@@ -20,23 +20,23 @@
  */
 
 /**
-        \file       htdocs/categories/viewcat.php
-        \ingroup    category
-        \brief      Page de visualisation de categorie produit
-        \version    $Revision$
-*/
+ *       \file       htdocs/categories/viewcat.php
+ *       \ingroup    category
+ *       \brief      Page de visualisation de categorie produit
+ *       \version    $Revision$
+ */
 
 require("./pre.inc.php");
 
 if ($_REQUEST['id'] == "")
 {
-  dol_print_error('','Missing parameter id');
-  exit();
+	dol_print_error('','Missing parameter id');
+	exit();
 }
 
 $type=$_REQUEST['type'];
 
-// Securite
+// Security check
 if (! $user->rights->categorie->lire)
 {
 	accessforbidden();
@@ -50,8 +50,8 @@ $c->fetch($_REQUEST['id']);
 
 
 /*
-*	Actions
-*/
+ *	Actions
+ */
 
 if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
@@ -88,6 +88,11 @@ $head[$h][1] = $langs->trans("Card");
 $head[$h][2] = 'card';
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT.'/categories/photos.php?id='.$c->id.'&amp;type='.$type;
+$head[$h][1] = $langs->trans("Photos");
+$head[$h][2] = 'photos';
+$h++;
+
 if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
@@ -96,8 +101,8 @@ dol_fiche_head($head, 'card', $title);
 
 
 /*
-* Confirmation suppression
-*/
+ * Confirmation suppression
+ */
 if ($_GET['action'] == 'delete')
 {
 	$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
@@ -106,22 +111,24 @@ if ($_GET['action'] == 'delete')
 
 print '<table border="0" width="100%" class="border">';
 
+// Path of category
 print '<tr><td width="20%" class="notopnoleft">';
 $ways = $c->print_all_ways ();
 print $langs->trans("Ref").'</td><td>';
 print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 foreach ($ways as $way)
 {
-  print $way."<br />\n";
+	print $way."<br />\n";
 }
 print '</td></tr>';
 
-
+// Description
 print '<tr><td width="20%" class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print nl2br($c->description);
 print '</td></tr>';
 
+// Visibility
 if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 {
 	if ($c->socid)
@@ -232,20 +239,20 @@ else
 	}
 	print "</table>\n";
 
-  /*
-   * Boutons actions
-   */
-  if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
-  {
-	  print "<div class='tabsAction'>\n";
+	/*
+	 * Boutons actions
+	 */
+	if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+	{
+		print "<div class='tabsAction'>\n";
 
-	  if ($user->rights->categorie->creer)
-	  {
-		  print "<a class='butAction' href='fiche.php?action=create&amp;catorigin=".$c->id."&amp;socid=".$c->socid."&amp;type=".$type."'>".$langs->trans("Create")."</a>";
-	  }
+		if ($user->rights->categorie->creer)
+		{
+			print "<a class='butAction' href='fiche.php?action=create&amp;catorigin=".$c->id."&amp;socid=".$c->socid."&amp;type=".$type."'>".$langs->trans("Create")."</a>";
+		}
 
-	  print "</div>";
-  }
+		print "</div>";
+	}
 }
 
 
@@ -255,7 +262,7 @@ if ($c->type == 0)
 	$prods = $c->get_type ("product","Product");
 	if ($prods < 0)
 	{
-	  dol_print_error();
+		dol_print_error();
 	}
 	else
 	{
@@ -274,7 +281,7 @@ if ($c->type == 0)
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
 				if ($prod->type == 1) print img_object($langs->trans("ShowService"),"service");
-	        	else print img_object($langs->trans("ShowProduct"),"product");
+				else print img_object($langs->trans("ShowProduct"),"product");
 				print " <a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
 				print '<td valign="top">'.$prod->libelle."</td>\n";
 				print '<td valign="top">'.$prod->description."</td>\n";
@@ -294,7 +301,7 @@ if ($c->type == 1)
 	$socs = $c->get_type ("societe","Fournisseur","fournisseur");
 	if ($socs < 0)
 	{
-	  dol_print_error();
+		dol_print_error();
 	}
 	else
 	{
@@ -331,7 +338,7 @@ if($c->type == 2)
 	$socs = $c->get_type ("societe","Societe");
 	if ($socs < 0)
 	{
-	  dol_print_error();
+		dol_print_error();
 	}
 	else
 	{

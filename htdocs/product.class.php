@@ -2280,7 +2280,6 @@ class Product extends CommonObject
 
 		if (! file_exists($dir))
 		{
-			dol_syslog("Product Create $dir");
 			create_exdir($dir);
 		}
 
@@ -2438,20 +2437,20 @@ class Product extends CommonObject
 					// On continue ou on arrete de boucler ?
 					if ($nbmax && $nbphoto >= $nbmax) break;
 				}
-	  }
+			}
 
-	  if ($nbbyrow && $size==1)
-	  {
-	  	// Ferme tableau
-	  	while ($nbphoto % $nbbyrow) {
-	  		print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
-	  		$nbphoto++;
-	  	}
+			if ($nbbyrow && $size==1)
+			{
+				// Ferme tableau
+				while ($nbphoto % $nbbyrow) {
+					print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+					$nbphoto++;
+				}
 
-	  	if ($nbphoto) print '</table>';
-	  }
+				if ($nbphoto) print '</table>';
+			}
 
-	  closedir($handle);
+			closedir($handle);
 		}
 
 		return $nbphoto;
@@ -2532,12 +2531,12 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Recupere la taille de l'image
-	 *    \param      file        Chemin de l'image
+	 *    \brief      Load size of image file
+	 *    \param      file        Path to file
 	 */
 	function get_image_size($file)
 	{
-		$infoImg = getimagesize($file); // R�cup�ration des infos de l'image
+		$infoImg = getimagesize($file); // Get information on image
 		$this->imgWidth = $infoImg[0]; // Largeur de l'image
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}

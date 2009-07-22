@@ -73,257 +73,268 @@ $original_file = str_replace("../","/", $original_file);
 $accessallowed=0;
 if ($modulepart)
 {
-    // Check permissions and define directory
+	// Check permissions and define directory
 
-    // Wrapping pour les photo utilisateurs
-    if ($modulepart == 'companylogo')
-    {
-    	$accessallowed=1;
-   		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
-    }
+	// Wrapping pour les photo utilisateurs
+	if ($modulepart == 'companylogo')
+	{
+		$accessallowed=1;
+		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
+	}
 
-    // Wrapping pour les photos utilisateurs
-    elseif ($modulepart == 'userphoto')
-    {
-    	$accessallowed=1;
-    	$original_file=$conf->user->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les photos utilisateurs
+	elseif ($modulepart == 'userphoto')
+	{
+		$accessallowed=1;
+		$original_file=$conf->user->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les photos adherents
-    elseif ($modulepart == 'memberphoto')
-    {
-    	$accessallowed=1;
-    	$original_file=$conf->adherent->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les photos adherents
+	elseif ($modulepart == 'memberphoto')
+	{
+		$accessallowed=1;
+		$original_file=$conf->adherent->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les apercu factures
-    elseif ($modulepart == 'apercufacture')
-    {
-        $user->getrights('facture');
-        if ($user->rights->facture->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->facture->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les apercu factures
+	elseif ($modulepart == 'apercufacture')
+	{
+		$user->getrights('facture');
+		if ($user->rights->facture->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->facture->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les apercu propal
-    elseif ($modulepart == 'apercupropal')
-    {
-        $user->getrights('propale');
-        if ($user->rights->propale->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->propale->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les apercu propal
+	elseif ($modulepart == 'apercupropal')
+	{
+		$user->getrights('propale');
+		if ($user->rights->propale->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->propale->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les apercu commande
-    elseif ($modulepart == 'apercucommande')
-    {
-        $user->getrights('commande');
-        if ($user->rights->commande->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->commande->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les apercu commande
+	elseif ($modulepart == 'apercucommande')
+	{
+		$user->getrights('commande');
+		if ($user->rights->commande->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->commande->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les apercu intervention
-    elseif ($modulepart == 'apercufichinter')
-    {
-        $user->getrights('ficheinter');
-        if ($user->rights->ficheinter->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les apercu intervention
+	elseif ($modulepart == 'apercufichinter')
+	{
+		$user->getrights('ficheinter');
+		if ($user->rights->ficheinter->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les images des stats propales
-    elseif ($modulepart == 'propalstats')
-    {
-        $user->getrights('propale');
-        if ($user->rights->propale->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->propale->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les images des stats propales
+	elseif ($modulepart == 'propalstats')
+	{
+		$user->getrights('propale');
+		if ($user->rights->propale->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->propale->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les images des stats commandes
-    elseif ($modulepart == 'orderstats')
-    {
-        $user->getrights('commande');
-        if ($user->rights->commande->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->commande->dir_temp.'/'.$original_file;
-    }
-    elseif ($modulepart == 'orderstatssupplier')
-    {
-        $user->getrights('fournisseur');
-        if ($user->rights->fournisseur->commande->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->fournisseur->dir_output.'/commande/temp/'.$original_file;
-    }
+	// Wrapping pour les images des stats commandes
+	elseif ($modulepart == 'orderstats')
+	{
+		$user->getrights('commande');
+		if ($user->rights->commande->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->commande->dir_temp.'/'.$original_file;
+	}
+	elseif ($modulepart == 'orderstatssupplier')
+	{
+		$user->getrights('fournisseur');
+		if ($user->rights->fournisseur->commande->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->dir_output.'/commande/temp/'.$original_file;
+	}
 
-    // Wrapping pour les images des stats factures
-    elseif ($modulepart == 'billstats')
-    {
-        $user->getrights('facture');
-        if ($user->rights->facture->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->facture->dir_temp.'/'.$original_file;
-    }
-    elseif ($modulepart == 'billstatssupplier')
-    {
-        $user->getrights('fourn');
-        if ($user->rights->fournisseur->facture->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->fournisseur->dir_output.'/facture/temp/'.$original_file;
-    }
+	// Wrapping pour les images des stats factures
+	elseif ($modulepart == 'billstats')
+	{
+		$user->getrights('facture');
+		if ($user->rights->facture->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->facture->dir_temp.'/'.$original_file;
+	}
+	elseif ($modulepart == 'billstatssupplier')
+	{
+		$user->getrights('fourn');
+		if ($user->rights->fournisseur->facture->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->fournisseur->dir_output.'/facture/temp/'.$original_file;
+	}
 
-    // Wrapping pour les images des stats expeditions
-    elseif ($modulepart == 'expeditionstats')
-    {
-        $user->getrights('expedition');
-        if ($user->rights->expedition->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->expedition->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les images des stats expeditions
+	elseif ($modulepart == 'expeditionstats')
+	{
+		$user->getrights('expedition');
+		if ($user->rights->expedition->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->expedition->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les images des stats produits
-    elseif (eregi('^productstats_',$modulepart))
-    {
-        $user->getrights('produit');
-        if ($user->rights->produit->lire || $user->rights->service->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->produit->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les images des stats produits
+	elseif (eregi('^productstats_',$modulepart))
+	{
+		$user->getrights('produit');
+		if ($user->rights->produit->lire || $user->rights->service->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->produit->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les produits
-    elseif ($modulepart == 'product')
-    {
-        $user->getrights('produit');
-        if ($user->rights->produit->lire || $user->rights->service->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->produit->dir_output.'/'.$original_file;
-    }
+	// Wrapping for products or services
+	elseif ($modulepart == 'product')
+	{
+		$user->getrights('produit');
+		if ($user->rights->produit->lire || $user->rights->service->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->produit->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les prelevements
-    elseif ($modulepart == 'prelevement')
-    {
-        $user->getrights('prelevement');
-        if ($user->rights->prelevement->bons->lire) $accessallowed=1;
+	// Wrapping for categories
+	elseif ($modulepart == 'category')
+	{
+		$user->getrights('categorie');
+		if ($user->rights->categorie->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->categorie->dir_output.'/'.$original_file;
+	}
 
-        $original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;
-    }
+	// Wrapping pour les prelevements
+	elseif ($modulepart == 'prelevement')
+	{
+		$user->getrights('prelevement');
+		if ($user->rights->prelevement->bons->lire) $accessallowed=1;
 
-    // Wrapping pour les graph telephonie
-    elseif ($modulepart == 'telephoniegraph')
-    {
-        $user->getrights('telephonie');
-        if ($user->rights->telephonie->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->telephonie->dir_temp.'/'.$original_file;
-    }
+		$original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;
+	}
 
-    // Wrapping pour les graph energie
-    elseif ($modulepart == 'energie')
-    {
-      $accessallowed=1;
-      $original_file=$conf->energie->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les graph telephonie
+	elseif ($modulepart == 'telephoniegraph')
+	{
+		$user->getrights('telephonie');
+		if ($user->rights->telephonie->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->telephonie->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les graph bank
-    elseif ($modulepart == 'bank')
-    {
-      $accessallowed=1;
-      $original_file=$conf->banque->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les graph energie
+	elseif ($modulepart == 'energie')
+	{
+		$accessallowed=1;
+		$original_file=$conf->energie->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les images wysiwyg
-    elseif ($modulepart == 'fckeditor')
-    {
-      $accessallowed=1;
-      $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les graph bank
+	elseif ($modulepart == 'bank')
+	{
+		$accessallowed=1;
+		$original_file=$conf->banque->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les images wysiwyg mailing
-    elseif ($modulepart == 'mailing')
-    {
-      $accessallowed=1;
-      $original_file=$conf->mailing->dir_output.'/'.$original_file;
-    }
+	// Wrapping pour les images wysiwyg
+	elseif ($modulepart == 'fckeditor')
+	{
+		$accessallowed=1;
+		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les graph energie
-    elseif ($modulepart == 'graph_stock')
-    {
-      $accessallowed=1;
-      $original_file=$conf->stock->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les images wysiwyg mailing
+	elseif ($modulepart == 'mailing')
+	{
+		$accessallowed=1;
+		$original_file=$conf->mailing->dir_output.'/'.$original_file;
+	}
 
-    // Wrapping pour les graph fournisseurs
-    elseif ($modulepart == 'graph_fourn')
-    {
-      $accessallowed=1;
-      $original_file=$conf->fournisseur->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les graph energie
+	elseif ($modulepart == 'graph_stock')
+	{
+		$accessallowed=1;
+		$original_file=$conf->stock->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les graph des produits
-    elseif ($modulepart == 'graph_product')
-    {
-      $accessallowed=1;
-      $original_file=$conf->produit->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les graph fournisseurs
+	elseif ($modulepart == 'graph_fourn')
+	{
+		$accessallowed=1;
+		$original_file=$conf->fournisseur->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping pour les code barre
-    elseif ($modulepart == 'barcode')
-    {
-    	$accessallowed=1;
+	// Wrapping pour les graph des produits
+	elseif ($modulepart == 'graph_product')
+	{
+		$accessallowed=1;
+		$original_file=$conf->produit->dir_temp.'/'.$original_file;
+	}
+
+	// Wrapping pour les code barre
+	elseif ($modulepart == 'barcode')
+	{
+		$accessallowed=1;
 		// If viewimage is called for barcode, we try to output an image on the fly,
 		// with not build of file on disk.
-    	//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
-    	$original_file='';
-    }
+		//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
+		$original_file='';
+	}
 
-    // Wrapping pour les icones de background des mailings
-    elseif ($modulepart == 'iconmailing')
-    {
-      $accessallowed=1;
-      $original_file=$conf->mailing->dir_temp.'/'.$original_file;
-    }
+	// Wrapping pour les icones de background des mailings
+	elseif ($modulepart == 'iconmailing')
+	{
+		$accessallowed=1;
+		$original_file=$conf->mailing->dir_temp.'/'.$original_file;
+	}
 
-    // Wrapping generique (allows any module to open a file if file is in directory
-    // called DOL_DATA_ROOT/modulepart).
-    else
-    {
-    	$accessallowed=1;
-    	$original_file=DOL_DATA_ROOT.'/'.$modulepart.'/'.$original_file;
-    }
+	// Wrapping generique (allows any module to open a file if file is in directory
+	// called DOL_DATA_ROOT/modulepart).
+	else
+	{
+		$accessallowed=1;
+		$original_file=DOL_DATA_ROOT.'/'.$modulepart.'/'.$original_file;
+	}
 }
 
 // Security:
 // Limit access if permissions are wrong
 if (! $accessallowed)
 {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Security:
@@ -383,11 +394,11 @@ else
 	// Les drois sont ok et fichier trouve
 	if ($type)
 	{
-	  header('Content-type: '.$type);
+		header('Content-type: '.$type);
 	}
 	else
 	{
-	  header('Content-type: image/png');
+		header('Content-type: image/png');
 	}
 
 	readfile($original_file);

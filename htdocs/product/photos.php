@@ -57,11 +57,7 @@ if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global
 		$product = new Product($db);
 		$result = $product->fetch($_GET["id"]);
 
-		// if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
-
-		//      var_dump($_FILES);
-
-		$product->add_photo($conf->produit->dir_output, $_FILES['userfile']);
+		$result = $product->add_photo($conf->produit->dir_output, $_FILES['userfile']);
 	}
 }
 
@@ -219,7 +215,7 @@ if ($_GET["id"] || $_GET["ref"])
 					$filename=$obj['photo'];
 				}
 
-				// Nom affich�
+				// Nom affiche
 				$viewfilename=$obj['photo'];
 
 				// Taille de l'image
@@ -233,7 +229,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<br>'.$viewfilename;
 				print '<br>';
 
-				// On propose la g�n�ration de la vignette si elle n'existe pas et si la taille est sup�rieure aux limites
+				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
 				if (!$obj['photo_vignette'] && eregi('(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$',$obj['photo']) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';

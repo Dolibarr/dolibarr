@@ -22,20 +22,20 @@
  */
 
 /**
-	    \file       htdocs/categories/categorie.class.php
-        \ingroup    categorie
-		\brief      Fichier de la classe des categorie
-		\version	$Id$
-*/
+ *	\file       htdocs/categories/categorie.class.php
+ *	\ingroup    categorie
+ *	\brief      Fichier de la classe des categorie
+ *	\version	$Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php");
 
 
 /**
-        \class      Categorie
-		\brief      Classe permettant la gestion des categories
-*/
+ *	\class      Categorie
+ *	\brief      Classe permettant la gestion des categories
+ */
 class Categorie
 {
 	var $error;
@@ -54,10 +54,10 @@ class Categorie
 
 
 	/**
-	* Constructeur
-	* db : accès base de données
-	* id : id de la catégorie
-	*/
+	 * Constructeur
+	 * db : accès base de données
+	 * id : id de la catégorie
+	 */
 	function Categorie($db, $id=-1)
 	{
 		$this->db = $db;
@@ -67,9 +67,9 @@ class Categorie
 	}
 
 	/**
-	* Charge la catégorie
-	* id : id de la catégorie à charger
-	*/
+	 * Charge la catégorie
+	 * id : id de la catégorie à charger
+	 */
 	function fetch($id)
 	{
 		$sql = "SELECT rowid, label, description, fk_soc, visible, type";
@@ -117,11 +117,11 @@ class Categorie
 	}
 
 	/**
-	* Ajoute la catégorie dans la base de données
-	* retour : -1 : erreur SQL
-	*          -2 : nouvel ID inconnu
-	*          -3 : catégorie invalide
-	*/
+	 * Ajoute la catégorie dans la base de données
+	 * retour : -1 : erreur SQL
+	 *          -2 : nouvel ID inconnu
+	 *          -3 : catégorie invalide
+	 */
 	function create()
 	{
 		global $conf,$langs;
@@ -180,11 +180,11 @@ class Categorie
 	}
 
 	/**
-	* Mise à jour de la catégorie
-	* retour :  1 : OK
-	*          -1 : erreur SQL
-	*          -2 : catégorie invalide
-	*/
+	 * Mise à jour de la catégorie
+	 * retour :  1 : OK
+	 *          -1 : erreur SQL
+	 *          -2 : catégorie invalide
+	 */
 	function update()
 	{
 		global $conf;
@@ -248,10 +248,10 @@ class Categorie
 	}
 
 	/**
-	* Supprime la catégorie
-	* Les produits et sous-catégories deviennent orphelins
-	* si $all = false, et sont (seront :) supprimés sinon
-	*/
+	 * Supprime la catégorie
+	 * Les produits et sous-catégories deviennent orphelins
+	 * si $all = false, et sont (seront :) supprimés sinon
+	 */
 	function remove ($all = false)
 	{
 
@@ -291,12 +291,12 @@ class Categorie
 
 
 	/**
-	* Ajout d'une sous-catégorie
-	* $fille : objet catégorie
-	* retour :  1 : OK
-	*          -2 : $fille est déjà dans la famille de $this
-	*          -3 : catégorie ($this ou $fille) invalide
-	*/
+	 * Ajout d'une sous-catégorie
+	 * $fille : objet catégorie
+	 * retour :  1 : OK
+	 *          -2 : $fille est déjà dans la famille de $this
+	 *          -3 : catégorie ($this ou $fille) invalide
+	 */
 	function add_fille()
 	{
 
@@ -315,11 +315,11 @@ class Categorie
 	}
 
 	/**
-	* Suppression d'une sous-catégorie (seulement "désassociation")
-	* $fille : objet catégorie
-	* retour :  1 : OK
-	*          -3 : catégorie ($this ou $fille) invalide
-	*/
+	 * Suppression d'une sous-catégorie (seulement "désassociation")
+	 * $fille : objet catégorie
+	 * retour :  1 : OK
+	 *          -3 : catégorie ($this ou $fille) invalide
+	 */
 	function del_fille($fille)
 	{
 		if (!$this->check() || !$fille->check())
@@ -342,11 +342,11 @@ class Categorie
 	}
 
 	/**
-	* 	\brief			Link an object to the category
-	*	\param			obj		Object to link to category
-	* 	\param			type	Type of category
-	* 	\return			int		1 : OK, -1 : erreur SQL, -2 : id non renseign, -3 : Already linked
-	*/
+	 * 	\brief			Link an object to the category
+	 *	\param			obj		Object to link to category
+	 * 	\param			type	Type of category
+	 * 	\return			int		1 : OK, -1 : erreur SQL, -2 : id non renseign, -3 : Already linked
+	 */
 	function add_type($obj,$type)
 	{
 		if ($this->id == -1)
@@ -377,11 +377,11 @@ class Categorie
 	}
 
 	/**
-	* Suppresion d'un produit de la catégorie
-	* @param $prod est un objet de type produit
-	* retour :  1 : OK
-	*          -1 : erreur SQL
-	*/
+	 * Suppresion d'un produit de la catégorie
+	 * @param $prod est un objet de type produit
+	 * retour :  1 : OK
+	 *          -1 : erreur SQL
+	 */
 	function del_type($obj,$type)
 	{
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
@@ -400,11 +400,11 @@ class Categorie
 	}
 
 	/**
-	* 	\brief	Retourne les produits de la catégorie
-	* 	\param	field	Field name for select in table. Full field name will be fk_field.
-	* 	\param	class	PHP Class of object to store entity
-	* 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
-	*/
+	 * 	\brief	Retourne les produits de la catégorie
+	 * 	\param	field	Field name for select in table. Full field name will be fk_field.
+	 * 	\param	class	PHP Class of object to store entity
+	 * 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
+	 */
 	function get_type($field,$class,$table='')
 	{
 		$objs = array();
@@ -440,8 +440,8 @@ class Categorie
 
 
 	/**
-	* Retourne les filles de la catégorie
-	*/
+	 * Retourne les filles de la catégorie
+	 */
 	function get_filles ()
 	{
 		$sql  = "SELECT fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association ";
@@ -468,8 +468,8 @@ class Categorie
 
 
 	/**
-	* retourne la description d'une catégorie
-	*/
+	 * retourne la description d'une catégorie
+	 */
 	function get_desc ($cate)
 	{
 		$sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
@@ -482,8 +482,8 @@ class Categorie
 	}
 
 	/**
-	* La catégorie $fille est-elle une fille de cette catégorie ?
-	*/
+	 * La catégorie $fille est-elle une fille de cette catégorie ?
+	 */
 	function is_fille ($fille)
 	{
 		$sql  = "SELECT count(fk_categorie_fille) FROM ".MAIN_DB_PREFIX."categorie_association ";
@@ -498,18 +498,18 @@ class Categorie
 
 
 	/**
-	* 	\brief		Reconstruit l'arborescence des catégories sous la forme d'un tableau
-	*				Renvoi un tableau de tableau('id','id_mere',...) trié selon
-	*				arbre et avec:
-	*				id = id de la categorie
-	*				id_mere = id de la categorie mere
-	*				id_children = tableau des id enfant
-	*				label = nom de la categorie
-	*				fulllabel = nom avec chemin complet de la categorie
-	*				fullpath = chemin complet compose des id
-    *	\param    	type		Type de categories (0=produit, 1=fournisseur, 2=client)
-	*	\return		array		Tableau de array
-	*/
+	 * 	\brief		Reconstruit l'arborescence des catégories sous la forme d'un tableau
+	 *				Renvoi un tableau de tableau('id','id_mere',...) trié selon
+	 *				arbre et avec:
+	 *				id = id de la categorie
+	 *				id_mere = id de la categorie mere
+	 *				id_children = tableau des id enfant
+	 *				label = nom de la categorie
+	 *				fulllabel = nom avec chemin complet de la categorie
+	 *				fullpath = chemin complet compose des id
+	 *	\param    	type		Type de categories (0=produit, 1=fournisseur, 2=client)
+	 *	\return		array		Tableau de array
+	 */
 	function get_full_arbo($type)
 	{
 		$this->cats = array();
@@ -583,17 +583,17 @@ class Categorie
 	}
 
 	/**
-	*	\brief		For category id_categ and its child available in this->cats, define property fullpath and fulllabel
-	* 	\param		id_categ		id_categ entry to update
-	* 	\param		protection		Deep counter to avoid infinite loop
-	*/
+	 *	\brief		For category id_categ and its child available in this->cats, define property fullpath and fulllabel
+	 * 	\param		id_categ		id_categ entry to update
+	 * 	\param		protection		Deep counter to avoid infinite loop
+	 */
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
 		dol_syslog("Categorie::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		//if (! empty($this->cats[$id_categ]['fullpath']))
 		//{
-			// Already defined
+		// Already defined
 		//	dol_syslog("Categorie::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
 		//	return;
 		//}
@@ -634,8 +634,8 @@ class Categorie
 	}
 
 	/**
-	*	\brief		Affiche contenu de $this->cats
-	*/
+	 *	\brief		Affiche contenu de $this->cats
+	 */
 	function debug_cats()
 	{
 		// Affiche $this->cats
@@ -653,9 +653,9 @@ class Categorie
 
 
 	/**
-	* 		\brief		Retourne toutes les catégories
-	*		\return		array		Tableau d'objet Categorie
-	*/
+	 * 		\brief		Retourne toutes les catégories
+	 *		\return		array		Tableau d'objet Categorie
+	 */
 	function get_all_categories ()
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
@@ -679,9 +679,9 @@ class Categorie
 	}
 
 	/**
-	* 	\brief		Retourne le nombre total de catégories
-	*	\return		int		Nombre de categories
-	*/
+	 * 	\brief		Retourne le nombre total de catégories
+	 *	\return		int		Nombre de categories
+	 */
 	function get_nb_categories ()
 	{
 		$sql = "SELECT count(rowid)";
@@ -700,8 +700,8 @@ class Categorie
 	}
 
 	/**
-	* 		Vérifie si une catégorie porte le label $label
-	*/
+	 * 		Vérifie si une catégorie porte le label $label
+	 */
 	function already_exists()
 	{
 		$sql = "SELECT count(c.rowid)";
@@ -731,8 +731,8 @@ class Categorie
 	}
 
 	/**
-	* 		\brief		Retourne les catégories de premier niveau (qui ne sont pas filles)
-	*/
+	 * 		\brief		Retourne les catégories de premier niveau (qui ne sont pas filles)
+	 */
 	function get_main_categories ()
 	{
 		$allcats = $this->get_all_categories ();
@@ -761,9 +761,9 @@ class Categorie
 	}
 
 	/**
-	* Retourne les chemin de la catégorie, avec les noms des catégories
-	* séparés par $sep (" >> " par défaut)
-	*/
+	 * Retourne les chemin de la catégorie, avec les noms des catégories
+	 * séparés par $sep (" >> " par défaut)
+	 */
 	function print_all_ways ($sep = " &gt;&gt; ", $url='')
 	{
 		$ways = array ();
@@ -790,8 +790,8 @@ class Categorie
 
 
 	/**
-	* get_primary_way() affiche le chemin le plus court pour se rendre à un produit
-	*/
+	 * get_primary_way() affiche le chemin le plus court pour se rendre à un produit
+	 */
 	function get_primary_way($id, $type="")
 	{
 		$primary_way = Array("taille"=>-1,"chemin"=>Array());
@@ -812,8 +812,8 @@ class Categorie
 	}
 
 	/**
-	* print_primary_way() affiche le chemin le plus court pour se rendre à un produit
-	*/
+	 * print_primary_way() affiche le chemin le plus court pour se rendre à un produit
+	 */
 	function print_primary_way($id, $sep= " &gt;&gt; ", $url, $type="")
 	{
 		$primary_way = Array();
@@ -835,8 +835,8 @@ class Categorie
 	}
 
 	/**
-	* Retourne un tableau contenant la liste des catégories mères
-	*/
+	 * Retourne un tableau contenant la liste des catégories mères
+	 */
 	function get_meres ()
 	{
 		$meres = array ();
@@ -862,9 +862,9 @@ class Categorie
 	}
 
 	/**
-	* Retourne dans un tableau tous les chemins possibles pour arriver à la catégorie
-	* en partant des catégories principales, représentés par des tableaux de catégories
-	*/
+	 * Retourne dans un tableau tous les chemins possibles pour arriver à la catégorie
+	 * en partant des catégories principales, représentés par des tableaux de catégories
+	 */
 	function get_all_ways ()
 	{
 		$ways = array ();
@@ -887,12 +887,12 @@ class Categorie
 	}
 
 	/**
-	* 		Return list of categories linked to element of type $type with id $typeid
-	* 		@param		id			Id of element
-	* 		@param		type		Type of link ('customer','fournisseur','societe'...)
-	* 		@param		typeid		Type id of link (0,1,2...)
-	* 		@return		array		List of category objects
-	*/
+	 * 		Return list of categories linked to element of type $type with id $typeid
+	 * 		@param		id			Id of element
+	 * 		@param		type		Type of link ('customer','fournisseur','societe'...)
+	 * 		@param		typeid		Type id of link (0,1,2...)
+	 * 		@return		array		List of category objects
+	 */
 	function containing ($id,$type,$typeid)
 	{
 		$cats = array ();
@@ -921,9 +921,9 @@ class Categorie
 
 
 	/**
-	* 	\brief	Retourne les catégories dont l'id ou le nom correspond
-	* 			ajoute des wildcards au nom sauf si $exact = true
-	*/
+	 * 	\brief	Retourne les catégories dont l'id ou le nom correspond
+	 * 			ajoute des wildcards au nom sauf si $exact = true
+	 */
 	function rechercher($id, $nom, $type, $exact = false)
 	{
 		$cats = array ();
@@ -963,18 +963,19 @@ class Categorie
 	}
 
 	/**
-	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\brief      Return name and link of category (with picto)
 	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		option			Sur quoi pointe le lien ('', 'withdraw')
+	 *	\param		option			Sur quoi pointe le lien ('', 'xyz')
+	 * 	\param		maxlength		Max length of text
 	 *	\return		string			Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $langs;
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'">';
 		$label=$this->label;
 		$lienfin='</a>';
 
@@ -984,8 +985,144 @@ class Categorie
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$lien.dol_trunc($this->ref,$maxlength).$lienfin;
 		return $result;
+	}
+
+
+	/**
+	 *    \brief      Deplace fichier uploade sous le nom $files dans le repertoire sdir
+	 *    \param      sdir        Repertoire destination finale
+	 *    \param      $file       Nom du fichier uploade
+	 *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par defaut)
+	 *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par defaut)
+	 */
+	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
+	{
+		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
+		$dir .= "photos/";
+
+		if (! file_exists($dir))
+		{
+			create_exdir($dir);
+		}
+
+		if (file_exists($dir))
+		{
+			$originImage = $dir . $file['name'];
+
+			// Cree fichier en taille origine
+			$result=dol_move_uploaded_file($file['tmp_name'], $originImage, 1);
+
+			if (file_exists($originImage))
+			{
+				// Cree fichier en taille vignette
+				$this->add_thumb($originImage,$maxWidth,$maxHeight);
+			}
+		}
+	}
+
+	/**
+	 *    \brief      Build thumb
+	 *    \param      sdir           Repertoire destination finale
+	 *    \param      file           Chemin du fichier d'origine
+	 *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
+	 *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
+	 */
+	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
+	{
+		require_once(DOL_DOCUMENT_ROOT ."/lib/images.lib.php");
+
+		if (file_exists($file))
+		{
+			vignette($file,$maxWidth,$maxHeight);
+		}
+	}
+
+
+	/**
+	 *    \brief      Retourne tableau de toutes les photos de la categorie
+	 *    \param      dir         R?pertoire ? scanner
+	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
+	 *    \return     array       Tableau de photos
+	 */
+	function liste_photos($dir,$nbmax=0)
+	{
+		$nbphoto=0;
+		$tabobj=array();
+
+		$dirthumb = $dir.'thumbs/';
+
+		if (file_exists($dir))
+		{
+			$handle=opendir($dir);
+
+			while (($file = readdir($handle)) != false)
+			{
+				if (is_file($dir.$file))
+				{
+					$nbphoto++;
+					$photo = $file;
+
+					// On determine nom du fichier vignette
+					$photo_vignette='';
+					if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
+					{
+						$photo_vignette=eregi_replace($regs[0],'',$photo).'_small'.$regs[0];
+					}
+
+					// Objet
+					$obj=array();
+					$obj['photo']=$photo;
+					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+					else $obj['photo_vignette']="";
+
+					$tabobj[$nbphoto-1]=$obj;
+
+					// On continue ou on arrete de boucler ?
+					if ($nbmax && $nbphoto >= $nbmax) break;
+				}
+			}
+
+			closedir($handle);
+		}
+
+		return $tabobj;
+	}
+
+	/**
+	 *    \brief      Efface la photo de la categorie et sa vignette
+	 *    \param      file        Chemin de l'image
+	 */
+	function delete_photo($file)
+	{
+		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
+		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
+		$filename = eregi_replace($dir,'',$file); // Nom du fichier
+
+		// On efface l'image d'origine
+		unlink($file);
+
+		// Si elle existe, on efface la vignette
+		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
+		{
+			$photo_vignette=eregi_replace($regs[0],'',$filename).'_small'.$regs[0];
+			if (file_exists($dirthumb.$photo_vignette))
+			{
+				unlink($dirthumb.$photo_vignette);
+			}
+		}
+	}
+
+	/**
+	 *    \brief      Load size of image file
+	 *    \param      file        Path to file
+	 */
+	function get_image_size($file)
+	{
+		$infoImg = getimagesize($file); // R?cup?ration des infos de l'image
+		$this->imgWidth = $infoImg[0]; // Largeur de l'image
+		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}
 
 }

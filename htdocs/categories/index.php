@@ -23,7 +23,7 @@
 /**
  *      \file       htdocs/categories/index.php
  *      \ingroup    category
- *      \brief      Page accueil espace categories
+ *      \brief      Home page of category area
  *	 	\version	$Id$
  */
 
@@ -144,7 +144,7 @@ print '</td>';
 print '</tr></table></td>';
 print '<td align="right">&nbsp;</td>';
 print '<td align="right">&nbsp;</td>';
-print '<td align="right">&nbsp;</td>';
+//print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
 
@@ -249,23 +249,30 @@ foreach($fulltree as $key => $val)
 		print '</td>';
 		// Show link
 		print '<td valign="middle">';
-		if ($section == $val['id']) print ' <u>';
+		//if ($section == $val['id']) print ' <u>';
+		/* We don't want a link
+		$categstatic->id=$val['id'];
+		$categstatic->ref=$val['label'];
+		$categstatic->type=$type;
+		print $categstatic->getNomUrl(0,'',28);
+		*/
 		print dol_trunc($val['label'],28);
-		if ($section == $val['id']) print '</u>';
+		//if ($section == $val['id']) print '</u>';
 		print '</td>';
 		print '</tr></table>';
 		print "</td>\n";
 
+		// Description
 		print '<td>';
 		print dol_trunc($categstatic->get_desc($val['id']),48);
 		print '</td>';
 
-		// Edit link
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/categories/edit.php?id='.$val['id'].'&type='.$type.'">'.img_edit().'</a></td>';
+		// Link to category card
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>';
 
 		// Add link
 		//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
-		print '<td align="right">&nbsp;</td>';
+		//print '<td align="right">&nbsp;</td>';
 
 		print "</tr>\n";
 	}
@@ -286,7 +293,7 @@ if ($nbofentries == 0)
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</table></td>';
-	print '<td colspan="5">&nbsp;</td>';
+	print '<td colspan="4">&nbsp;</td>';
 	print '</tr>';
 }
 
