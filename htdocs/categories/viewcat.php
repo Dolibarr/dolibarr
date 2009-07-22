@@ -34,6 +34,7 @@ if ($_REQUEST['id'] == "")
 	exit();
 }
 
+$mesg = '';
 $type=$_REQUEST['type'];
 
 // Security check
@@ -41,8 +42,6 @@ if (! $user->rights->categorie->lire)
 {
 	accessforbidden();
 }
-
-$mesg='';
 
 $c = new Categorie($db);
 $c->fetch($_REQUEST['id']);

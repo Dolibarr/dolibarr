@@ -34,6 +34,7 @@ $langs->load("category");
 $langs->load("bills");
 
 $mesg = '';
+$type=$_REQUEST['type'];
 
 // Security check
 if (!$user->rights->categorie->lire) accessforbidden();
@@ -108,13 +109,12 @@ if ($_GET["id"] || $_GET["ref"])
 		$head[$h][2] = 'photos';
 		$h++;
 
+		$title=$langs->trans("ProductsCategoryShort");
 		if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 		if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 		if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 
-
-		$titre=$langs->trans("ProductsCategoryShort");
-		dol_fiche_head($head, 'photos', $titre);
+		dol_fiche_head($head, 'photos', $title);
 
 		/*
 		 * Confirmation de la suppression de photo
