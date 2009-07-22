@@ -20,19 +20,20 @@
  */
 
 /**
- \file       	htdocs/lib/databases/mssql.lib.php
- \brief			Fichier de la classe permettant de g�rer une base mssql
- \version		$Id$
+ *	\file       	htdocs/lib/databases/mssql.lib.php
+ *	\brief			Fichier de la classe permettant de g�rer une base mssql
+ *	\version		$Id$
  */
+
 // Pour compatibilite lors de l'upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 /**
- \class      DoliDb
- \brief      Classe de gestion de la database de dolibarr
- \remarks	Works with PHP5 Only
+ *	\class      DoliDb
+ *	\brief      Classe de gestion de la database de dolibarr
+ *	\remarks	Works with PHP5 Only
  */
 class DoliDb
 {

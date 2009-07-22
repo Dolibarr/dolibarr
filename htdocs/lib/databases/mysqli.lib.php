@@ -25,6 +25,7 @@
  *	\brief      Class file to manage Dolibarr database access for a Mysql database
  *	\version	$Id$
  */
+
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
@@ -806,7 +807,7 @@ class DoliDb
 		}
 		return $listtables;
 	}
-	
+
 	/**
 	 *	\brief     	Liste les informations des champs d'une table.
 	 *	\param	    table			Nom de la table
@@ -817,7 +818,7 @@ class DoliDb
 		$infotables=array();
 
 		$sql="SHOW FULL COLUMNS FROM ".$table.";";
-		
+
 		dol_syslog($sql,LOG_DEBUG);
 		$result = $this->query($sql);
 		while($row = $this->fetch_row($result))

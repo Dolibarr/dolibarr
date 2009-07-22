@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/contrat/services.php
  *      \ingroup    contrat
- *		\brief      Page liste des contrats en service
+ *		\brief      Page to list services in contracts
  *		\version    $Id$
  */
 
@@ -91,7 +91,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
-if ($filter == "expired") $sql.= " AND date_fin_validite < ".$now;
+if ($filter == "expired") $sql.= " AND date_fin_validite < ".$db->idate($now);
 if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.description like '%".addslashes($search_service)."%')";
@@ -122,7 +122,12 @@ if ($resql)
 	if ($filter_date1 != '') $param.='&amp;op1day='.$_REQUEST['op1day'].'&amp;op1month='.$_REQUEST['op1month'].'&amp;op1year='.$_REQUEST['op1year'];
 	if ($filter_date2 != '') $param.='&amp;op2day='.$_REQUEST['op2day'].'&amp;op2month='.$_REQUEST['op2month'].'&amp;op2year='.$_REQUEST['op2year'];
 
-	print_barre_liste($langs->trans("ListOfServices"), $page, "services.php", $param, $sortfield, $sortorder,'',$num);
+	$title=$langs->trans("ListOfServices");
+	if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use == "0"
+	if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
+	if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
+	if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
+	print_barre_liste($title, $page, "services.php", $param, $sortfield, $sortorder,'',$num);
 
 	print '<table class="liste" width="100%">';
 
@@ -223,7 +228,7 @@ if ($resql)
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '</td>';
 		print '<td align="right" nowrap="nowrap">';
-		if ($obj->cstatut == 0)
+		if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
 		{
 			print $contractstatic->LibStatut(0,5,($obj->date_fin_validite && $obj->date_fin_validite < $now));
 		}
