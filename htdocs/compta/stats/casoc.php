@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -20,10 +20,10 @@
  */
 
 /**
-        \file        htdocs/compta/stats/casoc.php
-        \brief       Page reporting CA par societe
-        \version     $Id$
-*/
+ *       \file        htdocs/compta/stats/casoc.php
+ *       \brief       Page reporting CA par societe
+ *       \version     $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
@@ -52,22 +52,22 @@ $html=new Form($db);
 // Affiche en-tete de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
-    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-    $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
-    $description=$langs->trans("RulesCADue");
-    $builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$period=$langs->trans("Year")." ".$year;
+	$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	$description=$langs->trans("RulesCADue");
+	$builddate=time();
+	$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
-    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-    $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
-    $description=$langs->trans("RulesCAIn");
-    $builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$period=$langs->trans("Year")." ".$year;
+	$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	$description=$langs->trans("RulesCAIn");
+	$builddate=time();
+	$exportlink=$langs->trans("NotYetAvailable");
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
@@ -76,28 +76,28 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 $catotal=0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT s.rowid as socid, s.nom as name, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    $sql.= ", ".MAIN_DB_PREFIX."facture as f";
-    $sql.= " WHERE f.fk_statut in (1,2)";
-    $sql.= " AND f.fk_soc = s.rowid";
-    if ($year) $sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	$sql = "SELECT s.rowid as socid, s.nom as name, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " WHERE f.fk_statut in (1,2)";
+	$sql.= " AND f.fk_soc = s.rowid";
+	if ($year) $sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else
 {
-    /*
-     * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
-     */
+	/*
+	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
+	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+	 */
 	$sql = "SELECT s.rowid as socid, s.nom as name, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
-  $sql .= " WHERE p.rowid = pf.fk_paiement";
-  $sql.= " AND pf.fk_facture = f.rowid";
-  $sql.= " AND f.fk_soc = s.rowid";
-  if ($year) $sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	$sql .= " WHERE p.rowid = pf.fk_paiement";
+	$sql.= " AND pf.fk_facture = f.rowid";
+	$sql.= " AND f.fk_soc = s.rowid";
+	if ($year) $sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -107,54 +107,54 @@ $sql.= " ORDER BY s.rowid";
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i=0;
-    while ($i < $num)
-    {
-         $obj = $db->fetch_object($result);
-         $amount[$obj->socid] += $obj->amount_ttc;
-         $name[$obj->socid] = $obj->name;
-         $catotal+=$obj->amount_ttc;
-         $i++;
-    }
+	$num = $db->num_rows($result);
+	$i=0;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($result);
+		$amount[$obj->socid] += $obj->amount_ttc;
+		$name[$obj->socid] = $obj->name;
+		$catotal+=$obj->amount_ttc;
+		$i++;
+	}
 }
 else {
-    dol_print_error($db);   
+	dol_print_error($db);
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
 if ($modecompta != 'CREANCES-DETTES')
 {
-    $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-    $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-    $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE pf.rowid IS NULL";
-    $sql.= " AND p.fk_bank = b.rowid";
-    $sql.= " AND b.fk_account = ba.rowid";
-    $sql.= " AND ba.entity = ".$conf->entity;
-    if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    $sql.= " GROUP BY nom";
-    $sql.= " ORDER BY nom";
+	$sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+	$sql.= " WHERE pf.rowid IS NULL";
+	$sql.= " AND p.fk_bank = b.rowid";
+	$sql.= " AND b.fk_account = ba.rowid";
+	$sql.= " AND ba.entity = ".$conf->entity;
+	if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	$sql.= " GROUP BY nom";
+	$sql.= " ORDER BY nom";
 
-    $result = $db->query($sql);
-    if ($result)
-    {
-        $num = $db->num_rows($result);
-        $i=0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($result);
-            $amount[$obj->rowid] += $obj->amount_ttc;
-            $name[$obj->rowid] = $obj->name;
-            $catotal+=$obj->amount_ttc;
-            $i++;
-        }
-    }
-    else {
-        dol_print_error($db);   
-    }
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$i=0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($result);
+			$amount[$obj->rowid] += $obj->amount_ttc;
+			$name[$obj->rowid] = $obj->name;
+			$catotal+=$obj->amount_ttc;
+			$i++;
+		}
+	}
+	else {
+		dol_print_error($db);
+	}
 }
 
 
@@ -169,49 +169,49 @@ $var=true;
 
 if (sizeof($amount))
 {
-    $arrayforsort=$name;
-    
-    // On d�finit tableau arrayforsort
-    if ($sortfield == 'nom' && $sortorder == 'asc') {
-        asort($name);
-        $arrayforsort=$name;
-    }
-    if ($sortfield == 'nom' && $sortorder == 'desc') {
-        arsort($name);
-        $arrayforsort=$name;
-    }
-    if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
-        asort($amount);
-        $arrayforsort=$amount;
-    }
-    if ($sortfield == 'amount_ttc' && $sortorder == 'desc') {
-        arsort($amount);
-        $arrayforsort=$amount;
-    }
+	$arrayforsort=$name;
 
-    foreach($arrayforsort as $key=>$value)
-    {
-        $var=!$var;
-        print "<tr $bc[$var]>";
+	// On d�finit tableau arrayforsort
+	if ($sortfield == 'nom' && $sortorder == 'asc') {
+		asort($name);
+		$arrayforsort=$name;
+	}
+	if ($sortfield == 'nom' && $sortorder == 'desc') {
+		arsort($name);
+		$arrayforsort=$name;
+	}
+	if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
+		asort($amount);
+		$arrayforsort=$amount;
+	}
+	if ($sortfield == 'amount_ttc' && $sortorder == 'desc') {
+		arsort($amount);
+		$arrayforsort=$amount;
+	}
 
-        $fullname=$name[$key];
-        if ($key > 0) {
-            $linkname='<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$key.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$fullname.'</a>';
-        }
-        else {
-            $linkname=$langs->trans("PaymentsNotLinkedToInvoice");
-        }
-        print "<td>".$linkname."</td>\n";
-        print '<td align="right">'.price($amount[$key]).'</td>';
-        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
-        print "</tr>\n";
-        $i++;
-    }
+	foreach($arrayforsort as $key=>$value)
+	{
+		$var=!$var;
+		print "<tr $bc[$var]>";
 
-    // Total
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td></tr>';
+		$fullname=$name[$key];
+		if ($key > 0) {
+			$linkname='<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$key.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$fullname.'</a>';
+		}
+		else {
+			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
+		}
+		print "<td>".$linkname."</td>\n";
+		print '<td align="right">'.price($amount[$key]).'</td>';
+		print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
+		print "</tr>\n";
+		$i++;
+	}
 
-    $db->free($result);
+	// Total
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td></tr>';
+
+	$db->free($result);
 }
 
 print "</table>";
