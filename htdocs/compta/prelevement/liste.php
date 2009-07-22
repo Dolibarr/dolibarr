@@ -76,7 +76,7 @@ if ($_GET["search_code"])
 
 if ($_GET["search_societe"])
 {
-  $sel =urldecode($_GET["search_societe"]);
+  $sel = $_GET["search_societe"];
   $sql .= " AND s.nom LIKE '%".$sel."%'";
 }
 
@@ -88,7 +88,7 @@ if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  
+
   $urladd = "&amp;statut=".$_GET["statut"];
   $urladd .= "&amp;search_bon=".$_GET["search_bon"];
 
@@ -109,12 +109,12 @@ if ($result)
 
   print '<form action="liste.php" method="GET">';
   print '<tr class="liste_titre">';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>'; 
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>'; 
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>'; 
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>';
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>'; 
+  print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>';
   print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print '</tr>';
   print '</form>';
@@ -123,7 +123,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($result);
 
       $var=!$var;
 
@@ -142,14 +142,14 @@ if ($result)
       print '<td align="right">'.price($obj->amount)."</td>\n";
       print '<td align="center"><a href="fiche.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
       print '<td>&nbsp;</td>';
-      
+
       print "</tr>\n";
       $i++;
     }
   print "</table>";
   $db->free($result);
 }
-else 
+else
 {
   dol_print_error($db);
 }

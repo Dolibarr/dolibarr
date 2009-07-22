@@ -30,7 +30,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $mode=isset($_GET["mode"])?$_GET["mode"]:(isset($_SESSION['mode'])?$_SESSION['mode']:0);
-$mesg=isset($_GET["mesg"])?urldecode($_GET["mesg"]):"";
+$mesg=isset($_GET["mesg"])?$_GET["mesg"]:"";
 
 if (!$user->admin)
     accessforbidden();

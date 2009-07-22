@@ -48,7 +48,7 @@ $langs->load('products');
 $langs->load('main');
 
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
-$mesg=isset($_GET['mesg'])?urldecode($_GET['mesg']):'';
+$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
 $projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
 
 // Security check

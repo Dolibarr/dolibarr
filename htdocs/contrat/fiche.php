@@ -55,7 +55,7 @@ if ($_REQUEST["action"] == 'confirm_active' && $_REQUEST["confirm"] == 'yes' && 
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $result = $contrat->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"], urldecode($_GET["comment"]));
+    $result = $contrat->active_line($user, $_GET["ligne"], $_GET["date"], $_GET["dateend"], $_GET["comment"]);
 
     if ($result > 0)
     {

@@ -45,7 +45,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
 	if ($_POST["cancel"])
 	{
-		$urlsource=(! empty($_REQUEST["urlsource"]))?urldecode($_REQUEST["urlsource"]):((! empty($url))?urldecode($url):DOL_URL_ROOT.'/bookmarks/liste.php');
+		$urlsource=(! empty($_REQUEST["urlsource"]))?$_REQUEST["urlsource"]:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/liste.php');
         header("Location: ".$urlsource);
         exit;
 	}
@@ -71,7 +71,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
         if ($res > 0)
         {
-			$urlsource=isset($_REQUEST["urlsource"])?urldecode($_REQUEST["urlsource"]):DOL_URL_ROOT.'/bookmarks/liste.php';
+			$urlsource=isset($_REQUEST["urlsource"])?$_REQUEST["urlsource"]:DOL_URL_ROOT.'/bookmarks/liste.php';
             header("Location: ".$urlsource);
             exit;
         }

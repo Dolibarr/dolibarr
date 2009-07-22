@@ -483,7 +483,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$Out=split("\n",$outputlangs->convToOutputCharset($this->expediteur->adresse));
 		for ($i=0;$i<count($Out);$i++) {
 			$pdf->SetXY($blExpX,$Yoff+$blSocY);
-			$pdf->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
+			$pdf->MultiCell($blW,5,$Out[$i],  0, 'L');
 			$blSocY+=3;
 		}
 		$pdf->SetXY($blExpX,$Yoff+$blSocY);
@@ -528,10 +528,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		else if (!empty($object->fk_delivery_address))
 		{
 			$object->fetch_adresse_livraison($object->fk_delivery_address);
-			
+
 			// Customer name
 			$carac_client_name=$outputlangs->convToOutputCharset($object->deliveryaddress->nom);
-			
+
 			// Customer properties
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->deliveryaddress->address);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->deliveryaddress->cp) . " " . $outputlangs->convToOutputCharset($object->deliveryaddress->ville)."\n";

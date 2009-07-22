@@ -47,11 +47,11 @@ require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
+if (isset($_GET["msg"])) { $mesg=$_GET["mesg"]; }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
-$mesg=isset($_GET['mesg'])?urldecode($_GET['mesg']):'';
+$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
 
 // Security check
 $module='propale';
