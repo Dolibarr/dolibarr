@@ -2815,7 +2815,7 @@ class Form
 		    	{
 		    		global $dolibarr_main_url_root;
 		    		$ret.='<!-- Put link to gravatar -->';
-		    		$ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode($dolibarr_main_url_root.DOL_URL_ROOT.'/theme/common/nophoto.jpg').'">';
+		    		$ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" width="'.$width.'" src="http://www.gravatar.com/avatar/'.md5($email).'?s='.$width.'&d='.urlencode($dolibarr_main_url_root.'/theme/common/nophoto.jpg').'">';
 		    	}
 		    	else
 		    	{
