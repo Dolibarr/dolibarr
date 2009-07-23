@@ -57,12 +57,14 @@ $arrayofwidgets=array(
 // Widget for Laurent Destailleur
 array('name'=>'Laurent Destailleur',	# id user 4702
 		'sort'=>1,
+		'logo'=>'',			// Put your own logo (&logoUrl=http%3A%2F%2Fwww.monsite.com%2FMonLogo.jpg)
 		'id'=>'4256,4255',	// Put of list of sparkangels widget id (for each language)
 		'lang'=>'fr,en'),	// Put list of language code of widgets (always english at end)
 // Widget for Regis Houssin
 array('name'=>'R&eacute;gis Houssin',
 		'sort'=>2,
-		'id'=>'4611',
+		'logo'=>'&logoUrl=http%3A%2F%2Fwww.cap-networks.com%2Fimages%2Flogo.jpg',
+		'id'=>'5391',
 		'lang'=>'fr')
 );
 $arrayofwidgets=dol_sort_array($arrayofwidgets,'sort','asc',0,0);
@@ -98,7 +100,7 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 			// Widget V1
 			// print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 			// Widget V2
-			print '<iframe src="http://www.spark-angels.com/static/widget/widgetpro2-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			print '<iframe src="http://www.spark-angels.com/static/widget/widgetpro2-iframe.html?widgetId='.$widgetid.$arraywidget['logo'].'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 
 			print '</td>';
 			$found++;
