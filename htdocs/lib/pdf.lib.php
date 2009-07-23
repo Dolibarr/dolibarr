@@ -213,10 +213,11 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
  *	\brief		Return line description translated in outputlangs and encoded in UTF8
  *	\param		line				Line to format
  *  \param    	outputlang			Object lang for output
- *  \param    	showref       		Show reference
+ *  \param    	hideref       		hide reference
+ *  \param      hidedesc            Hide description
  * 	\param		issupplierline		Is it a line for a supplier object ?
  */
-function pdf_getlinedesc($line,$outputlangs,$showref=1,$issupplierline=0)
+function pdf_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
 	global $db, $conf, $langs;
 
@@ -248,7 +249,7 @@ function pdf_getlinedesc($line,$outputlangs,$showref=1,$issupplierline=0)
 	// Description long of product line
 	if ($desc && ($desc != $label))
 	{
-		if ($libelleproduitservice) $libelleproduitservice.="\n";
+		if ($libelleproduitservice && !$hidedesc) $libelleproduitservice.="\n";
 
 		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
 		{
@@ -260,7 +261,7 @@ function pdf_getlinedesc($line,$outputlangs,$showref=1,$issupplierline=0)
 		{
 			if ($idprod)
 			{
-				$libelleproduitservice.=$desc;
+				if (!$hidedesc) $libelleproduitservice.=$desc;
 			}
 			else
 			{
@@ -289,7 +290,7 @@ function pdf_getlinedesc($line,$outputlangs,$showref=1,$issupplierline=0)
 				}
 			}
 
-			if ($showref)
+			if (!$hideref)
 			{
 				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')';	// Show local ref and supplier ref
 				else $ref_prodserv = $prodser->ref;	// Show local ref only
