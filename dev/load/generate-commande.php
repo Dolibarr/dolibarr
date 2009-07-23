@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
- * $Source$
- *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
 
 /**
 	    \file       htdocs/dev/generate-commande.php
-		\brief      Script de génération de données aléatoires pour les commandes
-		\version    $Revision$
+		\brief      Script de generation de donnees aleatoires pour les commandes
+		\version    $Id$
 */
 
 // Test si mode batch

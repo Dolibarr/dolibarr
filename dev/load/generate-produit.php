@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
- * $Source$
- *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
 
 /**	
         \file       htdocs/dev/generate-produit.php
-		\brief      Script de génération de données aléatoires pour les produits
-		\version    $Revision$
+		\brief      Script de generation de donnees aleatoires pour les produits
+		\version    $Id$
 */
 
 // Test si mode batch
@@ -67,7 +64,7 @@ if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
 
-print "Génère ".GEN_NUMBER_PRODUIT." produits\n";
+print "Gï¿½nï¿½re ".GEN_NUMBER_PRODUIT." produits\n";
 for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 {
     print "Produit ".$s;

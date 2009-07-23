@@ -1,10 +1,8 @@
 --
 -- $Id$
--- $Source$
--- $Revision$
 --
--- Attention à l ordre des requetes.
--- Ce fichier doit être chargé sur une version 2.1.0 
+-- Attention a l ordre des requetes.
+-- Ce fichier doit etre charge sur une version 2.1.0 
 -- sans AUCUNE erreur ni warning
 --
 
@@ -30,7 +28,7 @@ alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;
 -- V4.1 delete c from llx_categorie as c where c.rowid in (select distinct c2.rowid from tmp_categorie1 as c2, tmp_categorie2 as cc2 where c2.rowid != cc2.rowid and c2.type = cc2.type and c2.label = cc2.label) and c.rowid not in (select min(c3.rowid) from tmp_categorie1 as c3, tmp_categorie2 as cc3 where c3.rowid != cc3.rowid and c3.type = cc3.type and c3.label = cc3.label group by c3.label,c3.type);
 -- V4.1 DROP TABLE tmp_categorie1;
 -- V4.1 DROP TABLE tmp_categorie2;
--- Si suppression des doublons precedente a ete faite, on monte la clé sur les categories
+-- Si suppression des doublons precedente a ete faite, on monte la clï¿½ sur les categories
 -- V4.1 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
 
 -- On migre les categories fournisseur de la table llx_fournisseur_categorie qui est obsolete vers table llx_categories qui est generique pour gerer les categories de tout type
@@ -45,7 +43,7 @@ alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;
 -- V4.1 delete c from llx_categorie as c where c.rowid in (select distinct c2.rowid from tmp_categorie1 as c2, tmp_categorie2 as cc2 where c2.rowid != cc2.rowid and c2.type = cc2.type and c2.label = cc2.label) and c.rowid not in (select min(c3.rowid) from tmp_categorie1 as c3, tmp_categorie2 as cc3 where c3.rowid != cc3.rowid and c3.type = cc3.type and c3.label = cc3.label group by c3.label,c3.type);
 -- V4.1 DROP TABLE tmp_categorie1;
 -- V4.1 DROP TABLE tmp_categorie2;
--- Si suppression des doublons precedente a ete faite, on monte la clé sur les categories
+-- Si suppression des doublons precedente a ete faite, on monte la clï¿½ sur les categories
 -- V4.1 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
 
 
@@ -94,7 +92,7 @@ alter table llx_chargesociales modify fk_type integer NOT NULL;
 alter table llx_chargesociales modify libelle varchar(80) NOT NULL;
 
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');
-update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' where perms='modifier' AND module='banque';
+update llx_rights_def set libelle='Crï¿½er/modifier/supprimer ï¿½criture bancaire' where perms='modifier' AND module='banque';
 
 -- Supprime colone en doublon avec fk_user_creat
 alter table llx_paiement drop column author;
@@ -142,7 +140,7 @@ alter table llx_tva add fk_user_modif   integer;
 -- V4.1 UPDATE llx_tva as t set fk_user_creat = (SELECT MIN(fk_user_author) FROM llx_bank as b WHERE b.datev = t.datev AND b.amount = -t.amount AND b.label like 'R%glement TVA') WHERE t.fk_user_creat IS NULL;
 
 
--- Extention de la gestion des catégories
+-- Extention de la gestion des catï¿½gories
 alter table llx_categorie ADD type int not null default '0';
 -- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 
@@ -170,7 +168,7 @@ alter table `llx_categorie_product`
   add constraint `fk_categorie_product_product_rowid` foreign key(`fk_product`) REFERENCES `llx_product` (`rowid`);
 
   
--- Ajout gestion du droit de prêt
+-- Ajout gestion du droit de prï¿½t
 drop table if exists `llx_droitpret_rapport`;
 create table `llx_droitpret_rapport` (
   `rowid` int(11) NOT NULL auto_increment,
@@ -388,7 +386,7 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2303, 'accountancy', '$leftmenu=="vat"', 2300, '/compta/tva/clients.php', 'ReportByCustomers', 1, 'companies', '$user->rights->tax->charges->lire', '', 0, 2);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2400, 'accountancy', '', 6, '/compta/ventilation/index.php?leftmenu=ventil', 'Ventilation', 0, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 8);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2401, 'accountancy', '$leftmenu=="ventil"', 2400, '/compta/ventilation/liste.php', 'A ventiler', 1, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 0);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2402, 'accountancy', '$leftmenu=="ventil"', 2400, '/compta/ventilation/lignes.php', 'Ventilées', 1, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 1);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2402, 'accountancy', '$leftmenu=="ventil"', 2400, '/compta/ventilation/lignes.php', 'Ventilï¿½es', 1, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2403, 'accountancy', '$leftmenu=="ventil"', 2400, '/compta/param/', 'Setup', 1, 'companies', '$user->rights->compta->ventilation->parametrer', '', 0, 2);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2404, 'accountancy', '$leftmenu=="ventil"', 2403, '/compta/param/comptes/liste.php', 'List', 2, 'companies', '$user->rights->compta->ventilation->parametrer', '', 0, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2405, 'accountancy', '$leftmenu=="ventil"', 2403, '/compta/param/comptes/fiche.php?action=create', 'New', 2, 'companies', '$user->rights->compta->ventilation->parametrer', '', 0, 1);
@@ -413,7 +411,7 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2606, 'accountancy', '$leftmenu=="bank"', 2600, '/compta/bank/virement.php', 'BankTransfers', 1, 'banks', '$user->rights->banque->modifier', '', 0, 5);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2607, 'accountancy', '$leftmenu=="bank"', 2600, '/compta/bank/bplc.php', 'Transactions BPLC', 1, 'banks', '', '', 0, 6);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2700, 'accountancy', '', 6, '/compta/resultat/index.php?leftmenu=ca&mainmenu=accountancy', 'Reportings', 0, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 11);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2701, 'accountancy', '$leftmenu=="ca"', 2700, '/compta/resultat/index.php?leftmenu=ca', 'Résultat / Exercice', 1, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 0);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2701, 'accountancy', '$leftmenu=="ca"', 2700, '/compta/resultat/index.php?leftmenu=ca', 'Rï¿½sultat / Exercice', 1, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2702, 'accountancy', '$leftmenu=="ca"', 2701, '/compta/resultat/clientfourn.php?leftmenu=ca', 'ByCompanies', 2, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2703, 'accountancy', '$leftmenu=="ca"', 2700, '/compta/stats/index.php?leftmenu=ca', 'Chiffre d''affaire', 1, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2704, 'accountancy', '$leftmenu=="ca"', 2703, '/compta/stats/casoc?leftmenu=ca', 'ByCompanies', 2, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 0);
@@ -480,13 +478,13 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4501, 'members', '$leftmenu=="export"', 4500, '/exports/index.php?leftmenu=export', 'Datas', 1, 'members', '$user->rights->adherent->export', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4502, 'members', '$leftmenu=="export"', 4500, '/adherents/htpasswd.php?leftmenu=export', 'Filehtpasswd', 1, 'members', '$user->rights->adherent->export', '', 2, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4503, 'members', '$leftmenu=="export"', 4500, '/adherents/cartes/carte.php?leftmenu=export', 'MembersCards', 1, 'members', '$user->rights->adherent->export', '_blank', 2, 2);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4504, 'members', '$leftmenu=="export"', 4500, '/adherents/cartes/etiquette.php?leftmenu=export', 'Etiquettes d''adhérents', 1, 'members', '$user->rights->adherent->export', '_blank', 2, 3);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4504, 'members', '$leftmenu=="export"', 4500, '/adherents/cartes/etiquette.php?leftmenu=export', 'Etiquettes d''adhï¿½rents', 1, 'members', '$user->rights->adherent->export', '_blank', 2, 3);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4600, 'members', '', 15, '/public/adherents/index.php?leftmenu=member_public', 'MemberPublicLinks', 0, 'members', '$user->rights->adherent->export', '', 2, 4);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4700, 'members', '', 15, '/adherents/index.php?leftmenu=setup&mainmenu=members', 'Setup', 0, 'members', '$user->rights->adherent->configurer', '', 2, 5);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4701, 'members', '', 4700, '/adherents/type.php?leftmenu=setup', 'MembersTypes', 1, 'members', '$user->rights->adherent->configurer', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4702, 'members', '', 4700, '/adherents/options.php?leftmenu=setup', 'MembersAttributes', 1, 'members', '$user->rights->adherent->configurer', '', 2, 1);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4800, 'product', '', 3, '/product/droitpret/index.php?leftmenu=droitpret', 'Droit de prêt', 0, 'products', '$user->rights->droitpret->lire', '', 2, 5);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4801, 'product', '$leftmenu=="droitpret"', 4800, '/product/droitpret/index.php?leftmenu=droitpret', 'Générer rapport', 1, 'products', '$user->rights->droitpret->creer', '', 2, 1);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4800, 'product', '', 3, '/product/droitpret/index.php?leftmenu=droitpret', 'Droit de prï¿½t', 0, 'products', '$user->rights->droitpret->lire', '', 2, 5);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4801, 'product', '$leftmenu=="droitpret"', 4800, '/product/droitpret/index.php?leftmenu=droitpret', 'Gï¿½nï¿½rer rapport', 1, 'products', '$user->rights->droitpret->creer', '', 2, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4900, 'suppliers', '', 4, '/categories/index.php?leftmenu=cat&type=1', 'Categories', 0, 'categories', '$user->rights->categorie>lire', '', 2, 3);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4901, 'suppliers', '$leftmenu=="cat"', 4900, '/categories/fiche.php?action=create&type=1', 'NewCat', 1, 'categories', '$user->rights->categorie>creer', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (5000, 'commercial', '', 5, '/categories/index.php?leftmenu=cat&type=2', 'Categories', 0, 'commercial', '$user->rights->categorie>lire', '', 2, 9);
@@ -764,7 +762,7 @@ ALTER TABLE llx_societe_remise_except MODIFY  amount_ttc    double(24,8) DEFAULT
 ALTER TABLE llx_societe_remise_except MODIFY  tva_tx        double(6,3)  DEFAULT 0;
 
 
--- Supprimme orphelins pour permettre montée de la clé
+-- Supprimme orphelins pour permettre montï¿½e de la clï¿½
 -- V4 DELETE llx_commande_fournisseur FROM llx_commande_fournisseur LEFT JOIN llx_societe ON llx_commande_fournisseur.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL; 
 
 
@@ -882,44 +880,44 @@ create table llx_c_ecotaxe
   active       tinyint DEFAULT 1  NOT NULL
 )type=innodb;
 
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (1, 'ER-A-A', 'Matériels électriques < 0,2kg', 0.01000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (2, 'ER-A-B', 'Matériels électriques >= 0,2 kg et < 0,5 kg', 0.03000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (3, 'ER-A-C', 'Matériels électriques >= 0,5 kg et < 1 kg', 0.04000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (4, 'ER-A-D', 'Matériels électriques >= 1 kg et < 2 kg', 0.13000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (5, 'ER-A-E', 'Matériels électriques >= 2 kg et < 4kg', 0.21000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (6, 'ER-A-F', 'Matériels électriques >= 4 kg et < 8 kg', 0.42000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (7, 'ER-A-G', 'Matériels électriques >= 8 kg et < 15 kg', 0.84000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (8, 'ER-A-H', 'Matériels électriques >= 15 kg et < 20 kg', 1.25000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (9, 'ER-A-I', 'Matériels électriques >= 20 kg et < 30 kg', 1.88000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (10, 'ER-A-J', 'Matériels électriques >= 30 kg', 3.34000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (1, 'ER-A-A', 'Matï¿½riels ï¿½lectriques < 0,2kg', 0.01000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (2, 'ER-A-B', 'Matï¿½riels ï¿½lectriques >= 0,2 kg et < 0,5 kg', 0.03000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (3, 'ER-A-C', 'Matï¿½riels ï¿½lectriques >= 0,5 kg et < 1 kg', 0.04000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (4, 'ER-A-D', 'Matï¿½riels ï¿½lectriques >= 1 kg et < 2 kg', 0.13000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (5, 'ER-A-E', 'Matï¿½riels ï¿½lectriques >= 2 kg et < 4kg', 0.21000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (6, 'ER-A-F', 'Matï¿½riels ï¿½lectriques >= 4 kg et < 8 kg', 0.42000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (7, 'ER-A-G', 'Matï¿½riels ï¿½lectriques >= 8 kg et < 15 kg', 0.84000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (8, 'ER-A-H', 'Matï¿½riels ï¿½lectriques >= 15 kg et < 20 kg', 1.25000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (9, 'ER-A-I', 'Matï¿½riels ï¿½lectriques >= 20 kg et < 30 kg', 1.88000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (10, 'ER-A-J', 'Matï¿½riels ï¿½lectriques >= 30 kg', 3.34000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (11, 'ER-M-1', 'TV, Moniteurs < 9kg', 0.84000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (12, 'ER-M-2', 'TV, Moniteurs >= 9kg et < 15kg', 1.67000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (13, 'ER-M-3', 'TV, Moniteurs >= 15kg et < 30kg', 3.34000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (14, 'ER-M-4', 'TV, Moniteurs >= 30 kg', 6.69000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (15, 'EC-A-A', 'Matériels électriques  0,2 kg max', 0.00840000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (16, 'EC-A-B', 'Matériels électriques 0,21 kg min - 0,50 kg max', 0.02500000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (17, 'EC-A-C', 'Matériels électriques  0,51 kg min - 1 kg max', 0.04000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (18, 'EC-A-D', 'Matériels électriques  1,01 kg min - 2,5 kg max', 0.13000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (19, 'EC-A-E', 'Matériels électriques  2,51 kg min - 4 kg max', 0.21000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (20, 'EC-A-F', 'Matériels électriques 4,01 kg min - 8 kg max', 0.42000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (21, 'EC-A-G', 'Matériels électriques  8,01 kg min - 12 kg max', 0.63000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (22, 'EC-A-H', 'Matériels électriques 12,01 kg min - 20 kg max', 1.05000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (23, 'EC-A-I', 'Matériels électriques  20,01 kg min', 1.88000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (15, 'EC-A-A', 'Matï¿½riels ï¿½lectriques  0,2 kg max', 0.00840000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (16, 'EC-A-B', 'Matï¿½riels ï¿½lectriques 0,21 kg min - 0,50 kg max', 0.02500000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (17, 'EC-A-C', 'Matï¿½riels ï¿½lectriques  0,51 kg min - 1 kg max', 0.04000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (18, 'EC-A-D', 'Matï¿½riels ï¿½lectriques  1,01 kg min - 2,5 kg max', 0.13000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (19, 'EC-A-E', 'Matï¿½riels ï¿½lectriques  2,51 kg min - 4 kg max', 0.21000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (20, 'EC-A-F', 'Matï¿½riels ï¿½lectriques 4,01 kg min - 8 kg max', 0.42000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (21, 'EC-A-G', 'Matï¿½riels ï¿½lectriques  8,01 kg min - 12 kg max', 0.63000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (22, 'EC-A-H', 'Matï¿½riels ï¿½lectriques 12,01 kg min - 20 kg max', 1.05000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (23, 'EC-A-I', 'Matï¿½riels ï¿½lectriques  20,01 kg min', 1.88000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (24, 'EC-M-1', 'TV, Moniteurs 9 kg max', 0.84000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (25, 'EC-M-2', 'TV, Moniteurs 9,01 kg min - 18 kg max', 1.67000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (26, 'EC-M-3', 'TV, Moniteurs 18,01 kg min - 36 kg max', 3.34000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (27, 'EC-M-4', 'TV, Moniteurs 36,01 kg min', 6.69000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (28, 'ES-M-1', 'TV, Moniteurs <= 20 pouces', 0.84000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (29, 'ES-M-2', 'TV, Moniteurs > 20 pouces et <= 32 pouces', 3.34000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (30, 'ES-M-3', 'TV, Moniteurs > 32 pouces et autres grands écrans', 6.69000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (31, 'ES-A-A', 'Ordinateur fixe, Audio home systems (HIFI), éléments hifi séparés...', 0.84000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (32, 'ES-A-B', 'Ordinateur portable, CD-RCR, VCR, lecteurs et enregistreurs DVD...  Instruments de musique et caisses de résonance, haut parleurs...', 0.25000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (33, 'ES-A-C', 'Imprimante, photocopieur, télécopieur,...', 0.42000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (34, 'ES-A-D', 'Accessoires, clavier, souris, PDA, imprimante photo, appareil photo, gps, téléphone, répondeur, téléphone sans fil, modem,...   Télécommande, casque, caméscope, baladeur mp3, radio portable, radio K7 et CD portable, set top box, radio réveil,...', 0.08400000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (35, 'ES-A-E', 'GSM', 0.00840000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (36, 'ES-A-F', 'Jouets et équipements de loisirs et de sports < 0,5 kg', 0.04200000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (37, 'ES-A-G', 'Jouets et équipements de loisirs et de sports > 0,5 kg', 0.17000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et équipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systèmes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (28, 'ES-M-1', 'TV, Moniteurs <= 20 pouces', 0.84000000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (29, 'ES-M-2', 'TV, Moniteurs > 20 pouces et <= 32 pouces', 3.34000000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (30, 'ES-M-3', 'TV, Moniteurs > 32 pouces et autres grands ï¿½crans', 6.69000000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (31, 'ES-A-A', 'Ordinateur fixe, Audio home systems (HIFI), ï¿½lï¿½ments hifi sï¿½parï¿½s...', 0.84000000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (32, 'ES-A-B', 'Ordinateur portable, CD-RCR, VCR, lecteurs et enregistreurs DVD...  Instruments de musique et caisses de rï¿½sonance, haut parleurs...', 0.25000000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (33, 'ES-A-C', 'Imprimante, photocopieur, tï¿½lï¿½copieur,...', 0.42000000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (34, 'ES-A-D', 'Accessoires, clavier, souris, PDA, imprimante photo, appareil photo, gps, tï¿½lï¿½phone, rï¿½pondeur, tï¿½lï¿½phone sans fil, modem,...   Tï¿½lï¿½commande, casque, camï¿½scope, baladeur mp3, radio portable, radio K7 et CD portable, set top box, radio rï¿½veil,...', 0.08400000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (35, 'ES-A-E', 'GSM', 0.00840000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (36, 'ES-A-F', 'Jouets et ï¿½quipements de loisirs et de sports < 0,5 kg', 0.04200000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (37, 'ES-A-G', 'Jouets et ï¿½quipements de loisirs et de sports > 0,5 kg', 0.17000000, 'Eco-systï¿½mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et ï¿½quipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systï¿½mes', 1, 1);
 
 ALTER TABLE llx_commandedet CHANGE coef marge_tx double(6,3) DEFAULT 0;
 ALTER TABLE llx_commandedet ADD COLUMN marge_tx double(6,3) DEFAULT 0;
@@ -996,7 +994,7 @@ ALTER TABLE llx_product ADD COLUMN partnumber varchar(32) after gencode;
 
 ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_socpeople);
 
--- Supprimme orphelins pour permettre montée de la clé
+-- Supprimme orphelins pour permettre montï¿½e de la clï¿½
 -- V4 DELETE llx_fichinter FROM llx_fichinter LEFT JOIN llx_societe ON llx_fichinter.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
 
 
@@ -1067,31 +1065,31 @@ create table llx_societe_log
 )type=innodb;
 
 
--- Pour la Tunisie (Formes les plus utilisées)
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Société à responsabilité limitée SARL');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Société en Nom Collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Société en Commandite Simple');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','société en participation');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Société Anonyme SA');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Société Unipersonnelle à Responsabilité Limitée SUARL');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intérêt économique GEI');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
+-- Pour la Tunisie (Formes les plus utilisï¿½es)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Sociï¿½tï¿½ ï¿½ responsabilitï¿½ limitï¿½e SARL');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Sociï¿½tï¿½ en Nom Collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Sociï¿½tï¿½ en Commandite Simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','sociï¿½tï¿½ en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Sociï¿½tï¿½ Anonyme SA');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Sociï¿½tï¿½ Unipersonnelle ï¿½ Responsabilitï¿½ Limitï¿½e SUARL');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intï¿½rï¿½t ï¿½conomique GEI');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociï¿½tï¿½s');
 
 -- Regions de Tunisie (id pays=10)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1001,10,1001, '',0,'Ariana');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'Béja');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'Bï¿½ja');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1003,10,1003, '',0,'Ben Arous');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1004,10,1004, '',0,'Bizerte');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1005,10,1005, '',0,'Gabès');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1005,10,1005, '',0,'Gabï¿½s');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1006,10,1006, '',0,'Gafsa');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1007,10,1007, '',0,'Jendouba');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1008,10,1008, '',0,'Kairouan');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1009,10,1009, '',0,'Kasserine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1010,10,1010, '',0,'Kébili');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1010,10,1010, '',0,'Kï¿½bili');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1011,10,1011, '',0,'La Manouba');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1012,10,1012, '',0,'Le Kef');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1013,10,1013, '',0,'Mahdia');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1014,10,1014, '',0,'Médenine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1014,10,1014, '',0,'Mï¿½denine');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1015,10,1015, '',0,'Monastir');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1016,10,1016, '',0,'Nabeul');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1017,10,1017, '',0,'Sfax');
@@ -1107,23 +1105,23 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (101,10, '6','0','TVA 6%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (102,10, '12','0','TVA 12%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (103,10, '18','0','VAT 18%',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (104,10, '7.5','0','TVA 6% Majoré à 25% (7.5%)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10, '15','0','TVA 12% Majoré à 25% (15%)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (104,10, '7.5','0','TVA 6% Majorï¿½ ï¿½ 25% (7.5%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10, '15','0','TVA 12% Majorï¿½ ï¿½ 25% (15%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majorï¿½ ï¿½ 25% (22.5%)',1);
 
 -- GUADELOUPE (id 105)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 111, 105, '8.5','0','VAT Rate 8.5',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 112, 105, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 112, 105, '8.5','1','VAT Rate 8.5 non perï¿½u par le vendeur mais rï¿½cupï¿½rable par l\'acheteur',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 113, 105,   '0','0','VAT Rate 0 ou non applicable',1);
 
 -- MARTINIQUE (id 150)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 121, 150, '8.5','0','VAT Rate 8.5',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 122, 150, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 122, 150, '8.5','1','VAT Rate 8.5 non perï¿½u par le vendeur mais rï¿½cupï¿½rable par l\'acheteur',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 123, 150,   '0','0','VAT Rate 0 ou non applicable',1);
 
 -- REUNION (id 187)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 131, 187, '8.5','0','VAT Rate 8.5',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 187, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 187, '8.5','1','VAT Rate 8.5 non perï¿½u par le vendeur mais rï¿½cupï¿½rable par l\'acheteur',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 133, 187,   '0','0','VAT Rate 0 ou non applicable',1);
 
 ALTER TABLE llx_bank_account MODIFY iban_prefix varchar(50);
@@ -1131,15 +1129,15 @@ ALTER TABLE llx_bank_account ADD COLUMN country_iban varchar(2) after iban_prefi
 ALTER TABLE llx_bank_account ADD COLUMN cle_iban varchar(2) after country_iban;
 
 
--- Mise à jour des pays
+-- Mise ï¿½ jour des pays
 update llx_c_pays set libelle = 'Palaos' where rowid = 176 and code = 'PW' and libelle = 'Belau';
 update llx_c_pays set libelle = 'Serbie' where rowid = 198 and code = 'CS';
 update llx_c_pays set code = 'RS' where rowid = 198 and code = 'CS';
 insert into llx_c_pays (rowid,code,libelle) values (241, 'GG', 'Guernesey'     );
 insert into llx_c_pays (rowid,code,libelle) values (242, 'IM', 'Ile de Man'    );
 insert into llx_c_pays (rowid,code,libelle) values (243, 'JE', 'Jersey'        );
-insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Monténégro'    );
-insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barthélemy');
+insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Montï¿½nï¿½gro'    );
+insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barthï¿½lemy');
 insert into llx_c_pays (rowid,code,libelle) values (246, 'MF', 'Saint-Martin'  );
 
 

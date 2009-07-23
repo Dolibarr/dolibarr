@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-/* Copyright (C) 2007 Régis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2007 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     	\file       dev/fpdf/convert.php
 		\ingroup    core
 		\brief      Convert TTF for FPDF
-		\version    $Revision$
+		\version    $Id$
 */
 
 // Test si mode batch
@@ -45,7 +42,7 @@ $fontType = $argv[1];
 $fontName = $argv[2];
 $enc      = $argv[3];
 
-//On vérifie le type d'encodage
+//On vï¿½rifie le type d'encodage
 if ($enc)
 {
 	$file='./makefont/'.strtolower($enc).'.map';
@@ -61,7 +58,7 @@ else
 	$enc = "cp1250";
 }
 
-//On détermine le type de la police
+//On dï¿½termine le type de la police
 if ($fontType == 1)
 {
 	$font = './tmp/'.$fontName.'.ttf';

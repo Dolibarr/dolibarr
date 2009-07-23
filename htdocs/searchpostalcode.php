@@ -16,9 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
- * $Source$
- *
  * ***************************************************************************
  * File  : searchpostalcode.php
  * Author  : Eric SEIGNE
@@ -30,8 +27,7 @@
  * Description:
  * ------------
  * @version    $Id$
- * @source     $Source$
- * @revision   $Revision$
+ * @revision   $Id$
  * @author     Eric Seigne
  * @project   
  * @copyright  Eric Seigne 13/06/2005
@@ -41,7 +37,7 @@
 /**
         \file       htdocs/searchpostalcode.php
         \ingroup    societe
-        \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societé, si on a deux clients dans la même ville c'est direct. Si jamais ça ne donne rien alors on lance la recherche dans la table des codes postaux.
+        \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societï¿½, si on a deux clients dans la mï¿½me ville c'est direct. Si jamais ï¿½a ne donne rien alors on lance la recherche dans la table des codes postaux.
         \version    $Revision$
 */
 require("pre.inc.php");
@@ -69,7 +65,7 @@ function run_request($table)
 }
 
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0) 
 {
     $_GET["action"] = '';
@@ -129,7 +125,7 @@ if($num == 0)
 	$num=$db->num_rows();
 }
 
-// Si on n'a qu'un seul résultat on switche direct et on remplit le formulaire
+// Si on n'a qu'un seul rï¿½sultat on switche direct et on remplit le formulaire
 if($num <= 1)
 {
 	$obj = $db->fetch_object($result);

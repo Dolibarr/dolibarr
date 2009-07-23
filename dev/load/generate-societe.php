@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
- * $Source$
- *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
 
 /**
         \file       htdocs/dev/generate-societe.php
-		\brief      Script de génération de données aléatoires pour les societes
-		\version    $Revision$
+		\brief      Script de generation de donnees aleatoires pour les societes
+		\version    $Id$
 */
 
 // Test si mode batch
@@ -45,7 +42,7 @@ include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 include_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
-$villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
+$villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mï¿½re Eglise","Le Bono");
 $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
 
 	
@@ -71,12 +68,12 @@ while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0]; 
 
 
 
-print "Génère ".GEN_NUMBER_SOCIETE." sociétés\n";
+print "Gï¿½nï¿½re ".GEN_NUMBER_SOCIETE." sociï¿½tï¿½s\n";
 for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 {
-    print "Société $s\n";
+    print "Sociï¿½tï¿½ $s\n";
     $soc = new Societe($db);
-    $soc->nom = "Société num ".time()."$s";
+    $soc->nom = "Sociï¿½tï¿½ num ".time()."$s";
     $soc->ville = $villes[rand(0,sizeof($villes)-1)];
     $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
     $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
@@ -86,13 +83,13 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 	// Un client sur 10 a une remise de 5%
     $user_remise=rand(1,10); if ($user_remise==10) $soc->remise_client=5;
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_client."\n";
-	$soc->note='Société fictive générée par le script generate-societe.php';
+	$soc->note='Sociï¿½tï¿½ fictive gï¿½nï¿½rï¿½e par le script generate-societe.php';
     $socid = $soc->create();
 
     if ($socid >= 0)
     {
         $rand = rand(1,4);
-        print "> Génère $rand contact\n";
+        print "> Gï¿½nï¿½re $rand contact\n";
         for ($c = 0 ; $c < $rand ; $c++)
         {
             $contact = new Contact($db);
