@@ -1,34 +1,32 @@
 README (french)
 --------------------------------
-Ce repertoire contient des outils qui permettent de creer vos propres polices qui peuvent etre utilisées*
-pour la generation des PDF par exemple.
+Ce repertoire contient des outils qui permettent de creer vos propres polices qui peuvent etre utilisÃ©es pour la generation des PDF par exemple.
 
 
 ## Convertisseur de Polices TrueType pour FPDF ##
 
-cette version de makefont a été modifié pour fonctionner en ligne de commande avec la version cliente de PHP.
+cette version de makefont a Ã©tÃ© modifiÃ© pour fonctionner en ligne de commande avec la version cliente de PHP.
 
-Tout d'abord il vous faut l'utilitaire pour générer le fichier de métrique:
+Tout d'abord il vous faut l'utilitaire pour gÃ©nÃ©rer le fichier de mÃ©trique:
 http://ttf2pt1.sourceforge.net/download.html
 
-Binaire Windows:
-http://www.fpdf.org/fr/dl.php?id=21
+Binaire Windows: http://www.fpdf.org/fr/dl.php?id=21
 
 
-## Création du fichier de métrique ##
+## CrÃ©ation du fichier de mÃ©trique ##
 
-Voici la ligne de commande pour créer un fichier de métrique allégé :
+Voici la ligne de commande pour crÃ©er un fichier de mÃ©trique allÃ©gÃ© :
 
 ttf2pt1 -b -L cp1250.map comic.ttf comic
 
-cp1250.map : fichier de mapping se trouvant dans le répertoire makefont
-comic.ttf : police TrueType à convertir
-comic : nom de la police de sortie, en principe le même nom que le TTF.
+cp1250.map : fichier de mapping se trouvant dans le rÃ©pertoire makefont
+comic.ttf : police TrueType Ã  convertir
+comic : nom de la police de sortie, en principe le mÃªme nom que le TTF.
 
 On obtient alors les fichiers comic.pfb et comic.afm
-Copier ses 2 fichiers dans le répertoire "/dev/fpdf/tmp"
+Copier ses 2 fichiers dans le rÃ©pertoire "/dev/fpdf/tmp"
 
-## Création du fichier php de la police ##
+## CrÃ©ation du fichier php de la police ##
 
 tapez en ligne de commande avec la version cliente de php (php-cli):
 
@@ -36,26 +34,24 @@ php convert.php TYPE_OF_FONT NAME_OF_FONT [ENCODAGE]
 
 TYPE_OF_FONT : mettre 1 pour TrueType ou 2 pour Type1, ici nous mettrons 2.
 NAME_OF_FONT : mettre le nom de la police, ici dans l'exemple "comic".
-ENCODAGE : optionnel, mettre le type d'encodage, par défaut "cp1250" suffisant pour notre utilisation.
+ENCODAGE : optionnel, mettre le type d'encodage, par dÃ©faut "cp1250" suffisant pour notre utilisation.
 
-exemple: 
+exemple:
 php convert.php 2 comic
 
-Vous obtiendrez un fichier nommé : comic.php que vous pouvez mettre dans le répertoire /htdocs/includes/fpdf/fpdf/font/"
+Vous obtiendrez un fichier nommÃ© : comic.php que vous pouvez mettre dans le rÃ©pertoire /htdocs/includes/fpdf/fpdf/font/"
 
-## Déclarer la police dans un modèle ##
+## DÃ©clarer la police dans un modÃ¨le ##
 
-si vous voulez utiliser une nouvelle police dans un modèle pdf vous devez ajouter cette ligne pour l'activer :
+si vous voulez utiliser une nouvelle police dans un modÃ¨le pdf vous devez ajouter cette ligne pour l'activer :
 
 $pdf->AddFont('Comic');
 
-si votre police est en gras, vous aurez créé un fichier nommé comicb.php par exemple,
-donc il vous faudra la déclarer comme ceci dans le modèle :
+si votre police est en gras, vous aurez crÃ©Ã© un fichier nommÃ© comicb.php par exemple,
+donc il vous faudra la dÃ©clarer comme ceci dans le modÃ©le :
 
 $pdf->AddFont('Comic','B');
 
-Pour plus d'information visitez ce lien :
-http://www.fpdf.org/fr/tutorial/tuto7.htm
+Pour plus d'information visitez ce lien : http://www.fpdf.org/fr/tutorial/tuto7.htm
 
-et pour toute question ou problème de fonctionnement :
-regis@dolibarr.fr
+et pour toute question ou problÃ¨me de fonctionnement : regis@dolibarr.fr

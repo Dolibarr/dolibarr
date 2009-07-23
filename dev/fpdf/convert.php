@@ -42,7 +42,7 @@ $fontType = $argv[1];
 $fontName = $argv[2];
 $enc      = $argv[3];
 
-//On v�rifie le type d'encodage
+//On verifie le type d'encodage
 if ($enc)
 {
 	$file='./makefont/'.strtolower($enc).'.map';
@@ -58,7 +58,7 @@ else
 	$enc = "cp1250";
 }
 
-//On d�termine le type de la police
+//On determine le type de la police
 if ($fontType == 1)
 {
 	$font = './tmp/'.$fontName.'.ttf';

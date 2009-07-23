@@ -1,3 +1,56 @@
 README (english)
 --------------------------------
 This directory contains tools to build your own font files that can be used for PDF generation.
+
+## Converter TrueType Fonts for FPDF ##
+
+makefont this version has been modified to work in command line with the client version of PHP.
+
+First you need the utility to generate the metric:
+http://ttf2pt1.sourceforge.net/download.html
+
+Windows binary: http://www.fpdf.org/fr/dl.php?id=21
+
+
+## Create file Metrics ##
+
+Here is the command line to create a metric light:
+
+ttf2pt1-b-L cp1250.map comic.ttf comic
+
+cp1250.map: mapping file located in the directory makefont
+comic.ttf: TrueType font to be converted
+comic name of the police to release, in principle the same name as the TTF.
+
+We then get the files comic.pfb and comic.afm
+Copy the 2 files in the directory "/dev/fpdf/tmp"
+
+## Create file of the police php ##
+
+type in command line with the client version of php (php-cli):
+
+php convert.php TYPE_OF_FONT NAME_OF_FONT [ENCODING]
+
+TYPE_OF_FONT: set to 1 for TrueType or 2 for Type1, we will here 2.
+NAME_OF_FONT: put the name of the police here in the example "comic".
+ENCODING: optional, set the encoding type, default "cp1250" enough for our use.
+
+example:
+php convert.php 2 comic
+
+You will get a file named: comic.php that you can put in the directory "/htdocs/includes/fpdf/fpdf/font/"
+
+## Declare the font in a template ##
+
+if you want to use a new font in a pdf you must add this line to enable it:
+
+$pdf->AddFont('Comic);
+
+if your policy is in bold, you create a file named comicb.php eg
+therefore you must declare it like this in the model:
+
+$pdf->AddFont('Comic','B');
+
+For more information visit this link: http://www.fpdf.org/fr/tutorial/tuto7.htm
+
+and for any questions or malfunction: regis@dolibarr.fr
