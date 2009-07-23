@@ -242,7 +242,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs,1,1);
+					$libelleproduitservice=pdf_getlinedesc($com->lignes[$i],$outputlangs,0,0,1);
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 

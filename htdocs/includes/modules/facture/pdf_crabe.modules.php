@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 /**
  \class      pdf_crabe
- \brief      Classe permettant de g�n�rer les factures au mod�le Crabe
+ \brief      Classe permettant de generer les factures au modele Crabe
  */
 
 class pdf_crabe extends ModelePDFFactures
@@ -101,8 +101,8 @@ class pdf_crabe extends ModelePDFFactures
 
 
 	/**
-	 *		\brief      Fonction g�n�rant la facture sur le disque
-	 *		\param	    fac				Objet facture � g�n�rer (ou id si ancienne methode)
+	 *		\brief      Fonction generant la facture sur le disque
+	 *		\param	    fac				Objet facture a generer (ou id si ancienne methode)
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
@@ -168,7 +168,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�tire, cr�e al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else

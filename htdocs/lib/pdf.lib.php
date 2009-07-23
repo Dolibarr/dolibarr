@@ -213,7 +213,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
  *	\brief		Return line description translated in outputlangs and encoded in UTF8
  *	\param		line				Line to format
  *  \param    	outputlang			Object lang for output
- *  \param    	hideref       		hide reference
+ *  \param    	hideref       		Hide reference
  *  \param      hidedesc            Hide description
  * 	\param		issupplierline		Is it a line for a supplier object ?
  */
