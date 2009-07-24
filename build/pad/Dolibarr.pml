@@ -75,7 +75,7 @@ Dolibarr est également disponible en version avec autoinstalleur pour Windows p
 		<Application_URLs>
 			<Application_Info_URL>http://www.dolibarr.org</Application_Info_URL>
 			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
-			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
+			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot1.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
 			<Application_XML_File_URL>http://www.dolibarr.org/files/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>

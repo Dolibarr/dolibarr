@@ -6,29 +6,29 @@
 		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
 	</MASTER_PAD_VERSION_INFO>
 	<Company_Info>
-		<Company_Name>NLTechno</Company_Name>
+		<Company_Name>Dolibarr team</Company_Name>
 		<Address_1>61 Boulevard Vauban</Address_1>
 		<Address_2 />
 		<City_Town>Montigny-le-Bretonneux</City_Town>
 		<State_Province />
 		<Zip_Postal_Code>78180</Zip_Postal_Code>
 		<Country>FRANCE</Country>
-		<Company_WebSite_URL>http://www.nltechno.com</Company_WebSite_URL>
+		<Company_WebSite_URL>http://www.dolibarr.org</Company_WebSite_URL>
 		<Contact_Info>
-			<Author_First_Name>NLTechno</Author_First_Name>
-			<Author_Last_Name>NLTechno</Author_Last_Name>
-			<Author_Email>dolibarr@nltechno.com</Author_Email>
-			<Contact_First_Name>NLTechno</Contact_First_Name>
-			<Contact_Last_Name>NLTechno</Contact_Last_Name>
-			<Contact_Email>dolibarr@nltechno.com</Contact_Email>
+			<Author_First_Name>Dolibarr team</Author_First_Name>
+			<Author_Last_Name>Dolibarr team</Author_Last_Name>
+			<Author_Email>dolibarr-dev@nongnu.org</Author_Email>
+			<Contact_First_Name>Dolibarr team</Contact_First_Name>
+			<Contact_Last_Name>Dolibarr team</Contact_Last_Name>
+			<Contact_Email>dolibarr-dev@nongnu.org</Contact_Email>
 		</Contact_Info>
 		<Support_Info>
-			<Sales_Email>dolibarr@nltechno.com</Sales_Email>
-			<Support_Email>dolibarr@nltechno.com</Support_Email>
-			<General_Email>dolibarr@nltechno.com</General_Email>
+			<Sales_Email>dolibarr-dev@nongnu.org</Sales_Email>
+			<Support_Email>dolibarr-dev@nongnu.org</Support_Email>
+			<General_Email>dolibarr-dev@nongnu.org</General_Email>
 			<Sales_Phone />
 			<Support_Phone />
-			<General_Phone ></General_Phone>
+			<General_Phone />
 			<Fax_Phone />
 		</Support_Info>
 	</Company_Info>
@@ -43,7 +43,7 @@
 		<Program_Cost_Other />
 		<Program_Type>Freeware</Program_Type>
 		<Program_Release_Status>Major Update</Program_Release_Status>
-		<Program_Install_Support>No Install Support</Program_Install_Support>
+		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
 		<Program_OS_Support>Win95,Win98,WinME,WinNT 4.x,Windows2000,WinXP,Windows2003,Windows Vista Starter,Windows Vista Home Basic,Windows Vista Home Premium,Windows Vista Business,Windows Vista Enterprise,Windows Vista Ultimate,Windows Vista Home Basic x64,Windows Vista Home Premium x64,Windows Vista Business x64,Windows Vista Enterprise x64,Windows Vista Ultimate x64,Unix,Linux,OS/2,OS/2 Warp,OS/2 Warp 4,MAC 68k,Mac PPC,Mac OS X,Mac OS X 10.1,Mac OS X 10.2,Mac OS X 10.3,Mac OS X 10.4,Mac OS X 10.5,Mac Other,BEOS</Program_OS_Support>
 		<Program_Language>English,Catalan,Dutch,French,German,Italian,Norwegian,Spanish</Program_Language>
 		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
@@ -52,8 +52,8 @@
 		<Program_System_Requirements>None</Program_System_Requirements>
 		<File_Info>
 			<File_Size_Bytes>1016660</File_Size_Bytes>
-			<File_Size_K>25036</File_Size_K>
-			<File_Size_MB>25</File_Size_MB>
+			<File_Size_K>992</File_Size_K>
+			<File_Size_MB>0.97</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>
@@ -77,6 +77,15 @@ Dolibarr ERP/CRM is a software built by modules addition (you enable only featur
 It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple: Simple to install, Simple to use, Simple to develop. 
 </Char_Desc_2000>
 		</English>
+		<French>
+			<Keywords>doliwamp, dolibarr, erp, crm, tpe, pme, auto-entrepreneur, gestion, comptabilité, trésorerie</Keywords>
+			<Char_Desc_45>DoliWamp, Dolibarr ERP/CRM pour Windows</Char_Desc_45>
+			<Char_Desc_80>DoliWamp, la version de DolibarrERP/CRM pour Windows pour gérer votre activité</Char_Desc_80>
+			<Char_Desc_250>DoliWamp est la version autoinstallable pour Windows de Dolibarr ERP/CRM. Elle permet à des utilisateurs non initié d'installer Dolibarr et tous ces prérequis (Apache, Mysql, PHP) sans connaissances techniques par un simple programme auto installable</Char_Desc_250>
+			<Char_Desc_450>DoliWamp est la version autoinstallable pour Windows de Dolibarr ERP/CRM. Elle permet à des utilisateurs non initié d'installer Dolibarr et tous ces prérequis (Apache, Mysql, PHP) sans connaissances techniques par un simple programme auto installable. Dolibarr ERP/CRM est alors directement et immédiatement opérationnel pour tout utilisateur Windows en 2mn, pour toutes versions de Windows.</Char_Desc_450>
+			<Char_Desc_2000>DoliWamp est la version autoinstallable pour Windows de Dolibarr ERP/CRM. Elle permet à des utilisateurs non initié d'installer Dolibarr et tous ces prérequis (Apache, Mysql, PHP) sans connaissances techniques par un simple programme auto installable. 
+Dolibarr ERP/CRM est alors directement et immédiatement opérationnel pour tout utilisateur Windows en 2mn, pour toutes version de Windows.</Char_Desc_2000>
+		</French>
 		<Spanish>
 			<Keywords>doliwamp, dolibarr, erp, crm</Keywords>
 			<Char_Desc_45>DoliWamp, Dolibarr ERP/CRM para Windows</Char_Desc_45>
@@ -85,21 +94,12 @@ It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, P
 			<Char_Desc_450 />
 			<Char_Desc_2000 />
 		</Spanish>
-		<French>
-			<Keywords>doliwamp, dolibarr, erp, crm, tpe, pme, auto-entrepreneur, gestion, comptabilité, trésorerie</Keywords>
-			<Char_Desc_45>DoliWamp, Dolibarr ERP/CRM pour Windows</Char_Desc_45>
-			<Char_Desc_80>DoliWamp, la version de Dolibarr ERP/CRM pour Windows pour gérer votre activité</Char_Desc_80>
-			<Char_Desc_250>DoliWamp est la version autoinstallable pour Windows de Dolibarr ERP/CRM. Elle permet à des utilisateurs non initié d'installer Dolibarr et tous ces prérequis (Apache, Mysql, PHP) sans connaissances techniques par un simple programme auto installable</Char_Desc_250>
-			<Char_Desc_450>DoliWamp est la version autoinstallable pour Windows de Dolibarr ERP/CRM. Elle permet à des utilisateurs non initié d'installer Dolibarr et tous ces prérequis (Apache, Mysql, PHP) sans connaissances techniques par un simple programme auto installable. Dolibarr ERP/CRM est alors directement et immédiatement opérationnel pour tout utilisateur Windows en 2mn, pour toutes versions de Windows.</Char_Desc_450>
-			<Char_Desc_2000>DoliWamp est la version autoinstallable pour Windows de Dolibarr ERP/CRM. Elle permet à des utilisateurs non initié d'installer Dolibarr et tous ces prérequis (Apache, Mysql, PHP) sans connaissances techniques par un simple programme auto installable. 
-Dolibarr ERP/CRM est alors directement et immédiatement opérationnel pour tout utilisateur Windows en 2mn, pour toutes version de Windows.</Char_Desc_2000>
-		</French>
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
 			<Application_Info_URL>http://www.nltechno.com/pages/dolibarrwinbin.php</Application_Info_URL>
 			<Application_Order_URL>http://www.nltechno.com/pages/dolibarrwinbin.php</Application_Order_URL>
-			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
+			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot1.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
 			<Application_XML_File_URL>http://www.dolibarr.org/files/pad_doliwamp.xml</Application_XML_File_URL>
 		</Application_URLs>

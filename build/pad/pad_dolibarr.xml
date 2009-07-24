@@ -52,8 +52,8 @@
 		<Program_System_Requirements>None</Program_System_Requirements>
 		<File_Info>
 			<File_Size_Bytes>1016660</File_Size_Bytes>
-			<File_Size_K>5881</File_Size_K>
-			<File_Size_MB>0.5</File_Size_MB>
+			<File_Size_K>992</File_Size_K>
+			<File_Size_MB>0.97</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>
@@ -105,7 +105,7 @@ Dolibarr est également disponible en version avec autoinstalleur pour Windows p
 		<Application_URLs>
 			<Application_Info_URL>http://www.dolibarr.org</Application_Info_URL>
 			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
-			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
+			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot1.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
 			<Application_XML_File_URL>http://www.dolibarr.org/files/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>
