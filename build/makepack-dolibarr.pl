@@ -215,7 +215,7 @@ if ($nboftargetok) {
 	{
    		chdir("$SOURCE");
     	print "Run cvs update\n";
-    	$ret=`cvs update -P -d`;
+    	$ret=`cvs update -P -d 2>&1`;
 	}
 	
     # Update buildroot if required
