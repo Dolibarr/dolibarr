@@ -44,7 +44,6 @@ $html=new Form($db);
 llxHeader();
 
 print_fiche_titre($langs->trans("DatabaseConfiguration"),'','setup');
-print '<br>';
 
 // Database
 print '<table class="noborder" width="100%">';

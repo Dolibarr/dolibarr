@@ -30,12 +30,15 @@ require("./pre.inc.php");
 
 $langs->load("admin");
 
+
+/*
+ * View
+ */
+
 llxHeader();
 
 
 print_fiche_titre("Dolibarr",'','setup');
-
-print "<br>\n";
 
 print $langs->trans("Version").':';
 print '<ul>';

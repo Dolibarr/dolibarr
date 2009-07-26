@@ -38,13 +38,12 @@ $formfile = new FormFile($db);
 
 
 /*
-* Affichage page
+* View
 */
 
 llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
-print '<br>';
 
 print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';

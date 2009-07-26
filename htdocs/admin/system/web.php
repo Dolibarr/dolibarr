@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-	    \file       htdocs/admin/system/web.php
-		\brief      Page des infos système du serveur Web
-		\version    $Revision$
-*/
+ *	    \file       htdocs/admin/system/web.php
+ *		\brief      Page des infos systï¿½me du serveur Web
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -32,12 +29,13 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+/*
+ * View
+ */
 
 llxHeader();
 
 print_fiche_titre($langs->trans("WebServer"),'','setup');
-
-print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td>".$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";

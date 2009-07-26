@@ -68,10 +68,9 @@ if (! $base)
 }
 else
 {
-	print '<br>';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
-	
+
 	if ($base==1)
 	{
 	    print '<td>'.$langs->trans("Tables").'</td>';
@@ -83,10 +82,10 @@ else
 	    print '<td>'.$langs->trans("Constraints").'</td>';
 	    print '<td>'.$langs->trans("ConstraintsType").'</td>';
 	}
-	
+
 	print "</tr>\n";
-	
-	
+
+
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -98,7 +97,7 @@ else
 	        $obj = $db->fetch_object($result);
 	        $var=!$var;
 	        print "<tr $bc[$var]>";
-	
+
 	        if ($base==1)
 	        {
 	            print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
@@ -110,7 +109,7 @@ else
 	            print '<td>'.$obj->conname.'</td>';
 	            print '<td>'.$obj->contype.'</td>';
 	        }
-	
+
 	        print '</tr>';
 	        $i++;
 	    }

@@ -60,7 +60,6 @@ $html=new Form($db);
 $formfile = new FormFile($db);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
-print '<br>';
 
 /**
  * Increase time limit for script execution and initializes some variables

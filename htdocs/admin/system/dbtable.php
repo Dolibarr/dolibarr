@@ -65,8 +65,6 @@ if (! $base)
 }
 else
 {
-	print '<br>';
-
 	$result = $db->query($sql);
 	if ($result)
 	{

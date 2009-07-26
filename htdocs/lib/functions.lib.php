@@ -1881,6 +1881,8 @@ function print_titre($titre)
 function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0)
 {
 	global $conf;
+
+	if ($picto == 'setup') $picto='title.png';
 	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
 
 	print "\n";
@@ -1913,6 +1915,8 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0)
 {
 	global $conf,$langs;
+
+	if ($picto == 'setup') $picto='title.png';
 	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
 
 	if ($num > $conf->liste_limit or $num == -1)

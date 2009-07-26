@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
  *       \file       htdocs/admin/triggers.php
  *       \brief      Page de configuration et activation des triggers
@@ -65,7 +65,7 @@ function Activate($value)
         $objMod->init();
     }
 
-    // Activation des modules dont le module dépend
+    // Activation des modules dont le module dï¿½pend
     for ($i = 0; $i < sizeof($objMod->depends); $i++)
     {
         Activate($objMod->depends[$i]);
@@ -74,8 +74,8 @@ function Activate($value)
 }
 
 
-/**     \brief      Désactive un module
-        \param      value   Nom du module a désactiver
+/**     \brief      Dï¿½sactive un module
+        \param      value   Nom du module a dï¿½sactiver
 */
 function UnActivate($value)
 {
@@ -103,6 +103,9 @@ function UnActivate($value)
 }
 
 
+/*
+ * View
+ */
 
 llxHeader("","");
 
@@ -110,7 +113,6 @@ $html = new Form($db);
 
 print_fiche_titre($langs->trans("TriggersAvailable"),'','setup');
 
-print "<br>\n";
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";
 
@@ -192,10 +194,10 @@ foreach ($orders as $key => $value)
 		if (strtolower($reg[1]) == 'all') $disabledbymodule=0;
 		else if (empty($conf->global->$constparam)) $disabledbymodule=2;
 	}
-    
+
 	// Show line for trigger file
     print "<tr $bc[$var]>\n";
-    
+
     print '<td valign="top" width="14" align="center">';
     print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
     print '</td>';
@@ -214,12 +216,12 @@ foreach ($orders as $key => $value)
         print img_tick();
     }
     print "</td>\n";
-	
+
     print '<td valign="top">';
 	$text ='<b>'.$langs->trans("Description").':</b><br>';
 	$text.=$objMod->getDesc().'<br>';
 	$text.='<br><b>'.$langs->trans("Status").':</b><br>';
-	if ($disabledbyname == 1) 
+	if ($disabledbyname == 1)
 	{
 		$text.=$langs->trans("TriggerDisabledByName").'<br>';
 		if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
@@ -234,7 +236,7 @@ foreach ($orders as $key => $value)
 	print "</td>\n";
 
     print "</tr>\n";
-    
+
 }
 print "</table>\n";
 

@@ -43,8 +43,6 @@ llxHeader();
 
 print_fiche_titre("Dolibarr",'','setup');
 
-print "<br>\n";
-
 // Version
 $var=true;
 print '<table class="noborder" width="100%">';

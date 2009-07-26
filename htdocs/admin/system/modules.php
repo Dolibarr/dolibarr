@@ -41,7 +41,6 @@ llxHeader();
 
 print_fiche_titre($langs->trans("AvailableModules"),'','setup');
 
-print "<br>\n";
 print $langs->trans("ToActivateModule").'<br>';
 print "<br>\n";
 

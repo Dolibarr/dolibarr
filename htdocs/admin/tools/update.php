@@ -60,7 +60,6 @@ $wikihelp='EN:Installation_/_Upgrade|FR:Installation_/_Mise_a_jour|ES:InstalaciÃ
 llxHeader($langs->trans("Upgrade"),'',$wikihelp);
 
 print_fiche_titre($langs->trans("Upgrade"),'','setup');
-print '<br>';
 
 print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("FeatureNotYetAvailable").'</b><br>';

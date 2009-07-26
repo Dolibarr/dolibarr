@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-    	\file       htdocs/admin/tools/index.php
-		\brief      Page d'accueil de l'espace outils admin
-		\version    $Revision$
-*/
+ *    	\file       htdocs/admin/tools/index.php
+ * 		\brief      Page d'accueil de l'espace outils admin
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -37,7 +34,7 @@ if (!$user->admin)
 
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader();
@@ -47,7 +44,6 @@ $form = new Form($db);
 
 print_fiche_titre($langs->trans("SystemToolsArea"),'','setup');
 
-print "<br>";
 print $langs->trans("SystemToolsAreaDesc").'<br>';
 print "<br>";
 

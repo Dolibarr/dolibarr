@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/admin/system/os.php
-		\brief      Page des infos système de l'OS
-		\version    $Revision$
-*/
+ *      \file       htdocs/admin/system/os.php
+ *		\brief      Page des infos systï¿½me de l'OS
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -32,25 +30,26 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+/*
+ * View
+ */
 
 llxHeader();
 
 print_fiche_titre("OS",'','setup');
 
-print "<br>\n";
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 
-// Récupère l'OS au sens PHP
+// Rï¿½cupï¿½re l'OS au sens PHP
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
 
-// Récupère la version de l'OS
-ob_start(); 
+// Rï¿½cupï¿½re la version de l'OS
+ob_start();
 phpinfo();
-$chaine = ob_get_contents(); 
-ob_end_clean(); 
+$chaine = ob_get_contents();
+ob_end_clean();
 eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';

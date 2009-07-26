@@ -63,7 +63,7 @@ else if ($conf->db->type == 'pgsql')
 }
 else if ($conf->db->type == 'mssql')
 {
-	//TODO: récupérer les infos du serveur
+	//TODO: rï¿½cupï¿½rer les infos du serveur
 	//$sqls[0] = "";
 	//$base=3;
 }
@@ -77,7 +77,6 @@ else
 {
 	if ($base == 1)
 	{
-		print '<br>';
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
@@ -92,9 +91,9 @@ else
 		print '<td>Last check</td>';
 		print '<td>Collation</td>';
 		print "</tr>\n";
-	  
+
 		$sql = "SHOW TABLE STATUS";
-	  
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -106,7 +105,7 @@ else
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr $bc[$var]>";
-				 
+
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
 				if ($row[1] == "MyISAM")
@@ -146,7 +145,7 @@ else
 		print '<td>Nbre de tuple supprimer</td>';
 		print "</tr>\n";
 		$sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del from pg_stat_user_tables;";
-		 
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{

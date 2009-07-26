@@ -21,10 +21,10 @@
  */
 
 /**
-		\file 		htdocs/admin/system/constall.php
-		\brief      Page d'info de toutes les constantes
-		\version    $Revision$
-*/
+ *		\file 		htdocs/admin/system/constall.php
+ *		\brief      Page d'info de toutes les constantes
+ *		\version    $Revision$
+ */
 
 require("./pre.inc.php");
 
@@ -35,11 +35,14 @@ if (!$user->admin)
   accessforbidden();
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 print_fiche_titre($langs->trans("SummaryConst"),'','setup');
 
-print '<br>';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -48,7 +51,7 @@ print "</tr>\n";
 
 $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const ORDER BY name ASC";
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
   $num = $db->num_rows();
   $i = 0;
