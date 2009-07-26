@@ -132,8 +132,8 @@ class modAgenda extends DolibarrModules
 		$this->rights[$r][5] = 'create';
 		$r++;
 
-		// Menus
-		//------
+		// Main menu entries
+		$this->menu = array();			// List of menus to add
 		$r=0;
 
 		$this->menu[$r]=array('fk_menu'=>0,
