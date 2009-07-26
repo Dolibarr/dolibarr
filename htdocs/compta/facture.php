@@ -855,8 +855,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		$result = -1 ;
 	}
 
-	// qty can't be null for invoice (no option)
-	if ($result >= 0 && $_POST['qty'] && (($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	if ($result >= 0 && $_POST['qty']!='' && (($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$ret=$fac->fetch($_POST['facid']);
 		if ($ret < 0)
@@ -958,6 +957,10 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 				);
 			}
 		}
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Qty')).'</div>';
 	}
 
 	if ($result > 0)
