@@ -112,7 +112,7 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 	}
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->supprimer)
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->supprimer)
 {
 	$projet = new Project($db);
 	$projet->id = $_GET["id"];
@@ -201,7 +201,7 @@ else
 
 	if ($_GET["action"] == 'delete')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
