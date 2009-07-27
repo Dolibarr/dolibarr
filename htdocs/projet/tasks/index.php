@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/projet/tasks/index.php
  *	\ingroup    project
- *	\brief      Fiche tâches d'un projet
+ *	\brief      Fiche tï¿½ches d'un projet
  *	\version    $Id$
  */
 
@@ -35,6 +35,13 @@ $langs->load('projects');
 if (!$user->rights->projet->lire) accessforbidden();
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
+
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
+$page = is_numeric($page) ? $page : 0;
+$page = $page == -1 ? 0 : $page;
+
 
 
 /*
@@ -67,17 +74,9 @@ if ($mode == 'mine') $title=$langs->trans("MyTasks");
 
 llxHeader("",$title,"Projet");
 
-/*
- * Card
- */
 
-$h=0;
-$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/index.php'.($_GET["mode"]?'?mode='.$_GET["mode"]:'');
-$head[$h][1] = $title;
-$head[$h][2] = 'tasks';
-$h++;
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-dol_fiche_head($head, 'tasks', $title);
 
 $projet = new Project($db);
 $tasksarray=$projet->getTasksArray($_GET["mode"]=='mine'?$user:0);
