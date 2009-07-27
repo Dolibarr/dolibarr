@@ -14,17 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
         \file       htdocs/bookmarks/pre.inc.php
         \ingroup    bookmark
         \brief      Fichier de gestion du menu gauche des bookmarks
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("../main.inc.php");
@@ -42,9 +38,9 @@ function llxHeader($head = '', $title='', $help_url='')
     // Bookmarks
     if ($conf->bookmark->enabled)
     {
-        if ($user->rights->bookmark->lire) $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
-        if ($user->rights->bookmark->creer) $menu->add_submenu(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"));
-        if ($user->rights->bookmark->lire) $menu->add_submenu(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"));
+        if ($user->rights->bookmark->lire)  $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("Bookmarks"));
+        if ($user->rights->bookmark->creer) $menu->add(DOL_URL_ROOT."/bookmarks/fiche.php?action=create", $langs->trans("NewBookmark"),1);
+        if ($user->rights->bookmark->lire)  $menu->add(DOL_URL_ROOT."/bookmarks/liste.php", $langs->trans("List"),1);
     }
 
     left_menu($menu->liste);

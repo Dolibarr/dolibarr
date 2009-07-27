@@ -21,7 +21,7 @@
 
 /**
  *		\file 		htdocs/admin/system/pre.inc.php
- *		\brief      Fichier gestionnaire menu page infos système
+ *		\brief      Fichier gestionnaire menu page infos systï¿½me
  *		\version    $Id$
  */
 
@@ -42,10 +42,10 @@ function llxHeader($head = "", $urlp = "")
 
     // Dolibarr
     $menu->add(DOL_URL_ROOT."/admin/system/dolibarr.php", "Dolibarr");
-    $menu->add_submenu(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"));
-	$menu->add_submenu(DOL_URL_ROOT."/admin/system/modules.php", $langs->trans("Modules"));
-    $menu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
-    $menu->add_submenu(DOL_URL_ROOT."/about.php", $langs->trans("About"));
+    $menu->add(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"),1);
+	$menu->add(DOL_URL_ROOT."/admin/system/modules.php", $langs->trans("Modules"),1);
+    $menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"),1);
+    $menu->add(DOL_URL_ROOT."/about.php", $langs->trans("About"),1);
 
     // OS
     $menu->add(DOL_URL_ROOT."/admin/system/os.php", $langs->trans("OS"));
@@ -61,8 +61,8 @@ function llxHeader($head = "", $urlp = "")
 
     // Database
     $menu->add(DOL_URL_ROOT."/admin/system/database.php", $langs->trans("Database"));
-    $menu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables.php", $langs->trans("Tables"));
-    $menu->add_submenu(DOL_URL_ROOT."/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"));
+    $menu->add(DOL_URL_ROOT."/admin/system/database-tables.php", $langs->trans("Tables"),1);
+    $menu->add(DOL_URL_ROOT."/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"),1);
 
     left_menu($menu->liste);
 }

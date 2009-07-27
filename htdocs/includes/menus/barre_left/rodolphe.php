@@ -17,15 +17,15 @@
  */
 
 /**	    \file       htdocs/includes/menus/barre_left/rodolphe.php
-		\brief      Gestionnaire par d�faut du menu de gauche
+		\brief      Gestionnaire du menu de gauche Rodolphe
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
-        \remarks    A l'aide d'un objet $newmenu=new Menu() et des m�thode add et add_submenu,
-        \remarks    d�finir la liste des entr�es menu � faire apparaitre.
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et de la methode add,
+        \remarks    definir la liste des entrees menu a faire apparaitre.
         \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
-        \remarks    Ce qui est d�finir dans un tel gestionnaire sera alors prioritaire sur
-        \remarks    les d�finitions de menu des fichiers pre.inc.php
+        \remarks    Ce qui est definir dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les definitions de menu des fichiers pre.inc.php
 */
 
 
@@ -39,7 +39,7 @@ class MenuLeft {
 
     var $require_top=array("");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
 
-    
+
     /**
      *    \brief      Constructeur
      *    \param      db      Handler d'acc�s base de donn�e
@@ -50,8 +50,8 @@ class MenuLeft {
       	$this->db=$db;
         $this->menu_array=$menu_array;
     }
-  
-    
+
+
     /**
      *    \brief      Affiche le menu
      */
@@ -91,9 +91,9 @@ class MenuLeft {
 			// On va le chercher en session si non d�fini par le lien
 			$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
 		}
-		
+
 		$newmenu = new Menu();
-        
+
 		if ($mainmenu)
 		{
 	      	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
@@ -101,7 +101,7 @@ class MenuLeft {
 	      	$this->menuArbo = new Menubase($this->db,'rodolphe','left');
     	    $this->overwritemenufor = $this->menuArbo->listeMainmenu();
 			$newmenu = $this->menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
-			
+
 			/*
 			* Menu AUTRES (Pour les menus du haut qui ne serait pas g�r�s)
 			*/
@@ -115,7 +115,7 @@ class MenuLeft {
 		if ($mainmenu) {
 			$this->menu_array=$newmenu->liste;
 		}
-		        
+
     	// Affichage du menu
 		$alt=0;
 		if (! sizeof($this->menu_array))
@@ -152,7 +152,7 @@ class MenuLeft {
 						$tabstring.='&nbsp; &nbsp;';
 					}
 				}
-				
+
 				// Menu niveau 0
 				if ($this->menu_array[$i]['level'] == 0)
 				{
@@ -195,11 +195,11 @@ class MenuLeft {
 				}
 			}
             if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
-			
+
 		}
 
     }
-    
+
 }
 
 ?>

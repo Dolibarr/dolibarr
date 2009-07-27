@@ -510,7 +510,7 @@ class Menubase
 					{
 						//				print "x".$pere." ".$tab[$x][6];
 
-						$this->newmenu->add_submenu((! eregi($tab[$x][2],"^(http:\/\/|https:\/\/)")) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
+						$this->newmenu->add((! eregi($tab[$x][2],"^(http:\/\/|https:\/\/)")) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
 					}
 				}

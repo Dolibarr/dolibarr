@@ -23,11 +23,11 @@
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
-        \remarks    A l'aide d'un objet $newmenu=new Menu() et des m�thode add et add_submenu,
-        \remarks    d�finir la liste des entr�es menu � faire apparaitre.
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et de la methode add,
+        \remarks    definir la liste des entrees menu a faire apparaitre.
         \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
-        \remarks    Ce qui est d�fini dans un tel gestionnaire sera alors prioritaire sur
-        \remarks    les d�finitions de menu des fichiers pre.inc.php
+        \remarks    Ce qui est defini dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les definitions de menu des fichiers pre.inc.php
 */
 
 

@@ -21,9 +21,9 @@
  */
 
 /**
- \file       htdocs/pre.inc.php
- \brief      File to manage left menu for home page
- \version    $Id$
+ *	\file       htdocs/pre.inc.php
+ *	\brief      File to manage left menu for home page
+ *	\version    $Id$
  */
 require ("./main.inc.php");
 
@@ -43,10 +43,10 @@ function llxHeader($head = '', $title='', $help_url='')
 
 		if ($user->rights->societe->creer)
 		{
-	  		$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewThirdParty"));
+	  		$menu->add(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewThirdParty"),1);
 		}
 
-		$menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
+		$menu->add(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"),1);
 	}
 
 	if (! empty($conf->categorie->enabled))
@@ -69,21 +69,6 @@ function llxHeader($head = '', $title='', $help_url='')
 		if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
 		if ($conf->service->enabled) { $chaine.= $langs->trans("Services"); }
 		$menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
-
-		/*
-		 if ($conf->boutique->enabled)
-		 {
-		 if ($conf->boutique->livre->enabled)
-		 {
-		 $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/index.php", "Livres");
-		 }
-
-		 if ($conf->boutique->album->enabled)
-		 {
-		 $menu->add_submenu(DOL_URL_ROOT."/product/album/index.php", "Albums");
-		 }
-		 }
-		 */
 	}
 
 
@@ -129,8 +114,8 @@ function llxHeader($head = '', $title='', $help_url='')
 	if (! empty($conf->voyage->enabled) && $user->societe_id == 0)
 	{
 		$menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
-		$menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
-		$menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc");
+		$menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages",1);
+		$menu->add(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc",1);
 	}
 
 	if (! empty($conf->domaine->enabled))
@@ -141,15 +126,15 @@ function llxHeader($head = '', $title='', $help_url='')
 	if (! empty($conf->export->enabled))
 	{
 		$langs->load("exports");
-		$menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("FormatedExport"),0, $user->rights->export->lire);
-		$menu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1, $user->rights->export->creer);
+		$menu->add(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("FormatedExport"),0,$user->rights->export->lire);
+		$menu->add(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1,$user->rights->export->creer);
 	}
 
 	if (! empty($conf->global->MAIN_MODULE_IMPORT))
 	{
 		$langs->load("exports");
-		$menu->add_submenu(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->lire);
-		$menu->add_submenu(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->creer);
+		$menu->add(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0,$user->rights->import->lire);
+		$menu->add(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1,$user->rights->import->creer);
 	}
 
 	if ($user->rights->user->user->lire || $user->admin)
