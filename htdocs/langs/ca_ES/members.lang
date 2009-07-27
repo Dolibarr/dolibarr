@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - members
+# Dolibarr language file - ca_ES - members 
 CHARSET = UTF-8
 MembersArea = Àrea membres
 PublicMembersArea = Àrea pública dels membres
@@ -16,6 +16,12 @@ ErrorMemberTypeNotDefined = No s'ha indicat el tipus de membre
 ListOfPublicMembers = Llista de membres públics
 ListOfValidatedPublicMembers = Llista de membres públics validats
 ErrorThisMemberIsNotPublic = Aquest membre no és públic
+ErrorMemberIsAlreadyLinkedToThisThirdParty = Un altre membre (nom: <b>%s</b>, login: <b>%s</b>) està vinculat al tercer <b>%s</b>. Esborreu l'enllaç existent ja que un tercer només pot estar vinculat a un sol membre (i viceversa).
+ErrorUserPermissionAllowsToLinksToItselfOnly = Per raons de seguretat, ha de posseir els drets de modificació de tots els usuaris per poder vincular un membre a un usuari que no sigui vostè mateix.
+ThisIsContentOfYourCard = Aquí hi ha els detalls de la seva fitxa
+CardContent = Contingut de la seva fitxa de membre
+SetLinkToUser = Vincular a un usuari Dolibarr
+SetLinkToThirdParty = Vincular a un tercer Dolibarr
 MembersCards = Carnets de membres
 MembersList = Llistat de membres
 MembersListToValid = Llistat de membres esborrany (a validar)
