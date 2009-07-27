@@ -26,19 +26,18 @@
  */
 
 /**
- *       \file       htdocs/includes/modules/modAdherent.class.php
- *       \ingroup    adherent
- *       \brief      Fichier de description et activation du module adherents
+ *		\file       htdocs/includes/modules/modAdherent.class.php
+ *      \ingroup    adherent
+ *      \brief      Fichier de description et activation du module adherents
  *		\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
-        \class      modAdherent
-        \brief      Classe de description et activation du module Adherent
-*/
-
+ *       \class      modAdherent
+ *       \brief      Classe de description et activation du module Adherent
+ */
 class modAdherent extends DolibarrModules
 {
 

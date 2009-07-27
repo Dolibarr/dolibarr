@@ -956,20 +956,21 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise e jour en base d'un utilisateur (sauf info mot de passe)
-	 *	\param		user			User qui fait la mise a jour
-	 *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *	\param		nosyncmember	Do not synchronize linked member
-	 *    \return     int         	<0 si KO, >=0 si OK
+	 *  	\brief      Mise e jour en base d'un utilisateur (sauf info mot de passe)
+	 *		\param		user				User qui fait la mise a jour
+	 *    	\param      notrigger			1 ne declenche pas les triggers, 0 sinon
+	 *		\param		nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
+	 *		\param		nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
+	 *    	\return     int         		<0 si KO, >=0 si OK
 	 */
-	function update($user,$notrigger=0,$nosyncmember=0)
+	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
 	{
 		global $conf, $langs;
 
 		$nbrowsaffected=0;
 		$error=0;
 
-		dol_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
+		dol_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
 		$this->nom          = trim($this->nom);
@@ -1015,13 +1016,13 @@ class User extends CommonObject
 		{
 			$nbrowsaffected+=$this->db->affected_rows($resql);
 
-			// Mise a jour mot de passe
+			// Update password
 			if ($this->pass)
 			{
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 				{
 					// Si mot de passe saisi et different de celui en base
-					$result=$this->setPassword($user,$this->pass,0,$notrigger);
+					$result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncmemberpass);
 					if (! $nbrowsaffected) $nbrowsaffected++;
 				}
 			}
@@ -1164,7 +1165,7 @@ class User extends CommonObject
 
 		$error=0;
 
-		dol_syslog("User::setPassword user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger, LOG_DEBUG);
+		dol_syslog("User::setPassword user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
 
 		// Si nouveau mot de passe non communique, on genere par module
 		if (! $password)
@@ -1776,9 +1777,9 @@ class User extends CommonObject
 
 
 /**
- \brief      Fonction pour creer un mot de passe aleatoire en minuscule
- \param	    sel			Donnee aleatoire
- \return		string		Mot de passe
+ *	\brief      Fonction pour creer un mot de passe aleatoire en minuscule
+ *	\param	    sel			Donnee aleatoire
+ *	\return		string		Mot de passe
  */
 function creer_pass_aleatoire_1($sel = "")
 {
@@ -1789,11 +1790,11 @@ function creer_pass_aleatoire_1($sel = "")
 
 
 /**
- \brief      Fonction pour creer un mot de passe aleatoire melangeant majuscule,
- minuscule, chiffre et alpha et caracteres speciaux
- \remarks    La fonction a ete prise sur http://www.uzine.net/spip
- \param	    sel			Donnee aleatoire
- \return		string		Mot de passe
+ *	\brief      Fonction pour creer un mot de passe aleatoire melangeant majuscule,
+ *				minuscule, chiffre et alpha et caracteres speciaux
+ *	\remarks    La fonction a ete prise sur http://www.uzine.net/spip
+ *	\param	    sel			Donnee aleatoire
+ *	\return		string		Mot de passe
  */
 function creer_pass_aleatoire_2($sel = "")
 {
@@ -1806,8 +1807,8 @@ function creer_pass_aleatoire_2($sel = "")
 	{
 		if (!$s)
 		{
-	  if (!$s) $s = mt_rand();
-	  $s = substr(md5(uniqid($s).$sel), 0, 16);
+			if (!$s) $s = mt_rand();
+			$s = substr(md5(uniqid($s).$sel), 0, 16);
 		}
 		$r = unpack("Cr", pack("H2", $s.$s));
 		$x = $r['r'] & 63;

@@ -77,8 +77,7 @@ $canaddmember=$user->rights->adherent->creer;
 // Define variables to know what current user can do on properties of a member
 if ($rowid)
 {
-	$caneditfieldmember=( (($user->id == $adh->user_id) && $user->rights->adherent->self->creer)
-		|| (($user->id != $adh->user_id) && $user->rights->adherent->creer) );
+	$caneditfieldmember=$user->rights->adherent->creer;
 }
 
 
@@ -87,19 +86,62 @@ if ($rowid)
  * 	Actions
  */
 
-if ($_POST['action'] == 'setuserid')
+if ($_POST['action'] == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 {
-	$result=$adh->setUserId($_POST["userid"]);
-	if ($result < 0) dol_print_error($adh->db,$adh->error);
-	$_POST['action']='';
-	$action='';
+	$error=0;
+	if (empty($user->rights->user->user->creer))	// If can edit only itself user, we can link to itself only
+	{
+		if ($_POST["userid"] != $user->id && $_POST["userid"] != $adh->user_id)
+		{
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+		}
+	}
+
+	if (! $error)
+	{
+		if ($_POST["userid"] != $adh->user_id)	// If link differs from currently in database
+		{
+			$result=$adh->setUserId($_POST["userid"]);
+			if ($result < 0) dol_print_error($adh->db,$adh->error);
+			$_POST['action']='';
+			$action='';
+		}
+	}
 }
 if ($_POST['action'] == 'setsocid')
 {
-	$result=$adh->setThirdPartyId($_POST["socid"]);
-	if ($result < 0) dol_print_error($adh->db,$adh->error);
-	$_POST['action']='';
-	$action='';
+	$error=0;
+	if (! $error)
+	{
+		if ($_POST["socid"] != $adh->fk_soc)	// If link differs from currently in database
+		{
+			$sql ="SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+			$sql.=" WHERE fk_soc = '".$_POST["socid"]."'";
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				if ($obj && $obj->rowid > 0)
+				{
+					$othermember=new Adherent($db);
+					$othermember->fetch($obj->rowid);
+					$thirdparty=new Societe($db);
+					$thirdparty->fetch($_POST["socid"]);
+					$error++;
+					$mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->fullname,$othermember->login,$thirdparty->nom).'</div>';
+				}
+			}
+
+			if (! $error)
+			{
+				$result=$adh->setThirdPartyId($_POST["socid"]);
+				if ($result < 0) dol_print_error($adh->db,$adh->error);
+				$_POST['action']='';
+				$action='';
+			}
+		}
+	}
 }
 
 // Create user from a member
@@ -148,113 +190,116 @@ if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 {
 	if ($adh->email)
 	{
-		$result=$adh->send_an_email("Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
+		$result=$adh->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
 		$mesg=$langs->trans("CardSent");
 	}
 }
 
-if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
+if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 {
-	// Is it a new link to a user ?
-	$nosyncuser=0;
-	if ($adh->user_id != $_POST["userid"]) $nosyncuser=1;
-
-	// If change (allowed on all members) or (allowed on myself and i am edited memeber)
-	if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
+	$datenaiss='';
+	if (isset($_POST["naissday"]) && $_POST["naissday"]
+		&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
+		&& isset($_POST["naissyear"]) && $_POST["naissyear"])
 	{
-		$datenaiss='';
-		if (isset($_POST["naissday"]) && $_POST["naissday"]
-			&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
-			&& isset($_POST["naissyear"]) && $_POST["naissyear"])
+		$datenaiss=dol_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+	}
+	//print $_POST["naissmonth"].", ".$_POST["naissday"].", ".$_POST["naissyear"]." ".$datenaiss." ".adodb_strftime('%Y-%m-%d %H:%M:%S',$datenaiss);
+
+	// Create new object
+	if ($result > 0)
+	{
+		// Modifie valeures
+		$adh->prenom      = trim($_POST["prenom"]);
+		$adh->nom         = trim($_POST["nom"]);
+		$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
+		$adh->login       = trim($_POST["login"]);
+		$adh->pass        = trim($_POST["pass"]);
+
+		$adh->societe     = trim($_POST["societe"]);
+		$adh->adresse     = trim($_POST["adresse"]);
+		$adh->cp          = trim($_POST["cp"]);
+		$adh->ville       = trim($_POST["ville"]);
+		$adh->pays_id     = $_POST["pays"];
+
+		$adh->phone       = trim($_POST["phone"]);
+		$adh->phone_perso = trim($_POST["phone_perso"]);
+		$adh->phone_mobile= trim($_POST["phone_mobile"]);
+		$adh->email       = trim($_POST["email"]);
+		$adh->naiss       = $datenaiss;
+
+		$adh->typeid      = $_POST["typeid"];
+		$adh->note        = trim($_POST["comment"]);
+		$adh->morphy      = $_POST["morphy"];
+
+		$adh->amount      = $_POST["amount"];
+
+		// Get status and public property
+		$adh->statut      = $_POST["statut"];
+		$adh->public      = $_POST["public"];
+
+		foreach($_POST as $key => $value)
 		{
-			$datenaiss=dol_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
-		}
-		//print $_POST["naissmonth"].", ".$_POST["naissday"].", ".$_POST["naissyear"]." ".$datenaiss." ".adodb_strftime('%Y-%m-%d %H:%M:%S',$datenaiss);
-
-		// Charge objet actuel
-		if ($result > 0)
-		{
-			// Modifie valeures
-			$adh->prenom      = trim($_POST["prenom"]);
-			$adh->nom         = trim($_POST["nom"]);
-			$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
-			$adh->login       = trim($_POST["login"]);
-			$adh->pass        = trim($_POST["pass"]);
-
-			$adh->societe     = trim($_POST["societe"]);
-			$adh->adresse     = trim($_POST["adresse"]);
-			$adh->cp          = trim($_POST["cp"]);
-			$adh->ville       = trim($_POST["ville"]);
-			$adh->pays_id     = $_POST["pays"];
-
-			$adh->phone       = trim($_POST["phone"]);
-			$adh->phone_perso = trim($_POST["phone_perso"]);
-			$adh->phone_mobile= trim($_POST["phone_mobile"]);
-			$adh->email       = trim($_POST["email"]);
-			$adh->naiss       = $datenaiss;
-
-			$adh->typeid      = $_POST["typeid"];
-			$adh->note        = trim($_POST["comment"]);
-			$adh->morphy      = $_POST["morphy"];
-
-			$adh->amount      = $_POST["amount"];
-
-			// recuperation du statut et public
-			$adh->statut      = $_POST["statut"];
-			$adh->public      = $_POST["public"];
-
-			$adh->fk_soc      = $_POST["socid"];
-			$adh->user_id     = $_POST["userid"];
-
-			foreach($_POST as $key => $value)
+			if (ereg("^options_",$key))
 			{
-				if (ereg("^options_",$key))
+				//escape values from POST, at least with addslashes, to avoid obvious SQL injections
+				//(array_options is directly input in the DB in adherent.class.php::update())
+				$adh->array_options[$key]=addslashes($_POST[$key]);
+			}
+		}
+
+		// Check if we need to also synchronize user information
+		$nosyncuser=0;
+		if ($adh->user_id)	// If linked to a user
+		{
+			if ($user->id != $adh->user_id && empty($user->rights->user->user->creer)) $nosyncuser=1;		// Disable synchronizing
+		}
+
+		// Check if we need to also synchronize password information
+		$nosyncuserpass=0;
+		if ($adh->user_id)	// If linked to a user
+		{
+			if ($user->id != $adh->user_id && empty($user->rights->user->user->password)) $nosyncuserpass=1;	// Disable synchronizing
+		}
+
+		$result=$adh->update($user,0,$nosyncuser,$nosyncuserpass);
+		if ($result >= 0 && ! sizeof($adh->errors))
+		{
+			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+			{
+				// If photo is provided
+				if (! is_dir($conf->adherent->dir_output))
 				{
-					//escape values from POST, at least with addslashes, to avoid obvious SQL injections
-					//(array_options is directly input in the DB in adherent.class.php::update())
-					$adh->array_options[$key]=addslashes($_POST[$key]);
+					create_exdir($conf->adherent->dir_output);
+				}
+				if (is_dir($conf->adherent->dir_output))
+				{
+					$newfile=$conf->adherent->dir_output . "/" . $adh->id . ".jpg";
+					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
+					{
+						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+					}
 				}
 			}
 
-			$result=$adh->update($user,0,$nosyncuser);
-			if ($result >= 0 && ! sizeof($adh->errors))
+			$_GET["rowid"]=$adh->id;
+			$_REQUEST["action"]='';
+		}
+		else
+		{
+		    if ($adh->error)
 			{
-				if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
-				{
-					// If photo is provided
-					if (! is_dir($conf->adherent->dir_output))
-					{
-						create_exdir($conf->adherent->dir_output);
-					}
-					if (is_dir($conf->adherent->dir_output))
-					{
-						$newfile=$conf->adherent->dir_output . "/" . $adh->id . ".jpg";
-						if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
-						{
-							$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
-						}
-					}
-				}
-
-				$_GET["rowid"]=$adh->id;
-				$_REQUEST["action"]='';
+				$errmsg=$adh->error;
 			}
 			else
 			{
-			    if ($adh->error)
+				foreach($adh->errors as $error)
 				{
-					$errmsg=$adh->error;
+					if ($errmsg) $errmsg.='<br>';
+					$errmsg.=$error;
 				}
-				else
-				{
-					foreach($adh->errors as $error)
-					{
-						if ($errmsg) $errmsg.='<br>';
-						$errmsg.=$error;
-					}
-				}
-				$action='';
 			}
+			$action='';
 		}
 	}
 }
@@ -661,7 +706,7 @@ if ($action == 'edit')
 
 	// Type
 	print '<tr><td>'.$langs->trans("Type").'*</td><td>';
-	if ($user->rights->adherent->creer)	// If $user->rights->adherent->self->creer, we do not allow.
+	if ($user->rights->adherent->creer)
 	{
 		$html->select_array("typeid",  $adht->liste_array(), $adh->typeid);
 	}
@@ -1126,7 +1171,12 @@ if ($rowid && $action != 'edit')
 	print '</td><td class="valeur">';
 	if ($_GET['action'] == 'editlogin')
 	{
-		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid');
+		/*$include=array();
+		if (empty($user->rights->user->user->creer))	// If can edit only itself user, we can link to itself only
+		{
+			$include=array($adh->user_id,$user->id);
+		}*/
+		print $html->form_users($_SERVER['PHP_SELF'].'?rowid='.$adh->id,$adh->user_id,'userid','');
 	}
 	else
 	{
@@ -1149,129 +1199,131 @@ if ($rowid && $action != 'edit')
      */
     print '<div class="tabsAction">';
 
-    // Modify
-	if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
-	{
-		print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Modify")."</a>";
-    }
-	else
-	{
-		print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Modify")."</font>";
-	}
-
-	// Valider
-	if ($adh->statut == -1)
-	{
-		if ($user->rights->adherent->creer)
-		{
-			print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
-		}
-		else
-		{
-			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Validate")."</font>";
-		}
-	}
-
-	// Reactiver
-	if ($adh->statut == 0)
-	{
-		if ($user->rights->adherent->creer)
-		{
-	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
-	    }
-		else
-		{
-			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Reenable")."</font>";
-		}
-	}
-
-	// Envoi fiche par mail
-	if ($adh->statut >= 1 && $adh->email)
-	{
-		if ($user->rights->adherent->creer)
-		{
-	    	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
-	    }
-		else
-		{
-			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
-		}
-	}
-
-	// Resilier
-	if ($adh->statut >= 1)
-	{
-		if ($user->rights->adherent->supprimer)
-		{
-	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
-	    }
-		else
-		{
-			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Resiliate")."</font>";
-		}
-	}
-
-	// Create third party
-	if ($conf->societe->enabled && ! $adh->fk_soc)
-	{
-		if ($user->rights->societe->creer)
-		{
-			print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
-		}
-		else
-		{
-			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
-		}
-	}
-
-	// Create user
-	if (! $user->societe_id && ! $adh->user_id)
-	{
-		if ($user->rights->user->user->creer)
-		{
-			print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
-		}
-		else
-		{
-			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrLogin")."</font>";
-		}
-	}
-
-	// Delete
-    if ($user->rights->adherent->supprimer)
+    if ($action != 'editlogin' && $action != 'editthirdparty')
     {
-        print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
-    }
-	else
-	{
-		print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Delete")."</font>";
-	}
+	    // Modify
+		if ($user->rights->adherent->creer)
+		{
+			print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Modify")."</a>";
+	    }
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Modify")."</font>";
+		}
 
-    // Action SPIP
-    if ($conf->global->ADHERENT_USE_SPIP)
-    {
-        $isinspip=$adh->is_in_spip();
-        if ($isinspip == 1)
-        {
-            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
-        }
-        if ($isinspip == 0)
-        {
-            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
-        }
-        if ($isinspip == -1) {
-            print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
-        }
+		// Valider
+		if ($adh->statut == -1)
+		{
+			if ($user->rights->adherent->creer)
+			{
+				print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
+			}
+			else
+			{
+				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Validate")."</font>";
+			}
+		}
+
+		// Reactiver
+		if ($adh->statut == 0)
+		{
+			if ($user->rights->adherent->creer)
+			{
+		        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
+		    }
+			else
+			{
+				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Reenable")."</font>";
+			}
+		}
+
+		// Envoi fiche par mail
+		if ($adh->statut >= 1 && $adh->email)
+		{
+			if ($user->rights->adherent->creer)
+			{
+		    	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+		    }
+			else
+			{
+				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
+			}
+		}
+
+		// Resilier
+		if ($adh->statut >= 1)
+		{
+			if ($user->rights->adherent->supprimer)
+			{
+		        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
+		    }
+			else
+			{
+				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Resiliate")."</font>";
+			}
+		}
+
+		// Create third party
+		if ($conf->societe->enabled && ! $adh->fk_soc)
+		{
+			if ($user->rights->societe->creer)
+			{
+				print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+			}
+			else
+			{
+				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
+			}
+		}
+
+		// Create user
+		if (! $user->societe_id && ! $adh->user_id)
+		{
+			if ($user->rights->user->user->creer)
+			{
+				print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+			}
+			else
+			{
+				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrLogin")."</font>";
+			}
+		}
+
+		// Delete
+	    if ($user->rights->adherent->supprimer)
+	    {
+	        print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
+	    }
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Delete")."</font>";
+		}
+
+	    // Action SPIP
+	    if ($conf->global->ADHERENT_USE_SPIP)
+	    {
+	        $isinspip=$adh->is_in_spip();
+	        if ($isinspip == 1)
+	        {
+	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
+	        }
+	        if ($isinspip == 0)
+	        {
+	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
+	        }
+	        if ($isinspip == -1) {
+	            print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
+	        }
+	    }
+
     }
 
     print '</div>';
     print "<br>\n";
 
 
-
     /*
      * Bandeau des cotisations
-     *
      */
 
     print '<table border=0 width="100%">';

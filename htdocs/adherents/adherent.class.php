@@ -365,20 +365,21 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *	\brief 		Fonction qui met a jour l'adherent (sauf mot de passe)
+	 *	\brief 		Update a member in database (standard information and password)
 	 *	\param		user			User making update
-	 *	\param		notrigger		1=desactive le trigger UPDATE (quand appele par creation)
-	 *	\param		nosyncuser		Do not synchronize linked user
-	 *	\return		int				<0 si KO, >0 si OK
+	 *	\param		notrigger		1=disable trigger UPDATE (when called by create)
+	 *	\param		nosyncuser		0=Synchronize linked user (standard info), 1=Do not synchronize linked user
+	 *	\param		nosyncuserpass	0=Synchronize linked user (password), 1=Do not synchronize linked user
+	 * 	\return		int				<0 si KO, >0 si OK
 	 */
-	function update($user,$notrigger=0,$nosyncuser=0)
+	function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0)
 	{
 		global $conf, $langs;
 
 		$nbrowsaffected=0;
 		$error=0;
 
-		dol_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", email=".$this->email);
+		dol_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass.", email=".$this->email);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($this->email))
@@ -414,6 +415,8 @@ class Adherent extends CommonObject
 		if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
 		$sql.= ", fk_user_mod=".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
 		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog("Adherent::update UPDATE MEMBER");
 
 		dol_syslog("Adherent::update sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -463,19 +466,20 @@ class Adherent extends CommonObject
 				}
 			}
 
-			// Mise a jour mot de passe
+			// Update password
 			if ($this->pass)
 			{
+				dol_syslog("Adherent::update UPDATE PASSWORD");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 				{
 					// Si mot de passe saisi et different de celui en base
-					$result=$this->setPassword($user,$this->pass,0,$notrigger);
-
+					$result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncuserpass);
 					if (! $nbrowsaffected) $nbrowsaffected++;
 				}
 			}
 
 			// Remove link to user
+			dol_syslog("Adherent::update UPDATE LINK TO USER");
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->id;
 			dol_syslog("Adherent::update sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -494,6 +498,8 @@ class Adherent extends CommonObject
 				if ($this->user_id > 0 && ! $nosyncuser)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+
+					dol_syslog("Adherent::update UPDATE LINKED USER");
 
 					// This member is linked with a user, so we also update users informations
 					// if this is an update.
@@ -517,7 +523,7 @@ class Adherent extends CommonObject
 
 						$luser->fk_member=$this->id;
 
-						$result=$luser->update($user,0,1);
+						$result=$luser->update($user,0,1,1);	// Use nosync to 1 to avoid cyclic updates
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
@@ -699,7 +705,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *    \brief     Change le mot de passe d'un utilisateur
+	 *    \brief     Change password of a user
 	 *    \param     user             Object user de l'utilisateur qui fait la modification
 	 *    \param     password         Nouveau mot de passe (e generer si non communique)
 	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
@@ -744,7 +750,7 @@ class Adherent extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$nbaffectedrows=$this->db->affected_rows();
+			$nbaffectedrows=$this->db->affected_rows($result);
 
 			if ($nbaffectedrows)
 			{
@@ -848,12 +854,20 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		// Update link to third party
+		if ($thirdpartyid > 0)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null where fk_soc = '".$thirdpartyid."'";
+			dol_syslog("Adherent::setThirdPartyId sql=".$sql);
+			$resql = $this->db->query($sql);
+		}
+
+		// Update link to third party
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid>0 ? $thirdpartyid : 'null');
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Adherent::setThirdPartyId sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
 			$this->db->commit();
 			return 1;

@@ -449,7 +449,7 @@ class Form
 	 *    	\brief      Output html form to select a third party
 	 *		\param      selected        Preselected type
 	 *		\param      htmlname        Name of field in form
-	 *    	\param      filter          Criteres optionnels de filtre
+	 *    	\param      filter          Optionnal filters criteras
 	 *		\param		showempty		Add an empty field
 	 */
 	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0)
@@ -457,7 +457,7 @@ class Form
 		global $conf,$user;
 
 		// On recherche les societes
-		$sql = "SELECT s.rowid, s.nom";
+		$sql = "SELECT s.rowid, s.nom, s.code_client, s.code_fournisseur";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.entity = ".$conf->entity;
@@ -666,39 +666,44 @@ class Form
 
 
 	/**
-	 *	\brief      Retourne la liste deroulante des utilisateurs
+	 *	\brief      Return select list of users
 	 *  \param      selected        Id user preselected
 	 *  \param      htmlname        Field name in form
 	 *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 *  \param      exclude         List of users id to exclude
 	 * 	\param		disabled		If select list must be disabled
+	 *  \param      include         List of users id to include
 	 */
-	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0)
+	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='')
 	{
 		global $conf;
 
 		// Permettre l'exclusion d'utilisateurs
 		if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
+		// Permettre l'inclusion d'utilisateurs
+		if (is_array($include))	$includeUsers = implode("','",$include);
 
 		// On recherche les utilisateurs
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.login FROM";
 		$sql.= " ".MAIN_DB_PREFIX ."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
+		if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
 		$sql.= " ORDER BY u.name ASC";
 
 		dol_syslog("Form::select_users sql=".$sql);
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
 			if ($show_empty) print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
 					{
@@ -1789,12 +1794,14 @@ class Form
 
 
 	/**
-	 *    \brief      Affiche formulaire de selection d'un utilisateur
-	 *    \param      page        Page
-	 *    \param      selected    Id of user preselected
-	 *    \param      htmlname    Name of input html field
+	 *    	\brief      Affiche formulaire de selection d'un utilisateur
+	 *    	\param      page        	Page
+	 *   	\param      selected    	Id of user preselected
+	 *    	\param      htmlname    	Name of input html field
+	 *  	\param      exclude         List of users id to exclude
+	 *  	\param      include         List of users id to include
 	 */
-	function form_users($page, $selected='', $htmlname='userid')
+	function form_users($page, $selected='', $htmlname='userid', $exclude='', $include='')
 	{
 		global $langs;
 
@@ -1805,7 +1812,7 @@ class Form
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			print $this->select_users($selected,$htmlname,1,0,0);
+			print $this->select_users($selected,$htmlname,1,$exclude,0,$include);
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
