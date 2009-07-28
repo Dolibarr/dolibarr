@@ -141,7 +141,16 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 }
 
 
-
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $inc
+ * @param unknown_type $parent
+ * @param unknown_type $lines
+ * @param unknown_type $level
+ * @param unknown_type $tasksrole
+ * @return unknown
+ */
 function PLinesb(&$inc, $parent, $lines, &$level, $tasksrole)
 {
 	global $user, $bc, $langs;
@@ -220,12 +229,12 @@ function PLinesb(&$inc, $parent, $lines, &$level, $tasksrole)
 /**
  * Show task lines with a particular parent
  * @param 	$inc				Counter that count number of lines legitimate to show (for return)
- * @param 	$parent				Id of parent task
+ * @param 	$parent				Id of parent task to start
  * @param 	$lines				Array of all tasks
  * @param 	$level				Level of task
  * @param 	$var				Color
  * @param 	$showproject		Show project columns
- * @param	$linesfiltered		''=No filter on users, Array=Shown tasks filtered on a particular user, the array contains tasks filtered
+ * @param	$taskrole			Array of task filtered on a particular user
  */
 function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskrole='')
 {
@@ -234,6 +243,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 	$lastprojectid=0;
 
 	$projectstatic = new Project($db);
+	$taskstatic = new Task($db);
 
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
@@ -257,13 +267,14 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 			// If there is filters to use
 			if (is_array($taskrole))
 			{
-				// If task not legitimate to show, search if a task exists later in tree
-				if (! isset($taskrole[$lines[$i]->id]))
+				// If task not legitimate to show, search if a legitimate task exists later in tree
+				if (! isset($taskrole[$lines[$i]->id]) && $lines[$i]->id != $lines[$i]->fk_parent)
 				{
 					// So search if task has a subtask legitimate to show
-					// FIXME
-					//SearchPLine($foundtaskforuserafter,$lines[$i]->id,$lines,$taskrole);
-					if ($foundtaskforuserlater)
+					$foundtaskforuserdeeper=0;
+					SearchTaskInChild($foundtaskforuserdeeper,$lines[$i]->id,$lines,$taskrole);
+					//print '$foundtaskforuserpeeper='.$foundtaskforuserdeeper.'<br>';
+					if ($foundtaskforuserdeeper > 0)
 					{
 						$showlineingray=1;		// We will show line but in gray
 					}
@@ -279,25 +290,38 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 				print "<tr ".$bc[$var].">\n";
 
 				print '<td>';
-				if (! $showlineingray) print '<a href="task.php?id='.$lines[$i]->id.'">';
-				print $lines[$i]->id;
-				if (! $showlineingray) print '</a>';
+				if ($showlineingray)
+				{
+					print '<i>'.$lines[$i]->id.'</i>';
+				}
+				else
+				{
+					$taskstatic->id=$lines[$i]->id;
+					$taskstatic->ref=$lines[$i]->id;
+					print $taskstatic->getNomUrl(1);
+				}
 				print '</td>';
 
 				print "<td>";
+				if ($showlineingray) print '<i>';
+				else print '<a href="task.php?id='.$lines[$i]->id.'">';
 				for ($k = 0 ; $k < $level ; $k++)
 				{
 					print "&nbsp;&nbsp;&nbsp;";
 				}
 				print $lines[$i]->title;
+				if ($showlineingray) print '</i>';
+				else print '</a>';
 				print "</td>\n";
 
 				if ($showproject)
 				{
 					print "<td>";
+					if ($showlineingray) print '<i>';
 					$projectstatic->id=$lines[$i]->projectid;
 					$projectstatic->ref=$lines[$i]->projectref;
 					print $projectstatic->getNomUrl(1);
+					if ($showlineingray) print '</i>';
 					print "</td>";
 				}
 
@@ -305,9 +329,11 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 				$minutes = round((($lines[$i]->duration - $heure) * 60),0);
 				$minutes = substr("00"."$minutes", -2);
 				print '<td align="right">';
-				if (! $showlineingray) print '<a href="task.php?id='.$lines[$i]->id.'">';
+				if ($showlineingray) print '<i>';
+				else print '<a href="time.php?id='.$lines[$i]->id.'">';
 				print $heure."&nbsp;h&nbsp;".$minutes;
-				if (! $showlineingray) print '</a>';
+				if ($showlineingray) print '</i>';
+				else print '</a>';
 				print '</td>';
 
 				print "</tr>\n";
@@ -327,6 +353,42 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 
 	return $inc;
 }
+
+
+/**
+ * Search in task lines with a particular parent if there is a task for a particular user (in taskrole)
+ * @param 	$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	$parent				Id of parent task to start
+ * @param 	$lines				Array of all tasks
+ * @param	$taskrole			Array of task filtered on a particular user
+ * @return	int					1 if there is
+ */
+function SearchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
+{
+	//print 'Search in line with parent id = '.$parent.'<br>';
+	for ($i = 0 ; $i < sizeof($lines) ; $i++)
+	{
+		// Process line $lines[$i]
+		if ($lines[$i]->fk_parent == $parent && $lines[$i]->id != $lines[$i]->fk_parent)
+		{
+			// If task is legitimate to show, no more need to search deeper
+			if (isset($taskrole[$lines[$i]->id]))
+			{
+				//print 'Found a legitimate task id='.$lines[$i]->id.'<br>';
+				$inc++;
+				return $inc;
+			}
+
+			SearchTaskInChild($inc, $lines[$i]->id, $lines, $taskrole);
+			//print 'Found inc='.$inc.'<br>';
+
+			if ($inc > 0) return $inc;
+		}
+	}
+
+	return $inc;
+}
+
 
 /**
  * Clean task not linked to a parent

@@ -1,4 +1,4 @@
-<?php
+ <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -186,7 +186,7 @@ else
 	if ($_REQUEST["mode"]=='mine') $tab='mytasks';
 
 	$head=project_prepare_head($projet);
-	dol_fiche_head($head, $tab, $langs->trans("Project"));
+	dol_fiche_head($head, $tab, $langs->trans("Project"),0,'project');
 
 	$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
 
@@ -223,13 +223,6 @@ else
 	print '</form>';
 	print '</div>';
 
-	// Get list of tasks in tasksarray and taskarrayfiltered
-	// We need all tasks (even not limited to a user because a task to user
-	// can have a parent that is not affected to him).
-	$tasksarray=$projet->getTasksArray(0, 0, 0);
-	// We load also tasks limited to a particular user
-	$tasksrole=($_REQUEST["mode"]=='mine' ? $projet->getTasksRoleForUser($user) : '');
-
 	/*
 	 * Actions
 	 */
@@ -250,6 +243,14 @@ else
 	print '</div>';
 
 	print '<br>';
+
+	// Get list of tasks in tasksarray and taskarrayfiltered
+	// We need all tasks (even not limited to a user because a task to user
+	// can have a parent that is not affected to him).
+	$tasksarray=$projet->getTasksArray(0, 0, 0);
+	// We load also tasks limited to a particular user
+	$tasksrole=($_REQUEST["mode"]=='mine' ? $projet->getTasksRoleForUser($user) : '');
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	if ($projectstatic->id) print '<td>'.$langs->trans("Project").'</td>';
@@ -261,11 +262,18 @@ else
 	$j=0;
 	$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 0, $tasksrole);
 	print "</table>";
+
 	print '</div>';
 
-	if ($nboftaskshown < sizeof($tasksarray))
+	// Test if database is clean. If not we clean it.
+	//print '$nboftaskshown='.$nboftaskshown.' sizeof($tasksarray)='.sizeof($tasksarray).' sizeof($tasksrole)='.sizeof($tasksrole).'<br>';
+	if ($_REQUEST["mode"]=='mine')
 	{
-		clean_orphelins($db);
+		if ($nboftaskshown < sizeof($tasksrole)) clean_orphelins($db);
+	}
+	else
+	{
+		if ($nboftaskshown < sizeof($tasksarray)) clean_orphelins($db);
 	}
 }
 

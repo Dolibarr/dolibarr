@@ -283,13 +283,14 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
 }
 
 /**
- *	\brief      Affiche le header d'une fiche
- *	\param	    links		Tableau de titre d'onglets
- *	\param	    active      0=onglet non actif, 1=onglet actif
- *	\param      title       Titre tabelau ("" par defaut)
+ *	\brief      Show tab header of a card
+ *	\param	    links		Array of tabs
+ *	\param	    active      Active tab name
+ *	\param      title       Title
  *	\param      notab		0=Add tab header, 1=no tab header
+ * 	\param		picto		Add a picto on tab titel
  */
-function dol_fiche_head($links, $active='0', $title='', $notab=0)
+function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 {
 	print "\n".'<div class="tabs">'."\n";
 
@@ -298,6 +299,7 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0)
 	{
 		$limittitle=30;
 		print '<a class="tabTitle">';
+		if ($picto) print img_object('',$picto).' ';
 		print
 		((!defined('MAIN_USE_SHORT_TITLE')) || (defined('MAIN_USE_SHORT_TITLE') &&  MAIN_USE_SHORT_TITLE))
 		? dol_trunc($title,$limittitle)

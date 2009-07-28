@@ -71,7 +71,7 @@ if ($projet->user_resp_id > 0)
 }
 
 $head=project_prepare_head($projet);
-dol_fiche_head($head, 'element', $langs->trans("Project"));
+dol_fiche_head($head, 'element', $langs->trans("Project"),0,'project');
 
 
 print '<table class="border" width="100%">';

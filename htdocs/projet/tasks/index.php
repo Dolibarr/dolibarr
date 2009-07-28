@@ -79,22 +79,28 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorde
 
 
 $projet = new Project($db);
-$tasksarray=$projet->getTasksArray($_GET["mode"]=='mine'?$user:0);
 
+
+// Get list of tasks in tasksarray and taskarrayfiltered
+// We need all tasks (even not limited to a user because a task to user
+// can have a parent that is not affected to him).
+$tasksarray=$projet->getTasksArray(0, 0, 0);
+// We load also tasks limited to a particular user
+$tasksrole=($_REQUEST["mode"]=='mine' ? $projet->getTasksRoleForUser($user) : '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Task").'</td>';
-print '<td>'.$langs->trans("Label").'</td>';
+print '<td width="80">'.$langs->trans("RefTask").'</td>';
+print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
-
-$level=0;
+// Show all lines in taskarray (recusrive function to go down on tree)
 $j=0;
-PLines($j, 0, $tasksarray, $level, true);
-
+$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 1, $tasksrole);
 print "</table>";
+
+
 print '</div>';
 
 

@@ -422,8 +422,10 @@ class Project extends CommonObject
 
 		/* Liste des taches et role sur la tache du user courant dans $tasksrole */
 		$sql = "SELECT a.fk_projet_task, a.role";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_actors as a";
-		$sql .= " WHERE a.fk_user = ".$user->id;
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_actors as a";
+		$sql.= " WHERE pt.rowid = a.fk_projet_task";
+		$sql.= " AND a.fk_user = ".$user->id;
+		if ($this->id) $sql.= " AND pt.fk_projet =".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)

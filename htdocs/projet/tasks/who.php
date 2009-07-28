@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/projet/tasks/task.php
  *	\ingroup    projet
- *	\brief      Fiche tâches d'un projet
+ *	\brief      Fiche tï¿½ches d'un projet
  *	\version    $Id$
  */
 
@@ -63,7 +63,7 @@ if ($_GET["id"] > 0)
 
 		$head=task_prepare_head($task);
 
-		dol_fiche_head($head, 'who', $langs->trans("Task"));
+		dol_fiche_head($head, 'who', $langs->trans("Task"),0,'projecttask');
 
 		if ($mesg) print $mesg.'<br>';
 
@@ -72,7 +72,13 @@ if ($_GET["id"] > 0)
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<table class="border" width="100%">';
 
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$task->id.'</td></tr>';
+		// Ref
+		print '<tr><td width="30%">'.$langs->trans("Ref");
+		print '</td><td colspan="3">';
+		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
+		print '</td></tr>';
+
+		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->title.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
