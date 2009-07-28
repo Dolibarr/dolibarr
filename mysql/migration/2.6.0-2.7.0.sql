@@ -242,3 +242,7 @@ alter table llx_facture_fourn_det add column label             varchar(255) afte
 
 alter table llx_societe_rib modify column iban_prefix varchar(34);
 alter table llx_bank_account modify column iban_prefix varchar(34);
+
+
+alter table llx_projet add column datec date after fk_statut;
+

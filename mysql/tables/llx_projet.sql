@@ -23,8 +23,9 @@ create table llx_projet
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc           integer,
   fk_statut        smallint NOT NULL,
+  datec            date,         -- date creation project
   tms              timestamp,
-  dateo            date,         -- date d'ouverture du projet
+  dateo            date,         -- date start project
   ref              varchar(50),
   entity           integer DEFAULT 1 NOT NULL, -- multi company id
   title            varchar(255),

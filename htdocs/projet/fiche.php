@@ -57,21 +57,24 @@ $result = restrictedArea($user, 'projet', $projetid);
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
 	//print $_POST["socid"];
-	$pro = new Project($db);
-	$pro->ref             = $_POST["ref"];
-	$pro->title           = $_POST["title"];
-	$pro->socid           = $_POST["socid"];
-	$pro->user_resp_id    = $_POST["officer_project"];
-	$result = $pro->create($user);
+	$project = new Project($db);
+	$project->ref             = $_POST["ref"];
+	$project->title           = $_POST["title"];
+	$project->socid           = $_POST["socid"];
+	$project->user_resp_id    = $_POST["officer_project"];
+	$project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+	$project->datec=dol_now('tzserver');
+
+	$result = $project->create($user);
 	if ($result > 0)
 	{
-		Header("Location:fiche.php?id=".$pro->id);
+		Header("Location:fiche.php?id=".$project->id);
 		exit;
 	}
 	else
 	{
 		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($pro->error).'</div>';
+		$mesg='<div class="error">'.$langs->trans($project->error).'</div>';
 		$_GET["action"] = 'create';
 	}
 }
@@ -101,6 +104,8 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 			$projet->title        = $_POST["title"];
 			$projet->socid        = $_POST["socid"];
 			$projet->user_resp_id = $_POST["officer_project"];
+			$projet->dateo           = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+
 			$projet->update($user);
 
 			$_GET["id"]=$projet->id;  // On retourne sur la fiche projet
@@ -177,6 +182,11 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	}
 	print '</td></tr>';
 
+	// Date
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print $html->select_date('','project');
+	print '</td></tr>';
+
 	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 	print '</table>';
 	print '</form>';
@@ -230,6 +240,11 @@ else
 		$html->select_users($projet->user_resp_id,'officer_project',1);
 		print '</td></tr>';
 
+		// Date
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+		print $html->select_date($projet->date_start,'project');
+		print '</td></tr>';
+
 		print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
 		print '</form>';
@@ -256,6 +271,11 @@ else
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
 		if ($projet->user->id) print $projet->user->getNomUrl(1);
 		else print $langs->trans('SharedProject');
+		print '</td></tr>';
+
+		// Date
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+		print dol_print_date($projet->date_start,'day');
 		print '</td></tr>';
 
 		print '</table>';

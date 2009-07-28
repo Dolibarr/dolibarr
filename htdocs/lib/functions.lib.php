@@ -416,7 +416,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 
 	// Analyse de la date (deprecated)   Ex: 19700101, 19700101010000
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg)
-	 || eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
+	|| eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
 	{
 		// This part of code should not be used.
 		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
@@ -705,7 +705,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64)
 
 	$newemail=$email;
 
-    if (empty($email)) return '&nbsp;';
+	if (empty($email)) return '&nbsp;';
 
 	if (! empty($addlink))
 	{
@@ -1439,14 +1439,17 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		if (empty($user->rights->$feature->lire)
 		&& empty($user->rights->$feature->read)) $readok=0;
 	}
-	//print "Read access is down";
-	if (! $readok) accessforbidden();
+	if (! $readok)
+	{
+		//print "Read access is down";
+		accessforbidden();
+	}
 	//print "Read access is ok";
 
 	// Check write permission from module
 	$createok=1;
 	if ( (isset($_GET["action"])  && $_GET["action"]  == 'create')
-	  || (isset($_POST["action"]) && $_POST["action"] == 'create') )
+	|| (isset($_POST["action"]) && $_POST["action"] == 'create') )
 	{
 		if ($feature == 'societe')
 		{
@@ -1506,7 +1509,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 			$sql.= " AND dbt.entity IN (0,".$conf->entity.")";
 		}
-   	else if ($feature == 'societe')
+		else if ($feature == 'societe')
 		{
 			// If external user: Check permission for external users
 			if ($user->societe_id > 0)
@@ -1654,7 +1657,7 @@ function dol_print_error($db='',$error='')
 	{
 		print $langs->trans("DolibarrHasDetectedError").".<br>\n";
 		if (! empty($conf->global->MAIN_FEATURES_LEVEL))
-			print "You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
+		print "You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
 		print $langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;

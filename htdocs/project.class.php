@@ -41,6 +41,9 @@ class Project extends CommonObject
 	var $id;
 	var $ref;
 	var $title;
+	var $date_c;
+	var $date_m;
+	var $date_start;
 	var $socid;
 	var $user_resp_id;
 
@@ -70,12 +73,14 @@ class Project extends CommonObject
 			return -1;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo, fk_statut)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, datec, dateo, fk_statut)";
 		$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
 		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".($this->user_resp_id>0?$this->user_resp_id:'null').",";
-		$sql.= " ".$this->db->idate(mktime()).", 0)";
+		$sql.= " ".($this->datec!=''?$this->db->idate($this->datec):'null').",";
+		$sql.= " ".($this->dateo!=''?$this->db->idate($this->dateo):'null').",";
+		$sql.= " 0)";
 
 		dol_syslog("Project::create sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -86,8 +91,8 @@ class Project extends CommonObject
 		}
 		else
 		{
-			dol_syslog("Project::Create error -2");
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Project::Create error -2 ".$this->error, LOG_ERR);
 			$result = -2;
 		}
 
@@ -104,16 +109,19 @@ class Project extends CommonObject
 			$sql.= ", title = '".$this->title."'";
 			$sql.= ", fk_soc = ".($this->socid > 0?$this->socid:"null");
 			$sql.= ", fk_user_resp = ".$this->user_resp_id;
+			$sql.= ", datec=".($this->datec!=''?$this->db->idate($this->datec):'null');
+			$sql.= ", dateo=".($this->dateo!=''?$this->db->idate($this->dateo):'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Project::update sql=".$sql,LOG_DEBUG);
+			dol_syslog("Project::Update sql=".$sql,LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
 				$result = 0;
 			}
 			else
 			{
-				dol_syslog($this->db->error());
+				$this->error=$this->db->lasterror();
+				dol_syslog("Project::Update error -2 ".$this->error, LOG_ERR);
 				$result = -2;
 			}
 		}
@@ -135,7 +143,7 @@ class Project extends CommonObject
 	 */
 	function fetch($id,$ref='')
 	{
-		$sql = "SELECT rowid, ref, title, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
+		$sql = "SELECT rowid, ref, title, datec, tms, dateo, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		if ($ref) $sql.= " WHERE ref='".$ref."'";
 		else $sql.= " WHERE rowid=".$id;
@@ -152,6 +160,9 @@ class Project extends CommonObject
 				$this->ref            = $obj->ref;
 				$this->title          = $obj->title;
 				$this->titre          = $obj->title;
+				$this->date_c         = $this->db->jdate($obj->datec);
+				$this->date_m         = $this->db->jdate($obj->tms);
+				$this->date_start     = $this->db->jdate($obj->dateo);
 				$this->note           = $obj->note;
 				$this->socid          = $obj->fk_soc;
 				$this->societe->id    = $obj->fk_soc;	// For backward compatibility
@@ -170,7 +181,8 @@ class Project extends CommonObject
 		}
 		else
 		{
-			print $this->db->error();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Project::fetch ".$this->error, LOG_ERR);
 			return -2;
 		}
 	}
@@ -210,7 +222,7 @@ class Project extends CommonObject
 		}
 		else
 		{
-			print $this->db->error();
+			print $this->db->lasterror();
 		}
 
 	}
@@ -325,7 +337,7 @@ class Project extends CommonObject
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user)";
 					$sql.= " VALUES (".$task_id.",".($id_resp>0?$id_resp:'null').")";
 
-					dol_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
+					dol_syslog("Project::CreateTask sql=".$sql, LOG_DEBUG);
 					if ($this->db->query($sql) )
 					{
 						$this->db->commit();
@@ -334,7 +346,7 @@ class Project extends CommonObject
 					else
 					{
 						$this->error=$this->db->lasterror();
-						dol_syslog("Project::CreateTask error -3 ".$this->error,LOG_ERR);
+						dol_syslog("Project::CreateTask error -3 ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
@@ -383,8 +395,8 @@ class Project extends CommonObject
 		}
 		else
 		{
-			dol_syslog("Project::TaskAddTime error -2",LOG_ERR);
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Project::TaskAddTime error -2 ".$this->error,LOG_ERR);
 			$result = -2;
 		}
 
@@ -401,8 +413,8 @@ class Project extends CommonObject
 			}
 			else
 			{
-				dol_syslog("Project::TaskAddTime error -3",LOG_ERR);
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
+				dol_syslog("Project::TaskAddTime error -3 ".$this->error, LOG_ERR);
 				$result = -2;
 			}
 		}
