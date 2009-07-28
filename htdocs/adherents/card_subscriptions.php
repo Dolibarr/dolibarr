@@ -81,7 +81,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	}
 	$cotisation=$_POST["cotisation"];	// Amount of subscription
 	$label=$_POST["label"];
-	
+
 	if (! $datecotisation)
 	{
 		$errmsg=$langs->trans("BadDateFormat");
@@ -91,7 +91,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	{
 		$datesubend=dol_time_plus_duree(dol_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
 	}
-	
+
 	// Payment informations
 	$accountid=$_POST["accountid"];
 	$operation=$_POST["operation"];	// Payment mode
@@ -186,7 +186,7 @@ $adho->fetch_optionals();
  */
 $head = member_prepare_head($adh);
 
-dol_fiche_head($head, 'subscription', $langs->trans("Member"));
+dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
 
 print '<form action="fiche.php" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -433,13 +433,13 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 		print '<tr><td>'.$langs->trans("Label").'</td>';
 		print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
 		print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
-		
+
 		// Bank account
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 		{
 			// Title payments
 			print '<tr><td colspan="2"><b>'.$langs->trans("Payment").'</b></td></tr>';
-			
+
 			// Bank account
 			print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
 			$html->select_comptes($_POST["accountid"],'accountid',0,'',1);
@@ -449,17 +449,17 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 			print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
 			$html->select_types_paiements($_POST["operation"],'operation');
 			print "</td></tr>\n";
-	
+
 			print '<tr><td>'.$langs->trans('Numero');
 			print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 			print '</td>';
 			print '<td><input name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
-	
+
 			print '<tr><td>'.$langs->trans('CheckTransmitter');
 			print ' <em>('.$langs->trans("ChequeMaker").')</em>';
 			print '</td>';
 			print '<td><input name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
-	
+
 			print '<tr><td>'.$langs->trans('Bank');
 			print ' <em>('.$langs->trans("ChequeBank").')</em>';
 			print '</td>';

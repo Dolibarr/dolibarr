@@ -80,7 +80,7 @@ if (! $result)
  */
 $head = member_prepare_head($adh);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Member"));
+dol_fiche_head($head, 'ldap', $langs->trans("Member"), 0, 'user');
 
 
 /*
@@ -129,7 +129,7 @@ $langs->load("admin");
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPMemberDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
 
-// LDAP Clé
+// LDAP Clï¿½
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_MEMBERS."</td></tr>\n";
 
 // LDAP Server
@@ -173,7 +173,7 @@ if ($result > 0)
 	{
 		if (! is_array($records))
 		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';	
+			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{

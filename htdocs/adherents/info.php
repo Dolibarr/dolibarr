@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/adherents/info.php
-        \ingroup    member
-		\brief      Page des informations d'un adherent
-		\version    $Id$
-*/
+ *      \file       htdocs/adherents/info.php
+ *      \ingroup    member
+ *		\brief      Page des informations d'un adherent
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -55,7 +55,7 @@ $adh->info($_GET["id"]);
  */
 $head = member_prepare_head($adh);
 
-dol_fiche_head($head, 'info', $langs->trans("Member"));
+dol_fiche_head($head, 'info', $langs->trans("Member"), 0, 'user');
 
 
 print '<table width="100%"><tr><td>';

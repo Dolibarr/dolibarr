@@ -50,7 +50,7 @@ $adh->fetch($id);
 if ($_POST["action"] == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
 {
 	$db->begin();
-	
+
 	$res=$adh->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
@@ -76,14 +76,14 @@ $html = new Form($db);
 if ($id)
 {
 	$head = member_prepare_head($adh);
-	
-	dol_fiche_head($head, 'note', $langs->trans("Member"));
+
+	dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
 	print "<form method=\"post\" action=\"note.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	
+
     print '<table class="border" width="100%">';
 
     // Reference
@@ -140,7 +140,7 @@ if ($id)
     print "</table>";
 	print "</form>\n";
 
-	
+
     /*
     * Actions
     */

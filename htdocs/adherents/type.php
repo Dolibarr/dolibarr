@@ -258,7 +258,7 @@ if ($rowid > 0)
         $head[$h][2] = 'card';
         $h++;
 
-        dol_fiche_head($head, 'card', $langs->trans("MemberType"));
+        dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
 
 
         print '<table class="border" width="100%">';
@@ -330,7 +330,7 @@ if ($rowid > 0)
         $head[$h][2] = 'card';
         $h++;
 
-        dol_fiche_head($head, 'card', $langs->trans("MemberType"));
+        dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
 
 
         print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'">';

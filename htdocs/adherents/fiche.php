@@ -651,7 +651,7 @@ if ($action == 'edit')
 	 */
 	$head = member_prepare_head($adh);
 
-	dol_fiche_head($head, 'general', $langs->trans("Member"));
+	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 	$rowspan=15;
 	$rowspan+=sizeof($adho->attribute_label);
@@ -947,7 +947,7 @@ if ($rowid && $action != 'edit')
 	 */
 	$head = member_prepare_head($adh);
 
-	dol_fiche_head($head, 'general', $langs->trans("Member"));
+	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
