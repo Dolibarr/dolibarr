@@ -409,15 +409,7 @@ class Menubase
 					$perms = $this->verifCond($menu['perms']);
 					//print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
 				}
-/*
-				// Define $constraint
-				$constraint = true;
-				if ($menu['action'])
-				{
-					$constraint = $this->verifCond($menu['action']);
-					//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
-				}
-*/
+
 				// Define $enabled
 				$enabled = true;
 				if ($menu['enabled'])
@@ -432,7 +424,7 @@ class Menubase
 				$tabMenu[$b][0] = $menu['rowid'];
 				$tabMenu[$b][1] = $menu['fk_menu'];
 				$tabMenu[$b][2] = $menu['url'];
-				if (! eregi($tabMenu[$b][2],"^(http:\/\/|https:\/\/)"))
+				if (! eregi("^(http:\/\/|https:\/\/)",$tabMenu[$b][2]))
 				{
 					if (eregi('\?',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
 					else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
@@ -442,8 +434,6 @@ class Menubase
 				$tabMenu[$b][6] = $menu['leftmenu'];
 				if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
 				else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
-				//if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $constraint;
-				//else $tabMenu[$b][7] = ($tabMenu[$b][7] && $constraint);
 				if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $enabled;
 				else $tabMenu[$b][7] = ($tabMenu[$b][7] && $enabled);
 
@@ -510,7 +500,7 @@ class Menubase
 					{
 						//				print "x".$pere." ".$tab[$x][6];
 
-						$this->newmenu->add((! eregi($tab[$x][2],"^(http:\/\/|https:\/\/)")) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
+						$this->newmenu->add((! eregi("^(http:\/\/|https:\/\/)",$tab[$x][2])) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
 					}
 				}
@@ -672,8 +662,6 @@ class Menubase
 				$tabMenu[$b]['atarget'] = $objm->target;
 				if (! isset($tabMenu[$b]['right'])) $tabMenu[$b]['right'] = $perms;
 				else $tabMenu[$b]['right'] = ($tabMenu[$b]['right'] && $perms);
-				//if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $constraint;
-				//else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $constraint);
 				if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $enabled;
 				else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $enabled);
 

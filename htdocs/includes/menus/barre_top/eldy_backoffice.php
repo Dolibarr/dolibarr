@@ -416,7 +416,7 @@ class MenuTop {
 				$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
 				if ($tabMenu[$i]['right'] == true)	// Is allowed
 				{
-					if (eregi($tabMenu[$i]['url'],"^(http:\/\/|https:\/\/)"))
+					if (eregi("^(http:\/\/|https:\/\/)",$tabMenu[$i]['url']))
 					{
 						$url = $tabMenu[$i]['url'];
 					}

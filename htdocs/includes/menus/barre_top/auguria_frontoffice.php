@@ -80,7 +80,7 @@ class MenuTop {
 				if ($tabMenu[$i]['right'] == true)	// Is allowed
 				{
 					// Define url
-					if (eregi($tabMenu[$i]['url'],"^(http:\/\/|https:\/\/)"))
+					if (eregi("^(http:\/\/|https:\/\/)",$tabMenu[$i]['url']))
 					{
 						$url = $tabMenu[$i]['url'];
 					}
