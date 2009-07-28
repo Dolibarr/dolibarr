@@ -3,8 +3,8 @@ README (French)
 Building packages
 ################################
 
-Les sous répertoires du répertoire "build" contiennent tous les fichiers
-requis pour packager Dolibarr de manière automatisé.
+Les sous repertoires du repertoire "build" contiennent tous les fichiers
+requis pour packager Dolibarr de maniere automatisee.
 On trouve plusieurs outils:
 
 - Pour construire un package Dolibarr complet, il suffit de
@@ -29,17 +29,17 @@ On trouve plusieurs outils:
   afin d'y mettre le repository Dolibarr.
 > Modifier AppVerName et OutputBaseFilename.
 > Lancer innosetup, ouvrir le fichier build/exe/doliwamp2.4.iss et cliquer sur
-  le bouton "Compile". Le fichier .exe sera fabriqué dans le répertoire build.
+  le bouton "Compile". Le fichier .exe sera fabrique dans le repertoire build.
 
 
 Note: 
 
-Le répertoire build et tout ce qu'il contient n'est absolument pas requis
-pour faire fonctionner Dolibarr. Ils ne servent qu'à la génération des
-packages, lequels packages, une fois construit, n'incluent par le répertoire
+Le repertoire build et tout ce qu'il contient n'est absolument pas requis
+pour faire fonctionner Dolibarr. Ils ne servent qu'a la generation des
+packages. Certains packages, une fois construit, n'incluent par le repertoire
 "build".
 
-On trouve dans le répertoire "build", les sous-répertoires utilisés par
+On trouve dans le repertoire "build", les sous-repertoires utilises par
 l'outil makepack-dolibarr.pl:
 
 * deb:
@@ -49,13 +49,24 @@ Fichier de config pour construire un package Debian.
 Fichier de config pour construire un package Redhat ou Mandrake.
 
 * tgz:
-Fichier de config pour construire un package tgz (ne contenant que les
-fichiers et instructions d'installation manuelle).
+Fichier de config pour construire un package tgz.
 
 * exe:
 Fichier de config pour construire un package exe pour Windows des sources 
 ou pour construire l'assistant d'installation complet DoliWamp.
 
+* zip:
+Fichier de config pour construire un package zip.
+
+* live:
+Fichier pour fabriquer un live CD de demo de Dolibarr.
+
+* patch:
+Fichier exemple de generation de fichier patch pour diffusion d'une
+modification de Dolibarr.
+
+* doap:
+Fichier descriptif DOAP pour promouvoir/decrire la version de Dolibarr.
+
 * pad:
-Fichier de config pour construire un fichier descriptif PAD pour la promotion
-de nouvelles versions de Dolibarr.
+Fichier descriptif PAD pour promouvoir/decrire la version de Dolibarr.

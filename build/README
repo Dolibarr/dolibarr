@@ -36,11 +36,20 @@ To build Debian package.
 To build Redhat or Mandrake package.
 
 * tgz:
-To build tgz package (containing Dolibarr files et setup documentation).
+To build a tgz package.
 
 * exe:
 To build exe package for Windows that distribute Dolibarr sources or
 to build the complete DoliWamp package.
 
+* tgz:
+To build a zip package.
+
+* doap:
+To build Doap descriptor to promote/describe Dolibarr releases.
+
 * pad:
-To build a PAD file descriptor to promote Dolibarr new versions.
+To build a PAD file descriptor to promote/describe Dolibarr releases.
+
+* patch:
+Script file to generate a patch file to distribute a Dolibarr mod.
