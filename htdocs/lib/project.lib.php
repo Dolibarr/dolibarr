@@ -69,8 +69,13 @@ function task_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'task';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("TimeSpent");
-	$head[$h][2] = 'tasks';
+	$head[$h][2] = 'time';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/who.php?id='.$object->id;
@@ -213,16 +218,16 @@ function PLinesb(&$inc, $parent, $lines, &$level, $tasksrole)
 
 
 /**
- * Enter description here...
- *
- * @param unknown_type $inc
- * @param unknown_type $parent
- * @param unknown_type $lines
- * @param unknown_type $level
- * @param unknown_type $var
- * @param unknown_type $showproject
+ * Show task lines with a particular parent
+ * @param 	$inc				Counter that count number of lines legitimate to show (for return)
+ * @param 	$parent				Id of parent task
+ * @param 	$lines				Array of all tasks
+ * @param 	$level				Level of task
+ * @param 	$var				Color
+ * @param 	$showproject		Show project columns
+ * @param	$linesfiltered		''=No filter on users, Array=Shown tasks filtered on a particular user, the array contains tasks filtered
  */
-function PLines(&$inc, $parent, $lines, &$level, $var, $showproject=1)
+function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskrole='')
 {
 	global $user, $bc, $langs;
 
@@ -232,6 +237,8 @@ function PLines(&$inc, $parent, $lines, &$level, $var, $showproject=1)
 
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
+		// Process line $lines[$i]
+
 		if ($parent == 0) $level = 0;
 
 		if ($lines[$i]->fk_parent == $parent)
@@ -243,39 +250,74 @@ function PLines(&$inc, $parent, $lines, &$level, $var, $showproject=1)
 				$lastprojectid=$lines[$i]->projectid;
 			}
 
-			print "<tr ".$bc[$var].">\n";
+			// Show task line.
+			$showline=1;
+			$showlineingray=0;
 
-			print '<td><a href="task.php?id='.$lines[$i]->id.'">'.$lines[$i]->id.'</a></td>';
-
-			print "<td>";
-			for ($k = 0 ; $k < $level ; $k++)
+			// If there is filters to use
+			if (is_array($taskrole))
 			{
-				print "&nbsp;&nbsp;&nbsp;";
+				// If task not legitimate to show, search if a task exists later in tree
+				if (! isset($taskrole[$lines[$i]->id]))
+				{
+					// So search if task has a subtask legitimate to show
+					// FIXME
+					//SearchPLine($foundtaskforuserafter,$lines[$i]->id,$lines,$taskrole);
+					if ($foundtaskforuserlater)
+					{
+						$showlineingray=1;		// We will show line but in gray
+					}
+					else
+					{
+						$showline=0;			// No reason to show line
+					}
+				}
 			}
-			print $lines[$i]->title;
-			print "</td>\n";
 
-			if ($showproject)
+			if ($showline)
 			{
+				print "<tr ".$bc[$var].">\n";
+
+				print '<td>';
+				if (! $showlineingray) print '<a href="task.php?id='.$lines[$i]->id.'">';
+				print $lines[$i]->id;
+				if (! $showlineingray) print '</a>';
+				print '</td>';
+
 				print "<td>";
-				$projectstatic->id=$lines[$i]->projectid;
-				$projectstatic->ref=$lines[$i]->projectref;
-				print $projectstatic->getNomUrl(1);
-				print "</td>";
+				for ($k = 0 ; $k < $level ; $k++)
+				{
+					print "&nbsp;&nbsp;&nbsp;";
+				}
+				print $lines[$i]->title;
+				print "</td>\n";
+
+				if ($showproject)
+				{
+					print "<td>";
+					$projectstatic->id=$lines[$i]->projectid;
+					$projectstatic->ref=$lines[$i]->projectref;
+					print $projectstatic->getNomUrl(1);
+					print "</td>";
+				}
+
+				$heure = intval($lines[$i]->duration);
+				$minutes = round((($lines[$i]->duration - $heure) * 60),0);
+				$minutes = substr("00"."$minutes", -2);
+				print '<td align="right">';
+				if (! $showlineingray) print '<a href="task.php?id='.$lines[$i]->id.'">';
+				print $heure."&nbsp;h&nbsp;".$minutes;
+				if (! $showlineingray) print '</a>';
+				print '</td>';
+
+				print "</tr>\n";
+
+				if (! $showlineingray) $inc++;
+
+				$level++;
+				if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole);
+				$level--;
 			}
-
-			$heure = intval($lines[$i]->duration);
-			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
-			$minutes = substr("00"."$minutes", -2);
-			print '<td align="right"><a href="task.php?id='.$lines[$i]->id.'">'.$heure."&nbsp;h&nbsp;".$minutes.'</a></td>';
-
-			print "</tr>\n";
-
-			$inc++;
-
-			$level++;
-			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $var, $showproject);
-			$level--;
 		}
 		else
 		{

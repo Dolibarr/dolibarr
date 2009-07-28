@@ -223,9 +223,12 @@ else
 	print '</form>';
 	print '</div>';
 
-
-	$tasksarray=$projet->getTasksArray($_REQUEST["mode"]=='mine'?$user:0, 0);
-
+	// Get list of tasks in tasksarray and taskarrayfiltered
+	// We need all tasks (even not limited to a user because a task to user
+	// can have a parent that is not affected to him).
+	$tasksarray=$projet->getTasksArray(0, 0, 0);
+	// We load also tasks limited to a particular user
+	$tasksrole=($_REQUEST["mode"]=='mine' ? $projet->getTasksRoleForUser($user) : '');
 
 	/*
 	 * Actions
@@ -250,12 +253,13 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	if ($projectstatic->id) print '<td>'.$langs->trans("Project").'</td>';
-	print '<td>'.$langs->trans("RefTask").'</td>';
+	print '<td width="80">'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print "</tr>\n";
+	// Show all lines in taskarray (recusrive function to go down on tree)
 	$j=0;
-	$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 0);
+	$nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 0, $tasksrole);
 	print "</table>";
 	print '</div>';
 

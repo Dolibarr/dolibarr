@@ -33,31 +33,8 @@ if (!$user->rights->projet->lire) accessforbidden();
  * Actions
  */
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
-{
-	$task = new Task($db);
-	if ($task->fetch($_GET["id"]) >= 0 )
-	{
-		$projet = new Project($db);
-		$result=$projet->fetch($task->fk_projet);
-		if (! empty($projet->socid))
-		{
-			$projet->societe->fetch($projet->socid);
-		}
 
-		if ($task->delete($user) > 0)
-		{
-			Header("Location: index.php");
-			exit;
-		}
-		else
-		{
-			$langs->load("errors");
-			$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
-			$_POST["action"]='';
-		}
-	}
-}
+
 
 
 /*
@@ -86,15 +63,9 @@ if ($_GET["id"] > 0)
 
 		$head=task_prepare_head($task);
 
-		dol_fiche_head($head, 'task', $langs->trans("Task"));
+		dol_fiche_head($head, 'time', $langs->trans("Task"));
 
 		if ($mesg) print $mesg.'<br>';
-
-		if ($_GET["action"] == 'delete')
-		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
-			if ($ret == 'html') print '<br>';
-		}
 
 		print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -151,12 +122,46 @@ if ($_GET["id"] > 0)
 		 */
 		print '<div class="tabsAction">';
 
+		/*
 		if ($user->rights->projet->creer)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
+		*/
 
 		print '</div>';
+
+		print '<br>';
+		print '<input type="hidden" name="action" value="addtime">';
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+		print '<td align="right">'.$langs->trans("By").'</td>';
+		print "</tr>\n";
+
+		foreach ($tasks as $task_time)
+		{
+			$var=!$var;
+  		    print "<tr ".$bc[$var].">";
+
+  		    // Date
+  		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'day').' '.dol_print_date($db->jdate($task_time->task_date),'%A').'</td>';
+
+		    // Time spent
+		    $heure = intval($task_time->task_duration);
+			$minutes = round((($task_time->task_duration - $heure) * 60),0);
+			$minutes = substr("00"."$minutes", -2);
+			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
+
+			// User
+			$user->id=$task_time->rowid;
+		    $user->nom=$task_time->login;
+		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
+		    print "</tr>\n";
+		}
+
+		print "</table>";
 
 	}
 }

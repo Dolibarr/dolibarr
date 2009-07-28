@@ -411,7 +411,7 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * Enter description here...
+	 * Return array of role of user for each projects
 	 *
 	 * @param unknown_type $user
 	 * @return unknown
@@ -457,7 +457,7 @@ class Project extends CommonObject
 	function getTasksArray($usert=0, $userp=0, $mode=0)
 	{
 		global $conf;
-		
+
 		$tasks = array();
 
 		//print $usert.'-'.$userp;
@@ -514,15 +514,15 @@ class Project extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
+				$tasks[$i]->id           = $obj->rowid;
 				$tasks[$i]->projectid    = $obj->projectid;
 				$tasks[$i]->projectref   = $obj->ref;
 				$tasks[$i]->projectlabel = $obj->title;
-				$tasks[$i]->id           = $obj->rowid;
 				$tasks[$i]->title        = $obj->title;
 				$tasks[$i]->fk_parent    = $obj->fk_task_parent;
 				$tasks[$i]->duration     = $obj->duration_effective;
-				$tasks[$i]->name         = $obj->name;
-				$tasks[$i]->firstname    = $obj->firstname;
+				$tasks[$i]->name         = $obj->name;			// Name of project leader
+				$tasks[$i]->firstname    = $obj->firstname;		// Firstname of project leader
 				$i++;
 			}
 			$this->db->free();
