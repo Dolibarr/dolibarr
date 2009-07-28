@@ -516,7 +516,7 @@ print '<br>';
         <?php echo $langs->trans("FileNameToGenerate"); ?></label> :
     <input type="text" name="filename_template" size="60" id="filename_template"
      value="<?php
-$file='mysqldump_'.$dolibarr_main_db_name.'_'.strftime("%Y%m%d%H%M").'.sql';
+$file='mysqldump_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.sql';
 echo $file;
 ?>" />
 

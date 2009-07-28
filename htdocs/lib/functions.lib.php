@@ -63,11 +63,13 @@ function dol_now($mode='tzserver')
 	return $ret;
 }
 
+
 /**
  *	\brief          Clean a string to use it as a file name.
  *	\param          str             String to clean
  * 	\param			newstr			String to replace bad chars by
  *	\return         string          String cleaned (a-zA-Z_)
+ * 	\seealso		dol_string_nospecial, dol_string_unaccent
  */
 function dol_sanitizeFileName($str,$newstr='_')
 {
@@ -75,9 +77,10 @@ function dol_sanitizeFileName($str,$newstr='_')
 }
 
 /**
- *	\brief          Clean a string from all accent characters
+ *	\brief          Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName.
  *	\param          str             String to clean
  *	\return         string          Cleaned string
+ * 	\seealso		dol_sanitizeFilename, dol_string_nospecial
  */
 function dol_string_unaccent($str)
 {
@@ -120,10 +123,11 @@ function dol_string_unaccent($str)
 }
 
 /**
- *	\brief          Clean a string from all punctuation characters
+ *	\brief          Clean a string from all punctuation characters to use it as a ref or login.
  *	\param          str             String to clean
  * 	\param			newstr			String to replace bad chars by
  * 	\return         string          Cleaned string
+ * 	\seealso		dol_sanitizeFilename, dol_string_unaccent
  */
 function dol_string_nospecial($str,$newstr='_')
 {
