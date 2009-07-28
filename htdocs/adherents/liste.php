@@ -177,7 +177,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),"liste.php","",$param,"",'width="60" align="center"',$sortfield,$sortorder);
     print "</tr>\n";
 
