@@ -2,6 +2,7 @@
 CHARSET=UTF-8
 Proposals=Propositions commerciales
 Proposal=Proposition commerciale
+ProposalShort=Proposition
 ProposalsDraft=Propositions commerciales brouillons
 ProposalDraft=Proposition commerciale brouillon
 Prop=Propositions commerc.

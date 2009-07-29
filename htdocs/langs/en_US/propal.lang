@@ -2,6 +2,7 @@
 CHARSET=UTF-8
 Proposals=Commercial proposals
 Proposal=Commercial proposal
+ProposalShort=Proposal
 ProposalsDraft=Draft commercial proposals
 ProposalDraft=Draft commercial proposal
 ProposalsOpened=Opened commercial proposals

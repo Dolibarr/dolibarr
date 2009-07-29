@@ -629,9 +629,9 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			print '<td>';
 			if ($histo[$key]['pid'] && $conf->propal->enabled)
 			{
-				print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$histo[$key]['pid'].'">'.img_object($langs->trans("ShowPropal"),"propal");
-				print $langs->trans("Propal");
-				print '</a>';
+				$propalstatic->ref=$langs->trans("ProposalShort");
+				$propalstatic->id=$histo[$key]['pid'];
+				print $propalstatic->getNomUrl(1);
 			}
 			elseif ($histo[$key]['oid'] && $conf->commande->enabled)
 			{
