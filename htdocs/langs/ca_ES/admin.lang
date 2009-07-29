@@ -1066,3 +1066,5 @@ EndPointIs = Els clients SOAP hauran d'enviar les seves sol·licituds al punt fi
 ##### Bank ##### =  = 
 BankSetupModule = Configuració del mòdul Banc
 FreeLegalTextOnChequeReceipts = Menció complementària a les remeses de xecs
+##### Multicompany ##### =  = 
+MultiCompanySetup = Configuració del mòdul Multi-empresa

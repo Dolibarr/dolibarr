@@ -1066,3 +1066,5 @@ EndPointIs = Losl cliente SOAP deberán enviar sus solicitudes all punto final e
 ##### Bank ##### = 
 BankSetupModule = Configuración del módulo Banco
 FreeLegalTextOnChequeReceipts = Mención complementaria en las remesas de cheques
+##### Multicompany ##### = 
+MultiCompanySetup = Configuración del módulo Multi-empresa
