@@ -38,7 +38,7 @@ class ProductLivre extends Product
 
 	/**
 	 *    \brief      Constructeur de la classe
-	 *    \param      DB          Handler accès base de données
+	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id produit (0 par defaut)
 	 */
 	function ProductLivre($DB=0, $id=0, $user=0)
@@ -563,10 +563,16 @@ class ProductLivre extends Product
 
 	function GetAvailableFormat()
 	{
+		global $conf;
+		
 		$this->available_formats = array();
-
-		$sql = "SELECT rowid,value FROM ".MAIN_DB_PREFIX."const ";
-		$sql.=" WHERE name LIKE 'EDITEUR_LIVRE_FORMAT_%';";
+		
+		$sql = "SELECT";
+		$sql.= " rowid";
+		$sql.= ", ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql.= " FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+		$sql.= " LIKE 'EDITEUR_LIVRE_FORMAT_%'";
 
 		$resql = $this->db->query($sql);
 

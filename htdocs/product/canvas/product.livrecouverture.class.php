@@ -37,7 +37,7 @@ class ProductLivreCouverture extends Product
 {
   /**
    *    \brief      Constructeur de la classe
-   *    \param      DB          Handler accès base de données
+   *    \param      DB          Handler acces base de donnees
    *    \param      id          Id produit (0 par defaut)
    */
   function ProductLivreCouverture($DB=0, $id=0)
