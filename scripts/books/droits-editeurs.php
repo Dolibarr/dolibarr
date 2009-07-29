@@ -65,7 +65,7 @@ class pdf_courrier_editeur
 
   /**
      \brief      Constructeur
-     \param	    db		Handler accËs base de donnÈe
+     \param	    db		Handler acces base de donnees
   */
   function pdf_courrier_editeur ($db=0, $langs)
   {
@@ -86,8 +86,8 @@ class pdf_courrier_editeur
   }
 
   /**
-     \brief      Fonction gÈnÈrant la fiche d'intervention sur le disque
-     \param	    id		id de la fiche intervention ‡ gÈnÈrer
+     \brief      Fonction generant la fiche d'intervention sur le disque
+     \param	    id		id de la fiche intervention a generer
      \return	    int     1=ok, 0=ko
   */
   function write($id, $year)
@@ -118,7 +118,7 @@ class pdf_courrier_editeur
 	$books = array();
 	$year_data = $year - 1;
 
-	// On rÈcupËre donnÈes du mail
+	// On recupere donnees du mail
 	$sql = "SELECT p.rowid, p.label, pc.taux, pc.quantite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " , ".MAIN_DB_PREFIX."facturedet as fd";
@@ -179,7 +179,7 @@ class pdf_courrier_editeur
 	  $pdf->SetFont('Arial','B',11);
 	  $pdf->MultiCell(106,4, $soc->nom, 0, 'L');
 
-	  // CaractÈristiques client
+	  // Caracteristiques client
 	  $carac_client=$soc->adresse;
 	  $carac_client.="\n".$soc->cp . " " . $soc->ville."\n";
 	  $carac_client.=$soc->pays."\n";
@@ -196,7 +196,7 @@ class pdf_courrier_editeur
 
 	  $pdf->SetXY(10,100);
 
-	  $pdf->MultiCell(190,5,"Je vous prie de trouver ci-dessous le rÈcapitulatif des ventes du titre citÈ pour la pÈriode du 1er janvier au 31 dÈcembre $year_data.");
+	  $pdf->MultiCell(190,5,"Je vous prie de trouver ci-dessous le r√©capitulatif des ventes du titre cit√© pour la p√©riode du 1er janvier au 31 d√©cembre $year_data.");
 
 	  $pdf->SetXY(10,120);
 	  $pdf->MultiCell(25,5,"Nom du titre : ");
@@ -206,7 +206,7 @@ class pdf_courrier_editeur
 
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->SetXY(10,140);
-	  $pdf->MultiCell(46,5,"QuantitÈ signÈe au contrat : ");
+	  $pdf->MultiCell(46,5,"Quantit√© sign√©e au contrat : ");
 
 	  $pdf->SetFont('Arial','B',10);
 	  $pdf->SetXY(56,140);
@@ -235,7 +235,7 @@ class pdf_courrier_editeur
 
 		  $pdf->SetFont('Arial','',10);
 		  $pdf->SetXY(10,140 + ($i * 8) );
-		  $pdf->MultiCell(44,5,"QuantitÈ vendue en ".$row[2]." : ",0);
+		  $pdf->MultiCell(44,5,"Quantit√© vendue en ".$row[2]." : ",0);
 		  $pdf->SetFont('Arial','B',10);
 		  $pdf->SetXY(54,140 + ($i * 8) );
 		  $pdf->MultiCell(16,5,$row[1],0,'R');
@@ -285,7 +285,7 @@ class pdf_courrier_editeur
 	  $i++;
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->SetXY(10,150 + ($i * 10) );
-	  $pdf->MultiCell(80,5,"Reste ‡ devoir sur les droits pour l'annÈe ".($year-1)." : ",0);
+	  $pdf->MultiCell(80,5,"Reste √† devoir sur les droits pour l'ann√©e ".($year-1)." : ",0);
 	  $pdf->SetFont('Arial','B',10);
 	  $pdf->SetXY(90,140 + ($i * 10) );
 	  $pdf->MultiCell(16,5, $pu_ttc,0,'R');
@@ -293,7 +293,7 @@ class pdf_courrier_editeur
 	  $i++;
 	  $pdf->SetFont('Arial','',10);
 	  $pdf->SetXY(10,150 + ($i * 10) + 20);
-	  $pdf->MultiCell(190,5,"Nous restons ‡ votre entiËre disposition pour de plus amples renseignements dont vous pouvez avoir besoin et vous remercions de la confiance que vous nous avez accordÈe.");
+	  $pdf->MultiCell(190,5,"Nous restons √† votre enti√®re disposition pour de plus amples renseignements dont vous pouvez avoir besoin et vous remercions de la confiance que vous nous avez accord√©e.");
 
 
 	}
