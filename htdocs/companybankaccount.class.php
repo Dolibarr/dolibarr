@@ -17,12 +17,14 @@
  */
 
 /*
- * 	\version	$Id$
+ * 		\files		htdocs/companybankaccount.class.php
+ *		\ingroup    societe
+ *		\brief      File of class to manage bank accounts description
+ *   	\version	$Id$
  */
 
 /**
- * 	\brief	Class
- *
+ * 	\brief	Class to manage bank accounts description
  */
 class CompanyBankAccount
 {
@@ -180,7 +182,7 @@ class CompanyBankAccount
 		return $this->error;
 	}
 
-	
+
 	/**
 	 *
 	 *
@@ -205,7 +207,7 @@ class CompanyBankAccount
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * 	\brief		Return account country code
 	 *	\return		String		country code
@@ -217,7 +219,7 @@ class CompanyBankAccount
 			// If IBAN defined, we can know country of account from it
 			if (eregi("^([a-zA-Z][a-zA-Z])",$this->iban,$reg)) return $reg[1];
 		}
-		
+
 		// We return country code
 		$company=new Societe($this->db);
 		$result=$company->fetch($this->socid);
@@ -235,8 +237,8 @@ class CompanyBankAccount
 		if ($this->getCountryCode() == 'FR') return true;
 		if ($this->getCountryCode() == 'ES') return true;
 		return false;
-	}	
-	
+	}
+
 }
 
 ?>

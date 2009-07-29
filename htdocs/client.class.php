@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,26 +18,23 @@
  */
 
 /**
-    	\file       htdocs/client.class.php
-		\ingroup    societe
-		\brief      Fichier de la classe des clients
-		\version    $Id$
-*/
-
-
-/** 
-        \class      Client
-		\brief      Classe permettant la gestion des clients
-*/
-
+ *   	\file       htdocs/client.class.php
+ *		\ingroup    societe
+ *		\brief      File for class of customers
+ *		\version    $Id$
+ */
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 
+/**
+ *      \class      Client
+ *		\brief      Class to manage customers
+ */
 class Client extends Societe
 {
     var $db;
 
-    
+
     /**
      *    \brief  Constructeur de la classe
      *    \param  DB     handler acces base de donnees
@@ -46,41 +43,41 @@ class Client extends Societe
     function Client($DB, $id=0)
     {
         global $config;
-    
+
         $this->db = $DB;
         $this->id = $id;
         $this->factures = array();
-    
+
         return 0;
     }
-    
+
     function read_factures()
     {
         $sql = "SELECT rowid, facnumber";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql .= " WHERE f.fk_soc = ".$this->id;
         $sql .= " ORDER BY datef DESC";
-    
+
         $result = $this->db->query($sql) ;
         $i = 0;
         if ( $result )
         {
             $num = $this->db->num_rows();
-    
+
             while ($i < $num )
             {
                 $row = $this->db->fetch_row();
-    
+
                 $this->factures[$i][0] = $row[0];
                 $this->factures[$i][1] = $row[1];
-    
+
                 $i++;
             }
         }
         return $result;
     }
 
-    
+
     /**
      *      \brief      Charge indicateurs this->nb de tableau de bord
      *      \return     int         <0 si ko, >0 si ok
@@ -88,7 +85,7 @@ class Client extends Societe
     function load_state_board()
     {
         global $conf, $user;
-        
+
         $this->nb=array("customers" => 0,"prospects" => 0);
         $clause = "WHERE";
 
@@ -103,7 +100,7 @@ class Client extends Societe
         $sql.= " ".$clause." s.client in (1,2)";
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " GROUP BY s.client";
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -114,7 +111,7 @@ class Client extends Societe
             }
             return 1;
         }
-        else 
+        else
         {
             dol_print_error($this->db);
             $this->error=$this->db->error();
@@ -122,6 +119,6 @@ class Client extends Societe
         }
 
     }
-    
+
 }
 ?>

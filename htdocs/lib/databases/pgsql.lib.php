@@ -671,9 +671,9 @@ class DoliDb
 
 	/**
 	 *	\brief  	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
-	 *	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 * 				19700101020000 -> 3600 with TZ+1
+	 * 	\param		string			Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	\return		date			Date TMS
-	 * 	\example	19700101020000 -> 3600 with TZ+1
 	 */
 	function jdate($string)
 	{
@@ -881,7 +881,7 @@ class DoliDb
         $this->results = pg_query($this->db, "SHOW TABLES;");
         return  $this->results;
     }
-    
+
 	/**
 	 *	\brief     	Liste les informations des champs d'une table.
 	 *	\param	    table			Nom de la table
@@ -894,7 +894,7 @@ class DoliDb
 		$infotables=array();
 
 		$sql="SHOW FULL COLUMNS FROM ".$table.";";
-		
+
 		dol_syslog($sql,LOG_DEBUG);
 		$result = $this->pg_query($this->db,$sql);
 		while($row = $this->fetch_row($result))
