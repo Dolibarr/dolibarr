@@ -18,15 +18,15 @@
  */
 
 /**
- \defgroup   label         Module Etiquettes
- \version	$Id$
- \brief      Module pour gerer les formats d'impression des etiquettes
+ *	\defgroup   label         Module labels
+ *	\version	$Id$
+ *	\brief      Module pour gerer les formats d'impression des etiquettes
  */
 
 /**
- \file       htdocs/includes/modules/modLabel.class.php
- \ingroup    other
- \brief      Fichier de description et activation du module Label
+ *	\file       htdocs/includes/modules/modLabel.class.php
+ *	\ingroup    other
+ *	\brief      Fichier de description et activation du module Label
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

@@ -17,9 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   mymodule     Module MyModule
- *      \brief      Example of a module descriptor.
- *					Such a file must be copied into htdocs/includes/module directory.
+/**     \defgroup   paybox     Module paybox
+ *      \brief      Add integration with Paybox online payment system.
  */
 
 /**

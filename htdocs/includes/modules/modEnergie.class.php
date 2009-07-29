@@ -18,7 +18,7 @@
  */
 
 /**
- *	\defgroup   energie     Module energie
+ *	\defgroup   energie     Module energy
  * 	\brief      Module pour le suivi de la consommation d'energie
  *	\version	$Id$
  */

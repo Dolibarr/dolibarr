@@ -21,7 +21,7 @@
  */
 
 /**
- *	\defgroup   produit     Module produit
+ *	\defgroup   produit     Module products
  *	\brief      Module pour gerer le suivi de produits predefinis
  *	\version	$Id$
  */

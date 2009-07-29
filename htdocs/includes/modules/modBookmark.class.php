@@ -18,7 +18,7 @@
  */
 
 /**
- *	\defgroup   bookmark    Module Bookmark
+ *	\defgroup   bookmark    Module bookmarks
  *	\brief      Module to manage Bookmarks
  *	\version	$Id$
  */

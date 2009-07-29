@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   facture     Module facture
+/**     \defgroup   facture     Module invoices
  *      \brief      Module pour gerer les factures clients et/ou fournisseurs
  *		\version	$Id$
  */

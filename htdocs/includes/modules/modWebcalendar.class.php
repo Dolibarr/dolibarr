@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   webcalendar     Module Webcalendar
+/**     \defgroup   webcalendar     Module webcalendar
         \brief      Module to include Webcalendar GUI into Dolibarr menu and
                     add Dolibarr events directly inside a Webcalendar database.
 		\version	$Id$
@@ -47,44 +47,44 @@ class modWebcalendar extends DolibarrModules
 	function modWebcalendar($DB)
 	{
 		$this->db = $DB;
-		
+
 		// Id for module (must be unique).
 		// Use here a free id.
 		$this->numero = 410;
-		
+
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
-		// It is used to sort modules in module setup page 
-		$this->family = "projects";		
+		// It is used to sort modules in module setup page
+		$this->family = "projects";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Interfacage avec le calendrier Webcalendar";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';    
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 1;
 		// Name of png file (without png) used for this module
 		$this->picto='calendar';
-		
+
 		// Data directories to create when module is enabled
 		$this->dirs = array();
-		
+
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
 		$this->config_page_url = array("webcalendar.php");
-		
+
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		
+
 		// Constants
 		$this->const = array();			// List of parameters
-		
+
 		// Boxes
-		$this->boxes = array();			// List of boxes 
+		$this->boxes = array();			// List of boxes
 		$r=0;
-		
+
 		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
 		// Example:
         //$this->boxes[$r][1] = "myboxa.php";
@@ -95,11 +95,11 @@ class modWebcalendar extends DolibarrModules
 		// Permissions
 		$this->rights_class = 'webcal';	// Permission key
 		$this->rights = array();		// Permission array used by this module
-		
+
         // Menus
 		//------
 		$r=0;
-		
+
 		$this->menu[$r]=array('fk_menu'=>0,
 													'type'=>'top',
 													'titre'=>'Calendar',
@@ -114,7 +114,7 @@ class modWebcalendar extends DolibarrModules
 													'user'=>0
 													);
 		$r++;
-		
+
 	}
 
 	/**
@@ -125,7 +125,7 @@ class modWebcalendar extends DolibarrModules
 	function init()
   	{
     	$sql = array();
-    
+
     	return $this->_init($sql);
   	}
 

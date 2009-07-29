@@ -18,8 +18,8 @@
  */
 
 /**
- *	\defgroup   notification	Module notification
- *	\brief      Module pour g�rer les notifications (par mail ou autre)
+ *	\defgroup   notification	Module email notification
+ *	\brief      Module pour gerer les notifications (par mail ou autre)
  *	\version	$Id$
  */
 

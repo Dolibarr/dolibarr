@@ -19,7 +19,7 @@
  */
 
 /**
- *	\defgroup   	stock     Module stock
+ *	\defgroup   	stock     Module stocks
  *	\brief      	Module pour gerer la tenue de stocks produits
  *	\version		$Id$
  */

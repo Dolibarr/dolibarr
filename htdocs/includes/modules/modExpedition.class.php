@@ -19,7 +19,7 @@
  */
 
 /**
- *	\defgroup   expedition     Module expedition
+ *	\defgroup   expedition     Module shipping
  *	\brief      Module pour gerer les expeditions de produits
  */
 

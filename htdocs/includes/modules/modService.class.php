@@ -23,7 +23,7 @@
  */
 
 /**
- *	\defgroup   service     Module service
+ *	\defgroup   service     Module services
  *	\brief      Module pour gerer le suivi de services predefinis
  */
 

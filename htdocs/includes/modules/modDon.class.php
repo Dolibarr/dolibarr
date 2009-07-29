@@ -19,7 +19,7 @@
  */
 
 /**
- \defgroup   don     Module don
+ \defgroup   don     Module donation
  \brief      Module pour g�rer le suivi des dons
  \version	$Id$
  */

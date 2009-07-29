@@ -18,15 +18,15 @@
  */
 
 /**
- \defgroup   contrat     Module contrat
- \brief      Module pour gerer la tenue de contrat de services
- \version	$Id$
+ *	\defgroup   contrat     Module contract
+ *	\brief      Module pour gerer la tenue de contrat de services
+ *	\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modContrat.class.php
- \ingroup    contrat
- \brief      Fichier de description et activation du module Contrat
+ *	\file       htdocs/includes/modules/modContrat.class.php
+ *	\ingroup    contrat
+ *	\brief      Fichier de description et activation du module Contrat
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

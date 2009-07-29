@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   fournisseur     Module fournisseur
+/**     \defgroup   fournisseur     Module suppliers
  *		\brief      Module pour gerer des societes et contacts de type fournisseurs
  *		\version	$Id$
  */

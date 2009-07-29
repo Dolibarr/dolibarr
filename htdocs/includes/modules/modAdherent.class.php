@@ -21,7 +21,7 @@
  */
 
 /**
- *       \defgroup   adherent     Module adherents
+ *       \defgroup   adherent     Module foundation
  *       \brief      Module pour gerer les adherents d'une association
  */
 

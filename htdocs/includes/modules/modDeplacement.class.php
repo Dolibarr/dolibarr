@@ -18,7 +18,7 @@
  */
 
 /**
- \defgroup   deplacement     Module deplacement et notes de frais
+ \defgroup   deplacement     Module trips
  \brief      Module pour gerer les deplacements et notes de frais
  \version	$Id$
  */

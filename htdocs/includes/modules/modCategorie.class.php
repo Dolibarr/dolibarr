@@ -18,7 +18,7 @@
  */
 
 /**
-        \defgroup   category       Module categorie
+        \defgroup   category       Module categories
         \brief      Module pour gérer les catégories
 		\version	$Id$
 */

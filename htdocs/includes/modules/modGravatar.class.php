@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   gravatar     Module Gravatar
+/**     \defgroup   gravatar     Module gravatar
  *      \brief      Module to use Gravatar to show photo of users
  */
 

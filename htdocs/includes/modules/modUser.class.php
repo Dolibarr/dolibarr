@@ -19,7 +19,7 @@
  */
 
 /**
- *	\defgroup   user  Module user
+ *	\defgroup   user  Module user management
  *	\brief      Module pour gerer les utilisateurs
  */
 

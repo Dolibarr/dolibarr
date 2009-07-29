@@ -20,7 +20,7 @@
  */
 
 /**     \defgroup   accounting 			Module accounting
- *		\brief      Module pour inclure des fonctions de comptabilite (gestion de comptes comptables et rapports)
+ *		\brief      Module to include accounting features
  *		\version	$Id$
  */
 

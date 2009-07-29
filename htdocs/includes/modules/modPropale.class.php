@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   propale     Module propale
+/**     \defgroup   propale     Module commercial proposals
  *		\brief      Module pour gerer la tenue de propositions commerciales
  */
 

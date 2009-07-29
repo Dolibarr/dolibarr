@@ -18,7 +18,7 @@
  */
 
 /**
- *	\defgroup   DroitPret     Module pret
+ *	\defgroup   DroitPret     Module droitpret
  *	\version	$Id$
  *	\brief      Module pour gerer le suivi des droits de prets
  */

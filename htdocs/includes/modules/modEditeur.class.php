@@ -18,7 +18,7 @@
  */
 
 /**
- *	\defgroup   	editeur     Module editeur
+ *	\defgroup   	editeur     Module editor
  *	\brief      	Module pour gerer les livres et editeurs
  *	\version		$Id$
  */

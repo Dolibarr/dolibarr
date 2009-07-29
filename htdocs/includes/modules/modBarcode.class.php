@@ -19,7 +19,7 @@
  */
 
 /**
- *	\defgroup   barcode         Module code barre
+ *	\defgroup   barcode         Module barcode
  *	\brief      Module pour gerer les codes barres
  *	\version	$Id$
  */

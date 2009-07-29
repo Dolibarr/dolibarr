@@ -17,16 +17,16 @@
  */
 
 /**
-        \defgroup   category       Module categorie
-        \brief      Module pour gérer les catégories
-		\version	$Id$
+ *      \defgroup   pos       Module points of sale
+ *      \brief      Module to manage points of sale
+ *		\version	$Id$
 */
 
 /**
-        \file       htdocs/includes/modules/modCashDesk.class.php
-        \ingroup    category
-        \brief      File to enable/disable module CashDesk
-*/
+ *      \file       htdocs/includes/modules/modCashDesk.class.php
+ *      \ingroup    pos
+ *      \brief      File to enable/disable module CashDesk
+ */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 

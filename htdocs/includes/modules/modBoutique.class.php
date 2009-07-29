@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   oscommerce     Module OSCommerce
+/**     \defgroup   oscommerce     Module oscommerce
         \brief      Module pour gerer une boutique et interface avec OSCommerce
 		\version	$Id$
 */

@@ -20,15 +20,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   banque     Module banque
- \brief      Module pour gérer la tenue d'un compte bancaire et rapprochements
- \version	$Id$
+/**     \defgroup   banque     Module bank
+ *		\brief      Module pour gérer la tenue d'un compte bancaire et rapprochements
+ *		\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modBanque.class.php
- \ingroup    banque
- \brief      Fichier de description et activation du module Banque
+ *		\file       htdocs/includes/modules/modBanque.class.php
+ *		\ingroup    banque
+ *		\brief      Fichier de description et activation du module Banque
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

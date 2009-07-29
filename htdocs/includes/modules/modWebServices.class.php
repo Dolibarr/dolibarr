@@ -17,7 +17,7 @@
  */
 
 /**
- *      \defgroup   webservices     Module WebServices
+ *      \defgroup   webservices     Module webservices
  *      \brief      Module to enable the Dolibarr server of web services
  *		\brief		$Id$
 */

@@ -18,15 +18,15 @@
  */
 
 /**
- \defgroup   clicktodial      Module click to dial
- \brief      Module pour g�rer l'appel automatique
+ *	\defgroup   clicktodial      Module clicktodial
+ *	\brief      Module pour gerer l'appel automatique
  */
 
 /**
- \file       htdocs/includes/modules/modClickToDial.class.php
- \ingroup    clicktodial
- \brief      Fichier de description et activation du module de click to Dial
- \version	$Id$
+ *	\file       htdocs/includes/modules/modClickToDial.class.php
+ *	\ingroup    clicktodial
+ *	\brief      Fichier de description et activation du module de click to Dial
+ *	\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

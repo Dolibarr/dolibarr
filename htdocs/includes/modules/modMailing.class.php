@@ -19,8 +19,8 @@
  */
 
 /**
- *	\defgroup   mailing  Module mailing
- *	\brief      Module pour gerer les mailings
+ *	\defgroup   mailing  Module emailing
+ *	\brief      Module to manage EMailings
  *	\version	$Id$
  */
 

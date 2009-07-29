@@ -18,7 +18,7 @@
  */
 
 /**
- *	\defgroup   	document     Module de generation de documents
+ *	\defgroup   	document     Module mass mailings
  *	\brief      	Module pour gerer des generations de documents
  *	\version		$Id$
  */

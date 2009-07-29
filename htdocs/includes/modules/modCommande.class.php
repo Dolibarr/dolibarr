@@ -21,15 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   commande     Module commande
- \brief      Module pour gerer le suivi des commandes
- \version	$Id$
+/**     \defgroup   commande     Module orders
+ *		\brief      Module pour gerer le suivi des commandes
+ *		\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modCommande.class.php
- \ingroup    commande
- \brief      Fichier de description et activation du module Commande
+ *		\file       htdocs/includes/modules/modCommande.class.php
+ *		\ingroup    commande
+ *		\brief      Fichier de description et activation du module Commande
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

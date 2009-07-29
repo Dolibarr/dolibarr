@@ -21,7 +21,7 @@
  * $Id$
  */
 
-/**     \defgroup   oscommerce2     Module OSCommerce 2
+/**     \defgroup   oscommerce2     Module oscommercews
  \brief      Module pour gerer une boutique et interface avec OSCommerce via Web Services
  */
 
