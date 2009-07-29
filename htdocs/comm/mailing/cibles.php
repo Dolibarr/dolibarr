@@ -25,9 +25,13 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/emailing.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load("mails");
 
+// Security check
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
 accessforbidden();
 
@@ -150,28 +154,15 @@ if ($_POST["button_removefilter"])
 
 llxHeader("","",$langs->trans("MailCard"));
 
+$html = new Form($db);
+
 $mil = new Mailing($db);
 
-$html = new Form($db);
 if ($mil->fetch($_REQUEST["id"]) >= 0)
 {
+	$head = emailing_prepare_head($mil);
 
-	$h=0;
-	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
-	$head[$h][1] = $langs->trans("MailCard");
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$mil->id;
-	$head[$h][1] = $langs->trans("MailRecipients");
-	$hselected = $h;
-	$h++;
-
-	/*
-	 $head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$mil->id;
-	 $head[$h][1] = $langs->trans("MailHistory");
-	 $h++;
-	 */
-	dol_fiche_head($head, $hselected, $langs->trans("Mailing"));
+	dol_fiche_head($head, 'targets', $langs->trans("Mailing"), 0, 'email');
 
 
 	print '<table class="border" width="100%">';
@@ -180,10 +171,22 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	print '<td colspan="3">';
 	print $html->showrefnav($mil,'id');
 	print '</td></tr>';
+
 	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
+
 	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
+
+	// Errors to
+	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.htmlentities($mil->email_errorsto);
+	if (! empty($mil->email_errorsto) && ! isValidEMail($mil->email_errorsto)) print img_warning($langs->trans("BadEMail"));
+	print '</td></tr>';
+
+	// Status
 	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
+
+	// Nb of distinct emails
 	print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'0').'</td></tr>';
+
 	print '</table>';
 
 	print "</div>";
@@ -195,15 +198,14 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	// Affiche les listes de selection
 	if ($mil->statut == 0)
 	{
-		print_titre($langs->trans("ToAddRecipientsChooseHere"));
+		print_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("RecipientSelectionModules");
-		if ($user->admin) print ' '.info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1);
-		print '</td>';
-		print '<td align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
-		print '<td align="left">'.$langs->trans("Filter").'</td>';
-		print '<td align="center" width="120">&nbsp;</td>';
+		print '<td class="liste_titre">'.$langs->trans("RecipientSelectionModules").'</td>';
+		print '<td class="liste_titre" align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
+		print '<td class="liste_titre" align="left">'.$langs->trans("Filter").'</td>';
+		print '<td class="liste_titre" align="center">&nbsp;</td>';
 		print "</tr>\n";
 
 		clearstatcache();
@@ -317,7 +319,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></td>';
+		print '<td class="liste_titre" align="right"><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></td>';
 		print '</tr>';
 		print '</table>';
 		print '</form>';
@@ -367,7 +369,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		// Date
 		if ($mil->statut < 2)
 		{
-			print '<td>&nbsp;</td>';
+			print '<td class="liste_titre">&nbsp;</td>';
 		}
 		else
 		{

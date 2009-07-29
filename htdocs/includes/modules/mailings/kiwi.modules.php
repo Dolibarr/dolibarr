@@ -10,10 +10,10 @@
  */
 
 /**
- \file       htdocs/includes/modules/mailings/kiwi.modules.php
- \ingroup    mailing
- \brief      Example file to provide a list of recipients for mailing module
- \version    $Revision$
+ *	\file       htdocs/includes/modules/mailings/kiwi.modules.php
+ *	\ingroup    mailing
+ *	\brief      Example file to provide a list of recipients for mailing module
+ *	\version    $Revision$
  */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
@@ -181,7 +181,7 @@ class mailing_kiwi extends MailingTargets
 				$type='';
 				if ($obj->type == 1) $type=$langs->trans("Supplier");
 				if ($obj->type == 2) $type=$langs->trans("Customer");
-				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,48,'middle');
+				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
 				if ($type) $s.=' ('.$type.')';
 				$s.='</option>';
 				$i++;

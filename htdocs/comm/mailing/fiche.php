@@ -25,6 +25,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/emailing.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/mailing.class.php");
@@ -526,22 +527,9 @@ else
 {
 	if ($mil->fetch($_GET["id"]) >= 0)
 	{
-		$h=0;
-		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
-		$head[$h][1] = $langs->trans("MailCard");
-		$hselected = $h;
-		$h++;
+		$head = emailing_prepare_head($mil);
 
-		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$mil->id;
-		$head[$h][1] = $langs->trans('MailRecipients');
-		$h++;
-
-		/*
-		 $head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$mil->id;
-		 $head[$h][1] = $langs->trans("MailHistory");
-		 $h++;
-		 */
-		dol_fiche_head($head, $hselected, $langs->trans("Mailing"));
+		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
 
 		// Confirmation de la validation du mailing
 		if ($_GET["action"] == 'valide')
@@ -601,33 +589,17 @@ else
 			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from);
 			if (! isValidEMail($mil->email_from)) print img_warning($langs->trans("BadEMail"));
 			print '</td></tr>';
+
+			// Errors to
 			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.htmlentities($mil->email_errorsto);
 			if (! empty($mil->email_errorsto) && ! isValidEMail($mil->email_errorsto)) print img_warning($langs->trans("BadEMail"));
 			print '</td></tr>';
+
+			// Status
 			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
+
+			// Nb of distinct emails
 			print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
-
-			$uc = new User($db, $mil->user_creat);
-			$uc->fetch();
-			print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>'.$uc->getNomUrl(1).'</td>';
-			print '<td>'.$langs->trans("Date").'</td>';
-			print '<td>'.dol_print_date($mil->date_creat,"dayhour").'</td></tr>';
-
-			if ($mil->statut > 0)
-			{
-				$uv = new User($db, $mil->user_valid);
-				$uv->fetch();
-				print '<tr><td>'.$langs->trans("ValidatedBy").'</td><td>'.$uv->getNomUrl(1).'</td>';
-				print '<td>'.$langs->trans("Date").'</td>';
-				print '<td>'.dol_print_date($mil->date_valid,"dayhour").'</td></tr>';
-			}
-
-			if ($mil->statut > 1)
-			{
-				print '<tr><td>'.$langs->trans("SentBy").'</td><td>'.$langs->trans("Unknown").'</td>';
-				print '<td>'.$langs->trans("Date").'</td>';
-				print '<td>'.dol_print_date($mil->date_envoi,"dayhour").'</td></tr>';
-			}
 
 			// Subject
 			print '<tr><td>'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
