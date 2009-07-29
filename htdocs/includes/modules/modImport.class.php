@@ -77,14 +77,14 @@ class modImport extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'import';
+		$r=0;
 
-		/*
-		$this->rights[1][0] = 1401;
-		$this->rights[1][1] = 'Réaliser un import';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
-		$this->rights[1][4] = 'lire';
-		*/
+		$r++;
+		$this->rights[$r][0] = 1251;
+		$this->rights[$r][1] = 'Run mass imports of external data (data load)';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'run';
 	}
 
 	/**

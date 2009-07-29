@@ -112,18 +112,20 @@ if (sizeof($export->array_export_code))
         print '</tr>';
 
     }
-
-    print '<tr class="total"><td class="total" colspan="2" align="center">';
-   	print '<form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
-   	print ($user->rights->export->creer?'':' disabled="true"');
-   	print '></form>';
-    print '</td></tr>';
 }
 else
 {
     print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoExportableData").'</td></tr>';
 }
 print '</table>';
+
+if (sizeof($export->array_export_code))
+{
+   	print '<center><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
+   	print ($user->rights->export->creer?'':' disabled="true"');
+   	print '></form></center>';
+}
+
 
 print '</td></tr>';
 print '</table>';

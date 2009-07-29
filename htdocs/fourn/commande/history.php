@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/fourn/commande/history.php
-        \ingroup    commande
-        \brief      Fiche commande
-        \version    $Id$
-*/
+ *       \file       htdocs/fourn/commande/history.php
+ *       \ingroup    commande
+ *       \brief      Fiche commande
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fourn.lib.php");
@@ -126,10 +126,10 @@ if ($id > 0 || ! empty($ref))
 		*/
 		print '<table class="noborder" width="100%">';
 
-		print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td>';
-		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td align="center">'.$langs->trans("Author").'</td>';
-		print '<td align="left">'.$langs->trans("Comment").'</td>';
+		print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Date").'</td>';
+		print '<td class="liste_titre">'.$langs->trans("Status").'</td>';
+		print '<td class="liste_titre" align="center">'.$langs->trans("Author").'</td>';
+		print '<td class="liste_titre" align="left">'.$langs->trans("Comment").'</td>';
 		print '</tr>';
 
 		$sql = "SELECT l.fk_statut, l.datelog as dl, l.comment, u.rowid, u.login, u.firstname, u.name";
@@ -156,14 +156,14 @@ if ($id > 0 || ! empty($ref))
 				print '<td width="20%">'.dol_print_date($db->jdate($obj->dl),"dayhour")."</td>\n";
 
 				// Statut
-				print '<td width="100px" nowrap="1">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
+				print '<td nowrap="nowrap">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
 
 				// User
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 				// Comment
-				print '<td width="100px" nowrap="1" title="'.dol_escape_htmltag($obj->comment).'">'.dol_trunc($obj->comment,48)."</td>\n";
+				print '<td nowrap="nowrap" title="'.dol_escape_htmltag($obj->comment).'">'.dol_trunc($obj->comment,48)."</td>\n";
 
 				print '</tr>';
 
@@ -181,8 +181,8 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		/* Commande non trouvée */
-		print "Commande inexistante ou accés refusé";
+		/* Commande non trouvee */
+		print "Commande inexistante ou acces refuse";
 	}
 }
 

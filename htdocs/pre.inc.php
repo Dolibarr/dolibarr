@@ -133,8 +133,8 @@ function llxHeader($head = '', $title='', $help_url='')
 	if (! empty($conf->global->MAIN_MODULE_IMPORT))
 	{
 		$langs->load("exports");
-		$menu->add(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0,$user->rights->import->lire);
-		$menu->add(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1,$user->rights->import->creer);
+		$menu->add(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0,$user->rights->import->run);
+		$menu->add(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1,$user->rights->import->run);
 	}
 
 	if ($user->rights->user->user->lire || $user->admin)

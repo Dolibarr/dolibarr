@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,14 +108,17 @@ if (sizeof($import->array_import_code))
         print '</tr>';
 
     }
-
-    print '<tr class="total"><td class="total" colspan="2" align="center"><form action="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import"><input type="submit" class="button" value="'.$langs->trans("NewImport").'"></form></td></tr>';
 }
 else
 {
     print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
 }
 print '</table>';
+
+if (sizeof($import->array_import_code))
+{
+	print '<center><form action="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import"><input type="submit" class="button" value="'.$langs->trans("NewImport").'"></form></center>';
+}
 
 /*
 // Affiche les profils d'exports

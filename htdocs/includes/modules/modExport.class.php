@@ -77,19 +77,21 @@ class modExport extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'export';
+		$r=0;
 
-		$this->rights[1][0] = 1201;
-		$this->rights[1][1] = 'Lire les exports';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
-		$this->rights[1][4] = 'lire';
+		$r++;
+		$this->rights[$r][0] = 1201;
+		$this->rights[$r][1] = 'Lire les exports';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'lire';
 
-		$this->rights[2][0] = 1202;
-		$this->rights[2][1] = 'Creer/modifier un export';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'creer';
-
+		$r++;
+		$this->rights[$r][0] = 1202;
+		$this->rights[$r][1] = 'Creer/modifier un export';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
 	}
 
 	/**

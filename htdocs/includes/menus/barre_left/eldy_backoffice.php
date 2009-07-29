@@ -807,14 +807,14 @@ class MenuLeft {
 					//$newmenu->add(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("List"),1, $user->rights->export->lire);
 				}
 
-				if (! empty($conf->global->MAIN_MODULE_IMPORT))
+				if (! empty($conf->import->enabled))
 				{
 					$langs->load("exports");
-					$newmenu->add(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->lire);
-					$newmenu->add(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->creer);
+					$newmenu->add(DOL_URL_ROOT."/imports/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->run);
+					$newmenu->add(DOL_URL_ROOT."/imports/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->run);
 				}
 
-				if (! empty($conf->global->MAIN_MODULE_DOMAIN))
+				if (! empty($conf->domain->enabled))
 				{
 					$langs->load("domains");
 					$newmenu->add(DOL_URL_ROOT."/domain/index.php?leftmenu=export",$langs->trans("DomainNames"),0, $user->rights->domain->read);
