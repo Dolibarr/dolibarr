@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +154,7 @@ if ($resql)
     }
 
     print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
-    print '<form method="get" action="index.php">';
+    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"index.php","fac.rowid","&amp;socid=$socid","","",$sortfield,$sortorder);
@@ -227,7 +228,7 @@ if ($resql)
 
         // Affiche statut de la facture
         print '<td align="right" nowrap="nowrap">';
-	      // \todo  le montant deja pay� obj->am n'est pas d�finie
+	      // TODO  le montant deja paye obj->am n'est pas definie
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
         print '</td>';
 
