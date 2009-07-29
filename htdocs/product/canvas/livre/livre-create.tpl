@@ -19,12 +19,12 @@
  * $Source$
  *}
 <!-- BEGIN SMARTY TEMPLATE -->
-<table width="100%" border="0" class="notopnoleftnoright">
+<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;">
 <tr>
 	<td class="nobordernopadding" width="40" align="left" valign="middle">
 		{$title_picto}
 	</td>
-	<td class="notopnoleftnoright" valign="middle">
+	<td class="nobordernopadding" valign="middle">
     	<div class="titre">{$title_text}</div>
 	</td>
 </tr>
