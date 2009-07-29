@@ -20,13 +20,15 @@
  */
 
 /**
- \file       htdocs/product/stock/user.php
- \ingroup    stock
- \brief      Page to link dolibarr users with warehouses
- \version    $Id$
+ *	\file       htdocs/product/stock/user.php
+ *	\ingroup    stock
+ *	\brief      Page to link dolibarr users with warehouses
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/stock.lib.php");
+
 
 $langs->load("products");
 $langs->load("stocks");
@@ -74,33 +76,10 @@ if ($_GET["id"])
 	if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
 
-		/*
-		 * Affichage onglets
-		 */
-		$h = 0;
+		$head = stock_prepare_head($entrepot);
 
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
-		$head[$h][1] = $langs->trans("WarehouseCard");
-		$h++;
+		dol_fiche_head($head, 'user', $langs->trans("Warehouse"), 0, 'stock');
 
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
-		$head[$h][1] = $langs->trans("StockMovements");
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
-		$head[$h][1] = $langs->trans("EnhancedValue");
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
-		$head[$h][1] = $langs->trans("Users");
-		$hselected=$h;
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
-		$head[$h][1] = $langs->trans("Info");
-		$h++;
-
-		dol_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 
 		print '<table class="border" width="100%">';
 

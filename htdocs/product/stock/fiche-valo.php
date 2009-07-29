@@ -25,6 +25,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/stock.lib.php");
 
 $langs->load("products");
 $langs->load("stocks");
@@ -52,39 +53,11 @@ if ($_GET["id"])
 		dol_print_error($db);
 	}
 
-	/*
-	 * Affichage onglets
-	 */
-	$h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
-	$head[$h][1] = $langs->trans("WarehouseCard");
-	$h++;
+	$head = stock_prepare_head($entrepot);
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
-	$head[$h][1] = $langs->trans("StockMovements");
-	$h++;
+	dol_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
-	$head[$h][1] = $langs->trans("EnhancedValue");
-	$hselected=$h;
-	$h++;
-
-	if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
-	{
-		// Add the constant STOCK_USE_WAREHOUSE_BY_USER in cont table to use this feature.
-		// Should not be enabled by defaut because does not work yet correctly because
-		// there is no way to add values in the table llx_user_entrepot
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
-		$head[$h][1] = $langs->trans("Users");
-		$h++;
-	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
-	$head[$h][1] = $langs->trans("Info");
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 
 	print '<table class="border" width="100%">';
 
@@ -137,7 +110,7 @@ if ($_GET["id"])
 	print "<div class=\"graph\">\n";
 	$year = strftime("%Y",time());
 
-	$file=DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year).'.png';
+	$file=$conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
 
 	// TODO Build graph in $file from a table called llx_stock_log
 

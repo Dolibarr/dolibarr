@@ -27,6 +27,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/stock.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
@@ -208,40 +209,10 @@ else
 		 */
 		if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 		{
+			$head = stock_prepare_head($entrepot);
 
-			/*
-			 * Affichage onglets
-			 */
-			$h = 0;
+			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
-			$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
-			$head[$h][1] = $langs->trans("WarehouseCard");
-			$hselected=$h;
-			$h++;
-
-			$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
-			$head[$h][1] = $langs->trans("StockMovements");
-			$h++;
-
-			$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
-			$head[$h][1] = $langs->trans("EnhancedValue");
-			$h++;
-
-			if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
-			{
-				// Add the constant STOCK_USE_WAREHOUSE_BY_USER in cont table to use this feature.
-				// Should not be enabled by defaut because does not work yet correctly because
-				// there is no way to add values in the table llx_user_entrepot
-				$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
-				$head[$h][1] = $langs->trans("Users");
-				$h++;
-			}
-
-			$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
-			$head[$h][1] = $langs->trans("Info");
-			$h++;
-
-			dol_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 
 			print '<table class="border" width="100%">';
 
