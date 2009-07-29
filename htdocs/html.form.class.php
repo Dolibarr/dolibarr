@@ -1524,7 +1524,7 @@ class Form
 	 *    \param    selected    	Id categorie preselectionnee
 	 *    \param    select_name		Nom formulaire HTML
 	 */
-	function select_all_categories($type,$selected='',$select_name="")
+	function select_all_categories($type,$selected='',$select_name="",$maxlength=64)
 	{
 		global $langs;
 		$langs->load("categories");
@@ -1551,7 +1551,7 @@ class Form
 					{
 						$add = '';
 					}
-					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'],80,'middle').'</option>';
+					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'],$maxlength,'middle').'</option>';
 				}
 			}
 		}
