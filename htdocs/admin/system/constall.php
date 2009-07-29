@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,9 +48,20 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Entity").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const ORDER BY name ASC";
+$sql = "SELECT";
+$sql.= " rowid";
+$sql.= ", ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
+$sql.= ", ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+$sql.= ", type";
+$sql.= ", note";
+$sql.= ", entity";
+$sql.= " FROM ".MAIN_DB_PREFIX."const";
+$sql.= " WHERE entity IN (0,".$conf->entity.")";
+$sql.= " ORDER BY entity, name ASC";
+
 $result = $db->query($sql);
 if ($result)
 {
@@ -62,11 +74,11 @@ if ($result)
       $obj = $db->fetch_object($result);
       $var=!$var;
 
-      print "<tr $bc[$var]><td>$obj->name</td>\n";
-
-      print '<td>';
-      print $obj->value;
-      print "</td></tr>\n";
+      print '<tr '.$bc[$var].'>';
+      print '<td>'.$obj->name.'</td>'."\n";
+      print '<td>'.$obj->value.'</td>'."\n";
+      print '<td>'.$obj->entity.'</td>'."\n";
+      print "</tr>\n";
 
       $i++;
     }

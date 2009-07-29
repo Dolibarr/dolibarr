@@ -30,7 +30,7 @@ class pdf_courrier_droit_editeur
 {
 	/**
 	 \brief      Constructeur
-	 \param	    db		Handler acc�s base de donn�e
+	 \param	    db		Handler acces base de donnees
   */
 	function pdf_courrier_droit_editeur ($db)
 	{
@@ -53,7 +53,7 @@ class pdf_courrier_droit_editeur
 	}
 
 	/**
-	 \brief G�n�re le document
+	 \brief Genere le document
 	 \return int 0 = ok, <> 0 = ko
   */
 	function Generate($numero)

@@ -37,7 +37,7 @@ print_titre($langs->trans("DocumentsBuilder"));
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '  <td>'.$langs->trans("Name").'</td>';
-print '  <td>'.$langs->trans("Généré le").'</td>';
+print '  <td>'.$langs->trans("GÃ©nÃ©rÃ© le").'</td>';
 print "</tr>\n";
 
 
