@@ -277,3 +277,9 @@ alter table llx_bank_account modify column iban_prefix varchar(34);
 
 alter table llx_projet add column datec date after fk_statut;
 
+delete from llx_action_def;
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (1,'NOTIFY_VAL_FICHINTER','Validation fiche intervention','Executed when a intervention is validated','ficheinter');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'NOTIFY_VAL_FAC','Validation facture client','Executed when a customer invoice is approved','facture');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_APP_ORDER_SUPPLIER','Approbation commande fournisseur','Executed when a supplier order is approved','order_supplier');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (4,'NOTIFY_REF_ORDER_SUPPLIER','Refus commande fournisseur','Executed when a supplier order is refused','order_supplier');
+

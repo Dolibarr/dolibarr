@@ -102,7 +102,7 @@ YouCanUseCommaSeparatorForSeveralRecipients=Vous pouvez utiliser le caractère d
 # Module Notifications
 Notifications=Notifications
 NoNotificationsWillBeSent=Aucune notification par email n'est prévue pour cet évenement et société
-ANotificationsWillBeSent=1 notification va être envoyée par mail
-SomeNotificationsWillBeSent=%s notifications vont être envoyées par mail
-AddNewNotification=Activer une nouvelle demande de notification
-ListOfActiveNotifications=Liste des demandes de notifications actives
+ANotificationsWillBeSent=1 notification va être envoyée par email
+SomeNotificationsWillBeSent=%s notifications vont être envoyées par email
+AddNewNotification=Activer une nouvelle demande de notification email
+ListOfActiveNotifications=Liste des demandes de notifications emails actives

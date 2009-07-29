@@ -317,7 +317,7 @@ Module410Desc=Webcalendar integration
 Module500Name=Taxes, social contributions and dividends
 Module500Desc=Taxes and social contributions' management
 Module600Name=Notifications
-Module600Desc=Send notifications (by email) on Dolibarr business events
+Module600Desc=Send notifications by email on some Dolibarr business events to third party's contacts
 Module700Name=Donations
 Module700Desc=Donations' management
 Module800Name=OSCommerce direct
@@ -713,7 +713,7 @@ ModuleCompanyCodeAquarium=Return an accountancy code built by "401" followed by 
 ModuleCompanyCodePanicum=Return an empty accountancy code.
 ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The code is composed of the character "C" in the first position followed by the first 5 characters of the third party code.  
 UseNotifications=Use notifications
-NotificationsDesc=Notifications feature allows you to silently send automatic mail, for some Dolibarr events, to companies that are configured to
+NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events, to third parties (customers or suppliers) that are configured to. Choice of active notification and targets contacts is made one third party at time.
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar
@@ -971,7 +971,7 @@ NewRSS=New RSS Feed
 MailingSetup=EMailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
 ##### Notification #####
-NotificationSetup=Mailing module setup
+NotificationSetup=Notification bu email module setup
 NotificationEMailFrom=Sender EMail (From) for emails sent for notifications
 ##### Sendings #####
 SendingsSetup=Sending module setup

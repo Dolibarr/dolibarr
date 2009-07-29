@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,17 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_modNotification_notification.class.php
-        \ingroup    notification
-        \brief      Fichier de gestion des notifications sur evenement Dolibarr
-		\version	$Id$
-*/
+ *      \file       htdocs/includes/triggers/interface_modNotification_notification.class.php
+ *      \ingroup    notification
+ *      \brief      Fichier de gestion des notifications sur evenement Dolibarr
+ *		\version	$Id$
+ */
 
 
 /**
-        \class      InterfaceNotification
-        \brief      Classe des fonctions triggers des actions personalisees du workflow
-*/
-
+ *     \class      InterfaceNotification
+ *     \brief      Classe des fonctions triggers des actions personalisees du workflow
+ */
 class InterfaceNotification
 {
     var $db;
@@ -107,7 +106,9 @@ class InterfaceNotification
 			$action_notify = 'NOTIFY_VAL_FAC';
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-            $mesg = 'La facture '.$object->ref." a été validée.\n";
+            if (! file_exists($filepdf)) $filepdf='';
+            $langs->load("other");
+			$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
 
             $notify = new Notify($this->db);
             $notify->send($action_notify, $object->socid, $mesg, 'facture', $object->id, $filepdf);
@@ -120,20 +121,41 @@ class InterfaceNotification
 			$action_notify = 'NOTIFY_VAL_FICHINTER';
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-            $mesg = 'La fiche intervention '.$object->ref." a été validée.\n";
+            if (! file_exists($filepdf)) $filepdf='';
+            $langs->load("other");
+			$mesg = $langs->transnoentitiesnoconv("EMailTextIntervnetionValidated",$object->ref);
 
             $notify = new Notify($this->db);
             $notify->send($action_notify, $object->socid, $mesg, 'ficheinter', $object->id, $filepdf);
 		}
 
-		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
+		elseif ($action == 'ORDER_SUPPLIER_APPROVE')
 		{
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$action_notify = 'NOTIFY_VAL_ORDER_SUPPLIER';
+			$action_notify = 'NOTIFY_APP_ORDER_SUPPLIER';
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
-            $mesg = 'La commande fournisseur '.$object->ref." a été validée.\n";
+            if (! file_exists($filepdf)) $filepdf='';
+            $mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->fullname);
+			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+
+            $notify = new Notify($this->db);
+            $notify->send($action_notify, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
+		}
+
+		elseif ($action == 'ORDER_SUPPLIER_REFUSE')
+		{
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			$action_notify = 'NOTIFY_REF_ORDER_SUPPLIER';
+            $ref = dol_sanitizeFileName($object->ref);
+            $filepdf = $conf->fournisseur->dir_output . '/commande/' . $ref . '/' . $ref . '.pdf';
+            if (! file_exists($filepdf)) $filepdf='';
+			$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+			$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->fullname);
+			$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 
             $notify = new Notify($this->db);
             $notify->send($action_notify, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);

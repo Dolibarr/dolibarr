@@ -30,6 +30,7 @@ For users:
 - New: Include Dolibarr version in suggested dump filename.
 - New: Enhancement in project module.
 - New: Add log tab on emailing module.
+- Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
 - Fix: Fix payment conditions on commercial proposals.
 - Fix: Nb of orders to process was wrong.

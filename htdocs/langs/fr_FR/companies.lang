@@ -264,6 +264,7 @@ Organization=Organisme
 AutomaticallyGenerated=Généré automatiquement
 FiscalYearInformation=Information sur l'année fiscale
 FiscalMonthStart=Mois de début d'exercice
+YouMustCreateContactFirst=Vous devez créer des contacts avec emails sur le tiers pour pouvoir lui définir des notifications par mails.
 
 # Monkey
 MonkeyNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn pour les codes clients et %syymm-nnnn pour les codes fournisseurs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0.

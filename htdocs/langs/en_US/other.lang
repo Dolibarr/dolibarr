@@ -26,8 +26,10 @@ BirthdayDate=Birthday
 DateToBirth=Date to birth
 BirthdayAlertOn = birthday alert active
 BirthdayAlertOff = birthday alert inactive
-Notify_NOTIFY_VAL_FICHINTER=Validate intervention
-Notify_NOTIFY_VAL_FAC=Validate bill
+Notify_NOTIFY_VAL_FICHINTER=Intervention validated
+Notify_NOTIFY_VAL_FAC=Invoice validated
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Supplier order approved
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Supplier order refused
 NbOfAttachedFiles=Number of attached files/documents
 TotalSizeOfAttachedFiles=Total size of attached files/documents
 MaxSize=Maximum size
@@ -100,11 +102,14 @@ NumberOfUnitsProposals=Number of units on proposals des 12 derniers mois
 NumberOfUnitsCustomerOrders=Number of units on customer orders on last 12 month
 NumberOfUnitsCustomerInvoices=Number of units on customer invoices on last 12 month
 NumberOfUnitsSupplierInvoices=Number of units on supplier invoices on last 12 month
+EMailTextInterventionValidated=Intervention %s validated
+EMailTextInvoiceValidated=Invoice %s validated
 EMailTextOrderApproved=Order %s approved
 EMailTextOrderApprovedBy=Order %s approved by %s
 EMailTextOrderRefused=Order %s refused
 EMailTextOrderRefusedBy=Order %s refused by %s
 ImportedWithSet=Importation data set
+DolibarrNotification=Automatic notification
 
 ##### Bookmark #####
 Bookmark=Bookmark

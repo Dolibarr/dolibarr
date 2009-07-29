@@ -47,9 +47,10 @@ insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_
 -- Définition des actions de workflow notifications
 --
 delete from llx_action_def;
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (1,'NOTIFY_VAL_FICHINTER','Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'NOTIFY_VAL_FAC','Validation facture','Déclenché lors de la validation d\'une facture','facture');
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUPPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (1,'NOTIFY_VAL_FICHINTER','Validation fiche intervention','Executed when a intervention is validated','ficheinter');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'NOTIFY_VAL_FAC','Validation facture client','Executed when a customer invoice is approved','facture');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_APP_ORDER_SUPPLIER','Approbation commande fournisseur','Executed when a supplier order is approved','order_supplier');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (4,'NOTIFY_REF_ORDER_SUPPLIER','Refus commande fournisseur','Executed when a supplier order is refused','order_supplier');
 
 --
 -- Setup constants

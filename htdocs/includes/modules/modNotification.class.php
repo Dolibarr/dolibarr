@@ -18,25 +18,23 @@
  */
 
 /**
- \defgroup   notification	Module notification
- \brief      Module pour g�rer les notifications (par mail ou autre)
- \version	$Id$
+ *	\defgroup   notification	Module notification
+ *	\brief      Module pour g�rer les notifications (par mail ou autre)
+ *	\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modNotification.class.php
- \ingroup    notification
- \brief      Fichier de description et activation du module Notification
+ *	\file       htdocs/includes/modules/modNotification.class.php
+ *	\ingroup    notification
+ *	\brief      Fichier de description et activation du module Notification
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
-
 /**
- \class      modMailing
- \brief      Classe de description et activation du module Mailing
+ *	\class      modMailing
+ *	\brief      Classe de description et activation du module Mailing
  */
-
 class modNotification extends DolibarrModules
 {
 

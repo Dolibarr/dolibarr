@@ -40,9 +40,9 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 
 /*
- * Recherche
- *
+ * Action
  */
+
 if ($mode == 'search')
 {
     if ($mode-search == 'soc')
@@ -179,7 +179,7 @@ if ($socid > 0)
         print '</td><td colspan="3">'.($societe->remise_client?price2num($societe->remise_client,'MT').'%':$langs->trans("DiscountNone")).'</td>';
         print '</tr>';
 
-        // R�ductions (Remises-Ristournes-Rabbais)
+        // Reductions (Remises-Ristournes-Rabbais)
         print '<tr><td nowrap>';
         print '<table width="100%" class="nobordernopadding">';
         print '<tr><td nowrap>';
@@ -336,27 +336,43 @@ if ($socid > 0)
 
     /*
      * Barre d'actions
-     *
      */
     print '<div class="tabsAction">';
 
 	if ($user->societe_id == 0)
 	{
 		// Si societe cliente ou prospect, on affiche bouton "Creer facture client"
-		if ($societe->client != 0 && $conf->facture->enabled && $user->rights->facture->creer) {
-			$langs->load("bills");
-			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";
+		if ($conf->facture->enabled)
+		{
+			if ($user->rights->facture->creer)
+			{
+				$langs->load("bills");
+				if ($societe->client != 0) print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";
+				else print "<a class=\"butActionRefused\" title=\"".dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer"))."\" href=\"#\">".$langs->trans("AddBill")."</a>";
+			}
+			else
+			{
+				print "<a class=\"butActionRefused\" title=\"".dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer"))."\" href=\"#\">".$langs->trans("AddBill")."</a>";
+			}
 		}
 
-		if ($conf->deplacement->enabled) {
+		if ($conf->deplacement->enabled)
+		{
 			$langs->load("trips");
 			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
 		}
 	}
 
-    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    if ($conf->agenda->enabled)
     {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
+    	if ($user->rights->agenda->myactions->create)
+    	{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
+    	}
+    	else
+    	{
+			print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
+    	}
     }
 
 	if ($user->rights->societe->contact->creer)

@@ -15,23 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
- 
+
 /**
-	    \file       htdocs/admin/notification.php
-		\ingroup    notification
-		\brief      Page d'administration/configuration du module notification
-		\version    $Revision$
-*/
+ *	    \file       htdocs/admin/notification.php
+ *		\ingroup    notification
+ *		\brief      Page d'administration/configuration du module notification
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
+// Security check
 if (!$user->admin)
   accessforbidden();
 
@@ -52,8 +50,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
 
 /*
- *
- *
+ *	View
  */
 
 llxHeader();
@@ -61,9 +58,10 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
 
-if ($mesg) print '<br>'.$mesg;
+print $langs->trans("NotificationsDesc").'<br><br>';
 
-print '<br>';
+if ($mesg) print $mesg.'<br>';
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
@@ -80,9 +78,13 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("NotificationEMailFrom").'</td><td>';
 print '<input size="32" type="text" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
 print '</td></tr>';
+print '</table>';
 
-print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-print '</table></form>';
+print '<br>';
+
+print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+
+print '</form>';
 
 
 $db->close();

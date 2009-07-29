@@ -563,17 +563,6 @@ class CommandeFournisseur extends Commande
 
 				if ($error == 0)
 				{
-					$langs->load("other");
-
-					$subject = $langs->trans("EMailTextOrderApproved",$this->ref);
-					$message = $langs->trans("Hello").",\n\n";
-					$message .= $langs->trans("EMailTextOrderApprovedBy",$this->ref,$user->fullname);
-					$message .= "\n\n".$langs->trans("Sincerely").",\n\n";
-					$this->_NotifyCreator($user, $subject, $message);
-				}
-
-				if ($error == 0)
-				{
 					$this->db->commit();
 					return 1;
 				}
@@ -615,16 +604,20 @@ class CommandeFournisseur extends Commande
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 9";
 			$sql .= " WHERE rowid = ".$this->id;
 
-			if ($this->db->query($sql) )
+			if ($this->db->query($sql))
 			{
 				$result = 0;
 				$this->log($user, 9, time());
 
-				$subject = $langs->trans("EMailTextOrderRefused",$this->ref);
-				$message = $langs->trans("Hello").",\n\n";
-				$message .= $langs->trans("EMailTextOrderRefusedBy",$this->ref,$user->fullname);
-
-				$this->_NotifyCreator($user, $subject, $message);
+				if ($error == 0)
+				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('ORDER_SUPPLIER_REFUSE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
 			}
 			else
 			{
@@ -638,29 +631,7 @@ class CommandeFournisseur extends Commande
 		}
 		return $result ;
 	}
-	/*
-	 *
-	 *
-	 */
-	function _NotifyCreator($user, $subject, $message)
-	{
-		require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
-		$cc = new User($this->db, $this->user_author_id);
-		$cc->fetch();
-
-		$sendto = $cc->email;
-		$from = $user->email;
-
-		$mailfile = new CMailFile($subject,
-		$sendto,
-		$from,
-		$message, array(), array(), array());
-		if ( $mailfile->sendfile() )
-		{
-			return 0;
-		}
-	}
 
 	/**
 	 * 	Send a supplier order to supplier

@@ -107,21 +107,30 @@ class Notify
 	}
 
     /**
-     *    	\brief      Verifie si notification actice. Si oui, envoi mail et sauve trace
-     *		\return		int		<0 si ko, sinon nombre de notifications faites
+     *    	\brief      Check if notification are active for couple action/company.
+     * 					If yes, send mail and save trace.
+     * 		\param		action		Code of action to check and send (list in llx_action_def)
+     * 		\param		socid		Id of third party
+     * 		\param		texte		Message to send
+     * 		\param		objet_type	Type of object notification deals on
+     * 		\param		objet_id	Id of object notification deals on
+     * 		\param		file		Attach a file
+     *		\return		int			<0 if KO or number of changes if OK
      */
     function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
         global $conf,$langs;
 
+        $langs->load("other");
+
         $sql = "SELECT s.nom, c.email, c.rowid, c.name, c.firstname, a.titre,n.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
         $sql .= " AND n.fk_soc = s.rowid";
-        $sql .= " AND a.code = 'NOTIFY_".$action."'";
+        $sql .= " AND a.code = '".$action."'";
         $sql .= " AND s.rowid = ".$socid;
 
-		dol_syslog("Notify.class::send $action, $socid, $texte, $objet_type, $objet_id, $file");
+		dol_syslog("Notify::send $action, $socid, $texte, $objet_type, $objet_id, $file");
 
         $result = $this->db->query($sql);
         if ($result)
@@ -136,7 +145,7 @@ class Notify
 
                 if (strlen($sendto))
                 {
-                    $subject = $langs->trans("DolibarrNotification");
+                    $subject = $langs->transnoentitiesnoconv("DolibarrNotification");
                     $message = $texte;
                     $filename = split("/",$file);
 					$msgishtml=0;
