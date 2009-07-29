@@ -384,6 +384,8 @@ class ProductLivre extends Product
 	 */
 	function assign_smarty_values(&$smarty, $action='')
 	{
+		global $langs;
+		
 		if ($action =='edit' or $action == 'create')
 		{
 			$this->GetAvailableFormat();
@@ -400,6 +402,9 @@ class ProductLivre extends Product
 			$smarty->assign('class_normal_ref', 'normal');
 			$smarty->assign('class_focus_ref',  'focus');
 		}
+		
+		$title = fiche_titre($langs->trans('NewBook'));
+		$smarty->assign('title', $title);
 
 		$smarty->assign('user',             $this->user->prenom.' '.$this->user->nom);
 
