@@ -80,41 +80,126 @@ function dol_print_file($langs,$filename,$searchalt=0)
  */
 function dol_print_object_info($object)
 {
-	global $langs;
+	global $langs,$db;
 	$langs->load("other");
 
+	// Import key
 	if (isset($object->import_key))
 	print $langs->trans("ImportedWithSet")." : " . $object->import_key . '<br>';
-	
-	if (isset($object->user_creation) && $object->user_creation->fullname)
-	print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
+	// User creation
+	if (isset($object->user_creation))
+	{
+		print $langs->trans("CreatedBy")." : ";
+		if (is_object($object->user_creation))
+		{
+		 	print $object->user_creation->getNomUrl(1);
+		}
+		else
+		{
+			$userstatic=new User($db);
+			$userstatic->id=$object->user_creation;
+			$userstatic->fetch();
+			print $userstatic->getNomUrl(1);
+		}
+		print '<br>';
+	}
+
+	// Date
 	if (isset($object->date_creation))
 	print $langs->trans("DateCreation")." : " . dol_print_date($object->date_creation,"dayhourtext") . '<br>';
 
-	if (isset($object->user_modification) && $object->user_modification->fullname)
-	print $langs->trans("ModifiedBy")." : " . $object->user_modification->fullname . '<br>';
+	// User change
+	if (isset($object->user_modification))
+	{
+		print $langs->trans("ModifiedBy")." : ";
+		if (is_object($object->user_modification))
+		{
+			print $object->user_modification->getNomUrl(1);
+		}
+		else
+		{
+			$userstatic=new User($db);
+			$userstatic->id=$object->user_modification;
+			$userstatic->fetch();
+			print $userstatic->getNomUrl(1);
+		}
+		print '<br>';
+	}
 
+	// Date
 	if (isset($object->date_modification))
 	print $langs->trans("DateLastModification")." : " . dol_print_date($object->date_modification,"dayhourtext") . '<br>';
 
-	if (isset($object->user_validation) && $object->user_validation->fullname)
-	print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
+	// User validation
+	if (isset($object->user_validation))
+	{
+		print $langs->trans("ValidatedBy")." : ";
+		if (is_object($object->user_validation))
+		{
+			print $object->user_validation->getNomUrl(1);
+		}
+		else
+		{
+			$userstatic=new User($db);
+			$userstatic->id=$object->user_validation;
+			$userstatic->fetch();
+			print $userstatic->getNomUrl(1);
+		}
+		print '<br>';
+	}
 
+	// Date
 	if (isset($object->date_validation))
 	print $langs->trans("DateValidation")." : " . dol_print_date($object->date_validation,"dayhourtext") . '<br>';
 
-	if (isset($object->user_cloture) && $object->user_cloture->fullname )
-	print $langs->trans("ClosedBy")." : " . $object->user_cloture->fullname . '<br>';
+	// User close
+	if (isset($object->user_cloture))
+	{
+		print $langs->trans("ClosedBy")." : ";
+		if (is_object($object->user_cloture))
+		{
+			print $object->user_cloture->getNomUrl(1);
+		}
+		else
+		{
+			$userstatic=new User($db);
+			$userstatic->id=$object->user_cloture;
+			$userstatic->fetch();
+			print $userstatic->getNomUrl(1);
+		}
+		print '<br>';
+	}
 
+	// Date
 	if (isset($object->date_cloture))
 	print $langs->trans("DateClosing")." : " . dol_print_date($object->date_cloture,"dayhourtext") . '<br>';
 
-	if (isset($object->user_rappro) && $object->user_rappro->fullname )
-	print $langs->trans("ConciliatedBy")." : " . $object->user_rappro->fullname . '<br>';
+	// User conciliate
+	if (isset($object->user_rappro))
+	{
+		print $langs->trans("ConciliatedBy")." : ";
+		if (is_object($object->user_rappro))
+		{
+			print $object->user_rappro->getNomUrl(1);
+		}
+		else
+		{
+			$userstatic=new User($db);
+			$userstatic->id=$object->user_rappro;
+			$userstatic->fetch();
+			print $userstatic->getNomUrl(1);
+		}
+		print '<br>';
+	}
 
+	// Date
 	if (isset($object->date_rappro))
 	print $langs->trans("DateConciliating")." : " . dol_print_date($object->date_rappro,"dayhourtext") . '<br>';
+
+	//Date send
+	if (isset($object->date_envoi))
+	print $langs->trans("DateLastSend")." : " . dol_print_date($object->date_envoi,"dayhourtext") . '<br>';
 }
 
 
@@ -174,19 +259,19 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 {
 	$ValidUrl = 0;
 	$urlregex = '';
-	
+
 	// SCHEME
 	if ($http) $urlregex .= "^(http:\/\/|https:\/\/)";
-	
+
 	// USER AND PASS
 	if ($pass) $urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)";
-	
+
 	// HOSTNAME OR IP
 	//$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // http://x = allowed (ex. http://localhost, http://routerlogin)
 	//$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // http://x.x = minimum
 	$urlregex .= "([a-z0-9+\$_-]+\.)*[a-z0-9+\$_-]{2,3}";  // http://x.xx(x) = minimum
 	//use only one of the above
-	
+
 	// PORT
 	if ($port) $urlregex .= "(\:[0-9]{2,5})";
 	// PATH
@@ -195,13 +280,13 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	if ($query) $urlregex .= "(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)";
 	// ANCHOR
 	if($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)\$";
-	
+
 	// check
 	if (eregi($urlregex, $url))
 	{
 		$ValidUrl = 1;
 	}
-	
+
 	return $ValidUrl;
 }
 
@@ -294,7 +379,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date='')
 {
 	global $conf;
-	
+
 	// Clean parameters
 	if ($date == '') $date=mktime();	// We use local year and month of PHP server to search numbers
 	// but we should use local year and month of user
