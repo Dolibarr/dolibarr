@@ -1068,3 +1068,5 @@ EndPointIs=SOAP clients must send their requests to the Dolibarr endpoint availa
 ##### Bank #####
 BankSetupModule=Bank module setup
 FreeLegalTextOnChequeReceipts=Free text on cheque receipts
+##### Multicompany #####
+MultiCompanySetup=Multi-company module setup

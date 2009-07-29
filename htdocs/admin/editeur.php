@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,9 @@ if ($_POST["action"] == 'set')
 // Action desactivation d'un sous module
 if ($_GET["action"] == 'unset')
 {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name LIKE 'EDITEUR_LIVRE_FORMAT_%'";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+	$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+	$sql.= " LIKE 'EDITEUR_LIVRE_FORMAT_%'";
 	$sql.= " AND rowid='".$_GET["id"]."';";
 	if ($db->query($sql))
 	{
@@ -89,8 +92,12 @@ print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 $var=true;
 
-
-$sql = "SELECT rowid,value FROM ".MAIN_DB_PREFIX."const WHERE name LIKE 'EDITEUR_LIVRE_FORMAT_%'";
+$sql = "SELECT";
+$sql.= " rowid";
+$sql.= ", ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+$sql.= " FROM ".MAIN_DB_PREFIX."const";
+$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+$sql.= " LIKE 'EDITEUR_LIVRE_FORMAT_%'";
 $result = $db->query($sql);
 
 while ($obj = $db->fetch_object($result) )

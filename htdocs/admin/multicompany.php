@@ -26,7 +26,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
-//$langs->load("multicompany");
+$langs->load("admin");
 
 if (!$user->admin)
 accessforbidden();
@@ -38,7 +38,7 @@ accessforbidden();
  */
 
 
-llxHeader('',$langs->trans("MultiCompanySetup"),'MultiCompanyConfiguration');
+llxHeader('',$langs->trans("MultiCompanySetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("MultiCompanySetup"),$linkback,'setup');
@@ -49,7 +49,7 @@ print_fiche_titre($langs->trans("MultiCompanySetup"),$linkback,'setup');
  */
 
 print '<br>';
-print_titre($langs->trans("MultiCompanyModule"));
+//print_titre($langs->trans("MultiCompanyModule"));
 
 
 llxFooter('$Date$ - $Revision$');
