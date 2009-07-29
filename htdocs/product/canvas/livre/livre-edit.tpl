@@ -18,6 +18,7 @@
  * $Id$
  * $Source$
  *}
+ 
 <!-- BEGIN SMARTY TEMPLATE -->
 
 <form id="evolForm" action="fiche.php" method="post">

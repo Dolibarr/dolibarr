@@ -1,5 +1,4 @@
-{* Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Auguria SARL         <info@auguria.org>
+{* Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,60 +20,60 @@
  
 <!-- BEGIN SMARTY TEMPLATE -->
 
-<table width="100%" border="0" class="notopnoleftnoright">
+<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;">
 <tr>
-	<td class="notopnoleftnoright" valign="middle">
-    	<div class="titre">Liste des Livres</div>
+	<td class="nobordernopadding" width="40" align="left" valign="middle">
+		{$title_picto}
+	</td>
+	<td class="nobordernopadding" valign="middle">
+    	<div class="titre">{$title_text}</div>
 	</td>
 </tr>
 </table>
 
-<form action="liste.php?canvas=livre" method="post" name="formulaire">
+<form action="liste.php?canvas=default" method="post" name="formulaire">
 
 <table class="liste" width="100%">
  <tr class="liste_titre">
-  <td class="liste_titre">Case
-  </td>
 
-  <td class="liste_titre" >Référence
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
+  <td class="liste_titre">Référence
+  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
+  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   </a>
   </td>
 
-  <td class="liste_titre">Titre
-  <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
+  <td class="liste_titre">Libellé
+  <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
+  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  <img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
+  </a>
+  </td>
+  
+  <td class="liste_titre">Code barre
+  <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
+  </a>
+  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   </a>
   </td>
 
-  <td class="liste_titre" align="center">Casier</td>
-  <td class="liste_titre" align="center">Entrepot</td>
-  <td class="liste_titre" align="center">Ventes</td>
-  <td class="liste_titre">Stock</td>
-  <td class="liste_titre" align="center">Pages</td>
-  <td class="liste_titre" align="right">Prix</td>
-  <td class="liste_titre" align="right">Valorisation
-  </td>
-  <td class="liste_titre" align="right">Action
-  </td>
+  <td class="liste_titre" align="center">Date de modification</td>
+  <td class="liste_titre" align="right">Prix de vente</td>
+  <td class="liste_titre" align="right">Stock</td>
+  <td class="liste_titre" align="right">Etat</td>
 
 </tr>
 
 <tr class="liste_titre">
- <td class="liste_titre">&nbsp;</td>
  <td class="liste_titre"><input class="flat" type="text" name="sref" value=""></td>
  <td class="liste_titre"><input class="flat" type="text" name="snom" value=""></td>
- <td class="liste_titre">&nbsp;</td>
- <td class="liste_titre">&nbsp;</td>
- <td class="liste_titre">&nbsp;</td>
- <td class="liste_titre">&nbsp;</td>
+ <td class="liste_titre"><input class="flat" type="text" name="sbarcode" value=""></td>
  <td class="liste_titre">&nbsp;</td>
  <td class="liste_titre">&nbsp;</td>
  <td class="liste_titre">&nbsp;</td>
@@ -87,16 +86,13 @@
 {section name=mysec loop=$datas}
 {strip}
    <tr class="{cycle values="pair,impair"}">
-      <td>$datas</td>
       <td><a href="fiche.php?id={$datas[mysec].id}">{$datas[mysec].ref}</a></td>
-      <td>{$datas[mysec].titre}</td>
-      <td align="center">{$datas[mysec].casier}</td>
-      <td align="center">{$datas[mysec].entrepot}</td>
-      <td>{$datas[mysec].ventes}</td>
-      <td>{$datas[mysec].stock}</td>
-      <td align="center">{$datas[mysec].pages}</td>
-      <td align="right">{$datas[mysec].prix}</td>
-      <td align="right">{$datas[mysec].valo}</td>
+      <td>{$datas[mysec].label}</td>
+      <td align="center">{$datas[mysec].barcode}</td>
+      <td align="center">{$datas[mysec].datem}</td>
+      <td align="right">{$datas[mysec].sellingprice}</td>
+      <td align="right">{$datas[mysec].stock}</td>
+      <td align="right">{$datas[mysec].status}</td>
    </tr>
 {/strip}
 {/section}

@@ -18,7 +18,9 @@
  * $Id$
  * $Source$
  *}
+ 
 <!-- BEGIN SMARTY TEMPLATE -->
+
 <table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;">
 <tr>
 	<td class="nobordernopadding" width="40" align="left" valign="middle">
