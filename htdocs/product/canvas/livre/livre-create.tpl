@@ -19,7 +19,16 @@
  * $Source$
  *}
 <!-- BEGIN SMARTY TEMPLATE -->
-{$title}
+<table width="100%" border="0" class="notopnoleftnoright">
+<tr>
+	<td class="nobordernopadding" width="40" align="left" valign="middle">
+		{$title_picto}
+	</td>
+	<td class="notopnoleftnoright" valign="middle">
+    	<div class="titre">{$title_text}</div>
+	</td>
+</tr>
+</table>
 
 <form id="evolForm" action="fiche.php" method="post">
 <input type="hidden" name="action" value="add">

@@ -1889,36 +1889,22 @@ function print_titre($titre)
  */
 function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0)
 {
-	print fiche_titre($titre, $mesg, $picto, $pictoisfullpath);
-}
-
-/**
- *	\brief  Affichage d'un titre d'une fiche, aligne a gauche
- *	\param	titre				Le titre a afficher
- *	\param	mesg				Message suplementaire a afficher a droite
- *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
- */
-function fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0)
-{
 	global $conf;
 
 	if ($picto == 'setup') $picto='title.png';
 	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
 
-	$title = "\n";
-	$title.= '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-	if ($picto && $titre) $title.= '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-	$title.= '<td class="nobordernopadding" valign="middle">';
-	$title.= '<div class="titre">'.$titre.'</div>';
-	$title.= '</td>';
+	print "\n";
+	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+	print '<td class="nobordernopadding" valign="middle">';
+	print '<div class="titre">'.$titre.'</div>';
+	print '</td>';
 	if (strlen($mesg))
 	{
-		$title.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
+		print '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
 	}
-	$title.= '</tr></table>'."\n";
-	
-	return $title;
+	print '</tr></table>'."\n";
 }
 
 /**

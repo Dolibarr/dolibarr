@@ -384,7 +384,7 @@ class ProductLivre extends Product
 	 */
 	function assign_smarty_values(&$smarty, $action='')
 	{
-		global $langs;
+		global $conf,$langs;
 		
 		if ($action =='edit' or $action == 'create')
 		{
@@ -403,8 +403,10 @@ class ProductLivre extends Product
 			$smarty->assign('class_focus_ref',  'focus');
 		}
 		
-		$title = fiche_titre($langs->trans('NewBook'));
-		$smarty->assign('title', $title);
+		$picto='title.png';
+		if (empty($conf->browser->firefox)) $picto='title.gif';
+		$smarty->assign('title_picto', img_picto('',$picto));
+		$smarty->assign('title_text', $langs->trans('NewBook'));
 
 		$smarty->assign('user',             $this->user->prenom.' '.$this->user->nom);
 
