@@ -143,8 +143,8 @@ class Translate {
 
 
 	/**
-	 *	\brief      	Deprecated function. Do nothing.
-	 *	\deprecated		Kept for backward compatibility with third party modules.
+	 *	Deprecated function. Do nothing.
+	 *	@deprecated		Kept for backward compatibility with third party modules.
 	 */
 	function setPhpLang()
 	{
