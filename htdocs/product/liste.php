@@ -202,6 +202,11 @@ if ($resql)
 		$smarty->assign('url_root', $dolibarr_main_url_root);
 		$smarty->assign('theme', $conf->theme);
 		$smarty->assign('langs', $langs);
+		$picto='title.png';
+		if (empty($conf->browser->firefox)) $picto='title.gif';
+		$smarty->assign('title_picto', img_picto('',$picto));
+		if ($_GET["canvas"] != 'default') $texte = $langs->trans('Books');
+		$smarty->assign('title_text', $texte);
 		$smarty->display('product/canvas/'.$_GET["canvas"].'/liste.tpl');
 	}
 	else
