@@ -24,6 +24,37 @@ create table llx_import_model
   	field         text NOT NULL
 )type=innodb;
 
+-- 2 forgotten tables
+create table llx_product_cnv_livre
+(
+  rowid              integer PRIMARY KEY,
+  isbn               varchar(13),
+  ean                varchar(13),
+  format             varchar(7),
+  px_feuillet        float(12,4),
+  px_reliure         float(12,4),
+  px_couverture      float(12,4),
+  px_revient         float(12,4),
+  stock_loc          varchar(5),
+  pages              smallint UNSIGNED,
+  fk_couverture      integer,
+  fk_contrat         integer,
+  fk_auteur          integer DEFAULT 0
+)type=innodb;
+
+create table llx_product_cnv_livre_contrat
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  fk_cnv_livre       integer,
+  quantite           integer,
+  taux               float(3,2),
+  date_app           datetime,
+  duree              varchar(50),
+  fk_user            integer,
+  locked             tinyint default 0
+)type=innodb;
+
+
 update llx_bank_url set type='banktransfert' where type='?' and label='(banktransfert)';
 
 ALTER TABLE llx_import_model ADD UNIQUE INDEX uk_import_model (label,type);

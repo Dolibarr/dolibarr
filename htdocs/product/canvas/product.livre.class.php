@@ -533,27 +533,27 @@ class ProductLivre extends Product
 
 			$i = 0;
 			while ($i < min($num,$limit))
-	  {
-	  	$datas = array();
-	  	$obj = $this->db->fetch_object($resql);
-	  	 
-	  	$datas["id"]        = $obj->rowid;
-	  	$datas["ref"]       = $obj->ref;
-	  	$datas["titre"]     = $obj->label;
-	  	$datas["casier"]    = $obj->casier;
-	  	$datas["entrepot"]  = $obj->entrepot;
-	  	$datas["ventes"]    = $obj->ventes;
-	  	$datas["stock"]     = 0;
-	  	$datas["stock_loc"] = stripslashes($obj->stock_loc);
-	  	$datas["pages"]     = $obj->pages;
-	  	$datas["prix"]      = price($obj->price);
-	  	$datas["valo"]      = 0;
-	  	 
-	  	array_push($this->list_datas,$datas);
-	  	 
-	  	$i++;
-	  }
-	  $this->db->free($resql);
+			{
+				$datas = array();
+				$obj = $this->db->fetch_object($resql);
+				
+				$datas["id"]        = $obj->rowid;
+				$datas["ref"]       = $obj->ref;
+				$datas["titre"]     = $obj->label;
+				$datas["casier"]    = $obj->casier;
+				$datas["entrepot"]  = $obj->entrepot;
+				$datas["ventes"]    = $obj->ventes;
+				$datas["stock"]     = 0;
+				$datas["stock_loc"] = stripslashes($obj->stock_loc);
+				$datas["pages"]     = $obj->pages;
+				$datas["prix"]      = price($obj->price);
+				$datas["valo"]      = 0;
+				
+				array_push($this->list_datas,$datas);
+				
+				$i++;
+			}
+			$this->db->free($resql);
 		}
 		else
 		{
@@ -603,8 +603,6 @@ class ProductLivre extends Product
 
 		return 0;
 	}
-
-
 
 }
 ?>
