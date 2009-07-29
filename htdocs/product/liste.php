@@ -136,7 +136,7 @@ if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 }
 if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
 {
-	$sql.= " AND p.canvas = '".mysql_escape_string($_GET["canvas"])."'";
+	$sql.= " AND p.canvas = '".$_GET["canvas"]."'";
 }
 if($catid)
 {
