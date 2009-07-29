@@ -32,6 +32,7 @@ require("pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -1221,6 +1222,27 @@ else
 		dol_print_error($db);
 	}
 	print '</td></tr>';
+
+	// Module Adherent
+	if ($conf->adherent->enabled)
+	{
+		$langs->load("members");
+		print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+		print '<td colspan="3">';
+		$adh=new Adherent($db);
+		$result=$adh->fetch('','',$soc->id);
+		if ($result > 0)
+		{
+			$adh->ref=$adh->fullname;
+			print $adh->getNomUrl(1);
+		}
+		else
+		{
+			print $langs->trans("UserNotLinkedToMember");
+		}
+		print '</td>';
+		print "</tr>\n";
+	}
 
 	print '</table>';
 	print '</form>';

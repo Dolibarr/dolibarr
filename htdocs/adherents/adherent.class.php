@@ -909,11 +909,12 @@ class Adherent extends CommonObject
 
 	/**
 	 *	\brief 		Load member from database
-	 *	\param      rowid       id of object to load
-	 * 	\param		ref			Ref of invoice
-	 *	\return     int         >0 if OK, <0 if KO
+	 *	\param      rowid       Id of object to load
+	 * 	\param		ref			To load member from its ref
+	 * 	\param		fk_soc		To load member from its link to third party
+	 *	\return     int         >0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($rowid,$ref='')
+	function fetch($rowid,$ref='',$fk_soc='')
 	{
 		global $langs;
 
@@ -934,6 +935,7 @@ class Adherent extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid";
 		if ($ref) $sql.= " AND d.rowid='".$ref."'";
+		elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
 		else $sql.= " AND d.rowid=".$rowid;
 		dol_syslog("Adherent::fetch sql=".$sql);
 
@@ -993,7 +995,7 @@ class Adherent extends CommonObject
 			}
 			else
 			{
-				return -1;
+				return 0;
 			}
 		}
 		else
