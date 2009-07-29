@@ -787,7 +787,6 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	// Gestion des produits specifiques
-	$product->canvas = '';
 	if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	{
 		if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
