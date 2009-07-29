@@ -17,24 +17,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   import      Module Iimport
- 		\brief      Module generique pour realiser des imports de donnees en base
-		\version	$Id$
+/**     \defgroup   import      Module import
+ *		\brief      Module to make generic import of data into dolibarr database
+ *		\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modImport.class.php
- \ingroup    import
- \brief      Fichier de description et activation du module Import
+ *	\file       htdocs/includes/modules/modImport.class.php
+ *	\ingroup    import
+ *	\brief      Fichier de description et activation du module Import
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**     \class      modImport
- \brief      Classe de description et activation du module Import
+ *		\brief      Classe de description et activation du module Import
  */
-
 class modImport extends DolibarrModules
 {
 

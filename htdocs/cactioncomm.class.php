@@ -18,17 +18,16 @@
  */
 
 /**
-        \file       htdocs/cactioncomm.class.php
-        \ingroup    commercial
-        \brief      Fichier de la classe des types d'actions commerciales
-        \version    $Id$
+ *       \file       htdocs/cactioncomm.class.php
+ *       \ingroup    commercial
+ *       \brief      Fichier de la classe des types d'actions commerciales
+ *       \version    $Id$
 */
 
 
-/**     \class      CActioncomm
-	    \brief      Classe permettant la gestion des diff�rents types d'actions commerciales
-*/
-
+/**     \class      CActionComm
+ *	    \brief      Class to manage different types of events
+ */
 class CActionComm {
   var $db;
 
@@ -40,9 +39,9 @@ class CActionComm {
   var $active;
 
   var $error;
-  
+
   var $type_actions=array();
-  
+
 
   /**
    *    \brief      Constructeur
@@ -60,25 +59,25 @@ class CActionComm {
    */
 	function fetch($id)
     {
-        
+
         $sql = "SELECT id, code, type, libelle, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
 		if (is_numeric($id)) $sql.= " WHERE id=".$id;
 		else $sql.= " WHERE code='".$id."'";
-        
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
-        
+
                 $this->id      = $obj->id;
                 $this->code    = $obj->code;
                 $this->type    = $obj->type;
                 $this->libelle = $obj->libelle;
                 $this->active  = $obj->active;
-        
+
                 return 1;
             }
             else
@@ -104,17 +103,17 @@ class CActionComm {
 	{
 		global $langs,$conf;
 		$langs->load("commercial");
-	
+
 		$repid = array();
 		$repcode = array();
-		
+
 		$sql = "SELECT id, code, libelle, module";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
 		if ($active != '')
 		{
 			$sql.=" WHERE active=".$active;
 		}
-	
+
 		dol_syslog("CActionComm::liste_array sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -152,7 +151,7 @@ class CActionComm {
 		}
 	}
 
-  
+
 	/**
 	*   \brief      Renvoie le nom sous forme d'un libelle traduit d'un type d'action
 	*	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
@@ -168,5 +167,5 @@ class CActionComm {
 		if ($transcode != "Action".$this->code) return $transcode;
 	}
 
-}    
+}
 ?>
