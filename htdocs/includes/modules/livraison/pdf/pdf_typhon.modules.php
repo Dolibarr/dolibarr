@@ -72,8 +72,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
-		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
-		$this->franchise=1;
+
+		$this->franchise=!$mysoc->tva_assuj;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;

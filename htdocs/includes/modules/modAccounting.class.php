@@ -67,7 +67,7 @@ class modAccounting extends DolibarrModules
 		$this->config_page_url = array("accounting.php");
 
 		// Dependancies
-		$this->depends = array("modFacture","modBanque");
+		$this->depends = array("modFacture","modBanque","modTax");
 		$this->requiredby = array();
 		$this->conflictwith = array("modComptabilite");
 		$this->langfiles = array("compta");

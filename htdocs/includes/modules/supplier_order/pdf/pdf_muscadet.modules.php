@@ -71,8 +71,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 
-		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
-		$this->franchise=1;
+		$this->franchise=!$mysoc->tva_assuj;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
@@ -397,9 +396,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$tab2_height = $tab2_hl * 4;
 		$pdf->SetFont('Arial','', 9);
 
-		// Affiche la mention TVA non applicable selon option
 		$pdf->SetXY ($this->marge_gauche, $tab2_top + 0);
-		if ($this->franchise==1)
+
+		// If France, show VAT mention if not applicable
+		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 		{
 			$pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
 		}

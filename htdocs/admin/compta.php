@@ -45,7 +45,7 @@ if ($_POST['action'] == 'setcomptamode')
 	$compta_mode = $_POST['compta_mode'];
 	if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
 	// Note: This setup differs from TAX_MODE.
-	// TAX_MODE is used with 0=normal, 1=option vat for services is on debit
+	// TAX_MODE is used for VAT exigibility only.
 }
 
 

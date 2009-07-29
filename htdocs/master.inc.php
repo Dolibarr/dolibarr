@@ -296,7 +296,6 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->profid2=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
 	$mysoc->profid3=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
 	$mysoc->profid4=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
-	$mysoc->tva_assuj=$conf->global->FACTURE_TVAOPTION;
 	$mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;
 	$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
 	$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
@@ -305,6 +304,9 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
 	$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
 	$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
+
+	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
+	$mysoc->tva_assuj=($conf->global->FACTURE_TVAOPTION=='franchise'?0:1);
 }
 
 

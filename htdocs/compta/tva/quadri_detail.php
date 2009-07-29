@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  *
@@ -56,7 +56,7 @@ $q=(! empty($_GET["q"]))?$_GET["q"]:1;
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if ($_GET["modetax"]) $modetax=$_GET["modetax"];
+if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -80,8 +80,8 @@ $paymentfourn_static=new PaiementFourn($db);
 
 //print_fiche_titre($langs->trans("VAT"),"");
 
-// Affiche en-tête du rapport
-if ($modetax==1)	// Caluclate on invoice for goods and services
+// Affiche en-tete du rapport
+if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=0">','</a>').')';
@@ -94,7 +94,7 @@ if ($modetax==1)	// Caluclate on invoice for goods and services
 	else { $nextquarter=1; $nextyear++; }
 	$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATDue");
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
+    //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -103,12 +103,12 @@ if ($modetax==1)	// Caluclate on invoice for goods and services
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("ToPay").')';
+	if ($mysoc->tva_assuj) $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPayed");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("ToGetBack").')';
+	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
@@ -123,7 +123,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	else { $nextquarter=1; $nextyear++; }
 	$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATIn");
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
+    if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -132,12 +132,12 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("ToPay").')';
+	if ($mysoc->tva_assuj) $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPayed");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("ToGetBack").')';
+	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
@@ -386,7 +386,7 @@ else
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
 	//print table headers for this quadri - expenses now
-	//imprime les en-tete de tables pour ce quadri - maintenant les dépenses
+	//imprime les en-tete de tables pour ce quadri - maintenant les dï¿½penses
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';

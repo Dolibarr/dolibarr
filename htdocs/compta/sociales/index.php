@@ -155,18 +155,18 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	print "<tr class=\"liste_titre\">";
-	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 	// Type
-	print '<td align="left">';
+	print '<td class="liste_titre" align="left">';
     $html->select_type_socialcontrib($typeid,'typeid',1,16,0);
     print '</td>';
 	// Period end date
-	print '<td>&nbsp;</td>';
-    print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
-	print '<td align="right">';
+	print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
 	print '</td>';
 	print "</tr>\n";

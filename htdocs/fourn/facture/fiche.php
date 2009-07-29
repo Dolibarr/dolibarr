@@ -1040,9 +1040,6 @@ else
 				}
 				print '</td>';
 				print '<td align="right">';
-				//if($mysoc->tva_assuj == "0")
-				//print '<input type="hidden" name="tva_tx" value="0">0';
-				//else
 				print $html->select_tva('tauxtva',$conf->defaulttx,$societe,$mysoc);
 				print '</td>';
 				print '<td align="right">';

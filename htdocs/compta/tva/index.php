@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -26,6 +26,7 @@
 		\version    $Id$
 */
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $langs->load("other");
@@ -45,127 +46,11 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+// Define modetax (0 or 1)
+// 0=normal, 1=option vat for services is on debit
+$modetax = $conf->global->TAX_MODE;
+if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
-
-/**
- * 	\brief		On cherche la tva a collecter
- *	\param		db		Handle acces base
- *	\param		y		Year
- *	\param		m		Month
- */
-function tva_coll($db,$y,$m)
-{
-	global $conf;
-
-    if ($conf->compta->mode == "CREANCES-DETTES")
-    {
-        // Si on paye la tva sur les factures dues (non brouillon)
-        $sql = "SELECT sum(f.tva) as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE f.fk_soc = s.rowid";
-        $sql.= " AND s.entity = ".$conf->entity;
-        $sql.= " AND f.fk_statut IN (1,2)";
-        $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND date_format(f.datef,'%m') = ".$m;
-    }
-    else
-    {
-        // Si on paye la tva sur les payments
-
-        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-        // n'est pas stocké dans la table des payments.
-        // Seul le module compta expert peut résoudre ce problème.
-        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-        // detail part tva et part ht).
-
-/*
-        // Tva sur factures payés
-        $sql = "SELECT sum(f.tva) as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-        $sql.= " WHERE ";
-        $sql.= " f.paye = 1";
-        $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND date_format(f.datef,'%m') = ".$m;
-*/
-    }
-
-    $resql = $db->query($sql);
-
-    if ($resql)
-    {
-        $obj = $db->fetch_object($resql);
-        return $obj->amount;
-    }
-    else
-    {
-        dol_print_error($db);
-    }
-}
-
-
-/**
- * 	\brief		On recupere la tva à payer
- *	\param		db		Handle accès base
- *	\param		y		Année
- *	\param		m		Mois
- */
-function tva_paye($db, $y,$m)
-{
-	global $conf;
-
-    if ($conf->compta->mode == "CREANCES-DETTES")
-    {
-        // Si on paye la tva sur les factures dues (non brouillon)
-        $sql = "SELECT sum(f.total_tva) as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE f.fk_soc = s.rowid";
-        $sql.= " AND s.entity = ".$conf->entity;
-        $sql.= " AND f.fk_statut in (1,2)";
-        $sql.= " AND date_format(f.datef,'%Y') = $y";
-        $sql.= " AND date_format(f.datef,'%m') = $m";
-    }
-    else
-    {
-        // Si on paye la tva sur les payments
-
-        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-        // n'est pas stocke dans la table des payments.
-        // Seul le module compta expert peut resoudre ce probleme.
-        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-        // detail part tva et part ht).
-
-/*
-
-        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-        // n'est pas stocke dans la table des payments.
-        // Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-        // detail part tva et part ht.
-
-        // Tva sur factures payes
-        $sql = "SELECT sum(f.total_tva) as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-  //      $sql.= " WHERE ";
-    $sql .= " WHERE f.fk_statut in (1,2)";
-//        $sql.= " f.paye = 1";
-        $sql.= " AND date_format(f.datef,'%Y') = $y";
-        $sql.= " AND date_format(f.datef,'%m') = $m";
-	//print "xx $sql";
-*/
-    }
-
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $obj = $db->fetch_object($resql);
-        return $obj->amount;
-    }
-    else
-    {
-        dol_print_error($db);
-    }
-}
 
 
 function pt ($db, $sql, $date)
@@ -227,6 +112,9 @@ print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." 
 echo '<table width="100%" class="nobordernopadding">';
 echo '<tr><td>';
 print_titre($langs->trans("VATSummary"));
+// The report mode is the one defined by defaut in tax module setup
+//print $modetax;
+//print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
 echo '</td><td width="5">&nbsp;</td><td>';
 print_titre($langs->trans("VATPayed"));
 echo '</td></tr>';
@@ -242,51 +130,67 @@ print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
-if ($conf->compta->mode == "CREANCES-DETTES")
+
+$y = $year_current ;
+
+
+$var=True;
+$total = 0;  $subtotal = 0;
+$i=0;
+for ($m = 1 ; $m < 13 ; $m++ )
 {
-	$y = $year_current ;
+	$coll_listsell = vat_by_quarter($db, $y, 0, $modetax, 'sell', $m);
+	$coll_listbuy = vat_by_quarter($db, $y, 0, $modetax, 'buy', $m);
 
-
-	$var=True;
-	$total = 0;  $subtotal = 0;
-	$i=0;
-	for ($m = 1 ; $m < 13 ; $m++ )
+	if ($coll_listbuy == -2)
 	{
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td nowrap>'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
-
-		$x_coll = tva_coll($db, $y, $m);
-		print "<td nowrap align=\"right\">".price($x_coll)."</td>";
-
-		$x_paye = tva_paye($db, $y, $m);
-		print "<td nowrap align=\"right\">".price($x_paye)."</td>";
-
-		$diff = $x_coll - $x_paye;
-		$total = $total + $diff;
-		$subtotal = $subtotal + $diff;
-
-		print "<td nowrap align=\"right\">".price($diff)."</td>\n";
-		print "<td>&nbsp;</td>\n";
-		print "</tr>\n";
-
-		$i++;
-		if ($i > 2) {
-			print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td>&nbsp;</td></tr>';
-			$i = 0;
-			$subtotal = 0;
-		}
+		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+		break;
 	}
-	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
-	print "<td>&nbsp;</td>\n";
-	print '</tr>';
 
+	$var=!$var;
+	print "<tr $bc[$var]>";
+	print '<td nowrap>'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
+
+	$x_coll = 0;
+	foreach($coll_listsell as $vatrate=>$val)
+	{
+		$x_coll+=$val['vat'];
+	}
+	print "<td nowrap align=\"right\">".price($x_coll)."</td>";
+
+	$x_paye = 0;
+	foreach($coll_listbuy as $vatrate=>$val)
+	{
+		$x_paye+=$val['vat'];
+	}
+	print "<td nowrap align=\"right\">".price($x_paye)."</td>";
+
+	$diff = $x_coll - $x_paye;
+	$total = $total + $diff;
+	$subtotal = $subtotal + $diff;
+
+	print "<td nowrap align=\"right\">".price($diff)."</td>\n";
+	print "<td>&nbsp;</td>\n";
+	print "</tr>\n";
+
+	$i++;
+	if ($i > 2) {
+		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td>&nbsp;</td></tr>';
+		$i = 0;
+		$subtotal = 0;
+	}
 }
+print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
+print "<td>&nbsp;</td>\n";
+print '</tr>';
+
+/*}
 else
 {
 	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
-}
+}*/
 
 print '</table>';
 

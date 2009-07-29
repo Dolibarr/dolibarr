@@ -69,8 +69,8 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode r�glement
-		$this->option_condreg = 1;                 // Affiche conditions r�glement
+		$this->option_modereg = 1;                 // Affiche mode reglement
+		$this->option_condreg = 1;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 1;                // Affiche si il y a eu escompte
@@ -78,8 +78,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->option_freetext = 1;					// Support add of a personalised text
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
-		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
-		$this->franchise=1;
+		$this->franchise=!$mysoc->tva_assuj;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;

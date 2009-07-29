@@ -64,7 +64,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stock� dans la table des payments.
+	        // n'est pas stocke dans la table des payments.
 	        // Seul le module compta expert peut r�soudre ce probl�me.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
@@ -116,7 +116,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
 	{
-		dol_syslog("Client::vat_by_customer sql=".$sql);
+		dol_syslog("Tax.lib:thirdparty sql=".$sql);
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
@@ -137,7 +137,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 
 
 /**
- * 	\brief		Gets VAT to collect for the given month of the given year
+ * 	\brief		Gets VAT to collect for the given year (and given quarter or month)
  *				The function gets the VAT in split results, as the VAT declaration asks
  * 				to report the amounts for different VAT rates as different lines.
  * 				This function also accounts recurrent invoices
@@ -145,10 +145,11 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
  * 	\param		y			Year
  *	\param		q			Period. If 1-4, it's year quarter.
  *	\param		modetax		0 or 1 (option vat on debit)
- *	\param		direction	'sell' or 'buy'
+ *	\param		direction	'sell' (customer invoice) or 'buy' (supplier invoices)
+ * 	\param		m			Month
  * 	\return		array		List of quarters with vat
  */
-function vat_by_quarter($db, $y, $q, $modetax, $direction)
+function vat_by_quarter($db, $y, $q=0, $modetax, $direction, $m=0)
 {
 	global $conf;
 
@@ -181,20 +182,20 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 
 	// Define sql request
 	$sql='';
-	if ($modetax == 1)	// Option vat on debit
+	if ($modetax == 1)	// Option vat on delivery for goods (payment) and debit invoice for services
     {
-        // If vat payed on due invoices (non draft)
 		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stock� dans la table des payments.
-	        // Seul le module compta expert peut r�soudre ce probl�me.
+	        // n'est pas stocke dans la table des payments.
+	        // Seul le module compta expert peut resoudre ce probleme.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
+			// Count on delivery date (use invoice date as delivery is unknown)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 			$sql.= " d.date_start as date_start, d.date_end as date_end,";
 	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
@@ -207,27 +208,27 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
 	        $sql.= " AND f.rowid = d.".$fk_facture;
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
 	        $sql.= " AND (d.product_type = 0";								// Limit to products
 	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
-    else	// Option vat on payments
+    else	// Option vat on delivery for goods (payments) and payments for services
     {
-        // If vat payed on payments
 		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stock� dans la table des payments.
-	        // Seul le module compta expert peut r�soudre ce probl�me.
+	        // n'est pas stocke dans la table des payments.
+	        // Seul le module compta expert peut resoudre ce probleme.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        // Tva sur factures pay�s (should be on shipment, done on payment instead !)
+			// Count on delivery date (use invoice date as delivery is unknown)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 			$sql.= " d.date_start as date_start, d.date_end as date_end,";
 	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
@@ -247,13 +248,15 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 //	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
 //	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
 	        $sql.= " AND (d.product_type = 0";								// Limit to products
 	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
 			$sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
 
+    //print $sql.'<br>';
 	if (! $sql) return -1;
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
@@ -267,8 +270,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 			$oldrowid='';
 	    	while($assoc = $db->fetch_array($resql))
 	    	{
-	    		if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['total_ht']=0;
-	    		if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['total_vat']=0;
+	    		if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
+	    		if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
 
 				if ($assoc['rowid'] != $oldrowid)		// Si rupture sur d.rowid
 				{
@@ -312,21 +315,22 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 
 	// Define sql request
 	$sql='';
-	if ($modetax == 1)	// Option vat on debit
+	if ($modetax == 1)	// Option vat on delivery for goods (payment) and debit invoice for services
     {
-        // If vat payed on due invoices (non draft)
 		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stock� dans la table des payments.
-	        // Seul le module compta expert peut r�soudre ce probl�me.
+			// Count on invoice date
+			// \todo a ce jour on se sait pas la compter car le montant tva d'un payment
+	        // n'est pas stocke dans la table des payments.
+	        // Seul le module compta expert peut resoudre ce probleme.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+			// Count on invoice date
+			$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 			$sql.= " d.date_start as date_start, d.date_end as date_end,";
 	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -338,28 +342,29 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
 	        $sql.= " AND f.rowid = d.".$fk_facture;
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
 	        $sql.= " AND (d.product_type = 1";								// Limit to services
 	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
 		}
     }
-    else	// Option vat on payments
+    else	// Option vat on delivery for goods (payments) and payments for services
     {
-        // If vat payed on payments
 		if ($conf->global->MAIN_MODULE_ACCOUNTING)
 		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stock� dans la table des payments.
-	        // Seul le module compta expert peut r�soudre ce probl�me.
+			// Count on payments date
+			// \todo a ce jour on se sait pas la compter car le montant tva d'un payment
+	        // n'est pas stocke dans la table des payments.
+	        // Seul le module compta expert peut resoudre ce probleme.
 	        // (Il faut quand un paiement a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        // Tva sur factures pay�s (should be on payment)
-	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
+			// Count on payments date
+			$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 			$sql.= " d.date_start as date_start, d.date_end as date_end,";
 	        $sql.= " f.facnumber as facnum, f.type, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
@@ -375,7 +380,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql.= " AND pf.".$fk_facture2." = f.rowid";
 	        $sql.= " AND pa.rowid = pf.".$fk_payment;
 	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
-	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
+	        if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
+	        if ($m) $sql.= " AND (date_format(pa.datep,'%m') > ".($m-1)." AND date_format(pa.datep,'%m') <= ".($m).")";
 	        $sql.= " AND (d.product_type = 1";								// Limit to services
 	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
 			$sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
@@ -394,8 +400,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 			$oldrowid='';
 	    	while($assoc = $db->fetch_array($resql))
 	    	{
-	    		if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['total_ht']=0;
-	    		if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['total_vat']=0;
+	    		if (! isset($list[$assoc['rate']]['totalht']))  $list[$assoc['rate']]['totalht']=0;
+	    		if (! isset($list[$assoc['rate']]['vat']))      $list[$assoc['rate']]['vat']=0;
 
 				if ($assoc['rowid'] != $oldrowid)		// Si rupture sur d.rowid
 				{

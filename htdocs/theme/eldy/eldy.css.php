@@ -498,6 +498,7 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
+/*    background: #F0F0F0 url(<?php echo $dolibarr_main_url_root.'/theme/login_background.png' ?>) repeat-x; */
 }
 
 div.tabsAction {

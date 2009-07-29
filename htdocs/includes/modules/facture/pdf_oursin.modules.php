@@ -79,8 +79,7 @@ class pdf_oursin extends ModelePDFFactures
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
-		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
-		$this->franchise=1;
+		$this->franchise=!$mysoc->tva_assuj;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;

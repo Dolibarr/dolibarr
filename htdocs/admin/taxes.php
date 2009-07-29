@@ -45,6 +45,17 @@ llxHeader();
 // 0=normal, 1=option vat for services is on debit
 $tax_mode = defined('TAX_MODE')?TAX_MODE:0;
 
+// TAX_MODE=0 (most cases):
+//              Buy                     Sell
+// Product      On delivery             On delivery
+// Service      On payment              On payment
+
+// TAX_MODE=1 (option):
+//              Buy                     Sell
+// Product      On delivery             On delivery
+// Service      On payment              On invoice
+
+
 if ($_POST['action'] == 'settaxmode')
 {
   $tax_mode = $_POST['tax_mode'];
@@ -79,25 +90,67 @@ print_fiche_titre($langs->trans('TaxSetup'),$linkback,'setup');
 
 
 print '<br>';
+if (empty($mysoc->tva_assuj))
+{
+	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
+}
+else
+{
+	print '<table class="noborder" width="100%">';
 
-print '<table class="noborder" width="100%">';
+	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="settaxmode">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
+	print '<td align="right"><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
+	print "</tr>\n";
+	print '<tr '.$bc[false].'><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
+	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
+	print "</td></tr>\n";
+	print '<tr '.$bc[true].'><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
+	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
+	print '</form>';
 
-// Cas du parametre TAX_MODE
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="settaxmode">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
-print '<td align="right"><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
-print "</tr>\n";
-print '<tr '.$bc[false].'><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
-print "</td></tr>\n";
-print '<tr '.$bc[true].'><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
-print '</form>';
+	print "</table>\n";
 
-print "</table>\n";
+	print '<br><br>';
+	print_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
+	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
+
+	print '<table class="border" width="100%">';
+	print '<tr><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+	// Products
+	print '<tr><td>'.$langs->trans("Product").'</td>';
+	print '<td>';
+	print $langs->trans("OnDelivery");
+	print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	print '</td>';
+	print '<td>';
+	print $langs->trans("OnDelivery");
+	print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	print '</td></tr>';
+	// Services
+	print '<tr><td>'.$langs->trans("Services").'</td>';
+	print '<td>';
+	print $langs->trans("OnPayment");
+	print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	print '</td>';
+	print '<td>';
+	if ($tax_mode == 0)
+	{
+		print $langs->trans("OnPayment");
+		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	}
+	if ($tax_mode == 1)
+	{
+		print $langs->trans("OnInvoice");
+		print ' ('.$langs->trans("InvoiceValidateDateUsed").')';
+	}
+	print '</td></tr>';
+	print '</table>';
+}
 
 $db->close();
 
