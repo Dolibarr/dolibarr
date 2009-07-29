@@ -382,6 +382,7 @@ if ($result)
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($total_payed)."</b></td>";
 		print '<td align="center">&nbsp;</td>';
+		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
 	}
 
