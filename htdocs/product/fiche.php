@@ -82,10 +82,10 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 
 	if (! $error)
 	{
-		if ($_POST["canvas"] <> '' && file_exists('canvas/product.'.$_POST["canvas"].'.class.php') )
+		if ($_POST["canvas"] <> '' && file_exists('templates/product.'.$_POST["canvas"].'.class.php') )
 		{
 			$class = 'Product'.ucfirst($_POST["canvas"]);
-			include_once('canvas/product.'.$_POST["canvas"].'.class.php');
+			include_once('templates/product.'.$_POST["canvas"].'.class.php');
 			$product = new $class($db);
 		}
 		else
@@ -206,7 +206,7 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
 			{
 				$class = 'Product'.ucfirst($product->canvas);
-				include_once('canvas/product.'.$product->canvas.'.class.php');
+				include_once('templates/product.'.$product->canvas.'.class.php');
 
 				$product = new $class($db);
 				if ($product->FetchCanvas($_POST["id"]))
@@ -792,7 +792,7 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
 		{
 			$class = 'Product'.ucfirst($product->canvas);
-			include_once('canvas/product.'.$product->canvas.'.class.php');
+			include_once('templates/product.'.$product->canvas.'.class.php');
 			$product = new $class($db);
 
 			$result = $product->FetchCanvas($_GET["id"],'',$_GET["action"]);
