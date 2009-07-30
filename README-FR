@@ -25,11 +25,11 @@ installer Dolibarr avec cette version de la manière suivante:
 - Copier le repertoire 'dolibarr' et tous ses fichiers dans la racine de
   votre serveur web or configurer votre serveur pour utiliser 
   dolibarr/htdocs comme racine d'un nouveau virtual host (ce second choix
-  requiert des comp�tences et habilitations en administration du serveur web).
+  requiert des compétences et habilitations en administration du serveur web).
   
-- Cre�e une base vide mysql (support postgresql experimentale).
+- Créez une base vide mysql (support postgresql experimentale).
 
-- D�finissez les permissions sur le repertoire 'dolibarr/htdocs/conf' pour votre
+- Définissez les permissions sur le repertoire 'dolibarr/htdocs/conf' pour votre
   user du serveur web (les permissions en ecriture seront supprimes une fois
   l'installation terminee).
   
@@ -50,7 +50,7 @@ Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
   fournis dans ce nouveau package.
   
 - Si vous venez d'une version x.y.z vers x.y.w (seul le 3eme chiffre varie),
-  il n'y a pas besoin de migration de donn�es.
+  il n'y a pas besoin de migration de données.
   
 - Si vous venez d'une beta ou d'un version x.y.z vers une autre ou les numeros x
   ou y varient, vous devez appelez la page de migration dans votre navigateur:
@@ -60,7 +60,7 @@ Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
 
   Pour savoir quelle est l'URL exactement de la page "install/", prenez l'URL que
   vous utilisez pour vous loguer. Si elle se termine par "index.php", enlevez le.
-  Dans tous les cas, ajouter ensuite "install/" � la fin.
+  Dans tous les cas, ajouter ensuite "install/" à la fin.
   Par exemple, si votre page de connexion est: 
   http://yourdolibarrhost/something/index.php
   Alors la page "install/" sera 
