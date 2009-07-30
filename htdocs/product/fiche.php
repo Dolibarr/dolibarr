@@ -133,9 +133,9 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 
 		if ( $value != $current_lang ) $e_product = $product;
 
-		// Produit spécifique
+		// Specific product
 		// $_POST n'est pas utilise dans la classe Product
-		// mais dans des classes qui hérite de Product
+		// mais dans des classes qui herite de Product
 		$id = $product->create($user);
 
 		if ($id > 0)
@@ -202,7 +202,7 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 				$mesg = $langs->trans("ErrorProductBadRefOrLabel");
 			}
 
-			// Produit spécifique
+			// Specific product
 			if ($product->canvas <> '' && file_exists('templates/product.'.$product->canvas.'.class.php') )
 			{
 				$class = 'Product'.ucfirst($product->canvas);
@@ -564,7 +564,7 @@ $formproduct = new FormProduct($db);
 
 
 /*
- * Fiche création du produit
+ * Fiche creation du produit
  */
 if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
@@ -639,7 +639,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 		}
 
-		// Description (utilisé dans facture, propale...)
+		// Description (used in invoice, propal...)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
@@ -1042,7 +1042,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</select>';
 			print '</td></tr>';
 
-			// Description (utilisé dans facture, propale...)
+			// Description (used in invoice, propal...)
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 			print "\n";
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
@@ -1616,6 +1616,7 @@ llxFooter('$Date$ - $Revision$');
 /**
  *		\brief		Load tva_taux_value and tva_taux_libelle array
  *		\remarks	Ne sert que pour smarty
+ *      \ TODO  deplacer dans une classe
  */
 function load_tva($db,$name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
 {
@@ -1651,10 +1652,10 @@ function load_tva($db,$name='tauxtva', $defaulttx='', $societe_vendeuse='', $soc
 		}
 	}
 
-	// Définition du taux à pré-sélectionner
+	// Definition du taux a pre-selectionner
 	if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-	// Si taux par defaut n'a pu etre trouvé, on prend dernier.
-	// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
+	// Si taux par defaut n'a pu etre trouve, on prend dernier.
+	// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
 	if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
 
 	$nbdetaux = sizeof($txtva);

@@ -54,13 +54,13 @@ $soc = new Societe($db);
 
 if ($_POST["getcustomercode"])
 {
-	// On défini valeur pour code_client
+	// On defini valeur pour code_client
 	$_POST["code_client"]="aa";
 }
 
 if ($_POST["getsuppliercode"])
 {
-	// On défini valeur pour code_fournisseur
+	// On defini valeur pour code_fournisseur
 	$_POST["code_fournisseur"]="aa";
 }
 
@@ -112,7 +112,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->effectif_id           = $_POST["effectif_id"];
 	if ($_REQUEST["private"] == 1)
 	{
-		$soc->typent_id             = 8; // TODO prévoir autre méthode si le champs "particulier" change de rowid
+		$soc->typent_id             = 8; // TODO prevoir autre methode si le champs "particulier" change de rowid
 	}
 	else
 	{
@@ -301,7 +301,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$modCodeFournisseur = new $module;
 
 		/*
-		 * Fiche societe en mode création
+		 * Fiche societe en mode creation
 		 */
 		if ($_GET["type"]=='f') { $soc->fournisseur=1; }
 		if ($_GET["type"]=='c') { $soc->client=1; }
@@ -564,7 +564,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$html = new Form($db);
 		print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
 		print '<td>';
-		print $html->selectyesno('assujtva_value',1,1);		// Assujeti par défaut en creation
+		print $html->selectyesno('assujtva_value',1,1);		// Assujeti par defaut en creation
 		print '</td>';
 
 		// Code TVA
@@ -634,7 +634,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeClient = new $module;
-		// On vérifie si la balise préfix est utilisée
+		// On verifie si la balise prefix est utilisee
 		if ($modCodeClient->code_auto)
 		{
 			$prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
@@ -647,7 +647,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeFournisseur = new $module;
-		// On vérifie si la balise préfix est utilisée
+		// On verifie si la balise prefix est utilisee
 		if ($modCodeFournisseur->code_auto)
 		{
 			$prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
@@ -722,7 +722,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-		// On ne permet pas la modification du préfix en mode de numérotation auto utilisant le prefix
+		// On ne permet pas la modification du prefix en mode de numerotation auto utilisant le prefix
 		if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
 		{
 			print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
@@ -945,7 +945,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 else
 {
 	/*
-	 * Fiche société en mode visu
+	 * Fiche societe en mode visu
 	 */
 	$soc = new Societe($db);
 	$soc->id = $socid;

@@ -84,7 +84,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						}
 						else dol_syslog($imgThumbSmall);
 
-						// Création de la vignette de la page "Société/Institution"
+						// Creation de la vignette de la page "Societe/Institution"
 						$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, 100, 30, '_mini', $quality);
 						if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 						{
@@ -135,7 +135,7 @@ if ($_GET["action"] == 'addthumb')
 		// Create thumbs of logo
 		if ($isimage > 0)
 		{
-			// Création de la vignette de la page login
+			// Creation de la vignette de la page login
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], 200, 100, '_small',80);
 			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
 			{
@@ -144,7 +144,7 @@ if ($_GET["action"] == 'addthumb')
 			}
 			else dol_syslog($imgThumbSmall);
 
-			// Création de la vignette de la page "Société/Institution"
+			// Creation de la vignette de la page "Societe/Institution"
 			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], 100, 30, '_mini',80);
 			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 			{
@@ -207,7 +207,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
 	/**
-	 * Edition des paramètres
+	 * Edition des parametres
 	 */
 
 	print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
@@ -306,7 +306,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	print '<br>';
 
-	// Identifiants de la société (propre au pays)
+	// Identifiants de la societe (propre au pays)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 	$var=true;
@@ -421,7 +421,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 
 	/*
-	 *  Début d'année fiscale
+	 *  Debut d'annee fiscale
 	 */
 	print '<br>';
 	print '<table class="noborder" width="100%">';
@@ -457,12 +457,12 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print "</table>";
 	print "</td></tr>\n";
 
-	/* Je désactive cette option "facturation" car ce statut fiscal n'existe pas. Seul le réel et franchise existe.
+	/* Je desactive cette option "facturation" car ce statut fiscal n'existe pas. Seul le reel et franchise existe.
 	 Cette option ne doit donc pas etre en "exclusif" avec l'option fiscale de gestion de tva. Peut etre faut-il
-	 une option a part qui n'entre pas en conflit avec les choix "assujéti TVA" ou "non".
+	 une option a part qui n'entre pas en conflit avec les choix "assujeti TVA" ou "non".
 	 $var=!$var;
 	 print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"facturation\"".($conf->global->FACTURE_TVAOPTION == "facturation"?" checked":"")."> Option facturation</label></td>";
-	 print "<td colspan=\"2\">L'option 'facturation' est utilisée par les entreprises qui payent la TVA à facturation (vente de matériel).</td></tr>\n";
+	 print "<td colspan=\"2\">L'option 'facturation' est utilisee par les entreprises qui payent la TVA a facturation (vente de materiel).</td></tr>\n";
 	 */
 
 	$var=!$var;
@@ -486,7 +486,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 else
 {
 	/*
-	 * Affichage des paramètres
+	 * Affichage des parametres
 	 */
 
 	if ($message) print $message.'<br>';
@@ -549,7 +549,7 @@ else
 	print $mysoc->logo;
 	print '</td><td valign="center" align="right">';
 
-	// On propose la génération de la vignette si elle n'existe pas
+	// On propose la generation de la vignette si elle n'existe pas
 	if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && eregi('(\.jpg|\.jpeg|\.png)$',$mysoc->logo))
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
@@ -575,7 +575,7 @@ else
 	print '<br>';
 
 
-	// Identifiants de la société (propre au pays)
+	// Identifiants de la societe (propre au pays)
 	print '<form name="formsoc" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
@@ -702,7 +702,7 @@ else
 	print '</form>';
 
 	/*
-	 *  Début d'année fiscale
+	 *  Debut d'annee fiscale
 	 */
 	print '<br>';
 	print '<table class="noborder" width="100%">';
@@ -769,18 +769,19 @@ llxFooter('$Date$ - $Revision$');
  *    \param      code_iso       Code iso de la devise
  *    \param      withcode       1=affiche code + nom
  *    \return     string         Nom traduit de la devise
+ *    TODO deplacer dans une classe
  */
 function currency_name($code_iso,$withcode=0)
 {
 	global $langs,$db;
 
-	// Si il existe une traduction, on peut renvoyer de suite le libellé
+	// Si il existe une traduction, on peut renvoyer de suite le libelle
 	if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
 	{
 		return $langs->trans("Currency".$code_iso);
 	}
 
-	// Si pas de traduction, on consulte le libellé par défaut en table
+	// Si pas de traduction, on consulte le libelle par defaut en table
 	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
 	$sql.= " WHERE code_iso='".$code_iso."'";
 

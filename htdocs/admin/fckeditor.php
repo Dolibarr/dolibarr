@@ -44,7 +44,7 @@ $modules = array(
 'MAILING' => 'FCKeditorForMailing',
 'DETAILS' => 'FCKeditorForProductDetails',
 );
-// Conditions pour que l'option soit proposée
+// Conditions pour que l'option soit proposee
 $conditions = array(
 'USER' => 1,
 'SOCIETE' => $conf->societe->enabled,
@@ -69,7 +69,7 @@ foreach($modules as $const => $desc)
 	if ($_GET["action"] == 'activate_'.strtolower($const))
 	{
 	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
-	    // Si fckeditor est activé dans la description produit/service, on l'active dans les formulaires
+	    // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
 	    if ($const == 'PRODUCTDESC' && $conf->global->PRODUIT_DESC_IN_FORM)
 	    {
 	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
@@ -96,7 +96,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("FCKEditor"),$linkback,'setup');
 print '<br>';
 /*
- * Activation/désactivation de FCKeditor
+ * Activation/desactivation de FCKeditor
  */
 
 $var=true;

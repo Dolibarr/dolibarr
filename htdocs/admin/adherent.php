@@ -230,111 +230,106 @@ $constantes=array(
 		'ADHERENT_CARD_FOOTER_TEXT',
 		'ADHERENT_ETIQUETTE_TYPE'
 		);
-		print_fiche_titre($langs->trans("Other"),'','');
+print_fiche_titre($langs->trans("Other"),'','');
 
-		print $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-		print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
-		print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
-		//print '%INFOS%'; Deprecated
-		print '<br>';
+print $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
+print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
+//print '%INFOS%'; Deprecated
+print '<br>';
 
-		form_constantes($constantes);
+form_constantes($constantes);
 
+$db->close();
 
-		$db->close();
+print '<br>';
 
-		print '<br>';
+llxFooter('$Date$ - $Revision$');
 
+function form_constantes($tableau)
+{
+	global $db,$bc,$langs;
+	
+	$form = new Form($db);
 
-		llxFooter('$Date$ - $Revision$');
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+	print "</tr>\n";
+	$var=true;
 
-
-		function form_constantes($tableau)
+	foreach($tableau as $const)
+	{
+		$sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='".$const."'";
+		$result = $db->query($sql);
+		if ($result)
 		{
-			// Variables globales
-			global $db,$bc,$langs;
-			$form = new Form($db);
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td>'.$langs->trans("Value").'</td>';
-			print '<td>'.$langs->trans("Type").'</td>';
-			print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
-			print "</tr>\n";
-			$var=true;
+			$obj = $db->fetch_object($result);
+			$var=!$var;
+			print '<form action="adherent.php" method="POST">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+			print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+			print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
 
-			foreach($tableau as $const)
+			print "<tr $bc[$var]>";
+
+			// Affiche nom constante
+			print '<td>';
+			print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : $obj->note;
+			print "</td>\n";
+
+			if ($const == 'ADHERENT_ETIQUETTE_TYPE')
 			{
-				$sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='".$const."'";
-				$result = $db->query($sql);
-				if ($result)
-				{
-					$obj = $db->fetch_object($result);
-					$var=!$var;
-					print '<form action="adherent.php" method="POST">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="action" value="update">';
-					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-					print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-					print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
+				print '<td>';
+				// List of possible labels. Values must exists in
+				// file htdocs/adherents/PDF_Card.class.php
+				require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
+				$pdfcardstatic=new PDF_card('5160',1,1,'mm');
+				$arrayoflabels=array_keys($pdfcardstatic->_Avery_Labels);
 
-					print "<tr $bc[$var]>";
-
-					// Affiche nom constante
-					print '<td>';
-					print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : $obj->note;
-					print "</td>\n";
-
-					if ($const == 'ADHERENT_ETIQUETTE_TYPE')
-					{
-						print '<td>';
-						// List of possible labels. Values must exists in
-						// file htdocs/adherents/PDF_Card.class.php
-						require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
-						$pdfcardstatic=new PDF_card('5160',1,1,'mm');
-						$arrayoflabels=array_keys($pdfcardstatic->_Avery_Labels);
-
-						$form->select_array('constvalue',$arrayoflabels,$obj->value,1,0,1);
-						print '</td><td>';
-						$form->select_array('consttype',array('yesno','texte','chaine'),1);
-					}
-					else
-					{
-						print '<td>';
-						if ($obj->type == 'yesno')
-						{
-							print $form->selectyesno('constvalue',$obj->value,1);
-							print '</td><td>';
-							$form->select_array('consttype',array('yesno','texte','chaine'),0);
-						}
-						elseif ($obj->type == 'texte')
-						{
-							print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
-							print $obj->value;
-							print "</textarea>\n";
-							print '</td><td>';
-							$form->select_array('consttype',array('yesno','texte','chaine'),1);
-						}
-						else
-						{
-							print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
-							print '</td><td>';
-							$form->select_array('consttype',array('yesno','texte','chaine'),2);
-						}
-						print '</td>';
-					}
-
-					print '<td align="center">';
-
-					print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
-					//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
-					print "</td></tr>\n";
-
-					print '</form>';
-					$i++;
-				}
+				$form->select_array('constvalue',$arrayoflabels,$obj->value,1,0,1);
+				print '</td><td>';
+				$form->select_array('consttype',array('yesno','texte','chaine'),1);
 			}
-			print '</table>';
+			else
+			{
+				print '<td>';
+				if ($obj->type == 'yesno')
+				{
+					print $form->selectyesno('constvalue',$obj->value,1);
+					print '</td><td>';
+					$form->select_array('consttype',array('yesno','texte','chaine'),0);
+				}
+				else if ($obj->type == 'texte')
+				{
+					print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
+					print $obj->value;
+					print "</textarea>\n";
+					print '</td><td>';
+					$form->select_array('consttype',array('yesno','texte','chaine'),1);
+				}
+				else
+				{
+					print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
+					print '</td><td>';
+					$form->select_array('consttype',array('yesno','texte','chaine'),2);
+				}
+				print '</td>';
+			}
+			print '<td align="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
+			// print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
+			print "</td></tr>\n";
+			print '</form>';
+			$i++;
 		}
+	}
+	print '</table>';
+}
 
-		?>
+?>

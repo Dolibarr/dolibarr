@@ -1874,9 +1874,9 @@ class Societe extends CommonObject
 			'LV',	// Latvia
 			'LT',	// Lithuania
 			'LU',	// Luxembourg
-			'MO',	// Monaco
+			'MO',	// Monaco ? TODO verify vat rules
 			'MT',	// Malta
-			'NO',	// Norway
+			'NO',	// Norway ? TODO verify vat rules
 			'PL',	// Poland
 			'PT',	// Portugal
 			'RO',	// Romania
@@ -1884,7 +1884,7 @@ class Societe extends CommonObject
 			'SI',	// Slovenia
 			'ES',	// Spain
 			'SE',	// Sweden
-			'CH',	// Switzerland
+			'CH',	// Switzerland ? TODO verify vat rules
 		);
 		//print "dd".$this->pays_code;
 		return in_array($this->pays_code,$country_code_in_EEC);

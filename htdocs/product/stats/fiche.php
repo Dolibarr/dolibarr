@@ -175,7 +175,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 				$graph_data = array();
 
-				// \todo Test si deja existant et recent, on ne genere pas
+				// TODO Test si deja existant et recent, on ne genere pas
 				if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid,$mode);
 				if ($key == 'orders')            $graph_data = $product->get_nb_order($socid,$mode);
 				if ($key == 'invoices')          $graph_data = $product->get_nb_vente($socid,$mode);
@@ -232,7 +232,7 @@ if ($_GET["id"] || $_GET["ref"])
 			//print $url;
 			print '<img src="'.$url.'" alt="'.$graphfiles[$key]['label'].'">';
 			print '</td></tr>';
-			// Date génération
+			// Date generation
 			print '<tr>';
 			if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file']) && ! $px->isGraphKo())
 			{
