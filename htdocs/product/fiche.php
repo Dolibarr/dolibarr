@@ -572,7 +572,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 	{
 		if (! isset($product))
 		{
-			$filecanvas=DOL_DOCUMENT_ROOT.'/product/canvas/product.'.$_GET["canvas"].'.class.php';
+			$filecanvas=DOL_DOCUMENT_ROOT.'/product/templates/product.'.$_GET["canvas"].'.class.php';
 			if ($_GET["canvas"] && file_exists($filecanvas) )
 			{
 				$class = 'Product'.ucfirst($_GET["canvas"]);
@@ -759,7 +759,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		// On assigne les valeurs meme en creation car elles sont definies si
 		// on revient en erreur
 		//
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
+		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/templates/'.$_GET["canvas"].'/';
 		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
 		$smarty->assign('tva_taux_value', $tvaarray['value']);
 		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
@@ -797,7 +797,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 			$result = $product->FetchCanvas($_GET["id"],'',$_GET["action"]);
 
-			$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/templates/'.$product->canvas.'/';
 
 			$product->assign_smarty_values($smarty,$_GET["action"]);
 		}

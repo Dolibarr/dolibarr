@@ -18,13 +18,13 @@
  */
 
 /**
-   \file       htdocs/product/canvas/product.livre.class.php
+   \file       htdocs/product/templates/product.livre.class.php
    \ingroup    produit
    \brief      Fichier de la classe des produits specifiques de type livre
    \version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT.'/product/canvas/product.livre.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/product/templates/product.livre.class.php');
 
 /**
    \class      ProductLivreContrat

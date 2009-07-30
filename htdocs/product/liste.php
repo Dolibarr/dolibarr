@@ -213,15 +213,15 @@ if ($resql)
 			$template = $_GET["canvas"].'/liste.tpl';
 		}
 		// Check if a default template is present
-		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/liste.tpl'))
+		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/templates/'.$_GET["canvas"].'/liste.tpl'))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/templates/';
 			$template = $_GET["canvas"].'/liste.tpl';
 		}
 		// Error template
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/common/templates/';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/core/templates/';
 			$template = 'error.tpl';
 		}
 		

@@ -306,7 +306,7 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
 	require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
-	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
+	$dir = DOL_DOCUMENT_ROOT . "/product/templates/";
 
 	if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	{

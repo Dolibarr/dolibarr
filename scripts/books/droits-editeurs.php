@@ -28,7 +28,7 @@
 require_once("../../htdocs/master.inc.php");
 require_once(FPDF_PATH.'fpdf.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/canvas/product.livre.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/templates/product.livre.class.php");
 
 $error = 0;
 $year = strftime("%Y", time());

@@ -50,7 +50,7 @@ function llxHeader($head = "", $urlp = "", $title="")
 	}
 
 	// Produit specifique
-	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
+	$dir = DOL_DOCUMENT_ROOT . "/product/templates/";
 	if(is_dir($dir) && ! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 	{
 		if ($handle = opendir($dir))

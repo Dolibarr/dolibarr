@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/multicompany/canvas/multicompany.class.php
+ *	\file       htdocs/multicompany/multicompany.class.php
  *	\ingroup    multicompany
  *	\brief      File Class multicompany
  *	\version    $Id$
