@@ -77,10 +77,10 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
  *
  */
 
-if ($_GET["canvas"] <> '' && file_exists('canvas/product.'.$_GET["canvas"].'.class.php') )
+if ($_GET["canvas"] <> '' && file_exists('templates/product.'.$_GET["canvas"].'.class.php') )
 {
 	$class = 'Product'.ucfirst($_GET["canvas"]);
-	include_once('canvas/product.'.$_GET["canvas"].'.class.php');
+	include_once('templates/product.'.$_GET["canvas"].'.class.php');
 
 	$object = new $class($db);
 	$object->LoadListDatas($limit, $offset, $sortfield, $sortorder);

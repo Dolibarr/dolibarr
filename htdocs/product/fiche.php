@@ -203,7 +203,7 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			}
 
 			// Produit spécifique
-			if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
+			if ($product->canvas <> '' && file_exists('templates/product.'.$product->canvas.'.class.php') )
 			{
 				$class = 'Product'.ucfirst($product->canvas);
 				include_once('templates/product.'.$product->canvas.'.class.php');
@@ -789,7 +789,7 @@ if ($_GET["id"] || $_GET["ref"])
 	// Gestion des produits specifiques
 	if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	{
-		if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
+		if ($product->canvas <> '' && file_exists('templates/product.'.$product->canvas.'.class.php') )
 		{
 			$class = 'Product'.ucfirst($product->canvas);
 			include_once('templates/product.'.$product->canvas.'.class.php');
