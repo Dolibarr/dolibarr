@@ -209,23 +209,23 @@ if ($resql)
 		// Check if a custom template is present
 		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/liste.tpl'))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates';
-			$template = '/product/'.$_GET["canvas"].'/liste.tpl';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/';
+			$template = $_GET["canvas"].'/liste.tpl';
 		}
 		// Check if a default template is present
 		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/liste.tpl'))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/canvas';
-			$template = '/'.$_GET["canvas"].'/liste.tpl';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/';
+			$template = $_GET["canvas"].'/liste.tpl';
 		}
 		// Error template
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/common/templates';
-			$template = '/error.tpl';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/common/templates/';
+			$template = 'error.tpl';
 		}
 		
-		$smarty->display($smarty->template_dir.$template);
+		$smarty->display($template);
 	}
 	else
 	{
