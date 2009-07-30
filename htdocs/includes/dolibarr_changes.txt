@@ -48,7 +48,7 @@ to get back colors that match the theme.
 
 * Edit fckconfig.js to set:
 ***************************
-(Rem: Pas requis car deja géré dans le fichier fckconfig.js qui est dans le repertoire du theme)
+(Rem: Not required as already in the managed file fckconfig.js which is in the directory of the theme)
 FCKConfig.LinkUpload = false ;
 FCKConfig.ImageUpload = false ;
 FCKConfig.FlashUpload = false ;
