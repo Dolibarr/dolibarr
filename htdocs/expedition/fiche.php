@@ -621,25 +621,28 @@ else
 			print "</tr>";
 
 			// Linked documents
-			print '<tr><td>';
-			if ($origin == 'commande')
+			if ($typeobject == 'commande' && $expedition->$typeobject->id && $conf->commande->enabled)
 			{
+				print '<tr><td>';
 				$order=new Commande($db);
-				$order->fetch($expedition->$origin->id);
+				$order->fetch($expedition->$typeobject->id);
 				print $langs->trans("RefOrder").'</td>';
 				print '<td colspan="3">';
 				print $order->getNomUrl(1,'commande');
+				print "</td>\n";
+				print '</tr>';
 			}
-			if ($origin == 'propal')
+			if ($typeobject == 'propal' && $expedition->$typeobject->id && $conf->propal->enabled)
 			{
+				print '<tr><td>';
 				$propal=new Propal($db);
-				$propal->fetch($expedition->$origin->id);
+				$propal->fetch($expedition->$typeobject->id);
 				print $langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
 				print $propal->getNomUrl(1,'expedition');
+				print "</td>\n";
+				print '</tr>';
 			}
-			print "</td>\n";
-			print '</tr>';
 
 			// Ref customer
 			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
@@ -894,9 +897,12 @@ else
 
 		print '</td></tr></table>';
 
-		print '<br>';
-		//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
-		show_list_sending_receive($expedition->origin,$expedition->origin_id);
+		if ($expedition->$origin->id)
+		{
+			print '<br>';
+			//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
+			show_list_sending_receive($expedition->origin,$expedition->origin_id);
+		}
 
 	}
 	else
