@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/product/canvas/product.livre.class.php
    \ingroup    produit
    \brief      Fichier de la classe des produits specifiques de type livre
-   \version    $Revision$
+   \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/product/canvas/product.livre.class.php');
@@ -90,7 +87,7 @@ class ProductLivreCouverture extends Product
 	$sql = "SELECT p.rowid,p.ref,p.label";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre as pl,".MAIN_DB_PREFIX."product as p";
 	$sql.= " WHERE pl.rowid=p.rowid AND pl.fk_couverture = '".$id."'";
-	
+
 	$result = $this->db->query($sql) ;
 
 	if ( $result )
@@ -103,7 +100,7 @@ class ProductLivreCouverture extends Product
 	    $this->db->free();
 	  }
       }
-    
+
     return $result;
   }
   /**
