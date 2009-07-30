@@ -2,6 +2,7 @@
 CHARSET = UTF-8
 Proposals = Presupuestos
 Proposal = Presupuesto
+ProposalShort = Presupuesto
 ProposalsDraft = Presupuestos borrador
 ProposalDraft = Presupuesto borrador
 Prop = Presupuestos

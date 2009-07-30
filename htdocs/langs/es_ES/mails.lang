@@ -66,6 +66,7 @@ CloneEMailing = Clonar E-Mailing
 ConfirmCloneEMailing = ¿ Está seguro de querer clonar este e-mailing ?
 CloneContent = Clonar mensaje
 CloneReceivers = Clonar destinatarios
+DateLastSend = Fecha último envío
 # Libelle des modules de liste de destinataires mailing = 
 MailingModuleDescContactCompanies = Contactos de terceros (clientes potenciales, clientes, proveedores...)
 MailingModuleDescDolibarrUsers = Usuarios de Dolibarr que tienen e-mail

@@ -264,6 +264,7 @@ Organization = Organismo
 AutomaticallyGenerated = Generado automáticamente
 FiscalYearInformation = Información del año fiscal
 FiscalMonthStart = Mes de inicio de ejercicio
+YouMustCreateContactFirst = Debe establecer contactos con e-mail en los terceros para poder configurarles notificaciones por e-mail.
 # Monkey = 
 MonkeyNumRefModelDesc = Devuelve un número bajo el formato %syymm-nnnn para los códigos de clientes y %syymm-nnnn para los códigos de los proveedores, donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0.
 # Leopard = 

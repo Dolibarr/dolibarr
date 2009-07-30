@@ -2,6 +2,7 @@
 CHARSET = UTF-8
 Proposals = Pressupostos
 Proposal = Pressupost
+ProposalShort = Pressupost
 ProposalsDraft = Pressupostos esborrany
 ProposalDraft = Pressupost esborrany
 Prop = Pressupostos

@@ -264,6 +264,7 @@ Organization = Organisme
 AutomaticallyGenerated = Generat automàticament
 FiscalYearInformation = Informació de l'any fiscal
 FiscalMonthStart = Mes d'inici d'exercici
+YouMustCreateContactFirst = Ha d'establir contactes amb e-mail en els tercers per a poder configurar notificacions per e-mail.
 # Monkey =  = 
 MonkeyNumRefModelDesc = Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
 # Leopard =  = 
