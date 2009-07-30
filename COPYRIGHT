@@ -10,7 +10,7 @@ Composant         Version  License                     Compatible GPL   Usage
 ----------------------------------------------------------------------------
 In alphabetical order of external-lib directory:
 ArtiChow          1.07     Public Domain               Yes              Graphics
-Smarty            2.6.0    LGPL 2.1                    Yes              Some pages templates
+Smarty            2.6.26   LGPL 2.1                    Yes              Some pages templates
 
 In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion

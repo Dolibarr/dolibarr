@@ -1,8 +1,9 @@
+
 NAME:
 
     Smarty - the PHP compiling template engine
 
-VERSION: 2.6.0
+VERSION: 2.6.26
 
 AUTHORS:
     
@@ -11,21 +12,26 @@ AUTHORS:
 
 MAILING LISTS:
 
-    We have a few mailing lists. "general" for you to share your ideas or ask
-	questions, "dev" for those interested in the development efforts of Smarty,
-	and "cvs" for those that would like to track the updates made in the cvs
+    We have a few mailing lists. "discussion" for you to share your ideas or ask
+	questions, "developers" for those interested in the development efforts of Smarty,
+	and "svn" for those that would like to track the updates made in the svn
 	repository.
 
     send a blank e-mail message to:
-      smarty-general-subscribe@lists.php.net (subscribe to the general list)
-      smarty-general-unsubscribe@lists.php.net (unsubscribe from the general list)
-      smarty-general-digest-subscribe@lists.php.net (subscribe to digest)
-      smarty-general-digest-unsubscribe@lists.php.net (unsubscribe from digest)
-      smarty-dev-subscribe@lists.php.net (subscribe to the dev list)
-      smarty-dev-unsubscribe@lists.php.net (unsubscribe from the dev list)
-      smarty-cvs-subscribe@lists.php.net (subscribe to the cvs list)
-      smarty-cvs-unsubscribe@lists.php.net (unsubscribe from the cvs list)
+      smarty-discussion-subscribe@googlecode.com(subscribe to the general discussion list)
+      smarty-discussion-unsubscribe@googlecode.com (unsubscribe from the general discussion list)
+      smarty-discussion-digest-subscribe@googlecode.com (subscribe to digest)
+      smarty-discussion-digest-unsubscribe@googlecode.com (unsubscribe from digest)
+      smarty-developers-subscribe@googlecode.com (subscribe to the dev list)
+      smarty-developers-unsubscribe@googlecode.com (unsubscribe from the dev list)
+      smarty-svn-subscribe@googlecode.com (subscribe to the svn list)
+      smarty-svn-unsubscribe@googlecode.com (unsubscribe from the svn list)
+
     You can also browse the mailing list archives at
+    http://groups.google.com/group/smarty-discussion
+    http://groups.google.com/group/smarty-developers
+
+    and the OLD list archives at
     http://marc.theaimsgroup.com/?l=smarty&r=1&w=2
 
 SYNOPSIS:

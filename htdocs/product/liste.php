@@ -194,10 +194,8 @@ if ($resql)
 		print "</div><br />";
 	}
 
-	$smarty->template_dir = DOL_DOCUMENT_ROOT;
-
-	if ($_GET["canvas"] <> '' && file_exists($smarty->template_dir . '/product/canvas/'.$_GET["canvas"].'/liste.tpl') )
-	{
+	if ($conf->global->PRODUCT_CANVAS_ABILITY && isset($_GET["canvas"]))
+	{	
 		$smarty->assign('datas', $object->list_datas);
 		$smarty->assign('url_root', $dolibarr_main_url_root);
 		$smarty->assign('theme', $conf->theme);
@@ -207,7 +205,27 @@ if ($resql)
 		$smarty->assign('title_picto', img_picto('',$picto));
 		if ($_GET["canvas"] != 'default') $texte = $langs->trans('Books');
 		$smarty->assign('title_text', $texte);
-		$smarty->display('product/canvas/'.$_GET["canvas"].'/liste.tpl');
+
+		// Check if a custom template is present
+		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/liste.tpl'))
+		{
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates';
+			$template = '/product/'.$_GET["canvas"].'/liste.tpl';
+		}
+		// Check if a default template is present
+		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/liste.tpl'))
+		{
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/canvas';
+			$template = '/'.$_GET["canvas"].'/liste.tpl';
+		}
+		// Error template
+		else
+		{
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/common/templates';
+			$template = '/error.tpl';
+		}
+		
+		$smarty->display($smarty->template_dir.$template);
 	}
 	else
 	{
