@@ -1854,37 +1854,38 @@ class Societe extends CommonObject
 	function isInEEC()
 	{
 		// List of all country codes that are in europe for european vat rules
+		// List found on http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome
 		$country_code_in_EEC=array(
 			'AT',	// Austria
 			'BE',	// Belgium
 			'BG',	// Bulgaria
 			'CY',	// Cyprus
 			'CZ',	// Czech republic
+			'DE',	// Germany
 			'DK',	// Danemark
 			'EE',	// Estonia
+			'ES',	// Spain
 			'FI',	// Finland
 			'FR',	// France
-			'DE',	// Germany
 			'GB',	// Royaume-uni
 			'GR',	// Greece
 			'NL',	// Holland
 			'HU',	// Hungary
 			'IE',	// Ireland
 			'IT',	// Italy
-			'LV',	// Latvia
 			'LT',	// Lithuania
 			'LU',	// Luxembourg
-			'MO',	// Monaco ? TODO verify vat rules
+			'LV',	// Latvia
+			'MO',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
 			'MT',	// Malta
-			'NO',	// Norway ? TODO verify vat rules
+			//'NO',	// Norway
 			'PL',	// Poland
 			'PT',	// Portugal
 			'RO',	// Romania
+			'SE',	// Sweden
 			'SK',	// Slovakia
 			'SI',	// Slovenia
-			'ES',	// Spain
-			'SE',	// Sweden
-			'CH',	// Switzerland ? TODO verify vat rules
+			//'CH',	// Switzerland - No. Swizerland in not in EEC
 		);
 		//print "dd".$this->pays_code;
 		return in_array($this->pays_code,$country_code_in_EEC);
