@@ -2641,7 +2641,7 @@ function dol_nboflines_bis($texte,$maxlinesize=0)
 {
 	$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
 	$texte = strtr($texte, $repTable);
-	$pattern = '/(<[^>]+>)/Uu';
+	$pattern = '/(<[^>]+>)/';
 	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$nblines = floor((count($a)+1)/2);
 	// count possible auto line breaks
