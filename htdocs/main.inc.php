@@ -569,11 +569,10 @@ else                        // Si utilisateur externe
 }
 
 
-// For modules using Smarty
-if ($conf->global->MAIN_NEED_SMARTY)
+// If there is at least one module using Smarty
+if (sizeof($conf->need_smarty) > 0)
 {
-	// SMARTY
-	// Definit dans le fichier de conf
+	// SMARTY (Defined into conf file)
 	// $dolibarr_smarty_libs_dir="/home/www/dolibarr/external-libs/smarty/libs/";
 	// $dolibarr_smarty_compile="/home/www/dolibarr/documents/smarty/templates/temp";
 	// $dolibarr_smarty_cache="/home/www/dolibarr/documents/smarty/cache/temp";

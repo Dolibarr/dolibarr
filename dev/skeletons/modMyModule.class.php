@@ -88,8 +88,8 @@ class modMyModule extends DolibarrModules
 
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled
-		//Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
-		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
+		//Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
+		//                            1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 
 		// Array to add new pages in new tabs
 		$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
@@ -132,7 +132,7 @@ class modMyModule extends DolibarrModules
 
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
+		$this->menus = array();			// List of menus to add
 		$r=0;
 
 		// Add here entries to declare new menus

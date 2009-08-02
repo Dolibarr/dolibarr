@@ -73,16 +73,10 @@ class modDroitPret  extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("droitpret.php");
 
-		// Constantes
-		$this->const=array();
-		$r=0;
-
-		$r++;
-		$this->const[$r][0] = "MAIN_NEED_SMARTY";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = 1;
-		$this->const[$r][3] = 'Need smarty';
-		$this->const[$r][4] = 0;
+		// Constants
+		//Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
+		//                            1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
+		$this->const=array(1=>array('MAIN_MODULE_DROITPRET_NEEDSMARTY',"chaine",1,'Need smarty',0));
 
 		// Boxes
 		$this->boxes = array();

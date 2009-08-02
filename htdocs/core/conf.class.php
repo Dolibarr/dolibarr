@@ -53,6 +53,7 @@ class Conf
 
 	var $css_modules=array();
 	var $tabs_modules=array();
+	var $need_smarty=array();
 	var $modules=array();
 
 	var $logbuffer=array();
@@ -139,13 +140,19 @@ class Conf
 							//print '->'.$module.'->'.$dir_name.' = '.$this->$module->$dir_name.'<br>';
 						}
 					}
+					// If this is constant for a smarty need by a module
+					if (eregi('^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$',$key) && $value)
+					{
+						$module=strtolower($reg[1]);
+						// Add this module in list of module that need smarty
+						$this->need_smarty[]=$module;
+					}
 					// If this is a module constant
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
 						//print "Module ".$module." is enabled<br>\n";
 						$this->$module->enabled=true;
-
 						// Add this module in list of enabled modules
 						$this->modules[]=$module;
 					}

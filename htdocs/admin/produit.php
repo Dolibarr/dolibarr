@@ -104,20 +104,6 @@ else if ($_POST["action"] == 'viewProdDescInForm')
 {
 	dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"],'chaine',0,'',$conf->entity);
 }
-/*
-else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
-{
-	dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmDeleteProdLineInForm"],'chaine',0,'',$conf->entity);
-}
-*/
-else if ($_POST["action"] == 'ProductCanvasAbility')
-{
-	// Create temp directory for smarty
-	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
-	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
-
-	dolibarr_set_const($db, "MAIN_NEED_SMARTY", $_POST["ProductCanvasAbility"],'chaine',0,'',$conf->entity);
-}
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
 	dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"],'chaine',0,'',$conf->entity);
