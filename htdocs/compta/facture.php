@@ -1355,7 +1355,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
  * View
  */
 
-llxHeader('',$langs->trans('Bill'),'HelpInvoice');
+llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 $html = new Form($db);
 $formfile = new FormFile($db);

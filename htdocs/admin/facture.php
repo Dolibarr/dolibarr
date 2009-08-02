@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne                  <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
@@ -25,7 +25,7 @@
  *		\ingroup    facture
  *		\brief      Page d'administration/configuration du module Facture
  *		\version    $Id$
-*/
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -209,16 +209,16 @@ if ($_POST["action"] == 'setNumWithInvoice') dolibarr_set_const($db, "AVOIR_NUM_
 
 
 /*
- * Affiche page
+ * View page
  */
 
-llxHeader("","");
+llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
 
 $html=new Form($db);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BillsNumberingModule"),$linkback,'setup');
+print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
 print '<br>';
 
 $h = 0;
@@ -230,9 +230,13 @@ $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
+
 /*
- *  Module numerotation
+ *  Numbering module
  */
+
+print_titre($langs->trans("BillsNumberingModule"));
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';

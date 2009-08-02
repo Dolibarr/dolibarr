@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/admin/compta.php
- \ingroup    tax
- \brief      Page de configuration du module tax
- \version    $Id$
+ *	\file       htdocs/admin/compta.php
+ *	\ingroup    tax
+ *	\brief      Page de configuration du module tax
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
