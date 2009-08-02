@@ -176,15 +176,18 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$pdf->SetDrawColor(224,224,224);
 
 	// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-	$nbofligne=dol_nboflines_bis($ligne);
+	$nbofligne=dol_nboflines_bis($ligne);  
+	//print 'nbofligne='.$nbofligne; exit;
 	//print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
-	$posy=$marge_basse + ($nbofligne*4) + ($ligne1?3:0) + ($ligne2?3:0);
+	$posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
 
 	if ($ligne)	// Free text
 	{
-		$pdf->SetXY($marge_gauche-5,-$posy);
-		$pdf->MultiCell(200, 3, $ligne, 0, 'C', 0);	// Use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
-		$posy-=($nbofligne*4);	// 6 of ligne + 3 of MultiCell
+		$pdf->SetXY($marge_gauche,-$posy);
+		$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
+		if ($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT) { $width=200; $align='C'; }
+		$pdf->MultiCell($width, 3, $ligne, 0, $align, 0);	
+		$posy-=($nbofligne*3);	// 6 of ligne + 3 of MultiCell
 	}
 
 	$pdf->SetY(-$posy);
@@ -193,14 +196,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 
 	if ($ligne1)
 	{
-		$pdf->SetXY($marge_gauche-5,-$posy);
+		$pdf->SetXY($marge_gauche,-$posy);
 		$pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
 	}
 
 	if ($ligne2)
 	{
 		$posy-=3;
-		$pdf->SetXY($marge_gauche-5,-$posy);
+		$pdf->SetXY($marge_gauche,-$posy);
 		$pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
 	}
 
