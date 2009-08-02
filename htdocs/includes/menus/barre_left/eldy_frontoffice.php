@@ -17,16 +17,16 @@
  */
 
 /**
- \file       htdocs/includes/menus/barre_left/eldy_frontoffice.php
- \brief      Gestionnaire du menu du gauche Eldy
- \version    $Id$
-
- \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
- \remarks    A l'aide d'un objet $newmenu=new Menu() et de la méthode add,
- \remarks    définir la liste des entrées menu à faire apparaitre.
- \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
- \remarks    Ce qui est défini dans un tel gestionnaire sera alors prioritaire sur
- \remarks    les définitions de menu des fichiers pre.inc.php
+ *	\file       htdocs/includes/menus/barre_left/eldy_frontoffice.php
+ *	\brief      Gestionnaire du menu du gauche Eldy
+ *	\version    $Id$
+ *
+ *	\remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
+ *	\remarks    A l'aide d'un objet $newmenu=new Menu() et de la méthode add,
+ *	\remarks    définir la liste des entrées menu à faire apparaitre.
+ *	\remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
+ *	\remarks    Ce qui est défini dans un tel gestionnaire sera alors prioritaire sur
+ *	\remarks    les définitions de menu des fichiers pre.inc.php
  */
 
 
@@ -603,7 +603,7 @@ class MenuLeft {
 					{
 						$newmenu->add(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->rights->produit->creer);
 						$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->rights->produit->lire);
-						if (! empty($conf->global->PRODUIT_SPECIAL_LIVRE) && ! empty($conf->global->PRODUCT_CANVAS_ABILITY))
+						if (! empty($conf->droitpret->enabled))
 						{
 							$newmenu->add(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0&canvas=livre", $langs->trans("NewBook"), 1, $user->rights->produit->creer);
 							$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre", $langs->trans("BookList"), 1, $user->rights->produit->creer);

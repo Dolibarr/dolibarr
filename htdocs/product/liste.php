@@ -194,7 +194,7 @@ if ($resql)
 		print "</div><br />";
 	}
 
-	if ($conf->global->PRODUCT_CANVAS_ABILITY && isset($_GET["canvas"]))
+	if ($conf->droitpret->enabled && isset($_GET["canvas"]))
 	{	
 		$smarty->assign('datas', $object->list_datas);
 		$smarty->assign('url_root', $dolibarr_main_url_root);

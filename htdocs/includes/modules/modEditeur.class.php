@@ -76,8 +76,7 @@ class modEditeur extends DolibarrModules
 		$this->langfiles = array("orders","bills","companies");
 
 		// Constantes
-		$this->const=array(0=>array('PRODUCT_CANVAS_ABILITY','chaine',1,'This is a constant',1),
-						   1=>array('MAIN_NEED_SMARTY','chaine',1,'Need smarty',0));
+		$this->const=array(1=>array('MAIN_NEED_SMARTY','chaine',1,'Need smarty',0));
 
 		// Boites
 		$this->boxes = array();

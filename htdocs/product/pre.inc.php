@@ -51,7 +51,7 @@ function llxHeader($head = "", $urlp = "", $title="")
 
 	// Produit specifique
 	$dir = DOL_DOCUMENT_ROOT . "/product/templates/";
-	if(is_dir($dir) && ! empty($conf->global->PRODUCT_CANVAS_ABILITY))
+	if(is_dir($dir) && ! empty($conf->droitpret->enabled))
 	{
 		if ($handle = opendir($dir))
 		{

@@ -293,8 +293,8 @@ print '</tr>';
 print '</form>';
 
 
-// Old canvas feature
-if ($conf->global->PRODUCT_CANVAS_ABILITY)
+// Add droitpret feature
+if ($conf->droitpret->enabled)
 {
 	// Propose utilisation de canvas.
 	// Ces derniers ne sont geres que par le menu default
@@ -308,50 +308,47 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
 	$dir = DOL_DOCUMENT_ROOT . "/product/templates/";
 
-	if ($conf->global->PRODUCT_CANVAS_ABILITY)
+	if (is_dir($dir) )
 	{
-		if(is_dir($dir) )
-		{
-			$handle=opendir($dir);
+		$handle=opendir($dir);
 
-			while (($file = readdir($handle))!==false)
+		while (($file = readdir($handle))!==false)
+		{
+			if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
 			{
-				if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
+				$parts = explode('.',$file);
+				$classname = 'Product'.ucfirst($parts[1]);
+				require_once($dir.$file);
+				$module = new $classname();
+
+				$var=!$var;
+				print "<tr $bc[$var]><td>";
+
+				print $module->description;
+
+				print '</td><td align="right">';
+
+				$const = "PRODUIT_SPECIAL_".strtoupper($parts[1]);
+				if ($conf->global->$const)
 				{
-					$parts = explode('.',$file);
-					$classname = 'Product'.ucfirst($parts[1]);
-					require_once($dir.$file);
-					$module = new $classname();
-
-					$var=!$var;
-					print "<tr $bc[$var]><td>";
-
-					print $module->description;
-
+					print img_tick();
 					print '</td><td align="right">';
-
-					$const = "PRODUIT_SPECIAL_".strtoupper($parts[1]);
-					if ($conf->global->$const)
-					{
-						print img_tick();
-						print '</td><td align="right">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';
-					}
-					else
-					{
-						print '&nbsp;</td><td align="right">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
-					}
-
-					print '</td></tr>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';
 				}
+				else
+				{
+					print '&nbsp;</td><td align="right">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
+				}
+
+				print '</td></tr>';
 			}
-			closedir($handle);
 		}
-		else
-		{
-			print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
-		}
+		closedir($handle);
+	}
+	else
+	{
+		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 	}
 	print '</table>';
 }

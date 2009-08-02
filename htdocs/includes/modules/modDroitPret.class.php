@@ -77,12 +77,6 @@ class modDroitPret  extends DolibarrModules
 		$this->const=array();
 		$r=0;
 
-		$this->const[$r][0] = "PRODUCT_CANVAS_ABILITY";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = 1;
-		$this->const[$r][3] = 'This is a constant';
-		$this->const[$r][4] = 1;
-
 		$r++;
 		$this->const[$r][0] = "MAIN_NEED_SMARTY";
 		$this->const[$r][1] = "chaine";

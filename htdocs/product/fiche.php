@@ -568,7 +568,7 @@ $formproduct = new FormProduct($db);
  */
 if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	if ($conf->global->PRODUCT_CANVAS_ABILITY)
+	if ($conf->droitpret->enabled)
 	{
 		if (! isset($product))
 		{
@@ -598,7 +598,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 	if ($mesg) print $mesg."\n";
 
-	if (! $conf->global->PRODUCT_CANVAS_ABILITY || !$_GET["canvas"])
+	if (empty($conf->droitpret->enabled) || empty($_GET["canvas"]))
 	{
 		print '<form action="fiche.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -787,7 +787,7 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	// Gestion des produits specifiques
-	if ($conf->global->PRODUCT_CANVAS_ABILITY)
+	if ($conf->droitpret->enabled)
 	{
 		if ($product->canvas <> '' && file_exists('templates/product.'.$product->canvas.'.class.php') )
 		{
