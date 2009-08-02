@@ -289,7 +289,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->SetXY (10, $tab_top + 4 + $j * $height);
 							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + 4 + $j * $height,
 							dol_htmlentitiesbr($outputlangs->convToOutputCharset($fichinterligne->desc),1), 0, 1, 0);
-							$tab_height+=dol_nboflines_bis($fichinterligne->desc,52)*4;
+							$tab_height+=dol_nboflines_bis($fichinterligne->desc,52,$outputlangs->charset_output)*4;
 
 							$j++;
 						}

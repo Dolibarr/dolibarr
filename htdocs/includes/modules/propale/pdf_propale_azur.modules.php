@@ -303,7 +303,7 @@ class pdf_propale_azur extends ModelePDFPropales
 						//on recupere la description du produit suivant
 						$follow_descproduitservice = $propale->lignes[$i+1]->desc;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
+						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}
 					else	// If it's last line
 					{

@@ -219,7 +219,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'C', 0);
 
 					//Generation de la page 2
-					$curY += (dol_nboflines_bis($libelleproduitservice)*3+1);
+					$curY += (dol_nboflines_bis($libelleproduitservice,0,$outputlangs->charset_output)*3+1);
 					$nexY = $curY;
 					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1)
 					{

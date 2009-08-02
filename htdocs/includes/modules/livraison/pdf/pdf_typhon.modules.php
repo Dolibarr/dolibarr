@@ -301,10 +301,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						//on r�cup�re la description du produit suivant
+						//on recupere la description du produit suivant
 						$follow_descproduitservice = $object->lignes[$i+1]->desc;
-						//on compte le nombre de ligne afin de v�rifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52)*4);
+						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}
 					else	// If it's last line
 					{

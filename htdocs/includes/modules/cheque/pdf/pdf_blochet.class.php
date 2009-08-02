@@ -334,7 +334,7 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->SetDrawColor(224,224,224);
 
 		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-		$nbofligne=dol_nboflines_bis($ligne);
+		$nbofligne=dol_nboflines_bis($ligne,0,$outputlangs->charset_output);
 		//print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
 		$posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
 

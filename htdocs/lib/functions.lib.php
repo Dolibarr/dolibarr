@@ -2632,16 +2632,19 @@ function dol_nboflines($s,$maxchar=0)
 
 
 /**
- *	\brief     Return nb of lines of a formated text with \n and <br>
- *	\param	   texte      	Text
- *	\param	   maxlinesize  Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
- *	\return    int			Number of lines
+ *	\brief     	Return nb of lines of a formated text with \n and <br>
+ *	\param	   	texte      		Text
+ *	\param	   	maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
+ * 	\param		charset			Give the charset used to encode the $texte variable in memory.
+ *	\return    	int				Number of lines
  */
-function dol_nboflines_bis($texte,$maxlinesize=0)
+function dol_nboflines_bis($texte,$maxlinesize=0,$charset='UTF-8')
 {
+	//print $texte; 
 	$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
 	$texte = strtr($texte, $repTable);
-	$pattern = '/(<[^>]+>)/';
+	if ($charset == 'UTF-8') { $pattern = '/(<[^>]+>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
+	else $pattern = '/(<[^>]+>)/U';								// /U is to have UNGREEDY regex to limit to one html tag.
 	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$nblines = floor((count($a)+1)/2);
 	// count possible auto line breaks
