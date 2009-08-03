@@ -119,8 +119,8 @@ if ($resql)
 
     print '<tr class="liste_titre">';
 
-    print '<td><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
-    print '<td><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
     print '<td colspan="2" class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print '</td>';
