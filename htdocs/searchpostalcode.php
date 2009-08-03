@@ -37,7 +37,7 @@
 /**
         \file       htdocs/searchpostalcode.php
         \ingroup    societe
-        \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societ�, si on a deux clients dans la m�me ville c'est direct. Si jamais �a ne donne rien alors on lance la recherche dans la table des codes postaux.
+        \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societe, si on a deux clients dans la meme ville c'est direct. Si jamais la recherche ne donne rien alors on lance la recherche dans la table des codes postaux.
         \version    $Revision$
 */
 require("pre.inc.php");
@@ -55,17 +55,17 @@ function run_request($table)
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
     $sql.= " WHERE cp ".($cp?"LIKE":"=")." '".addslashes($cp)."'";
 	$sql.= " ORDER by ville";
-	
+
     $result=$db->query($sql);
     if (!$result)
     {
         dol_print_error($db);
     }
-    //  print $sql;
+    //print $sql.'<br>';
 }
 
 
-// S�curit� acc�s client
+// Securite acces client
 if ($user->societe_id > 0) 
 {
     $_GET["action"] = '';
@@ -116,16 +116,16 @@ print "  <b>Recherche code postal: " . $_GET['cp'] . " </b>";
 print "  </td>";
 print "</tr>\n";
 
-run_request("societe");
+$result = run_request("societe");
 
-$num=$db->num_rows();
+$num=$db->num_rows($result);
 if($num == 0)
 {
-	run_request("postalcode");
-	$num=$db->num_rows();
+	$result = run_request("postalcode");
+	$num=$db->num_rows($result);
 }
 
-// Si on n'a qu'un seul r�sultat on switche direct et on remplit le formulaire
+// Si on n'a qu'un seul resultat on switche direct et on remplit le formulaire
 if($num <= 1)
 {
 	$obj = $db->fetch_object($result);
@@ -138,7 +138,7 @@ if($num <= 1)
 }
 else
 {
-    // Sinon on affiche la liste des villes dont c'est le code postal ...
+	// Sinon on affiche la liste des villes dont c'est le code postal ...
     for ($i = 0; $i < $num; $i++)
     {
         $obj = $db->fetch_object($result);
@@ -156,7 +156,7 @@ else
 
         $var=!$var;
         print "<tr ".$bc[$var]."><td width=\"10%\">";
-        print "<input type=\"radio\" name=\"choix\" value=\"$ville\"> $ville $cp";
+        print '<input type="radio" name="choix" value="'.$ville.'"> '.$ville.' '.$cp;
         print "</td></tr>";
     }
 }
