@@ -129,6 +129,7 @@ FieldRenamed=Field renamed
 IfLoginDoesNotExistsCheckCreateUser=If login does not exists yet, you must check option "Create user"
 ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or PHP client version may be too old compared to database version.
 InstallChoiceRecommanded=Recommanded choice to install version <b>%s</b> from your current version <b>%s</b>
+InstallChoiceSuggested=<b>Install choice suggested by installer</b>.
 
 #########
 # upgrade

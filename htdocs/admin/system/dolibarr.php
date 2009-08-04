@@ -50,9 +50,11 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionLastInstall")."</td><td>".$conf->global->MAIN_VERSION_LAST_INSTALL."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionProgram")."</td><td>".DOL_VERSION."</td></tr>\n";
-$var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionLastUpgrade")."</td><td>".$conf->global->MAIN_VERSION_LAST_UPGRADE;
+print "</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionProgram")."</td><td>".DOL_VERSION;
+// If current version differs from last upgrade
 if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 print "</td></tr>\n";
 print '</table>';

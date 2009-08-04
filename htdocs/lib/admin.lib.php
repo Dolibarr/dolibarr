@@ -40,22 +40,24 @@ function versiontostring($versionarray)
 }
 
 /**
- \brief      Compare 2 versions
- \param      versionarray1       Tableau de version (vermajeur,vermineur,autre)
- \param      versionarray2       Tableau de version (vermajeur,vermineur,autre)
- \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
+ *	\brief      Compare 2 versions
+ *	\param      versionarray1       Array of version (vermajor,verminor,patch)
+ *	\param      versionarray2       Array of version (vermajor,verminor,patch)
+ *	\return     int                 -3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
+ * 									0 if =
+ * 									1,2,3 if versionarray1>versionarray2 (value depends on level of difference)
  */
 function versioncompare($versionarray1,$versionarray2)
 {
 	$ret=0;
-	$i=0;
-	while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
+	$level=0;
+	while ($level < max(sizeof($versionarray1),sizeof($versionarray1)))
 	{
-		$operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
-		$operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
-		if ($operande1 < $operande2) { $ret = -1; break; }
-		if ($operande1 > $operande2) { $ret =  1; break; }
-		$i++;
+		$operande1=isset($versionarray1[$level])?$versionarray1[$level]:0;
+		$operande2=isset($versionarray2[$level])?$versionarray2[$level]:0;
+		$level++;
+		if ($operande1 < $operande2) { $ret = -$level; break; }
+		if ($operande1 > $operande2) { $ret = $level; break; }
 	}
 	return $ret;
 }
@@ -217,7 +219,7 @@ function run_sql($sqlfile,$silent=1)
 				$newsql=str_replace($from,$to,$newsql);
 				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 			}
-			
+
 			// Replace __ENTITY__ with current entity id
 			while (eregi('(__ENTITY__)',$newsql,$reg))
 			{

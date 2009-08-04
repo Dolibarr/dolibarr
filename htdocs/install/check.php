@@ -246,39 +246,11 @@ else
 		$allowinstall=1;
 	}
 	print "<br />\n";
-	print "<br />\n";
 
 	// Si prerequis ok, on affiche le bouton pour passer à l'étape suivante
 	if ($checksok)
 	{
 		$ok=0;
-
-		print $langs->trans("ChooseYourSetupMode");
-
-		print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
-
-		print '<tr><td nowrap="nowrap"><b>'.$langs->trans("FreshInstall").'</b></td><td>';
-		print $langs->trans("FreshInstallDesc").'</td>';
-		print '<td align="center">';
-		if ($allowinstall)
-		{
-			print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
-		}
-		else
-		{
-			print $langs->trans("InstallNotAllowed");
-		}
-		print '</td>';
-		print '</tr>'."\n";
-
-		$migrationscript=array(array('from'=>'2.0.0', 'to'=>'2.1.0'),
-								array('from'=>'2.1.0', 'to'=>'2.2.0'),
-								array('from'=>'2.2.0', 'to'=>'2.4.0'),
-								array('from'=>'2.4.0', 'to'=>'2.5.0'),
-								array('from'=>'2.5.0', 'to'=>'2.6.0'),
-								array('from'=>'2.6.0', 'to'=>'2.7.0')
-								);
-
 
 		// Try to create db connexion
 		if (file_exists($conffile))
@@ -303,7 +275,6 @@ else
 			}
 		}
 
-
 		# If a database access is available, we set more variable
 		if ($ok)
 		{
@@ -315,11 +286,53 @@ else
 			$conf->setValues($db);
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
-			$dolibarrcurrentversionarray=split('[\.-]',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+			$dolibarrlastupgradeversionarray=split('[\.-]',$conf->global->MAIN_VERSION_LAST_UPGRADE);
 			$dolibarrversiontoinstallarray=versiondolibarrarray();
 		}
 
+		# Show title
+		if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
+		{
+			print $langs->trans("VersionLastUpgrade").": ".$conf->global->MAIN_VERSION_LAST_UPGRADE.'<br>';
+			print $langs->trans("VersionProgram").": ".DOL_VERSION;
+			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
+			print '<br>';
+			print '<br>';
+		}
+		else print "<br />\n";
+
+		print $langs->trans("ChooseYourSetupMode");
+
+		print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
+
+
+		# Sho first install line
+		print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b></td>';
+		print '<td>';
+		print $langs->trans("FreshInstallDesc").'</td>';
+		print '<td align="center">';
+		if ($allowinstall)
+		{
+			print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+		}
+		else
+		{
+			print $langs->trans("InstallNotAllowed");
+		}
+		print '</td>';
+		print '</tr>'."\n";
+
+
 		# Show upgrade lines
+		$allowupgrade=true;
+		$migrationscript=array( //array('from'=>'2.0.0', 'to'=>'2.1.0'),
+								//array('from'=>'2.1.0', 'to'=>'2.2.0'),
+								array('from'=>'2.2.0', 'to'=>'2.4.0'),
+								array('from'=>'2.4.0', 'to'=>'2.5.0'),
+								array('from'=>'2.5.0', 'to'=>'2.6.0'),
+								array('from'=>'2.6.0', 'to'=>'2.7.0')
+								);
+
 		$foundrecommandedchoice=0;
 		foreach ($migrationscript as $migarray)
 		{
@@ -327,19 +340,29 @@ else
 			$versionto=$migarray['to'];
 		    $newversionfrom=eregi_replace('\.[0-9]+$','.*',$versionfrom);
 		    $newversionto=eregi_replace('\.[0-9]+$','.*',$versionto);
-			print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$newversionfrom.' -> '.$newversionto.'</b></td>';
+			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
 			print '<td>';
 			print $langs->trans("UpgradeDesc");
-			if ($ok && sizeof($dolibarrcurrentversionarray) > 0)	// If a database access is available and a version already available
+			if ($ok)
 			{
-				$dolibarrversionfromarray=split('[\.-]',$versionfrom);
-				$dolibarrversiontoarray=split('[\.-]',$versionto);
-				if (empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrcurrentversionarray) >= 0)
+				if (sizeof($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
 				{
-					print '<br>';
-					print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-					// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
-					$foundrecommandedchoice=1;	// To show only once
+					$dolibarrversionfromarray=split('[\.-]',$versionfrom);
+					$dolibarrversiontoarray=split('[\.-]',$versionto);
+					// If last upgrade was an alpha or beta, we increase target version to 1 to select this one.
+					if (isset($conf->global->MAIN_VERSION_LAST_UPGRADE) && eregi('beta|alpha',$conf->global->MAIN_VERSION_LAST_UPGRADE)) $dolibarrversiontoarray[2]=(isset($dolibarrversiontoarray[2]) ? ($dolibarrversiontoarray[2]+1) : 1);
+					// Now we check if this is the first qualified choice
+					if (empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
+					{
+						print '<br>';
+						//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
+						print '<center><div class="warning">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
+						// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
+						$foundrecommandedchoice=1;	// To show only once
+					}
+				}
+				else {
+					// We can not recommand a choice.
 				}
 			}
 			print '</td>';
