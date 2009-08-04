@@ -608,7 +608,7 @@ if ($_GET["id"])
 				}
 			}
 			print_liste_field_titre($langs->trans("Action"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield,$sortorder);
-			print '<td colspan="2">&nbsp;</td>';
+			print '<td colspan="2"  class="liste_titre">&nbsp;</td>';
 			print '</tr>';
 
 			// Lignes de valeurs
