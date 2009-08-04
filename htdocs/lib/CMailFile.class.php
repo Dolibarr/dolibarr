@@ -325,8 +325,8 @@ class CMailFile
 			$smtps->setCharSet($conf->file->character_set_client);
 
 			$smtps->setSubject($this->encodetorfc2822($subject));
-			$smtps->setTO($this->getValidAddress($to,2));
-			$smtps->setFrom($from);
+			$smtps->setTO($this->getValidAddress($to,0,1));
+			$smtps->setFrom($this->getValidAddress($from,0,1));
 
 			if (! empty($this->html))
 			{
