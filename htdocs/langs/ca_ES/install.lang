@@ -129,6 +129,7 @@ FieldRenamed = Camp renombrat
 IfLoginDoesNotExistsCheckCreateUser = Si l'login encara no existeix, ha de seleccionar l'opció "Creació de l'usuari"
 ErrorConnection = El servidor "<b>%s </b>", base de dades "<b>%s</b>", login "<b>%s</b>", o la contrasenya de la base de dades poden ser incorrectes o la versió de PHP molt vella en comparació amb la versió de la base de dades.
 InstallChoiceRecommanded = Opció recomanada per a instal·lar la versió <b>%s</b> sobre la seva actual versió <b>%s</b>
+InstallChoiceSuggested = <b>Opció suggerida per l'instal·lador</b>.
 ######### =  = 
 # upgrade =  = 
 MigrationOrder = Migració de dades de les comandes clients
