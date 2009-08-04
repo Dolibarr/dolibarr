@@ -222,6 +222,7 @@ class Contact extends CommonObject
 	/*
 	*	\brief		Initialise tableau info (tableau des attributs LDAP)
 	*	\return		array		Tableau info des attributs
+	*	TODO tester si la suppression des utf8_encode affecte l'utilisation de active directory
 	*/
 	function _load_ldap_info()
 	{
