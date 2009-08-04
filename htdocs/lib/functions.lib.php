@@ -1220,7 +1220,7 @@ function img_next($alt = "default")
 }
 
 /**
- \brief      Affiche logo pr�c�dent
+ \brief      Affiche logo precedent
  \param      alt     Texte sur le alt de l'image
  \return     string      Retourne tag img
  */
@@ -1633,7 +1633,7 @@ function dolibarr_print_error($db='',$error='')
 }
 
 /**
- *	\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remont�e des bugs.
+ *	\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontee des bugs.
  *				On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
  *				Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
  *				renvoyer leur erreur par l'intermediaire de leur propriete "error".
@@ -2290,17 +2290,17 @@ function get_product_vat_for_country($idprod, $countrycode)
 
 /**
  *	\brief      	Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
- *	\remarks    	Si vendeur non assujeti a TVA, TVA par d�faut=0. Fin de r�gle.
- *					Si le (pays vendeur = pays acheteur) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
- *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
- *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
- *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle
+ *	\remarks    	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *					Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
  *					Sinon TVA proposee par defaut=0. Fin de regle.
  *	\param      	societe_vendeuse    	Objet societe vendeuse
  *	\param      	societe_acheteuse   	Objet societe acheteuse
  *	\param      	taux_produit        	Taux par defaut du produit vendu (old way to get product vat rate)
  *	\param      	idprod					Id product (new way to get product vat rate)
- *	\return     	float               	Taux de tva a appliquer, -1 si ne peut etre d�termin�
+ *	\return     	float               	Taux de tva a appliquer, -1 si ne peut etre determine
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $idprod=0)
 {
@@ -2313,49 +2313,49 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
 	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
 
-	// Si le (pays vendeur = pays acheteur) alors la TVA par d�faut=TVA du produit vendu. Fin de r�gle.
+	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	//if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
-	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concercn� si le test suivant n'est pas suffisant.
+	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concercne si le test suivant n'est pas suffisant.
 	if ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id)
 	{
 		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut d�terminer taux tva
+		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut determiner taux tva
 		return $taux_produit;
 	}
 
-	// Si (vendeur et acheteur dans Communaut� europ�enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
-	// Non g�r�
+	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+	// Non gere
 
-	// Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
+	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
 	{
 		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut d�terminer taux tva
+		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut determiner taux tva
 		return $taux_produit;
 	}
 
-	// Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA intra) alors TVA par d�faut=0. Fin de r�gle
+	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA intra) alors TVA par defaut=0. Fin de regle
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
 	{
 		return 0;
 	}
 
-	// Sinon la TVA propos�e par d�faut=0. Fin de r�gle.
-	// Rem: Cela signifie qu'au moins un des 2 est hors Communaut� europ�enne et que le pays diff�re
+	// Sinon la TVA proposee par defaut=0. Fin de regle.
+	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
 	return 0;
 }
 
 
 /**
- \brief      	Fonction qui renvoie si tva doit etre tva percue r�cup�rable
- \remarks    	Si vendeur non assujeti a TVA, TVA par d�faut=0. Fin de r�gle.
- Si le (pays vendeur = pays acheteur) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle
- Sinon TVA propos�e par d�faut=0. Fin de r�gle.
- \param      	societe_vendeuse    	Objet soci�t� vendeuse
- \param      	societe_acheteuse   	Objet soci�t� acheteuse
+ \brief      	Fonction qui renvoie si tva doit etre tva percue recuperable
+ \remarks    	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
+ Sinon TVA proposee par defaut=0. Fin de regle.
+ \param      	societe_vendeuse    	Objet societe vendeuse
+ \param      	societe_acheteuse   	Objet societe acheteuse
  \param      	taux_produit        	Taux par defaut du produit vendu
  \return     	float               	0 or 1
  */

@@ -3,7 +3,7 @@
 # Script to remove setup of a Dolibarr installation.
 # Note: "dialog" tool need to be available.
 #
-# Régis Houssin - regis@dolibarr.fr
+# Regis Houssin - regis@dolibarr.fr
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # WARNING: This script erase all data of database

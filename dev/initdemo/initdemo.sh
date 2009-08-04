@@ -3,7 +3,7 @@
 # Script to purge and init a database with demo values.
 # Note: "dialog" tool need to be available.
 #
-# Régis Houssin - regis@dolibarr.fr
+# Regis Houssin - regis@dolibarr.fr
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # WARNING: This script erase all data of database
@@ -90,7 +90,7 @@ exit;;
 exit;;
 esac
 
-# ---------------------------- chemin d'accès du répertoire documents
+# ---------------------------- chemin d'acces du repertoire documents
 DIALOG=${DIALOG=dialog}
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15

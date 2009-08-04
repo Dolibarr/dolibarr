@@ -124,7 +124,7 @@ else {
     		printf(" %d - %3s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
     	}
     
-    	# On demande de choisir le fichier à passer
+    	# Are asked to select the file to move
     	print "Choose one package number or several separated with space: ";
     	$NUM_SCRIPT=<STDIN>; 
     	chomp($NUM_SCRIPT);

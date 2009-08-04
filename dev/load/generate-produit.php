@@ -64,10 +64,10 @@ if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
 
-print "G�n�re ".GEN_NUMBER_PRODUIT." produits\n";
+print "Generates ".GEN_NUMBER_PRODUIT." products\n";
 for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 {
-    print "Produit ".$s;
+    print "Product ".$s;
     $produit = new Product($db);
     $produit->type = rand(0,1);
     $produit->status = 1;

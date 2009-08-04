@@ -51,7 +51,7 @@ $langues = array(
 		'askhelp' => 'Request a help support'
 	),
 	'fr' => array(
-		'langue' => 'Fran�ais',
+		'langue' => 'Français',
 		'autreLangue' => 'Versi&oacute;n Espa&ntilde;ol',
 		'autreLangueLien' => 'es',
 		'titreHtml' => 'Accueil DoliWamp',

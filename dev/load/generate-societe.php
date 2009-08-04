@@ -42,7 +42,7 @@ include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 include_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
-$villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-M�re Eglise","Le Bono");
+$villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
 $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
 
 	
@@ -68,12 +68,12 @@ while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0]; 
 
 
 
-print "G�n�re ".GEN_NUMBER_SOCIETE." soci�t�s\n";
+print "Generates ".GEN_NUMBER_SOCIETE." companies\n";
 for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 {
-    print "Soci�t� $s\n";
+    print "Company $s\n";
     $soc = new Societe($db);
-    $soc->nom = "Soci�t� num ".time()."$s";
+    $soc->nom = "Company num ".time()."$s";
     $soc->ville = $villes[rand(0,sizeof($villes)-1)];
     $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
     $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
@@ -83,13 +83,13 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 	// Un client sur 10 a une remise de 5%
     $user_remise=rand(1,10); if ($user_remise==10) $soc->remise_client=5;
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_client."\n";
-	$soc->note='Soci�t� fictive g�n�r�e par le script generate-societe.php';
+	$soc->note='Fictional company created by the script generate-societe.php';
     $socid = $soc->create();
 
     if ($socid >= 0)
     {
         $rand = rand(1,4);
-        print "> G�n�re $rand contact\n";
+        print "> Generates $rand contact\n";
         for ($c = 0 ; $c < $rand ; $c++)
         {
             $contact = new Contact($db);

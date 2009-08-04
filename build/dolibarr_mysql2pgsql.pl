@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 #------------------------------------------------------------------------------
-# Ce script est une version modifiée de mysql2pgsql afin de:
-# - gérer les base mysql innodb
+# Ce script est une version modifiee de mysql2pgsql afin de:
+# - gerer les base mysql innodb
 # - traiter tous les fichiers ../mysq/data/*.sql vers ./pgsql/data
-# - gérer les autoincrement en SERIAL plutot qu'en séquenceurs
+# - gerer les autoincrement en SERIAL plutot qu'en sequenceurs
 # - utiliser le CHECK plutot que des sous-tables pour les types enum
 # - corriger de nombreux bugs
 #

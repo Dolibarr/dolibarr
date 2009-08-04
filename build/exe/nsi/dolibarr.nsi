@@ -54,7 +54,7 @@ CompletedText 'Dolibarr ${MUI_VERSION_DOT} setup completed.'
 ;--------------------------------
 ;Language Selection Dialog Settings
 
-  ;Recupere la langue choisie pour la dernière installation
+  ;Retrieves the language chosen for the final installation
   !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
   !define MUI_LANGDLL_REGISTRY_KEY "Software\${MUI_PROD}" 
   !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
@@ -103,7 +103,7 @@ CompletedText 'Dolibarr ${MUI_VERSION_DOT} setup completed.'
   LangString PHPCHECK_SUBTITLE ${LANG_ENGLISH} "Check if a working PHP interpreter can be found"
 
   LangString PHPCHECK_TITLE ${LANG_FRENCH} "Verification PHP"
-  LangString PHPCHECK_SUBTITLE ${LANG_FRENCH} "Verification si un interpreteur PHP operationnel peut etre trouvé"
+  LangString PHPCHECK_SUBTITLE ${LANG_FRENCH} "Verification si un interpreteur PHP opÃ©rationnel peut Ãªtre trouvÃ©"
 
   LangString SETUP_TITLE ${LANG_ENGLISH} "Setup"
   LangString SETUP_SUBTITLE ${LANG_ENGLISH} "Dolibarr files copying"

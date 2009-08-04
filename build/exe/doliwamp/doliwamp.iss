@@ -733,7 +733,7 @@ end;
 
 //-----------------------------------------------
 
-//procedure lanc�e � la fin de l'installation, elle supprime les fichiers d'installation
+//procedure launched by the end of the installation, it deletes the installation files
 
 procedure DeinitializeSetup();
 begin
