@@ -157,7 +157,7 @@ var value: String;
 
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr ERP-CRM and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects than Dolibarr, it is recommended to make ' #13 'a manual installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to start installation process ?', mbConfirmation, MB_YESNO) = idYes;
+  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install or upgrade Dolibarr ERP-CRM and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects than Dolibarr, it is recommended to make ' #13 'a manual installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to start installation/upgrade process ?', mbConfirmation, MB_YESNO) = idYes;
 end;
 
 procedure InitializeWizard();
@@ -700,7 +700,7 @@ begin
     DeleteFile(pathWithSlashes+'/www/dolibarr/install.lock');
 
 
-    MsgBox('DoliWamp installer will now start Apache and Mysql, this may last from several seconds to one minute after this confirmation.',mbInformation,MB_OK)
+    MsgBox('DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation.',mbInformation,MB_OK)
 
 
     // Install services
