@@ -25,14 +25,17 @@ function barcode_coder_save(formNameID)
 
 /*=================================================================
 	Purpose:  Pour la fonction de saisie auto des villes
-	Input:    postalcode,objectville
+	Input:    postalcode,objecttown,objectcountry,objectstate
 	Author:   Eric Seigne
 	Licence:  GPL
 ==================================================================*/
 
-function autofilltownfromzip_PopupPostalCode(postalcode,objectville)
+function autofilltownfromzip_PopupPostalCode(postalcode,objecttown,objectcountry,objectstate)
 {
-    var url = 'searchpostalcode.php?cp=' + postalcode + '&targetobject=window.opener.document.formsoc.' + objectville.name;
+    var url = 'searchpostalcode.php?cp=' + postalcode;
+    url = url + '&targettown=window.opener.document.formsoc.' + objecttown.name;
+    url = url + '&targetcountry=window.opener.document.formsoc.' + objectcountry.name;
+    url = url + '&targetstate=window.opener.document.formsoc.' + objectstate.name;
     //  alert(url);
     var hWnd = window.open(url, "SearchPostalCodeWindow", "width=" + 300 + ",height=" + 150 + ",resizable=yes,scrollbars=yes");
     if((document.window != null) && (!hWnd.opener)) hWnd.opener = document.window;

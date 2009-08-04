@@ -230,14 +230,12 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<tr><td>'.$langs->trans('DeliveryAddressLabel').'</td><td><input type="text" size="30" name="label" value="'.$livraison->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$livraison->nom.'"></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $livraison->adresse;
         print '</textarea></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$livraison->cp.'"';
-        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
-        print '>';
-        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
+        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$livraison->cp.'">';
+        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville,pays_id,departement_id)">';
         print '</td></tr>';
         print '<tr><td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$livraison->ville.'"></td></tr>';
 
@@ -273,7 +271,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 	$head = societe_prepare_head($societe);
 
 	dol_fiche_head($head, 'customer', $societe->nom);
-	
+
 	print_titre($langs->trans("EditDeliveryAddress"));
 	print "<br>\n";
 
@@ -340,10 +338,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print $livraison->adresse;
         print '</textarea></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$livraison->cp.'"';
-        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
-        print '>';
-        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
+        print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$livraison->cp.'">';
+        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTOFILL_TOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville,pays_id,departement_id)">';
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$livraison->ville.'"></td></tr>';

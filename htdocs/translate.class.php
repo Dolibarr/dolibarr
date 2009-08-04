@@ -444,10 +444,10 @@ class Translate {
 
 
 	/**
-	 *  \brief       Retourne la version traduite du texte passe en parametre complete du code pays
-	 *  \param       str            chaine a traduire
-	 *  \param       countrycode    code pays (FR, ...)
-	 *  \return      string         chaine traduite
+	 *  \brief       Return translation of a key depending on country
+	 *  \param       str            string root to translate
+	 *  \param       countrycode    country code (FR, ...)
+	 *  \return      string         translated string
 	 */
 	function transcountry($str, $countrycode)
 	{
@@ -458,9 +458,9 @@ class Translate {
 
 	/**
 	 *  \brief       Retourne la version traduite du texte passe en parametre complete du code pays
-	 *  \param       str            chaine a traduire
-	 *  \param       countrycode    code pays (FR, ...)
-	 *  \return      string         chaine traduite
+	 *  \param       str            string root to translate
+	 *  \param       countrycode    country code (FR, ...)
+	 *  \return      string         translated string
 	 */
 	function transcountrynoentities($str, $countrycode)
 	{
