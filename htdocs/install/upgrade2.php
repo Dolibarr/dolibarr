@@ -113,7 +113,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
 	if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
-	
+
 	// Chargement config
 	if (! $error) $conf->setValues($db);
 
@@ -206,7 +206,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 		// Script pour V2.6 -> V2.7
 		migrate_menus($db,$langs,$conf);
-		
+
 		migrate_commande_deliveryaddress($db,$langs,$conf);
 
 
@@ -1497,6 +1497,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 
 		$db->free($resql);
 
+		/*
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet";
 		$sql.= " WHERE subprice = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
 		$resql=$db->query($sql);
@@ -1504,6 +1505,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 		{
 			dol_print_error($db);
 		}
+		*/
 
 		$db->commit();
 	}
@@ -2039,7 +2041,7 @@ function migrate_menus($db,$langs,$conf)
 	if ($db->DDLInfoTable(MAIN_DB_PREFIX."menu_constraint"))
 	{
 		$db->begin();
-		
+
 		$sql = "SELECT m.rowid, mc.action";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu_constraint as mc, ".MAIN_DB_PREFIX."menu_const as md, ".MAIN_DB_PREFIX."menu as m";
 		$sql.= " WHERE md.fk_menu = m.rowid AND md.fk_constraint = mc.rowid";
@@ -2054,16 +2056,16 @@ function migrate_menus($db,$langs,$conf)
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					
+
 					$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
 					$sql.= " enabled = '".$obj->action."'";
 					$sql.= " WHERE rowid=".$obj->rowid;
 					$sql.= " AND enabled = '1'";
-					
+
 					$resql2=$db->query($sql);
 					if ($resql2)
 					{
-						
+
 					}
 					else
 					{
@@ -2074,7 +2076,7 @@ function migrate_menus($db,$langs,$conf)
 					$i++;
 				}
 			}
-			
+
 			if ($error == 0)
 			{
 				$db->commit();
@@ -2119,7 +2121,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
 	$sql.= ", ".MAIN_DB_PREFIX."co_exp as ce";
 	$sql.= " WHERE c.rowid = ce.fk_commande";
 	$sql.= " AND c.fk_adresse_livraison IS NOT NULL";
-	
+
 	$resql = $db->query($sql);
 	if ($resql)
 	{
