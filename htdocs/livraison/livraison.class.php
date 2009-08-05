@@ -50,6 +50,7 @@ class Livraison extends CommonObject
 	var $origin;
 	var $origin_id;
 	var $socid;
+	var $ref_client;
 
 	var $expedition_id;
 
@@ -100,6 +101,7 @@ class Livraison extends CommonObject
 		$sql.= "ref";
 		$sql.= ", entity";
 		$sql.= ", fk_soc";
+		$sql.= ", ref_client";
 		$sql.= ", date_creation";
 		$sql.= ", fk_user_author";
 		$sql.= ", fk_adresse_livraison";
@@ -109,6 +111,7 @@ class Livraison extends CommonObject
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->socid;
+		$sql.= ", '".$this->ref_client."'";
 		$sql.= ", ".$this->db->idate(mktime());
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->adresse_livraison_id > 0 ? $this->adresse_livraison_id : "null");
@@ -514,6 +517,7 @@ class Livraison extends CommonObject
 		$this->date_livraison       = $expedition->date_livraison;
 		$this->adresse_livraison_id = $expedition->adresse_livraison_id;
 		$this->socid                = $expedition->socid;
+		$this->ref_client			= $expedition->ref_client;
 
 		return $this->create($user);
 	}

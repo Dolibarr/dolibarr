@@ -237,16 +237,18 @@ class Expedition extends CommonObject
 		global $conf;
 
 		$sql = "SELECT e.rowid, e.fk_soc as socid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut";
-		$sql.= ", weight, weight_units, size, size_units, width, height";
+		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf, e.fk_adresse_livraison";
 		$sql.= ", e.fk_expedition_methode, e.tracking_number";
 		if ($conf->commande->enabled)
 		{
-			$sql.=", ce.fk_commande as origin_id";
+			$sql.= ", ce.fk_commande as origin_id";
+			$sql.= ", c.ref_client";
 		}
 		else
 		{
-			$sql.=", pe.fk_propal as origin_id";
+			$sql.= ", pe.fk_propal as origin_id";
+			$sql.= ", p.ref_client"; 
 		}
 		if ($conf->livraison_bon->enabled) $sql.=", l.rowid as livraison_id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -274,6 +276,7 @@ class Expedition extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
+				$this->ref_client			= $obj->ref_client;
 				$this->statut               = $obj->fk_statut;
 				$this->origin_id            = $obj->origin_id;
 				$this->livraison_id         = $obj->livraison_id;
@@ -503,22 +506,22 @@ class Expedition extends CommonObject
 		if ($conf->livraison_bon->enabled)
 		{
 			if ($this->statut == 1)
-	  {
-	  	// Expédition validée
-	  	include_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
-	  	$livraison = new Livraison($this->db);
-	  	$result=$livraison->create_from_sending($user, $this->id);
-	  	if ($result > 0)
-	  	{
-	  		return $result;
-	  	}
-	  	else
-	  	{
-	  		$this->error=$livraison->error;
-	  		return $result;
-	  	}
-	  }
-	  else return 0;
+			{
+				// Expédition validée
+				include_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+				$livraison = new Livraison($this->db);
+				$result=$livraison->create_from_sending($user, $this->id);
+				if ($result > 0)
+				{
+					return $result;
+				}
+				else
+				{
+					$this->error=$livraison->error;
+					return $result;
+				}
+			}
+			else return 0;
 		}
 		else return 0;
 	}

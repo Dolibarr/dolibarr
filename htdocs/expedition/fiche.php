@@ -646,7 +646,7 @@ else
 
 			// Ref customer
 			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-			print '<td colspan="3">'.$object->ref_client."</a></td>\n";
+			print '<td colspan="3">'.$expedition->ref_client."</a></td>\n";
 			print '</tr>';
 
 			// Date
