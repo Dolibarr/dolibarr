@@ -46,12 +46,11 @@ $form = new Form($db);
 
 print_fiche_titre($langs->trans("SetupArea"),'','setup');
 
-print "<br>";
-print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
+//print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+//print '<center><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></center><br>';
 
 if ($mesg) print $mesg.'<br>';
 
-print "<br>";
 print $langs->trans("SetupDescription1").'<br>';
 print $langs->trans("AreaForAdminOnly").'<br>';
 

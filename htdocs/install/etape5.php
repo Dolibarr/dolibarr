@@ -240,9 +240,18 @@ if ($_POST["action"] == "upgrade")
 }
 
 
-print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-print $langs->trans("GoToSetupArea");
-print '</a>';
+if ($_POST["action"] == "upgrade")
+{
+	print '<a href="'.$dolibarr_main_url_root .'/index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	print $langs->trans("GoToSetupArea");
+	print '</a>';
+}
+else
+{
+	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	print $langs->trans("GoToDolSetupArea");
+	print '</a>';
+}
 
 
 // Clear cache files

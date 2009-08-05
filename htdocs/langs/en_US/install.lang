@@ -82,6 +82,7 @@ SystemIsInstalled=This installation is complete.
 SystemIsUpgraded=Dolibarr has been upgraded successfully.
 YouNeedToPersonalizeSetup=You need to configure Dolibarr to match your needs (appearance, features, ...). To do this, please follow the link below:
 AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfuly.
+GoToDolibarr=Go to Dolibarr
 GoToSetupArea=Go to Dolibarr (setup area)
 Examples=Examples
 WithNoSlashAtTheEnd=Without the slash "/" at the end
