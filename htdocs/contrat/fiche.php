@@ -441,7 +441,7 @@ $contratlignestatic=new ContratLigne($db);
  *********************************************************************/
 if ($_GET["action"] == 'create')
 {
-    dol_fiche_head($head, $a, $langs->trans("AddContract"));
+    dol_fiche_head($head, $a, $langs->trans("AddContract"), 0, 'contract');
 
     if ($mesg) print $mesg;
 
@@ -647,7 +647,7 @@ else
 
         $hselected = 0;
 
-        dol_fiche_head($head, $hselected, $langs->trans("Contract"));
+        dol_fiche_head($head, $hselected, $langs->trans("Contract"), 0, 'contract');
 
 
         /*

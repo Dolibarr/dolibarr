@@ -165,7 +165,7 @@ if ($id > 0)
 
 		$head = facture_prepare_head($facture);
 
-		dol_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'));
+		dol_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
 		/*
 		 *   Facture synthese pour rappel

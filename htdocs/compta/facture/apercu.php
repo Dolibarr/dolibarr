@@ -79,7 +79,7 @@ if ($_GET["facid"] > 0)
         }
 
 		$head = facture_prepare_head($fac);
-        dol_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"));
+        dol_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"), 0, 'bill');
 
 
         /*

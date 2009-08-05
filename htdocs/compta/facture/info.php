@@ -30,13 +30,12 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 
 $langs->load("bills");
 
-llxHeader();
-
 
 /*
- * Visualisation de la fiche
- *
+ * View
  */
+
+llxHeader();
 
 $fac = new Facture($db);
 $fac->fetch($_GET["facid"]);
@@ -46,7 +45,7 @@ $soc = new Societe($db, $fac->socid);
 $soc->fetch($fac->socid);
 
 $head = facture_prepare_head($fac);
-dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"));
+dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), 0, 'bill');
 
 
 print '<table width="100%"><tr><td>';

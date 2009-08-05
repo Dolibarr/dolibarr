@@ -125,7 +125,7 @@ if ($facid > 0)
 		$societe->fetch($facture->socid);
 
 		$head = facture_prepare_head($facture);
-		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'));
+		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
 
 		// Construit liste des fichiers

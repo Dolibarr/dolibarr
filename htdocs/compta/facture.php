@@ -2020,7 +2020,7 @@ else
 
 			$head = facture_prepare_head($fac);
 
-			dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
+			dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
 
 			// Confirmation de la conversion de l'avoir en reduc
 			if ($_GET['action'] == 'converttoreduc')
@@ -3787,7 +3787,7 @@ else
 
 					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
-					print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+					print '<td class="nobordernopadding" nowrap="nowrap">';
 					print $facturestatic->getNomUrl(1);
 					print $objp->increment;
 					print '</td>';

@@ -53,7 +53,7 @@ $contrat->fetch($_GET["id"]);
 if ($_POST["action"] == 'update_public' && $user->rights->contrat->creer)
 {
 	$db->begin();
-	
+
 	$res=$contrat->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
@@ -69,7 +69,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->contrat->creer)
 if ($_POST["action"] == 'update' && $user->rights->contrat->creer)
 {
 	$db->begin();
-	
+
 	$res=$contrat->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
@@ -95,7 +95,7 @@ $html = new Form($db);
 if ($_GET["id"])
 {
 	if ($mesg) print $mesg;
-	
+
     $soc = new Societe($db, $contrat->societe->id);
     $soc->fetch($contrat->societe->id);
 
@@ -103,7 +103,7 @@ if ($_GET["id"])
 
     $hselected = 2;
 
-    dol_fiche_head($head, 'note', $langs->trans("Contract"));
+    dol_fiche_head($head, 'note', $langs->trans("Contract"), 0, 'contract');
 
 
     print '<table class="border" width="100%">';
@@ -144,7 +144,7 @@ if ($_GET["id"])
     }
 	print "</td></tr>";
 
-	// Note privée
+	// Note privï¿½e
 	if (! $user->societe_id)
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';

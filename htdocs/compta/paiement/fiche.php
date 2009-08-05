@@ -109,7 +109,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 
 
 /*
- * Visualisation de la fiche
+ * View
  */
 
 llxHeader();
@@ -136,7 +136,7 @@ $head[$h][1] = $langs->trans("Info");
 $h++;
 
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
+dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"), 0, 'payment');
 
 /*
  * Confirmation de la suppression du paiement

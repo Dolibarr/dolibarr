@@ -175,7 +175,7 @@ if ($id > 0)
 
 		$hselected=1;
 
-		dol_fiche_head($head, $hselected, $langs->trans("Contract"));
+		dol_fiche_head($head, $hselected, $langs->trans("Contract"), 0, 'contract');
 
 		/*
 		 *   Contrat

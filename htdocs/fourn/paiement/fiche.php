@@ -19,11 +19,11 @@
  */
 
 /**
- \file       htdocs/fourn/paiement/fiche.php
- \ingroup    facture, fournisseur
- \brief      Onglet paiement d'un paiement fournisseur
- \remarks	Fichier presque identique a compta/paiement/fiche.php
- \version    $Id$
+ *	\file       htdocs/fourn/paiement/fiche.php
+ *	\ingroup    facture, fournisseur
+ *	\brief      Onglet paiement d'un paiement fournisseur
+ *	\remarks	Fichier presque identique a compta/paiement/fiche.php
+ *	\version    $Id$
  */
 
 
@@ -85,7 +85,7 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 
 
 /*
- * Visualisation de la fiche
+ * View
  */
 
 llxHeader();
@@ -107,7 +107,7 @@ $head[$h][1] = $langs->trans('Info');
 $h++;
 
 
-dol_fiche_head($head, $hselected, $langs->trans('SupplierPayment'));
+dol_fiche_head($head, $hselected, $langs->trans('SupplierPayment'), 0, 'payment');
 
 /*
  * Confirmation de la suppression du paiement
@@ -160,7 +160,7 @@ if ($conf->banque->enabled)
 {
 	if ($paiement->bank_account)
 	{
-		// Si compte renseigné, on affiche libelle
+		// Si compte renseignï¿½, on affiche libelle
 		$bank=new Account($db);
 		$bank->fetch($paiement->bank_account);
 

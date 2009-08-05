@@ -35,8 +35,8 @@ if (!$user->rights->facture->lire)
 $langs->load("companies");
 $langs->load("bills");
 
-// Sécurité accés
-if ($user->societe_id > 0) 
+// Sï¿½curitï¿½ accï¿½s
+if ($user->societe_id > 0)
 {
   unset($_GET["action"]);
   $socid = $user->societe_id;
@@ -54,7 +54,7 @@ $fac->fetch($_GET["facid"]);
 if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
 {
 	$db->begin();
-	
+
 	$res=$fac->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
@@ -70,7 +70,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
 if ($_POST["action"] == 'update' && $user->rights->facture->creer)
 {
 	$db->begin();
-	
+
 	$res=$fac->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
@@ -99,7 +99,7 @@ if ($_GET["facid"])
     $soc->fetch($fac->socid);
 
     $head = facture_prepare_head($fac);
-    dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"));
+    dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), 0, 'bill');
 
 
     print '<table class="border" width="100%">';
@@ -107,7 +107,7 @@ if ($_GET["facid"])
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
 
-    // Société
+    // Sociï¿½tï¿½
     print '<tr><td>'.$langs->trans("Company").'</td>';
     print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
 
@@ -129,7 +129,7 @@ if ($_GET["facid"])
     }
 	print "</td></tr>";
 
-	// Note privée
+	// Note privï¿½e
 	if (! $user->societe_id)
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
@@ -149,7 +149,7 @@ if ($_GET["facid"])
 		}
 		print "</td></tr>";
 	}
-	
+
     print "</table>";
 
 

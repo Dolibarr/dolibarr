@@ -18,11 +18,11 @@
  */
 
 /**
-    	\file       htdocs/compta/paiement/info.php
-		\ingroup    facture
-		\brief      Onglet info d'un paiement
-		\version    $Id$
-*/
+ *   	\file       htdocs/compta/paiement/info.php
+ *		\ingroup    facture
+ *		\brief      Onglet info d'un paiement
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -55,7 +55,7 @@ $hselected = $h;
 $h++;
 
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
+dol_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"), 0, 'payment');
 
 print '<table class="border" width="100%">';
 

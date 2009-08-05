@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-    	\file       htdocs/fourn/paiement/info.php
-		\ingroup    facture
-		\brief      Onglet info d'un paiement fournisseur
-		\version    $Id$
-*/
+ *   	\file       htdocs/fourn/paiement/info.php
+ *		\ingroup    facture
+ *		\brief      Onglet info d'un paiement fournisseur
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -31,6 +31,11 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
 $langs->load("bills");
 $langs->load("suppliers");
 $langs->load("companies");
+
+
+/*
+ * View
+ */
 
 llxHeader();
 $h=0;
@@ -44,13 +49,8 @@ $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("SupplierPayment"));
+dol_fiche_head($head, $hselected, $langs->trans("SupplierPayment"), 0, 'payment');
 
-
-/*
- * Visualisation de la fiche
- *
- */
 
 $paiement = new PaiementFourn($db);
 $paiement->fetch($_GET["id"], $user);
