@@ -624,22 +624,22 @@ else
 			if ($typeobject == 'commande' && $expedition->$typeobject->id && $conf->commande->enabled)
 			{
 				print '<tr><td>';
-				$order=new Commande($db);
-				$order->fetch($expedition->$typeobject->id);
+				$object=new Commande($db);
+				$object->fetch($expedition->$typeobject->id);
 				print $langs->trans("RefOrder").'</td>';
 				print '<td colspan="3">';
-				print $order->getNomUrl(1,'commande');
+				print $object->getNomUrl(1,'commande');
 				print "</td>\n";
 				print '</tr>';
 			}
 			if ($typeobject == 'propal' && $expedition->$typeobject->id && $conf->propal->enabled)
 			{
 				print '<tr><td>';
-				$propal=new Propal($db);
-				$propal->fetch($expedition->$typeobject->id);
+				$object=new Propal($db);
+				$object->fetch($expedition->$typeobject->id);
 				print $langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
-				print $propal->getNomUrl(1,'expedition');
+				print $object->getNomUrl(1,'expedition');
 				print "</td>\n";
 				print '</tr>';
 			}
