@@ -47,6 +47,8 @@ class FactureFournisseur extends Facture
 	var $ref;
 	var $ref_supplier;
 	var $socid;
+	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proformat invoice
+	var $type;
 	//! 0=draft,
 	//! 1=validated,
 	//! TODO Ce statut doit etre 2 et non 1 classee payee partiellement (close_code='discount_vat','badcustomer') ou completement (close_code=null),
@@ -231,6 +233,8 @@ class FactureFournisseur extends Facture
 				$this->ref           = $this->id;
 				$this->ref_supplier  = $obj->facnumber;
 
+				$this->type          = 0;
+
 				$this->datep         = $obj->df;
 				$this->date          = $obj->df;
 				$this->date_echeance = $obj->de;
@@ -268,9 +272,9 @@ class FactureFournisseur extends Facture
 			}
 			else
 			{
-				dol_syslog('FactureFournisseur::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
-				dol_print_error($this->db);
+				dol_syslog('FactureFournisseur::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+				dol_print_error('',$sql);
 				return -2;
 			}
 		}

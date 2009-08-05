@@ -166,7 +166,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	// Client
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';
 	//print $_REQUEST["socid"];
-	print $html->select_societes($_REQUEST["socid"],'socid','',1);
+	print $html->select_societes($_REQUEST["socid"],'socid','',1,1);
 	print '</td></tr>';
 
 	// Responsable du projet
@@ -232,7 +232,7 @@ else
 
 		// Client
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		print $html->select_societes($projet->societe->id,'socid','',1);
+		print $html->select_societes($projet->societe->id,'socid','',1,1);
 		print '</td></tr>';
 
 		// Responsable du projet

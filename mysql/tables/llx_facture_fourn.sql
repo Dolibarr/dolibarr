@@ -46,6 +46,7 @@ create table llx_facture_fourn
   fk_user_author      integer,                       -- createur de la facture
   fk_user_valid       integer,                       -- valideur de la facture
 
+  fk_facture_source   integer,                       -- facture origine si facture avoir
   fk_projet           integer,                       -- projet auquel est associ�e la facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)

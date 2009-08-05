@@ -72,6 +72,8 @@ ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_fk_soc (fk_soc);
 
 alter table llx_facture add column  tms timestamp after date_valid;
 alter table llx_facture_fourn add column  tms timestamp after datef;
+alter table llx_facture_fourn add column  fk_facture_source   integer after fk_user_valid;
+  
 update llx_facture set tms = datec where tms <= 0;
 update llx_facture_fourn set tms = datec where tms <= 0;
 

@@ -97,11 +97,11 @@ function task_prepare_head($object)
  */
 function select_projects($socid, $selected='', $htmlname='projectid')
 {
-	global $db;
+	global $db,$langs;
 
 	// On recherche les projets
-	$sql = 'SELECT p.rowid, p.ref, p.title FROM ';
-	$sql.= MAIN_DB_PREFIX .'projet as p';
+	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc';
+	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
 	$sql.= " WHERE (fk_soc='".$socid."' or fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
 
@@ -118,13 +118,15 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
+				$labeltoshow=dol_trunc($obj->ref,12).' - '.dol_trunc($obj->title,12);
+				if (empty($obj->fk_soc)) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 				if (!empty($selected) && $selected == $obj->rowid)
 				{
-					print '<option value="'.$obj->rowid.'" selected="true">'.dol_trunc($obj->ref,12).' - '.dol_trunc($obj->title,12).'</option>';
+					print '<option value="'.$obj->rowid.'" selected="true">'.$labeltoshow.'</option>';
 				}
 				else
 				{
-					print '<option value="'.$obj->rowid.'">'.dol_trunc($obj->ref,12).' - '.dol_trunc($obj->title,12).'</option>';
+					print '<option value="'.$obj->rowid.'">'.$labeltoshow.'</option>';
 				}
 				$i++;
 			}

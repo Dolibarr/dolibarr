@@ -451,13 +451,14 @@ class Form
 	 *		\param      htmlname        Name of field in form
 	 *    	\param      filter          Optionnal filters criteras
 	 *		\param		showempty		Add an empty field
+	 * 		\param		showtype		Show if third party is customer, prospect or supplier
 	 */
-	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0)
+	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0)
 	{
-		global $conf,$user;
+		global $conf,$user,$langs;
 
 		// On recherche les societes
-		$sql = "SELECT s.rowid, s.nom, s.code_client, s.code_fournisseur";
+		$sql = "SELECT s.rowid, s.nom, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.entity = ".$conf->entity;
@@ -507,13 +508,22 @@ class Form
 					while ($i < $num)
 					{
 						$obj = $this->db->fetch_object($resql);
+						$label=$obj->nom;
+						if ($showtype)
+						{
+							if ($obj->client || $obj->fournisseur) $label.=' (';
+							if ($obj->client == 1) $label.=$langs->trans("Customer");
+							if ($obj->client == 2) $label.=$langs->trans("Prospect");
+							if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
+							if ($obj->client || $obj->fournisseur) $label.=')';
+						}
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
-							print '<option value="'.$obj->rowid.'" selected="true">'.$obj->nom.'</option>';
+							print '<option value="'.$obj->rowid.'" selected="true">'.$label.'</option>';
 						}
 						else
 						{
-							print '<option value="'.$obj->rowid.'">'.$obj->nom.'</option>';
+							print '<option value="'.$obj->rowid.'">'.$label.'</option>';
 						}
 						$i++;
 					}

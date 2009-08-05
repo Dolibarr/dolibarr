@@ -1923,7 +1923,7 @@ class Facture extends CommonObject
 		$idarray=array();
 
 		$sql = 'SELECT rowid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 		$sql.= ' WHERE fk_facture_source = '.$this->id;
 		$sql.= ' AND type = 2';
 		$resql=$this->db->query($sql);
@@ -1953,7 +1953,7 @@ class Facture extends CommonObject
 	function getIdReplacingInvoice($option='')
 	{
 		$sql = 'SELECT rowid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 		$sql.= ' WHERE fk_facture_source = '.$this->id;
 		$sql.= ' AND type < 2';
 		if ($option == 'validated') $sql.= ' AND fk_statut = 1';

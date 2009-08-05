@@ -515,6 +515,7 @@ else
 			print '<td width="50%" valign="top">'.$langs->trans('NotePublic').'</td>';
 			print '</tr>';
 
+			// Ref
 			print '<tr><td valign="top">'.$langs->trans('Ref').'</td><td valign="top">';
 			print $fac->ref.'</td>';
 
@@ -594,7 +595,7 @@ else
 		else
 		{
 			/*
-			 *
+			 *	View card
 			 */
 			$head = facturefourn_prepare_head($fac);
 			$titre=$langs->trans('SupplierInvoice');
