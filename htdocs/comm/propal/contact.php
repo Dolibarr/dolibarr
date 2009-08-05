@@ -173,7 +173,7 @@ if ($id > 0)
 
 
 		$head = propal_prepare_head($propal);
-		dol_fiche_head($head, 'contact', $langs->trans("Proposal"));
+		dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
 
 
 		/*

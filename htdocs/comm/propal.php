@@ -899,7 +899,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
  * View
  */
 
-llxHeader('',$langs->trans('Proposal'),'Proposition');
+llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -925,7 +925,7 @@ if ($id > 0 || ! empty($ref))
 	$societe->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
-	dol_fiche_head($head, 'comm', $langs->trans('Proposal'));
+	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
 
 	// Clone confirmation
 	if ($_GET["action"] == 'clone')

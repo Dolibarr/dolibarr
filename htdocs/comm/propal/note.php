@@ -52,7 +52,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->propale->creer)
 	$propal->fetch($_GET['propalid']);
 
 	$db->begin();
-	
+
 	$res=$propal->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
@@ -97,9 +97,9 @@ $html = new Form($db);
 if ($_GET['propalid'])
 {
 	if ($mesg) print $mesg;
-	
+
 	$now=gmmktime();
-	
+
 	$propal = new Propal($db);
 	if ( $propal->fetch($_GET['propalid']) )
 	{
@@ -107,15 +107,15 @@ if ($_GET['propalid'])
 		if ( $societe->fetch($propal->socid) )
 		{
 			$head = propal_prepare_head($propal);
-			dol_fiche_head($head, 'note', $langs->trans('Proposal'));
-			
+			dol_fiche_head($head, 'note', $langs->trans('Proposal'), 0, 'propal');
+
 			print '<table class="border" width="100%">';
 
 	    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
-	    
+
 	    // Societe
       print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
-            
+
 			// Ligne info remises tiers
       print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
@@ -126,13 +126,13 @@ if ($_GET['propalid'])
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';
-    
+
 			// Date
       print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
       print dol_print_date($propal->date,'daytext');
       print '</td>';
     	print '</tr>';
-    		
+
     	// Date fin propal
       print '<tr>';
       print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
@@ -165,7 +165,7 @@ if ($_GET['propalid'])
 		  	print ($propal->note_public?nl2br($propal->note_public):"&nbsp;");
 		  }
 			print "</td></tr>";
-		
+
 			// Note privee
 			if (! $user->societe_id)
 			{
@@ -186,7 +186,7 @@ if ($_GET['propalid'])
 				}
 				print "</td></tr>";
 			}
-			
+
 			print "</table>";
 
 			print '</div>';

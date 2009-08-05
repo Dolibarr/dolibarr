@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -22,7 +22,7 @@
 /**
 		\file		htdocs/comm/propal/apercu.php
 		\ingroup	propal
-		\brief		Page de l'onglet aperçu d'une propal
+		\brief		Page de l'onglet aperï¿½u d'une propal
 		\version	$Id$
 */
 
@@ -66,7 +66,7 @@ if ($_GET["propalid"] > 0)
 		$soc->fetch($propal->socid);
 
 		$head = propal_prepare_head($propal);
-		dol_fiche_head($head, 'preview', $langs->trans('Proposal'));
+		dol_fiche_head($head, 'preview', $langs->trans('Proposal'), 0, 'propal');
 
 
 		/*
@@ -141,7 +141,7 @@ if ($_GET["propalid"] > 0)
 				$relativepath = "${propalref}/${propalref}.pdf";
 				$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
 
-                // Chemin vers png aperçus
+                // Chemin vers png aperï¿½us
 				$relativepathimage = "${propalref}/${propalref}.pdf.png";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
@@ -163,8 +163,8 @@ if ($_GET["propalid"] > 0)
 					print '</tr>';
 
 					// Si fichier detail PDF existe
-					if (file_exists($filedetail)) { // propal détaillée supplémentaire
-						print "<tr $bc[$var]><td>Propal détaillée</td>";
+					if (file_exists($filedetail)) { // propal dï¿½taillï¿½e supplï¿½mentaire
+						print "<tr $bc[$var]><td>Propal dï¿½taillï¿½e</td>";
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
@@ -213,17 +213,17 @@ if ($_GET["propalid"] > 0)
 			dol_print_error($db);
 		}
 	} else {
-	// Propal non trouvée
+	// Propal non trouvï¿½e
 	print $langs->trans("ErrorPropalNotFound",$_GET["propalid"]);
 	}
 }
 
-// Si fichier png PDF d'1 page trouvé
+// Si fichier png PDF d'1 page trouvï¿½
 if (file_exists($fileimage))
 	{
 	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimage).'">';
 	}
-// Si fichier png PDF de plus d'1 page trouvé
+// Si fichier png PDF de plus d'1 page trouvï¿½
 elseif (file_exists($fileimagebis))
 	{
 		$multiple = $relativepathimage . ".";

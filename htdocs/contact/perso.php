@@ -46,13 +46,13 @@ if ($user->rights->societe->contact->creer)
 	{
 		$contact = new Contact($db);
 		$contact->fetch($_POST["contactid"]);
-		
+
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$contact->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
 		$contact->birthday_alert = $_POST["birthday_alert"];
-		 
+
 		$result = $contact->update_perso($_POST["contactid"], $user);
-	
+
 		if ($result > 0)
 		{
 			$contact->old_name='';
@@ -82,7 +82,7 @@ $contact->fetch($_GET["id"], $user);
  */
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'perso', $langs->trans("Contact"));
+dol_fiche_head($head, 'perso', $langs->trans("Contact"), 0, 'contact');
 
 
 
@@ -103,7 +103,7 @@ if ($_GET["action"] == 'edit')
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
     print $contact->id;
     print '</td></tr>';
-	
+
 	// Name
     print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->nom.'</td>';
     print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->prenom.'</td>';
@@ -122,12 +122,12 @@ if ($_GET["action"] == 'edit')
         print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
-    
+
 	// Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $contact->getCivilityLabel();
     print '</td></tr>';
-    
+
 	// Date To Birth
     print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
     $html=new Form($db);
@@ -188,12 +188,12 @@ else
         print $langs->trans("ContactNotLinkedToCompany");
         print '</td></tr>';
     }
-    
+
 	// Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $contact->getCivilityLabel();
     print '</td></tr>';
-    
+
 	// Date To Birth
     if ($contact->birthday != '')
     {
@@ -218,7 +218,7 @@ else
     if ($user->societe_id == 0)
     {
         print '<div class="tabsAction">';
-				
+
 				if ($user->rights->societe->contact->creer)
     		{
         	print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Modify').'</a>';

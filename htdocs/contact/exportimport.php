@@ -48,12 +48,9 @@ $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 
 
-/*
- * Affichage onglets
- */
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'exportimport', $langs->trans("Contact"));
+dol_fiche_head($head, 'exportimport', $langs->trans("Contact"), 0, 'contact');
 
 
 /*

@@ -125,7 +125,7 @@ if ($propalid > 0)
         $societe->fetch($propal->socid);
 
 		$head = propal_prepare_head($propal);
-		dol_fiche_head($head, 'document', $langs->trans('Proposal'));
+		dol_fiche_head($head, 'document', $langs->trans('Proposal'), 0, 'propal');
 
 
 		// Construit liste des fichiers

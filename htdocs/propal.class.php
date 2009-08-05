@@ -2054,7 +2054,7 @@ class Propal extends CommonObject
 		}
 		$lienfin='</a>';
 
-		$picto='order';
+		$picto='propal';
 		$label=$langs->trans("ShowPropal").': '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
@@ -2180,9 +2180,9 @@ class PropaleLigne
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function insert()
-	{    
+	{
         global $conf;
-    
+
 		dol_syslog("PropaleLigne::insert rang=".$this->rang);
 		$this->db->begin();
 
@@ -2247,7 +2247,7 @@ class PropaleLigne
 		if ($resql)
 		{
 			$this->rang=$rangmax;
-            
+
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
 			if (! $notrigger)
 			{
@@ -2257,8 +2257,8 @@ class PropaleLigne
 				$result = $interface->run_triggers('LINEPROPAL_INSERT',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-			}            
-            
+			}
+
 			$this->db->commit();
 			return 1;
 		}

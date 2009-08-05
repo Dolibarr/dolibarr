@@ -41,8 +41,7 @@ $result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 /*
- *
- *
+ *	View
  */
 
 llxHeader();
@@ -54,7 +53,7 @@ $societe = new Societe($db);
 $societe->fetch($propal->socid);
 
 $head = propal_prepare_head($propal);
-dol_fiche_head($head, 'info', $langs->trans('Proposal'));
+dol_fiche_head($head, 'info', $langs->trans('Proposal'), 0, 'propal');
 
 $propal->info($propal->id);
 

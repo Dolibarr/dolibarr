@@ -52,12 +52,9 @@ $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 
 
-/*
- * Affichage onglets
- */
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Contact"));
+dol_fiche_head($head, 'ldap', $langs->trans("Contact"), 0, 'contact');
 
 
 /*
@@ -97,7 +94,7 @@ print '</td></tr>';
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPContactDn").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
 
-// LDAP Clé
+// LDAP Clï¿½
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_KEY_CONTACTS."</td></tr>\n";
 
 // LDAP Server
@@ -139,7 +136,7 @@ if ($result > 0)
 	{
 		if (! is_array($records))
 		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';	
+			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{

@@ -147,7 +147,7 @@ if ($id > 0 || ! empty($ref))
 	$societe->fetch($propal->socid);
 
 	$head = propal_prepare_head($propal);
-	dol_fiche_head($head, 'compta', $langs->trans('Proposal'));
+	dol_fiche_head($head, 'compta', $langs->trans('Proposal'), 0, 'propal');
 
 
 	/*

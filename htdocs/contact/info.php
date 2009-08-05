@@ -51,7 +51,7 @@ $contact->fetch($_GET["id"], $user);
 
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'info', $langs->trans("Contact"));
+dol_fiche_head($head, 'info', $langs->trans("Contact"), 0, 'contact');
 
 
 print '<table width="100%"><tr><td>';

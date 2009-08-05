@@ -218,7 +218,7 @@ if ($_GET["id"] > 0)
 	 */
 	$head = contact_prepare_head($contact);
 
-	dol_fiche_head($head, 'general', $langs->trans("Contact"));
+	dol_fiche_head($head, 'general', $langs->trans("Contact"), 0, 'contact');
 }
 
 
