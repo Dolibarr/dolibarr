@@ -757,7 +757,7 @@ else
 		$head = user_prepare_head($fuser);
 
 		$title = $langs->trans("User");
-		dol_fiche_head($head, 'user', $title);
+		dol_fiche_head($head, 'user', $title, 0, 'user');
 
 
 		/*

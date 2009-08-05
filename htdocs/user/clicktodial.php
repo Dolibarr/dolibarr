@@ -35,20 +35,23 @@ $form = new Form($db);
 /*
  * Actions
  */
- 
+
 if ($_POST["action"] == 'update' && ! $_POST['cancel'])
 {
 	$edituser = new User($db, $_GET["id"]);
-	
+
 	$edituser->clicktodial_login    = $_POST["login"];
 	$edituser->clicktodial_password = $_POST["password"];
 	$edituser->clicktodial_poste    = $_POST["poste"];
-	
+
 	$result=$edituser->update_clicktodial();
 }
 
 
 
+/*
+ * View
+ */
 
 llxHeader("","ClickToDial");
 
@@ -65,7 +68,8 @@ if ($_GET["id"])
 	 */
 	$head = user_prepare_head($fuser);
 
-	dol_fiche_head($head, 'clicktodial', $langs->trans("User"));
+	$title = $langs->trans("User");
+	dol_fiche_head($head, 'clicktodial', $title, 0, 'user');
 
     /*
      * Fiche en mode visu
@@ -89,18 +93,18 @@ if ($_GET["id"])
     print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
     print '<td colspan="2">'.$fuser->prenom.'</td>';
     print "</tr>\n";
-    
+
     print "</table>\n";
     print "<br>\n";
 
-    
+
     if ($_GET["action"] == 'edit')
     {
         print '<form action="clicktodial.php?id='.$_GET["id"].'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update">';
         print '<table class="border" width="100%">';
-        
+
         if ($user->admin)
         {
         	print "<tr>".'<td width="25%" valign="top">ClickToDial URL</td>';
@@ -109,12 +113,12 @@ if ($_GET["id"])
         	print '</td>';
         	print '</tr>';
         }
-        
+
         print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">';
         print '<input name="login" value="'.$fuser->clicktodial_login.'"></td>';
 		print '</tr>';
-		
+
         print "<tr>".'<td width="25%" valign="top">ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">';
         print '<input name="password" value="'.$fuser->clicktodial_password.'"></td>';
@@ -129,7 +133,7 @@ if ($_GET["id"])
 		print ' &nbsp; &nbsp; ';
 		print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
-		
+
         print '</table></form>';
     }
     else

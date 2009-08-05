@@ -52,7 +52,7 @@ $fuser->info($_GET["id"]);
 $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'info', $title);
+dol_fiche_head($head, 'info', $title, 0, 'user');
 
 
 print '<table width="100%"><tr><td>';

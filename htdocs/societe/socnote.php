@@ -69,7 +69,7 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'note', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
 
 
 	print "<form method=\"post\" action=\"".DOL_URL_ROOT."/societe/socnote.php\">";

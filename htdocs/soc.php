@@ -954,7 +954,7 @@ else
 
 	$head = societe_prepare_head($soc);
 
-	dol_fiche_head($head, 'company', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'company', $langs->trans("ThirdParty"),0,'company');
 
 
 	// Confirm delete third party

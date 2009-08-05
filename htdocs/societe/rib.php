@@ -92,7 +92,7 @@ llxHeader();
 
 $head=societe_prepare_head2($soc);
 
-dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"));
+dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
 $account = new CompanyBankAccount($db);
 $account->socid=$soc->id;
@@ -108,7 +108,7 @@ $account->fetch($soc->id);
 if ($_GET["socid"] && $_GET["action"] != 'edit')
 {
 	// Check BBAN
-	if (! checkBanForAccount($account)) 
+	if (! checkBanForAccount($account))
 	{
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div><br>';
 	}
@@ -132,7 +132,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 	print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
 	print '<td colspan="3">'.$account->number.'</td>';
 	print '</tr>';
-		
+
 	if ($account->useDetailedBBAN())
 	{
 		print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
@@ -213,7 +213,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 		print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
 		print '</tr>';
 	}
-	
+
 	print '<td>'.$langs->trans("BankAccountNumber").'</td>';
 	print '<td><input size="15" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
 	print '</tr>';
@@ -223,7 +223,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 		print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
 		print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
 		print '</tr>';
-	}	
+	}
 
 	// IBAN
 	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';

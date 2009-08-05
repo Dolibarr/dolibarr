@@ -27,10 +27,10 @@ function user_prepare_head($user)
 {
 	global $langs, $conf;
 	$langs->load("users");
-	
+
 	$h = 0;
 	$head = array();
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$user->id;
     $head[$h][1] = $langs->trans("UserCard");
     $head[$h][2] = 'user';
@@ -44,7 +44,7 @@ function user_prepare_head($user)
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$user->id;
     $head[$h][1] = $langs->trans("UserRights");
     $head[$h][2] = 'rights';
@@ -54,14 +54,6 @@ function user_prepare_head($user)
     $head[$h][1] = $langs->trans("UserGUISetup");
     $head[$h][2] = 'guisetup';
     $h++;
-
-    if ($conf->bookmark4u->enabled)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$user->id;
-        $head[$h][1] = $langs->trans("Other");
-	    $head[$h][2] = 'other';
-        $h++;
-    }
 
     if ($conf->clicktodial->enabled)
     {
@@ -88,10 +80,10 @@ function user_prepare_head($user)
 function group_prepare_head($group)
 {
 	global $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id;
     $head[$h][1] = $langs->trans("GroupCard");
     $head[$h][2] = 'group';
@@ -105,7 +97,7 @@ function group_prepare_head($group)
 	    $head[$h][2] = 'ldap';
 	    $h++;
 	}
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$group->id;
     $head[$h][1] = $langs->trans("GroupRights");
     $head[$h][2] = 'rights';
@@ -120,17 +112,17 @@ function group_prepare_head($group)
  * 		\param		fuser		User concerned or '' for global theme
  * 		\param		edit		1 to add edit form
  */
-function show_theme($fuser,$edit=0,$foruserprofile=false) 
+function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
     global $conf,$langs,$dirtheme,$bc;
-    
-    
+
+
     $selected_theme=$conf->global->MAIN_THEME;
     if (! empty($fuser)) $selected_theme=$fuser->conf->MAIN_THEME;
-    
+
     $colspan=2;
     if ($foruserprofile) $colspan=4;
-    
+
     $thumbsbyrow=6;
     print '<table class="noborder" width="100%">';
     if ($foruserprofile)
@@ -153,14 +145,14 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<td '.$bc[$var].' align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
 	    print '<td '.$bc[$var].'>&nbsp;</td></tr>';
     }
-    
+
     if ($edit) print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
-	if ($edit) 
+	if ($edit)
 	{
 		if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 		else $title=$langs->trans("ShowPreview");
 	}
-    
+
     $var=!$var;
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
 
@@ -176,7 +168,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
             {
                 print '<tr '.$bc[$var].'>';
             }
-            
+
             print '<td align="center">';
             $file=$dirtheme."/".$subdir."/thumb.png";
             if (! file_exists($file)) $file=$dirtheme."/common/nophoto.jpg";
@@ -210,7 +202,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
             $i++;
         }
         print '</tr>';
-    }    
+    }
     print '</table>';
 
     print '</td></tr>';

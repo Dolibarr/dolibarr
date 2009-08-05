@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/user/ldap.php
-        \ingroup    ldap
-        \brief      Page fiche LDAP utilisateur
-        \version    $Id$
-*/
+ *      \file       htdocs/user/ldap.php
+ *      \ingroup    ldap
+ *      \brief      Page fiche LDAP utilisateur
+ *      \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
@@ -79,7 +79,7 @@ if ($_GET["action"] == 'dolibarr2ldap')
 
 
 /*
- *	Affichage page
+ * View
  */
 
 llxHeader();
@@ -93,7 +93,7 @@ $form = new Form($db);
 $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'ldap', $title);
+dol_fiche_head($head, 'ldap', $title, 0, 'user');
 
 
 /*
@@ -146,7 +146,7 @@ if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPUserDn").'</td><td class="valeur">'.$conf->global->LDAP_USER_DN."</td></tr>\n";
 
-// LDAP Clé
+// LDAP Clï¿½
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_USERS."</td></tr>\n";
 
 // LDAP Server

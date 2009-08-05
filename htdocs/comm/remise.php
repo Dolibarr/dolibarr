@@ -89,7 +89,7 @@ if ($_socid > 0)
 	 */
 	$head = societe_prepare_head($objsoc);
 
-	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
 
 
 	/*

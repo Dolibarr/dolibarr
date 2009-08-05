@@ -95,7 +95,7 @@ $fuser->getrights();
 $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'rights', $title);
+dol_fiche_head($head, 'rights', $title, 0, 'user');
 
 
 $db->begin();

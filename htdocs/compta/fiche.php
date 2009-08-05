@@ -94,7 +94,7 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"),0,'company');
 
 
     print '<table width="100%" class="notopnoleftnoright">';

@@ -100,7 +100,7 @@ if ( $soc->fetch($soc->id) )
 
 	$head = societe_prepare_head($soc);
 
-	dol_fiche_head($head, 'notify', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'notify', $langs->trans("ThirdParty"),0,'company');
 
 
 	print '<table class="border"width="100%">';

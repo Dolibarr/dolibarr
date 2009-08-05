@@ -83,7 +83,7 @@ if ($id)
 	$head = user_prepare_head($fuser);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title);
+	dol_fiche_head($head, 'note', $title, 0, 'user');
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 

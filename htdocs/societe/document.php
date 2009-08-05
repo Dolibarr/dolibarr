@@ -126,7 +126,7 @@ if ($socid > 0)
 
 		$html=new Form($db);
 
-		dol_fiche_head($head, 'document', $langs->trans("ThirdParty"));
+		dol_fiche_head($head, 'document', $langs->trans("ThirdParty"),0,'company');
 
 
 		// Construit liste des fichiers

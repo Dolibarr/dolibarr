@@ -124,7 +124,6 @@ if ($mode == 'search')
 	}
 }
 
-
 llxHeader('',$langs->trans('CustomerCard'));
 
 $userstatic=new User($db);
@@ -149,7 +148,7 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($objsoc);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
 
 
 	/*

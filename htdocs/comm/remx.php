@@ -123,7 +123,7 @@ if ($_socid > 0)
 	 */
 	$head = societe_prepare_head($objsoc);
 
-	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"),0,'company');
 
 
     print '<form method="POST" action="remx.php?id='.$objsoc->id.'">';

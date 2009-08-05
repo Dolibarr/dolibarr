@@ -105,16 +105,16 @@ if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
 
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
-
-/*
- * Affichage onglets
- */
 $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'guisetup', $title);
+dol_fiche_head($head, 'guisetup', $title, 0, 'user');
 
 
 print '<table class="border" width="100%">';

@@ -102,7 +102,7 @@ if ($_GET["action"] == 'delete')
 
 
 /*
- * Affiche onglet
+ * View
  */
 
 llxHeader();
@@ -144,7 +144,7 @@ if ($objectid > 0)
 		$head[$h][1] = $langs->trans('Info');
 		$h++;
 
-		dol_fiche_head($head, $hselected, $langs->trans("Action"));
+		dol_fiche_head($head, $hselected, $langs->trans("Action"),0,'task');
 
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%"';

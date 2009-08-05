@@ -585,7 +585,6 @@ if ($_GET["action"] == 'create')
 
 /*
  * Affichage action en mode edition ou visu
- *
  */
 if ($_GET["id"])
 {
@@ -640,7 +639,7 @@ if ($_GET["id"])
 	$head[$h][1] = $langs->trans('Info');
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Action"));
+	dol_fiche_head($head, $hselected, $langs->trans("Action"),0,'task');
 
 	$now=gmmktime();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;

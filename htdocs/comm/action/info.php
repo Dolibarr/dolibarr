@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/comm/action/info.php
-        \ingroup    agenda
-		\brief      Page des informations d'une action
-		\version    $Id$
-*/
+ *      \file       htdocs/comm/action/info.php
+ *      \ingroup    agenda
+ *		\brief      Page des informations d'une action
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -40,9 +40,9 @@ if ($user->societe_id > 0)
 }
 
 
+
 /*
- * Visualisation de la fiche
- *
+ * View
  */
 
 llxHeader();
@@ -67,7 +67,7 @@ $head[$h][1] = $langs->trans('Info');
 $hselected=$h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("Action"));
+dol_fiche_head($head, $hselected, $langs->trans("Action"),0,'task');
 
 
 print '<table width="100%"><tr><td>';
