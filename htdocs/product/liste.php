@@ -203,8 +203,6 @@ if ($resql)
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$smarty->assign('title_picto', img_picto('',$picto));
-		if ($_GET["canvas"] != 'default') $texte = $langs->trans('Books');
-		$smarty->assign('title_text', $texte);
 
 		// Check if a custom template is present
 		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/liste.tpl'))

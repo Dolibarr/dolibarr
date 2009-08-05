@@ -26,7 +26,7 @@
 		{$title_picto}
 	</td>
 	<td class="nobordernopadding" valign="middle">
-    	<div class="titre">{$title_text}</div>
+    	<div class="titre">{$langs->trans('Books')}</div>
 	</td>
 </tr>
 </table>
@@ -35,10 +35,10 @@
 
 <table class="liste" width="100%">
  <tr class="liste_titre">
-  <td class="liste_titre">Case
+  <td class="liste_titre">{$langs->trans('Case')}
   </td>
 
-  <td class="liste_titre" >Référence
+  <td class="liste_titre">{$langs->trans('Ref')}
   <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   </a>
@@ -47,7 +47,7 @@
   </a>
   </td>
 
-  <td class="liste_titre">Titre
+  <td class="liste_titre">{$langs->trans('Title')}
   <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   </a>
