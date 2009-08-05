@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/commande/info.php
-        \ingroup    commande
-		\brief      Page des informations d'une commande
-		\version    $Id$
-*/
+ *      \file       htdocs/commande/info.php
+ *      \ingroup    commande
+ *		\brief      Page des informations d'une commande
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -41,12 +41,12 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$comid,'');
 
 
+
 /*
- * Visualisation de la fiche
- *
+ * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $commande = new Commande($db);
 $commande->fetch($_GET["id"]);
@@ -55,7 +55,7 @@ $soc = new Societe($db, $commande->socid);
 $soc->fetch($commande->socid);
 
 $head = commande_prepare_head($commande);
-dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"));
+dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"), 0, 'order');
 
 
 print '<table width="100%"><tr><td>';

@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/commande/document.php
- \ingroup    order
- \brief      Page de gestion des documents attachees a une commande
- \version    $Id$
+ *	\file       htdocs/commande/document.php
+ *	\ingroup    order
+ *	\brief      Page de gestion des documents attachees a une commande
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
@@ -108,7 +108,7 @@ if ($action=='delete')
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $html = new Form($db);
 
@@ -120,7 +120,7 @@ if ($id > 0 || ! empty($ref))
 	$societe->fetch($commande->socid);
 
 	$head = commande_prepare_head($commande);
-	dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'));
+	dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), 0, 'order');
 
 
 	// Construit liste des fichiers

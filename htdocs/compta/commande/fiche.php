@@ -119,7 +119,7 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
  * View
  */
 
-llxHeader('',$langs->trans("OrderCard"),"Commande");
+llxHeader('',$langs->trans("OrderCard"),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -141,7 +141,7 @@ if ($id > 0 || ! empty($ref))
 		$author->fetch();
 
 		$head = commande_prepare_head($commande);
-		dol_fiche_head($head, 'accountancy', $langs->trans("CustomerOrder"));
+		dol_fiche_head($head, 'accountancy', $langs->trans("CustomerOrder"), 0, 'order');
 
 		/*
 		 *   Commande

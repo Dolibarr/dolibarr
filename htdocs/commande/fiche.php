@@ -881,7 +881,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
  *	View
  */
 
-llxHeader('',$langs->trans('Order'),'Commande');
+llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $html = new Form($db);
 $formfile = new FormFile($db);
@@ -1205,7 +1205,7 @@ else
 			$author->fetch();
 
 			$head = commande_prepare_head($commande);
-			dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
+			dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
 
 			/*
 			 * Confirmation de la suppression de la commande

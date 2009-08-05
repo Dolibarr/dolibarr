@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file		htdocs/commande/apercu.php
 		\ingroup	commande
-		\brief		Page de l'onglet aperçu d'une commande
-		\version	$Revision$
+		\brief		Page de l'onglet aperï¿½u d'une commande
+		\version	$Id$
 */
 
 require("./pre.inc.php");
@@ -50,7 +47,12 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$comid,'');
 
 
-llxHeader();
+
+/*
+ * View
+ */
+
+llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $html = new Form($db);
 
@@ -70,7 +72,7 @@ if ($_GET["id"] > 0) {
 
 
 		$head = commande_prepare_head($commande);
-        dol_fiche_head($head, 'preview', $langs->trans("CustomerOrder"));
+        dol_fiche_head($head, 'preview', $langs->trans("CustomerOrder"), 0, 'order');
 
 
 		/*
@@ -134,7 +136,7 @@ if ($_GET["id"] > 0) {
 				$relativepath = "${commanderef}/${commanderef}.pdf";
 				$relativepathdetail = "${commanderef}/${commanderef}-detail.pdf";
 
-                // Chemin vers png aperçus
+                // Chemin vers png aperï¿½us
 				$relativepathimage = "${commanderef}/${commanderef}.pdf.png";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
@@ -156,8 +158,8 @@ if ($_GET["id"] > 0) {
 					print '</tr>';
 
 					// Si fichier detail PDF existe
-					if (file_exists($filedetail)) { // commande détaillée supplémentaire
-						print "<tr $bc[$var]><td>Commande détaillée</td>";
+					if (file_exists($filedetail)) { // commande dï¿½taillï¿½e supplï¿½mentaire
+						print "<tr $bc[$var]><td>Commande dï¿½taillï¿½e</td>";
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$commande->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
@@ -231,17 +233,17 @@ if ($_GET["id"] > 0) {
 			dol_print_error($db);
 		}
 	} else {
-	// Commande non trouvée
+	// Commande non trouvï¿½e
 	print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
 	}
 }
 
-// Si fichier png PDF d'1 page trouvé
+// Si fichier png PDF d'1 page trouvï¿½
 if (file_exists($fileimage))
 	{
 	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimage).'">';
 	}
-// Si fichier png PDF de plus d'1 page trouvé
+// Si fichier png PDF de plus d'1 page trouvï¿½
 elseif (file_exists($fileimagebis))
 	{
 		$multiple = $relativepathimage . ".";

@@ -55,6 +55,7 @@ $now=gmmktime();
 
 $html = new Form($db);
 $formfile = new FormFile($db);
+$companystatic = new Societe($db);
 
 llxHeader();
 
@@ -69,7 +70,7 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET['page'] ;
 
-$sql = 'SELECT s.nom, s.rowid as socid, c.rowid, c.ref, c.total_ht, c.ref_client,';
+$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -192,7 +193,7 @@ if ($resql)
 		$generic_commande->ref=$objp->ref;
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+		print '<td class="nobordernopadding" nowrap="nowrap">';
 		print $generic_commande->getNomUrl(1,$objp->fk_statut);
 		print '</td>';
 
@@ -209,7 +210,13 @@ if ($resql)
 
 		print '</td>';
 
-		print '<td><a href="../comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+		// Company
+		$companystatic->id=$objp->socid;
+		$companystatic->nom=$objp->nom;
+		$companystatic->client=$objp->client;
+		print '<td>';
+		print $companystatic->getNomUrl(1,'customer');
+		print '</td>';
 
 		print '<td>'.$objp->ref_client.'</td>';
 

@@ -903,6 +903,7 @@ llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_c
 
 $html = new Form($db);
 $formfile = new FormFile($db);
+$companystatic=new Societe($db);
 
 $now=gmmktime();
 
@@ -2085,7 +2086,7 @@ else
 			$propalstatic->ref=$objp->ref;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+			print '<td class="nobordernopadding" nowrap="nowrap">';
 			print $propalstatic->getNomUrl(1);
 			print '</td>';
 
@@ -2094,12 +2095,10 @@ else
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';
-
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
-
 			print '</td></tr></table>';
 
 			if ($objp->client == 1)
@@ -2111,8 +2110,13 @@ else
 				$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
 			}
 
-			// Societe
-			print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+			// Company
+			$companystatic->id=$objp->rowid;
+			$companystatic->nom=$objp->nom;
+			$companystatic->client=$objp->client;
+			print '<td>';
+			print $companystatic->getNomUrl(1,'customer');
+			print '</td>';
 
 			// Date propale
 			print '<td align="center">';

@@ -145,7 +145,11 @@ if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
 }
 
 
-llxHeader('', $langs->trans("Order"), "Commande");
+/*
+ * View
+ */
+
+llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $html = new Form($db);
 $formcompany = new FormCompany($db);
@@ -172,7 +176,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		$head = commande_prepare_head($commande);
-		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"));
+		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), 0, 'order');
 
 
 		/*

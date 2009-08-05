@@ -21,9 +21,9 @@
 // Code identique a /expedition/fiche.php
 
 /**
- \file       htdocs/expedition/commande.php
- \ingroup    expedition
- \version    $Id$
+ *	\file       htdocs/expedition/commande.php
+ *	\ingroup    expedition
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -130,7 +130,7 @@ $formfile = new FormFile($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-llxHeader('',$langs->trans("OrderCard"));
+llxHeader('',$langs->trans('OrderCard'),'');
 
 $id = $_GET['id'];
 $ref= $_GET['ref'];
@@ -151,15 +151,14 @@ if ($id > 0 || ! empty($ref))
 		$author->fetch();
 
 		$head = commande_prepare_head($commande);
-		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"));
+		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), 0, 'order');
 
 		/*
 		 * Confirmation de la validation
-		 *
 		 */
 		if ($_GET["action"] == 'cloture')
 		{
-			$ret=$html->form_confirm("commande.php?id=".$_GET["id"],"Cl�turer la commande","Etes-vous s�r de vouloir cl�turer cette commande ?","confirm_cloture");
+			$ret=$html->form_confirm("commande.php?id=".$_GET["id"],$langs->trans("CloseOrder"),$langs->trans("ConfirmCloseOrder"),"confirm_cloture");
 			if ($ret == 'html') print '<br>';
 		}
 

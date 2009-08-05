@@ -80,7 +80,7 @@ if ($_POST["action"] == 'update' && $user->rights->commande->creer)
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $html = new Form($db);
 
@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = commande_prepare_head($commande);
 
-	dol_fiche_head($head, 'note', $langs->trans("CustomerOrder"));
+	dol_fiche_head($head, 'note', $langs->trans("CustomerOrder"), 0, 'order');
 
 	print '<table class="border" width="100%">';
 
@@ -161,7 +161,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Actions
 	 */
-	 
+
 	print '<div class="tabsAction">';
 
 	if ($user->rights->commande->creer && $_GET["action"] <> 'edit')
