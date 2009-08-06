@@ -778,11 +778,14 @@ width: 100%;
 
 tr.liste_titre {
 height: 16px;
-/* background: #7699A9; */
+<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre_2.png' ?>);
 background-repeat: repeat-y;
+<?php } else { ?>
+background: #7699A9;
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
 <?php } ?>
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
@@ -790,9 +793,12 @@ border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 td.liste_titre {
-/* background: #7699A9; */
+<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
+<?php } else { ?>
+background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
@@ -804,9 +810,12 @@ white-space: nowrap;
 }
 td.liste_titre_sel
 {
-/* background: #7699A9; */
+<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
+<?php } else { ?>
+background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
@@ -817,9 +826,12 @@ border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 input.liste_titre {
-/* background: #7699A9; */
+<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
+<?php } else { ?>
+background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
@@ -885,11 +897,14 @@ margin: 2px;
 }
 
 tr.box_titre {
-/* background: #7699A9; */
+<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-<?php if (eregi('firefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE6 ?>
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre_2.png' ?>);
 background-repeat: repeat-y;
+<?php } else { ?>
+background: #7699A9;
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-repeat: repeat-x;
 <?php } ?>
 color: #334444;
 font-size: 12px;
