@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/contact.php
-        \ingroup    facture, fournisseur
-        \brief      Onglet de gestion des contacts des factures
-        \version    $Id$
-*/
+ *      \file       htdocs/fourn/facture/contact.php
+ *      \ingroup    facture, fournisseur
+ *      \brief      Onglet de gestion des contacts des factures
+ *      \version    $Id$
+ */
 
 require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
@@ -170,7 +170,7 @@ if ($id > 0)
 
 		$head = facturefourn_prepare_head($facture);
 
-		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'));
+		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), 0, 'bill');
 
 		/*
 		 *   Facture synthese pour rappel

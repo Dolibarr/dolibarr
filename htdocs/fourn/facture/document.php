@@ -123,7 +123,7 @@ if ($facid > 0)
 		$upload_dir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($facture->id,2).$facture->id;
 
 		$head = facturefourn_prepare_head($facture);
-		dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
+		dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), 0, 'bill');
 
 
 		// Construit liste des fichiers

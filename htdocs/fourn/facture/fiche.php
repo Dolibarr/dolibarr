@@ -599,7 +599,7 @@ else
 			 */
 			$head = facturefourn_prepare_head($fac);
 			$titre=$langs->trans('SupplierInvoice');
-			dol_fiche_head($head, 'card', $titre);
+			dol_fiche_head($head, 'card', $titre, 0, 'bill');
 
 			if ($mesg) { print $mesg.'<br>'; }
 

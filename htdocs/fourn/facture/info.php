@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/fourn/facture/info.php
-        \ingroup    facture, fournisseur
-		\brief      Page des informations d'une facture fournisseur
-		\version    $Id$
-*/
+ *      \file       htdocs/fourn/facture/info.php
+ *      \ingroup    facture, fournisseur
+ *		\brief      Page des informations d'une facture fournisseur
+ *		\version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -37,13 +37,13 @@ $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture');
 
-llxHeader();
 
 
 /*
- * Visualisation de la fiche
- *
+ * View
  */
+
+llxHeader();
 
 $fac = new FactureFournisseur($db);
 $fac->fetch($_GET["facid"]);
@@ -53,7 +53,7 @@ $soc->fetch($fac->socid);
 
 $head = facturefourn_prepare_head($fac);
 $titre=$langs->trans('SupplierInvoice');
-dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'));
+dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), 0, 'bill');
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($fac);
