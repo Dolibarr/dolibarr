@@ -468,13 +468,13 @@ class Project extends CommonObject
 	 * @param	mode	0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 * @return 	array	Array of tasks
 	 */
-	function getTasksArray($usert=0, $userp=0, $mode=0)
+	function getTasksArray($usert=0, $userp=0, $mode=0, $socid=0)
 	{
 		global $conf;
 
 		$tasks = array();
 
-		//print $usert.'-'.$userp;
+		//print $usert.'-'.$userp.'<br>';
 
 		// List of tasks
 		$sql = "SELECT p.rowid as projectid, p.ref, p.title as ptitle,";
@@ -492,6 +492,7 @@ class Project extends CommonObject
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
 			$sql.= " WHERE t.fk_projet = p.rowid";
 			$sql.= " AND p.entity = ".$conf->entity;
+			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
 			if (is_object($usert)) $sql .= " AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
@@ -513,12 +514,13 @@ class Project extends CommonObject
 			}
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
 			$sql.= " WHERE p.entity = ".$conf->entity;
+			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
 			if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
 			$sql.= " ORDER BY p.ref, t.title";
 		}
-
+		
 		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)

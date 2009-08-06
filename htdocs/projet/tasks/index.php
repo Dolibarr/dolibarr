@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *	\file       htdocs/projet/tasks/index.php
  *	\ingroup    project
- *	\brief      Fiche t�ches d'un projet
+ *	\brief      Fiche taches d'un projet
  *	\version    $Id$
  */
 
@@ -78,15 +79,15 @@ llxHeader("",$title,"Projet");
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 
-$projet = new Project($db);
+$project = new Project($db);
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray=$projet->getTasksArray(0, 0, 0);
+$tasksarray=$project->getTasksArray(0, 0, 0, $socid);
 // We load also tasks limited to a particular user
-$tasksrole=($_REQUEST["mode"]=='mine' ? $projet->getTasksRoleForUser($user) : '');
+$tasksrole=($_REQUEST["mode"]=='mine' ? $project->getTasksRoleForUser($user) : '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -107,11 +108,12 @@ print '</div>';
 /*
  * Actions
  */
-print '<div class="tabsAction">';
-print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?action=create">'.$langs->trans('AddTask').'</a>';
-print '</div>';
-
-
+if ($user->rights->projet->creer)
+{
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?action=create">'.$langs->trans('AddTask').'</a>';
+	print '</div>';
+}
 
 $db->close();
 
