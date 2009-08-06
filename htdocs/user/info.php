@@ -35,6 +35,13 @@ $id = isset($_GET["id"])?$_GET["id"]:'';
 $fuser = new User($db);
 $fuser->id = $id;
 $fuser->fetch();
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+
 // If user is not user read and no permission to read other users, we stop
 if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();

@@ -51,7 +51,10 @@ if ($_GET["id"])
 }
 
 // Security check
-$result = restrictedArea($user, 'user', $_GET["id"], '', 'user');
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 if ($user->id <> $_GET["id"] && ! $canreadperms) accessforbidden();
 
 $langs->load("users");

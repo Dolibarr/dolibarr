@@ -41,10 +41,14 @@ if ($_REQUEST["id"])
   $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
 		  || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
 }
-if ($user->id <> $_REQUEST["id"] && ! $canreadperms)
-{
-  accessforbidden();
-}
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+if ($user->id <> $_REQUEST["id"] && ! $canreadperms) accessforbidden();
+
 
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $dirtop = "../includes/menus/barre_top";

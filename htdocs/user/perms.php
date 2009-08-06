@@ -32,16 +32,20 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 $langs->load("users");
 $langs->load("admin");
 
-$form = new Form($db);
-
 $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
-if (! isset($_GET["id"])) accessforbidden();
+if (! isset($_GET["id"]) || empty($_GET["id"])) accessforbidden();
 
 
 // Defini si peux modifier utilisateurs et permisssions
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+if ($user->id <> $_REQUEST["id"] && ! $canreadperms) accessforbidden();
 
 
 /**
