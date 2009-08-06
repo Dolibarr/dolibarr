@@ -20,11 +20,11 @@
  */
 
 /**
-   \file       htdocs/product/fournisseurs.php
-   \ingroup    product
-   \brief      Page de l'onglet fournisseur de produits
-   \version    $Id$
-*/
+ *  \file       htdocs/product/fournisseurs.php
+ *  \ingroup    product
+ *  \brief      Page de l'onglet fournisseur de produits
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -61,29 +61,29 @@ if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT &&
 
 if ($_GET["action"] == 'remove_pf')
 {
-    $product = new ProductFournisseur($db);
-    if ($product->fetch($_GET["id"]) > 0)
-    {
-        if ($_GET["rowid"])
-        {
+	$product = new ProductFournisseur($db);
+	if ($product->fetch($_GET["id"]) > 0)
+	{
+		if ($_GET["rowid"])
+		{
 			$result=$product->remove_product_fournisseur_price($_GET["rowid"]);
-            $_GET["action"] = '';
-            $mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
+			$_GET["action"] = '';
+			$mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
 		}
-        else
-        {
-        	// Deprecated. Should not occurs
-            if ($product->remove_fournisseur($_GET["socid"]) > 0)
-            {
-                $_GET["action"] = '';
-                $mesg = '<div class="ok">'.$langs->trans("SupplierRemoved").'.</div>';
-            }
-            else
-            {
-                $_GET["action"] = '';
-            }
-        }
-    }
+		else
+		{
+			// Deprecated. Should not occurs
+			if ($product->remove_fournisseur($_GET["socid"]) > 0)
+			{
+				$_GET["action"] = '';
+				$mesg = '<div class="ok">'.$langs->trans("SupplierRemoved").'.</div>';
+			}
+			else
+			{
+				$_GET["action"] = '';
+			}
+		}
+	}
 }
 
 if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
@@ -161,9 +161,9 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
-    $action = '';
-    Header("Location: fournisseurs.php?id=".$_GET["id"]);
-    exit;
+	$action = '';
+	Header("Location: fournisseurs.php?id=".$_GET["id"]);
+	exit;
 }
 
 
@@ -190,12 +190,13 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 		{
 			/*
-			*  En mode visu
-			*/
+			 *  En mode visu
+			 */
 
 			$head=product_prepare_head($product, $user);
 			$titre=$langs->trans("CardProduct".$product->type);
-			dol_fiche_head($head, 'suppliers', $titre);
+			$picto=($product->type==1?'service':'product');
+			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
 
 
 			print '<table class="border" width="100%">';

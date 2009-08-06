@@ -120,7 +120,8 @@ llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
-dol_fiche_head($head, 'price', $titre);
+$picto=($product->type==1?'service':'product');
+dol_fiche_head($head, 'price', $titre, 0, $picto);
 
 
 print '<table class="border" width="100%">';

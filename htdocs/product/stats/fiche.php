@@ -67,7 +67,8 @@ if ($_GET["id"] || $_GET["ref"])
 	{
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		dol_fiche_head($head, 'stats', $titre);
+		$picto=($product->type==1?'service':'product');
+		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
 
 		print '<table class="border" width="100%">';

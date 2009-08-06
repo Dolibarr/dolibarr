@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/product/photos.php
- \ingroup    product
- \brief      Onglet photos de la fiche produit
- \version    $Id$
+ *	\file       htdocs/product/photos.php
+ *	\ingroup    product
+ *	\brief      Onglet photos de la fiche produit
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -75,7 +75,7 @@ if ($_GET["action"] == 'addthumb' && $_GET["file"])
 
 
 /*
- *
+ *	View
  */
 
 $html = new Form($db);
@@ -96,7 +96,8 @@ if ($_GET["id"] || $_GET["ref"])
 		 */
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		dol_fiche_head($head, 'photos', $titre);
+		$picto=($product->type==1?'service':'product');
+		dol_fiche_head($head, 'photos', $titre, 0, $picto);
 
 		/*
 		 * Confirmation de la suppression de photo

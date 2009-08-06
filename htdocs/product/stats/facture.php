@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/product/stats/facture.php
-        \ingroup    product, service, facture
-        \brief      Page des stats des factures clients pour un produit
-        \version    $Id$
-*/
+ \file       htdocs/product/stats/facture.php
+ \ingroup    product, service, facture
+ \brief      Page des stats des factures clients pour un produit
+ \version    $Id$
+ */
 
 
 require("./pre.inc.php");
@@ -69,39 +69,40 @@ $html = new Form($db);
 if ($_GET["id"] || $_GET["ref"])
 {
 	$product = new Product($db);
-  if ($_GET["ref"])
-  {
-  	$result = $product->fetch('',$_GET["ref"]);
-    $_GET["id"]=$product->id;
-  }
-  if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+	if ($_GET["ref"])
+	{
+		$result = $product->fetch('',$_GET["ref"]);
+		$_GET["id"]=$product->id;
+	}
+	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-  llxHeader("","",$langs->trans("CardProduct".$product->type));
+	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-  /*
-   *  En mode visu
-   */
-  if ($result > 0)
-  {
-  	$head=product_prepare_head($product, $user);
+	/*
+	 *  En mode visu
+	 */
+	if ($result > 0)
+	{
+		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		dol_fiche_head($head, 'referers', $titre);
+		$picto=($product->type==1?'service':'product');
+		dol_fiche_head($head, 'referers', $titre, 0, $picto);
 
 		print '<table class="border" width="100%">';
 
-    // Reference
-    print '<tr>';
-    print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		// Reference
+		print '<tr>';
+		print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $html->showrefnav($product,'ref','',1,'ref');
-    print '</td>';
-    print '</tr>';
+		print '</td>';
+		print '</tr>';
 
-    // Libelle
-    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
-    print '</tr>';
+		// Libelle
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
+		print '</tr>';
 
-    // Price
-    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
+		// Price
+		print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
 		if ($product->price_base_type == 'TTC')
 		{
 			print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
@@ -112,90 +113,90 @@ if ($_GET["id"] || $_GET["ref"])
 		}
 		print '</td></tr>';
 
-    // Statut
-    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 		print $product->getLibStatut(2);
-    print '</td></tr>';
+		print '</td></tr>';
 
 		show_stats_for_company($product,$socid);
 
-    print "</table>";
+		print "</table>";
 
-    print '</div>';
+		print '</div>';
 
 
-    $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, f.facnumber, f.total as total_ht,";
-    $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
-    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    $sql.= ", ".MAIN_DB_PREFIX."facture as f";
-    $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
-    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= " WHERE f.fk_soc = s.rowid";
-    $sql.= " AND s.entity = ".$conf->entity;
-    $sql.= " AND d.fk_facture = f.rowid";
-    $sql.= " AND d.fk_product =".$product->id;
-    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    if ($socid) $sql.= " AND f.fk_soc = $socid";
-    $sql.= " ORDER BY $sortfield $sortorder ";
-    $sql.= $db->plimit($conf->liste_limit +1, $offset);
+		$sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, f.facnumber, f.total as total_ht,";
+		$sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
+		$sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE f.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND d.fk_facture = f.rowid";
+		$sql.= " AND d.fk_product =".$product->id;
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid) $sql.= " AND f.fk_soc = $socid";
+		$sql.= " ORDER BY $sortfield $sortorder ";
+		$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-    $result = $db->query($sql);
-    if ($result)
-    {
-    	$num = $db->num_rows($result);
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows($result);
 
-      print_barre_liste($langs->trans("CustomersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
+			print_barre_liste($langs->trans("CustomersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 
-      $i = 0;
-      print "<table class=\"noborder\" width=\"100%\">";
+			$i = 0;
+			print "<table class=\"noborder\" width=\"100%\">";
 
-      print '<tr class="liste_titre">';
-      print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-      print "</tr>\n";
+			print '<tr class="liste_titre">';
+			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+			print "</tr>\n";
 
-      if ($num > 0)
-      {
-      	$var=True;
-        while ($i < $num && $i < $conf->liste_limit)
-        {
-        	$objp = $db->fetch_object($result);
-          $var=!$var;
+			if ($num > 0)
+			{
+				$var=True;
+				while ($i < $num && $i < $conf->liste_limit)
+				{
+					$objp = $db->fetch_object($result);
+					$var=!$var;
 
-          print "<tr $bc[$var]>";
-          print '<td>';
-          $invoicestatic->id=$objp->facid;
-          $invoicestatic->ref=$objp->facnumber;
+					print "<tr $bc[$var]>";
+					print '<td>';
+					$invoicestatic->id=$objp->facid;
+					$invoicestatic->ref=$objp->facnumber;
 					print $invoicestatic->getNomUrl(1);
-          print "</td>\n";
-          print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
-          print "<td>".$objp->code_client."</td>\n";
-          print "<td align=\"center\">";
-          print dol_print_date($objp->date)."</td>";
-          print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-          print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
-          print "</tr>\n";
-          $i++;
-        }
-      }
-    }
-    else
-    {
-    	dol_print_error($db);
-    }
-    print "</table>";
-    print '<br>';
-    $db->free($result);
-  }
+					print "</td>\n";
+					print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+					print "<td>".$objp->code_client."</td>\n";
+					print "<td align=\"center\">";
+					print dol_print_date($objp->date)."</td>";
+					print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
+					print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
+					print "</tr>\n";
+					$i++;
+				}
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print "</table>";
+		print '<br>';
+		$db->free($result);
+	}
 }
 else
 {
-    dol_print_error();
+	dol_print_error();
 }
 
 $db->close();

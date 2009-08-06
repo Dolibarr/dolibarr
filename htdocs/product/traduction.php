@@ -22,10 +22,10 @@
  */
 
 /**
- \file       htdocs/product/traduction.php
- \ingroup    product
- \brief      Page de traduction des produits
- \version    $Revision$
+ *	\file       htdocs/product/traduction.php
+ *	\ingroup    product
+ *	\brief      Page de traduction des produits
+ *	\version    $Revision$
  */
 
 require("./pre.inc.php");
@@ -119,12 +119,11 @@ $_POST["cancel"] != $langs->trans("Cancel") &&
 	if ( $product->setMultiLangs() > 0 )
 	{
 		$_GET["action"] = '';
-		$mesg = 'Fiche mise � jour';
 	}
 	else
 	{
 		$_GET["action"] = 'edit';
-		$mesg = 'Fiche non mise � jour !' . "<br>" . $product->mesg_error;
+		$mesg = $product->mesg_error;
 	}
 }
 
@@ -134,7 +133,7 @@ if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader("","",$langs->trans("Translation"));
@@ -143,7 +142,8 @@ $html = new Form($db);
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
-dol_fiche_head($head, 'translation', $titre);
+$picto=($product->type==1?'service':'product');
+dol_fiche_head($head, 'translation', $titre, 0, $picto);
 
 print '<table class="border" width="100%">';
 
@@ -253,6 +253,7 @@ if ($_GET["action"] == 'add' || ($user->rights->produit->creer || $user->rights-
 	$select.= "<option value='$value'>$value</option>";
 	$select.='</select>';
 
+	print '<br>';
 	print '<form action="" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
@@ -264,7 +265,7 @@ if ($_GET["action"] == 'add' || ($user->rights->produit->creer || $user->rights-
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80"></textarea></td></tr>';
 	print '</tr>';
 	print '</table>';
-	print '<br /><table class="noborder" width="100%">';
+	print '<br /><table class="nobordernopadding" width="100%">';
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	print '</table>';
