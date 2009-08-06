@@ -341,7 +341,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 			print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 			print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-			print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+			print '<td align="right" nowrap="nowrap">'.$langs->trans('AmountHT').'</td>';
 			print '<td width="16">&nbsp;</td>';
 			print '<td width="16">&nbsp;</td>';
 			print '<td width="16">&nbsp;</td>';

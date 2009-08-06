@@ -20,10 +20,10 @@
  */
 
 /**
- \file      htdocs/fourn/commande/fiche.php
- \ingroup   commande
- \brief     Fiche de ventilation des commandes fournisseurs
- \version   $Id$
+ *	\file      htdocs/fourn/commande/fiche.php
+ *	\ingroup   commande
+ *	\brief     Fiche de ventilation des commandes fournisseurs
+ *	\version   $Id$
  */
 
 require('./pre.inc.php');
@@ -45,7 +45,7 @@ $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
-// Récupération	de l'id	de projet
+// Rï¿½cupï¿½ration	de l'id	de projet
 $projetid =	0;
 if ($_GET["projetid"]) $projetid = $_GET["projetid"];
 
@@ -108,7 +108,7 @@ if ($id > 0 || ! empty($ref))
 		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dol_fiche_head($head, 'dispatch', $title);
+		dol_fiche_head($head, 'dispatch', $title, 0, 'order');
 
 		/*
 		 *	Commande
@@ -218,7 +218,7 @@ if ($id > 0 || ! empty($ref))
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
-					// On n'affiche pas les produits personnalisés
+					// On n'affiche pas les produits personnalisï¿½s
 					if ($objp->fk_product)
 					{
 						$var=!$var;
@@ -376,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		// Commande	non	trouvée
+		// Commande	non	trouvï¿½e
 		dol_print_error($db);
 	}
 }

@@ -22,11 +22,11 @@
  */
 
 /**
-        \file       htdocs/compta/commande/liste.php
-        \ingroup    commande
-        \brief      Page liste des commandes
-        \version    $Revision$
-*/
+ *       \file       htdocs/compta/commande/liste.php
+ *       \ingroup    commande
+ *       \brief      Page liste des commandes
+ *       \version    $Revision$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -106,7 +106,7 @@ if ($resql)
     {
         $title = $langs->trans("ListOfOrders");
     }
-    // Si page des commandes � facturer
+    // Si page des commandes a facturer
     $link=DOL_URL_ROOT."/compta/commande/fiche.php";
     $title.=" - ".$langs->trans("StatusOrderToBill");
     $param="&amp;socid=".$socid."&amp;year=".$_GET["year"]."&amp;month=".$_GET["month"];
@@ -139,7 +139,7 @@ if ($resql)
         $generic_commande->ref=$objp->ref;
 
         print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-        print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+        print '<td class="nobordernopadding" nowrap="nowrap">';
         print $generic_commande->getNomUrl(1);
         print '</td>';
 

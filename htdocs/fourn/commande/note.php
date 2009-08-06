@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/fourn/commande/note.php
-        \ingroup    commande
-        \brief      Fiche note commande
-        \version    $Id$
-*/
+ *       \file       htdocs/fourn/commande/note.php
+ *       \ingroup    commande
+ *       \brief      Fiche note commande
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fourn.lib.php");
@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref))
 		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dol_fiche_head($head, 'note', $title);
+		dol_fiche_head($head, 'note', $title, 0, 'order');
 
 
 		/*
@@ -171,7 +171,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		/* Commande non trouvée */
+		/* Commande non trouvï¿½e */
 		print "Commande inexistante";
 	}
 }

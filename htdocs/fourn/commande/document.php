@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/fourn/commande/document.php
- \ingroup    supplier
- \brief      Page de gestion des documents attachees a une commande fournisseur
- \version    $Id$
+ *	\file       htdocs/fourn/commande/document.php
+ *	\ingroup    supplier
+ *	\brief      Page de gestion des documents attachees a une commande fournisseur
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
@@ -128,7 +128,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = ordersupplier_prepare_head($commande);
 
-	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'));
+	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), 0, 'order');
 
 
 	// Construit liste des fichiers

@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/commande/contact.php
-        \ingroup    commande
-        \brief      Onglet de gestion des contacts de commande
-        \version    $Id$
-*/
+ *       \file       htdocs/commande/contact.php
+ *       \ingroup    commande
+ *       \brief      Onglet de gestion des contacts de commande
+ *       \version    $Id$
+ */
 
 require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
@@ -176,7 +176,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		$head = ordersupplier_prepare_head($commande);
-		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"));
+		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), 0, 'order');
 
 
 		/*

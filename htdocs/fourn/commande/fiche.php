@@ -510,7 +510,7 @@ if ($id > 0 || ! empty($ref))
 		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dol_fiche_head($head, 'card', $title);
+		dol_fiche_head($head, 'card', $title, 0, 'order');
 
 		/*
 		 * Confirmation de la suppression de	la commande

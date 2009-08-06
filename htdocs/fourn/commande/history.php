@@ -68,7 +68,7 @@ if ($id > 0 || ! empty($ref))
 		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dol_fiche_head($head, 'info', $title);
+		dol_fiche_head($head, 'info', $title, 0, 'order');
 
 
 		/*
