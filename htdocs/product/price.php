@@ -40,7 +40,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
+$socid=$user->societe_id?$user->societe_id:0;
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 
@@ -139,58 +139,101 @@ print '</tr>';
 
 
 // MultiPrix
-if ($conf->global->PRODUIT_MULTIPRICES)
+if($conf->global->PRODUIT_MULTIPRICES)
 {
-	for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	if ($socid)
 	{
-		print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
-
-		if ($product->multiprices_base_type["$i"] == 'TTC')
+		$soc = new Societe($db);
+		$soc->id = $socid;
+		$soc->fetch($socid);
+					
+		print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
+						
+		if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
 		{
-			print '<td>'.price($product->multiprices_ttc["$i"]);
+			print '<td>'.price($product->multiprices_ttc["$soc->price_level"]);
 		}
 		else
 		{
-			print '<td>'.price($product->multiprices["$i"]);
+			print '<td>'.price($product->multiprices["$soc->price_level"]);
 		}
-
-		if ($product->multiprices_base_type["$i"])
+						
+		if ($product->multiprices_base_type["$soc->price_level"])
 		{
-			print ' '.$langs->trans($product->multiprices_base_type["$i"]);
+			print ' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
 		}
 		else
 		{
 			print ' '.$langs->trans($product->price_base_type);
 		}
 		print '</td></tr>';
-
-		// Prix minimum
-		print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
-		if ($product->multiprices_base_type["$i"] == 'TTC')
+						
+		// Prix mini
+		print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+		if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
 		{
-			print price($product->multiprices_min_ttc["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
+			print price($product->multiprices_min_ttc["$soc->price_level"]).' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
 		}
 		else
 		{
-			print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
+			print price($product->multiprices_min["$soc->price_level"]).' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
 		}
 		print '</td></tr>';
+	}
+	else
+	{
+		for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+		{
+			print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
+						
+			if ($product->multiprices_base_type["$i"] == 'TTC')
+			{
+				print '<td>'.price($product->multiprices_ttc["$i"]);
+			}
+			else
+			{
+				print '<td>'.price($product->multiprices["$i"]);
+			}
+			
+			if ($product->multiprices_base_type["$i"])
+			{
+				print ' '.$langs->trans($product->multiprices_base_type["$i"]);
+			}
+			else
+			{
+				print ' '.$langs->trans($product->price_base_type);
+			}
+			print '</td></tr>';
+						
+			// Prix mini
+			print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
+			if ($product->multiprices_base_type["$i"] == 'TTC')
+			{
+				print price($product->multiprices_min_ttc["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
+			}
+			else
+			{
+				print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
+			}
+			print '</td></tr>';
+		}
 	}
 }
 else
 {
 	// Prix
-	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
 	if ($product->price_base_type == 'TTC')
 	{
-		print price($product->price_ttc).' '.$langs->trans($product->price_base_type).'</td></tr>';
+		print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
 	}
 	else
 	{
-		print price($product->price).' '.$langs->trans($product->price_base_type).'</td></tr>';
+		print price($product->price).' '.$langs->trans($product->price_base_type);
 	}
+	print '</td></tr>';
 
-	// Prix minimum
+	// Prix mini
 	print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
 	if ($product->price_base_type == 'TTC')
 	{
@@ -360,6 +403,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE fk_product = ".$product->id;
 $sql.= " AND p.fk_user_author = u.rowid";
+if ($socid && $conf->global->PRODUIT_MULTIPRICES) $sql.= " AND p.price_level = ".$soc->price_level;
 $sql.= " ORDER BY p.date_price DESC, p.price_level ASC";
 //$sql .= $db->plimit();
 
