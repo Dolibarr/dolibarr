@@ -21,7 +21,7 @@
 /**
         \file       htdocs/compta/bank/categ.php
         \ingroup    compta
-        \brief      Page ajout de catégories bancaires
+        \brief      Page ajout de catï¿½gories bancaires
         \version    $Id$
 */
 
@@ -33,7 +33,7 @@ if (!$user->rights->banque->configurer)
 
 
 /*
-* Actions ajout catégorie
+* Actions ajout catï¿½gorie
 */
 if ($_POST["action"] == 'add')
 {
@@ -46,7 +46,7 @@ if ($_POST["action"] == 'add')
 		$sql.= "'".addslashes($_POST["label"])."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
-		
+
 		$result = $db->query($sql);
 
 		if (!$result)
@@ -57,7 +57,7 @@ if ($_POST["action"] == 'add')
 }
 
 /*
-* Action suppression catégorie
+* Action suppression catï¿½gorie
 */
 if ( $_REQUEST['action'] == 'delete' )
 {
@@ -66,7 +66,7 @@ if ( $_REQUEST['action'] == 'delete' )
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
 		$sql.= " WHERE rowid = '".$_REQUEST['categid']."'";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$result = $db->query($sql);
 
 		if (!$result)
@@ -79,7 +79,7 @@ if ( $_REQUEST['action'] == 'delete' )
 
 
 /*
- * Affichage liste des catégories
+ * Affichage liste des catï¿½gories
  */
 
 llxHeader();
@@ -106,7 +106,7 @@ if ($result)
 {
   $num = $db->num_rows();
   $i = 0; $total = 0;
-    
+
   $var=True;
   while ($i < $num)
     {
@@ -123,7 +123,7 @@ if ($result)
 }
 
 /*
- * Affichage ligne ajout de catégorie
+ * Affichage ligne ajout de categorie
  */
 $var=!$var;
 print "<tr $bc[$var]>";

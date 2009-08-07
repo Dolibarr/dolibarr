@@ -728,7 +728,7 @@ else
 
 // Onglets
 $head=bank_prepare_head($acct);
-dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
+dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
 
 if ($mesg) print $mesg.'<br>';
 

@@ -19,11 +19,11 @@
  */
 
 /**
-		\file       htdocs/compta/bank/virement.php
-		\ingroup    banque
-		\brief      Page de saisie d'un virement
-		\version    $Id$
-*/
+ *		\file       htdocs/compta/bank/virement.php
+ *		\ingroup    banque
+ *		\brief      Page de saisie d'un virement
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
@@ -40,7 +40,7 @@ if (! $user->rights->banque->transfer)
 if ($_POST["action"] == 'add')
 {
 	$langs->load("errors");
-	
+
 	$mesg='';
 	$dateo = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	$label = $_POST["label"];
@@ -48,22 +48,22 @@ if ($_POST["action"] == 'add')
 
 	if (! $label)
 	{
-		$error=1;	
+		$error=1;
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"))."</div>";
 	}
 	if (! $amount)
 	{
-		$error=1;	
+		$error=1;
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"))."</div>";
 	}
 	if (! $_POST['account_from'])
 	{
-		$error=1;	
+		$error=1;
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom"))."</div>";
 	}
 	if (! $_POST['account_to'])
 	{
-		$error=1;	
+		$error=1;
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo"))."</div>";
 	}
 	if (! $error)
@@ -79,12 +79,12 @@ if ($_POST["action"] == 'add')
 		if ($accountto->id != $accountfrom->id)
 		{
 			$db->begin();
-			
+
 			$error=0;
 			$bank_line_id_from=0;
 			$bank_line_id_to=0;
 			$result=0;
-			
+
 			// By default, electronic transfert from bank to bank
 			$typefrom='PRE';
 			$typeto='VIR';
@@ -94,17 +94,17 @@ if ($_POST["action"] == 'add')
 				$typefrom='LIQ';
 				$typeto='LIQ';
 			}
-			
+
 			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
 			if (! ($bank_line_id_from > 0)) $error++;
 			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
 			if (! ($bank_line_id_to > 0)) $error++;
-			
+
 		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (! ($result > 0)) $error++;
 		    if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (! ($result > 0)) $error++;
-		    
+
 			if (! $error)
 			{
 				$mesg.="<div class=\"ok\">";
@@ -130,7 +130,7 @@ if ($_POST["action"] == 'add')
 /*
  * Affichage
  */
- 
+
 llxHeader();
 
 $html=new Form($db);

@@ -286,7 +286,7 @@ else
 
 		// Onglets
 		$head=bank_prepare_head($account);
-		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"));
+		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"),0,'account');
 
 		/*
 		* Confirmation to delete

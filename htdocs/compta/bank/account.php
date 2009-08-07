@@ -260,7 +260,7 @@ if ($account || $_GET["ref"])
 
 	// Onglets
 	$head=bank_prepare_head($acct);
-	dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
+	dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0,'account');
 
 	print '<table class="border" width="100%">';
 

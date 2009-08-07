@@ -128,7 +128,7 @@ else
 
 // Onglets
 $head=bank_prepare_head($acct);
-dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0);
+dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$acct->label;
 $lien=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
@@ -152,7 +152,7 @@ if ($_GET["account"])
 		{
 			$bankaccount->fetch($id);
 			$bankaccount->label=$bankaccount->ref;
-			print $bankaccount->getNomUrl(1); 
+			print $bankaccount->getNomUrl(1);
 			if ($key < (sizeof($listid)-1)) print ', ';
 		}
 	}
@@ -206,7 +206,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$case = sprintf("%04s-%02s",$annee,$mois);
-		 
+
 		print '<td align="right" width="10%">&nbsp;';
 		if ($decaiss[$case]>0)
 		{

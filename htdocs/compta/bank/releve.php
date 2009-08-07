@@ -96,7 +96,7 @@ if (! isset($_GET["num"]))
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.fk_account = ".$_GET["account"];
 	$sql.= " ORDER BY numr DESC";
-	
+
 	$sql.= $db->plimit($conf->liste_limit+1,$offset);
 
 	$result = $db->query($sql);
@@ -108,7 +108,7 @@ if (! isset($_GET["num"]))
 
 		// Onglets
 		$head=bank_prepare_head($acct);
-		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0);
+		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0,'account');
 
 		print '<table class="border" width="100%">';
 
@@ -174,7 +174,7 @@ else
 		$sql.= " WHERE b.num_releve < '".$_GET["num"]."'";
 		$sql.= " AND b.fk_account = ".$_GET["account"];
 		$sql.= " ORDER BY b.num_releve DESC";
-		
+
 		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
@@ -196,7 +196,7 @@ else
 		$sql.= " WHERE b.num_releve > '".$_GET["num"]."'";
 		$sql.= " AND b.fk_account = ".$_GET["account"];
 		$sql.= " ORDER BY b.num_releve ASC";
-		
+
 		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
@@ -244,7 +244,7 @@ else
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.num_releve < '".$num."'";
 	$sql.= " AND b.fk_account = ".$acct->id;
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -261,7 +261,7 @@ else
 	if (!isset($num))	$sql.= " OR b.num_releve is null";
 	$sql.= " AND b.fk_account = ".$acct->id;
 	$sql.= " ORDER BY b.datev ASC";
-	
+
 	$result = $db->query($sql);
 
 	if ($result)
@@ -382,7 +382,7 @@ else
 				$sql.= " WHERE ct.rowid = cl.fk_categ";
 				$sql.= " AND ct.entity = ".$conf->entity;
 				$sql.= " AND cl.lineid = ".$objp->rowid;
-				
+
 				$resc = $db->query($sql);
 				if ($resc)
 				{

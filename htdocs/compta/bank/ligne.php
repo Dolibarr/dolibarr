@@ -200,7 +200,7 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Info");
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans('LineRecord'));
+dol_fiche_head($head, $hselected, $langs->trans('LineRecord'),0,'account');
 
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro,";

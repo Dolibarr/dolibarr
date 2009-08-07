@@ -44,6 +44,10 @@ function valeur($sql)
 }
 
 
+/*
+ *	View
+ */
+
 llxHeader();
 
 print_titre("Bilan");
@@ -51,7 +55,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr class=\"liste_titre\">";
-echo '<td colspan="2">R�sum�</td>';
+echo '<td colspan="2">'.$langs->trans("Summary").'</td>';
 print "</tr>\n";
 
 $var=!$var;

@@ -1,6 +1,6 @@
 <?php
 /* Copytight (C) 2005-2009 Regis Houssin               <regis@dolibarr.fr>
- * Copyright (C) 2008      Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/compta/bank/treso.php
- \ingroup    banque
- \brief      Page de détail du budget de trésorerie
- \version    $Id$
+ *	\file       htdocs/compta/bank/treso.php
+ *	\ingroup    banque
+ *	\brief      Page de dï¿½tail du budget de trï¿½sorerie
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -94,7 +94,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	 */
 	// Onglets
 	$head=bank_prepare_head($acct);
-	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0);
+	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0,'account');
 
 	print '<table class="border" width="100%">';
 
@@ -119,7 +119,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$solde = $acct->solde(0);
 
 	/*
-	 * Affiche tableau des echeances à venir
+	 * Affiche tableau des echeances ï¿½ venir
 	 */
 	print '<table class="notopnoleftnoright" width="100% border="1">';
 

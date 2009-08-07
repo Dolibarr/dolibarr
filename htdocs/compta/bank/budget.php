@@ -35,14 +35,12 @@ $result=restrictedArea($user,'banque');
 
 
 /*
- *	Affichage page
- *
+ * View
  */
 
 $companystatic=new Societe($db);
 
 llxHeader();
-
 
 // List movements bu category for bank transactions
 print_fiche_titre($langs->trans("BankTransactionByCategories"));

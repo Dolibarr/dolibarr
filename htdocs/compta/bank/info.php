@@ -32,8 +32,7 @@ $langs->load("companies");
 
 
 /*
- * Visualisation de la fiche
- *
+ * View
  */
 
 llxHeader();
@@ -55,7 +54,7 @@ $hselected = $h;
 $h++;
 
 
-dol_fiche_head($head, $hselected, $langs->trans("LineRecord"));
+dol_fiche_head($head, $hselected, $langs->trans("LineRecord"),0,'account');
 
 print '<table width="100%"><tr><td>';
 dol_print_object_info($line);
