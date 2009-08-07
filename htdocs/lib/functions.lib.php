@@ -2367,8 +2367,8 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
 
 
 /**
- *	\brief  Renvoie oui ou non dans la langue choisie
- *	\param	yesno			Variable pour test si oui ou non
+ *	\brief  Return yes or no in current language
+ *	\param	yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
  *	\param	case			1=Yes/No, 0=yes/no
  *	\param	color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  */
@@ -2640,7 +2640,7 @@ function dol_nboflines($s,$maxchar=0)
  */
 function dol_nboflines_bis($texte,$maxlinesize=0,$charset='UTF-8')
 {
-	//print $texte; 
+	//print $texte;
 	$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
 	$texte = strtr($texte, $repTable);
 	if ($charset == 'UTF-8') { $pattern = '/(<[^>]+>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support

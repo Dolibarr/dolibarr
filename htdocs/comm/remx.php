@@ -28,12 +28,13 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/discount.class.php");
 
 $langs->load("orders");
 $langs->load("bills");
 $langs->load("companies");
 
-// S�curit� si un client essaye d'acc�der � une autre fiche que la sienne
+// Security check
 $_socid = $_GET["id"];
 if ($user->societe_id > 0)
 {
@@ -44,9 +45,88 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
+if ($_REQUEST["action"] == 'confirm_split' && $_REQUEST["confirm"] == 'yes')
+{
+	//if ($user->rights->societe->creer)
+	//if ($user->rights->facture->creer)
+
+	$error=0;
+	$remid=isset($_REQUEST["remid"])?$_REQUEST["remid"]:0;
+	$discount=new DiscountAbsolute($db);
+	$res=$discount->fetch($remid);
+	if (! $res > 0)
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFailedToLoadDiscount").'</div>';
+	}
+	if (! $error && price2num($_POST["amount_ttc_1"]+$_POST["amount_ttc_2"]) != $discount->amount_ttc)
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("TotalOfTwoDiscountMustEqualsOriginal").'</div>';
+	}
+	if (! $error && $discount->fk_facture_line)
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorCantSplitAUsedDiscount").'</div>';
+	}
+	if (! $error)
+	{
+		$newdiscount1=new DiscountAbsolute($db);
+		$newdiscount2=new DiscountAbsolute($db);
+		$newdiscount1->fk_facture_source=$discount->fk_facture_source;
+		$newdiscount2->fk_facture_source=$discount->fk_facture_source;
+		$newdiscount1->fk_facture=$discount->fk_facture;
+		$newdiscount2->fk_facture=$discount->fk_facture;
+		$newdiscount1->fk_facture_line=$discount->fk_facture_line;
+		$newdiscount2->fk_facture_line=$discount->fk_facture_line;
+		if ($discount->description == '(CREDIT_NOTE)')
+		{
+			$newdiscount1->description=$discount->description;
+			$newdiscount2->description=$discount->description;
+		}
+		else
+		{
+			$newdiscount1->description=$discount->description.' (1)';
+			$newdiscount2->description=$discount->description.' (2)';
+		}
+		$newdiscount1->fk_user=$discount->fk_user;
+		$newdiscount2->fk_user=$discount->fk_user;
+		$newdiscount1->fk_soc=$discount->fk_soc;
+		$newdiscount2->fk_soc=$discount->fk_soc;
+		$newdiscount1->datec=$discount->datec;
+		$newdiscount2->datec=$discount->datec;
+		$newdiscount1->tva_tx=$discount->tva_tx;
+		$newdiscount2->tva_tx=$discount->tva_tx;
+		$newdiscount1->amount_ttc=$_POST["amount_ttc_1"];
+		$newdiscount2->amount_ttc=price2num($discount->amount_ttc-$newdiscount1->amount_ttc);
+		$newdiscount1->amount_ht=price2num($newdiscount1->amount_ttc/(1+$newdiscount1->tva_tx/100),'MT');
+		$newdiscount2->amount_ht=price2num($newdiscount2->amount_ttc/(1+$newdiscount2->tva_tx/100),'MT');
+		$newdiscount1->amount_tva=price2num($newdiscount1->amount_ttc-$newdiscount2->amount_ht);
+		$newdiscount2->amount_tva=price2num($newdiscount2->amount_ttc-$newdiscount2->amount_ht);
+
+		$db->begin();
+		$discount->fk_facture_source=0;	// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
+		$res=$discount->delete($user);
+		$newid1=$newdiscount1->create($user);
+		$newid2=$newdiscount2->create($user);
+		if ($res > 0 && $newid1 > 0 && $newid2 > 0)
+		{
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$_REQUEST['id']);	// To avoid pb whith back
+			exit;
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+}
 
 if ($_POST["action"] == 'setremise')
 {
+	//if ($user->rights->societe->creer)
+	//if ($user->rights->facture->creer)
+
 	if (price2num($_POST["amount_ht"]) > 0)
 	{
 		$error=0;
@@ -80,22 +160,26 @@ if ($_POST["action"] == 'setremise')
 	}
 }
 
-if ($_GET["action"] == 'remove')
+if ($_REQUEST["action"] == 'confirm_remove' && $_REQUEST["confirm"]=='yes')
 {
+	//if ($user->rights->societe->creer)
+	//if ($user->rights->facture->creer)
+
 	$db->begin();
 
-	$soc = new Societe($db);
-	$soc->fetch($_GET["id"]);
-	$result=$soc->del_remise_except($_GET["remid"]);
-
+	$discount = new DiscountAbsolute($db);
+	$result=$discount->fetch($_REQUEST["remid"]);
+	$result=$discount->delete($user);
 	if ($result > 0)
 	{
 		$db->commit();
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$_REQUEST['id']);	// To avoid pb whith back
+		exit;
 	}
 	else
 	{
+		$mesg='<div class="error">'.$discount->error.'</div>';
 		$db->rollback();
-		$mesg='<div class="error">'.$soc->error.'</div>';
 	}
 }
 
@@ -126,7 +210,7 @@ if ($_socid > 0)
 	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"),0,'company');
 
 
-    print '<form method="POST" action="remx.php?id='.$objsoc->id.'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="setremise">';
 
@@ -162,11 +246,12 @@ if ($_socid > 0)
 
     print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
     print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-    print "</table>";
+    print '</table>';
 	print '<br>';
 
+	print_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
     print '<table class="border" width="100%">';
-    print '<tr><td width="38%">'.$langs->trans("NewGlobalDiscount").'</td>';
+    print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
     print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
     print '<td>';
@@ -183,6 +268,10 @@ if ($_socid > 0)
 
     print '<br>';
 
+    if ($_GET['action'] == 'remove')
+    {
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$_GET["remid"], $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
+    }
 
     /*
      * Liste remises fixes restant en cours (= liees a acune facture ni ligne de facture)
@@ -255,9 +344,33 @@ if ($_socid > 0)
             print '<td align="center">';
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 			print '</td>';
-			if ($obj->user_id == $user->id) print '<td><a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</a></td>';
+			if ($user->rights->societe->creer || $user->rights->facture->creer)
+			{
+				print '<td nowrap="nowrap">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=split&amp;remid='.$obj->rowid.'">'.img_picto($langs->trans("SplitDiscount"),'split').'</a>';
+				print ' &nbsp; ';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
+				print '</td>';
+			}
             else print '<td>&nbsp;</td>';
             print '</tr>';
+
+            if ($_GET["action"]=='split' && $_GET['remid'] == $obj->rowid)
+            {
+				print "<tr $bc[$var]>";
+				print '<td colspan="8">';
+				$amount1=price2num($obj->amount_ttc/2,'MT');
+				$amount2=($obj->amount_ttc-$amount1);
+				$formquestion=array(
+				'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
+				array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
+				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
+				);
+				$langs->load("dict");
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$obj->rowid, $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($obj->amount_ttc),$langs->transnoentities("Currency".$conf->monnaie)), 'confirm_split', $formquestion, 0, 0);
+				print '</td>';
+				print '</tr>';
+            }
             $i++;
         }
         $db->free($resql);

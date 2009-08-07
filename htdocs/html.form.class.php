@@ -2623,13 +2623,13 @@ class Form
 		$resultyesno = '<select class="flat" name="'.$htmlname.'">'."\n";
 		if (("$value" == 'yes') || ($value == 1))
 		{
-			$resultyesno .= '<option value="'.$yes.'" selected="true">'.$langs->trans("yes").'</option>'."\n";
-			$resultyesno .= '<option value="'.$no.'">'.$langs->trans("no").'</option>'."\n";
+			$resultyesno .= '<option value="'.$yes.'" selected="true">'.$langs->trans("Yes").'</option>'."\n";
+			$resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
 		}
 		else
 		{
-			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans("yes").'</option>'."\n";
-			$resultyesno .= '<option value="'.$no.'" selected="true">'.$langs->trans("no").'</option>'."\n";
+			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
+			$resultyesno .= '<option value="'.$no.'" selected="true">'.$langs->trans("No").'</option>'."\n";
 		}
 		$resultyesno .= '</select>'."\n";
 		return $resultyesno;

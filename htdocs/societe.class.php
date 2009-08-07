@@ -1048,7 +1048,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Ajoute une remise fixe pour la societe
+	 *    	\brief      Add a discount for third party
 	 *    	\param      remise      Montant de la remise
 	 *    	\param      user        Utilisateur qui accorde la remise
 	 *    	\param      desc		Motif de l'avoir
@@ -1084,7 +1084,7 @@ class Societe extends CommonObject
 			$discount->amount_tva=price2num($remise*$tva_tx/100,'MT');
 			$discount->amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
 			$discount->tva_tx=price2num($tva_tx,'MT');
-			$discount->desc=$desc;
+			$discount->description=$desc;
 			$result=$discount->create($user);
 			if ($result > 0)
 			{
@@ -1098,26 +1098,6 @@ class Societe extends CommonObject
 		}
 		else return 0;
 	}
-
-	/**
-	 *    	\brief      Supprime un avoir (a condition que non affecte a une facture)
-	 *    	\param      id			Id de l'avoir a supprimer
-	 *		\return		int			<0 si ko, id de l'avoir si ok
-	 */
-	function del_remise_except($id)
-	{
-		if ($this->id)
-		{
-			require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
-
-			$discount = new DiscountAbsolute($this->db);
-			$result=$discount->fetch($id);
-			$result=$discount->delete();
-			return $result;
-		}
-		else return 0;
-	}
-
 
 	/**
 	 *    	\brief      Renvoie montant TTC des reductions/avoirs en cours disponibles de la societe

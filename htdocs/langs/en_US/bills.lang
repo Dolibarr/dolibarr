@@ -241,7 +241,8 @@ DiscountFromCreditNote=Discount from credit note %s
 DiscountFromDeposit=Payments from deposit invoice %s
 AbsoluteDiscountUse=This kind of credit can be used on invoice before its validation
 CreditNoteDepositUse=Invoice must be validated to use this king of credits
-NewGlobalDiscount=New discount
+NewGlobalDiscount=New fix discount
+NewRelativeDiscount=New relative discount
 NoteReason=Note/Reason
 ReasonDiscount=Reason
 AddGlobalDiscount=Add discount
@@ -268,6 +269,11 @@ ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b> ?
 DisabledBecauseReplacedInvoice=Action disabled because invoice has been replaced
 DescTaxAndDividendsArea=This area presents a summary of all payments made for tax or social contributions. Only records with payment during the fixed year are included here.
 NbOfPayments=Nb of payments
+SplitDiscount=Split discount in two
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into 2 lower discounts ?
+TypeAmountOfEachNewDiscount=Input amount for each of two parts :
+TotalOfTwoDiscountMustEqualsOriginal=Total of two new discount must be equal to original discount amount. 
+ConfirmRemoveDiscount=Are you sure you want to remove this discount ?
 
 # PaymentConditions
 PaymentConditionShortRECEP=Immediate

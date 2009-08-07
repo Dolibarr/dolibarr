@@ -241,6 +241,7 @@ DiscountFromDeposit=Paiements issue de l'acompte %s
 AbsoluteDiscountUse=Ce type de crédit ne peut s'utiliser que sur une facture non validée
 CreditNoteDepositUse=La facture doit être validée pour pouvoir utiliser ce type de crédits
 NewGlobalDiscount=Nouvelle remise fixe
+NewRelativeDiscount=Nouvelle remise relative
 NoteReason=Note/Motif
 ReasonDiscount=Motif
 AddGlobalDiscount=Ajouter remise fixe
@@ -268,6 +269,11 @@ ConfirmCloneInvoice=Etes-vous sur de vouloir cloner cette facture <b>%s</b> ?
 DisabledBecauseReplacedInvoice=Action désactivée car facture remplacée
 DescTaxAndDividendsArea=Cet écran résumé la liste de toutes les taxes et charges sociales sociales exigées pour une année donnée. La date prise en compte est la période d'exigibilité.
 NbOfPayments=Nb de payements
+SplitDiscount=Scinder réduction en deux
+ConfirmSplitDiscount=Etes-vous sur de vouloir scinder la réduction de <b>%s</b> %s en 2 réductions plus petites ?
+TypeAmountOfEachNewDiscount=Saisissez le montant de chacune des deux parts :
+TotalOfTwoDiscountMustEqualsOriginal=La somme du montant des 2 nouvelles réductions doit être équivalent au montant de la réduction à scinder.
+ConfirmRemoveDiscount=Etes-vous sur de vouloir supprimer cette réduction ?
 
 # PaymentConditions
 PaymentConditionShortRECEP=A réception

@@ -92,15 +92,6 @@ if ($_socid > 0)
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"),0,'company');
 
 
-	/*
-	 *
-	 *
-	 */
-	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="setremise">';
-	print '<table width="100%" border="0">';
-	print '<tr><td valign="top">';
 	print '<table class="border" width="100%">';
 
     // Name
@@ -113,6 +104,17 @@ if ($_socid > 0)
 	print '<tr><td colspan="2" width="25%">';
 	print $langs->trans("CustomerRelativeDiscount").'</td><td colspan="2">'.$objsoc->remise_client."%</td></tr>";
 
+	print '</table>';
+	print '<br>';
+
+	print_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
+
+	print '<form method="POST" action="remise.php?id='.$objsoc->id.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="setremise">';
+
+	print '<table class="border" width="100%">';
+
 	// Nouvelle valeur
 	print '<tr><td colspan="2">';
 	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">%</td></tr>';
@@ -124,8 +126,7 @@ if ($_socid > 0)
 	print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 
 	print "</table>";
-	print "</td></tr>";
-	print '</table>';
+
 	print "</form>";
 
 	print "</div>\n";

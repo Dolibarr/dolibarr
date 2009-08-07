@@ -428,8 +428,8 @@ if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == '
 
 		// Insert one discount by VAT rate category
 		$discount = new DiscountAbsolute($db);
-		if ($fac->type == 2)     $discount->desc='(CREDIT_NOTE)';
-		elseif ($fac->type == 3) $discount->desc='(DEPOSIT)';
+		if ($fac->type == 2)     $discount->description='(CREDIT_NOTE)';
+		elseif ($fac->type == 3) $discount->description='(DEPOSIT)';
 		else {
 			$this->error="CantConvertToReducAnInvoiceOfThisType";
 			return -1;
@@ -2285,8 +2285,17 @@ else
 					}
 					else
 					{
-						$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
-						print $html->textwithpicto($text,$langs->trans("AbsoluteDiscountUse"));
+						if ($fac->statut < 1 || $fac->type == 2 || $fac->type == 3)
+						{
+							$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+							print '<br>'.$text.'.<br>';
+						}
+						else
+						{
+							$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+							$text2=$langs->trans("AbsoluteDiscountUse");
+							print $html->textwithpicto($text,$text2);
+						}
 					}
 				}
 				else

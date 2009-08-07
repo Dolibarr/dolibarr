@@ -333,6 +333,30 @@ class Translate {
 	}
 
 
+	function getTradFromKey($key)
+	{
+		global $db;
+		$newstr=$key;
+		if (eregi('CurrencyShort([A-Z]+)$',$key,$reg))
+		{
+			global $db;
+			//$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelshort');
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
+		}
+		else if (eregi('Currency([A-Z]+)$',$key,$reg))
+		{
+			global $db;
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
+		}
+		else if (eregi('SendingMethod([0-9A-Z]+)$',$key,$reg))
+		{
+			global $db;
+			$newstr=$this->getLabelFromKey($db,$reg[1],'expedition_methode','code','libelle');
+		}
+		return $newstr;
+	}
+
+
 	/**
 	 *  \brief      Retourne la version traduite du texte passe en parametre en la codant en HTML
 	 *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
@@ -372,23 +396,7 @@ class Translate {
 		}
 		else								// Translation is not available
 		{
-			$newstr=$key;
-			if (eregi('CurrencyShort([A-Z]+)$',$key,$reg))
-			{
-				global $db;
-				//$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelshort');
-				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
-			}
-			else if (eregi('Currency([A-Z]+)$',$key,$reg))
-			{
-				global $db;
-				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
-			}
-			else if (eregi('SendingMethod([0-9A-Z]+)$',$key,$reg))
-			{
-				global $db;
-				$newstr=$this->getLabelFromKey($db,$reg[1],'expedition_methode','code','libelle');
-			}
+			$newstr=$this->getTradFromKey($key);
 			return $this->convToOutputCharset($newstr);
 		}
 	}
@@ -408,11 +416,14 @@ class Translate {
 	 */
 	function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
 	{
-		$newstr=$key;
-		if ($this->getTransFromTab($newstr))
+		if ($this->getTransFromTab($key))
 		{
 			// Si la traduction est disponible
-			$newstr=sprintf($this->tab_translate[$newstr],$param1,$param2,$param3,$param4);
+			$newstr=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
+		}
+		else
+		{
+			$newstr=$this->getTradFromKey($key);
 		}
 		return $this->convToOutputCharset($newstr);
 	}
@@ -433,11 +444,14 @@ class Translate {
 	 */
 	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
 	{
-		$newstr=$key;
-		if ($this->getTransFromTab($newstr))
+		if ($this->getTransFromTab($key))
 		{
 			// Si la traduction est disponible
-			$newstr=sprintf($this->tab_translate[$newstr],$param1,$param2,$param3,$param4);
+			$newstr=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
+		}
+		else
+		{
+			$newstr=$this->getTradFromKey($key);
 		}
 		return $newstr;
 	}

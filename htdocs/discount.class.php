@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ class DiscountAbsolute
 	var $datec;					// Date creation
 	var $fk_facture_line;  		// Id invoice line when a discount linked to invoice line
 	var $fk_facture;			// Id invoice when a discoutn linked to invoice
-	var $fk_facture_source;		// Id facture avoir � l'origine de la remise
-	var $ref_facture_source;	// Ref facture avoir � l'origine de la remise
+	var $fk_facture_source;		// Id facture avoir a l'origine de la remise
+	var $ref_facture_source;	// Ref facture avoir a l'origine de la remise
 
 	/**
 	 *    \brief  Constructeur de la classe
@@ -58,10 +58,10 @@ class DiscountAbsolute
 
 
 	/**
-	 *    	\brief      Charge objet remise depuis la base
-	 *    	\param      rowid       		id du projet � charger
+	 *    	\brief      Load object from database into memory
+	 *    	\param      rowid       		id discount to load
 	 *    	\param      fk_facture_source	fk_facture_source
-	 *		\return		int					<0 si ko, =0 si non trouv�, >0 si ok
+	 *		\return		int					<0 if KO, =0 if not found, >0 if OK
 	 */
 	function fetch($rowid,$fk_facture_source=0)
 	{
@@ -76,7 +76,7 @@ class DiscountAbsolute
 		$sql.= " sr.fk_user,";
 		$sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
 		$sql.= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.description,";
-		$sql.= " ".$this->db->pdate("sr.datec")." as datec,";
+		$sql.= " sr.datec,";
 		$sql.= " f.facnumber as ref_facture_source";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
@@ -104,7 +104,7 @@ class DiscountAbsolute
 				$this->fk_facture_source = $obj->fk_facture_source;		// Id avoir source
 				$this->ref_facture_source = $obj->ref_facture_source;	// Ref avoir source
 				$this->description = $obj->description;
-				$this->datec = $obj->datec;
+				$this->datec = $this->db->jdate($obj->datec);
 
 				$this->db->free($resql);
 				return 1;
@@ -132,11 +132,19 @@ class DiscountAbsolute
     {
     	global $conf, $langs;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$this->amount_ht=price2num($this->amount_ht);
 		$this->amount_tva=price2num($this->amount_tva);
 		$this->amount_ttc=price2num($this->amount_ttc);
 		$this->tva_tx=price2num($this->tva_tx);
+
+		// Check parameters
+		if (empty($this->description))
+		{
+			$this->error='BadValueForPropertyDescription';
+            dol_syslog("DiscountAbsolute::create ".$this->error, LOG_ERR);
+            return -1;
+		}
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
@@ -144,7 +152,7 @@ class DiscountAbsolute
 		$sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
 		$sql.= " fk_facture_source";
 		$sql.= ")";
-		$sql.= " VALUES (".$this->db->idate(mktime()).", ".$this->fk_soc.", ".$user->id.", '".addslashes($this->desc)."',";
+		$sql.= " VALUES (".$this->db->idate($this->datec!=''?$this->datec:dol_now('tzserver')).", ".$this->fk_soc.", ".$user->id.", '".addslashes($this->description)."',";
 		$sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
 		$sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
 		$sql.= ")";
@@ -166,23 +174,56 @@ class DiscountAbsolute
 
 
 	/*
-	*   \brief      Delete object in database
+	*   \brief      Delete object in database. If fk_facture_source is defined, we delete all familiy with same fk_facture_source. If not, only with id is removed.
+	* 	\param		user		Object of user asking to delete
 	*	\return		int			<0 if KO, >0 if OK
 	*/
-	function delete()
+	function delete($user)
 	{
 		global $conf, $langs;
 
+		// Check if we can remove the discount
+		if ($this->fk_facture_source)
+		{
+			$sql.="SELECT COUNT(rowid) as nb";
+			$sql.=" FROM ".MAIN_DB_PREFIX."societe_remise_except";
+			$sql.=" WHERE (fk_facture_line IS NOT NULL";	// Not used as absolute simple discount
+			$sql.=" OR fk_facture IS NOT NULL)"; 			// Not used as credit note and not used as deposit
+			$sql.=" AND fk_facture_source = ".$this->fk_facture_source;
+			//$sql.=" AND rowid != ".$this->id;
+
+			dol_syslog("DiscountAbsolute::delete Check if we can remove discount sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj->nb > 0)
+				{
+					$this->error='ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved';
+					return -2;
+				}
+			}
+			else
+			{
+				dol_print_error($db);
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
+		// Delete but only if not used
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
-		$sql.= " WHERE rowid = ".$this->id." AND (fk_facture_line IS NULL or fk_facture IS NULL)";
+		if ($this->fk_facture_source) $sql.= " WHERE fk_facture_source = ".$this->fk_facture_source;	// Delete all lines of same serie
+		else $sql.= " WHERE rowid = ".$this->id;	// Delete only line
+		$sql.= " AND (fk_facture_line IS NULL";	// Not used as absolute simple discount
+		$sql.= " AND fk_facture IS NULL)";		// Not used as credit note and not used as deposit
 
 	   	dol_syslog("DiscountAbsolute::delete Delete discount sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			// If source of discount was a credit not, we change credit note statut.
+			// If source of discount was a credit note or deposit, we change source statut.
 			if ($this->fk_facture_source)
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
@@ -191,7 +232,7 @@ class DiscountAbsolute
 
 			   	dol_syslog("DiscountAbsolute::delete Update credit note or deposit invoice statut sql=".$sql);
 				$result=$this->db->query($sql);
-				if ($result)
+			   	if ($result)
 				{
 					$this->db->commit();
 					return 1;
@@ -288,7 +329,7 @@ class DiscountAbsolute
 
 
 	/**
-	 *    	\brief      Renvoie montant TTC des reductions/avoirs en cours disponibles
+	 *    	\brief      Renvoie montant TTC des reductions/avoirs en cours disponibles pour une société, un user ou autre
 	 *		\param		company		Object third party for filter
 	 *		\param		user		Filtre sur un user auteur des remises
 	 * 		\param		filter		Filtre autre

@@ -346,7 +346,7 @@ else
     foreach ($searchform as $key => $value)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?$langs->trans("yes"):$langs->trans("no")).'</td>';
+        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
 		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
         print '</td></tr>';
     }
@@ -360,7 +360,7 @@ else
     // Link to help center
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-    print yn($conf->global->MAIN_HELPCENTER_DISABLELINK);
+    print yn($conf->global->MAIN_HELPCENTER_DISABLELINK,1);
     print '</td></tr>';
 
     // Message login
