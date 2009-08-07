@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
- * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
+/* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +19,14 @@
  */
 
 /**
- \file       htdocs/includes/menus/barre_top/auguria_backoffice.php
- \brief      Gestionnaire nomme Auguria du menu du haut
- \version    $$Id$
-
- \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
- \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
- \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
- \remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
+ *	\file       htdocs/includes/menus/barre_top/auguria_backoffice.php
+ *	\brief      Gestionnaire nomme Auguria du menu du haut
+ *	\version    $Id$
+ *
+ *	\remarks    La construction d'un gestionnaire pour le menu du haut est simple:
+ *	\remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
+ *	\remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
+ *	\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
  */
 
 
