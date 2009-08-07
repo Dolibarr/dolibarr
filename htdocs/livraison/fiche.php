@@ -396,7 +396,7 @@ else
 			$hselected = $h;
 			$h++;
 
-			dol_fiche_head($head, $hselected, $langs->trans("Sending"));
+			dol_fiche_head($head, $hselected, $langs->trans("Sending"), 0, 'sending');
 
 			/*
 			 * Confirmation de la suppression

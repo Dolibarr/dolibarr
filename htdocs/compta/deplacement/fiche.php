@@ -184,7 +184,7 @@ else
 				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
 				$head[$h][1] = $langs->trans("Card");
 
-				dol_fiche_head($head, $hselected, $langs->trans("TripCard"));
+				dol_fiche_head($head, $hselected, $langs->trans("TripCard"), 0, 'trip');
 
 				print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -232,10 +232,10 @@ else
 				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
 				$head[$h][1] = $langs->trans("Card");
 
-				dol_fiche_head($head, $hselected, $langs->trans("TripCard"));
+				dol_fiche_head($head, $hselected, $langs->trans("TripCard"), 0, 'trip');
 
 				/*
-				 * Confirmation de la suppression du déplacement
+				 * Confirmation de la suppression du dï¿½placement
 				 */
 				if ($_GET["action"] == 'delete')
 				{

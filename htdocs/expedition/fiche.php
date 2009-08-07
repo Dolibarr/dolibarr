@@ -560,7 +560,7 @@ else
 				$h++;
 			}
 
-			dol_fiche_head($head, $hselected, $langs->trans("Sending"));
+			dol_fiche_head($head, $hselected, $langs->trans("Sending"), 0, 'sending');
 
 			if ($mesg) print $mesg;
 
