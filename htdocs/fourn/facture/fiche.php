@@ -786,9 +786,11 @@ else
 
 			print '</tr>';
 
+			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3" nowrap="nowrap">';
 			print dol_print_date($fac->datep,'daytext').'</td></tr>';
 
+			// Due date
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
 			print dol_print_date($fac->date_echeance,'daytext');
