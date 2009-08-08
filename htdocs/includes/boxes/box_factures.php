@@ -19,12 +19,11 @@
  */
 
 /**
- \file       htdocs/includes/boxes/box_factures.php
- \ingroup    factures
- \brief      Module de generation de l'affichage de la box factures
- \version	$Id$
+ *	\file       htdocs/includes/boxes/box_factures.php
+ *	\ingroup    factures
+ *	\brief      Module de generation de l'affichage de la box factures
+ *	\version	$Id$
  */
-
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 

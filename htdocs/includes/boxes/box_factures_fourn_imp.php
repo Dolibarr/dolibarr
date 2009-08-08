@@ -23,7 +23,6 @@
  *		\brief      Fichier de gestion d'une box des factures fournisseurs impayees
  *		\version    $Id$
  */
-
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
