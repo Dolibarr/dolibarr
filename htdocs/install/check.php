@@ -303,8 +303,9 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
-		print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
 
+		// Array of install choices
+		print '<table width="100%" border="1" cellpadding="2">';
 
 		# Sho first install line
 		print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b></td>';

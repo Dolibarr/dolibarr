@@ -78,6 +78,14 @@ margin-top: 10px;
 color: #000000;
 }
 
+.installchoices table tr td  {
+margin-left: 2px;
+margin-right: 2px;
+border-bottom: 1px solid #8CACBB;
+border-right: 1px solid #8CACBB;
+color: #000000;
+}
+
 /* OK */
 div.ok {
 color: #114466;
