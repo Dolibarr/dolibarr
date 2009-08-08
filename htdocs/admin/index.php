@@ -51,15 +51,17 @@ print_fiche_titre($langs->trans("SetupArea"),'','setup');
 
 if ($mesg) print $mesg.'<br>';
 
-print $langs->trans("SetupDescription1").'<br>';
+print $langs->trans("SetupDescription1").' ';
 print $langs->trans("AreaForAdminOnly").'<br>';
 
 print "<br>";
 print $langs->trans("SetupDescription2")."<br>";
 print "<br>";
 print img_picto('','puce').' '.$langs->trans("SetupDescription3")."<br>";
-//print "<br>";
+print "<br>";
 print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
+print "<br>";
+print img_picto('','puce').' '.$langs->trans("SetupDescription5")."<br>";
 print "<br>";
 
 print '<br>';

@@ -185,7 +185,8 @@ function UnActivate($value,$requiredby=1)
  */
 $_SESSION["mode"]=$mode;
 
-llxHeader("","");
+$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+llxHeader($langs->trans("Setup"),'',$wikihelp);
 
 print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 

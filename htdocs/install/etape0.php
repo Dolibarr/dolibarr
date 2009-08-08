@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/install/etape0.php
- \ingroup	install
- \brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
- \version    $Id$
+ *	\file       htdocs/install/etape0.php
+ *	\ingroup	install
+ *	\brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
+ *	\version    $Id$
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -233,7 +233,7 @@ if (! $error && $db->connected)
 	?>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetDatabase"); ?></td>
-		<td valign="top" class="label"><?php 
+		<td valign="top" class="label"><?php
 		if (sizeof($listOfCharacterSet))
 		{
 			print '<select name="dolibarr_main_db_character_set" '.$disabled.'>';
@@ -243,7 +243,7 @@ if (! $error && $db->connected)
 				// We keep only utf8 and iso
 				$linedisabled=false;
 				if (! eregi('(utf8|latin1)',$characterSet['charset'])) $linedisabled=true;
-				
+
 				if ($defaultCharacterSet == $characterSet['charset'] )
 				{
 					$selected="selected";
@@ -286,7 +286,7 @@ if (! $error && $db->connected)
 				// We keep only utf8 and iso
 				$linedisabled=false;
 				if (! eregi('(utf8_general|latin1_swedish)',$collation['collation'])) $linedisabled=true;
-				
+
 				if ($defaultCollationConnection == $collation['collation'])
 				{
 					$selected="selected";

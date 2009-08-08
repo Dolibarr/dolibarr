@@ -48,16 +48,15 @@ dolibarr_install_syslog("check: Dolibarr install/upgrade process started");
  *	View
  */
 
-pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
+pHeader('',"");   // Etape suivante = license
 
 print '<center>';
 print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
 print DOL_VERSION.'<br><br>';
 print '</center>';
-print "<br>\n";
 
-
-print $langs->trans("InstallEasy")."<br><br>\n";
+//print "<br>\n";
+//print $langs->trans("InstallEasy")."<br><br>\n";
 
 print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
 
@@ -293,14 +292,15 @@ else
 		# Show title
 		if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
 		{
-			print $langs->trans("VersionLastUpgrade").": ".$conf->global->MAIN_VERSION_LAST_UPGRADE.'<br>';
-			print $langs->trans("VersionProgram").": ".DOL_VERSION;
+			print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
+			print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
 			print '<br>';
 		}
 		else print "<br />\n";
 
+		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
 		print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
@@ -325,6 +325,7 @@ else
 
 		# Show upgrade lines
 		$allowupgrade=true;
+		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
 		$migrationscript=array( //array('from'=>'2.0.0', 'to'=>'2.1.0'),
 								//array('from'=>'2.1.0', 'to'=>'2.2.0'),
 								array('from'=>'2.2.0', 'to'=>'2.4.0'),
@@ -352,11 +353,11 @@ else
 					// If last upgrade was an alpha or beta, we increase target version to 1 to select this one.
 					if (isset($conf->global->MAIN_VERSION_LAST_UPGRADE) && eregi('beta|alpha',$conf->global->MAIN_VERSION_LAST_UPGRADE)) $dolibarrversiontoarray[2]=(isset($dolibarrversiontoarray[2]) ? ($dolibarrversiontoarray[2]+1) : 1);
 					// Now we check if this is the first qualified choice
-					if (empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
+					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
 					{
 						print '<br>';
 						//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-						print '<center><div class="warning">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
+						print '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
 						// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
 						$foundrecommandedchoice=1;	// To show only once
 					}

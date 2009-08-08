@@ -66,7 +66,7 @@ if (! empty($force_install_message_doliwamp))
 
 <tr>
 <td colspan="3" class="label" align="center"><h3>
-<?php echo $langs->trans("Main"); ?>
+<?php echo $langs->trans("WebServer"); ?>
 </h3></td></tr>
 
 <tr>
@@ -314,7 +314,7 @@ while (($file = readdir($handle))!==false)
 </td>
 </tr>
 
-<tr class="bg1">
+<tr>
 <td class="label" valign="top">
 <b><?php echo $langs->trans("Login"); ?></b>
 </td>

@@ -44,7 +44,6 @@ margin: 0em 0em 0em 0em;
 border: 1px solid #AAAAAA;
 }
 
-
 div.soustitre {
 font-size: 15px;
 font-weight: bold;
@@ -58,23 +57,16 @@ text-align: right;
 
 inputdisabled
 {
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+background: #FDFDFD;
+border: 1px solid #ACBCBB;
+padding: 0px 0px 0px 0px;
+margin: 0px 0px 0px 0px;
 }
 
 table.main {
 background: #dcdcd3;
 text-align: left;
 border: 1px solid #8CACBB;
-}
-
-table.main-inside {
-padding-left: 10px;
-padding-right: 10px;
-margin-bottom: 20px;
-margin-top: 10px;
 }
 
 div.ok {
@@ -96,32 +88,11 @@ font.error {
 color: #550000;
 }
 
-div.barrebottom {
-text-align: right;
-margin-top: 10px;
-padding-top: 10px;
-padding-bottom: 10px;
-padding-right: 10px;
-}
-
-
-div.footer {
-background-color: #dcdff4;
-font-size: 10px;
-border-top: solid black 1px;
-padding-left: 5px;
-text-align: center;
-}
-
 div.header {
 background-color: #dcdff4;
 border-bottom: solid black 1px;
 padding-left: 5px;
 text-align: center;
-}
-
-div.footer p {
-margin: 0px;
 }
 
 a:link,a:visited,a:active {
@@ -137,12 +108,6 @@ a.titre {
 text-decoration:none;
 }
 
-
-div.comment {
-text-decoration:none;
-color:black;
-font-size: 13px;
-}
 
 div.main-inside h2 {
 font-size:18px;
@@ -188,4 +153,4 @@ background: #DDDFDD;
 }
 
 table { font-size: 12px; }
-table.login {  border: 1px solid #C0C0C0; background: #F0F0F0 url(background.png) repeat-x;font-size: 12px; }
+table.login {  border: 1px solid #C0C0C0; background: #F0F0F0 url(background.png) repeat-x; font-size: 12px; }

@@ -65,7 +65,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
+pHeader('',"upgrade2","upgrade");
 
 $actiondone=0;
 
@@ -74,7 +74,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade" || $_GET["action"] 
 {
 	$actiondone=1;
 
-	print '<h3>'.$langs->trans("DatabaseMigration").'<h3>';
+	print '<h3>'.$langs->trans("DatabaseMigration").'</h3>';
 
 	if ($_GET["action"] != "repair" && ! $versionfrom && ! $versionto)
 	{
@@ -103,7 +103,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade" || $_GET["action"] 
 	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 	if ($db->connected == 1)
 	{
-		print "<tr><td nowrap>";
+		print '<tr><td nowrap="nowrap">';
 		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
 		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
 		$ok = 1;
@@ -119,7 +119,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade" || $_GET["action"] 
 	{
 		if($db->database_selected == 1)
 		{
-			print "<tr><td nowrap>";
+			print '<tr><td nowrap="nowrap">';
 			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
 			dolibarr_install_syslog("upgrade: Database connection successfull : $dolibarr_main_db_name");
 			$ok=1;

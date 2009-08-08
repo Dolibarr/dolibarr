@@ -1,4 +1,5 @@
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,107 +19,107 @@
  */
 
 body {
-	font-size:13px;
-	font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-	background-color: #F4F4F4;
-	margin-left: 20px;
-	margin-right: 20px;
-	margin-top: 20px;
-	margin-bottom: 20px;
-}
-
-span.titre {
-	font-size:1.1em;
-	font-weight: bold;
-	background: #dcdcd3;
-	color: #4965B3;
-	border: 1px solid #8CACBB;
-	padding: 5px 5px 5px 5px;
-	margin: 0em 0em 0em 0em;
+font-size:13px;
+font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
+/* background-color: #F4F4F4; */
+margin-left: 20px;
+margin-right: 20px;
+margin-top: 20px;
+margin-bottom: 10px;
 }
 
 div.titre {
-	padding: 5px 5px 5px 5px;
-	margin: 0em 0em 0em 0em;
+padding: 5px 5px 5px 5px;
+margin: 0em 0em 0em 0em;
+}
+
+span.titre {
+font-size: 1.1em;
+font-weight: bold;
+background: #FFFFFF;
+color: #4965B3;
+border: 1px solid #8CACBB;
+padding: 5px 5px 5px 5px;
+margin: 0em 0em 0em 0em;
 }
 
 div.soustitre {
-	font-size: 15px;
-	font-weight: bold;
-	color: #4965B3;
-	padding: 0em 1.2em 0.5em 2em;
-	margin: 1.2em 1.2em 1.2em 1.2em;
-	border-bottom: 1px solid #8CACBB;
-	border-right: 1px solid #8CACBB;
-	text-align: right;
+font-size: 15px;
+font-weight: bold;
+color: #4965B3;
+padding: 0em 1.2em 0.5em 2em;
+margin: 1.2em 1.2em 1.2em 1.2em;
+border-bottom: 1px solid #8CACBB;
+border-right: 1px solid #8CACBB;
+text-align: right;
 }
 
 inputdisabled
 {
-    background: #FDFDFD;
-    border: 1px solid #ACBCBB;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
+background: #FDFDFD;
+border: 1px solid #ACBCBB;
+padding: 0px 0px 0px 0px;
+margin: 0px 0px 0px 0px;
 }
 
 table.main {
-background: #dcdcd3;
+background: #F0F0F0 url(background.png) repeat-x; 
 text-align: left;
 border: 1px solid #8CACBB;
+color: #000000;
 }
 
 table.main-inside {
 padding-left: 10px;
 padding-right: 10px;
-margin-bottom: 20px;
+margin-bottom: 10px;
 margin-top: 10px;
+color: #000000;
 }
 
+/* OK */
 div.ok {
 color: #114466;
 }
+font.ok {
+color: #114466;
+}
 
+/* Warning */
 div.warning {
 color: #777711;
 }
+font.warning {
+color: #777711;
+}
 
+/* Error */
 div.error {
 color: #550000; font-weight: bold;
 padding: 0.2em 0.2em 0.2em 0.2em;
 margin: 0.5em 0em 0.5em 0em;
 border: 1px solid #6C7C8B;
 }
-
 font.error {
-color: #550000;
+color: #550000; font-weight: bold;
 }
 
+/* Next button */
 div.barrebottom {
 text-align: right;
 margin-top: 10px;
-padding-top: 10px;
-padding-bottom: 10px;
+padding-top: 5px;
+padding-bottom: 5px;
 padding-right: 10px;
 }
 
-
-div.footer {
-background-color: #dcdff4;
-font-size: 10px;
-border-top: solid black 1px;
-padding-left: 5px;
-text-align: center;
-}
 
 div.header {
 background-color: #dcdff4;
 border-bottom: solid black 1px;
 padding-left: 5px;
 text-align: center;
-}
-
-div.footer p {
-margin: 0px;
 }
 
 a:link,a:visited,a:active {
@@ -139,7 +140,8 @@ color:black;
 font-size: 13px;
 }
 
-div.main-inside h2 {
+h3 {
+margin-top: 10px;
 font-size:18px;
 font-weight: bold;
 color: #4965B3;
@@ -153,16 +155,16 @@ tr.bg2 {
 background-color: #B5C5C5;
 }
 
+/* Class for parameters key and value */
 td.label {
-background: #dcdcd3;
 color: #5945A3;
 padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
 border-bottom: 1px solid #8CACBB;
 }
 
+/* Class for parameters example */
 td.comment {
-background: #dcdcd3;
 color: black;
 padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;

@@ -65,7 +65,7 @@ dolibarr_install_syslog("upgrade2: Entering upgrade2.php page");
 if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized",LOG_ERR);
 
 
-pHeader($langs->trans('DataMigration'),'etape5','upgrade');
+pHeader('','etape5','upgrade');
 
 
 if (isset($_POST['action']) && $_POST['action'] == 'upgrade')

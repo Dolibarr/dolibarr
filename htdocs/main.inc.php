@@ -139,7 +139,7 @@ if ($conf->file->main_force_https)
 		{
 			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
 
-			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl);
+			dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 			header("Location: ".$newurl);
 			exit;
 		}
@@ -155,7 +155,7 @@ if ($conf->file->main_force_https)
 
 			$newurl='https://'.$domaineport.$_SERVER["REQUEST_URI"];
 			//print 'eee'.$newurl; 	exit;
-			dol_syslog("dolibarr_main_force_https is on, we make a redirect to ".$newurl);
+			dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 			header("Location: ".$newurl);
 			exit;
 		}
@@ -168,6 +168,27 @@ if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 690ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 20ko memory
 //stopwithmem();
+
+// If install or upgrade process not done or not completely finished, we call the install page.
+if (! empty($conf->global->MAIN_NOT_INSTALLED) || ! empty($conf->global->MAIN_NOT_UPGRADED))
+{
+	dol_syslog("main.inc: A previous install or upgrade was not complete. Redirect to install page.", LOG_WARNING);
+	Header("Location: ".DOL_URL_ROOT."/install/index.php");
+	exit;
+}
+// If an upgrade process is required, we call the install page.
+if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
+{
+	require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+	$dolibarrversionlastupgrade=split('[\.-]',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+	$dolibarrversionprogram=split('[\.-]',DOL_VERSION);
+	if (versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade) > 0)	// Programs have a version higher than database
+	{
+		dol_syslog("main.inc: database version ".$conf->global->MAIN_VERSION_LAST_UPGRADE." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
+		Header("Location: ".DOL_URL_ROOT."/install/index.php");
+		exit;
+	}
+}
 
 // Creation d'un jeton contre les failles CSRF
 if (! defined('NOTOKENRENEWAL'))
@@ -599,12 +620,12 @@ if (sizeof($conf->need_smarty) > 0)
 // Tentative de hacking ?
 if (! $user->login) accessforbidden();
 
-// Verifie si user actif
+// Check if user is active
 if ($user->statut < 1)
 {
 	// Si non actif, on delogue le user
 	$langs->load("other");
-	dol_syslog ("Authentification ko car login desactive");
+	dol_syslog ("Authentification ko as login is disbaled");
 	accessforbidden($langs->trans("ErrorLoginDisabled"));
 	exit;
 }
@@ -614,14 +635,6 @@ dol_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
 
 // For backward compatibility
 if (! defined('MAIN_INFO_SOCIETE_PAYS')) define('MAIN_INFO_SOCIETE_PAYS','1');
-
-// If install not finished, we start again.
-if (defined("MAIN_NOT_INSTALLED"))
-{
-	Header("Location: ".DOL_URL_ROOT."/install/index.php");
-	exit;
-}
-
 
 // On charge les fichiers lang principaux
 $langs->load("main");

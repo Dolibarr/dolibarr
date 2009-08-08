@@ -1,6 +1,6 @@
 # Dolibarr language file - fr_FR - install
 CHARSET=UTF-8
-InstallEasy=Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.
+InstallEasy=Veuillez suivre les étapes une à une.
 MiscellanousChecks=Vérification de prérequis
 DolibarrWelcome=Bienvenue sur Dolibarr
 ConfFileExists=Le fichier de configuration <b>%s</b> existe.
