@@ -756,12 +756,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
+			$mini='';
+			if (! empty($conf->global->MAIN_US_MINI_JS)) $mini='_mini';
 
 			// This one is required for all Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))
 			{
 				print '<!-- Includes for Prototype (Used by Scriptaculous and PWC) -->'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.'.js"></script>'."\n";
 			}
 			// This one is required for boxes
 			if (! defined('DISABLE_SCRIPTACULOUS'))
@@ -777,7 +779,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
 				// PWC js
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.'.js"></script>'."\n";
 			}
 		}
 		if (is_array($arrayofjs))

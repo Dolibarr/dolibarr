@@ -667,21 +667,23 @@ if (sizeof($boxarray))
 	if ($conf->use_javascript_ajax)
 	{
 		print "\n";
-		print '<script type="text/javascript" language="javascript">
-		function updateOrder(){
-	    var left_list = cleanSerialize(Sortable.serialize(\'left\'));
-	    var right_list = cleanSerialize(Sortable.serialize(\'right\'));
-	    var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+		print '<script type="text/javascript" language="javascript">';
+		print 'function updateOrder(){';
+	    print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));';
+	    print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));';
+	    print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;';
 	    //alert( \'boxorder=\' + boxorder );
-	    var userid = \''.$user->id.'\';
-	    var url = "ajaxbox.php";
-	    o_options = new Object();
-	    o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};
-	    var myAjax = new Ajax.Request(url, o_options);
-	  }'."\n";
-		print '// <![CDATA['."\n";
+	    print 'var userid = \''.$user->id.'\';';
+	    print 'var url = "ajaxbox.php";';
+	    print 'o_options = new Object();';
+	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};';
+	    print 'var myAjax = new Ajax.Request(url, o_options);';
+	  	print '}';
+	  	print "\n";
 
-		print 'Sortable.create(\'left\', {'."\n";
+	  	print '// <![CDATA['."\n";
+
+	  	print 'Sortable.create(\'left\', {'."\n";
 		print 'tag:\'div\', '."\n";
 		print 'containment:["left","right"], '."\n";
 		print 'constraint:false, '."\n";
