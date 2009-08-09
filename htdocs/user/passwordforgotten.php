@@ -199,7 +199,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
 
 // Table 1
-print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="480">'."\n";
+print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="498">'."\n";
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 {
   print '<tr><td colspan="3" style="text-align:center;">';
@@ -218,7 +218,7 @@ if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
 if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';				// To force button enabled
 
 // Table 2
-print '<table cellpadding="2" align="center" width="480">'."\n";
+print '<table cellpadding="2" align="center" width="498">'."\n";
 
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
