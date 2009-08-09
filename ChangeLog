@@ -30,6 +30,7 @@ For users:
 - New: Include Dolibarr version in suggested dump filename.
 - New: Enhancement in project module.
 - New: Add log tab on emailing module.
+- New: Minor enhancements in look themes.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
 - Fix: Fix payment conditions on commercial proposals.
@@ -56,7 +57,7 @@ For developers:
 - Removed useless code of old commercial module.
 - Updated wiki documentation.
 - Better W3C standard.
-- Can add data provided with a module.
+- Can add init data when enabling a module.
 - Can fix some corruptions in database by calling the update page with action=repair
 
 
