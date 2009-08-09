@@ -212,7 +212,7 @@ function pHeader($soutitre,$next,$action='none')
 
 	print '<table class="noborder" summary="helpcentertitle"><tr valign="middle">';
 	print '<td width="20">';
-	print '<img src="'.DOL_URL_ROOT.'/theme/common/helpcenter.png" alt="logohelpcenter">';
+	print '<img src="helpcenter.png" alt="logohelpcenter">';
 	print '</td>';
 	print '<td>';
 	print '<span class="titre">'.$soutitre.'</span>'."\n";

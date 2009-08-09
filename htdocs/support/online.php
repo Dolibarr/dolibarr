@@ -151,7 +151,7 @@ print '</td></tr></table>';
 
 // Otherwise, go back to help center home
 print '<br><br>';
-print '* '.$langs->trans("BackToHelpCenter",DOL_URL_ROOT.'/support/');
+print '* '.$langs->trans("BackToHelpCenter",'index.php');
 print '<br><br>';
 
 

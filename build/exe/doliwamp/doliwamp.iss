@@ -205,11 +205,15 @@ begin
   'If first install, please specify some technical parameters. If you don''t understand, are not sure, or are doing an upgrade, just leave the default values.');
 
   // TODO Add control differently if first install or update
-  Page.Add('SMTP server (your own or ISP SMTP server, first install only) :', False);
-  Page.Add('Apache port (common choice is 80, first install only) :', False);
-  Page.Add('Mysql port (common choice is 3306, first install only) :', False);
-  Page.Add('Mysql server and database password you want for root (first install only):', False);
-
+  if firstinstall == true
+  then
+  begin
+    Page.Add('SMTP server (your own or ISP SMTP server, first install only) :', False);
+    Page.Add('Apache port (first install only, common choice is 80) :', False);
+    Page.Add('Mysql port (first install only, common choice is 3306) :', False);
+    Page.Add('Mysql server and database password you want for root (first install only):', False);
+  end
+  
   // Valeurs par defaut
   Page.Values[0] := smtpServer;
   Page.Values[1] := apachePort;

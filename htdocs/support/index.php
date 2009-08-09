@@ -36,6 +36,10 @@ $langs->load("other");
 $langs->load("help");
 
 
+/*
+ * View
+ */
+
 pHeader($langs->trans("DolibarrHelpCenter"),$_SERVER["PHP_SELF"]);
 
 print $langs->trans("HelpCenterDesc1")."<br>\n";
@@ -43,8 +47,16 @@ print $langs->trans("HelpCenterDesc2")."<br>\n";
 
 print '<br>';
 
-print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
-//print '<img src="dolibarr_logo2.png" height="22" alt="Dolibarr" title="Dolibarr">';
+if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
+{
+	print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
+	//print '<img src="dolibarr_logo2.png" height="22" alt="Dolibarr" title="Dolibarr">';
+}
+else
+{
+	print $langs->trans("ToGoBackToDolibarr",'../install/index.php');
+	//print '<img src="dolibarr_logo2.png" height="22" alt="Dolibarr" title="Dolibarr">';
+}
 
 print '<br><br>';
 
@@ -58,18 +70,25 @@ print '<tr><td width="50%" valign="top">';
 // Forum/wiki support
 print '<table class="login" width="100%">';
 print '<tr class="title" valign="top">';
-print '<td width="100%" align="center" valign="top">';
-//print img_picto('','/theme/common/who.png','',1).'<br>';
+print '<td width="100%" align="left" valign="top">';
+
+print '<table><td>'.img_picto('','who.png','',1).'</td><td>';
+
 print '<font style="'.$style1.'">'.$langs->trans("CommunitySupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</font>';
 print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
-print $langs->trans("TypeHelpDev").'/'.img_picto_common('','redstar').img_picto_common('','redstar').'/'.img_picto_common('','star').img_picto_common('','star').img_picto_common('','star').img_picto_common('','star');
+print $langs->trans("TypeHelpDev").'/'.img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).'/'.img_picto_common('','star','',1).img_picto_common('','star','',1).img_picto_common('','star','',1).img_picto_common('','star','',1);
+
+print '</td></tr></table>';
+
 print '</td>';
 print '</tr><tr>';
 print '<td align="center" valign="top">';
-print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
-print img_picto_common('','who.png');
-print '</td></tr><tr><td align="center">';
+print '<table class="nocellnopadd">';
+/*print '<tr><td align="center" valign="top">';
+print img_picto_common('','who.png','',1);
+print '</td></tr>';*/
+print '<tr><td align="center">';
 $urlwiki='http://wiki.dolibarr.org';
 if (eregi('fr',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Accueil';
 if (eregi('es',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Portada';
@@ -89,17 +108,25 @@ print '</td><td width="50%" valign="top">';
 // Online support
 print '<table class="login" width="100%">';
 print '<tr class="title">';
-print '<td width="100%" align="center" valign="top">';
+print '<td width="100%" align="left" valign="top">';
+
+print '<table><td>'.img_picto('','internet.png','',1).'</td><td>';
+
 print '<font style="'.$style1.'">'.$langs->trans("RemoteControlSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
 print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
-print $langs->trans("TypeHelpOnly").'/'.img_picto_common('','redstar').img_picto_common('','redstar').img_picto_common('','redstar').img_picto_common('','redstar').'/'.img_picto_common('','star').img_picto_common('','star');
+print $langs->trans("TypeHelpOnly").'/'.img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).img_picto_common('','redstar','',1).'/'.img_picto_common('','star','',1).img_picto_common('','star','',1);
+
+print '</td></tr></table>';
+
 print '</td>';
 print '</tr><tr>';
 print '<td align="center" valign="top">';
-print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
-print img_picto_common('','internet.png');
-print '</td></tr><tr><td align="center">';
+print '<table class="nocellnopadd">';
+/*print '<tr><td align="center" valign="top">';
+print img_picto_common('','internet.png','',1);
+print '</td></tr>';*/
+print '<tr><td align="center">';
 print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
 print '<b><a href="online.php">'.$langs->trans("ClickHere").'</a></b><br>';
 print '<br><br>';
@@ -115,18 +142,25 @@ print '<tr><td width="50%" valign="top">';
 // EMail support
 print '<table class="login" width="100%">';
 print '<tr class="title" valign="top">';
-print '<td width="100%" align="center" valign="top">';
-//print img_picto('','/theme/common/mail.png','',1).'<br>';
+print '<td width="100%" align="left" valign="top">';
+
+print '<table><td>'.img_picto('','mail.png','',1).'</td><td>';
+
 print '<font style="'.$style1.'">'.$langs->trans("EMailSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
 print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
-print $langs->trans("TypeHelpOnly").'/'.img_picto_common('','redstar').img_picto_common('','redstar').img_picto_common('','redstar').'/'.img_picto_common('','star').img_picto_common('','star');
+print $langs->trans("TypeHelpOnly").'/'.img_picto_common('','redstar','',1).img_picto_common('','redstar').img_picto_common('','redstar','',1).'/'.img_picto_common('','star','',1).img_picto_common('','star','',1);
+
+print '</td></tr></table>';
+
 print '</td>';
 print '</tr><tr>';
 print '<td align="center" valign="top">';
-print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
-print img_picto_common('','mail.png');
-print '</td></tr><tr><td align="center">';
+print '<table class="nocellnopadd">';
+/*print '<tr><td align="center" valign="top">';
+print img_picto_common('','mail.png','',1);
+print '</td></tr>';*/
+print '<tr><td align="center">';
 print '<br>'.$langs->trans("FeatureNotYetAvailable").'.<br>';
 print '</td></tr></table>';
 print '<br><br>';
@@ -141,19 +175,27 @@ print '</td><td width="50%" valign="top">';
 // Other support
 print '<table class="login" width="100%">';
 print '<tr class="title">';
-print '<td width="100%" align="center" valign="top">';
+print '<td width="100%" align="left" valign="top">';
+
+print '<table><td>'.img_picto('','pagemaster.png','',1).'</td><td>';
+
 print '<font style="'.$style1.'">'.$langs->trans("OtherSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
 //print '<br>'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': '.img_picto_common('','redstar').img_picto_common('','redstar').img_picto_common('','redstar').' / '.img_picto_common('','star');
 print '<br>'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': ';
 print $langs->trans("TypeHelpDevForm").'/?/?';
+
+print '</td></tr></table>';
+
 print '</td>';
 print '</tr><tr>';
 $urlwiki='http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers';
 print '<td align="center" valign="top">';
-print '<table class="nocellnopadd"><tr><td align="center" valign="top">';
-print img_picto_common('','pagemaster.png');
-print '</td></tr><tr><td align="center">';
+print '<table class="nocellnopadd">';
+/*print '<tr><td align="center" valign="top">';
+print img_picto_common('','pagemaster.png','',1);
+print '</td></tr>';*/
+print '<tr><td align="center">';
 print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
 print '<b><a href="'.$urlwiki.'">'.$langs->trans("ClickHere").'</a></b><br>';
 print '<br><br>';
