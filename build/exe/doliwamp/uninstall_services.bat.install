@@ -1,5 +1,12 @@
+@echo off
+REM --------------------------------------------------------
+REM This script install Apache and Mysql DoliWamp services
+REM --------------------------------------------------------
+
+echo ---- Execute uninstall_services.bat >> doliwamp.log 2>>&1
 NET STOP doliwampapache
 .\bin\apache\apacheWAMPAPACHEVERSION\bin\httpd.exe -k uninstall -n doliwampapache
 NET STOP doliwampmysqld 
 .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --remove doliwampmysqld
 REM wampmanager.exe -quit -id={doliwampserver}
+echo ---- End script >> doliwamp.log 2>>&1

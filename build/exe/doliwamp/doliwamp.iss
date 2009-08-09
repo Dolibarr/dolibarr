@@ -205,7 +205,7 @@ begin
   'If first install, please specify some technical parameters. If you don''t understand, are not sure, or are doing an upgrade, just leave the default values.');
 
   // TODO Add control differently if first install or update
-  if firstinstall == true
+  if firstinstall
   then
   begin
     Page.Add('SMTP server (your own or ISP SMTP server, first install only) :', False);
@@ -713,9 +713,10 @@ begin
     batFile := path+'\install_services.bat';
     Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
-    // Stard services
+    // Start services
     batFile := path+'\startdoliwamp.bat';
     Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    //MsgBox(myResult,mbInformation,MB_OK);
 
     // Change mysql password
     batFile := path+'\mysqlinitpassword.bat';
