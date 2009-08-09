@@ -756,14 +756,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			// Other external js
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 
-			$mini='';$ext='';
-			if (! empty($conf->global->MAIN_OPTIMIZE_SPEED)) { $mini='_mini'; $ext=''; }	// mini='_mini', ext='.gz'
+			$mini='';$ext='.js';
+			if (! empty($conf->global->MAIN_OPTIMIZE_SPEED)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
 			// This one is required for all Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))
 			{
 				print '<!-- Includes for Prototype (Used by Scriptaculous and PWC) -->'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.'.js'.$ext.'"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.$ext.'"></script>'."\n";
 			}
 			// This one is required for boxes
 			if (! defined('DISABLE_SCRIPTACULOUS'))
@@ -779,7 +779,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
 				// PWC js
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.'.js'.$ext.'"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.$ext.'"></script>'."\n";
 			}
 		}
 
@@ -1005,7 +1005,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	}
 
 	// Link to Dolibarr wiki pages
-	if ($helppagename && empty($conf->global->MAIN_DISABLE_HELP_LINKS))
+	if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
 	{
 		$langs->load("help");
 

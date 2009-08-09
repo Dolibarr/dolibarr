@@ -447,6 +447,7 @@ function formatDate(date,format)
 		//alert('substr='+substr);
 		if (substr == 'yyyy')      { result=result+year; }
 		else if (substr == 'yy')   { result=result+year.substring(2,4); }
+		else if (substr == 'M')    { result=result+month; }
 		else if (substr == 'MM')   { result=result+(month<1||month>9?"":"0")+month; }
 		else if (substr == 'd')    { result=result+day; }
 		else if (substr == 'dd')   { result=result+(day<1||day>9?"":"0")+day; }

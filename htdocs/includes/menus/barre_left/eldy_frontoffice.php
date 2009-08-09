@@ -103,7 +103,7 @@ class MenuLeft {
 			if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 			{
 				$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
-				print '<img title="'.$title.'" src="'.$urllogo.'">';
+				print '<center><img title="'.$title.'" src="'.$urllogo.'"></center>';
 			}
 		}
 

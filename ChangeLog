@@ -31,6 +31,8 @@ For users:
 - New: Enhancement in project module.
 - New: Add log tab on emailing module.
 - New: Minor enhancements in look themes.
+- New: Add option to hide help in menu.
+- Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
 - Fix: Fix payment conditions on commercial proposals.

@@ -64,9 +64,6 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["main_show_bugtrack_link"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD",     $_POST["main_show_workboard"],'chaine',0,'',$conf->entity);
-
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
@@ -74,9 +71,12 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_ADHERENT",$_POST["MAIN_SEARCHFORM_ADHERENT"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MOTD",               dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME",               dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", $_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
+	dolibarr_set_const($db, "MAIN_MOTD",                   dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME",                   dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",       $_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
+	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",    $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
+
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
@@ -135,15 +135,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-
-	/*
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-    print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK,1);
-    print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-	*/
 
     // Desactivation javascript et ajax
     $var=!$var;
@@ -216,7 +207,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
 
-    // Hide need help link on login page
+    // Hide help link on login page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
     print $html->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
@@ -256,6 +247,24 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	}
 	print '</td></tr>';
 
+    // Hide help link on login page
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp").'</td><td>';
+    print $html->selectyesno('MAIN_HELP_DISABLELINK',isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	/*
+	// Show bugtrack link
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+    print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	*/
+
 	print '</table>';
 
     print '<br><center>';
@@ -286,14 +295,6 @@ else
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
-
-    /*
-	$var=!$var;
-    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-    print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td>";
-	print '<td width="20">&nbsp;</td>';
-	print "</tr>";
-	*/
 
     // Disable javascript/ajax
     $var=!$var;
@@ -374,6 +375,22 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
     print nl2br($conf->global->MAIN_MOTD);
     print '</td></tr>';
+
+    // Link to wiki help
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td>';
+    print yn($conf->global->MAIN_HELP_DISABLELINK,1);
+    print '</td></tr>';
+
+    /*
+    // Show bugtrack link
+	$var=!$var;
+    print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+    print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
+	*/
+
 
     print '</table>';
 
