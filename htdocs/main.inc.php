@@ -748,22 +748,22 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
-		// Output javascript links
+		// Output standard javascript links
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-		}
-		if (! $disablejs && $conf->use_javascript_ajax)
-		{
+
+			// Other external js
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
-			$mini='';
-			if (! empty($conf->global->MAIN_US_MINI_JS)) $mini='_mini';
+
+			$mini='';$ext='';
+			if (! empty($conf->global->MAIN_OPTIMIZE_SPEED)) { $mini='_mini'; $ext=''; }	// mini='_mini', ext='.gz'
 
 			// This one is required for all Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))
 			{
 				print '<!-- Includes for Prototype (Used by Scriptaculous and PWC) -->'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.'.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.'.js'.$ext.'"></script>'."\n";
 			}
 			// This one is required for boxes
 			if (! defined('DISABLE_SCRIPTACULOUS'))
@@ -779,9 +779,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
 				// PWC js
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.'.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.'.js'.$ext.'"></script>'."\n";
 			}
 		}
+
+		// Output module javascript
 		if (is_array($arrayofjs))
 		{
 			foreach($arrayofjs as $jsfile)
