@@ -225,7 +225,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
-	print '<textarea name="address" cols="60" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>'."\n";
+	print '<textarea name="address" cols="80" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyZip").'</td><td>';
@@ -300,7 +300,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>';
-	print '<textarea class="flat" name="note" cols="60" rows="'.ROWS_4.'">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
+	print '<textarea class="flat" name="note" cols="80" rows="'.ROWS_5.'">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
 	print '</td></tr>';
 
 	print '</table>';
