@@ -40,6 +40,7 @@ else header('Cache-Control: no-cache');
 
 body {
     background-color: #F4F4F4;
+	background: #f9f9f9 url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/headbg.jpg' ?>) 0 0 no-repeat;
 	color: #101010;
 	font-size: 12px;
     font-family: arial,tahoma,verdana,helvetica;

@@ -1039,14 +1039,14 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		if ($helpbaseurl && $helppage)
 		{
 			print '<div class="help">';
-			print '<a class="help" target="_blank" title="'.$langs->trans("GoToHelpPage");
-			if ($mode == 'wiki') print '  - '.$langs->trans("PageWiki").' '.$helppage;
+			print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
+			if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.strtr($helppage,'_',' ').'&quot;';
 			print '" href="';
 			print sprintf($helpbaseurl,$helppage);
 			print '">';
 			print img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).' ';
 			print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-			if ($mode == 'wiki') print ' ('.dol_trunc($helppage,8).')';
+			if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 			print '</a>';
 			print '</div>';
 		}
@@ -1084,14 +1084,13 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 
 
 /**
- *  \brief   Affiche une zone de recherche
+ *  \brief   Show a search area
  *  \param   urlaction          Url du post
  *  \param   urlobject          Url du lien sur titre de la zone de recherche
  *  \param   title              Titre de la zone de recherche
  *  \param   htmlmodesearch     'search'
  *  \param   htmlinputname      Nom du champ input du formulaire
  */
-
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
 	global $langs;
