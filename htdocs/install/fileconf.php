@@ -58,7 +58,7 @@ pHeader($langs->trans("ConfigurationFile"),"etape0");
 
 if (! empty($force_install_message_doliwamp))
 {
-	print $langs->trans("KeepDefaultValues").'<br>';
+	print '<b>'.$langs->trans("KeepDefaultValues").'</b><br>';
 }
 
 ?>
