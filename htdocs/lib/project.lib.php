@@ -291,6 +291,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 			{
 				print "<tr ".$bc[$var].">\n";
 
+				// Ref of task
 				print '<td>';
 				if ($showlineingray)
 				{
@@ -304,18 +305,20 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 				}
 				print '</td>';
 
+				// Title of task
 				print "<td>";
 				if ($showlineingray) print '<i>';
 				else print '<a href="task.php?id='.$lines[$i]->id.'">';
 				for ($k = 0 ; $k < $level ; $k++)
 				{
-					print "&nbsp;&nbsp;&nbsp;";
+					print "&nbsp; &nbsp; &nbsp;";
 				}
 				print $lines[$i]->title;
 				if ($showlineingray) print '</i>';
 				else print '</a>';
 				print "</td>\n";
 
+				// Project
 				if ($showproject)
 				{
 					print "<td>";
