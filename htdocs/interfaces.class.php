@@ -57,6 +57,12 @@ class Interfaces
 	*/
 	function run_triggers($action,$object,$user,$langs,$conf)
 	{
+		// Check parameters
+		if (! is_object($object) || ! is_object($user) || ! is_object($langs) || ! is_object($conf))
+		{
+   			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
+		}
+
 		$handle=opendir($this->dir);
 		$modules = array();
 		$nbfile = $nbtotal = $nbok = $nbko = 0;

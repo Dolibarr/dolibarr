@@ -3043,7 +3043,7 @@ class FactureLigne
 	 */
 	function update()
 	{
-		global $conf;
+		global $user,$langs,$conf;
 
         // Clean parameters
 		$this->desc=trim($this->desc);
