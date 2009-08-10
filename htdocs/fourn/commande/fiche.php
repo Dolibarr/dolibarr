@@ -85,7 +85,7 @@ if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->com
  */
 if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer)
 {
-	if ($_POST['qty'] && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
+	if (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
 	{
 		$commande =	new	CommandeFournisseur($db);
 		$ret=$commande->fetch($id);
@@ -120,6 +120,10 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 				$desc = $product->description;
 				$desc.= $product->description && $_POST['np_desc'] ? "\n" : "";
 				$desc.= $_POST['np_desc'];
+				
+				$qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
+				
+				$remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
 				$tva_tx	= get_default_tva($societe,$mysoc,$product->tva_tx,$product->id);
 				$type = $product->type;
@@ -127,12 +131,12 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 				$result=$commande->addline(
 				$desc,
 				$pu,
-				$_POST['qty'],
+				$qty,
 				$tva_tx,
 				$product->id,
 				$_POST['idprodfournprice'],
 				$product->fourn_ref,
-				$_POST['remise_percent'],
+				$remise_percent,
 				'HT',
 				$type
 				);
@@ -883,11 +887,11 @@ if ($id > 0 || ! empty($ref))
 			//if($soc->tva_assuj == "0")
 			//print '<input type="hidden" name="tva_tx" value="0">0';
 			//else
-			print $html->select_tva('tva_tx',$conf->defaulttx,$soc,$mysoc);
+			print $html->select_tva('tva_tx',($_POST["tva_tx"]?$_POST["tva_tx"]:$conf->defaulttx),$soc,$mysoc);
 			print '</td>';
-			print '<td align="right"><input type="text" name="pu" size="5"></td>';
-			print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-			print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
+			print '<td align="right"><input type="text" name="pu" size="5" value="'.$_POST["pu"].'"></td>';
+			print '<td align="right"><input type="text" name="qty" value="'.($_POST["qty"]?$_POST["qty"]:'1').'" size="2"></td>';
+			print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.($_POST["remise_percent"]?$_POST["remise_percent"]:$soc->remise_client).'">%</td>';
 			print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 			print '</tr>';
 
@@ -938,8 +942,8 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				print '</td>';
-				print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-				print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="0">%</td>';
+				print '<td align="right"><input type="text" size="2" name="pqty" value="'.($_POST["pqty"]?$_POST["pqty"]:'1').'"></td>';
+				print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="p_remise_percent" value="'.($_POST["p_remise_percent"]?$_POST["p_remise_percent"]:$soc->remise_client).'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
 
