@@ -33,6 +33,11 @@ include_once("./inc.php");
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
+// TODO Send value from migrate choice
+$targetversion=DOL_VERSION;
+if (isset($_REQUEST["targetversion"])) $targetversion=$_REQUEST["targetversion"];
+
+
 $langs->load("admin");
 $langs->load("install");
 
@@ -162,9 +167,10 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 			{
 				$db->begin();
 
-				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const to '.DOL_VERSION, LOG_DEBUG);
+				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const to '.$targetversion, LOG_DEBUG);
 				$db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_INSTALL'");
-				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_INSTALL','".DOL_VERSION."','chaine',0,'Dolibarr version when install',0)");
+				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_INSTALL','".$targetversion."','chaine',0,'Dolibarr version when install',0)");
+				$conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
 				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_DEBUG);
 				$db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
@@ -177,13 +183,17 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 			print $langs->trans("Error")."<br>";
 		}
 	}
-
 	// If upgrade
-	if ($_POST["action"] == "upgrade")
+	elseif ($_POST["action"] == "upgrade")
 	{
-		dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const to value '.DOL_VERSION, LOG_DEBUG);
+		dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const to value '.$targetversion, LOG_DEBUG);
 		$db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_UPGRADE'");
-		$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_UPGRADE','".DOL_VERSION."','chaine',0,'Dolibarr version for last upgrade',0)");
+		$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_UPGRADE','".$targetversion."','chaine',0,'Dolibarr version for last upgrade',0)");
+		$conf->global->MAIN_VERSION_LAST_UPGRADE=$targetversion;
+	}
+	else
+	{
+		dol_print_error('','install/etape5.php Unknown choice of action');
 	}
 
 	// May fail if parameter already defined
@@ -197,68 +207,98 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 print "<br>";
 
 
+// Create lock file
+
 // If first install
 if ($_POST["action"] == "set")
 {
-	// Fin install
-	print $langs->trans("SystemIsInstalled")."<br>";
-	if (empty($force_install_lockinstall))
+	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{
-		print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+		// Install is finished
+		print $langs->trans("SystemIsInstalled")."<br>";
+		if (empty($force_install_lockinstall))
+		{
+			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+		}
+		else
+		{
+			// Install is finished, we create the lock file
+			$fp = fopen("../../install.lock", "w");
+			fwrite($fp, "This is a lock file to prevent use of install pages");
+			fclose($fp);
+		}
+
+		print "<br>";
+
+		print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
+
+		print '<center><a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+		print $langs->trans("GoToSetupArea");
+		print '</a></center>';
 	}
 	else
 	{
-		// Open the file and erase the contents if any
-		$fp = fopen("../../install.lock", "w");
-		fwrite($fp, "This is a lock file to prevent use of install pages");
-		fclose($fp);
+		// If here MAIN_VERSION_LAST_UPGRADE is not empty
+		print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
+		print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b>';
+
+		print "<br>";
+
+		print '<center><a href="'.$dolibarr_main_url_root .'/install/index.php">';
+		print $langs->trans("GoToUpgradePage");
+		print '</a></center>';
 	}
-
-	print "<br>";
-
-	print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
 }
-
 // If upgrade
-if ($_POST["action"] == "upgrade")
+elseif ($_POST["action"] == "upgrade")
 {
-	// Fin install
-	print $langs->trans("SystemIsUpgraded")."<br>";
-	if (empty($force_install_lockinstall))
+	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{
-		print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+		// Upgrade is finished
+		print $langs->trans("SystemIsUpgraded")."<br>";
+		if (empty($force_install_lockinstall))
+		{
+			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+		}
+		else
+		{
+			// Upgrade is finished, we create the lock file
+			$fp = fopen("../../install.lock", "w");
+			fwrite($fp, "This is a lock file to prevent use of install pages");
+			fclose($fp);
+		}
+
+		print "<br>";
+
+		print '<center><a href="'.$dolibarr_main_url_root .'/index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+		print $langs->trans("GoToDolibarr");
+		print '</a></center>';
 	}
 	else
 	{
-		// Open the file and erase the contents if any
-		$fp = fopen("../../install.lock", "w");
-		fwrite($fp, "This is a lock file to prevent use of install pages");
-		fclose($fp);
+		// If here MAIN_VERSION_LAST_UPGRADE is not empty
+		print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
+		print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b>';
+
+		print "<br>";
+
+		print '<center><a href="'.$dolibarr_main_url_root .'/install/index.php">';
+		print $langs->trans("GoToUpgradePage");
+		print '</a></center>';
 	}
-
-	print "<br>";
-}
-
-
-if ($_POST["action"] == "upgrade")
-{
-	print '<center><a href="'.$dolibarr_main_url_root .'/index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-	print $langs->trans("GoToDolibarr");
-	print '</a></center>';
 }
 else
 {
-	print '<center><a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-	print $langs->trans("GoToSetupArea");
-	print '</a></center>';
+	dol_print_error('','install/etape5.php Unknown choice of action');
 }
+
 
 
 // Clear cache files
 clearstatcache();
 
 
-dolibarr_install_syslog("Dolibarr install/setup finished", LOG_INFO);
+dolibarr_install_syslog("install/etape5.php Dolibarr setup finished", LOG_INFO);
 
 pFooter(1,$setuplang);
 ?>

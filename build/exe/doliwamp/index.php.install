@@ -18,10 +18,10 @@ $appDir = '../apps/';
 
 
 // we set version of applications
-$phpVersion = '5.2.5';
-$apacheVersion = '2.2.6';
-$mysqlVersion = '5.0.45';
-
+$phpVersion = 'WAMPPHPVERSION';
+$apacheVersion = 'WAMPAPACHEVERSION';
+$mysqlVersion = 'WAMPMYSQLVERSION';
+$apachePort = 'WAMPAPACHEPORT';
 
 
 // directories to ignore in project list
@@ -32,8 +32,10 @@ $projectsListIgnore = array ('.','..');
 $langues = array(
 	'en' => array(
 		'langue' => 'English',
-		'autreLangue' => 'Version Fran&ccedil;aise',
-		'autreLangueLien' => 'fr',
+		'autreLangue1' => 'Español',
+		'autreLangueLien1' => 'es',
+		'autreLangue2' => 'Fran&ccedil;ais',
+		'autreLangueLien2' => 'fr',
 		'titreHtml' => 'DoliWamp Homepage',
 		'titreConf' => 'Server Configuration',
 		'versa' => 'Apache Version :',
@@ -46,14 +48,19 @@ $langues = array(
 		'txtProjet' => 'Your Softwares',
 		'txtNoProjet' => 'No other softwares. To create a new one, just create a directory in \'www\'.',
 		'txtApp' => 'Applications',
+		'FromLocalNetwork' => 'URL for local access',
+		'FromInternet' => 'URL for Internet',
+		'NotAvailable' => 'Not available',
 		'faq' => 'http://www.en.wampserver.com/faq.php',
 		'ipserver' => 'Name/IP Server:',
-		'askhelp' => 'Request a help support'
+		'askhelp' => 'Dolibarr Help center'
 	),
 	'fr' => array(
 		'langue' => 'Français',
-		'autreLangue' => 'Versi&oacute;n Espa&ntilde;ol',
-		'autreLangueLien' => 'es',
+		'autreLangue1' => 'Espa&ntilde;ol',
+		'autreLangueLien1' => 'es',
+		'autreLangue2' => 'English',
+		'autreLangueLien2' => 'en',
 		'titreHtml' => 'Accueil DoliWamp',
 		'titreConf' => 'Configuration Serveur',
 		'versa' => 'Version de Apache:',
@@ -66,14 +73,19 @@ $langues = array(
 		'txtProjet' => 'Autres applications (sans alias)',
 		'txtNoProjet' => 'Pas d\'autre application. Pour en ajouter une nouvelle, cr&eacute;ez simplement un r&eacute;pertoire dans \'www\'.',
 		'txtApp' => 'Applications',
+		'FromLocalNetwork' => 'URL accès local',
+		'FromInternet' => 'URL accès par Internet',
+		'NotAvailable' => 'Non disponible',
 		'faq' => 'http://www.wampserver.com/faq.php',
 		'ipserver' => 'Name/IP Serveur:',
-		'askhelp' => 'Demander une aide au support'
+		'askhelp' => 'Centre d\'assistance Dolibarr'
 	),
 	'es' => array(
 		'langue' => 'Español',
-		'autreLangue' => 'English Version',
-		'autreLangueLien' => 'en',
+		'autreLangue1' => 'English',
+		'autreLangueLien1' => 'en',
+		'autreLangue2' => 'Fran&ccedil;ais',
+		'autreLangueLien2' => 'fr',
 		'titreHtml' => 'Inicio DoliWamp',
 		'titreConf' => 'Configuraci&oacute;n Servidor',
 		'versa' => 'Versi&oacute;n de Apache:',
@@ -86,6 +98,9 @@ $langues = array(
 		'txtProjet' => 'Otras aplicaciones (sin alias)',
 		'txtNoProjet' => 'Ninguna otra aplicaci&oacute;n. Para a&ntilde;adir una nueva, simplemente cree una carpeta en \'www\'.',
 		'txtApp' => 'Aplicaciones',
+		'FromLocalNetwork' => 'URL for local access',
+		'FromInternet' => 'URL for Internet',
+		'NotAvailable' => 'Not available',
 		'faq' => 'http://www.wampserver.com/faq.php',
 		'ipserver' => 'Nombre/IP Servidor',
 		'askhelp' => 'Pedir ayuda o soporte'
@@ -331,19 +346,22 @@ if (is_dir($aliasDir))
 	    if (is_file($aliasDir.$file) && ereg('.conf',$file))
 	    {		
 		    $msg = '';
+
+			$aliasContents.='<tr><td><ul class="aliases">';
+
 		    $aliasContents .= '<li><a href="'.ereg_replace('.conf','',$file).'/">';
 			$file = ereg_replace('.conf','',$file);
-			if (eregi('dolibarr',$file)) $aliasContents .= $file.'</a> (URL: http://<i>ipofyourserver</i>:81/'.$file.'/)';
-			elseif (eregi('phpmyadmin',$file)) $aliasContents .= $file.'</a> (URL: http://<i>ipofyourserver</i>:81/'.$file.'/)';
-			else $aliasContents .= $file.'</a>';
-			$aliasContents.='</li>';
+			if (eregi('dolibarr',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>http://<i>ipofyourserver</i>'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td></tr>';
+			elseif (eregi('phpmyadmin',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
+			else $aliasContents .= $file.'</a></li></ul></td> <td> </td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
+			
 			$aliasarray[]=$file;
 	    }
     }
     closedir($handle);
 }
 if (!isset($aliasContents))
-	$aliasContents = $langues[$langue]['txtNoAlias'];
+	$aliasContents = '<tr><td colspan="3">'.$langues[$langue]['txtNoAlias'].'</td></tr>';
 	
 
 // Read projects in www dir
@@ -359,14 +377,18 @@ foreach($listoffiles as $file)
 {
 	if (is_dir($file) && !in_array($file,$projectsListIgnore) && !in_array($file,$aliasarray)) 
 	{		
+		$projectContents .= '<tr><td><ul class="projects">';
+		
 		$projectContents .= '<li><a href="'.$file.'/">';
-		$projectContents .= $file.'</a> (URL: http://<i>ipofyourserver</i>:81/'.$file.'/)';
+		$projectContents .= $file.'</a>';
 		$projectContents .= '</li>';
+		
+		$projectContents .= '</ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/)'.'</td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
 	}
 }
 
 if (!isset($projectContents))
-	$projectContents = $langues[$langue]['txtNoProjet'];
+	$projectContents = '<tr><td colspan="3">'.$langues[$langue]['txtNoProjet'].'</td></tr>';
 
 
 
@@ -380,7 +402,7 @@ $pageContents = <<< EOPAGE
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<html lang="en" xml:lang="en">
+<html lang="$langue" xml:lang="$langue">
 <head>
 	<title>{$langues[$langue]['titreHtml']}</title>
 	<meta http-equiv="Content-Type" content="txt/html; charset=utf-8" />
@@ -501,7 +523,8 @@ a:hover {
 <td align="right">
 	<ul class="utility">
 		<li>${wampserverVersion}</li>
-		<li><a href="?lang={$langues[$langue]['autreLangueLien']}">{$langues[$langue]['autreLangue']}</a></li>
+		<li><a href="?lang={$langues[$langue]['autreLangueLien1']}">{$langues[$langue]['autreLangue1']}</a>
+		- <a href="?lang={$langues[$langue]['autreLangueLien2']}">{$langues[$langue]['autreLangue2']}</a></li>
 		<br><br>
 		<li>Provided by <a href="http://www.nltechno.com" targer="_blank">NLTechno</a></li>
 	</ul>
@@ -527,17 +550,23 @@ a:hover {
 	</dl>
 
 	<h2>{$langues[$langue]['txtApp']}</h2>
-	<ul class="aliases">
+	<table width="100%" style="padding: 0px 0px 0px 0px;">
+	<tr valign="middle"><td>
+	{$langues[$langue]['txtApp']}
+	</td><td valign="middle">
+	{$langues[$langue]['FromLocalNetwork']}
+	</td><td valign="middle">
+	{$langues[$langue]['FromInternet']}
+	</td></tr>
 	${aliasContents}			
-	<ul class="projects">
-	$projectContents
-	</ul>
+	${projectContents}			
+	</table>
 
 	<h2>{$langues[$langue]['titrePage']}</h2>
 	<ul class="tools">
 		<li><a href="index.php?phpinfo=1">Phpinfo</a></li>
 		<li><a href="server-status">Server-status</a></li>
-		<li><a href="/dolibarr/support/onlinesupport.php">{$langues[$langue]['askhelp']}</a></li>
+		<li><a href="/dolibarr/support/index.php">{$langues[$langue]['askhelp']}</a></li>
 	</ul>
 
 

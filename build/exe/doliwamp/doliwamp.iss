@@ -65,6 +65,7 @@ Source: "build\exe\doliwamp\startdoliwamp.bat"; DestDir: "{app}\"; Flags: ignore
 Source: "build\exe\doliwamp\removefiles.bat"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\rundoliwamp.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\rundolihelp.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\rundoliadmin.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
@@ -105,6 +106,7 @@ Name: "{group}\Dolibarr ERP-CRM"; Filename: "{app}\rundoliwamp.bat"; WorkingDir:
 Name: "{group}\Tools\Help center"; Filename: "{app}\rundolihelp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\dolihelp.ico
 Name: "{group}\Tools\Start DoliWamp server"; Filename: "{app}\startdoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliwampon.ico
 Name: "{group}\Tools\Stop DoliWamp server"; Filename: "{app}\stopdoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliwampoff.ico
+Name: "{group}\Tools\Admin DoliWamp server"; Filename: "{app}\rundoliadmin.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliadmin.ico
 Name: "{group}\Tools\Uninstall DoliWamp"; Filename: "{app}\unins000.exe"; WorkingDir: "{app}"; IconFilename: {app}\uninstall_services.bat
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Dolibarr"; WorkingDir: "{app}"; Filename: "{app}\rundoliwamp.bat"; Tasks: quicklaunchicon; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
 Name: "{userdesktop}\Dolibarr ERP-CRM"; Filename: "{app}\rundoliwamp.bat"; WorkingDir: "{app}"; Tasks: desktopicon; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
@@ -303,7 +305,7 @@ begin
 
 
     //----------------------------------------------
-    // rundoliwamp.bat and rundolihelp.bat
+    // rundoliwamp.bat, rundolihelp.bat and rundoliadmin.bat
     //----------------------------------------------
 
     destFile := pathWithSlashes+'/rundoliwamp.bat';
@@ -312,7 +314,11 @@ begin
     destFileH := pathWithSlashes+'/rundolihelp.bat';
     srcFileH := pathWithSlashes+'/rundolihelp.bat.install';
 
-    if (not FileExists (destFile) or not FileExists (destFileH)) and (FileExists(srcFile) and FileExists(srcFileH)) then
+    destFileA := pathWithSlashes+'/rundoliadmin.bat';
+    srcFileA := pathWithSlashes+'/rundoliadmin.bat.install';
+
+    if (not FileExists (destFile) or not FileExists (destFileH) or not FileExists (destFileA))
+     and (FileExists(srcFile) and FileExists(srcFileH) and FileExists(srcFileA)) then
     begin
       //navigateur
       browser := 'explorer.exe';
@@ -337,6 +343,11 @@ begin
       StringChange (srcContents, 'WAMPBROWSER', browser);
       StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
       SaveStringToFile(destFileH,srcContents, False);
+      
+      LoadStringFromFile (srcFileA, srcContents);
+      StringChange (srcContents, 'WAMPBROWSER', browser);
+      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
+      SaveStringToFile(destFileA,srcContents, False);
     end
 
 

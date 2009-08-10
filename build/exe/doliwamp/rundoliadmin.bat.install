@@ -1,0 +1,6 @@
+@echo off
+REM Launch Dolibarr Admin center
+REM ----------------------------
+
+REM Go to admin center page
+start "WAMPBROWSER" http://localhost:WAMPAPACHEPORT/
