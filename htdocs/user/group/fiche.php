@@ -169,14 +169,13 @@ $html = new Form($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Affichage fiche en mode création                                           */
+/* Affichage fiche en mode crï¿½ation                                           */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("NewGroup"));
-	print "<br>";
 
 	if ($message) { print $message."<br>"; }
 
