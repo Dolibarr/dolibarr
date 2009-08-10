@@ -518,9 +518,9 @@ class Project extends CommonObject
 			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
 			if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
-			$sql.= " ORDER BY p.ref, t.title";
 		}
-		
+		$sql.= " ORDER BY p.ref, t.title";
+
 		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)

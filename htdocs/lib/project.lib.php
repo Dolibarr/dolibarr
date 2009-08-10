@@ -249,19 +249,13 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
-		// Process line $lines[$i]
-
 		if ($parent == 0) $level = 0;
+
+		// Process line
+		// print "i:".$i."-".$lines[$i]->projectid.'<br>';
 
 		if ($lines[$i]->fk_parent == $parent)
 		{
-			// Break on a new project
-			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
-			{
-				$var = !$var;
-				$lastprojectid=$lines[$i]->projectid;
-			}
-
 			// Show task line.
 			$showline=1;
 			$showlineingray=0;
@@ -289,6 +283,13 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskro
 
 			if ($showline)
 			{
+				// Break on a new project
+				if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+				{
+					$var = !$var;
+					$lastprojectid=$lines[$i]->projectid;
+				}
+
 				print "<tr ".$bc[$var].">\n";
 
 				// Ref of task

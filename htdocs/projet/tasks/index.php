@@ -96,8 +96,8 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
-// Show all lines in taskarray (recusrive function to go down on tree)
-$j=0;
+// Show all lines in taskarray (recursive function to go down on tree)
+$j=0; $level=0;
 $nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 1, $tasksrole);
 print "</table>";
 
