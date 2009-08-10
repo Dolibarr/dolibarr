@@ -133,6 +133,8 @@ var srcFile: String;
 var destFile: String;
 var srcFileH: String;
 var destFileH: String;
+var srcFileA: String;
+var destFileA: String;
 var srcContents: String;
 var browser: String;
 var winPath: String;
