@@ -47,6 +47,7 @@ $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 $error=0;
 

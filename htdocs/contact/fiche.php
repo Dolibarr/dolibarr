@@ -393,6 +393,7 @@ if ($user->rights->societe->contact->creer)
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
 		print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
 
+		// EMail
 		print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.$contact->email.'"></td>';
 		if ($conf->mailing->enabled)
 		{
@@ -547,6 +548,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($contact->phone_mobile,$contact->pays_code,$contact->id,$contact->socid,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($contact->fax,$contact->pays_code,$contact->id,$contact->socid,'AC_FAX').'</td></tr>';
 
+	// Email
 	print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($contact->email,$contact->id,$contact->socid,'AC_EMAIL').'</td>';
 	if ($conf->mailing->enabled)
 	{

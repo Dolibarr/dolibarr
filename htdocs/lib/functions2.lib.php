@@ -204,27 +204,6 @@ function dol_print_object_info($object)
 
 
 /**
- *	\brief      Return true if email syntax is ok
- *	\param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	\return     boolean     true if email syntax is OK, false if KO
- */
-function isValidEmail($address)
-{
-	if (eregi(".*<(.+)>", $address, $regs)) {
-		$address = $regs[1];
-	}
-	// 3 letters domains extensions: biz|com|edu|gov|int|mil|net|org|pro
-	if (eregi("^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2,3}|asso|aero|coop|info|name)\$",$address))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-/**
  *	\brief      Return true if email has a domain name that can't be resolved
  *	\param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
  *	\return     boolean     true if domain email is OK, false if KO

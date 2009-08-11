@@ -206,8 +206,12 @@ function dol_syslog($message, $level=LOG_INFO)
 			if ($message != $langs->trans($message)) $message = $langs->trans($message);
 		}
 
+		// Add page/script name to log message
+		$script=isset($_SERVER['PHP_SELF'])?basename($_SERVER['PHP_SELF'],'.php').' ':'';
+		$message=$script.$message;
+
 		// Add user to log message
-		$login='???';
+		$login=isset($_SERVER['USERNAME'])?$_SERVER['USERNAME']:'nologin';
 		if (is_object($user) && $user->id) $login=$user->login;
 		$message=sprintf("%-8s",$login)." ".$message;
 
@@ -221,15 +225,14 @@ function dol_syslog($message, $level=LOG_INFO)
 
 			if ($file)
 			{
-
-				$ip='unknown_ip';
+				$ip=$_SERVER['COMPUTERNAME'];
 				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];
 
 				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
 				$liblevel=$liblevelarray[$level];
 				if (! $liblevel) $liblevel='UNDEF';
 
-				$message=strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".$ip." ".$message;
+				$message=strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".sprintf("%-15s",$ip)." ".$message;
 
 				fwrite($file,$message."\n");
 				fclose($file);
@@ -692,14 +695,14 @@ function dol_print_url($url,$target='_blank',$max=32)
 
 /**
  * \brief		Show EMail link
- * \param		email		EMail to show
+ * \param		email		EMail to show (only email without <Name of recipient>)
  * \param 		cid 		Id of contact if known
  * \param 		socid 		Id of third party if known
  * \param 		addlink		0=no link to create action
  * \param		max			Max number of characters to show
  * \return		string		HTML Link
  */
-function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64)
+function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1)
 {
 	global $conf,$user,$langs;
 
@@ -715,6 +718,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64)
 		$newemail.='">';
 		$newemail.=dol_trunc($email,$max);
 		$newemail.='</a>';
+		if ($showinvalid && ! isValidEmail($email)) $newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
 
 		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
 		{
@@ -799,6 +803,28 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 	}
 
 	return $newphone;
+}
+
+/**
+ *	\brief      Return true if email syntax is ok
+ *	\param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	\return     boolean     true if email syntax is OK, false if KO
+ */
+function isValidEmail($address)
+{
+	if (eregi(".*<(.+)>", $address, $regs)) {
+		$address = $regs[1];
+	}
+	// 2 letters domains extensions are for countries
+	// 3 letters domains extensions: biz|com|edu|gov|int|mil|net|org|pro|...
+	if (eregi("^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2,3}|asso|aero|coop|info|name)\$",$address))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
