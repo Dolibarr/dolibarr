@@ -565,15 +565,15 @@ class Ldap
 
 		if (! $olddn || $olddn != $dn)
 		{
-			// This case is not used for the moment
+			// If change we make is rename the key of LDAP record, we create new one and if ok, we delete old one.
 			$result = $this->add($dn, $info, $user);
 			if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn);	// If add fails, we do not try to delete old one
 		}
 		else
 		{
-			$result = $this->delete($olddn);
-			$result = $this->add($dn, $info, $user);
-			//$result = $this->modify($dn, $info, $user);	// TODO Must use modify instead of delete/add when olddn is received (for the moment olddn is dn)
+			//$result = $this->delete($olddn);
+			$result = $this->add($dn, $info, $user);	// If record has been deleted from LDAP, we recreate it. We ignore error if it already exists.
+			$result = $this->modify($dn, $info, $user);	// We use add/modify instead of delete/add when olddn is received
 		}
 		if ($result <= 0)
 		{

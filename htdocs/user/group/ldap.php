@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/user/group/ldap.php
-        \ingroup    ldap
-        \brief      Page fiche LDAP groupe
-        \version    $Id$
-*/
+ *       \file       htdocs/user/group/ldap.php
+ *       \ingroup    ldap
+ *       \brief      Page fiche LDAP groupe
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -60,14 +60,10 @@ if ($_GET["action"] == 'dolibarr2ldap')
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$oldobject=$fgroup;	// TODO Get oldobject
-
-	$oldinfo=$oldobject->_load_ldap_info();
-	$olddn=$oldobject->_load_ldap_dn($oldinfo);
-
 	$info=$fgroup->_load_ldap_info();
 	$dn=$fgroup->_load_ldap_dn($info);
-	$result=$ldap->add($dn,$info,$user);
+	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
 	$result=$ldap->update($dn,$info,$user,$olddn);
 
 	if ($result >= 0)
@@ -137,6 +133,7 @@ print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'
 print "</table>\n";
 
 print '</div>';
+
 
 if ($message) { print $message; }
 

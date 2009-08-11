@@ -233,7 +233,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$edituser = new User($db, $_GET["id"]);
 		$edituser->fetch();
 
-		//$edituser->oldpass_indatabase = $edituser->pass_indatabase;
+		$edituser->oldcopy=dol_clone($edituser);
 
 		$edituser->nom           = $_POST["nom"];
 		$edituser->prenom        = $_POST["prenom"];
@@ -263,7 +263,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 			}
 		}
 
-		if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='')
+		if ($ret >= 0 && ! sizeof($edituser->errors) && isset($_POST["password"]) && $_POST["password"] !='')
 		{
 			$ret=$edituser->setPassword($user,$_POST["password"]);
 			if ($ret < 0)
@@ -272,28 +272,32 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 			}
 		}
 
-		if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+		if ($ret >=0 && ! sizeof($edituser->errors))
 		{
-			// If photo is provided
-			if (! is_dir($conf->user->dir_output))
+			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
-				create_exdir($conf->user->dir_output);
-			}
-			if (is_dir($conf->user->dir_output))
-			{
-				$newfile=$conf->user->dir_output . "/" . $edituser->id . ".jpg";
-				if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
+				// If photo is provided
+				if (! is_dir($conf->user->dir_output))
 				{
-					$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+					create_exdir($conf->user->dir_output);
+				}
+				if (is_dir($conf->user->dir_output))
+				{
+					$newfile=$conf->user->dir_output . "/" . $edituser->id . ".jpg";
+					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
+					{
+						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+					}
 				}
 			}
 		}
 
-		if ($ret >= 0)
+		if ($ret >= 0 && ! sizeof($edituser->errors))
 		{
 			$message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
 			$db->commit();
-		} else
+		}
+		else
 		{
 			$db->rollback();
 		}

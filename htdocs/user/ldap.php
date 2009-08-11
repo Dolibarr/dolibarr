@@ -61,14 +61,10 @@ if ($_GET["action"] == 'dolibarr2ldap')
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$oldobject=$fuser;	// TODO Get oldobject
-
-	$oldinfo=$oldobject->_load_ldap_info();
-	$olddn=$oldobject->_load_ldap_dn($oldinfo);
-
 	$info=$fuser->_load_ldap_info();
 	$dn=$fuser->_load_ldap_dn($info);
-	$result=$ldap->add($dn,$info,$user);
+	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
 	$result=$ldap->update($dn,$info,$user,$olddn);
 
 	if ($result >= 0)
@@ -92,19 +88,11 @@ llxHeader();
 
 $form = new Form($db);
 
-
-/*
- * Affichage onglets
- */
 $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
 dol_fiche_head($head, 'ldap', $title, 0, 'user');
 
-
-/*
- * Fiche en mode visu
- */
 print '<table class="border" width="100%">';
 
 // Ref

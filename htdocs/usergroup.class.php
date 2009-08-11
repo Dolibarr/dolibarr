@@ -46,6 +46,8 @@ class UserGroup extends CommonObject
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
 
+	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+
 
 	/**
 	 *    \brief Constructeur de la classe
@@ -94,6 +96,8 @@ class UserGroup extends CommonObject
 
 				$this->next_prev_filter = 'entity IN (0,'.$conf->entity.')';
 
+				// Sav current LDAP Current DN
+				//$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);
 			}
 			$this->db->free($result);
 			return 1;
@@ -488,19 +492,21 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf, $langs;
 
+		$error=0;
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
 		$sql .= " nom = '".addslashes($this->nom)."',";
 		$sql .= " note = '".addslashes($this->note)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		$result = $this->db->query($sql);
-
-		if ($result)
+		dol_syslog("Usergroup::update sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			if ($this->db->affected_rows())
+			if ($this->db->affected_rows($resql))
 			{
 
-				if (! $notrigger)
+				if (!$error && ! $notrigger)
 				{
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");

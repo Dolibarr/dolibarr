@@ -209,6 +209,8 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 	// Create new object
 	if ($result > 0)
 	{
+		$adh->oldcopy=dol_clone($adh);
+
 		// Modifie valeures
 		$adh->prenom      = trim($_POST["prenom"]);
 		$adh->nom         = trim($_POST["nom"]);

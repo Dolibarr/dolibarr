@@ -96,6 +96,7 @@ class User extends CommonObject
 	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
 	var $tab_loaded=array();		// Tableau pour signaler les permissions deja chargees
 
+	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
 

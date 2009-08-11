@@ -32,6 +32,7 @@ For users:
 - New: Add log tab on emailing module.
 - New: Minor enhancements in look themes.
 - New: Add option to hide help in menu.
+- New: Added a "force LDAP synchronize" on member and contact cards.
 - Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
@@ -44,6 +45,7 @@ For users:
        new product lines.
 - Fix: CC and BCC in emails was not used if using SMTPS handler.
 - Fix: Last character was lost when text end with n or r.
+- Fix: LDAP synchronization is now more robust.
 
 For translators:
 - Update some language files.
@@ -61,6 +63,8 @@ For developers:
 - Better W3C standard.
 - Can add init data when enabling a module.
 - Can fix some corruptions in database by calling the update page with action=repair
+- Log files contains more information (PHP_SELD added and OS user used for log of 
+  command lines scripts) 
 
 
 ***** Changelog for 2.6 compared to 2.5 *****

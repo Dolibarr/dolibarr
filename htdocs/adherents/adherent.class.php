@@ -96,12 +96,12 @@ class Adherent extends CommonObject
 	//  var $public;
 	var $array_options;
 
+	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
 	/**
-	 \brief Adherent
-	 \param DB		base de donnees
-	 \param id		id de l'adherent
+	 *	\brief Adherent
+	 *	\param DB		base de donnees
 	 */
 	function Adherent($DB)
 	{

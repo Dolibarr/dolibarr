@@ -65,6 +65,8 @@ class Contact extends CommonObject
 	var $user_id;
 	var $user_login;
 
+	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+
 
 	/**
 	 *      \brief      Constructeur de l'objet contact
@@ -375,7 +377,7 @@ class Contact extends CommonObject
 	/*
 	 *    \brief      Charge l'objet contact
 	 *    \param      id          id du contact
-	 *    \param      user        Utilisateur lie au contact pour une alerte
+	 *    \param      user        Utilisateur abonnes aux alertes si on veut les alertes de ce contact
 	 *    \return     int         -1 if KO, 0 if OK but not found, 1 if OK
 	 */
 	function fetch($id, $user=0)
@@ -442,7 +444,7 @@ class Contact extends CommonObject
 				$this->user_id        = $obj->user_id;
 				$this->user_login     = $obj->user_login;
 
-				// Recherche le user Dolibarr li� � ce contact
+				// Recherche le user Dolibarr lie a ce contact
 				$sql = "SELECT u.rowid ";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE u.fk_socpeople = ". $this->id;

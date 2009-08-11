@@ -135,10 +135,8 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
-				$oldobject=$object;	// TODO Get oldobject
-
-        		$oldinfo=$oldobject->_load_ldap_info();
-        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+        		$oldinfo=$object->oldcopy->_load_ldap_info();
+        		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
         		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
@@ -205,10 +203,8 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
-				$oldobject=$object;	// TODO Get oldobject
-
-        		$oldinfo=$oldobject->_load_ldap_info();
-        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+        		$oldinfo=$object->oldcopy->_load_ldap_info();
+        		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
         		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
@@ -268,10 +264,8 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
-				$oldobject=$object;	// TODO Get oldobject
-
-        		$oldinfo=$oldobject->_load_ldap_info();
-        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+        		$oldinfo=$object->oldcopy->_load_ldap_info();
+        		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
@@ -384,10 +378,8 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
-				$oldobject=$object;	// TODO Get oldobject
-
-        		$oldinfo=$oldobject->_load_ldap_info();
-        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+        		$oldinfo=$object->oldcopy->_load_ldap_info();
+        		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
         		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);

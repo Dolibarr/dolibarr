@@ -94,7 +94,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 	}
 	else if (empty($conf->global->LDAP_SERVER_HOST))
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans('SetupNotComplete').'">'.$butlabel.'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	}
 	else if (empty($key) || empty($dn) || empty($objectclass))
 	{

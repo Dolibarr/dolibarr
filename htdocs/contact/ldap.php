@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/contact/ldap.php
-        \ingroup    ldap
-        \brief      Page fiche LDAP contact
-        \version    $Id$
-*/
+ *       \file       htdocs/contact/ldap.php
+ *       \ingroup    ldap
+ *       \brief      Page fiche LDAP contact
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -43,11 +43,41 @@ $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 
 
+/*
+ * Actions
+ */
+
+if ($_GET["action"] == 'dolibarr2ldap')
+{
+	$message="";
+
+	$db->begin();
+
+	$ldap=new Ldap();
+	$result=$ldap->connect_bind();
+
+	$info=$contact->_load_ldap_info();
+	$dn=$contact->_load_ldap_dn($info);
+	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
+	$result=$ldap->update($dn,$info,$user,$olddn);
+
+	if ($result >= 0)
+	{
+		$message.='<div class="ok">'.$langs->trans("ContactSynchronized").'</div>';
+		$db->commit();
+	}
+	else
+	{
+		$message.='<div class="error">'.$ldap->error.'</div>';
+		$db->rollback();
+	}
+}
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader();
 
@@ -72,16 +102,16 @@ print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstn
 // Company
 if ($contact->socid > 0)
 {
-    $objsoc = new Societe($db);
-    $objsoc->fetch($contact->socid);
+	$objsoc = new Societe($db);
+	$objsoc->fetch($contact->socid);
 
-    print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+	print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
 }
 else
 {
-    print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">';
-    print $langs->trans("ContactNotLinkedToCompany");
-    print '</td></tr>';
+	print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">';
+	print $langs->trans("ContactNotLinkedToCompany");
+	print '</td></tr>';
 }
 
 // Civility
@@ -104,7 +134,25 @@ print '</table>';
 
 print '</div>';
 
-print '<br>';
+
+if ($message) { print $message; }
+
+
+/*
+ * Barre d'actions
+ */
+
+print '<div class="tabsAction">';
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+{
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$contact->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+}
+
+print "</div>\n";
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
+
 
 
 // Affichage attributs LDAP

@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/adherents/ldap.php
-        \ingroup    ldap
-        \brief      Page fiche LDAP adherent
-        \version    $Id$
-*/
+ *       \file       htdocs/adherents/ldap.php
+ *       \ingroup    ldap
+ *       \brief      Page fiche LDAP adherent
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
@@ -64,7 +64,36 @@ if (! $result)
 }
 
 
+/*
+ * Actions
+ */
 
+if ($_GET["action"] == 'dolibarr2ldap')
+{
+	$message="";
+
+	$db->begin();
+
+	$ldap=new Ldap();
+	$result=$ldap->connect_bind();
+
+	$info=$adh->_load_ldap_info();
+	$dn=$adh->_load_ldap_dn($info);
+	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
+	$result=$ldap->update($dn,$info,$user,$olddn);
+
+	if ($result >= 0)
+	{
+		$message.='<div class="ok">'.$langs->trans("MemberSynchronized").'</div>';
+		$db->commit();
+	}
+	else
+	{
+		$message.='<div class="error">'.$ldap->error.'</div>';
+		$db->rollback();
+	}
+}
 
 
 
@@ -138,7 +167,24 @@ print '</table>';
 
 print '</div>';
 
-print '<br>';
+
+if ($message) { print $message; }
+
+
+/*
+ * Barre d'actions
+ */
+
+print '<div class="tabsAction">';
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+{
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$adh->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+}
+
+print "</div>\n";
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 
 
 

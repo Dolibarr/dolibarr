@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -34,6 +34,27 @@
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
+
+
+/**
+ *	\brief          Create a clone of instance of object (new instance with same properties)
+ * 					This function works for both PHP4 and PHP5
+ * 	\param			object		Object to clone
+ *	\return         date		Timestamp
+ */
+function dol_clone($object)
+{
+	dol_syslog("Functions.lib::dol_clone Clone object");
+
+	// We create dynamically a clone function, making a =
+	if (version_compare(phpversion(), '5.0') < 0 && ! function_exists('clone'))
+	{
+		eval('function clone($object){return($object);}');
+	}
+	$myclone=clone($object);
+	return $myclone;
+}
+
 
 /**
  *	\brief          Return date for now

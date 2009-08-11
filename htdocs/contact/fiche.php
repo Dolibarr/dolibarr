@@ -144,6 +144,9 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
 {
 	$contact = new Contact($db);
+	$contact->fetch($_POST["contactid"]);
+
+	$contact->oldcopy=dol_clone($contact);
 
 	$contact->old_name      = $_POST["old_name"];
 	$contact->old_firstname = $_POST["old_firstname"];

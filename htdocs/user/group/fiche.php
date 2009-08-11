@@ -136,7 +136,8 @@ if ($_GET["action"] == 'removeuser')
 
 if ($_POST["action"] == 'update')
 {
-	if($caneditperms){
+	if($caneditperms)
+	{
 		$message="";
 
 		$db->begin();
@@ -144,34 +145,40 @@ if ($_POST["action"] == 'update')
 		$editgroup = new Usergroup($db, $_GET["id"]);
 		$editgroup->fetch($_GET["id"]);
 
+		$editgroup->oldcopy=dol_clone($editgroup);
+
 		$editgroup->nom           = trim($_POST["group"]);
 		$editgroup->note          = dol_htmlcleanlastbr($_POST["note"]);
 
 		$ret=$editgroup->update();
 
-		if ($ret >= 0) {
+		if ($ret >= 0 && ! sizeof($editgroup->errors))
+		{
 			$message.='<div class="ok">'.$langs->trans("GroupModified").'</div>';
 			$db->commit();
-		} else {
-			$message.='<div class="error">'.$editgroup->error.'</div>';
-			$db->rollback;
 		}
-	}else{
+		else
+		{
+			$message.='<div class="error">'.$editgroup->error.'</div>';
+			$db->rollback();
+		}
+	}
+	else
+	{
 		$message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
 	}
 }
 
 
+
+/*
+ * View
+ */
+
 llxHeader('',$langs->trans("GroupCard"));
 
 $html = new Form($db);
 
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Affichage fiche en mode cr�ation                                           */
-/*                                                                            */
-/* ************************************************************************** */
 
 if ($action == 'create')
 {

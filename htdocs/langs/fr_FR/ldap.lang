@@ -24,5 +24,7 @@ LDAPFieldLastSubscriptionAmount=Montant dernière adhésion
 SynchronizeDolibarr2Ldap=Synchroniser utilisateur (Dolibarr -> LDAP)
 UserSynchronized=Utilisateur synchronisé
 GroupSynchronized=Groupe synchronisé
+MemberSynchronized=Adhérent synchronisé
+ContactSynchronized=Contact synchronizé
 ForceSynchronize=Forcer synchro Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Echec de la lecture de l'annuaire LDAP. Vérifier la configuration du module LDAP et l'accessibilité de l'annuaire.
