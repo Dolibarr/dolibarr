@@ -45,7 +45,7 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_POST["action"] == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-    dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",trim($_POST["BANK_CHEQUERECEIPT_FREE_TEXT"]),'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$_POST["BANK_CHEQUERECEIPT_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
 
 
@@ -77,7 +77,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnChequeReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="BANK_CHEQUERECEIPT_FREE_TEXT" class="flat" cols="100">'.$conf->global->BANK_CHEQUERECEIPT_FREE_TEXT.'</textarea>';
+print '<textarea name="BANK_CHEQUERECEIPT_FREE_TEXT" class="flat" cols="120">'.$conf->global->BANK_CHEQUERECEIPT_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

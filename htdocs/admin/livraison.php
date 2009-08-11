@@ -104,7 +104,7 @@ if ($_GET["action"] == 'del')
     $sql.= " WHERE nom = '".$_GET["value"];
     $sql.= " AND type = '".$type."'";
     $sql.= " AND entity = ".$conf->entity;
-    
+
     if ($db->query($sql))
     {
 
@@ -141,7 +141,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_POST["action"] == 'set_DELIVERY_FREE_TEXT')
 {
-    dolibarr_set_const($db, "DELIVERY_FREE_TEXT",trim($_POST["DELIVERY_FREE_TEXT"]),'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$_POST["DELIVERY_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'setmod')
@@ -424,7 +424,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnDeliveryReceipts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="DELIVERY_FREE_TEXT" class="flat" cols="100">'.$conf->global->DELIVERY_FREE_TEXT.'</textarea>';
+print '<textarea name="DELIVERY_FREE_TEXT" class="flat" cols="120">'.$conf->global->DELIVERY_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

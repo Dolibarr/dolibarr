@@ -154,7 +154,7 @@ if ($_POST["action"] == 'set_COMMANDE_DRAFT_WATERMARK')
 
 if ($_POST["action"] == 'set_COMMANDE_FREE_TEXT')
 {
-	dolibarr_set_const($db, "COMMANDE_FREE_TEXT",trim($_POST["COMMANDE_FREE_TEXT"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "COMMANDE_FREE_TEXT",$_POST["COMMANDE_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setvalidorder')
@@ -466,7 +466,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_COMMANDE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="COMMANDE_FREE_TEXT" class="flat" cols="100">'.$conf->global->COMMANDE_FREE_TEXT.'</textarea>';
+print '<textarea name="COMMANDE_FREE_TEXT" class="flat" cols="120">'.$conf->global->COMMANDE_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
