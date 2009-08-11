@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
     	\file       htdocs/admin/ldap_groups.php
 		\ingroup    ldap
@@ -43,7 +43,7 @@ if (!$user->admin)
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
@@ -51,7 +51,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',$_POST["group"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"],'chaine',0,'',$conf->entity)) $error++;
@@ -202,8 +202,9 @@ if (function_exists("ldap_connect"))
 			$info=$object->_load_ldap_info();
 			$dn=$object->_load_ldap_dn($info);
 
-			$result2=$ldap->update($dn,$info,$user);
-			$result3=$ldap->delete($dn);
+			$result1=$ldap->delete($dn);			// To be sure to delete existing records
+			$result2=$ldap->add($dn,$info,$user);	// Now the test
+			$result3=$ldap->delete($dn);			// Clean what we did
 
 			if ($result2 > 0)
 			{

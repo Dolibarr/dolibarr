@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
     	\file       htdocs/admin/ldap_users.php
 		\ingroup    ldap
@@ -43,7 +43,7 @@ if (!$user->admin)
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
@@ -51,7 +51,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',$_POST["filterconnection"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"],'chaine',0,'',$conf->entity)) $error++;
@@ -102,7 +102,7 @@ print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-   
+
 $html=new Form($db);
 
 print '<table class="noborder" width="100%">';
@@ -286,7 +286,7 @@ if (function_exists("ldap_connect"))
 		$object->initAsSpecimen();
 
 		// TODO Mutualize code following with other ldap_xxxx.php pages
-		
+
 		// Test synchro
 		$ldap=new Ldap();
 		$result=$ldap->connect_bind();
@@ -296,8 +296,9 @@ if (function_exists("ldap_connect"))
 			$info=$object->_load_ldap_info();
 			$dn=$object->_load_ldap_dn($info);
 
-			$result2=$ldap->update($dn,$info,$user);
-			$result3=$ldap->delete($dn);
+			$result1=$ldap->delete($dn);			// To be sure to delete existing records
+			$result2=$ldap->add($dn,$info,$user);	// Now the test
+			$result3=$ldap->delete($dn);			// Clean what we did
 
 			if ($result2 > 0)
 			{

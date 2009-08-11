@@ -135,10 +135,15 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
-				$info=$object->_load_ldap_info();
+				$oldobject=$object;	// TODO Get oldobject
+
+        		$oldinfo=$oldobject->_load_ldap_info();
+        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+        		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP"." ".$ldap->error;
@@ -200,10 +205,15 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
-				$info=$object->_load_ldap_info();
+				$oldobject=$object;	// TODO Get oldobject
+
+        		$oldinfo=$oldobject->_load_ldap_info();
+        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+        		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP"." ".$ldap->error;
@@ -258,10 +268,15 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
+				$oldobject=$object;	// TODO Get oldobject
+
+        		$oldinfo=$oldobject->_load_ldap_info();
+        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP"." ".$ldap->error;
@@ -320,10 +335,15 @@ class InterfaceLdapsynchro
 					$ldap=new Ldap();
 	        		$ldap->connect_bind();
 
-					$info=$object->_load_ldap_info();
+					$oldobject=$object;	// TODO Get oldobject
+
+	        		$oldinfo=$oldobject->_load_ldap_info();
+	        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+	        		$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
-		    	    $result=$ldap->update($dn,$info,$user);
+		    	    $result=$ldap->update($dn,$info,$user,$olddn);
 					if ($result < 0)
 					{
 						$this->error="ErrorLDAP"." ".$ldap->error;
@@ -347,10 +367,15 @@ class InterfaceLdapsynchro
 					$ldap=new Ldap();
 	        		$ldap->connect_bind();
 
-					$info=$object->_load_ldap_info();
+					$oldobject=$object;	// TODO Get oldobject
+
+	        		$oldinfo=$oldobject->_load_ldap_info();
+	        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+	        		$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
-		    	    $result=$ldap->update($dn,$info,$user);
+		    	    $result=$ldap->update($dn,$info,$user,$olddn);
 					if ($result < 0)
 					{
 						$this->error="ErrorLDAP"." ".$ldap->error;
@@ -367,10 +392,15 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
-				$info=$object->_load_ldap_info();
+				$oldobject=$object;	// TODO Get oldobject
+
+        		$oldinfo=$oldobject->_load_ldap_info();
+        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+        		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP"." ".$ldap->error;
@@ -412,10 +442,15 @@ class InterfaceLdapsynchro
 					$ldap=new Ldap();
 	        		$ldap->connect_bind();
 
-					$info=$object->_load_ldap_info();
+					$oldobject=$object;	// TODO Get oldobject
+
+	        		$oldinfo=$oldobject->_load_ldap_info();
+	        		$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+	        		$info=$object->_load_ldap_info();
 					$dn=$object->_load_ldap_dn($info);
 
-		    	    $result=$ldap->update($dn,$info,$user);
+		    	    $result=$ldap->update($dn,$info,$user,$olddn);
 					if ($result < 0)
 					{
 						$this->error="ErrorLDAP"." ".$ldap->error;

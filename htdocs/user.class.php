@@ -1414,11 +1414,11 @@ class User extends CommonObject
 
 		if ($result)
 		{
-	  return 0;
+	  		return 0;
 		}
 		else
 		{
-	  print $this->db->error();
+	  		print $this->db->error();
 		}
 	}
 
@@ -1566,8 +1566,8 @@ class User extends CommonObject
 	/**
 	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *	\param		info		Info string loaded by _load_ldap_info
-	 *	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *							1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	\param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *							1=
 	 *							2=Return key only (uid=qqq)
 	 *	\return		string		DN
 	 */
@@ -1580,6 +1580,11 @@ class User extends CommonObject
 		if ($mode==2) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS];
 		return $dn;
 	}
+
+	/**
+	 *	\brief		Initialise tableau info (tableau des attributs LDAP)
+	 *	\return		array		Tableau info des attributs
+	 */
 
 
 	/**

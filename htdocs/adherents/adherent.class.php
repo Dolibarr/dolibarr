@@ -21,15 +21,10 @@
  */
 
 /**
- \file       htdocs/adherents/adherent.class.php
- \ingroup    adherent
- \brief      Fichier de la classe permettant la gestion d'un adherent
- \author     Rodolphe Qiedeville
- \author	    Jean-Louis Bergamo
- \author	    Laurent Destailleur
- \author     Sebastien Di Cintio
- \author     Benoit Mortier
- \version    $Id$
+ *	\file       htdocs/adherents/adherent.class.php
+ *	\ingroup    adherent
+ *	\brief      Fichier de la classe permettant la gestion d'un adherent
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -1923,8 +1918,8 @@ class Adherent extends CommonObject
 	/**
 	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *	\param		info		Info string loaded by _load_ldap_info
-	 *	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *							1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	\param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *							1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *							2=Return key only (uid=qqq)
 	 *	\return		string		DN
 	 */

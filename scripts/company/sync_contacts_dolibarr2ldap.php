@@ -86,10 +86,16 @@ if ($resql)
 
 		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->getFullName($langs);
 
+		$oldobject=$contact;
+
+	    $oldinfo=$oldobject->_load_ldap_info();
+	    $olddn=$oldobject->_load_ldap_dn($oldinfo);
+
 		$info=$contact->_load_ldap_info();
 		$dn=$contact->_load_ldap_dn($info);
 
-		$result=$ldap->update($dn,$info,$user);
+		$result=$ldap->add($dn,$info,$user);	// Wil fail if already exists
+		$result=$ldap->update($dn,$info,$user,$olddn);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");

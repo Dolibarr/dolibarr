@@ -137,11 +137,13 @@ class Contact extends CommonObject
 	 *      \param      id          	Id du contact a mettre a jour
 	 *      \param      user        	Objet utilisateur qui effectue la mise a jour
 	 *      \param      notrigger	    0=non, 1=oui
-	 *      \return     int         	<0 si erreur, >0 si ok
+	 *      \return     int         	<0 if KO, >0 if OK
 	 */
 	function update($id, $user=0, $notrigger=0)
 	{
 		global $conf, $langs;
+
+		$error=0;
 
 		$this->id = $id;
 
@@ -154,6 +156,8 @@ class Contact extends CommonObject
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->fax=trim($this->fax);
+
+		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".addslashes($this->socid)."',";
@@ -179,32 +183,45 @@ class Contact extends CommonObject
 
 		dol_syslog("Contact::update sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if (! $result)
+		if ($result)
 		{
+			if (! $error && ! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('CONTACT_MODIFY',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -$error;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+
 			$this->error=$this->db->lasterror().' sql='.$sql;
 			dol_syslog("Contact::update Error ".$this->error,LOG_ERR);
 			return -1;
 		}
-
-		if (! $notrigger)
-		{
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTACT_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-		}
-
-		return 1;
 	}
 
 
 	/**
 	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *	\param		info		Info string loaded by _load_ldap_info
-	 *	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *							1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	\param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *							1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *							2=Return key only (uid=qqq)
 	 *	\return		string		DN
 	 */

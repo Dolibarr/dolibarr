@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
     	\file       htdocs/admin/ldap_contacts.php
 		\ingroup    ldap
@@ -50,7 +50,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contactdn"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"],'chaine',0,'',$conf->entity)) $error++;
@@ -64,7 +64,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_ZIP',$_POST["fieldzip"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_TOWN',$_POST["fieldtown"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_COUNTRY',$_POST["fieldcountry"],'chaine',0,'',$conf->entity)) $error++;
-	
+
 	if ($error)
 	{
 		dol_print_error($db->error());
@@ -107,7 +107,7 @@ $var=true;
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
-   
+
 
 // DN Pour les contacts
 $var=!$var;
@@ -280,8 +280,9 @@ if (function_exists("ldap_connect"))
 			$info=$object->_load_ldap_info();
 			$dn=$object->_load_ldap_dn($info);
 
-			$result2=$ldap->update($dn,$info,$user);
-			$result3=$ldap->delete($dn);
+			$result1=$ldap->delete($dn);			// To be sure to delete existing records
+			$result2=$ldap->add($dn,$info,$user);	// Now the test
+			$result3=$ldap->delete($dn);			// Clean what we did
 
 			if ($result2 > 0)
 			{

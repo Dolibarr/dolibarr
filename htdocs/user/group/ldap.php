@@ -42,33 +42,62 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-
-
-/*
- *	Affichage page
- */
-
-llxHeader();
-
-$form = new Form($db);
-
 $fgroup = new Usergroup($db, $_GET["id"]);
 $fgroup->fetch($_GET["id"]);
 $fgroup->getrights();
 
 
 /*
- * Affichage onglets
+ * Actions
  */
-$head = group_prepare_head($fgroup);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Group"));
+if ($_GET["action"] == 'dolibarr2ldap')
+{
+	$message="";
+
+	$db->begin();
+
+	$ldap=new Ldap();
+	$result=$ldap->connect_bind();
+
+	$oldobject=$fgroup;	// TODO Get oldobject
+
+	$oldinfo=$oldobject->_load_ldap_info();
+	$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+	$info=$fgroup->_load_ldap_info();
+	$dn=$fgroup->_load_ldap_dn($info);
+	$result=$ldap->add($dn,$info,$user);
+	$result=$ldap->update($dn,$info,$user,$olddn);
+
+	if ($result >= 0)
+	{
+		$message.='<div class="ok">'.$langs->trans("GroupSynchronized").'</div>';
+		$db->commit();
+	}
+	else
+	{
+		$message.='<div class="error">'.$ldap->error.'</div>';
+		$db->rollback();
+	}
+}
+
 
 
 
 /*
- * Fiche en mode visu
+ *	View
  */
+
+llxHeader();
+
+$form = new Form($db);
+
+
+$head = group_prepare_head($fgroup);
+
+dol_fiche_head($head, 'ldap', $langs->trans("Group"));
+
 print '<table class="border" width="100%">';
 
 // Ref
@@ -97,7 +126,7 @@ $langs->load("admin");
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPGroupDn").'</td><td class="valeur">'.$conf->global->LDAP_GROUP_DN."</td></tr>\n";
 
-// LDAP Clé
+// LDAP Cle
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_GROUPS."</td></tr>\n";
 
 // LDAP Server
@@ -109,12 +138,29 @@ print "</table>\n";
 
 print '</div>';
 
-print '<br>';
+if ($message) { print $message; }
 
 
-print_titre($langs->trans("LDAPInformationsForThisGroup"));
+/*
+ * Barre d'actions
+ */
+
+print '<div class="tabsAction">';
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+{
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fgroup->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+}
+
+print "</div>\n";
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
+
+
 
 // Affichage attributs LDAP
+print_titre($langs->trans("LDAPInformationsForThisGroup"));
+
 print '<table width="100%" class="noborder">';
 
 print '<tr class="liste_titre">';

@@ -61,9 +61,15 @@ if ($_GET["action"] == 'dolibarr2ldap')
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
+	$oldobject=$fuser;	// TODO Get oldobject
+
+	$oldinfo=$oldobject->_load_ldap_info();
+	$olddn=$oldobject->_load_ldap_dn($oldinfo);
+
 	$info=$fuser->_load_ldap_info();
 	$dn=$fuser->_load_ldap_dn($info);
-    $result=$ldap->update($dn,$info,$user);	// Marche en creation LDAP et mise a jour
+	$result=$ldap->add($dn,$info,$user);
+	$result=$ldap->update($dn,$info,$user,$olddn);
 
 	if ($result >= 0)
 	{
@@ -146,7 +152,7 @@ if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPUserDn").'</td><td class="valeur">'.$conf->global->LDAP_USER_DN."</td></tr>\n";
 
-// LDAP Cl�
+// LDAP Cle
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_USERS."</td></tr>\n";
 
 // LDAP Server

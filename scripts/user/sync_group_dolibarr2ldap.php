@@ -28,7 +28,7 @@
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -37,7 +37,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-    print "Usage: $script_file now\n";   
+    print "Usage: $script_file now\n";
     exit;
 }
 $now=$argv[1];
@@ -59,7 +59,7 @@ print "***** $script_file ($version) *****\n";
 if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
 {
 	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit 1;	
+	exit 1;
 }
 */
 
@@ -74,7 +74,7 @@ if ($resql)
 
 	$ldap=new Ldap();
 	$ldap->connect_bind();
-	
+
 	while ($i < $num)
 	{
 		$ldap->error="";
@@ -84,13 +84,19 @@ if ($resql)
 		$fgroup = new UserGroup($db);
 		$fgroup->id = $obj->rowid;
 		$fgroup->fetch($fgroup->id);
-		
+
 		print $langs->trans("UpdateGroup")." rowid=".$fgroup->id." ".$fgroup->nom;
 
-		$info=$fgroup->_load_ldap_info();
+		$oldobject=$fgroup;
+
+	    $oldinfo=$oldobject->_load_ldap_info();
+	    $olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+	    $info=$fgroup->_load_ldap_info();
 		$dn=$fgroup->_load_ldap_dn($info);
-		
-		$result=$ldap->update($dn,$info,$user);
+
+		$result=$ldap->add($dn,$info,$user);	// Wil fail if already exists
+		$result=$ldap->update($dn,$info,$user,$olddn);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");

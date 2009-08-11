@@ -144,8 +144,8 @@ if ($_POST["action"] == 'update')
 		$editgroup = new Usergroup($db, $_GET["id"]);
 		$editgroup->fetch($_GET["id"]);
 
-		$editgroup->nom           = $_POST["group"];
-		$editgroup->note          = $_POST["note"];
+		$editgroup->nom           = trim($_POST["group"]);
+		$editgroup->note          = dol_htmlcleanlastbr($_POST["note"]);
 
 		$ret=$editgroup->update();
 

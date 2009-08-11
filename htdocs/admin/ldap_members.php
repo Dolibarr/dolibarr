@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
     	\file       htdocs/admin/ldap_members.php
 		\ingroup    ldap adherent
@@ -43,12 +43,12 @@ if (!$user->admin)
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
 	$error=0;
 	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS',$_POST["key"],'chaine',0,'',$conf->entity)) $error++;
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_DN',$_POST["user"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
 	// Members
@@ -394,8 +394,9 @@ if (function_exists("ldap_connect"))
 			$info=$object->_load_ldap_info();
 			$dn=$object->_load_ldap_dn($info);
 
-			$result2=$ldap->update($dn,$info,$user);
-			$result3=$ldap->delete($dn);
+			$result1=$ldap->delete($dn);			// To be sure to delete existing records
+			$result2=$ldap->add($dn,$info,$user);	// Now the test
+			$result3=$ldap->delete($dn);			// Clean what we did
 
 			if ($result2 > 0)
 			{
@@ -419,7 +420,7 @@ if (function_exists("ldap_connect"))
 			print '</font><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
 		}
-		
+
 		print "<br>\n";
 		print "LDAP input file used for test:<br><br>\n";
 		print nl2br($ldap->dump_content($dn,$info));

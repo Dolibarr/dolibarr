@@ -28,7 +28,7 @@
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -37,7 +37,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-    print "Usage: $script_file now\n";   
+    print "Usage: $script_file now\n";
     exit;
 }
 $now=$argv[1];
@@ -59,7 +59,7 @@ print "***** $script_file ($version) *****\n";
 if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
 {
 	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit 1;	
+	exit 1;
 }
 */
 
@@ -84,13 +84,19 @@ if ($resql)
 		$fuser = new User($db);
 		$fuser->id = $obj->rowid;
 		$fuser->fetch();
-		
+
 		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
 
-		$info=$fuser->_load_ldap_info();
+		$oldobject=$fuser;
+
+	    $oldinfo=$oldobject->_load_ldap_info();
+	    $olddn=$oldobject->_load_ldap_dn($oldinfo);
+
+	    $info=$fuser->_load_ldap_info();
 		$dn=$fuser->_load_ldap_dn($info);
 
-		$result=$ldap->update($dn,$info,$user);
+		$result=$ldap->add($dn,$info,$user);	// Wil fail if already exists
+		$result=$ldap->update($dn,$info,$user,$olddn);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");

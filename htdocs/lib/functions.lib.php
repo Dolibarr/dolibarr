@@ -2620,11 +2620,11 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 }
 
 /**
- \brief		Check if a string is a correct iso string
- If not, it will we considered not HTML encoded even if it is by FPDF.
- \remarks	Example, if string contains euro symbol that has ascii code 128.
- \param		s		String to check
- \return	int		0 if bad iso, 1 if good iso
+ *	\brief		Check if a string is a correct iso string
+ *				If not, it will we considered not HTML encoded even if it is by FPDF.
+ *	\remarks	Example, if string contains euro symbol that has ascii code 128.
+ *	\param		s		String to check
+ *	\return	int		0 if bad iso, 1 if good iso
  */
 function dol_string_is_good_iso($s)
 {

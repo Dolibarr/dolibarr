@@ -388,50 +388,6 @@ class Ldap
 	}
 
 
-	/**
-	 *   \brief      Mise à jour dans l'arbre LDAP
-	 *   \param      dn			DN
-	 *   \param      info		Tableau info
-	 *   \param    	user		Objet user qui fait l'opération
-	 *	\return		int			<0 si ko, >0 si ok
-	 *	\remarks	Ldap object connect and bind must have been done
-	 */
-	function update($dn,$info,$user,$olddn='')
-	{
-		global $conf, $langs;
-
-		if (! $this->connection)
-		{
-			$this->error=$langs->trans("NotConnected");
-			return -2;
-		}
-		if (! $this->bind)
-		{
-			$this->error=$langs->trans("NotConnected");
-			return -3;
-		}
-
-		if (! $olddn) $olddn=$dn;
-
-		dol_syslog("Ldap::update dn=".$dn." olddn=".$olddn);
-
-		// On supprime et on insère
-		$result = $this->delete($olddn);
-		$result = $this->add($dn, $info, $user);
-		if ($result <= 0)
-		{
-			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection)." ".$this->error;
-			dol_syslog("Ldap::update ".$this->error,LOG_ERR);
-			//print_r($info);
-			return -1;
-		}
-		else
-		{
-			dol_syslog("Ldap::update done successfully");
-			return 1;
-		}
-	}
-
 
 	/**
 	 * 		\brief		Checks a username and password - does this by logging on to the
@@ -482,14 +438,27 @@ class Ldap
 	 * 	\brief		Add a LDAP entry
 	 *	\param		dn			DN entry key
 	 *	\param		info		Attributes array
-	 *	\param		user		Objet utilisateru qui crée
-	 *	\return		int			<0 si KO, >0 si OK
+	 *	\param		user		Objet user that create
+	 *	\return		int			<0 if KO, >0 if OK
+	 *	\remarks	Ldap object connect and bind must have been done
 	 */
 	function add($dn, $info, $user)
 	{
 		global $conf;
 
 		dol_syslog("Ldap::add dn=".$dn." info=".join(',',$info));
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
 
 		// Encode to LDAP page code
 		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
@@ -517,15 +486,133 @@ class Ldap
 	}
 
 	/**
+	 * 	\brief		Modify a LDAP entry
+	 *	\param		dn			DN entry key
+	 *	\param		info		Attributes array
+	 *	\param		user		Objet user that modify
+	 *	\return		int			<0 if KO, >0 if OK
+	 *	\remarks	Ldap object connect and bind must have been done
+	 */
+	function modify($dn, $info, $user)
+	{
+		global $conf;
+
+		dol_syslog("Ldap::modify dn=".$dn." info=".join(',',$info));
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
+
+		// Encode to LDAP page code
+		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
+		foreach($info as $key => $val)
+		{
+			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val,$this->ldapcharset);
+		}
+
+		$this->dump($dn,$info);
+
+		//print_r($info);
+		$result=@ldap_modify($this->connection, $dn, $info);
+
+		if ($result)
+		{
+			dol_syslog("Ldap::modify successfull", LOG_DEBUG);
+			return 1;
+		}
+		else
+		{
+			$this->error=@ldap_error($this->connection);
+			dol_syslog("Ldap::modify failed: ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+	/**
+	 *  \brief      Modify a LDAP entry (to use if dn != olddn)
+	 *  \param      dn			DN entry key
+	 *  \param      info		Attributes array
+	 *  \param    	user		Objet user that delete
+	 * 	\param		olddn		Old DN entry key (before update)
+	 *	\return		int			<0 if KO, >0 if OK
+	 *	\remarks	Ldap object connect and bind must have been done
+	 */
+	function update($dn,$info,$user,$olddn)
+	{
+		global $conf;
+
+		dol_syslog("Ldap::update dn=".$dn." olddn=".$olddn);
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
+
+		if (! $olddn || $olddn != $dn)
+		{
+			// This case is not used for the moment
+			$result = $this->add($dn, $info, $user);
+			if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn);	// If add fails, we do not try to delete old one
+		}
+		else
+		{
+			$result = $this->delete($olddn);
+			$result = $this->add($dn, $info, $user);
+			//$result = $this->modify($dn, $info, $user);	// TODO Must use modify instead of delete/add when olddn is received (for the moment olddn is dn)
+		}
+		if ($result <= 0)
+		{
+			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection)." ".$this->error;
+			dol_syslog("Ldap::update ".$this->error,LOG_ERR);
+			//print_r($info);
+			return -1;
+		}
+		else
+		{
+			dol_syslog("Ldap::update done successfully");
+			return 1;
+		}
+	}
+
+
+	/**
 	 * 	\brief		Delete a LDAP entry
 	 *	\param		dn			DN entry key
 	 *	\return		int			<0 si KO, >0 si OK
+	 *	\remarks	Ldap object connect and bind must have been done
 	 */
 	function delete($dn)
 	{
 		global $conf;
 
 		dol_syslog("Ldap::delete Delete LDAP entry dn=".$dn);
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
 
 		// Encode to LDAP page code
 		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
@@ -1101,32 +1188,32 @@ class Ldap
 
 
 	/**
-     *  \brief      Convert a string into output/memory charset
-     *  \param      str            	String to convert
-     *  \param		pagecodefrom	Page code of src string
-     *  \return     string         	Converted string
-     */
-    function convToOutputCharset($str,$pagecodefrom='UTF-8')
-    {
-    	global $conf;
-    	if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_encode($str);
+	 *  \brief      Convert a string into output/memory charset
+	 *  \param      str            	String to convert
+	 *  \param		pagecodefrom	Page code of src string
+	 *  \return     string         	Converted string
+	 */
+	function convToOutputCharset($str,$pagecodefrom='UTF-8')
+	{
+		global $conf;
+		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_encode($str);
 		if ($pagecodefrom == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')  $str=utf8_decode($str);
 		return $str;
-    }
+	}
 
 	/**
-     *  \brief      Convert a string from output/memory charset
-     *  \param      str            	String to convert
-     *  \param		pagecodeto		Page code for result string
-     *  \return     string         	Converted string
-     */
-    function convFromOutputCharset($str,$pagecodeto='UTF-8')
-    {
-    	global $conf;
-    	if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_decode($str);
+	 *  \brief      Convert a string from output/memory charset
+	 *  \param      str            	String to convert
+	 *  \param		pagecodeto		Page code for result string
+	 *  \return     string         	Converted string
+	 */
+	function convFromOutputCharset($str,$pagecodeto='UTF-8')
+	{
+		global $conf;
+		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_decode($str);
 		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')	$str=utf8_encode($str);
 		return $str;
-    }
+	}
 }
 
 

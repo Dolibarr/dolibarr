@@ -45,16 +45,6 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-
-/*
- *	Affichage page
- */
-
-llxHeader();
-
-$html = new Form($db);
-
-
 $adh = new Adherent($db);
 $adh->id = $rowid;
 $result=$adh->fetch($rowid);
@@ -75,17 +65,22 @@ if (! $result)
 
 
 
+
+
+
 /*
- * Affichage onglets
+ *	View
  */
+
+llxHeader();
+
+$html = new Form($db);
+
 $head = member_prepare_head($adh);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Member"), 0, 'user');
 
 
-/*
- * Fiche en mode visu
- */
 print '<table class="border" width="100%">';
 
 // Ref
@@ -129,7 +124,7 @@ $langs->load("admin");
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPMemberDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
 
-// LDAP Cl�
+// LDAP Cle
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_MEMBERS."</td></tr>\n";
 
 // LDAP Server
@@ -146,9 +141,10 @@ print '</div>';
 print '<br>';
 
 
-print_titre($langs->trans("LDAPInformationsForThisMember"));
 
 // Affichage attributs LDAP
+print_titre($langs->trans("LDAPInformationsForThisMember"));
+
 print '<table width="100%" class="noborder">';
 
 print '<tr class="liste_titre">';

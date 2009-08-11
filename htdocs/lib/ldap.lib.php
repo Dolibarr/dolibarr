@@ -37,12 +37,12 @@ function ldap_prepare_head()
 	// Onglets
 	$head=array();
 	$h = 0;
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/ldap.php";
 	$head[$h][1] = $langs->trans("LDAPGlobalParameters");
 	$head[$h][2] = 'ldap';
 	$h++;
-	
+
 	if ($conf->global->LDAP_SYNCHRO_ACTIVE)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
@@ -58,7 +58,7 @@ function ldap_prepare_head()
 		$head[$h][2] = 'groups';
 		$h++;
 	}
-	
+
 	if ($conf->societe->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
@@ -66,7 +66,7 @@ function ldap_prepare_head()
 		$head[$h][2] = 'contacts';
 		$h++;
 	}
-	
+
 	if ($conf->adherent->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
@@ -86,7 +86,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 {
 	global $langs, $conf, $user;
 	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
-	
+
 	print '<br>';
 	if (! function_exists("ldap_connect"))
 	{
@@ -122,7 +122,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
 function show_ldap_content($result,$level,$count,$var,$hide=0)
 {
 	global $bc, $conf;
-	
+
 	$count++;
 	if ($count > 1000) return -1;	// To avoid infinite loop
 	if (! is_array($result)) return -1;
@@ -132,16 +132,16 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 		if ("$key" == "objectclass") continue;
 		if ("$key" == "count") continue;
 		if ("$key" == "dn") continue;
-		
+
 		if ("$val" == "objectclass") continue;
 		if ("$val" == $lastkey[$level]) continue;
-		
+
 		$lastkey[$level]=$key;
-		
-		if (is_array($val)) 
+
+		if (is_array($val))
 		{
 			$hide=0;
-			if (! is_numeric($key)) 
+			if (! is_numeric($key))
 			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td>';
@@ -153,8 +153,9 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 		}
 		else
 		{
-			if ($hide) print eregi_replace('.','*',$val);
-			else print $val;
+			$newstring=@htmlentities($val,ENT_COMPAT,'UTF-8');	// Make entity encoding
+			if ($hide) print eregi_replace('.','*',$newstring);
+			else print $newstring;
 			print '</td></tr>';
 		}
 	}

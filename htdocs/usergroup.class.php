@@ -525,8 +525,8 @@ class UserGroup extends CommonObject
 	/**
 	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *	\param		info		Info string loaded by _load_ldap_info
-	 *	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *							1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	\param		mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *							1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *							2=Return key only (uid=qqq)
 	 *	\return		string		DN
 	 */
@@ -534,7 +534,7 @@ class UserGroup extends CommonObject
 	{
 		global $conf;
 		$dn='';
-		if ($mode==0) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_USER_DN;
+		if ($mode==0) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
 		if ($mode==1) $dn=$conf->global->LDAP_GROUP_DN;
 		if ($mode==2) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
 		return $dn;

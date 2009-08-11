@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,11 @@ $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid, 'socpeople');
 
+$contact = new Contact($db);
+$contact->fetch($_GET["id"], $user);
+
+
+
 
 /*
 *	View
@@ -48,18 +53,11 @@ llxHeader();
 
 $form = new Form($db);
 
-$contact = new Contact($db);
-$contact->fetch($_GET["id"], $user);
-
-
 $head = contact_prepare_head($contact);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Contact"), 0, 'contact');
 
 
-/*
- * Fiche en mode visu
- */
 print '<table class="border" width="100%">';
 
 // Ref
@@ -94,7 +92,7 @@ print '</td></tr>';
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPContactDn").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
 
-// LDAP Cl�
+// LDAP Cle
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_KEY_CONTACTS."</td></tr>\n";
 
 // LDAP Server
@@ -109,9 +107,9 @@ print '</div>';
 print '<br>';
 
 
+// Affichage attributs LDAP
 print_titre($langs->trans("LDAPInformationsForThisContact"));
 
-// Affichage attributs LDAP
 print '<table width="100%" class="noborder">';
 
 print '<tr class="liste_titre">';
