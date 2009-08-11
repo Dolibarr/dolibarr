@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("admin");
+$langs->load("errors");
 
 if (!$user->admin)
   accessforbidden();
@@ -219,6 +220,11 @@ if (function_exists("ldap_connect"))
 				print '</font><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
 			}
+
+			print "<br>\n";
+			print "LDAP input file used for test:<br><br>\n";
+			print nl2br($ldap->dump_content($dn,$info));
+			print "\n<br>";
 		}
 		else
 		{
@@ -228,11 +234,6 @@ if (function_exists("ldap_connect"))
 			print '</font><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
 		}
-
-		print "<br>\n";
-		print "LDAP input file used for test:<br><br>\n";
-		print nl2br($ldap->dump_content($dn,$info));
-		print "\n<br>";
 	}
 }
 
