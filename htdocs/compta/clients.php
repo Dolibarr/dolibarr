@@ -19,19 +19,26 @@
  */
 
 /**
- \file       htdocs/compta/clients.php
- \ingroup    compta
- \brief      Page accueil des clients
- \version    $Id$
+ *	\file       htdocs/compta/clients.php
+ *	\ingroup    compta
+ *	\brief      Show list of customers to add an new invoice
+ *	\version    $Id$
  */
 
 require_once("./pre.inc.php");
-
-if (! $user->rights->societe->lire)
-accessforbidden();
-
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+
+// Secrutiy check
+if ($user->societe_id > 0)
+{
+	$action = '';
+	$socid = $user->societe_id;
+}
+
+if (! $user->rights->facture->lire)
+accessforbidden();
+
 
 $langs->load("companies");
 
@@ -46,18 +53,12 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+
 /*
  * View
  */
 
 llxHeader();
-
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
 
 if ($action == 'attribute_prefix')
 {
