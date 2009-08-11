@@ -1,0 +1,63 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=المرجع. إرسال
+Sending=إرسال
+Sendings=الإرسال
+Receivings=Receivings
+SendingsArea=منطقة الإرسال
+ListOfSendings=قائمة الإرسال
+SendingMethod=طريقة إرسال
+SendingReceipt=ارسال ورود
+LastSendings=ق الماضي ٪ الإرسال
+SearchASending=البحث المرسلة
+StatisticsOfSendings=إحصاءات الإرسال
+NbOfSendings=عدد الإرسال
+SendingCard=إرسال بطاقة
+NewSending=ارسال جديدة
+CreateASending=خلق إرسال
+CreateSending=خلق إرسال
+QtyOrdered=الكمية أمرت
+QtyShipped=الكمية المشحونة
+QtyToShip=لشحن الكمية
+QtyReceived=الكمية الواردة
+KeepToShip=إبقاء لشحن
+OtherSendingsForSameOrder=الإرسال الأخرى لهذا النظام
+DateSending=وحتى الآن من أجل إرسال
+DateSendingShort=وحتى الآن من أجل إرسال
+SendingsForSameOrder=الإرسال لهذا النظام
+SendingsAndReceivingForSameOrder=الإرسال وreceivings لهذا النظام
+SendingsToValidate=للمصادقة على إرسال
+StatusSendingDraft=مسودة
+StatusSendingValidated=صادق (لشحن المنتجات أو شحنها بالفعل)
+StatusSendingDraftShort=مسودة
+StatusSendingValidatedShort=صادق
+SendingSheet=إرسال ورقة
+Carriers=شركات الطيران
+Carrier=الناقل
+CarriersArea=ناقلات المنطقة
+NewCarrier=الناقل الجديد
+ConfirmDeleteSending=هل أنت متأكد من أنك تريد حذف هذا المرسلة؟
+ConfirmValidateSending=هل أنت متأكد من أنك تريد إرسال valdate هذا؟
+ConfirmCancelSending=هل أنت متأكد من أنك تريد إلغاء إرسال هذا؟
+GenericTransport=النقل العام
+Enlevement=حصلت من قبل العميل
+DocumentModelSimple=وثيقة نموذج بسيط
+WarningNoQtyLeftToSend=تحذير ، لا تنتظر أن المنتجات المشحونة.
+StatsOnShipmentsOnlyValidated=والإحصاءات التي أجريت على الشحنات فقط المصادق
+SendingMethodCATCH=القبض على العملاء
+SendingMethodTRANS=نقل
+SendingMethodCOLSUI=Colissimo
+NumRefModelJade=العودة رقم مرجعي مع الشكل BLYY00001 ،... ص ص حيث هو. العدد في نهاية أبدا إعادة إلى الصفر.
+DocumentModelSirocco=نموذج بسيط لتسليم وثيقة من وثائق وإيصالات
+DocumentModelTyphon=أكمل نموذج لتسليم وثيقة من وثائق الإيصالات (logo...)
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

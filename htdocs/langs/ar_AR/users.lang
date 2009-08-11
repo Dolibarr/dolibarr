@@ -1,0 +1,119 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+UserCard=بطاقة مستخدم
+ContactCard=بطاقة الاتصال
+GroupCard=مجموعة البطاقات
+NoContactCard=أي بطاقة اتصالات بين
+Permission=إذن
+Permissions=أذونات
+EditPassword=تعديل كلمة السر
+SendNewPassword=تجديد وإرسال كلمة السر
+ReinitPassword=تجديد كلمة المرور
+PasswordChangedTo=تغيير كلمة السر : ٪ ق
+SubjectNewPassword=كلمة المرور الجديدة لDolibarr
+AvailableRights=تتوفر أذونات
+OwnedRights=المملوكة الاذونات
+GroupRights=مجموعة الاذونات
+UserRights=أذونات المستخدم
+UserGUISetup=مستخدم عرض الإعداد
+DisableUser=يعطل
+DisableAUser=تعطيل المستخدم
+DeleteUser=حذف
+DeleteAUser=حذف المستخدم
+DisableGroup=يعطل
+DisableAGroup=تعطيل مجموعة
+EnableAUser=وتمكن المستخدم
+EnableAGroup=وتمكن فريق
+DeleteGroup=حذف
+DeleteAGroup=حذف مجموعة
+ConfirmDisableUser=هل أنت متأكد من أنك تريد تعطيل مستخدم <b>٪ ق؟</b>
+ConfirmDisableGroup=هل أنت متأكد من أنك تريد تعطيل فريق <b>٪ ق؟</b>
+ConfirmDeleteUser=هل أنت متأكد من أنك تريد حذف مستخدم <b>٪ ق؟</b>
+ConfirmDeleteGroup=هل أنت متأكد من أنك تريد حذف مجموعة <b>٪ ق؟</b>
+ConfirmEnableUser=هل تريد بالتأكيد لتمكين المستخدم <b>٪ ق؟</b>
+ConfirmEnableGroup=هل تريد بالتأكيد لتمكين فريق <b>٪ ق؟</b>
+ConfirmReinitPassword=هل أنت متأكد من أن تولد كلمة سر جديدة للمستخدم <b>٪ ق؟</b>
+ConfirmSendNewPassword=هل تريد بالتأكيد لتوليد وإرسال كلمة مرور جديدة للمستخدم <b>٪ ق؟</b>
+NewUser=مستخدم جديد
+CreateUser=إنشاء مستخدم
+SearchAGroup=فريق البحث
+SearchAUser=بحث المستخدم
+ErrorFailedToSendPassword=لم ترسل كلمة السر
+LoginNotDefined=ادخل ليست محددة.
+NameNotDefined=اسم غير محدد.
+ListOfUsers=قائمة المستخدمين
+Administrator=المدير العام
+SuperAdministrator=مدير السوبر
+SuperAdministratorDesc=مدير كل الحقوق
+DefaultRights=الافتراضي أذونات
+DefaultRightsDesc=التقصير هنا تحديد الاذونات التي تمنح تلقائيا للمستخدم خلق جديد.
+DolibarrUsers=Dolibarr المستخدمين
+LastName=اسم
+FirstName=Firstname
+ListOfGroups=قائمة المجموعات
+NewGroup=مجموعة جديدة
+CreateGroup=إنشاء مجموعة
+RemoveFromGroup=إزالة من المجموعة
+PasswordChangedAndSentTo=تم تغيير كلمة المرور وترسل إلى <b>٪ ق.</b>
+PasswordChangeRequestSent=طلب تغيير كلمة السر لإرسالها إلى <b>٪ ق ٪ ق.</b>
+MenuUsersAndGroups=&amp; مجموعات المستخدمين
+LastGroupsCreated=ق الماضي خلق مجموعات ٪
+LastUsersCreated=آخر مستخدمين خلق ق ٪
+ShowGroup=وتبين لفريق
+ShowUser=وتظهر للمستخدم
+NonAffectedUsers=غير المتأثرة المستخدمين
+UserModified=المعدل المستخدم بنجاح
+GroupModified=تعديل المجموعة بنجاح
+PhotoFile=ملف الصور
+UserWithDolibarrAccess=مع وصول المستخدمين Dolibarr
+ListOfUsersInGroup=قائمة المستخدمين في هذه المجموعة
+ListOfGroupsForUser=قائمة الجماعات لهذا المستخدم
+UsersToAdd=للمستخدمين إضافة إلى هذه المجموعة
+GroupsToAdd=إضافة إلى مجموعات لهذا المستخدم
+NoLogin=لم ادخل
+LinkToCompanyContact=ربط طرف ثالث / اتصالات
+LinkedToDolibarrMember=وصلة عضو
+LinkedToDolibarrUser=وصلة مستخدم Dolibarr
+LinkedToDolibarrThirdParty=Dolibarr الارتباط لطرف ثالث
+CreateDolibarrLogin=انشاء مستخدم
+CreateDolibarrThirdParty=إيجاد طرف ثالث
+LoginAccountDisable=حساب والمعوقين ، ووضع جديد ادخل الى تنشيطها.
+LoginAccountDisableInDolibarr=في حساب المعاقين Dolibarr.
+LoginAccountDisableInLdap=الحساب في مجال المعوقين.
+UsePersonalValue=استخدام الشخصي قيمة
+GuiLanguage=لغة الواجهة
+InternalUser=المستخدم الداخلي
+MyInformations=بي البيانات
+ExportDataset_user_1=Dolibarr مستخدمي وممتلكاتهم
+DomainUser=النطاق المستخدم ق ٪
+Reactivate=تنشيط
+CreateInternalUserDesc=هذا الشكل يتيح لك يخلق أي مستخدم الداخلي لتسجيل شركة أو مؤسسة. ليخلق خارجي المستخدم (العميل ، المورد ،...)، استخدام زر &#39;إنشاء مستخدم Dolibarr&#39; من طرف ثالث بطاقة اتصال.
+InternalExternalDesc=<b>داخلي</b> المستخدم المستخدم الذي يشكل جزءا من الشركة / المؤسسة. <br> مستخدم <b>خارجي</b> هو عميل أو مورد أو غيرها. <br><br> وفي كلتا الحالتين ، ويحدد الحقوق على أذونات Dolibarr ، كما يمكن للمستخدم خارجي له قائمة من مدير المستخدم الداخلي (انظر الصفحة الرئيسية -- إعداد -- عرض)
+PermissionInheritedFromAGroup=منح إذن ineherited بسبب من واحد من جهاز المستخدم.
+IdPhoneCaller=رقم تعريف الهاتف المتصل
+UserLogged=ق صلة مستخدم ٪
+NewUserCreated=مستخدم ٪ ق خلق
+NewUserPassword=لتغيير كلمة المرور ل ٪
+EventUserModified=مستخدم تعديل ق ٪
+UserDisabled=مستخدم ٪ ق المعوقين
+UserEnabled=مستخدم ٪ ق تفعيلها
+UserDeleted=ق إزالة المستخدم ٪
+NewGroupCreated=أنشأت مجموعة ق ٪
+GroupModified=ق تعديل المجموعة ٪
+GroupDeleted=فريق ازالة ق ٪
+ConfirmCreateContact=هل أنت متأكد من خلق Dolibarr حساب هذا الاتصال؟
+ConfirmCreateLogin=هل أنت متأكد من خلق Dolibarr حساب هذا؟
+ConfirmCreateThirdParty=هل أنت متأكد من خلق لهذا الطرف الثالث؟
+LoginToCreate=ادخل لخلق
+NameToCreate=اسم طرف ثالث لخلق
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

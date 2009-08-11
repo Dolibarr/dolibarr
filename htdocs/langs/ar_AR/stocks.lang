@@ -1,0 +1,80 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=بطاقة مخزن
+Warehouse=مخزن
+NewWarehouse=المستودع الجديد / بورصة المنطقة
+MenuNewWarehouse=مستودع جديد
+WarehouseOpened=فتح مخزن
+WarehouseClosed=مخزن مغلق
+WarehouseSource=مصدر مخزن
+WarehouseTarget=الهدف مخزن
+ValidateSending=حذف ارسال
+CancelSending=الغاء ارسال
+DeleteSending=حذف ارسال
+Stock=الأسهم
+Stocks=الاسهم
+Movement=الحركة
+Movements=حركات
+ErrorWarehouseRefRequired=مستودع الاشارة اسم مطلوب
+ErrorWarehouseLabelRequired=مستودع العلامة مطلوبة
+CorrectStock=تصحيح الأوراق المالية
+ListOfWarehouses=لائحة المخازن
+ListOfStockMovements=قائمة الحركات الأسهم
+StocksArea=مخزون المنطقة
+Location=عوضا عن
+LocationSummary=باختصار اسم الموقع
+NumberOfProducts=العدد الإجمالي للمنتجات
+LastMovement=الماضي حركة
+LastMovements=التحركات الأخيرة
+Units=الوحدات
+Unit=وحدة
+StockCorrection=تصحيح الأوراق المالية
+StockMovement=نقل
+StockMovements=تحويلات الأوراق المالية
+NumberOfUnit=عدد الوحدات
+TotalStock=إجمالي المخزون
+StockTooLow=الاسهم منخفضة جدا
+EnhancedValue=القيمة
+PMPValue=المتوسط المرجح لسعر
+PMPValueShort=الواب
+EnhancedValueOfWarehouses=قيمة المستودعات
+UserWarehouseAutoCreate=خلق مخزون تلقائيا عند إنشاء مستخدم
+QtyDispatched=ارسال كمية
+OrderDispatch=ارسال الأسهم
+RuleForStockManagementDecrease=قاعدة لإدارة المخزون النقصان
+RuleForStockManagementIncrease=قاعدة لإدارة المخزون وزيادة
+DeStockOnBill=انخفاض الاسهم الحقيقي على الفواتير / الائتمان وتلاحظ المصادقة (تحذير ، في هذه الرواية ، إلا انه في المخزن رقم 1 أن رصيد تعديل)
+DeStockOnValidateOrder=انخفاض الاسهم الحقيقية بناء على أوامر تلاحظ المصادقة (تحذير ، في هذه الرواية ، إلا انه في المخزن رقم 1 أن رصيد تعديل)
+DeStockOnShipment=انخفاض الاسهم الحقيقي على شحنة المصادقة (recommanded)
+ReStockOnBill=زيادة مخزونات الحقيقي على الفواتير / الائتمان وتلاحظ المصادقة (تحذير ، في هذه الرواية ، إلا انه في المخزن رقم 1 أن رصيد تعديل)
+ReStockOnValidateOrder=زيادة مخزونات الحقيقي على أوامر تلاحظ المصادقة (تحذير ، في هذه الرواية ، إلا انه في المخزن رقم 1 أن رصيد تعديل)
+StockDiffPhysicTeoric=والسبب في الاختلاف المخزون المادي وtheorical
+StockLimitShort=الحد
+StockLimit=الأسهم للحد من التنبيهات
+PhysicalStock=المخزون المادي
+RealStock=الحقيقية للاسهم
+TheoreticalStock=Therocial الأسهم
+VirtualStock=الأسهم الافتراضية
+MininumStock=الحد الأدنى للرصيد
+StockUp=تخزين
+MininumStockShort=الأسهم دقيقة
+StockUpShort=تخزين
+IdWarehouse=معرف مخزن
+DescWareHouse=وصف المخزن
+LieuWareHouse=المكان مخزن
+WarehousesAndProducts=والمستودعات والمنتجات
+AverageUnitPricePMPShort=متوسط أسعار المدخلات
+AverageUnitPricePMP=متوسط أسعار المدخلات
+EstimatedStockValueShort=وتقدر قيمة المخزون
+EstimatedStockValue=وتقدر قيمة المخزون
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

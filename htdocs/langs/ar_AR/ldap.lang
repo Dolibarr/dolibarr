@@ -1,0 +1,38 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+DomainPassword=كلمة السر لالنطاق
+YouMustChangePassNextLogon=كلمة السر للمستخدم <b>٪</b> على النطاق <b>ق ق ٪</b> ويجب أن يتغير.
+UserMustChangePassNextLogon=يجب على المستخدم تغيير كلمة المرور على المجال ق ٪
+LdapUacf_NORMAL_ACCOUNT=حساب المستخدم
+LdapUacf_DONT_EXPIRE_PASSWORD=كلمة السر لا تنتهي
+LdapUacf_ACCOUNTDISABLE=تم تعطيل الحساب في مجال ق ٪
+LDAPInformationsForThisContact=المعلومات في قاعدة البيانات LDAP لهذا الاتصال
+LDAPInformationsForThisUser=المعلومات في قاعدة البيانات LDAP لهذا المستخدم
+LDAPInformationsForThisGroup=المعلومات في قاعدة البيانات LDAP لهذه المجموعة
+LDAPInformationsForThisMember=المعلومات في قاعدة البيانات LDAP لهذا العضو
+LDAPAttribute=LDAP السمة
+LDAPAttributes=LDAP الصفات
+LDAPCard=بطاقة LDAP
+LDAPRecordNotFound=سجل غير موجود في قاعدة البيانات LDAP
+LDAPUsers=المستخدمين في قاعدة البيانات LDAP
+LDAPGroups=مجموعات LDAP في قاعدة البيانات
+LDAPFieldStatus=حالة
+LDAPFieldFirstSubscriptionDate=أول موعد الاكتتاب
+LDAPFieldFirstSubscriptionAmount=قبضة مبلغ الاشتراك
+LDAPFieldLastSubscriptionDate=آخر موعد الاكتتاب
+LDAPFieldLastSubscriptionAmount=الاكتتاب المبلغ الأخير
+SynchronizeDolibarr2Ldap=التزامن بين المستخدمين (Dolibarr --&gt; LDAP)
+UserSynchronized=وتزامن المستخدم
+ForceSynchronize=واكبت قوة Dolibarr --&gt; LDAP
+ErrorFailedToReadLDAP=فشل في قراءة قاعدة البيانات LDAP. LDAP وحدة التحقق من الإعداد ، وإمكانية الوصول إلى قاعدة البيانات.
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

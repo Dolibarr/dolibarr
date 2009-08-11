@@ -1,0 +1,131 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=أوامر منطقة العملاء
+SuppliersOrdersArea=الموردين أوامر المنطقة
+OrderCard=من أجل بطاقة
+Order=ترتيب
+Orders=أوامر
+OrderLine=من أجل خط
+OrderFollow=متابعة
+OrderContact=من أجل الاتصال
+OrderDate=من أجل التاريخ
+NewOrder=النظام الجديد
+ToOrder=ومن أجل جعل
+MakeOrder=ومن أجل جعل
+SupplierOrder=من أجل المورد
+SuppliersOrders=الموردين أوامر
+SuppliersOrdersRunning=الحالية الموردين أوامر
+CustomerOrder=عملاء النظام
+CustomersOrders=الزبائن
+CustomersOrdersRunning=الحالية الزبائن
+CustomersOrdersAndOrdersLines=أوامر العملاء وأوامر خطوط
+OrdersToValid=أوامر صالحة
+OrdersToBill=أوامر لمشروع قانون
+OrdersInProcess=الأوامر في عملية
+OrdersToProcess=أوامر لعملية
+StatusOrderCanceledShort=ألغى
+StatusOrderDraftShort=مسودة
+StatusOrderValidatedShort=صادق
+StatusOrderOnProcessShort=على عملية
+StatusOrderProcessedShort=تجهيز
+StatusOrderToBillShort=على مشروع قانون
+StatusOrderApprovedShort=وافق
+StatusOrderRefusedShort=رفض
+StatusOrderToProcessShort=لعملية
+StatusOrderReceivedPartiallyShort=تلقى جزئيا
+StatusOrderReceivedAllShort=وتلقى كل شيء
+StatusOrderCanceled=ألغى
+StatusOrderDraft=مشروع (لا بد من التحقق من صحة)
+StatusOrderValidated=صادق
+StatusOrderOnProcess=على عملية
+StatusOrderProcessed=تجهيز
+StatusOrderToBill=على مشروع قانون
+StatusOrderApproved=وافق
+StatusOrderRefused=رفض
+StatusOrderReceivedPartially=تلقى جزئيا
+StatusOrderReceivedAll=وتلقى كل شيء
+DraftOrWaitingApproved=الموافقة على مشروع أو لم يأمر بعد
+DraftOrWaitingShipped=مشروع مصادق عليه أو لم تشحن
+MenuOrdersToBill=أوامر لمشروع قانون
+SearchOrder=من أجل البحث
+Sending=إرسال
+Sendings=الإرسال
+ShipProduct=سفينة المنتج
+Discount=الخصم
+CreateOrder=خلق أمر
+RefuseOrder=رفض النظام
+ApproveOrder=قبول النظام
+ValidateOrder=من أجل التحقق من صحة
+DeleteOrder=من أجل حذف
+CancelOrder=من أجل إلغاء
+AddOrder=من أجل إضافة
+AddToMyOrders=أضف إلى أوامر
+AddToOtherOrders=إضافة إلى أوامر أخرى
+ShowOrder=وتبين من أجل
+NoOpenedOrders=أي أوامر فتح
+NoOtherOpenedOrders=أي أوامر فتح
+OtherOrders=أوامر أخرى
+LastOrders=ق الماضي أوامر ٪
+LastModifiedOrders=آخر تعديل أوامر ق ٪
+LastClosedOrders=٪ ق الماضي أوامر مغلقة
+AllOrders=جميع أوامر
+NbOfOrders=عدد الأوامر
+OrdersStatistics=أوامر إحصاءات
+OrdersStatisticsSuppliers=المورد أوامر إحصاءات
+NumberOfOrdersByMonth=عدد أوامر الشهر
+AmountOfOrdersByMonthHT=مبلغ أوامر الشهر (بعد خصم الضريبة)
+ListOfOrders=قائمة الأوامر
+CloseOrder=وثيق من أجل
+ConfirmCloseOrder=هل أنت متأكد من أجل اقفال هذا؟ مرة واحدة أمر قد انتهى ، فإنه لا يمكن إلا أن يكون فواتير.
+ConfirmCloseOrderIfSending=هل أنت متأكد من أجل اقفال هذا؟ يجب عليك أمر وثيق إلا عندما يتم شحن جميع.
+ConfirmDeleteOrder=هل أنت متأكد من أنك تريد حذف هذا النظام؟
+ConfirmValidateOrder=هل أنت متأكد أنك تريد التحقق من صحة هذا الأمر تحت اسم <b>٪ ق؟</b>
+ConfirmCancelOrder=هل أنت متأكد من أنك تريد إلغاء هذا النظام؟
+ConfirmMakeOrder=هل أنت متأكد من أن يؤكد لك هذا النظام على <b>٪ ق؟</b>
+GenerateBill=توليد الفاتورة
+ClassifyBilled=تصنيف &quot;فواتير&quot;
+ComptaCard=بطاقة المحاسبة
+DraftOrders=مشروع أوامر
+RelatedOrders=الأوامر ذات الصلة
+OnProcessOrders=على عملية أوامر
+RefOrder=المرجع. ترتيب
+RefCustomerOrder=المرجع. عملاء النظام
+CustomerOrder=عملاء النظام
+RefCustomerOrderShort=المرجع. العملاء. ترتيب
+SendOrderByMail=لكي ترسل عن طريق البريد
+ActionsOnOrder=إجراءات من أجل
+NoArticleOfTypeProduct=أي مادة من نوع &#39;منتج&#39; حتى لا مادة للشحن لهذا النظام
+OrderMode=طريقة أوامر
+AuthorRequest=طلب مقدم البلاغ
+UseCustomerContactAsOrderRecipientIfExist=استخدام العميل عنوان الاتصال إذا حددت بدلا من التصدي لطرف ثالث من أجل التصدي للمتلقي
+RunningOrders=أوامر بشأن عملية
+UserWithApproveOrderGrant=مع منح المستخدمين &quot;الموافقة على أوامر&quot; إذن.
+PaymentOrderRef=من أجل دفع ق ٪
+CloneOrder=استنساخ النظام
+ConfirmCloneOrder=هل أنت متأكد من أن هذا الأمر استنساخ <b>٪ ق؟</b>
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=لم تعرف COMMANDE_SUPPLIER_ADDON مستمر
+Error_COMMANDE_ADDON_NotDefined=لم تعرف COMMANDE_ADDON مستمر
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=لم يتم تحميل الملف وحدة &#39;٪ ق&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=لم يتم تحميل الملف وحدة &#39;٪ ق&#39;
+OrderSource0=اقتراح التجارية
+OrderSource1=الإنترنت
+OrderSource2=حملة بريدية
+OrderSource3=الهاتف compain
+OrderSource4=حملة الفاكس
+OrderSource5=التجارية
+OrderSource6=مخزن
+QtyOrdered=الكمية أمرت
+AddDeliveryCostLine=تضاف تكلفة توصيل خط يبين الوزن من أجل
+PDFEinsteinDescription=من أجل نموذج كامل (logo...)
+MarbreNumRefDesc=Renvoie جنيه numéro sous لوس انجليس في شكل syymm ٪ nnnn - où l&#39; année السنة بتوقيت شرق الولايات المتحدة ، مم جنيه mois ét nnnn الامم المتحدة compteur sequentiel بلا انقطاع ét بلا remise ه 0
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

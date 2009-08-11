@@ -1,0 +1,61 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+MenuManager=قائمة مدير
+ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
+ErrorGroupAlreadyExists=المجموعة ٪ ق موجود بالفعل.
+ErrorDuplicateTrigger=وهناك تحريك ملف الطبقة نام <b>&#39;٪ ق&#39;</b> sevaral هذا العصر. إزالة ازدواجية تحريك الملف في الدليل <b>&#39;٪ ق.</b>
+ErrorFailToDeleteFile=فشل إزالة الملف <b>&#39;٪ ق.</b>
+ErrorFailToCreateFile=فشل إنشاء الملف <b>&#39;٪ ق.</b>
+ErrorFailToRenameDir=فشل إعادة تسمية الدليل <b>&#39;٪ ق&#39;</b> الى <b>&#39;٪ ق.</b>
+ErrorFailToCreateDir=فشل إنشاء الدليل <b>&#39;٪ ق.</b>
+ErrorFailToDeleteDir=فشل حذف الدليل <b>&#39;٪ ق.</b>
+ErrorFailedToDeleteJoinedFiles=لا يمكن حذف كيان لان هناك انضم بعض الملفات. إزالة ملفات الانضمام الأولى.
+ErrorThisContactIsAlreadyDefinedAsThisType=هذا الاتصال هو اتصال بالفعل تعريف لهذا النوع.
+ErrorCashAccountAcceptsOnlyCashMoney=هذا الحساب المصرفي هو الحساب النقدي ، وذلك ما وافق على نوع من المدفوعات النقدية فقط.
+ErrorFromToAccountsMustDiffers=المصدر والأهداف يجب أن تكون الحسابات المصرفية المختلفة.
+ErrorBadThirdPartyName=سوء قيمة اسم طرف ثالث
+ErrorBadCustomerCodeSyntax=سوء تركيب الزبون مدونة
+ErrorCustomerCodeRequired=رمز العميل المطلوبة
+ErrorCustomerCodeAlreadyUsed=الشفرة المستخدمة بالفعل العملاء
+ErrorPrefixRequired=المطلوب ببادئة
+ErrorUrlNotValid=موقع معالجة صحيحة
+ErrorBadSupplierCodeSyntax=مورد سوء تركيب لمدونة
+ErrorSupplierCodeRequired=رمز المورد المطلوب
+ErrorSupplierCodeAlreadyUsed=الشفرة المستخدمة بالفعل مورد
+ErrorBadParameters=بارامترات سيئة
+ErrorFailedToWriteInDir=لم يكتب في دليل ٪ ق
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق = ٪ مع البريد الإلكتروني)
+ErrorUserCannotBeDelete=المستخدم لا يمكن حذفها. قد يكون ذلك مرتبطا Dolibarr على الكيانات.
+ErrorFieldsRequired=تتطلب بعض المجالات لم تملأ.
+ErrorFailedToCreateDir=فشل إنشاء دليل. تأكد من أن خادم الويب المستخدم أذونات لكتابة وثائق Dolibarr في الدليل. إذا تم تمكين المعلم <b>safe_mode</b> على هذا PHP ، تحقق من أن ملفات Dolibarr php تملك لخدمة الويب المستخدم (أو مجموعة).
+ErrorNoMailDefinedForThisUser=البريد لا يعرف لهذا المستخدم
+ErrorFeatureNeedJavascript=هذه الميزة تحتاج إلى تفعيل جافا سكريبت في العمل. هذا التغيير في البنية -- عرض.
+ErrorTopMenuMustHaveAParentWithId0=وهناك قائمة من نوع &#39;توب&#39; لا يمكن أن يكون أحد الوالدين القائمة. 0 وضعت في القائمة أو الأم في اختيار قائمة من نوع &#39;اليسار&#39;.
+ErrorLeftMenuMustHaveAParentId=وهناك قائمة من نوع &#39;اليسار&#39; يجب أن يكون لها هوية الوالد.
+ErrorGenbarCodeNotfound=لم يتم العثور على الملف (باد الطريق الخطأ أو أذونات الوصول نفى المعلم openbasedir)
+ErrorFunctionNotAvailableInPHP=<b>ق ٪</b> وظيفة مطلوبة لهذه الميزة ولكن لا تتوافر في هذه النسخة / الإعداد للPHP.
+ErrorDirAlreadyExists=دليل بهذا الاسم بالفعل.
+ErrorFieldCanNotContainSpecialCharacters=ميدان <b>٪ ق</b> يجب ألا يحتوي على أحرف خاصة.
+WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen</b> المعلم يجب أن يوضع <b>على</b> المدون في <b>php.ini</b> لتعمل هذه الوحدة بشكل كامل. يجب عليك أن تعدل عن هذا الملف يدويا.
+WarningBuildScriptNotRunned=السيناريو <b>٪ ق</b> لم يكن يتعارض مع بناء الرسومات ، أو عدم وجود بيانات تظهر.
+WarningBookmarkAlreadyExists=المرجعية هذا الكتاب أو هذا الهدف (عنوان) موجود بالفعل.
+WarningPassIsEmpty=تحذير كلمة سر قاعدة بيانات فارغة. هذه هي ثغرة أمنية. يجب عليك أن تضيف كلمة السر الخاصة بك لقاعدة البيانات وتغيير conf.php ليعكس هذا الملف.
+ErrorNoAccountancyModuleLoaded=أي وحدة المحاسبة وتفعيل
+ErrorExportDuplicateProfil=هذا ملف الاسم بالفعل لتصدير هذه المجموعة.
+ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
+ErrorLDAPMakeManualTest=ألف. ldif الملف قد ولدت في الدليل ٪ s. انها محاولة لتحميل يدويا من سطر في الحصول على مزيد من المعلومات عن الأخطاء.
+ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع &quot;المركز الخاص لم تبدأ&quot; اذا الميدان &quot;الذي قام به&quot; كما شغلها.
+ErrorBillRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
+ErrorPleaseTypeBankTransactionReportName=الرجاء كتابة اسم البنك استلام المعاملات ويقال فيها (شكل YYYYMM أو YYYYMMDD)
+ErrorRecordHasChildren=فشل حذف السجلات منذ نحو الطفل.
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

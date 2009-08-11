@@ -1,0 +1,72 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ExportsArea=صادرات المنطقة
+ImportArea=مجال الاستيراد
+NewExport=تصديرية جديدة
+NewImport=استيراد جديدة
+ExportableDatas=تصدير البيانات
+ImportableDatas=بيانات وارداتها
+SelectExportDataSet=اختر البيانات التي تريد تصديرها...
+SelectImportDataSet=اختر البيانات التي تريد الاستيراد...
+SelectExportFields=اختيار الحقول التي تريد تصديرها ، أو اختيار ملف التصدير مسبقا
+SelectImportFields=اختيار الحقول التي تريد استيراد ، أو حدد ملف استيراد محددة سلفا ،
+SaveExportModel=احفظ هذا التصدير صورة لو كنت تخطط لإعادة استخدامها في وقت لاحق...
+SaveImportModel=إنقاذ هذه استيراد صورة لو كنت تخطط لإعادة استخدامها في وقت لاحق...
+ExportModelName=اسم تصدير صورة
+ExportModelSaved=تصدير صورة المحفوظة تحت اسم <b>٪ ق.</b>
+ExportableFields=مجالات للتصدير
+ExportedFields=صدرت المجالات
+ImportModelName=استيراد صورة الاسم
+ImportModelSaved=استيراد صورة المحفوظة تحت اسم <b>٪ ق.</b>
+ImportableFields=ارداتها المجالات
+ImportedFields=الحقول المستوردة
+DatasetToExport=بيانات التصدير
+DatasetToImport=استيراد البيانات
+Dataset=بيانات
+ChooseFieldsOrdersAndTitle=اختيار الحقول من أجل...
+FieldsOrder=المجالات من أجل
+FieldsTitle=عنوان الحقول
+ChooseExportFormat=اختيار شكل للتصدير
+NowClickToGenerateToBuildExportFile=الآن ، انقر على &quot;توليد&quot; لبناء ملف التصدير...
+AvailableFormats=الصيغ المتاحة و
+LibraryShort=المكتبة
+LibraryUsed=وتستخدم المكتبة
+LibraryVersion=النسخة
+Step=خطوة
+FormatedImport=مساعد والاستيراد
+FormatedImportDesc1=ويسمح هذا المجال لاستيراد البيانات الشخصية ، وذلك باستخدام مساعد لمساعدتكم في هذه العملية من دون المعرفة التقنية.
+FormatedImportDesc2=والخطوة الأولى هي اختيار ملك للبيانات التي تريد تحميل ، ثم تحميل ملف ، ثم اختيار الحقول التي تريد تحميل.
+FormatedExport=مساعد والتصدير
+FormatedExportDesc1=ويسمح هذا المجال لتصدير البيانات الشخصية ، وذلك باستخدام مساعد لمساعدتكم في هذه العملية من دون المعرفة التقنية.
+FormatedExportDesc2=والخطوة الأولى هي اختيار مجموعة بيانات محددة سلفا ، ثم اختيار الحقول التي تريد نتيجة في الملفات الخاصة بك ، والذي النظام.
+FormatedExportDesc3=عند تصدير البيانات ويتم اختيار ، يمكنك تحديد صيغة الملف الناتج تريد تصديره إلى بياناتك.
+Sheet=ورقة
+NoImportableData=لا ارداتها البيانات (أي وحدة مع السماح للبيانات تعريفات الواردات)
+FileSuccessfullyBuilt=ملف التصدير ولدت
+SQLUsedForExport=SQL طلب استخدامه لبناء ملف التصدير
+LineId=معرف السطر
+LineDescription=وصف خط
+LineUnitPrice=سعر الوحدة من خط
+LineVATRate=ضريبة القيمة المضافة من سعر الخط
+LineQty=خط للكمية
+LineTotalHT=المبلغ الصافي بعد خصم الضرائب عن الخط
+LineTotalTTC=المبلغ تمشيا مع ضريبة
+LineTotalVAT=مبلغ الضريبة على القيمة المضافة لخط
+TypeOfLineServiceOrProduct=Type of line (0=product, 1=نوع الخط (0 = منتج الخدمة = 1)
+FileWithDataToImport=ملف استيراد البيانات
+FileToImport=مصدر لاستيراد ملف
+FileMustHaveOneOfFollowingFormat=ملف لاستيراد ويجب أن يكون واحدا من الشكل التالي
+ChooseFileToImport=اختيار ملف لاستيراد ثم اضغط على picto ٪ ق...
+FieldsInSourceFile=الحقول في ملف المصدر
+FieldsInTargetDatabase=Dolibarr المجالات المستهدفة في قاعدة البيانات
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

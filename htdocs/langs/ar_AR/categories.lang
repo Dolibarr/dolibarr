@@ -1,0 +1,97 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Category=الفئة
+Categories=الفئات
+Rubrique=الفئة
+Rubriques=الفئات
+categories=الفئات
+TheCategorie=فئة
+NoCategoryYet=أي فئة من هذا النوع التي أنشئت
+In=في
+AddIn=أضيف في
+modify=تعديل
+Classify=تصنيف
+CategoriesArea=منطقة الفئات
+ProductsCategoriesArea=منتجات / خدمات الفئات المنطقة
+SuppliersCategoriesArea=الموردين منطقة الفئات
+CustomersCategoriesArea=العملاء منطقة الفئات
+ThirdPartyCategoriesArea=أطراف ثالثة &#39;منطقة الفئات
+MainCats=الفئات الرئيسية
+SubCats=فرعية
+CatStatistics=احصاءات
+CatList=قائمة الفئات
+AllCats=جميع الفئات
+ViewCat=وترى هذه الفئة
+NewCat=إضافة فئة
+NewCategory=فئة جديدة
+ModifCat=تعديل الفئة
+CatCreated=فئة خلق
+CreateCat=خلق فئة
+CreateThisCat=تهيئة هذه الفئة
+ValidateFields=صحة المجالات
+NoSubCat=لا فرعية.
+SubCatOf=فرعية
+FoundCats=العثور على الفئات
+FoundCatsForName=فئات إيجاد اسم :
+FoundSubCatsIn=فرعية موجودة في الفئة
+ErrSameCatSelected=كنت قد اخترت نفس الفئة عدة مرات
+ErrForgotCat=نسيت اختيار الفئة
+ErrForgotField=نسيت أن أبلغ المجالات
+ErrCatAlreadyExists=هذا الاسم مستخدم بالفعل
+AddProductToCat=إضافة هذا المنتج إلى الفئة؟
+ImpossibleAddCat=من المستحيل أن تضيف فئة
+ImpossibleAssociateCategory=من المستحيل المنتسبين لهذه الفئة
+WasAddedSuccessfully=<b>ق ٪</b> أضيفت بنجاح.
+ObjectAlreadyLinkedToCategory=العنصر المرتبط بالفعل في هذه الفئة.
+CategorySuccessfullyCreated=ق ٪ من هذه الفئة تم اضافة بالنجاح.
+ProductIsInCategories=المنتجات / الخدمات وتملك على الفئات التالية
+SupplierIsInCategories=لطرف ثالث يملك الموردين الفئات التالية
+CompanyIsInCustomersCategories=هذا الطرف الثالث وتملك ليلي العملاء / آفاق الفئات
+CompanyIsInSuppliersCategories=ويملك هذا الطرف الثالث على الفئات التالية الموردين
+ProductHasNoCategory=هذا المنتج / الخدمة وليس في أي فئات
+SupplierHasNoCategory=هذا المورد ليست في أي فئات
+CompanyHasNoCategory=هذه الشركة ليست في أي فئات
+ClassifyInCategory=تصنف في الفئة
+NoneCategory=بلا
+CategoryExistsAtSameLevel=هذه الفئة موجودة بالفعل في نفس المكان
+ReturnInProduct=عودة إلى المنتجات / الخدمات بطاقة
+ReturnInSupplier=عودة الى مورد بطاقة
+ReturnInCompany=عودة الى الزبون / احتمال بطاقة
+ContentsVisibleByAll=محتويات سوف تكون واضحة من جانب جميع
+ContentsVisibleByAllShort=محتويات مرئية من قبل جميع
+ContentsNotVisibleByAllShort=محتويات غير مرئي من قبل جميع
+CategoriesTree=شجرة التصنيفات
+DeleteCategory=حذف فئة
+ConfirmDeleteCategory=هل أنت متأكد من أنك تريد حذف هذه الفئة؟
+RemoveFromCategory=إزالة الارتباط مع catégorie
+RemoveFromCategoryConfirm=هل أنت متأكد من أنك تريد إزالة الربط بين الصفقة والفئة؟
+NoCategoriesDefined=أي فئة محددة
+SuppliersCategoryShort=فئة الموردين
+CustomersCategoryShort=فئة الزبائن
+ProductsCategoryShort=فئة المنتجات
+SuppliersCategoriesShort=فئات الموردين
+CustomersCategoriesShort=فئات العملاء
+CustomersProspectsCategoriesShort=Custo. / Prosp. الفئات
+ProductsCategoriesShort=فئات المنتجات
+ThisCategoryHasNoProduct=هذه الفئة لا تحتوي على أي منتج.
+ThisCategoryHasNoSupplier=هذه الفئة لا تحتوي على أي مورد.
+ThisCategoryHasNoCustomer=هذه الفئة لا تحتوي على أي عميل.
+AssignedToCustomer=المخصصة للعميل
+AssignedToTheCustomer=يكلف العميل
+InternalCategory=فئة Inernal
+CategoryContents=محتويات هذه الفئة
+CategId=معرف الفئة
+CatSupList=قائمة الموردين الفئات
+CatCusList=قائمة العملاء / احتمال الفئات
+CatProdList=قائمة المنتجات فئات
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

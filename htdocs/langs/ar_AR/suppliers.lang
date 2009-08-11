@@ -1,0 +1,47 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=الموردين
+Supplier=المورد
+AddSupplier=إضافة مورد
+SupplierRemoved=إزالة المورد
+SuppliersInvoice=فاتورة الموردين
+SuppliersInvoices=فواتير الموردين
+NewSupplier=مورد جديد
+History=التاريخ
+ListOfSuppliers=قائمة الموردين
+ShowSupplier=وتظهر المورد
+OrderDate=من أجل التاريخ
+BuyingPrice=سعر الشراء
+AddSupplierPrice=إضافة مورد الأسعار
+ChangeSupplierPrice=تغيير سعر المورد
+ErrorQtyTooLowForThisSupplier=كمية منخفضة جدا لهذا المورد أو لا يعرف سعر هذا المنتج لهذا المورد
+ErrorSupplierCountryIsNotDefined=لهذا البلد المورد غير محدد. تصحيح هذا أولا.
+ProductHasAlreadyReferenceInThisSupplier=هذا المنتج بالفعل مرجعا في هذا المورد
+NoRecordedSuppliers=لم تسجل الموردين
+SupplierPayment=المورد الدفع
+SuppliersArea=الموردين المنطقة
+RefSupplierShort=المرجع. المورد
+ExportDataset_fournisseur_1=قائمة فواتير الموردين والفواتير &#39;خطوط
+ExportDataset_fournisseur_2=فواتير الموردين والمدفوعات
+ApproveThisOrder=الموافقة على هذا النظام
+ConfirmApproveThisOrder=هل أنت متأكد من أن يوافق على هذا الأمر؟
+DenyingThisOrder=ونفى هذا الأمر
+ConfirmDenyingThisOrder=هل أنت متأكد من إنكار هذا الأمر؟
+ConfirmCancelThisOrder=هل أنت متأكد من أنك تريد إلغاء هذا النظام؟
+AddCustomerOrder=العملاء من أجل خلق
+AddCustomerInvoice=إنشاء فاتورة المستهلك
+AddSupplierOrder=من أجل خلق مورد
+AddSupplierInvoice=خلق مورد فاتورة
+ListOfSupplierProductForSupplier=قائمة المنتجات والأسعار لمورد <b>ق ٪</b>
+NoneOrBatchFileNeverRan=أو لا شيء دفعة <b>٪ ق</b> لا يتعارض مؤخرا
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

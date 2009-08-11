@@ -36,6 +36,7 @@ class Translate {
 	var $dir;						// Directories that contains /langs subdirectory
 
 	var $defaultlang;				// Langue courante en vigueur de l'utilisateur
+	var $direction = 'ltr';			// Left to right or Right to left
 
 	var $tab_loaded=array();		// Tableau pour signaler les fichiers deja charges
 	var $tab_translate=array();		// Tableau des traductions
@@ -156,13 +157,14 @@ class Translate {
 	 *  \brief      Load in a memory array, translation key-value for a particular file.
 	 *              If data for file already loaded, do nothing.
 	 * 				All data in translation array are stored in UTF-8 format.
-	 *  \param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
-	 *  \param      alt         Use alternate file even if file in target language is found
-	 *	\return		int			<0 if KO, >0 if OK
+	 *  \param      domain      		File name to load (.lang file). Use @ before value if domain is in a module directory.
+	 *  \param      alt         		Use alternate file even if file in target language is found
+	 * 	\param		soptafterdirection	Stop when the DIRECTION tag is found
+	 *	\return		int					<0 if KO, >0 if OK
 	 *	\remarks	tab_loaded is completed with $domain key.
 	 *				Value for key is: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 */
-	function Load($domain,$alt=0)
+	function Load($domain,$alt=0,$stopafterdirection=0)
 	{
 		global $conf;
 		//dol_syslog("Translate::Load domain=".$domain." alt=".$alt);
@@ -243,11 +245,19 @@ class Translate {
 								{
 									$value=trim(ereg_replace('\\\n',"\n",$tab[1]));
 
-									if (eregi('^CHARSET$',$key))
+									if (eregi('^CHARSET$',$key))		// This is to declare in which charset files are encoded
 									{
-										// On est tombe sur une balise qui declare le format du fichier lu
 										$this->charset_inputfile[$domain]=strtoupper($value);
 										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$domain].'<br>';
+									}
+									elseif (eregi('^DIRECTION$',$key))	// This is to declare direction of language
+									{
+										// We do not load Separator values for alternate files
+										if (! $newalt)
+										{
+											$this->direction=$value;
+											if ($stopafterdirection) break;
+										}
 									}
 									else
 									{
@@ -268,12 +278,12 @@ class Translate {
 						}
 						fclose($fp);
 
-						// Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
+						// For language other than fr_FR and en_US, we also load alternate file
 						if (! $newalt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
 						{
-							// This function MUST NOY contains call to syslog
+							// This function MUST NOT contains call to syslog
 							//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
-							$this->load($domain,1);
+							$this->load($domain,1,$stopafterdirection);
 						}
 
 						$this->tab_loaded[$domain]=1;           // Marque ce fichier comme charge

@@ -1,0 +1,38 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+CommunitySupport=منتدى / الدعم ويكي
+EMailSupport=رسائل البريد الإلكتروني لدعم
+RemoteControlSupport=الانترنت في الوقت الحقيقي / النائية الدعم
+OtherSupport=الدعم الأخرى
+ToSeeListOfAvailableRessources=للاتصال / ressources المتاحة انظر :
+ClickHere=اضغط هنا
+HelpCenter=مركز المساعدة
+DolibarrHelpCenter=Dolibarr مركز المساعدة والدعم
+ToGoBackToDolibarr=Otherwise, click <a href=بخلاف ذلك ، انقر <a href="%s">هنا لاستخدام Dolibarr</a>
+TypeOfSupport=مصدر الدعم
+TypeSupportCommunauty=المجتمع (مجاني)
+TypeSupportCommercial=التجارية
+TypeOfHelp=نوع
+NeedHelpCenter=بحاجة إلى مساعدة أو دعم؟
+Efficiency=الكفاءة
+TypeHelpOnly=يساعد فقط
+TypeHelpDev=+ المساعدة على التنمية
+TypeHelpDevForm=مساعدة التنمية + + تشكيل
+ToGetHelpGoOnSparkAngels1=ويمكن أن توفر بعض الشركات سريعة (ما الفورية) ، وزيادة كفاءة شبكة الإنترنت عن طريق دعم السيطرة على جهاز الكمبيوتر الخاص بك. مساعدات من هذا القبيل يمكن الاطلاع على الموقع الإلكتروني <b>ل ٪</b> :
+ToGetHelpGoOnSparkAngels3=كما يمكنك الذهاب الى قائمة المدربين كل ما هو متاح لDolibarr ، لهذا اضغط على زر
+ToGetHelpGoOnSparkAngels2=في بعض الأحيان ، لا يوجد أي شركة المتاحة في الوقت الراهن تقوم بإجراء البحث ، لذلك اعتقد تغيير فلتر للبحث عن &quot;توافر جميع&quot;. ستتمكن من ارسال المزيد من الطلبات.
+BackToHelpCenter=Otherwise, click here to go <a href=بخلاف ذلك ، انقر هنا للذهاب <a href="%s">الى الصفحة الرئيسية لمركز المساعدة.</a>
+LinkToGoldMember=تستطيع الاتصال به من قبل المدرب مختار مسبقا لغتك Dolibarr (٪) عن طريق النقر فوق القطعة له (والحد الاعلى لسعر يتم تحديثها تلقائيا) :
+PossibleLanguages=وأيد لغات
+MakeADonation=مساعدة Dolibarr المشروع ، تقديم تبرع
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

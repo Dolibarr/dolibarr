@@ -1,0 +1,65 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Project=المشروع
+Projects=المشاريع
+SharedProject=مشاريع مشتركة
+Myprojects=بلدي المشاريع
+ProjectsArea=مشاريع المنطقة
+NewProject=مشروع جديد
+AddProject=يضيف المشروع
+DeleteAProject=حذف مشروع
+DeleteATask=حذف مهمة
+ConfirmDeleteAProject=هل أنت متأكد من أنك تريد حذف هذا المشروع؟
+ConfirmDeleteATask=هل أنت متأكد من أنك تريد حذف هذه المهمة؟
+OfficerProject=ضابط المشروع
+LastProjects=آخر مشاريع ق ٪
+AllProjects=جميع المشاريع
+ProjectsList=قائمة المشاريع
+ShowProject=وتبين للمشروع
+SetProject=وضع المشروع
+NoProject=لا يعرف أو المملوكة للمشروع
+NbOpenTasks=ملاحظة : من مهام فتح
+NbOfProjects=ملاحظة : للمشاريع
+TimeSpent=الوقت الذي تستغرقه
+RefTask=المرجع. مهمة
+LabelTask=علامة مهمة
+NewTimeSpent=جديد الوقت الذي يقضيه
+MyTimeSpent=وقتي قضى
+MyTasks=مهمتي
+Tasks=المهام
+Task=مهمة
+NewTask=مهمة جديدة
+AddTask=إضافة مهمة
+AddDuration=تضاف المدة
+Activity=النشاط
+Activities=المهام والأنشطة
+MyActivity=نشاط بلدي
+MyActivities=بلدي المهام والأنشطة
+DurationEffective=فعالة لمدة
+MyProjects=بلدي المشاريع
+Time=وقت
+ListProposalsAssociatedProject=قائمة المقترحات التجارية المرتبطة بالمشروع.
+ListOrdersAssociatedProject=قائمة الزبائن المرتبطة بالمشروع.
+ListInvoicesAssociatedProject=قائمة العملاء والفواتير المرتبطة بالمشروع
+ListPredefinedInvoicesAssociatedProject=قائمة العملاء مسبقا والفواتير المرتبطة المشروع
+ListSupplierOrdersAssociatedProject=قائمة الموردين الأوامر المرتبطة بالمشروع
+ListSupplierInvoicesAssociatedProject=قائمة الموردين المرتبطة بالمشروع.
+ListContractAssociatedProject=قائمة العقود المرتبطة بالمشروع.
+ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
+ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر
+ActivityOnProjectThisYear=نشاط المشروع هذا العام
+ChildOfTaks=طفل من مشروع / مهمة
+NotOwnerOfProject=لا صاحب هذا المشروع من القطاع الخاص
+AffectedTo=إلى المتضررين
+CantRemoveProject=هذا المشروع لا يمكن إزالتها كما هي المرجعية بعض أشياء أخرى (الفاتورة ، أو غيرها من الأوامر). انظر referers تبويبة.
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

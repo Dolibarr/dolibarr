@@ -1,0 +1,102 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=عقود منطقة
+ListOfContracts=قائمة العقود
+LastContracts=آخر تعديل العقود ق ٪
+AllContracts=جميع العقود
+ContractCard=عقد بطاقة
+ContractStatus=عقد مركز
+ContractStatusNotRunning=لا تعمل
+ContractStatusRunning=على التوالي
+ContractStatusDraft=مسودة
+ContractStatusValidated=صادق
+ContractStatusClosed=مغلقة
+ServiceStatusInitial=لا تعمل
+ServiceStatusRunning=على التوالي
+ServiceStatusNotLate=على التوالي ، وليس انتهاء
+ServiceStatusNotLateShort=لا تنتهي
+ServiceStatusLate=على التوالي ، وانتهت
+ServiceStatusLateShort=انتهى
+ServiceStatusClosed=مغلقة
+ServicesLegend=خدمات أسطورة
+Contracts=عقود
+Contract=العقد
+ContractContacts=عقد اتصالات
+NoContracts=أي عقود
+MenuServices=الخدمات
+MenuInactiveServices=الخدمات غير الفعالة
+MenuRunningServices=ادارة الخدمات
+MenuExpiredServices=انتهت الخدمات
+MenuClosedServices=أغلقت الخدمات
+NewContract=العقد الجديد
+AddContract=إضافة العقد
+SearchAContract=بحث عقد
+DeleteAContract=الغاء العقد
+CloseAContract=وثيقة العقد
+ConfirmDeleteAContract=هل أنت متأكد من أنك تريد حذف هذا العقد ، وجميع الخدمات التي تقدمها؟
+ConfirmValidateContract=هل أنت متأكد أنك تريد التحقق من صحة هذا العقد؟
+ConfirmCloseContract=هذا ستغلق جميع الخدمات (أو لا). هل أنت متأكد أنك تريد إغلاق هذا العقد؟
+ConfirmCloseService=هل أنت متأكد من أن وثيقة مع هذه الخدمة حتى الآن <b>٪ ق؟</b>
+ValidateAContract=مصادقة على العقود
+ActivateService=تفعيل الخدمة
+ConfirmActivateService=هل أنت متأكد من تفعيل هذه الخدمة في تاريخ <b>٪ ق؟</b>
+DateContract=تاريخ العقد
+DateServiceActivate=تاريخ تفعيل الخدمة
+DateServiceUnactivate=تاريخ خدمة unactivation
+DateServiceStart=موعدا لبدء الخدمة
+DateServiceEnd=موعد لنهاية الخدمة
+ShowContract=وتظهر العقد
+ListOfServices=قائمة الخدمات
+ListOfInactiveServices=قائمة الخدمات غير الفعالة
+ListOfExpiredServices=انتهت نشطة قائمة الخدمات
+ListOfClosedServices=قائمة مغلقة الخدمات
+ListOfRunningContractsLines=قائمة تشغيل خطوط العقد
+ListOfRunningServices=لائحة ادارة الخدمات
+NotActivatedServices=لا تنشيط الخدمات) بين مصدق العقود)
+BoardNotActivatedServices=خدمات لتفعيل العقود بين مصدق
+LastContracts=العقود الماضية ٪
+LastActivatedServices=ق الماضي ٪ تنشيط الخدمات
+LastModifiedServices=آخر تعديل ٪ ق الخدمات
+EditServiceLine=تعديل خط الخدمات
+ContractStartDate=تاريخ البدء
+ContractEndDate=نهاية التاريخ
+DateStartPlanned=تاريخ البدء المخطط
+DateStartPlannedShort=تاريخ البدء المخطط
+DateEndPlanned=المخطط لها تاريخ انتهاء
+DateEndPlannedShort=المخطط لها تاريخ انتهاء
+DateStartReal=البداية الحقيقية لتاريخ
+DateStartRealShort=البداية الحقيقية لتاريخ
+DateEndReal=نهاية التاريخ الحقيقي
+DateEndRealShort=نهاية التاريخ الحقيقي
+NbOfServices=ملاحظة : الخدمات
+CloseService=قريبة من الخدمة
+ServicesNomberShort=ق ٪ خدمة (ق)
+RunningServices=ادارة الخدمات
+BoardRunningServices=انتهت إدارة الخدمات
+ServiceStatus=مركز الخدمة
+DraftContracts=عقود مشاريع
+CloseRefusedBecauseOneServiceActive=العقد لا يمكن أن تكون مغلقة حيث يوجد واحد على الأقل من الخدمة على فتح
+CloseAllContracts=إغلاق جميع العقود
+DeleteContractLine=عقد حذف السطر
+ConfirmDeleteContractLine=هل أنت متأكد من أنك تريد حذف هذا العقد الخط؟
+MoveToAnotherContract=الانتقال إلى خدمة أخرى.
+ConfirmMoveToAnotherContract=الهدف الأول choosed جديدة العقد وأريد التأكد من هذه الخدمة للتحرك في هذا العقد.
+ConfirmMoveToAnotherContractQuestion=اختيار القائمة التي العقد (من نفس الطرف الثالث) ، وترغب في نقل هذه الخدمة؟
+PaymentRenewContractId=تجديد العقد الخط (رقم ٪)
+ExpiredSince=تاريخ الانتهاء
+TypeContact_contrat_internal_SALESREPSIGN=ممثل مبيعات توقيع العقد
+TypeContact_contrat_internal_SALESREPFOLL=ممثل مبيعات متابعة العقد
+TypeContact_contrat_external_BILLING=فواتير العملاء الاتصال
+TypeContact_contrat_external_CUSTOMER=متابعة العملاء الاتصال
+TypeContact_contrat_external_SALESREPSIGN=توقيع عقد خدمات العملاء
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

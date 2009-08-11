@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - donations
 CHARSET=UTF-8
 Donation=Donation
-Donationss=Donations
+Donations=Donations
 Donor=Donor
 Donors=Donors
 AddDonation=Add a donation

@@ -1,0 +1,88 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=التجارية
+CommercialArea=منطقة تجارية
+CommercialCard=بطاقة تجارية
+CustomerArea=منطقة العملاء
+Customer=العميل
+Customers=العملاء
+Prospect=احتمال
+Prospects=آفاق
+DeleteAction=حذف عمل / المهمة
+NewAction=عمل جديدة / المهمة
+AddAction=أضف العمل / المهمة
+AddAnAction=إضافة عمل / المهمة
+AddActionRendezVous=إضافة لقاء للVous مهمة
+Rendez-Vous=لقاء للVous
+ConfirmDeleteAction=هل أنت متأكد من أنك تريد حذف هذه المهمة؟
+CardAction=بطاقة العمل
+PercentDone=النسبة المئوية لعمله
+ActionOnCompany=مهمة عن الشركة
+ActionOnContact=مهمة حول الاتصال
+TaskRDV=اجتماعات
+TaskRDVWith=لقاء مع ق ٪
+ShowTask=وتظهر هذه المهمة
+ShowAction=وتظهر العمل
+ActionsReport=تقرير الأعمال
+SalesRepresentative=ممثل مبيعات
+SalesRepresentatives=مندوبي المبيعات
+SalesRepresentativeFollowUp=ممثل مبيعات (متابعة)
+SalesRepresentativeSignature=ممثل مبيعات (التوقيع)
+CommercialInterlocutor=المحاور التجارية
+ErrorWrongCode=رمز الخطأ
+NoSalesRepresentativeAffected=أي ممثل مبيعات المتضررة
+ShowCustomer=وتبين للعملاء
+ShowProspect=وتظهر احتمال
+ListOfProspects=قائمة التوقعات
+ListOfCustomers=قائمة العملاء
+LastDoneTasks=٪ ق الماضي مهام عمله
+LastRecordedTasks=وسجلت آخر المهام
+LastActionsToDo=الماضي ٪ اقدم الإجراءات لم تكتمل
+DoneAndToDoActionsFor=وعمله من أجل القيام بالمهام ق ٪
+DoneAndToDoActions=ويتم القيام بمهام
+DoneActions=إجراءات عمله
+DoneActionsFor=إجراءات لعمله ق ٪
+ToDoActions=Uncomplete الأعمال
+ToDoActionsFor=Uncomplete إجراءات ق ٪
+SendPropalRef=اقتراح ارسال التجارية ق ٪
+SendOrderRef=من أجل إرسال المستندات ٪
+StatusActionToDo=القيام
+StatusActionDone=فعل
+MyActionsAsked=لقد سجلت الأعمال
+MyActionsToDo=الإجراءات التي يتعين علي القيام به
+MyActionsDone=الإجراءات التي أثرت لي
+StatusActionInProcess=في العملية
+TasksHistoryForThisContact=إجراءات لهذا الاتصال
+LastProspectDoNotContact=لا اتصال
+LastProspectNeverContacted=اتصل أبدا
+LastProspectToContact=للاتصال
+LastProspectContactInProcess=في عملية الاتصال
+LastProspectContactDone=الاتصال به
+DateActionPlanned=تاريخ العمل المزمع
+DateActionDone=تاريخ العمل به
+ActionAskedBy=طلبت العمل
+ActionAffectedTo=العمل على المتضررين
+ActionDoneBy=العمل الذي قام به
+ActionUserAsk=التي سجلتها
+ErrorStatusCantBeZeroIfStarted=إذا كان المجال <b>&#39;تاريخ عمله</b> هو شغلها ، وبدأ العمل (أو انتهت) ، وذلك الميدان&#39; <b>الحالة</b> &#39;لا يمكن أن يكون 0 ٪ ٪.
+ActionAC_TEL=اتصال هاتفي
+ActionAC_FAX=إرسال فاكس
+ActionAC_PROP=إرسال اقتراح
+ActionAC_EMAIL=ارسال بريد الكتروني
+ActionAC_RDV=اجتماعات
+ActionAC_FAC=ارسال الفواتير
+ActionAC_REL=ارسال الفواتير (للتذكير)
+ActionAC_CLO=إغلاق
+ActionAC_EMAILING=إرسال البريد الإلكتروني الجماعي
+ActionAC_COM=لكي ترسل عن طريق البريد
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

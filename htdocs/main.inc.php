@@ -718,21 +718,21 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print "\n";
 
 		// Output style sheets
-		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
 		// CSS forced by modules
 		if (is_array($conf->css_modules))
 		{
 			foreach($conf->css_modules as $cssfile)
 			{	// cssfile is an absolute path
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.'">'."\n";
 			}
 		}
-		// CSS forced by page
+		// CSS forced by page (in top_htmlhead call)
 		if (is_array($arrayofcss))
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$cssfile.'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$cssfile.'?lang='.$langs->defaultlang.'">'."\n";
 			}
 		}
 

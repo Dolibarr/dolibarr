@@ -1,0 +1,59 @@
+/*
+ * Language code: ar_AR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-11 13:27:01
+ */
+
+
+// Date 2009-08-11 13:27:01
+// START - Lines generated via autotranslator.php tool.
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=الإجراءات
+ActionsArea=الإجراءات منطقة الأحداث والمهام)
+Agenda=جدول الأعمال
+Agendas=جداول الأعمال
+Calendar=التقويم
+Calendars=التقاويم
+AffectedTo=إلى المتضررين
+DoneBy=الذي قام به
+Events=الأحداث
+ListOfActions=قائمة الأحداث
+Location=موقع
+SearchAnAction=البحث عن عمل / المهمة
+MenuToDoActions=جميع الإجراءات uncomplete
+MenuDoneActions=أنهت جميع الإجراءات
+MenuToDoMyActions=بلدي مكتمل الإجراءات
+MenuDoneMyActions=بلدي إنهاء الإجراءات
+ListOfEvents=قائمة الأحداث Dolibarr
+ActionsAskedBy=الإجراءات التي سجلتها
+ActionsToDoBy=الإجراءات التي أثرت على
+ActionsDoneBy=الإجراءات التي قامت به
+AllMyActions=كل أفعالي / المهام
+AllActions=Toutes ليه الإجراءات / المهام
+ViewList=وبالنظر إلى قائمة
+ViewCal=وبالنظر إلى الجدول الزمني
+ViewWithPredefinedFilters=وترى مسبقا مع الفلاتر
+AutoActions=التلقائي ملء جدول الأعمال
+AgendaAutoActionDesc=هنا تعريف الأحداث التي تريد Dolibarr لخلق عمل تلقائيا في جدول الأعمال. إذا لم فحصها (افتراضي) ، إلا دليل الإجراءات التي ستدرج في جدول الأعمال.
+AgendaSetupOtherDesc=وتسمح هذه الصفحة لتكوين البارامترات الأخرى من جدول الأعمال وحدة.
+ActionsEvents=الأحداث التي ستخلق Dolibarr عمل تلقائيا في جدول الأعمال
+PropalValidatedInDolibarr=المصادقة على اقتراح
+InvoiceValidatedInDolibarr=فاتورة مصادق
+OrderValidatedInDolibarr=من أجل التحقق من صحة
+NewCompanyToDolibarr=طرف ثالث خلق
+DateActionPlannedStart=تاريخ البدء المخطط
+DateActionPlannedEnd=المخطط لها تاريخ انتهاء
+DateActionDoneStart=البداية الحقيقية لتاريخ
+DateActionDoneEnd=نهاية التاريخ الحقيقي
+DateActionStart=تاريخ البدء
+DateActionEnd=نهاية التاريخ
+AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لترشيح الناتج :
+AgendaUrlOptions2=<b>login=<b>ادخل ق = ٪</b> لتقييد الانتاج لإجراءات التي أوجدتها ، وأثرت على المستخدم الذي قام به أو <b>٪ ق.</b>
+AgendaUrlOptions3=<b>logina=<b>logina ق = ٪</b> لتقييد الانتاج لإجراءات التي أنشأها مستخدم <b>٪ ق.</b>
+AgendaUrlOptions4=<b>logint=<b>ق = logint ٪</b> لتقييد الانتاج لإجراءات المتضررة لمستخدم <b>٪ ق.</b>
+AgendaUrlOptions5=<b>logind=<b>ق = logind ٪</b> لتقييد الانتاج لإجراءات قامت به المستخدم <b>٪ ق.</b>
+AgendaShowBirthdayEvents=عيد ميلاد تظهر اتصالات
+AgendaHideBirthdayEvents=عيد ميلاد إخفاء اتصالات
+// Date 2009-08-11 13:27:01
+// STOP - Lines generated via parser

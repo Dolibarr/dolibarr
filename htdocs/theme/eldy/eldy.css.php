@@ -24,7 +24,8 @@
  *		\version    $Id$
  */
 
-require("../../conf/conf.php");
+//require_once("../../conf/conf.php");
+require_once("../../master.inc.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -32,6 +33,12 @@ header('Content-type: text/css');
 // each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
+
+
+if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
+$langs->load("main",0,1);
+$right=($langs->direction=='rtl'?'left':'right');
+$left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
@@ -48,6 +55,7 @@ body {
     margin-bottom: 0;
     margin-right: 0;
     margin-left: 0;
+    <?php print 'direction: '.$langs->direction.";\n"; ?>
 }
 
 a:link    { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
@@ -141,7 +149,7 @@ form
 
 td.vmenu
 {
-    margin-right: 2px;
+    margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
     width: 164px;
@@ -149,8 +157,8 @@ td.vmenu
 
 div.fiche
 {
-	margin-left: 4px;
-	margin-right: 2px;
+	margin-<?php print $left; ?>: 4px;
+	margin-<?php print $right; ?>: 2px;
 }
 
 /* ============================================================================== */
@@ -163,8 +171,8 @@ div.tmenu
     display: block;
     white-space: nowrap;
     border-top: 1px solid #D3E5EC;
-    border-left: 0px;
-    border-right: 0px solid #555555;
+    border-<?php print $left; ?>: 0px;
+    border-<?php print $right; ?>: 0px solid #555555;
     border-bottom: 1px solid #8B9999;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 4px 0px;
@@ -239,9 +247,9 @@ a.tmenu:hover
   margin: 0px 0px 0px 0px;
   font-weight: normal;
   background: #dee7ec;
-  border-right: 1px solid #555555;
+  border-<?php print $right; ?>: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
-  border-left: 1px solid #D8D8D8;
+  border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #dee7ec;
 }
 a.tmenu:active
@@ -251,9 +259,9 @@ a.tmenu:active
   margin: 0px 0px 0px 0px;
   font-weight: normal;
   background: #F4F4F4;
-  border-right: 1px solid #555555;
+  border-<?php print $right; ?>: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
-  border-left: 1px solid #D8D8D8;
+  border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #dee7ec;
 }
 
@@ -264,9 +272,9 @@ a.tmenusel:link
   font-weight: normal;
   color: #234046;
   background: #F4F4F4;
-  border-right: 1px solid #555555;
+  border-<?php print $right; ?>: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
-  border-left: 1px solid #D8D8D8;
+  border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #F4F4F4;
 }
 a.tmenusel:visited
@@ -276,9 +284,9 @@ a.tmenusel:visited
   font-weight: normal;
   color: #234046;
   background: #F4F4F4;
-  border-right: 1px solid #555555;
+  border-<?php print $right; ?>: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
-  border-left: 1px solid #D8D8D8;
+  border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #F4F4F4;
 }
 a.tmenusel:hover
@@ -288,9 +296,9 @@ a.tmenusel:hover
   font-weight: normal;
   color: #234046;
   background: #F4F4F4;
-  border-right: 1px solid #555555;
+  border-<?php print $right; ?>: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
-  border-left: 1px solid #D8D8D8;
+  border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #F4F4F4;
 }
 a.tmenusel:active
@@ -300,9 +308,9 @@ a.tmenusel:active
   font-weight: normal;
   color: #234046;
   background: #F4F4F4;
-  border-right: 1px solid #555555;
+  border-<?php print $right; ?>: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
-  border-left: 1px solid #D8D8D8;
+  border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #F4F4F4;
 }
 
@@ -343,7 +351,7 @@ li.tmenu {
 a.login
 {
   position: absolute;
-  right: 24px;
+  <?php print $right; ?>: 24px;
   top: 3px;
 
   color: #234046;
@@ -360,7 +368,7 @@ a.login:hover
 img.login
 {
   position: absolute;
-  right: 8px;
+  <?php print $right; ?>: 8px;
   top: 3px;
 
   text-decoration: none;
@@ -373,22 +381,22 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-a.vmenu:link        { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:visited     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:active      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:hover       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-font.vmenudisabled  { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; color: #93a5aa; }
+a.vmenu:link        { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:visited     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:active      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:hover       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+font.vmenudisabled  { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:visited    { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:active     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:hover      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
+a.vsmenu:link       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:visited    { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:active     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:hover      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
 
-a.help:link         { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:visited      { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:link         { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:visited      { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
 
 
 div.blockvmenupair
@@ -398,7 +406,7 @@ div.blockvmenupair
     border-bottom: 1px solid #555555;
 	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
-	text-align:left;
+	text-align: <?php print $left; ?>;
 	text-decoration: none;
     padding-left: 3px;
     padding-right: 1px;
@@ -418,7 +426,7 @@ div.blockvmenuimpair
     border-bottom: 1px solid #555555;
 	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
-	text-align:left;
+	text-align: <?php print $left; ?>;
 	text-decoration: none;
     padding-left: 3px;
     padding-right: 1px;
@@ -439,7 +447,7 @@ div.help
 	background: #f0f0f0;
 	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
-	text-align:left;
+	text-align: <?php print $left; ?>;
 	text-decoration: none;
     padding-left: 3px;
     padding-right: 1px;
@@ -455,7 +463,7 @@ td.barre {
 	background: #b3c5cc;
 	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
-	text-align:left;
+	text-align: <?php print $left; ?>;
 	text-decoration: none;
 }
 
@@ -480,7 +488,7 @@ div.tabs {
     top: 20px;
     margin: 1px 0px 0px 0px;
     padding: 0px 6px 0px 0px;
-    text-align: left;
+    text-align: <?php print $left; ?>;
 }
 
 div.tabBar {
@@ -509,7 +517,7 @@ div.tabsAction {
 }
 
 
-/* onglet_inf ne sert qu'a telephonie. A virer */
+/* TODO onglet_inf ne sert qu'a telephonie. A virer */
 div.onglet_inf
 {
     position: relative;
@@ -548,8 +556,8 @@ a.tabTitle {
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
-    border-right: 1px solid #555555;
-    border-left: 1px solid #D8D8D8;
+    border-<?php print $right; ?>: 1px solid #555555;
+    border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
 
@@ -564,8 +572,8 @@ a.tab:link {
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
 
-    border-right: 1px solid #555555;
-    border-left: 1px solid #D8D8D8;
+    border-<?php print $right; ?>: 1px solid #555555;
+    border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
 a.tab:visited {
@@ -579,8 +587,8 @@ a.tab:visited {
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
 
-    border-right: 1px solid #555555;
-    border-left: 1px solid #D8D8D8;
+    border-<?php print $right; ?>: 1px solid #555555;
+    border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
 a.tab#active {
@@ -594,8 +602,8 @@ a.tab#active {
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
 
-    border-right: 1px solid #555555;
-    border-left: 1px solid #D8D8D8;
+    border-<?php print $right; ?>: 1px solid #555555;
+    border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
 a.tab:hover {
@@ -608,8 +616,8 @@ a.tab:hover {
     -moz-border-radius-topleft:6px;
     -moz-border-radius-topright:6px;
 
-    border-right: 1px solid #555555;
-    border-left: 1px solid #D8D8D8;
+    border-<?php print $right; ?>: 1px solid #555555;
+    border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 }
 
@@ -718,8 +726,8 @@ padding: 0px;
 border-collapse: collapse;
 border: 0px;
 padding-top: 0px;
-padding-left: 0px;
-padding-right: 4px;
+padding-<?php print $left; ?>: 0px;
+padding-<?php print $right; ?>: 4px;
 padding-bottom: 4px;
 margin: 0px 0px;
 }
@@ -1007,8 +1015,8 @@ div.titre {
 
 table.valid {
     border-top: solid 1px #E6E6E6;
-    border-left: solid 1px #E6E6E6;
-    border-right: solid 1px #444444;
+    border-<?php print $left; ?>: solid 1px #E6E6E6;
+    border-<?php print $right; ?>: solid 1px #444444;
     border-bottom: solid 1px #555555;
 	padding-top: 0px;
 	padding-left: 0px;
@@ -1181,8 +1189,8 @@ table.valid {
 position: absolute;
 width: 450px;
 border-top: solid 1px #BBBBBB;
-border-left: solid 1px #BBBBBB;
-border-right: solid 1px #444444;
+border-<?php print $left; ?>: solid 1px #BBBBBB;
+border-<?php print $right; ?>: solid 1px #444444;
 border-bottom: solid 1px #444444;
 padding: 2px;
 background-color: #FFFFE0;
@@ -1197,15 +1205,15 @@ z-index: 100;
 .bodyline {
 	-moz-border-radius:8px;
 	border: 1px #E4ECEC outset;
-	padding:0px;
-	margin-bottom:5px;
+	padding: 0px;
+	margin-bottom: 5px;
 }
 table.dp {
     width: 180px;
     background-color: #FFFFFF;
     border-top: solid 2px #DDDDDD;
-    border-left: solid 2px #DDDDDD;
-    border-right: solid 1px #222222;
+    border-<?php print $left; ?>: solid 2px #DDDDDD;
+    border-<?php print $right; ?>: solid 1px #222222;
     border-bottom: solid 1px #222222;
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
@@ -1287,12 +1295,12 @@ td.hidden {
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
-.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
-table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding-top: 0px; padding-bottom: 0px; }
+table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
@@ -1476,7 +1484,7 @@ img.menuDel
 div.menuNew
 {
 	margin-top:-20px;
-	margin-left:270px;
+	margin-<?php print $left; ?>:270px;
 	height:20px;
 	padding:0px;
 	width:30px;
@@ -1486,7 +1494,7 @@ div.menuNew
 div.menuEdit
 {
 	margin-top:-15px;
-	margin-left:250px;
+	margin-<?php print $left; ?>:250px;
 	height:20px;
 	padding:0px;
 	width:30px;
@@ -1497,7 +1505,7 @@ div.menuEdit
 div.menuDel
 {
 	margin-top:-20px;
-	margin-left:290px;
+	margin-<?php print $left; ?>:290px;
 	height:20px;
 	padding:0px;
 	width:30px;
@@ -1508,7 +1516,7 @@ div.menuDel
 div.menuFleche
 {
 	margin-top:-16px;
-	margin-left:320px;
+	margin-<?php print $left; ?>:320px;
 	height:20px;
 	padding:0px;
 	width:30px;
