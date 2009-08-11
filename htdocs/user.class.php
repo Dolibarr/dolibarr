@@ -1563,12 +1563,12 @@ class User extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *	\param		info		Info string loaded by _load_ldap_info
 	 *	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 2=Return key only (uid=qqq)
+	 *							1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *							2=Return key only (uid=qqq)
 	 *	\return		string		DN
 	 */
 	function _load_ldap_dn($info,$mode=0)
@@ -1582,7 +1582,7 @@ class User extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *	\brief		Initialise tableau info (tableau des attributs LDAP)
 	 *	\return		array		Tableau info des attributs
 	 */

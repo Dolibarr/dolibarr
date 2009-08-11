@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       scripts/company/sync_contacts_dolibarr2ldap.php
-        \ingroup    ldap company
-        \brief      Script de mise a jour des contacts dans LDAP depuis base Dolibarr
-*/
+ *      \file       scripts/company/sync_contacts_dolibarr2ldap.php
+ *      \ingroup    ldap company
+ *      \brief      Script to update all contacts from Dolibarr into a LDAP database
+ *		\version	$Id$
+ */
 
 // Test si mode CLI
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -37,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-    print "Usage: $script_file now\n";   
+    print "Usage: $script_file now\n";
     exit;
 }
 $now=$argv[1];
@@ -59,7 +57,7 @@ print "***** $script_file ($version) *****\n";
 if (! $conf->global->LDAP_CONTACT_ACTIVE)
 {
 	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit 1;	
+	exit 1;
 }
 */
 
@@ -74,7 +72,7 @@ if ($resql)
 
 	$ldap=new Ldap();
 	$ldap->connect_bind();
-	
+
 	while ($i < $num)
 	{
 		$ldap->error="";
@@ -84,12 +82,12 @@ if ($resql)
 		$contact = new Contact($db);
 		$contact->id = $obj->rowid;
 		$contact->fetch($contact->id);
-		
+
 		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->getFullName($langs);
 
 		$info=$contact->_load_ldap_info();
 		$dn=$contact->_load_ldap_dn($info);
-		
+
 		$result=$ldap->update($dn,$info,$user);
 		if ($result > 0)
 		{

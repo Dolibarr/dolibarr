@@ -142,13 +142,13 @@ if ($_POST["action"] == 'add_action')
 	{
 		if ($_POST["actioncode"] == 'AC_RDV' && $contact->getFullName($langs))
 		{
-			$actioncomm->label = $langs->transnoentities("TaskRDVWith",$contact->getFullName($langs));
+			$actioncomm->label = $langs->transnoentitiesnoconv("TaskRDVWith",$contact->getFullName($langs));
 		}
 		else
 		{
 			if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
 			{
-				$actioncomm->label = $langs->transnoentities("Action".$actioncomm->type_code)."\n";
+				$actioncomm->label = $langs->transnoentitiesnoconv("Action".$actioncomm->type_code)."\n";
 			}
 			else $actioncomm->label = $cactioncomm->libelle;
 		}
@@ -207,7 +207,7 @@ if ($_POST["action"] == 'add_action')
 	{
 		$error=1;
 		$_GET["action"] = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
 	if ($datea && $_POST["percentage"] == 0)
 	{
@@ -220,7 +220,7 @@ if ($_POST["action"] == 'add_action')
 	{
 		$error=1;
 		$_GET["action"] = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
 	}
 
 	if (! $error)
