@@ -34,6 +34,9 @@
  */
 function dol_loginfunction($langs,$conf,$mysoc)
 {
+	$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
+	$langs->setDefaultLang($langcode);
+
 	$langs->load("main");
 	$langs->load("other");
 
@@ -62,7 +65,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 	print "<title>".$langs->trans("Login")."</title>\n";
 
-	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
 
 	print '<style type="text/css">'."\n";
 	print '<!--'."\n";
@@ -271,7 +274,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print nl2br($conf->global->MAIN_HOME);
 		print '</td></tr></table></center><br>'."\n";
 	}
-	
+
 	// Google Adsense (ex: demo mode)
 	if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 	{

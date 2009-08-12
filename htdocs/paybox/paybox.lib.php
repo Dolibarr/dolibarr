@@ -44,10 +44,10 @@ function llxHeaderPaybox($title, $head = "")
 	print '<meta name="description" content="Welcome on Dolibarr online payment form">'."\n";
 	print "<title>".$title."</title>\n";
 	if ($head) print $head."\n";
-	if ($conf->global->PAYBOX_CSS_URL) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'">'."\n";
+	if ($conf->global->PAYBOX_CSS_URL) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 	else
 	{
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
 		print '<style type="text/css">';
 		print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
 		print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';

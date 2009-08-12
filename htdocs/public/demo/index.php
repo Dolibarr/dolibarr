@@ -34,7 +34,7 @@ $langs->load("main");
 $langs->load("other");
 
 // Security check
-if (empty($conf->global->MAIN_DEMO)) accessforbidden('Constant MAIN_DEMO must be defined in Home->Setup->Misc to enable the demo entry page',1,1,1);
+if (empty($conf->global->MAIN_DEMO)) accessforbidden('Constant MAIN_DEMO must be defined in Home->Setup->Misc with value "default login,default pass" to enable the demo entry page',1,1,1);
 
 
 $demoprofiles=array(
@@ -74,7 +74,7 @@ function llxHeaderVierge($title, $head = "")
 	print '<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos,online">'."\n";
 	print '<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
 	print "<title>".$title."</title>\n";
-	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php?lang='.$langs->defaultlang.'">'."\n";
 	if ($head) print $head."\n";
 	print '<style type="text/css">';
 	print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
@@ -222,14 +222,14 @@ foreach ($demoprofiles as $profilarray)
 		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;demochoice='.$profilarray['key'].'&amp;urlfrom='.urlencode($_SERVER["PHP_SELF"]);
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
 		print '<tr>';
-		print '<td align="left">';
+		print '<td>';
 		print '<table summary="Dolibarr online demonstration for profile '.$profilarray['label'].'" style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
 		print '<tr>';
-		print '<td align="left" width="50"><a href="'.$url.'"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
+		print '<td width="50"><a href="'.$url.'"><img src="'.$profilarray['icon'].'" width="48" border="0" alt="Demo '.$profilarray['label'].'"></a></td>';
 		//print '<td><input type="radio" name="demochoice"';
 		//if ($profilarray['default']) print ' checked="true"';
 		//print ' value="'.$profilarray['key'].'"></td>';
-		print '<td align="left"><a href="'.$url.'">'.$langs->trans($profilarray['label']).'</a></td></tr>';
+		print '<td><a href="'.$url.'">'.$langs->trans($profilarray['label']).'</a></td></tr>';
 		print '</table>';
 		print '</td>';
 		//if ($i % $NBOFCOLS == ($NBOFCOLS-1)) print '</tr>'."\n";

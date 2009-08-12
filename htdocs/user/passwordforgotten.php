@@ -37,6 +37,9 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
+$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
+$langs->setDefaultLang($langcode);
+
 $user->getrights('user');
 
 $langs->load("main");
@@ -157,9 +160,10 @@ print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 // En tete html
 print "<html>\n";
 print "<head>\n";
+print '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'."\n";
 print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 print "<title>Dolibarr Authentification</title>\n";
-print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
 print '<style type="text/css">'."\n";
 print '<!--'."\n";
 print '#login {';

@@ -158,7 +158,6 @@ AvailableOnlyIfJavascriptAndAjaxNotDisabled=Tilgjengelig bare hvis Javascript og
 Required=Påkrevet
 Security=Sikkerhet
 Passwords=Passord
-DoNotStoreClearPassword=Ikke lagre passord åpnet i databasen
 MainDbPasswordFileConfEncrypted=Databasepassord kryptert i conf.php
 ConfigFileIsInReadOnly=Filen conf.php er skrivebeskyttet. Sjekk tillatelser.
 ProtectAndEncryptPdfFiles=Beskytt genererte pdf-filer (anbefales ikke, brekker mulighet for massegenerering av PDF'er)

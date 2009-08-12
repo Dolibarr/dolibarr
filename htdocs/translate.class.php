@@ -108,27 +108,36 @@ class Translate {
 			$langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
 			$langpref=eregi_replace(";[^,]*","",$langpref);
 			$langpref=eregi_replace("-","_",$langpref);
-
 			$langlist=split("[;,]",$langpref);
+			$codetouse=$langlist[0];
+		}
+		else $codetouse=$srclang;
 
-			$langpart=split("_",$langlist[0]);
-			//print "Short before _ : ".$langpart[0].'/ Short after _ : '.$langpart[1];
+		// We redefine $srclang
+		$langpart=split("_",$codetouse);
+		//print "Short before _ : ".$langpart[0].'/ Short after _ : '.$langpart[1];
 
-			if (isset($langpart[1])) {
+		if (isset($langpart[1]))	// If its a long code xx_YY
+		{
+			// Array to convert short lang code into other long code.
+			$longforshort=array('ar'=>'ar_AR');
+			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
+			else {
 				$srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
 				// Array to convert long lang code into other long code.
 				$longforlong=array('no_nb'=>'nb_NO');
 				if (isset($longforlong[strtolower($srclang)])) $srclang=$longforlong[strtolower($srclang)];
 			}
-			else {
-				// Array to convert short lang code into long code.
-				$longforshort=array('ca'=>'ca_ES', 'nb'=>'nb_NO', 'no'=>'nb_NO');
-				if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
-				else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
-			}
+		}
+		else {							// If its a short code xx
+			// Array to convert short lang code into long code.
+			$longforshort=array('ca'=>'ca_ES', 'nb'=>'nb_NO', 'no'=>'nb_NO');
+			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
+			else $srclang=strtolower($langpart[0])."_".strtoupper($langpart[0]);
 		}
 
 		$this->defaultlang=$srclang;
+		//print $this->defaultlang;
 	}
 
 
@@ -201,7 +210,7 @@ class Translate {
 			// Check in "always available" alternate file if not found or if asked
 			if ($newalt || ! $filelangexists)
 			{
-				// Dir of always available alternate file (en_US or fr_FR)
+				// Dir of ALWAYS available alternate file (en_US, fr_FR, es_ES)
 				if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
 				elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $searchdir."/fr_FR";
 				elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
