@@ -106,7 +106,7 @@ print '<table class="noborder" width="100%">';
 $var=true;
 
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
+print '<td colspan="4">'.$langs->trans("LDAPSynchronizeContacts").'</td>';
 print "</tr>\n";
 
 

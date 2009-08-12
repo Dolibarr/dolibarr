@@ -19,23 +19,21 @@
  */
 
 /**     \defgroup   ldap     Module ldap
- 		\brief      Module pour interfacer les contacts avec un annuaire Ldap
+ \brief      Module pour interfacer les contacts avec un annuaire Ldap
  */
 
 /**
- 	\file       htdocs/includes/modules/modLdap.class.php
- 	\ingroup    ldap
- 	\brief      Fichier de description et activation du module Ldap
-	\version	$Id$
+ *	\file       htdocs/includes/modules/modLdap.class.php
+ *	\ingroup    ldap
+ *	\brief      Fichier de description et activation du module Ldap
+ *	\version	$Id$
  */
-
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class modLdap
- \brief      Classe de description et activation du module Ldap
+/** \class 		modLdap
+ *	\brief      Classe de description et activation du module Ldap
  */
-
 class modLdap extends DolibarrModules
 {
 	/**
@@ -67,63 +65,21 @@ class modLdap extends DolibarrModules
 		$this->requiredby = array();
 
 		// Constants
-		$this->const = array();
-		$r=0;
-
-		$this->const[$r][0] = "LDAP_USER_DN";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "ou=users,dc=my-domain,dc=com";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_GROUP_DN";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "ou=groups,dc=my-domain,dc=com";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FILTER_CONNECTION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "&(objectClass=user)(objectCategory=person)";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_LOGIN";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "uid";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_LOGIN_SAMBA";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "samaccountname";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_NAME";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "sn";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_FIRSTNAME";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "givenname";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_MAIL";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mail";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_PHONE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "telephonenumber";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_FAX";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "facsimiletelephonenumber";
-		$r++;
-
-		$this->const[$r][0] = "LDAP_FIELD_MOBILE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mobile";
-		$r++;
+		$this->const = array(
+		0=>array('LDAP_SERVER_TYPE','chaine','openldap','',0),
+		1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',0),
+		2=>array('LDAP_SERVER_HOST','chaine','localhost','',0),
+		3=>array('LDAP_USER_DN','chaine','ou=users,dc=my-domain,dc=com','',0),
+		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=my-domain,dc=com','',0),
+		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=user)(objectCategory=person)','',0),
+		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0),
+		7=>array('LDAP_FIELD_NAME','chaine','sn','',0),
+		8=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0),
+		9=>array('LDAP_FIELD_MAIL','chaine','mail','',0),
+		10=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0),
+		11=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0),
+		12=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
+		);
 
 		// Boites
 		$this->boxes = array();

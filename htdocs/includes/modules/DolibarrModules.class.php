@@ -770,7 +770,7 @@ class DolibarrModules
 			{
 				$row = $this->db->fetch_row($result);
 
-				if ($row[0] == 0)
+				if ($row[0] == 0)	// If not found
 				{
 					if (! $visible) $visible='0';
 					if (strlen($note))
@@ -813,6 +813,10 @@ class DolibarrModules
 						dol_syslog("DolibarrModules::insert_const ".$this->db->lasterror(), LOG_ERR);
 						$err++;
 					}
+				}
+				else
+				{
+					dol_syslog("DolibarrModules::insert_const constant '".$name."' alreday exists");
 				}
 			}
 			else

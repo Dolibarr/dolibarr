@@ -122,7 +122,7 @@ $var=true;
 
 
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
+print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembers").'</td>';
 print "</tr>\n";
 
 // DN Pour les adherents
