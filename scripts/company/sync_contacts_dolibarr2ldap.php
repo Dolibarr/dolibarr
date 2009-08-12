@@ -54,6 +54,31 @@ $error=0;
 
 print "***** $script_file ($version) *****\n";
 
+print "Mails sending disabled (useless in batch mode)\n";
+$conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
+print "\n";
+print "----- Synchronize all records from Dolibarr database:\n";
+print "type=".$conf->db->type."\n";
+print "host=".$conf->db->host."\n";
+print "port=".$conf->db->port."\n";
+print "login=".$conf->db->user."\n";
+//print "pass=".eregi_replace('.','*',$conf->db->password)."\n";	// Not defined for security reasons
+print "database=".$conf->db->name."\n";
+print "\n";
+print "----- To LDAP database:\n";
+print "host=".$conf->global->LDAP_SERVER_HOST."\n";
+print "port=".$conf->global->LDAP_SERVER_PORT."\n";
+print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "pass=".eregi_replace('.','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "DN target=".$conf->global->LDAP_CONTACT_DN."\n";
+print "\n";
+print "Press a key to confirm...\n";
+$input = trim(fgets(STDIN));
+print "Warning, this operation may result in data loss if it failed.\n";
+print "Be sure to have a backup of your LDAP database (With OpenLDAP: slapcat > save.ldif).\n";
+print "Hit Enter to continue or CTRL+C to stop...\n";
+$input = trim(fgets(STDIN));
+
 /*
 if (! $conf->global->LDAP_CONTACT_ACTIVE)
 {
