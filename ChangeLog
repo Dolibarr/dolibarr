@@ -52,6 +52,7 @@ For users:
 
 For translators:
 - Update some language files.
+- Can accept right to left languages. Added an "automatic" arabe translation.
 
 For developers:
 - An external module can force the third party code to be required whatever
