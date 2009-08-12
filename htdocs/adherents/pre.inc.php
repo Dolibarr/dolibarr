@@ -31,7 +31,7 @@ function llxHeader($head = '', $title='', $help_url='')
 
 	$langs->load("members");
 
-	top_menu($head);
+	top_menu($head, $title);
 
 	$menu = new Menu();
 

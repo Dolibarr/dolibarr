@@ -18,17 +18,17 @@
  */
 
 /**
-        \file       htdocs/comm/mailing/liste.php
-        \ingroup    mailing
-        \brief      Liste des mailings
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/mailing/liste.php
+ *       \ingroup    mailing
+ *       \brief      Liste des mailings
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 
 if (!$user->rights->mailing->lire) accessforbidden();
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -54,7 +54,7 @@ $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 
 $sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec";

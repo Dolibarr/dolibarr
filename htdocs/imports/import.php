@@ -250,7 +250,7 @@ $objmodelimport=new ModeleImports();
 
 if ($step == 1 || ! $datatoimport)
 {
-	llxHeader('',$langs->trans("NewImport"));
+	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	/*
 	 * Affichage onglets
@@ -323,7 +323,7 @@ if ($step == 1 || ! $datatoimport)
 
 if ($step == 2 && $datatoimport)
 {
-	llxHeader('',$langs->trans("NewImport"));
+	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	/*
 	 * Affichage onglets
@@ -510,7 +510,7 @@ if ($step == 3 && $datatoimport)
 
 var_dump($array_match_file_to_database);
 
-	llxHeader('',$langs->trans("NewImport"));
+	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	/*
 	 * Affichage onglets
@@ -729,7 +729,7 @@ if ($step == 4 && $datatoimport)
 {
 	asort($array_match_file_to_database);
 
-	llxHeader('',$langs->trans("NewImport"));
+	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	/*
 	 * Affichage onglets

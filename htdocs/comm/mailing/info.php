@@ -39,7 +39,7 @@ accessforbidden();
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $html = new Form($db);
 

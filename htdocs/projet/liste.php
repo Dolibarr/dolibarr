@@ -63,7 +63,7 @@ $pagenext = $page + 1;
  * View
  */
 
-llxHeader();
+llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $projectstatic = new Project($db);
 $userstatic = new User($db);

@@ -33,7 +33,7 @@ function llxHeader($head = '', $title='', $help_url='')
 	$langs->load("companies");
 	$langs->load("commercial");
 
-	top_menu($head);
+	top_menu($head,$title);
 
 	$menu = new Menu();
 

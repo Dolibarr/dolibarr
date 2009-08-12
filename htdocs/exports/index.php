@@ -41,7 +41,7 @@ $export->load_arrays($user);
  * View
  */
 
-llxHeader('',$langs->trans("ExportsArea"));
+llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 print_fiche_titre($langs->trans("ExportsArea"));
 

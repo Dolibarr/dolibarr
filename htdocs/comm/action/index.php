@@ -104,7 +104,7 @@ if ($action=='delete_action')
  * View
  */
 
-llxHeader('','','EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda');
+llxHeader('','','EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda');
 
 $form=new Form($db);
 

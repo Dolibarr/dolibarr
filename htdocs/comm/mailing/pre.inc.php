@@ -32,30 +32,30 @@ $langs->load("mails");
 $langs->load("exports");
 
 
-function llxHeader($head = "", $title = "")
+function llxHeader($head = "", $title = "", $help_url="")
 {
     global $user, $conf, $langs;
-    
+
     top_menu($head, $title);
-    
+
     $menu = new Menu();
-    
+
     if ($user->rights->mailing->lire)
     {
         $menu->add(DOL_URL_ROOT."/comm/mailing/index.php", $langs->trans("Mailings"));
     }
-    
+
     if ($user->rights->mailing->creer)
     {
         $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", $langs->trans("NewMailing"));
     }
-    
+
     if ($user->rights->mailing->lire)
     {
         $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/liste.php", $langs->trans("List"));
     }
-    
-    left_menu($menu->liste);
+
+    left_menu($menu->liste, $help_url);
 }
 
 ?>

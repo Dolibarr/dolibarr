@@ -612,7 +612,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && 
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $html = new Form($db);
 

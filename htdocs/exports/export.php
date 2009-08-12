@@ -244,13 +244,13 @@ if ($step == 2 && $action == 'select_model')
 
 
 /*
- * Affichage Pages des Etapes
+ * View
  */
 
 
 if ($step == 1 || ! $datatoexport)
 {
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
     /*
      * Affichage onglets
@@ -323,7 +323,7 @@ if ($step == 1 || ! $datatoexport)
 
 if ($step == 2 && $datatoexport)
 {
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 
     /*
@@ -464,7 +464,7 @@ if ($step == 3 && $datatoexport)
 {
     asort($array_selected);
 
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
     /*
      * Affichage onglets
@@ -638,7 +638,7 @@ if ($step == 4 && $datatoexport)
 {
     asort($array_selected);
 
-    llxHeader('',$langs->trans("NewExport"));
+    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
     /*
      * Affichage onglets

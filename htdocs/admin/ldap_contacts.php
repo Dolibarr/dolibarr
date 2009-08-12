@@ -78,7 +78,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
  * Visu
  */
 
-llxHeader();
+llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 
 $head = ldap_prepare_head();
 

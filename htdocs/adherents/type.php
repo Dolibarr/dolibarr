@@ -110,7 +110,7 @@ if ($user->rights->adherent->configurer && $_GET["action"] == 'commentaire')
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $form=new Form($db);
 

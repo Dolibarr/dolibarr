@@ -160,14 +160,11 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 }
 
 
+/*
+ * View
+ */
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Mode affichage                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-
-llxHeader();
+llxHeader('',$langs->trans("Subscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $html = new Form($db);
 

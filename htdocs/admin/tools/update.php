@@ -56,7 +56,7 @@ if ($_POST["action"]=='update')
 * View
 */
 
-$wikihelp='EN:Installation_/_Upgrade|FR:Installation_/_Mise_a_jour|ES:Instalación_/_Actualización';
+$wikihelp='EN:Installation_/_Upgrade|FR:Installation_/_Mise_a_jour|ES:Instalaci&omodulon_/_Actualizaci&omodulon';
 llxHeader($langs->trans("Upgrade"),'',$wikihelp);
 
 print_fiche_titre($langs->trans("Upgrade"),'','setup');

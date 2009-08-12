@@ -33,7 +33,7 @@ $langs->load("donations");
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
 
 
 print_fiche_titre($langs->trans("Statistics"));

@@ -65,11 +65,11 @@ if ($_POST["action"] == 'update' && $user->rights->adherent->creer && ! $_POST["
 
 
 
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
-llxHeader();
+llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $html = new Form($db);
 

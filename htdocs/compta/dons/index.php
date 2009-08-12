@@ -15,17 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
 	    \file       htdocs/compta/dons/index.php
 		\ingroup    don
 		\brief      Page accueil espace don
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -35,10 +31,10 @@ $langs->load("donations");
 
 
 /*
- * Affichage
+ * View
  */
- 
-llxHeader();
+
+llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
 
 $donstatic=new Don($db);
 
@@ -49,7 +45,7 @@ $sql.= " ORDER BY d.fk_statut";
 
 $result = $db->query($sql);
 
-if ($result) 
+if ($result)
 {
   $num = $db->num_rows();
   $i = 0;
@@ -63,7 +59,7 @@ if ($result)
     }
   $db->free($result);
 } else {
-    dol_print_error($db);   
+    dol_print_error($db);
 }
 
 print_fiche_titre($langs->trans("DonationsArea"));

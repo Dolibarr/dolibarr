@@ -55,10 +55,10 @@ $result = restrictedArea($user, 'projet', $projetid);
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
-llxHeader("",$langs->trans("Referers"));
+llxHeader("",$langs->trans("Referers"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $form = new Form($db);
 
@@ -156,33 +156,33 @@ foreach ($listofreferent as $key => $value)
 		{
 			$var=true;
 			$total = 0;
-		    for ($i = 0; $i<sizeof($elementarray);$i++)
-		    {
-		        $element = new $class($db);
-		        $element->fetch($elementarray[$i]);
+			for ($i = 0; $i<sizeof($elementarray);$i++)
+			{
+				$element = new $class($db);
+				$element->fetch($elementarray[$i]);
 
-		        $var=!$var;
-		        print "<tr $bc[$var]>";
-		        print "<td>";
+				$var=!$var;
+				print "<tr $bc[$var]>";
+				print "<td>";
 				print $element->getNomUrl(1);
 				print "</td>\n";
-		        $date=$element->date;
+				$date=$element->date;
 				if (empty($date)) $date=$element->datep;
 				if (empty($date)) $date=$element->date_contrat;
 				print '<td>'.dol_print_date($date,'day').'</td>';
-		        print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
-		        print '<td align="right">'.$element->getLibStatut(5).'</td>';
-		        print '</tr>';
+				print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
+				print '<td align="right">'.$element->getLibStatut(5).'</td>';
+				print '</tr>';
 
-		        $total = $total + $element->total_ht;
-		    }
+				$total = $total + $element->total_ht;
+			}
 
-		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Number").': '.$i.'</td>';
-		    print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
-		    print '<td>&nbsp;</td>';
-		    print '</tr>';
+			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Number").': '.$i.'</td>';
+			print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
 		}
-	    print "</table>";
+		print "</table>";
 
 		/*
 		 * Barre d'action
@@ -193,11 +193,11 @@ foreach ($listofreferent as $key => $value)
 		{
 			if ($key == 'propal' && $conf->propal->enabled && $user->rights->propale->creer)
 			{
-			    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddProp").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddProp").'</a>';
 			}
 			if ($key == 'order' && $conf->commande->enabled && $user->rights->commande->creer)
 			{
-			    print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
 			}
 			if ($key == 'invoice' && $conf->facture->enabled && $user->rights->facture->creer)
 			{

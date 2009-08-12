@@ -136,10 +136,10 @@ if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !=''
 
 
 /*
- * Affichage page
+ * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 if ($msg)	print $msg.'<br>';
 

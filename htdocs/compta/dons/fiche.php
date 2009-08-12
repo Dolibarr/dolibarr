@@ -193,7 +193,7 @@ if ($_REQUEST['action'] == 'builddoc')
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
 
 $html=new Form($db);
 $formfile = new FormFile($db);

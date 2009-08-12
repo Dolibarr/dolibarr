@@ -79,7 +79,7 @@ if ($_GET["action"] == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 

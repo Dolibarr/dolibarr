@@ -39,20 +39,16 @@ if (!$user->rights->adherent->lire)
 
 
 /*
- * Visualisation de la fiche
- *
+ * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $adh = new Adherent($db);
 $adh->id=$_GET["id"];
 $adh->fetch($_GET["id"]);
 $adh->info($_GET["id"]);
 
-/*
- * Affichage onglets
- */
 $head = member_prepare_head($adh);
 
 dol_fiche_head($head, 'info', $langs->trans("Member"), 0, 'user');

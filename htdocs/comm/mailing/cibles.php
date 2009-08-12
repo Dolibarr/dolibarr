@@ -60,6 +60,7 @@ $search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_
 /*
  * Actions
  */
+
 if ($_GET["action"] == 'add')
 {
 	$modulename=$_GET["module"];
@@ -149,10 +150,10 @@ if ($_POST["button_removefilter"])
 
 
 /*
- * Liste des destinataires
+ * View
  */
 
-llxHeader("","",$langs->trans("MailCard"));
+llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $html = new Form($db);
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,28 +38,28 @@ $libelle[2] = $langs->trans("DonationsPayed");
 $libelle[3] = $langs->trans("DonationsReceived");
 
 
-function llxHeader($head = "")
+function llxHeader($head = "", $title="", $help_url="")
 {
 	global $user, $conf, $langs;
-	
+
 	$langs->load("donations");
-	
-	top_menu($head);
-	
+
+	top_menu($head,$title);
+
 	$menu = new Menu();
-	
+
 	$menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
 	$menu->add_submenu(DOL_URL_ROOT."/compta/dons/fiche.php?action=create",$langs->trans("NewDonation"));
 	$menu->add_submenu(DOL_URL_ROOT."/compta/dons/liste.php",$langs->trans("List"));
 	$menu->add_submenu(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"));
-	
+
 	if ($conf->banque->enabled)
 	{
 		$langs->load("banks");
 		$menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
 	}
-	
-	left_menu($menu->liste);
+
+	left_menu($menu->liste, $help_url);
 }
 
 ?>

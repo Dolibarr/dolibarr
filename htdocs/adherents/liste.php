@@ -65,7 +65,7 @@ if ($_REQUEST["button_removefilter"])
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $form=new Form($db);
 

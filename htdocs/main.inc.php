@@ -1050,7 +1050,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 			print '">';
 			print img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).' ';
 			print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-			if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
+			//if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 			print '</a>';
 			print '</div>';
 		}

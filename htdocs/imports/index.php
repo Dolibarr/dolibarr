@@ -39,7 +39,7 @@ $import->load_arrays($user);
  * View
  */
 
-llxHeader('',$langs->trans("ImportArea"));
+llxHeader('',$langs->trans("ImportArea"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 print_fiche_titre($langs->trans("ImportArea"));
 

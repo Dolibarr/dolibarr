@@ -190,7 +190,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe
 *	View
 */
 
-llxHeader();
+llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

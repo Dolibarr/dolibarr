@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/compta/dons/liste.php
         \ingroup    don
 		\brief      Page de liste des dons
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -48,10 +45,10 @@ $pagenext = $page + 1;
 
 
 /*
- * Affichage
+ * View
  */
- 
-llxHeader();
+
+llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
 
 $donstatic=new Don($db);
 
@@ -68,16 +65,16 @@ if ($statut >= 0)
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  
+
   if ($statut >= 0)
     {
       print_barre_liste($libelle[$statut], $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
     }
-  else 
+  else
     {
       print_barre_liste($langs->trans("Donation"), $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
     }
@@ -97,7 +94,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
   print "</tr>\n";
-    
+
   $var=True;
   while ($i < $num)
     {

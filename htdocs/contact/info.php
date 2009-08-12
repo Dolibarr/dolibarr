@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'contact',$contactid,'socpeople');
 * 	View
 */
 
-llxHeader();
+llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 
 $contact = new Contact($db);

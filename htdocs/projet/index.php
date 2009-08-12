@@ -41,7 +41,7 @@ if ($user->societe_id > 0)
  * View
  */
 
-llxHeader("",$langs->trans("Projects"),"EN:Projects|FR:Projet|ES:Proyectos");
+llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $text=$langs->trans("Projects");
 if ($_REQUEST["mode"]=='mine') $text=$langs->trans("MyProjects");

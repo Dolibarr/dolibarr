@@ -18,10 +18,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \file       htdocs/adherents/options.php
- \ingroup    adherent
- \brief      Page de configuratin des champs optionnels
- \version    $Id$
+/**
+ *      \file       htdocs/adherents/options.php
+ *		\ingroup    adherent
+ *		\brief      Page de configuratin des champs optionnels
+ *		\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -104,8 +105,7 @@ if ($_GET["action"] == 'delete' && $user->rights->adherent->configurer)
  * View
  */
 
-llxHeader();
-
+llxHeader('',$langs->trans("OptionalFieldsSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 print_titre($langs->trans("OptionalFieldsSetup"));

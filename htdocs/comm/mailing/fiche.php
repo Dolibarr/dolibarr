@@ -471,7 +471,7 @@ if (! empty($_POST["cancel"]))
  * View
  */
 
-llxHeader("","","Fiche Mailing");
+llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $html = new Form($db);
 $htmlother = new FormOther($db);

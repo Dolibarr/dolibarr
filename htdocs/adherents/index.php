@@ -37,7 +37,7 @@ $langs->load("members");
  * View
  */
 
-llxHeader($langs->trans("Members"),'','EN:Fundations|FR:Adherents|ES:Miembros');
+llxHeader('',$langs->trans("Members"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);

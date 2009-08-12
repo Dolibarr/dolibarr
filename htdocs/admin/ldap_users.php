@@ -21,11 +21,11 @@
  */
 
 /**
-    	\file       htdocs/admin/ldap_users.php
-		\ingroup    ldap
-		\brief      Page d'administration/configuration du module Ldap
-		\version    $Id$
-*/
+ *   	\file       htdocs/admin/ldap_users.php
+ *		\ingroup    ldap
+ *		\brief      Page d'administration/configuration du module Ldap
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -80,7 +80,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
  * Visu
  */
 
-llxHeader();
+llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 
 $head = ldap_prepare_head();
 

@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/comm/mailing/index.php
-        \ingroup    mailing
-        \brief      Page accueil de la zone mailing
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/mailing/index.php
+ *       \ingroup    mailing
+ *       \brief      Page accueil de la zone mailing
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -91,12 +91,12 @@ while (($file = readdir($handle))!==false)
                 if (! $conf->$key->enabled || (! $user->admin && $mailmodule->require_admin))
                 {
                     $qualified=0;
-                    //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
+                    //print "Les prï¿½requis d'activation du module mailing ne sont pas respectï¿½s. Il ne sera pas actif";
                     break;
                 }
             }
 
-            // Si le module mailing est qualifié
+            // Si le module mailing est qualifiï¿½
             if ($qualified)
             {
                 $var = !$var;
