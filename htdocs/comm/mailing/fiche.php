@@ -97,7 +97,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 		// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 		// on affiche donc juste un message
 		$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-		$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
+		$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
 		$message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 		$_GET["action"]='';
 	}
@@ -141,7 +141,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 
 			if ($num)
 			{
-				dol_syslog("fiche.php: nb of targets = ".$num, LOG_DEBUG);
+				dol_syslog("comm/mailing/fiche.php: nb of targets = ".$num, LOG_DEBUG);
 
 				// Positionne date debut envoi
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$id;
@@ -213,7 +213,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 						// Mail successful
 						$nbok++;
 
-						dol_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+						dol_syslog("comm/mailing/fiche.php: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 						$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 						$sql.=" SET statut=1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
@@ -228,7 +228,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 						// Mail failed
 						$nbko++;
 
-						dol_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+						dol_syslog("comm/mailing/fiche.php: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 						$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 						$sql.=" SET statut=-1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
@@ -255,7 +255,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 			}
 
 			$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-			dol_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
+			dol_syslog("comm/mailing/fiche.php: update global status sql=".$sql, LOG_DEBUG);
 			$resql2=$db->query($sql);
 			if (! $resql2)
 			{
@@ -566,7 +566,7 @@ else
 					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 					// on affiche donc juste un message
 					$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-					$message.='<br><textarea cols="50" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
+					$message.='<br><textarea cols="50" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
 					$message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 					$_GET["action"]='';
 				}
@@ -638,7 +638,7 @@ else
 				// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 				// on affiche donc juste un message
 				$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-				$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
+				$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$_GET["id"].'</textarea>';
 			}
 
 			if ($message) print "$message<br>";
