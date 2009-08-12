@@ -45,7 +45,10 @@ For users:
        new product lines.
 - Fix: CC and BCC in emails was not used if using SMTPS handler.
 - Fix: Last character was lost when text end with n or r.
-- Fix: LDAP synchronization is now more robust.
+- Fix: LDAP synchronization is now more robust (transaction and 
+  use modify instead of delete/add).
+- Fix: Fix: Setup of member synchronization does not conflict 
+  with contact or user synchronization.
 
 For translators:
 - Update some language files.
