@@ -130,7 +130,7 @@ print '</tr>';
 print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
 
 // Password not crypted
-if ($conf->global->LDAP_FIELD_PASSWORD)
+if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD)
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
 	print '<td class="valeur">'.$fuser->pass.'</td>';
@@ -138,7 +138,7 @@ if ($conf->global->LDAP_FIELD_PASSWORD)
 }
 
 // Password crypted
-if ($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
+if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
 	print '<td class="valeur">'.$fuser->pass_crypted.'</td>';
@@ -177,14 +177,14 @@ if ($message) { print $message; }
 
 print '<div class="tabsAction">';
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+if ($conf->global->LDAP_MEMBER_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$adh->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
+if ($conf->global->LDAP_MEMBER_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 
 
 

@@ -22,18 +22,18 @@
  */
 
 /**
- \file       htdocs/contact.class.php
- \ingroup    societe
- \brief      Fichier de la classe des contacts
- \version    $Id$
+ *	\file       htdocs/contact.class.php
+ *	\ingroup    societe
+ *	\brief      Fichier de la classe des contacts
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 
 /**
- \class      Contact
- \brief      Classe permettant la gestion des contacts
+ *	\class      Contact
+ *	\brief      Classe permettant la gestion des contacts
  */
 class Contact extends CommonObject
 {
@@ -250,9 +250,9 @@ class Contact extends CommonObject
 		$info["objectclass"]=split(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		// Champs
-		if ($this->getFullName($langs) && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->getFullName($langs);
-		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
-		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->getFullName($langs) && $conf->global->LDAP_CONTACT_FIELD_FULLNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->getFullName($langs);
+		if ($this->name && $conf->global->LDAP_CONTACT_FIELD_NAME) $info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->name;
+		if ($this->firstname && $conf->global->LDAP_CONTACT_FIELD_FIRSTNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
 
 		if ($this->poste) $info["title"] = $this->poste;
 		if ($this->socid > 0)
@@ -260,21 +260,21 @@ class Contact extends CommonObject
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 
-			$info[$conf->global->LDAP_FIELD_COMPANY] = $soc->nom;
+			$info[$conf->global->LDAP_CONTACT_FIELD_COMPANY] = $soc->nom;
 			if ($soc->client == 1)      $info["businessCategory"] = "Customers";
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
 		}
-		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
-		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
-		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
-		if ($this->pays && $conf->global->LDAP_FIELD_COUNTRY)      $info[$conf->global->LDAP_FIELD_COUNTRY] = $this->pays_code;
-		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
-		if ($this->phone_perso && $conf->global->LDAP_FIELD_HOMEPHONE) $info[$conf->global->LDAP_FIELD_HOMEPHONE] = $this->phone_perso;
-		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
-		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+		if ($this->address && $conf->global->LDAP_CONTACT_FIELD_ADDRESS) $info[$conf->global->LDAP_CONTACT_FIELD_ADDRESS] = $this->address;
+		if ($this->cp && $conf->global->LDAP_CONTACT_FIELD_ZIP)          $info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->cp;
+		if ($this->ville && $conf->global->LDAP_CONTACT_FIELD_TOWN)      $info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->ville;
+		if ($this->pays && $conf->global->LDAP_CONTACT_FIELD_COUNTRY)      $info[$conf->global->LDAP_CONTACT_FIELD_COUNTRY] = $this->pays_code;
+		if ($this->phone_pro && $conf->global->LDAP_CONTACT_FIELD_PHONE) $info[$conf->global->LDAP_CONTACT_FIELD_PHONE] = $this->phone_pro;
+		if ($this->phone_perso && $conf->global->LDAP_CONTACT_FIELD_HOMEPHONE) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
+		if ($this->phone_mobile && $conf->global->LDAP_CONTACT_FIELD_MOBILE) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
+		if ($this->fax && $conf->global->LDAP_CONTACT_FIELD_FAX)	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
+		if ($this->note && $conf->global->LDAP_CONTACT_FIELD_DESCRIPTION) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note;
+		if ($this->email && $conf->global->LDAP_CONTACT_FIELD_MAIL)     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
