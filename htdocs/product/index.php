@@ -39,11 +39,22 @@ $staticproduct=new Product($db);
  * View
  */
 
-$transAreaType = $langs->trans("ProductsAndServicesArea");
-if (isset($_GET["type"]) && $_GET["type"] == 0) $transAreaType = $langs->trans("ProductsArea");
-if (isset($_GET["type"]) && $_GET["type"] == 1) $transAreaType = $langs->trans("ServicesArea");
 
-llxHeader("","",$langs->trans("ProductsAndServices"));
+
+$transAreaType = $langs->trans("ProductsAndServicesArea");
+$helpurl='';
+if (isset($_GET["type"]) && $_GET["type"] == 0)
+{
+	$transAreaType = $langs->trans("ProductsArea");
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (isset($_GET["type"]) && $_GET["type"] == 1)
+{
+	$transAreaType = $langs->trans("ServicesArea");
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader("",$helpurl,$langs->trans("ProductsAndServices"));
 
 print_fiche_titre($transAreaType);
 

@@ -55,6 +55,7 @@ $page = $_GET["page"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+
 /*
  * Actions
  */
@@ -72,9 +73,9 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 }
 
 
+
 /*
- * Affichage mode liste
- *
+ * View
  */
 
 if ($_GET["canvas"] <> '' && file_exists('templates/product.'.$_GET["canvas"].'.class.php') )
@@ -172,7 +173,17 @@ if ($resql)
 		$envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
 	}
 
-	llxHeader("","",$texte);
+	$helpurl='';
+	if (isset($_GET["type"]) && $_GET["type"] == 0)
+	{
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (isset($_GET["type"]) && $_GET["type"] == 1)
+	{
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
+
+	llxHeader("",$helpurl,$texte);
 
 	// Displays product removal confirmation
 	if (!empty($_GET['delprod']))
@@ -195,7 +206,7 @@ if ($resql)
 	}
 
 	if ($conf->droitpret->enabled && isset($_GET["canvas"]))
-	{	
+	{
 		$smarty->assign('datas', $object->list_datas);
 		$smarty->assign('url_root', $dolibarr_main_url_root);
 		$smarty->assign('theme', $conf->theme);
@@ -222,7 +233,7 @@ if ($resql)
 			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/core/templates/';
 			$template = 'error.tpl';
 		}
-		
+
 		$smarty->display($template);
 	}
 	else

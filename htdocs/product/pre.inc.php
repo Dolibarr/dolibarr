@@ -29,7 +29,7 @@ require("../main.inc.php");
 $langs->load("products");
 
 
-function llxHeader($head = "", $urlp = "", $title="")
+function llxHeader($head = "", $help_url = "", $title="")
 {
 	global $user, $conf, $langs;
 
@@ -115,6 +115,6 @@ function llxHeader($head = "", $urlp = "", $title="")
 		$menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("ProductsCategoriesShort"));
 	}
 
-	left_menu($menu->liste);
+	left_menu($menu->liste, $help_url);
 }
 ?>

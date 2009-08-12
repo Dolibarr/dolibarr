@@ -594,7 +594,17 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		}
 	}
 
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
+	$helpurl='';
+	if (isset($_GET["type"]) && $_GET["type"] == 0)
+	{
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (isset($_GET["type"]) && $_GET["type"] == 1)
+	{
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
+
+	llxHeader("",$helpurl,$langs->trans("CardProduct".$product->type));
 
 	if ($mesg) print $mesg."\n";
 
