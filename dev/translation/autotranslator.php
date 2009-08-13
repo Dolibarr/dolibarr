@@ -88,6 +88,8 @@ require_once(DOL_DOCUMENT_ROOT."/../dev/translation/langAutoParser.class.php");
 
 $langParser = new langAutoParser($argv[2],$argv[1],$dir,$file);
 
+print "***** Finished *****\n";
+
 // -------------------- END OF YOUR CODE --------------------
 
 $db->close();
