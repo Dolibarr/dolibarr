@@ -14,7 +14,7 @@ $MINOR="7";
 $BUILD="0-beta";				# Mettre x pour release, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
-@LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE","EXEDOLIWAMP");   # Possible packages
+@LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
 "SNAPSHOT"=>"tar",
 "TGZ"=>"tar",
@@ -250,7 +250,7 @@ if ($nboftargetok) {
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
     		unlink $FILENAMESNAPSHOT.tgz;
     		print "Compress $SOURCE into $FILENAMESNAPSHOT.tgz...\n";
-   		    $cmd="tar --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+   		    $cmd="tar --exclude $FILENAMESNAPSHOT.tgz --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
 			$ret=`$cmd`;
             if ($OS =~ /windows/i)
             {
