@@ -162,7 +162,8 @@ function loadMonth(base,month,year,ymd)
 	var req=null;
 	
 	req=loadXMLDoc(theURL,null,false);
-	//alert(theURL+req.responseText);   // L'url doit avoir la meme racine que la pages et elements sinon pb de securite.
+	if (req.responseText == '') alert('Failed to get URL '.theURL);
+ 	//alert(theURL+' - '+req.responseText);  // L'url doit avoir la meme racine que la pages et elements sinon pb de securite.
 	showDP.box.innerHTML=req.responseText;	
 }
 

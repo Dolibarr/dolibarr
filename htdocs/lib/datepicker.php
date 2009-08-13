@@ -122,7 +122,7 @@ function xyzToUnixTimestamp($mysqldate){
 }
 
 function displayBox($selectedDate,$month,$year){
-	global $dolibarr_main_url_root,$langs,$conf;
+	global $langs,$conf;
 
 	//print "$selectedDate,$month,$year";
 	$thedate=dol_mktime(12,0,0,$month,1,$year);
@@ -154,15 +154,15 @@ function displayBox($selectedDate,$month,$year){
 	</tr>
 	<tr>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>')">&lt;&lt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>')">&lt;&lt;</td>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>')">&lt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>')">&lt;</td>
 		<td colspan="3" class="dpButtons"
-			onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("MonthOfDay") ?></td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo dol_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("MonthOfDay") ?></td>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>')">&gt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>')">&gt;</td>
 		<td class="dpButtons"
-			onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
+			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
 	</tr>
 	<tr class="dpDayNames">
 		<td width="14%"><?php echo $langs->trans("ShortSunday") ?></td>
