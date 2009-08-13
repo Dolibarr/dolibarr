@@ -792,6 +792,29 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
+		// Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
+		$tradTemp=array($langs->trans("January"),
+		$langs->trans("February"),
+		$langs->trans("March"),
+		$langs->trans("April"),
+		$langs->trans("May"),
+		$langs->trans("June"),
+		$langs->trans("July"),
+		$langs->trans("August"),
+		$langs->trans("September"),
+		$langs->trans("October"),
+		$langs->trans("November"),
+		$langs->trans("December")
+		);
+		print '<script type="text/javascript">';
+		print 'var tradMonths = [';
+		foreach($tradTemp as $val)
+		{
+			print '"'.addslashes($val).'",';
+		}
+		print '""];';
+		print '</script>'."\n";
+
 		print "</head>\n";
 	}
 }
@@ -939,7 +962,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	}
 
 	if ((($conf->produit->enabled && $user->rights->produit->lire) || ($conf->service->enabled && $user->rights->service->lire))
-			&& $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE)
+	&& $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE)
 	{
 		$langs->load("products");
 		$searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/index.php',

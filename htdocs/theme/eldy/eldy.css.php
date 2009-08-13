@@ -47,7 +47,7 @@ $left=($langs->direction=='rtl'?'right':'left');
 
 body {
     background-color: #F4F4F4;
-	background: #f9f9f9 url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/headbg.jpg' ?>) 0 0 no-repeat;
+	background: #f9f9f9 url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg.jpg' ?>) 0 0 no-repeat;
 	color: #101010;
 	font-size: 12px;
     font-family: arial,tahoma,verdana,helvetica;
@@ -111,7 +111,7 @@ select.flat
     font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
 	border: 0px;
-	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
@@ -121,7 +121,7 @@ select.flat
     font-family: helvetica, verdana, arial, sans-serif;
 	color: #222244;
 	border: 0px;
-	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
@@ -131,7 +131,7 @@ select.flat
     font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
 	border: 0px;
-	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -180,7 +180,7 @@ div.tmenu
     font-size: 12px;
     height: 19px;
     background: #b3c5cc;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000;
     text-decoration: none;
 }
@@ -414,7 +414,7 @@ div.blockvmenupair
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 	background: #A3BCC6;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -434,7 +434,7 @@ div.blockvmenuimpair
     padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 	background: #A3BCC6;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -507,7 +507,7 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-/*    background: #F0F0F0 url(<?php echo $dolibarr_main_url_root.'/theme/login_background.png' ?>) repeat-x; */
+/*    background: #F0F0F0 url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>) repeat-x; */
 }
 
 div.tabsAction {
@@ -789,11 +789,11 @@ tr.liste_titre {
 height: 16px;
 <?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre_2.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre_2.png' ?>);
 background-repeat: repeat-y;
 <?php } else { ?>
 background: #7699A9;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
 color: #334444;
@@ -804,11 +804,11 @@ white-space: nowrap;
 td.liste_titre {
 <?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } else { ?>
 background: #7699A9;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
 color: #334444;
@@ -821,11 +821,11 @@ td.liste_titre_sel
 {
 <?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } else { ?>
 background: #7699A9;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
 color: #F5FFFF;
@@ -837,11 +837,11 @@ white-space: nowrap;
 input.liste_titre {
 <?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } else { ?>
 background: #7699A9;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
 border: 0px;
@@ -908,11 +908,11 @@ margin: 2px;
 tr.box_titre {
 <?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
 background: #91ABB3;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre_2.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre_2.png' ?>);
 background-repeat: repeat-y;
 <?php } else { ?>
 background: #7699A9;
-background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
 <?php } ?>
 color: #334444;
@@ -1394,7 +1394,7 @@ form.inplaceeditor-form input[type="submit"] { /* The submit button */
   font-size: 100%;
   font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-image : url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position : bottom;
 	cursor:pointer;
 }
@@ -1404,7 +1404,7 @@ form.inplaceeditor-form a { /* The cancel link */
   font-size: 11px;
 	font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-image : url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
 	background-position : bottom;
 	cursor:pointer;
 }
@@ -1433,16 +1433,16 @@ ul.arbre strong {
     font-weight: normal;
     padding: 0 0 0 20px;
     margin: 0 0 0 -7px;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/branch.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
     background-repeat: no-repeat;
     background-position: 1px 50%;
 }
 ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/plus.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/minus.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre ul {

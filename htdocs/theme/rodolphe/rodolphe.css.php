@@ -24,7 +24,8 @@
  *		\version    $Id$
  */
 
-require("../../conf/conf.php");
+//require_once("../../conf/conf.php");
+require_once("../../master.inc.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -32,6 +33,11 @@ header('Content-type: text/css');
 // each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
+
+if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
+$langs->load("main",0,1);
+$right=($langs->direction=='rtl'?'left':'right');
+$left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 

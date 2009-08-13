@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007 Patrick raguin      <patrick.raguin@gmail.com>
- * Copyright (C) 2008 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2007      Patrick raguin      <patrick.raguin@gmail.com>
+ * Copyright (C) 2008-2009 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
  *		\version    $Id$
  */
 
-require("../../conf/conf.php");
+//require_once("../../conf/conf.php");
+require_once("../../master.inc.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -31,6 +32,11 @@ header('Content-type: text/css');
 // each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
+
+if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
+$langs->load("main",0,1);
+$right=($langs->direction=='rtl'?'left':'right');
+$left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
@@ -104,7 +110,7 @@ select.flat
 {
 	font-size: 100%;
 	border: 0px;
-	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
+	background-image : url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/button_bg.png' ?>);
 	background-position : bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -113,7 +119,7 @@ select.flat
 {
 	font-size: 100%;
 	border: 0px;
-	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
+	background-image : url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/button_bg.png' ?>);
 	background-position : bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -162,7 +168,7 @@ div.tmenu
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
     font-size: 13px;
-    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/nav.jpg' ?>) ;
+    background-image : url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/nav.jpg' ?>) ;
     height: 22px;
 }
 
@@ -383,7 +389,7 @@ div.help
 /* Pour menu gauche Auguria */
 
 div.menu_titre {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
+	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
 	padding: 0px;
 	padding-top:7px;
 	padding-left:0px;
@@ -397,7 +403,7 @@ div.menu_titre {
 }
 
 div.menu_contenu {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-rubrique.png' ?>);
+	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-rubrique.png' ?>);
 	margin: 0px;
 	padding: 1px;
 
@@ -409,7 +415,7 @@ div.menu_contenu {
 }
 
 div.menu_fin {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-bas-rubrique.png' ?>);
+	background: url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/bg-bas-rubrique.png' ?>);
 	margin: 0px;
 	padding: 0px;
 	height:6px;
@@ -465,7 +471,7 @@ div.tabBar {
     border-bottom: 1px solid #68ACCF;
     border-left: 1px solid #68ACCF;
     border-top: 1px solid #68ACCF;
-    background: #F0F0F0 url(<?php echo $dolibarr_main_url_root.'/theme/login_background.png' ?>) repeat-x;
+    background: #F0F0F0 url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>) repeat-x;
 }
 
 div.tabsAction {
@@ -1094,16 +1100,16 @@ ul.arbre strong {
     font-weight: normal;
     padding: 0 0 0 20px;
     margin: 0 0 0 -7px;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/branch.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
     background-repeat: no-repeat;
     background-position: 1px 50%;
 }
 ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/plus.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/minus.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre ul {
@@ -1329,7 +1335,7 @@ form.inplaceeditor-form input[type="submit"] { /* The submit button */
   font-size: 100%;
   font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
+	background-image : url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/button_bg.png' ?>);
 	background-position : bottom;
 	cursor:pointer;
 }
@@ -1339,7 +1345,7 @@ form.inplaceeditor-form a { /* The cancel link */
   font-size: 11px;
 	font-weight:normal;
 	border: 0px;
-	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
+	background-image : url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/button_bg.png' ?>);
 	background-position : bottom;
 	cursor:pointer;
 }

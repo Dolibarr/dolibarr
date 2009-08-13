@@ -162,6 +162,7 @@ function loadMonth(base,month,year,ymd)
 	var req=null;
 	
 	req=loadXMLDoc(theURL,null,false);
+	//alert(theURL+req.responseText);   // L'url doit avoir la meme racine que la pages et elements sinon pb de securite.
 	showDP.box.innerHTML=req.responseText;	
 }
 
@@ -329,74 +330,31 @@ function loadXMLDoc(url,readyStateFunction,async)
 	return req;
 }
 
-// For Boxes
+// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and not put popup completely on the front)
 function hideSelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE") > -1) {		
-		for(var i = 0; i < document.all.length; i++) {
+	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
+	{  
+		for(var i = 0; i < document.all.length; i++) 
+		{
 			if(document.all[i].tagName)
-				if(document.all[i].tagName == "SELECT") 
-					document.all[i].style.visibility="hidden";
+				if(document.all[i].tagName == "SELECT")
+			  		document.all[i].style.visibility="hidden";
 		}
 	}
 }
-
 function displaySelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE") > -1) {		
-        for(var i = 0; i < document.all.length; i++) {
-                if(document.all[i].tagName)
-                        if(document.all[i].tagName == "SELECT")
-                                document.all[i].style.visibility="visible";
-        }
+	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
+	{  
+	       for(var i = 0; i < document.all.length; i++) 
+	       {
+	               if(document.all[i].tagName)
+	                       if(document.all[i].tagName == "SELECT")
+	                               document.all[i].style.visibility="visible";
+	       }
 	}
 }
-
-
-// Afficher/cacher les champs d'un formulaire
-function formDisplayHideId(baliseId,numField) 
-{
-	//if (document.getElementById && document.getElementById(baliseId) != null) 
-    //{
-    	//var balise = document.getElementById(baliseId);
-
-    	var numDiv = 1
-    	
-      if (document.formsoc.typent_id.value == 8)
-    	  {
-
-    	  	while ( document.getElementById( baliseId + numDiv) ) {
-    	  	
-    	  	var balise = document.getElementById( baliseId + numDiv);
-   	  	
-    	  	if (balise && balise.className == "hidden") 
-              balise.className = "visible";
-              
-          if (balise && balise.className == "visible") 
-              balise.className = "hidden";
-              numDiv++
-
-            }
-    	  }
-      else
-    	  {
-
-    	  	while ( document.getElementById( baliseId + numDiv) ) {
-    	    
-    	    var balise = document.getElementById( baliseId + numDiv);
-
-    		  if (balise && balise.className == "visible") 
-              balise.className = "hidden";
-              
-          if (balise && balise.className == "hidden") 
-              balise.className = "visible";
-              numDiv++
-
-            }
-    	  }
-     //}
-}
-
 
 
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
  *		\version    $Id$
  */
 
-require("../../conf/conf.php");
+//require_once("../../conf/conf.php");
+require_once("../../master.inc.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -31,6 +32,11 @@ header('Content-type: text/css');
 // each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
+
+if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
+$langs->load("main",0,1);
+$right=($langs->direction=='rtl'?'left':'right');
+$left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
@@ -39,7 +45,7 @@ else header('Cache-Control: no-cache');
 
 body {
 	background-color: #F8F8F8;
-	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/background.png' ?>);
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/background.png' ?>);
 	text-decoration: none ;
 	color: #101010;
 	font-size: 12px;
@@ -107,7 +113,7 @@ select.flat
 	border-right: 1px solid #aaaaaa;
 	border-top: 1px solid #dddddd;
 	border-bottom: 1px solid #aaaaaa;
-	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/button_bg.png' ?>);
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/button_bg.png' ?>);
 	background-position: bottom;
 	background-repeat: repeat-x;
 }
@@ -120,7 +126,7 @@ select.flat
 	border-right: 1px solid #aaaaaa;
 	border-top: 1px solid #dddddd;
 	border-bottom: 1px solid #aaaaaa;
-	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/button_bg.png' ?>);
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/button_bg.png' ?>);
 	background-position: bottom;
 	background-repeat: repeat-x;
 }
@@ -1125,16 +1131,16 @@ ul.arbre strong {
     font-weight: normal;
     padding: 0 0 0 20px;
     margin: 0 0 0 -7px;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/branch.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
     background-repeat: no-repeat;
     background-position: 1px 50%;
 }
 ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/plus.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/minus.gif' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre ul {
