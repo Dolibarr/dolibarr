@@ -17,17 +17,19 @@ class langAutoParser {
 	private $destLang = string;
 	private $refLang = string;
 	private $langDir = string;
+	private $limittofile = string;
 	private $outputpagecode = 'UTF-8';
 	//private $outputpagecode = 'ISO-8859-1';
 	const DIR_SEPARATOR = '/';
 
-	function __construct($destLang,$refLang,$langDir){
+	function __construct($destLang,$refLang,$langDir,$limittofile){
 
 		// Set enviorment variables
 		$this->destLang = $destLang;
 		$this->refLang = $refLang;
 		$this->langDir = $langDir.self::DIR_SEPARATOR;
 		$this->time = date('Y-m-d H:i:s');
+		$this->limittofile = $limittofile;
 
 		// Translate
 		//ini_set('default_charset','UTF-8');
@@ -41,6 +43,7 @@ class langAutoParser {
 		$files = $this->getTranslationFilesArray($this->refLang);
 		$counter = 1;
 		foreach($files as $file) {
+			if ($this->limittofile && $this->limittofile != $file) continue;
 			$counter++;
 			$fileContent = null;
 			$this->translatedFiles = array();
@@ -59,13 +62,18 @@ FILE_SKIP_EMPTY_LINES);
 			// Translate lines
 			$fileContentDest = file($destPath,FILE_IGNORE_NEW_LINES |
 FILE_SKIP_EMPTY_LINES);
+			$newlines=0;
 			foreach($fileContent as $line){
 				$key = $this->getLineKey($line);
 				$value = $this->getLineValue($line);
-				$this->translateFileLine($fileContentDest,$file,$key,$value);
+				if ($key && $value)
+				{
+					$newlines+=$this->translateFileLine($fileContentDest,$file,$key,$value);
+				}
 			}
 
 			$this->updateTranslationFile($destPath,$file);
+			echo "New translated lines: " . $newlines . "<br>\n";
 			#if ($counter ==3) die('fim');
 		}
 	}
@@ -77,14 +85,12 @@ FILE_SKIP_EMPTY_LINES);
 			$fp = fopen($destPath, 'a');
 			fwrite($fp, "\r\n");
 			fwrite($fp, "\r\n");
-			fwrite($fp, "// Date " . $this->time . "\r\n");
-			fwrite($fp, "// START - Lines generated via autotranslator.php tool.\r\n");
+			fwrite($fp, "// START - Lines generated via autotranslator.php tool (".$this->time.").\r\n");
 			fwrite($fp, "// Reference language: {$this->refLang}\r\n");
 			foreach( $this->translatedFiles[$file] as $line) {
 				fwrite($fp, $line . "\r\n");
 			}
-			fwrite($fp, "// Date " . $this->time . "\r\n");
-			fwrite($fp, "// STOP - Lines generated via parser\r\n");
+			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->time.").\r\n");
 			fclose($fp);
 		}
 		return;
@@ -101,13 +107,27 @@ FILE_SKIP_EMPTY_LINES);
 		return;
 	}
 
+	/**
+	 * Put in array translation of a key
+	 *
+	 * @param unknown_type $content		Existing content of dest file
+	 * @param unknown_type $file		File name translated (xxxx.lang)
+	 * @param unknown_type $key			Key to translate
+	 * @param unknown_type $value		Existing key in source file
+	 * @return	int						0=Nothing translated, 1=Record translated
+	 */
 	private function translateFileLine($content,$file,$key,$value){
 
+		//print "key    =".$key."\n";
 		foreach( $content as $line ) {
 			$destKey = $this->getLineKey($line);
 			$destValue = $this->getLineValue($line);
 			// If translated return
-			if ( $destKey == $key ) { return; }
+			//print "destKey=".$destKey."\n";
+			if ( trim($destKey) == trim($key) )
+			{	// Found already existing translation
+				 return 0;
+			}
 		}
 
 		// If not translated then translate
@@ -117,17 +137,18 @@ FILE_SKIP_EMPTY_LINES);
 		if ($key == 'CHARSET') $val=$this->outputpagecode;
 
 		$this->translatedFiles[$file][] = $key . '=' . $val ;
+		return 1;
 	}
 
 
 	private function getLineKey($line){
-		$key = preg_match('/^(.*)=/',$line,$matches);
-		return trim( $matches[1] );
+		$arraykey = split('=',$line,2);
+		return trim( $arraykey[0] );
 	}
 
 	private function getLineValue($line){
-		$value = preg_match('/=(.*)$/',$line,$matches);
-		return trim( $matches[1] );
+		$arraykey = split('=',$line,2);
+		return trim( $arraykey[1] );
 	}
 
 	private function getTranslationFilesArray($lang){

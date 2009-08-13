@@ -138,7 +138,6 @@ CashBudget=Cash talousarvio
 PlannedTransactions=Suunnitellut toimet
 ExportDataset_banque_1=Pankki ja tilitiedot julkilausuma
 TransactionOnTheOtherAccount=Liiketoimen muut huomioon
-TransactionWithOtherAccount=Huomioon transfert
 PaymentNumberUpdateSucceeded=Maksu numero päivitetty onnistuneesti
 PaymentNumberUpdateFailed=Maksu numero ei voi päivittää
 PaymentDateUpdateSucceeded=Maksupäivä päivityksen onnistuneesti

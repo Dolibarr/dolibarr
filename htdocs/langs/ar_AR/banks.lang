@@ -138,7 +138,6 @@ CashBudget=الميزانية النقدية
 PlannedTransactions=المخطط المعاملات
 ExportDataset_banque_1=المعاملات المصرفية وحساب
 TransactionOnTheOtherAccount=صفقة على حساب الآخرين
-TransactionWithOtherAccount=حساب transfert
 PaymentNumberUpdateSucceeded=دفع عدد تحديث بنجاح
 PaymentNumberUpdateFailed=دفع عددا لا يمكن تحديث
 PaymentDateUpdateSucceeded=تاريخ التحديث الدفع بنجاح
@@ -149,3 +148,8 @@ BackToAccount=إلى حساب
 ShowAllAccounts=وتبين للجميع الحسابات
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:13:59).
+// Reference language: en_US
+TransactionWithOtherAccount=تحويل الحساب
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:13:59).

@@ -55,7 +55,7 @@ $dir=DOL_DOCUMENT_ROOT."/langs";
 
 // Check parameters
 if (! isset($argv[2])) {
-    print "Usage:   ".$script_file." lang_code_src lang_code_dest\n";
+    print "Usage:   ".$script_file." lang_code_src lang_code_dest  [langgile.lang]\n";
     print "Example: ".$script_file." en_US         pt_PT\n";
     print "Rem:     code to use can be found on http://www.google.com/language_tools\n";
     exit;
@@ -64,6 +64,12 @@ if (! isset($argv[2])) {
 // Show parameters
 print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
+$file='';
+if (isset($argv[3]))
+{
+	$file=$argv[3];
+	print 'Argument 3='.$argv[3]."\n";
+}
 print 'Files will be generated/updated in directory '.$dir."\n";
 
 if (! is_dir($dir.'/'.$argv[2]))
@@ -80,7 +86,7 @@ if (! is_dir($dir.'/'.$argv[2]))
 // Examples for manipulating class skeleton_class
 require_once(DOL_DOCUMENT_ROOT."/../dev/translation/langAutoParser.class.php");
 
-$langParser = new langAutoParser($argv[2],$argv[1],$dir);
+$langParser = new langAutoParser($argv[2],$argv[1],$dir,$file);
 
 // -------------------- END OF YOUR CODE --------------------
 

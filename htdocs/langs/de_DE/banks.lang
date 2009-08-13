@@ -138,7 +138,6 @@ CashBudget=Cash-Haushalt
 PlannedTransactions=Geplante Transaktionen
 ExportDataset_banque_1=Bank-Transaktionen und Kontoauszug
 TransactionOnTheOtherAccount=Transaktion auf der anderen Konto
-TransactionWithOtherAccount=Konto transfert
 PaymentNumberUpdateSucceeded=Zahlung Anzahl erfolgreich aktualisiert
 PaymentNumberUpdateFailed=Die Zahlung konnte nicht aktualisiert werden
 PaymentDateUpdateSucceeded=Zahltag Update erfolgreich

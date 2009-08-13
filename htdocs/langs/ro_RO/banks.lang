@@ -138,7 +138,6 @@ CashBudget=Cash buget
 PlannedTransactions=Planificate tranzacţiilor
 ExportDataset_banque_1=Banca şi tranzacţiilor de cont
 TransactionOnTheOtherAccount=Tranzacţiei, pe de altă cont
-TransactionWithOtherAccount=Contul transfert
 PaymentNumberUpdateSucceeded=Plata numărul fost actualizat cu succes
 PaymentNumberUpdateFailed=Numărul de plată nu a putut fi actualizate
 PaymentDateUpdateSucceeded=Plata data de actualizare cu succes

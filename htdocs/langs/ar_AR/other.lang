@@ -165,3 +165,11 @@ ToExport=الصادرات
 NewExport=تصديرية جديدة
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:15:10).
+// Reference language: en_US
+DemoDesc=Dolibarr الاتفاق هو تخطيط موارد المؤسسات وإدارة علاقات العملاء وتتكون من عدة وحدات وظيفية. وقال ان العرض يشمل جميع وحدات لا يعني اي شيء يحدث هذا أبدا. بذلك ، عرض عدة ملامح المتاحة.
+DemoCompanyServiceOnly=إدارة نشاط بيع الخدمة لحسابهم الخاص فقط
+SendNewPasswordDesc=هذا الشكل يتيح لك طلب كلمة مرور جديدة. سيكون من إرسالها إلى عنوان البريد الإلكتروني الخاص بك. <br> التغيير لن تكون فعالة إلا بعد النقر على تأكيد الصلة داخل هذه الرسالة. <br> تحقق من بريدك الالكتروني القارئ البرمجيات.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:15:10).

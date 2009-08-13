@@ -140,7 +140,6 @@ CashBudget=Cash budget
 PlannedTransactions=Planlagte transaktioner
 ExportDataset_banque_1=Banktransaktioner og kontoudtog
 TransactionOnTheOtherAccount=Transaktion på den anden konto
-TransactionWithOtherAccount=Account Transfert
 PaymentNumberUpdateSucceeded=Betaling antal opdateret
 PaymentNumberUpdateFailed=Betaling antal kunne ikke opdateres
 PaymentDateUpdateSucceeded=Betaling dato opdatering held

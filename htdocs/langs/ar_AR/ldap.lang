@@ -36,3 +36,11 @@ ForceSynchronize=واكبت قوة Dolibarr --&gt; LDAP
 ErrorFailedToReadLDAP=فشل في قراءة قاعدة البيانات LDAP. LDAP وحدة التحقق من الإعداد ، وإمكانية الوصول إلى قاعدة البيانات.
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:15:10).
+// Reference language: en_US
+GroupSynchronized=مجموعة متزامنة
+MemberSynchronized=عضو متزامنة
+ContactSynchronized=وتزامن الاتصال
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:15:10).
