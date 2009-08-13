@@ -77,13 +77,15 @@ if (empty($dolibarr_main_data_root))
 	$dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
 	$dolibarr_main_data_root.="/documents";
 }
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);	// Filesystem pages php (htdocs)
-define('DOL_DATA_ROOT', $dolibarr_main_data_root);			// Filesystem donnes (documents)
-define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);		// URL racine absolue
-$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
-$pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
-if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
-define('DOL_URL_ROOT', $pos);								// URL racine relative
+// Define some constants
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem pages php (htdocs)
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem donnes (documents)
+define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
+$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);	// $suburi contains url without http*
+$suburi = strstr ($uri, '/');		// $suburi contains url without domain
+if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
+define('DOL_URL_ROOT', $suburi);	// URL relative root ('/', '/dolibarr', ...)
+if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
 
 
 /*
