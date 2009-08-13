@@ -22,11 +22,11 @@
  */
 
 /**
-		\file 		htdocs/admin/boutique.php
-		\ingroup    boutique
-		\brief      Page d'administration/configuration du module OsCommerce
-		\version    $Revision$
-*/
+ \file 		htdocs/admin/boutique.php
+ \ingroup    boutique
+ \brief      Page d'administration/configuration du module OsCommerce
+ \version    $Revision$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -35,7 +35,7 @@ $langs->load("admin");
 $langs->load("oscommerce");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 
@@ -47,79 +47,79 @@ if ($_POST["save"])
 {
 	$db->begin();
 
-  $i=0;
-    
-  $i+=dolibarr_set_const($db,'OSC_DB_HOST',trim($_POST["oscommerce_dbhost"]),'chaine',0,'',$conf->entity);
-  $i+=dolibarr_set_const($db,'OSC_DB_NAME',trim($_POST["oscommerce_dbname"]),'chaine',0,'',$conf->entity);
-  $i+=dolibarr_set_const($db,'OSC_DB_USER',trim($_POST["oscommerce_dbuser"]),'chaine',0,'',$conf->entity);
-  $i+=dolibarr_set_const($db,'OSC_DB_PASS',trim($_POST["oscommerce_dbpass"]),'chaine',0,'',$conf->entity);
-	$i+=dolibarr_set_const($db,'OSC_DB_TABLE_PREFIX',trim($_POST["oscommerce_db_table_prefix"]),'chaine',0,'',$conf->entity); 
-  $i+=dolibarr_set_const($db,'OSC_LANGUAGE_ID',1,'chaine',0,'',$conf->entity);
-  
-  if ($i >= 4)
-  {
-  	$db->commit();
-    $mesg = "<font class=\"ok\">".$langs->trans("OSCommerceSetupSaved")."</font>";
-  }
-  else
-  {
-  	$db->rollback();
-    header("Location: ".$_SERVER["PHP_SELF"]);
-    exit;
-  }
+	$i=0;
+
+	$i+=dolibarr_set_const($db,'OSC_DB_HOST',trim($_POST["oscommerce_dbhost"]),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_NAME',trim($_POST["oscommerce_dbname"]),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_USER',trim($_POST["oscommerce_dbuser"]),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_PASS',trim($_POST["oscommerce_dbpass"]),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_TABLE_PREFIX',trim($_POST["oscommerce_db_table_prefix"]),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_LANGUAGE_ID',1,'chaine',0,'',$conf->entity);
+
+	if ($i >= 4)
+	{
+		$db->commit();
+		$mesg = "<font class=\"ok\">".$langs->trans("OSCommerceSetupSaved")."</font>";
+	}
+	else
+	{
+		$db->rollback();
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
 }
 elseif ($_POST["test"])
 {
-    //$resql=$db->query("select count(*) from llx_const");
-    //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
+	//$resql=$db->query("select count(*) from llx_const");
+	//print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 
-    // Test de la connexion a la database webcalendar
-    $conf->oscommerce->db->type=$dolibarr_main_db_type;
-    $conf->oscommerce->db->host=$_POST["oscommerce_dbhost"];
-    $conf->oscommerce->db->port=$_POST["oscommerce_dbport"];
-    $conf->oscommerce->db->name=$_POST["oscommerce_dbname"];
-    $conf->oscommerce->db->user=$_POST["oscommerce_dbuser"];
-    $conf->oscommerce->db->pass=$_POST["oscommerce_dbpass"];
+	// Test de la connexion a la database webcalendar
+	$conf->oscommerce->db->type=$dolibarr_main_db_type;
+	$conf->oscommerce->db->host=$_POST["oscommerce_dbhost"];
+	$conf->oscommerce->db->port=$_POST["oscommerce_dbport"];
+	$conf->oscommerce->db->name=$_POST["oscommerce_dbname"];
+	$conf->oscommerce->db->user=$_POST["oscommerce_dbuser"];
+	$conf->oscommerce->db->pass=$_POST["oscommerce_dbpass"];
 
-    $oscommercedb=new DoliDB($conf->oscommerce->db->type,$conf->oscommerce->db->host,$conf->oscommerce->db->user,$conf->oscommerce->db->pass,$conf->oscommerce->db->name,$conf->oscommerce->db->port);
+	$oscommercedb=new DoliDB($conf->oscommerce->db->type,$conf->oscommerce->db->host,$conf->oscommerce->db->user,$conf->oscommerce->db->pass,$conf->oscommerce->db->name,$conf->oscommerce->db->port);
 
-    //print "D ".$db." - ".$db->db."<br>\n";
-    //print "W ".$oscommercedb." - ".$oscommercedb->db."<br>\n";
-    
-    if ($oscommercedb->connected == 1 && $oscommercedb->database_selected == 1)
-    {
-        // V�rifie si bonne base par requete sur une table OSCommerce
-        $sql ="SELECT configuration_value";
-        $sql.=" FROM ".$_POST["oscommerce_db_table_prefix"]."configuration";
-        $sql.=" WHERE configuration_key='STORE_NAME'";
-        $resql=$oscommercedb->query($sql);
-        if ($resql) {
-            $mesg ="<div class=\"ok\">".$langs->trans("OSCommerceTestOk",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbname"],$_POST["oscommerce_dbuser"]);
-            $mesg.="</div>";
-        }
-        else {
-            $mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase",'STORE_NAME',$_POST["oscommerce_db_table_prefix"]."configuration");
-            $mesg.="</div>";
-        }
+	//print "D ".$db." - ".$db->db."<br>\n";
+	//print "W ".$oscommercedb." - ".$oscommercedb->db."<br>\n";
 
-        //$oscommercedb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
-    }
-    elseif ($oscommercedb->connected == 1 && $oscommercedb->database_selected != 1)
-    {
-        $mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo1",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbname"]);
-        $mesg.="<br>".$oscommercedb->error();
-        $mesg.="</div>";
-        //$oscommercedb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
-    }
-    else
-    {
-        $mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo2",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbuser"]);
-        $mesg.="<br>".$oscommercedb->error();
-        $mesg.="</div>";
-    }
+	if ($oscommercedb->connected == 1 && $oscommercedb->database_selected == 1)
+	{
+		// V�rifie si bonne base par requete sur une table OSCommerce
+		$sql ="SELECT configuration_value";
+		$sql.=" FROM ".$_POST["oscommerce_db_table_prefix"]."configuration";
+		$sql.=" WHERE configuration_key='STORE_NAME'";
+		$resql=$oscommercedb->query($sql);
+		if ($resql) {
+			$mesg ="<div class=\"ok\">".$langs->trans("OSCommerceTestOk",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbname"],$_POST["oscommerce_dbuser"]);
+			$mesg.="</div>";
+		}
+		else {
+			$mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase",'STORE_NAME',$_POST["oscommerce_db_table_prefix"]."configuration");
+			$mesg.="</div>";
+		}
 
-    //$resql=$db->query("select count(*) from llx_const");
-    //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
+		//$oscommercedb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
+	}
+	elseif ($oscommercedb->connected == 1 && $oscommercedb->database_selected != 1)
+	{
+		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo1",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbname"]);
+		$mesg.="<br>".$oscommercedb->error();
+		$mesg.="</div>";
+		//$oscommercedb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
+	}
+	else
+	{
+		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo2",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbuser"]);
+		$mesg.="<br>".$oscommercedb->error();
+		$mesg.="</div>";
+	}
+
+	//$resql=$db->query("select count(*) from llx_const");
+	//print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 }
 
 
@@ -163,12 +163,12 @@ print "<td>oscommerce";
 print "</td>";
 print "</tr>";
 $var=!$var;
-print "<tr ".$bc[$var].">"; 
-print "<td>".$langs->trans("OSCommercePrefix")."</td>"; 
-print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_db_table_prefix\" value=\"". ($_POST["oscommerce_db_table_prefix"]?$_POST["oscommerce_db_table_prefix"]:$conf->global->DB_TABLE_PREFIX) . "\" size=\"30\"></td>"; 
-print "<td>osc_"; 
-print "</td>"; 
-print "</tr>"; 
+print "<tr ".$bc[$var].">";
+print "<td>".$langs->trans("OSCommercePrefix")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_db_table_prefix\" value=\"". ($_POST["oscommerce_db_table_prefix"]?$_POST["oscommerce_db_table_prefix"]:$conf->global->DB_TABLE_PREFIX) . "\" size=\"30\"></td>";
+print "<td>osc_";
+print "</td>";
+print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("OSCommerceUser")."</td>";
