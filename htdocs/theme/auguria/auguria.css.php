@@ -1456,21 +1456,21 @@ A.none, A.none:active, A.none:visited, A.none:hover {
  width : 50%;
  height : 24px;
  line-height : 12px;
- font: helvetica, verdana, arial, sans-serif;
+ font-family: helvetica, verdana, arial, sans-serif;
  font-size : 8pt;
  color : black;
  text-align : center;
 }
 .btnColor {
  width : 100%;
- font: helvetica, verdana, arial, sans-serif;
+ font-family: helvetica, verdana, arial, sans-serif;
  font-size : 10pt;
  padding : 0px;
  margin : 0px;
 }
 .btnPalette {
  width : 100%;
- font: helvetica, verdana, arial, sans-serif;
+ font-family: helvetica, verdana, arial, sans-serif;
  font-size : 8pt;
  padding : 0px;
  margin : 0px;
