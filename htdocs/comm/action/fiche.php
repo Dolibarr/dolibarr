@@ -56,7 +56,6 @@ $contact = new Contact($db);
 
 /*
  * Action creation de l'action
- *
  */
 if ($_POST["action"] == 'add_action')
 {

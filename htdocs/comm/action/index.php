@@ -552,7 +552,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$action
 	print '</td><td align="right" nowrap="nowrap">';
 	if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 	{
-		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'">';
+		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
 		print img_picto($langs->trans("NewAction"),'edit_add.png');
 		print '</a>';
 	}

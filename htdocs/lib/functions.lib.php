@@ -1541,7 +1541,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	}
 
 	// If we have a particular object to check permissions on
-	if ($objectid)
+	if ($objectid > 0)
 	{
 		$sql='';
 

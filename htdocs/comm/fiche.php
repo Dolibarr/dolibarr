@@ -46,7 +46,7 @@ if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
 $sortorder=$_GET["sortorder"];
@@ -101,6 +101,14 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
  * View
  */
 
+llxHeader('',$langs->trans('CustomerCard'));
+
+
+$userstatic=new User($db);
+
+$form = new Form($db);
+
+
 if ($mode == 'search')
 {
 	if ($mode-search == 'soc')
@@ -124,11 +132,6 @@ if ($mode == 'search')
 	}
 }
 
-llxHeader('',$langs->trans('CustomerCard'));
-
-$userstatic=new User($db);
-
-$form = new Form($db);
 
 if ($socid > 0)
 {
