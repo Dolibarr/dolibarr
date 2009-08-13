@@ -17,7 +17,7 @@ CurrentAccount				 =Conto corrente
 CurrentAccounts				 =Conti correnti
 SavingAccount				 =Conto di risparmio
 SavingAccounts				 =Conti di risparmio
-ErrorBankLabelAlreadyExists		 =Etichetta conto finanziario gi‡ esistente
+ErrorBankLabelAlreadyExists		 =Etichetta conto finanziario gi√† esistente
 BankBalance				 =Saldo
 BalanceMinimalAllowed			 =Saldo minimo consentito
 BalanceMinimalDesired			 =Saldo minimo desiderato 
@@ -106,10 +106,10 @@ SocialContributionPayment		 =Pagamento di contributo sociale
 FinancialAccountJournal			 =Diario del conto finanziario 
 BankTransfer				 =Bonifico bancario
 BankTransfers				 =Bonifici bancari
-TransferDesc				 =Trasferimento da un conto ad un altro, Dolibarr scriver‡ due record (uno fonte di addebito in conto e di un credito in conto bersaglio, dello stesso importo. La stessa etichetta e la data verranno utilizzati per questa operazione)
+TransferDesc				 =Trasferimento da un conto ad un altro, Dolibarr scriver√† due record (uno fonte di addebito in conto e di un credito in conto bersaglio, dello stesso importo. La stessa etichetta e la data verranno utilizzati per questa operazione)
 TransferFrom				 =Da
 TransferTo				 =A
-TransferFromToDone			 =Un trasferimento da <b> %s </b> per <b> %s </b> di <b> %s </b> %s Ë stato registrato.
+TransferFromToDone			 =Un trasferimento da <b> %s </b> per <b> %s </b> di <b> %s </b> %s √® stato registrato.
 CheckTransmitter			 =Emittente
 ValidateCheckReceipt			 =Convalidare questo deposito di assegno?
 DeleteCheckReceipt			 =Elimina questo deposito di assegno?
@@ -133,13 +133,13 @@ Rapprocher					=Concilia
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
 // Reference language: en_US
-RIBControlError=Inetgrity controlli non di valori. CiÚ significa che per questo numero di conto non sono complete o sbagliato (controlla paese, i numeri e IBAN).
+RIBControlError=Inetgrity controlli non di valori. Ci√≤ significa che per questo numero di conto non sono complete o sbagliato (controlla paese, i numeri e IBAN).
 BankTransactionByCategories=Banca operazioni per categorie
 BankTransactionForCategory=Transazioni bancarie per la <b>categoria% s</b>
 ListBankTransactions=Elenco delle operazioni bancarie
 ListTransactions=Elenco transazioni
 ListTransactionsByCategory=Elenco operazione / categoria
-ConfirmValidateCheckReceipt=Sei sicuro di voler verificare per convalidare questa ricevuta, nessun cambiamento sar‡ possibile una volta che questo Ë fatto?
+ConfirmValidateCheckReceipt=Sei sicuro di voler verificare per convalidare questa ricevuta, nessun cambiamento sar√† possibile una volta che questo √® fatto?
 ConfirmDeleteCheckReceipt=Sei sicuro di voler eliminare questo controllo ricevuta?
 NumberOfCheques=Numero di assegni
 BankTransactionLine=Banca transazione

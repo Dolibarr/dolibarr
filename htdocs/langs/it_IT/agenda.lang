@@ -23,7 +23,7 @@ ViewList 			      =Visualizza l'elenco
 ViewCal 			      =Visualizza il calendario
 ViewWithPredefinedFilters 	      =Vedere con i filtri predefiniti
 AutoActions 			      =Riempimento automatico di ordine del giorno
-AgendaAutoActionDesc 		      =Definire qui gli eventi di cui si desidera Dolibarr per creare automaticamente un 'azione in giorno. Se non Ë selezionata (impostazione predefinita), solo manuale azioni saranno incluse nel programma.
+AgendaAutoActionDesc 		      =Definire qui gli eventi di cui si desidera Dolibarr per creare automaticamente un 'azione in giorno. Se non √® selezionata (impostazione predefinita), solo manuale azioni saranno incluse nel programma.
 AgendaSetupOtherDesc 		      =Questa pagina consente di configurare gli altri parametri del modulo di ordine del giorno.
 ActionsEvents 			      =Eventi per il quale creare un azione
 PropalValidatedInDolibarr 	      =Proposta convalidata
@@ -41,8 +41,8 @@ DateActionEnd 			      =Data di fine
 // START - Lines generated via parser
 // Reference language: en_US
 ListOfActions=Lista degli eventi
-Location=Localit‡
-AgendaUrlOptions1=» inoltre possibile aggiungere seguenti parametri di filtro in uscita:
+Location=Localit√†
+AgendaUrlOptions1=√à inoltre possibile aggiungere seguenti parametri di filtro in uscita:
 AgendaUrlOptions2=<b>login=<b>login =% s</b> per limitare la produzione di azioni creato da, o interessati a fare da <b>utente% s.</b>
 AgendaUrlOptions3=<b>logina=<b>logina =% s</b> per limitare la produzione di azioni creato da <b>utente% s.</b>
 AgendaUrlOptions4=<b>logint=<b>logint =% s</b> per limitare la produzione di azioni <b>compromesso% s</b> utente.

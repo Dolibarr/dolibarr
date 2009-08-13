@@ -1,5 +1,5 @@
 # Dolibarr language file - it_IT - main                    
-CHARSET							   =ISO-8859-1
+CHARSET=UTF-8
 SeparatorDecimal					   =,
 SeparatorThousand					   =
 FormatDateShort=%d/%m/%Y

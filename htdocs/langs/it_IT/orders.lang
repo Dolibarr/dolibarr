@@ -71,15 +71,15 @@ OrdersStatistics					=Statistiche ordini
 NumberOfOrdersByMonth					=Numero di ordini per mese 
 ListOfOrders						=Elenco degli ordini 
 CloseOrder						=Chiudi ordine
-ConfirmCloseOrder					=Sei sicuro di voler chiudere questo ordine? Una volta che un ordine Ë chiuso, puÚ solo essere fatturato. 
-ConfirmCloseOrderIfSending				=Sei sicuro di voler chiudere questo ordine? » necessario chiudere un ordine solo quando tutti i costi di spedizione sono fatti. 
+ConfirmCloseOrder					=Sei sicuro di voler chiudere questo ordine? Una volta che un ordine √® chiuso, pu√≤ solo essere fatturato. 
+ConfirmCloseOrderIfSending				=Sei sicuro di voler chiudere questo ordine? √à necessario chiudere un ordine solo quando tutti i costi di spedizione sono fatti. 
 ConfirmDeleteOrder					=Sei sicuro di voler cancellare questo ordine? 
 ConfirmValidateOrder					=Sei sicuro di voler convalidare questo ordine sotto il nome <b> %s </b>? 
 ConfirmCancelOrder					=Sei sicuro di voler annullare questo ordine? 
 ConfirmMakeOrder					=Sei sicuro di voler confermare hai fatto questo ordine su <b> %s </b>? 
 GenerateBill						=Genera fattura 
 ClassifyBilled						=Classifica "fatturato" 
-ComptaCard						=Scheda contabilit‡ 
+ComptaCard						=Scheda contabilit√† 
 DraftOrders						=Bozze di ordini 
 RelatedOrders						=Ordini collegati 
 OnProcessOrders						=Ordini in lavorazione
@@ -89,7 +89,7 @@ CustomerOrder						=Ordine cliente
 RefCustomerOrderShort					=Rif. ord. cliente 
 SendOrderByMail						=Inviare ordine via e-mail 
 ActionsOnOrder						=Azioni su ordine 
-NoArticleOfTypeProduct					=Nessun articolo del tipo 'prodotto' quindi l'articolo non Ë spedibile per questo ordine 
+NoArticleOfTypeProduct					=Nessun articolo del tipo 'prodotto' quindi l'articolo non √® spedibile per questo ordine 
 OrderMode						=Metodo ordine
 AuthorRequest						=Autore della richiesta  
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined		=Costante COMMANDE_SUPPLIER_ADDON non definita 
@@ -106,7 +106,7 @@ OrderSource3						=Campagna Telefono
 OrderSource4						=Campagna Fax  
 OrderSource5						=Commerciale 
 OrderSource6						=Negozio 
-QtyOrdered						=Quantit‡ ordinata 
+QtyOrdered						=Quantit√† ordinata 
 AddDeliveryCostLine					=Aggiungi un costo di consegna linea che indica il peso dell'ordine
 
 
@@ -119,9 +119,9 @@ PDFEinsteinDescription					=Un modello completo per (logo. ..)
 // Reference language: en_US
 CustomersOrdersAndOrdersLines=Ordini dei clienti e degli ordini &#39;linee
 OrdersStatisticsSuppliers=Fornitore ordini &#39;di statistiche
-AmountOfOrdersByMonthHT=quantit‡ di ordini da mesi (al netto delle imposte)
+AmountOfOrdersByMonthHT=quantit√† di ordini da mesi (al netto delle imposte)
 RunningOrders=Ordini in corso
 UserWithApproveOrderGrant=Useres concesso con &quot;approvare ordini&quot; permesso.
-MarbreNumRefDesc=Renvoie le numro sous la forme syymm% aa-nnnn ou est l&#39;annÈe, le mois et millimetri nnnn un compteur sequentiel sans rottura et sans remise e 0
+MarbreNumRefDesc=Renvoie le numro sous la forme syymm% aa-nnnn ou est l&#39;ann√©e, le mois et millimetri nnnn un compteur sequentiel sans rottura et sans remise e 0
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser

@@ -24,11 +24,11 @@ TypeContact_fichinter_internal_INTERREPFOLL	    =Rappresentante follow-up di int
 TypeContact_fichinter_internal_INTERVENING	    =Intervenente
 TypeContact_fichinter_external_BILLING		    =Fatturazione contatto con i clienti 
 TypeContact_fichinter_external_CUSTOMER		    =In seguito a contatto con i clienti 
-# Modele numÈrotation				    
+# Modele num√©rotation				    
 ArcticNumRefModelDesc1				    =Generico modello di numerazione 
 ArcticNumRefModelError				    =Impossibile attivare 
-PacificNumRefModelDesc1				    =NUMERO ritorno con formato %syymm-nnnn dove yy Ë anno, mm Ë il mese e nnnn Ë una sequenza senza pausa e non ritorno a 0 
-PacificNumRefModelError				    =Una carta d'intervento che inizia con $syymm gi‡ esiste e non Ë compatibile con questo modello di sequenza. Rimuovere o rinominare per attivare questo modulo.
+PacificNumRefModelDesc1				    =NUMERO ritorno con formato %syymm-nnnn dove yy √® anno, mm √® il mese e nnnn √® una sequenza senza pausa e non ritorno a 0 
+PacificNumRefModelError				    =Una carta d'intervento che inizia con $syymm gi√† esiste e non √® compatibile con questo modello di sequenza. Rimuovere o rinominare per attivare questo modulo.
 
 
 // Date 2009-01-18 19:41:54

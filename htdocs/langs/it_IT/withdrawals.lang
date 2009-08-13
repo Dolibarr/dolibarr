@@ -1,4 +1,4 @@
-# Dolibarr language file - it_IT - withdrawals "bonifico periodico" o "disposizione permanente di bonifico", se Ë una domiciliazione di bollette Ë meglio "RID".
+# Dolibarr language file - it_IT - withdrawals "bonifico periodico" o "disposizione permanente di bonifico", se √® una domiciliazione di bollette √® meglio "RID".
 StandingOrdersArea			       =Sezione ordini permanenti 
 CustomersStandingOrdersArea		       =Sezione ordini permanenti clienti
 StandingOrders				       =Ordini permanenti 
@@ -24,7 +24,7 @@ NbOfInvoiceToWithdraw=Nb di ritirare la richiesta con fattura
 InvoiceWaitingWithdraw=Fattura di attesa per ritirare
 AmountToWithdraw=Importo di ritirare
 WithdrawsRefused=Ritira rifiutato
-NoInvoiceToWithdraw=Nessun cliente fattura in modalit‡ di pagamento &quot;ritirare&quot; Ë in attesa. Vai su &#39;Prelevare&#39; sulla scheda fattura carta a fare una richiesta.
+NoInvoiceToWithdraw=Nessun cliente fattura in modalit√† di pagamento &quot;ritirare&quot; √® in attesa. Vai su &#39;Prelevare&#39; sulla scheda fattura carta a fare una richiesta.
 ResponsibleUser=Merito utente
 WithdrawalsSetup=Ritiro di setup
 WithdrawStatistics=Ritira &#39;statistiche

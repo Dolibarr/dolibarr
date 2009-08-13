@@ -23,8 +23,8 @@ ECMCreationDate				       =La data di creazione
 ECMCreationUser				       =Creatore
 ECMArea					       =Sezione ECM
 ECMAreaDesc				       =L'ECM (Electronic Content Management) permette di salvare, condividere e ricercare rapidamente tutti i tipi di documenti in Dolibarr.
-ECMAreaDesc2				       =* Le directory sono riempite automaticamente quando si aggiungono dei documenti dalla scheda di un elemento. <br> * Manuale di directory può essere utilizzato per salvare i documenti non legati ad un particolare elemento.
-ECMSectionWasRemoved			       =<b> Directory %s </ b> è stato eliminato.
+ECMAreaDesc2				       =* Le directory sono riempite automaticamente quando si aggiungono dei documenti dalla scheda di un elemento. <br> * Manuale di directory puÃ² essere utilizzato per salvare i documenti non legati ad un particolare elemento.
+ECMSectionWasRemoved			       =<b> Directory %s </ b> Ã¨ stato eliminato.
 ECMDocumentsSection			       =Documento della directory
 ECMSearchByKeywords			       =Ricerca per parole chiave
 ECMSearchByEntity			       =Ricerca per oggetto
@@ -44,7 +44,7 @@ ShowECMSection				       =Visualizza la directory
 DeleteSection				       =Rimuovere la directory
 ConfirmDeleteSection			       =Potete confermare che si desidera eliminare la directory <b> %s </ b>?
 ECMDirectoryForFiles			       =Relativa directory per i file
-CannotRemoveDirectoryContainsFiles	       =Rimosso non è possibile perché contiene alcuni file
+CannotRemoveDirectoryContainsFiles	       =Rimosso non Ã¨ possibile perchÃ© contiene alcuni file
 
 
 // Date 2009-01-18 19:41:54

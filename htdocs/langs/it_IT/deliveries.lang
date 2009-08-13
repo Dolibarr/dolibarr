@@ -18,7 +18,7 @@ Deliverer						=Chi consegna :
 Date 							=Data : 
 Sender							=Mittente
 Recipient						=Destinatario
-ICOMM							=N° Part. IVA : 
+ICOMM							=NÂ° Part. IVA : 
 APE								=Iscr. trib. : 
 SIRET							=R.E.A. : 
 
@@ -26,7 +26,7 @@ SIRET							=R.E.A. :
 // START - Lines generated via parser
 // Reference language: en_US
 DeliveryDateShort=Consegna. data
-QtyDelivered=Quantità consegnata
+QtyDelivered=QuantitÃ  consegnata
 DeliveryMethod=Metodo di consegna
 TrackingNumber=Numero di tracking
 // Date 2009-01-18 19:41:54
