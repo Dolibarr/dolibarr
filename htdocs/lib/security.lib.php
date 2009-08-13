@@ -155,7 +155,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Login field
-	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b> &nbsp; </td>';
+	print '<td valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b> &nbsp; </td>';
 	print '<td valign="bottom" nowrap="nowrap"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="';
 	print (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
 	print '" tabindex="1" /></td>';
@@ -183,7 +183,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '</tr>'."\n";
 
 	// Password field
-	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
+	print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
 	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="';
 	print $demopassword;
 	print '" tabindex="2">';
@@ -197,7 +197,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		//TODO: creer class
 		$entity = array('1'=>'company1','2'=>'company2');
 
-		print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
+		print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
 		print '<td valign="top" nowrap="nowrap">';
 		print $html->selectarray('entity',$entity,$lastentity,0,0,0,1,'tabindex="3"');
 		print '</td></tr>';
@@ -209,7 +209,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (function_exists("imagecreatefrompng") && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
 		//print "Info session: ".session_name().session_id();print_r($_SESSION);
-		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+		print '<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
 
 		print '<table><tr>';
