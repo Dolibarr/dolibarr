@@ -90,3 +90,18 @@ TypeContact_contrat_external_CUSTOMER=Seurata asiakkaiden yhteystiedot
 TypeContact_contrat_external_SALESREPSIGN=Kirjautuminen sopimus asiakkaiden yhteystiedot
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+ServiceStatusNotLate=Juoksu, ei lakkaa
+ServiceStatusNotLateShort=Ei lakkaa
+ServiceStatusLateShort=Lakkaa
+ListOfInactiveServices=Luettelo ei ole aktiivinen palvelut
+ListOfExpiredServices=Luettelo lakkaa aktiivinen palvelut
+ListOfClosedServices=Luettelo suljettu palvelut
+DeleteContractLine=Poista sopimuksen linjan
+ConfirmDeleteContractLine=Oletko varma, että haluat poistaa tämän sopimuksen linja?
+PaymentRenewContractId=Uudista sopimus linja (numero% s)
+ExpiredSince=Vanhenemispäivä
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

@@ -60,3 +60,12 @@ NoRecordedSupplierInvoices=Ei kirjata toimittajan laskut
 NoUnpayedSupplierBills=N: o unpayed toimittajan laskut
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+LastRefreshDate=Viimeisin päivitys päivämäärä
+NoRecordedProducts=N: o kirjataan tuotteet / palvelut
+NoRecordedProspects=N: o kirjataan näkymät
+NoContractedProducts=Ei tuotteita / palveluista
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

@@ -157,3 +157,19 @@ ToExport=Export
 NewExport=New export
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+BirthdayAlertOn=ziua de nastere de alertă activă
+BirthdayAlertOff=ziua de nastere de alertă inactiv
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Furnizor pentru a aprobat
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Furnizor pentru a refuzat
+DemoDesc=Dolibarr este un compact ERP / CRM compus din mai multe module funcţionale. Un demo care include toate modulele nu înseamnă nimic, deoarece aceasta nu se produce. Deci, mai multe demo-profile sunt disponibile.
+DemoCompanyServiceOnly=Gestionaţi o independenţi activitate vânzarea de servicii numai
+SendNewPasswordDesc=Acest formular vă permite să solicitaţi o parolă nouă. Se va trimite la adresa de e-mail. <br> Modificarea va fi în vigoare doar după ce fac clic pe link-ul de confirmare în interiorul acestui email. <br> Verificaţi-vă de e-mail reader software.
+EMailTextInterventionValidated=Intervenţia% s validate
+EMailTextInvoiceValidated=Factura% s validate
+ImportedWithSet=Importul set de date
+DolibarrNotification=Automat de notificare
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

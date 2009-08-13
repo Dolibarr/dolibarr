@@ -1,0 +1,36 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 21:14:36
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+CHARSET=UTF-8
+CommunitySupport=Форум / Wiki поддержки
+EMailSupport=Письма поддержки
+RemoteControlSupport=Интернет в реальном времени / удаленной поддержки
+OtherSupport=Другие виды поддержки
+ToSeeListOfAvailableRessources=Чтобы связаться с / См. имеющиеся ресурсы:
+ClickHere=Нажмите здесь
+HelpCenter=Справочный центр
+DolibarrHelpCenter=Dolibarr центра справки и поддержки
+ToGoBackToDolibarr=В противном случае, щелкните <a href="%s">здесь, чтобы использовать Dolibarr</a>
+TypeOfSupport=Источник поддержки
+TypeSupportCommunauty=Сообщества (бесплатная)
+TypeSupportCommercial=Коммерческие
+TypeOfHelp=Печатать
+NeedHelpCenter=Нужна помощь или поддержка?
+Efficiency=Эффективность
+TypeHelpOnly=Помощь только
+TypeHelpDev=Справка + развития
+TypeHelpDevForm=Помощь развитию + + Формирование
+ToGetHelpGoOnSparkAngels1=Некоторые компании могут обеспечить быстрый (иногда неотложную) и более эффективной поддержки сети путем контроля над компьютером. Такое помощниками могут быть найдены <b>на% с</b> веб-сайта:
+ToGetHelpGoOnSparkAngels3=Вы также можете перейти к списку всех имеющихся автобусов для Dolibarr, для этого нажмите на кнопку
+ToGetHelpGoOnSparkAngels2=Иногда, не существует компания на данный момент вам сделать ваш поиск, так что думаю, менять фильтр для поиска &quot;все доступности&quot;. Вы сможете отправить больше заявок.
+BackToHelpCenter=В противном случае, щелкните здесь, чтобы вернуться <a href="%s">обратно, чтобы помочь центре главной странице.</a>
+LinkToGoldMember=Вы можете позвонить одному из предварительно тренер по Dolibarr на русском языке (% S), выбрав его Виджет (статуса и максимальной цены автоматически обновляются):
+PossibleLanguages=Поддерживаемые языки
+MakeADonation=Помощь Dolibarr проект, сделать пожертвование
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

@@ -38,3 +38,11 @@ ForceSynchronize=Force synchroniserende Dolibarr -&gt; LDAP
 ErrorFailedToReadLDAP=Failed to read LDAP-database. Check LDAP module setup en database toegankelijkheid.
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+GroupSynchronized=Groep gesynchroniseerd
+MemberSynchronized=Lid gesynchroniseerd
+ContactSynchronized=Contact gesynchroniseerd
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

@@ -89,3 +89,14 @@ DocModelAzurDescription=Un model de propunere (logo. ..)
 DocModelJauneDescription=Jaune propunerea model
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+ProposalShort=Propunere
+LastModifiedProposals=Ultima% s propuneri modificate
+DatePropal=Data de propunerea
+ProposalsAndProposalsLines=Comerciale propunerea si a liniilor
+ProposalLine=Propunere linie
+MarbreNumRefModelDesc=Întoarceţi-vă NUMERO cu formatul% syymm-NNNN de propuneri în cazul în care este aa ani, mm este luna şi NNNN este o succesiune fără pauză şi fără întoarcere la 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

@@ -347,3 +347,43 @@ TitanNumRefModelDesc4=I dette eksempel, så har vi den 1. september 2006 en fakt
 PlutonNumRefModelDesc1=Retur en tilpasselig faktura i henhold til en defineret maske.
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+InvoiceDeposit=Indbetaling faktura
+InvoiceDepositAsk=Indbetaling faktura
+InvoiceDepositDesc=Denne form for fakturaen er gjort, når en indbetaling er modtaget.
+InvoiceProFormat=Proformat faktura
+InvoiceProFormatAsk=Proformat faktura
+InvoiceProFormatDesc=<b>Proformat fakturaen</b> er et billede af en ægte faktura, men har ingen regnskabspool værdi.
+UsedByInvoice=Anvendes til at betale fakturaen% s
+ConsumedBy=Forbruges af
+NotConsumed=Ikke forbruges
+HelpPaymentHigherThanReminderToPay=Opmærksomhed, de indbetalingsbeløb af en eller flere regninger er højere end resten til at betale. <br> Rediger din indrejse, ellers bekræfte og tænke på at oprette en kreditnota af den overskydende modtaget for hver overpayed fakturaer.
+BillStatusConverted=Omdannes til discount
+BillShortStatusConverted=Forarbejdede
+Prélèvements=Stående ordre
+Prélèvements=Stående ordrer
+ShowInvoiceDeposit=Vis depositum faktura
+AlreadyPayedNoCreditNotesNoDeposits=Alreday betales (uden kreditnotaer og indskud)
+SetDate=Indstil dato
+Deposit=Indbetaling
+Deposits=Indlån
+DiscountFromDeposit=Betalinger fra depositum faktura% s
+AbsoluteDiscountUse=Denne form for kredit kan bruges på faktura før dens validering
+CreditNoteDepositUse=Fakturaen skal valideres for at bruge denne konge af kreditter
+NewRelativeDiscount=Ny relativ discount
+IdSocialContribution=Sociale bidrag id
+PaymentId=Betaling id
+DescTaxAndDividendsArea=Dette område giver en oversigt over alle betalinger, der foretages af skattemæssige eller sociale bidrag. Registrerer kun med betaling i løbet af de faste år er medtaget her.
+NbOfPayments=Nb af betalinger
+SplitDiscount=Split rabat i to
+ConfirmSplitDiscount=Er du sikker på at du ønsker at opsplitte denne rabat <b>på% s%</b> s til 2 lavere rabatter?
+TypeAmountOfEachNewDiscount=Input beløb for hver af to dele:
+TotalOfTwoDiscountMustEqualsOriginal=Total af to nye rabatten skal svare til de oprindelige discount beløb.
+ConfirmRemoveDiscount=Er du sikker på du vil fjerne denne rabat?
+UseCredit=Brug kredit
+ShowUnpayedLateOnly=Vis sent unpayed faktura kun
+PaymentInvoiceRef=Betaling faktura% s
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

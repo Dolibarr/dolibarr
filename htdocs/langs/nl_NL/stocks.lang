@@ -75,3 +75,13 @@ LieuWareHouse=Localisatie magazijn
 WarehousesAndProducts=Opslagruimtes en producten
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+PMPValueShort=WAP
+AverageUnitPricePMPShort=Gemiddelde prijs input
+AverageUnitPricePMP=Gemiddelde prijs input
+EstimatedStockValueShort=Geschatte waarde van de voorraad
+EstimatedStockValue=Geschatte waarde van de voorraad
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

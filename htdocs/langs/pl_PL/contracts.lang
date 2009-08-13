@@ -92,3 +92,18 @@ TypeContact_contrat_external_CUSTOMER=W ślad za kontakt z klientem
 TypeContact_contrat_external_SALESREPSIGN=Podpisanie umowy, kontakt z klientem
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+ServiceStatusNotLate=Running, nie minął
+ServiceStatusNotLateShort=Nie minął
+ServiceStatusLateShort=Minął
+ListOfInactiveServices=Lista nie aktywnych usług
+ListOfExpiredServices=Lista minął aktywnych usług
+ListOfClosedServices=Wykaz zamkniętych usług
+DeleteContractLine=Usuń umowy linii
+ConfirmDeleteContractLine=Czy na pewno chcesz usunąć tę linię zamówienia?
+PaymentRenewContractId=Odnowienie umowy linii (liczba% s)
+ExpiredSince=Data ważności
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

@@ -45,3 +45,33 @@ NoImportableData=Ei tuoda maahan tiedot (ei-moduulin määritelmiä mahdollistaa
 FileSuccessfullyBuilt=Vie tiedosto luotu
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+SelectImportDataSet=Valitse tiedot haluat tuoda ...
+SelectImportFields=Valitse kentät haluat tuoda, tai valitse ennalta tuonti profil
+SaveImportModel=Tallenna tämä tuonti profiili, jos aiot käyttää uudelleen myöhemmin ...
+ImportModelName=Tuo profiilin nimi
+ImportModelSaved=Tuo profiili tallennetaan <b>nimi% s.</b>
+ImportableFields=Tuoda maahan kentät
+ImportedFields=Maahantuodut kentät
+DatasetToImport=Tietokokonaisuus tuoda
+LibraryShort=Kirjasto
+SQLUsedForExport=SQL Pyydä tarkoitus rakentaa viedä tiedosto
+LineId=Id-linjan
+LineDescription=Kuvaus linja
+LineUnitPrice=Yksikköhinta radan
+LineVATRate=Alv-linjan
+LineQty=Määrä rivin
+LineTotalHT=Määrä verottomia rivin
+LineTotalTTC=Määrä vero rivin
+LineTotalVAT=Arvonlisäveron määrästä linja
+TypeOfLineServiceOrProduct=Type of line (0 = tuotteen, 1 = palvelu)
+FileWithDataToImport=Tiedoston tiedot tuoda
+FileToImport=Lähdetiedostoa tuoda
+FileMustHaveOneOfFollowingFormat=Tiedoston tuonti on oltava yksi seuraavassa muodossa
+ChooseFileToImport=Valitse tiedosto tuoda sitten picto% s ...
+FieldsInSourceFile=Toimialoja lähdetiedostoa
+FieldsInTargetDatabase=Kohdekieli kentät Dolibarr tietokanta
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

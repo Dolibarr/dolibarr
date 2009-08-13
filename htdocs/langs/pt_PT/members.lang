@@ -136,3 +136,18 @@ ShowTypeCard=Ver tipo '%s'
 HTPasswordExport=geração Ficheiro htpassword
 NoThirdPartyAssociatedToMember=nenhum Terceiro asociado a este membro
 ThirdPartyDolibarr=Terceiros Dolibarr
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Outro membro <b>(nome:% s, login:% s)</b> já está associada a um <b>terceiro% s.</b> Remover este link em primeiro lugar porque um terceiro não pode ser ligada a apenas um membro (e vice-versa).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Por motivos de segurança, você deve ser concedido permissões para editar todos os usuários para poder ligar um membro de um usuário que não é seu.
+ThisIsContentOfYourCard=Trata-se pormenores do seu cartão
+CardContent=Conteúdo do seu cartão de membro
+SetLinkToUser=Link para um usuário Dolibarr
+SetLinkToThirdParty=Link para uma Dolibarr terceiro
+SubscriptionId=Assinaturas id
+MemberId=Estados-id
+PaymentSubscription=Nova contribuição pagamento
+MembersAndSubscriptions=Deputados e Suscriptions
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

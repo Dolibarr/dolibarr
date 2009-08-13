@@ -153,3 +153,17 @@ Finished=Fremstillede produkt
 RowMaterial=Første materiale
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+ProductRef=Produkt ref.
+ProductLabel=Produktmærke
+MinPrice=Minim. salgspris
+CantBeLessThanMinPrice=Salgsprisen kan ikke være lavere end minimum tilladt for dette produkt (% s uden skat)
+ExportDataset_service_1=Services
+CloneProduct=Klon vare eller tjenesteydelse
+ConfirmCloneProduct=Er du sikker på at du vil klone vare eller <b>tjenesteydelse% s?</b>
+CloneContentProduct=Klon alle de vigtigste informationer af produkt / service
+ClonePricesProduct=Klon vigtigste informationer og priser
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

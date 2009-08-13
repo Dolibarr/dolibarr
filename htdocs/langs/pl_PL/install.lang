@@ -194,3 +194,16 @@ ErrorConnection=Serwer <b>&quot;% s&quot;,</b> nazwa bazy danych <b>&quot;% s&qu
 MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Poprawna umowa% s (Kontrakt data =% s, daty rozpoczęcia usługi min =% s)
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+GoToDolibarr=Idź do Dolibarr
+MigrationNotFinished=Wersja Twojej dtabase nie jest w pełni aktualne, więc musisz uruchomić ponownie proces aktualizacji.
+GoToUpgradePage=Wejdź na stronę aktualizacji ponownie
+InstallChoiceRecommanded=Zaleciły wybór zainstalować <b>wersję% s</b> od aktualnej <b>wersji% s</b>
+InstallChoiceSuggested=<b>Zainstaluj wyboru sugerowane przez instalatora.</b>
+MigrationStockDetail=Aktualizacja wartości zapasów produktów
+MigrationMenusDetail=Aktualizacja dynamiczne menu tabele
+MigrationDeliveryAddress=Aktualizacja adresu dostarczenia przesyłki
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

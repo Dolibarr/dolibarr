@@ -148,3 +148,9 @@ BackToAccount=Inapoi la cont
 ShowAllAccounts=Arata pentru toate conturile
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+TransactionWithOtherAccount=Contul de transfer
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

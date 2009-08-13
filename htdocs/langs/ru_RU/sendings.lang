@@ -55,3 +55,14 @@ WarningNoQtyLeftToSend=Внимание, без продуктов, ожидаю
 NumRefModelJade=Вернуться номер с форматом BLYY00001, ... где YY является год. Количество на конец никогда сброс до нуля.
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+StatsOnShipmentsOnlyValidated=Статистика проводится на поставки только апробированные
+SendingMethodCATCH=Catch заказчиком
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Простая модель документа для доставки квитанций
+DocumentModelTyphon=Более полная модель документа для доставки квитанций (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

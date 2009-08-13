@@ -127,3 +127,12 @@ PDFEinsteinDescription=Pełna kolejność modelu (logo. ..)
 MarbreNumRefDesc=Renvoie le numro sous la forme syymm% rr-nnnn ou est l&#39;année, le mois mm et un nnnn compteur sequentiel bez pęknięcia et sans zrzekanie e 0
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+OrderLine=Zamówienie linii
+PaymentOrderRef=Płatność celu% s
+CloneOrder=Clone celu
+ConfirmCloneOrder=Czy na pewno chcesz klon tej <b>kolejności% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

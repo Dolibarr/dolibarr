@@ -89,3 +89,14 @@ DocModelAzurDescription=Полный текст предложения моде�
 DocModelJauneDescription=Желтый предложение модель
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+ProposalShort=Предложение
+LastModifiedProposals=Последнее% с измененными предложения
+DatePropal=Дата предложения
+ProposalsAndProposalsLines=Коммерческое предложение и линий
+ProposalLine=Предложение линия
+MarbreNumRefModelDesc=Вернуться Numero с форматом% syymm-NNNN предложений, где год является годом, мм NNNN месяца и представляет собой последовательность без перерыва и не вернуться до 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

@@ -147,3 +147,20 @@ ShowTypeCard=Vis type &#39;% s&#39;
 HTPasswordExport=htpassword fil generation
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Et andet medlem <b>(navn:% s, login:% s)</b> er allerede knyttet til en <b>tredjepart% s.</b> Fjern dette link første fordi en tredjepart ikke kan forbindes med kun et medlem (og omvendt).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Af sikkerhedsmæssige grunde skal du være tildelt tilladelser til at redigere alle brugere til at kunne knytte et medlem til en bruger, der ikke er dit.
+ThisIsContentOfYourCard=Dette er nærmere oplysninger om dit kort
+CardContent=Indholdet af din medlem kortet
+SetLinkToUser=Link til en Dolibarr bruger
+SetLinkToThirdParty=Link til en Dolibarr tredjepart
+SubscriptionId=Abonnements-id
+MemberId=Medlem id
+PaymentSubscription=Nye bidrag betaling
+NoThirdPartyAssociatedToMember=Nr. tredjepart forbundet til dette medlem
+ThirdPartyDolibarr=Dolibarr tredjepart
+MembersAndSubscriptions=Medlemmer og Suscriptions
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

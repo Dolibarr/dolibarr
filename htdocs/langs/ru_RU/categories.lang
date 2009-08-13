@@ -91,3 +91,12 @@ CategoryContents=Категория содержание
 CategId=Идентификатор категории
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+NoCategoryYet=Нет категорию этого типа создаются
+CatSupList=Список поставщиков категорий
+CatCusList=Список клиентов / проспект категорий
+CatProdList=Список категорий продукции
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

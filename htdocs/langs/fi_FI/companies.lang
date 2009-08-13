@@ -267,3 +267,16 @@ FiscalMonthStart=Lähtölista kuukauden kuluessa tilikauden
 TigreNumRefModelDesc1=Paluu mukautettavan asiakas / toimittaja numero mukaan määritelty mask.
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+Contacts=Yhteystiedot
+ThirdPartyContacts=Kolmannen osapuolen yhteystiedot
+ThirdPartyContact=Kolmannen osapuolen yhteystiedot,
+StatusContactValidated=Tila yhteystiedot
+PriceLevel=Hintataso
+YouMustCreateContactFirst=Sinun on luotava sähköpostit yhteyksiä kolmannen osapuolen ensin voi lisätä sähköpostit ilmoituksia.
+MonkeyNumRefModelDesc=Paluu numero on muodossa% syymm-nnnn asiakkaan koodi ja% syymm-nnnn luovuttajalle koodi jos VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0.
+LeopardNumRefModelDesc=Asiakas / toimittaja-koodi on maksuton. Tämä koodi voidaan muuttaa milloin tahansa.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

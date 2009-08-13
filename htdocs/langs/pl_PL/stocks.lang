@@ -75,3 +75,13 @@ LieuWareHouse=Lokalizacja hurtowni
 WarehousesAndProducts=Magazyny i produktów
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+PMPValueShort=WAP
+AverageUnitPricePMPShort=Średnia cena wejścia
+AverageUnitPricePMP=Średnia cena wejścia
+EstimatedStockValueShort=Szacunkowa wartość zapasów
+EstimatedStockValue=Szacunkowa wartość zapasów
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

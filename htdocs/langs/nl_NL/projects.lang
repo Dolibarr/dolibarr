@@ -63,3 +63,10 @@ NotOwnerOfProject=Geen eigenaar van dit prive-project
 AffectedTo=Beïnvloed in
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+ListPredefinedInvoicesAssociatedProject=Lijst van klanten vooraf facturen in verband met project
+CantRemoveProject=Dit project kan niet worden verwijderd, als zij wordt verwezen door een andere voorwerpen (facturen, bestellingen of andere). Zie referers tabblad.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

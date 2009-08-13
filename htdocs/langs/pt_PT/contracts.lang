@@ -83,3 +83,15 @@ TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimento do contrato
 TypeContact_contrat_external_BILLING=Contacto cliente de facturação do contrato
 TypeContact_contrat_external_CUSTOMER=Contacto cliente seguimento do contrato
 TypeContact_contrat_external_SALESREPSIGN=Contacto cliente assinante do contrato
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+ServiceStatusNotLate=Correndo, não terminou
+ServiceStatusNotLateShort=Não terminou
+ListOfInactiveServices=Lista de serviços não activa
+ListOfExpiredServices=Lista de serviços ativos expired
+ListOfClosedServices=Lista de serviços fechados
+DeleteContractLine=Apagar uma linha contrato
+ConfirmDeleteContractLine=Tem certeza de que deseja excluir este contrato linha?
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

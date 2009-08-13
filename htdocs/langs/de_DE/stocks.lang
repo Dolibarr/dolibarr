@@ -73,3 +73,13 @@ LieuWareHouse=Localisation Lager
 WarehousesAndProducts=Hallen und Produkte
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+PMPValueShort=WAP
+AverageUnitPricePMPShort=Durchschnittliche Input Preis
+AverageUnitPricePMP=Durchschnittliche Input Preis
+EstimatedStockValueShort=Geschätzter Wert der Aktie
+EstimatedStockValue=Geschätzter Wert der Aktie
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

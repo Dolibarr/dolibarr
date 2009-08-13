@@ -78,3 +78,14 @@ ClonePropal=Colonar Proposta Comercial
 ConfirmClonePropal=Tem a certeza que deseja colonar a proposta comercial <b>%s</b>?
 DocModelAzurDescription=Modelo de orçamento completo (logo...)
 DocModelJauneDescription=Modelo de Orçamento Jaune
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+ProposalShort=Proposta
+LastModifiedProposals=Última% s propostas alteradas
+DatePropal=Data da proposta
+ProposalsAndProposalsLines=Proposta comercial e linhas
+ProposalLine=Proposta linha
+MarbreNumRefModelDesc=Retornar numero com formato% syymm-nnnn propostas para onde yy é o ano, mm mês e é nnnn é uma seqüência, sem interrupção e sem volta para 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

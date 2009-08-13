@@ -47,3 +47,33 @@ NoImportableData=Nr. indføres data (ingen modul med definitioner at tillade dat
 FileSuccessfullyBuilt=Eksporter fil genereret
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+SelectImportDataSet=Vælg datasæt, du vil importere ...
+SelectImportFields=Vælg felter, du vil importere, eller vælg en foruddefineret import profil
+SaveImportModel=Gem denne import profil hvis du planlægger at genbruge det senere ...
+ImportModelName=Import Profilnavn
+ImportModelSaved=Import profil gemt under <b>navnet% s.</b>
+ImportableFields=Indføres felter
+ImportedFields=Importerede felter
+DatasetToImport=Datasæt til at importere
+LibraryShort=Bibliotek
+SQLUsedForExport=SQL Anmodning bruges til at bygge eksport-fil
+LineId=Id for linje
+LineDescription=Beskrivelse af linje
+LineUnitPrice=Enhedspris på linje
+LineVATRate=Momssats på linje
+LineQty=Mængde for linje
+LineTotalHT=Beløb efter skat for linje
+LineTotalTTC=Beløb med fradrag af skat for linje
+LineTotalVAT=Momsbeløb for linje
+TypeOfLineServiceOrProduct=Strækningstype (0 = produkt, 1 = tjeneste)
+FileWithDataToImport=Fil med data til at importere
+FileToImport=Kildefilen til at importere
+FileMustHaveOneOfFollowingFormat=Fil til at importere, skal have en af følgende format
+ChooseFileToImport=Vælg fil for at importere og klik derefter på picto% s ...
+FieldsInSourceFile=Områder i kildefilen
+FieldsInTargetDatabase=Målret felter i Dolibarr database
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

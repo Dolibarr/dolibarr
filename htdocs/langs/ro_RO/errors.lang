@@ -57,3 +57,10 @@ ErrorPleaseTypeBankTransactionReportName=Vă rugăm să scrieţi numele băncii 
 ErrorRecordHasChildren=Nu a reuşit să ştergeţi înregistrări, deoarece acesta are unele Childs.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+MenuManager=Meniu manager
+ErrorUrlNotValid=Site-ul este incorect adresa
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

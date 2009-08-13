@@ -109,3 +109,18 @@ ConfirmCreateContact=Er du sikker yu ønsker at skabe et Dolibarr højde for den
 LoginToCreate=Log ind for at oprette
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator med alle rettigheder
+LinkToCompanyContact=Link til tredjepart / kontakt
+LinkedToDolibarrMember=Link til medlem
+LinkedToDolibarrUser=Link til Dolibarr bruger
+LinkedToDolibarrThirdParty=Link til Dolibarr tredjepart
+CreateDolibarrThirdParty=Opret en tredjepart
+ConfirmCreateLogin=Er du sikker på at du vil oprette en Dolibarr højde for dette medlem?
+ConfirmCreateThirdParty=Er du sikker på at du vil oprette en tredjepart for dette medlem?
+NameToCreate=Navn af tredjemand til at skabe
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

@@ -91,3 +91,14 @@ DocModelAzurDescription=Kompletny wniosek modelu (logo. ..)
 DocModelJauneDescription=Jaune propozycję modelu
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+ProposalShort=Wniosek
+LastModifiedProposals=Ostatnia% s zmodyfikowane propozycje
+DatePropal=Data wniosku
+ProposalsAndProposalsLines=Commercial wniosku i linie
+ProposalLine=Wniosek linii
+MarbreNumRefModelDesc=Wróć NUMERO z formatu% syymm-nnnn do składania wniosków, jeżeli rr jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

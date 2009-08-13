@@ -20,3 +20,9 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL que ofrece una interfaz de pago e
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofrece una interfaz de pago en línea %s basada en un importe libre
 YouCanAddTagOnUrl=También puede añadir el parámetro url <b>&tag=<i>value</i></b>  para cualquiera de estas direcciones (obligatorio sólamente para el pago libre) para ver su propio \"código de comentario\" de pago.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configure su url PayBox <b>%s</b> para que el pago se cree automáticamente al Confirmar.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+PaymentForm=Forma de pagamento
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

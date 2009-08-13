@@ -32,10 +32,7 @@ ErrorConstantNotDefined=معلمة ٪ ق لم تحدد
 ErrorUnknown=Unkown خطأ
 ErrorSQL=خطأ SQL
 ErrorLogoFileNotFound=شعار ملف &#39;٪ ق&#39; لم يتم العثور على
-ErrorGoToGlobalSetup=اذهب إلى &#39;شركة / Fundation&#39; الإعداد لتثبيت هذا
 ErrorGoToModuleSetup=الذهاب الى الوحدة لتحديد هذا الإعداد
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=فشل إرسال البريد (ق = ٪ مرسل ، واستقبال = ٪)
-ErrorAttachedFilesDisabled=إرفاق ملفات الميزة المعوقين على هذا serveur
 ErrorFileNotUploaded=لم تحميل الملف. تأكد من أن حجمها لا يتجاوز الحد الأقصى المسموح به ، والتي توفر مساحة خالية على القرص الصلب ، وأنه لا يوجد بالفعل ملف بنفس الاسم في هذا الدليل.
 ErrorInternalErrorDetected=اكتشاف الخطأ
 ErrorNoRequestRan=لا يتعارض مع طلب
@@ -54,7 +51,6 @@ ErrorNoVATRateDefinedForSellerCountry=خطأ ، لم يعرف لمعدلات ض�
 ErrorFailedToSaveFile=خطأ ، وفشلت في انقاذ الملف.
 ErrorOnlyPngJpgSupported=خطأ فقط. بابوا نيو غينيا ، وجيه. شكل صورة ملف الدعم.
 ErrorImageFormatNotSupported=PHP الخاص بك لا يدعم وظائف لتحويل الصور من هذا الشكل.
-GoToWikiHelpPage=الانترنت تساعد على قراءة (nead الوصول إلى الإنترنت)
 GoToHelpPage=قراءة مساعدة
 RecordSaved=سجل المحفوظة
 LevelOfFeature=مستوى الملامح
@@ -304,7 +300,6 @@ ActionsDoneShort=فعل
 ActionRunningNotStarted=لم تبدأ
 ActionRunningShort=بدأت
 ActionDoneShort=انتهى
-CompanyFundation=شركة / Fundation
 ContactsForCompany=اتصالات لهذا الطرف الثالث
 ActionsOnCompany=الأعمال حول هذا الطرف الثالث
 NActions=ق ٪ الإجراءات
@@ -410,7 +405,6 @@ MonthShort10=أكتوبر
 MonthShort11=نوفمبر
 MonthShort12=ديسمبر
 AttachedFiles=الملفات والوثائق المرفقة
-FileTransferComplete=الملف updloaded بنجاح
 DateFormatYYYYMM=سنة ملم
 DateFormatYYYYMMDD=سنة ملم - دال
 DateFormatYYYYMMDDHHMM=سنة ملم بين سمو دال : س.
@@ -549,3 +543,20 @@ ShortSaturday=دإ
 ShortSunday=دإ
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:22:26).
+// Reference language: en_US
+Login=تسجيل الدخول
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:22:26).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
+// Reference language: en_US
+ErrorGoToGlobalSetup=اذهب إلى &#39;شركة / مؤسسة&#39; الإعداد لتثبيت هذا
+ErrorFailedToSendMail=فشل إرسال البريد (ق = ٪ مرسل ، واستقبال = ٪)
+ErrorAttachedFilesDisabled=إرفاق ملفات الميزة المعوقين على هذا الخادم
+GoToWikiHelpPage=الانترنت تساعد على قراءة (على ضرورة الوصول إلى الإنترنت)
+CompanyFoundation=الشركة / المؤسسة
+FileTransferComplete=تم تحميل الملف بنجاح
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).

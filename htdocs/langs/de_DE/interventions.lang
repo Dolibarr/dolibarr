@@ -41,3 +41,9 @@ PacificNumRefModelDesc1=Zurück NUMERO mit Format% syymm-nnnn wo ist JJ Jahr, MM
 PacificNumRefModelError=Eine Intervention Karte, beginnend mit $ syymm existiert bereits und ist nicht kompatibel mit diesem Modell der Reihe. Entfernen oder umbenennen, um dieses Modul.
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+ModifyIntervention=Ändern Intervention
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

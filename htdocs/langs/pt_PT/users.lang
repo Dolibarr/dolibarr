@@ -100,3 +100,14 @@ ConfirmCreateLogin=¿Está seguro de que deseja criar uma conta para este membro
 ConfirmCreateThirdParty=¿Está seguro de querer criar um Terceiro para este membro?
 LoginToCreate=Login a Criar
 NameToCreate=Nome do Terceiro a Criar
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+SuperAdministrator=Super Administrador
+SuperAdministratorDesc=Administrador com todos os direitos
+LinkToCompanyContact=Link para terceiros / contact
+LinkedToDolibarrMember=Link para membro
+LinkedToDolibarrUser=Link para Dolibarr usuário
+LinkedToDolibarrThirdParty=Link para Dolibarr terceiro
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

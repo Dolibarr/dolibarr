@@ -347,3 +347,43 @@ TitanNumRefModelDesc4=W tym przykładzie, mamy na 1 wrzesień 2006 faktura nazwi
 PlutonNumRefModelDesc1=Zwrotu dostosowywalne numer faktury zgodnie z definicją maska.
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+InvoiceDeposit=Depozyt faktury
+InvoiceDepositAsk=Depozyt faktury
+InvoiceDepositDesc=Tego rodzaju faktury jest wykonywane wtedy, gdy depozyt została odebrana.
+InvoiceProFormat=Proformat faktury
+InvoiceProFormatAsk=Proformat faktury
+InvoiceProFormatDesc=<b>Proformat fakturze</b> jest obraz prawdziwy faktury, ale nie ma wartości księgowych.
+UsedByInvoice=Służy do zapłaty faktury% s
+ConsumedBy=Zużywanej przez
+NotConsumed=Nie zużywanej
+HelpPaymentHigherThanReminderToPay=Uwaga, płatność kwoty jednego lub więcej rachunków jest wyższa niż reszta zapłacić. <br> Edycja wpisu, inaczej potwierdzić i myśleć o tworzeniu kredytowej uwagę nadwyżki otrzymanych dla każdego nadpłaty faktur.
+BillStatusConverted=Przeliczone na zniżki
+BillShortStatusConverted=Przetworzone
+Prélèvements=Zlecenie stałe
+Prélèvements=Zlecenia stałe
+ShowInvoiceDeposit=Pokaż złożeniu faktury
+AlreadyPayedNoCreditNotesNoDeposits=Alreday wypłacana (bez not kredytowych i depozytowych)
+SetDate=Ustaw datę
+Deposit=Depozyt
+Deposits=Depozyty
+DiscountFromDeposit=Płatności z depozytu faktury% s
+AbsoluteDiscountUse=Tego rodzaju kredyt może być użyta na fakturze przed jej zatwierdzeniem
+CreditNoteDepositUse=Faktura musi być zatwierdzone do użytku tego króla punktów
+NewRelativeDiscount=Nowe zniżki w stosunku
+IdSocialContribution=Społeczny wkład id
+PaymentId=Płatność id
+DescTaxAndDividendsArea=Obszar ten stanowi podsumowanie wszystkich płatności podatkowych lub składek na ubezpieczenia społeczne. Tylko rekordy z płatności w ciągu roku ustalana jest włączona.
+NbOfPayments=Nb płatności
+SplitDiscount=Split zniżki w dwóch
+ConfirmSplitDiscount=Czy na pewno chcesz podzielić tym rabat <b>w% s% s</b> na 2 niższe zniżki?
+TypeAmountOfEachNewDiscount=Wejście kwoty dla każdego z dwóch części:
+TotalOfTwoDiscountMustEqualsOriginal=Suma dwóch nowych rabatu musi być równa kwocie pierwotnego zniżki.
+ConfirmRemoveDiscount=Czy na pewno chcesz usunąć ten rabat?
+UseCredit=Wykorzystanie kredytu
+ShowUnpayedLateOnly=Pokaż późno unpayed fakturze tylko
+PaymentInvoiceRef=Płatność faktury% s
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

@@ -159,3 +159,19 @@ ToExport=Export
 NewExport=Nye eksportmarkeder
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+BirthdayAlertOn=fødselsdag alarm aktive
+BirthdayAlertOff=fødselsdag alarm inaktive
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Leverandør for godkendt
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Leverandør For nægtes
+DemoDesc=Dolibarr er et kompakt ERP / CRM sammensat af flere funktionelle moduler. En demo, som omfatter alle moduler ikke betyder noget, da dette aldrig sker. Så flere demo profiler der er tilgængelige.
+DemoCompanyServiceOnly=Administrer en freelance virksomhed sælger service kun
+SendNewPasswordDesc=Denne form giver dig mulighed for at anmode om en ny adgangskode. Det vil blive sendt til din email-adresse. <br> Ændring vil kun være effektiv, når de har klikket på bekræftelse linket i denne e-mail. <br> Tjek din e-mail reader software.
+EMailTextInterventionValidated=Intervention% s valideret
+EMailTextInvoiceValidated=Faktura% s valideret
+ImportedWithSet=Indførsel datasæt
+DolibarrNotification=Automatisk anmeldelse
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

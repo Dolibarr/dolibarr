@@ -125,3 +125,13 @@ UserWithApproveOrderGrant=Useres concesso con &quot;approvare ordini&quot; perme
 MarbreNumRefDesc=Renvoie le numro sous la forme syymm% aa-nnnn ou est l&#39;année, le mois et millimetri nnnn un compteur sequentiel sans rottura et sans remise e 0
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+OrderLine=Ordine linea
+PaymentOrderRef=Il pagamento della fine% s
+CloneOrder=Clone fine
+ConfirmCloneOrder=Sei sicuro di voler clonare questo <b>modo% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

@@ -146,3 +146,18 @@ Finished=Prodotto
 RowMaterial=Prima materiale
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+ProductRef=Prodotto rif.
+ProductLabel=Prodotto etichetta
+MinPrice=Minim. prezzo di vendita
+CantBeLessThanMinPrice=Il prezzo di vendita non può essere inferiore al minimo consentito per questo prodotto (% s senza IVA)
+ExportDataset_service_1=Servizi
+CloneProduct=Clone prodotto o servizio
+ConfirmCloneProduct=Sei sicuro di voler clonare prodotto o <b>servizio% s?</b>
+CloneContentProduct=Clona tutte le principali informazioni del prodotto / servizio
+ClonePricesProduct=Clone principali informazioni e prezzi
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

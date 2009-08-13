@@ -1,0 +1,36 @@
+/*
+ * Language code: nl_NL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 21:00:22
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+CHARSET=UTF-8
+CommunitySupport=Forum / Wiki ondersteuning
+EMailSupport=E-mail ondersteuning
+RemoteControlSupport=Online real-time / remote support
+OtherSupport=Andere ondersteunende
+ToSeeListOfAvailableRessources=Om contact / zie beschikbare middelen:
+ClickHere=Klik hier
+HelpCenter=Help centrum
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Zoniet, klik dan <a href="%s">hier om gebruik Dolibarr</a>
+TypeOfSupport=Bron van steun
+TypeSupportCommunauty=Gemeenschap (gratis)
+TypeSupportCommercial=Commercieel
+TypeOfHelp=Type
+NeedHelpCenter=Hulp nodig heeft of ondersteuning?
+Efficiency=Efficiëntie
+TypeHelpOnly=Help alleen
+TypeHelpDev=Hulp + Ontwikkeling
+TypeHelpDevForm=Hulp + Ontwikkeling + Oprichtingskosten
+ToGetHelpGoOnSparkAngels1=Sommige bedrijven kunnen een snel (ergens onmiddellijke) en efficiëntere online support door middel van controle van uw computer. Dergelijke hulpverleners kan worden gevonden <b>op% s</b> web-site:
+ToGetHelpGoOnSparkAngels3=U kunt ook naar de lijst van alle beschikbare bussen voor Dolibarr, voor dit klik op de knop
+ToGetHelpGoOnSparkAngels2=Soms is er geen bedrijf te vinden op het moment dat u uw zoekopdracht, dus denk om het filter te veranderen om te zoeken naar &quot;alle beschikbaarheid&quot;. Je zal kunnen sturen meer verzoeken.
+BackToHelpCenter=Zoniet, klik hier om te gaan <a href="%s">terug naar het Helpcentrum home page.</a>
+LinkToGoldMember=U kunt bellen naar een van de coach vooraf door Dolibarr voor uw taal (% s) door te klikken op zijn Widget (status en de maximale prijs worden automatisch bijgewerkt):
+PossibleLanguages=Ondersteunde talen
+MakeADonation=Help Dolibarr project, maak een donatie
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

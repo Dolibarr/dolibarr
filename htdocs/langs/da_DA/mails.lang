@@ -103,3 +103,19 @@ AddNewNotification=Aktivere en ny anmeldelse anmodning
 ListOfActiveNotifications=List alle aktive meddelelser anmodninger
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+AllEMailings=Alle eMailings
+ResetMailing=Gensend emailing
+ConfirmResetMailing=Advarsel ved reinitializing <b>emailing% s,</b> du tillader at gøre en masse afsendelse af denne e-mail et andet tidspunkt. Er du sikker på du dette er, hvad du vil gøre?
+BadEMail=Bad værdi for Email
+CloneEMailing=Klon E-mail
+ConfirmCloneEMailing=Er du sikker på at du vil klone denne e-mail?
+CloneContent=Klon besked
+CloneReceivers=Cloner modtagere
+DateLastSend=Dato for sidste afsendelse
+MailingModuleDescDolibarrContractsLinesExpired=Tredjemand med udløb kontrakten&#39;s linjer
+YouCanUseCommaSeparatorForSeveralRecipients=Du kan bruge <b>comma</b> separator til at angive flere modtagere.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

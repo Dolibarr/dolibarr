@@ -122,3 +122,10 @@ Dispatched=Expediate
 ToDispatch=Pentru a expedierii
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+ReportTurnover=Cifra de afaceri
+NotUsedForGoods=Nu sunt utilizate pentru cumpărarea de bunuri
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

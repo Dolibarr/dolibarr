@@ -151,3 +151,17 @@ Finished=Hergestellt werden,
 RowMaterial=Erste Material
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+ProductRef=Produkt-ref.
+ProductLabel=Etikett
+MinPrice=Minim. Verkaufspreis
+CantBeLessThanMinPrice=Der Verkaufspreis kann nicht niedriger sein als Minimum für dieses Produkt (% s ohne MwSt.)
+ExportDataset_service_1=Services
+CloneProduct=Klon-Produkt oder eine Dienstleistung
+ConfirmCloneProduct=Sind Sie sicher, dass Sie zu klonen Produkts oder einer <b>Dienstleistung% s?</b>
+CloneContentProduct=Clone alle wichtigen Informationen über Produkt / Service
+ClonePricesProduct=Clone wichtigsten Informationen und Preise
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

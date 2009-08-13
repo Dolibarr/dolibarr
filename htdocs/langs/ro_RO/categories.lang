@@ -91,3 +91,12 @@ CategoryContents=Categorie conţinutul
 CategId=Id-ul categoriei
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+NoCategoryYet=Nici o categorie de acest tip creat
+CatSupList=Lista de furnizor categorii
+CatCusList=Lista de client / categorii de perspectivă
+CatProdList=Lista de categorii de produse
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

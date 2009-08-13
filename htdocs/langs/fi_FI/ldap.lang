@@ -36,3 +36,11 @@ ForceSynchronize=Force synkronointi Dolibarr -&gt; LDAP
 ErrorFailedToReadLDAP=Lukeminen epäonnistui LDAP-tietokantaan. Tarkista LDAP-moduulin asennus ja tietokannan saavutettavuus.
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+GroupSynchronized=Ryhmän synkronoidaan
+MemberSynchronized=Jäsen synkronoidaan
+ContactSynchronized=Yhteystiedot synkronoidaan
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

@@ -62,3 +62,12 @@ NoRecordedSupplierInvoices=Nr. registreres leverandørens fakturaer
 NoUnpayedSupplierBills=Nr. unpayed leverandørens fakturaer
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+LastRefreshDate=Sidst opdateret dato
+NoRecordedProducts=Nr. registreres produkter / tjenester
+NoRecordedProspects=Nr. registreres udsigter
+NoContractedProducts=Ingen produkter / tjenesteydelser kontrakt
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

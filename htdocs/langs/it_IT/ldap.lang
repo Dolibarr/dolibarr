@@ -24,3 +24,12 @@ SynchronizeDolibarr2Ldap		  =Sincronizzare utente (Dolibarr -> LDAP)
 UserSynchronized			  =Utente sincronizzato 
 ForceSynchronize			  =Forza la sincronizzazione Dolibarr -> LDAP 
 ErrorFailedToReadLDAP			  =Impossibile leggere database LDAP. Controlla LDAP modulo di database di configurazione e di accessibilità.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+GroupSynchronized=Gruppo sincronizzato
+MemberSynchronized=Stati sincronizzato
+ContactSynchronized=Contatti sincronizzati
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

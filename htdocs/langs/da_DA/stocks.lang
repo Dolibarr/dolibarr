@@ -75,3 +75,13 @@ LieuWareHouse=Lokalisering lager
 WarehousesAndProducts=Lager og produkter
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+PMPValueShort=WAP
+AverageUnitPricePMPShort=Gennemsnitlig input pris
+AverageUnitPricePMP=Gennemsnitlig input pris
+EstimatedStockValueShort=Anslåede værdi af materiel
+EstimatedStockValue=Anslåede værdi af materiel
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

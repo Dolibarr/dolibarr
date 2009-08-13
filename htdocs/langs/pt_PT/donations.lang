@@ -23,3 +23,9 @@ DonationStatusPayedShort=Paga
 ValidPromise=Validar Promessa
 BuildDonationReceipt=Criar Recibo
 DonationsModels=Modelo de documento de recepção de Doação
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+Donations=Donativos
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

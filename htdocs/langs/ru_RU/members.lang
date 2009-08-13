@@ -145,3 +145,20 @@ ShowTypeCard=Показать типу &#39;% S&#39;
 HTPasswordExport=htpassword файл поколения
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Еще один член (имя и <b>фамилия:% S, логин:% S)</b> уже связан с третьей <b>стороной% S.</b> Удалить эту ссылку первых, потому третья сторона не может быть связан только один член (и наоборот).
+ErrorUserPermissionAllowsToLinksToItselfOnly=По соображениям безопасности, вы должны получить разрешение, чтобы изменить все пользователи должны иметь доступ к ссылке члена к пользователю, что это не твое.
+ThisIsContentOfYourCard=Это детали Вашей карты
+CardContent=Содержание Вашего члена карту
+SetLinkToUser=Ссылка на Dolibarr пользователя
+SetLinkToThirdParty=Ссылка на Dolibarr третья сторона
+SubscriptionId=Подписка ID
+MemberId=Член ID
+PaymentSubscription=Новый вклад оплаты
+NoThirdPartyAssociatedToMember=Никакая третья сторона, связанных с этой член
+ThirdPartyDolibarr=Dolibarr третья сторона
+MembersAndSubscriptions=Члены и Suscriptions
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

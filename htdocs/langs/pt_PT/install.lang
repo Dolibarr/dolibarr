@@ -173,3 +173,16 @@ MigrationDeliveryOrderMatching=Entrega recepção atualização
 MigrationDeliveryDetail=Delivery update
 // Date 2009-01-18 18:56:33
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+GoToDolibarr=Ir para Dolibarr
+MigrationNotFinished=Versão do seu dtabase não é completamente até à data, assim você terá que executar o processo de atualização novamente.
+GoToUpgradePage=Ir para a página atualizar novamente
+InstallChoiceRecommanded=Recommanded escolha para instalar a <b>versão% s</b> do seu actual <b>versão% s</b>
+InstallChoiceSuggested=<b>Instale opção sugerida pelo instalador.</b>
+MigrationStockDetail=Atualizar estoque valor dos produtos
+MigrationMenusDetail=Atualização dinâmica menus quadros
+MigrationDeliveryAddress=Atualizar endereço de entrega em transferências
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

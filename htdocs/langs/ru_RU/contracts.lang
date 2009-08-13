@@ -90,3 +90,18 @@ TypeContact_contrat_external_CUSTOMER=После деятельность зак
 TypeContact_contrat_external_SALESREPSIGN=Подписание контракта заказчик контакт
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+ServiceStatusNotLate=Запуск, не истек
+ServiceStatusNotLateShort=Не истек
+ServiceStatusLateShort=Истек
+ListOfInactiveServices=Перечень услуг не активен
+ListOfExpiredServices=Список с истекшим сроком службы
+ListOfClosedServices=Список закрытых услуги
+DeleteContractLine=Удалить контракт линия
+ConfirmDeleteContractLine=Вы уверены, что хотите удалить этот контракт линию?
+PaymentRenewContractId=Продлить контракт линия (номер% S)
+ExpiredSince=Срок действия
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

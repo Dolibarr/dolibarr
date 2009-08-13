@@ -271,3 +271,17 @@ ProspectStatus=Prospect stato
 PL_NONE=Aucun
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+Contacts=Contatti
+ThirdPartyContacts=Contatti da parte di terzi
+ThirdPartyContact=Terzo contatto
+StatusContactValidated=Stato di contatto
+PriceLevel=Del livello dei prezzi
+YouMustCreateContactFirst=È necessario creare contatti per e-mail di terze parti prima di essere in grado di aggiungere le notifiche e-mail.
+MonkeyNumRefModelDesc=Torna numero con formato% syymm-nnnn per codice cliente e% syymm-nnnn per il fornitore che per il codice in cui è aa anno, MM è il mese e nnnn è una sequenza senza interruzione e senza possibilità di ritorno a 0.
+LeopardNumRefModelDesc=Cliente / fornitore del codice è gratuita. Questo codice può essere modificato in qualsiasi momento.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

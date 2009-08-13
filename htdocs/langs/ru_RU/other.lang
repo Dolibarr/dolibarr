@@ -157,3 +157,19 @@ ToExport=Экспорт
 NewExport=Новый экспорт
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+BirthdayAlertOn=рождения активного оповещения
+BirthdayAlertOff=рождения оповещения неактивные
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Поставщик утвердил порядок
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Поставщик порядке отказалась
+DemoDesc=Dolibarr является компактным ERP / CRM составе нескольких функциональных модулей. В демо, что включает в себя все модули, не означает ничего, как этого никогда не происходит. Так, несколько демо-профилей доступны.
+DemoCompanyServiceOnly=Управление внештатным деятельности службы только в продаже
+SendNewPasswordDesc=Эта форма позволяет запросить новый пароль. Он будет отправить на ваш адрес электронной почты. <br> Изменения вступят в силу только после нажатия на ссылку в подтверждение этого сообщения. <br> Проверьте ваш электронный читатель программного обеспечения.
+EMailTextInterventionValidated=Вмешательство% S проверены
+EMailTextInvoiceValidated=Счет% S проверены
+ImportedWithSet=Импорт данных
+DolibarrNotification=Автоматические уведомления
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

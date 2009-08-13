@@ -345,3 +345,43 @@ TitanNumRefModelDesc4=In diesem Beispiel werden wir auf den 1. September 2006 ei
 PlutonNumRefModelDesc1=Zurück eine anpassbare Rechnungsnummer nach einem definierten Maske.
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+InvoiceDeposit=Anzahlung Rechnung
+InvoiceDepositAsk=Anzahlung Rechnung
+InvoiceDepositDesc=Diese Art der Rechnung erfolgt, wenn eine Anzahlung eingegangen ist.
+InvoiceProFormat=Proformat Rechnung
+InvoiceProFormatAsk=Proformat Rechnung
+InvoiceProFormatDesc=<b>Proformat Rechnung</b> ist ein Bild eines echten Rechnung, hat aber keine Buchhaltung Wert.
+UsedByInvoice=Zur Bezahlung der Rechnung% s
+ConsumedBy=Consumed von
+NotConsumed=Nicht verbrauchte
+HelpPaymentHigherThanReminderToPay=Achtung, die Zahlung eines oder mehrerer Rechnungen ist höher als der Rest zu zahlen. <br> Bearbeiten Sie Ihre Eingabe, sonst bestätigen und denken über die Schaffung einer Gutschrift von mehr als der für jede overpayed Rechnungen.
+BillStatusConverted=Umgerechnet auf Rabatt
+BillShortStatusConverted=Verarbeitete
+Prélèvements=Dauerauftrag
+Prélèvements=Daueraufträge
+ShowInvoiceDeposit=Show Anzahlung Rechnung
+AlreadyPayedNoCreditNotesNoDeposits=Alreday bezahlt (ohne Kredit-Banknoten und Einlagen)
+SetDate=Datum
+Deposit=Anzahlung
+Deposits=Einlagen
+DiscountFromDeposit=Die Zahlungen aus Anzahlung Rechnung% s
+AbsoluteDiscountUse=Diese Art von Krediten verwendet werden kann auf der Rechnung vor der Validierung
+CreditNoteDepositUse=Rechnung muss validiert werden, um mit diesem König von Krediten
+NewRelativeDiscount=Neue relative Rabatt
+IdSocialContribution=Sozialbeitrags id
+PaymentId=Zahlung id
+DescTaxAndDividendsArea=Dieser Bereich stellt eine Übersicht über alle Zahlungen, die für die Steuer-oder Sozialabgaben. Nur Datensätze mit der Bezahlung während der festgesetzten Jahr hier.
+NbOfPayments=Zahl der Zahlungen
+SplitDiscount=Split Rabatt in zwei
+ConfirmSplitDiscount=Sind Sie sicher, dass Sie teilen wollen diesen Rabatt <b>von% s% s</b> in 2 niedrigere Rabatte?
+TypeAmountOfEachNewDiscount=Input für jeden der zwei Teile:
+TotalOfTwoDiscountMustEqualsOriginal=Insgesamt zwei neue Rabatt muss gleich zu den ursprünglichen Betrag Rabatt.
+ConfirmRemoveDiscount=Sind Sie sicher, dass Sie möchten, entfernen Sie diesen Rabatt?
+UseCredit=Verwenden Sie die Credit
+ShowUnpayedLateOnly=Show Ende unpayed Rechnung nur
+PaymentInvoiceRef=Die Zahlung der Rechnung% s
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

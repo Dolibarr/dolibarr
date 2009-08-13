@@ -89,3 +89,14 @@ DocModelAzurDescription=Täydellinen ehdotus malli (logo. ..)
 DocModelJauneDescription=Jaune ehdotus malli
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+ProposalShort=Ehdotus
+LastModifiedProposals=Viimeisin% s muutetut ehdotukset
+DatePropal=Päiväys Ehdotuksen
+ProposalsAndProposalsLines=Kaupalliset ehdotusta ja linjat
+ProposalLine=Ehdotus linja
+MarbreNumRefModelDesc=Paluu numero on muodossa% syymm-nnnn ehdotuksia jossa VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

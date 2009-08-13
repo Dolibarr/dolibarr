@@ -63,3 +63,10 @@ NotOwnerOfProject=Nie prywatnego właściciela tego projektu
 AffectedTo=Affected do
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+ListPredefinedInvoicesAssociatedProject=Lista klientów gotowych faktur związanych z projektem
+CantRemoveProject=Ten projekt nie może zostać usunięty, ponieważ jest do których odwołują się inne obiekty (faktury, zamówienia lub innych). Zobacz odsyłających tab.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

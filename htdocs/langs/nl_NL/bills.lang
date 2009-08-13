@@ -347,3 +347,43 @@ TitanNumRefModelDesc4=In dit voorbeeld hebben we op 1 september 2006 een factuur
 PlutonNumRefModelDesc1=Terugkeer een aanpasbare factuurnummer volgens een omschreven masker.
 // Date 2009-01-18 23:57:49
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+InvoiceDeposit=Borgsom factuur
+InvoiceDepositAsk=Borgsom factuur
+InvoiceDepositDesc=Dit soort factuur wordt gedaan wanneer een aanbetaling heeft ontvangen.
+InvoiceProFormat=Proformat factuur
+InvoiceProFormatAsk=Proformat factuur
+InvoiceProFormatDesc=<b>Proformat factuur</b> is een afbeelding van een echte factuur, maar heeft geen boekhoudkundige waarde.
+UsedByInvoice=Gebruikt voor de betaling van de factuur% s
+ConsumedBy=Verbruikt door
+NotConsumed=Niet verbruikte
+HelpPaymentHigherThanReminderToPay=Opgelet, het bedrag van de betaling van een of meer rekeningen is hoger dan de rest te betalen. <br> Bewerk uw binnenkomst, anders bevestigen en na te denken over het maken van een credit nota van het teveel ontvangen voor elke overpayed facturen.
+BillStatusConverted=Omgezet in een korting
+BillShortStatusConverted=Verwerkte
+Prélèvements=Doorlopende opdracht
+Prélèvements=Permanente opdrachten
+ShowInvoiceDeposit=Toon nederlegging factuur
+AlreadyPayedNoCreditNotesNoDeposits=Alreday betaald (zonder credit nota&#39;s en deposito&#39;s)
+SetDate=Ingestelde datum
+Deposit=Borgsom
+Deposits=Deposito&#39;s
+DiscountFromDeposit=Betalingen van nederlegging factuur% s
+AbsoluteDiscountUse=Dit soort krediet kan gebruikt worden op de factuur voor de validatie
+CreditNoteDepositUse=Factuur moet worden gevalideerd voor het gebruik van deze koning van de kredieten
+NewRelativeDiscount=Nieuwe relatieve korting
+IdSocialContribution=Sociale bijdrage id
+PaymentId=Betaling id
+DescTaxAndDividendsArea=Dit gebied geeft een overzicht van alle betalingen voor de belasting of sociale premies. Alleen records die met de betaling gedurende de vastgestelde jaar worden hier opgenomen.
+NbOfPayments=Nb van betalingen
+SplitDiscount=Split korting op twee
+ConfirmSplitDiscount=Weet u zeker dat u wilt splitsen deze korting <b>van% s% s</b> in 2 lagere kortingen?
+TypeAmountOfEachNewDiscount=Input bedrag voor elk van de twee delen:
+TotalOfTwoDiscountMustEqualsOriginal=Totaal van de twee nieuwe korting moet gelijk zijn aan originele korting bedrag.
+ConfirmRemoveDiscount=Weet u zeker dat u wilt verwijderen van deze korting?
+UseCredit=Kredietbeoordelingen
+ShowUnpayedLateOnly=Toon laat unpayed factuur alleen
+PaymentInvoiceRef=Betaling factuur% s
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

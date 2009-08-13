@@ -44,3 +44,9 @@ ArcticNumRefModelDesc1=Modelo de numeração genérico
 ArcticNumRefModelError=Activação Impossivel
 PacificNumRefModelDesc1=Devolve o número com o formato %syymm-nnnn dónde yy é o ano, mm. O mês e nnnn um contador sequêncial sem ruptura e sem ficar a 0
 PacificNumRefModelError=Uma factura que começa por # $$syymm existe na base e é incompativel com esta numeração. Eliminia  ou renomea-la para activar este módulo.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+ModifyIntervention=Modificar intervenção
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

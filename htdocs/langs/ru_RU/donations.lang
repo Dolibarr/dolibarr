@@ -34,3 +34,9 @@ BuildDonationReceipt=Build получения
 DonationsModels=Документы моделей пожертвование квитанции
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+Donations=Пожертвования
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

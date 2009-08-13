@@ -57,8 +57,6 @@ SuperAdministratorDesc=مدير كل الحقوق
 DefaultRights=الافتراضي أذونات
 DefaultRightsDesc=التقصير هنا تحديد الاذونات التي تمنح تلقائيا للمستخدم خلق جديد.
 DolibarrUsers=Dolibarr المستخدمين
-LastName=اسم
-FirstName=Firstname
 ListOfGroups=قائمة المجموعات
 NewGroup=مجموعة جديدة
 CreateGroup=إنشاء مجموعة
@@ -117,3 +115,10 @@ LoginToCreate=ادخل لخلق
 NameToCreate=اسم طرف ثالث لخلق
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
+// Reference language: en_US
+LastName=اسم
+FirstName=الاسم الأول
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).

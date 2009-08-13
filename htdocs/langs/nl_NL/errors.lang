@@ -67,3 +67,10 @@ ErrorRecordHasChildren=Mislukt records te verwijderen, omdat er nog wat kinderen
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Gevonden onjuist e-syntax voor% s-lijnen in het bestand (bijvoorbeeld regel% s met email =% s)
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+MenuManager=Menu manager
+ErrorUrlNotValid=Het adres van de website is onjuist
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

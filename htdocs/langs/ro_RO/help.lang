@@ -1,0 +1,36 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 21:12:07
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+CHARSET=UTF-8
+CommunitySupport=Forum / wiki sprijin
+EMailSupport=E-mail-uri de sprijin
+RemoteControlSupport=Online timp real / distanţă de sprijin
+OtherSupport=Alte tipuri de sprijin
+ToSeeListOfAvailableRessources=Pentru a contacta / vezi resurse disponibile:
+ClickHere=Click aici
+HelpCenter=Centrul de Ajutor
+DolibarrHelpCenter=Dolibarr Centrul de Ajutor şi Asistenţă
+ToGoBackToDolibarr=Altfel, faceţi clic <a href="%s">aici pentru a utiliza Dolibarr</a>
+TypeOfSupport=Sursa de sprijin
+TypeSupportCommunauty=Comunitare (gratuite)
+TypeSupportCommercial=Comerciale
+TypeOfHelp=Tip
+NeedHelpCenter=Aveţi nevoie de ajutor sau sprijin?
+Efficiency=Eficienţa
+TypeHelpOnly=Ajutor numai
+TypeHelpDev=Ajutor + Dezvoltare
+TypeHelpDevForm=Ajutor + + Formarea de Dezvoltare
+ToGetHelpGoOnSparkAngels1=Unele companii pot oferi o repede (cândva imediată) şi mai eficientă asistenţă online, prin luarea de control de pe computer. Aceste ajutoare pot fi găsite pe <b>site-ul% s:</b>
+ToGetHelpGoOnSparkAngels3=De asemenea, puteţi să mergeţi la lista de toate disponibile pentru autocare Dolibarr, pentru aceasta, faceţi clic pe butonul
+ToGetHelpGoOnSparkAngels2=Uneori, nu există nici o companie disponibile în acest moment pe care le faceţi dumneavoastră de căutare, aşa cred că pentru a schimba filtrul de a căuta &quot;disponibilitatea tuturor&quot;. Vi se va putea trimite mai multe cereri.
+BackToHelpCenter=Altfel, faceţi clic aici pentru a merge <a href="%s">înapoi la Centrul de Ajutor pentru pagina de start.</a>
+LinkToGoldMember=Aveţi posibilitatea să apelaţi unul dintre antrenor preselected de Dolibarr pentru limba dumneavoastră (% s), făcând clic pe sale Widget (statutul şi preţul maxim sunt actualizate automat):
+PossibleLanguages=Sprijinită de limbi
+MakeADonation=Ajutor Dolibarr proiect, să facă o donaţie
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

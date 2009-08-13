@@ -91,3 +91,14 @@ DocModelAzurDescription=En komplet forslag model (logo. ..)
 DocModelJauneDescription=Jaune forslag model
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+ProposalShort=Forslag
+LastModifiedProposals=Seneste% s ændrede forslag
+DatePropal=Dato for forslag
+ProposalsAndProposalsLines=Kommercielle forslag og linjer
+ProposalLine=Forslag linje
+MarbreNumRefModelDesc=Retur numero med format% syymm-nnnn for forslag, hvor yy er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

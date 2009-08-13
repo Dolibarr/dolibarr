@@ -57,3 +57,10 @@ ErrorPleaseTypeBankTransactionReportName=Kirjoita pankki vastaanottamisesta nimi
 ErrorRecordHasChildren=Poistaminen ei onnistunut kirjaa, koska se on noin lapsen.
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+MenuManager=Valikko johtaja
+ErrorUrlNotValid=Www-sivuston osoite on virheellinen
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

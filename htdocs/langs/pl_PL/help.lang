@@ -1,0 +1,36 @@
+/*
+ * Language code: pl_PL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 21:07:31
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+CHARSET=UTF-8
+CommunitySupport=Forum / Wiki wsparcia
+EMailSupport=E-maile wsparcia
+RemoteControlSupport=Online w czasie rzeczywistym / zdalne wsparcie
+OtherSupport=Inne wsparcie
+ToSeeListOfAvailableRessources=Aby skontaktować / patrz dostępne zasoby:
+ClickHere=Kliknij tutaj
+HelpCenter=Centrum pomocy
+DolibarrHelpCenter=Dolibarr Centrum pomocy i obsługi technicznej
+ToGoBackToDolibarr=W innym przypadku, kliknij <a href="%s">tutaj, aby używać Dolibarr</a>
+TypeOfSupport=Źródła wsparcia
+TypeSupportCommunauty=Wspólnoty (bezpłatny)
+TypeSupportCommercial=Komercyjne
+TypeOfHelp=Typ
+NeedHelpCenter=Potrzebujesz pomocy lub wsparcia?
+Efficiency=Efektywność
+TypeHelpOnly=Pomoc tylko
+TypeHelpDev=Pomoc + Rozwoju
+TypeHelpDevForm=Pomoc + Rozwoju + Formacja
+ToGetHelpGoOnSparkAngels1=Niektóre firmy mogą zapewnić szybki (niekiedy natychmiastową) i bardziej wydajnych sieci wsparcia poprzez podjęcie kontroli nad komputerem. Takie pomocników można znaleźć na stronie <b>internetowej% s:</b>
+ToGetHelpGoOnSparkAngels3=Można też przejść do listy wszystkich dostępnych dla autokarów Dolibarr, w tym kliknąć przycisk
+ToGetHelpGoOnSparkAngels2=Czasami nie ma firmy dostępne w tej chwili można dokonać wyszukiwania, dlatego uważam, aby zmienić filtr do poszukiwania &quot;dostępność wszystkich&quot;. Będziesz mógł wysłać więcej wniosków.
+BackToHelpCenter=W innym przypadku, kliknij tutaj, aby przejść <a href="%s">wstecz na stronie głównej Centrum pomocy.</a>
+LinkToGoldMember=Możesz połączyć jedno z trenera wybranej przez Dolibarr dla danego języka (% s), klikając jego Widget (status i maksymalną cenę są automatycznie uaktualniane):
+PossibleLanguages=Obsługiwane języki
+MakeADonation=Pomoc Dolibarr projektu, dokonać wpłaty
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

@@ -124,3 +124,10 @@ Dispatched=Wysłane
 ToDispatch=Do wysyłki
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+ReportTurnover=Obrót
+NotUsedForGoods=Nie używany od towarów
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

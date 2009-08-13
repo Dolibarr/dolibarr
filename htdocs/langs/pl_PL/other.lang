@@ -159,3 +159,19 @@ ToExport=Eksport
 NewExport=Nowy eksport
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+BirthdayAlertOn=urodziny wpisu aktywnych
+BirthdayAlertOff=urodziny wpisu nieaktywne
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Dostawca celu zatwierdzone
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Dostawca odmówił celu
+DemoDesc=Dolibarr jest kompaktowym ERP / CRM złożona z kilku modułów funkcjonalnych. A demo, które zawiera wszystkie moduły nie oznacza nic, ponieważ nie występuje. Tak więc, kilka profili są dostępne demo.
+DemoCompanyServiceOnly=Zarządzanie wolny działalności sprzedaży usług tylko
+SendNewPasswordDesc=Ta forma pozwala na złożenie wniosku o nowe hasło. Będzie wyślij swój adres e-mail. <br> Zmiana będzie skuteczne dopiero po kliknięciu na link potwierdzający wewnątrz tej wiadomości. <br> Sprawdź pocztę czytnik oprogramowania.
+EMailTextInterventionValidated=Interwencja% s zatwierdzone
+EMailTextInvoiceValidated=Faktura% s zatwierdzone
+ImportedWithSet=Przywóz zestaw danych
+DolibarrNotification=Automatyczne powiadomienia
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

@@ -60,3 +60,12 @@ NoRecordedSupplierInvoices=Nu înregistrate furnizorului facturi
 NoUnpayedSupplierBills=Nu unpayed furnizorului, facturi
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+LastRefreshDate=Ultima data de reîmprospătare
+NoRecordedProducts=Nu înregistrate produse / servicii
+NoRecordedProspects=Nu înregistrate perspectivele
+NoContractedProducts=Nu produse / servicii contractate
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

@@ -151,3 +151,17 @@ Finished=Произведено продукции
 RowMaterial=Первый материал
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+ProductRef=Продукт исх.
+ProductLabel=Продукт этикетки
+MinPrice=Миним. продажная цена
+CantBeLessThanMinPrice=В продаже цена не может быть ниже минимального позволило этот продукт (S% без учета налогов)
+ExportDataset_service_1=Услуги
+CloneProduct=Клон продукт или услугу
+ConfirmCloneProduct=Вы уверены, что хотите клонировать продукт или <b>услуга% S?</b>
+CloneContentProduct=Клон все основные данные о продукции / услуг
+ClonePricesProduct=Клон основные данные и цены
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

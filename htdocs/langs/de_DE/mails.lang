@@ -101,3 +101,19 @@ AddNewNotification=Aktivieren Sie eine neue Mitteilung Anfrage
 ListOfActiveNotifications=Liste aller aktiven Meldungen Anfragen
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+AllEMailings=Alle eMailings
+ResetMailing=Senden Sie eine E-Mail
+ConfirmResetMailing=Achtung, E-Mail von <b>Neuinitialisierung% s,</b> Sie können zu einer Massen-Versand von dieser E-Mail einer anderen Zeit. Sind Sie sicher, dass Sie das ist, was Sie wollen?
+BadEMail=Unzulässiger Wert für die E-Mail
+CloneEMailing=Clone per E-Mail
+ConfirmCloneEMailing=Sind Sie sicher, dass Sie diese E-Mail-Klon?
+CloneContent=Clone Nachricht
+CloneReceivers=Cloner Empfänger
+DateLastSend=Datum der letzten Senden
+MailingModuleDescDolibarrContractsLinesExpired=Dritte mit Ablauf des Vertrages Linien
+YouCanUseCommaSeparatorForSeveralRecipients=Sie können das Trennzeichen <b>Komma,</b> um mehrere Empfänger.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

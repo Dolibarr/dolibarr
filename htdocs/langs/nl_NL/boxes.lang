@@ -70,3 +70,12 @@ NoUnpayedSupplierBills=Nr. unpayed leverancier facturen
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Geen bladwijzers gedefinieerd. Klik <a href="%s">hier</a> om bladwijzers toe te voegen.
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+LastRefreshDate=Laatste refresh datum
+NoRecordedProducts=Nr. geregistreerd producten / diensten
+NoRecordedProspects=Nr. geregistreerd vooruitzichten
+NoContractedProducts=Geen producten / diensten die
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

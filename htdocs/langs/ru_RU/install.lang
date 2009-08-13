@@ -174,3 +174,16 @@ MigrationDeliveryOrderMatching=Доставка получения обновл�
 MigrationDeliveryDetail=Поставка обновлений
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+GoToDolibarr=Перейти к Dolibarr
+MigrationNotFinished=Версия Вашего dtabase не полностью в курсе, так что вам придется запустить процесс обновления еще раз.
+GoToUpgradePage=Перейти на страницу снова обновить
+InstallChoiceRecommanded=Recommanded выбор для установки версии <b>S%</b> от текущей <b>версии% S</b>
+InstallChoiceSuggested=<b>Установить выбор предложенной установки.</b>
+MigrationStockDetail=Обновление запасов стоимость товаров
+MigrationMenusDetail=Обновление динамического меню таблицы
+MigrationDeliveryAddress=Обновить адрес для доставки грузов в
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

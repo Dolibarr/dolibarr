@@ -43,3 +43,9 @@ PacificNumRefModelDesc1=Retur numero med format% syymm-nnnn hvor ÅÅ er årstal
 PacificNumRefModelError=En intervention kortet begynder med $ syymm allerede eksisterer og er ikke kompatible med denne model af sekvensinformation. Fjern den eller omdøbe den til at aktivere dette modul.
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+ModifyIntervention=Modify intervention
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

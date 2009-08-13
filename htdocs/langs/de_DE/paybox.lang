@@ -1,0 +1,32 @@
+/*
+ * Language code: de_DE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 20:42:36
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+CHARSET=UTF-8
+PayBoxSetup=PayBox Modul Setup
+PayBoxDesc=Dieses Modul bietet Seiten die Zahlung über <a href="http://www.paybox.com" target="_blank">Paybox</a> den Kunden. Dies kann verwendet werden, für eine Zahlung oder eine Zahlung zu einem bestimmten Objekt Dolibarr (Rechnung, Bestellung, ...)
+FollowingUrlAreAvailableToMakePayments=Folgenden URLs zur Verfügung stehen, um eine Seite an einen Kunden, um eine Zahlung auf Dolibarr Objekte
+PaymentForm=Zahlungsformular
+WelcomeOnPaymentPage=Willkommen auf unserer Online-Payment-Service
+ThisScreenAllowsYouToPay=In diesem Fenster können Sie eine Online-Zahlung an% s.
+ThisIsInformationOnPayment=Dies ist Informationen über die Zahlung zu tun
+ToComplete=Um
+YourEMail=E-Mail-Bestätigung für die Zahlung
+Creditor=Kreditorenlösungen
+PaymentCode=Zahlung Code
+PayBoxDoPayment=Gehen Sie auf die Zahlung
+YouWillBeRedirectedOnPayBox=Sie werden weitergeleitet auf gesicherten Paybox Seite, um Sie Kreditkarten-Informationen
+PleaseBePatient=Bitte etwas Geduld
+Continue=Nächster
+ToOfferALinkForOnlinePaymentOnOrder=URL, um einen% s Benutzer-Schnittstelle für Online-Zahlungen für einen Auftrag
+ToOfferALinkForOnlinePaymentOnInvoice=URL, um einen% s online Benutzeroberfläche für die Zahlung einer Rechnung
+ToOfferALinkForOnlinePaymentOnContractLine=URL, um einen% s online Benutzeroberfläche für die Zahlung einer Linie
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL, um einen% s Benutzer-Schnittstelle für Online-Zahlungen für eine freie Höhe
+YouCanAddTagOnUrl=Sie können auch URL-Parameter <b>&amp; tag = <i>Wert</i></b> für jede dieser URL (nur für die Zahlung), um Ihren eigenen Kommentar Zahlung Tag.
+SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie Ihre PayBox mit <b>URL% s,</b> um die Zahlung automatisch erstellt, wenn die von paybox.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

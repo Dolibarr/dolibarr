@@ -43,3 +43,9 @@ PacificNumRefModelDesc1=Wróć NUMERO z formatu% syymm rr-nnnn gdzie jest rok, m
 PacificNumRefModelError=Interwencja karty zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+ModifyIntervention=Modyfikuj interwencji
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

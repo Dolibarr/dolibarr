@@ -81,3 +81,11 @@ AssignedToTheCustomer=Atribuido a um cliente
 InternalCategory=Categoria Interna
 CategoryContents=Conteudo da Categoria
 CategId=Id Categoria
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+CatSupList=Lista de fornecedores categorias
+CatCusList=Lista de clientes / perspectiva categorias
+CatProdList=Lista dos produtos categorias
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

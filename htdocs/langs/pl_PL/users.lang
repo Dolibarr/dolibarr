@@ -57,8 +57,6 @@ Administrator=Administrator
 DefaultRights=Domyślne uprawnienia
 DefaultRightsDesc=Określ tutaj domyślne uprawnienia, które są przyznawane automatycznie utworzony nowy użytkownik.
 DolibarrUsers=Dolibarr użytkowników
-LastName=Imię
-FirstName=Imię
 ListOfGroups=Lista grup
 NewGroup=Nowa grupa
 CreateGroup=Tworzenie grupy
@@ -109,3 +107,20 @@ ConfirmCreateContact=Czy na pewno chcesz yu Dolibarr utworzyć konto dla tego ko
 LoginToCreate=Zaloguj się, aby utworzyć
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator ze wszystkich praw
+LastName=Imię
+FirstName=Imię
+LinkToCompanyContact=Link do strony trzeciej / kontakt
+LinkedToDolibarrMember=Link do członka
+LinkedToDolibarrUser=Link do Dolibarr użytkownika
+LinkedToDolibarrThirdParty=Link do Dolibarr trzeciej
+CreateDolibarrThirdParty=Tworzenie stron trzecich
+ConfirmCreateLogin=Czy na pewno chcesz, aby utworzyć konto dla tego Dolibarr członkiem?
+ConfirmCreateThirdParty=Czy na pewno chcesz, aby utworzyć trzecią dla tego członka?
+NameToCreate=Nazwisko osoby trzeciej w celu stworzenia
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

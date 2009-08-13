@@ -44,3 +44,9 @@ AddSupplierInvoice=Creaţi furnizor factura
 ListOfSupplierProductForSupplier=Lista de produse şi a preţurilor pentru <b>furnizor% s</b>
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+NoneOrBatchFileNeverRan=Nici unul sau <b>lot% s</b> nu a fugit recent
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

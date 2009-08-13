@@ -1,0 +1,32 @@
+/*
+ * Language code: ru_RU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 21:14:36
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+CHARSET=UTF-8
+PayBoxSetup=PayBox модуль настройки
+PayBoxDesc=Этот модуль предложить страниц, чтобы платеж по <a href="http://www.paybox.com" target="_blank">Paybox</a> клиентами. Это может быть использовано для свободного платежа или за плату по тому или иному объекту Dolibarr (счетов-фактур, порядка, ...)
+FollowingUrlAreAvailableToMakePayments=После URL, можно предложить страницу к клиенту сделать платеж по Dolibarr объектов
+PaymentForm=Форма оплаты
+WelcomeOnPaymentPage=Добро пожаловать на наш интернет-платежей службы
+ThisScreenAllowsYouToPay=На этом экране можно сделать онлайн-платежей для% s.
+ThisIsInformationOnPayment=Это данные по оплате делать
+ToComplete=Для завершения
+YourEMail=Электронная почта для подтверждения оплаты
+Creditor=Кредитор
+PaymentCode=Код платежа
+PayBoxDoPayment=Перейти на оплату
+YouWillBeRedirectedOnPayBox=Вы будете перенаправлены по обеспеченным Paybox страницу для ввода данных кредитной карточки
+PleaseBePatient=Пожалуйста, будьте терпеливы
+Continue=Следующий
+ToOfferALinkForOnlinePaymentOnOrder=URL предложить% S онлайн платежей пользовательский интерфейс для заказа
+ToOfferALinkForOnlinePaymentOnInvoice=URL предложить% S онлайн платежей пользовательский интерфейс для счета
+ToOfferALinkForOnlinePaymentOnContractLine=URL предложить% интернет-платежей с интерфейсом пользователя на контракт линия
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL предложить% интернет-платежей с пользовательским интерфейсом для свободного сумму
+YouCanAddTagOnUrl=Вы также можете добавить URL параметр И <b>тег = <i>значение</i></b> для любой из этих URL (требуется только для свободного платежа), чтобы добавить свой комментарий оплаты метки.
+SetupPayBoxToHavePaymentCreatedAutomatically=Настройте PayBox с <b>URL% S</b> иметь платежей создается автоматически, когда подтверждено paybox.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

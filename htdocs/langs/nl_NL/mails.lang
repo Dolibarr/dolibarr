@@ -103,3 +103,19 @@ AddNewNotification=Activeren van een nieuwe kennisgeving verzoek
 ListOfActiveNotifications=Een lijst van alle actieve aanmeldingen verzoeken
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+AllEMailings=Alle eMailings
+ResetMailing=Opnieuw emailen
+ConfirmResetMailing=Let op, e-mailen <b>initialiseren% s,</b> die u in staat om een massale verzending van deze e-mail een andere tijd. Weet u zeker dat u dit is wat u wilt doen?
+BadEMail=Onjuiste waarde voor e-mail
+CloneEMailing=Clone mailen
+ConfirmCloneEMailing=Weet u zeker dat u wilt kloon deze e-mail te sturen?
+CloneContent=Clone bericht
+CloneReceivers=Cloner ontvangers
+DateLastSend=Datum van de laatse verzenden
+MailingModuleDescDolibarrContractsLinesExpired=Derden verstreken contract lijnen
+YouCanUseCommaSeparatorForSeveralRecipients=U kunt de <b>komma</b> scheidingsteken te specificeren verschillende ontvangers.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

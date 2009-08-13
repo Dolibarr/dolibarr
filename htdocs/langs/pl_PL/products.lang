@@ -153,3 +153,17 @@ Finished=Producent produktu
 RowMaterial=Pierwsze materiały
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+ProductRef=Produkt ref.
+ProductLabel=Etykieta produktu
+MinPrice=Półnuta. cena sprzedaży
+CantBeLessThanMinPrice=Cena sprzedaży nie może być niższy niż minimalny dozwolony dla tego produktu (% s bez podatku)
+ExportDataset_service_1=Usługi
+CloneProduct=Clone produktu lub usługi
+ConfirmCloneProduct=Czy na pewno chcesz klon produktu lub <b>usługi% s?</b>
+CloneContentProduct=Clone informacje o wszystkich głównych produktów / usług
+ClonePricesProduct=Clone główne informacje i ceny
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

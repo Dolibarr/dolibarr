@@ -90,3 +90,18 @@ TypeContact_contrat_external_CUSTOMER=Follow-up Kunden Kontakt
 TypeContact_contrat_external_SALESREPSIGN=Unterzeichnung Vertrag Kundenkontakt
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+ServiceStatusNotLate=Laufen, nicht abgelaufen ist
+ServiceStatusNotLateShort=Nicht abgelaufen
+ServiceStatusLateShort=Abgelaufen
+ListOfInactiveServices=Liste der nicht aktiven Dienst
+ListOfExpiredServices=Liste der aktiven Dienste abgelaufen
+ListOfClosedServices=Liste der Dienstleistungen geschlossen
+DeleteContractLine=Löschen Sie einen Vertrag online
+ConfirmDeleteContractLine=Sind Sie sicher, dass Sie löschen möchten, diesen Vertrag aus?
+PaymentRenewContractId=Renew Vertrag Zeile (Zahl% s)
+ExpiredSince=Ablaufdatum
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

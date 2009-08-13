@@ -145,3 +145,20 @@ ShowTypeCard=Näytä tyyppi &#39;% s&#39;
 HTPasswordExport=htpassword tiedosto sukupolven
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Toinen jäsen <b>(nimi:% s, kirjautuminen:% s)</b> on jo liitetty kolmasosaa <b>osapuoli% s.</b> Poista tämä ensimmäiseksi, koska kolmas osapuoli ei voi yhdistää vain jäsen (ja päinvastoin).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Turvallisuussyistä sinun täytyy myöntää oikeudet muokata kaikki käyttäjät pystyvät linkki jäsenen käyttäjä, joka ei ole sinun.
+ThisIsContentOfYourCard=Tämä on yksityiskohtaiset tiedot kortin
+CardContent=Sisältö jäsennimesi kortti
+SetLinkToUser=Linkki on Dolibarr käyttäjä
+SetLinkToThirdParty=Linkki on Dolibarr kolmannen osapuolen
+SubscriptionId=Tilaus id
+MemberId=Jäsen id
+PaymentSubscription=Uusi osuus maksu
+NoThirdPartyAssociatedToMember=Kolmansista osapuolista ei näihin jäsen
+ThirdPartyDolibarr=Dolibarr kolmannen osapuolen
+MembersAndSubscriptions=Jäsenet ja Suscriptions
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

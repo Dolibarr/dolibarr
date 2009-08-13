@@ -74,3 +74,10 @@ ActionAC_REL					  =Invia la fatturazione (richiamo)
 ActionAC_CLO					  =Chiudere
 ActionAC_EMAILING				  =Invia e-mail di massa
 ActionAC_COM					  =Per inviare via e-mail
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+Rendez-Vous=Rendez-Vous
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

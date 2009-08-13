@@ -288,7 +288,7 @@ ActionsDoneShort=Realizadas
 ActionRunningNotStarted=Não Iniciado
 ActionRunningShort=Iniciado
 ActionDoneShort=Terminado
-CompanyFundation=Empresa ou Instituição
+CompanyFoundation=Empresa ou Instituição
 ContactsForCompany=Contactos desta empresa
 ActionsOnCompany=Acções nesta sociedade
 NActions=%s acções
@@ -525,3 +525,28 @@ ShortThursday=Qui
 ShortFriday=Sex
 ShortSaturday=Sab
 ShortSunday=Dom
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+DIRECTION=ltr
+GoToWikiHelpPage=Ler ajuda on-line (necessidade de acesso à Internet)
+GoToHelpPage=Ler ajudar
+DefinedAndHasThisValue=Eo valor definido para
+IsNotDefined=indefinido
+ConnectedOnMultiCompany=Conectado sobre entidade
+OnlineHelp=Ajuda on-line
+PageWiki=Página wiki
+PeriodEndDate=Data final para o período
+ShowCardHere=Mostrar cartão
+Person=Pessoa
+ActionsRunningshort=Iniciado
+Login=Fazer logon
+AddNewLine=Adicionar nova linha
+AddFile=Adicionar arquivo
+ListOfFiles=Lista de arquivos disponíveis
+FreeZone=Texto livre
+CloneMainAttributes=Clone objeto com os seus principais atributos
+PDFMerge=PDF Merge
+Merge=Junção
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

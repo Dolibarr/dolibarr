@@ -156,3 +156,20 @@ EMailTextOrderRefusedBy=Ordine rifiutato da% s% s
 MemberSubscriptionAddedInDolibarr=Abbonamento membro aggiunto in% s Dolibarr
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+BirthdayAlertOn=compleanno avviso attiva
+BirthdayAlertOff=compleanno segnalazione inattive
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Fornitore fine approvato
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Fornitore rifiutato per
+DemoDesc=Dolibarr è una compatta ERP / CRM, composto da diversi moduli funzionali. Un demo che comprende tutti i moduli non significa niente come questo non si verifica. Così, diversi profili sono disponibili demo.
+DemoCompanyServiceOnly=Gestire un servizio di free-lance di attività di vendita solo
+SendNewPasswordDesc=Questo modulo consente di richiedere una nuova password. Sarà inviare al tuo indirizzo email. <br> Cambiamento sarà efficace solo dopo aver fatto clic sul link di conferma all&#39;interno di questa email. <br> Controlla la tua e-mail lettore software.
+EMailTextInterventionValidated=Intervento% s convalidati
+EMailTextInvoiceValidated=Fattura% s convalidati
+ImportedWithSet=Importazione di dati
+DolibarrNotification=Notifica automatica
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

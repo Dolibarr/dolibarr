@@ -127,3 +127,12 @@ PDFEinsteinDescription=Een complete order model (logo. ..)
 MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou jj est l&#39;annee, mm le mois et nnnn un compteur sequentiel sans breuk et sans remise e 0
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+OrderLine=Bestel online
+PaymentOrderRef=Betaling van de bestelling% s
+CloneOrder=Klonen Om
+ConfirmCloneOrder=Weet u zeker dat u wilt kloon deze <b>bestelling% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

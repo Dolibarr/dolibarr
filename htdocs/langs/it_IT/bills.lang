@@ -372,3 +372,42 @@ ConfirmCloneInvoice=Sei sicuro di voler clonare presente <b>fattura% s?</b>
 DisabledBecauseReplacedInvoice=Azione disabili perché fattura è stato sostituito
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+InvoiceDeposit=Deposito fattura
+InvoiceDepositAsk=Deposito fattura
+InvoiceDepositDesc=Questo tipo di fattura viene fatto quando un deposito è stato ricevuto.
+InvoiceProFormat=Proformat fattura
+InvoiceProFormatAsk=Proformat fattura
+InvoiceProFormatDesc=<b>Proformat fattura</b> è l&#39;immagine di una vera e propria fattura, ma non ha alcun valore contabile.
+UsedByInvoice=Usato per pagare fattura% s
+ConsumedBy=Consumati da
+NotConsumed=Non consumato
+HelpPaymentHigherThanReminderToPay=Attenzione, l&#39;importo del pagamento di una o più fatture è più elevata rispetto al resto di pagare. <br> Crea la tua voce, altrimenti confermare e pensare di creare una nota di accredito della somma percepita per ciascun overpayed fatture.
+BillStatusConverted=Convertito in sconto
+BillShortStatusConverted=Re
+ShowInvoiceDeposit=Visualizza deposito fattura
+AlreadyPayedNoCreditNotesNoDeposits=Alreday pagata (senza note di credito e dei depositi)
+SetDate=Imposta data
+Deposit=Deposito
+Deposits=Depositi
+DiscountFromDeposit=Pagamenti deposito fattura da% s
+AbsoluteDiscountUse=Questo tipo di credito può essere utilizzato su fattura prima della sua convalida
+CreditNoteDepositUse=Fattura deve essere convalidato per l&#39;utilizzo di questo re dei crediti
+NewRelativeDiscount=Nuovo relativo sconto
+IdSocialContribution=Contributo sociale id
+PaymentId=Pagamento id
+DescTaxAndDividendsArea=Questa zona presenta una sintesi di tutti i pagamenti effettuati a fini fiscali o di contributi sociali. Solo record con il pagamento nel corso del fisso anno sono inclusi qui.
+NbOfPayments=Nb dei pagamenti
+SplitDiscount=Split di sconto in due
+ConfirmSplitDiscount=Sei sicuro di voler dividere questo sconto <b>del% s% s</b> in 2 sconti inferiori?
+TypeAmountOfEachNewDiscount=Ingresso importo per ciascuna delle due parti:
+TotalOfTwoDiscountMustEqualsOriginal=Totale di due nuovi sconto deve essere pari alla quantità originale di sconto.
+ConfirmRemoveDiscount=Sei sicuro di voler rimuovere questo sconto?
+UseCredit=Utilizzo di credito
+ShowUnpayedLateOnly=Visualizza tardi unpayed fattura solo
+PaymentInvoiceRef=Pagamento fattura% s
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

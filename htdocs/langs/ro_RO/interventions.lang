@@ -41,3 +41,9 @@ PacificNumRefModelDesc1=Întoarceţi-vă cu NUMERO format% syymm-NNNN în cazul 
 PacificNumRefModelError=O carte de intervenţie începând cu $ syymm există deja şi nu este compatibilă cu acest model de succesiune. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+ModifyIntervention=Modificare de intervenţie
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

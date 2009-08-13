@@ -73,3 +73,13 @@ LieuWareHouse=Локализация склад
 WarehousesAndProducts=Склады и продукты
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+PMPValueShort=WAP
+AverageUnitPricePMPShort=Средняя цена входного
+AverageUnitPricePMP=Средняя цена входного
+EstimatedStockValueShort=Ориентировочная стоимость товарно-материальных запасов
+EstimatedStockValue=Ориентировочная стоимость товарно-материальных запасов
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

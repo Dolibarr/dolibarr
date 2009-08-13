@@ -61,3 +61,10 @@ NotOwnerOfProject=Не владелец этого частного проект
 AffectedTo=Затронутые в
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+ListPredefinedInvoicesAssociatedProject=Список клиентов заранее счетов, связанных с проектом
+CantRemoveProject=Этот проект не может быть удалена, как он ссылается на другие объекты (счета-фактуры, приказы или другие). См. реферрала вкладке.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

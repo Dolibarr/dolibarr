@@ -45,3 +45,33 @@ NoImportableData=Нет данных ввозимый (без модуля с о
 FileSuccessfullyBuilt=Экспортный файл
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+SelectImportDataSet=Выбор данных, вы хотите импортировать ...
+SelectImportFields=Выбрать поля, вы хотите импортировать, или выбрать заранее импорта профиль
+SaveImportModel=Сохранить профиль импорт, если вы планируете использовать повторно момент ...
+ImportModelName=Импорт имя профиля
+ImportModelSaved=Импорт профиль сохраняется под <b>именем% S.</b>
+ImportableFields=ИМПОРТИРОВАННАЯ поля
+ImportedFields=Импортирована поля
+DatasetToImport=Набор данных для импорта
+LibraryShort=Библиотека
+SQLUsedForExport=SQL запрос, используемых для создания экспортного файла
+LineId=Идентификатор строки
+LineDescription=Описание строки
+LineUnitPrice=Цена за единицу линии
+LineVATRate=Ставка НДС в строке
+LineQty=Кол-во в строке
+LineTotalHT=Сумма за вычетом налога на линию
+LineTotalTTC=Сумма налога с на линию
+LineTotalVAT=Сумма налога на добавленную стоимость по строке
+TypeOfLineServiceOrProduct=Тип линии (0 = продукт, услуга 1 =)
+FileWithDataToImport=Файл с данными для импорта
+FileToImport=Исходный файл для импорта
+FileMustHaveOneOfFollowingFormat=Файл для импорта должны иметь один из следующих форматах
+ChooseFileToImport=Выберите файл для импорта выберите пункт о picto% S ...
+FieldsInSourceFile=Поля в исходном файле
+FieldsInTargetDatabase=Задача поля в базе данных Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

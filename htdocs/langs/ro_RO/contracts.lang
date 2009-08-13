@@ -90,3 +90,18 @@ TypeContact_contrat_external_CUSTOMER=După-up client de contact
 TypeContact_contrat_external_SALESREPSIGN=Semnarea contractului de client de contact
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+ServiceStatusNotLate=Rularea, nu a expirat
+ServiceStatusNotLateShort=Nu expirat
+ServiceStatusLateShort=Expirat
+ListOfInactiveServices=Lista de servicii nu activă
+ListOfExpiredServices=Lista de servicii active expirat
+ListOfClosedServices=Lista de servicii închis
+DeleteContractLine=Ştergeţi un contract de linie
+ConfirmDeleteContractLine=Sunteţi sigur că doriţi să ştergeţi acest contract de linie?
+PaymentRenewContractId=Reînnoiţi contract linie (numărul% s)
+ExpiredSince=Data expirării
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

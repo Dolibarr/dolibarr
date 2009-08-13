@@ -140,3 +140,21 @@ ShowTypeCard=Visualizza il tipo &#39;% s&#39;
 HTPasswordExport=htpassword la generazione del file
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Un altro membro <b>(nome:% s,</b> effettua il <b>login:% s)</b> è già collegato ad un <b>terzo% s.</b> Rimuovere questo link prima perché un terzo non può essere legata solo a un membro (e viceversa).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Per motivi di sicurezza, è necessario essere concessi permessi per modificare tutti gli utenti devono essere in grado di collegare un membro a un utente che non è tuo.
+ThisIsContentOfYourCard=Si tratta di dettagli della vostra carta di
+CardContent=Contenuto della vostra carta di membro
+SetLinkToUser=Link a un utente Dolibarr
+SetLinkToThirdParty=Link ad un terzo Dolibarr
+SubscriptionId=Abbonamento id
+MemberId=Gli ID
+PaymentSubscription=Nuovo contributo di pagamento
+NoThirdPartyAssociatedToMember=N. terzi associati a questo membro
+ThirdPartyDolibarr=Dolibarr terzi
+MembersAndSubscriptions=Deputati e Suscriptions
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

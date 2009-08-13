@@ -1032,3 +1032,55 @@ CashDeskIdWareHouse=Almacén que se utiliza para as ventas
 BookmarkSetup=Configuração do Modulo de Favoritos
 BookmarkDesc=Este módulo le permite Gerir os enlaces e acessos directos. também permite Adicionar qualquer página de Dolibarr o link web ao menu de acesso rápido da esquerda.
 NbOfBoomarkToShow=Número máximo de marcadores que se mostrará ao menu
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+SessionSavePath=Armazenamento sessão localization
+IfModuleEnabled=Nota: sim só é eficaz se <b>módulo% s</b> é ativado
+RemoveLock=Remova o <b>arquivo% s</b> se ela existe para permitir a atualização ferramenta.
+RestoreLock=Substituir um <b>arquivo% s</b> com permissão somente leitura no arquivo para desativar o uso de qualquer atualização ferramenta.
+ClientHour=Hora cliente (usuário)
+CompanyTZ=Fuso horário empresa (principal empresa)
+CompanyHour=Hora empresa (principal empresa)
+PurgeDeleteLogFile=Apagar <b>ficheiro% s</b> definida para Syslog módulo (sem risco de perderem os dados)
+UseACacheDelay=Prazo para o caching exportação resposta em segundos (0 ou em branco para não cache)
+DisableLinkToHelpCenter=Ocultar link <b>&quot;Precisa de ajuda ou apoio&quot;</b> na página de login
+DisableLinkToHelp=Ocultar link <b>&quot;% s Online ajudar&quot;</b> no menu esquerdo
+AddCRIfTooLong=Não há envolvimento automática, por isso, se estiver fora de linha página de documentos, porque demasiado longo, você deve adicionar a si mesmo o retorno de carro em textarea.
+ModuleDisabled=Módulo deficientes
+ModuleDisabledSoNoEvent=Módulo deficientes tão evento nunca criou
+ConfirmPurge=Tem certeza de que deseja executar este purge? <br> Isto irá apagar definitivamente todos os seus arquivos dados sem forma de restaurar eles (ECM arquivos, ficheiros anexados ...).
+Module51Name=Massa enviamentos
+Module51Desc=Massa papel expedições &quot;gestão
+Module5000Name=Multi-empresa
+Module5000Desc=Permite-lhe gerir várias empresas
+Module10000Name=PayBox
+Module10000Desc=Módulo para oferecer uma página de pagamento on-line com cartão de crédito com PayBox
+Permission28=Exportação propostas comerciais
+Permission531=Ler serviços
+Permission532=Criar / modificar serviços
+Permission534=Apagar serviços
+Permission538=Exportação de serviços
+Permission1251=Executar massa importações de dados externos em base de dados (dados de carga)
+SetupDescription5=Outros itens do menu gerir parâmetros opcionais.
+BackupDescY=O arquivo gerado deve ser armazenado em um local seguro.
+ForcedToByAModule=Esta regra é forçado <b>a% s</b> activado por um módulo
+DetailEnabled=Condição para mostrar ou não entrada
+SummaryOfVatExigibilityUsedByDefault=Hora do IVA exigibility por padrão de acordo com a opção escolhida:
+OnDelivery=Na entrega
+OnPayment=Em payement
+OnInvoice=Em factura
+SupposedToBePaymentDate=Data de pagamento utilizado, se não sabe data de entrega
+Buy=Comprar
+Sell=Vender
+InvoiceValidateDateUsed=Factura dtate utilizados
+YourCompanyDoesNotUseVAT=Sua empresa não tenha sido definido para usar o IVA (Home - Setup - Empresa / Fundação), pelo que não há opções de configuração do IVA.
+WebServicesSetup=Webservices módulo configuração
+WebServicesDesc=Ao permitir a este módulo, Dolibarr tornar-se um serviço de servidor web para fornecer diversos serviços da web.
+WSDLCanBeDownloadedHere=WSDL descritor de arquivo desde serviceses pode ser fazer o download aqui
+EndPointIs=SOAP clientes devem enviar os seus pedidos à Dolibarr final disponível no URL
+BankSetupModule=Banco módulo configuração
+FreeLegalTextOnChequeReceipts=Texto livre sobre cheque recibos
+MultiCompanySetup=Multi-empresa módulo configuração
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

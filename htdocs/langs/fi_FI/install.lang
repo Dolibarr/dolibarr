@@ -174,3 +174,16 @@ MigrationDeliveryOrderMatching=Toimitus vastaanottamisesta päivitys
 MigrationDeliveryDetail=Toimitus päivitys
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+GoToDolibarr=Siirry Dolibarr
+MigrationNotFinished=Versio dtabase ei ole täysin ajan tasalla, joten sinun on suoritettava päivitys uudelleen.
+GoToUpgradePage=Siirry päivittää sivu uudelleen
+InstallChoiceRecommanded=Recommanded valinta asentaa <b>version% s</b> nykyisen <b>version% s</b>
+InstallChoiceSuggested=<b>Asenna valinta ehdotti installer.</b>
+MigrationStockDetail=Päivitä varastossa tuotteiden arvosta
+MigrationMenusDetail=Päivitä dynaaminen valikot taulukot
+MigrationDeliveryAddress=Päivitä toimitusosoite kuljetusta
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

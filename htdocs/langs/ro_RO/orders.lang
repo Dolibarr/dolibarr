@@ -125,3 +125,12 @@ PDFEinsteinDescription=Un model complet pentru (logo. ..)
 MarbreNumRefDesc=Renvoie le numro sous la Forme% syymm-NNNN ou aa est l&#39;année, le mois et mm NNNN un compteur sequentiel sans ruptură et sans remiză e 0
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+OrderLine=Ordinul linie
+PaymentOrderRef=Plata pentru% s
+CloneOrder=Clone pentru
+ConfirmCloneOrder=Sunteţi sigur că doriţi să clona pentru <b>acest% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

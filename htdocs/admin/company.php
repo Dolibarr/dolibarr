@@ -199,7 +199,7 @@ $formcompany = new FormCompany($db);
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-print_fiche_titre($langs->trans("CompanyFundation"),'','setup');
+print_fiche_titre($langs->trans("CompanyFoundation"),'','setup');
 
 print $langs->trans("CompanyFundationDesc")."<br>\n";
 print "<br>\n";

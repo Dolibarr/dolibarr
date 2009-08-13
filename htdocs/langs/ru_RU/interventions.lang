@@ -41,3 +41,9 @@ PacificNumRefModelDesc1=Вернуться Numero с форматом% syymm-YY,
 PacificNumRefModelError=Вмешательство карточки начиная с $ syymm уже и не совместимы с этой моделью последовательности. Удалить или переименовать его, чтобы активировать этот модуль.
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+ModifyIntervention=Изменить вмешательства
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

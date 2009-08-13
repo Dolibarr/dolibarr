@@ -91,3 +91,12 @@ CategoryContents=Luokka sisältö
 CategId=Luokka id
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+NoCategoryYet=Luokkaa ei tällaisen luonut
+CatSupList=Luettelo toimittaja tuoteryhmät
+CatCusList=Luettelo asiakas / näköpiirissä tuoteryhmät
+CatProdList=Luettelo tuotteista tuoteryhmät
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

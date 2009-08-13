@@ -63,3 +63,12 @@ IdWarehouse=Id. armazem
 DescWareHouse=Descrição armazem
 LieuWareHouse=Localização armazem
 WarehousesAndProducts=Armazens e produtos
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+AverageUnitPricePMPShort=Média dos preços de entrada
+AverageUnitPricePMP=Média dos preços de entrada
+EstimatedStockValueShort=Valor estimado de stock
+EstimatedStockValue=Valor estimado de stock
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

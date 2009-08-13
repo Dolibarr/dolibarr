@@ -107,3 +107,18 @@ ConfirmCreateContact=Oletko varma yu haluamme luoda Dolibarr huomioon tässä yh
 LoginToCreate=Kirjaudu luoda
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator kaikki oikeudet
+LinkToCompanyContact=Linkki kolmannen osapuolen / contact
+LinkedToDolibarrMember=Linkki jäsen
+LinkedToDolibarrUser=Linkki Dolibarr käyttäjä
+LinkedToDolibarrThirdParty=Linkki Dolibarr kolmannen osapuolen
+CreateDolibarrThirdParty=Luo kolmasosaa osapuoli
+ConfirmCreateLogin=Oletko varma, että haluat luoda Dolibarr huomioon tämän jäsen?
+ConfirmCreateThirdParty=Oletko varma, että haluat luoda kolmannelle osapuolelle tämä jäsen?
+NameToCreate=Nimi kolmannen osapuolen luoda
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

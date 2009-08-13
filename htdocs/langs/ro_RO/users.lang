@@ -107,3 +107,18 @@ ConfirmCreateContact=Yu Sunteţi sigur că doriţi să creaţi un cont pentru ac
 LoginToCreate=Login pentru a crea
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator, cu toate drepturile
+LinkToCompanyContact=Link către o terţă parte / de contact
+LinkedToDolibarrMember=Link către statele
+LinkedToDolibarrUser=Link la Dolibarr utilizator
+LinkedToDolibarrThirdParty=Link către o terţă parte Dolibarr
+CreateDolibarrThirdParty=Creaţi o terţă parte
+ConfirmCreateLogin=Sunteţi sigur că doriţi să creaţi un cont pentru acest Dolibarr membru?
+ConfirmCreateThirdParty=Sunteţi sigur că doriţi să creaţi o terţă parte pentru acest stat?
+NameToCreate=Nume de terţă parte pentru a crea
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

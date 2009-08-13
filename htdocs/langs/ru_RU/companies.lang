@@ -267,3 +267,16 @@ FiscalMonthStart=Начало месяца финансовый год
 TigreNumRefModelDesc1=Вернуться настраиваемый клиент / поставщик номер в соответствии с определенной маской.
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+Contacts=Контакты
+ThirdPartyContacts=Третий участник контакты
+ThirdPartyContact=Третий участник контакт
+StatusContactValidated=Состояние контактов
+PriceLevel=Уровень цен
+YouMustCreateContactFirst=Вы должны создать электронную почту для контактов сторонних первыми сможете добавить писем уведомлений.
+MonkeyNumRefModelDesc=Вернуться Numero с форматом% syymm-NNNN заказчику код и% syymm NNNN-код для поставщиков, где год является годом, мм NNNN месяца и представляет собой последовательность без перерыва и не вернуться к 0.
+LeopardNumRefModelDesc=Клиент / код поставщика является бесплатным. Этот код может быть изменен в любое время.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

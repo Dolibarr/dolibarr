@@ -91,3 +91,14 @@ DocModelAzurDescription=Een complete voorstel model (logo. ..)
 DocModelJauneDescription=Jaune voorstel model
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+ProposalShort=Voorstel
+LastModifiedProposals=Last% s gewijzigde voorstellen
+DatePropal=Datum van het voorstel
+ProposalsAndProposalsLines=Commerciële voorstel en lijnen
+ProposalLine=Voorstel lijn
+MarbreNumRefModelDesc=Terugkeren numero met format% syymm-nnnn voorstellen waar jj is jaar, mm de maand en nnnn een sequentie zonder pauze en geen terugkeer naar 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

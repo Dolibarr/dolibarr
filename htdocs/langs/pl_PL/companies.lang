@@ -269,3 +269,16 @@ FiscalMonthStart=Początek miesiąca roku podatkowego
 TigreNumRefModelDesc1=Zwrotu dostosowywalne klienta / dostawcy numer zgodnie z definicją maska.
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+Contacts=Kontakty
+ThirdPartyContacts=Trzeciej kontaktów
+ThirdPartyContact=Trzeciej kontakt
+StatusContactValidated=Status kontakt
+PriceLevel=Poziomu cen
+YouMustCreateContactFirst=Musisz stworzyć e-maile, kontakty dla trzeciej pierwszy, aby móc dodać powiadomień e-maile.
+MonkeyNumRefModelDesc=Wróć NUMERO z formatu% syymm-nnnn klienta i kod% syymm-nnnn dla dostawcy kod yy gdzie jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0.
+LeopardNumRefModelDesc=Klient / dostawcy kod jest bezpłatny. Ten kod może być modyfikowany w dowolnym momencie.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

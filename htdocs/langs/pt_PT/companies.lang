@@ -264,3 +264,10 @@ FiscalMonthStart=Mês de Inicio do Exercício
 MonkeyNumRefModelDesc=Devolve um número baixo o formato %syymm-nnnn para os códigos de clientes e %syymm-nnnn para os códigos dos Fornecedores, donde yy é o ano, mm o mês e nnnn um contador sequêncial sem ruptura e sem Voltar a 0.
 # Leopard=
 LeopardNumRefModelDesc=Código de cliente/fornecedor livre sem verificação. pode ser modificado em qualquer momento.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+PriceLevel=Nível de preços
+YouMustCreateContactFirst=Você deve criar contactos e-mails para terceiros, primeiro a ser capaz de adicionar e-mails notificações.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

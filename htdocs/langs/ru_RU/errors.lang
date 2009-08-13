@@ -57,3 +57,10 @@ ErrorPleaseTypeBankTransactionReportName=Введите название бан�
 ErrorRecordHasChildren=Не удается удалить записи, поскольку он имеет некоторые хлеб.
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+MenuManager=Меню менеджера
+ErrorUrlNotValid=Адрес веб-сайта, является неверным
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

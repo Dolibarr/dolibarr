@@ -63,3 +63,10 @@ NotOwnerOfProject=Ikke ejer af denne private projekt
 AffectedTo=Påvirkes i
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+ListPredefinedInvoicesAssociatedProject=Liste over kundernes foruddefineret fakturaer i forbindelse med projektet
+CantRemoveProject=Dette projekt kan ikke fjernes, da det er der henvises til nogle andre objekter (faktura, ordrer eller andet). Se referers fane.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

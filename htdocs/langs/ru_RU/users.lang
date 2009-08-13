@@ -55,8 +55,6 @@ Administrator=Администратор
 DefaultRights=По умолчанию разрешения
 DefaultRightsDesc=Определить здесь умолчанию разрешения, что автоматически предоставляются новые созданные пользователем.
 DolibarrUsers=Dolibarr пользователей
-LastName=Имя
-FirstName=Имя
 ListOfGroups=Список групп
 NewGroup=Новая группа
 CreateGroup=Создать группу
@@ -107,3 +105,20 @@ ConfirmCreateContact=Вы уверены, что Ю. хотите создать
 LoginToCreate=Логин для создания
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+SuperAdministrator=Супер Администратор
+SuperAdministratorDesc=Администратор со всеми правами
+LastName=Имя
+FirstName=Имя
+LinkToCompanyContact=Ссылка на сторонние / контакт
+LinkedToDolibarrMember=Ссылка на члена
+LinkedToDolibarrUser=Ссылка на Dolibarr пользователя
+LinkedToDolibarrThirdParty=Ссылка на Dolibarr третья сторона
+CreateDolibarrThirdParty=Создание третьей стороной
+ConfirmCreateLogin=Вы уверены, что хотите создать учетную запись для Dolibarr этот член?
+ConfirmCreateThirdParty=Вы уверены, что хотите создать третью сторону для этого члена?
+NameToCreate=Имя третьей стороной для создания
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

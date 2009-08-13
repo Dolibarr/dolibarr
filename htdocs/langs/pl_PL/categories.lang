@@ -93,3 +93,12 @@ CategoryContents=Kategoria treści
 CategId=Kategoria id
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+NoCategoryYet=Nr kategorii tego typu tworzone
+CatSupList=Lista kategorii dostawcy
+CatCusList=Lista klientów / perspektywa kategorii
+CatProdList=Lista produktów kategorii
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

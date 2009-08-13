@@ -47,3 +47,33 @@ NoImportableData=Nr przywozowe danych (bez modułu z definicji pozwalają na imp
 FileSuccessfullyBuilt=Eksport plików generowanych
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+SelectImportDataSet=Wybierz dane, które chcesz zaimportować ...
+SelectImportFields=Wybierz pola, które chcesz zaimportować, lub wybrać predefiniowany profil importu
+SaveImportModel=Zapisz ten przywóz profil jeśli masz zamiar ponownego użycia go później ...
+ImportModelName=Importuj nazwę profilu
+ImportModelSaved=Import profilu zapisany pod <b>nazwą% s.</b>
+ImportableFields=Przywozowe pola
+ImportedFields=Przywożone pola
+DatasetToImport=Dataset importować
+LibraryShort=Biblioteka
+SQLUsedForExport=Zapytanie SQL wykorzystywane do budowania pliku eksportu
+LineId=Identyfikator linii
+LineDescription=Opis linii
+LineUnitPrice=Cena jednostkowa linii
+LineVATRate=Stawka VAT linii
+LineQty=Ilość dla linii
+LineTotalHT=Kwota netto podatku dla linii
+LineTotalTTC=Kwota z podatku na linii
+LineTotalVAT=Kwota podatku VAT dla linii
+TypeOfLineServiceOrProduct=Rodzaj linii (0 = produkt, usługa 1 =)
+FileWithDataToImport=Plik z danymi do importu
+FileToImport=Źródło plik do zaimportowania
+FileMustHaveOneOfFollowingFormat=Plik do importu musi mieć jeden z następującego formatu
+ChooseFileToImport=Wybierz plik do zaimportowania, a następnie kliknij przycisk picto% s ...
+FieldsInSourceFile=Obszary w pliku źródłowym
+FieldsInTargetDatabase=Docelowe Dolibarr pól w bazie danych
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

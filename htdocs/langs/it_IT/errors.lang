@@ -54,3 +54,11 @@ ErrorPleaseTypeBankTransactionReportName=Si prega di tipo bancario ricevimento n
 ErrorRecordHasChildren=Impossibile eliminare i record in quanto ha alcuni bambini.
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+MenuManager=Menu gestore
+ErrorUrlNotValid=L&#39;indirizzo del sito Internet non è corretto
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

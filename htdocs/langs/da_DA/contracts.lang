@@ -92,3 +92,18 @@ TypeContact_contrat_external_CUSTOMER=Opfølgning kunde kontakt
 TypeContact_contrat_external_SALESREPSIGN=Undertegnelse kontrakt kunde kontakt
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+ServiceStatusNotLate=Kører, ikke er udløbet
+ServiceStatusNotLateShort=Ikke er udløbet
+ServiceStatusLateShort=Udløbet
+ListOfInactiveServices=Liste over ikke aktive tjenester
+ListOfExpiredServices=Liste over udløb aktive tjenester
+ListOfClosedServices=Liste over lukkede tjenester
+DeleteContractLine=Slet en kontrakt linje
+ConfirmDeleteContractLine=Er du sikker på du vil slette denne kontrakt linje?
+PaymentRenewContractId=Forny kontrakten linje (antal% s)
+ExpiredSince=Udløbsdatoen
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

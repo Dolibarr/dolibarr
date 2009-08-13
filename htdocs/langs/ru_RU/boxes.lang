@@ -60,3 +60,12 @@ NoRecordedSupplierInvoices=Зарегистрировано ни одного п
 NoUnpayedSupplierBills=Нет unpayed поставщиком счета-фактуры
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+LastRefreshDate=Последняя дата обновления
+NoRecordedProducts=Нет зарегистрированных продуктов / услуг
+NoRecordedProspects=Не зарегистрированы перспективы
+NoContractedProducts=Нет товаров / услуг по контракту
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

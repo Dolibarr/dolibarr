@@ -267,3 +267,16 @@ FiscalMonthStart=Incepand de luni din anul fiscal
 TigreNumRefModelDesc1=Întoarceţi-vă un particularizabilă client / furnizor numărul definite în conformitate cu o masca.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+Contacts=Contacte
+ThirdPartyContacts=Terţă parte de contact
+ThirdPartyContact=Terţă parte de contact
+StatusContactValidated=Stare de contact
+PriceLevel=Pret de nivel
+YouMustCreateContactFirst=Trebuie să creaţi contacte e-mail-uri terţă parte pentru prima pentru a putea adăuga notificări e-mail-uri.
+MonkeyNumRefModelDesc=Întoarceţi-vă NUMERO cu formatul% syymm-NNNN pentru codul de client şi% syymm-NNNN furnizor de cod în cazul în care este aa ani, mm este luna şi NNNN este o succesiune fără pauză şi fără întoarcere la 0.
+LeopardNumRefModelDesc=Client / furnizor de cod este gratuit. Acest cod poate fi modificat în orice moment.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

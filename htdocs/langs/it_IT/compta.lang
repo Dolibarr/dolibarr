@@ -119,3 +119,11 @@ Dispatched=Spediti
 ToDispatch=Per la spedizione
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+ReportTurnover=Fatturato
+NotUsedForGoods=Non utilizzati per le merci
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

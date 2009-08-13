@@ -151,3 +151,17 @@ Finished=Produs fabricat
 RowMaterial=Primul material
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+ProductRef=Produsul ref.
+ProductLabel=Eticheta produsului
+MinPrice=Minim. preţul de vânzare
+CantBeLessThanMinPrice=Preţul de vânzare nu poate fi mai mică decât minimă permisă pentru acest produs (% s, fără taxe)
+ExportDataset_service_1=Servicii
+CloneProduct=Clone produs sau un serviciu
+ConfirmCloneProduct=Sunteţi sigur că doriţi să clona produsul sau <b>serviciul% s?</b>
+CloneContentProduct=Clone toate principalele informatii de produs / serviciu
+ClonePricesProduct=Clone principalele informatii si preturi
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

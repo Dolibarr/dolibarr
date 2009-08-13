@@ -34,3 +34,33 @@ FormatedExportDesc3=Uma vez seleccionados os dados, é possivel escolher o forma
 Sheet=Folha
 NoImportableData=Não existe tipo de dados importavel (não existe nenhum módulo com definições de dados importavel activado)
 FileSuccessfullyBuilt=Ficheiro de exportação gerado
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+SelectImportDataSet=Escolha de dados que pretende importar ...
+SelectImportFields=Escolha campos que deseja importar, ou escolha um perfil predefinido importação
+SaveImportModel=Guarde este perfil de importação, se pretender reutilizá-la mais tarde ...
+ImportModelName=Importar nome do perfil
+ImportModelSaved=Importar perfil guardado em <b>nome% s.</b>
+ImportableFields=Importável campos
+ImportedFields=Campos importados
+DatasetToImport=Dataset para importar
+LibraryShort=Biblioteca
+SQLUsedForExport=Pedido de SQL usada para construir exportação arquivo
+LineId=Id da linha
+LineDescription=Descrição da linha
+LineUnitPrice=Preço por unidade de linha
+LineVATRate=Taxa de IVA de linha
+LineQty=Quantidade de linha
+LineTotalHT=Montante líquido de impostos para a linha
+LineTotalTTC=Montante do imposto para a linha
+LineTotalVAT=Montante do IVA para a linha
+TypeOfLineServiceOrProduct=Tipo de linha (0 = produto, serviço de 1 =)
+FileWithDataToImport=Arquivo com os dados de importação
+FileToImport=Fonte ficheiro a importar
+FileMustHaveOneOfFollowingFormat=Arquivo a ser importado deve ter um dos seguintes formatos
+ChooseFileToImport=Escolha ficheiro a importar, em seguida, clique em picto% s ...
+FieldsInSourceFile=Os campos em arquivo fonte
+FieldsInTargetDatabase=Alvo Dolibarr em campos de dados
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

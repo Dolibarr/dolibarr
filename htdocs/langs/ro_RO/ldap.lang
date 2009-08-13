@@ -36,3 +36,11 @@ ForceSynchronize=Forţei de sincronizare Dolibarr -&gt; LDAP
 ErrorFailedToReadLDAP=Nu şi-a citit de baze de date LDAP. LDAP verifica modul de instalare şi de baze de date de accesibilitate.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+GroupSynchronized=Grupul sincronizate
+MemberSynchronized=Statele sincronizate
+ContactSynchronized=Contact sincronizate
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

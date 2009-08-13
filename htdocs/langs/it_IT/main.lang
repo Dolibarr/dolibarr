@@ -270,7 +270,6 @@ ActionsToDo						   =Azioni da fare
 ActionsDone						   =Azioni fatte
 ActionsToDoShort					   =Da fare
 ActionsDoneShort					   =Fatto
-CompanyFundation					   =Societ� / Fondazione
 ContactsForCompany					   =Contatti per questa terza parte
 ActionsOnCompany					   =Azioni su questo terzo
 NActions						   =%s azioni
@@ -502,3 +501,68 @@ UnHidePassword=Visualizza reale comando chiaro con la password
 Root=Root
 // Date 2009-01-18 19:41:54
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+DIRECTION=ltr
+GoToWikiHelpPage=Leggi la guida in linea (necessità di accesso a Internet)
+GoToHelpPage=Per saperne di aiuto
+ConnectedOnMultiCompany=Collegati su entità
+OnlineHelp=Guida online
+PageWiki=Pagina wiki
+PeriodEndDate=Data di fine periodo
+ShowCardHere=Visualizza scheda
+NoteSomeFeaturesAreDisabled=Si noti che un sacco di funzioni / moduli sono disabili in questa dimostrazione.
+Person=Persona
+DateModificationShort=Modif. data
+DateBuild=Relazione costruire data
+DurationWeek=settimana
+DurationWeeks=settimana
+CompanyFoundation=Società / Fondazione
+OtherInformations=Altre informazioni
+NoneF=Nessuno
+Login=Accesso
+Month01=gennaio
+Month02=febbraio
+Month03=mar
+Month04=aprile
+Month05=potere
+Month06=giugno
+Month07=luglio
+Month08=agosto
+Month09=settembre
+Month10=ottobre
+Month11=novembre
+Month12=dicembre
+MonthShort01=gennaio
+MonthShort02=feb
+MonthShort03=mar
+MonthShort04=apr
+MonthShort05=potere
+MonthShort06=giugno
+MonthShort07=luglio
+MonthShort08=agosto
+MonthShort09=sep
+MonthShort10=ottobre
+MonthShort11=nov
+MonthShort12=dicembre
+ShowProspectPreview=Visualizza prospettiva anteprima
+Informations=Informazioni
+Page=Pagina
+Notes=Note
+AddNewLine=Aggiungi una nuova linea
+AddFile=Aggiungi file
+ListOfFiles=Elenco dei file
+FreeZone=Testo libero
+CloneMainAttributes=Clone oggetto con i suoi principali attributi
+PDFMerge=PDF Merge
+Merge=Unisci
+Day1=Lunedi
+Day2=Martedì
+Day3=Mercoledì
+Day4=Giovedi
+Day5=Venerdì
+Day6=Sabato
+Day0=Domenica
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

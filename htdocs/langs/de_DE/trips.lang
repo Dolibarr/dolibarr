@@ -27,3 +27,9 @@ TF_LUNCH=Mittagessen
 TF_TRIP=Reise
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+ListTripsAndExpenses=Liste der Fahrten und Kosten
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

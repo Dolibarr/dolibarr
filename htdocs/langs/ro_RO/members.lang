@@ -145,3 +145,20 @@ ShowTypeCard=Arată tipul &#39;% s&#39;
 HTPasswordExport=htpassword fişier generaţie
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Un alt membru <b>(numele:% s, login:% s)</b> este deja în legătură cu o terţă <b>parte% s.</b> Eliminaţi acest link pentru că primul la o terţă parte nu poate fi legat la numai un membru (şi invers).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Din motive de securitate, trebuie să fie acordat pentru a edita permisiunile tuturor utilizatorilor de a fi capabil de a lega un membru către un utilizator care nu este a ta.
+ThisIsContentOfYourCard=Aceasta este cartea dvs. de credit de detalii
+CardContent=Continut de membru carte
+SetLinkToUser=Link de la un utilizator Dolibarr
+SetLinkToThirdParty=Link de la o terţă parte Dolibarr
+SubscriptionId=Abonamente id
+MemberId=Statele id
+PaymentSubscription=New plata contribuţiei
+NoThirdPartyAssociatedToMember=Nu părţi terţe asociate la prezenta membru
+ThirdPartyDolibarr=Dolibarr terţă parte
+MembersAndSubscriptions=Membrii şi Suscriptions
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

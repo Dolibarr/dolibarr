@@ -92,3 +92,18 @@ TypeContact_contrat_external_CUSTOMER=Follow-up van het contact met klanten
 TypeContact_contrat_external_SALESREPSIGN=Ondertekening contract Customer Contact
 // Date 2009-01-18 23:57:49
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+ServiceStatusNotLate=Hardlopen, niet is verstreken
+ServiceStatusNotLateShort=Niet is verstreken
+ServiceStatusLateShort=Verlopen
+ListOfInactiveServices=Lijst van de niet actieve services
+ListOfExpiredServices=Lijst van verstreken actieve services
+ListOfClosedServices=Lijst van diensten gesloten
+DeleteContractLine=Verwijderen van een contract lijn
+ConfirmDeleteContractLine=Weet u zeker dat u wilt verwijderen van dit contract lijn?
+PaymentRenewContractId=Hernieuwen contract lijn (aantal% s)
+ExpiredSince=Vervaldatum
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

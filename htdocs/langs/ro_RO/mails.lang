@@ -101,3 +101,19 @@ AddNewNotification=Activaţi-o nouă notificare cerere
 ListOfActiveNotifications=Lista tuturor notificărilor activă a cererilor
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+AllEMailings=Toate eMailings
+ResetMailing=Retrimiteţi email-uri
+ConfirmResetMailing=Atenţie, de reinitializing <b>email-uri% s,</b> va permite de a face o masă de a trimite acest e-mail-un alt timp. Esti sigur ca asta e ceea ce vrei să faci?
+BadEMail=Bad valoarea de email
+CloneEMailing=Clone email-uri
+ConfirmCloneEMailing=Sunteţi sigur că doriţi să trimiteţi un email la acest clona?
+CloneContent=Clone mesaj
+CloneReceivers=Cloner destinatari
+DateLastSend=Data ultimei trimiterea
+MailingModuleDescDolibarrContractsLinesExpired=Terţe părţi, cu contract expirat de linii
+YouCanUseCommaSeparatorForSeveralRecipients=Aveţi posibilitatea de a utiliza <b>comma</b> separator pentru a specifica mai mulţi destinatari.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

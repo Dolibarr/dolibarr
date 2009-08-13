@@ -44,3 +44,13 @@ Enlevement=Pick-up por o Cliente
 DocumentModelSimple=Modelo Simples
 WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
 NumRefModelJade=Devolve um número de referencia em formato l BLYY00001 ... donde AA é o ano. o incremento para o ano seguinte não se restablece ao inicio de ano.
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+StatsOnShipmentsOnlyValidated=Estatísticas sobre as transferências realizadas apenas validado
+SendingMethodCATCH=Capturas por cliente
+SendingMethodTRANS=Transportador
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Simples documento modelo de recibos de entrega
+DocumentModelTyphon=Documento modelo mais completo para a entrega recibos (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

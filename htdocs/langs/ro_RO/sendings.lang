@@ -55,3 +55,14 @@ WarningNoQtyLeftToSend=Atenţie, nu produse care aşteaptă să fie expediate.
 NumRefModelJade=Întoarceţi-vă cu un număr de referinţă în format BLYY00001, ... unde YY este an. Numărul de la sfârşitul anului nu este niciodată resetate la zero.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+StatsOnShipmentsOnlyValidated=Statistici privind transferurile efectuate numai validate
+SendingMethodCATCH=Prinde de către client
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Simplă document model pentru livrare încasări
+DocumentModelTyphon=Mai completă, documentul model de livrare încasări (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

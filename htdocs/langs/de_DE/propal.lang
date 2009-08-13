@@ -89,3 +89,14 @@ DocModelAzurDescription=Eine vollständige Vorschlag Modell (logo. ..)
 DocModelJauneDescription=Jaune Vorschlag Modell
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+ProposalShort=Vorschlag
+LastModifiedProposals=Letzte% s geändert Vorschläge
+DatePropal=Datum des Vorschlags
+ProposalsAndProposalsLines=Kommerzielle Vorschlag und Linien
+ProposalLine=Vorschlag Linie
+MarbreNumRefModelDesc=Zurück NUMERO mit Format% syymm-nnnn für Vorschläge, wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine Rückkehr auf 0
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

@@ -22,3 +22,10 @@ DonationStatusPayedShort			 =Ricevuto
 ValidPromise					 =Valida promessa
 BuildDonationReceipt				 =Costruire ricevimento
 DonationsModels					 =Documenti modelli di donazione ricevute
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// Reference language: en_US
+CHARSET=UTF-8
+Donations=Donazioni
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

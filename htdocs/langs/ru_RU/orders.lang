@@ -125,3 +125,12 @@ PDFEinsteinDescription=Для полной модели (logo. ..)
 MarbreNumRefDesc=Renvoie LE numro SOUS LA форме% syymm-NNNN или YY EST L&#39;année, мм LE Mois и NNNN ООН compteur sequentiel без разрывов и без REMISE E 0
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+OrderLine=Заказ линии
+PaymentOrderRef=Оплата заказа% S
+CloneOrder=Клон порядка
+ConfirmCloneOrder=Вы уверены, что хотите клон этого <b>приказа% S?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

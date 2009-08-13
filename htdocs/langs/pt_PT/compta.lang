@@ -112,3 +112,9 @@ PercentOfInvoice=%%/factura
 Dispatch=Repartição
 Dispatched=Repartições
 ToDispatch=A Repartir
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+NotUsedForGoods=Não utilizados em bens
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

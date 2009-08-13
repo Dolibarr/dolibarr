@@ -269,3 +269,16 @@ FiscalMonthStart=Start måned i regnskabsåret
 TigreNumRefModelDesc1=Retur en tilpasselig kunde / leverandør i henhold til en defineret maske.
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+Contacts=Kontakter
+ThirdPartyContacts=Tredjepart kontakter
+ThirdPartyContact=Tredjepart kontakt
+StatusContactValidated=Status for kontakt
+PriceLevel=Prisniveau
+YouMustCreateContactFirst=Du skal oprette e-mails, kontakter til tredjepart første til at kunne tilføje emails anmeldelser.
+MonkeyNumRefModelDesc=Retur numero med format% syymm-nnnn for kunde-kode og% syymm-nnnn for leverandøren kode hvor yy er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0.
+LeopardNumRefModelDesc=Kunde / leverandør-koden er gratis. Denne kode kan til enhver tid ændres.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

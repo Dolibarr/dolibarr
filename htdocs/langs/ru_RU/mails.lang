@@ -101,3 +101,19 @@ AddNewNotification=Включить новое уведомление запро
 ListOfActiveNotifications=Список всех активных уведомлений запросов
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+AllEMailings=Все eMailings
+ResetMailing=Resend электронной почте
+ConfirmResetMailing=Предупреждение, по электронной почте <b>reinitializing% S,</b> вы позволите сделать массу отправки этого письма еще раз. Вы уверены, что это то, что вы хотите сделать?
+BadEMail=Плохо стоимости EMail
+CloneEMailing=Клон Отправка
+ConfirmCloneEMailing=Вы уверены, что хотите клон этой электронной почте?
+CloneContent=Клон сообщение
+CloneReceivers=Cloner получателей
+DateLastSend=Дата последней отправки
+MailingModuleDescDolibarrContractsLinesExpired=Третьи стороны истек контракт с линий
+YouCanUseCommaSeparatorForSeveralRecipients=Вы можете использовать сепаратор для <b>запятую</b> указать несколько получателей.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

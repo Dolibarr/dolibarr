@@ -50,3 +50,11 @@ NoRecordedInvoices=Sem facturas a clientes registados
 NoUnpayedCustomerBills=Sem facturas a clientes Pendentes de pagamento
 NoRecordedSupplierInvoices=Sem facturas de Fornecedores
 NoUnpayedSupplierBills=Sem facturas de Fornecedores Pendentes de Pagamento
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+NoRecordedProducts=Não gravado produtos / serviços
+NoRecordedProspects=Não gravado perspectivas
+NoContractedProducts=Não produtos / serviços contratados
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

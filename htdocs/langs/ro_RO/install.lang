@@ -174,3 +174,16 @@ MigrationDeliveryOrderMatching=Livrarea primirea actualizare
 MigrationDeliveryDetail=Livrarea actualizare
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+GoToDolibarr=Du-te la Dolibarr
+MigrationNotFinished=Versiune de dtabase nu este complet până la data, deci va trebui să rulaţi din nou procesul de upgrade.
+GoToUpgradePage=Du-te la pagina de actualizare din nou
+InstallChoiceRecommanded=Recommanded posibilitatea de a instala <b>versiunea% s din% s</b> versiunea curentă
+InstallChoiceSuggested=<b>Instalarea de alegere a sugerat de instalare.</b>
+MigrationStockDetail=Update valoarea stocului de produse
+MigrationMenusDetail=Update dinamic meniuri tabele
+MigrationDeliveryAddress=Update adresa de livrare în transporturile
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

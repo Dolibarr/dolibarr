@@ -34,3 +34,9 @@ BuildDonationReceipt=Build-Eingang
 DonationsModels=Dokumente, Modelle für die Spende Einnahmen
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+Donations=Spenden
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

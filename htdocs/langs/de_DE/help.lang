@@ -1,0 +1,36 @@
+/*
+ * Language code: de_DE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-13 20:42:36
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+CHARSET=UTF-8
+CommunitySupport=Forum / Wiki-Unterstützung
+EMailSupport=E-Mail-Unterstützung
+RemoteControlSupport=Online-Echtzeit-/ Remote-Support
+OtherSupport=Weitere Unterstützung
+ToSeeListOfAvailableRessources=Um Kontakt / siehe Ressourcen zur Verfügung:
+ClickHere=Klicken Sie hier
+HelpCenter=Hilfe-Center
+DolibarrHelpCenter=Dolibarr Hilfe-und Supportcenter
+ToGoBackToDolibarr=Andernfalls klicken Sie <a href="%s">hier, um Verwendung Dolibarr</a>
+TypeOfSupport=Quelle der Unterstützung
+TypeSupportCommunauty=Gemeinschaft (kostenlos)
+TypeSupportCommercial=Kommerzielle
+TypeOfHelp=Typ
+NeedHelpCenter=Benötigen Sie Hilfe oder Unterstützung?
+Efficiency=Effizienz
+TypeHelpOnly=Hilfe nur
+TypeHelpDev=Hilfe + Entwicklung
+TypeHelpDevForm=Hilfe + Entwicklung + Bildung
+ToGetHelpGoOnSparkAngels1=Einige Unternehmen bieten einen schnellen (manchmal sofort) und effizientere Online-Unterstützung durch die Kontrolle des Computers. Solche Helfer finden Sie <b>auf% s-Website:</b>
+ToGetHelpGoOnSparkAngels3=Sie können auch die Liste aller verfügbaren Busse für Dolibarr, für diese Klicken Sie auf die Schaltfläche
+ToGetHelpGoOnSparkAngels2=Manchmal gibt es kein Unternehmen im Augenblick Sie Ihre Suche, so denke an die Filter, um sich für &quot;alle Verfügbarkeit&quot;. Sie können zum Senden von mehr Anfragen.
+BackToHelpCenter=Andernfalls klicken Sie hier, um <a href="%s">zurück zur Hilfe-Startseite.</a>
+LinkToGoldMember=Sie können einer der Trainer von vorgewählter Dolibarr für Ihre Sprache (% s), indem Sie seine Widget (Stand und maximale Preis werden automatisch aktualisiert):
+PossibleLanguages=Unterstützte Sprachen
+MakeADonation=Hilfe Dolibarr Projekt, machen Sie eine Spende
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

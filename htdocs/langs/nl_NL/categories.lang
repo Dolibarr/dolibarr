@@ -93,3 +93,12 @@ CategoryContents=Categorie inhoud
 CategId=Categorie-id
 // Date 2009-01-18 23:57:49
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+NoCategoryYet=Geen enkele categorie van dit type gemaakt
+CatSupList=Lijst van de leverancier categorieën
+CatCusList=Lijst van de klant / prospect categorieën
+CatProdList=Lijst van producten van de categorieën
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

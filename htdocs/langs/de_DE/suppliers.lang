@@ -44,3 +44,9 @@ AddSupplierInvoice=Erstellen Lieferanten Rechnung
 ListOfSupplierProductForSupplier=Liste der Produkte und Preise für <b>Anbieter% s</b>
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+NoneOrBatchFileNeverRan=Keine oder <b>Batch-% s</b> nicht lief vor kurzem
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

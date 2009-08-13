@@ -44,3 +44,9 @@ AddSupplierInvoice=Создать поставщику счет-фактуру
 ListOfSupplierProductForSupplier=Перечень продукции и цен для <b>поставщиков% S</b>
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// Reference language: en_US
+NoneOrBatchFileNeverRan=Ни одна партия <b>или% не</b> побежал в последнее время
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

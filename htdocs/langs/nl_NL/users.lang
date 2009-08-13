@@ -109,3 +109,18 @@ ConfirmCreateContact=Weet u zeker dat yu wilt maken Dolibarr een account voor de
 LoginToCreate=Login maken
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator met alle rechten
+LinkToCompanyContact=Link naar derden / contact
+LinkedToDolibarrMember=Link naar lid
+LinkedToDolibarrUser=Link naar Dolibarr gebruiker
+LinkedToDolibarrThirdParty=Link naar Dolibarr derde
+CreateDolibarrThirdParty=Maak een derde partij
+ConfirmCreateLogin=Weet u zeker dat u wilt maken Dolibarr een account voor deze leden?
+ConfirmCreateThirdParty=Weet u zeker dat u wilt maken van een derde partij voor dit lid worden?
+NameToCreate=Naam van de derde partij te creëren
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

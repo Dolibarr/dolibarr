@@ -345,3 +345,43 @@ TitanNumRefModelDesc4=În acest exemplu, vom avea pe 1 septembrie 2006 o factur�
 PlutonNumRefModelDesc1=Întoarceţi-vă un personalizabile numărul facturii în conformitate cu o mască de definit.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// Reference language: en_US
+InvoiceDeposit=Depozit de factură
+InvoiceDepositAsk=Depozit de factură
+InvoiceDepositDesc=Acest tip de factură se face în cazul în care un depozit a fost primit.
+InvoiceProFormat=Proformat factură
+InvoiceProFormatAsk=Proformat factură
+InvoiceProFormatDesc=<b>Proformat factură</b> este o imagine de o adevărată factură, dar nu are nici o valoare contabilă.
+UsedByInvoice=Folosite pentru a plăti factura% s
+ConsumedBy=Consumat de către
+NotConsumed=Nu consumaţi
+HelpPaymentHigherThanReminderToPay=Atentie, la plata sumei de una sau mai multe proiecte de lege este mai mare decât în restul să plătească. <br> Editaţi-vă de intrare, altfel confirma si gandeste-te la crearea unei note de credit a primit în exces, pentru fiecare overpayed facturilor.
+BillStatusConverted=Convertite în reducere
+BillShortStatusConverted=Prelucrate
+Prélèvements=Permanent pentru
+Prélèvements=Ordine de plată
+ShowInvoiceDeposit=Arata depozit factură
+AlreadyPayedNoCreditNotesNoDeposits=Alreday platite (fara note de credit şi depozite)
+SetDate=Setaţi data
+Deposit=Garantie
+Deposits=Depozite
+DiscountFromDeposit=Plăţile efectuate de depozit factura% s
+AbsoluteDiscountUse=Acest tip de credit poate fi utilizat pe factură înainte de validarea acestuia
+CreditNoteDepositUse=Factură trebuie să fie validate pentru a utiliza acest rege de credite
+NewRelativeDiscount=Noua reducere relativă
+IdSocialContribution=Social contribuţie id
+PaymentId=Plata id
+DescTaxAndDividendsArea=Această zonă a prezentat un rezumat al tuturor plăţilor efectuate de impozit sau a contribuţiilor sociale. Numai de înregistrări cu plată în cursul fix an sunt incluse aici.
+NbOfPayments=Nb de plăţi
+SplitDiscount=Split reducere în două
+ConfirmSplitDiscount=Sunteţi sigur că doriţi să împărţim această reducere <b>a% s% s</b> în 2 mai mici reduceri?
+TypeAmountOfEachNewDiscount=Valoarea de intrare, pentru fiecare din două părţi:
+TotalOfTwoDiscountMustEqualsOriginal=Total a două noi reduceri trebuie să fie egal cu suma iniţială de reduceri.
+ConfirmRemoveDiscount=Sunteţi sigur că doriţi să eliminaţi acest discount?
+UseCredit=Utilizarea de credit
+ShowUnpayedLateOnly=Arata târziu unpayed factura numai
+PaymentInvoiceRef=Plata facturii% s
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

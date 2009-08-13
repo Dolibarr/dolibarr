@@ -358,3 +358,31 @@ TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the mo
 TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
 # pluton
 PlutonNumRefModelDesc1=Return a customizable invoice number according to a defined mask.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+UsedByInvoice=Usado para pagar factura% s
+ConsumedBy=Consumida por
+NotConsumed=Não consumiu
+HelpPaymentHigherThanReminderToPay=Atenção, o montante do pagamento de uma ou mais letras é maior do que o resto a pagar. <br> Edite sua entrada, caso contrário, confirmar e pensar sobre como criar uma nota de crédito do excesso recebido para cada overpayed facturas.
+BillShortStatusConverted=Transformados
+AlreadyPayedNoCreditNotesNoDeposits=Alreday paga (sem notas de crédito e depósitos)
+SetDate=Definir a data
+Deposit=Depósito
+Deposits=Depósitos
+AbsoluteDiscountUse=Este tipo de crédito pode ser usado na factura antes da sua validação
+CreditNoteDepositUse=Factura deve ser validado para utilizar este rei de créditos
+NewRelativeDiscount=Nova parente desconto
+IdSocialContribution=Contribuição Social id
+PaymentId=Pagamento id
+DescTaxAndDividendsArea=Esta área apresenta um resumo de todos os pagamentos de impostos ou contribuições sociais. Somente registros com pagamento fixo durante o ano são incluídas aqui.
+NbOfPayments=Nb de pagamentos
+SplitDiscount=Dividido em duas desconto
+ConfirmSplitDiscount=Tem certeza de que quer dividir este desconto <b>de% s% s</b> em 2 menores descontos?
+TypeAmountOfEachNewDiscount=Entrada montante para cada uma das duas partes:
+TotalOfTwoDiscountMustEqualsOriginal=Total de dois novos desconto deve ser igual ao montante original de desconto.
+ConfirmRemoveDiscount=Tem certeza de que deseja remover este desconto?
+UseCredit=Uso de crédito
+ShowUnpayedLateOnly=Mostrar tarde unpayed factura única
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

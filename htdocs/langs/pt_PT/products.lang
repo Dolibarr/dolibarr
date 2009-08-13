@@ -140,3 +140,17 @@ ServiceNb=Serviço nº %s
 ListProductByPopularity=Lista de Produtos/Perviços por Popularidade
 Finished=Produto Manofacturado
 RowMaterial=Matéria Prima
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+ProductRef=Produto ref.
+ProductLabel=Produto rótulo
+MinPrice=Mínima. preço de venda
+CantBeLessThanMinPrice=O preço de venda não pode ser inferior ao mínimo permitido para este produto (% s sem impostos)
+ExportDataset_service_1=Serviços
+CloneProduct=Clone produto ou serviço
+ConfirmCloneProduct=Tem certeza de que pretende clonar produto ou <b>serviço% s?</b>
+CloneContentProduct=Clone todas as principais informações do produto / serviço
+ClonePricesProduct=Clone principais informações e preços
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

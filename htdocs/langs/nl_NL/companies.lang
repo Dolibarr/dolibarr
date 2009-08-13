@@ -277,3 +277,16 @@ TigreNumRefModelDesc1=Terugkeer een aanpasbare klant / leverancier aantal volgen
 VATIntraManualCheck=You can also check manually from european web site <a href="%s" target=U kunt ook handmatig controleren van de Europese <a href="%s" target="_blank">website% s</a>
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+Contacts=Contacten
+ThirdPartyContacts=Derde contacten
+ThirdPartyContact=Derde partij contact
+StatusContactValidated=Status van de contactpersoon
+PriceLevel=Prijsniveau
+YouMustCreateContactFirst=U moet e-mails contacten voor derden eerste te kunnen e-mails toevoegen aanmeldingen.
+MonkeyNumRefModelDesc=Terugkeren numero met format% syymm-nnnn voor klantcode en% syymm-nnnn voor leverancier code waar jj jaar is, MM de maand en het is nnnn een sequentie zonder pauze en geen terugkeer naar 0.
+LeopardNumRefModelDesc=Klant / leverancier-code is gratis. Deze code kan te allen tijde worden gewijzigd.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

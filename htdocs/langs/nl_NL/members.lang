@@ -147,3 +147,20 @@ ShowTypeCard=Toon type &#39;% s&#39;
 HTPasswordExport=htpassword bestand generatie
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Een ander lid <b>(naam:% s, login:% s)</b> is al gekoppeld aan een derde <b>partij% s.</b> Verwijder deze link eerste omdat een derde partij niet kan worden gekoppeld aan slechts een lid (en vice versa).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Om veiligheidsredenen moet u machtigingen verleend voor het bewerken van alle gebruikers te kunnen koppelen van een lid aan een gebruiker die niet de jouwe.
+ThisIsContentOfYourCard=Dit is de details van uw kaart
+CardContent=Inhoud van uw lidkaart
+SetLinkToUser=Link naar een Dolibarr gebruiker
+SetLinkToThirdParty=Link naar een Dolibarr derden
+SubscriptionId=Inschrijvings-id
+MemberId=Lid ID
+PaymentSubscription=Nieuwe bijdrage betaling
+NoThirdPartyAssociatedToMember=Geen derde partij betrokken bij dit lid
+ThirdPartyDolibarr=Dolibarr derde partij
+MembersAndSubscriptions=Leden en Suscriptions
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

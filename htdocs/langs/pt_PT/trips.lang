@@ -17,3 +17,9 @@ ConfirmDeleteTrip=¿Está seguro de querer eliminar esta deslocação?
 TF_OTHER=Outro
 TF_LUNCH=Alimentação
 TF_TRIP=Viagem
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+ListTripsAndExpenses=Lista de viagens e gastos
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

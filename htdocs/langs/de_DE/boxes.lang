@@ -60,3 +60,12 @@ NoRecordedSupplierInvoices=Nr. erfasst Lieferanten Rechnungen
 NoUnpayedSupplierBills=Nr. unpayed Lieferanten Rechnungen
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+LastRefreshDate=Letztes Aktualisierungsdatum
+NoRecordedProducts=Nr. aufgenommenen Produkte / Dienstleistungen
+NoRecordedProspects=Nr. erfasst Aussichten
+NoContractedProducts=Keine Produkte / Dienstleistungen in Auftrag
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

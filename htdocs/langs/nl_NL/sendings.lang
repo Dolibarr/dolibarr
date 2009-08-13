@@ -57,3 +57,14 @@ WarningNoQtyLeftToSend=Waarschuwing, geen producten nog moeten worden verzonden.
 NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... waar is YY jaar. Aantal op het einde is nooit op nul.
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+StatsOnShipmentsOnlyValidated=Statistieken uitgevoerd betreffende de overbrenging slechts gevalideerd
+SendingMethodCATCH=Vangst per klant
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Eenvoudig document model voor de levering van aandelen
+DocumentModelTyphon=Meer volledige document model voor de levering van aandelen (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

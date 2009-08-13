@@ -131,12 +131,12 @@ print '</td>';
 print '</tr>';
 
 // Nom
-print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+print '<tr><td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
 print '<td colspan="2">'.$fuser->nom.'</td>';
 print "</tr>\n";
 
 // Prenom
-print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+print '<tr><td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
 print '<td colspan="2">'.$fuser->prenom.'</td>';
 print "</tr>\n";
 

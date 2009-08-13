@@ -46,3 +46,9 @@ AddSupplierInvoice=Opret leverandørens faktura
 ListOfSupplierProductForSupplier=Liste over produkter og priser for <b>leverandørens% s</b>
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// Reference language: en_US
+NoneOrBatchFileNeverRan=Ingen eller <b>parti% s</b> ikke kørte for nylig
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

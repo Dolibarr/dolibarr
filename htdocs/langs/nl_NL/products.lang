@@ -153,3 +153,17 @@ Finished=Fabrikaat
 RowMaterial=Eerste materiaal
 // Date 2009-01-19 00:04:30
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// Reference language: en_US
+ProductRef=Product ref.
+ProductLabel=Productlabel
+MinPrice=Minim. verkoopprijs
+CantBeLessThanMinPrice=De verkoopprijs kan niet lager zijn dan de minimumnormen voor dit product (% s zonder belasting)
+ExportDataset_service_1=Diensten
+CloneProduct=Kloon product of dienst
+ConfirmCloneProduct=Weet u zeker dat u wilt kloon product of <b>dienst% s?</b>
+CloneContentProduct=Clone alle belangrijke informatie van het product / dienst
+ClonePricesProduct=Clone belangrijkste informatie en prijzen
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

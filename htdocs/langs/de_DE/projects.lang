@@ -61,3 +61,10 @@ NotOwnerOfProject=Nicht Eigentümer der privaten Projekt
 AffectedTo=Betroffene zu
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+ListPredefinedInvoicesAssociatedProject=Liste der Kunden vordefinierten Rechnungen im Zusammenhang mit der Projekt
+CantRemoveProject=Dieses Projekt kann nicht entfernt werden, da sie auf die andere Objekte (Rechnungen, Bestellungen oder andere). Siehe referers Registerkarte.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

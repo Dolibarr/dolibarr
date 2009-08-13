@@ -158,3 +158,18 @@ ToExport=Vienti
 NewExport=Uusia vientimahdollisuuksia
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+BirthdayAlertOn=syntymäpäivä hälytys aktiivinen
+BirthdayAlertOff=syntymäpäivä varoituskynnysten inaktiivinen
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Toimittaja jotta hyväksytty
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Toimittaja jotta evätty
+DemoDesc=Dolibarr on kompakti ERP / CRM säveltänyt useita toiminnallisia moduuleja. A demo, joka sisältää kaikki moduulit eivät merkitse mitään, koska tämä ei koskaan tapahdu. Joten useita demo profiilit ovat saatavilla.
+DemoCompanyServiceOnly=Hallinnoi freelance toimintaa myymällä palvelua vain
+EMailTextInterventionValidated=Väliintulo% s validoitava
+EMailTextInvoiceValidated=Lasku% s validoitava
+ImportedWithSet=Tuonti tietokokonaisuutta
+DolibarrNotification=Automaattinen ilmoitus
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

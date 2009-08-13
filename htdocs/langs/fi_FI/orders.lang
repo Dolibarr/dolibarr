@@ -125,3 +125,12 @@ PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
 MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn tai vv est l&#39;année, mm le mois et nnnn un compteur sequentiel sans murtumasta et sans remise e 0
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+OrderLine=Tilaa linja
+PaymentOrderRef=Maksutoimisto jotta% s
+CloneOrder=Klooni jotta
+ConfirmCloneOrder=Oletko varma, että haluat klooni tässä <b>järjestyksessä% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

@@ -57,3 +57,14 @@ WarningNoQtyLeftToSend=Ostrzeżenie nie produktów oczekujących na wysłanie.
 NumRefModelJade=Wróć numeru referencyjnego w formacie BLYY00001 ... gdzie RR jest rok. Liczba na końcu nigdy nie jest resetowany do zera.
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+StatsOnShipmentsOnlyValidated=Statystyki prowadzone w sprawie przesyłania jedynie zatwierdzonych
+SendingMethodCATCH=Catch przez klientów
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Prosty dokument model dostawy wpływy
+DocumentModelTyphon=Więcej kompletny dokument model dostawy wpływy (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

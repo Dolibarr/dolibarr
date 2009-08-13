@@ -38,3 +38,11 @@ ForceSynchronize=Siły synchronizujące Dolibarr -&gt; LDAP
 ErrorFailedToReadLDAP=Nie można odczytać bazy danych LDAP. Sprawdź LDAP moduł konfiguracji bazy danych i dostępności.
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+GroupSynchronized=Grupa zsynchronizowane
+MemberSynchronized=Państwa zsynchronizowane
+ContactSynchronized=Kontakt zsynchronizowane
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

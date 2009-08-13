@@ -103,3 +103,19 @@ AddNewNotification=Aktywacja nowego zgłoszenia wniosku
 ListOfActiveNotifications=Lista wszystkich aktywnych zgłoszeń wniosków
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// Reference language: en_US
+AllEMailings=Wszystkie eMailings
+ResetMailing=Wyślij e-maila
+ConfirmResetMailing=Ostrzeżenie przez reinitializing pocztą <b>elektroniczną% s,</b> można pozwolić, aby masowego wysyłania tej wiadomości innym razem. Czy na pewno jest to, co chcesz zrobić?
+BadEMail=Zła wartość EMail
+CloneEMailing=Clone e-mail
+ConfirmCloneEMailing=Czy na pewno chcesz klon tego e-maila?
+CloneContent=Clone wiadomość
+CloneReceivers=Cloner odbiorców
+DateLastSend=Data ostatniej wysyłanie
+MailingModuleDescDolibarrContractsLinesExpired=Trzecim minął zamówienia linie
+YouCanUseCommaSeparatorForSeveralRecipients=Możesz używać <b>przecinka</b> separator określić kilku odbiorców.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

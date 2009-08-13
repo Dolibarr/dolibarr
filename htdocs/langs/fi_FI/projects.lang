@@ -61,3 +61,10 @@ NotOwnerOfProject=Ei omistaja tämän yksityistä hanketta
 AffectedTo=Vaikuttaa
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+ListPredefinedInvoicesAssociatedProject=Luettelo asiakkaiden ennalta laskut liittyvät hankkeen
+CantRemoveProject=Tämä hanke ei voi poistaa, koska se on viittaamat joitakin muita esineitä (lasku, tilaukset ja muut). Katso viittaajan välilehti.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

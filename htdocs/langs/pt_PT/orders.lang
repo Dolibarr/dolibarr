@@ -117,3 +117,11 @@ AddDeliveryCostLine=Adicionar uma linha de despesas de portes indicando o peso d
 # einstein PDF Model
 PDFEinsteinDescription=Modelo de orçamento completo (logo...)
 MarbreNumRefDesc=Devolve o número baixo o formato %syymm-nnnn onde yy é o ano, mm o mês e nnnn um contador sequêncial sem ruptura e sem Voltar a 0
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+OrderLine=Ordem linha
+CloneOrder=Clone fim
+ConfirmCloneOrder=Tem certeza de que deseja clonar este <b>fim% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

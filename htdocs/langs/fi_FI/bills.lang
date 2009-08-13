@@ -345,3 +345,43 @@ TitanNumRefModelDesc4=Tässä esimerkissä olemme koskevat 1 syyskuu 2006 laskun
 PlutonNumRefModelDesc1=Paluu mukautettavan laskunumeroa mukaan määritelty mask.
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+InvoiceDeposit=Talletuslokero lasku
+InvoiceDepositAsk=Talletuslokero lasku
+InvoiceDepositDesc=Tällainen lasku on tehnyt, kun talletus on vastaanotettu.
+InvoiceProFormat=Proformat lasku
+InvoiceProFormatAsk=Proformat lasku
+InvoiceProFormatDesc=<b>Proformat laskun</b> kuvan todellinen lasku, mutta sillä ei ole kirjanpidon arvoa.
+UsedByInvoice=Käytetyt maksaa laskun% s
+ConsumedBy=Kuluttamaan
+NotConsumed=Ei kuluteta
+HelpPaymentHigherThanReminderToPay=Huomio, maksusumman yhden tai useamman laskut on korkeampi kuin muualla maksamaan. <br> Muokkaa merkintä, muuten vahvistaa ja mieti luoda menoilmoitus sen ylittävältä osalta saatu kunkin overpayed laskut.
+BillStatusConverted=Muunnetaan edullisista
+BillShortStatusConverted=Jalostettu
+Prélèvements=Kestotilaus
+Prélèvements=Pysyvän tilaukset
+ShowInvoiceDeposit=Näytä tallettaa laskun
+AlreadyPayedNoCreditNotesNoDeposits=Alreday maksetaan (ilman hyvityslaskuja ja talletukset)
+SetDate=Aseta pvm
+Deposit=Talletuslokero
+Deposits=Talletukset
+DiscountFromDeposit=Maksut tallettaa laskun% s
+AbsoluteDiscountUse=Tällainen luotto voidaan käyttää laskun ennen sen validointi
+CreditNoteDepositUse=Lasku on validoitava käyttää tätä kuningas luottojen
+NewRelativeDiscount=Uusi suhteellinen alennus
+IdSocialContribution=Yhteiskunnallinen id
+PaymentId=Maksu-id
+DescTaxAndDividendsArea=Tämä alue esittelee yhteenvedon kaikista maksaa veroja tai sosiaaliturvamaksuja. Tallentaa ainoastaan maksamisen aikana kiinteän vuodessa ovat mukana tässä.
+NbOfPayments=Nb maksujen
+SplitDiscount=Split edullisista kahdessa
+ConfirmSplitDiscount=Oletko varma, että haluat jakaa tämän <b>alennus% s%</b> s 2 alhaisempi alennusta?
+TypeAmountOfEachNewDiscount=Input määrä kunkin kahteen osaan:
+TotalOfTwoDiscountMustEqualsOriginal=Yhteensä kaksi uutta alennus on oltava alkuperäinen alennuksen määrästä.
+ConfirmRemoveDiscount=Oletko varma, että haluat poistaa tämän edullisista?
+UseCredit=Käytä luotto
+ShowUnpayedLateOnly=Näytä myöhään unpayed laskun vain
+PaymentInvoiceRef=Maksu laskun% s
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

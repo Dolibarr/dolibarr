@@ -47,3 +47,9 @@ ErrorCantSaveADoneUserWithZeroPercentage=No se puede cambiar una acciÃ³n al es
 ErrorBillRefAlreadyExists=a referencia utilizada para a criação já existe
 ErrorPleaseTypeBankTransactionReportName=Introduzca o Nome do registo bancario sobre a qual o escrito está constatado (formato AAAAMM ó AAAMMJJ)
 ErrorRecordHasChildren=não se pode eliminar o registo porque tem hijos.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+ErrorUrlNotValid=O endereço do sítio está incorreto
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

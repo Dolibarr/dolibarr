@@ -25,3 +25,11 @@ SynchronizeDolibarr2Ldap=Sincronizar utilizador (Dolibarr -> LDAP)
 UserSynchronized=Utilizador sincronizado
 ForceSynchronize=forçar sincronização Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Erro na leitura do anuario LDAP. Verificar a configuração do módulo LDAP e a acessibilidade do anuario.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+GroupSynchronized=Grupo sincronizado
+MemberSynchronized=Membro sincronizado
+ContactSynchronized=Contato sincronizado
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

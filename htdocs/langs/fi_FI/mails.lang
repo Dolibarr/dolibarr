@@ -101,3 +101,19 @@ AddNewNotification=Ota uusi ilmoitus pyynnöstä
 ListOfActiveNotifications=Listaa kaikki aktiiviset ilmoitukset pyynnöt
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// Reference language: en_US
+AllEMailings=Kaikki eMailings
+ResetMailing=Uudelleen sähköpostitse
+ConfirmResetMailing=Varoitus, jonka reinitializing <b>sähköpostitse% s,</b> te sallitte tehdä massa lähettäminen tähän sähköpostiviestiin toisella kertaa. Oletko varma, että tämä on, mitä haluat tehdä?
+BadEMail=Bad arvo EMail
+CloneEMailing=Klooni Sähköpostituksen
+ConfirmCloneEMailing=Oletko varma, että haluat klooni tämän sähköpostitse?
+CloneContent=Klooni viesti
+CloneReceivers=Cloner vastaanottajat
+DateLastSend=Viimeisen lähettäminen
+MailingModuleDescDolibarrContractsLinesExpired=Kolmannen osapuolen kanssa lakkaa sopimuksen linjat
+YouCanUseCommaSeparatorForSeveralRecipients=Voit käyttää <b>comma</b> separator määritellä usealle vastaanottajalle.
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

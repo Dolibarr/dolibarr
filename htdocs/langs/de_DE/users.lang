@@ -107,3 +107,18 @@ ConfirmCreateContact=Sind Sie sicher, dass Yu wollen ein Dolibarr für diesen Ko
 LoginToCreate=Login erstellen
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator mit allen Rechten
+LinkToCompanyContact=Link zum Dritten / Kontakt
+LinkedToDolibarrMember=Link zum Mitglied
+LinkedToDolibarrUser=Link zu Dolibarr Benutzer
+LinkedToDolibarrThirdParty=Link zu Dolibarr Dritten
+CreateDolibarrThirdParty=Erstellen Sie eine dritte Partei
+ConfirmCreateLogin=Sind Sie sicher, dass Sie einen Dolibarr für diese Mitglied?
+ConfirmCreateThirdParty=Sind Sie sicher, dass Sie einen Dritten für diese Mitglied?
+NameToCreate=Name des Dritten zu schaffen
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

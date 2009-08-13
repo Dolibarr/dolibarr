@@ -125,3 +125,12 @@ PDFEinsteinDescription=Eine vollständige Um-Modell (logo. ..)
 MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn oder yy est l&#39;année, le mois et mm nnnn un compteur sequentiel ohne Bruch et sans remise e 0
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+// Reference language: en_US
+OrderLine=Bestell-line
+PaymentOrderRef=Die Zahlung der Bestellung% s
+CloneOrder=Klonen, um
+ConfirmCloneOrder=Sind Sie sicher, dass Sie zu klonen, um <b>diese% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
