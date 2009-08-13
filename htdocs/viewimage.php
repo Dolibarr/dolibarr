@@ -26,6 +26,8 @@
  *		\version    $Id$
  */
 
+define('NOTOKENRENEWAL',1); // Disables token renewal
+
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 $action = isset($_GET["action"])?$_GET["action"]:'';
 $original_file = isset($_GET["file"])?$_GET["file"]:'';
