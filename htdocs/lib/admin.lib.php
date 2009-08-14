@@ -43,22 +43,26 @@ function versiontostring($versionarray)
  *	\brief      Compare 2 versions
  *	\param      versionarray1       Array of version (vermajor,verminor,patch)
  *	\param      versionarray2       Array of version (vermajor,verminor,patch)
- *	\return     int                 -3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
+ *	\return     int                 -4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
  * 									0 if =
- * 									1,2,3 if versionarray1>versionarray2 (value depends on level of difference)
+ * 									1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
  */
 function versioncompare($versionarray1,$versionarray2)
 {
 	$ret=0;
 	$level=0;
-	while ($level < max(sizeof($versionarray1),sizeof($versionarray1)))
+	while ($level < max(sizeof($versionarray1),sizeof($versionarray2)))
 	{
 		$operande1=isset($versionarray1[$level])?$versionarray1[$level]:0;
 		$operande2=isset($versionarray2[$level])?$versionarray2[$level]:0;
+		if (eregi('beta|alpha',$operande1)) $operande1=-1;
+		if (eregi('beta|alpha',$operande2)) $operande2=-1;
 		$level++;
+		//print 'level '.$level.' '.$operande1.'-'.$operande2;
 		if ($operande1 < $operande2) { $ret = -$level; break; }
 		if ($operande1 > $operande2) { $ret = $level; break; }
 	}
+	//print join('.',$versionarray1).'('.sizeof($versionarray1).') / '.join('.',$versionarray2).'('.sizeof($versionarray2).') => '.$ret;
 	return $ret;
 }
 

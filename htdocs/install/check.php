@@ -336,8 +336,10 @@ else
 								);
 
 		$foundrecommandedchoice=0;
+		$count=0;
 		foreach ($migrationscript as $migarray)
 		{
+			$count++;
 			$versionfrom=$migarray['from'];
 			$versionto=$migarray['to'];
 		    $newversionfrom=eregi_replace('\.[0-9]+$','.*',$versionfrom);
@@ -351,8 +353,6 @@ else
 				{
 					$dolibarrversionfromarray=split('[\.-]',$versionfrom);
 					$dolibarrversiontoarray=split('[\.-]',$versionto);
-					// If last upgrade was an alpha or beta, we increase target version to 1 to select this one.
-					if (isset($conf->global->MAIN_VERSION_LAST_UPGRADE) && eregi('beta|alpha',$conf->global->MAIN_VERSION_LAST_UPGRADE)) $dolibarrversiontoarray[2]=(isset($dolibarrversiontoarray[2]) ? ($dolibarrversiontoarray[2]+1) : 1);
 					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
 					{
@@ -371,7 +371,8 @@ else
 			print '<td align="center">';
 			if ($allowupgrade)
 			{
-				print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
+				print '<a href="upgrade.php?action=upgrade'.($count<sizeof($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 			}
 			else
 			{

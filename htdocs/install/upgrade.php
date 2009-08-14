@@ -65,12 +65,12 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-pHeader('',"upgrade2","upgrade");
+pHeader('',"upgrade2",$_REQUEST['action']);
 
 $actiondone=0;
 
 // Action to launch the repair or migrate script
-if (! isset($_GET["action"]) || $_GET["action"] == "upgrade" || $_GET["action"] == "repair")
+if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]) || $_GET["action"] == "repair")
 {
 	$actiondone=1;
 

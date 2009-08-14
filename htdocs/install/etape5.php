@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -28,15 +28,21 @@
  */
 
 include_once("./inc.php");
+if (file_exists($conffile)) include_once($conffile);
+require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
-// TODO Send value from migrate choice
-$targetversion=DOL_VERSION;
-if (isset($_REQUEST["targetversion"])) $targetversion=$_REQUEST["targetversion"];
-
+// Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
+// or MAIN_VERSION_LAST_UPGRADE for upgrade.
+$targetversion=DOL_VERSION;		// It it's last upgrade
+if (isset($_POST["action"]) && eregi('upgrade',$_POST["action"]))	// If it's an old upgrade
+{
+	$tmp=split('_',$_POST["action"],2);
+	if ($tmp[0]=='upgrade' && ! empty($tmp[1])) $targetversion=$tmp[1];
+}
 
 $langs->load("admin");
 $langs->load("install");
@@ -91,7 +97,7 @@ if ($_POST["action"] == "set")
 
 pHeader($langs->trans("SetupEnd"),"etape5");
 
-if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
+if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 {
 	print '<table cellspacing="0" cellpadding="2" width="100%">';
 	$error=0;
@@ -111,6 +117,7 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	$conf->db->pass = $dolibarr_main_db_pass;
 
 	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+
 	$ok = 0;
 
 	// If first install
@@ -180,16 +187,42 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 		}
 		else
 		{
-			print $langs->trans("Error")."<br>";
+			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
 	}
 	// If upgrade
-	elseif ($_POST["action"] == "upgrade")
+	elseif (eregi('upgrade',$_POST["action"]))
 	{
-		dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const to value '.$targetversion, LOG_DEBUG);
-		$db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_UPGRADE'");
-		$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_UPGRADE','".$targetversion."','chaine',0,'Dolibarr version for last upgrade',0)");
-		$conf->global->MAIN_VERSION_LAST_UPGRADE=$targetversion;
+		if ($db->connected == 1)
+		{
+			$conf->setValues($db);
+
+			// Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
+			$tagdatabase=false;
+			if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) $tagdatabase=true;	// We don't know what it was before, so now we consider we are version choosed.
+			else
+			{
+				$mainversionlastupgradearray=split('[\.-]',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+				$targetversionarray=split('[\.-]',$targetversion);
+				if (versioncompare($targetversionarray,$mainversionlastupgradearray) > 0) $tagdatabase=true;
+			}
+
+			if ($tagdatabase)
+			{
+				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const to value '.$targetversion, LOG_DEBUG);
+				$db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_UPGRADE'");
+				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_UPGRADE','".$targetversion."','chaine',0,'Dolibarr version for last upgrade',0)");
+				$conf->global->MAIN_VERSION_LAST_UPGRADE=$targetversion;
+			}
+			else
+			{
+				dolibarr_install_syslog('install/etape5.php We run an upgrade to version '.$targetversion.' but database was already upgraded to '.$conf->global->MAIN_VERSION_LAST_UPGRADE.'. We keep MAIN_VERSION_LAST_UPGRADE as it is.', LOG_DEBUG);
+			}
+		}
+		else
+		{
+			print $langs->trans("ErrorFailedToConnect")."<br>";
+		}
 	}
 	else
 	{
@@ -250,7 +283,7 @@ if ($_POST["action"] == "set")
 	}
 }
 // If upgrade
-elseif ($_POST["action"] == "upgrade")
+elseif (eregi('upgrade',$_POST["action"]))
 {
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{
