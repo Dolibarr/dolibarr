@@ -115,6 +115,8 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 	$conf->db->name = $dolibarr_main_db_name;
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;
+	$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
+	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
@@ -175,12 +177,12 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 				$db->begin();
 
 				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const to '.$targetversion, LOG_DEBUG);
-				$db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_INSTALL'");
-				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_INSTALL','".$targetversion."','chaine',0,'Dolibarr version when install',0)");
+				$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."='MAIN_VERSION_LAST_INSTALL'");
+				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",".$db->encrypt($targetversion,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'chaine',0,'Dolibarr version when install',0)");
 				$conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
 				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_DEBUG);
-				$db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+				$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."='MAIN_NOT_INSTALLED'");
 
 				$db->commit();
 			}
@@ -210,8 +212,8 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 			if ($tagdatabase)
 			{
 				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const to value '.$targetversion, LOG_DEBUG);
-				$db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_UPGRADE'");
-				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_VERSION_LAST_UPGRADE','".$targetversion."','chaine',0,'Dolibarr version for last upgrade',0)");
+				$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."='MAIN_VERSION_LAST_UPGRADE'");
+				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_UPGRADE',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",".$db->encrypt($targetversion,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'chaine',0,'Dolibarr version for last upgrade',0)");
 				$conf->global->MAIN_VERSION_LAST_UPGRADE=$targetversion;
 			}
 			else
@@ -230,7 +232,7 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 	}
 
 	// May fail if parameter already defined
-	$resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values('MAIN_LANG_DEFAULT','".$setuplang."','chaine',0,'Default language',1)");
+	$resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_LANG_DEFAULT',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",".$db->encrypt($setuplang,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'chaine',0,'Default language',1)");
 
 	print '</table>';
 
