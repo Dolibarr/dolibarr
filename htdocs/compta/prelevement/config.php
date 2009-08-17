@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/compta/prelevement/config.php
- \ingroup    prelevement
- \brief      Page configuration des prelevements
- \version    $Id$
+ *	\file       htdocs/compta/prelevement/config.php
+ *	\ingroup    prelevement
+ *	\brief      Page configuration des prelevements
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -70,13 +70,12 @@ llxHeader('',$langs->trans("WithdrawalsSetup"));
 
 print_fiche_titre($langs->trans("WithdrawalsSetup"));
 
-print "<br>";
 
 if ($user->rights->prelevement->bons->configurer)
 print '<form method="post" action="config.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="nobordernopadding" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Parameter").'</td>';
 if ($user->rights->prelevement->bons->configurer)
@@ -136,10 +135,10 @@ if ($user->rights->prelevement->bons->configurer)
 	print '<td align="left">';
 	print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
 	print '<select name="value6">';
-	
+
 	$sql = "SELECT u.rowid, u.name, u.firstname";
 	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-	$sql.= " WHERE u.entity IN (0,".$conf->entity.")"; 
+	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 
 	if ($db->query($sql))
 	{
@@ -198,10 +197,10 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td width="30%">Nom</td>';
-	print '<td width="40%">Valeur</td>';
+	print '<td>'.$langs->trans("User").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
 	if ($user->rights->prelevement->bons->configurer)
-	print '<td width="30%">Action</td>';
+	print '<td align="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 
 	if ($user->rights->prelevement->bons->configurer)
@@ -229,7 +228,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 
 		print '</select></td>';
 
-		print '<td align="left">';
+		print '<td>';
 		print '<select name="action">';
 
 		print '<option value="tr">Transmission du bon</option>';
@@ -237,7 +236,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 		print '<option value="cr">Credit du bon</option>';
 		print '</select></td>';
 
-		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+		print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 	}
 
 
@@ -246,14 +245,14 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql.= ", ".MAIN_DB_PREFIX."prelevement_notifications as pn";
 	$sql.= " WHERE u.rowid = pn.fk_user";
-	$sql.= " AND u.entity IN (0,".$conf->entity.")"; 
+	$sql.= " AND u.entity IN (0,".$conf->entity.")";
 
 	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var = True;
+		$var = false;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -266,7 +265,7 @@ if ($conf->global->MAIN_MODULE_NOTIFICATION)
 
 			if ($user->rights->prelevement->bons->configurer)
 			{
-				print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td></tr>';
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td></tr>';
 			}
 			else
 			{

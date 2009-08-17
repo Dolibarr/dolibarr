@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/bon-prelevement.class.php
         \ingroup    prelevement
-        \brief      Fichier de la classe des bons de pr�l�vements
-        \version    $Revision$
+        \brief      Fichier de la classe des bons de prelevements
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -217,7 +214,7 @@ class BonPrelevement extends CommonObject
     function fetch($rowid)
     {
     	global $conf;
-    	
+
         $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
         $sql.= ", ".$this->db->pdate("p.datec")." as dc";
         $sql.= ", ".$this->db->pdate("p.date_trans")." as date_trans";
@@ -359,7 +356,7 @@ class BonPrelevement extends CommonObject
     function set_infocredit($user, $date)
     {
     	global $conf;
-    	
+
         $error == 0;
 
         if ($this->_fetched == 1)
@@ -432,7 +429,7 @@ class BonPrelevement extends CommonObject
     function set_infotrans($user, $date, $method)
     {
     	global $conf;
-    	
+
         $error == 0;
         dol_syslog("bon-prelevement::set_infotrans Start",LOG_INFO);
         if ($this->db->begin())
@@ -499,7 +496,7 @@ class BonPrelevement extends CommonObject
     function Notify($user, $action, $subject, $message, $joinfile=0)
     {
     	global $conf;
-    	
+
         $message .= "\n\n--\n";
         $message .= "Ceci est un message automatique envoye par Dolibarr";
 
@@ -553,7 +550,7 @@ class BonPrelevement extends CommonObject
     function _get_list_factures()
     {
     	global $conf;
-    	
+
         $arr = array();
 
         /*
@@ -601,7 +598,7 @@ class BonPrelevement extends CommonObject
     function SommeAPrelever()
     {
     	global $conf;
-    	
+
         $sql = "SELECT sum(f.total_ttc)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -640,7 +637,7 @@ class BonPrelevement extends CommonObject
     function NbFactureAPrelever($banque=0,$agence=0)
     {
     	global $conf;
-    	
+
         $sql = "SELECT count(f.rowid)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";

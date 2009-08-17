@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
  */
 
 /**
-        \file       htdocs/compta/prelevement/stats.php
-        \brief      Page de stats des prélèvements
-        \version    $Id$
+ *       \file       htdocs/compta/prelevement/stats.php
+ *       \brief      Page de stats des prelevements
+ *       \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -35,13 +35,11 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
 
 
-llxHeader('',$langs->trans("WithdrawStatistics"));
-
 /*
- *
- * Stats générales
- *
+ * View
  */
+
+llxHeader('',$langs->trans("WithdrawStatistics"));
 
 print_titre($langs->trans("WithdrawStatistics"));
 
@@ -56,10 +54,10 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  
+
   if ( $num >0 )
     {
-      $row = $db->fetch_row();	
+      $row = $db->fetch_row();
       $total = $row[0];
       $nbtotal = $row[1];
     }
@@ -80,56 +78,56 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  
+
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td><td align="right">%</td>';
   print '<td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
-  
+
   $var=True;
 
-  $st[0] = "En attente";
-  $st[1] = "En attente";
-  $st[2] = "Crédité";
-  $st[3] = "Rejeté";
-  
+  $st[0] = "Wainting";
+  $st[1] = "Wainting";
+  $st[2] = "Credited";
+  $st[3] = "Rejected";
+
   while ($i < $num)
     {
-      $row = $db->fetch_row();	
-      
+      $row = $db->fetch_row();
+
       print "<tr $bc[$var]><td>";
 
-      print $st[$row[2]];            
+      print $st[$row[2]];
       print '</td><td align="center">';
-      print $row[1];            
+      print $row[1];
 
-      print '</td><td align="right">';	  
+      print '</td><td align="right">';
       print round($row[1]/$nbtotal*100,2)." %";
 
       print '</td><td align="right">';
 
-      print price($row[0]);	  
-      
-      print '</td><td align="right">';	  
-      print round($row[0]/$total*100,2)." %";	  
+      print price($row[0]);
+
+      print '</td><td align="right">';
+      print round($row[0]/$total*100,2)." %";
       print '</td></tr>';
-      
+
       $var=!$var;
       $i++;
     }
 
   print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td>';
-  print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td align="right">';	  
-  print price($total);	        
+  print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td align="right">';
+  print price($total);
   print '</td><td align="right">&nbsp;</td>';
   print "</tr></table>";
   $db->free();
 }
-else 
+else
 {
   dol_print_error($db);
-} 
+}
 
 
 /*
@@ -151,10 +149,10 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  
+
   if ( $num > 0 )
     {
-      $row = $db->fetch_row();	
+      $row = $db->fetch_row();
       $total = $row[0];
       $nbtotal = $row[1];
     }
@@ -179,54 +177,54 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  
+
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td width="30%">'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Number").'</td>';
   print '<td align="right">%</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
-  
+
   $var=True;
 
   require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
   $Rejet = new RejetPrelevement($db, $user);
-  
+
   while ($i < $num)
     {
-      $row = $db->fetch_row();	
-      
+      $row = $db->fetch_row();
+
       print "<tr $bc[$var]><td>";
-      print $Rejet->motifs[$row[2]]; 
+      print $Rejet->motifs[$row[2]];
 
       print '</td><td align="center">'.$row[1];
 
-      print '</td><td align="right">';	  
+      print '</td><td align="right">';
       print round($row[1]/$nbtotal*100,2)." %";
 
-      print '</td><td align="right">';	  
+      print '</td><td align="right">';
       print price($row[0]);
 
-      print '</td><td align="right">';	  
+      print '</td><td align="right">';
       print round($row[0]/$total*100,2)." %";
 
 
       print '</td></tr>';
-      
+
       $var=!$var;
       $i++;
     }
 
   print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td><td align="center">'.$nbtotal.'</td>';
-  print '<td>&nbsp;</td><td align="right">';	  
-  print price($total);	        
+  print '<td>&nbsp;</td><td align="right">';
+  print price($total);
   print '</td><td align="right">&nbsp;</td>';
   print "</tr></table>";
   $db->free();
 }
-else 
+else
 {
   dol_print_error($db);
-}  
+}
 
 
 $db->close();
