@@ -36,6 +36,8 @@ $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
 if (! isset($_GET["id"]) || empty($_GET["id"])) accessforbidden();
 
+// Defini si peux lire/modifier permisssions
+$canreaduser=($user->admin || $user->rights->user->user->lire);
 
 // Defini si peux modifier utilisateurs et permisssions
 $caneditperms=($user->admin || $user->rights->user->user->creer);
@@ -44,8 +46,13 @@ $caneditperms=($user->admin || $user->rights->user->user->creer);
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->id == $_GET["id"])	// A user can always read its own card
+{
+	$feature2='';
+	$canreaduser=1;
+}
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
-if ($user->id <> $_REQUEST["id"] && ! $canreadperms) accessforbidden();
+if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
 
 
 /**

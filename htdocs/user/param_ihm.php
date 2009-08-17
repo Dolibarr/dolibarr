@@ -17,10 +17,10 @@
  */
 
 /**
-        \file       htdocs/user/param_ihm.php
-        \brief      Onglet parametrage de la fiche utilisateur
-        \version    $Id$
-*/
+ *       \file       htdocs/user/param_ihm.php
+ *       \brief      Onglet parametrage de la fiche utilisateur
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -33,11 +33,11 @@ $langs->load("admin");
 $langs->load("users");
 
 // Defini si peux lire/modifier permisssions
-$canreadperms=($user->admin || $user->rights->user->user->lire);
+$canreaduser=($user->admin || $user->rights->user->user->lire);
 
 if ($_REQUEST["id"])
 {
-  // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edité
+  // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur editï¿½
   $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
 		  || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
 }
@@ -46,8 +46,13 @@ if ($_REQUEST["id"])
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->id == $_GET["id"])	// A user can always read its own card
+{
+	$feature2='';
+	$canreaduser=1;
+}
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
-if ($user->id <> $_REQUEST["id"] && ! $canreadperms) accessforbidden();
+if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
 
 
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
@@ -55,12 +60,12 @@ $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
 
-// Charge utilisateur edité
+// Charge utilisateur editï¿½
 $fuser = new User($db, $id);
 $fuser->fetch();
 $fuser->getrights();
 
-// Liste des zone de recherche permanantes supportées
+// Liste des zone de recherche permanantes supportï¿½es
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
@@ -227,7 +232,7 @@ else
 	}
 	else
 	{
-		if ($caneditfield  || $user->admin)       // Si utilisateur édité = utilisateur courant ayant les droits de créer ou admin
+		if ($caneditfield  || $user->admin)       // Si utilisateur ï¿½ditï¿½ = utilisateur courant ayant les droits de crï¿½er ou admin
 	    {
 	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Modify").'</a>';
 	    }

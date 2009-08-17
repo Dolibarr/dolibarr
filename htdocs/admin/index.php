@@ -59,6 +59,7 @@ print "<br>";
 print $langs->trans("SetupDescription2")."<br>";
 
 print "<br>";
+print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription3")."<br>";
 //print '<br>';
 print '<hr style="color: #DDDDDD;">';
@@ -66,6 +67,7 @@ print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
 //print '<br>';
 print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription5")."<br>";
+print '<hr style="color: #DDDDDD;">';
 print "<br>";
 
 /*

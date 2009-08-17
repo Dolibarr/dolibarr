@@ -29,8 +29,15 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 $langs->load("users");
 $langs->load("admin");
 
-$form = new Form($db);
-
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->id == $_GET["id"])	// A user can always read its own card
+{
+	$feature2='';
+}
+$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 
 /*
  * Actions
@@ -52,6 +59,8 @@ if ($_POST["action"] == 'update' && ! $_POST['cancel'])
 /*
  * View
  */
+
+$form = new Form($db);
 
 llxHeader("","ClickToDial");
 

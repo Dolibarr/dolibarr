@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/user/note.php
-        \ingroup    usergroup
-        \brief      Fiche de notes sur un utilisateur Dolibarr
-		\version    $Revision$
-*/
+ *      \file       htdocs/user/note.php
+ *      \ingroup    usergroup
+ *      \brief      Fiche de notes sur un utilisateur Dolibarr
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/usergroups.lib.php');
@@ -45,11 +43,15 @@ $fuser->fetch();
 // If user is not user read and no permission to read other users, we stop
 if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();
-  
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->id == $_GET["id"])	// A user can always read its own card
+{
+	$feature2='';
+}
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 
 

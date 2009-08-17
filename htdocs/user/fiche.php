@@ -37,7 +37,7 @@ if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adheren
 
 // Define value to know what current user can do on users
 $canadduser=($user->admin || $user->rights->user->user->creer);
-$canreadperms=($user->admin || $user->rights->user->user->lire);
+$canreaduser=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 // Define value to know what current user can do on properties of edited user
@@ -54,8 +54,13 @@ if ($_GET["id"])
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->id == $_GET["id"])	// A user can always read its own card
+{
+	$feature2='';
+	$canreaduser=1;
+}
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
-if ($user->id <> $_GET["id"] && ! $canreadperms) accessforbidden();
+if ($user->id <> $_GET["id"] && ! $canreaduser) accessforbidden();
 
 $langs->load("users");
 $langs->load("companies");
@@ -1225,7 +1230,7 @@ else
 
 					print "<tr ".$bc[$var].">";
 					print '<td>';
-					if ($canreadperms)
+					if ($canreaduser)
 					{
 						print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->nom.'</a>';
 					}

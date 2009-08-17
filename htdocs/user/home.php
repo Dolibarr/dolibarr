@@ -18,22 +18,25 @@
  */
 
 /**
-        \file       htdocs/user/home.php
-        \brief      Page acceuil de la zone utilisateurs et groupes
-        \version    $Id$
-*/
+ *	\file       htdocs/user/home.php
+ *	\brief      Page acceuil de la zone utilisateurs et groupes
+ *	\version    $Id$
+ */
 
 require("./pre.inc.php");
 
 if (! $user->rights->user->user->lire && !$user->admin)
 {
-  // Redirection vers la page de l'utilisateur
-  Header("Location: fiche.php?id=".$user->id);
+	// Redirection vers la page de l'utilisateur
+	Header("Location: fiche.php?id=".$user->id);
 }
 
 $langs->load("users");
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -73,7 +76,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
- * Derniers utilisateurs créés
+ * Derniers utilisateurs crees
  */
 $max=10;
 
@@ -88,56 +91,56 @@ $sql.= " DESC limit $max";
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
-    $var = true;
-    $i = 0;
+	$num = $db->num_rows($resql);
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
+	$var = true;
+	$i = 0;
 
-    while ($i < $num && $i < $max)
-    {
-        $obj = $db->fetch_object($resql);
-        $var=!$var;
+	while ($i < $num && $i < $max)
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
 
-        print "<tr $bc[$var]>";
-        print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a>";
-        if ($conf->global->MAIN_MODULE_MULTICOMPANY && $obj->admin && ! $obj->entity)
-        {
-        	print img_redstar($langs->trans("SuperAdministrator"));
-        }
-        else if ($obj->admin)
-        {
-        	print img_picto($langs->trans("Administrator"),'star');
-        }
-        print "</td>";
-        print "<td align=\"left\">".$obj->login.'</td>';
-        print "<td>";
-        if ($obj->fk_societe)
-        {
-            print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
-        }
-        else if ($obj->ldap_sid)
-        {
-        	print $langs->trans("DomainUser");
-        }
-        else print $langs->trans("InternalUser");
-        print '</td>';
-        print "<td align=\"right\">".dol_print_date($obj->datec,'dayhour')."</td>";
-        print '</tr>';
-        $i++;
-    }
-    print "</table><br>";
+		print "<tr $bc[$var]>";
+		print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a>";
+		if ($conf->global->MAIN_MODULE_MULTICOMPANY && $obj->admin && ! $obj->entity)
+		{
+			print img_redstar($langs->trans("SuperAdministrator"));
+		}
+		else if ($obj->admin)
+		{
+			print img_picto($langs->trans("Administrator"),'star');
+		}
+		print "</td>";
+		print "<td align=\"left\">".$obj->login.'</td>';
+		print "<td>";
+		if ($obj->fk_societe)
+		{
+			print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_societe.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a>';
+		}
+		else if ($obj->ldap_sid)
+		{
+			print $langs->trans("DomainUser");
+		}
+		else print $langs->trans("InternalUser");
+		print '</td>';
+		print "<td align=\"right\">".dol_print_date($obj->datec,'dayhour')."</td>";
+		print '</tr>';
+		$i++;
+	}
+	print "</table><br>";
 
-    $db->free($resql);
+	$db->free($resql);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
 /*
- * Derniers groupes créés
+ * Derniers groupes crï¿½ï¿½s
  */
 $max=5;
 
@@ -149,35 +152,35 @@ if ($max) $sql.= " LIMIT $max";
 
 if ( $db->query($sql) )
 {
-    $num = $db->num_rows();
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
-    $var = true;
-    $i = 0;
+	$num = $db->num_rows();
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
+	$var = true;
+	$i = 0;
 
-    while ($i < $num && (! $max || $i < $max))
-    {
-        $obj = $db->fetch_object();
-        $var=!$var;
+	while ($i < $num && (! $max || $i < $max))
+	{
+		$obj = $db->fetch_object();
+		$var=!$var;
 
-        print "<tr $bc[$var]>";
-        print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
-        if (!$obj->entity)
-        {
-        	print img_picto($langs->trans("GlobalGroup"),'redstar');
-        }
-        print "</td>";
-        print "<td width=\"80\" align=\"center\">".dol_print_date($obj->datec)."</td>";
-        print "</tr>";
-        $i++;
-    }
-    print "</table><br>";
+		print "<tr $bc[$var]>";
+		print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
+		if (!$obj->entity)
+		{
+			print img_picto($langs->trans("GlobalGroup"),'redstar');
+		}
+		print "</td>";
+		print "<td width=\"80\" align=\"center\">".dol_print_date($obj->datec)."</td>";
+		print "</tr>";
+		$i++;
+	}
+	print "</table><br>";
 
-    $db->free();
+	$db->free();
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 

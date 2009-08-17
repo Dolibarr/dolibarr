@@ -17,10 +17,10 @@
  */
 
 /**
-        \file       htdocs/user/info.php
-        \ingroup    core
-		\brief      Page des informations d'un utilisateur
-		\version    $Id$
+ *      \file       htdocs/user/info.php
+ *      \ingroup    core
+ *		\brief      Page des informations d'un utilisateur
+ *		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -40,6 +40,10 @@ $fuser->fetch();
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->id == $_GET["id"])	// A user can always read its own card
+{
+	$feature2='';
+}
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 
 // If user is not user read and no permission to read other users, we stop
