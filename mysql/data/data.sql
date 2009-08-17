@@ -724,6 +724,12 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '208', 'SN
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d intérêt économique');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d intérêt économique');
 
+-- For germany
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '500', 'Limited liability corporation (GmbH)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '501', 'Stock corporation (AG)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '502', 'Partnerships general or limited (GmbH & CO. KG)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '503', 'Sole proprietor / Private business');
+
 -- Pour la Suisse
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '600', 'Raison Individuelle');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '601', 'Société Simple');
