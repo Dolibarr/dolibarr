@@ -23,7 +23,7 @@
 /**
  *	    \file       htdocs/compta/bank/account.php
  *		\ingroup    banque
- *		\brief      Page de détail des transactions bancaires
+ *		\brief      Page de dï¿½tail des transactions bancaires
  *		\version    $Id$
  */
 
@@ -475,10 +475,13 @@ if ($account || $_GET["ref"])
 			{
 				$var=!$var;
 
-				if ($objp->do > $time && !$sep)
+				// Is it a transaction in future ?
+				if ($objp->do > $time && !$sep)		// Yes, we show a subtotal
 				{
 					$sep = 1 ;
-					print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
+					print '<tr class="liste_total"><td colspan="7">';
+					print $langs->trans("CurrentBalance");
+					print '</td>';
 					print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
 					print "<td>&nbsp;</td>";
 					print '</tr>';
@@ -564,7 +567,7 @@ if ($account || $_GET["ref"])
 						print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
 						{
-							// Label générique car entre parenthèses. On l'affiche en le traduisant
+							// Label gï¿½nï¿½rique car entre parenthï¿½ses. On l'affiche en le traduisant
 							if ($reg[1]=='paiement') $reg[1]='Payment';
 							print $langs->trans($reg[1]);
 						}
@@ -608,6 +611,7 @@ if ($account || $_GET["ref"])
 				}
 				print '</td>';
 
+				// Amount
 				if ($objp->amount < 0)
 				{
 					print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
@@ -617,6 +621,7 @@ if ($account || $_GET["ref"])
 					print "<td>&nbsp;</td><td align=\"right\" nowrap>&nbsp;".price($objp->amount)."</td>\n";
 				}
 
+				// Balance
 				if ($action != 'search')
 				{
 					if ($total >= 0)
@@ -633,7 +638,7 @@ if ($account || $_GET["ref"])
 					print '<td align="right">-</td>';
 				}
 
-				// Relevé rappro ou lien edition
+				// Receipt conciliate or edit link
 				if ($objp->rappro && $acct->type != 2)  // Si non compte cash
 				{
 					print "<td align=\"center\" nowrap>";
@@ -676,10 +681,13 @@ if ($account || $_GET["ref"])
 			$i++;
 		}
 
-		// Affichage total
+		// Show total
 		if ($page == 0 && ! $mode_search)
 		{
-			print '<tr class="liste_total"><td align="left" colspan="7">'.$langs->trans("CurrentBalance").'</td>';
+			print '<tr class="liste_total"><td align="left" colspan="7">';
+			if ($sep) print '&nbsp;';
+			else print $langs->trans("CurrentBalance");
+			print '</td>';
 			print '<td align="right" nowrap>'.price($total).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
