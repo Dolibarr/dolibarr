@@ -19,11 +19,11 @@
  */
 
 /**
-   \file       htdocs/admin/editeur.php
-   \ingroup    editeur
-   \brief      Page d'administration/configuration du module Editeur
-   \version    $Id$
-*/
+ *  \file       htdocs/admin/editeur.php
+ *  \ingroup    editeur
+ *  \brief      Page d'administration/configuration du module Editeur
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -72,10 +72,10 @@ print '<br>';
 
 print '<form action="editeur.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
+print '<table class="nobordernopadding" width="100%">';
 
 print '<input type="hidden" name="action" value="set">';
-print "<tr $bc[$var] class=value><td>".$langs->trans("Nouveau format").'</td><td>';
+print "<tr $bc[$var] class=value><td>".$langs->trans("NewFormat").'</td><td>';
 print '<input type="texte" name="format">';
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button">';
@@ -106,7 +106,7 @@ while ($obj = $db->fetch_object($result) )
 
   print "<tr $bc[$var]><td>".nl2br($obj->value)."</td>\n";
 
-  print '<td>';
+  print '<td align="center">';
   print '<a href="editeur.php?action=unset&id='.$obj->rowid.'">'.$langs->trans('Delete').'</a>';
   print "</td></tr>\n";
 }
