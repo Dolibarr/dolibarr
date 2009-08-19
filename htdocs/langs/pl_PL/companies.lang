@@ -202,7 +202,6 @@ ErrorVATCheckMS_UNAVAILABLE=Zameldowanie nie jest możliwe. Sprawdź usługi nie
 NorProspectNorCustomer=Nie perspektywę, ani klienta
 JuridicalStatus=Status prawny
 Staff=Personel
-ProspectLevelShort=Potentiel
 ProspectLevel=Prospect potencjał
 ContactPrivate=Prywatne
 ContactPublic=Współużytkowane
@@ -282,3 +281,13 @@ YouMustCreateContactFirst=Musisz stworzyć e-maile, kontakty dla trzeciej pierws
 MonkeyNumRefModelDesc=Wróć NUMERO z formatu% syymm-nnnn klienta i kod% syymm-nnnn dla dostawcy kod yy gdzie jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0.
 LeopardNumRefModelDesc=Klient / dostawcy kod jest bezpłatny. Ten kod może być modyfikowany w dowolnym momencie.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+// Reference language: en_US
+ProfId1DE=Prof Id 1 (USt.-IdNr)
+ProfId2DE=Prof ID 2 (USt. Nr)
+ProfId3DE=Prof ID 3 (Handelsregister-Nr.)
+ProfId4DE=--
+ProspectLevelShort=Potencjalne
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).

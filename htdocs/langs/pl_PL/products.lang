@@ -40,7 +40,6 @@ ServicesOnSell=Usługi na sprzedaż
 ServicesNotOnSell=Usługi na sprzedaż
 InternalRef=Internal reference
 LastRecorded=Ostatnie produkty / usługi na sprzedaż rejestrowana
-LastRecordedProductsAndServices=Ostatnia% s precorded roducts / usługi
 LastModifiedProductsAndServices=Ostatnia% s zmodyfikowane produkty / usługi
 LastRecordedProducts=Ostatnia% s produkty zarejestrowane
 LastRecordedServices=Ostatnia% s zarejestrowanych usług
@@ -167,3 +166,9 @@ ConfirmCloneProduct=Czy na pewno chcesz klon produktu lub <b>usługi% s?</b>
 CloneContentProduct=Clone informacje o wszystkich głównych produktów / usług
 ClonePricesProduct=Clone główne informacje i ceny
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+// Reference language: en_US
+LastRecordedProductsAndServices=Ostatnia% s rejestrowane produkty / usługi
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).

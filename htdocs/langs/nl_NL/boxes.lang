@@ -16,8 +16,6 @@ BoxLastProducts=Laatste producten / diensten
 BoxLastProductsInContract=Laatste gecontracteerde producten / diensten
 BoxLastSupplierBills=Laatste leverancier facturen
 BoxLastCustomerBills=Laatste klant facturen
-BoxOldestUnpaidCustomerBills=Oudste unpaid klant facturen
-BoxOldestUnpaidSupplierBills=Oudste unpaid leverancier facturen
 BoxLastProposals=Laatste commerciële voorstellen
 BoxLastProspects=Laatste kans
 BoxLastCustomers=Laatste klanten
@@ -27,8 +25,6 @@ BoxLastBooks=Laatste boeken
 BoxLastActions=Laatste acties
 BoxCurrentAccounts=Lopende rekeningen evenwicht
 BoxSalesTurnover=Omzet
-BoxTotalUnpaidCustomerBills=Totaal unpaid klant facturen
-BoxTotalUnpaidSuppliersBills=Totaal unpaid leverancier facturen
 BoxTitleLastBooks=Last% s geregistreerd boeken
 BoxTitleNbOfCustomers=Nombre de client
 BoxTitleLastRssInfos=Laatste nieuws uit% s% s
@@ -42,12 +38,8 @@ BoxTitleLastCustomerBills=Last% s klant facturen
 BoxTitleLastSupplierBills=Last% s leverancier facturen
 BoxTitleLastProspects=Last% s geregistreerd vooruitzichten
 BoxTitleLastProductsInContract=Last% s derniers produits / diensten
-BoxTitleOldestUnpaidCustomerBills=Oudste% s unpaid klant facturen
-BoxTitleOldestUnpaidSupplierBills=Oudste% s unpaid leverancier facturen
 BoxTitleCurrentAccounts=Lopende rekening van de saldi
 BoxTitleSalesTurnover=Omzet
-BoxTitleTotalUnpaidCustomerBills=Unpaid klant facturen
-BoxTitleTotalUnpaidSuppliersBills=Unpaid leverancier facturen
 BoxMyLastBookmarks=Mijn laatste% s bladwijzers
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Laatste succesvolle refresh datum:% s
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Geen bladwijzers gedefinieerd. Klik <a href="%s">hier</a> om bladwijzers toe te voegen.
@@ -57,9 +49,7 @@ NoActionsToDo=Geen acties te doen
 NoRecordedOrders=Nr. geregistreerd klant orders
 NoRecordedProposals=Nr. opgenomen voorstellen
 NoRecordedInvoices=Nr. geregistreerd klant facturen
-NoUnpaidCustomerBills=Nr. unpaid klant facturen
 NoRecordedSupplierInvoices=Nr. geregistreerd leverancier facturen
-NoUnpaidSupplierBills=Nr. unpaid leverancier facturen
 // Date 2009-01-18 23:57:49
 // STOP - Lines generated via parser
 
@@ -79,3 +69,18 @@ NoRecordedProducts=Nr. geregistreerd producten / diensten
 NoRecordedProspects=Nr. geregistreerd vooruitzichten
 NoContractedProducts=Geen producten / diensten die
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+BoxOldestUnpaidCustomerBills=Oudste klant onbetaalde facturen
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde leverancier facturen
+BoxTotalUnpaidCustomerBills=Totaal onbetaalde klant facturen
+BoxTotalUnpaidSuppliersBills=Totaal leverancier onbetaalde facturen
+BoxTitleOldestUnpaidCustomerBills=Oudste% s klant onbetaalde facturen
+BoxTitleOldestUnpaidSupplierBills=Oudste% s onbetaalde leverancier facturen
+BoxTitleTotalUnpaidCustomerBills=Klant onbetaalde facturen
+BoxTitleTotalUnpaidSuppliersBills=Onbetaalde leverancier facturen
+NoUnpaidCustomerBills=Geen klant onbetaalde facturen
+NoUnpaidSupplierBills=Geen onbetaalde leverancier facturen
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

@@ -69,7 +69,6 @@ MailingAddFile=Liitä tämä kuva
 NoAttachedFiles=Ei liitetiedostoja
 MailingModuleDescContactCompanies=Yhteystiedot kaikista kolmansien osapuolten (asiakas, näkymä, toimittaja, ...)
 MailingModuleDescDolibarrUsers=Kaikki Dolibarr käyttäjien sähköpostit
-MailingModuleDescFundationMembers=Fundation jäsenten sähköpostit
 MailingModuleDescEmailsFromFile=Sähköpostit tekstitiedosto (sähköposti, nimi, sukunimi)
 MailingModuleDescContactsCategories=Yhteystiedot kaikista kolmansien osapuolten (luokittain)
 LineInFile=Rivi% s tiedosto
@@ -117,3 +116,9 @@ DateLastSend=Viimeisen lähettäminen
 MailingModuleDescDolibarrContractsLinesExpired=Kolmannen osapuolen kanssa lakkaa sopimuksen linjat
 YouCanUseCommaSeparatorForSeveralRecipients=Voit käyttää <b>comma</b> separator määritellä usealle vastaanottajalle.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+MailingModuleDescFundationMembers=Säätiön jäsenten sähköpostit
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

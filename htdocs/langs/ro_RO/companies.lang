@@ -200,7 +200,6 @@ ErrorVATCheckMS_UNAVAILABLE=Verificaţi nu este posibil. Verificaţi serviciu nu
 NorProspectNorCustomer=Nici o perspectivă, nici client
 JuridicalStatus=Statut juridic
 Staff=Personal
-ProspectLevelShort=Potentiel
 ProspectLevel=Prospect potenţial
 ContactPrivate=Privata
 ContactPublic=Shared
@@ -280,3 +279,13 @@ YouMustCreateContactFirst=Trebuie să creaţi contacte e-mail-uri terţă parte 
 MonkeyNumRefModelDesc=Întoarceţi-vă NUMERO cu formatul% syymm-NNNN pentru codul de client şi% syymm-NNNN furnizor de cod în cazul în care este aa ani, mm este luna şi NNNN este o succesiune fără pauză şi fără întoarcere la 0.
 LeopardNumRefModelDesc=Client / furnizor de cod este gratuit. Acest cod poate fi modificat în orice moment.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+// Reference language: en_US
+ProfId1DE=Prof Id-ul 1 (USt.-IdNr)
+ProfId2DE=Prof Id-ul 2 (USt.-NR)
+ProfId3DE=Prof Id-ul 3 (Handelsregister-Nr.)
+ProfId4DE=--
+ProspectLevelShort=Potential
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).

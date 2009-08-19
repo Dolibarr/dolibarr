@@ -2,7 +2,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Inloggen %s bestaat reeds.
 ErrorGroupAlreadyExists=Groep %s bestaat reeds.
-ErrorDuplicateTrigger=Een trigger bestand met klasse nam <b>&#39;% s&#39;</b> is aanwezig sevaral tijden. Verwijder dubbele trigger-bestand in de directory <b>&#39;% s&#39;.</b>
 ErrorFailToDeleteFile=Mislukt om bestand '<b>%s</b>' te verwijderen
 ErrorFailToCreateFile=Mislukt om bestand '<b>%s</b>' te creëren
 ErrorFailToRenameDir=Mislukt om directory '<b>%s</b>' in '<b>%s</b>' te hernoemen
@@ -47,3 +46,10 @@ ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "statut not s
 ErrorBillRefAlreadyExists=Ref gebruikt voor de oprichting bestaat al.
 ErrorPleaseTypeBankTransactionReportName=Vul bankontvangst naam in waar transactie wordt gemeld (Formaat YYYYMM of JJJJMMDD)
 ErrorRecordHasChildren=Mislukt om records te verwijderen omdat er nog gelinkte bestanden zijn.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+MenuManager=Menu manager
+ErrorUrlNotValid=Het adres van de website is onjuist
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

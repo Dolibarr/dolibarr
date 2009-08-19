@@ -66,7 +66,6 @@ CreateUser=Создать пользователя
 DatabaseSuperUserAccess=База данных - Superuser доступа
 CheckToCreateDatabase=Флажок, если база данных не существует, и должен быть создан. <br> В этом случае, вы должны заполнить логин и пароль для учетной записи суперпользователя в нижней части этой страницы.
 CheckToCreateUser=Флажок, если логин не существует и должна быть создана. <br> В этом случае, вы должны заполнить логин и пароль для учетной записи суперпользователя в нижней части этой страницы.
-Experimental=(экспериментальная, не operationnal)
 DatabaseRootLoginDescription=Войти на пользователя разрешается создавать новые базы данных и новых пользователей, бесполезны, если ваша база данных, и ваша база данных логин уже существует (например, когда вы Хостинг провайдер веб-хостинга).
 KeepEmptyIfNoPassword=Оставьте пустым, если пользователь не имеет пароля (избежать этого)
 SaveConfigurationFile=Сохранить ценности
@@ -141,7 +140,6 @@ MigrationProposal=Данные миграции для коммерческих 
 MigrationInvoice=Данные миграции для клиентов, счета-фактуры
 MigrationContract=Данные по миграции контрактов
 MigrationSuccessfullUpdate=Обновление успешной
-MigrationUpdateFailed=Falied процесса обновления
 MigrationPaymentsUpdate=Оплата данных коррекции
 MigrationPaymentsNumberToUpdate=% с платежа (ей) для обновления
 MigrationProcessPaymentUpdate=Обновление платежа (ей)% S
@@ -181,9 +179,15 @@ MigrationDeliveryDetail=Поставка обновлений
 GoToDolibarr=Перейти к Dolibarr
 MigrationNotFinished=Версия Вашего dtabase не полностью в курсе, так что вам придется запустить процесс обновления еще раз.
 GoToUpgradePage=Перейти на страницу снова обновить
-InstallChoiceRecommanded=Recommanded выбор для установки версии <b>S%</b> от текущей <b>версии% S</b>
 InstallChoiceSuggested=<b>Установить выбор предложенной установки.</b>
 MigrationStockDetail=Обновление запасов стоимость товаров
 MigrationMenusDetail=Обновление динамического меню таблицы
 MigrationDeliveryAddress=Обновить адрес для доставки грузов в
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+// Reference language: en_US
+Experimental=(экспериментальная, не действуют)
+MigrationUpdateFailed=Сбой процесса обновления
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).

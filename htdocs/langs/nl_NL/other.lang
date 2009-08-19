@@ -51,8 +51,6 @@ PredefinedMailContentSendInvoiceReminder=Nous apportons votre Connaissance que l
 PredefinedMailContentSendProposal=Veuillez trouver ci-joint la proposition commerciale __PROPREF__ \ n \ nCordialement \ n \ n
 PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF__ \ n \ nCordialement \ n \ n
 ChooseYourDemoProfil=Kies de demo profiel die overeenkomen met uw activiteit ...
-DemoFundation=Leden beheren van een fundation
-DemoFundation2=Beheer van de leden en de bankrekening van een fundation
 DemoCompanyShopWithCashDesk=Beheren van een winkel met een kassa
 DemoCompanyProductAndStocks=Het beheren van een kleine of middelgrote onderneming verkopen van producten
 DemoCompanyAll=Het beheren van een kleine of middelgrote onderneming met meerdere activiteiten (alle modules)
@@ -175,3 +173,10 @@ EMailTextInvoiceValidated=Factuur% is gevalideerd
 ImportedWithSet=Invoer van gegevens
 DolibarrNotification=Automatische melding
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+DemoFundation=Leden beheren van een stichting
+DemoFundation2=Beheer van de leden en de bankrekening van een stichting
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

@@ -1069,7 +1069,6 @@ ForcedToByAModule=Esta regra é forçado <b>a% s</b> activado por um módulo
 DetailEnabled=Condição para mostrar ou não entrada
 SummaryOfVatExigibilityUsedByDefault=Hora do IVA exigibility por padrão de acordo com a opção escolhida:
 OnDelivery=Na entrega
-OnPayment=Em payement
 OnInvoice=Em factura
 SupposedToBePaymentDate=Data de pagamento utilizado, se não sabe data de entrega
 Buy=Comprar
@@ -1084,3 +1083,9 @@ BankSetupModule=Banco módulo configuração
 FreeLegalTextOnChequeReceipts=Texto livre sobre cheque recibos
 MultiCompanySetup=Multi-empresa módulo configuração
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).
+// Reference language: en_US
+OnPayment=No pagamento
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).

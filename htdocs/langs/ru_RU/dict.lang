@@ -272,3 +272,10 @@ CurrencyXAF=Франков КФА БГЦА
 CurrencyXOF=Франков КФА ЦБЗАГ
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+// Reference language: en_US
+CountryCH=Швейцария
+CountryMA=Марокко
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).

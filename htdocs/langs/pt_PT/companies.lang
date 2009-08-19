@@ -271,3 +271,12 @@ LeopardNumRefModelDesc=Código de cliente/fornecedor livre sem verificação. po
 PriceLevel=Nível de preços
 YouMustCreateContactFirst=Você deve criar contactos e-mails para terceiros, primeiro a ser capaz de adicionar e-mails notificações.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).
+// Reference language: en_US
+ProfId1DE=Prof Id 1 (USt.-IdNr)
+ProfId2DE=Prof Id 2 (USt.-Nr)
+ProfId3DE=Prof Id 3 (Handelsregister-Nr.)
+ProfId4DE=--
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).

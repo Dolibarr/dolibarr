@@ -91,7 +91,6 @@ DomainUser=Domena użytkownika% s
 Reactivate=Przywraca
 CreateInternalUserDesc=Ta forma pozwala na utworzenie jeden użytkownik wewnętrzną Twojej firmy / fundacji. Aby creat zewnętrznego użytkownika (klienta, dostawcy, ...), użyć przycisku &quot;Utwórz Dolibarr użytkownika&quot; od osoby trzeciej karcie kontaktu.
 InternalExternalDesc=<b>Wewnętrzny</b> użytkownik jest użytkownikiem, który jest częścią firmy / fundacji. <br> <b>Zewnętrzna</b> użytkownika klienta, dostawcy lub innym. <br><br> W obu przypadkach uprawnienia określa prawa Dolibarr, także zewnętrznych użytkownik może mieć różne menu menedżera niż użytkownika wewnętrznego (patrz strona główna - Instalator - Display)
-PermissionInheritedFromAGroup=Zezwolenie udzielone ineherited ponieważ jeden z użytkowników grupy.
 IdPhoneCaller=ID dzwoniącego telefonu
 UserLogged=Użytkownik% s podłączony
 NewUserCreated=Użytkownik% s tworzone
@@ -124,3 +123,9 @@ ConfirmCreateLogin=Czy na pewno chcesz, aby utworzyć konto dla tego Dolibarr cz
 ConfirmCreateThirdParty=Czy na pewno chcesz, aby utworzyć trzecią dla tego członka?
 NameToCreate=Nazwisko osoby trzeciej w celu stworzenia
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+// Reference language: en_US
+PermissionInheritedFromAGroup=Zezwolenie udzielone ponieważ odziedziczył od jednego z użytkowników grupy.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).

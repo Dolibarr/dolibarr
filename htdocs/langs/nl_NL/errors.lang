@@ -13,7 +13,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Inloggen% s bestaat reeds.
 ErrorGroupAlreadyExists=Groep% s bestaat reeds.
-ErrorDuplicateTrigger=Een trigger bestand met klasse nam <b>&#39;% s&#39;</b> is aanwezig sevaral tijden. Verwijder dubbele trigger-bestand in de directory <b>&#39;% s&#39;.</b>
 ErrorFailToDeleteFile=Mislukt te verwijderen bestand <b>&#39;% s&#39;.</b>
 ErrorFailToCreateFile=Mislukt om het bestand <b>&#39;% s&#39;.</b>
 ErrorFailToRenameDir=Failed to rename directory <b>&#39;% s&#39; in&#39;% s&#39;.</b>

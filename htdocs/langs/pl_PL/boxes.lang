@@ -16,8 +16,6 @@ BoxLastProducts=Ostatnie produkty / usługi
 BoxLastProductsInContract=Ostatnia zakontraktowanych produktów / usług
 BoxLastSupplierBills=Ostatnia dostawcy faktur
 BoxLastCustomerBills=Ostatnia klienta faktury
-BoxOldestUnpaidCustomerBills=Najstarszy unpaid klienta faktury
-BoxOldestUnpaidSupplierBills=Najstarszy unpaid dostawcy faktur
 BoxLastProposals=Ostatnia propozycji
 BoxLastProspects=Ostatnia perspektywy
 BoxLastCustomers=Ostatnia klientów
@@ -27,8 +25,6 @@ BoxLastBooks=Ostatnie książki
 BoxLastActions=Ostatnie działania
 BoxCurrentAccounts=Rachunki bieżące saldo
 BoxSalesTurnover=Obrót
-BoxTotalUnpaidCustomerBills=Razem unpaid klienta faktury
-BoxTotalUnpaidSuppliersBills=Razem unpaid dostawcy faktur
 BoxTitleLastBooks=Ostatnia% s rejestrowane książek
 BoxTitleNbOfCustomers=Nombre de klienta
 BoxTitleLastRssInfos=Ostatnie wieści z% s% s
@@ -42,12 +38,8 @@ BoxTitleLastCustomerBills=Ostatnia% s klienta faktury
 BoxTitleLastSupplierBills=Ostatnia% s dostawcy faktur
 BoxTitleLastProspects=Ostatnia% s rejestrowane perspektywy
 BoxTitleLastProductsInContract=Ostatnia% s derniers produktów / usług umów
-BoxTitleOldestUnpaidCustomerBills=Najstarszy% s unpaid klienta faktury
-BoxTitleOldestUnpaidSupplierBills=Najstarszy% s unpaid dostawcy faktur
 BoxTitleCurrentAccounts=Salda na rachunku obrotów bieżących
 BoxTitleSalesTurnover=Obrót
-BoxTitleTotalUnpaidCustomerBills=Unpaid klienta faktury
-BoxTitleTotalUnpaidSuppliersBills=Unpaid dostawcy faktur
 BoxMyLastBookmarks=Moje ostatnie% s zakładek
 FailedToRefreshDataInfoNotUpToDate=Nie można odświeżyć RSS topnika. Ostatnie udane odświeżenie data:% s
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Nie zdefiniowano zakładki. Kliknij <a href="%s">tutaj,</a> aby dodać zakładki.
@@ -57,9 +49,7 @@ NoActionsToDo=Brak działań do
 NoRecordedOrders=Nr rejestrowane klienta zamówienia
 NoRecordedProposals=Nr zarejestrowanych wniosków
 NoRecordedInvoices=Nr rejestrowane klienta faktury
-NoUnpaidCustomerBills=Nr unpaid klienta faktury
 NoRecordedSupplierInvoices=Nr rejestrowane dostawcy faktur
-NoUnpaidSupplierBills=Nr unpaid dostawcy faktur
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 
@@ -71,3 +61,18 @@ NoRecordedProducts=Nr zarejestrowane produkty / usługi
 NoRecordedProspects=Nr rejestrowane perspektywy
 NoContractedProducts=Brak produktów / usług zakontraktowanych
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+// Reference language: en_US
+BoxOldestUnpaidCustomerBills=Najstarszego klienta niezapłaconych faktur
+BoxOldestUnpaidSupplierBills=Najstarszy dostawcy niezapłaconych faktur
+BoxTotalUnpaidCustomerBills=Suma niezapłaconych faktur klienta
+BoxTotalUnpaidSuppliersBills=Suma niezapłaconych faktur dostawcy
+BoxTitleOldestUnpaidCustomerBills=Najstarszy% s klienta niezapłaconych faktur
+BoxTitleOldestUnpaidSupplierBills=Najstarszy% s dostawcy niezapłaconych faktur
+BoxTitleTotalUnpaidCustomerBills=Należne wpłaty klienta faktury
+BoxTitleTotalUnpaidSuppliersBills=Zaległej płatności za faktury dostawcy
+NoUnpaidCustomerBills=Nr klienta niezapłaconych faktur
+NoUnpaidSupplierBills=Nr dostawcy niezapłaconych faktur
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).

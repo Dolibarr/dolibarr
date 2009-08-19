@@ -129,7 +129,7 @@ KeepDefaultValues=You use the Doliwamp setup wizard, so values proposed here are
 FieldRenamed=Field renamed
 IfLoginDoesNotExistsCheckCreateUser=If login does not exists yet, you must check option "Create user"
 ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or PHP client version may be too old compared to database version.
-InstallChoiceRecommanded=Recommanded choice to install version <b>%s</b> from your current version <b>%s</b>
+InstallChoiceRecommanded=Recommended choice to install version <b>%s</b> from your current version <b>%s</b>
 InstallChoiceSuggested=<b>Install choice suggested by installer</b>.
 
 #########
@@ -141,7 +141,7 @@ MigrationProposal=Data migration for commercial proposals
 MigrationInvoice=Data migration for customers' invoices
 MigrationContract=Data migration for contracts
 MigrationSuccessfullUpdate=Upgrade successful
-MigrationUpdateFailed=Falied upgrade process
+MigrationUpdateFailed=Failed upgrade process
 
 # Payments Update
 MigrationPaymentsUpdate=Payment data correction
@@ -180,8 +180,8 @@ MigrationReopenThisContract=Reopen contract %s
 MigrationReopenedContractsNumber=%s contracts modified
 MigrationReopeningContractsNothingToUpdate=No closed contract to open
 
-# Migration transfert
-MigrationBankTransfertsUpdate=Update links between bank transaction and a bank transfert
+# Migration transfer
+MigrationBankTransfertsUpdate=Update links between bank transaction and a bank transfer
 MigrationBankTransfertsNothingToUpdate=All links are up to date
 
 # Migration delivery

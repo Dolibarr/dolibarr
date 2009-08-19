@@ -38,7 +38,6 @@ ServicesOnSell=Palvelut myydä
 ServicesNotOnSell=Palvelut pois myydä
 InternalRef=Kertomus
 LastRecorded=Uusimmat tuotteet / palvelut myydä kirjataan
-LastRecordedProductsAndServices=Viimeisin% s precorded roducts / palvelut
 LastModifiedProductsAndServices=Viimeisin% s muunneltuja tuotteita / palveluita
 LastRecordedProducts=Viimeisin% s tuotteet kirjataan
 LastRecordedServices=Viimeisin% s palvelut kirjataan
@@ -165,3 +164,9 @@ ConfirmCloneProduct=Oletko varma, että haluat klooni tuotteen tai <b>palvelun% 
 CloneContentProduct=Klooni kaikki tärkeimmät tiedot tuotteen / palvelun
 ClonePricesProduct=Klooni tärkeimmät tiedot ja hinnat
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+LastRecordedProductsAndServices=Viimeisin% s kirjataan tuotteet / palvelut
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

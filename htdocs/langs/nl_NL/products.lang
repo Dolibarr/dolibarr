@@ -40,7 +40,6 @@ ServicesOnSell=Diensten op verkopen
 ServicesNotOnSell=Diensten van de verkopen
 InternalRef=Verslag
 LastRecorded=Laatste producten / diensten verkopen geregistreerd
-LastRecordedProductsAndServices=Last% s precorded roducts / diensten
 LastModifiedProductsAndServices=Last% s gemodificeerde producten / diensten
 LastRecordedProducts=Last% s producten geregistreerd
 LastRecordedServices=Last% s diensten opgenomen
@@ -167,3 +166,9 @@ ConfirmCloneProduct=Weet u zeker dat u wilt kloon product of <b>dienst% s?</b>
 CloneContentProduct=Clone alle belangrijke informatie van het product / dienst
 ClonePricesProduct=Clone belangrijkste informatie en prijzen
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+LastRecordedProductsAndServices=Last% s opgenomen producten / diensten
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

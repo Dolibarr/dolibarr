@@ -60,7 +60,6 @@ MailingAddFile=Bestand toevoegen
 NoAttachedFiles=Geen bijgevoegde bestanden
 MailingModuleDescContactCompanies=Contacten van alle derde partijen (klant, potentiële klant, leverancier, ...)
 MailingModuleDescDolibarrUsers=Alle Dolibarr gebruikers met e-mails
-MailingModuleDescFundationMembers=Fundation leden met e-mails
 MailingModuleDescEmailsFromFile=E-mails van een tekstbestand (e-mail, naam, achternaam, commentaar)
 MailingModuleDescContactsCategories=Derde partijen met e-mails (per categorie)
 LineInFile=Regel %s in bestand
@@ -90,3 +89,20 @@ ANotificationsWillBeSent=1 berichtgeving zal worden verzonden per e-mail
 SomeNotificationsWillBeSent=%s berichtgevingen worden verzonden per e-mail
 AddNewNotification=Activeer een nieuw verzoek van berichtgeving
 ListOfActiveNotifications=Lijst van alle actieve berichtgevingen
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+AllEMailings=Alle eMailings
+ResetMailing=Opnieuw emailen
+ConfirmResetMailing=Let op, e-mailen <b>initialiseren% s,</b> die u in staat om een massale verzending van deze e-mail een andere tijd. Weet u zeker dat u dit is wat u wilt doen?
+BadEMail=Onjuiste waarde voor e-mail
+CloneEMailing=Clone mailen
+ConfirmCloneEMailing=Weet u zeker dat u wilt kloon deze e-mail te sturen?
+CloneContent=Clone bericht
+CloneReceivers=Cloner ontvangers
+DateLastSend=Datum van de laatse verzenden
+MailingModuleDescFundationMembers=Stichting leden met e-mails
+MailingModuleDescDolibarrContractsLinesExpired=Derden verstreken contract lijnen
+YouCanUseCommaSeparatorForSeveralRecipients=U kunt de <b>komma</b> scheidingsteken te specificeren verschillende ontvangers.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

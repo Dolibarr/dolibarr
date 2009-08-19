@@ -21,7 +21,6 @@ DeleteAction=Poista toiminto / tehtävä
 NewAction=Uusi toimi / tehtävä
 AddAction=Lisää toiminta / tehtävä
 AddAnAction=Lisää toiminta / tehtävä
-AddActionRendezVous=Lisää Rendez-Vous tehtävä
 ConfirmDeleteAction=Oletko varma, että haluat poistaa tämän tehtävän?
 CardAction=Toimi-kortti
 PercentDone=Prosenttiosuus tehnyt
@@ -88,7 +87,8 @@ ActionAC_COM=Lähetä tilata postitse
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
 // Reference language: en_US
-Rendez-Vous=Rendez-Vous
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+AddActionRendezVous=Lisää Rendezvous tehtävä
+Rendez-Vous=Rendezvous
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

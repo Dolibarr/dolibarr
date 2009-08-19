@@ -18,7 +18,6 @@ NewDonation=منحة جديدة
 DonationPromise=هدية الوعد
 PromisesNotValid=وعود لم يصادق
 PromisesValid=صادق الوعود
-DonationsPaid=التبرعات paid
 DonationsReceived=تلقى التبرعات
 PublicDonation=تبرع العامة
 DonationsNumber=تبرع عدد
@@ -34,3 +33,9 @@ BuildDonationReceipt=بناء استلام
 DonationsModels=نماذج لوثائق ايصالات للتبرع
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+DonationsPaid=التبرعات المدفوعة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

@@ -129,7 +129,6 @@ ConfirmDeleteBill						   =Sei sicuro di voler cancellare questa fattura?
 ConfirmValidateBill						   =Sei sicuro di voler convalidare questa fattura con riferimento <b> %s </b>?
 ConfirmClassifyPaidBill					   =Sei sicuro di voler cambiare fattura <b> %s </b> per lo stato pagato?
 ConfirmCancelBill						   =Sei sicuro di voler annullare la fattura <b> %s </b>?
-ConfirmCancelBillQuestion					   =perché vuoi classificare questa fattura 'abdandonned'?
 ConfirmClassifyPaidPartially					   =Sei sicuro di voler cambiare fattura <b> %s </b> per lo stato pagato?
 ConfirmClassifyPaidPartiallyQuestion				   =La fattura non è stato pagato completamente. Quali sono i motivi per voi per chiudere questa fattura?
 ConfirmClassifyPaidPartiallyReasonAvoir			   =Rimanenza pagare <b> ( %s %s) </b> è concesso uno sconto perché il pagamento è stato effettuato prima del termine. I regolarizzare l'IVA con una nota di credito.
@@ -361,7 +360,6 @@ ValidatePayment								   =Convalidare questo pagamento?
 // START - Lines generated via parser
 // Reference language: en_US
 BillsStatisticsSuppliers=Fornitori &#39;fatture statistiche
-ConfirmValidatePayment=ETES-vous sur de vouloir Valider ce paiment, auncune possibile modifica n&#39;est une fois le paiement valido?
 NumberOfBillsByMonthHT=Nb di fatture per mese (al netto delle imposte)
 AmountOfBills=Importo delle fatture
 AmountOfBillsByMonth=Importo delle fatture da mesi
@@ -411,3 +409,10 @@ UseCredit=Utilizzo di credito
 ShowUnpaidLateOnly=Visualizza tardi unpaid fattura solo
 PaymentInvoiceRef=Pagamento fattura% s
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
+// Reference language: en_US
+ConfirmCancelBillQuestion=perché si desidera classificare questa fattura &#39;abbandonato&#39;?
+ConfirmValidatePayment=Sei sicuro di voler convalidare questo pagamento? Nessun cambiamento può essere fatto una volta paiement è convalidato.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).

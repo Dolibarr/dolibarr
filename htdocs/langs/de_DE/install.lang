@@ -141,7 +141,6 @@ MigrationProposal=Daten-Migration für kommerzielle Vorschläge
 MigrationInvoice=Daten-Migration für Kunden Rechnungen
 MigrationContract=Daten-Migration für die Verträge
 MigrationSuccessfullUpdate=Upgrade erfolgreich
-MigrationUpdateFailed=Falied Upgrade-Prozess
 MigrationPaymentsUpdate=Zahlung Daten Korrektur
 MigrationPaymentsNumberToUpdate=% s Zahlung (en) zu aktualisieren
 MigrationProcessPaymentUpdate=Zahlung Update (s)% s
@@ -167,7 +166,6 @@ MigrationReopeningContracts=Open Vertrag durch Fehler
 MigrationReopenThisContract=Öffnen Vertrag% s
 MigrationReopenedContractsNumber=% s Verträge geändert
 MigrationReopeningContractsNothingToUpdate=Nr. geschlossenen Vertrag zu öffnen
-MigrationBankTransfertsUpdate=Update Links Transaktion zwischen Bank und eine Bank transfert
 MigrationBankTransfertsNothingToUpdate=Alle Links sind auf dem neuesten Stand.
 MigrationShipmentOrderMatching=Sendungen Eingang Update
 MigrationDeliveryOrderMatching=Lieferschein-Update
@@ -187,3 +185,10 @@ MigrationStockDetail=Update Lager Wert der Produkte
 MigrationMenusDetail=Update dynamischen Menüs Tabellen
 MigrationDeliveryAddress=Update Lieferadresse in Sendungen
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+// Reference language: en_US
+MigrationUpdateFailed=Failed Upgrade-Prozess
+MigrationBankTransfertsUpdate=Update Links Transaktion zwischen Bank und eine Überweisung
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).

@@ -39,7 +39,6 @@ ErrorDecimalLargerThanAreForbidden=Fehler, eine höhere Genauigkeit <b>als% s</b
 DictionnarySetup=Wörterbuch-Setup
 DisableJavascript=Deaktivieren Sie JavaScript und Ajax-Funktionen
 ConfirmAjax=Verwenden Sie Ajax Bestätigung Pop-ups
-UseSearchToSelectCompany=Verwenden Sie eine Suche, um ein Unternehmen (intead der Verwendung einer Liste)
 ViewFullDateActions=Show voller Termine Aktionen in der dritten Blatt
 NotAvailableWhenAjaxDisabled=Nicht zur Verfügung, wenn Ajax deaktiviert
 JavascriptDisabled=JavaScript deaktiviert
@@ -171,7 +170,6 @@ DoNotStoreClearPassword=Keine Passwörter im Klartext in der Datenbank
 MainDbPasswordFileConfEncrypted=Passwort für die Datenbank verschlüsselt conf.php
 ConfigFileIsInReadOnly=Die Datei conf.php kann nur gelesen werden, überprüfen Sie die Berechtigungen.
 ProtectAndEncryptPdfFiles=Schutz der erzeugten PDF-Dateien (nicht recommandd, bricht Masse PDF-Generierung)
-ProtectAndEncryptPdfFilesDesc=Schutz der ein PDF-Dokument zur Verfügung hält sie zu lesen und zu drucken mit einer PDF-Browser. Allerdings, Bearbeiten und Kopieren ist nicht mehr möglich. Beachten Sie, dass mit dieser Funktion die Errichtung einer globalen kumulierten pdf nicht funktioniert (wie unpaid Rechnungen).
 Feature=Merkmal
 DolibarrLicense=Lizenz
 DolibarrProjectLeader=Projektleiter
@@ -577,7 +575,6 @@ DelaysOfTolerancePropalsToBill=Delay Toleranz (in Tagen) vor der Benachrichtigun
 DelaysOfToleranceNotActivatedServices=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über die Dienstleistungen zu aktivieren
 DelaysOfToleranceRunningServices=Toleranz Verzögerung (in Tagen) vor der Ausschreibung abgelaufen Dienstleistungen
 DelaysOfToleranceSupplierBillsToPay=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über unbezahlte Rechnungen Lieferanten
-DelaysOfToleranceCustomerBillsUnpaid=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über unbezahlte Rechnungen Client
 DelaysOfToleranceTransactionsToConciliate=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über die Bank bis zur Versöhnung
 DelaysOfToleranceMembers=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über die Verzögerung adherant Mitgliedsbeitrag
 DelaysOfToleranceChequesToDeposit=Toleranz Verzögerung (in Tagen) vor der Ausschreibung für Schecks Anzahlung zu tun
@@ -844,7 +841,6 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max
 ConfirmDeleteProductLineAbility=Bestätigung für die Entfernung von einer Linie produziert in den Formularen
 ModifyProductDescAbility=Personalisierung der Beschreibungen in den Formen
 ViewProductDescInFormAbility=Visualisierung von Produkt-Beschreibungen in den Formularen (anders als popup tooltip)
-UseSearchToSelectProduct=Verwenden Sie eine Suche, um ein Produkt (intead der Verwendung einer Liste)
 UseEcoTaxeAbility=Öko-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Standard-Barcode-Typ, die für Produkte
 SetDefaultBarcodeTypeThirdParties=Standard-Barcode-Typ, die für Dritte
@@ -1062,3 +1058,12 @@ BankSetupModule=Bank-Modul Setup
 FreeLegalTextOnChequeReceipts=Freier Text Scheck über Einnahmen
 MultiCompanySetup=Multi-Company-Modul Setup
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+// Reference language: en_US
+UseSearchToSelectCompany=Verwenden Sie eine Suche, um ein Unternehmen (anstelle der Verwendung einer Liste)
+ProtectAndEncryptPdfFilesDesc=Schutz der ein PDF-Dokument hält sie zur Verfügung zu lesen und zu drucken mit einer PDF-Browser. Allerdings, Bearbeiten und Kopieren ist nicht mehr möglich. Beachten Sie, dass mit dieser Funktion die Errichtung einer globalen kumulierten pdf nicht funktioniert (zB unbezahlte Rechnungen).
+DelaysOfToleranceCustomerBillsUnpaid=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über unbezahlte Rechnungen Client
+UseSearchToSelectProduct=Verwenden Sie ein Formular, um die Suche wählen Sie ein Produkt aus (anstelle der Verwendung einer Liste)
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).

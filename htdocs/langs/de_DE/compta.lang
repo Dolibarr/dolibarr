@@ -16,7 +16,6 @@ MenuFinancial=Finanzielle
 OptionMode=Option für die Buchhaltung
 OptionModeTrue=Option Input-Ausgang
 OptionModeVirtual=Option Credits-Soll
-OptionModeTrueDesc=In diesem Zusammenhang, der Umsatz wird über Paiements (Zeitpunkt der Zahlungen). \ nDie Gültigkeit der Daten gewährleistet ist, nur dann, wenn die Buchhaltung geprüft werden durch die Eingabe / Ausgabe auf die Konten über Rechnungen.
 OptionModeVirtualDesc=In diesem Zusammenhang, der Umsatz wird über Rechnungen (Datum der Anerkennung). Wenn diese Rechnungen sind, unabhängig davon, ob sie gezahlt worden ist oder nicht, sie sind in der Umsatz-Ausgang.
 FeatureIsSupportedInInOutModeOnly=Feature nur in CREDITS-SCHULDEN Buchführungen (siehe Rechnungswesen-Modul-Konfiguration)
 Param=Setup
@@ -73,7 +72,6 @@ ShowVatPayment=Show MwSt. Zahlung
 TotalToPay=Total zu zahlen
 TotalVATReceived=Total Mehrwertsteuer erhalten
 CustomerAccountancyCode=Kunden Buchführungen Code
-SupplierAccountancyCode=Accountacy Supplier Code
 AlreadyPaid=Bereits bezahlt
 AccountNumberShort=Konto-Nummer
 AccountNumber=Konto-Nummer
@@ -129,3 +127,10 @@ ToDispatch=Zum Versand
 ReportTurnover=Umsatz
 NotUsedForGoods=Nicht für Waren
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+// Reference language: en_US
+OptionModeTrueDesc=In diesem Zusammenhang, der Umsatz wird über die Zahlungen (Zeitpunkt der Zahlungen). \ nDie Gültigkeit der Daten gewährleistet ist, nur dann, wenn die Buchführung geprüft werden durch die Input / Output über die Konten über Rechnungen.
+SupplierAccountancyCode=Supplier Code Buchführungen
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).

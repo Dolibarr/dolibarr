@@ -21,7 +21,6 @@ MemberAccount=Lid logon
 ShowMember=Toon lidkaart
 UserNotLinkedToMember=Gebruiker niet gekoppeld aan een lid
 MembersTickets=Leden Tickets
-FundationMembers=Fundation leden
 Attributs=Attributen
 Person=Persoon
 ErrorMemberTypeNotDefined=Lid type niet gedefinieerd
@@ -164,3 +163,9 @@ NoThirdPartyAssociatedToMember=Geen derde partij betrokken bij dit lid
 ThirdPartyDolibarr=Dolibarr derde partij
 MembersAndSubscriptions=Leden en Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+FundationMembers=Stichting leden
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

@@ -166,3 +166,15 @@ MigrationShipmentOrderMatching=Verzendingen ontvangst update
 MigrationDeliveryOrderMatching=Leveringsbon update
 MigrationDeliveryDetail=Levering update
 MigrationStockDetail=Update voorraad van producten
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+GoToDolibarr=Ga naar Dolibarr
+MigrationNotFinished=Versie van uw dtabase is niet helemaal up-to-date, dus je zult moeten uitvoeren van de upgrade-proces opnieuw.
+GoToUpgradePage=Ga naar de upgrade pagina opnieuw
+InstallChoiceRecommanded=Aanbevolen keuze te installeren <b>versie% s</b> van uw huidige <b>versie% s</b>
+InstallChoiceSuggested=<b>Installeer keuze die door de installateur.</b>
+MigrationMenusDetail=Update dynamische menu&#39;s tabellen
+MigrationDeliveryAddress=Update afleveradres in overbrengingen
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

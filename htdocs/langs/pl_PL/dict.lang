@@ -274,3 +274,10 @@ CurrencyXAF=Franków CFA BEAC
 CurrencyXOF=Franków CFA BCEAO
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+// Reference language: en_US
+CountryCH=Szwajcaria
+CountryMA=Maroko
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).

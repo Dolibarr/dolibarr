@@ -11,7 +11,6 @@ DeleteAction					  =Elimina un ricorso / compito
 NewAction					  =Nuova azione / compito
 AddAction					  =Aggiungi azione / compito
 AddAnAction					  =Aggiungi un ricorso / compito
-AddActionRendezVous				  =Aggiungi un Rendez-Vous compito
 ConfirmDeleteAction				  =Sei sicuro di voler eliminare questo compito?
 CardAction					  =Azione carte
 PercentDone					  =Percentuale fatto
@@ -76,8 +75,9 @@ ActionAC_EMAILING				  =Invia e-mail di massa
 ActionAC_COM					  =Per inviare via e-mail
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
 // Reference language: en_US
 CHARSET=UTF-8
-Rendez-Vous=Rendez-Vous
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+AddActionRendezVous=Aggiungi un compito Rendezvous
+Rendez-Vous=Rendezvous
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).

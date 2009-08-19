@@ -75,7 +75,7 @@ class Facture extends CommonObject
 	//! 0=draft,
 	//! 1=validated (need to be paid),
 	//! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
-	//! 3=classified abandonned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
+	//! 3=classified abandoned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
 	var $statut;
 	//! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
 	var $paye;

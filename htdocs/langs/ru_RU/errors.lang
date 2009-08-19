@@ -11,7 +11,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Логин% уже существует.
 ErrorGroupAlreadyExists=Группа% уже существует.
-ErrorDuplicateTrigger=Вызывать файл с классом Nam <b>&#39;% S&#39;</b> присутствует sevaral раза. Удалите дубликаты вызвать файл в директории <b>&#39;% S&#39;.</b>
 ErrorFailToDeleteFile=Не удается удалить файл <b>&#39;% S&#39;.</b>
 ErrorFailToCreateFile=Не удалось создать файл <b>&#39;% S&#39;.</b>
 ErrorFailToRenameDir=Не удалось переименовать директорию <b>&#39;% S&#39;</b> в <b>&#39;% S&#39;.</b>

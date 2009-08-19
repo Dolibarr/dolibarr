@@ -21,7 +21,6 @@ DeleteAction=Löschen einer Aktion / Aufgabe
 NewAction=Neue Maßnahme / Aufgabe
 AddAction=Add Maßnahme / Aufgabe
 AddAnAction=Hinzufügen einer Aktion / Aufgabe
-AddActionRendezVous=Fügen Sie ein Rendez-Vous Aufgabe
 ConfirmDeleteAction=Sind Sie sicher, dass Sie löschen möchten, diese Aufgabe?
 CardAction=Action-Karte
 PercentDone=Anteil Geschehen
@@ -92,3 +91,9 @@ ActionAC_COM=Senden Sie per Post bestellen
 // Reference language: en_US
 Rendez-Vous=Rendez-Vous
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+// Reference language: en_US
+AddActionRendezVous=Fügen Sie ein Rendezvous Aufgabe
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).

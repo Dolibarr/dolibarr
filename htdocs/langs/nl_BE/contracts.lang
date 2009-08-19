@@ -80,3 +80,18 @@ TypeContact_contrat_internal_SALESREPFOLL=Verkoopvertegenwoordiger opvolging con
 TypeContact_contrat_external_BILLING=Factureer contact met klant
 TypeContact_contrat_external_CUSTOMER=Opvolging contact met klant
 TypeContact_contrat_external_SALESREPSIGN=Ondertekening contract klantencontact
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+ServiceStatusNotLate=Hardlopen, niet is verstreken
+ServiceStatusNotLateShort=Niet is verstreken
+ServiceStatusLateShort=Verlopen
+ListOfInactiveServices=Lijst van de niet actieve services
+ListOfExpiredServices=Lijst van verstreken actieve services
+ListOfClosedServices=Lijst van diensten gesloten
+DeleteContractLine=Verwijderen van een contract lijn
+ConfirmDeleteContractLine=Weet u zeker dat u wilt verwijderen van dit contract lijn?
+PaymentRenewContractId=Hernieuwen contract lijn (aantal% s)
+ExpiredSince=Vervaldatum
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

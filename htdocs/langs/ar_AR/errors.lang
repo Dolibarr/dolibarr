@@ -12,7 +12,6 @@ CHARSET=UTF-8
 MenuManager=قائمة مدير
 ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
 ErrorGroupAlreadyExists=المجموعة ٪ ق موجود بالفعل.
-ErrorDuplicateTrigger=وهناك تحريك ملف الطبقة نام <b>&#39;٪ ق&#39;</b> sevaral هذا العصر. إزالة ازدواجية تحريك الملف في الدليل <b>&#39;٪ ق.</b>
 ErrorFailToDeleteFile=فشل إزالة الملف <b>&#39;٪ ق.</b>
 ErrorFailToCreateFile=فشل إنشاء الملف <b>&#39;٪ ق.</b>
 ErrorFailToRenameDir=فشل إعادة تسمية الدليل <b>&#39;٪ ق&#39;</b> الى <b>&#39;٪ ق.</b>

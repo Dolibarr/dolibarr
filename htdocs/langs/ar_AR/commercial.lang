@@ -21,8 +21,6 @@ DeleteAction=حذف عمل / المهمة
 NewAction=عمل جديدة / المهمة
 AddAction=أضف العمل / المهمة
 AddAnAction=إضافة عمل / المهمة
-AddActionRendezVous=إضافة لقاء للVous مهمة
-Rendez-Vous=لقاء للVous
 ConfirmDeleteAction=هل أنت متأكد من أنك تريد حذف هذه المهمة؟
 CardAction=بطاقة العمل
 PercentDone=النسبة المئوية لعمله
@@ -86,3 +84,10 @@ ActionAC_EMAILING=إرسال البريد الإلكتروني الجماعي
 ActionAC_COM=لكي ترسل عن طريق البريد
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+AddActionRendezVous=إضافة مهمة رانديفو
+Rendez-Vous=الموعد
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

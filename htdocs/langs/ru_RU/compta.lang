@@ -14,9 +14,7 @@ AccountancyCard=Бухгалтерия карту
 Treasury=Казначейство
 MenuFinancial=Финансовые
 OptionMode=Вариант для бухгалтеров
-OptionModeTrue=Варианты ввода-Ouput
 OptionModeVirtual=Вариант Кредиты-Вычеты
-OptionModeTrueDesc=В этом контексте, оборот исчисляется более paiements (сроки платежей). \ nThe действительности цифры обеспечивается только в том случае, если бухгалтерия является тщательно путем ввода / вывода по счетам с помощью счетов-фактур.
 OptionModeVirtualDesc=В этом контексте, оборот исчисляется более счетов (дата проверки). Когда эти счета-фактуры должны ли они были выплачены или нет, они перечислены в оборот продукции.
 FeatureIsSupportedInInOutModeOnly=Функция доступна только в виде кредитов-ДОЛГОВ бухгалтерия (см. Бухгалтерия конфигурации модуля)
 Param=Настройка
@@ -69,11 +67,9 @@ DatePayment=Дата оплаты
 NewVATPayment=Новые оплаты НДС
 VATPayment=Оплата НДС
 VATPayments=НДС Платежи
-ShowVatPayment=Показать НДС payement
 TotalToPay=Всего к оплате
 TotalVATReceived=Общая сумма НДС, полученные
 CustomerAccountancyCode=Заказчиком бухгалтерской код
-SupplierAccountancyCode=Поставщик accountacy код
 AlreadyPaid=Уже оплачивается
 AccountNumberShort=Номер счета
 AccountNumber=Номер счета
@@ -129,3 +125,12 @@ ToDispatch=Направить
 ReportTurnover=Оборот
 NotUsedForGoods=Не используется на товары
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+// Reference language: en_US
+OptionModeTrue=Вариант &quot;затраты-выпуск&quot;
+OptionModeTrueDesc=В этом контексте, оборот исчисляется за платежи (дата выплаты). \ nThe действительности цифры обеспечивается только в том случае, если бухгалтерия является тщательно путем ввода / вывода по счетам с помощью счетов-фактур.
+ShowVatPayment=Показать оплате НДС
+SupplierAccountancyCode=Поставщик бухгалтерских код
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).

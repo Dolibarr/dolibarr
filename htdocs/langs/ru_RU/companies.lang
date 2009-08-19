@@ -280,3 +280,12 @@ YouMustCreateContactFirst=Вы должны создать электронну�
 MonkeyNumRefModelDesc=Вернуться Numero с форматом% syymm-NNNN заказчику код и% syymm NNNN-код для поставщиков, где год является годом, мм NNNN месяца и представляет собой последовательность без перерыва и не вернуться к 0.
 LeopardNumRefModelDesc=Клиент / код поставщика является бесплатным. Этот код может быть изменен в любое время.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+// Reference language: en_US
+ProfId1DE=Проф ID 1 (USt.-IdNr)
+ProfId2DE=Проф Id 2 (USt.-NR)
+ProfId3DE=Проф ID 3 (Handelsregister-Nr.)
+ProfId4DE=--
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).

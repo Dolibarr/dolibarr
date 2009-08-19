@@ -50,3 +50,10 @@ ActivityOnProjectThisYear=Activiteiten op projecten van dit jaar
 ChildOfTaks=Uitvoering in project / taak
 NotOwnerOfProject=Geen eigenaar van dit project
 AffectedTo=Uitgevoerd door
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+ListPredefinedInvoicesAssociatedProject=Lijst van klanten vooraf facturen in verband met project
+CantRemoveProject=Dit project kan niet worden verwijderd, als zij wordt verwezen door een andere voorwerpen (facturen, bestellingen of andere). Zie referers tabblad.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

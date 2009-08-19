@@ -25,7 +25,6 @@ ErrorConstantNotDefined=Parameter% s ikke defineret
 ErrorUnknown=Ukendt fejl
 ErrorSQL=SQL Fejl
 ErrorLogoFileNotFound=Logo fil &#39;% s&#39; blev ikke fundet
-ErrorGoToGlobalSetup=Gå til &#39;Company / Fundation «setup at rette dette
 ErrorGoToModuleSetup=Gå til Modul setup at rette dette
 ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Det lykkedes ikke at sende e-mails (afsender =% s, receiver =% s)
 ErrorAttachedFilesDisabled=Vedhæftning af filer funktionen er slået fra på denne serveur
@@ -568,3 +567,9 @@ Day5=Fredag
 Day6=Lørdag
 Day0=Søndag
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+ErrorGoToGlobalSetup=Gå til &#39;Company / Foundation &quot;-opsætningen til at løse dette
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

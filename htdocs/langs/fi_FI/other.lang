@@ -49,8 +49,6 @@ PredefinedMailContentSendInvoiceReminder=Nous apportons votre connaissance que l
 PredefinedMailContentSendProposal=Veuillez trouver ci-yhteinen la proposition commerciale __PROPREF__ \ n \ nCordialement \ n \ n
 PredefinedMailContentSendOrder=Veuillez trouver ci-yhteinen la commande __ORDERREF__ \ n \ nCordialement \ n \ n
 ChooseYourDemoProfil=Valitse demo profil jotka vastaavat aktiviisuutesi ...
-DemoFundation=Hallitse jäseniä, fundation
-DemoFundation2=Jäsenten hallinta ja pankkitilin on fundation
 DemoCompanyShopWithCashDesk=Hallinnoi liikkeen kanssa kassa
 DemoCompanyProductAndStocks=Hallitse pieni tai keskisuuri yritys myy tuotteitaan
 DemoCompanyAll=Hallitse pieni tai keskisuuri yritys, jossa on useita toimintoja (kaikki tärkeimmät moduulit)
@@ -173,3 +171,10 @@ EMailTextInvoiceValidated=Lasku% s validoitava
 ImportedWithSet=Tuonti tietokokonaisuutta
 DolibarrNotification=Automaattinen ilmoitus
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+DemoFundation=Hallitse jäseniä säätiön
+DemoFundation2=Jäsenten hallinta ja pankkitilille säätiön
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

@@ -11,7 +11,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Login% s există deja.
 ErrorGroupAlreadyExists=Grupul% s există deja.
-ErrorDuplicateTrigger=A pune în mişcare fişier cu clasa nam <b>&quot;% s&quot;</b> este prezent sevaral ori. Eliminaţi duplicat declanşa fişier în directorul <b>&#39;% s&#39;.</b>
 ErrorFailToDeleteFile=Nu a reuşit să eliminaţi fişierul <b>&quot;% s&quot;.</b>
 ErrorFailToCreateFile=Nu a reuşit să creeze fişierul <b>&quot;% s&quot;.</b>
 ErrorFailToRenameDir=Nu a reuşit să redenumiţi directorul <b>&quot;% s&quot;</b> în <b>&quot;% s&quot;.</b>

@@ -143,7 +143,6 @@ MigrationProposal=Data migration til kommercielle forslag
 MigrationInvoice=Data migration til kundernes fakturaer
 MigrationContract=Data migration for kontrakter
 MigrationSuccessfullUpdate=Upgrade vellykket
-MigrationUpdateFailed=Falied Opgraderingsprocessen
 MigrationPaymentsUpdate=Betaling data korrektion
 MigrationPaymentsNumberToUpdate=% s betaling (er) for at opdatere
 MigrationProcessPaymentUpdate=Update betaling (s)% s
@@ -169,7 +168,6 @@ MigrationReopeningContracts=Åbn kontrakten lukkes med fejl
 MigrationReopenThisContract=Genåbne kontrakt% s
 MigrationReopenedContractsNumber=% s kontrakter modificerede
 MigrationReopeningContractsNothingToUpdate=Nr. lukket kontrakt for at åbne
-MigrationBankTransfertsUpdate=Update forbindelser mellem bank transaktion, og en bank Transfert
 MigrationBankTransfertsNothingToUpdate=Alle links er ajour
 MigrationShipmentOrderMatching=Sendings modtagelsen opdatering
 MigrationDeliveryOrderMatching=Levering modtagelsen opdatering
@@ -183,9 +181,15 @@ MigrationDeliveryDetail=Levering opdatering
 GoToDolibarr=Gå til Dolibarr
 MigrationNotFinished=Version af din dtabase er ikke helt up to date, så du er nødt til at køre opgraderingsprocessen igen.
 GoToUpgradePage=Gå til opgradere siden igen
-InstallChoiceRecommanded=Recommanded valg til at installere <b>version% s</b> fra din nuværende <b>version% s</b>
 InstallChoiceSuggested=<b>Installer valg foreslået af installationsprogrammet.</b>
 MigrationStockDetail=Update materiel værdi af produkter
 MigrationMenusDetail=Update dynamiske menuer tabeller
 MigrationDeliveryAddress=Update leverings adresse i forsendelser
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+MigrationUpdateFailed=Mislykket Opgraderingsprocessen
+MigrationBankTransfertsUpdate=Update forbindelser mellem bank transaktion og en bankoverførsel
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

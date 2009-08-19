@@ -45,7 +45,6 @@ ThirdPartyCustomers=Asiakkaat
 ThirdPartyCustomersWithIdProf12=Asiakkaat, joilla on% s% s
 ThirdPartySuppliers=Tavarantoimittajat
 ThirdPartyType=Kolmannen osapuolen tyyppi
-Company/Fundation=Yritys / Fundation
 Individual=Yksityishenkilö
 ToCreateContactWithSameName=Luo automaattisesti fyysinen kosketus saman informations
 ParentCompany=Emoyhtiö
@@ -200,7 +199,6 @@ ErrorVATCheckMS_UNAVAILABLE=Tarkista ole mahdollista. Tarkista palvelu ei toimit
 NorProspectNorCustomer=Eikä näköpiirissä, eikä asiakkaan
 JuridicalStatus=Juridinen asema
 Staff=Henkilökunta
-ProspectLevelShort=Potentiel
 ProspectLevel=Esitetilaus mahdollisten
 ContactPrivate=Yksityinen
 ContactPublic=Yhteiset
@@ -243,7 +241,6 @@ ExportCardToFormat=Vienti kortin muodossa
 ContactNotLinkedToCompany=Yhteystiedot eivät liity minkään kolmannen osapuolen
 DolibarrLogin=Dolibarr sisäänkirjoittautumissivuksesi
 NoDolibarrAccess=N: o Dolibarr pääsy
-ExportDataset_company_1=Yritykset / fundations ja ominaisuudet
 ExportDataset_company_2=Yhteystiedot ja ominaisuudet
 DeliveriesAddress=Toimitus osoitteet
 DeliveryAddress=Toimitusosoite
@@ -280,3 +277,15 @@ YouMustCreateContactFirst=Sinun on luotava sähköpostit yhteyksiä kolmannen os
 MonkeyNumRefModelDesc=Paluu numero on muodossa% syymm-nnnn asiakkaan koodi ja% syymm-nnnn luovuttajalle koodi jos VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0.
 LeopardNumRefModelDesc=Asiakas / toimittaja-koodi on maksuton. Tämä koodi voidaan muuttaa milloin tahansa.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+Company/Fundation=Yritys / säätiö
+ProfId1DE=Prof Id 1 (USt.-IdNr)
+ProfId2DE=Prof Id 2 (USt.-Nr)
+ProfId3DE=Prof Id 3 (Handelsregister-Nr.)
+ProfId4DE=--
+ProspectLevelShort=Mahdollinen
+ExportDataset_company_1=Yhtiöiden / säätiöiden ja ominaisuudet
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

@@ -205,7 +205,6 @@ NewPrivateIndividual=Nieuwe particulier (potentiële klant, klant, leverancier)
 IdThirdParty=Id derde partij
 CountryIsInEEC=Land binnen de Europese Economische Gemeenschap
 ThirdPartyType=Derde partij soort
-Company/Fundation=Bedrijf / Fundation
 Individual=Particulier
 ToCreateContactWithSameName=Maakt automatisch een fysiek contact aan met dezelfde informatie
 ReportByCustomers=Verslag door klanten
@@ -260,3 +259,20 @@ AutomaticallyGenerated=Automatisch gegenereerd
 FiscalYearInformation=Informatie over het fiscale jaar
 FiscalMonthStart=Startmaand van het boekjaar
 TigreNumRefModelDesc1=Terugkeer een aanpasbare klant / leverancier aantal volgens een omschreven masker.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+ThirdPartyContacts=Derde contacten
+ThirdPartyContact=Derde partij contact
+StatusContactValidated=Status van de contactpersoon
+Company/Fundation=Bedrijf / Stichting
+ProfId1DE=Prof. id 1 (USt.-IdNr)
+ProfId2DE=Prof. id 2 (USt.-Nr)
+ProfId3DE=Prof. Id 3 (Handelsregister-Nr.)
+ProfId4DE=--
+PriceLevel=Prijsniveau
+YouMustCreateContactFirst=U moet e-mails contacten voor derden eerste te kunnen e-mails toevoegen aanmeldingen.
+MonkeyNumRefModelDesc=Terugkeren numero met format% syymm-nnnn voor klantcode en% syymm-nnnn voor leverancier code waar jj jaar is, MM de maand en het is nnnn een sequentie zonder pauze en geen terugkeer naar 0.
+LeopardNumRefModelDesc=Klant / leverancier-code is gratis. Deze code kan te allen tijde worden gewijzigd.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

@@ -21,7 +21,6 @@ DeleteAction=Ştergeţi o acţiune / sarcina
 NewAction=New acţiune / sarcina
 AddAction=Adăugare acţiune / sarcina
 AddAnAction=Adăugaţi o acţiune / sarcina
-AddActionRendezVous=Adauga un Rendez-vous sarcină
 ConfirmDeleteAction=Sunteţi sigur că doriţi să ştergeţi această sarcină?
 CardAction=Acţiunea carte
 PercentDone=Procentajul făcut
@@ -88,7 +87,8 @@ ActionAC_COM=Pentru a trimite prin e-mail
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
 // Reference language: en_US
-Rendez-Vous=Rendez-vous
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+AddActionRendezVous=Adauga un loc de întâlnire sarcină
+Rendez-Vous=Loc de întâlnire
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).

@@ -10,7 +10,6 @@ MemberAccount=Medlemskonto
 ShowMember=Bis medlemskort
 UserNotLinkedToMember=Brukeren er ikke knyttet til noe medlem
 MembersTickets=Members Tickets
-FundationMembers=Fundation members
 Attributs=Attributes
 Person=Person
 ErrorMemberTypeNotDefined=Member type not defined

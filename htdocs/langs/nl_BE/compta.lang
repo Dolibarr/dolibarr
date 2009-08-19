@@ -89,25 +89,33 @@ DeleteSocialContribution=Verwijderen van een sociale bijdrage
 ConfirmDeleteSocialContribution=Weet u zeker dat u deze sociale bijdrage wilt verwijderen?
 ExportDataset_tax_1=Sociale premies en betalingen
 AnnualSummaryDueDebtMode=Saldo van inkomsten en uitgaven, jaarlijks overzicht, en mode <b>%sLeningen Schulden%s</b> dit <b>comptabilité d'engagement</b>.
-AnnualSummaryInputOutputMode=Bilan et des RECETTES dpenses, rsum annuel, en <b>mode% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse.</b>
-AnnualByCompaniesDueDebtMode=Bilan et des RECETTES dpenses, dtail par tiers, en <b>mode% sCrances-dettes% s</b> dit <b>comptabilit d&#39;engagement.</b>
-AnnualByCompaniesInputOutputMode=Bilan et des RECETTES dpenses, dtail par tiers, en <b>mode% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse.</b>
-SeeReportInInputOutputMode=Voir le <b>rapport% sRecettes-Dpenses% s</b> dit <b>comptabilit de caisse</b> pour un berekening sur les Paiements effectivement raliss
-SeeReportInDueDebtMode=Voir le <b>rapport% sCrances-dettes% s</b> dit <b>comptabilit d&#39;engagement</b> pour un berekening sur les factures Mises
 RulesResultDue=- Bedragen zijn inclusief alle belastingen <br> - Het omvat openstaande facturen, onkosten en BTW of ze betaald zijn of niet. <br> - Het is gebaseerd op de validatiedatum van de facturen en BTW en op de vervaldag voor de kosten.
 RulesResultInOut=- Bedragen zijn inclusief alle belastingen <br> - Het omvat de werkelijke betalingen op facturen, onkosten en BTW. <br> - Het is gebaseerd op de data van betaling van de facturen, uitgaven en BTW. <br>
 RulesCADue=- It includes the clients' due invoices whether they are paid or not. <br>- It is based on the validation date of these invoices. <br>
 RulesCAIn=- Het omvat alle effectieve betalingen van facturen van klanten. <br> - Het is gebaseerd op de betalingsdatum van deze facturen <br>
 VATReportByCustomersInInputOutputMode=Verslag de geïnd en betaalde BTW van de klant (BTW ontvangst)
-VATReportByCustomersInDueDebtMode=Rapport par client des TVA collectes et betaalt (TVA sur dbit)
-VATReportByQuartersInInputOutputMode=Rapport par trimestre des TVA collectes et betaalt (TVA sur encaissement)
-VATReportByQuartersInDueDebtMode=Rapport par trimestre des TVA collectes et betaalt (TVA sur dbit)
-SeeVATReportInInputOutputMode=Voir le <b>rapport% sTVA encaissement% s</b> pour MODE DE CALCUL standaard
-SeeVATReportInDueDebtMode=Voir le <b>rapport% sTVA sur dbit% s</b> pour MODE DE CALCUL avec optie sur les dbits
-RulesVATIn=- Pour les services, le rapport inclut les TVA des rglements effectivement reus ou mis en se basant sur la date du rglement. <br> - Pour les biens matriels, il inclut les TVA des factures nl se basant sur la date de validering de la facture.
-RulesVATDue=- Pour les services, le rapport inclut les TVA des factures eindkosten, payes ou non nl se basant sur la date de validatie de ces factures. <br> - Pour les biens matriels, il inclut les TVA des factures nl se basant sur la date de validering de la facture.
-OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait utiliser la date de livraison pour tre plus juste.
 PercentOfInvoice=%% / factuur
 Dispatch=Verzending
 Dispatched=Verzonden
 ToDispatch=Te verzenden
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+ReportTurnover=Omzet
+ToGet=Om terug te
+AnnualSummaryInputOutputMode=Saldo van inkomsten en uitgaven, jaarlijks overzicht, <b>mode% sRevenues-Expensens% s</b> zei <b>kasboekhouding.</b>
+AnnualByCompaniesDueDebtMode=Saldo van baten en lasten, detail door derden, <b>mode% sClaims-Schulden% s</b> zei <b>Vastleggings boekhouding.</b>
+AnnualByCompaniesInputOutputMode=Saldo van baten en lasten, detail door derden, <b>mode% sRevenues-Uitgaven% s</b> zei <b>kasboekhouding.</b>
+SeeReportInInputOutputMode=Zie <b>verslag% sIncomes-Uitgaven% s</b> zei <b>kasstelsel</b> voor een berekening op de werkelijke betalingen
+SeeReportInDueDebtMode=Zie <b>verslag% sClaims-Schulden% s</b> zei <b>toezegging goed</b> voor een berekening over afgegeven facturen
+VATReportByCustomersInDueDebtMode=Verslag van de klant de BTW geïnd en betaald (BTW-tarief)
+VATReportByQuartersInInputOutputMode=Kwartaalverslag van de geïnde BTW en betaald (BTW ontvangst)
+VATReportByQuartersInDueDebtMode=Kwartaalverslag van de geïnde BTW en betaald (BTW-tarief)
+SeeVATReportInInputOutputMode=Zie <b>verslag% SVAT beschoeien% s</b> voor een standaard berekening
+SeeVATReportInDueDebtMode=Zie <b>verslag% SVAT op stroom% s</b> voor een berekening met een optie op de stroming
+RulesVATIn=Voor diensten, het verslag bevat de BTW-regelgeving daadwerkelijk ontvangen of afgegeven op basis van de datum van betaling. <br> - Voor de materiële activa, maar ook de BTW-facturen op basis van de validatie datum van de factuur.
+RulesVATDue=Voor diensten, het verslag is inclusief BTW facturen verschuldigd, betaald of niet, gebaseerd op de datum van validering van deze rekeningen. <br> - Voor de materiële activa, maar ook de BTW-facturen, gebaseerd op de datum van validering van de factuur.
+OptionVatInfoModuleComptabilite=Opmerking: Voor materiële activa, zij moeten gebruik maken van de datum van levering te zijn eerlijk.
+NotUsedForGoods=Niet gebruikt voor goederen
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

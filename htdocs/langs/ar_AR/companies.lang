@@ -49,7 +49,6 @@ ThirdPartyCustomers=العملاء
 ThirdPartyCustomersWithIdProf12=الزبائن ٪ أو ٪ ق ق
 ThirdPartySuppliers=الموردين
 ThirdPartyType=طرف ثالث من نوع
-Company/Fundation=شركة / Fundation
 Individual=فرد
 ToCreateContactWithSameName=سيخلق تلقائيا مادية نفس معلومات الاتصال
 ParentCompany=الشركة الأم
@@ -204,7 +203,6 @@ ErrorVATCheckMS_UNAVAILABLE=وليس من الممكن التحقق. تأكد م
 NorProspectNorCustomer=ولا آفاق ولا العملاء
 JuridicalStatus=المركز القانوني
 Staff=الموظفون
-ProspectLevelShort=Potentiel
 ProspectLevel=آفاق محتملة
 ContactPrivate=القطاع الخاص
 ContactPublic=تقاسم
@@ -274,3 +272,14 @@ MonkeyNumRefModelDesc=عودة número مع الشكل nnnn - ٪ syymm الزب�
 LeopardNumRefModelDesc=العميل / المورد مدونة مجانية. هذا القانون يمكن تعديلها في أي وقت.
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+Company/Fundation=الشركة / المؤسسة
+ProfId1DE=الأستاذ عيد 1 (USt. - IdNr)
+ProfId2DE=الأستاذ عيد 2 (رقم USt. -)
+ProfId3DE=الأستاذ عيد 3 (Handelsregister-Nr.)
+ProfId4DE=--
+ProspectLevelShort=المحتملة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

@@ -47,7 +47,6 @@ ThirdPartyCustomers=Klanten
 ThirdPartyCustomersWithIdProf12=Klanten met% s of% s
 ThirdPartySuppliers=Leveranciers
 ThirdPartyType=Derde soort
-Company/Fundation=Bedrijf / Fundation
 Individual=Particulier
 ToCreateContactWithSameName=Maakt automatisch een fysieke contact met dezelfde informatie
 ParentCompany=Moedermaatschappij
@@ -202,7 +201,6 @@ ErrorVATCheckMS_UNAVAILABLE=Controleer niet mogelijk. Controleer dienst niet wor
 NorProspectNorCustomer=Evenmin vooruitzicht, noch klant
 JuridicalStatus=Juridische status
 Staff=Personeel
-ProspectLevelShort=Potentiel
 ProspectLevel=Prospect potentiële
 ContactPrivate=Prive
 ContactPublic=Gedeelde
@@ -245,7 +243,6 @@ ExportCardToFormat=Export kaart te formatteren
 ContactNotLinkedToCompany=Contact niet gekoppeld worden aan een derde partij
 DolibarrLogin=Dolibarr login
 NoDolibarrAccess=Nr. Dolibarr toegang
-ExportDataset_company_1=Bedrijven / fundations en eigenschappen
 ExportDataset_company_2=Contacten en eigenschappen
 DeliveriesAddress=Bezorgadressen
 DeliveryAddress=Afleveradres
@@ -290,3 +287,15 @@ YouMustCreateContactFirst=U moet e-mails contacten voor derden eerste te kunnen 
 MonkeyNumRefModelDesc=Terugkeren numero met format% syymm-nnnn voor klantcode en% syymm-nnnn voor leverancier code waar jj jaar is, MM de maand en het is nnnn een sequentie zonder pauze en geen terugkeer naar 0.
 LeopardNumRefModelDesc=Klant / leverancier-code is gratis. Deze code kan te allen tijde worden gewijzigd.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+Company/Fundation=Bedrijf / Stichting
+ProfId1DE=Prof. id 1 (USt.-IdNr)
+ProfId2DE=Prof. id 2 (USt.-Nr)
+ProfId3DE=Prof. Id 3 (Handelsregister-Nr.)
+ProfId4DE=--
+ProspectLevelShort=Potentiële
+ExportDataset_company_1=Bedrijven / stichtingen en eigenschappen
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

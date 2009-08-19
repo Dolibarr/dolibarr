@@ -25,3 +25,11 @@ SynchronizeDolibarr2Ldap=Synchroniseren gebruiker (Dolibarr - LDAP)
 UserSynchronized=Gebruiker gesynchroniseerd
 ForceSynchronize=Force synchroniserende Dolibarr - LDAP
 ErrorFailedToReadLDAP=Failed to read LDAP-database. Check LDAP module setup en database toegankelijkheid.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+GroupSynchronized=Groep gesynchroniseerd
+MemberSynchronized=Lid gesynchroniseerd
+ContactSynchronized=Contact gesynchroniseerd
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

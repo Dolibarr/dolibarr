@@ -19,7 +19,6 @@ MemberAccount=دخول الأعضاء
 ShowMember=وتظهر بطاقة عضو
 UserNotLinkedToMember=المستخدم لا ترتبط عضو
 MembersTickets=أعضاء التذاكر
-FundationMembers=أعضاء Fundation
 Attributs=الصفات
 ErrorMemberTypeNotDefined=عضو نوع غير معرف
 ListOfPublicMembers=قائمة بأسماء أعضاء العمومية
@@ -156,3 +155,9 @@ ThirdPartyDolibarr=Dolibarr طرف ثالث
 MembersAndSubscriptions=وأعضاء Suscriptions
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+FundationMembers=أعضاء المؤسسة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

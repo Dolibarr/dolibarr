@@ -203,7 +203,6 @@ ErrorVATCheckMS_UNAVAILABLE=Anreise nicht möglich. Überprüfen Sie Dienstleist
 NorProspectNorCustomer=Ebenso wenig Aussicht, noch Kunden
 JuridicalStatus=Rechtlichen Status
 Staff=Personal
-ProspectLevelShort=Potentiel
 ProspectLevel=Prospect Potenzial
 ContactPrivate=Private
 ContactPublic=Shared
@@ -283,3 +282,9 @@ YouMustCreateContactFirst=Sie müssen E-Mails Kontakte für Dritte erste sein, u
 MonkeyNumRefModelDesc=Zurück NUMERO mit Format% syymm-nnnn für den Kunden-Code und syymm%-nnnn für die Lieferanten-Code ist, wenn JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und kein Zurück mehr gibt, auf 0 gesetzt.
 LeopardNumRefModelDesc=Kunden / Lieferanten-Code ist frei. Dieser Code kann jederzeit geändert werden.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+// Reference language: en_US
+ProspectLevelShort=Potenzielle
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).

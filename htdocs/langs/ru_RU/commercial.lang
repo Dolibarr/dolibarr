@@ -21,7 +21,6 @@ DeleteAction=Удалить действия / задачи
 NewAction=Новые меры / задачи
 AddAction=Добавить действия / задачи
 AddAnAction=Добавить меры / задачи
-AddActionRendezVous=Добавить Rendez-Vous задачи
 ConfirmDeleteAction=Вы уверены, что хотите удалить эту задачу?
 CardAction=Действия карточки
 PercentDone=Процент сделали
@@ -88,7 +87,8 @@ ActionAC_COM=Отправить заказ по почте
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
 // Reference language: en_US
-Rendez-Vous=Rendez-Vous
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+AddActionRendezVous=Добавить рандеву задачи
+Rendez-Vous=Свидание
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).

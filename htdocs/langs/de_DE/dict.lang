@@ -272,3 +272,10 @@ CurrencyXAF=CFA-Franc BEAC
 CurrencyXOF=CFA Francs BCEAO
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+// Reference language: en_US
+CountryCH=Schweiz
+CountryIE=Irland
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).

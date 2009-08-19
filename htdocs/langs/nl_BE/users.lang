@@ -102,3 +102,15 @@ LoginToCreate=Login te creëren
 NameToCreate=Naam van derde partij te creëren
 // Date 2009-01-18 19:49:33
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator met alle rechten
+LinkToCompanyContact=Link naar derden / contact
+LinkedToDolibarrMember=Link naar lid
+LinkedToDolibarrUser=Link naar Dolibarr gebruiker
+LinkedToDolibarrThirdParty=Link naar Dolibarr derde
+CreateDolibarrThirdParty=Maak een derde partij
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

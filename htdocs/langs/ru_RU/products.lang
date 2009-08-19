@@ -38,7 +38,6 @@ ServicesOnSell=Услуги по продаже
 ServicesNotOnSell=Услуги вне продать
 InternalRef=Внутренние ссылки
 LastRecorded=Последние продукты / услуги по продаже зарегистрировано
-LastRecordedProductsAndServices=Последнее% S precorded roducts / услуг
 LastModifiedProductsAndServices=Последнее% S модифицированных продуктов / услуг
 LastRecordedProducts=Последнее% с продуктами зарегистрировано
 LastRecordedServices=Последнее% S услуги зарегистрированы
@@ -165,3 +164,9 @@ ConfirmCloneProduct=Вы уверены, что хотите клонирова�
 CloneContentProduct=Клон все основные данные о продукции / услуг
 ClonePricesProduct=Клон основные данные и цены
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
+// Reference language: en_US
+LastRecordedProductsAndServices=Последнее% S зарегистрированные продукции / услуг
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).

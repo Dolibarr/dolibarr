@@ -34,3 +34,33 @@ FormatedExportDesc3=When data to export are selected, you can define output file
 Sheet=Blad
 NoImportableData=Geen importable gegevens (no module with definitions to allow data imports)
 FileSuccessfullyBuilt=Export bestand gegenereerd
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+SelectImportDataSet=Kies een gegevensbestand dat u wilt importeren ...
+SelectImportFields=Kies velden die u wilt importeren of selecteer een vooraf gedefinieerde invoer Profiel
+SaveImportModel=Bewaar dit profiel importeren als u van plan bent om hergebruik het later ...
+ImportModelName=Import profiel naam
+ImportModelSaved=Import profiel opgeslagen onder de <b>naam% s.</b>
+ImportableFields=Invoerbeperking velden
+ImportedFields=Geïmporteerde velden
+DatasetToImport=Dataset te importeren
+LibraryShort=Bibliotheek
+SQLUsedForExport=SQL Verzoek gebruikt te bouwen exportbestand
+LineId=Id van de lijn
+LineDescription=Beschrijving van de lijn
+LineUnitPrice=Prijs per eenheid van de lijn
+LineVATRate=BTW-tarief van de lijn
+LineQty=Hoeveelheid voor lijn
+LineTotalHT=Bedrag na aftrek van belastingen voor de lijn
+LineTotalTTC=Bedrag met de belasting voor de lijn
+LineTotalVAT=Bedrag van de BTW voor de lijn
+TypeOfLineServiceOrProduct=Type lijn (0 = product, 1 = dienst)
+FileWithDataToImport=Bestand met de gegevens te importeren
+FileToImport=Bron bestand te importeren
+FileMustHaveOneOfFollowingFormat=Bestand te importeren moet een van de volgende indeling
+ChooseFileToImport=Kies een bestand te importeren, klik dan op picto% s ...
+FieldsInSourceFile=Velden in bronbestand
+FieldsInTargetDatabase=Target velden in Dolibarr database
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

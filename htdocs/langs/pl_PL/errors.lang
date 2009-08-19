@@ -13,7 +13,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Zaloguj% s już istnieje.
 ErrorGroupAlreadyExists=Grupa% s już istnieje.
-ErrorDuplicateTrigger=A powodować nam plik z klasą <b>&quot;% s \&quot;</b> jest obecna sevaral razy. Usuń zduplikowane wywołać plik w katalogu <b>&quot;% s&quot;.</b>
 ErrorFailToDeleteFile=Nie można usunąć pliku <b>&quot;% s&quot;.</b>
 ErrorFailToCreateFile=Nie można utworzyć pliku <b>&#39;% s&#39;.</b>
 ErrorFailToRenameDir=Nie można zmienić nazwy katalogu <b>&#39;% s&#39; do&#39;% s&#39;.</b>

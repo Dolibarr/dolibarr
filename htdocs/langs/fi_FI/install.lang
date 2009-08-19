@@ -66,7 +66,6 @@ CreateUser=Luo käyttäjä
 DatabaseSuperUserAccess=Tietokanta - SuperUser pääsy
 CheckToCreateDatabase=Valintaruutu, jos tietokanta ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
 CheckToCreateUser=Valintaruutu, jos kirjautuminen ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
-Experimental=(kokeellinen, ei operationnal)
 DatabaseRootLoginDescription=Kirjaudu että käyttäjä voi luoda uusia tietokantoja tai uusia käyttäjiä, hyödytön, jos tietokanta ja tietokanta on jo olemassa (kuten silloin, kun olet isännöi Web hosting-palvelujen tarjoaja).
 KeepEmptyIfNoPassword=Jätä tyhjä, jos käyttäjä ei ole salasanaa (välttää)
 SaveConfigurationFile=Tallenna arvot
@@ -141,7 +140,6 @@ MigrationProposal=Tietojen siirtäminen kaupallisiin ehdotuksia
 MigrationInvoice=Tietojen siirtäminen asiakkaiden laskut
 MigrationContract=Tietojen siirtäminen sopimusten
 MigrationSuccessfullUpdate=Päivitys onnistunut
-MigrationUpdateFailed=Falied päivitysprosessi
 MigrationPaymentsUpdate=Maksu tietojen korjaus
 MigrationPaymentsNumberToUpdate=% s maksu (t) päivitys
 MigrationProcessPaymentUpdate=Päivitä maksutiedot (s)% s
@@ -167,7 +165,6 @@ MigrationReopeningContracts=Avoinna sopimuksen suljettu virhe
 MigrationReopenThisContract=Uudelleen sopimuksen% s
 MigrationReopenedContractsNumber=% s sopimusten muuntamattomat
 MigrationReopeningContractsNothingToUpdate=N: o suljettu sopimuksen auki
-MigrationBankTransfertsUpdate=Päivitä välisiä pankkitoimiin ja pankki transfert
 MigrationBankTransfertsNothingToUpdate=Kaikki linkit ovat ajan tasalla
 MigrationShipmentOrderMatching=Sendings vastaanottamisesta päivitys
 MigrationDeliveryOrderMatching=Toimitus vastaanottamisesta päivitys
@@ -181,9 +178,16 @@ MigrationDeliveryDetail=Toimitus päivitys
 GoToDolibarr=Siirry Dolibarr
 MigrationNotFinished=Versio dtabase ei ole täysin ajan tasalla, joten sinun on suoritettava päivitys uudelleen.
 GoToUpgradePage=Siirry päivittää sivu uudelleen
-InstallChoiceRecommanded=Recommanded valinta asentaa <b>version% s</b> nykyisen <b>version% s</b>
 InstallChoiceSuggested=<b>Asenna valinta ehdotti installer.</b>
 MigrationStockDetail=Päivitä varastossa tuotteiden arvosta
 MigrationMenusDetail=Päivitä dynaaminen valikot taulukot
 MigrationDeliveryAddress=Päivitä toimitusosoite kuljetusta
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+Experimental=(kokeellinen, ei käytössä)
+MigrationUpdateFailed=Epäonnistui päivitysprosessi
+MigrationBankTransfertsUpdate=Päivitä välisiä pankkitoimiin ja pankkisiirtoa
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

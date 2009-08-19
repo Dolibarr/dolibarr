@@ -11,7 +11,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Kirjaudu% s on jo olemassa.
 ErrorGroupAlreadyExists=Ryhmän% s on jo olemassa.
-ErrorDuplicateTrigger=A käynnistää tiedoston luokan nam <b>&#39;% s&#39;</b> on sevaral kertaa. Poista Kaksoiskappale käynnistää tiedoston hakemistoon <b>&#39;% s&#39;.</b>
 ErrorFailToDeleteFile=Epäonnistui poistaa tiedoston <b>&#39;% s&#39;.</b>
 ErrorFailToCreateFile=Luominen epäonnistui file <b>&#39;% s&#39;.</b>
 ErrorFailToRenameDir=Epäonnistui nimetä directory <b>&#39;% s&#39; osaksi&#39;% s&#39;.</b>

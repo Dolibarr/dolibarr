@@ -143,7 +143,6 @@ MigrationProposal=Data migratie voor commerciële voorstellen
 MigrationInvoice=Data migratie voor klanten facturen
 MigrationContract=Data migratie voor contracten
 MigrationSuccessfullUpdate=Upgrade succesvol
-MigrationUpdateFailed=Falied upgrade proces
 MigrationPaymentsUpdate=Betaling gegevens correctie
 MigrationPaymentsNumberToUpdate=% s (en) te actualiseren
 MigrationProcessPaymentUpdate=Update betaling (s)% s
@@ -189,3 +188,9 @@ MigrationStockDetail=Update voorraad van producten
 MigrationMenusDetail=Update dynamische menu&#39;s tabellen
 MigrationDeliveryAddress=Update afleveradres in overbrengingen
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+MigrationUpdateFailed=Mislukt upgradeprocedure
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

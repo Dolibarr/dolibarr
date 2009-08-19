@@ -23,7 +23,6 @@ DeleteAction=Verwijder een actie / taak
 NewAction=Nieuwe actie / taak
 AddAction=Toevoegen actie / taak
 AddAnAction=Voeg een actie / taak
-AddActionRendezVous=Voeg een Rendez-Vous taak
 ConfirmDeleteAction=Weet u zeker dat u wilt verwijderen van deze taak?
 CardAction=Actie kaart
 PercentDone=Percentage gedaan
@@ -90,7 +89,8 @@ ActionAC_COM=Verstuur bestelling per mail
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
 // Reference language: en_US
-Rendez-Vous=Rendez-Vous
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+AddActionRendezVous=Voeg een Rendezvous taak
+Rendez-Vous=Rendezvous
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

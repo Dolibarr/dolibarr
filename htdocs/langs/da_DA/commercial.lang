@@ -23,7 +23,6 @@ DeleteAction=Slet en foranstaltning / opgave
 NewAction=Ny action / opgave
 AddAction=Tilføj action / opgave
 AddAnAction=Tilføj en foranstaltning / opgave
-AddActionRendezVous=Tilføj et Rendez-Vous opgave
 ConfirmDeleteAction=Er du sikker på du vil slette denne opgave?
 CardAction=Action-kortet
 PercentDone=Procentdel gjort
@@ -90,7 +89,8 @@ ActionAC_COM=Send ordre ved mail
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
 // Reference language: en_US
-Rendez-Vous=Rendez-Vous
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+AddActionRendezVous=Tilføj en Rendezvous opgave
+Rendez-Vous=Rendezvous
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

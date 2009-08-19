@@ -23,3 +23,9 @@ DonationStatusPaidShort=Ontvangen
 ValidPromise=Valideer belofte
 BuildDonationReceipt=Creëer donatie ontvangst
 DonationsModels=Documenten modellen voor donatie ontvangsten
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+Donations=Donaties
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

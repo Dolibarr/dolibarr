@@ -141,3 +141,16 @@ ServiceNb=Service # %s
 ListProductByPopularity=Lijst van producten / diensten op populariteit
 Finished=Afgewerkt product
 RowMaterial=Basis product
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+ProductRef=Product ref.
+ProductLabel=Productlabel
+CantBeLessThanMinPrice=De verkoopprijs kan niet lager zijn dan de minimumnormen voor dit product (% s zonder belasting)
+ExportDataset_service_1=Diensten
+CloneProduct=Kloon product of dienst
+ConfirmCloneProduct=Weet u zeker dat u wilt kloon product of <b>dienst% s?</b>
+CloneContentProduct=Clone alle belangrijke informatie van het product / dienst
+ClonePricesProduct=Clone belangrijkste informatie en prijzen
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

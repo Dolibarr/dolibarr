@@ -44,3 +44,14 @@ Enlevement=Gotten by customer
 DocumentModelSimple=Eenvoudig document model
 WarningNoQtyLeftToSend=Waarschuwing, geen producten wachten nog voor verzending.
 NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... waar YY een jaar is. Nummer op het einde is nooit op nul.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+StatsOnShipmentsOnlyValidated=Statistieken uitgevoerd betreffende de overbrenging slechts gevalideerd
+SendingMethodCATCH=Vangst per klant
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=Eenvoudig document model voor de levering van aandelen
+DocumentModelTyphon=Meer volledige document model voor de levering van aandelen (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

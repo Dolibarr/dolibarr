@@ -62,3 +62,13 @@ IdWarehouse=Id opslagplaats
 DescWareHouse=Beschrijving opslagplaats
 LieuWareHouse=Localisatie opslagplaats
 WarehousesAndProducts=opslagplaatsen en producten
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+PMPValueShort=WAP
+AverageUnitPricePMPShort=Gemiddelde prijs input
+AverageUnitPricePMP=Gemiddelde prijs input
+EstimatedStockValueShort=Geschatte waarde van de voorraad
+EstimatedStockValue=Geschatte waarde van de voorraad
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

@@ -271,3 +271,11 @@ CurrencyXAF=CFA-frangia BEAC
 CurrencyXOF=CFA-frangia BCEAO
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+CountryCH=Sveitsi
+CountryIE=Irlanti
+CountryMA=Marokko
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

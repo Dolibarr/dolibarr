@@ -15,7 +15,6 @@ InvoiceStandardAsk=Standardfaktura
 InvoiceStandardDesc=Denne fakturatypen er den vanligste fakturaen.
 InvoiceReplacement=Erstatningsfaktura. Må erstatte faktura med referanse
 InvoiceReplacementAsk=Erstatningsfaktura for faktura
-InvoiceReplacementDesc=<b>Erstatningsfaktura</b> brukes for å kansellere og erstatte en hel faktura hvor det ikke er mottatt noen betaling.<br><br>Obs: Du kan bare erstatte fakturaer hvor det ikke er kommet inn noen betaling. Hvis den ikke er lukket vil den automatisk bli lukket med status 'abandonned'.
 InvoiceAvoir=Kreditnota
 InvoiceAvoirAsk=Kreditnota for å korriger fektura
 InvoiceAvoirDesc=En <b>kreditnota</b> er en negativ faktura som brukes for å løse situasjoner hvor en faktura har et annet beløp enn det som virkelig er betalt (fordi kunden har betalt for lite ved en feil, eller for eksempel ikke ønsker å betale alt fordi han har returnert noen varer.).<br><br>Obs!: Originalfakturaen må allerede være lukket ('betalt' eller 'delbetalt') for at du skal kunne opprette en kreditnota mot den.

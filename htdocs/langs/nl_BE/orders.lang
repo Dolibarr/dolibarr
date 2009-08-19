@@ -115,3 +115,12 @@ RunningOrders=Lopende bestellingen
 UserWithApproveOrderGrant=Gebruikers gemachtigd om "bestellingen goed te keuren".
 PDFEinsteinDescription=Een compleet bestel document (logo. ..)
 MarbreNumRefDesc=Renvoie le numéro sous la forme %syymm-nnnn ou yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise e 0
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+OrderLine=Bestel online
+PaymentOrderRef=Betaling van de bestelling% s
+CloneOrder=Klonen Om
+ConfirmCloneOrder=Weet u zeker dat u wilt kloon deze <b>bestelling% s?</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

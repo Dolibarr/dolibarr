@@ -146,7 +146,6 @@ PropalClosedSignedInDolibarr=اقتراح ٪ ق الذي وقع في Dolibarr
 PropalClosedRefusedInDolibarr=ق رفض الاقتراح ٪ في Dolibarr
 PropalValidatedInDolibarr=اقتراح ٪ في التحقق من صحة المستندات Dolibarr
 InvoiceValidatedInDolibarr=فاتورة ٪ في التحقق من صحة المستندات Dolibarr
-InvoicePaidInDolibarr=فاتورة ٪ ق paid تغيير في Dolibarr
 InvoiceCanceledInDolibarr=فاتورة ٪ ق الغى في Dolibarr
 PaymentDoneInDolibarr=ق ٪ الدفع به في Dolibarr
 CustomerPaymentDoneInDolibarr=العميل بدفع ٪ ق عمله في Dolibarr
@@ -173,3 +172,9 @@ DemoDesc=Dolibarr الاتفاق هو تخطيط موارد المؤسسات و�
 DemoCompanyServiceOnly=إدارة نشاط بيع الخدمة لحسابهم الخاص فقط
 SendNewPasswordDesc=هذا الشكل يتيح لك طلب كلمة مرور جديدة. سيكون من إرسالها إلى عنوان البريد الإلكتروني الخاص بك. <br> التغيير لن تكون فعالة إلا بعد النقر على تأكيد الصلة داخل هذه الرسالة. <br> تحقق من بريدك الالكتروني القارئ البرمجيات.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:15:10).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+InvoicePaidInDolibarr=ق ٪ الفاتورة المدفوعة في تغيير Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

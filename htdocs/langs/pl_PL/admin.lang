@@ -41,7 +41,6 @@ ErrorDecimalLargerThanAreForbidden=Błąd, dokładność większa <b>niż% s</b>
 DictionnarySetup=Słownik konfiguracji
 DisableJavascript=Wyłączanie funkcji JavaScript i Ajax
 ConfirmAjax=Wykorzystanie Ajax potwierdzenie pop
-UseSearchToSelectCompany=Użyj formularza wyszukiwania, aby wybrać firmy (intead użycia listy)
 ViewFullDateActions=Pokaż pełny terminy działań w trzecim arkusza
 NotAvailableWhenAjaxDisabled=Niedostępne podczas Ajax niepełnosprawnych
 JavascriptDisabled=JavaScript niepełnosprawnych
@@ -173,7 +172,6 @@ DoNotStoreClearPassword=Czy nie przechowywać hasła w sposób jasny w bazie dan
 MainDbPasswordFileConfEncrypted=Baza hasło zaszyfrowane w conf.php
 ConfigFileIsInReadOnly=Plik conf.php jest tylko do odczytu, sprawdź uprawnienia.
 ProtectAndEncryptPdfFiles=Ochrona generowanych plików PDF (nie recommandd, przerwy masowego generowania pdf)
-ProtectAndEncryptPdfFilesDesc=Ochrona dokument PDF utrzymuje dostępne do odczytu i druku PDF z dowolnej przeglądarki. Jednakże, edycję i kopiowanie nie jest już możliwe. Należy pamiętać, że użycie tej funkcji dokonać budowy globalnego kumulowana pdf nie działa (np. unpaid faktury).
 Feature=Funkcja
 DolibarrLicense=Licencja
 DolibarrProjectLeader=Project Leader
@@ -846,7 +844,6 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=Mak
 ConfirmDeleteProductLineAbility=Potwierdzenie usunięcia linii produkuje w formach
 ModifyProductDescAbility=Personalizacja opisy produkowanych w formach
 ViewProductDescInFormAbility=Wizualizacja opisy produktów w formach (inaczej jak popup tooltip)
-UseSearchToSelectProduct=Użyj formularza wyszukiwania, aby wybrać produkt (intead użycia listy)
 UseEcoTaxeAbility=Wsparcie Eko-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Domyślny kod kreskowy typu użyć do produktów
 SetDefaultBarcodeTypeThirdParties=Domyślny kod kreskowy typu do użytku dla osób trzecich
@@ -1046,7 +1043,6 @@ Menus=Menu
 DetailEnabled=Warunek, aby pokazać lub nie wejścia
 SummaryOfVatExigibilityUsedByDefault=Godzina VAT wymagalność domyślnie według choosed opcji:
 OnDelivery=Na dostawy
-OnPayment=Na PAYEMENT
 OnInvoice=Na fakturze
 SupposedToBePaymentDate=Płatność daty dostawy, jeśli wykorzystane data nie jest znana
 Buy=Kupić
@@ -1064,3 +1060,12 @@ BankSetupModule=Bank konfiguracji modułu
 FreeLegalTextOnChequeReceipts=Darmowy czek tekst na wpływy
 MultiCompanySetup=Firma Multi-Moduł konfiguracji
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
+// Reference language: en_US
+UseSearchToSelectCompany=Użyj formularza wyszukiwania, aby wybrać firmy (zamiast przy użyciu pola listy)
+ProtectAndEncryptPdfFilesDesc=Ochrona dokument PDF utrzymuje dostępne do odczytu i druku PDF z dowolnej przeglądarki. Jednakże, edycję i kopiowanie nie jest już możliwe. Należy pamiętać, że korzystając z tej funkcji dokonać budowy globalnego kumulowana pdf nie działa (np. niezapłaconych faktur).
+UseSearchToSelectProduct=Użyj formularza wyszukiwania, aby wybrać produkt (zamiast przy użyciu pola listy)
+OnPayment=W sprawie wypłaty
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).

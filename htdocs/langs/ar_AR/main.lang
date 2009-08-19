@@ -349,7 +349,6 @@ Unknown=غير معروف
 General=العامة
 Size=حجم
 Received=وردت
-Paid=Paid
 Topic=Sujet
 ByCompanies=الشركات
 ByUsers=من قبل المستخدمين
@@ -560,3 +559,9 @@ GoToWikiHelpPage=الانترنت تساعد على قراءة (على ضرور�
 CompanyFoundation=الشركة / المؤسسة
 FileTransferComplete=تم تحميل الملف بنجاح
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+Paid=دفع
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

@@ -19,7 +19,6 @@ AddTrip=Toevoegen reis
 ListOfTrips=Lijst van excursies
 ListOfFees=Lijst van de vergoedingen
 NewTrip=Nieuwe tocht
-CompanyVisited=Bedrijf / fundation bezocht
 Kilometers=Kilometers
 FeesKilometersOrAmout=Bedrag of kilometers
 DeleteTrip=Verwijderen reis
@@ -35,3 +34,9 @@ TF_TRIP=Reis
 // Reference language: en_US
 ListTripsAndExpenses=Lijst van reizen en onkosten
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+CompanyVisited=Bedrijf / stichting bezocht
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

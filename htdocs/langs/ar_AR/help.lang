@@ -13,7 +13,6 @@ CommunitySupport=منتدى / الدعم ويكي
 EMailSupport=رسائل البريد الإلكتروني لدعم
 RemoteControlSupport=الانترنت في الوقت الحقيقي / النائية الدعم
 OtherSupport=الدعم الأخرى
-ToSeeListOfAvailableRessources=للاتصال / ressources المتاحة انظر :
 ClickHere=اضغط هنا
 HelpCenter=مركز المساعدة
 DolibarrHelpCenter=Dolibarr مركز المساعدة والدعم
@@ -36,3 +35,9 @@ PossibleLanguages=وأيد لغات
 MakeADonation=مساعدة Dolibarr المشروع ، تقديم تبرع
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+ToSeeListOfAvailableRessources=للاتصال / انظر الموارد المتاحة :
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

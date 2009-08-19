@@ -271,3 +271,11 @@ CurrencyXAF=من الفرنكات BEAC
 CurrencyXOF=BCEAO فرنك أفريقي
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+CountryCH=سويسرا
+CountryIE=أيرلاندا
+CountryMA=المغرب
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

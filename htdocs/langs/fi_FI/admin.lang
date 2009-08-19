@@ -39,7 +39,6 @@ ErrorDecimalLargerThanAreForbidden=Virhe, tarkkuuden suurempi <b>kuin% s</b> ei 
 DictionnarySetup=Sanakirja setup
 DisableJavascript=Poista JavaScript-ja Ajax toiminnot
 ConfirmAjax=Käytä Ajax vahvistus ponnahdusikkunat
-UseSearchToSelectCompany=Käytä hakulomaketta valita yrityksen (intead käyttää luettelo laatikko)
 ViewFullDateActions=Näytä koko päivämäärät toimia kolmannen arkin
 NotAvailableWhenAjaxDisabled=Ole käytettävissä, kun Ajax vammaisten
 JavascriptDisabled=JavaScript pois päältä
@@ -171,7 +170,6 @@ DoNotStoreClearPassword=Onko mitään salasanoja vuonna selväksi tietokantaan
 MainDbPasswordFileConfEncrypted=Tietokannan salasana salattu conf.php
 ConfigFileIsInReadOnly=Tiedoston conf.php on vain luku-, tarkista oikeudet.
 ProtectAndEncryptPdfFiles=Suojaaminen syntyy pdf-tiedostoja (ei recommandd, taukoja massa pdf sukupolvi)
-ProtectAndEncryptPdfFilesDesc=Suojaaminen PDF asiakirja pitää saatavilla lukea ja tulostaa kaikki PDF-selaimella. Kuitenkin, editointi ja kopiointi ei ole mahdollista enää. Huomaa, että käyttäessäsi tätä ominaisuutta tehdä rakentaa maailmanlaajuinen kumuloida pdf ei toimi (kuten unpaid laskut).
 Feature=Ominaisuus
 DolibarrLicense=Lisenssi
 DolibarrProjectLeader=Projektin johtaja
@@ -533,7 +531,6 @@ SummarySystem=System Information summary
 SummaryConst=Luettelo kaikista Dolibarr setup parametrit
 SystemUpdate=Järjestelmän päivitys
 SystemSuccessfulyUpdate=Järjestelmä on päivitetty onnistui
-MenuCompanySetup=Yritys / Fundation
 MenuNewUser=Uusi käyttäjä
 MenuTopManager=Päävalikko johtaja
 MenuLeftManager=Vasen valikko johtaja
@@ -582,8 +579,6 @@ DelaysOfToleranceTransactionsToConciliate=Suvaitsevaisuus viive (päivinä) enne
 DelaysOfToleranceMembers=Suvaitsevaisuus viive (päivinä) ennen kuin hälytys on viivästynyt adherant jäsenmaksu
 DelaysOfToleranceChequesToDeposit=Suvaitsevaisuus viive (päivinä) ennen varoituksena sekit tallettaa tehdä
 SetupDescription1=Kaikki parametrit saatavilla asennusohjelma alueella voit setup Dolibarr ennen kuin alkaa käyttää sitä.
-SetupDescription2=2 tärkein setup toimenpiteet ovat 2 ensimmäinen niistä vuonna vasemmalle valikko, tämä tarkoittaa Yritys / fundation setup sivulla ja moduulit setup sivulla:
-SetupDescription3=<b>Yritys / fundation</b> asetukset on tarpeen, koska panos tietoja käytetään Dolibarr näyttää ja muuttaa Dolibarr käyttäytymiseen (esimerkiksi ominaisuuksia, jotka liittyvät oman maan).
 SetupDescription4=<b>Moduulit</b> setup on tarpeen, koska Dolibarr ei ole yksinkertainen ERP / CRM mutta summa useita moduuleja, kaikki enemmän tai vähemmän riippumaton. Se on vasta, kun aktivoit modules olet mielenkiintoinen näet ominaisuuksia ilmestyi Dolibarr valikosta.
 EventsSetup=Asennusohjelma tapahtumien lokit
 LogEvents=Security Audit tapahtumat
@@ -724,7 +719,6 @@ LDAPNamingAttribute=Näppäile LDAP
 LDAPSynchronizeUsers=Synkronoi Dolibarr käyttäjille LDAP
 LDAPSynchronizeGroups=Synkronoi Dolibarr ryhmien LDAP
 LDAPSynchronizeContacts=Synkronoi Dolibarr yhteyksiä LDAP
-LDAPSynchronizeMembers=Synkronoi jäsenistä Dolibarr fundation moduulin LDAP
 LDAPTypeExample=OpenLDAP, Egroupware tai Active Directory
 LDAPPrimaryServer=Ensisijainen palvelin
 LDAPSecondaryServer=Toissijainen palvelin
@@ -844,7 +838,6 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max
 ConfirmDeleteProductLineAbility=Vahvistus poisto linja tuottaa lomakkeet
 ModifyProductDescAbility=Mukauttaminen kuvausten tuotettu lomakkeet
 ViewProductDescInFormAbility=Visualisointi tuotteen kuvaukset lomakkeiden (toisin kuin popup tooltip)
-UseSearchToSelectProduct=Käytä hakulomaketta valita tuotteen (intead käyttää luettelo laatikko)
 UseEcoTaxeAbility=Tuki Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Oletus viivakoodi tyyppi käyttää tuotteita
 SetDefaultBarcodeTypeThirdParties=Oletus viivakoodi tyyppi käyttämään kolmansien osapuolten
@@ -1044,7 +1037,6 @@ Menus=Menut
 DetailEnabled=Ehto näyttää tai tulon
 SummaryOfVatExigibilityUsedByDefault=Aika alv erääntyminen oletusarvon mukaan choosed vaihtoehto:
 OnDelivery=Toimituksen
-OnPayment=Käytössä payement
 OnInvoice=Käytössä lasku
 SupposedToBePaymentDate=Maksupäivä käyttää, jos toimituksen päivämäärä ei ole tiedossa
 Buy=Ostaa
@@ -1062,3 +1054,16 @@ BankSetupModule=Pankki-moduulin asetukset
 FreeLegalTextOnChequeReceipts=Vapaa teksti sekkiä kuitit
 MultiCompanySetup=Multi-yhtiö moduulin asetukset
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+UseSearchToSelectCompany=Käytä hakulomaketta valita yrityksen (sen sijaan, että käyttäisit luettelo laatikko)
+ProtectAndEncryptPdfFilesDesc=Suojaaminen PDF asiakirja pitää saatavilla lukea ja tulostaa kaikki PDF-selaimella. Kuitenkin, editointi ja kopiointi ei ole mahdollista enää. Huomaa, että käyttäessäsi tätä ominaisuutta tehdä rakentaa maailmanlaajuinen kumuloida pdf ei toimi (kuten maksamattomat laskut).
+MenuCompanySetup=Yritys / säätiö
+SetupDescription2=2 tärkein setup toimenpiteet ovat 2 ensimmäinen niistä vuonna vasemmalle valikko, tämä tarkoittaa Yritys / säätiö setup sivulla ja moduulit setup sivulla:
+SetupDescription3=Parametrit valikossa <b>Asetukset -&gt; Yritys / säätiö</b> ovat tarpeen, koska panos tietoja käytetään Dolibarr näyttää ja muuttaa Dolibarr käyttäytymiseen (esimerkiksi ominaisuuksia, jotka liittyvät oman maan).
+LDAPSynchronizeMembers=Järjestämisestä säätiön jäsenten LDAP
+UseSearchToSelectProduct=Käytä hakulomaketta valita tuotteen (sen sijaan, että käyttäisit luettelo laatikko)
+OnPayment=Maksu
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

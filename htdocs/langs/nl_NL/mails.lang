@@ -71,7 +71,6 @@ MailingAddFile=Bevestig dit bestand
 NoAttachedFiles=Geen bijgevoegde bestanden
 MailingModuleDescContactCompanies=Contacten van alle derden (klant, prospect, leverancier, ...)
 MailingModuleDescDolibarrUsers=Alle Dolibarr gebruikers met e-mails
-MailingModuleDescFundationMembers=Fundation leden met e-mails
 MailingModuleDescEmailsFromFile=E-mails van een tekstbestand (e-mail, naam, achternaam)
 MailingModuleDescContactsCategories=Contacten van alle derden (per categorie)
 LineInFile=Regel% s in bestand
@@ -119,3 +118,9 @@ DateLastSend=Datum van de laatse verzenden
 MailingModuleDescDolibarrContractsLinesExpired=Derden verstreken contract lijnen
 YouCanUseCommaSeparatorForSeveralRecipients=U kunt de <b>komma</b> scheidingsteken te specificeren verschillende ontvangers.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+MailingModuleDescFundationMembers=Stichting leden met e-mails
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

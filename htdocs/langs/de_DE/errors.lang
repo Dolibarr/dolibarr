@@ -11,7 +11,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Login% s existiert bereits.
 ErrorGroupAlreadyExists=Gruppe% s existiert bereits.
-ErrorDuplicateTrigger=Die Trigger-Datei mit nam-Klasse <b>&#39;% s&#39;</b> ist sevaral mal. Entfernen Sie doppelte Trigger-Datei im Verzeichnis <b>&quot;% s&quot;.</b>
 ErrorFailToDeleteFile=Failed to remove file <b>&#39;% s&#39;.</b>
 ErrorFailToCreateFile=Fehler beim Erstellen einer Datei <b>&quot;% s&quot;.</b>
 ErrorFailToRenameDir=Failed to rename <b>Verzeichnis&#39;% s&#39;</b> in <b>&#39;% s&#39;.</b>

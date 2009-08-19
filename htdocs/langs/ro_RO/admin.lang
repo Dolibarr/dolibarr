@@ -39,7 +39,6 @@ ErrorDecimalLargerThanAreForbidden=Eroare, o precizie mai mare <b>decât% s</b> 
 DictionnarySetup=Dictionar de configurare
 DisableJavascript=Disable JavaScript si Ajax funcţii
 ConfirmAjax=Utilizaţi Ajax confirmare popup
-UseSearchToSelectCompany=Folositi un formular de căutare pentru a alege o societate (intead de a utiliza o listă caseta)
 ViewFullDateActions=Arata complet datele de acţiuni în cea de-a treia foaie
 NotAvailableWhenAjaxDisabled=Nu este disponibil, atunci când Ajax cu handicap
 JavascriptDisabled=JavaScript dezactivat
@@ -844,7 +843,6 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max
 ConfirmDeleteProductLineAbility=Confirmarea de îndepărtare a produce o linie în forme
 ModifyProductDescAbility=Personalizare de descrieri produse în forme
 ViewProductDescInFormAbility=Vizualizare descrierile de produs, în forme (de altfel ca popup tooltip)
-UseSearchToSelectProduct=Folositi un formular de căutare pentru a alege un produs (de intead folosind o caseta listă)
 UseEcoTaxeAbility=Suport Eco-Taxe (DEEE)
 SetDefaultBarcodeTypeProducts=Implicit tip de cod de bare de a utiliza pentru produse
 SetDefaultBarcodeTypeThirdParties=Implicit tip de cod de bare de a utiliza pentru terţi
@@ -1044,7 +1042,6 @@ Menus=Meniuri
 DetailEnabled=Conditia pentru a afişa sau nu intrare
 SummaryOfVatExigibilityUsedByDefault=Timp de TVA exigibility, în mod implicit în funcţie de choosed opţiune:
 OnDelivery=Pe de livrare
-OnPayment=Pe payement
 OnInvoice=Pe factura
 SupposedToBePaymentDate=Plata data de utilizat, dacă nu se cunoaşte data de livrare
 Buy=Cumpăra
@@ -1062,3 +1059,11 @@ BankSetupModule=Banca modul de configurare
 FreeLegalTextOnChequeReceipts=Free text pe cec încasări
 MultiCompanySetup=Multi-societate modul setup
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+// Reference language: en_US
+UseSearchToSelectCompany=Folositi un formular de căutare pentru a alege o societate (în loc de a utiliza o listă caseta)
+UseSearchToSelectProduct=Folositi un formular de căutare pentru a alege un produs (în loc de a utiliza o listă caseta)
+OnPayment=Pe de plată
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).

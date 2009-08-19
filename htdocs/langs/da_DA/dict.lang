@@ -274,3 +274,10 @@ CurrencyXAF=CFA-franc BEAC
 CurrencyXOF=CFA-franc BCEAO
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+CountryCH=Schweiz
+CountryMA=Marokko
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

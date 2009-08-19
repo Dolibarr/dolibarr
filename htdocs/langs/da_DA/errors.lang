@@ -13,7 +13,6 @@
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=Log ind% s eksisterer allerede.
 ErrorGroupAlreadyExists=Gruppe% s eksisterer allerede.
-ErrorDuplicateTrigger=En udløse fil med klasse nam <b>&#39;% s&#39;</b> er til stede sevaral gange. Fjern duplikateksemplaret udløse filen i mappen <b>&#39;% s&#39;.</b>
 ErrorFailToDeleteFile=Det lykkedes ikke at fjerne filen <b>&#39;% s&#39;.</b>
 ErrorFailToCreateFile=Kunne ikke oprette filen <b>&#39;% s&#39;.</b>
 ErrorFailToRenameDir=Kunne ikke omdøbe mappe <b>&#39;% s&#39; i&#39;% s&#39;.</b>

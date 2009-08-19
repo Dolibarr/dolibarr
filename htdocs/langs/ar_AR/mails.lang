@@ -78,7 +78,6 @@ CloneReceivers=شبيه المستفيدين
 DateLastSend=تاريخ آخر ارسال
 MailingModuleDescContactCompanies=اتصالات لجميع الأطراف الثالثة (العملاء ، والاحتمال ، والمورد ،...)
 MailingModuleDescDolibarrUsers=Dolibarr جميع مستخدمي البريد الإلكتروني
-MailingModuleDescFundationMembers=Fundation الأعضاء مع رسائل البريد الإلكتروني
 MailingModuleDescEmailsFromFile=رسائل البريد الإلكتروني من ملف نصي (البريد الإلكتروني ؛ اسم الشهرة ؛ التعليقات)
 MailingModuleDescContactsCategories=أطراف ثالثة مع رسائل البريد الإلكتروني (حسب الفئة)
 MailingModuleDescDolibarrContractsLinesExpired=أطراف ثالثة مع انتهاء العقد خطوط
@@ -112,3 +111,9 @@ AddNewNotification=تفعيل جديد طلب إخطار بالبريد الإل
 ListOfActiveNotifications=قائمة البريد الإلكتروني لجميع طلبات الإخطار
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+MailingModuleDescFundationMembers=مؤسسة البريد الالكتروني للأعضاء
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

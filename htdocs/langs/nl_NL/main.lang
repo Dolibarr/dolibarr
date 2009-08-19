@@ -32,7 +32,6 @@ ErrorConstantNotDefined=Parameter% s is niet gedefinieerd
 ErrorUnknown=UNKOWN fout
 ErrorSQL=SQL Error
 ErrorLogoFileNotFound=Logo bestand &#39;% s&#39; is niet gevonden
-ErrorGoToGlobalSetup=Ga naar &#39;Bedrijf / Fundation &quot;instelscherm in op dit oplossen
 ErrorGoToModuleSetup=Ga naar Module setup Om dit op te lossen
 ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Failed to send mail (afzender =% s, ontvanger =% s)
 ErrorAttachedFilesDisabled=Verbonden bestanden functie is uitgeschakeld op deze serveur
@@ -567,3 +566,9 @@ Day5=Vrijdag
 Day6=Zaterdag
 Day0=Zondag
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+ErrorGoToGlobalSetup=Ga naar &#39;Bedrijf / Stichting &quot;instelscherm in op dit oplossen
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

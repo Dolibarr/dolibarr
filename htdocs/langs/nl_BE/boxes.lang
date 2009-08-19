@@ -49,3 +49,12 @@ NoRecordedInvoices=Geen facturen klanten geregistreerd
 NoUnpaidCustomerBills=Geen onbetaalde facturen klanten
 NoRecordedSupplierInvoices=Geen facturen leveranciers geregistreerd
 NoUnpaidSupplierBills=Geen onbetaalde facturen leveranciers
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+LastRefreshDate=Laatste refresh datum
+NoRecordedProducts=Nr. geregistreerd producten / diensten
+NoRecordedProspects=Nr. geregistreerd vooruitzichten
+NoContractedProducts=Geen producten / diensten die
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

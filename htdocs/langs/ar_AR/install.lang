@@ -66,7 +66,6 @@ CreateUser=إنشاء مستخدم
 DatabaseSuperUserAccess=قاعدة بيانات -- وصول مستخدم الكومبيوتر ذو الصلاحيات العليا
 CheckToCreateDatabase=المربع إذا كان لا وجود قاعدة بيانات ، ويجب تهيئة. <br> في هذه الحالة ، يجب عليك ملء ادخل كلمة السر لحساب المستعملين المتميزين في أسفل هذه الصفحة.
 CheckToCreateUser=المربع اذا ادخل لا وجود له ، ويجب تهيئة. <br> في هذه الحالة ، يجب عليك ملء ادخل كلمة السر لحساب المستعملين المتميزين في أسفل هذه الصفحة.
-Experimental=(تجريبية ، غير operationnal)
 DatabaseRootLoginDescription=ادخل يسمح للمستخدم لإنشاء قواعد بيانات جديدة أو المستخدمين الجدد ، وإذا كانت غير مجدية وقاعدة البيانات وقاعدة البيانات ادخل موجود بالفعل (مثل عندما كنت استضافته استضافة ويب).
 KeepEmptyIfNoPassword=ترك فارغا إذا لم المستخدم كلمة السر (تجنب هذا؟)
 SaveConfigurationFile=إنقاذ القيم
@@ -138,7 +137,6 @@ KeepDefaultValues=استخدام معالج الإعداد Doliwamp ، حتى ا
 FieldRenamed=تغيير اسم الميدان
 IfLoginDoesNotExistsCheckCreateUser=اذا ادخل لا يوجد حتى الآن ، يجب عليك التحقق من خيار &quot;تكوين المستخدم&quot;
 ErrorConnection=الخادم <b>&quot;٪ ل&quot;</b> اسم قاعدة بيانات <b>&quot;٪ ل&quot;</b> ادخل <b>&quot;٪ ل&quot;</b> أو كلمة سر قاعدة البيانات قد تكون خاطئة أو PHP العميل نسخة قديمة جدا ويمكن مقارنة مع قاعدة البيانات نسخة.
-InstallChoiceRecommanded=Recommanded اختيار تثبيت النسخة <b>٪ المستندات</b> الخاصة بك من النسخة الحالية <b>ل ٪</b>
 InstallChoiceSuggested=<b>اقترح تثبيت اختيار المثبت.</b>
 MigrationOrder=بيانات الهجرة طلبات الزبائن
 MigrationSupplierOrder=بيانات الهجرة من أجل الموردين أوامر
@@ -146,7 +144,6 @@ MigrationProposal=بيانات الهجرة لأغراض تجارية اقترا
 MigrationInvoice=بيانات الهجرة لعملاء الفواتير
 MigrationContract=بيانات الهجرة للحصول على عقود
 MigrationSuccessfullUpdate=تحديث ناجحة
-MigrationUpdateFailed=عملية تحديث Falied
 MigrationPaymentsUpdate=تصحيح بيانات الدفع
 MigrationPaymentsNumberToUpdate=٪ ق الدفع (ق) لتحديث
 MigrationProcessPaymentUpdate=تحديث الدفع (ق) ق ٪
@@ -172,7 +169,6 @@ MigrationReopeningContracts=أغلقت العقود المفتوحة خطأ
 MigrationReopenThisContract=اعادة فتح العقد ق ٪
 MigrationReopenedContractsNumber=ق ٪ العقود المعدلة
 MigrationReopeningContractsNothingToUpdate=لا أغلقت العقود فتح
-MigrationBankTransfertsUpdate=تحديث الروابط بين المصارف والمعاملات المصرفية transfert
 MigrationBankTransfertsNothingToUpdate=كل الروابط حتى الآن
 MigrationShipmentOrderMatching=الإرسال استلام آخر التطورات
 MigrationDeliveryOrderMatching=إيصال استلام آخر التطورات
@@ -182,3 +178,11 @@ MigrationMenusDetail=تحديث القوائم الديناميكية الجدا
 MigrationDeliveryAddress=تتناول آخر التطورات في تسليم شحنات
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+Experimental=(التجريبية وغير التشغيلية)
+MigrationUpdateFailed=فشلت عملية تحديث
+MigrationBankTransfertsUpdate=تحديث الروابط بين المعاملات المصرفية وتحويل مصرفي
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

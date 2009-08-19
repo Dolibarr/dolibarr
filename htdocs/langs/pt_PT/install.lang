@@ -140,7 +140,6 @@ MigrationProposal=Migração de dados de propostas comerciais
 MigrationInvoice=Migração de dados para os clientes &quot;facturas
 MigrationContract=Migração de dados para os contratos
 MigrationSuccessfullUpdate=Actualização bem sucedida
-MigrationUpdateFailed=Falied atualizar processo
 MigrationPaymentsUpdate=Pagamento correcção de dados
 MigrationPaymentsNumberToUpdate=% s pagamento (s) para atualizar
 MigrationProcessPaymentUpdate=Atualização pagamento (s)% s
@@ -180,9 +179,14 @@ MigrationDeliveryDetail=Delivery update
 GoToDolibarr=Ir para Dolibarr
 MigrationNotFinished=Versão do seu dtabase não é completamente até à data, assim você terá que executar o processo de atualização novamente.
 GoToUpgradePage=Ir para a página atualizar novamente
-InstallChoiceRecommanded=Recommanded escolha para instalar a <b>versão% s</b> do seu actual <b>versão% s</b>
 InstallChoiceSuggested=<b>Instale opção sugerida pelo instalador.</b>
 MigrationStockDetail=Atualizar estoque valor dos produtos
 MigrationMenusDetail=Atualização dinâmica menus quadros
 MigrationDeliveryAddress=Atualizar endereço de entrega em transferências
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).
+// Reference language: en_US
+MigrationUpdateFailed=Falha na atualização processo
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:12).

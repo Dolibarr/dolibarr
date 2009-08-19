@@ -21,7 +21,6 @@ MemberAccount=Medlem login
 ShowMember=Vis medlem kortet
 UserNotLinkedToMember=Brugeren ikke er knyttet til et medlem
 MembersTickets=Medlemmer Billetter
-FundationMembers=Fundation medlemmer
 Attributs=Attributter
 Person=Person
 ErrorMemberTypeNotDefined=Medlem type ikke defineret
@@ -164,3 +163,9 @@ NoThirdPartyAssociatedToMember=Nr. tredjepart forbundet til dette medlem
 ThirdPartyDolibarr=Dolibarr tredjepart
 MembersAndSubscriptions=Medlemmer og Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+FundationMembers=Instituttets medlemmer
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

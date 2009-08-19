@@ -14,8 +14,6 @@ BoxLastProducts=ق الماضي ٪ منتجات / خدمات
 BoxLastProductsInContract=٪ ق الماضي التعاقد المنتجات / الخدمات
 BoxLastSupplierBills=الماضي فواتير المورد
 BoxLastCustomerBills=الماضي العميل الفواتير
-BoxOldestUnpaidCustomerBills=أقدم unpaid العملاء والفواتير
-BoxOldestUnpaidSupplierBills=أقدم unpaid المورد الفواتير
 BoxLastProposals=آخر مقترحات تجارية
 BoxLastProspects=آفاق الماضي
 BoxLastCustomers=آخر الزبائن
@@ -40,12 +38,8 @@ BoxTitleLastCustomerBills=ق الماضي ٪ العميل الفواتير
 BoxTitleLastSupplierBills=ق الماضي ٪ فواتير المورد
 BoxTitleLastProspects=الماضي وسجل آفاق ق ٪
 BoxTitleLastProductsInContract=ق الماضي ٪ derniers المنتجات / الخدمات contractés
-BoxTitleOldestUnpaidCustomerBills=أقدم ٪ ق unpaid العميل الفواتير
-BoxTitleOldestUnpaidSupplierBills=أقدم ٪ ق unpaid فواتير المورد
 BoxTitleCurrentAccounts=أرصدة الحسابات الجارية
 BoxTitleSalesTurnover=مبيعات
-BoxTitleTotalUnpaidCustomerBills=Unpaid العميل الفواتير
-BoxTitleTotalUnpaidSuppliersBills=Unpaid فواتير المورد
 BoxMyLastBookmarks=آخر العناوين ق ٪
 FailedToRefreshDataInfoNotUpToDate=فشلت في تجديد تدفق RSS. اخر تحديث تاريخ : ٪ ق
 LastRefreshDate=تاريخ آخر تجديد
@@ -65,3 +59,14 @@ NoContractedProducts=أي المنتجات / الخدمات المتعاقد ع�
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
 
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+BoxOldestUnpaidCustomerBills=اقدم العميل الفواتير غير المدفوعة
+BoxOldestUnpaidSupplierBills=أقدم المورد الفواتير غير المدفوعة
+BoxTitleOldestUnpaidCustomerBills=أقدم ٪ ق العميل الفواتير غير المدفوعة
+BoxTitleOldestUnpaidSupplierBills=أقدم ٪ ق المورد الفواتير غير المدفوعة
+BoxTitleTotalUnpaidCustomerBills=العميل الفواتير غير المدفوعة
+BoxTitleTotalUnpaidSuppliersBills=المورد الفواتير غير المدفوعة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

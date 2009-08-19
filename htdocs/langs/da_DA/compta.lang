@@ -16,9 +16,7 @@ AccountancyCard=Regnskabsmæssig kortet
 Treasury=Treasury
 MenuFinancial=Finansielle
 OptionMode=Mulighed for regnskabspool
-OptionModeTrue=Mulighed Input-Ouput
 OptionModeVirtual=Mulighed Credits-automatiske
-OptionModeTrueDesc=I denne sammenhæng, omsætningen er beregnet over paiements (dato for betalinger). \ nDen gyldigheden af tallene sikres kun, hvis bogføring er granskes gennem input / output på konti via fakturaer.
 OptionModeVirtualDesc=I denne sammenhæng, omsætningen er beregnet over fakturaer (datoen for bekræftelsen). Når disse fakturaer skyldes, uanset om de er blevet betalt eller ej, de er anført i omsætning output.
 FeatureIsSupportedInInOutModeOnly=Funktionen kun tilgængelig i CREDITS-FORDRINGER regnskabspool mode (Se Regnskabsmæssig modul konfiguration)
 Param=Setup
@@ -71,11 +69,9 @@ DatePayment=Betalingsdato
 NewVATPayment=Ny momsbetaling
 VATPayment=Moms Betaling
 VATPayments=Momsbetalinger
-ShowVatPayment=Vis moms payement
 TotalToPay=I alt at betale
 TotalVATReceived=Total moms modtaget
 CustomerAccountancyCode=Kunden regnskabspool kode
-SupplierAccountancyCode=Leverandør accountacy kode
 AlreadyPaid=Allerede betales
 AccountNumberShort=Kontonummer
 AccountNumber=Kontonummer
@@ -131,3 +127,12 @@ ToDispatch=Afsendelsen
 ReportTurnover=Omsætning
 NotUsedForGoods=Ikke anvendes på varer
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+OptionModeTrue=Mulighed Input-Output
+OptionModeTrueDesc=I denne sammenhæng, omsætningen er beregnet over betalinger (dato for betalinger). \ nDen gyldigheden af tallene sikres kun, hvis bogføring er granskes gennem input / output på konti via fakturaer.
+ShowVatPayment=Vis momsbetaling
+SupplierAccountancyCode=Leverandør regnskabspool kode
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

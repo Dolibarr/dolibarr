@@ -91,9 +91,7 @@ MyInformations=Mijn gegevens
 ExportDataset_user_1=Dolibarr gebruikers en eigenschappen
 DomainUser=Domeingebruikersaccount% s
 Reactivate=Reactiveren
-CreateInternalUserDesc=Dit formulier kunt u maken van een gebruiker binnen uw bedrijf / fundation. Maak een externe gebruiker (klant, leverancier, ...), gebruik knop &#39;Create Dolibarr gebruiker&#39; uit derde partij contactkaart.
 InternalExternalDesc=Een <b>interne</b> gebruiker is een gebruiker die deel uitmaakt van uw bedrijf / fundation. <br> Een <b>externe</b> gebruiker is een klant, de leverancier of de andere. <br><br> In beide gevallen, machtigingen omschrijft de rechten op Dolibarr, ook externe gebruiker kan beschikken over een ander menu manager dan interne gebruiker (Zie Home - Setup - Display)
-PermissionInheritedFromAGroup=Toestemming verleend, omdat ineherited van een van een gebruiker van de groep.
 IdPhoneCaller=Id telefoon beller
 UserLogged=Gebruiker% s aangesloten
 NewUserCreated=Gebruiker% s gemaakt
@@ -124,3 +122,10 @@ ConfirmCreateLogin=Weet u zeker dat u wilt maken Dolibarr een account voor deze 
 ConfirmCreateThirdParty=Weet u zeker dat u wilt maken van een derde partij voor dit lid worden?
 NameToCreate=Naam van de derde partij te creëren
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+CreateInternalUserDesc=Dit formulier kunt u maken van een gebruiker binnen uw bedrijf / stichting. Maak een externe gebruiker (klant, leverancier, ...), gebruik knop &#39;Create Dolibarr gebruiker&#39; uit derde partij contactkaart.
+PermissionInheritedFromAGroup=Toestemming verleend, omdat geërfd van een van een gebruiker van de groep.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

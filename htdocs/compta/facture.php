@@ -3186,7 +3186,7 @@ else
 					}
 
 					// Reopen a classified invoice
-					if ($fac->statut == 3 &&				// A abandonned invoice
+					if ($fac->statut == 3 &&				// A abandoned invoice
 					$fac->getIdReplacingInvoice() == 0 &&	// Not replaced by another invoice
 					($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
 					{

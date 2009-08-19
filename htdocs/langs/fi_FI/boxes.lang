@@ -14,8 +14,6 @@ BoxLastProducts=Uusimmat tuotteet / palvelut
 BoxLastProductsInContract=Viimeisin sopimus tuotteet / palvelut
 BoxLastSupplierBills=Viimeisin toimittajan laskut
 BoxLastCustomerBills=Viimeisin asiakkaan laskut
-BoxOldestUnpaidCustomerBills=Vanhin unpaid asiakkaan laskut
-BoxOldestUnpaidSupplierBills=Vanhin unpaid toimittajan laskut
 BoxLastProposals=Viimeisin kaupallinen ehdotuksia
 BoxLastProspects=Viimeisin näkymät
 BoxLastCustomers=Viimeisin asiakkaille
@@ -25,8 +23,6 @@ BoxLastBooks=Uusimmat kirjat
 BoxLastActions=Viimeisin toimia
 BoxCurrentAccounts=Sekkitilit tasapaino
 BoxSalesTurnover=Myynnin liikevaihto
-BoxTotalUnpaidCustomerBills=Yhteensä unpaid asiakkaan laskut
-BoxTotalUnpaidSuppliersBills=Yhteensä unpaid toimittajan laskut
 BoxTitleLastBooks=Viimeisin% s kirjataan kirjat
 BoxTitleNbOfCustomers=Nombre de asiakas
 BoxTitleLastRssInfos=Viimeisin% s uutisia% s
@@ -40,12 +36,8 @@ BoxTitleLastCustomerBills=Viimeisin% s asiakkaan laskut
 BoxTitleLastSupplierBills=Viimeisin% s toimittajan laskut
 BoxTitleLastProspects=Viimeisin% s kirjataan näkymät
 BoxTitleLastProductsInContract=Viimeisin% s derniers produits / palveluhankinnat
-BoxTitleOldestUnpaidCustomerBills=Vanhin% s unpaid asiakkaan laskut
-BoxTitleOldestUnpaidSupplierBills=Vanhin% s unpaid toimittajan laskut
 BoxTitleCurrentAccounts=Nykyinen tilin saldot
 BoxTitleSalesTurnover=Myynnin liikevaihto
-BoxTitleTotalUnpaidCustomerBills=Unpaid asiakkaan laskut
-BoxTitleTotalUnpaidSuppliersBills=Unpaid toimittajan laskut
 BoxMyLastBookmarks=Viimeinen% s kirjanmerkeistä
 FailedToRefreshDataInfoNotUpToDate=Päivitys ei onnistunut RSS muutostilassa. Viimeisin onnistunut virkistystaajuuden päivämäärä:% s
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Ei kirjanmerkkejä määritelty. Klikkaa <a href="%s">tästä</a> lisätä kirjanmerkkejä.
@@ -55,9 +47,7 @@ NoActionsToDo=Mitään toimenpiteitä tehdä
 NoRecordedOrders=N: o kirjataan asiakkaan tilaukset
 NoRecordedProposals=Ei kirjata ehdotuksia
 NoRecordedInvoices=N: o kirjataan asiakkaan laskut
-NoUnpaidCustomerBills=N: o unpaid asiakkaan laskut
 NoRecordedSupplierInvoices=Ei kirjata toimittajan laskut
-NoUnpaidSupplierBills=N: o unpaid toimittajan laskut
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
 
@@ -69,3 +59,18 @@ NoRecordedProducts=N: o kirjataan tuotteet / palvelut
 NoRecordedProspects=N: o kirjataan näkymät
 NoContractedProducts=Ei tuotteita / palveluista
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+BoxOldestUnpaidCustomerBills=Vanhin palkatonta asiakkaan laskut
+BoxOldestUnpaidSupplierBills=Vanhin palkatonta toimittajan laskut
+BoxTotalUnpaidCustomerBills=Yhteensä maksamattomia asiakkaan laskut
+BoxTotalUnpaidSuppliersBills=Yhteensä maksamattomia toimittajan laskut
+BoxTitleOldestUnpaidCustomerBills=Vanhin% s palkatonta asiakkaan laskut
+BoxTitleOldestUnpaidSupplierBills=Vanhin% s palkatonta toimittajan laskut
+BoxTitleTotalUnpaidCustomerBills=Maksamattomat asiakkaan laskut
+BoxTitleTotalUnpaidSuppliersBills=Maksamattomat toimittajan laskut
+NoUnpaidCustomerBills=N: o palkatonta asiakkaan laskut
+NoUnpaidSupplierBills=N: o palkatonta toimittajan laskut
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

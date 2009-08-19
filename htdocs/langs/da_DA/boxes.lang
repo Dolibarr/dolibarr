@@ -16,8 +16,6 @@ BoxLastProducts=Seneste produkter / ydelser
 BoxLastProductsInContract=Seneste kontraheret produkter / tjenester
 BoxLastSupplierBills=Seneste leverandørens fakturaer
 BoxLastCustomerBills=Seneste kundens fakturaer
-BoxOldestUnpaidCustomerBills=Aldersformand unpaid kundens fakturaer
-BoxOldestUnpaidSupplierBills=Aldersformand unpaid leverandørens fakturaer
 BoxLastProposals=Seneste kommercielle forslag
 BoxLastProspects=Seneste udsigter
 BoxLastCustomers=Seneste kunder
@@ -27,8 +25,6 @@ BoxLastBooks=Seneste bøger
 BoxLastActions=Seneste tiltag
 BoxCurrentAccounts=Anfordringskonti balance
 BoxSalesTurnover=Omsætning
-BoxTotalUnpaidCustomerBills=Total unpaid kundens fakturaer
-BoxTotalUnpaidSuppliersBills=Total unpaid leverandørens fakturaer
 BoxTitleLastBooks=Seneste% s registreres bøger
 BoxTitleNbOfCustomers=Nombre de klient
 BoxTitleLastRssInfos=Seneste% s nyheder fra% s
@@ -42,12 +38,8 @@ BoxTitleLastCustomerBills=Seneste% s kundens fakturaer
 BoxTitleLastSupplierBills=Seneste% s leverandørens fakturaer
 BoxTitleLastProspects=Seneste% s registreres udsigter
 BoxTitleLastProductsInContract=Seneste% s derniers produits / tjenesteydelseskontrakter
-BoxTitleOldestUnpaidCustomerBills=Aldersformand% s unpaid kundens fakturaer
-BoxTitleOldestUnpaidSupplierBills=Aldersformand% s unpaid leverandørens fakturaer
 BoxTitleCurrentAccounts=Løbende poster&#39;s tilgodehavender
 BoxTitleSalesTurnover=Omsætning
-BoxTitleTotalUnpaidCustomerBills=Unpaid kundens fakturaer
-BoxTitleTotalUnpaidSuppliersBills=Unpaid leverandørens fakturaer
 BoxMyLastBookmarks=Min sidste% s bogmærker
 FailedToRefreshDataInfoNotUpToDate=Det lykkedes ikke at opdatere RSS flux. Seneste vellykkede opdatere dato:% s
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Nr. bogmærker defineret. Klik <a href="%s">her</a> for at tilføje bogmærker.
@@ -57,9 +49,7 @@ NoActionsToDo=Ingen handlinger at gøre
 NoRecordedOrders=Nr. registreres kundens ordrer
 NoRecordedProposals=Nr. registreres forslag
 NoRecordedInvoices=Nr. registreres kundens fakturaer
-NoUnpaidCustomerBills=Nr. unpaid kundens fakturaer
 NoRecordedSupplierInvoices=Nr. registreres leverandørens fakturaer
-NoUnpaidSupplierBills=Nr. unpaid leverandørens fakturaer
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
 
@@ -71,3 +61,18 @@ NoRecordedProducts=Nr. registreres produkter / tjenester
 NoRecordedProspects=Nr. registreres udsigter
 NoContractedProducts=Ingen produkter / tjenesteydelser kontrakt
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+BoxOldestUnpaidCustomerBills=Aldersformand ubetalte kundens fakturaer
+BoxOldestUnpaidSupplierBills=Aldersformand ubetalte leverandørens fakturaer
+BoxTotalUnpaidCustomerBills=Total ubetalte kundens fakturaer
+BoxTotalUnpaidSuppliersBills=Total ubetalte leverandørens fakturaer
+BoxTitleOldestUnpaidCustomerBills=Aldersformand% s ubetalte kundens fakturaer
+BoxTitleOldestUnpaidSupplierBills=Aldersformand% s ubetalte leverandørens fakturaer
+BoxTitleTotalUnpaidCustomerBills=Ulønnet kundens fakturaer
+BoxTitleTotalUnpaidSuppliersBills=Ulønnet leverandørens fakturaer
+NoUnpaidCustomerBills=Nr. ubetalte kundens fakturaer
+NoUnpaidSupplierBills=Nr. ubetalte leverandørens fakturaer
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

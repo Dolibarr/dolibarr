@@ -47,7 +47,6 @@ ThirdPartyCustomers=Kunder
 ThirdPartyCustomersWithIdProf12=Kunder med% s eller% s
 ThirdPartySuppliers=Leverandører
 ThirdPartyType=Tredjepart type
-Company/Fundation=Company / Fundation
 Individual=Privatperson
 ToCreateContactWithSameName=Vil skabe automatisk en fysisk kontakt med samme informationer
 ParentCompany=Moderselskab
@@ -202,7 +201,7 @@ ErrorVATCheckMS_UNAVAILABLE=Check ikke mulig. Check-tjenesten er ikke fastsat af
 NorProspectNorCustomer=Heller ikke udsigt til, og heller ikke kunde
 JuridicalStatus=Juridiske status
 Staff=Personale
-ProspectLevelShort=Potentiel
+ProspectLevelShort=Potential
 ProspectLevel=Prospect potentiale
 ContactPrivate=Privat
 ContactPublic=Delt
@@ -282,3 +281,13 @@ YouMustCreateContactFirst=Du skal oprette e-mails, kontakter til tredjepart før
 MonkeyNumRefModelDesc=Retur numero med format% syymm-nnnn for kunde-kode og% syymm-nnnn for leverandøren kode hvor yy er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0.
 LeopardNumRefModelDesc=Kunde / leverandør-koden er gratis. Denne kode kan til enhver tid ændres.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+Company/Fundation=Company / Foundation
+ProfId1DE=Prof Id 1 (USt.-IdNr)
+ProfId2DE=Prof Id 2 (USt.-Nr)
+ProfId3DE=Prof Id 3 (Handelsregister-Nr.)
+ProfId4DE=--
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

@@ -89,9 +89,6 @@ MyInformations=Omat tiedot
 ExportDataset_user_1=Dolibarr käyttäjille ja ominaisuudet
 DomainUser=Domain käyttäjän% s
 Reactivate=Uudelleenaktivoi
-CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäinen yrityksenne / fundation. Voit luotu ulkopuolinen käyttäjä (asiakas, toimittaja, ...), käytä painiketta Luo Dolibarr käyttäjä &quot;kolmannen osapuolen yhteystiedot kortin.
-InternalExternalDesc=<b>Sisäinen</b> käyttäjä on käyttäjä, joka on osa yrityksen / fundation. <br> <b>Ulkoinen</b> käyttäjä on asiakas, toimittaja tai muu. <br><br> Molemmissa tapauksissa, oikeudet määritellään oikeuksia Dolibarr myös ulkoinen käyttäjä voi olla eri valikosta johtaja kuin sisäinen käyttäjä (Katso etusivu - Asetukset - Display)
-PermissionInheritedFromAGroup=Lupa myönnettiin, koska ineherited jostakin käyttäjän ryhmään.
 IdPhoneCaller=Id puhelimeen soittajan
 UserLogged=Käyttäjän% s kytketty
 NewUserCreated=Käyttäjä% s on luotu
@@ -122,3 +119,11 @@ ConfirmCreateLogin=Oletko varma, että haluat luoda Dolibarr huomioon tämän j�
 ConfirmCreateThirdParty=Oletko varma, että haluat luoda kolmannelle osapuolelle tämä jäsen?
 NameToCreate=Nimi kolmannen osapuolen luoda
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäinen yrityksenne / perusta. Voit luotu ulkopuolinen käyttäjä (asiakas, toimittaja, ...), käytä painiketta Luo Dolibarr käyttäjä &quot;kolmannen osapuolen yhteystiedot kortin.
+InternalExternalDesc=<b>Sisäinen</b> käyttäjä on käyttäjä, joka on osa yrityksen / perusta. <br> <b>Ulkoinen</b> käyttäjä on asiakas, toimittaja tai muu. <br><br> Molemmissa tapauksissa, oikeudet määritellään oikeuksia Dolibarr myös ulkoinen käyttäjä voi olla eri valikosta johtaja kuin sisäinen käyttäjä (Katso etusivu - Asetukset - Display)
+PermissionInheritedFromAGroup=Lupa myönnettiin, koska periytyy yhden käyttäjän ryhmä.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

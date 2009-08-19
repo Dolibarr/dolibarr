@@ -23,7 +23,6 @@ DeleteAction=Usuń działania / zadania
 NewAction=Nowe działania / zadania
 AddAction=Dodaj działania / zadania
 AddAnAction=Dodaj działania / zadania
-AddActionRendezVous=Dodaj Rendez-Vous zadanie
 ConfirmDeleteAction=Czy na pewno chcesz usunąć to zadanie?
 CardAction=Działanie karty
 PercentDone=Procent zrobić
@@ -90,7 +89,8 @@ ActionAC_COM=Wyślij zamówienie pocztą
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
 // Reference language: en_US
-Rendez-Vous=Rendez-Vous
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+AddActionRendezVous=Dodać zadanie Rendezvous
+Rendez-Vous=Rendezvous
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).

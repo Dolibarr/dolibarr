@@ -33,3 +33,9 @@ AddCustomerInvoice=Maak factuur voor klant
 AddSupplierOrder=Maak leveranciersbestelling
 AddSupplierInvoice=Maak factuur voor leverancier
 ListOfSupplierProductForSupplier=Lijst van producten en de prijzen van <b>leverancier %s</b>
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+NoneOrBatchFileNeverRan=Geen of <b>partij% s</b> niet liep onlangs
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

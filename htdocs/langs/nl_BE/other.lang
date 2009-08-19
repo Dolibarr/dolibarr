@@ -147,3 +147,18 @@ ExportableDatas=Exportable gegevens
 NoExportableData=Geen gegevens exporteerbaar (geen modules geladen met exporteerbare gegevens, of het ontbreken van machtigingen)
 ToExport=Export
 NewExport=Nieuwe exportmogelijkheden
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+Calendar=Kalender
+BirthdayAlertOn=verjaardag alert actief
+BirthdayAlertOff=verjaardag alert inactief
+Notify_NOTIFY_APP_ORDER_SUPPLIER=Leverancier bestelling goedgekeurd
+Notify_NOTIFY_REF_ORDER_SUPPLIER=Leverancier bestelling geweigerd
+EMailTextInterventionValidated=Interventie% s gevalideerd
+EMailTextInvoiceValidated=Factuur% is gevalideerd
+ImportedWithSet=Invoer van gegevens
+DolibarrNotification=Automatische melding
+LoginWebcal=Login voor Webcalendar
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

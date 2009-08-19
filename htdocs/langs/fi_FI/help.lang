@@ -12,7 +12,6 @@ CommunitySupport=Foorumi / Wiki tukea
 EMailSupport=Sähköpostit tukea
 RemoteControlSupport=Online reaaliajassa / etätuki
 OtherSupport=Muut tuet
-ToSeeListOfAvailableRessources=Voit ottaa yhteyttä / katso saatavilla ressources:
 ClickHere=Klikkaa tästä
 HelpCenter=Ohjekeskukseen
 DolibarrHelpCenter=Dolibarr apua ja tukea keskus
@@ -34,3 +33,9 @@ LinkToGoldMember=Voit soittaa yksi valmentaja valittua on Dolibarr for your lang
 PossibleLanguages=Tuetut kielet
 MakeADonation=Ohje Dolibarr hanke, tee lahjoitus
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+ToSeeListOfAvailableRessources=Voit ottaa yhteyttä / nähdä käytettävissä olevat varat:
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

@@ -80,3 +80,12 @@ AssignedToTheCustomer=Toegewezen aan de klant
 InternalCategory=Interne categorie
 CategoryContents=Categorie inhoud
 CategId=Categorie id
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+NoCategoryYet=Geen enkele categorie van dit type gemaakt
+CatSupList=Lijst van de leverancier categorieën
+CatCusList=Lijst van de klant / prospect categorieën
+CatProdList=Lijst van producten van de categorieën
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

@@ -75,3 +75,9 @@ ActionAC_REL=Stuur factuur (herinnering)
 ActionAC_CLO=Sluiten
 ActionAC_EMAILING=Stuur massa e-mail
 ActionAC_COM=Verzend bestelling per mail
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+Rendez-Vous=Rendezvous
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

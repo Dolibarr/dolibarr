@@ -17,3 +17,9 @@ Person=Persoon
 TF_OTHER=Ander
 TF_LUNCH=Lunch
 TF_TRIP=Verplaatsing
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+ListTripsAndExpenses=Lijst van reizen en onkosten
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

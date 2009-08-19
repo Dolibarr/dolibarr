@@ -41,7 +41,6 @@ ErrorDecimalLargerThanAreForbidden=Fout, een nauwkeurigheid van meer <b>dan% s</
 DictionnarySetup=Woordenboek setup
 DisableJavascript=Schakel JavaScript en Ajax-functies
 ConfirmAjax=Gebruik Ajax bevestiging popups
-UseSearchToSelectCompany=Gebruik een zoekscherm om te kiezen voor een bedrijf (intead van het gebruik van een keuzelijst)
 ViewFullDateActions=Toon volledige data acties in het derde plaat
 NotAvailableWhenAjaxDisabled=Niet beschikbaar wanneer Ajax uitgeschakeld
 JavascriptDisabled=JavaScript uitgeschakeld
@@ -846,7 +845,6 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max
 ConfirmDeleteProductLineAbility=Bevestiging van de uitslag van een lijn produceert in de vorm
 ModifyProductDescAbility=Aanpassen van de beschrijvingen die in de formulieren
 ViewProductDescInFormAbility=Visualisatie van de product-beschrijvingen van de formulieren (anders als popup tooltip)
-UseSearchToSelectProduct=Gebruik een zoekscherm om te kiezen voor een product (intead van het gebruik van een keuzelijst)
 UseEcoTaxeAbility=Ondersteuning van Eco-Taxe (AEEA)
 SetDefaultBarcodeTypeProducts=Standaard type barcode te gebruiken voor producten
 SetDefaultBarcodeTypeThirdParties=Standaard type barcode te gebruiken voor derden
@@ -1064,3 +1062,10 @@ BankSetupModule=Bank module setup
 FreeLegalTextOnChequeReceipts=Vrije tekst op cheque ontvangsten
 MultiCompanySetup=Multi-company module setup
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+UseSearchToSelectCompany=Gebruik een zoekscherm om te kiezen voor een bedrijf (in plaats van met behulp van een keuzelijst)
+UseSearchToSelectProduct=Gebruik een zoekscherm om te kiezen voor een product (in plaats van met behulp van een keuzelijst)
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).

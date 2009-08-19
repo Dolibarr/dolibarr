@@ -19,7 +19,6 @@ MemberAccount=Kirjaudu
 ShowMember=Näytä jäsenen kortti
 UserNotLinkedToMember=Käyttäjää ei liity jäseneksi
 MembersTickets=Jäsenet Liput
-FundationMembers=Fundation jäseniä
 Attributs=Määritteet
 Person=Henkilö
 ErrorMemberTypeNotDefined=Jäsen tyyppiä ei ole määritelty
@@ -162,3 +161,9 @@ NoThirdPartyAssociatedToMember=Kolmansista osapuolista ei näihin jäsen
 ThirdPartyDolibarr=Dolibarr kolmannen osapuolen
 MembersAndSubscriptions=Jäsenet ja Suscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+FundationMembers=Säätiön jäsenet
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

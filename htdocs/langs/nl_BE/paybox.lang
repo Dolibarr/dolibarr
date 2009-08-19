@@ -1,0 +1,32 @@
+/*
+ * Language code: nl_BE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2009-08-19 20:37:40
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+CHARSET=UTF-8
+PayBoxSetup=PayBox module setup
+PayBoxDesc=Deze module biedt pagina&#39;s om betaling op <a href="http://www.paybox.com" target="_blank">Paybox</a> door de klanten. Dit kan gebruikt worden voor een gratis betaling of een betaling op een bepaalde Dolibarr object (factuur, bestelling, ...)
+FollowingUrlAreAvailableToMakePayments=Volgende URL&#39;s beschikbaar om een pagina naar een klant om een betaling op Dolibarr voorwerpen
+PaymentForm=Betaling vorm
+WelcomeOnPaymentPage=Welkom op onze online betalingsdienstaanbieders
+ThisScreenAllowsYouToPay=Dit scherm kunt u bij het maken van een online betaling aan% s.
+ThisIsInformationOnPayment=Dit is informatie over de betaling te doen
+ToComplete=Te voltooien
+YourEMail=E-mailadres voor de betaling bevestiging
+Creditor=Creditor
+PaymentCode=Betaling code
+PayBoxDoPayment=Ga op de betaling
+YouWillBeRedirectedOnPayBox=U wordt omgeleid over Paybox beveiligde pagina naar input je creditcard informatie
+PleaseBePatient=Gelieve even geduld
+Continue=Volgende
+ToOfferALinkForOnlinePaymentOnOrder=URL om een online betaling% s user interface voor een bestelling
+ToOfferALinkForOnlinePaymentOnInvoice=URL om een online betaling% s user interface voor een factuur
+ToOfferALinkForOnlinePaymentOnContractLine=URL om een online betaling% s user interface voor een contract lijn
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL om een online betaling% s user interface voor een gratis bedrag
+YouCanAddTagOnUrl=U kunt ook url parameter <b>&amp; tag = <i>waarde</i></b> voor een van deze URL (enkel vereist voor de vrije betaling) om uw eigen commentaar betaling tag.
+SetupPayBoxToHavePaymentCreatedAutomatically=Uw PayBox met <b>url% s</b> om de betaling automatisch gemaakt wanneer gevalideerd door paybox.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

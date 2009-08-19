@@ -40,7 +40,6 @@ ServicesOnSell=خدمات البيع
 ServicesNotOnSell=من بيع الخدمات
 InternalRef=إشارة الداخلية
 LastRecorded=آخر المنتجات والخدمات المسجلة على بيع
-LastRecordedProductsAndServices=آخر precorded roducts ٪ ق / خدمات
 LastModifiedProductsAndServices=آخر تعديل ٪ ق المنتجات / الخدمات
 LastRecordedProducts=آخر المنتجات المسجلة ق ٪
 LastRecordedServices=٪ ق الماضي سجلت الخدمات
@@ -75,7 +74,6 @@ ContractStatusClosed=مغلقة
 ContractStatusRunning=على التوالي
 ContractStatusExpired=انتهى
 ContractStatusOnHold=لا تعمل
-ContractStatusToRun=ألف mettre én الخدمة
 ContractNotRunning=هذا العقد لا تعمل
 ErrorProductAlreadyExists=منتج مع الإشارة ٪ ق موجود بالفعل.
 ErrorProductBadRefOrLabel=قيمة خاطئة لإشارة أو علامة.
@@ -160,3 +158,10 @@ CloneContentProduct=استنساخ جميع المعلومات الرئيسية 
 ClonePricesProduct=استنساخ الرئيسية معلومات والأسعار
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+LastRecordedProductsAndServices=٪ ق الماضي سجلت المنتجات / الخدمات
+ContractStatusToRun=ألف mettre én الخدمة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

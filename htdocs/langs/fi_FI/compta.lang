@@ -14,9 +14,7 @@ AccountancyCard=Kirjanpito-kortti
 Treasury=Treasury
 MenuFinancial=Financial
 OptionMode=Vaihtoehto kirjanpitotietojen
-OptionModeTrue=Vaihtoehto Panos-Ouput
 OptionModeVirtual=Vaihtoehto Credits-Debits
-OptionModeTrueDesc=Tässä yhteydessä, että liikevaihto on laskettu yli paiements (maksupäivät). \ nThe voimassaoloaika luvut on taattu vain, jos kirjanpitoon on tarkastettu kautta panos / tuotos-ja tilien kautta laskut.
 OptionModeVirtualDesc=Tässä yhteydessä, että liikevaihto on laskettava laskuista (päivämäärä validointi). Kun nämä laskut maksetaan, onko ne maksettu vai ei, ne on mainittu liikevaihto tuotos.
 FeatureIsSupportedInInOutModeOnly=Ominaisuus saatavilla vain CREDITS-VELAT kirjanpitotietojen tilassa (Katso kirjanpidon moduulin määritykset)
 Param=Setup
@@ -69,11 +67,9 @@ DatePayment=Maksupäivä
 NewVATPayment=Uuden alv-maksu
 VATPayment=Alv maksutoimisto
 VATPayments=Alv-maksut
-ShowVatPayment=Näytä alv payement
 TotalToPay=Yhteensä maksaa
 TotalVATReceived=Yhteensä ALV
 CustomerAccountancyCode=Asiakas kirjanpitotietojen koodi
-SupplierAccountancyCode=Toimittaja accountacy koodi
 AlreadyPaid=Jo maksanut
 AccountNumberShort=Tilinumero
 AccountNumber=Tilinumero
@@ -129,3 +125,12 @@ ToDispatch=Lähettämistä
 ReportTurnover=Liikevaihto
 NotUsedForGoods=Ei käytetä tavaroiden
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+// Reference language: en_US
+OptionModeTrue=Vaihtoehto Panos-tuotos
+OptionModeTrueDesc=Tässä yhteydessä, että liikevaihto on laskettu yli maksut (maksupäivät). \ nThe voimassaoloaika luvut on taattu vain, jos kirjanpitoon on tarkastettu kautta panos / tuotos-ja tilien kautta laskut.
+ShowVatPayment=Näytä arvonlisäveron maksaminen
+SupplierAccountancyCode=Toimittaja kirjanpitotietojen koodi
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).

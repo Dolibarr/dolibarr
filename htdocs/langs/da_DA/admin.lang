@@ -41,7 +41,6 @@ ErrorDecimalLargerThanAreForbidden=Fejl, en præcision højere <b>end% s</b> er 
 DictionnarySetup=Ordbog setup
 DisableJavascript=Deaktiver JavaScript og Ajax funktioner
 ConfirmAjax=Brug Ajax bekræftelse popups
-UseSearchToSelectCompany=Brug en søgning form for at vælge et selskab (intead ved at bruge et listefelt)
 ViewFullDateActions=Vis fuld datoer aktioner i tredje ark
 NotAvailableWhenAjaxDisabled=Ikke tilgængelige, når Ajax handicappede
 JavascriptDisabled=JavaScript slået
@@ -469,7 +468,6 @@ Permission2501=Indsend eller slette dokumenter
 Permission2515=Setup dokumenter abonnentfortegnelser
 DictionnaryCompanyType=Company typer
 DictionnaryCompanyJuridicalType=Juridiske former for virksomhed
-DictionnaryProspectLevel=Prospect potentielle niveau
 DictionnaryCanton=Distrikter
 DictionnaryRegion=Regioner
 DictionnaryCountry=Lande
@@ -846,7 +844,6 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max
 ConfirmDeleteProductLineAbility=Bekræftelse af fjernelse af en linje producerer i former
 ModifyProductDescAbility=Tilpasning af beskrivelser produceret i former
 ViewProductDescInFormAbility=Visualisering af Varebeskrivelserne i de former (ellers som popup tooltip)
-UseSearchToSelectProduct=Brug en søgning form for at vælge et produkt (intead ved at bruge et listefelt)
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Default stregkode type bruge til produkter
 SetDefaultBarcodeTypeThirdParties=Default stregkode type bruge til tredjemand
@@ -1046,7 +1043,6 @@ Menus=Menuer
 DetailEnabled=Betingelse for at vise eller ikke indrejse
 SummaryOfVatExigibilityUsedByDefault=Time moms forfaldstidspunkt som standard i henhold til choosed valg:
 OnDelivery=Om levering
-OnPayment=På payement
 OnInvoice=På fakturaen
 SupposedToBePaymentDate=Betaling dato bruges, hvis leveringsdato ikke kendt
 Buy=Købe
@@ -1064,3 +1060,12 @@ BankSetupModule=Bank modul opsætning
 FreeLegalTextOnChequeReceipts=Fri tekst på check kvitteringer
 MultiCompanySetup=Multi-selskab modul opsætning
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+UseSearchToSelectCompany=Brug en søgning form for at vælge en virksomhed (i stedet for at bruge et listefelt)
+DictionnaryProspectLevel=Prospect potentielle niveau
+UseSearchToSelectProduct=Brug en søgning form for at vælge et produkt (i stedet for at bruge et listefelt)
+OnPayment=Om betaling
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

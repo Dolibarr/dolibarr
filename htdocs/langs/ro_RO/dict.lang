@@ -271,3 +271,11 @@ CurrencyXAF=CFA BEAC Franci
 CurrencyXOF=CFA BCEAO Franci
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+// Reference language: en_US
+CountryCH=Eleveţia
+CountryIE=Irlanda
+CountryMA=Maroc
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).

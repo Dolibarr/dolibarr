@@ -14,8 +14,6 @@ BoxLastProducts=Letzte Produkte / Dienstleistungen
 BoxLastProductsInContract=Letzte vertraglich Produkte / Dienstleistungen
 BoxLastSupplierBills=Letzte Lieferanten Rechnungen
 BoxLastCustomerBills=Letzte Kunden Rechnungen
-BoxOldestUnpaidCustomerBills=Älteste unpaid Kunden Rechnungen
-BoxOldestUnpaidSupplierBills=Älteste unpaid Lieferanten Rechnungen
 BoxLastProposals=Letzte kommerzielle Vorschläge
 BoxLastProspects=Letzte Aussichten
 BoxLastCustomers=Letzte Kunden
@@ -25,8 +23,6 @@ BoxLastBooks=Letzte Bücher
 BoxLastActions=Letzte Aktionen
 BoxCurrentAccounts=Aktueller Saldo
 BoxSalesTurnover=Umsatz
-BoxTotalUnpaidCustomerBills=Insgesamt unpaid Kunden Rechnungen
-BoxTotalUnpaidSuppliersBills=Insgesamt unpaid Lieferanten Rechnungen
 BoxTitleLastBooks=Letzte% s aufgezeichnet Bücher
 BoxTitleNbOfCustomers=Nombre de-Client
 BoxTitleLastRssInfos=Letzte Neuigkeiten aus% s% s
@@ -40,12 +36,8 @@ BoxTitleLastCustomerBills=Letzte% s Kunden Rechnungen
 BoxTitleLastSupplierBills=Letzte% s Lieferanten Rechnungen
 BoxTitleLastProspects=Letzte% s aufgezeichnet Aussichten
 BoxTitleLastProductsInContract=Letzte% s Derniers produits / Verträge
-BoxTitleOldestUnpaidCustomerBills=Älteste% s unpaid Kunden Rechnungen
-BoxTitleOldestUnpaidSupplierBills=Älteste% s unpaid Lieferanten Rechnungen
 BoxTitleCurrentAccounts=Leistungsbilanz der Salden
 BoxTitleSalesTurnover=Umsatz
-BoxTitleTotalUnpaidCustomerBills=Unpaid Kunden Rechnungen
-BoxTitleTotalUnpaidSuppliersBills=Unpaid Lieferanten Rechnungen
 BoxMyLastBookmarks=Meine letzte% s Lesezeichen
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS Fluss. Letzte erfolgreiche Aktualisierungsdatum:% s
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Keine Lesezeichen definiert. Klicken Sie <a href="%s">hier,</a> um Lesezeichen.
@@ -55,9 +47,7 @@ NoActionsToDo=Nr. Aktionen zu tun
 NoRecordedOrders=Nr. erfasst Kunden Aufträge
 NoRecordedProposals=Nr. aufgenommenen Vorschläge
 NoRecordedInvoices=Nr. erfasst Kunden Rechnungen
-NoUnpaidCustomerBills=Nr. unpaid Kunden Rechnungen
 NoRecordedSupplierInvoices=Nr. erfasst Lieferanten Rechnungen
-NoUnpaidSupplierBills=Nr. unpaid Lieferanten Rechnungen
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
 
@@ -69,3 +59,18 @@ NoRecordedProducts=Nr. aufgenommenen Produkte / Dienstleistungen
 NoRecordedProspects=Nr. erfasst Aussichten
 NoContractedProducts=Keine Produkte / Dienstleistungen in Auftrag
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).
+// Reference language: en_US
+BoxOldestUnpaidCustomerBills=Älteste Kunden unbezahlte Rechnungen
+BoxOldestUnpaidSupplierBills=Älteste unbezahlte Rechnungen des Lieferanten
+BoxTotalUnpaidCustomerBills=Total Kunden unbezahlte Rechnungen
+BoxTotalUnpaidSuppliersBills=Insgesamt unbezahlte Rechnungen des Lieferanten
+BoxTitleOldestUnpaidCustomerBills=Älteste% s Kunden unbezahlte Rechnungen
+BoxTitleOldestUnpaidSupplierBills=Älteste% s unbezahlte Lieferanten Rechnungen
+BoxTitleTotalUnpaidCustomerBills=Kunden wegen eines nicht bezahlten Rechnungen
+BoxTitleTotalUnpaidSuppliersBills=Unbezahlte Rechnungen des Lieferanten
+NoUnpaidCustomerBills=Kunden Nr. unbezahlte Rechnungen
+NoUnpaidSupplierBills=Nr. unbezahlte Rechnungen des Lieferanten
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:47:16).

@@ -96,7 +96,6 @@ DomainUser=النطاق المستخدم ق ٪
 Reactivate=تنشيط
 CreateInternalUserDesc=هذا الشكل يتيح لك يخلق أي مستخدم الداخلي لتسجيل شركة أو مؤسسة. ليخلق خارجي المستخدم (العميل ، المورد ،...)، استخدام زر &#39;إنشاء مستخدم Dolibarr&#39; من طرف ثالث بطاقة اتصال.
 InternalExternalDesc=<b>داخلي</b> المستخدم المستخدم الذي يشكل جزءا من الشركة / المؤسسة. <br> مستخدم <b>خارجي</b> هو عميل أو مورد أو غيرها. <br><br> وفي كلتا الحالتين ، ويحدد الحقوق على أذونات Dolibarr ، كما يمكن للمستخدم خارجي له قائمة من مدير المستخدم الداخلي (انظر الصفحة الرئيسية -- إعداد -- عرض)
-PermissionInheritedFromAGroup=منح إذن ineherited بسبب من واحد من جهاز المستخدم.
 IdPhoneCaller=رقم تعريف الهاتف المتصل
 UserLogged=ق صلة مستخدم ٪
 NewUserCreated=مستخدم ٪ ق خلق
@@ -122,3 +121,9 @@ NameToCreate=اسم طرف ثالث لخلق
 LastName=اسم
 FirstName=الاسم الأول
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+// Reference language: en_US
+PermissionInheritedFromAGroup=منح إذن لأن الموروث من واحد من المستخدم.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

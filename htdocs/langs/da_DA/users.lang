@@ -91,9 +91,6 @@ MyInformations=Mine data
 ExportDataset_user_1=Dolibarr brugere og egenskaber
 DomainUser=Domænebruger% s
 Reactivate=Genaktiver
-CreateInternalUserDesc=Denne form giver dig mulighed for at oprettet en bruger interne til din virksomheds / fundation. At oprettet en ekstern bruger (kunde, leverandør, ...), bruge knappen &#39;Opret Dolibarr bruger&#39; fra tredjepartens kontaktkort.
-InternalExternalDesc=En <b>intern</b> bruger er en bruger, der er en del af din virksomhed / fundation. <br> En <b>ekstern</b> bruger er en kunde, leverandør eller andre. <br><br> I begge tilfælde permissions definerer rettigheder på Dolibarr, også eksterne bruger kan have en anden menu manager end intern bruger (Se Home - Setup - Display)
-PermissionInheritedFromAGroup=Tilladelse gives, fordi ineherited fra en af en brugers gruppe.
 IdPhoneCaller=Id telefonen ringer op
 UserLogged=Bruger% s tilsluttet
 NewUserCreated=Bruger% s oprettet
@@ -124,3 +121,11 @@ ConfirmCreateLogin=Er du sikker på at du vil oprette en Dolibarr højde for det
 ConfirmCreateThirdParty=Er du sikker på at du vil oprette en tredjepart for dette medlem?
 NameToCreate=Navn af tredjemand til at skabe
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+CreateInternalUserDesc=Denne form giver dig mulighed for at oprettet en bruger interne til din virksomheds / fundament. At oprettet en ekstern bruger (kunde, leverandør, ...), bruge knappen &#39;Opret Dolibarr bruger&#39; fra tredjepartens kontaktkort.
+InternalExternalDesc=En <b>intern</b> bruger er en bruger, der er en del af din virksomhed / fundament. <br> En <b>ekstern</b> bruger er en kunde, leverandør eller andre. <br><br> I begge tilfælde permissions definerer rettigheder på Dolibarr, også eksterne bruger kan have en anden menu manager end intern bruger (Se Home - Setup - Display)
+PermissionInheritedFromAGroup=Tilladelse gives, fordi arvet fra en af en brugers gruppe.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

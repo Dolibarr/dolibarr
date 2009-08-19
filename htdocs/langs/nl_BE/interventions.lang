@@ -30,3 +30,9 @@ ArcticNumRefModelDesc1=Generiek nummer model
 ArcticNumRefModelError=Mislukt om te activeren
 PacificNumRefModelDesc1=Nummer met formaat %syymm-nnnn waar yy het jaar is, mm de maand is en nnnn een sequentie is zonder pauze en geen terugkeer naar 0
 PacificNumRefModelError=Een interventie kaart te beginnen met %s syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijdere of hernoem het om deze module te activeren.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
+// Reference language: en_US
+ModifyIntervention=Wijzigen interventie
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

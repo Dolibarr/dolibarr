@@ -71,7 +71,6 @@ MailingAddFile=Vedhæft denne fil
 NoAttachedFiles=Ingen vedhæftede filer
 MailingModuleDescContactCompanies=Kontakter af alle tredjemand (kunde, udsigt, leverandør, ...)
 MailingModuleDescDolibarrUsers=Alle Dolibarr brugere med e-mails
-MailingModuleDescFundationMembers=Fundation medlemmer med e-mails
 MailingModuleDescEmailsFromFile=E-mails fra en tekstfil (email; navn, efternavn)
 MailingModuleDescContactsCategories=Kontakter af alle tredjeparter (efter kategori)
 LineInFile=Line% s filtjenester
@@ -119,3 +118,9 @@ DateLastSend=Dato for sidste afsendelse
 MailingModuleDescDolibarrContractsLinesExpired=Tredjemand med udløb kontrakten&#39;s linjer
 YouCanUseCommaSeparatorForSeveralRecipients=Du kan bruge <b>comma</b> separator til at angive flere modtagere.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
+// Reference language: en_US
+MailingModuleDescFundationMembers=Instituttets medlemmer med e-mails
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).

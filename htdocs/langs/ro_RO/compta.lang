@@ -14,9 +14,7 @@ AccountancyCard=Contabilitate carte
 Treasury=Trezoreria
 MenuFinancial=Financiar
 OptionMode=Opţiunea pentru contabilitate
-OptionModeTrue=Opţiunea de intrare-Ouput
 OptionModeVirtual=Opţiunea Credite-debite
-OptionModeTrueDesc=În acest context, se calculează cifra de afaceri de peste paiements (data de plăţi). \ nThe valabilitate a cifrelor este asigurată numai în cazul în care cartea-ţinerea este analizată prin intrare / ieşire de pe conturi, prin intermediul facturilor.
 OptionModeVirtualDesc=În acest context, cifra de afaceri se calculează pe facturi (data de validare). Când aceste facturi se datorează, indiferent dacă acestea au fost plătite sau nu, ele sunt enumerate în cifra de afaceri de ieşire.
 FeatureIsSupportedInInOutModeOnly=Caracteristicã disponibil doar în CREDITE-DEBTS Mod de contabilitate (a se vedea modul de configurare de contabilitate)
 Param=Setup
@@ -69,11 +67,9 @@ DatePayment=Plata data
 NewVATPayment=New plata TVA
 VATPayment=TVA de plată
 VATPayments=TVA Plăţi
-ShowVatPayment=Arata TVA payement
 TotalToPay=Total de a plăti
 TotalVATReceived=Total TVA primit
 CustomerAccountancyCode=Clientul contabile cod
-SupplierAccountancyCode=Furnizor accountacy cod
 AlreadyPaid=Deja platite
 AccountNumberShort=Numărul de cont
 AccountNumber=Numărul de cont
@@ -129,3 +125,12 @@ ToDispatch=Pentru a expedierii
 ReportTurnover=Cifra de afaceri
 NotUsedForGoods=Nu sunt utilizate pentru cumpărarea de bunuri
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+// Reference language: en_US
+OptionModeTrue=Opţiunea de intrare-iesire
+OptionModeTrueDesc=În acest context, se calculează cifra de afaceri de peste de plăţi (data de plăţi). \ nThe valabilitate a cifrelor este asigurată numai în cazul în care cartea-ţinerea este analizată prin intrare / ieşire de pe conturi, prin intermediul facturilor.
+ShowVatPayment=Arata plata TVA
+SupplierAccountancyCode=Furnizor de contabilitate cod
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).

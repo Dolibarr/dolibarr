@@ -14,8 +14,6 @@ BoxLastProducts=Ultimele produse / servicii
 BoxLastProductsInContract=Ultima contractate de produse / servicii
 BoxLastSupplierBills=Ultima furnizorului facturi
 BoxLastCustomerBills=Ultimul client a facturilor
-BoxOldestUnpaidCustomerBills=Cele mai vechi unpaid clientului facturi
-BoxOldestUnpaidSupplierBills=Cele mai vechi unpaid furnizorului, facturi
 BoxLastProposals=Ultima comerciale propuneri
 BoxLastProspects=Ultima perspectivele
 BoxLastCustomers=Ultima clienţi
@@ -25,8 +23,6 @@ BoxLastBooks=Ultimele cărţi
 BoxLastActions=Ultima acţiuni
 BoxCurrentAccounts=Conturile curente echilibru
 BoxSalesTurnover=Vanzari cifra de afaceri
-BoxTotalUnpaidCustomerBills=Total unpaid clientului facturi
-BoxTotalUnpaidSuppliersBills=Total unpaid furnizorului, facturi
 BoxTitleLastBooks=Ultima% s înregistrate cărţi
 BoxTitleNbOfCustomers=Nombre de client
 BoxTitleLastRssInfos=Ultimele noutăţi de la% s% s
@@ -40,12 +36,8 @@ BoxTitleLastCustomerBills=Ultima% s clientului facturi
 BoxTitleLastSupplierBills=Ultima% s furnizorului facturi
 BoxTitleLastProspects=Ultima% s înregistrate perspectivele
 BoxTitleLastProductsInContract=Ultima% s derniers produselor / serviciilor de contracte
-BoxTitleOldestUnpaidCustomerBills=Cele mai vechi% s unpaid clientului facturi
-BoxTitleOldestUnpaidSupplierBills=Cele mai vechi% s unpaid furnizorului, facturi
 BoxTitleCurrentAccounts=Contul curent al soldurilor
 BoxTitleSalesTurnover=Vanzari cifra de afaceri
-BoxTitleTotalUnpaidCustomerBills=Unpaid clientului facturi
-BoxTitleTotalUnpaidSuppliersBills=Unpaid furnizorului, facturi
 BoxMyLastBookmarks=Ultima mea% s marcaje
 FailedToRefreshDataInfoNotUpToDate=Nu a reuşit să reîmprospătaţi flux RSS. Ultima reuşită a reîmprospăta data:% s
 NoRecordedBookmarks=No bookmarks defined. Click <a href=Nu marcaje definite. Faceţi clic <a href="%s">aici</a> pentru a adăuga marcaje.
@@ -55,9 +47,7 @@ NoActionsToDo=Nr actiuni pentru a face
 NoRecordedOrders=Nu înregistrate clientului ordinelor
 NoRecordedProposals=Nu înregistrate propuneri
 NoRecordedInvoices=Nu înregistrate clientului facturi
-NoUnpaidCustomerBills=Nu unpaid clientului facturi
 NoRecordedSupplierInvoices=Nu înregistrate furnizorului facturi
-NoUnpaidSupplierBills=Nu unpaid furnizorului, facturi
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
 
@@ -69,3 +59,18 @@ NoRecordedProducts=Nu înregistrate produse / servicii
 NoRecordedProspects=Nu înregistrate perspectivele
 NoContractedProducts=Nu produse / servicii contractate
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
+// Reference language: en_US
+BoxOldestUnpaidCustomerBills=Primele facturi neachitate clientului
+BoxOldestUnpaidSupplierBills=Primele facturi neachitate furnizorului
+BoxTotalUnpaidCustomerBills=Total facturi neachitate clientului
+BoxTotalUnpaidSuppliersBills=Total facturi neachitate furnizorului
+BoxTitleOldestUnpaidCustomerBills=Cele mai vechi% s neachitate clientului facturi
+BoxTitleOldestUnpaidSupplierBills=Cele mai vechi% s neachitate furnizorului, facturi
+BoxTitleTotalUnpaidCustomerBills=Neachitate clientului facturi
+BoxTitleTotalUnpaidSuppliersBills=Furnizorului, facturi neachitate
+NoUnpaidCustomerBills=Nu neachitate clientului facturi
+NoUnpaidSupplierBills=Nu facturi neachitate furnizorului
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).

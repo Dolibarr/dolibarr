@@ -273,3 +273,11 @@ CurrencyXAF=CFA Frank BEAC
 CurrencyXOF=FCFA BCEAO
 // Date 2009-01-18 23:57:49
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+// Reference language: en_US
+CountryCH=Zwitserland
+CountryIE=Ierland
+CountryMA=Marokko
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
