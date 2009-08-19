@@ -89,3 +89,10 @@ ActionAC_COM=لكي ترسل عن طريق البريد
 AddActionRendezVous=إضافة مهمة رانديفو
 Rendez-Vous=الموعد
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:54:01).
+// Reference language: en_US
+ToDoActions=عدم اكتمال الإجراءات
+ToDoActionsFor=لعدم اكتمال الإجراءات ق ٪
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:54:01).
