@@ -142,7 +142,7 @@ class modAgenda extends DolibarrModules
 													'mainmenu'=>'agenda',
 													'leftmenu'=>'0',
 													'url'=>'/comm/action/index.php',
-													'langs'=>'commercial',
+													'langs'=>'agenda',
 													'position'=>100,
 													'perms'=>'$user->rights->agenda->myactions->read',
 													'enabled'=>'$conf->agenda->enabled',
