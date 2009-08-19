@@ -130,7 +130,7 @@ class ModeleBoxes
 			print '>';
 			if ($conf->use_javascript_ajax)
 			{
-				print '<table summary="" class="nobordernopadding" width="100%"><tr><td align="left">';
+				print '<table summary="" class="nobordernopadding" width="100%"><tr><td>';
 			}
 			if (! empty($head['text']))
 			{
