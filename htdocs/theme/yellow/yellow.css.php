@@ -298,7 +298,7 @@ li.tmenu a:link
 a.login
 {
   position: absolute;
-  right: 24px;
+  <?php print $right; ?>: 30px;
   top: 2px;
 
   color: #234046;
@@ -316,12 +316,22 @@ a.login:hover
 img.login
 {
   position: absolute;
-  right: 8px;
+  <?php print $right; ?>: 20px;
   top: 2px;
 
   text-decoration:none;
   color:white;
   font-weight:bold;
+}
+img.printer
+{
+  position: absolute;
+  <?php print $right; ?>: 4px;
+  top: 4px;
+
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
 }
 
 

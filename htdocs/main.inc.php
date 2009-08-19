@@ -864,14 +864,14 @@ function top_menu($head, $title='', $target='')
 		$text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
 		$text.='>';
 		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="'.$langs->trans("Logout").'" title=""';
+		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
 		$text.='>';
 		$text.='</a>';
 	}
 	else
 	{
 		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="'.$langs->trans("Logout").'" title=""';
+		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
 		$text.='>';
 	}
 	$htmltext.='<u>'.$langs->trans("User").'</u>';
@@ -895,12 +895,15 @@ function top_menu($head, $title='', $target='')
 	$html=new Form($db);
 	print $html->textwithtooltip('',$htmltext,2,1,$text);
 
-	// Link to print
-	$text ='<a class="print" href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_new">';
-	$text.='<img class="print" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-	$text.=' alt="'.$langs->trans("Print").'" title="">';
-	$text.='</a>';
-	//print $text;
+	// Link to print main content area
+	if (empty($conf->global->MAIN_PRINT_DISABLELINK))
+	{
+		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_new">';
+		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
+		$text.=' title="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'" alt="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'">';
+		$text.='</a>';
+		print $text;
+	}
 
 	print "\n</div>\n<!-- End top horizontal menu -->\n";
 }

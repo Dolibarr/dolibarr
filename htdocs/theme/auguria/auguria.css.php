@@ -305,11 +305,11 @@ li.tmenu {
 a.login
 {
   position: absolute;
-  right: 24px;
+  <?php print $right; ?>: 30px;
   top: 3px;
   color: #234046;
-  padding: 0em 1em;
-  margin: 0px 0px 1.5px 0px;
+  padding: 0px 8px;
+  margin: 0px 0px 1px 0px;
   font-weight:bold;
   font-size:12px;
 }
@@ -321,12 +321,22 @@ a.login:hover
 img.login
 {
   position: absolute;
-  right: 8px;
+  <?php print $right; ?>: 20px;
   top: 3px;
 
   text-decoration:none;
   color:white;
   font-weight:bold;
+}
+img.printer
+{
+  position: absolute;
+  <?php print $right; ?>: 4px;
+  top: 3px;
+
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
 }
 
 
