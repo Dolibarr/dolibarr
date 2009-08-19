@@ -99,7 +99,7 @@ if ($_GET['action'] == 'reopen' && $user->rights->facture->creer)
 	$result = $fac->fetch($_GET['facid']);
 	if ($fac->statut == 3 && ($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
 	{
-		$result = $fac->set_unpayed($user);
+		$result = $fac->set_unpaid($user);
 		if ($result > 0)
 		{
 			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);

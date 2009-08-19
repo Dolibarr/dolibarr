@@ -408,7 +408,7 @@ class MenuLeft {
 						{
 							if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2,$user->rights->fournisseur->facture->creer);
 						}
-						if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpayed"),2,$user->rights->fournisseur->facture->lire);
+						if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/fourn/facture/impayees.php", $langs->trans("Unpaid"),2,$user->rights->fournisseur->facture->lire);
 						if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2,$user->rights->fournisseur->facture->lire);
 
 						if ($leftmenu=="suppliers_bills") $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=suppliers_bills&mode=supplier", $langs->trans("Statistics"),2,$user->rights->fournisseur->facture->lire);
@@ -439,7 +439,7 @@ class MenuLeft {
 
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),2,$user->rights->facture->lire);
 
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
+					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpaid"),2,$user->rights->facture->lire);
 
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
 

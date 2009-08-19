@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/fourn/facture/impayees.php
  *		\ingroup    facture
- *		\brief      Page to list all unpayed invoices
+ *		\brief      Page to list all unpaid invoices
  *		\version    $Id$
  */
 
@@ -53,7 +53,7 @@ if ($user->societe_id > 0)
 
 $now=gmmktime();
 
-llxHeader('',$langs->trans("BillsSuppliersUnpayed"));
+llxHeader('',$langs->trans("BillsSuppliersUnpaid"));
 
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
@@ -149,7 +149,7 @@ if ($user->rights->fournisseur->facture->lire)
 			$soc->fetch($socid);
 		}
 
-		$titre=($socid?$langs->trans("BillsSuppliersUnpayedForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpayed"));
+		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpaid"));
 		print_barre_liste($titre,$page,"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 		$i = 0;
 		print '<table class="liste" width="100%">';

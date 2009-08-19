@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/compta/facture/impayees.php
  *		\ingroup    facture
- *		\brief      Page to list and build liste of unpayed invoices
+ *		\brief      Page to list and build liste of unpaid invoices
  *		\version    $Revision$
  */
 
@@ -39,7 +39,7 @@ $langs->load("bills");
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 $option = $_REQUEST["option"];
 
-$diroutputpdf=$conf->facture->dir_output . '/unpayed/temp';
+$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -74,8 +74,8 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 
 		//$pdf->Open();
 		//$pdf->AddPage();
-		//$title=$langs->trans("BillsCustomersUnpayed");
-		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpayed");
+		//$title=$langs->trans("BillsCustomersUnpaid");
+		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
 		//$pdf->MultiCell(100, 3, $title, 0, 'J');
 
 		// Add all others
@@ -96,7 +96,7 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		create_exdir($diroutputpdf);
 
 		// Save merged file
-		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Unpayed")));
+		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
 		if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 		if ($pagecount)
 		{
@@ -124,8 +124,8 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
  * View
  */
 
-$title=$langs->trans("BillsCustomersUnpayed");
-if ($option=='late') $title=$langs->trans("BillsCustomersUnpayed");
+$title=$langs->trans("BillsCustomersUnpaid");
+if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
 
 llxHeader('',$title);
 
@@ -248,13 +248,13 @@ if ($result)
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=eregi_replace('&amp;','&',$param);
 
-	$titre=($socid?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
+	$titre=($socid?$langs->trans("BillsCustomersUnpaidForCompany",$soc->nom):$langs->trans("BillsCustomersUnpaid"));
 	if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
 	else $titre.=' ('.$langs->trans("All").')';
 
 	$link='';
-	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late">'.$langs->trans("ShowUnpayedLateOnly").'</a>';
-	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpayedAll").'</a>';
+	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpaidAll").'</a>';
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
@@ -403,7 +403,7 @@ if ($result)
 
 	print '<br>';
 	print '<input type="hidden" name="option" value="'.$option.'">';
-	$formfile->show_documents('unpayed','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1,$param,'',$langs->trans("PDFMerge"));
+	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1,$param,'',$langs->trans("PDFMerge"));
 	print '</form>';
 
 	$db->free();

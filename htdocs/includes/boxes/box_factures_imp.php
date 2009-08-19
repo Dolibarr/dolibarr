@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 
 class box_factures_imp extends ModeleBoxes {
 
-    var $boxcode="oldestunpayedcustomerbills";
+    var $boxcode="oldestunpaidcustomerbills";
     var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture");
@@ -51,7 +51,7 @@ class box_factures_imp extends ModeleBoxes {
     	global $langs;
       $langs->load("boxes");
 
-      $this->boxlabel=$langs->trans("BoxOldestUnpayedCustomerBills");
+      $this->boxlabel=$langs->trans("BoxOldestUnpaidCustomerBills");
     }
 
     /**
@@ -67,7 +67,7 @@ class box_factures_imp extends ModeleBoxes {
     	include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
     	$facturestatic=new Facture($db);
     	
-    	$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedCustomerBills",$max));
+    	$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));
 
       if ($user->rights->facture->lire)
       {
@@ -128,7 +128,7 @@ class box_factures_imp extends ModeleBoxes {
                     $i++;
                 }
                 
-                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpayedCustomerBills"));
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
             }
             else
             {

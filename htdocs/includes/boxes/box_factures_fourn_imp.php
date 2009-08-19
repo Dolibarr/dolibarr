@@ -28,7 +28,7 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 class box_factures_fourn_imp extends ModeleBoxes {
 
-	var $boxcode="oldestunpayedsupplierbills";
+	var $boxcode="oldestunpaidsupplierbills";
 	var $boximg="object_bill";
 	var $boxlabel;
 	var $depends = array("facture","fournisseur");
@@ -48,7 +48,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxOldestUnpayedSupplierBills");
+		$this->boxlabel=$langs->trans("BoxOldestUnpaidSupplierBills");
 	}
 
 	/**
@@ -64,7 +64,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
 		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 		$facturestatic=new FactureFournisseur($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedSupplierBills",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills",$max));
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
@@ -126,7 +126,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpayedSupplierBills"));
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidSupplierBills"));
 			}
 			else {
 				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',

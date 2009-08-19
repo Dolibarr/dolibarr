@@ -1135,16 +1135,16 @@ class Facture extends CommonObject
 	 *      \param      user        Object user that change status
 	 *      \return     int         <0 si ok, >0 si ok
 	 */
-	function set_unpayed($user)
+	function set_unpaid($user)
 	{
 		global $conf,$langs;
 
-		dol_syslog("Facture::set_unpayed rowid=".$this->id, LOG_DEBUG);
+		dol_syslog("Facture::set_unpaid rowid=".$this->id, LOG_DEBUG);
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
 
-		dol_syslog("Facture::set_unpayed sql=".$sql);
+		dol_syslog("Facture::set_unpaid sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2032,7 +2032,7 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpayed');
+				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
 				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
 				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
 				return $langs->trans('Bill'.$prefix.'StatusStarted');

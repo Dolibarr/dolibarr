@@ -275,7 +275,7 @@ class FormFile
 					$modellist=$model->liste_modeles($this->db);
 				}
 			}
-			else if ($modulepart == 'unpayed')
+			else if ($modulepart == 'unpaid')
 			{
 				$modellist='';
 			}

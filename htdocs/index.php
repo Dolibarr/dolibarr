@@ -468,7 +468,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$board->load_board($user);
 
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("CustomerBillsUnpayed").'</td>';
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("CustomerBillsUnpaid").'</td>';
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">'.$board->nbtodo.'</a></td>';
 	print '<td align="right">';
 	print '<a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">';

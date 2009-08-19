@@ -117,14 +117,14 @@ if ($modulepart)
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='$refname'";
 	}
 
-	if ($modulepart == 'unpayed')
+	if ($modulepart == 'unpaid')
 	{
 		$user->getrights('facture');
 		if ($user->rights->facture->lire || eregi('^specimen',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->facture->dir_output.'/unpayed/temp/'.$original_file;
+		$original_file=$conf->facture->dir_output.'/unpaid/temp/'.$original_file;
 	}
 
 	// Wrapping pour les fiches intervention

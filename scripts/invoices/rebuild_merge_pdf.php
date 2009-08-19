@@ -253,8 +253,8 @@ if ( $resql=$db->query($sql) )
 
 		//$pdf->Open();
 		//$pdf->AddPage();
-		//$title=$langs->trans("BillsCustomersUnpayed");
-		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpayed");
+		//$title=$langs->trans("BillsCustomersUnpaid");
+		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
 		//$pdf->MultiCell(100, 3, $title, 0, 'J');
 
 		// Add all others

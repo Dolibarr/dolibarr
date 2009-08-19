@@ -73,7 +73,7 @@ function llxHeader($head = '', $title = '', $help_url='')
 	if ($user->rights->fournisseur->facture->lire)
 	{
 		$menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
-		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/impayees.php",$langs->trans("Unpayed"));
+		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/impayees.php",$langs->trans("Unpaid"));
 		$menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
 	}
 

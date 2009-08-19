@@ -48,7 +48,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update'))
   if ($_POST["BoardNotActivatedServices"]) dolibarr_set_const($db, "MAIN_DELAY_NOT_ACTIVATED_SERVICES",$_POST["BoardNotActivatedServices"],'chaine',0,'',$conf->entity);
   if ($_POST["BoardRunningServices"]) dolibarr_set_const($db, "MAIN_DELAY_RUNNING_SERVICES",$_POST["BoardRunningServices"],'chaine',0,'',$conf->entity);
   if ($_POST["SupplierBillsToPay"]) dolibarr_set_const($db, "MAIN_DELAY_SUPPLIER_BILLS_TO_PAY",$_POST["SupplierBillsToPay"],'chaine',0,'',$conf->entity);
-  if ($_POST["CustomerBillsUnpayed"]) dolibarr_set_const($db, "MAIN_DELAY_CUSTOMER_BILLS_UNPAYED",$_POST["CustomerBillsUnpayed"],'chaine',0,'',$conf->entity);
+  if ($_POST["CustomerBillsUnpaid"]) dolibarr_set_const($db, "MAIN_DELAY_CUSTOMER_BILLS_UNPAYED",$_POST["CustomerBillsUnpaid"],'chaine',0,'',$conf->entity);
   if ($_POST["TransactionsToConciliate"]) dolibarr_set_const($db, "MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE",$_POST["TransactionsToConciliate"],'chaine',0,'',$conf->entity);
   if ($_POST["ChequesToDeposit"]) dolibarr_set_const($db, "MAIN_DELAY_CHEQUES_TO_DEPOSIT",$_POST["ChequesToDeposit"],'chaine',0,'',$conf->entity);
 	if ($_POST["Members"]) dolibarr_set_const($db, "MAIN_DELAY_MEMBERS",$_POST["Members"],'chaine',0,'',$conf->entity);
@@ -143,8 +143,8 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','bill').'</td>';
-        print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpayed").'</td><td>';
-        print '<input size="5" name="CustomerBillsUnpayed" value="'. ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . '"> ' . $langs->trans("days") . '</td></tr>';
+        print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpaid").'</td><td>';
+        print '<input size="5" name="CustomerBillsUnpaid" value="'. ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }    
     if ($conf->banque->enabled)
     {
@@ -248,7 +248,7 @@ else
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','bill').'</td>';
-        print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpayed").'</td><td>' . ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . ' ' . $langs->trans("days") . '</td></tr>';
+        print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpaid").'</td><td>' . ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
     if ($conf->banque->enabled)

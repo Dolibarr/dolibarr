@@ -148,8 +148,8 @@ class RejetPrelevement
 	  }
 
 	/* Tag la facture comme impayee */
-	dol_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
-	$fac->set_unpayed($fac->id, $user);
+	dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
+	$fac->set_unpaid($fac->id, $user);
 
 	/* Envoi un email à l'emetteur de la demande de prev */
 	$this->_send_email($fac);

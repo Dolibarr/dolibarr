@@ -780,7 +780,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpayed",min($conf->liste_limit,$num)).' <a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">('.$num.')</a></td>';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpaid",min($conf->liste_limit,$num)).' <a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">('.$num.')</a></td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Received").'</td>';
@@ -877,7 +877,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpayed",min($conf->liste_limit,$num)).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">('.$num.')</a></td>';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpaid",min($conf->liste_limit,$num)).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">('.$num.')</a></td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Payed").'</td>';

@@ -324,7 +324,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '</table>';
 
 		/*
-		 * List of unpayed invoices
+		 * List of unpaid invoices
 		 */
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
 		$sql.= $db->pdate('f.datef').' as df, ';

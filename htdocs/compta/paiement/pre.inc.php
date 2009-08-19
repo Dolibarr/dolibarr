@@ -49,7 +49,7 @@ function llxHeader($head = "", $title="")
 	$menu->add("rapport.php",$langs->trans("Reportings"));
 
 	$menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-	$menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
+	$menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpaid"));
 
 	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 	{

@@ -260,32 +260,32 @@ class ChargeSociales extends CommonObject
 
 		if ($mode == 0)
 		{
-			if ($statut ==  0) return $langs->trans("Unpayed");
+			if ($statut ==  0) return $langs->trans("Unpaid");
 			if ($statut ==  1) return $langs->trans("Payed");
 		}
 		if ($mode == 1)
 		{
-			if ($statut ==  0) return $langs->trans("Unpayed");
+			if ($statut ==  0) return $langs->trans("Unpaid");
 			if ($statut ==  1) return $langs->trans("Payed");
 		}
 		if ($mode == 2)
 		{
-			if ($statut ==  0) return img_picto($langs->trans("Unpayed"), 'statut1').' '.$langs->trans("Unpayed");
+			if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
 			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6').' '.$langs->trans("Payed");
 		}
 		if ($mode == 3)
 		{
-			if ($statut ==  0) return img_picto($langs->trans("Unpayed"), 'statut1');
+			if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1');
 			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6');
 		}
 		if ($mode == 4)
 		{
-			if ($statut ==  0) return img_picto($langs->trans("Unpayed"), 'statut1').' '.$langs->trans("Unpayed");
+			if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
 			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6').' '.$langs->trans("Payed");
 		}
 		if ($mode == 5)
 		{
-			if ($statut ==  0) return $langs->trans("Unpayed").' '.img_picto($langs->trans("Unpayed"), 'statut1');
+			if ($statut ==  0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
 			if ($statut ==  1) return $langs->trans("Payed").' '.img_picto($langs->trans("Payed"), 'statut6');
 		}
 
