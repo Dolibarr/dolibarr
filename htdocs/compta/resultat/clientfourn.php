@@ -554,7 +554,7 @@ else
         dol_print_error($db);
     }
     print "<tr $bc[$var]><td>&nbsp;</td>";
-    print "<td>".$langs->trans("VATPayed")."</td>\n";
+    print "<td>".$langs->trans("VATPaid")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";

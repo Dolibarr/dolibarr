@@ -50,10 +50,10 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 /*
  * 	Classer paye
  */
-if ($_REQUEST["action"] == 'confirm_payed' && $_REQUEST["confirm"] == 'yes')
+if ($_REQUEST["action"] == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
 {
 	$chargesociales = new ChargeSociales($db);
-	$result = $chargesociales->set_payed($chid);
+	$result = $chargesociales->set_paid($chid);
 }
 
 /*
@@ -262,10 +262,10 @@ if ($chid > 0)
 		* Confirmation de la suppression de la charge
 		*
 		*/
-		if ($_GET["action"] == 'payed')
+		if ($_GET["action"] == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=$cha->id&amp;action=confirm_payed",$langs->trans('PaySocialContribution'),$text,"confirm_payed");
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=$cha->id&amp;action=confirm_paid",$langs->trans('PaySocialContribution'),$text,"confirm_paid");
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -360,7 +360,7 @@ if ($chid > 0)
 
 			if ($cha->paye == 0)
 			{
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPayed")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
+				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 
 				$resteapayer = $cha->amount - $totalpaye;
@@ -428,10 +428,10 @@ if ($chid > 0)
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
-			// Classify 'payed'
+			// Classify 'paid'
 			if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
 			}
 
 			// Delete

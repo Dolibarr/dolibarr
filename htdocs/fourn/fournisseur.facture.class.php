@@ -411,7 +411,7 @@ class FactureFournisseur extends Facture
 	 *      \param      user        Objet utilisateur qui modifie l'etat
 	 *      \return     int         <0 si ko, >0 si ok
 	 */
-	function set_payed($user)
+	function set_paid($user)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
 		$sql.= ' SET paye = 1';

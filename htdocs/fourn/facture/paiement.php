@@ -278,7 +278,7 @@ if ($action == 'create' || $action == 'add_paiement')
 					print '<td>'.$langs->trans('RefSupplier').'</td>';
 					print '<td align="center">'.$langs->trans('Date').'</td>';
 					print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
-					print '<td align="right">'.$langs->trans('AlreadyPayed').'</td>';
+					print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
 					print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
 					print '<td align="center">'.$langs->trans('Amount').'</td>';
 					print '</tr>';

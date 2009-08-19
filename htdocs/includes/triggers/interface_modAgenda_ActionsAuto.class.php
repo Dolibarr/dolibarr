@@ -267,8 +267,8 @@ class InterfaceActionsAuto
             $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
-            $object->actionmsg2=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
+            $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;

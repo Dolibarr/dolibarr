@@ -62,7 +62,7 @@ function tva_coll($db,$y,$q)
 	global $conf;
     if ($conf->compta->mode == "CREANCES-DETTES")
     {
-        // if vat payed on due invoices
+        // if vat paid on due invoices
         $sql = "SELECT d.fk_facture as facid, f.facnumber as facnum, d.tva_taux as rate, d.total_ht as totalht, d.total_tva as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."facturedet as d" ;
@@ -79,7 +79,7 @@ function tva_coll($db,$y,$q)
     }
     else
     {
-        // if vat payed on paiments
+        // if vat paid on paiments
     }
 
     $resql = $db->query($sql);

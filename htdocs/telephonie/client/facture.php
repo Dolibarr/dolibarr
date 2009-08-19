@@ -283,7 +283,7 @@ if ($_GET["facid"] > 0)
 
 	  if ($fac->paye == 0)
 	    {
-	      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPayed")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
+	      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 	      print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 
 	      $resteapayer = $fac->total_ttc - $totalpaye;

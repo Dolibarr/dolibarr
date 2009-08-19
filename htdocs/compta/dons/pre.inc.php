@@ -34,7 +34,7 @@ $langs->load("propal");
 
 $libelle[0] = $langs->trans("PromisesNotValid");
 $libelle[1] = $langs->trans("PromisesValid");
-$libelle[2] = $langs->trans("DonationsPayed");
+$libelle[2] = $langs->trans("DonationsPaid");
 $libelle[3] = $langs->trans("DonationsReceived");
 
 

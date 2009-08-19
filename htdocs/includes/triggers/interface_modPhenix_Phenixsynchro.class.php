@@ -243,8 +243,8 @@ class InterfacePhenixsynchro
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
+            $this->texte=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
         elseif ($action == 'BILL_CANCELED')

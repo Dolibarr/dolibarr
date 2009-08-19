@@ -365,14 +365,14 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 }
 
 // Classe à "payée"
-if ($_REQUEST['action'] == 'confirm_payed' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
-	$result = $fac->set_payed($user);
+	$result = $fac->set_paid($user);
 }
 // Classe à "payée partiellement"
-if ($_REQUEST['action'] == 'confirm_payed_partially' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
+if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
@@ -380,7 +380,7 @@ if ($_REQUEST['action'] == 'confirm_payed_partially' && $_REQUEST['confirm'] == 
 	$close_note=$_POST["close_note"];
 	if ($close_code)
 	{
-		$result = $fac->set_payed($user,$close_code,$close_note);
+		$result = $fac->set_paid($user,$close_code,$close_note);
 	}
 	else
 	{
@@ -457,7 +457,7 @@ if ($_REQUEST['action'] == 'confirm_converttoreduc' && $_REQUEST['confirm'] == '
 		if (! $error)
 		{
 			// Classe facture
-			$result=$fac->set_payed($user);
+			$result=$fac->set_paid($user);
 			if ($result > 0)
 			{
 				//$mesg='OK'.$discount->id;
@@ -2073,12 +2073,12 @@ else
 			}
 
 			// Confirmation du classement payé
-			if ($_GET['action'] == 'payed' && $resteapayer <= 0)
+			if ($_GET['action'] == 'paid' && $resteapayer <= 0)
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed','',0,1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidBill',$fac->ref),'confirm_paid','',0,1);
 				if ($ret == 'html') print '<br>';
 			}
-			if ($_GET['action'] == 'payed' && $resteapayer > 0)
+			if ($_GET['action'] == 'paid' && $resteapayer > 0)
 			{
 				// Code
 				$i=0;
@@ -2086,12 +2086,12 @@ else
 				$close[$i]['code']='badcustomer';$i++;
 				// Help
 				$i=0;
-				$close[$i]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyReasonDiscountVatDesc");$i++;
-				$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");$i++;
+				$close[$i]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPaidPartiallyReasonDiscountVatDesc");$i++;
+				$close[$i]['label']=$langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");$i++;
 				// Texte
 				$i=0;
-				$close[$i]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
-				$close[$i]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				$close[$i]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				$close[$i]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
 				// arrayreasons[code]=reason
 				foreach($close as $key => $val)
 				{
@@ -2100,12 +2100,12 @@ else
 
 				// Crée un tableau formulaire
 				$formquestion=array(
-				'text' => $langs->trans("ConfirmClassifyPayedPartiallyQuestion"),
+				'text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),
 				array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
 				array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidPartially',$fac->ref),'confirm_paid_partially',$formquestion);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -2130,10 +2130,10 @@ else
 					$close[1]['code']='badcustomer';
 					$close[2]['code']='abandon';
 					// Help
-					$close[1]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");
+					$close[1]['label']=$langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 					$close[2]['label']=$langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
 					// Texte
-					$close[1]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$fac->ref),$close[1]['label'],1);
+					$close[1]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer",$fac->ref),$close[1]['label'],1);
 					$close[2]['reason']=$html->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"),$close[2]['label'],1);
 					// arrayreasons
 					$arrayreasons[$close[1]['code']]=$close[1]['reason'];
@@ -2481,10 +2481,10 @@ else
 
 			if ($fac->type != 2)
 			{
-				// Total already payed
+				// Total already paid
 				print '<tr><td colspan="2" align="right">';
-				if ($fac->type != 3) print $langs->trans('AlreadyPayedNoCreditNotesNoDeposits');
-				else print $langs->trans('AlreadyPayed');
+				if ($fac->type != 3) print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
+				else print $langs->trans('AlreadyPaid');
 				print ' :</td><td align="right">'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
 
 				$resteapayeraffiche=$resteapayer;
@@ -3283,21 +3283,21 @@ else
 						}
 					}
 
-					// Classify payed (if not deposit and not credit note. Such invoice are "converted")
+					// Classify paid (if not deposit and not credit note. Such invoice are "converted")
 					if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement &&
 					(($fac->type != 2 && $fac->type != 3 && $resteapayer <= 0) || ($fac->type == 2 && $resteapayer >= 0)) )
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 					}
 
-					// Classify 'closed not completely payed' (possible si validée et pas encore classée payée)
+					// Classify 'closed not completely paid' (possible si validée et pas encore classée payée)
 					if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
 					&& $user->rights->facture->paiement)
 					{
 						if ($totalpaye > 0 || $totalcreditnotes > 0)
 						{
 							// If one payment or one credit note was linked to this invoice
-							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
 						}
 						else
 						{

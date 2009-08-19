@@ -588,7 +588,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
 		$sql.= " cc.libelle,";
-		$sql.= " sum(pc.amount) as sumpayed";
+		$sql.= " sum(pc.amount) as sumpaid";
 		$sql.= " FROM (".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON c.rowid = pc.fk_charge";
 		$sql.= " WHERE c.fk_type = cc.id";
@@ -607,7 +607,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 			print '<td>'.$langs->trans("ContributionsToPay").($num?' ('.$num.')':'').'</td>';
 			print '<td align="center">'.$langs->trans("DateDue").'</td>';
 			print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-			print '<td align="right">'.$langs->trans("Payed").'</td>';
+			print '<td align="right">'.$langs->trans("Paid").'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 			if ($num)
@@ -624,7 +624,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td align="center">'.dol_print_date($obj->date_ech,'day').'</td>';
 					print '<td align="right">'.price($obj->amount).'</td>';
-					print '<td align="right">'.price($obj->sumpayed).'</td>';
+					print '<td align="right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 					$tot_ttc+=$obj->amount;
@@ -880,7 +880,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpaid",min($conf->liste_limit,$num)).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">('.$num.')</a></td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-		print '<td align="right">'.$langs->trans("Payed").'</td>';
+		print '<td align="right">'.$langs->trans("Paid").'</td>';
 		print '<td width="16">&nbsp;</td>';
 		print "</tr>\n";
 		if ($num)

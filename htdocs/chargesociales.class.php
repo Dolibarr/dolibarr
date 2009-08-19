@@ -231,7 +231,7 @@ class ChargeSociales extends CommonObject
 	*    \brief      Tag la charge comme payee completement
 	*    \param      rowid       id de la ligne a modifier
 	*/
-	function set_payed($rowid)
+	function set_paid($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales set paye=1 WHERE rowid = ".$rowid;
       $return = $this->db->query( $sql);
@@ -261,32 +261,32 @@ class ChargeSociales extends CommonObject
 		if ($mode == 0)
 		{
 			if ($statut ==  0) return $langs->trans("Unpaid");
-			if ($statut ==  1) return $langs->trans("Payed");
+			if ($statut ==  1) return $langs->trans("Paid");
 		}
 		if ($mode == 1)
 		{
 			if ($statut ==  0) return $langs->trans("Unpaid");
-			if ($statut ==  1) return $langs->trans("Payed");
+			if ($statut ==  1) return $langs->trans("Paid");
 		}
 		if ($mode == 2)
 		{
 			if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6').' '.$langs->trans("Payed");
+			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
 		if ($mode == 3)
 		{
 			if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1');
-			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6');
+			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			if ($statut ==  1) return img_picto($langs->trans("Payed"), 'statut6').' '.$langs->trans("Payed");
+			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
 		if ($mode == 5)
 		{
 			if ($statut ==  0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-			if ($statut ==  1) return $langs->trans("Payed").' '.img_picto($langs->trans("Payed"), 'statut6');
+			if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
 		}
 
 		return "Error, mode/status not found";

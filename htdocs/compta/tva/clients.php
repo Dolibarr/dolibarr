@@ -103,7 +103,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
-	$vatsup=$langs->trans("VATPayed");
+	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
@@ -126,7 +126,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
-	$vatsup=$langs->trans("VATPayed");
+	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
@@ -202,7 +202,7 @@ else
 print '</table>';
 
 
-// VAT Payed
+// VAT Paid
 
 print "<br>";
 print_titre($vatsup);

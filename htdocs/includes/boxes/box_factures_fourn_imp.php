@@ -119,9 +119,9 @@ class box_factures_fourn_imp extends ModeleBoxes {
 
 					$fac = new FactureFournisseur($db);
 					$fac->fetch($objp->facid);
-					$alreadypayed=$fac->getSommePaiement();
+					$alreadypaid=$fac->getSommePaiement();
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypayed,$objp->type));
+                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type));
 
 					$i++;
 				}

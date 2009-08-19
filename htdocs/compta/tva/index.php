@@ -116,7 +116,7 @@ print_titre($langs->trans("VATSummary"));
 //print $modetax;
 //print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
 echo '</td><td width="5">&nbsp;</td><td>';
-print_titre($langs->trans("VATPayed"));
+print_titre($langs->trans("VATPaid"));
 echo '</td></tr>';
 
 echo '<tr><td width="50%" valign="top">';

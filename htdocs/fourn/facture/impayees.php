@@ -162,7 +162,7 @@ if ($user->rights->fournisseur->facture->lire)
 		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=$socid","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AlreadyPayed"),$_SERVER["PHP_SELF"],"am","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("AlreadyPaid"),$_SERVER["PHP_SELF"],"am","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
@@ -193,7 +193,7 @@ if ($user->rights->fournisseur->facture->lire)
 			$var=True;
 			$total_ht=0;
 			$total_ttc=0;
-			$total_payed=0;
+			$total_paid=0;
 
 			while ($i < $num)
 			{
@@ -235,7 +235,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print "</tr>\n";
 				$total_ht+=$objp->total_ht;
 				$total_ttc+=$objp->total_ttc;
-				$total_payed+=$objp->am;
+				$total_paid+=$objp->am;
 
 				$i++;
 			}
@@ -244,7 +244,7 @@ if ($user->rights->fournisseur->facture->lire)
 			print "<td colspan=\"5\" align=\"left\">".$langs->trans("Total").": </td>";
 			print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
 			print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-			print "<td align=\"right\"><b>".price($total_payed)."</b></td>";
+			print "<td align=\"right\"><b>".price($total_paid)."</b></td>";
 			print '<td align="center">&nbsp;</td>';
 			print "</tr>\n";
 		}

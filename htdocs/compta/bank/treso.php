@@ -157,7 +157,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
-	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not payed
+	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
 	$sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
@@ -166,7 +166,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql2.= " WHERE ff.entity = ".$conf->entity;
-	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not payed
+	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
 	$sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
@@ -174,7 +174,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
 	$sql3.= " WHERE cs.entity = ".$conf->entity;
-	$sql3.= " AND cs.paye = 0";	// Not payed
+	$sql3.= " AND cs.paye = 0";	// Not paid
 	$sql3.= " ORDER BY dlr ASC";
 
 	$error=0;

@@ -72,10 +72,10 @@ class Don extends CommonObject
 		$langs->load("donations");
 		$this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
 		$this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
-		$this->labelstatut[2]=$langs->trans("DonationStatusPayed");
+		$this->labelstatut[2]=$langs->trans("DonationStatusPaid");
 		$this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
 		$this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
-		$this->labelstatutshort[2]=$langs->trans("DonationStatusPayedShort");
+		$this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
 	}
 
 

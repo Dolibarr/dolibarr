@@ -684,10 +684,10 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			$pdf->SetFont('Arial','', 10);
 
-			// Already payed + Deposits
+			// Already paid + Deposits
 			$index++;
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'L', 0);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid"), 0, 'L', 0);
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount), 0, 'R', 0);
 

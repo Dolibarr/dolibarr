@@ -1737,7 +1737,7 @@ class Adherent extends CommonObject
 			{
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
-				else                                     return $langs->trans("MemberStatusPayed");
+				else                                     return $langs->trans("MemberStatusPaid");
 			}
 			if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
 		}
@@ -1748,7 +1748,7 @@ class Adherent extends CommonObject
 			{
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
-				else                                     return $langs->trans("MemberStatusPayedShort");
+				else                                     return $langs->trans("MemberStatusPaidShort");
 			}
 			if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
 		}
@@ -1759,7 +1759,7 @@ class Adherent extends CommonObject
 			{
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
-				else                                     return img_picto($langs->trans('MemberStatusPayed'),'statut4').' '.$langs->trans("MemberStatusPayedShort");
+				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaidShort");
 			}
 			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
 		}
@@ -1770,7 +1770,7 @@ class Adherent extends CommonObject
 			{
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
-				else                                     return img_picto($langs->trans('MemberStatusPayed'),'statut4');
+				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4');
 			}
 			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
@@ -1781,7 +1781,7 @@ class Adherent extends CommonObject
 			{
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
-				else                                     return img_picto($langs->trans('MemberStatusPayed'),'statut4').' '.$langs->trans("MemberStatusPayed");
+				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaid");
 			}
 			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
 		}
@@ -1792,7 +1792,7 @@ class Adherent extends CommonObject
 			{
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate").' '.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
-				else                                     return $langs->trans("MemberStatusPayed").' '.img_picto($langs->trans('MemberStatusPayed'),'statut4');
+				else                                     return $langs->trans("MemberStatusPaid").' '.img_picto($langs->trans('MemberStatusPaid'),'statut4');
 			}
 			if ($statut == 0)  return $langs->trans("MemberStatusResiliated").' '.img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}

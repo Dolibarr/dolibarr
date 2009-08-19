@@ -107,7 +107,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
-	$vatsup=$langs->trans("VATPayed");
+	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
@@ -136,13 +136,13 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
-	$vatsup=$langs->trans("VATPayed");
+	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
 
-// VAT Received and payed
+// VAT Received and paid
 
 echo '<table class="noborder" width="100%">';
 
@@ -200,7 +200,7 @@ else
 				'link'      =>$invoice_customer->getNomUrl(1,'',12));
 		}
 	}
-	// tva payed
+	// tva paid
 	foreach(array_keys($x_paye) as $my_paye_rate){
 		$x_both[$my_paye_rate]['paye']['totalht'] = $x_paye[$my_paye_rate]['totalht'];
 		$x_both[$my_paye_rate]['paye']['vat'] = $x_paye[$my_paye_rate]['vat'];
@@ -395,7 +395,7 @@ else
 		print '<td align="right">'.$amountsup.'</td>';
 		print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
 	}
-	print '<td align="right">'.$langs->trans("AmountHTVATRealPayed").'</td>';
+	print '<td align="right">'.$langs->trans("AmountHTVATRealPaid").'</td>';
 	print '<td align="right">'.$vatsup.'</td>';
 	print '</tr>'."\n";
 
@@ -483,7 +483,7 @@ else
 					print '</td>';
 				}
 
-				// VAT payed
+				// VAT paid
 				print '<td nowrap align="right">';
 				$temp_ht=$fields['totalht'];
 				if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;

@@ -117,11 +117,11 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
 	}
 }
 
-if ($_REQUEST['action'] == 'confirm_payed' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->facture->creer)
+if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->facture->creer)
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
-	$facturefourn->set_payed($user);
+	$facturefourn->set_paid($user);
 }
 
 if($_GET['action'] == 'deletepaiement')
@@ -630,10 +630,10 @@ else
 				if ($ret == 'html') print '<br>';
 			}
 
-			// Confirmation set payed
-			if ($_GET['action'] == 'payed')
+			// Confirmation set paid
+			if ($_GET['action'] == 'paid')
 			{
-				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPayed'), $langs->trans('ConfirmClassifyPayedBill', $fac->ref), 'confirm_payed', '', 0, 1);
+				$ret=$html->form_confirm('fiche.php?facid='.$fac->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $fac->ref), 'confirm_paid', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -766,7 +766,7 @@ else
 
 				if ($fac->paye == 0)
 				{
-					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 					$resteapayer = $fac->total_ttc - $totalpaye;
@@ -798,8 +798,8 @@ else
 			print '</td></tr>';
 
 			// Status
-			$alreadypayed=$fac->getSommePaiement();
-			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->getLibStatut(4,$alreadypayed).'</td></tr>';
+			$alreadypaid=$fac->getSommePaiement();
+			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->getLibStatut(4,$alreadypaid).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
@@ -1122,10 +1122,10 @@ else
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=payed"';
-			print '>'.$langs->trans('ClassifyPayed').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=paid"';
+			print '>'.$langs->trans('ClassifyPaid').'</a>';
 
-			//print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
+			//print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 		}
 
 		if ($_GET['action'] != 'edit' && $fac->statut == 0 && $user->rights->fournisseur->facture->valider)

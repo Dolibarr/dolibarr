@@ -63,7 +63,7 @@ print '<td>'.$langs->trans("Label").'</td>';
 print "<td>".$langs->trans("Type")."</td>";
 print "<td align=\"right\">".$langs->trans("Amount")."</td>";
 print "<td align=\"right\">".$langs->trans("NbOfPayments")."</td>";
-print "<td align=\"right\">".$langs->trans("AlreadyPayed")."</td>";
+print "<td align=\"right\">".$langs->trans("AlreadyPaid")."</td>";
 print "</tr>\n";
 
 $sql = "SELECT c.id, c.libelle as lib, s.rowid, s.libelle, s.fk_type as type, s.periode, s.date_ech,";
@@ -166,7 +166,7 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	    print "<td>".$langs->trans("Label")."</td>";
 	    print '<td align="right">'.$langs->trans("Amount")."</td>";
 	    print '<td align="center">'.$langs->trans("DatePayment")."</td>";
-	    print "<td align=\"right\">".$langs->trans("AlreadyPayed")."</td>";
+	    print "<td align=\"right\">".$langs->trans("AlreadyPaid")."</td>";
 	    print "</tr>\n";
 	    $var=1;
 	    while ($i < $num)

@@ -305,7 +305,7 @@ if ($result)
 		$var=True;
 		$total_ht=0;
 		$total_ttc=0;
-		$total_payed=0;
+		$total_paid=0;
 
 		print '<form id="form_generate_pdf" method="post" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $_GET['sortfield'] .'&sortorder='. $_GET['sortorder'] .'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -371,7 +371,7 @@ if ($result)
 			print "</tr>\n";
 			$total_ht+=$objp->total_ht;
 			$total_ttc+=$objp->total_ttc;
-			$total_payed+=$objp->am;
+			$total_paid+=$objp->am;
 
 			$i++;
 		}
@@ -380,7 +380,7 @@ if ($result)
 		print "<td colspan=\"4\" align=\"left\">".$langs->trans("Total")."</td>";
 		print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-		print "<td align=\"right\"><b>".price($total_payed)."</b></td>";
+		print "<td align=\"right\"><b>".price($total_paid)."</b></td>";
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";

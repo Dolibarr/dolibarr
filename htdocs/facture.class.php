@@ -73,8 +73,8 @@ class Facture extends CommonObject
 	var $note;
 	var $note_public;
 	//! 0=draft,
-	//! 1=validated (need to be payed),
-	//! 2=classified payed partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
+	//! 1=validated (need to be paid),
+	//! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
 	//! 3=classified abandonned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
 	var $statut;
 	//! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
@@ -1092,13 +1092,13 @@ class Facture extends CommonObject
 	 *	   \param      close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet (cas ecompte par exemple)
 	 *      \return     int         	<0 si ok, >0 si ok
 	 */
-	function set_payed($user,$close_code='',$close_note='')
+	function set_paid($user,$close_code='',$close_note='')
 	{
 		global $conf,$langs;
 
 		if ($this->paye != 1)
 		{
-			dol_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
+			dol_syslog("Facture::set_paid rowid=".$this->id, LOG_DEBUG);
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 			$sql.= ' fk_statut=2';
 			if (! $close_code) $sql.= ', paye=1';
@@ -2003,12 +2003,12 @@ class Facture extends CommonObject
 	/**
 	 *	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
 	 *	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé lon
-	 *	\param		alreadypayed	0=Not payment already done, 1=Some payments already done
+	 *	\param		alreadypaid	0=Not payment already done, 1=Some payments already done
 	 *	\return     string        	Libelle
 	 */
-	function getLibStatut($mode=0,$alreadypayed=-1)
+	function getLibStatut($mode=0,$alreadypaid=-1)
 	{
-		return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypayed,$this->type);
+		return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypaid,$this->type);
 	}
 
 	/**
@@ -2016,32 +2016,32 @@ class Facture extends CommonObject
 	 *    	\param      paye          	Etat paye
 	 *    	\param      statut        	Id statut
 	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Pict
-	 *		\param		alreadypayed	Montant deja payé
+	 *		\param		alreadypaid	Montant deja payé
 	 *		\param		type			Type facture
 	 *    	\return     string        	Libellé du statut
 	 */
-	function LibStatut($paye,$statut,$mode=0,$alreadypayed=-1,$type=0)
+	function LibStatut($paye,$statut,$mode=0,$alreadypaid=-1,$type=0)
 	{
 		global $langs;
 		$langs->load('bills');
 
-		//print "$paye,$statut,$mode,$alreadypayed,$type";
+		//print "$paye,$statut,$mode,$alreadypaid,$type";
 		if ($mode == 0)
 		{
 			$prefix='';
 			if (! $paye)
 			{
 				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
-				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
+				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
+				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
 			else
 			{
-				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
 				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted');
-				else return $langs->trans('Bill'.$prefix.'StatusPayed');
+				else return $langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
 		if ($mode == 1)
@@ -2050,16 +2050,16 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
+				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
 			else
 			{
-				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
 				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted');
-				else return $langs->trans('Bill'.$prefix.'StatusPayed');
+				else return $langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
 		if ($mode == 2)
@@ -2068,16 +2068,16 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPayed');
+				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
 			}
 			else
 			{
-				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				if ($type == 2) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');
 				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusConverted');
-				else return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
+				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
 		if ($mode == 3)
@@ -2086,16 +2086,16 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
-				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
-				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1');
+				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
 			else
 			{
-				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6');
+				if ($type == 2) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6');
 				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6');
-				else return img_picto($langs->trans('BillStatusPayed'),'statut6');
+				else return img_picto($langs->trans('BillStatusPaid'),'statut6');
 			}
 		}
 		if ($mode == 4)
@@ -2103,16 +2103,16 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('BillStatusNotPayed');
+				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('BillStatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
 			}
 			else
 			{
-				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6').' '.$langs->trans('BillStatusPayedBackOrConverted');
+				if ($type == 2) return img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6').' '.$langs->trans('BillStatusPaidBackOrConverted');
 				elseif ($type == 3) return img_picto($langs->trans('BillStatusConverted'),'statut6').' '.$langs->trans('BillStatusConverted');
-				else return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('BillStatusPayed');
+				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('BillStatusPaid');
 			}
 		}
 		if ($mode == 5)
@@ -2121,16 +2121,16 @@ class Facture extends CommonObject
 			if (! $paye)
 			{
 				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('BillStatusDraft'),'statut0');
-				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially').' '.img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
-				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('BillStatusNotPayed'),'statut1');
+				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' '.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if ($alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPaid').' '.img_picto($langs->trans('BillStatusNotPaid'),'statut1');
 				return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
 			else
 			{
-				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted').' '.img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6');
+				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted').' '.img_picto($langs->trans('BillStatusPaidBackOrConverted'),'statut6');
 				elseif ($type == 3) return $langs->trans('Bill'.$prefix.'StatusConverted').' '.img_picto($langs->trans('BillStatusConverted'),'statut6');
-				else return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
+				else return $langs->trans('Bill'.$prefix.'StatusPaid').' '.img_picto($langs->trans('BillStatusPaid'),'statut6');
 			}
 		}
 	}

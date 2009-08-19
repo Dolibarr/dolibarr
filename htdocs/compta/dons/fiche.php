@@ -137,7 +137,7 @@ if ($_GET["action"] == 'valid_promesse')
 		exit;
 	}
 }
-if ($_GET["action"] == 'set_payed')
+if ($_GET["action"] == 'set_paid')
 {
 	$don = new Don($db);
 	if ($don->set_paye($_GET["rowid"], $modepaiement))
@@ -437,7 +437,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	if ($don->statut == 1 && $resteapayer == 0 && $don->paye == 0)
 	{
-		print "<a class=\"butAction\" href=\"fiche.php?rowid=$don->id&action=set_payed\">".$langs->trans("ClassifyPayed")."</a>";
+		print "<a class=\"butAction\" href=\"fiche.php?rowid=$don->id&action=set_paid\">".$langs->trans("ClassifyPaid")."</a>";
 	}
 
 	if ($user->rights->don->supprimer)

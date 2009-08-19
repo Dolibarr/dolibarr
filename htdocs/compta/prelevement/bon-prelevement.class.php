@@ -300,10 +300,10 @@ class BonPrelevement extends CommonObject
                 for ($i = 0 ; $i < sizeof($facs) ; $i++)
                 {
                     /* Tag la facture comme impay�e */
-                    dol_syslog("BonPrelevement::set_credite set_payed fac ".$facs[$i]);
+                    dol_syslog("BonPrelevement::set_credite set_paid fac ".$facs[$i]);
                     $fac = new Facture($this->db);
                     $fac->fetch($facs[$i]);
-                    $result = $fac->set_payed($user);
+                    $result = $fac->set_paid($user);
                 }
             }
 

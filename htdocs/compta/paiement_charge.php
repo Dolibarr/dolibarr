@@ -196,11 +196,11 @@ if ($_GET["action"] == 'create')
       if ($resql)
       {
       	$obj=$db->fetch_object($resql);
-	    $sumpayed = $obj->total;
+	    $sumpaid = $obj->total;
 	    $db->free();
       }
-      print '<tr><td>'.$langs->trans("AlreadyPayed").'</td><td colspan="2"><b>'.price($sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")."</td><td colspan=\"3\"><b>".price($total - $sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+      print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2"><b>'.price($sumpaid).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")."</td><td colspan=\"3\"><b>".price($total - $sumpaid).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
 
@@ -239,7 +239,7 @@ if ($_GET["action"] == 'create')
 		  //print '<td>'.$langs->trans("SocialContribution").'</td>';
 		  print '<td align="left">'.$langs->trans("DateDue").'</td>';
 		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-		  print '<td align="right">'.$langs->trans("AlreadyPayed").'</td>';
+		  print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 		  print '<td align="right">'.$langs->trans("Amount").'</td>';
 		  print "</tr>\n";
@@ -270,12 +270,12 @@ if ($_GET["action"] == 'create')
 
 		      print '<td align="right">'.price($objp->amount)."</td>";
 
-		      print '<td align="right">'.price($sumpayed)."</td>";
+		      print '<td align="right">'.price($sumpaid)."</td>";
 
-		      print '<td align="right">'.price($objp->amount-$sumpayed)."</td>";
+		      print '<td align="right">'.price($objp->amount-$sumpaid)."</td>";
 
 		      print '<td align="right">';
-		      if ($sumpayed < $objp->amount)
+		      if ($sumpaid < $objp->amount)
 			{
 			  $namef = "amount_".$objp->id;
 			  print '<input type="text" size="8" name="'.$namef.'">';
