@@ -576,7 +576,6 @@ DelaysOfToleranceNotActivatedServices=Toleranz Verzögerung (in Tagen) vor der B
 DelaysOfToleranceRunningServices=Toleranz Verzögerung (in Tagen) vor der Ausschreibung abgelaufen Dienstleistungen
 DelaysOfToleranceSupplierBillsToPay=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über unbezahlte Rechnungen Lieferanten
 DelaysOfToleranceTransactionsToConciliate=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über die Bank bis zur Versöhnung
-DelaysOfToleranceMembers=Toleranz Verzögerung (in Tagen) vor der Benachrichtigung über die Verzögerung adherant Mitgliedsbeitrag
 DelaysOfToleranceChequesToDeposit=Toleranz Verzögerung (in Tagen) vor der Ausschreibung für Schecks Anzahlung zu tun
 SetupDescription1=Alle Parameter im Setup-Bereich können Sie die Setup-Dolibarr vor dem Start verwenden.
 SetupDescription2=Die 2 wichtigsten Setup-Schritte sind die 2 ersten, in der linken Setup-Menü, bedeutet dies, dass Unternehmen / Stiftung Setup-Seite und Module Setup Seite:

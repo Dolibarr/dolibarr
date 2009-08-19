@@ -578,7 +578,6 @@ DelaysOfToleranceRunningServices=Toleranta întârziere (în zile) înainte de a
 DelaysOfToleranceSupplierBillsToPay=Toleranta întârziere (în zile) înainte de alertă cu privire la facturile neachitate furnizorului
 DelaysOfToleranceCustomerBillsUnpaid=Toleranta întârziere (în zile) înainte de alertă cu privire la facturile neachitate de client
 DelaysOfToleranceTransactionsToConciliate=Toleranta întârziere (în zile) înainte de alertă în aşteptarea de pe banca de reconciliere
-DelaysOfToleranceMembers=Toleranta întârziere (în zile) înainte de alertă pe întârziat adherant taxa de membru
 DelaysOfToleranceChequesToDeposit=Toleranta întârziere (în zile) înainte de alertă pentru cecuri de depozit pentru a face
 SetupDescription1=Toţi parametrii disponibile în zona de instalare vă permit să setaţi Dolibarr, înainte de a începe utilizarea acestuia.
 SetupDescription2=La 2 mai importante sunt paşii de instalare de 2 primul cele din stânga setup meniu, aceasta înseamnă Companie / Fundaţia pagina de configurare pagina de configurare şi module:

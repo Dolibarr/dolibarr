@@ -76,3 +76,10 @@ EstimatedStockValueShort=وتقدر قيمة المخزون
 EstimatedStockValue=وتقدر قيمة المخزون
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).
+// Reference language: en_US
+DeStockOnShipment=انخفاض الاسهم الحقيقي على شحنة المصادقة (مستحسن)
+StockDiffPhysicTeoric=والسبب في الاختلاف المخزون المادي والنظرية
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).

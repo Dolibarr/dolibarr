@@ -126,7 +126,6 @@ OtherBills=غيرها من الفواتير
 DraftBills=مشروع الفواتير
 CustomersDraftInvoices=مشروع فواتير العملاء
 SuppliersDraftInvoices=مشروع فواتير الموردين
-Unpaid=Unpaid
 ConfirmDeleteBill=هل أنت متأكد من أنك تريد حذف هذه الفاتورة؟
 ConfirmValidateBill=هل أنت متأكد أنك تريد التحقق من صحة هذه الفاتورة مع الإشارة <b>٪ ق؟</b>
 ConfirmClassifyPaidBill=هل أنت متأكد من أنك تريد تغيير فاتورة <b>٪ ق</b> لمركز paid؟
@@ -375,3 +374,16 @@ CustomerBillsUnpaid=فواتير غير مدفوعة للعملاء
 InvoicePaid=دفعت الفاتورة
 ShowUnpaidLateOnly=وتبين في وقت متأخر من الفواتير غير المدفوعة فقط
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+// Reference language: en_US
+ClassifyCanceled=تصنيف &#39;المهجورة&#39;
+BillStatusCanceled=المهجورة
+BillShortStatusCanceled=المهجورة
+Unpaid=غير المدفوعة
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=هذا الخيار ممكن إذا الفاتورة تم تزويد مناسبة. (مثال «فقط الضرائب المقابلة إلى أن الأسعار قد دفعت فعلا تعطي الحقوق لخصم»)
+ConfirmCustomerPayment=هل تؤكد ذلك دفع مساهمات <b>٪</b> ٪ <b>ق</b> ق؟
+ConfirmValidatePayment=هل أنت متأكد أنك تريد التحقق من صحة هذا الدفع؟ لم يطرأ أي تغيير يمكن الدفع مرة واحدة على صحتها.
+HelpEscompte=هذا الخصم هو الخصم الممنوح للعميل لأن الدفع قبل البعيد.
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).

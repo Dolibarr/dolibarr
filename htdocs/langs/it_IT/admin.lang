@@ -561,7 +561,6 @@ DelaysOfToleranceRunningServices					   =Tolleranza di ritardo (in giorni) prima
 DelaysOfToleranceSupplierBillsToPay					   =Tolleranza di ritardo (in giorni) prima di allertare sulle fatture dei fornitori non ancora pagate
 DelaysOfToleranceCustomerBillsUnpaid					   =Tolleranza di ritardo (in giorni) prima di allertare sulle fatture dei clienti non ancora pagate
 DelaysOfToleranceTransactionsToConciliate				   =Tolleranza di ritardo (in giorni) prima di allertare sui movimenti di banca in attesa di riconciliazione
-DelaysOfToleranceMembers						   =Tolleranza di ritardo (in giorni) prima segnalazione differita su adherant quota di adesione
 DelaysOfToleranceChequesToDeposit					   =Tolleranza di ritardo (in giorni), prima segnalazione per il deposito di assegni a che fare
 SetupDescription1							   =Tutti i parametri disponibili nella sezione impostazioni consentono il setup Dolibarr prima di iniziare l'uso.
 SetupDescription2							   =I 2 pi� importanti passi dell'installazione avvengono seguendo le prime 2 voci a sinistra nel menu impostazioni, ovvero la pagina di configurazione Azienda / Fondazione  e la pagina di configurazione moduli:

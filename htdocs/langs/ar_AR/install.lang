@@ -186,3 +186,9 @@ Experimental=(التجريبية وغير التشغيلية)
 MigrationUpdateFailed=فشلت عملية تحديث
 MigrationBankTransfertsUpdate=تحديث الروابط بين المعاملات المصرفية وتحويل مصرفي
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).
+// Reference language: en_US
+InstallChoiceRecommanded=وأوصت لتثبيت اختيار النسخة <b>٪ المستندات</b> الخاصة بك من النسخة الحالية <b>ل ٪</b>
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).

@@ -100,7 +100,6 @@ NumberOfProposals=Serie de propuneri pe ultimele 12 luni
 NumberOfCustomerOrders=Numarul de ordine de client pe ultimele 12 luni
 NumberOfCustomerInvoices=Numărul de clienţi facturile pe ultimele 12 luni
 NumberOfSupplierInvoices=Numărul de furnizor facturile pe ultimele 12 luni
-NumberOfUnitsProposals=Numărul de unităţi de la 12 de propuneri des derniers mois
 NumberOfUnitsCustomerOrders=Numărul de unităţi de pe ordinele de client pe ultimele 12 luni
 NumberOfUnitsCustomerInvoices=Numărul de unităţi de pe facturile de client pe ultimele 12 luni
 NumberOfUnitsSupplierInvoices=Numărul de unităţi de la furnizor de facturi pe ultimele 12 luni

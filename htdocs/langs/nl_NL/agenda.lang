@@ -23,7 +23,6 @@ Events=Evenementen
 ListOfActions=Lijst met evenementen
 Location=Locatie
 SearchAnAction=Zoek een actie / taak
-MenuToDoActions=Alle uncomplete acties
 MenuDoneActions=Alle beëindigd acties
 MenuToDoMyActions=Mijn onvolledige acties
 MenuDoneMyActions=Mijn beëindigd acties

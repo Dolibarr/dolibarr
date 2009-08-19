@@ -283,3 +283,12 @@ ProfId3DE=الأستاذ عيد 3 (Handelsregister-Nr.)
 ProfId4DE=--
 ProspectLevelShort=المحتملة
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).
+// Reference language: en_US
+ProfId1ES=(CNAE)
+ProfId2ES=(رقم الضمان الاجتماعي)
+ProfId3ES=(IAE)
+ProfId4ES=(عدد الجماعية)
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).

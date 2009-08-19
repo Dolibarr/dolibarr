@@ -21,7 +21,6 @@ Events=Tapahtumat
 ListOfActions=Luettelo tapahtumista
 Location=Sijainti
 SearchAnAction=Haku toimintasuunnitelma / tehtävä
-MenuToDoActions=Kaikki uncomplete toimia
 MenuDoneActions=Kaikki irti toimia
 MenuToDoMyActions=Oma puutteellisia toimia
 MenuDoneMyActions=Oma irtisanotaan toimia

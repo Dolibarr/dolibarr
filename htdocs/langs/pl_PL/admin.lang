@@ -579,7 +579,6 @@ DelaysOfToleranceRunningServices=Tolerancja opóźnienie (w dniach) upłynął p
 DelaysOfToleranceSupplierBillsToPay=Tolerancja opóźnienia (liczba dni) przed wpisu na dostawcę niezapłaconych faktur
 DelaysOfToleranceCustomerBillsUnpaid=Tolerancja opóźnienia (liczba dni) przed wpisu na klienta niezapłaconych faktur
 DelaysOfToleranceTransactionsToConciliate=Tolerancja opóźnienia (liczba dni) przed wpisu w oczekiwaniu banku pojednania
-DelaysOfToleranceMembers=Tolerancja opóźnienia (liczba dni) przed wpisu na opóźnione adherant opłaty członkowskiej
 DelaysOfToleranceChequesToDeposit=Tolerancja opóźnienia (liczba dni) przed wpisu do deponowania czeków do
 SetupDescription1=Wszystkie parametry dostępne w konfiguracji obszaru pozwalają na konfigurację Dolibarr przed rozpoczęciem jej używania.
 SetupDescription2=2 Najważniejsze kroki konfiguracji są 2 pierwszych w lewym menu, oznacza to, firmy / fundacji stronie konfiguracji i instalacji modułów strony:

@@ -104,7 +104,6 @@ NumberOfProposals=عددا من المقترحات بشأن 12 الشهر الم
 NumberOfCustomerOrders=عدد طلبات الزبائن على 12 في الشهر الماضي
 NumberOfCustomerInvoices=عدد من العملاء والفواتير على 12 الشهر الماضي
 NumberOfSupplierInvoices=عدد من فواتير الموردين على 12 الشهر الماضي
-NumberOfUnitsProposals=عدد من الوحدات على المقترحات ديس 12 derniers mois
 NumberOfUnitsCustomerOrders=عدد من الوحدات على طلبات الزبائن على 12 في الشهر الماضي
 NumberOfUnitsCustomerInvoices=عدد من الوحدات على فواتير العملاء على 12 الشهر الماضي
 NumberOfUnitsSupplierInvoices=عدد من الوحدات على فواتير الموردين على 12 الشهر الماضي
@@ -178,3 +177,9 @@ SendNewPasswordDesc=هذا الشكل يتيح لك طلب كلمة مرور ج�
 // Reference language: en_US
 InvoicePaidInDolibarr=ق ٪ الفاتورة المدفوعة في تغيير Dolibarr
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+// Reference language: en_US
+NumberOfUnitsProposals=عدد من الوحدات على مقترحات بشأن 12 الشهر الماضي
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).

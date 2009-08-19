@@ -580,7 +580,6 @@ DelaysOfToleranceRunningServices=Tolerantie vertraging (in dagen) voor de signal
 DelaysOfToleranceSupplierBillsToPay=Tolerantie vertraging (in dagen) voor de signalering op onbetaalde facturen leverancier
 DelaysOfToleranceCustomerBillsUnpaid=Tolerantie vertraging (in dagen) voor de signalering op onbetaalde facturen cliënt
 DelaysOfToleranceTransactionsToConciliate=Tolerantie vertraging (in dagen) voor de signalering op de bank in afwachting van verzoening
-DelaysOfToleranceMembers=Tolerantie vertraging (in dagen) voor de signalering op vertraagde adherant lidgeld
 DelaysOfToleranceChequesToDeposit=Tolerantie vertraging (in dagen) voor signalering voor cheques aanbetaling te doen
 SetupDescription1=Alle parameters die beschikbaar zijn in het Setup gebied kunt u instellen Dolibarr voordat u begint met het gebruik.
 SetupDescription2=De 2 belangrijkste setup stappen zijn de 2 eersten die in het linker menu Setup, betekent dit dat de vennootschap / fundation setup pagina en Modules setup pagina:

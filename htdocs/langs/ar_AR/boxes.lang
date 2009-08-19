@@ -23,8 +23,6 @@ BoxLastBooks=آخر الكتب
 BoxLastActions=آخر الأعمال
 BoxCurrentAccounts=ميزان الحسابات الجارية
 BoxSalesTurnover=مبيعات
-BoxTotalUnpaidCustomerBills=مجموع unpaid العميل الفواتير
-BoxTotalUnpaidSuppliersBills=مجموع فواتير المورد unpaid
 BoxTitleLastBooks=آخر الكتب المسجلة ق ٪
 BoxTitleNbOfCustomers=دي اسم العميل
 BoxTitleLastRssInfos=آخر الأخبار من ٪ ق ق ٪
@@ -37,7 +35,6 @@ BoxTitleLastPropals=٪ ق الماضي سجلت مقترحات
 BoxTitleLastCustomerBills=ق الماضي ٪ العميل الفواتير
 BoxTitleLastSupplierBills=ق الماضي ٪ فواتير المورد
 BoxTitleLastProspects=الماضي وسجل آفاق ق ٪
-BoxTitleLastProductsInContract=ق الماضي ٪ derniers المنتجات / الخدمات contractés
 BoxTitleCurrentAccounts=أرصدة الحسابات الجارية
 BoxTitleSalesTurnover=مبيعات
 BoxMyLastBookmarks=آخر العناوين ق ٪
@@ -50,16 +47,12 @@ NoActionsToDo=أي إجراءات للقيام
 NoRecordedOrders=لم تسجل أوامر العملاء
 NoRecordedProposals=لم تسجل مقترحات
 NoRecordedInvoices=لم تسجل العملاء والفواتير
-NoUnpaidCustomerBills=لا unpaid العملاء والفواتير
 NoRecordedSupplierInvoices=لم تسجل فواتير المورد
-NoUnpaidSupplierBills=لا unpaid فواتير المورد
 NoRecordedProducts=لم تسجل المنتجات / الخدمات
 NoRecordedProspects=لم تسجل آفاق
 NoContractedProducts=أي المنتجات / الخدمات المتعاقد عليها
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
-
-
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
 // Reference language: en_US
@@ -70,3 +63,13 @@ BoxTitleOldestUnpaidSupplierBills=أقدم ٪ ق المورد الفواتير �
 BoxTitleTotalUnpaidCustomerBills=العميل الفواتير غير المدفوعة
 BoxTitleTotalUnpaidSuppliersBills=المورد الفواتير غير المدفوعة
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
+// Reference language: en_US
+BoxTotalUnpaidCustomerBills=مجموع الفواتير غير المدفوعة للعميل
+BoxTotalUnpaidSuppliersBills=مجموع الفواتير غير المدفوعة المورد
+BoxTitleLastProductsInContract=الماضي ٪ ق المنتجات / الخدمات في عقد
+NoUnpaidCustomerBills=لا العميل الفواتير غير المدفوعة
+NoUnpaidSupplierBills=لا المورد الفواتير غير المدفوعة
+// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).

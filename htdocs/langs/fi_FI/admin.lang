@@ -576,7 +576,6 @@ DelaysOfToleranceRunningServices=Suvaitsevaisuus viive (päivinä) ennen kuin h�
 DelaysOfToleranceSupplierBillsToPay=Suvaitsevaisuus viive (päivinä) ennen varoituskynnysten Palkattoman toimittajan laskut
 DelaysOfToleranceCustomerBillsUnpaid=Suvaitsevaisuus viive (päivinä) ennen varoituskynnysten Palkattoman asiakkaan laskut
 DelaysOfToleranceTransactionsToConciliate=Suvaitsevaisuus viive (päivinä) ennen kuin hälytys on vireillä pankki sovinnon
-DelaysOfToleranceMembers=Suvaitsevaisuus viive (päivinä) ennen kuin hälytys on viivästynyt adherant jäsenmaksu
 DelaysOfToleranceChequesToDeposit=Suvaitsevaisuus viive (päivinä) ennen varoituksena sekit tallettaa tehdä
 SetupDescription1=Kaikki parametrit saatavilla asennusohjelma alueella voit setup Dolibarr ennen kuin alkaa käyttää sitä.
 SetupDescription4=<b>Moduulit</b> setup on tarpeen, koska Dolibarr ei ole yksinkertainen ERP / CRM mutta summa useita moduuleja, kaikki enemmän tai vähemmän riippumaton. Se on vasta, kun aktivoit modules olet mielenkiintoinen näet ominaisuuksia ilmestyi Dolibarr valikosta.
