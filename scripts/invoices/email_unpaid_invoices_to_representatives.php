@@ -19,9 +19,9 @@
  */
 
 /**
- *      \file       scripts/invoices/email_unpaid_invoices_to_representatives.php
+ *      \file       scripts/invoices/email_unpayed_invoices_to_representatives.php
  *      \ingroup    facture
- *      \brief      Script to send a mail to dolibarr users linked to companies with unpaid invoices
+ *      \brief      Script to send a mail to dolibarr users linked to companies with unpayed invoices
  *		\version	$Id$
  */
 
@@ -33,7 +33,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=eregi_replace('email_unpaid_invoices_to_representatives.php','',$_SERVER["PHP_SELF"]);
+$path=eregi_replace('email_unpayed_invoices_to_representatives.php','',$_SERVER["PHP_SELF"]);
 
 
 require($path."../../htdocs/master.inc.php");
@@ -60,63 +60,63 @@ if ( $db->query($sql) )
     $oldemail = '';
     $message = '';
     $total = '';
-    dol_syslog("email_unpaid_invoices_to_representatives.php");
+    dol_syslog("email_unpayed_invoices_to_representatives.php");
 
     if ($num)
     {
         while ($i < $num)
         {
             $obj = $db->fetch_object();
-
+    
             if ($obj->email <> $oldemail)
             {
                 if (strlen($oldemail))
                 {
-                    envoi_mail($oldemail,$message,$total);
+                    envoi_mail($oldemail,$message,$total);    
                 }
                 $oldemail = $obj->email;
                 $message = '';
                 $total = 0;
             }
-
+    
             $message .= "Facture ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->nom."\n";
             $total += $obj->total_ttc;
-
-            dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
+    
+            dol_syslog("email_unpayed_invoices_to_representatives.php: ".$obj->email);
             $i++;
         }
 
         // Si il reste des envois en buffer
         if ($total)
         {
-            envoi_mail($oldemail,$message,$total);
+            envoi_mail($oldemail,$message,$total);    
         }
     }
     else
     {
-        print "No unpaid invoices to companies linked to a particular commercial dolibarr user\n";
+        print "No unpayed invoices to companies linked to a particular commercial dolibarr user\n";
     }
 }
 else
 {
     dol_print_error($db);
-    dol_syslog("email_unpaid_invoices_to_representatives.php: Error");
+    dol_syslog("email_unpayed_invoices_to_representatives.php: Error");
 }
 
 
 function envoi_mail($oldemail,$message,$total)
 {
     global $conf,$langs;
-
-    $subject = "[Dolibarr] List of unpaid invoices";
+    
+    $subject = "[Dolibarr] List of unpayed invoices";
     $sendto = $oldemail;
     $from = $conf->global->MAIN_EMAIL_FROM;
 	$msgishtml = 0;
-
+	
     print "Envoi mail pour $oldemail, total: $total\n";
-    dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to $oldemail");
+    dol_syslog("email_unpayed_invoices_to_representatives.php: send mail to $oldemail");
 
-    $allmessage = "List of unpaid invoices\n";
+    $allmessage = "List of unpayed invoices\n";
     $allmessage .= "This list contains only invoices for third parties you are linked to as a sales representative.\n";
     $allmessage .= "\n";
     $allmessage .= $message;
@@ -143,7 +143,7 @@ function envoi_mail($oldemail,$message,$total)
 
     }
 
-}
-
+}    
+    
 
 ?>
