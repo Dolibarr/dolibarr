@@ -44,8 +44,11 @@ $left=($langs->direction=='rtl'?'right':'left');
 /* ============================================================================== */
 
 body {
-	background-color: #F8F8F8;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/background.png' ?>);
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	background-color: #FFFFFF;
+<?php } else { ?>
+	background: #F8F8F8 url(<?php echo DOL_URL_ROOT.'/theme/freelug/img/background.png' ?>);
+<?php } ?>
 	text-decoration: none ;
 	color: #101010;
 	font-size: 12px;

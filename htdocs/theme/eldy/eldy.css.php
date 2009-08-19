@@ -46,8 +46,11 @@ $left=($langs->direction=='rtl'?'right':'left');
 /* ============================================================================== */
 
 body {
-    background-color: #F4F4F4;
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	background-color: #FFFFFF;
+<?php } else { ?>
 	background: #f9f9f9 url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg.jpg' ?>) 0 0 no-repeat;
+<?php } ?>
 	color: #101010;
 	font-size: 12px;
     font-family: arial,tahoma,verdana,helvetica;

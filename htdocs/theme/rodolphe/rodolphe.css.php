@@ -43,7 +43,11 @@ $left=($langs->direction=='rtl'?'right':'left');
 
 /***** Style du fond *****/
 body {
-  background: #AAA5A0;
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	background-color: #FFFFFF;
+<?php } else { ?>
+	background-color: #AAA5A0;
+<?php } ?>
   font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
   margin-top: 0;

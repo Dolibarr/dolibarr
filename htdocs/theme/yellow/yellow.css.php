@@ -44,7 +44,11 @@ $left=($langs->direction=='rtl'?'right':'left');
 /* ============================================================================== */
 
 body {
-  background: #ebebe0;
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	background-color: #FFFFFF;
+<?php } else { ?>
+	background-color: #ebebe0;
+<?php } ?>
   font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
   margin-top: 0;
