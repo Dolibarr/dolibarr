@@ -691,7 +691,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 {
 	global $user, $conf, $langs, $db;
 
-	if (empty($conf->css))  $conf->css ='/theme/eldy/eldy.css.php';
+	if (empty($conf->css)) 		$conf->css = 'theme/eldy/eldy.css.php';
+
 	//header("Content-type: text/html; charset=UTF-8");
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -718,13 +719,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print "\n";
 
 		// Output style sheets
-		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 		// CSS forced by modules
 		if (is_array($conf->css_modules))
 		{
 			foreach($conf->css_modules as $cssfile)
 			{	// cssfile is an absolute path
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
 		// CSS forced by page (in top_htmlhead call)
@@ -732,7 +733,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$cssfile.'?lang='.$langs->defaultlang.'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
 

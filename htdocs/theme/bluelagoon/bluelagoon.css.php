@@ -87,16 +87,6 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-/* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
-
-td.vmenu
-{
-    margin-right: 2px;
-    padding: 0px;
-    padding-bottom: 0px;
-    width: 164px;
-}
-
 div.fiche
 {
 	margin-left: 4px;
@@ -110,6 +100,9 @@ div.fiche
 
 div.tmenu
 {
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	display:none;
+<?php } else { ?>
     float: top;
     display:block;
     white-space: nowrap;
@@ -123,6 +116,7 @@ div.tmenu
     height: 18px;
     color: #000000;
     text-decoration: none;
+<?php } ?>
 }
 
 a.tmenu:link
@@ -253,9 +247,23 @@ img.login
 }
 
 
-/*
- *   Barre de gauche
- */
+/* ============================================================================== */
+/* Menu gauche                                                                    */
+/* ============================================================================== */
+
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+.vmenu {
+	display:none;
+}
+<?php } ?>
+
+td.vmenu
+{
+    margin-right: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    width: 164px;
+}
 
 a.vmenu:link    { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:visited { font-size: 12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }

@@ -40,7 +40,7 @@ $left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
-/* Styles par défaut                                                              */
+/* Styles par dï¿½faut                                                              */
 /* ============================================================================== */
 
 body {
@@ -161,6 +161,9 @@ div.fiche
 
 div.tmenu
 {
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	display:none;
+<?php } else { ?>
     position: relative;
 	display: block;
     white-space: nowrap;
@@ -170,6 +173,7 @@ div.tmenu
     font-size: 13px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/auguria/img/nav.jpg' ?>) ;
     height: 22px;
+<?php } ?>
 }
 
 a.tmenudisabled
@@ -265,9 +269,6 @@ a.tmenusel:active
   font-weight: normal;
 }
 
-
-/* Top menu */
-
 table.tmenu
 {
     padding: 1px 0px 0px 0px;	// x y z w x=top offset
@@ -326,8 +327,14 @@ img.login
 
 
 /* ============================================================================== */
-/* Barre de gauche                                                                */
+/* Menu gauche                                                                    */
 /* ============================================================================== */
+
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+.vmenu {
+	display:none;
+}
+<?php } ?>
 
 a.vmenu:link        { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
 a.vmenu:visited     { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
@@ -1290,7 +1297,7 @@ table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding
 
 
 /* ============================================================================== */
-/*  Ajax - Liste déroulante de l'autocompletion                                   */
+/*  Ajax - Liste dï¿½roulante de l'autocompletion                                   */
 /* ============================================================================== */
 
 div.autocomplete {

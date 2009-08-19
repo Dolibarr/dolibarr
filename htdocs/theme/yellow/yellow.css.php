@@ -40,7 +40,7 @@ $left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
-/* Styles par défaut                                                              */
+/* Styles par dï¿½faut                                                              */
 /* ============================================================================== */
 
 body {
@@ -126,14 +126,6 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-td.vmenu
-{
-    margin-right: 2px;
-    padding: 0px;
-    padding-bottom: 0px;
-    width: 164px;
-}
-
 div.fiche
 {
 	margin-left: 4px;
@@ -148,6 +140,9 @@ div.fiche
 
 div.tmenu
 {
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	display:none;
+<?php } else { ?>
     position: relative;
     display: block;
     white-space: nowrap;
@@ -162,7 +157,9 @@ div.tmenu
     background: #dcdcb3;
     color: #000000;
     text-decoration: none;
+<?php } ?>
 }
+
 a.tmenudisabled
 {
 	color: #757575;
@@ -325,9 +322,22 @@ img.login
 
 
 /* ============================================================================== */
-/* Barre de gauche                                                                */
+/* Menu gauche                                                                    */
 /* ============================================================================== */
 
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+.vmenu {
+	display:none;
+}
+<?php } ?>
+
+td.vmenu
+{
+    padding-right: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    width: 164px;
+}
 
 a.vmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }

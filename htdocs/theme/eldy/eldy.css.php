@@ -167,6 +167,9 @@ div.fiche
 
 div.tmenu
 {
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	display:none;
+<?php } else { ?>
     position: relative;
     display: block;
     white-space: nowrap;
@@ -183,6 +186,7 @@ div.tmenu
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000;
     text-decoration: none;
+<?php } ?>
 }
 
 a.tmenudisabled:link
@@ -314,8 +318,6 @@ a.tmenusel:active
   border-bottom: 2px solid #F4F4F4;
 }
 
-/* Top menu */
-
 table.tmenu
 {
     padding: 0px 0px 10px 0px;	/* x y z w x=top offset */
@@ -378,8 +380,14 @@ img.login
 
 
 /* ============================================================================== */
-/* Barre de gauche                                                                */
+/* Menu gauche                                                                    */
 /* ============================================================================== */
+
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+.vmenu {
+	display:none;
+}
+<?php } ?>
 
 a.vmenu:link        { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
 a.vmenu:visited     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }

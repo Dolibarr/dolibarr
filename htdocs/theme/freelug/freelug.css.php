@@ -40,7 +40,7 @@ $left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
-/* Styles par défaut                                                              */
+/* Styles par dï¿½faut                                                              */
 /* ============================================================================== */
 
 body {
@@ -141,14 +141,6 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-td.vmenu
-{
-    padding-right: 2px;
-    padding: 0px;
-    padding-bottom: 0px;
-    width: 180px;
-}
-
 div.fiche
 {
 	margin-left: 5px;
@@ -160,6 +152,9 @@ div.fiche
 
 div.tmenu
 {
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+	display:none;
+<?php } else { ?>
     position: relative;
     display: block;
     white-space: nowrap;
@@ -175,6 +170,7 @@ div.tmenu
     background: #dddddd;
     color: #000000;
     text-decoration: none;
+<?php } ?>
 }
 
 a.tmenudisabled
@@ -356,8 +352,22 @@ img.login
 
 
 /* ============================================================================== */
-/* Barre de gauche                                                                */
+/* Menu gauche                                                                    */
 /* ============================================================================== */
+
+<?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
+.vmenu {
+	display:none;
+}
+<?php } ?>
+
+td.vmenu
+{
+    padding-right: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    width: 180px;
+}
 
 a.vmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
@@ -516,7 +526,7 @@ a.tabimage {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* Nouvelle syntaxe à utiliser */
+/* Nouvelle syntaxe ï¿½ utiliser */
 
 a.butAction:link    { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butAction:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
