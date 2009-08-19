@@ -737,14 +737,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
-		// Definition en alternate style sheet des feuilles de styles les plus maintenues
-		// Les navigateurs qui supportent sont rares. Plus aucun connu.
-		/*
-		print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
-		print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css.php">'."\n";
-		print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
-		*/
-
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
@@ -838,24 +830,6 @@ function top_menu($head, $title='', $target='')
 	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
 	/*
-	 * Si la constante MAIN_NEED_UPDATE est definie (par le script de migration sql en general), c'est que
-	 * les donnees ont besoin d'un remaniement. Il faut passer le update.php
-	 */
-	if (! empty($conf->global->MAIN_NEED_UPDATE))
-	{
-		$langs->load("admin");
-		print '<div class="fiche">'."\n";
-		print '<table class="noborder" width="100%" summary="">';
-		print '<tr><td>';
-		print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/install/index.php');
-		print '</td></tr>';
-		print "</table>";
-		llxFooter();
-		exit;
-	}
-
-
-	/*
 	 * Top menu
 	 */
 	print "\n".'<!-- Start top horizontal menu -->'."\n";
@@ -873,12 +847,12 @@ function top_menu($head, $title='', $target='')
 	// Affiche le menu
 	$menutop->showmenu();
 
-	// Lien sur fiche du login
+	// Link to login card
 	print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
 	print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
 	print '>'.$user->login.'</a>';
 
-	// Lien info
+	// Link info
 	$htmltext=''; $text='';
 	if ($_SESSION["dol_authmode"] != 'forceuser'
 	&& $_SESSION["dol_authmode"] != 'http')
@@ -915,12 +889,18 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
 	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',split(',',$_SESSION["disablemodules"]));
 
-	$html=new Form($db);
-	print $html->textwithtooltip('',$htmltext,2,1,$text);
-
 	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
 	//        print ' alt="'.$title.'" title="'.$title.'"';
 	//        print '>';
+	$html=new Form($db);
+	print $html->textwithtooltip('',$htmltext,2,1,$text);
+
+	// Link to print
+	$text ='<a class="print" href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_new">';
+	$text.='<img class="print" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+	$text.=' alt="'.$langs->trans("Print").'" title="">';
+	$text.='</a>';
+	//print $text;
 
 	print "\n</div>\n<!-- End top horizontal menu -->\n";
 }
