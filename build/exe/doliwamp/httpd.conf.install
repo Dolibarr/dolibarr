@@ -505,13 +505,14 @@ Include conf/extra/httpd-autoindex.conf
 
 
 # Secure (SSL/TLS) connections
-#Include conf/extra/httpd-ssl.conf
 #
 # Note: The following must must be present to support
 #       starting without SSL on platforms with no /dev/random equivalent
 #       but a statically compiled-in mod_ssl.
 #
+
 <IfModule ssl_module>
+
 SSLRandomSeed startup builtin
 SSLRandomSeed connect builtin
 
@@ -540,7 +541,7 @@ AddType application/x-pkcs7-crl    .crl
 #   Configure the SSL Session Cache: First the mechanism 
 #   to use and second the expiring timeout (in seconds).
 #SSLSessionCache         "dbm:C:/Program Files/Apache Software Foundation/Apache2.2/logs/ssl_scache"
-#SSLSessionCache        "shmcb:C:/Program Files/Apache Software Foundation/Apache2.2/logs/ssl_scache(512000)"
+#SSLSessionCache         "shmcb:C:/Program Files/Apache Software Foundation/Apache2.2/logs/ssl_scache(512000)"
 #SSLSessionCacheTimeout  300
 
 #   Semaphore:
@@ -578,14 +579,14 @@ CustomLog "WAMPROOT/logs/apache_access_ssl.log" "%t %h %{SSL_PROTOCOL}x %{SSL_CI
 #   in mind that if you have both an RSA and a DSA certificate you
 #   can configure both in parallel (to also allow the use of DSA
 #   ciphers, etc.)
-SSLCertificateFile "WAMPROOT/server.crt"
+SSLCertificateFile "WAMPROOT/myserver.crt"
 
 #   Server Private Key:
 #   If the key is not combined with the certificate, use this
 #   directive to point at the key file.  Keep in mind that if
 #   you've both a RSA and a DSA private key you can configure
 #   both in parallel (to also allow the use of DSA ciphers, etc.)
-SSLCertificateKeyFile "WAMPROOT/server.key"
+SSLCertificateKeyFile "WAMPROOT/myserver.key"
 
 #   Server Certificate Chain:
 #   Point SSLCertificateChainFile at a file containing the
