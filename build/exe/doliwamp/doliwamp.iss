@@ -71,6 +71,7 @@ Source: "build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; 
 Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\mysqltestinstall.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\builddemosslfiles.bat"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
 Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
@@ -96,6 +97,9 @@ Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.
 Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\ca_demo_dolibarr.crt"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\ca_demo_dolibarr.key"; DestDir: "{app}"; Flags: ignoreversion;
 ; Licence
 Source: "COPYRIGHT"; DestDir: "{app}"; Flags: ignoreversion;
 
@@ -148,6 +152,7 @@ var batFile: String;
 
 var mysmtp: String;
 var myporta: String;
+var myportas: String;
 var myport: String;
 var mypass: String;
 
@@ -267,6 +272,7 @@ begin
 
         mysmtp  := Page.Values[0];
         myporta := Page.Values[1];
+        myportas:= '443';
         myport  := Page.Values[2];
         mypass  := Page.Values[3];
     end
@@ -274,6 +280,7 @@ begin
     begin
         mysmtp  := smtpServer;
         myporta := apachePort;
+        myportas:= '443';
         myport  := mysqlPort;
         mypass  := newPassword;
     end
@@ -281,6 +288,7 @@ begin
     // Save parameters to registry
     RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'smtpServer',  mysmtp);
     RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'apachePort',  myporta);
+    RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'apachePSSL',  myportas);
     RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'mysqlPort',   myport);
     RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'newPassword', mypass);
 
@@ -339,16 +347,19 @@ begin
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPBROWSER', browser);
       StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
+      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
       SaveStringToFile(destFile,srcContents, False);
 
       LoadStringFromFile (srcFileH, srcContents);
       StringChange (srcContents, 'WAMPBROWSER', browser);
       StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
+      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
       SaveStringToFile(destFileH,srcContents, False);
       
       LoadStringFromFile (srcFileA, srcContents);
       StringChange (srcContents, 'WAMPBROWSER', browser);
       StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
+      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
       SaveStringToFile(destFileA,srcContents, False);
     end
 
@@ -438,6 +449,7 @@ begin
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
       StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
+      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
 
       SaveStringToFile(destFile,srcContents, False);
     end
@@ -480,6 +492,7 @@ begin
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
       StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
       StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
+      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
       SaveStringToFile(destFile, srcContents, False);
     end
     else
@@ -490,6 +503,7 @@ begin
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
       StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
       StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
+      StringChange (srcContents, 'WAMPAPACHEPSSL', myportas);
       SaveStringToFile(destFile, srcContents, False);
     end
 
