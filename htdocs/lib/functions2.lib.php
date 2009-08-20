@@ -926,9 +926,9 @@ function version_os()
 	phpinfo();
 	$chaine = ob_get_contents();
 	ob_end_clean();
-	eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
-	$phpversion=$reg[1];
-	return $phpversion;
+	eregi('System </td><td class="v">([^<]*)</td>',$chaine,$reg);
+	$osversion=$reg[1];
+	return $osversion;
 }
 
 /**
