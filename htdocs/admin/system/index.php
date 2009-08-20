@@ -19,7 +19,7 @@
 
 /**
  *  \file       htdocs/admin/system/index.php
- *  \brief      Page accueil infos système
+ *  \brief      Page accueil infos systï¿½me
  *  \version    $Id$
  */
 
@@ -56,8 +56,8 @@ print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("OS")."</td></tr>\n";
-$phpversion=version_os();
-print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
+$osversion=version_os();
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
