@@ -58,16 +58,16 @@ print $langs->trans("AreaForAdminOnly").'<br>';
 print "<br>";
 print $langs->trans("SetupDescription2")."<br>";
 
-print "<br>";
-print '<hr style="color: #DDDDDD;">';
+print "<br><br>";
+//print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription3")."<br>";
-//print '<br>';
-print '<hr style="color: #DDDDDD;">';
+print '<br>';
+//print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
-//print '<br>';
-print '<hr style="color: #DDDDDD;">';
+print '<br>';
+//print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription5")."<br>";
-print '<hr style="color: #DDDDDD;">';
+//print '<hr style="color: #DDDDDD;">';
 print "<br>";
 
 /*
@@ -77,8 +77,9 @@ print '<tr '.$bc[true].'><td '.$bc[true].'>'.img_picto('','puce').' '.$langs->tr
 print '<tr '.$bc[false].'><td '.$bc[false].'>'.img_picto('','puce').' '.$langs->trans("SetupDescription5")."</td></tr>";
 print '</table>';
 */
-print '<br>';
-print info_admin($langs->trans("OnceSetupFinishedCreateUsers")).'<br>';
+
+//print '<br>';
+//print info_admin($langs->trans("OnceSetupFinishedCreateUsers")).'<br>';
 
 $db->close();
 
