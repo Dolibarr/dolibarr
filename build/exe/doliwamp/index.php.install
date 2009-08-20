@@ -19,7 +19,9 @@ $appDir = '../apps/';
 
 // we set version of applications
 $phpVersion = 'WAMPPHPVERSION';
+if ($phpVersion != phpversion()) $phpVersion .= ' ('.phpversion().')';
 $apacheVersion = 'WAMPAPACHEVERSION';
+if ($apacheVersion != $_SERVER["SERVER_SOFTWARE"]) $apacheVersion .= ' ('.$_SERVER["SERVER_SOFTWARE"].')';
 $mysqlVersion = 'WAMPMYSQLVERSION';
 $apachePort = 'WAMPAPACHEPORT';
 
