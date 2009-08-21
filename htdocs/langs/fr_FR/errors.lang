@@ -47,4 +47,5 @@ ErrorLDAPMakeManualTest=Un fichier .ldif a été généré dans le répertoire %
 ErrorCantSaveADoneUserWithZeroPercentage=Impossible sauver une action à l'état non commencé avec un utilisateur défini comme ayant fait l'action.
 ErrorBillRefAlreadyExists=La référence utilisée pour la création existe déjà
 ErrorPleaseTypeBankTransactionReportName=Veuiller saisir le nom de relevé bancaire sur lequel l'écriture est constaté (Format AAAAMM ou AAAMMJJ)
-ErrorRecordHasChildren=Impossible de supprimer l'enregistrement car il possède des fils. 
+ErrorRecordHasChildren=Impossible de supprimer l'enregistrement car il possède des fils.
+WarningConfFileMustBeReadOnly=Attention, votre fichier <b>conf.php</b> est accessible en écriture au serveur Web. Ceci représente une faille sérieuse de sécurité. Modifier les permissions pour qu'il soit en lecture seule pour le compte sous lequel tourne le serveur Web.<br>Si vous êtes sous Windows sur un disque dur utilisant un formatage FAT, sachez que ce système de fichier ne permet pas de protéger des fichiers et n'offre donc aucune solution rendre pour être sur.

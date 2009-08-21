@@ -170,7 +170,8 @@ print '</table>';
 
 print '<br>';
 
-// Autre Options
+
+// Other Options
 
 $var=true;
 
@@ -212,6 +213,22 @@ else
 print "</td>";
 
 print "</td>";
+print '</tr>';
+
+print '</table>';
+
+
+print '<br>';
+
+// Antivirus options
+
+$var=true;
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="3">'.$langs->trans("AntiVirus").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 // Enable AV scanner

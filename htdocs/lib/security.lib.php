@@ -333,13 +333,15 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 
 /**
  *  \brief   	Encode\decode database password in config file
- *  \param   	level   Encode level : 0 no enconding, 1 encoding
- *	\return		int		<0 if KO, >0 if OK
+ *  \param   	level   	Encode level: 0 no encoding, 1 encoding
+ *	\return		int			<0 if KO, >0 if OK
  */
 function encodedecode_dbpassconf($level=0)
 {
 	dol_syslog("security.lib::encodedecode_dbpassconf level=".$level, LOG_DEBUG);
 	$config = '';
+	$passwd='';
+	$passwd_crypted='';
 
 	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
 	{
@@ -347,19 +349,57 @@ function encodedecode_dbpassconf($level=0)
 		{
 			$buffer = fgets($fp,4096);
 
-			if (strstr($buffer,"\$dolibarr_main_db_encrypted_pass") && $level == 0)
+			$lineofpass=0;
+
+			if (eregi('^[^#]*dolibarr_main_db_encrypted_pass[ ]*=[ ]*(.*)',$buffer,$reg))	// Old way to save crypted value
 			{
-				$passwd = strstr($buffer,"$dolibarr_main_db_encrypted_pass=");
-				$passwd = substr(substr($passwd,2),0,-3);
-				$passwd = dol_decode($passwd);
-				$config .= "\$dolibarr_main_db_pass=\"$passwd\";\n";
+				$val = trim($reg[1]);	// This also remove CR/LF
+				$val=eregi_replace('^["\']','',$val);
+				$val=eregi_replace('["\'][ ;]*$','',$val);
+				if (! empty($val))
+				{
+					$passwd_crypted = $val;
+					$val = dol_decode($val);
+					$passwd = $val;
+					$lineofpass=1;
+				}
 			}
-			else if (strstr($buffer,"\$dolibarr_main_db_pass") && $level == 1)
+			elseif (eregi('^[^#]*dolibarr_main_db_pass[ ]*=[ ]*(.*)',$buffer,$reg))
 			{
-				$passwd = strstr($buffer,"$dolibarr_main_db_pass=");
-				$passwd = substr(substr($passwd,2),0,-3);
-				$passwd = dol_encode($passwd);
-				$config .= "\$dolibarr_main_db_encrypted_pass=\"$passwd\";\n";
+				$val = trim($reg[1]);	// This also remove CR/LF
+				$val=eregi_replace('^["\']','',$val);
+				$val=eregi_replace('["\'][ ;]*$','',$val);
+				if (eregi('crypted:',$buffer))
+				{
+					$val = eregi_replace('crypted:','',$val);
+					$passwd_crypted = $val;
+					$val = dol_decode($val);
+					$passwd = $val;
+				}
+				else
+				{
+					$passwd = $val;
+					$val = dol_encode($val);
+					$passwd_crypted = $val;
+				}
+				$lineofpass=1;
+			}
+
+			// Output line
+			if ($lineofpass)
+			{
+				// Add value at end of file
+				if ($level == 0)
+				{
+					$config .= '$dolibarr_main_db_pass="'.$passwd.'";'."\n";
+				}
+				if ($level == 1)
+				{
+					$config .= '$dolibarr_main_db_pass="crypted:'.$passwd_crypted.'";'."\n";
+				}
+
+				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
+				//exit;
 			}
 			else
 			{
@@ -368,13 +408,15 @@ function encodedecode_dbpassconf($level=0)
 		}
 		fclose($fp);
 
+		// Write new conf file
 		$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
 		if ($fp = @fopen($file,'w'))
 		{
 			fputs($fp, $config, strlen($config));
 			fclose($fp);
-			// It's config file, so we set permission for creator only
-			// @chmod($file, octdec('0600'));
+			// It's config file, so we set read permission for creator only.
+			// Should set permission to web user and groups for users used by batch
+			//@chmod($file, octdec('0600'));
 
 			return 1;
 		}

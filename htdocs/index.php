@@ -63,16 +63,23 @@ if (! empty($conf->global->MAIN_MOTD))
 	}
 }
 
-// Affiche warning répertoire install existe (si utilisateur admin)
-if ($user->admin && ! defined("MAIN_REMOVE_INSTALL_WARNING"))
+// Security warning repertoire install existe (si utilisateur admin)
+if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 {
+	// Install lock missing
 	if (is_dir(DOL_DOCUMENT_ROOT."/install") && ! file_exists('../install.lock'))
 	{
 		$langs->load("other");
 		$message=$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install");
 		$message.=$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install");
 		print info_admin($message);
-		print "<br>\n";
+	}
+
+	// Conf files must be in read only mode
+	if (is_writable(DOL_DOCUMENT_ROOT.'/conf/conf.php'))
+	{
+		$langs->load("errors");
+		print info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly"));
 	}
 }
 
@@ -109,8 +116,8 @@ print "</table>\n";
 
 
 /*
- * Tableau de bord d'états Dolibarr (statistiques)
- * Non affiché pour un utilisateur externe
+ * Tableau de bord d'ï¿½tats Dolibarr (statistiques)
+ * Non affichï¿½ pour un utilisateur externe
  */
 $langs->load("commercial");
 $langs->load("bills");
@@ -125,7 +132,7 @@ if ($user->societe_id == 0)
 
 	$var=true;
 
-	// Condition à vérifier pour affichage de chaque ligne du tableau de bord
+	// Condition ï¿½ vï¿½rifier pour affichage de chaque ligne du tableau de bord
 	$conditions=array(
 	! empty($conf->societe->enabled) && $user->rights->societe->lire,
 	! empty($conf->societe->enabled) && $user->rights->societe->lire,
@@ -162,7 +169,7 @@ if ($user->societe_id == 0)
 				   'Facture',
                    'LigneTel',
                    'Contrat');
-	// Clé de tableau retourné par la methode load_state_board pour chaque ligne
+	// Clï¿½ de tableau retournï¿½ par la methode load_state_board pour chaque ligne
 	$keys=array('customers',
                 'prospects',
                 'suppliers',
@@ -231,7 +238,7 @@ if ($user->societe_id == 0)
 		if ($conditions[$key])
 		{
 			$classe=$classes[$key];
-			// Cherche dans cache si le load_state_board deja réalisé
+			// Cherche dans cache si le load_state_board deja rï¿½alisï¿½
 			if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
 			{
 				include_once($includes[$key]);
@@ -279,7 +286,7 @@ $var=true;
 // Ne pas inclure de sections sans gestion de permissions
 //
 
-// Nbre actions à faire (en retard)
+// Nbre actions ï¿½ faire (en retard)
 if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
 	include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -305,7 +312,7 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 	print "\n";
 }
 
-// Nbre commandes clients à traiter
+// Nbre commandes clients ï¿½ traiter
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
@@ -329,7 +336,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	print "\n";
 }
 
-// Nbre propales ouvertes (expirées)
+// Nbre propales ouvertes (expirï¿½es)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
@@ -354,7 +361,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print '</tr>';
 }
 
-// Nbre propales fermées signées (à facturer)
+// Nbre propales fermï¿½es signï¿½es (ï¿½ facturer)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
@@ -380,7 +387,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print "\n";
 }
 
-// Nbre services à activer (en retard)
+// Nbre services ï¿½ activer (en retard)
 if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$langs->load("contracts");
@@ -432,7 +439,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	print "\n";
 }
 
-// Nbre factures fournisseurs (à payer)
+// Nbre factures fournisseurs (ï¿½ payer)
 if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
 {
 	$langs->load("bills");
@@ -458,7 +465,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
 	print "\n";
 }
 
-// Nbre factures clients (à payer)
+// Nbre factures clients (ï¿½ payer)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	$langs->load("bills");
@@ -484,7 +491,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	print "\n";
 }
 
-// Nbre ecritures à rapprocher
+// Nbre ecritures ï¿½ rapprocher
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
 	$langs->load("banks");
@@ -510,7 +517,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 	print "\n";
 }
 
-// Nbre ecritures à rapprocher
+// Nbre ecritures ï¿½ rapprocher
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
 	$langs->load("banks");
@@ -536,7 +543,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 	print "\n";
 }
 
-// Nbre adhérent valides (attente cotisation)
+// Nbre adhï¿½rent valides (attente cotisation)
 if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societe_id)
 {
 	$langs->load("members");

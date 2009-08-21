@@ -165,10 +165,11 @@ AvailableOnlyIfJavascriptAndAjaxNotDisabled = Disponible uniquement si Javascrip
 Required = Requis
 Security = Sécurité
 Passwords = Mots de passe
-DoNotStoreClearPassword = Ne pas stocker de mot de passe en clair dans la base
-MainDbPasswordFileConfEncrypted = Encrypter le mot de passe de la base dans le fichier conf.php
-ConfigFileIsInReadOnly = Le fichier conf.php est lecture seule, vérifiez les droits d'écriture.
-ProtectAndEncryptPdfFiles = Protection des pdf générés (non recommandé, rend inopérent la génération de PDF de masse)
+DoNotStoreClearPassword = Ne pas stocker de mot de passe en clair dans la base (Activation recommandée)
+MainDbPasswordFileConfEncrypted = Encrypter le mot de passe de la base dans le fichier conf.php (Activation recommandée)
+InstrucToEncodePass = Pour avoir le mot de passe de la base encodé dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="..."</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s"</b>
+InstrucToClearPass = Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
+ProtectAndEncryptPdfFiles = Protection des pdf générés (Activation NON recommandé, rend inopérent la génération de PDF de masse)
 ProtectAndEncryptPdfFilesDesc = La protection d'un document pdf laisse le document libre à la lecture et à l'impression avec tout logiciel de lecture PDF. Par contre, la modification et la copie deviennent impossible. Notez de plus que l'utilisation de cette option empeche la génération de pdf cumulés (comme pour le pdf global des impayés).
 Feature = Fonction
 DolibarrLicense = Licence
@@ -245,6 +246,7 @@ AddCRIfTooLong=Il n'y a pas de coupures de lignes automatiques, aussi si votre t
 ModuleDisabled=Module désactivé
 ModuleDisabledSoNoEvent=Module désactivé donc évênement jamais créé
 ConfirmPurge=Etes vous sur de vouloir réaliser cette purge ?<br>Ceci effacera définitivement toutes vos données fichier (espace GED, pièces jointes, etc...). 
+MinLength=Longueur minimale
 
 # Modules = undefined
 Module0Name = Utilisateurs & groupes
@@ -703,9 +705,9 @@ PasswordGenerationNone = Ne propose pas de mots de passe générés. Le mot de p
 ##### Users setup ##### = undefined
 UserGroupSetup = Configuration module utilisateurs et groupes
 GeneratePassword = Proposer un mot de passe généré
-RuleForGeneratedPasswords = Règle pour la génération des mots de passe proposés
+RuleForGeneratedPasswords = Règle pour la génération des mots de passe proposés et leur validation
 DoNotSuggest = Ne pas proposer
-EncryptedPasswordInDatabase = Permettre l'encryption des mots de passe dans la base de données
+EncryptedPasswordInDatabase = Permettre l'encryption des mots de passe dans la base de données (Activation recommandée)
 DisableForgetPasswordLinkOnLogonPage = Ne pas afficher le lien "Mot de passe oublié" sur la page de connexion
 ##### Company setup ##### = undefined
 CompanySetup = Configuration du module Sociétés

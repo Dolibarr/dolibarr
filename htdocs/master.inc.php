@@ -103,12 +103,19 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
  * Create $conf object
  */
 
-// on décode le mot de passe de la base si besoin
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
-if (! empty($dolibarr_main_db_encrypted_pass))
+
+// If password is encoded, we decode it
+if (eregi('crypted:',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
 	require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
-	$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+	if (eregi('crypted:',$dolibarr_main_db_pass))
+	{
+		$dolibarr_main_db_pass = eregi_replace('crypted:', '', $dolibarr_main_db_pass);
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+	}
+	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
 //print memory_get_usage();
 
@@ -252,7 +259,7 @@ if (! defined('NOREQUIREDB'))
 
 /*
  * Creation objet $mysoc
- * Objet Societe qui contient carac de l'institution gérée par Dolibarr.
+ * Objet Societe qui contient carac de l'institution gï¿½rï¿½e par Dolibarr.
  */
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
@@ -293,7 +300,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->siret=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
 	$mysoc->ape=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
 	$mysoc->rcs=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
-	// Id prof génériques
+	// Id prof gï¿½nï¿½riques
 	$mysoc->profid1=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
 	$mysoc->profid2=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
 	$mysoc->profid3=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
@@ -322,7 +329,7 @@ if (! defined('NOREQUIRETRAN'))
 
 /*
  * Pour utiliser d'autres versions des librairies externes que les
- * versions embarquées dans Dolibarr, définir les constantes adequates:
+ * versions embarquï¿½es dans Dolibarr, dï¿½finir les constantes adequates:
  * Pour FPDF:           FPDF_PATH
  * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
  * Pour MagpieRss:      MAGPIERSS_PATH

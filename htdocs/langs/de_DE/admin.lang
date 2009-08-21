@@ -169,7 +169,6 @@ Passwords=Passwörter
 DoNotStoreClearPassword=Keine Passwörter im Klartext in der Datenbank
 MainDbPasswordFileConfEncrypted=Passwort für die Datenbank verschlüsselt conf.php
 ConfigFileIsInReadOnly=Die Datei conf.php kann nur gelesen werden, überprüfen Sie die Berechtigungen.
-ProtectAndEncryptPdfFiles=Schutz der erzeugten PDF-Dateien (nicht recommandd, bricht Masse PDF-Generierung)
 Feature=Merkmal
 DolibarrLicense=Lizenz
 DolibarrProjectLeader=Projektleiter

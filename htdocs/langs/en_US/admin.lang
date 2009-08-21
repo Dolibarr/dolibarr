@@ -165,10 +165,11 @@ AvailableOnlyIfJavascriptAndAjaxNotDisabled=Available only if JavaScript is not 
 Required=Required
 Security=Security
 Passwords=Passwords
-DoNotStoreClearPassword=Do no store passwords in clear in the database
-MainDbPasswordFileConfEncrypted=Database password encrypted in conf.php
-ConfigFileIsInReadOnly=The file conf.php is read-only, check the permissions.
-ProtectAndEncryptPdfFiles=Protection of generated pdf files (not recommandd, breaks mass pdf generation)
+DoNotStoreClearPassword=Do no store clear passwords in database but store only encrypted value (Activated recommended)
+MainDbPasswordFileConfEncrypted=Database password encrypted in conf.php (Activated recommended)
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="..."</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s"</b>
+InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:..."</b><br>by<br><b>$dolibarr_main_db_pass="%s"</b>
+ProtectAndEncryptPdfFiles=Protection of generated pdf files (Activated NOT recommended, breaks mass pdf generation)
 ProtectAndEncryptPdfFilesDesc=Protection of a PDF document keeps it available to read and print with any PDF browser. However, editing and copying is not possible anymore. Note that using this feature make building of a global cumulated pdf not working (like unpaid invoices).
 Feature=Feature
 DolibarrLicense=License
@@ -245,6 +246,7 @@ AddCRIfTooLong=There is no automatic wrapping, so if line is out of page on docu
 ModuleDisabled=Module disabled
 ModuleDisabledSoNoEvent=Module disabled so event never created
 ConfirmPurge=Are you sure you want to execute this purge ?<br>This will delete definitely all your file data with no way to restore them (ECM files, attached files...). 
+MinLength=Minimum length
 
 # Modules
 Module0Name=Users & groups
@@ -703,7 +705,7 @@ PasswordGenerationNone=Do not suggest any generated password. Password must be t
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
-RuleForGeneratedPasswords=Rule to generate suggested passwords
+RuleForGeneratedPasswords=Rule to generate suggested passwords or validate passwords
 DoNotSuggest=Do not suggest any password
 EncryptedPasswordInDatabase=To allow the encryption of the passwords in the database
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page

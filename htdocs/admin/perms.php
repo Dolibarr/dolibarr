@@ -69,8 +69,6 @@ $head=security_prepare_head();
 
 dol_fiche_head($head, 'default', $langs->trans("Security"));
 
-print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
-
 
 print '<table class="noborder" width="100%">';
 

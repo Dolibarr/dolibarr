@@ -79,11 +79,17 @@ if (isset($_POST['action']) && eregi('upgrade',$_POST["action"]))
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
-	// decode database pass if needed
-	if (! empty($dolibarr_main_db_encrypted_pass))
+	// If password is encoded, we decode it
+	if (eregi('crypted:',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 	{
 		require_once($dolibarr_main_document_root."/lib/security.lib.php");
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+		if (eregi('crypted:',$dolibarr_main_db_pass))
+		{
+			$dolibarr_main_db_pass = eregi_replace('crypted:', '', $dolibarr_main_db_pass);
+			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+		}
+		else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
 
 	// $conf is already instancied inside inc.php
@@ -1840,7 +1846,7 @@ function migrate_commande_livraison($db,$langs,$conf)
 }
 
 /*
- * Migration des détails commandes dans les détails livraisons
+ * Migration des dï¿½tails commandes dans les dï¿½tails livraisons
  */
 function migrate_detail_livraison($db,$langs,$conf)
 {

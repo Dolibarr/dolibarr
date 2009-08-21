@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
- *      \brief      Page de configuration du module sécurité
+ *      \brief      Page de configuration du module sï¿½curitï¿½
  *		\version    $Id$
  */
 
@@ -83,7 +83,7 @@ if ($_GET["action"] == 'activate_encrypt')
 }
 else if ($_GET["action"] == 'disable_encrypt')
 {
-	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
+	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas ï¿½tre dï¿½codï¿½s
 	//Do not allow "disable encryption" as passwords cannot be decrypted
 	if ($allow_disable_encryption)
 	{
@@ -105,7 +105,7 @@ if ($_GET["action"] == 'activate_encryptdbpassconf')
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans('ConfigFileIsInReadOnly').'</div>';
+		$mesg='<div class="warning">'.$langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)).'</div>';
 	}
 }
 else if ($_GET["action"] == 'disable_encryptdbpassconf')
@@ -120,7 +120,7 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('ConfigFileIsInReadOnly').'</div>';
+		$mesg='<div class="warning">'.$langs->trans('InstrucToClearPass',$dolibarr_main_db_pass).'</div>';
 	}
 }
 
@@ -154,14 +154,15 @@ else if ($_GET["action"] == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 
 
 /*
- * Affichage onglet
+ * View
  */
+$html = new Form($db);
 
 llxHeader('',$langs->trans("Passwords"));
 
-if ($mesg) print "$mesg\n";
-
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
+
+if ($mesg) print $mesg."<br>\n";
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";
@@ -173,10 +174,9 @@ dol_fiche_head($head, 'passwords', $langs->trans("Security"));
 
 
 $var=false;
-$html = new Form($db);
 
 
-// Choix du gestionnaire du générateur de mot de passe
+// Choix du gestionnaire du gï¿½nï¿½rateur de mot de passe
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
@@ -192,7 +192,7 @@ while (($file = readdir($handle))!==false)
 {
     if (eregi('(modGeneratePass[a-z]+).class.php',$file,$reg))
     {
-        // Chargement de la classe de numérotation
+        // Chargement de la classe de numï¿½rotation
         $classname = $reg[1];
         require_once($dir.'/'.$file);
 
@@ -222,7 +222,8 @@ foreach ($arrayhandler as $key => $module)
         print '<tr '.$bc[$var].'><td width="100">';
         print ucfirst($key);
         print "</td><td>\n";
-        print $module->getDescription();
+        print $module->getDescription().'<br>';
+        print $langs->trans("MinLength").': '.$module->length;
         print '</td>';
 
         // Affiche example
@@ -280,7 +281,7 @@ if($conf->global->DATABASE_PWD_ENCRYPTED)
 	print '<td align="center" width="100">';
 	if ($allow_disable_encryption)
 	{
-		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
+		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas ï¿½tre dï¿½codï¿½s
 	  	//Do not allow "disable encryption" as passwords cannot be decrypted
 	  	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
 	}
@@ -293,39 +294,12 @@ if($conf->global->DATABASE_PWD_ENCRYPTED)
 print "</td>";
 print '</tr>';
 
-
-// Disable link "Forget password" on logon
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
-print '<td align="center" width="60">';
-if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
-{
-	print img_tick();
-}
-print '</td>';
-if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 0)
-{
-	print '<td align="center" width="100">';
-	print '<a href="security.php?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Activate").'</a>';
-	print "</td>";
-}
-if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
-{
-	print '<td align="center" width="100">';
-	print '<a href="security.php?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Disable").'</a>';
-	print "</td>";
-}
-print "</td>";
-print '</tr>';
-
-
 // Cryptage du mot de base de la base dans conf.php
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
-if (! empty($dolibarr_main_db_encrypted_pass))
+if (eregi('crypted:',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
 	print img_tick();
 }
@@ -333,7 +307,6 @@ if (! empty($dolibarr_main_db_encrypted_pass))
 print '</td>';
 
 print '<td align="center" width="100">';
-// TODO Impossibilité de crypter le mot de passe lorsqu'il y a en a un, il affiche qu'il n'y en a pas !!
 if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass))
 {
 	$langs->load("errors");
@@ -384,6 +357,34 @@ print "</td>";
 
 print "</td>";
 print '</tr>';
+
+
+
+// Disable link "Forget password" on logon
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
+print '<td align="center" width="60">';
+if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
+{
+	print img_tick();
+}
+print '</td>';
+if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 0)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Activate").'</a>';
+	print "</td>";
+}
+if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Disable").'</a>';
+	print "</td>";
+}
+print "</td>";
+print '</tr>';
+
 
 print '</table>';
 print '</form>';

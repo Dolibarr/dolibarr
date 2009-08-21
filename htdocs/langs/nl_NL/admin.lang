@@ -171,7 +171,6 @@ Passwords=Wachtwoorden
 DoNotStoreClearPassword=Doe geen wachtwoorden opslaan in duidelijke in de database
 MainDbPasswordFileConfEncrypted=Database wachtwoord versleuteld conf.php
 ConfigFileIsInReadOnly=Het bestand conf.php read-only is, controleert u de machtigingen.
-ProtectAndEncryptPdfFiles=Bescherming van de gegenereerde PDF-bestanden (niet recommandd, pauzes massa pdf generatie)
 ProtectAndEncryptPdfFilesDesc=Bescherming van een PDF-document houdt deze ter beschikking te lezen en te printen met een PDF-browser. Echter, het bewerken en kopiëren is niet meer mogelijk. Merk op dat het gebruik van deze functie maakt de bouw van een globale gecumuleerde pdf niet werkt (zoals unpaid facturen).
 Feature=Kenmerk
 DolibarrLicense=Licentie

@@ -102,11 +102,17 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 	print '<table cellspacing="0" cellpadding="2" width="100%">';
 	$error=0;
 
-	// decode database pass if needed
-	if (! empty($dolibarr_main_db_encrypted_pass))
+	// If password is encoded, we decode it
+	if (eregi('crypted:',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+		require_once($dolibarr_main_document_root."/lib/security.lib.php");
+		if (eregi('crypted:',$dolibarr_main_db_pass))
+		{
+			$dolibarr_main_db_pass = eregi_replace('crypted:', '', $dolibarr_main_db_pass);
+			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+		}
+		else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
 
 	$conf->db->type = $dolibarr_main_db_type;
