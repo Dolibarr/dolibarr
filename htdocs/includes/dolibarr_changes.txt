@@ -56,12 +56,24 @@ FCKConfig.FlashUpload = false ;
 * Edit htdocs\includes\fckeditor\editor\filemanager\connectors\php\config.php to set:
 *****************************************************************************************************
 
-//require_once("../../../../../../master.inc.php");
-require_once("../../../../../../conf/conf.php"); // car include master.inc.php ne marche pas
+define('NOTOKENRENEWAL',1); // Disables token renewal
+
+// We must include the main because this page is
+// a web page that require security controls and
+// is a security hole if anybody can access without
+// being an authenticated user.
+require_once("../../../../../../main.inc.php");	
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);
+
+/*
+$conf->syslog->enabled=1;
+define('SYSLOG_FILE','c:/log/dolibarr/dolibarr.log');
+require_once("../../../../../../lib/functions.lib.php");
+dol_syslog("eee".$conf->fckeditor->dir_output);
+*/
 
 // SECURITY: You must explicitelly enable this "connector". (Set it to "true").
 $Config['Enabled'] = true ;

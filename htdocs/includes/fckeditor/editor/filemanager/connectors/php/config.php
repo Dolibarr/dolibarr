@@ -24,6 +24,8 @@
 
 global $Config ;
 
+define('NOTOKENRENEWAL',1); // Disables token renewal
+
 // We must include the main because this page is
 // a web page that require security controls and
 // is a security hole if anybody can access without
