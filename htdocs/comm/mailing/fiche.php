@@ -633,7 +633,7 @@ else
 			if ($mesg) print $mesg;
 
 
-			if ($_GET["action"] == 'sendall')
+			if ($_GET["action"] == 'sendall' && empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 			{
 				// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 				// on affiche donc juste un message
