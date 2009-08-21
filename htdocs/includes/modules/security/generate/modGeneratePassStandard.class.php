@@ -41,7 +41,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	var $lang;
 	var $user;
 
-	
+
 	/**
 	 *		\brief      Constructeur
 	 *		\param		db			Handler d'acces base
@@ -80,40 +80,49 @@ class modGeneratePassStandard extends ModeleGenPassword
 	}
 
 	/**
-	 * 		\brief		Genere le mot de passe
- 	 *      \return     string      Renvoi mot de passe genere
+	 * 		\brief		Build new password
+ 	 *      \return     string      Return a new generated password
 	 */
 	function getNewGeneratedPassword()
 	{
 		// start with a blank password
 		$password = "";
-		
+
 		// define possible characters
 		$possible = "0123456789bcdfghjkmnpqrstvwxyz";
-		
+
 		// set up a counter
 		$i = 0;
 
 		// add random characters to $password until $length is reached
 		while ($i < $this->length)
 		{
-		
+
 			// pick a random character from the possible ones
 			$char = substr($possible, mt_rand(0, strlen($possible)-1), 1);
-		
+
 			// we don't want this character if it's already in the password
 			if (!strstr($password, $char))
 			{
 				$password .= $char;
 				$i++;
 			}
-		
+
 		}
-		
+
 		// done!
 		return $password;
 	}
 
+	/**
+	 * 		\brief		Validate a password
+ 	 *      \return     int		0 if KO, >0 if OK
+	 */
+	function validatePassword($password)
+	{
+		if (strlen($password) < $this->length) return 0;
+		return 1;
+	}
 }
 
 ?>

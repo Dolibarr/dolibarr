@@ -41,7 +41,7 @@ class modGeneratePassNone extends ModeleGenPassword
 	var $lang;
 	var $user;
 
-	
+
 	/**
 	 *		\brief      Constructeur
 	 *		\param		db			Handler d'acc�s base
@@ -80,12 +80,21 @@ class modGeneratePassNone extends ModeleGenPassword
 	}
 
 	/**
-	 * 		\brief		G�n�re le mot de passe
- 	 *      \return     string      Renvoi mot de passe g�n�r�
+	 * 		\brief		Build new password
+ 	 *      \return     string      Return a new generated password
 	 */
 	function getNewGeneratedPassword()
 	{
 		return "";
+	}
+
+	/**
+	 * 		\brief		Validate a password
+ 	 *      \return     int		0 if KO, >0 if OK
+	 */
+	function validatePassword($password)
+	{
+		return 1;
 	}
 
 }

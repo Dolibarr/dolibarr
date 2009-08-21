@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,18 @@
  */
 
 /**
-		\file       htdocs/includes/modules/facture/modules_genpassword.php
-		\ingroup    core
-		\brief      Fichier contenant la classe mère de generation des mots de passe
-		\version    $Id$
-*/
-
+ *		\file       htdocs/includes/modules/security/generate/modules_genpassword.php
+ *		\ingroup    core
+ *		\brief      Fichier contenant la classe mï¿½re de generation des mots de passe
+ *		\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 
 
 /**
-   \class      ModeleGenPassword
-   \brief      Classe mère des modèles de generation des mots de passe
-*/
-
+ *  \class      ModeleGenPassword
+ *  \brief      Parent class for password rules/management modules
+ */
 class ModeleGenPassword
 {
 	var $error='';
@@ -53,7 +51,7 @@ class ModeleGenPassword
 		$langs->load("bills");
 		return $langs->trans("NoDescription");
 	}
-	
+
 	/**     \brief     	Renvoi un exemple de generation
 	*		\return		string      Example
 	*/
@@ -63,16 +61,26 @@ class ModeleGenPassword
 		$langs->load("bills");
 		return $langs->trans("NoExample");
 	}
-	
+
 	/**
-	 * 		\brief		Génère le mot de passe
- 	 *      \return     string      Renvoi mot de passe généré
+	 * 		\brief		Build new password
+ 	 *      \return     string      Return a new generated password
 	 */
 	function getNewGeneratedPassword()
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
 	}
+
+	/**
+	 * 		\brief		Validate a password
+ 	 *      \return     int		0 if KO, >0 if OK
+	 */
+	function validatePassword($password)
+	{
+		return 1;
+	}
+
 }
 
 ?>
