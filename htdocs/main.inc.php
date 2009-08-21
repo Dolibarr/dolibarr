@@ -62,8 +62,9 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 	@set_magic_quotes_runtime(0);
 }
 
-// Security: SQL Injection protection (Filters on GET, POST, REQUEST, COOKIE)
-function test_sql_inject($val)
+
+// Security: SQL and Script Injection protection (Filters on GET, POST)
+function test_sql_and_script_inject($val)
 {
 	$sql_inj = 0;
 	$sql_inj += eregi('delete[[:space:]]+from', $val);
@@ -71,29 +72,31 @@ function test_sql_inject($val)
 	$sql_inj += eregi('update.+set.+=', $val);
 	$sql_inj += eregi('insert[[:space:]]+into', $val);
 	$sql_inj += eregi('select.+from', $val);
+	$sql_inj += eregi('<script', $val);
 	return $sql_inj;
 }
-// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/patch-dolibarr-fix-sql-injection-check-in-array.html)
-function analyse_sql_injection(&$var)
+function analyse_sql_and_script(&$var)
 {
 	if (is_array($var))
 	{
 		$result = array();
 		foreach ($var as $key => $value)
 		{
-			if (test_sql_inject($key) > 0)
+			if (test_sql_and_script_inject($key) > 0)
 			{
-				unset($var[$key]);
+				print 'Access refused by SQL/Script injection protection in main.inc.php';
+				exit;
 			}
 			else
 			{
-				if (analyse_sql_injection($value))
+				if (analyse_sql_and_script($value))
 				{
 					$var[$key] = $value;
 				}
 				else
 				{
-					unset($var[$key]);
+					print 'Access refused by SQL/Script injection protection in main.inc.php';
+					exit;
 				}
 			}
 		}
@@ -101,11 +104,11 @@ function analyse_sql_injection(&$var)
 	}
 	else
 	{
-		return (test_sql_inject($var) <= 0);
+		return (test_sql_and_script_inject($var) <= 0);
 	}
 }
-analyse_sql_injection($_GET);
-analyse_sql_injection($_POST);
+analyse_sql_and_script($_GET);
+analyse_sql_and_script($_POST);
 
 // Security: CSRF protection
 // The test to do is to check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST']).

@@ -56,9 +56,10 @@ print $langs->trans("AreaForAdminOnly").'<br>';
 
 
 print "<br>";
+print "<br>";
 print $langs->trans("SetupDescription2")."<br>";
 
-print "<br><br>";
+print "<br>";
 //print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription3")."<br>";
 print '<br>';

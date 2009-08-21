@@ -20,7 +20,7 @@
 /**
  *      \file       	cron/functions_cron.lib.php
  *      \ingroup    	core
- *      \brief      	Functions for miscellanous cron tasks
+ *      \brief      	Functions for miscellaneous cron tasks
  *		\version		$Id$
  */
 
