@@ -34,6 +34,9 @@ For users:
 - New: Minor enhancements in look themes.
 - New: Add option to hide help in menu.
 - New: Added a "force LDAP synchronize" on member and contact cards.
+- New: Can split a discount into two smaller discount. This allows to use a
+       discount on an invoice even if invoice amount is lower than discount
+       credit available. 
 - Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
@@ -68,9 +71,10 @@ For developers:
 - Updated wiki documentation.
 - Better W3C standard.
 - Can add init data when enabling a module.
-- Can fix some corruptions in database by calling the update page with action=repair
-- Log files contains more information (PHP_SELD added and OS user used for log of 
-  command lines scripts) 
+- Can fix some corruptions in database by calling the update page with
+  action=repair
+- Log files contains more information (PHP_SELD added and OS user used for 
+  log of command lines scripts) 
 
 
 ***** Changelog for 2.6 compared to 2.5 *****
@@ -79,8 +83,8 @@ For users:
 - New: Add filter on status in emailing selector for Dolibarr users.
 - New: Can add bookmarks on all pages.
 - New: Enhance bank transactions reporting.
-- New: When creating a contact from a third party, informations from third party card
-  are automatically suggested.
+- New: When creating a contact from a third party, informations from third
+  party card are automatically suggested.
 - New: Sort list of languages in combo box.
 - New: EMails links are show with function dol_print_email
 - New: Add graph report on number of entities in product statistics page.
@@ -118,7 +122,8 @@ For users:
 - Fix: Partial payment on social contributions not shown on main page.
 - Fix: Handle correctly the comment in status changing of supplier orders.
 - Fix: Author, title and topic are correctly encoded in PDF.
-- Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old users.
+- Fix: Now HTML output is always UTF8, this solve bad PDF encoding on old
+  users.
 - Fix: Save new model when changed on interventions.
 - Fix: Failed to go on the future view of bank transaction if there is no 
   future bank transaction already wrote.  
