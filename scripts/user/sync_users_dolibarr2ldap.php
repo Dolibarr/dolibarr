@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       scripts/user/sync_group_dolibarr2ldap.php
-        \ingroup    ldap company
-        \brief      Script de mise a jour des groupes dans LDAP depuis base Dolibarr
-*/
+ *      \file       scripts/user/sync_user_dolibarr2ldap.php
+ *      \ingroup    ldap core
+ *      \brief      Script de mise a jour des users dans LDAP depuis base Dolibarr
+ *		\version	$Id$
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -48,7 +46,7 @@ $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
+require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 
 $error=0;
 
@@ -64,7 +62,7 @@ if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
 */
 
 $sql = "SELECT rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."usergroup";
+$sql .= " FROM ".MAIN_DB_PREFIX."user";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -81,19 +79,19 @@ if ($resql)
 
 		$obj = $db->fetch_object($resql);
 
-		$fgroup = new UserGroup($db);
-		$fgroup->id = $obj->rowid;
-		$fgroup->fetch($fgroup->id);
+		$fuser = new User($db);
+		$fuser->id = $obj->rowid;
+		$fuser->fetch();
 
-		print $langs->trans("UpdateGroup")." rowid=".$fgroup->id." ".$fgroup->nom;
+		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
 
-		$oldobject=$fgroup;
+		$oldobject=$fuser;
 
 	    $oldinfo=$oldobject->_load_ldap_info();
 	    $olddn=$oldobject->_load_ldap_dn($oldinfo);
 
-	    $info=$fgroup->_load_ldap_info();
-		$dn=$fgroup->_load_ldap_dn($info);
+	    $info=$fuser->_load_ldap_info();
+		$dn=$fuser->_load_ldap_dn($info);
 
 		$result=$ldap->add($dn,$info,$user);	// Wil fail if already exists
 		$result=$ldap->update($dn,$info,$user,$olddn);
