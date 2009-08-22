@@ -52,10 +52,10 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"],'chaine',0,'',$conf->entity);
-	
+
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"],'chaine',0,'',$conf->entity);
-	
+
 	// Define list of menu handlers to initialize
  	$listofmenuhandler=array();
 	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menu_barretop"])]=1;
@@ -88,7 +88,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 $html=new Form($db);
 $htmladmin=new FormAdmin($db);
 
-llxHeader();
+$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+llxHeader($langs->trans("Setup"),'',$wikihelp);
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
 
@@ -155,7 +156,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</tr>';
 
     print '</table>';
-	
+
 	print '<br><center>';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
     print '</center>';
@@ -176,7 +177,7 @@ else
 	print $html->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
     print '</td>';
     print '</tr>';
-    
+
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
     print '<td>';
@@ -214,7 +215,7 @@ if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 }
-	
+
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
