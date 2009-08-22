@@ -294,7 +294,7 @@ if ($_socid > 0)
         print_titre($langs->trans("DiscountStillRemaining"));
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre">';
-        print '<td width="110" align="left">'.$langs->trans("Date").'</td>';
+        print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
         print '<td width="150" align="left">'.$langs->trans("ReasonDiscount").'</td>';
         print '<td align="left" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
         print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
@@ -430,7 +430,7 @@ if ($_socid > 0)
         print_titre($langs->trans("DiscountAlreadyCounted"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td width="110" align="left">'.$langs->trans("Date").'</td>';
+        print '<td width="120" align="left">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
         print '<td width="150" align="left">'.$langs->trans("ReasonDiscount").'</td>';
         print '<td align="left" nowrap="nowrap">'.$langs->trans("ConsumedBy").'</td>';
         print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';

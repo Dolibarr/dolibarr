@@ -279,7 +279,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$tvaligne=$com->lignes[$i]->total_tva;
 					if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
 					$vatrate=(string) $com->lignes[$i]->tva_tx;
-					if ($com->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
+					if (($com->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes

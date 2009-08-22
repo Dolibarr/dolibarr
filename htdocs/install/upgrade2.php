@@ -220,6 +220,7 @@ if (isset($_POST['action']) && eregi('upgrade',$_POST["action"]))
 
 		migrate_commande_deliveryaddress($db,$langs,$conf);
 
+		migrate_restore_missing_links($db,$langs,$conf);
 
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -2164,6 +2165,158 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
 			}
 
 		}
+
+		if ($error == 0)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+
+/*
+ * Migration du champ fk_remise_except dans llx_facturedet doit correspondre a
+ * lien dans llx_societe_remise_except vers llx_facturedet
+ */
+function migrate_restore_missing_links($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_restore_missing_links");
+
+	if (($db->type == 'mysql' || $db->type == 'mysqli'))
+	{
+		if (versioncompare($db->getVersionArray(),array(4,0)) < 0)
+		{
+			dolibarr_install_syslog("upgrade2::migrate_restore_missing_links Version of database too old to make this migrate action");
+			return 0;
+		}
+	}
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationFixData')."</b> (1)<br>\n";
+
+	$error = 0;
+
+
+	// Restore missing link for this cross foreign key (link 1 <=> 1). Direction 1.
+	$table1='facturedet'; $field1='fk_remise_except';
+	$table2='societe_remise_except'; $field2='fk_facture_line';
+
+	$db->begin();
+
+	$sql = "SELECT t1.rowid, t1.".$field1." as field";
+	$sql.= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
+	$sql.= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
+	$sql.= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
+	$sql.= " WHERE t1.rowid = t2.".$field2.")";
+
+	dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 1 sql=".$sql);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
+				$sql.= " ".$field2." = '".$obj->rowid."'";
+				$sql.= " WHERE rowid=".$obj->field;
+
+				$resql2=$db->query($sql);
+				if (! $resql2)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				//print ". ";
+				$i++;
+			}
+
+		}
+		else print $langs->trans('AlreadyDone')."<br>\n";
+
+		if ($error == 0)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationFixData')."</b> (2)<br>\n";
+
+	// Restore missing link for this cross foreign key (link 1 <=> 1). Direction 2.
+	$table2='facturedet'; $field2='fk_remise_except';
+	$table1='societe_remise_except'; $field1='fk_facture_line';
+
+	$db->begin();
+
+	$sql = "SELECT t1.rowid, t1.".$field1." as field";
+	$sql.= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
+	$sql.= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
+	$sql.= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
+	$sql.= " WHERE t1.rowid = t2.".$field2.")";
+
+	dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 2 sql=".$sql);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
+				$sql.= " ".$field2." = '".$obj->rowid."'";
+				$sql.= " WHERE rowid=".$obj->field;
+
+				$resql2=$db->query($sql);
+				if (! $resql2)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				//print ". ";
+				$i++;
+			}
+
+		}
+		else print $langs->trans('AlreadyDone')."<br>\n";
 
 		if ($error == 0)
 		{

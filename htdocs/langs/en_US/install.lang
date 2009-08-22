@@ -135,6 +135,7 @@ InstallChoiceSuggested=<b>Install choice suggested by installer</b>.
 #########
 # upgrade
 #########
+MigrationFixData=Fix for denormalized data
 MigrationOrder=Data migration for customers' orders
 MigrationSupplierOrder=Data migration for suppliers' orders
 MigrationProposal=Data migration for commercial proposals

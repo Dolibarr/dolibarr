@@ -47,21 +47,21 @@ class DoliDb
 	var $forcecollate='latin1_swedish_ci';
 	//! Version min database
 	var $versionmin=array(2000);
-	//! Resultset de la derni�re requete
+	//! Resultset de la derniere requete
 	var $results;
-	//! 1 si connect�, 0 sinon
+	//! 1 si connecte, 0 sinon
 	var $connected;
-	//! 1 si base s�lectionn�, 0 sinon
+	//! 1 si base selectionne, 0 sinon
 	var $database_selected;
-	//! Nom base s�lectionn�e
+	//! Nom base selectionnee
 	var $database_name;
 	//! Nom user base
 	var $database_user;
 	//! 1 si une transaction est en cours, 0 sinon
 	var $transaction_opened;
-	//! Derniere requete ex�cut�e
+	//! Derniere requete executee
 	var $lastquery;
-	//! Derniere requete ex�cut�e avec echec
+	//! Derniere requete executee avec echec
 	var $lastqueryerror;
 	//! Message erreur mysql
 	var $lasterror;
@@ -73,14 +73,14 @@ class DoliDb
 
 
 	/**
-	 \brief      Ouverture d'une connexion vers le serveur et �ventuellement une database.
-	 \param      type		Type de base de donn�es (mysql ou pgsql)
-	 \param	    host		Addresse de la base de donn�es
-	 \param	    user		Nom de l'utilisateur autoris�
-	 \param	    pass		Mot de passe
-	 \param	    name		Nom de la database
-	 \param	    port		Port of database server
-	 \return     int			1 en cas de succ�s, 0 sinon
+	 *	\brief      Ouverture d'une connexion vers le serveur et eventuellement une database.
+	 *	\param      type		Type de base de donnees (mysql ou pgsql)
+	 *	\param	    host		Addresse de la base de donnees
+	 *	\param	    user		Nom de l'utilisateur autorise
+	 *	\param	    pass		Mot de passe
+	 *	\param	    name		Nom de la database
+	 *	\param	    port		Port of database server
+	 *	\return     int			1 en cas de succes, 0 sinon
 	 */
 	function DoliDb($type='mssql', $host, $user, $pass, $name='', $port=0)
 	{

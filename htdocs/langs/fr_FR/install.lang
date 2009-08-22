@@ -137,6 +137,7 @@ InstallChoiceSuggested=<b>Choix suggéré par l'installeur</b>.
 #########
 # upgrade
 #########
+MigrationFixData=Correction de données dénormalisées
 MigrationOrder=Migration de données sur les commandes clients
 MigrationSupplierOrder=Migration de données sur les commandes fournisseurs
 MigrationProposal=Migration de données sur les propositions commerciales

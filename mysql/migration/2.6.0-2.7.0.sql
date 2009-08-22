@@ -289,3 +289,7 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (4,'
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 51, 5,  '19','0','VAT standard rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 52, 5,   '7','0','VAT reduced rate', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 53, 5,   '0','0','VAT Rate 0', 1); 
+
+-- Add rule to avoid duplicate use of discount
+update llx_facturedet set fk_remise_except = null where fk_remise_except = 0;
+ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except);

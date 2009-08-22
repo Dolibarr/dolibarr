@@ -292,7 +292,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$tvaligne=$propale->lignes[$i]->total_tva;
 					if ($propale->remise_percent) $tvaligne-=($tvaligne*$propale->remise_percent)/100;
 					$vatrate=(string) $propale->lignes[$i]->tva_tx;
-					if ($propale->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
+					if (($propale->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes

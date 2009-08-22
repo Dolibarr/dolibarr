@@ -277,7 +277,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$com->lignes[$i]->total_tva;
 					$vatrate=(string) $com->lignes[$i]->tva_tx;
-					if ($com->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
+					if (($com->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes

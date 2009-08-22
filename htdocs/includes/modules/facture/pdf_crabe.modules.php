@@ -284,7 +284,7 @@ class pdf_crabe extends ModelePDFFactures
 					$tvaligne=$fac->lignes[$i]->total_tva;
 					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
 					$vatrate=(string) $fac->lignes[$i]->tva_tx;
-					if ($fac->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
+					if (($fac->lignes[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes

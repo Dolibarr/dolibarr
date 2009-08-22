@@ -152,7 +152,7 @@ class FactureFournisseur extends Facture
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn');
-			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+			foreach ($this->lignes as $i => $val)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 				$sql .= ' VALUES ('.$this->id.');';
@@ -893,6 +893,15 @@ class FactureFournisseur extends Facture
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
+
+		// Loop on each line of new invoice
+		foreach($object->lignes as $i => $line)
+		{
+			if (($object->lignes[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
+			{
+				unset($object->lignes[$i]);
+			}
+		}
 
 		// Create clone
 		$result=$object->create($user);

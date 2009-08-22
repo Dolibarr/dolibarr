@@ -19,8 +19,9 @@
 -- ===================================================================
 
 
--- Supprimme orhpelins pour permettre montée de la clé
+-- Supprimme orhpelins pour permettre montï¿½e de la clï¿½
 -- V4 DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_facture (fk_facture);
+ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except);
 ALTER TABLE llx_facturedet ADD CONSTRAINT fk_facturedet_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
