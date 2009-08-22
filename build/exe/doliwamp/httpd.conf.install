@@ -708,4 +708,22 @@ BrowserMatch ".*MSIE.*" \
 </IfModule>
 
 
+
+# OPTIMIZE: To use gzip compression
+# Note that constants MAIN_OPTIMIZE_SPEED must be defined. 
+#AddType text/javascript .jgz
+#AddEncoding gzip .jgz
+
+# OPTIMIZE: To use cache on static pages
+# Note that you must also enable the plugin mod_expires
+#ExpiresActive On                  		# enable expirations
+#ExpiresByType image/gif A86400
+#ExpiresByType image/png A86400
+#ExpiresByType image/jpg A86400
+#ExpiresByType text/html A86400
+#ExpiresByType text/css A86400
+#ExpiresByType text/javascript A86400
+
+
+# Declare alias for Dolibarr, PHPMyAdmin and other softwares
 Include "WAMPROOT/alias/*.conf"
