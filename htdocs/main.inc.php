@@ -811,7 +811,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '""];';
 		print '</script>'."\n";
 
-		print "</head>\n";
+		print "</head>\n\n";
 	}
 }
 
