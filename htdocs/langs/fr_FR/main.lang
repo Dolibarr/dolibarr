@@ -525,6 +525,7 @@ CloneMainAttributes=Cloner l'objet avec ces attributs principaux
 PDFMerge=Fusion PDF
 Merge=Fusion
 PrintContentArea=Afficher page d'impression de la zone centrale
+NoMenu=Aucun sous-menu
 # Week day
 Day1=Lundi
 Day2=Mardi

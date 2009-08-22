@@ -526,6 +526,7 @@ CloneMainAttributes=Clone object with its main attributes
 PDFMerge=PDF Merge
 Merge=Merge
 PrintContentArea=Show page to print main content area
+NoMenu=No sub-menu
 # Week day
 Day1=Monday
 Day2=Tuesday

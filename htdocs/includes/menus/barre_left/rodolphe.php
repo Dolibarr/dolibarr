@@ -52,14 +52,15 @@ class MenuLeft {
     }
 
 
-    /**
-     *    \brief      Affiche le menu
-     */
+	/**
+	 *    	\brief      Show menu
+	 * 		\return		int		Number of menu entries shown
+	 */
     function showmenu()
     {
         global $user, $conf, $langs, $dolibarr_main_db_name;
 
-		// On r�cup�re mainmenu et leftmenu qui d�finissent le menu � afficher
+		// Read mainmenu and leftmenu that define which menu to show
 		if (isset($_GET["mainmenu"]))
 		{
 			// On sauve en session le menu principal choisi
@@ -69,7 +70,7 @@ class MenuLeft {
 		}
 		else
 		{
-			// On va le chercher en session si non d�fini par le lien
+			// On va le chercher en session si non defini par le lien
 			$mainmenu=$_SESSION["mainmenu"];
 		}
 
@@ -118,13 +119,7 @@ class MenuLeft {
 
     	// Affichage du menu
 		$alt=0;
-		if (! sizeof($this->menu_array))
-		{
-			print '<div class="blockvmenuimpair">'."\n";
-			print $langs->trans("NoMenu");
-			print '</div>';
-		}
-		else
+		if (sizeof($this->menu_array))
 		{
 			$contenu = 0;
 			for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
@@ -195,9 +190,9 @@ class MenuLeft {
 				}
 			}
             if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
-
 		}
 
+		return sizeof($this->menu_array);
     }
 
 }

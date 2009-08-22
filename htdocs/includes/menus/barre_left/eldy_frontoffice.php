@@ -22,11 +22,11 @@
  *	\version    $Id$
  *
  *	\remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
- *	\remarks    A l'aide d'un objet $newmenu=new Menu() et de la méthode add,
- *	\remarks    définir la liste des entrées menu à faire apparaitre.
+ *	\remarks    A l'aide d'un objet $newmenu=new Menu() et de la mï¿½thode add,
+ *	\remarks    dï¿½finir la liste des entrï¿½es menu ï¿½ faire apparaitre.
  *	\remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
- *	\remarks    Ce qui est défini dans un tel gestionnaire sera alors prioritaire sur
- *	\remarks    les définitions de menu des fichiers pre.inc.php
+ *	\remarks    Ce qui est dï¿½fini dans un tel gestionnaire sera alors prioritaire sur
+ *	\remarks    les dï¿½finitions de menu des fichiers pre.inc.php
  */
 
 
@@ -43,8 +43,8 @@ class MenuLeft {
 
 	/**
 	 *    \brief      Constructeur
-	 *    \param      db            Handler d'accès base de donnée
-	 *    \param      menu_array    Tableau des entrée de menu défini dans les fichier pre.inc.php
+	 *    \param      db            Handler d'accï¿½s base de donnï¿½e
+	 *    \param      menu_array    Tableau des entrï¿½e de menu dï¿½fini dans les fichier pre.inc.php
 	 */
 	function MenuLeft($db,&$menu_array)
 	{
@@ -54,13 +54,14 @@ class MenuLeft {
 
 
 	/**
-	 *    \brief      Affiche le menu
+	 *    	\brief      Show menu
+	 * 		\return		int		Number of menu entries shown
 	 */
 	function showmenu()
 	{
 		global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
-		// On récupère mainmenu et leftmenu qui définissent le menu à afficher
+		// Read mainmenu and leftmenu that define which menu to show
 		if (isset($_GET["mainmenu"]))
 		{
 			// On sauve en session le menu principal choisi
@@ -70,7 +71,7 @@ class MenuLeft {
 		}
 		else
 		{
-			// On va le chercher en session si non défini par le lien
+			// On va le chercher en session si non defini par le lien
 			$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
 		}
 
@@ -89,7 +90,7 @@ class MenuLeft {
 				$_SESSION["leftmenuopened"]=$leftmenu;
 			}
 		} else {
-			// On va le chercher en session si non défini par le lien
+			// On va le chercher en session si non dï¿½fini par le lien
 			$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
 		}
 
@@ -181,7 +182,7 @@ class MenuLeft {
 			 */
 			if ($mainmenu == 'companies')
 			{
-				// Sociétés
+				// Sociï¿½tï¿½s
 				if ($conf->societe->enabled)
 				{
 					$langs->load("companies");
@@ -206,7 +207,7 @@ class MenuLeft {
 				{
 					$newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 
-					// Sécurité accés client
+					// Sï¿½curitï¿½ accï¿½s client
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
@@ -390,7 +391,7 @@ class MenuLeft {
 					$langs->load("suppliers");
 					$newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=suppliers", $langs->trans("Suppliers"),0,$user->rights->societe->lire && $user->rights->fournisseur->lire);
 
-					// Sécurité accés client
+					// Sï¿½curitï¿½ accï¿½s client
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer && $user->rights->fournisseur->lire);
@@ -477,7 +478,7 @@ class MenuLeft {
 					if ($leftmenu=="donations") $newmenu->add(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 				}
 
-				// Déplacements
+				// Dï¿½placements
 				if ($conf->deplacement->enabled)
 				{
 					$langs->load("trips");
@@ -527,7 +528,7 @@ class MenuLeft {
 
 				*/
 
-				// Prélèvements
+				// Prï¿½lï¿½vements
 				if ($conf->prelevement->enabled)
 				{
 					$langs->load("withdrawals");
@@ -572,7 +573,7 @@ class MenuLeft {
 				/*
 				if ($conf->compta->enabled || $conf->accounting->enabled)
 				{
-				// Bilan, résultats
+				// Bilan, rï¿½sultats
 				$newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
 				if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca",$langs->trans("ReportInOut"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
@@ -680,7 +681,7 @@ class MenuLeft {
 				{
 					$newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 
-					// Sécurité accés client
+					// Sï¿½curitï¿½ accï¿½s client
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
@@ -891,7 +892,7 @@ class MenuLeft {
 			$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,1,'eldy');
 
 			/*
-			 * Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
+			 * Menu AUTRES (Pour les menus du haut qui ne serait pas gï¿½rï¿½s)
 			 */
 			if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
 
@@ -900,7 +901,7 @@ class MenuLeft {
 
 
 		/**
-		 *  Si on est sur un cas géré de surcharge du menu, on ecrase celui par defaut
+		 *  Si on est sur un cas gï¿½rï¿½ de surcharge du menu, on ecrase celui par defaut
 		 */
 		if ($mainmenu) {
 			$this->menu_array=$newmenu->liste;
@@ -909,13 +910,7 @@ class MenuLeft {
 
 		// Affichage du menu
 		$alt=0;
-		if (! sizeof($this->menu_array))
-		{
-			print '<div class="blockvmenuimpair">'."\n";
-			print $langs->trans("NoMenu");
-			print '</div>'."\n";
-		}
-		else
+		if (sizeof($this->menu_array))
 		{
 			$contenu = 0;
 			for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
@@ -993,6 +988,7 @@ class MenuLeft {
 		$conf->global->MAIN_SEARCHFORM_CONTACT=0;
 		$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE=0;
 
+		return sizeof($this->menu_array);
 	}
 
 }

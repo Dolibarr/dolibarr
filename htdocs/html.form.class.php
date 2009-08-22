@@ -63,6 +63,15 @@ class Form
 
 
 	/**
+	 *	\brief	Old version of textwithtooltip. Kept for backward compatibility with modules for 2.6.
+	 *	\deprecated
+	 */
+	function textwithhelp($text,$htmltext,$tooltipon=1)
+	{
+		return $this->textwithtooltip($text,$htmltext,$tooltipon);
+	}
+
+	/**
 	 *	\brief	Affiche un texte+picto avec tooltip sur texte ou sur picto
 	 *	\param  text				Texte a afficher
 	 *	\param  htmltext	    	Contenu html du tooltip, code en html
