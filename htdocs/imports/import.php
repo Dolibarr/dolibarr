@@ -653,8 +653,8 @@ if ($step == 3 && $datatoimport)
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
 		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-		print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
-		print '<td>'.$langs->trans($label).' ('.$code.')</td>';
+		print '<td nowrap="nowrap" style="font-weight: normal">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td style="font-weight: normal">'.$langs->trans($label).' ('.$code.')</td>';
 
 		print '</tr>';
 		$save_select.=$bit;
@@ -968,11 +968,11 @@ function show_elem($fieldssource,$pos,$var,$key)
 	else
 	{
 		//print '<td width="16">'.img_file('','').'</td>';
-		print '<td class="nocellnopadding" width="16">';
+		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveBox",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
-		print '<td>';
+		print '<td style="font-weight: normal">';
 		print $langs->trans("Field").' '.$key.': ';
 		print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
 		print '</td>';
