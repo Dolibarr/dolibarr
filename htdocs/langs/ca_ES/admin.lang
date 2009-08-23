@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin 
+# Dolibarr language file - ca_ES - admin
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -167,7 +167,8 @@ Security = Seguretat
 Passwords = Contrasenyes
 DoNotStoreClearPassword = No emmagatzemar la contrasenya sense xifrar a la base
 MainDbPasswordFileConfEncrypted = Encriptar la contrasenya de la base en l'arxiu conf.php
-ConfigFileIsInReadOnly = L'arxiu conf.php és de només lectura, comprovi els drets d'escriptura.
+InstrucToEncodePass = Per tenir la contrasenya de la base de dades codificada en el fitxer de configuració< b> conf.php </b>, reemplaçar en aquest fitxer la línia <br><b>$dolibarr_main_db_pass="..."</b><br> per <br><b>$dolibarr_main_db_pass="crypted:%s"</b>
+InstrucToClearPass = Per tenir la contrasenya de la base de dades descodificat en el fitxer de configuració b> conf.php </b>, reemplaçar en aquest fitxer la línia <br><b>$dolibarr_main_db_pass="crypted:..."</b><br> per <br><b>$dolibarr_main_db_pass="%s"</b>
 ProtectAndEncryptPdfFiles = Protecció i encriptació dels pdf generats
 ProtectAndEncryptPdfFilesDesc = La protecció d'un document pdf deixa el document lliure a la lectura ia la impressió a qualsevol lector de PDF. Per contra, la modificació i la còpia resulten impossibles.
 Feature = Funció
@@ -245,6 +246,7 @@ AddCRIfTooLong = No hi ha línies de tall automàtic, de manera que si el text �
 ModuleDisabled = Mòdul desactivat
 ModuleDisabledSoNoEvent = Mòdul desactivat, per la qual cosa el esdeveniment mai es crea
 ConfirmPurge = Esteu segur de voler realitzar aquesta purga? <br> Això esborrarà definitivament totes les dades dels seus fitxers (àrea GED, arxius adjunts etc.).
+MinLength = Longuitud mínima
 # Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups

@@ -167,7 +167,8 @@ Security = Seguridad
 Passwords = Contraseñas
 DoNotStoreClearPassword = No almacenar la contraseña sin cifrar en la base
 MainDbPasswordFileConfEncrypted = Encriptar la contraseña de la base en el archivo conf.php
-ConfigFileIsInReadOnly = El archivo conf.php es de sólo lectura, compruebe los derechos de escritura.
+InstrucToEncodePass = Para tener la contraseña de la base de datos codificada en el fichero de configuración <b>conf.php</b>, reemplazar en ese fichero la línea <br><b>$dolibarr_main_db_pass="..."</b><br> por <br><b>$dolibarr_main_db_pass="crypted:%s"</b>
+InstrucToClearPass = Para tener la contraseña de la base de datos descodificada en el fichero de configuración b>conf.php</b>, reemplazar en ese fichero la línea <br><b>$dolibarr_main_db_pass="crypted:..."</b><br> por <br><b>$dolibarr_main_db_pass="%s"</b>
 ProtectAndEncryptPdfFiles = Protección y encriptación de los pdf generados
 ProtectAndEncryptPdfFilesDesc = La protección de un documento pdf deja el documento libre a la lectura y a la impresión a cualquier lector de PDF. Por el contrario, la modificación y la copia resultan imposibles.
 Feature = Función
@@ -245,6 +246,7 @@ AddCRIfTooLong = No hay líneas de corte automático, de modo que si el texto es
 ModuleDisabled = Módulo desactivado
 ModuleDisabledSoNoEvent = Módulo desactivado, por lo que evento nunca se crea
 ConfirmPurge = ¿ Está seguro de querer realizar esta purga ?<br>Esto borrará definitivamente todos los datos de sus ficheros (área GED, archivos adjuntos etc.).
+MinLength = Longuitud mínima
 # Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos

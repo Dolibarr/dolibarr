@@ -48,3 +48,4 @@ ErrorCantSaveADoneUserWithZeroPercentage = No es pot canviar una acció al estat
 ErrorBillRefAlreadyExists = La referència utilitzada per a la creació ja existeix
 ErrorPleaseTypeBankTransactionReportName = Introduïu el nom del registre bancari sobre el qual l'escrit està constatat (format AAAAMM o AAAMMJJ)
 ErrorRecordHasChildren = No es pot esborrar el registre perquè té fills.
+WarningConfFileMustBeReadOnly = Atenció, el seu fitxer <b>conf.php</b> és accessible en escriptura al servidor web. Això representa un error seriós de seguretat. Modifiqueu els permisos per ser llegit únicament pel compte que executa el servidor Web.Si està executant Windows en undisco amb format FAT, sigui conscient que aquest sistema d'arxius no protegeix els arxius i no ofereix cap solució per a això.
