@@ -146,6 +146,7 @@ if ($resql)
 
 	print '<form method="POST" action="services.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="filter" value="'.$filter.'">';
@@ -187,7 +188,7 @@ if ($resql)
 		$contractstatic=new Contrat($db);
 		$contractstatic->id=$obj->cid;
 		$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
-		print $contractstatic->getNomUrl(1);
+		print $contractstatic->getNomUrl(1,16);
 		print '</td>';
 
 		// Service
@@ -207,7 +208,7 @@ if ($resql)
 		$companystatic->id=$obj->socid;
 		$companystatic->nom=$obj->nom;
 		$companystatic->client=1;
-		print $companystatic->getNomUrl(1,'customer',32);
+		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';
 
 		// Start date
