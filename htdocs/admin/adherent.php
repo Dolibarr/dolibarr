@@ -249,7 +249,7 @@ llxFooter('$Date$ - $Revision$');
 function form_constantes($tableau)
 {
 	global $db,$bc,$langs;
-	
+
 	$form = new Form($db);
 
 	print '<table class="noborder" width="100%">';
@@ -280,7 +280,7 @@ function form_constantes($tableau)
 
 			// Affiche nom constante
 			print '<td>';
-			print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : $obj->note;
+			print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
 			print "</td>\n";
 
 			if ($const == 'ADHERENT_ETIQUETTE_TYPE')
