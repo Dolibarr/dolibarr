@@ -248,7 +248,7 @@ llxFooter('$Date$ - $Revision$');
 
 function form_constantes($tableau)
 {
-	global $db,$bc,$langs;
+	global $db,$bc,$langs,$conf;
 
 	$form = new Form($db);
 
@@ -263,8 +263,17 @@ function form_constantes($tableau)
 
 	foreach($tableau as $const)
 	{
-		$sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='".$const."'";
+		$sql = "SELECT ";
+		$sql.= "rowid";
+		$sql.= ", ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
+		$sql.= ", ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql.= ", type";
+		$sql.= ", note";
+		$sql.= " FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$const."'";
+		$sql.= " AND entity = ".$conf->entity;
 		$result = $db->query($sql);
+
 		if ($result)
 		{
 			$obj = $db->fetch_object($result);
