@@ -687,7 +687,7 @@ if ($step == 3 && $datatoimport)
 	}
 	else
 	{
-		show_elem('','',$var,'');
+		show_elem('','',$var,'none');
 	}
 
 	print "</div>\n";
@@ -945,6 +945,9 @@ $db->close();
 llxFooter('$Date$ - $Revision$');
 
 
+/*
+ * Function to put the movable box of a source field
+ */
 function show_elem($fieldssource,$pos,$var,$key)
 {
 	global $langs,$bc;
@@ -954,7 +957,15 @@ function show_elem($fieldssource,$pos,$var,$key)
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	print '<tr class="liste_total" height="20">';
-	if (! empty($key))
+	if (empty($key))
+	{
+		print '<td class="nocellnopadding" colspan="2">&nbsp;</td>';
+	}
+	elseif ($key == 'none')
+	{
+		print '<td class="nocellnopadding" colspan="2" style="font-weight: normal">'.$langs->trans("NoDiscardedFields").'</td>';
+	}
+	else
 	{
 		//print '<td width="16">'.img_file('','').'</td>';
 		print '<td class="nocellnopadding" width="16">';
@@ -966,7 +977,6 @@ function show_elem($fieldssource,$pos,$var,$key)
 		print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
 		print '</td>';
 	}
-	else print '<td class="nocellnopadding" colspan="2">&nbsp;</td>';
 	print '</tr>';
 
 	print "</table>\n";
