@@ -135,6 +135,7 @@ InstallChoiceRecommanded = Opción recomendada para instalar la versión <b>%s</
 InstallChoiceSuggested = <b>Opción sugerida por el instalador</b>.
 ######### = 
 # upgrade = 
+MigrationFixData = Corrección de datos desnormalizados
 MigrationOrder = Migración de datos de los pedidos clientes
 MigrationSupplierOrder = Migración de datos de los pedidos a proveedores
 MigrationProposal = Migración de datos de presupuestos

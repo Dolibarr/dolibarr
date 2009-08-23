@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - install 
+# Dolibarr language file - ca_ES - install
 CHARSET = UTF-8
 InstallEasy = Hem procurat que la instal lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
 MiscellanousChecks = Comprovació dels Prerequisits
@@ -135,6 +135,7 @@ InstallChoiceRecommanded = Opció recomanada per a instal·lar la versió <b>%s<
 InstallChoiceSuggested = <b>Opció suggerida per l'instal·lador</b>.
 ######### =  = 
 # upgrade =  = 
+MigrationFixData = Correcció de dades desnormalitzades
 MigrationOrder = Migració de dades de les comandes clients
 MigrationSupplierOrder = Migració de dades de les comandes a proveïdors
 MigrationProposal = Migració de dades de pressupostos
