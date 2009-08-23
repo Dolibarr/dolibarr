@@ -117,7 +117,7 @@ print "</table>\n";
 
 /*
  * Tableau de bord d'�tats Dolibarr (statistiques)
- * Non affich� pour un utilisateur externe
+ * Hidden for external users
  */
 $langs->load("commercial");
 $langs->load("bills");
@@ -286,7 +286,7 @@ $var=true;
 // Ne pas inclure de sections sans gestion de permissions
 //
 
-// Nbre actions � faire (en retard)
+// Nbre actions a faire (en retard)
 if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
 	include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -312,7 +312,7 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 	print "\n";
 }
 
-// Nbre commandes clients � traiter
+// Nbre commandes clients a traiter
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
@@ -336,7 +336,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	print "\n";
 }
 
-// Nbre propales ouvertes (expir�es)
+// Nbre propales ouvertes (expirees)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
@@ -361,7 +361,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print '</tr>';
 }
 
-// Nbre propales ferm�es sign�es (� facturer)
+// Nbre propales fermees signees (� facturer)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
@@ -387,7 +387,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print "\n";
 }
 
-// Nbre services � activer (en retard)
+// Nbre services a activer (en retard)
 if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$langs->load("contracts");
@@ -491,7 +491,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	print "\n";
 }
 
-// Nbre ecritures � rapprocher
+// Nbre ecritures a rapprocher
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
 	$langs->load("banks");
@@ -517,7 +517,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 	print "\n";
 }
 
-// Nbre ecritures � rapprocher
+// Nbre ecritures a rapprocher
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
 	$langs->load("banks");
@@ -543,7 +543,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 	print "\n";
 }
 
-// Nbre adh�rent valides (attente cotisation)
+// Nbre adherent valides (attente cotisation)
 if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societe_id)
 {
 	$langs->load("members");
@@ -691,20 +691,20 @@ if (sizeof($boxarray))
 	  	print '// <![CDATA['."\n";
 
 	  	print 'Sortable.create(\'left\', {'."\n";
-		print 'tag:\'div\', '."\n";
-		print 'containment:["left","right"], '."\n";
-		print 'constraint:false, '."\n";
-		print "handle: 'boxhandle',"."\n";
-		print 'onUpdate:updateOrder';
-		print "});\n";
+		print ' tag:\'div\', '."\n";
+		print ' containment:["left","right"], '."\n";
+		print ' constraint:false, '."\n";
+		print " handle: 'boxhandle',"."\n";
+		print ' onUpdate:updateOrder';
+		print " });\n";
 
 		print 'Sortable.create(\'right\', {'."\n";
-		print 'tag:\'div\', '."\n";
-		print 'containment:["right","left"], '."\n";
-		print 'constraint:false, '."\n";
-		print "handle: 'boxhandle',"."\n";
-		print 'onUpdate:updateOrder';
-		print "});\n";
+		print ' tag:\'div\', '."\n";
+		print ' containment:["right","left"], '."\n";
+		print ' constraint:false, '."\n";
+		print " handle: 'boxhandle',"."\n";
+		print ' onUpdate:updateOrder';
+		print " });\n";
 
 		print '// ]]>'."\n";
 		print '</script>'."\n";

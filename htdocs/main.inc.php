@@ -901,7 +901,7 @@ function top_menu($head, $title='', $target='')
 	// Link to print main content area
 	if (empty($conf->global->MAIN_PRINT_DISABLELINK))
 	{
-		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_new">';
+		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_blank">';
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
 		$text.=' title="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'" alt="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'">';
 		$text.='</a>';

@@ -508,8 +508,6 @@ if ($step == 3 && $datatoimport)
 		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
 
-var_dump($array_match_file_to_database);
-
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	/*
@@ -556,8 +554,9 @@ var_dump($array_match_file_to_database);
 	print '<br>';
 
 
-	print $langs->trans("SelectImportFields");
+	print $langs->trans("SelectImportFields",img_picto('','uparrow',''));
 
+	// Title of array with fields
 	print '<table class="nobordernopadding" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FieldsInSourceFile").'</td>';
@@ -566,15 +565,21 @@ var_dump($array_match_file_to_database);
 
 	print '<tr valign="top"><td width="50%">';
 
-	// List of source fields
-	print '<table width="100%" class="noborder">';
+	//var_dump($array_match_file_to_database);
 	$pos=1;
+
+	print "\n<!-- Box left container -->\n";
+	print '<div id="left">'."\n";
+
+	// List of source fields
+//	print '<table width="100%" class="noborder">';
 	$var=true;
 	while ($pos <= $maxpos)
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].' height="20">';
-		print '<td>';
+
+//		print "<tr ".$bc[$var].' height="20">';
+//		print '<td>';
 		// Get name of database field at position $pos into $namefield
 		$namefield='';
 		$posbis=1;
@@ -590,45 +595,57 @@ var_dump($array_match_file_to_database);
 			break;
 		}
 		// Now we check if there is a file field linked to this $namefield database field
+		$keyfound='';
 		foreach($fieldssource as $key => $val)
 		{
 			if (! empty($array_match_file_to_database[$key]) && $array_match_file_to_database[$key] == $namefield)
 			{
-				print $langs->trans("Field").' '.$key.': ';
-				print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
+//				print $langs->trans("Field").' '.$key.': ';
+//				print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
+				$keyfound=$key;
 				break;
 			}
 		}
-		print '</td>';
+//		print '</td>';
+
+		show_elem($fieldssource,$pos,$var,$keyfound);
 
 		// Arrows
-		print '<td align="center">&nbsp;';
+//		print '<td align="center">&nbsp;';
 		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource))
 		{
-	        if ($pos < $maxpos) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_down().'</a>';
-    	    if ($pos > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_up().'</a>';
+//	        if ($pos < $maxpos) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_down().'</a>';
+//    	    if ($pos > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_up().'</a>';
 		}
-		print '&nbsp;</td>';
+//		print '&nbsp;</td>';
 
-		print '<td>';
-		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource)) print ' -> ';
-		print '</td>';
+//		print '<td>';
+//		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource)) print ' -> ';
+//		print '</td>';
 
-		print '</tr>';
+//		print '</tr>';
+
 		$pos++;
+
+		if ($pos > sizeof($fieldstarget)) break;
 	}
 
-	print '</table>';
+	//	print '</table>';
+
+	print "</div>\n";
+	print "<!-- End box container -->\n";
+
 
 	print '</td><td width="50%">';
 
+	// List of targets fields
 	$i = 0;
 	$var=true;
-	print '<table width="100%" class="noborder">';
+	print '<table width="100%" class="nobordernopadding">';
 	foreach($fieldstarget as $code=>$label)
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var].' height="20">';
+		print '<tr class="liste_total" height="20">';
 
 		$i++;
 
@@ -646,15 +663,88 @@ var_dump($array_match_file_to_database);
 
 	print '</td></tr>';
 
+
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotImportedFields").'</td></tr>';
+
+	print '<tr valign="top"><td colspan="2">';
+
+	print "\n<!-- Box forget container -->\n";
+	print '<div id="right">'."\n";
+
+	// Print all input fields discarded
+	if ($pos <= $maxpos)
+	{
+		while ($pos <= $maxpos)
+		{
+			print '<table summary="" width="100%" class="nobordernopadding">'."\n";
+			print '<tr class="liste_total" height="20">';
+			print '<td class="nocellnopadding" colspan="2">&nbsp;</td>';
+			print '</tr>';
+			print "</table>\n";
+
+			$pos++;
+		}
+	}
+	else
+	{
+		show_elem('','',$var,'');
+	}
+
+	print "</div>\n";
+	print "<!-- End box container -->\n";
+
+	print '</td></tr>';
+
 	print '</table>';
 
 	print '</div>';
+
+
+	if ($conf->use_javascript_ajax)
+	{
+		print "\n";
+		print '<script type="text/javascript" language="javascript">';
+		print 'function updateOrder(){';
+	    print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));';
+	    //print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));';
+	    print 'var boxorder = \'A:\' + left_list;';
+	    //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;';
+	    //alert( \'boxorder=\' + boxorder );
+	    print 'var userid = \''.$user->id.'\';';
+	    print 'var url = "ajaximport.php";';
+	    print 'o_options = new Object();';
+	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};';
+	    print 'var myAjax = new Ajax.Request(url, o_options);';
+	  	print '}';
+	  	print "\n";
+
+	  	print '// <![CDATA['."\n";
+
+	  	print 'Sortable.create(\'left\', {'."\n";
+		print 'tag:\'div\', '."\n";
+		print 'containment:["left","right"], '."\n";
+		print 'constraint:false, '."\n";
+		print "handle: 'boxhandle',"."\n";
+		print 'onUpdate:updateOrder';
+		print "});\n";
+
+		print 'Sortable.create(\'right\', {'."\n";
+		print 'tag:\'div\', '."\n";
+		print 'containment:["right","left"], '."\n";
+		print 'constraint:false, '."\n";
+		print "handle: 'boxhandle',"."\n";
+		print 'onUpdate:updateOrder';
+		print "});\n";
+
+		print '// ]]>'."\n";
+		print '</script>'."\n";
+	}
+
 
 	if ($mesg) print $mesg;
 
 	/*
 	 * Barre d'action
-	 *
 	 */
 	print '<div class="tabsAction">';
 
@@ -679,7 +769,7 @@ var_dump($array_match_file_to_database);
 		print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 
-		print '<table class="noborder" width="100%">';
+		print '<table summary="selectofimportprofil" class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
 		print '<td>&nbsp;</td>';
@@ -853,4 +943,37 @@ print '<br>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
+
+
+function show_elem($fieldssource,$pos,$var,$key)
+{
+	global $langs,$bc;
+
+	print "\n\n<!-- Box start -->\n";
+	print '<div style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
+
+	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
+	print '<tr class="liste_total" height="20">';
+	if (! empty($key))
+	{
+		//print '<td width="16">'.img_file('','').'</td>';
+		print '<td class="nocellnopadding" width="16">';
+		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+		print img_picto($langs->trans("MoveBox",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
+		print '</td>';
+		print '<td>';
+		print $langs->trans("Field").' '.$key.': ';
+		print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
+		print '</td>';
+	}
+	else print '<td class="nocellnopadding" colspan="2">&nbsp;</td>';
+	print '</tr>';
+
+	print "</table>\n";
+
+	print "</div>\n";
+	print "<!-- Box end -->\n\n";
+}
+
+
 ?>

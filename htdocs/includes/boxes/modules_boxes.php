@@ -115,7 +115,6 @@ class ModeleBoxes
 
 		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
 		{
-			print '<div id="boxto_'.$this->box_id.'_title">'."\n";
 			print '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder">'."\n";
 		}
 
@@ -236,7 +235,6 @@ class ModeleBoxes
 		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
 		{
 			print "</table>\n";
-			print "</div>\n";
 		}
 
 		// If invisible box with no contents
