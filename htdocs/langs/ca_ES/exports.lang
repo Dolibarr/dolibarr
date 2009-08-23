@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - exports 
+# Dolibarr language file - ca_ES - exports
 CHARSET = UTF-8
 ExportsArea = Àrea exportació
 ImportArea = Àrea importació
@@ -6,10 +6,11 @@ NewExport = Nova exportació
 NewImport = Nova importació
 ExportableDatas = Conjunt de dades exportables
 ImportableDatas = Conjunt de dades importables
-SelectImportDataSet = Seleccioneu un lot de dades predefinides que desitgi importar ...
 SelectExportDataSet = Trieu un conjunt predefinit de dades que voleu exportar ...
-SelectImportFields = Seleccioneu els camps a importar, o seleccioneu un perfil predefinit d'importació
+SelectImportDataSet = Seleccioneu un lot de dades predefinides que desitgi importar ...
 SelectExportFields = Escolliu els camps que han d'exportar, o elija un perfil d'exportació predefinit
+SelectImportFields = Seleccioneu els camps a importar, o seleccioneu un perfil predefinit d'importació
+NotImportedFields = Camps de l'arxiu origen no importats
 SaveExportModel = Desar aquest perfil d'exportació si voleu reutilitzar posteriorment ...
 SaveImportModel = Deseu aquest perfil d'importació si el voleu reutilitzar de nou posteriorment ...
 ExportModelName = Nom del perfil d'exportació
@@ -22,6 +23,7 @@ ImportableFields = Camps importables
 ImportedFields = Camps a importar
 DatasetToExport = Conjunt de dades a exportar
 DatasetToImport = Lot de dades a importar
+NoDiscardedFields = Sense camps del fitxer origen rebutjats
 Dataset = Conjunt de dades
 ChooseFieldsOrdersAndTitle = Trieu l'ordre dels camps ...
 FieldsOrder = Ordre dels camps
