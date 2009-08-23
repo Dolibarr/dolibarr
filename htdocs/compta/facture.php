@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/compta/facture.php
  *	\ingroup    facture
- *	\brief      Page de création/visu facture
+ *	\brief      Page de crï¿½ation/visu facture
  *	\version    $Id$
  */
 
@@ -57,7 +57,7 @@ $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $facid,'');
 
-// Nombre de ligne pour choix de produit/service prédéfinis
+// Nombre de ligne pour choix de produit/service prï¿½dï¿½finis
 $NBLINES=4;
 
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
@@ -185,7 +185,7 @@ if ($_GET['action'] == 'valid')
 	// On verifie signe facture
 	if ($facture->type == 2)
 	{
-		// Si avoir, le signe doit etre négatif
+		// Si avoir, le signe doit etre nï¿½gatif
 		if ($facture->total_ht >= 0)
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorInvoiceAvoirMustBeNegative").'</div>';
@@ -324,7 +324,7 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
 
-	// On vérifie si la facture a des paiements
+	// On vï¿½rifie si la facture a des paiements
 	$sql = 'SELECT pf.amount';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 	$sql.= ' WHERE pf.fk_facture = '.$fac->id;
@@ -346,10 +346,10 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 
 	$resteapayer = $fac->total_ttc - $totalpaye;
 
-	// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+	// On vï¿½rifie si les lignes de factures ont ï¿½tï¿½ exportï¿½es en compta et/ou ventilï¿½es
 	$ventilExportCompta = $fac->getVentilExportCompta();
 
-	// On vérifie si aucun paiement n'a été effectué
+	// On vï¿½rifie si aucun paiement n'a ï¿½tï¿½ effectuï¿½
 	if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
 	{
 		$fac->set_draft($user);
@@ -364,14 +364,14 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 	}
 }
 
-// Classe à "payée"
+// Classe ï¿½ "payï¿½e"
 if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
 	$result = $fac->set_paid($user);
 }
-// Classe à "payée partiellement"
+// Classe ï¿½ "payï¿½e partiellement"
 if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
@@ -387,7 +387,7 @@ if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == '
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
 	}
 }
-// Classe à "abandonnée"
+// Classe ï¿½ "abandonnï¿½e"
 if ($_REQUEST['action'] == 'confirm_canceled' && $_REQUEST['confirm'] == 'yes')
 {
 	$fac = new Facture($db);
@@ -522,7 +522,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->remise_absolue    = $_POST['remise_absolue'];
 			$facture->remise_percent    = $_POST['remise_percent'];
 
-			// Propriétés particulieres a facture de remplacement
+			// Propriï¿½tï¿½s particulieres a facture de remplacement
 			$facture->fk_facture_source = $_POST['fac_replacement'];
 			$facture->type              = 1;
 
@@ -566,7 +566,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->remise_absolue    = $_POST['remise_absolue'];
 			$facture->remise_percent    = $_POST['remise_percent'];
 
-			// Propriétés particulieres a facture avoir
+			// Propriï¿½tï¿½s particulieres a facture avoir
 			$facture->fk_facture_source = $_POST['fac_avoir'];
 			$facture->type              = 2;
 
@@ -595,7 +595,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->ref_client     = $_POST['ref_client'];
 			$facture->modelpdf       = $_POST['model'];
 
-			// Propriétés particulieres a facture recurrente
+			// Propriï¿½tï¿½s particulieres a facture recurrente
 			$facture->fac_rec        = $_POST['fac_rec'];
 			$facture->type           = 0;
 
@@ -818,7 +818,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
-	// Fin création facture, on l'affiche
+	// Fin crï¿½ation facture, on l'affiche
 	if ($facid > 0 && ! $error)
 	{
 		$db->commit();
@@ -987,7 +987,7 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		if (empty($mesg)) $mesg='<div class="error">'.$fac->error.'</div>';
 	}
 
-	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition
+	$_GET['facid']=$_POST['facid'];   // Pour rï¿½affichage de la fiche en cours d'ï¿½dition
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
@@ -1065,12 +1065,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
 
-	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition
+	$_GET['facid']=$_POST['facid'];   // Pour rï¿½affichage de la fiche en cours d'ï¿½dition
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-	Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_POST['facid']);   // Pour réaffichage de la fiche en cours d'édition
+	Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_POST['facid']);   // Pour rï¿½affichage de la fiche en cours d'ï¿½dition
 	exit;
 }
 
@@ -1139,7 +1139,7 @@ if ($_POST['addfile'])
 			}
 			else
 			{
-				// Echec transfert (fichier dépassant la limite ?)
+				// Echec transfert (fichier dï¿½passant la limite ?)
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				// print_r($_FILES);
 			}
@@ -1168,13 +1168,13 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 
 			if ($_POST['sendto'])
 			{
-				// Le destinataire a été fourni via le champ libre
+				// Le destinataire a ï¿½tï¿½ fourni via le champ libre
 				$sendto = $_POST['sendto'];
 				$sendtoid = 0;
 			}
 			elseif ($_POST['receiver'])
 			{
-				// Le destinataire a été fourni via la liste déroulante
+				// Le destinataire a ï¿½tï¿½ fourni via la liste dï¿½roulante
 				if ($_POST['receiver'] < 0)	// Id du tiers
 				{
 					$sendto = $fac->client->email;
@@ -1311,14 +1311,14 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 	{
 		$langs->load("other");
 		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-		dol_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
+		dol_syslog('Impossible de lire les donnï¿½es de la facture. Le fichier facture n\'a peut-ï¿½tre pas ï¿½tï¿½ gï¿½nï¿½rï¿½.');
 	}
 
 	$_GET['action'] = 'presend';
 }
 
 /*
- * Générer ou regénérer le document PDF
+ * Gï¿½nï¿½rer ou regï¿½nï¿½rer le document PDF
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
@@ -1370,7 +1370,7 @@ if ($_GET['action'] == 'create')
 {
 	$facturestatic=new Facture($db);
 
-	print_titre($langs->trans('NewBill'));
+	print_fiche_titre($langs->trans('NewBill'));
 
 	if ($mesg) print $mesg;
 
@@ -1447,9 +1447,9 @@ if ($_GET['action'] == 'create')
 	/*
 	 \todo
 	 L'info "Reference commande client" est une carac de la commande et non de la facture.
-	 Elle devrait donc etre stockée sur l'objet commande liée à la facture et non sur la facture.
+	 Elle devrait donc etre stockï¿½e sur l'objet commande liï¿½e ï¿½ la facture et non sur la facture.
 	 Pour ceux qui veulent l'utiliser au niveau de la facture, positionner la
-	 constante FAC_USE_CUSTOMER_ORDER_REF à 1.
+	 constante FAC_USE_CUSTOMER_ORDER_REF ï¿½ 1.
 	 */
 	if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
 	{
@@ -1458,7 +1458,7 @@ if ($_GET['action'] == 'create')
 		print '</td></tr>';
 	}
 
-	// Factures prédéfinnies
+	// Factures prï¿½dï¿½finnies
 	if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
 	{
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc FROM '.MAIN_DB_PREFIX.'facture_rec as r';
@@ -1680,7 +1680,7 @@ if ($_GET['action'] == 'create')
 	}
 	print '</textarea></td></tr>';
 
-	// Note privée
+	// Note privï¿½e
 	if (! $user->societe_id)
 	{
 		print '<tr>';
@@ -1761,7 +1761,7 @@ if ($_GET['action'] == 'create')
 		{
 			print '<tr><td colspan="3">';
 
-			// Zone de choix des produits prédéfinis à la création
+			// Zone de choix des produits prï¿½dï¿½finis ï¿½ la crï¿½ation
 			print '<table class="noborder" width="100%">';
 			print '<tr>';
 			print '<td>'.$langs->trans('ProductsAndServices').'</td>';
@@ -1786,7 +1786,7 @@ if ($_GET['action'] == 'create')
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
 				print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
 				print '<td>&nbsp;</td>';
-				// Si le module service est actif, on propose des dates de début et fin à la ligne
+				// Si le module service est actif, on propose des dates de dï¿½but et fin ï¿½ la ligne
 				if ($conf->service->enabled)
 				{
 					print '<td nowrap="nowrap">';
@@ -2041,7 +2041,7 @@ else
 			// Confirmation de la validation
 			if ($_GET['action'] == 'valid')
 			{
-				// on vérifie si la facture est en numérotation provisoire
+				// on vï¿½rifie si la facture est en numï¿½rotation provisoire
 				$facref = substr($fac->ref, 1, 4);
 				if ($facref == 'PROV')
 				{
@@ -2072,7 +2072,7 @@ else
 				if ($ret == 'html') print '<br>';
 			}
 
-			// Confirmation du classement payé
+			// Confirmation du classement payï¿½
 			if ($_GET['action'] == 'paid' && $resteapayer <= 0)
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPaid'),$langs->trans('ConfirmClassifyPaidBill',$fac->ref),'confirm_paid','',0,1);
@@ -2098,7 +2098,7 @@ else
 					$arrayreasons[$close[$key]['code']]=$close[$key]['reason'];
 				}
 
-				// Crée un tableau formulaire
+				// Crï¿½e un tableau formulaire
 				$formquestion=array(
 				'text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),
 				array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
@@ -2112,7 +2112,7 @@ else
 			// Confirmation du classement abandonne
 			if ($_GET['action'] == 'canceled')
 			{
-				// S'il y a une facture de remplacement pas encore validée (etat brouillon),
+				// S'il y a une facture de remplacement pas encore validï¿½e (etat brouillon),
 				// on ne permet pas de classer abandonner la facture.
 				if ($facidnext)
 				{
@@ -2139,7 +2139,7 @@ else
 					$arrayreasons[$close[1]['code']]=$close[1]['reason'];
 					$arrayreasons[$close[2]['code']]=$close[2]['reason'];
 
-					// Crée un tableau formulaire
+					// Crï¿½e un tableau formulaire
 					$formquestion=array(
 					'text' => $langs->trans("ConfirmCancelBillQuestion"),
 					array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
@@ -2197,8 +2197,8 @@ else
 			/*
 			\todo
 			L'info "Reference commande client" est une carac de la commande et non de la facture.
-			Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
-			Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
+			Elle devrait donc etre stockï¿½e sur l'objet commande liï¿½ ï¿½ la facture et non sur la facture.
+			Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF ï¿½ 1.
 			*/
 			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
 			{
@@ -2525,7 +2525,7 @@ else
 					dol_print_error($db);
 				}
 
-				// Payé partiellement 'escompte'
+				// Payï¿½ partiellement 'escompte'
 				if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'discount_vat')
 				{
 					print '<tr><td colspan="2" align="right" nowrap="1">';
@@ -2533,7 +2533,7 @@ else
 					print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 					$resteapayeraffiche=0;
 				}
-				// Payé partiellement ou Abandon 'badcustomer'
+				// Payï¿½ partiellement ou Abandon 'badcustomer'
 				if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'badcustomer')
 				{
 					print '<tr><td colspan="2" align="right" nowrap="1">';
@@ -2541,7 +2541,7 @@ else
 					print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 					//$resteapayeraffiche=0;
 				}
-				// Payé partiellement ou Abandon 'product_returned'
+				// Payï¿½ partiellement ou Abandon 'product_returned'
 				if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'product_returned')
 				{
 					print '<tr><td colspan="2" align="right" nowrap="1">';
@@ -2549,7 +2549,7 @@ else
 					print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 					$resteapayeraffiche=0;
 				}
-				// Payé partiellement ou Abandon 'abandon'
+				// Payï¿½ partiellement ou Abandon 'abandon'
 				if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'abandon')
 				{
 					print '<tr><td colspan="2" align="right" nowrap="1">';
@@ -2608,7 +2608,7 @@ else
 			}
 			print '</td></tr>';
 
-			// Conditions de règlement
+			// Conditions de rï¿½glement
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
@@ -2651,7 +2651,7 @@ else
 			}
 			print '</td></tr>';
 
-			// Lit lignes de facture pour déterminer montant
+			// Lit lignes de facture pour dï¿½terminer montant
 			// On s'en sert pas mais ca sert pour debuggage
 			/*
 			$sql  = 'SELECT l.price as price, l.qty, l.rowid, l.tva_taux,';
@@ -2876,7 +2876,7 @@ else
 							print '<td align="center">';
 							if (($objp->info_bits & 2) == 2)
 							{
-								// Ligne remise prédéfinie, on permet pas modif
+								// Ligne remise prï¿½dï¿½finie, on permet pas modif
 							}
 							else
 							{
@@ -3165,10 +3165,10 @@ else
 				{
 					print '<div class="tabsAction">';
 
-					// Editer une facture déjà validée, sans paiement effectué et pas exporté en compta
+					// Editer une facture dï¿½jï¿½ validï¿½e, sans paiement effectuï¿½ et pas exportï¿½ en compta
 					if ($fac->statut == 1)
 					{
-						// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+						// On vï¿½rifie si les lignes de factures ont ï¿½tï¿½ exportï¿½es en compta et/ou ventilï¿½es
 						$ventilExportCompta = $fac->getVentilExportCompta();
 
 						if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
@@ -3290,7 +3290,7 @@ else
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 					}
 
-					// Classify 'closed not completely paid' (possible si validée et pas encore classée payée)
+					// Classify 'closed not completely paid' (possible si validï¿½e et pas encore classï¿½e payï¿½e)
 					if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
 					&& $user->rights->facture->paiement)
 					{
@@ -3351,7 +3351,7 @@ else
 				print '<a name="builddoc"></a>'; // ancre
 
 				/*
-				 * Documents générés
+				 * Documents gï¿½nï¿½rï¿½s
 				 */
 				$filename=dol_sanitizeFileName($fac->ref);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($fac->ref);
@@ -3365,7 +3365,7 @@ else
 				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
 
 				/*
-				 *   Propales rattachées
+				 *   Propales rattachï¿½es
 				 */
 				$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.ref_client, p.rowid as propalid';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
@@ -3419,7 +3419,7 @@ else
 				}
 
 				/*
-				 * Commandes rattachées
+				 * Commandes rattachï¿½es
 				 */
 				if($conf->commande->enabled)
 				{
@@ -3518,7 +3518,7 @@ else
 					$liste[$key]=$value;
 				}
 
-				// Créé l'objet formulaire mail
+				// Crï¿½ï¿½ l'objet formulaire mail
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				$formmail->fromtype = 'user';
@@ -3536,7 +3536,7 @@ else
 				$formmail->withcancel=1;
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
-				// Tableau des paramètres complémentaires du post
+				// Tableau des paramï¿½tres complï¿½mentaires du post
 				$formmail->param['action']='send';
 				$formmail->param['models']='facture_send';
 				$formmail->param['facid']=$fac->id;
@@ -3585,7 +3585,7 @@ else
 					$liste[$key]=$value;
 				}
 
-				// Créé l'objet formulaire mail
+				// Crï¿½ï¿½ l'objet formulaire mail
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				$formmail->fromname = $user->fullname;
@@ -3600,7 +3600,7 @@ else
 				$formmail->withcancel=1;
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
-				// Tableau des paramètres complémentaires
+				// Tableau des paramï¿½tres complï¿½mentaires
 				$formmail->param['action']='relance';
 				$formmail->param['models']='facture_relance';
 				$formmail->param['facid']=$fac->id;
