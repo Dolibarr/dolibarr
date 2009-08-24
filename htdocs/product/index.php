@@ -43,12 +43,17 @@ $staticproduct=new Product($db);
 
 $transAreaType = $langs->trans("ProductsAndServicesArea");
 $helpurl='';
-if (isset($_GET["type"]) && $_GET["type"] == 0)
+if (! isset($_GET["type"]))
 {
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if (isset($_GET["type"]) && $_GET["type"] == 1)
+if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled))
+{
+	$transAreaType = $langs->trans("ProductsArea");
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->produit->enabled))
 {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
