@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/expedition/liste.php
-        \ingroup    expedition
-        \brief      Page de la liste des expéditions/livraisons
-		\version	$Id$
-*/
+ *      \file       htdocs/expedition/liste.php
+ *      \ingroup    expedition
+ *      \brief      Page de la liste des expï¿½ditions/livraisons
+ *		\version	$Id$
+ */
 
 require("./pre.inc.php");
 
@@ -44,15 +44,12 @@ $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 
 
+/*
+ * View
+ */
 
-/******************************************************************************/
-/*                                                                            */
-/*                   Fin des  Actions                                         */
-/*                                                                            */
-/******************************************************************************/
-
-
-llxHeader('',$langs->trans('ListOfSendings'));
+$helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
+llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
@@ -61,7 +58,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 if ($conf->commande->enabled)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as ori ON ce.fk_commande = ori.rowid"; 
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as ori ON ce.fk_commande = ori.rowid";
 }
 else
 {
@@ -76,8 +73,8 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$sql.= " AND sc.fk_user = " .$user->id;
 }
 if ($socid)
-{ 
-  $sql.= " AND e.fk_soc = ".$socid; 
+{
+  $sql.= " AND e.fk_soc = ".$socid;
 }
 if ($_POST["sf_ref"])
 {
@@ -91,14 +88,14 @@ $resql=$db->query($sql);
 if ($resql)
 {
   $num = $db->num_rows($resql);
-  
+
   $expedition = new Expedition($db);
-  
+
   print_barre_liste($langs->trans('ListOfSendings'), $_GET["page"], "liste.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
-  
+
   $i = 0;
   print '<table class="noborder" width="100%">';
-  
+
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","","&amp;socid=$socid",'width="15%"',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", "&amp;socid=$socid",'width="25%" align="left"',$sortfield,$sortorder);
@@ -114,11 +111,11 @@ if ($resql)
   print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socid=$socid",'width="10%" align="right"',$sortfield,$sortorder);
   print "</tr>\n";
   $var=True;
-  
+
   while ($i < min($num,$limit))
   {
   	$objp = $db->fetch_object($resql);
-      
+
     $var=!$var;
     print "<tr $bc[$var]>";
     print "<td><a href=\"fiche.php?id=".$objp->rowid."\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
@@ -135,7 +132,7 @@ if ($resql)
 
     $now = time();
     $lim = 3600 * 24 * 15 ;
-      
+
     if ( ($now - $objp->date_expedition) > $lim && $objp->statutid == 1 )
     {
     	print "<td><b> &gt; 15 jours</b></td>";
@@ -144,7 +141,7 @@ if ($resql)
     {
     	print "<td>&nbsp;</td>";
     }
-    
+
     print "<td align=\"right\">";
     $y = dol_print_date($objp->date_expedition,"%Y");
     $m = dol_print_date($objp->date_expedition,"%m");
@@ -154,14 +151,14 @@ if ($resql)
     print " <a href=\"propal.php?year=$y&amp;month=$m\">";
     print $b."</a>\n";
     print " <a href=\"propal.php?year=$y\">";
-    print $y."</a></TD>\n";      
-    
+    print $y."</a></TD>\n";
+
     print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
     print "</tr>\n";
-    
+
     $i++;
   }
-  
+
   print "</table>";
   $db->free($resql);
 }

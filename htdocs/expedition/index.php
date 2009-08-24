@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/expedition/index.php
-        \ingroup    expedition
-        \brief      Page accueil du module expedition
-        \version    $Id$
-*/
+ *       \file       htdocs/expedition/index.php
+ *       \ingroup    expedition
+ *       \brief      Page accueil du module expedition
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -31,10 +31,11 @@ $langs->load("sendings");
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
-llxHeader('',$langs->trans("Sendings"),'ch-expedition.html',$form_search);
+$helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
+llxHeader('',$langs->trans("Sendings"),$helpurl);
 
 print_fiche_titre($langs->trans("SendingsArea"));
 
@@ -51,7 +52,7 @@ print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_r
 print "</form></table><br />\n";
 
 /*
- * Expeditions à valider
+ * Shipments to validate
  */
 $clause = " WHERE ";
 
@@ -60,7 +61,7 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid"; 
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
 {
@@ -76,30 +77,30 @@ if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    if ($num)
-    {
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
-        $i = 0;
-        $var = True;
-        while ($i < $num)
-        {
-            $var=!$var;
-            $obj = $db->fetch_object($resql);
-            print "<tr $bc[$var]><td nowrap=\"nowrap\"><a href=\"fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
-            $i++;
-        }
-        print "</table><br>";
-    }
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("SendingsToValidate").'</td></tr>';
+		$i = 0;
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object($resql);
+			print "<tr $bc[$var]><td nowrap=\"nowrap\"><a href=\"fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
+			$i++;
+		}
+		print "</table><br>";
+	}
 }
 
 
 /*
- * Commandes à traiter
+ * Commandes a traiter
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
@@ -112,20 +113,20 @@ if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY c.rowid ASC";
 
-if ( $db->query($sql) ) 
+if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  if ($num)
-    {
-      $langs->load("orders");
-
-      $i = 0;
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
-      $var = True;
-      while ($i < $num)
+	$num = $db->num_rows();
+	if ($num)
 	{
+		$langs->load("orders");
+
+		$i = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
+		$var = True;
+		while ($i < $num)
+		{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
 	  print "<tr $bc[$var]>";
@@ -133,9 +134,9 @@ if ( $db->query($sql) )
 	  print "<a href=\"commande.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,20).'</a></td></tr>';
 	  $i++;
+		}
+		print "</table><br>";
 	}
-      print "</table><br>";
-    }
 }
 
 
@@ -159,34 +160,34 @@ if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 $resql = $db->query($sql);
-if ( $resql ) 
+if ( $resql )
 {
-  $langs->load("orders");
-  
-  $num = $db->num_rows($resql);
-  if ($num)
-    {
-      $i = 0;
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">'.$langs->trans("OrdersInProcess").'</td></tr>';
-      $var = True;
-      while ($i < $num)
+	$langs->load("orders");
+
+	$num = $db->num_rows($resql);
+	if ($num)
 	{
+		$i = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("OrdersInProcess").'</td></tr>';
+		$var = True;
+		while ($i < $num)
+		{
 	  $var=!$var;
 	  $obj = $db->fetch_object($resql);
 	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"commande.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' ';
 	  print $obj->ref.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
+		}
+		print "</table><br>";
 	}
-      print "</table><br>";
-    }
 }
 
 
 /*
- * Expeditions à valider
+ * Last shipments
  */
 $clause = " WHERE ";
 $sql = "SELECT e.rowid, e.ref";
@@ -194,7 +195,7 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid"; 
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
 {
@@ -209,29 +210,35 @@ $sql.= " ORDER BY e.date_expedition DESC";
 $sql.= $db->plimit(5, 0);
 
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
-  $num = $db->num_rows($resql);
-  if ($num)
-  {
-  	$i = 0;
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
-    $var = True;
-    while ($i < $num)
-    {
-    	$var=!$var;
-    	$obj = $db->fetch_object($resql);
-    	print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowSending"),"sending").' ';
-    	print $obj->ref.'</a></td>';
-    	print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-    	print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->commande_ref.'</a></td></tr>';
-    	$i++;
-    }
-    print "</table><br>";
-  }
-  $db->free($resql);
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object($resql);
+			print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowSending"),"sending").' ';
+			print $obj->ref.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+			print '<td>';
+			if ($obj->commande_id)
+			{
+				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">';
+				print img_object($langs->trans("ShowOrder"),"order").' '.$obj->commande_ref.'</a>';
+			} else print '&nbsp;';
+			print '</td></tr>';
+			$i++;
+		}
+		print "</table><br>";
+	}
+	$db->free($resql);
 }
 
 print '</td></tr></table>';
