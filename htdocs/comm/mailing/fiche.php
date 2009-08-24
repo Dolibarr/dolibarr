@@ -471,7 +471,8 @@ if (! empty($_POST["cancel"]))
  * View
  */
 
-llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
+$help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
+llxHeader('',$langs->trans("Mailing"),$help_url);
 
 $html = new Form($db);
 $htmlother = new FormOther($db);

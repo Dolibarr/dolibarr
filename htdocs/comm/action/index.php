@@ -104,7 +104,8 @@ if ($action=='delete_action')
  * View
  */
 
-llxHeader('','','EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda');
+$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form=new Form($db);
 

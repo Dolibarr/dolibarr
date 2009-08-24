@@ -25,7 +25,7 @@
 		\brief      Page liste des actions commerciales
 		\version    $Id$
 */
- 
+
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -63,12 +63,12 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder)
-{ 
+{
 	$sortorder="ASC";
 	if ($status == 'todo') $sortorder="DESC";
 	if ($status == 'done') $sortorder="DESC";
 }
-if (! $sortfield) 
+if (! $sortfield)
 {
 	$sortfield="a.percent";
 	if ($status == 'todo') $sortfield="a.datep";
@@ -97,7 +97,9 @@ if (! empty($_POST["viewcal"]))
  *  View
  */
 
-llxHeader();
+$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+llxHeader('',$langs->trans("Agenda"),$help_url);
+
 $form=new Form($db);
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
@@ -125,7 +127,7 @@ if ($_GET["type"]) $sql.= " AND c.id = ".$_GET["type"];
 if ($_REQUEST["time"] == "today") $sql.= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
-if ($filtera > 0 || $filtert > 0 || $filterd > 0) 
+if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
 	$sql.= " AND (";
 	if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
@@ -143,7 +145,7 @@ if ($resql)
 {
     $actionstatic=new ActionComm($db);
     $societestatic=new Societe($db);
-    
+
     $num = $db->num_rows($resql);
 
 	$title=$langs->trans("DoneAndToDoActions");
@@ -171,9 +173,9 @@ if ($resql)
     {
         print_barre_liste($langs->trans($title), $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
     }
-    
+
 	//print '<br>';
-	
+
 	if ($canedit)
 	{
 		print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -203,7 +205,7 @@ if ($resql)
 		print '</td><td>';
 		print $form->select_users($filtert,'usertodo',1,'',!$canedit);
 		print '</td></tr>';
-		
+
 		print '<tr>';
 		print '<td>';
 		//print '<input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
@@ -215,8 +217,8 @@ if ($resql)
 		print '</table>';
 		print '</form><br>';
 	}
-	
-	
+
+
 	$i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
@@ -231,11 +233,11 @@ if ($resql)
     print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
-	
+
     $contactstatic = new Contact($db);
 	$now=gmmktime();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
-	
+
     $var=true;
     while ($i < min($num,$limit))
     {

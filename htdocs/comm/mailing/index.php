@@ -38,7 +38,8 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
  *	View
  */
 
-llxHeader('','Mailing');
+$help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
+llxHeader('','EMailing',$help_url);
 
 print_fiche_titre($langs->trans("MailingArea"));
 
