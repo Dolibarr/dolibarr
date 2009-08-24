@@ -54,7 +54,6 @@ class modImport extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = '';
-		$this->need_javascript = 1;
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/import/temp");
@@ -67,6 +66,8 @@ class modImport extends DolibarrModules
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
 		$this->phpmax = array();
+		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
+		$this->need_javascript_ajax = 1;
 
 		// Constantes
 		$this->const = array();

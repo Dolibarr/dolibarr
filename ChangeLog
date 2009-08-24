@@ -75,6 +75,7 @@ For developers:
   action=repair
 - Log files contains more information (PHP_SELD added and OS user used for 
   log of command lines scripts) 
+- Can protect a module to not being enabled if javascript disabled.
 
 
 ***** Changelog for 2.6 compared to 2.5 *****

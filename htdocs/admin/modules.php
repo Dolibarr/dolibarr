@@ -29,6 +29,8 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
+$langs->load("errors");
+
 $mode=isset($_GET["mode"])?$_GET["mode"]:(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $mesg=isset($_GET["mesg"])?$_GET["mesg"]:"";
 
@@ -72,7 +74,7 @@ function Activate($value,$withdeps=1)
 
 	$ret='';
 
-	// Activation du module
+	// Activate module
 	if ($modName)
 	{
 		$file = $modName . ".class.php";
@@ -86,7 +88,7 @@ function Activate($value,$withdeps=1)
 
 		$objMod = new $modName($db);
 
-		// Test si version PHP ok
+		// Test if PHP version ok
 		$verphp=versionphparray();
 		$vermin=$objMod->phpmin;
 		if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
@@ -94,12 +96,18 @@ function Activate($value,$withdeps=1)
 			return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
 		}
 
-		// Test si version Dolibarr ok
+		// Test if Dolibarr version ok
 		$verdol=versiondolibarrarray();
 		$vermin=$objMod->need_dolibarr_version;
 		if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
 		{
 			return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
+		}
+
+		// Test if javascript requirement ok
+		if (! empty($objMod->need_javascript_ajax) && empty($conf->use_javascript_ajax))
+		{
+			return $langs->trans("ErrorModuleRequireJavascript");
 		}
 
 		$result=$objMod->init();
@@ -427,8 +435,10 @@ foreach ($orders as $key => $value)
             print "&nbsp;";
         }
 
-        print "</td>\n  <td align=\"center\" valign=\"top\">";
+        print "</td>\n";
 
+        // Activate/Disable and Setup
+        print "<td align=\"center\" valign=\"top\">";
         if (! empty($conf->global->$const_name))
         {
             // Module actif
@@ -477,7 +487,7 @@ foreach ($orders as $key => $value)
             }
 
             // Module non actif
-            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
+           	print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
         }
 
         print "</tr>\n";
