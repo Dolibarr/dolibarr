@@ -1942,7 +1942,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
 
 	print "\n";
-	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	print '<table summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
 	if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding" valign="middle">';
 	print '<div class="titre">'.$titre.'</div>';

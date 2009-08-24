@@ -327,7 +327,7 @@ dol_fiche_head($head, $tagmode, $langs->trans("Modules"));
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
-print "<table class=\"noborder\" width=\"100%\">\n";
+print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Family")."</td>\n";
 print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
@@ -456,13 +456,13 @@ foreach ($orders as $key => $value)
 						$urlpage=$page;
                         if ($i++)
                         {
-                            print '<a href="'.$urlpage.'" alt="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
+                            print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
                         //    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
                         }
                         else
                         {
                             //print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;';
-                            print '<a href="'.$urlpage.'" alt="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                            print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
                         }
                     }
                     print "</td>\n";
@@ -470,7 +470,7 @@ foreach ($orders as $key => $value)
                 else
                 {
                     //print '  <td align="center"><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
-                    print '  <td align="center" valign="top"><a href="'.$objMod->config_page_url.'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                    print '  <td align="center" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
                 }
             }
             else

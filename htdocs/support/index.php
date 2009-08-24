@@ -64,7 +64,7 @@ print '<table class="login" width="100%">';
 print '<tr class="title" valign="top">';
 print '<td width="100%" align="left" valign="top">';
 
-print '<table><td>'.img_picto('','who.png','',1).'</td><td>';
+print '<table summary="who"><tr><td>'.img_picto('','who.png','',1).'</td><td>';
 
 print '<font style="'.$style1.'">'.$langs->trans("CommunitySupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</font>';
@@ -102,7 +102,7 @@ print '<table class="login" width="100%">';
 print '<tr class="title">';
 print '<td width="100%" align="left" valign="top">';
 
-print '<table><td>'.img_picto('','internet.png','',1).'</td><td>';
+print '<table summary="community"><tr><td>'.img_picto('','internet.png','',1).'</td><td>';
 
 print '<font style="'.$style1.'">'.$langs->trans("RemoteControlSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
@@ -136,7 +136,7 @@ print '<table class="login" width="100%">';
 print '<tr class="title" valign="top">';
 print '<td width="100%" align="left" valign="top">';
 
-print '<table><td>'.img_picto('','mail.png','',1).'</td><td>';
+print '<table summary="mail"><tr><td>'.img_picto('','mail.png','',1).'</td><td>';
 
 print '<font style="'.$style1.'">'.$langs->trans("EMailSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
@@ -169,7 +169,7 @@ print '<table class="login" width="100%">';
 print '<tr class="title">';
 print '<td width="100%" align="left" valign="top">';
 
-print '<table><td>'.img_picto('','pagemaster.png','',1).'</td><td>';
+print '<table summary="special"><tr><td>'.img_picto('','pagemaster.png','',1).'</td><td>';
 
 print '<font style="'.$style1.'">'.$langs->trans("OtherSupport").'</font>';
 print '<br>'.$langs->trans("TypeOfSupport").': <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
