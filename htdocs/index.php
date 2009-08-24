@@ -63,26 +63,6 @@ if (! empty($conf->global->MAIN_MOTD))
 	}
 }
 
-// Security warning repertoire install existe (si utilisateur admin)
-if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
-{
-	// Install lock missing
-	if (is_dir(DOL_DOCUMENT_ROOT."/install") && ! file_exists('../install.lock'))
-	{
-		$langs->load("other");
-		$message=$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install");
-		$message.=$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install");
-		print info_admin($message);
-	}
-
-	// Conf files must be in read only mode
-	if (is_writable(DOL_DOCUMENT_ROOT.'/conf/conf.php'))
-	{
-		$langs->load("errors");
-		print info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly"));
-	}
-}
-
 print '<table width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" class="notopnoleft">';
@@ -710,6 +690,41 @@ if (sizeof($boxarray))
 		print '</script>'."\n";
 	}
 }
+
+
+/*
+ * Show security warnings
+ */
+
+// Security warning repertoire install existe (si utilisateur admin)
+if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
+{
+	$message='';
+
+	// Install lock missing
+	if (is_dir(DOL_DOCUMENT_ROOT."/install") && ! file_exists('../install.lock'))
+	{
+		$langs->load("other");
+		//if (! empty($message)) $message.='<br>';
+		$message.=info_admin($langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+	}
+
+	// Conf files must be in read only mode
+	if (is_writable(DOL_DOCUMENT_ROOT.'/conf/conf.php'))
+	{
+		$langs->load("errors");
+		//if (! empty($message)) $message.='<br>';
+		$message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+	}
+
+	if ($message)
+	{
+		print $message;
+		//$message.='<br>';
+		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+	}
+}
+
 
 $db->close();
 

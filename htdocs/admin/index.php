@@ -57,7 +57,7 @@ print $langs->trans("AreaForAdminOnly").'<br>';
 
 print "<br>";
 print "<br>";
-print $langs->trans("SetupDescription2")."<br>";
+print '<u>'.$langs->trans("SetupDescription2")."</u><br>";
 
 print "<br>";
 //print '<hr style="color: #DDDDDD;">';
@@ -81,6 +81,7 @@ print '</table>';
 
 //print '<br>';
 //print info_admin($langs->trans("OnceSetupFinishedCreateUsers")).'<br>';
+
 
 $db->close();
 
