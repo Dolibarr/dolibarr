@@ -21,11 +21,11 @@
  */
 
 /**
-   \file       htdocs/product/stock/index.php
-   \ingroup    stock
-   \brief      Page accueil stocks produits
-   \version    $Revision$
-*/
+ *  \file       htdocs/product/stock/index.php
+ *  \ingroup    stock
+ *  \brief      Page accueil stocks produits
+ *  \version    $Revision$
+ */
 
 require_once("./pre.inc.php");
 require_once("./entrepot.class.php");
@@ -35,7 +35,13 @@ $langs->load("stocks");
 if (!$user->rights->stock->lire)
   accessforbidden();
 
-llxHeader("","",$langs->trans("Stocks"));
+  
+/*
+ * View
+ */
+
+$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+llxHeader("",$langs->trans("Stocks"),$help_url);
 
 print_fiche_titre($langs->trans("StocksArea"));
 

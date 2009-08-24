@@ -129,7 +129,8 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 $productstatic=new Product($db);
 $form=new Form($db);
 
-llxHeader("","",$langs->trans("WarehouseCard"));
+$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+llxHeader("",$langs->trans("WarehouseCard"),$help_url);
 
 
 if ($_GET["action"] == 'create')

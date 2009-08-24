@@ -15,23 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
-   \file       htdocs/product/stock/pre.inc.php
-   \ingroup    stock
-   \brief      Fichier gestionnaire du menu gauche de stocks
-   \version    $Revision$
-*/
+ *  \file       htdocs/product/stock/pre.inc.php
+ *  \ingroup    stock
+ *  \brief      Fichier gestionnaire du menu gauche de stocks
+ *  \version    $Id$
+ */
 
 require("../../main.inc.php");
 require("./entrepot.class.php");
 
-function llxHeader($head = "", $urlp = "", $title="")
+function llxHeader($head="", $title="", $help_url="")
 {
   global $langs,$conf,$user;
   
@@ -49,7 +45,6 @@ function llxHeader($head = "", $urlp = "", $title="")
   $menu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Restock"));
   
   $menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
-  
-  left_menu($menu->liste);
+  left_menu($menu->liste, $help_url);
 }
 ?>

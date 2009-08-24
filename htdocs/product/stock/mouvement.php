@@ -119,8 +119,9 @@ if ($resql)
 
 	$i = 0;
 
+	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	$texte = $langs->trans("ListOfStockMovements");
-	llxHeader("","",$texte);
+	llxHeader("",$texte,$help_url);
 
 
 	/*

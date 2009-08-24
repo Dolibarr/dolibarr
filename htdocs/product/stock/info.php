@@ -33,7 +33,8 @@ $langs->load("stocks");
  * View
  */
 
-llxHeader();
+$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+llxHeader("",$langs->trans("Stocks"),$help_url);
 
 $entrepot = new Entrepot($db);
 $entrepot->fetch($_GET["id"]);

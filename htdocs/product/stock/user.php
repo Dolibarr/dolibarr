@@ -54,7 +54,8 @@ $mesg = '';
  * View
  */
 
-llxHeader("","",$langs->trans("WarehouseCard"));
+$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+llxHeader("",$langs->trans("WarehouseCard"),$help_url);
 
 $form=new Form($db);
 

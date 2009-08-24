@@ -119,7 +119,8 @@ if ($_GET["id"] || $_GET["ref"])
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
+	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+	llxHeader("",$langs->trans("CardProduct".$product->type),$help_url);
 
 	if ($result > 0)
 	{
