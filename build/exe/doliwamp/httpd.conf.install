@@ -174,6 +174,32 @@ ServerName localhost
 #
 DocumentRoot "WAMPROOT/www/"
 
+
+#
+# Timeout: The number of seconds before receives and sends time out.
+#
+Timeout 300
+
+#
+# KeepAlive: Whether or not to allow persistent connections (more than
+# one request per connection). Set to "Off" to deactivate.
+#
+KeepAlive On
+
+#
+# MaxKeepAliveRequests: The maximum number of requests to allow
+# during a persistent connection. Set to 0 to allow an unlimited amount.
+# We recommend you leave this number high, for maximum performance.
+#
+MaxKeepAliveRequests 500
+
+#
+# KeepAliveTimeout: Number of seconds to wait for the next request from the
+# same client on the same connection.
+#
+KeepAliveTimeout 30
+
+
 #
 # Each directory to which Apache has access can be configured with respect
 # to which services and features are allowed and/or disabled in that
@@ -699,9 +725,9 @@ SSLCertificateKeyFile "WAMPROOT/myserver.key"
 #   Similarly, one has to force some clients to use HTTP/1.0 to workaround
 #   their broken HTTP/1.1 implementation. Use variables "downgrade-1.0" and
 #   "force-response-1.0" for this.
-BrowserMatch ".*MSIE.*" \
-         nokeepalive ssl-unclean-shutdown \
-         downgrade-1.0 force-response-1.0
+#BrowserMatch ".*MSIE.*" \
+#         nokeepalive ssl-unclean-shutdown \
+#         downgrade-1.0 force-response-1.0
 
 </VirtualHost>  
 
