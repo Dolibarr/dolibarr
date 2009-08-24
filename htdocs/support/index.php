@@ -47,16 +47,8 @@ print $langs->trans("HelpCenterDesc2")."<br>\n";
 
 print '<br>';
 
-if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
-{
-	print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
-	//print '<img src="dolibarr_logo2.png" height="22" alt="Dolibarr" title="Dolibarr">';
-}
-else
-{
-	print $langs->trans("ToGoBackToDolibarr",'../install/index.php');
-	//print '<img src="dolibarr_logo2.png" height="22" alt="Dolibarr" title="Dolibarr">';
-}
+print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
+//print '<img src="dolibarr_logo2.png" height="22" alt="Dolibarr" title="Dolibarr">';
 
 print '<br><br>';
 
