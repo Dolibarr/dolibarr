@@ -39,7 +39,6 @@ $typeconst=array('yesno','texte','chaine');
 /*
  * Actions
  */
-
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]));
@@ -148,11 +147,11 @@ if ($result)
 
 		// Value
 		print '<td>';
-		print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
+		print '<input type="text" class="flat" size="30" name="constvalue" value="'.htmlspecialchars($obj->value).'">';
 		print '</td><td>';
 
 		// Note
-		print '<input type="text" class="flat" size="40" name="constnote" value="'.nl2br($obj->note).'">';
+		print '<input type="text" class="flat" size="40" name="constnote" value="'.htmlspecialchars($obj->note,1).'">';
 		print '</td>';
 
 		// Entity
