@@ -49,3 +49,4 @@ ErrorBillRefAlreadyExists = La referencia utilizada para la creación ya existe
 ErrorPleaseTypeBankTransactionReportName = Introduzca el nombre del registro bancario sobre la cual el escrito está constatado (formato AAAAMM ó AAAMMJJ)
 ErrorRecordHasChildren = No se puede eliminar el registro porque tiene hijos.
 WarningConfFileMustBeReadOnly = Atención, su fichero <b>conf.php</b> es accesible en escritura al servidor Web. Esto representa un fallo serio de seguridad. Modifique los permisos para ser leído únicamente por la cuenta que ejecuta el servidor Web.Si está ejecutando Windows en undisco con formato FAT, sea consciente que este sistema de archivos no protege los archivos y no ofrece ninguna solución para ello.
+ErrorModuleRequireJavascript = Javascript no debe estar desactivado para que esta opción pueda utilizarse. Para activar/desactivar JavaScript, vaya al menú Inicio->Configuración->Entorno.

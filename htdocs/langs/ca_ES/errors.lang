@@ -49,3 +49,4 @@ ErrorBillRefAlreadyExists = La referència utilitzada per a la creació ja exist
 ErrorPleaseTypeBankTransactionReportName = Introduïu el nom del registre bancari sobre el qual l'escrit està constatat (format AAAAMM o AAAMMJJ)
 ErrorRecordHasChildren = No es pot esborrar el registre perquè té fills.
 WarningConfFileMustBeReadOnly = Atenció, el seu fitxer <b>conf.php</b> és accessible en escriptura al servidor web. Això representa un error seriós de seguretat. Modifiqueu els permisos per ser llegit únicament pel compte que executa el servidor Web.Si està executant Windows en undisco amb format FAT, sigui conscient que aquest sistema d'arxius no protegeix els arxius i no ofereix cap solució per a això.
+ErrorModuleRequireJavascript = Javascript ha d'estar activat per a que aquesta opció pugui utilitzar-se. Per activar/desactivar JavaScript, aneu al menú Inici->Configuració->Entorn.
