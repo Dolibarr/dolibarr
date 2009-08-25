@@ -355,13 +355,13 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 
 /**
- *	\brief      Insertion d'une constante dans la base de donnees.
+ *	\brief      Insert a parameter (key,value) into database.
  *	\sa			dolibarr_del_const, dolibarr_get_const
- *	\param	    db          Handler d'acces base
- *	\param	    name		Nom de la constante
- *	\param	    value		Valeur de la constante
- *	\param	    type		Type de constante (chaine par defaut)
- *	\param	    visible	    La constante est elle visible (0 par defaut)
+ *	\param	    db          Database handler
+ *	\param	    name		Name of constant
+ *	\param	    value		Value of constant
+ *	\param	    type		Type of constante (chaine par defaut)
+ *	\param	    visible	    Is constant visible in Setup->Other page (0 by default)
  *	\param	    note		Note on parameter
  *	\param	    entity		Multi company id
  *	\return     int         -1 if KO, 1 if OK
