@@ -337,8 +337,8 @@ class Translate {
 	}
 
 	/**
-	 *	\brief      Retourne la liste des domaines charg�es en memoire
-	 *  \return     array       Tableau des domaines charg�es
+	 *	\brief      Retourn list of files already loaded into memory
+	 *  \return     string      List of files loaded into memory "main=1,errors=1,..."
 	 */
 	function list_domainloaded()
 	{
@@ -351,7 +351,12 @@ class Translate {
 		return $ret;
 	}
 
-
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $key
+	 * @return unknown
+	 */
 	function getTradFromKey($key)
 	{
 		global $db;
@@ -517,7 +522,7 @@ class Translate {
 
 
 	/**
-	 *  \brief       Retourne la liste des langues disponibles
+	 *  \brief       Return list of all available languages
 	 *  \return      array     list of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
@@ -563,6 +568,28 @@ class Translate {
 
 
 	/**
+	 *      \brief      Return full text translated to languagea label for a key. Store key-label in a cache.
+	 *		\number		number		Number to encode in full text
+	 * 		\param		isamount	1=It's an amount, 0=it's just a number
+	 *      \return     string		Label translated in UTF8 (but without entities)
+	 * 								10 if setDefaultLang was en_US => ten
+	 * 								123 if setDefaultLang was fr_FR => cent vingt trois
+	 */
+	function getLabelFromNumber($number,$isamount=0)
+	{
+		$outlang=$this->defaultlang;	// Output language we want
+		$outlangarray=split('_',$outlang,2);
+		// If lang is xx_XX, then we use xx
+		if (strtolower($outlangarray[0]) == strtolower($outlangarray[1])) $outlang=$outlangarray[0];
+
+		// TODO
+
+
+		return $number;
+	}
+
+
+	/**
 	 *      \brief      Return a label for a key. Store key-label in a cache.
 	 * 		\param		db			Database handler
 	 * 		\param		key			Key to get label (key in language file)
@@ -570,7 +597,7 @@ class Translate {
 	 * 		\param		fieldkey	Field for key
 	 * 		\param		fieldlabel	Field for label
 	 * 		\param		fieldval	Value to find record
-	 *      \return     string		Label
+	 *      \return     string		Label in UTF8 (but without entities)
 	 *		\remarks	This function can be used to get label in database but more often to get code from key id.
 	 */
 	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
