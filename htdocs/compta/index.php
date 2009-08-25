@@ -33,10 +33,10 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 if ($conf->tax->enabled) require_once(DOL_DOCUMENT_ROOT.'/chargesociales.class.php');
 
-// L'espace compta/tréso doit toujours etre actif car c'est un espace partagé
-// par de nombreux modules (banque, facture, commande à facturer, etc...) indépendemment
+// L'espace compta/trï¿½so doit toujours etre actif car c'est un espace partagï¿½
+// par de nombreux modules (banque, facture, commande ï¿½ facturer, etc...) indï¿½pendemment
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
-// est protégé par le droit qui va bien du module concerné.
+// est protï¿½gï¿½ par le droit qui va bien du module concernï¿½.
 //if (!$user->rights->compta->general->lire)
 //  accessforbidden();
 
@@ -653,7 +653,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 }
 
 /*
- * Commandes clients à facturer
+ * Commandes clients ï¿½ facturer
  */
 if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->commande->lire)
 {
@@ -752,7 +752,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 }
 
 /*
- * Factures clients impayées
+ * Factures clients impayï¿½es
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
@@ -851,7 +851,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 }
 
 /*
- * Factures fournisseurs impayées
+ * Factures fournisseurs impayï¿½es
  */
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {

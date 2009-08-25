@@ -166,7 +166,7 @@ if ($_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
     print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT).'</td>';
     print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"");
-    print ! empty($conf->global->MAIN_DEMO)?' disabled="true"':'';	// Disabled for demo
+    print ! empty($dolibarr_main_demo)?' disabled="true"':'';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $html=new Form($db);
@@ -178,7 +178,7 @@ if ($_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->MAIN_SIZE_LISTE_LIMIT?" checked":"");
-    print ! empty($conf->global->MAIN_DEMO)?' disabled="true"':'';	// Disabled for demo
+    print ! empty($dolibarr_main_demo)?' disabled="true"':'';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" size="4" value="' . $fuser->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
 
@@ -186,7 +186,7 @@ if ($_GET["action"] == 'edit')
 
 
     // Theme
-    show_theme($fuser,$conf->global->MAIN_DEMO?0:1,true);
+    show_theme($fuser,empty($dolibarr_main_demo)?1:0,true);
 
     print '</div>';
 
@@ -226,7 +226,7 @@ else
     print '</div>';
 
     print '<div class="tabsAction">';
-	if ($conf->global->MAIN_DEMO)
+	if (! empty($dolibarr_main_demo))
 	{
 		print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
 	}

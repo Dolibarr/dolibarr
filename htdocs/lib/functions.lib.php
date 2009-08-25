@@ -1684,12 +1684,13 @@ function dolibarr_print_error($db='',$error='')
  *				On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
  *				Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
  *				renvoyer leur erreur par l'intermediaire de leur propriete "error".
- *				\param      db      Database handler
- *				\param      error	Chaine erreur ou tableau de chaines erreur complementaires a afficher
+ *	\param      db      Database handler
+ *	\param      error	Chaine erreur ou tableau de chaines erreur complementaires a afficher
  */
 function dol_print_error($db='',$error='')
 {
 	global $conf,$langs,$argv;
+	$out = '';
 	$syslog = '';
 
 	// Si erreur intervenue avant chargement langue
@@ -1699,28 +1700,29 @@ function dol_print_error($db='',$error='')
 		$langs = new Translate("", $conf);
 		$langs->load("main");
 	}
+	$langs->load("errors");
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
-		print $langs->trans("DolibarrHasDetectedError").".<br>\n";
+		$out.=$langs->trans("DolibarrHasDetectedError").".<br>\n";
 		if (! empty($conf->global->MAIN_FEATURES_LEVEL))
-		print "You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
-		print $langs->trans("InformationToHelpDiagnose").":<br>\n";
+		$out.="You use an experimental level of features, so please do NOT report any bugs, anywhere, until going back to MAIN_FEATURES_LEVEL = 0.<br>\n";
+		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
-		print "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
-		print "<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
-		if (isset($conf->global->MAIN_FEATURES_LEVEL)) print "<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";;
-		print "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
-		print "<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
-		print "<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
-		print "<b>".$langs->trans("MenuManager").":</b> ".$conf->left_menu.'/'.$conf->top_menu."<br>\n";
-		print "<br>\n";
+		$out.="<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION."<br>\n";;
+		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";;
+		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out.="<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";;
+		$out.="<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
+		$out.="<b>".$langs->trans("Referer").":</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
+		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->left_menu.'/'.$conf->top_menu."<br>\n";
+		$out.="<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];
 		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];
 	}
 	else                              // Mode CLI
 	{
-		print '> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
+		$out.='> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog.="pid=".getmypid();
 	}
 
@@ -1728,18 +1730,18 @@ function dol_print_error($db='',$error='')
 	{
 		if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 		{
-			print "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-			print "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			print "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			print "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			print "<br>\n";
+			$out.="<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
+			$out.="<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out.="<br>\n";
 		}
 		else                            // Mode CLI
 		{
-			print '> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
-			print '> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
-			print '> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."\n";
-			print '> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."\n";
+			$out.='> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
+			$out.='> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
+			$out.='> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."\n";
+			$out.='> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."\n";
 
 		}
 		$syslog.=", sql=".$db->lastquery();
@@ -1758,23 +1760,26 @@ function dol_print_error($db='',$error='')
 			$msg=$langs->trans($msg);
 			if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 			{
-				print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+				$out.="<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
 			}
 			else                            // Mode CLI
 			{
-				print '> '.$langs->transnoentities("Message").":\n".$msg."\n" ;
+				$out.='> '.$langs->transnoentities("Message").":\n".$msg."\n" ;
 			}
 			$syslog.=", msg=".$msg;
 		}
 	}
 	if ($_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
 	{
-		print '<b>XDebug informations:</b>'."<br>\n";
-		print 'File: '.xdebug_call_file()."<br>\n";
-		print 'Line: '.xdebug_call_line()."<br>\n";
-		print "<br>\n";
+		$out.='<b>XDebug informations:</b>'."<br>\n";
+		$out.='File: '.xdebug_call_file()."<br>\n";
+		$out.='Line: '.xdebug_call_line()."<br>\n";
+		$out.="<br>\n";
 	}
 
+	global $dolibarr_main_prod;
+	if (empty($dolibarr_main_prod)) print $out;
+	else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported on browsers. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
 

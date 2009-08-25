@@ -34,7 +34,8 @@ $langs->load("main");
 $langs->load("other");
 
 // Security check
-if (empty($conf->global->MAIN_DEMO)) accessforbidden('Constant MAIN_DEMO must be defined in Home->Setup->Misc with value "default login,default pass" to enable the demo entry page',1,1,1);
+global $dolibarr_main_demo;
+if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',1,1,1);
 
 
 $demoprofiles=array(

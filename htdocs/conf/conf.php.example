@@ -176,4 +176,19 @@ $dolibarr_smarty_libs_dir="";
 $dolibarr_smarty_compile="";
 $dolibarr_smarty_cache="";
 
+
+# Login and pass to use in a demo mode
+# Default value: 0
+# Possible values: 0 or 1
+# Examples:
+# $dolibarr_main_demo="autologin,autopass"
+
+
+# When this parameter is defined, all errors messages are not reported.
+# This feature exists for production usage to avoid to give any information to hackers.
+# Default value: 0
+# Possible values: 0 or 1
+# Examples:
+# $dolibarr_main_prod=1
+
 ?>

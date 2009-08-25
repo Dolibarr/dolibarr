@@ -126,9 +126,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$demologin='';
 	$demopassword='';
-	if (! empty($conf->global->MAIN_DEMO))
+
+	global $dolibarr_main_demo;
+	if (! empty($dolibarr_main_demo))
 	{
-		$tab=split(',',$conf->global->MAIN_DEMO);
+		$tab=split(',',$dolibarr_main_demo);
 		$demologin=$tab[0];
 		$demopassword=$tab[1];
 	}
