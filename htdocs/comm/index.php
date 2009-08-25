@@ -341,7 +341,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 }
 
 /*
- * Last modified customers prospects
+ * Last modified customers or prospects
  */
 if ($conf->societe->enabled && $user->rights->societe->lire)
 {
@@ -394,7 +394,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
 		}
 	}
 }
