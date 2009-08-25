@@ -499,14 +499,16 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->MultiCell(86,4, $carac_client);
 	}
 
-	/*
-	 *   	\brief      Affiche le pied de page
-	 *		\param      pdf     		Object PDF
-	 * 		\param		object			Object proposal
+	/**
+	 *   	\brief      Show footer of page
+	 *   	\param      pdf     		PDF factory
+	 * 		\param		object			Object invoice
+	 *      \param      outputlangs		Object lang for output
+	 * 		\remarks	Need this->emetteur object
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'PROPALE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'PROPALE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }

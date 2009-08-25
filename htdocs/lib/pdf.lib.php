@@ -105,22 +105,36 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 
 /**
  *   	\brief      Show footer of page for PDF generation
- *   	\param      pdf     		Object PDF
+ *   	\param      pdf     		The PDF factory
  *      \param      outputlang		Object lang for output
  * 		\param		paramfreetext	Constant name of free text
  * 		\param		fromcompany		Object company
- * 		\param		marge_basse
- * 		\param		marge_gauche
- * 		\param		page_hauteur
+ * 		\param		marge_basse		Margin bottom
+ * 		\param		marge_gauche	Margin left
+ * 		\param		page_hauteur	Page height
+ * 		\param		object			Object shown in PDF
  */
-function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur)
+function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object)
 {
 	global $conf;
 
 	$outputlangs->load("dict");
+	$ligne='';
 
 	// Line of free text
-	$ligne=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
+	if (! empty($conf->global->$paramfreetext))
+	{
+		// Make substitution
+		$substitutionarray=array(
+			'__FROM_NAME__' => $fromcompany->nom,
+			'__FROM_EMAIL__' => $fromcompany->email,
+			'__TOTAL_TTC__' => $object->total_ttc,
+			'__TOTAL_HT__' => $object->total_ht,
+			'__TOTAL_VAT__' => $object->total_vat
+		);
+		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+		$ligne.=$outputlangs->convToOutputCharset($newfreetext);
+	}
 
 	// First line of company infos
 
@@ -176,7 +190,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$pdf->SetDrawColor(224,224,224);
 
 	// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-	$nbofligne=dol_nboflines_bis($ligne,0,$outputlangs->charset_output);  
+	$nbofligne=dol_nboflines_bis($ligne,0,$outputlangs->charset_output);
 	//print 'nbofligne='.$nbofligne; exit;
 	//print 'e'.$ligne.'t'.dol_nboflines($ligne);exit;
 	$posy=$marge_basse + ($nbofligne*3) + ($ligne1?3:0) + ($ligne2?3:0);
@@ -186,7 +200,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$pdf->SetXY($marge_gauche,-$posy);
 		$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
 		if ($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT) { $width=200; $align='C'; }
-		$pdf->MultiCell($width, 3, $ligne, 0, $align, 0);	
+		$pdf->MultiCell($width, 3, $ligne, 0, $align, 0);
 		$posy-=($nbofligne*3);	// 6 of ligne + 3 of MultiCell
 	}
 

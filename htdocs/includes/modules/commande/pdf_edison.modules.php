@@ -494,13 +494,16 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->Text(11, 94, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->ref));
 	}
 
-    /*
-     *   \brief      Affiche le pied de page
-     *   \param      pdf     objet PDF
-     */
-    function _pagefoot(&$pdf,$object,$outputlangs)
+	/**
+	 *   	\brief      Show footer of page
+	 *   	\param      pdf     		PDF factory
+	 * 		\param		object			Object invoice
+	 *      \param      outputlangs		Object lang for output
+	 * 		\remarks	Need this->emetteur object
+	 */
+	function _pagefoot(&$pdf,$object,$outputlangs)
     {
-		return pdf_pagefoot($pdf,$outputlangs,'COMMANDE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'COMMANDE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
     }
 }
 

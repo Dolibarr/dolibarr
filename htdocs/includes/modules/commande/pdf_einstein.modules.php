@@ -317,7 +317,7 @@ class pdf_einstein extends ModelePDFCommandes
 							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 						}
 
-						$this->_pagefoot($pdf,$outputlangs);
+						$this->_pagefoot($pdf,$com,$outputlangs);
 
 						// New page
 						$pdf->AddPage();
@@ -356,7 +356,7 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 
 				// Pied de page
-				$this->_pagefoot($pdf,$outputlangs);
+				$this->_pagefoot($pdf,$com,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -888,13 +888,16 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 	}
 
-	/*
-	 *   \brief      Affiche le pied de page
-	 *   \param      pdf     objet PDF
+	/**
+	 *   	\brief      Show footer of page
+	 *   	\param      pdf     		PDF factory
+	 * 		\param		object			Object invoice
+	 *      \param      outputlangs		Object lang for output
+	 * 		\remarks	Need this->emetteur object
 	 */
-	function _pagefoot(&$pdf,$outputlangs)
+	function _pagefoot(&$pdf,$object,$outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'COMMANDE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'COMMANDE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }

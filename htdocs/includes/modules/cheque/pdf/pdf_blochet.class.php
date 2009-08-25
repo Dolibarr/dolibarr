@@ -131,7 +131,7 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->SetDrawColor(128,128,128);
 
 		$pdf->SetDrawColor(128,128,128);
-		$pdf->SetTitle($outputlangs->convToOutputCharset($fac->ref));
+		$pdf->SetTitle($outputlangs->transnoentities("CheckReceipt")." ".$number);
 		$pdf->SetSubject($outputlangs->transnoentities("CheckReceipt"));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
@@ -141,6 +141,7 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 		$pdf->SetAutoPageBreak(1,0);
 
+		$lignes=$this->line_per_page;	// There is no line in such PDF.
 
 		$pages = intval($lignes / $this->line_per_page);
 
@@ -313,15 +314,15 @@ class BordereauChequeBlochet extends FPDF
 	/**
 	 *   	\brief      Show footer of page
 	 *   	\param      pdf     		Object PDF
-	 * 		\param		object			Object invoice
-	 *      \param      outputlang		Object lang for output
+	 * 		\param		object			Object cheque receipt
+	 *      \param      outputlangs		Object lang for output
 	 * 		\remarks	Need this->emetteur object
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{
 		global $conf;
 
-		//return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		//return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 		$paramfreetext='BANK_CHEQUERECEIPT_FREE_TEXT';
 		$marge_basse=$this->marge_basse;
 		$marge_gauche=$this->marge_gauche;

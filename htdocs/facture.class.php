@@ -2646,14 +2646,13 @@ class Facture extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise la facture avec valeurs fictives al�atoire
-	 *					Sert � g�n�rer une facture pour l'aperu des mod�les ou dem
+	 *		\brief		Initialise an example of invoice with random values
+	 *					Used to build preivew of invoices or demo
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs,$conf;
 
-		// Charge tableau des id de soci�t� socids
 		$socids = array();
 
 		$sql = "SELECT rowid";
@@ -2668,15 +2667,14 @@ class Facture extends CommonObject
 			$num_socs = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num_socs)
-	  {
-	  	$i++;
+			{
+				$i++;
 
-	  	$row = $this->db->fetch_row($resql);
-	  	$socids[$i] = $row[0];
-	  }
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
 		}
 
-		// Charge tableau des produits prodids
 		$prodids = array();
 
 		$sql = "SELECT rowid";
@@ -2690,11 +2688,11 @@ class Facture extends CommonObject
 			$num_prods = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num_prods)
-	  {
-	  	$i++;
-	  	$row = $this->db->fetch_row($resql);
-	  	$prodids[$i] = $row[0];
-	  }
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
 		}
 
 		// Initialize parameters
@@ -3057,7 +3055,7 @@ class FactureLigne
 	{
 		global $user,$langs,$conf;
 
-        // Clean parameters
+		// Clean parameters
 		$this->desc=trim($this->desc);
 
 		// Check parameters

@@ -1061,14 +1061,16 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
 	}
 
-	/*
-	 *   \brief      Affiche le pied de page de la facture
-	 *   \param      pdf     objet PDF
-	 *   \param      fac     objet facture
+	/**
+	 *   	\brief      Show footer of page
+	 *   	\param      pdf     		PDF factory
+	 * 		\param		object			Object invoice
+	 *      \param      outputlang		Object lang for output
+	 * 		\remarks	Need this->emetteur object
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }

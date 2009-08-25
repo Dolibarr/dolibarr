@@ -872,7 +872,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *      \param      pdf             Object PDF
 	 *      \param      object          Object invoice
 	 *      \param      showadress      0=no, 1=yes
-	 *      \param      outputlang		Object lang for output
+	 *      \param      outputlangs		Object lang for output
 	 */
 	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
@@ -1168,14 +1168,14 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		Object PDF
+	 *   	\param      pdf     		PDF factory
 	 * 		\param		object			Object invoice
 	 *      \param      outputlang		Object lang for output
 	 * 		\remarks	Need this->emetteur object
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }

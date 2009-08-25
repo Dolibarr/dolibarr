@@ -371,14 +371,14 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 	/**
 	 *   	\brief      Show footer of page
-	 *   	\param      pdf     		Object PDF
+	 *   	\param      pdf     		PDF factory
 	 * 		\param		object			Object invoice
-	 *      \param      outputlang		Object lang for output
+	 *      \param      outputlangs		Object lang for output
 	 * 		\remarks	Need this->emetteur object
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SENDING_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'SENDING_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }

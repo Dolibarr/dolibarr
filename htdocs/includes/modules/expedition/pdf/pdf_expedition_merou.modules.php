@@ -224,7 +224,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-						$this->_pagefoot($pdf, $outputlangs);
+						$this->_pagefoot($pdf, $object, $outputlangs);
 						$pdf->AliasNbPages();
 
 						$curY = $iniY;
@@ -239,7 +239,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					}
 				}
 				//Insertion du pied de page
-				$this->_pagefoot($pdf, $outputlangs);
+				$this->_pagefoot($pdf, $object, $outputlangs);
 
 				$pdf->AliasNbPages();
 
@@ -293,10 +293,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 
-	//********************************
-	// Generation du Pied de page
-	//********************************
-	function _pagefoot(&$pdf, $outputlangs)
+	/**
+	 *   	\brief      Show footer of page
+	 *   	\param      pdf     		PDF factory
+	 * 		\param		object			Object invoice
+	 *      \param      outputlangs		Object lang for output
+	 */
+	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetY(-23);

@@ -2767,7 +2767,7 @@ function make_substitutions($chaine,$substitutionarray)
 {
 	foreach ($substitutionarray as $key => $value)
 	{
-		$chaine=ereg_replace($key,$value,$chaine);
+		$chaine=ereg_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
 	}
 	return $chaine;
 }

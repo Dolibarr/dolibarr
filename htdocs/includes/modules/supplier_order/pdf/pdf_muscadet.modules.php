@@ -306,7 +306,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 						}
 
-						$this->_pagefoot($pdf, $outputlangs);
+						$this->_pagefoot($pdf, $com, $outputlangs);
 
 						// New page
 						$pdf->AddPage();
@@ -356,7 +356,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				/*
 				 * Pied de page
 				 */
-				$this->_pagefoot($pdf, $outputlangs);
+				$this->_pagefoot($pdf, $com, $outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -572,7 +572,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *    	\param      pdf     		Object PDF
 	 *      \param      object          Object invoice
 	 *      \param      showadress      0=no, 1=yes
-	 *      \param      outputlang		Object lang for output
+	 *      \param      outputlangs		Object lang for output
 	 */
 	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
 	{
@@ -705,12 +705,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 	/**
 	 *   	\brief      Show footer of page
-	 *		\param      pdf     		Object PDF
+	 *   	\param      pdf     		PDF factory
+	 * 		\param		object			Object invoice
 	 *      \param      outputlang		Object lang for output
+	 * 		\remarks	Need this->emetteur object
 	 */
-	function _pagefoot(&$pdf, $outputlangs)
+	function _pagefoot(&$pdf, $object, $outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'FACTURESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
 	}
 
 }

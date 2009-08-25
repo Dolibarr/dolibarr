@@ -36,7 +36,8 @@ For users:
 - New: Added a "force LDAP synchronize" on member and contact cards.
 - New: Can split a discount into two smaller discount. This allows to use a
        discount on an invoice even if invoice amount is lower than discount
-       credit available. 
+       credit available.
+- New: Can use variables into the free text on PDF (__TOTAL_TTC_, __TOTAL_VAT...)
 - Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
