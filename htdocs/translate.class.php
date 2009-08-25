@@ -574,18 +574,32 @@ class Translate {
 	 *      \return     string		Label translated in UTF8 (but without entities)
 	 * 								10 if setDefaultLang was en_US => ten
 	 * 								123 if setDefaultLang was fr_FR => cent vingt trois
+	 * 		\remarks	This function need module "numberwords" to be installed. If not it will return
+	 * 					same number (this module is not provided by default as it use non GPL source code).
 	 */
 	function getLabelFromNumber($number,$isamount=0)
 	{
+		global $conf;
+
 		$outlang=$this->defaultlang;	// Output language we want
 		$outlangarray=split('_',$outlang,2);
 		// If lang is xx_XX, then we use xx
 		if (strtolower($outlangarray[0]) == strtolower($outlangarray[1])) $outlang=$outlangarray[0];
 
-		// TODO
+		$newnumber=$number;
+		foreach ($conf->file->dol_document_root as $dirroot)
+		{
+			$dir=$dirroot."/includes/modules/substitutions";
+			$fonc='numberwords';
+			if (file_exists($dir.'/functions_'.$fonc.'.lib.php'))
+			{
+				include_once($dir.'/functions_'.$fonc.'.lib.php');
+				$newnumber=numberwords_getLabelFromNumber($this,$number,$isamount);
+				break;
+			}
+		}
 
-
-		return $number;
+		return $newnumber;
 	}
 
 

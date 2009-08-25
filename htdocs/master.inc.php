@@ -157,7 +157,7 @@ $conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt contains several directories
-	$values=split(';',$dolibarr_main_document_root_alt);
+	$values=split('[;,]',$dolibarr_main_document_root_alt);
 	foreach($values as $value)
 	{
 		$conf->file->dol_document_root[]=$value;

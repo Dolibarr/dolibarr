@@ -116,7 +116,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
  */
 function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object)
 {
-	global $conf;
+	global $conf,$user;
 
 	$outputlangs->load("dict");
 	$ligne='';
@@ -132,7 +132,8 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			'__TOTAL_HT__' => $object->total_ht,
 			'__TOTAL_VAT__' => $object->total_vat
 		);
-		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+
+		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
 		$ligne.=$outputlangs->convToOutputCharset($newfreetext);
 	}
 

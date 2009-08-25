@@ -77,6 +77,9 @@ For developers:
 - Log files contains more information (PHP_SELD added and OS user used for 
   log of command lines scripts) 
 - Can protect a module to not being enabled if javascript disabled.
+- If module numberwords is installed, code can use langs->getLabelFromNumber 
+  to get value of an amount in text.
+- A module can add subsitution keys in makesubsitutions() functions.
 
 
 ***** Changelog for 2.6 compared to 2.5 *****

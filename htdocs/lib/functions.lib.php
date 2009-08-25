@@ -2763,13 +2763,34 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *    \brief      Effectue les substitutions des mots cles par les donnees en fonction du tableau
- *    \param      chaine      			Chaine dans laquelle faire les substitutions
- *    \param      substitutionarray		Tableau cle substitution => valeur a mettre
- *    \return     string      			Chaine avec les substitutions effectuees
+ *    	\brief      Add substitution required by external modules then make substitutions in array substitutionarray
+ *    	\param      chaine      			Source string in which we must do substitution
+ *    	\param      substitutionarray		Array substitution old value => new value value
+ * 		\param		outputlangs				If we want to add more substitution, we provide a language
+ * 		\param		object					If we want to add more substitution, we provide a source object
+ *    	\return     string      			Output string after subsitutions
  */
-function make_substitutions($chaine,$substitutionarray)
+function make_substitutions($chaine,$substitutionarray,$outputlangs='',$object='')
 {
+	global $conf,$user;
+
+	// Check if there is external substitution to do asked by plugins
+	// We look files into the includes/modules/substitutions directory
+	// By default, there is no such external plugins.
+	foreach ($conf->file->dol_document_root as $dirroot)
+	{
+		$dir=$dirroot."/includes/modules/substitutions";
+		$fonc='numberwords';	// For the moment only one file scan
+		if (file_exists($dir.'/functions_'.$fonc.'.lib.php'))
+		{
+			dol_syslog("Library functions_".$fonc.".lib.php found into ".$dir);
+			require_once($dir."/functions_".$fonc.".lib.php");
+			numberwords_completesubstitutionarray($substitutionarray,$outputlangs,$object);
+			break;
+		}
+	}
+
+	// Make substitition
 	foreach ($substitutionarray as $key => $value)
 	{
 		$chaine=ereg_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
