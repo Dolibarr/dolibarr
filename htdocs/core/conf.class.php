@@ -144,7 +144,7 @@ class Conf
 					if (eregi('^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$',$key) && $value)
 					{
 						$module=strtolower($reg[1]);
-						// Add this module in list of module that need smarty
+						// Add this module in list of modules that need smarty
 						$this->need_smarty[]=$module;
 					}
 					// If this is a module constant
