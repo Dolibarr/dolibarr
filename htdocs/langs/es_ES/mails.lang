@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - mails 
+# Dolibarr language file - es_ES - mails
 CHARSET = UTF-8
 Mailing = E-Mailing
 EMailing = E-Mailing
@@ -88,7 +88,8 @@ SendMail = Enviar e-mail
 SentBy = Enviado por
 MailingNeedCommand = Por razones de seguridad, el envío de un E-Mailing en masa puede realizarse en línea de comandos. Pida a su administrador que lance el comando siguiente para para enviar la correspondencia a a todos los destinatarios:
 MailingNeedCommand2 = Puede enviar en línea añadiendo el parámetro MAILING_LIMIT_SENDBYWEB con un valor número que indica el máximo nº de e-mails enviados por sesión.
-ConfirmSendingEmailing = ¿Confirma el envío del e-mailing?<br>El envío en línea de e-mails están limitados por seguridad a <b>%s</b> destinatarios por sesión.
+ConfirmSendingEmailing = ¿Confirma el envío del e-mailing?
+LimitSendingEmailing = El envío de un e-mailing desde las pantallas está limitado por razones de seguridad y de timeout a <b>%s</b> destinatarios por sesión de envío.
 TargetsReset = Vaciar lista
 ToClearAllRecipientsClickHere = Para vaciar la lista de los destinatarios de este E-Mailing, haga click en el botón
 ToAddRecipientsChooseHere = Para añadir destinatarios, escoja los que figuran en las listas a continuación
