@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -42,9 +42,9 @@ class DoliDb
 	//! Database type
 	var $type='mysqli';
 	//! Charset used to force charset when creating database
-	var $forcecharset='latin1';
+	var $forcecharset='utf8';	// latin1, utf8
 	//! Collate used to force collate when creating database
-	var $forcecollate='latin1_swedish_ci';
+	var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
 	//! Version min database
 	var $versionmin=array(4,1,0);
 	//! Resultset of last request

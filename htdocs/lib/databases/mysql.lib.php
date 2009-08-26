@@ -41,9 +41,9 @@ class DoliDb
 	//! Database type
 	var $type='mysql';
 	//! Charset used to force charset when creating database
-	var $forcecharset='latin1';
+	var $forcecharset='utf8';	// latin1, utf8
 	//! Collate used to force collate when creating database
-	var $forcecollate='latin1_swedish_ci';
+	var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
 	//! Version min database
 	var $versionmin=array(3,1,0);
 	//! Resultset of last request

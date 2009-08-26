@@ -22,7 +22,7 @@
 /**
 		\file       htdocs/install/etape1.php
 		\ingroup	install
-		\brief      Génère le fichier conf.php avec les informations issues de l'étape précédente
+		\brief      Build conf file
 		\version    $Id$
 */
 
@@ -49,7 +49,7 @@ pHeader($langs->trans("ConfigurationFile"),"etape2");
 
 $error = 0;
 
-// Répertoire des pages dolibarr
+// Rï¿½pertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
 // On supprime /  de fin dans main_dir
@@ -64,7 +64,7 @@ if (substr($_POST["main_url"], strlen($_POST["main_url"]) -1) == "/")
 	$_POST["main_url"] = substr($_POST["main_url"], 0, strlen($_POST["main_url"])-1);
 }
 
-// Répertoire des documents générés (factures, etc...)
+// Rï¿½pertoire des documents gï¿½nï¿½rï¿½s (factures, etc...)
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 
@@ -120,7 +120,7 @@ if ($_POST["action"] == "set")
 	// Create subdirectory main_data_dir
 	if (! $error)
 	{
-		// Répertoire des documents
+		// Rï¿½pertoire des documents
 		if (! is_dir($main_data_dir))
 		{
 			create_exdir($main_data_dir);
@@ -138,7 +138,7 @@ if ($_POST["action"] == "set")
 		}
 		else
 		{
-			// Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre téléchargés en passant outre l'authentification
+			// Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre tï¿½lï¿½chargï¿½s en passant outre l'authentification
 			$dir[0] = "$main_data_dir/facture";
 			$dir[1] = "$main_data_dir/users";
 			$dir[2] = "$main_data_dir/propale";
@@ -149,7 +149,7 @@ if ($_POST["action"] == "set")
 			$dir[7] = "$main_data_dir/rss";
 			$dir[8] = "$main_data_dir/logo";
 
-			// Boucle sur chaque répertoire de dir[] pour les créer s'ils nexistent pas
+			// Boucle sur chaque rï¿½pertoire de dir[] pour les crï¿½er s'ils nexistent pas
 			for ($i = 0 ; $i < sizeof($dir) ; $i++)
 			{
 				if (is_dir($dir[$i]))
@@ -203,7 +203,7 @@ if ($_POST["action"] == "set")
 
 
 		/**
-		* 	Si creation utilisateur admin demandée, on le crée
+		* 	Si creation utilisateur admin demandï¿½e, on le crï¿½e
 		*/
 		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 		{
@@ -362,7 +362,7 @@ if ($_POST["action"] == "set")
 
 
 		/*
-		* On test maintenant l'accès par le user admin dolibarr
+		* On test maintenant l'accï¿½s par le user admin dolibarr
 		*/
 		if (! $error)
 		{
@@ -373,7 +373,7 @@ if ($_POST["action"] == "set")
 
 			if ($db->connected == 1)
 			{
-				// si accès serveur ok et accès base ok, tout est ok, on ne va pas plus loin, on a même pas utilisé le compte root.
+				// si accï¿½s serveur ok et accï¿½s base ok, tout est ok, on ne va pas plus loin, on a mï¿½me pas utilisï¿½ le compte root.
 				if ($db->database_selected == 1)
 				{
 					dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
@@ -413,8 +413,8 @@ if ($_POST["action"] == "set")
 					print "</td></tr>";
 
 					// Affiche aide diagnostique
-					print '<tr><td colspan="2"><br>Vérifier que le nom de base "<b>'.$dolibarr_main_db_name.'</b>" est correct.<br>';
-					print 'Si ce nom est correct et que cette base n\'existe pas déjà, vous devez cocher l\'option "Créer la base de donnée".<br>';
+					print '<tr><td colspan="2"><br>Vï¿½rifier que le nom de base "<b>'.$dolibarr_main_db_name.'</b>" est correct.<br>';
+					print 'Si ce nom est correct et que cette base n\'existe pas dï¿½jï¿½, vous devez cocher l\'option "Crï¿½er la base de donnï¿½e".<br>';
 					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 					print '</td></tr>';
 

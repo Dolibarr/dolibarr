@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007 Cyrille de Lambert   <cyrille.delambert@auguria.net>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007      Cyrille de Lambert   <cyrille.delambert@auguria.net>
+ * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,17 @@
 /**
  *	\file       htdocs/install/etape0.php
  *	\ingroup	install
- *	\brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
+ *	\brief      Show and ask charset for database
  *	\version    $Id$
  */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 
 include_once("./inc.php");
+
+//print ">> ".$conf->db->character_set;
+//print ">> ".$conf->db->dolibarr_main_db_collation;
+
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
@@ -37,10 +41,10 @@ $langs->load("errors");
 
 $error = 0;
 
-// Récuparation des information de connexion
+// Recuparation des information de connexion
 $userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 $passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
-// Répertoire des pages dolibarr
+// Repertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
@@ -55,7 +59,7 @@ dolibarr_install_syslog("etape0: Entering etape0.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"etape1");
 
-// On reporte champ formulaire précédent pour propagation
+// On reporte champ formulaire prï¿½cï¿½dent pour propagation
 if ($_POST["action"] == "set")
 {
 	umask(0);
@@ -187,7 +191,7 @@ else
 }
 
 /*
- * Si creation database demandée, il est possible de faire un choix
+ * Si creation database demandee, il est possible de faire un choix
  */
 $disabled="";
 if (! $error && ! empty($_POST["db_create_database"]))
@@ -224,8 +228,17 @@ if (! $error && $db->connected)
 	</tr>
 
 	<?php
-	$defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
-	$defaultCollationConnection=$db->getDefaultCollationDatabase();
+	if (! empty($_POST["db_create_database"]))	// If we create database, we force default value
+	{
+		$defaultCharacterSet=$db->forcecharset;
+		$defaultCollationConnection=$db->forcecollate;
+	}
+	else	// If already created, we take current value
+	{
+		$defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
+		$defaultCollationConnection=$db->getDefaultCollationDatabase();
+	}
+
 	$listOfCharacterSet=$db->getListOfCharacterSet();
 	$listOfCollation=$db->getListOfCollation();
 
