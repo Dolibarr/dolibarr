@@ -56,6 +56,7 @@ $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
 
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
+$html = new Form($db);
 
 $sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
