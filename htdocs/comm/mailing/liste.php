@@ -28,7 +28,7 @@ require("./pre.inc.php");
 
 if (!$user->rights->mailing->lire) accessforbidden();
 
-// S�curit� acc�s client
+// Securite acces client
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -114,7 +114,18 @@ if ($result)
       print img_object($langs->trans("ShowEMail"),"email").' '.stripslashes($obj->rowid).'</a></td>';
       print '<td>'.$obj->titre.'</td>';
       print '<td align="center">'.dol_print_date($obj->datec,'day').'</td>';
-      print '<td align="center">'.$obj->nbemail.'</td>';
+      print '<td align="center">';
+      $nbemail = $obj->nbemail;
+      if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+      {
+      	$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+		print $html->textwithpicto($nbemail,$text,1,'warning');
+      }
+      else
+      {
+      	print $nbemail;
+      }
+      print '</td>';
       print '<td align="right">'.$email->LibStatut($obj->statut,5).'</td>';
       print "</tr>\n";
       $i++;
