@@ -61,13 +61,13 @@ body {
     <?php print 'direction: '.$langs->direction.";\n"; ?>
 }
 
-a:link    { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:visited { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:active  { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:hover   { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 input
 {
-    font-size: 12px;
+	font-size: 12px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -76,7 +76,7 @@ input
 }
 input.flat
 {
-    font-size: 12px;
+	font-size: 12px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -84,8 +84,8 @@ input.flat
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-    font-size: 12px;
-    font-family: helvetica, verdana, arial, sans-serif;
+	font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -93,8 +93,8 @@ textarea  {
 }
 textarea.flat
 {
-    font-size: 12px;
-    font-family: helvetica, verdana, arial, sans-serif;
+	font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -111,7 +111,6 @@ select.flat
 }
 .button
 {
-    font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
@@ -120,7 +119,6 @@ select.flat
     margin: 0px 0px 0px 0px;
 }
 .button:focus  {
-    font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
 	color: #222244;
 	border: 0px;
@@ -131,7 +129,6 @@ select.flat
 }
 .buttonajax
 {
-    font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
@@ -183,7 +180,6 @@ div.tmenu
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 4px 0px;
     font-weight: normal;
-    font-size: 12px;
     height: 19px;
     background: #b3c5cc;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
@@ -196,7 +192,6 @@ a.tmenudisabled:link
 {
 	color: #757575;
     font-weight: normal;
-	font-size: 12px;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
@@ -206,7 +201,6 @@ a.tmenudisabled:visited
 {
 	color: #757575;
     font-weight: normal;
-	font-size: 12px;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
@@ -216,7 +210,6 @@ a.tmenudisabled:hover
 {
 	color: #757575;
     font-weight: normal;
-	font-size: 12px;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
@@ -226,7 +219,6 @@ a.tmenudisabled:active
 {
 	color: #757575;
     font-weight: normal;
-	font-size: 12px;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
@@ -363,7 +355,6 @@ a.login
   padding: 0px 8px;
   margin: 0px 0px 1px 0px;
   font-weight: bold;
-  font-size: 12px;
 }
 a.login:hover
 {
@@ -547,7 +538,6 @@ div.onglet_inf
     padding: 0px 0px 0px 0px;
     margin: -12px 0px 0px 10px;
     font-weight:bold;
-    font-size: 12px;
     height: 19px;
     color: #000000;
     text-decoration: none;
@@ -659,7 +649,7 @@ td.tab {
 
 /* Nouvelle syntaxe a utiliser */
 
-a.butAction:link    {     font-size: 12px;
+a.butAction:link    {
 					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
@@ -670,7 +660,7 @@ a.butAction:link    {     font-size: 12px;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:visited {     font-size: 12px;
+a.butAction:visited {
 					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
@@ -681,7 +671,7 @@ a.butAction:visited {     font-size: 12px;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:active  {     font-size: 12px;
+a.butAction:active  {
 					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
@@ -692,7 +682,7 @@ a.butAction:active  {     font-size: 12px;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:hover   {     font-size: 12px;
+a.butAction:hover   {
 					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: #dee7ec;
@@ -703,7 +693,7 @@ a.butAction:hover   {     font-size: 12px;
                       text-decoration: none;
                       white-space: nowrap; }
 
-.butActionRefused    {     font-size: 12px !important;
+.butActionRefused   {
 					  font-family: helvetica, verdana, arial, sans-serif !important;
                       font-weight: bold !important;
                       background: white !important;
@@ -716,7 +706,7 @@ a.butAction:hover   {     font-size: 12px;
 					  cursor: not-allowed;
 					  }
 
-a.butActionDelete    {     font-size: 12px;
+a.butActionDelete    {
 					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
@@ -727,10 +717,10 @@ a.butActionDelete    {     font-size: 12px;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionDelete:link    { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:active  { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:visited { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:hover   { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
 /* ============================================================================== */
