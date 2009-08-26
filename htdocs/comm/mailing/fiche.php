@@ -573,7 +573,8 @@ else
 				}
 				else
 				{
-					$text=$langs->trans('ConfirmSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+					$text=$langs->trans('ConfirmSendingEmailing').'<br>';
+					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$_REQUEST['id'],$langs->trans('SendMailing'),$text,'sendallconfirmed');
 					if ($ret == 'html') print '<br>';
 				}
@@ -598,9 +599,22 @@ else
 
 			// Status
 			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
-
+			
 			// Nb of distinct emails
-			print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
+			print '<tr><td width="25%">';
+			print $langs->trans("TotalNbOfDistinctRecipients");
+			print '</td><td colspan="3">';
+			$nbemail = ($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>');
+			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			{
+				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+				print $html->textwithpicto($nbemail,$text,1,'warning');
+			}
+			else
+			{
+				print $nbemail;
+			}
+			print '</td></tr>';
 
 			// Subject
 			print '<tr><td>'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
