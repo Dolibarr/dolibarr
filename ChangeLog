@@ -38,6 +38,8 @@ For users:
        discount on an invoice even if invoice amount is lower than discount
        credit available.
 - New: Can use variables into the free text on PDF (__TOTAL_TTC_, __TOTAL_VAT...)
+- New: Increase page loading speed (all changes reported by Google PageSpeed
+       tool has been added). 
 - Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
