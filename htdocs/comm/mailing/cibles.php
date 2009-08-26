@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,7 +187,20 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
 
 	// Nb of distinct emails
-	print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'0').'</td></tr>';
+	print '<tr><td width="25%">';
+	print $langs->trans("TotalNbOfDistinctRecipients");
+	print '</td><td colspan="3">';
+	$nbemail = ($mil->nbemail?$mil->nbemail:'0');
+	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+	{
+		$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+		print $html->textwithpicto($nbemail,$text,1,'warning');
+	}
+	else
+	{
+		print $nbemail;
+	}
+	print '</td></tr>';
 
 	print '</table>';
 
