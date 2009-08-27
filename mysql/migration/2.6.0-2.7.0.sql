@@ -293,3 +293,34 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 5
 -- Add rule to avoid duplicate use of discount
 update llx_facturedet set fk_remise_except = null where fk_remise_except = 0;
 ALTER TABLE llx_facturedet ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except);
+
+-- Add Mauritius
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15201', 'Mauritius Private Company Limited By Shares', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15202', 'Mauritius Company Limited By Guarantee', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15203', 'Mauritius Public Company Limited By Shares', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15204', 'Mauritius Foreign Company', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15205', 'Mauritius GBC1 (Offshore Company)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15206', 'Mauritius GBC2 (International Company)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15207', 'Mauritius General Partnership', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15208', 'Mauritius Limited Partnership', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15209', 'Mauritius Sole Proprietorship', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15210', 'Mauritius Trusts', 1);
+
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MU', 'MUR', 1, 'Roupies mauritiennes');
+
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '15','0','VAT Rate 15',1);
+
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15201,  152, '', 0, 'Rivière Noire', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15202,  152, '', 0, 'Flacq', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15203,  152, '', 0, 'Grand Port', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15204,  152, '', 0, 'Moka', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15205,  152, '', 0, 'Pamplemousses', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15206,  152, '', 0, 'Plaines Wilhems', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15207,  152, '', 0, 'Port-Louis', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15208,  152, '', 0, 'Rivière du Rempart', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15209,  152, '', 0, 'Savanne', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15210,  152, '', 0, 'Rodrigues', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15211,  152, '', 0, 'Les îles Agaléga', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15212,  152, '', 0, 'Les écueils des Cargados Carajos', 1);
+

@@ -762,21 +762,33 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','G
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
 
 -- Spain
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('401', 4, 'Empresario Individual', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('402', 4, 'Comunidad de Bienes', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('403', 4, 'Sociedad Civil', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('404', 4, 'Sociedad Colectiva', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('405', 4, 'Sociedad Limitada', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('406', 4, 'Sociedad Anonima', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('407', 4, 'Sociedad Comandataria por Acciones', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('408', 4, 'Sociedad Comandataria Simple', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('409', 4, 'Sociedad Laboral', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('410', 4, 'Sociedad Cooperativa', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('411', 4, 'Sociedad de Garantía Recíproca', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('412', 4, 'Entidad de Capital-Riesgo', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('413', 4, 'Agrupación de Interes Económico', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('414', 4, 'Sociedad de Invarsión Mobiliaria', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('415', 4, 'Agrupación sin Animo de Lucro', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '401', 'Empresario Individual', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '402', 'Comunidad de Bienes', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '403', 'Sociedad Civil', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '404', 'Sociedad Colectiva', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '405', 'Sociedad Limitada', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '406', 'Sociedad Anonima', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '407', 'Sociedad Comandataria por Acciones', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '408', 'Sociedad Comandataria Simple', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '409', 'Sociedad Laboral', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '410', 'Sociedad Cooperativa', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '411', 'Sociedad de Garantía Recíproca', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '412', 'Entidad de Capital-Riesgo', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '413', 'Agrupación de Interes Económico', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '414', 'Sociedad de Invarsión Mobiliaria', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '415', 'Agrupación sin Animo de Lucro', 1);
+
+-- Mauritius
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15201', 'Mauritius Private Company Limited By Shares', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15202', 'Mauritius Company Limited By Guarantee', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15203', 'Mauritius Public Company Limited By Shares', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15204', 'Mauritius Foreign Company', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15205', 'Mauritius GBC1 (Offshore Company)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15206', 'Mauritius GBC2 (International Company)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15207', 'Mauritius General Partnership', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15208', 'Mauritius Limited Partnership', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15209', 'Mauritius Sole Proprietorship', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15210', 'Mauritius Trusts', 1);
 
 
 --
@@ -890,6 +902,20 @@ INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VA
 
 -- Region US (id pays=11)
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (110, 11, '', 0, 'United-States', 1);
+
+-- Regions Mauritius (id pays=152)
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15201,  152, '', 0, 'Rivière Noire', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15202,  152, '', 0, 'Flacq', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15203,  152, '', 0, 'Grand Port', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15204,  152, '', 0, 'Moka', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15205,  152, '', 0, 'Pamplemousses', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15206,  152, '', 0, 'Plaines Wilhems', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15207,  152, '', 0, 'Port-Louis', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15208,  152, '', 0, 'Rivière du Rempart', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15209,  152, '', 0, 'Savanne', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15210,  152, '', 0, 'Rodrigues', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15211,  152, '', 0, 'Les îles Agaléga', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15212,  152, '', 0, 'Les écueils des Cargados Carajos', 1);
 
 
 --
@@ -1224,7 +1250,8 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'IN', 'I
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LT', 'LTL', 1, 'Litas'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'RU', 'SUR', 1, 'Rouble'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'FH', 'HUF', 1, 'Forint hongrois'); 
-insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LK', 'LKR', 1, 'Roupie sri lanka'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'LK', 'LKR', 1, 'Roupies sri lanka');
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MU', 'MUR', 1, 'Roupies mauritiennes');
 
 --
 -- Taux TVA
@@ -1334,6 +1361,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (19
 
 -- SAINT MARTIN
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2461,246,  '0','0','VAT Rate 0',1);
+
+-- MAURITIUS
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '15','0','VAT Rate 15',1);
 
 
 --
