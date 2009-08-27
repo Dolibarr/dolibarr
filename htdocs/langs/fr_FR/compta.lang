@@ -114,3 +114,4 @@ OrderStats=Statistiques sur les commandes
 Dispatch=Ventilation
 Dispatched=Ventilés
 ToDispatch=A ventiler
+ThirdPartyMustBeEditAsCustomer=Le tiers doit être défini comme client

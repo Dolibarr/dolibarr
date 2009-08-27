@@ -713,6 +713,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 	if (is_writable(DOL_DOCUMENT_ROOT.'/conf/conf.php'))
 	{
 		$langs->load("errors");
+		$langs->load("other");
 		//if (! empty($message)) $message.='<br>';
 		$message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}

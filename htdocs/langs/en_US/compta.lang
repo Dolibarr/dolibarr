@@ -113,3 +113,4 @@ NotUsedForGoods=Not used on goods
 Dispatch=Dispatching
 Dispatched=Dispatched
 ToDispatch=To dispatch
+ThirdPartyMustBeEditAsCustomer=Third party must be defined as a customer
