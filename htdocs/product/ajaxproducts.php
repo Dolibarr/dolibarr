@@ -24,7 +24,10 @@
  *       \version    $Id$
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 
 require('../main.inc.php');
 

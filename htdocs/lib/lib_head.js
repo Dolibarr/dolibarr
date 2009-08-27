@@ -585,14 +585,9 @@ function newpopup(url,title) {
 	Licence:  GPL
 ==================================================================*/
 function ac_return(field, item){
-        // on met en place l'expression régulière
-        var regex = new RegExp('[0123456789]*-idcache', 'i');
-        // on l'applique au contenu
-        var idCache = regex.exec($(item).innerHTML);
-        //on récupère l'id
-        id = idCache[0].replace('-idcache', '');
-        // et on l'affecte au champ caché
-        $(field.name+'_id').value = id;
+        /*alert('id='+field.name+'-'+item.id);*/
+        $(field.name+'_id').value = item.id;
+        /*alert('after='+$(field.name+'_id').value);*/
 }
 
 /*=================================================================
@@ -601,9 +596,9 @@ function ac_return(field, item){
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
- function ac_delay(funct,delay) {
- 	// délai exprimé en millisecondes avant le déclenchement de l'action
-  setTimeout(funct,delay);
+function ac_delay(funct,delay) {
+	/* delay before action start */
+  	setTimeout(funct,delay);
 }
 
 /*=================================================================

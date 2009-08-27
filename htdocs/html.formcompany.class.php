@@ -474,7 +474,7 @@ class FormCompany
 				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'newcompany_id\').value;";
 				$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
 
-				print '<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
+				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
 				print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 				print '<td class="nobordernopadding">';
 				if ($obj->rowid == 0)

@@ -31,7 +31,7 @@ function ajax_indicator($htmlname,$indicator='working')
 }
 
 /**
- *  \brief     Recupere la valeur d'un champ, effectue un traitement Ajax et affiche le resultat
+ *	\brief     Get value of a field, do Ajax process and show result
  *  \param	   htmlname            nom et id du champ
  *  \param     keysearch           nom et id complementaire du champ de collecte
  *  \param	   url                 chemin du fichier de reponse : /chemin/fichier.php
@@ -136,7 +136,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 	           paramName: \''.$htmlname.'\',
 	           indicator: \'indicator'.$htmlname.'\',
 	           afterUpdateElement: ac_return
-	         });';
+	         });';	// Note: The ac_return will fill value inside the field htmlname (param of Autocompleter constructor) and htmlname_id (function ac_return)
 	$script.= '</script>';
 
 	return $script;

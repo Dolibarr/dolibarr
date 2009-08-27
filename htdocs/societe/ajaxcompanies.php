@@ -24,7 +24,10 @@
  *       \version    $Id$
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 
 require('../main.inc.php');
 
@@ -53,9 +56,9 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 		print '<ul>';
 		while ($company = $db->fetch_object($resql))
 		{
-			print '<li>';
+			print '<li id="'.$company->rowid.'">';
 			print $company->nom;
-			print '<span id="object" class="informal"	style="display:none">'.$company->rowid.'-idcache</span>';
+			//print '<span id="object" class="informal" style="display:none">'.$company->rowid.'-idcache</span>';
 			print '</li>';
 		}
 		print '</ul>';

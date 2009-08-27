@@ -248,7 +248,7 @@ class Form
 				}
 
 				print ajax_indicator($htmlname,'working');
-				print ajax_autocompleter($pays_id,'pays','/societe/ajaxcountries.php','');
+				print ajax_autocompleter($pays_id,'pays',DOL_URL_ROOT.'/societe/ajaxcountries.php','');
 			}
 			else
 			{
@@ -495,7 +495,7 @@ class Form
 				//$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
 				$htmloption='';
 
-				print '<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
+				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding">';
 				if ($socid == 0)
@@ -507,7 +507,7 @@ class Form
 				{
 					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
-				print ajax_autocompleter(($socid?$socid:-1),$htmlname,'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
+				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
 				print '</td>';
 				print '<td class="nobordernopadding" align="left" width="16">';
 				print ajax_indicator($htmlname,'working');
@@ -771,18 +771,17 @@ class Form
 
 		if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
 		{
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td class="nobordernopadding" width="80" nowrap="nowrap">';
+			print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
+			print '<td class="nobordernopadding" nowrap="nowrap" width="80">';
 			print $langs->trans("RefOrLabel").':</td>';
-			print '<td class="nobordernopadding" align="left" width="16">';
+			print '<td class="nobordernopadding" width="16">';
 			print ajax_indicator($htmlname,'working');	// Indicator is et here
 			print '</td>';
-			print '<td align="left"><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"> ';
-			print '</td>';
+			print '<td><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"></td>';
 			print '</tr>';
 			print '<tr class="nocellnopadd">';
 			print '<td class="nobordernopadding" colspan="3">';
-			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');	// Indicator is '' to disable it as it is alreay output
+			print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');	// Indicator is '' to disable it as it is alreay output
 			print '</td></tr>';
 			print '</table>';
 		}
@@ -999,7 +998,7 @@ class Form
 		if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
 		{
 			print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtertype.'&mode=2','working');
+			print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtertype.'&mode=2','working');
 		}
 		else
 		{
