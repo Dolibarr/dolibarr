@@ -309,7 +309,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'MU', 'MUR', 1, 'Roupies mauritiennes');
 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '0','0','VAT Rate 0',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '15','0','VAT Rate 15',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1522,152,  '15','0','VAT Rate 15',1);
 
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15201,  152, '', 0, 'Rivière Noire', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15202,  152, '', 0, 'Flacq', 1);

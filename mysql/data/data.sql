@@ -1364,7 +1364,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (24
 
 -- MAURITIUS
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '0','0','VAT Rate 0',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1521,152,  '15','0','VAT Rate 15',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1522,152,  '15','0','VAT Rate 15',1);
 
 
 --
