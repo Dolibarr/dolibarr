@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file		htdocs/lib/agenda.lib.php
+ *  \file		htdocs/lib/ajax.lib.php
  *  \brief		Page called by Ajax request for produts
  *  \version	$Id$
  */
@@ -117,7 +117,7 @@ function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator=
 }
 
 /**
- *	\brief     	Get vlaue of field, do Ajax process and return result
+ *	\brief     	Get value of field, do Ajax process and return result
  *	\param	    htmlname            nom et id du champ
  *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
  *	\param     	indicator           nom de l'image gif sans l'extension
@@ -125,9 +125,10 @@ function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator=
  */
 function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 {
-	if ($indicator) $script.= ajax_indicator($htmlname,$indicator);
+	$script='';
+
 	$script.= '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
-	$script.= '</div>';
+
 	$script.= '<div id="result'.$htmlname.'" class="autocomplete"></div>';
 	$script.= '<script type="text/javascript">';
 	$script.= 'new Ajax.Autocompleter(\''.$htmlname.'\',\'result'.$htmlname.'\',\''.DOL_URL_ROOT.$url.'\',{

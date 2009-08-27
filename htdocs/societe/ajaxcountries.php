@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/societe/ajaxcountries.php
-        \brief      Fichier de reponse sur evenement Ajax
-        \version    $Revision$
-*/
+ *       \file       htdocs/societe/ajaxcountries.php
+ *       \brief      File to return Ajax response on country request
+ *       \version    $Id$
+ */
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
 
@@ -39,12 +36,12 @@ if(isset($_POST['pays']) && !empty($_POST['pays']))
 {
 	global $langs;
 	$langs->load("dict");
-	
+
 	$sql = "SELECT rowid, code, libelle, active";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 	$sql.= " WHERE active = 1 AND libelle LIKE '%" . utf8_decode($_POST['pays']) . "%'";
 	$sql.= " ORDER BY libelle ASC;";
-	
+
 	$resql=$db->query($sql);
 
 	if ($resql)
@@ -60,8 +57,8 @@ if(isset($_POST['pays']) && !empty($_POST['pays']))
 		}
 		print '</ul>';
 	}
-} 
+}
 
-print "</body>"; 
-print "</html>"; 
+print "</body>";
+print "</html>";
 ?>

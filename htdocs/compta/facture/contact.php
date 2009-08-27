@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/compta/facture/contact.php
-        \ingroup    facture
-        \brief      Onglet de gestion des contacts des factures
-        \version    $Id$
-*/
+ *       \file       htdocs/compta/facture/contact.php
+ *       \ingroup    facture
+ *       \brief      Onglet de gestion des contacts des factures
+ *       \version    $Id$
+ */
 
 require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -142,6 +142,10 @@ if ($_GET["action"] == 'deleteline' && $user->rights->facture->creer)
 }
 
 
+/*
+ * View
+ */
+
 llxHeader('', $langs->trans("Bill"), "Facture");
 
 $html = new Form($db);
@@ -192,7 +196,7 @@ if ($id > 0)
 
 		/*
 		 * Ajouter une ligne de contact
-		 * Non affich� en mode modification de ligne
+		 * Non affiche en mode modification de ligne
 		 */
 		if ($_GET["action"] != 'editline' && $user->rights->facture->creer)
 		{
@@ -224,7 +228,7 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			// On r�cup�re les id des users d�j� s�lectionn�s
+			// Ge get ids of alreadey selected users
 			//$userAlreadySelected = $facture->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
@@ -250,12 +254,12 @@ if ($id > 0)
 			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td nowrap="nowrap">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$facture->client->id;
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($facture, 'facid', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
-			print '<td colspan="1">';
+			print '<td>';
 			//$contactAlreadySelected = $facture->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$nbofcontacts=$html->select_contacts($selectedCompany, '', 'contactid', 0, $contactAlreadySelected);
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
@@ -263,7 +267,7 @@ if ($id > 0)
 			print '<td>';
 			$formcompany->selectTypeContact($facture, '', 'type','external');
 			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
+			print '<td align="right" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
 			print '></td>';
 			print '</tr>';

@@ -226,11 +226,11 @@ class Form
 				$mode_company = substr($htmloption,-10,7);
 				if ($mode_create == 'create')
 				{
-					$htmloption = 'onChange="ac_delay(\'autofilltownfromzip_save_refresh_create()\',\'500\')"';
+					$htmloption = 'onChange="ac_delay(\'company_save_refresh_create()\',\'500\')"';
 				}
 				else if ($mode_edit == 'edit')
 				{
-					$htmloption = 'onChange="ac_delay(\'autofilltownfromzip_save_refresh_edit()\',\'500\')"';
+					$htmloption = 'onChange="ac_delay(\'company_save_refresh_edit()\',\'500\')"';
 				}
 				else if ($mode_company == 'refresh')
 				{
@@ -247,7 +247,8 @@ class Form
 					print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
 				}
 
-				print ajax_autocompleter($pays_id,'pays','/societe/ajaxcountries.php','working');
+				print ajax_indicator($htmlname,'working');
+				print ajax_autocompleter($pays_id,'pays','/societe/ajaxcountries.php','');
 			}
 			else
 			{
@@ -488,16 +489,23 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					$socid = $obj->rowid?$obj->rowid:'';
 				}
+
+				// We call a page after a small delay when a new input has been selected
+				//$javaScript = "window.location=\'...\'";
+				//$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
+				$htmloption='';
+
+				print '<!-- Input text for third party with Ajax.Autocompleter (select_societes) -->'."\n";
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding">';
-				print '<div>';
 				if ($socid == 0)
 				{
-					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value=""/>';
+					$langs->load("companies");
+					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
 				}
 				else
 				{
-					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'"/>';
+					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
 				print ajax_autocompleter(($socid?$socid:-1),$htmlname,'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
 				print '</td>';
@@ -767,14 +775,14 @@ class Form
 			print '<td class="nobordernopadding" width="80" nowrap="nowrap">';
 			print $langs->trans("RefOrLabel").':</td>';
 			print '<td class="nobordernopadding" align="left" width="16">';
-			print ajax_indicator($htmlname,'working');
+			print ajax_indicator($htmlname,'working');	// Indicator is et here
 			print '</td>';
 			print '<td align="left"><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"> ';
 			print '</td>';
 			print '</tr>';
 			print '<tr class="nocellnopadd">';
 			print '<td class="nobordernopadding" colspan="3">';
-			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
+			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');	// Indicator is '' to disable it as it is alreay output
 			print '</td></tr>';
 			print '</table>';
 		}

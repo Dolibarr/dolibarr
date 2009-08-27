@@ -41,13 +41,13 @@ function autofilltownfromzip_PopupPostalCode(postalcode,objecttown,objectcountry
     if((document.window != null) && (!hWnd.opener)) hWnd.opener = document.window;
 }
 
-function autofilltownfromzip_save_refresh_edit()
+function company_save_refresh_edit()
 {
     document.formsoc.action.value="edit";
     document.formsoc.submit();
 }
 
-function autofilltownfromzip_save_refresh_create()
+function company_save_refresh_create()
 {
     document.formsoc.action.value="create";
     document.formsoc.submit();

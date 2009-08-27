@@ -455,10 +455,7 @@ class FormCompany
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom FROM";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s";
-		if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
-		{
-			$sql.= " WHERE rowid = ".$selected;
-		}
+		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) $sql.= " WHERE rowid = ".$selected;
 		$sql .= " ORDER BY nom ASC";
 
 		$resql = $object->db->query($sql);
@@ -466,31 +463,36 @@ class FormCompany
 		{
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
 			{
-				$langs->load("companies");
-				$obj = $this->db->fetch_object($resql);
-				$socid = $obj->rowid?$obj->rowid:'';
-				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'newcompany_id\').value;";
+				$socid=0;
+				if ($selected)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$socid = $obj->rowid?$obj->rowid:'';
+				}
 
-				// On applique un delai d'execution pour le bon fonctionnement
+				// We call a page after a small delay when a new input has been selected
+				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'newcompany_id\').value;";
 				$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
 
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
+				print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 				print '<td class="nobordernopadding">';
-				print '<div>';
 				if ($obj->rowid == 0)
 				{
-					print '<input type="text" size="30" id="newcompany" name="newcompany" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
+					$langs->load("companies");
+					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
 				}
 				else
 				{
-					print '<input type="text" size="30" id="newcompany" name="newcompany" value="'.$obj->nom.'" '.$htmloption.' />';
+					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
-				print ajax_autocompleter($socid,'newcompany','/societe/ajaxcompanies.php','');
+				print ajax_autocompleter(($socid?$socid:-1),$htmlname,'/societe/ajaxcompanies.php','');
 				print '</td>';
 				print '<td class="nobordernopadding" align="left" width="16">';
 				print ajax_indicator($htmlname,'working');
 				print '</td></tr>';
 				print '</table>';
+				print "\n";
 				return $socid;
 			}
 			else

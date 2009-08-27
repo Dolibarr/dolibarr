@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/product/ajaxproducts.php
- *       \brief      File to return Ajax question of product list
+ *       \brief      File to return Ajax response on product list request
  *       \version    $Id$
  */
 

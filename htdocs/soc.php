@@ -266,7 +266,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
  *	View
  */
 
-llxHeader();
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('','',$help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

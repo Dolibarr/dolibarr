@@ -767,7 +767,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<!-- Includes for Scriptaculous (Used by Drag and drop and PWC) -->'."\n";
 				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
 				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load=builder,effects,dragdrop,controls,slider,sound"></script>'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load=effects,dragdrop"></script>'."\n";
+				$listofscripts='effects,dragdrop';
+				if ($conf->global->COMPANY_USE_SEARCH_TO_SELECT) $listofscripts.=',controls';	// For Ajax.Autocompleter
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js?load='.$listofscripts.'"></script>'."\n";
 			}
 
 			// Those ones are required only with option "confirm by ajax popup"

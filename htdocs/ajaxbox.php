@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/ajaxbox.php
- *       \brief      Fichier de reponse sur evenement Ajax deplacement boxes
+ *       \brief      File to return Ajax response on Box move
  *       \version    $Id$
  */
 

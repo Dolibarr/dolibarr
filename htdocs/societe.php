@@ -100,20 +100,23 @@ if ($mode == 'search')
 		}
 		$db->free($result);
 	}
-	// S�curit� acc�s client
-	if ($user->societe_id > 0)
-	{
-		$action = '';
-		$socid = $user->societe_id;
-	}
 }
+
+// Security check
+if ($user->societe_id > 0)
+{
+	$action = '';
+	$socid = $user->societe_id;
+}
+
 
 
 /*
  * View
  */
 
-llxHeader($langs->trans("ThirdParty"),'','EN:Third_Parties|FR:Tiers|ES:Empresas');
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader($langs->trans("ThirdParty"),'',$help_url);
 
 $form=new Form($db);
 $companystatic=new Societe($db);
