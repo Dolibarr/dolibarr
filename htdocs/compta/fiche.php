@@ -179,7 +179,7 @@ if ($socid > 0)
         print '</td><td colspan="3">'.($societe->remise_client?price2num($societe->remise_client,'MT').'%':$langs->trans("DiscountNone")).'</td>';
         print '</tr>';
 
-        // Reductions (Remises-Ristournes-Rabbais)
+        // Reductions (Discounts-Drawbacks-Rebates)
         print '<tr><td nowrap>';
         print '<table width="100%" class="nobordernopadding">';
         print '<tr><td nowrap>';
