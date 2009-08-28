@@ -194,6 +194,27 @@ begin
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','smtpServer', value) then
   begin
       if value <> '' then smtpServer:=value;
+  end
+  else
+  begin
+    if RegQueryStringValue(HKEY_CURRENT_USER, 'Software\Microsoft\Internet Account Manager\Accounts\00000001','SMTP Server', value) then
+    begin
+      if value <> '' then smtpServer:=value;
+    end
+    else
+    begin
+      if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'PMail\ServiceInfo\Mail_Account_1','SvcSMTPHost', value) then
+      begin
+        if value <> '' then smtpServer:=value;
+      end
+      else
+      begin
+        if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\MSCRM','SMTPServer', value) then
+        begin
+          if value <> '' then smtpServer:=value;
+        end
+      end
+    end
   end;
 
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','apachePort', value) then
