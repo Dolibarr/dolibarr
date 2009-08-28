@@ -114,3 +114,4 @@ OrderStats = Estadísticas de pedidos
 Dispatch = Desglose
 Dispatched = Desglosados
 ToDispatch = A desglosar
+ThirdPartyMustBeEditAsCustomer = El tercero debe de estar definido como cliente
