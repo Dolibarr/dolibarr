@@ -1,5 +1,6 @@
 ; ----- DoliWamp.iss ---------------------------------------------------------------------
 ; Script to build an auto installer for Dolibarr.
+; Works with InnoSetup 5.3.4 (a)
 ; Idea from WampServer 2 (http://www.wampserver.com)
 ;----------------------------------------------------------------------------------------
 ; You must edit some path in this file to build an exe.
@@ -193,19 +194,22 @@ begin
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','smtpServer', value) then
   begin
       if value <> '' then smtpServer:=value;
-  end
+  end;
+
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','apachePort', value) then
   begin
       if value <> '' then apachePort:=value;
-  end
+  end;
+
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','mysqlPort', value) then
   begin
       if value <> '' then mysqlPort:=value;
-  end
+  end;
+
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','newPassword', value) then
   begin
       if value <> '' then newPassword:=value;
-  end
+  end;
 
 
   // Prepare an object calle "Page" of type wpInstalling.
@@ -229,7 +233,7 @@ begin
     Page.Add('Apache port (first install only, common choice is 80) :', False);
     Page.Add('Mysql port (first install only, common choice is 3306) :', False);
     Page.Add('Mysql server and database password you want for root (first install only):', False);
-  end
+  end;
   
   // Default values
   Page.Values[0] := smtpServer;
@@ -348,11 +352,28 @@ begin
 		    myportas:= '443';
 		    myport  := mysqlPort;
 		    mypass  := newPassword;
-		end
+		end;
 		
 		paramok := True;
 		// TODO Test if choice of param is ok if firstinstall
-		
+
+		// Test port Apache
+		//batFile := pathWithSlashes+'/usedport.exe';
+		//MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
+		//Exec(batFile, myporta, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+		//if myResult > 0 && MsgBox('Revenez en arriere pour choisir un autre port Apache.',mbConfirmation,MB_YES) = IDYES then
+		//begin
+		//end;
+		 			
+		// Test port Mysql
+		//batFile := pathWithSlashes+'/usedport.exe';
+		//MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
+		//Exec(batFile, myport, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+		//MsgBox(IntToStr(myResult),mbConfirmation,MB_YESNO);
+		//if myResult > 0 && MsgBox('Revenez en arriere pour choisir un autre port Mysql.',mbConfirmation,MB_YES) = IDYES then
+		//begin
+		//end;
+
 		
 		if paramok
 		then
@@ -367,15 +388,15 @@ begin
 		      if MsgBox('A previous c:/windows/php.ini file has been detected in your Windows directory. Do you want DoliWamp to rename it to php_old.ini to avoid conflicts ?',mbConfirmation,MB_YESNO) = IDYES then
 		      begin
 		        RenameFile('c:/windows/php.ini','c:/windows/php_old.ini');
-		      end
-		    end
+		      end;
+		    end;
 		    if FileExists ('c:/winnt/php.ini') then
 		    begin
 		      if MsgBox('A previous c:/winnt/php.ini file has been detected in your Windows directory. Do you want DoliWamp to rename it to php_old.ini to avoid conflicts ?',mbConfirmation,MB_YESNO) = IDYES then
 		      begin
 		        RenameFile('c:/winnt/php.ini','c:/winnt/php_old.ini');
-		      end
-		    end
+		      end;
+		    end;
 		
 		
 		
@@ -402,12 +423,13 @@ begin
 		        if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser with Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
 		        begin
 		          browser := 'C:/Program Files/Mozilla Firefox/firefox.exe';
-		        end
-		      end
+		        end;
+		      end;
+
 		      if browser = 'explorer.exe' then
 		      begin
 		        GetOpenFileName('Please choose your default browser. If you are not sure, just click Open :', browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
-		      end
+		      end;
 		
 		      LoadStringFromFile (srcFile, srcContents);
 		      StringChange (srcContents, 'WAMPBROWSER', browser);
@@ -856,4 +878,5 @@ Type: filesandordirs; Name: "{app}\www\dolibarr"
 
 [UninstallRun]
 Filename: "{app}\uninstall_services.bat"; Flags: runhidden
+
 
