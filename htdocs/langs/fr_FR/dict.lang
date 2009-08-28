@@ -257,17 +257,18 @@ CivilityMTRE=Maître
 Currencyeuros=Euros
 CurrencyAUD=Dollars Aus.
 CurrencyCAD=Dollars Can.
-CurrencyXPF=Francs CFP
 CurrencyCHF=Francs suisses
 CurrencyEUR=Euros
 CurrencyFRF=Francs Français
-CurrencyGBP=Livre sterling
+CurrencyGBP=Livres sterling
 CurrencyMAD=Dirham
 CurrencyMGA=Ariary
-CurrencyMUR=Roupie mauritienne
-CurrencyTND=TND
-CurrencyUSD=Dollar US
+CurrencyMUR=Roupies mauritiennes
+CurrencySUR=Roubles
+CurrencyTND=Dinar tunisiens
+CurrencyTRL=Livre turques
+CurrencyUSD=Dollars US
 CurrencyXAF=Francs CFA BEAC
 CurrencyXOF=Francs CFA BCEAO
-
+CurrencyXPF=Francs CFP
 
