@@ -27,6 +27,15 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['socid_id']))
+{
+	$_GET['socid'] = $_GET['socid_id'];
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
+// Security check
 if (!$user->admin)
 accessforbidden();
 
@@ -42,11 +51,11 @@ if ($_POST["action"] == 'set')
 	if ($_POST["CASHDESK_ID_THIRDPARTY"] < 0) $_POST["CASHDESK_ID_THIRDPARTY"]='';
 	if ($_POST["CASHDESK_ID_WAREHOUSE"] < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';
 	if ($_POST["CASHDESK_ID_BANKACCOUNT"] < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
-	
+
 	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["CASHDESK_ID_THIRDPARTY"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT",$_POST["CASHDESK_ID_BANKACCOUNT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"],'chaine',0,'',$conf->entity);
-	
+
 	dol_syslog("admin/cashdesk: level ".$_POST["level"]);
 }
 

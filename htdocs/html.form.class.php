@@ -500,8 +500,8 @@ class Form
 				print '<td class="nobordernopadding">';
 				if ($socid == 0)
 				{
-					$langs->load("companies");
-					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
+					//$langs->load("companies");
+					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="" '.$htmloption.' />';
 				}
 				else
 				{

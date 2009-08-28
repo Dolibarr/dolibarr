@@ -29,6 +29,15 @@
 require "./pre.inc.php";
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['socid_id']))
+{
+	$_GET['socid'] = $_GET['socid_id'];
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
+// Security check
 if (!$user->rights->categorie->lire) accessforbidden();
 
 if (isset ($_REQUEST['choix']))
@@ -53,8 +62,9 @@ if ($_REQUEST['catorigin'])
 }
 
 // If socid provided by ajax company selector
-if (! empty($_POST['socid_id']))
+if (! empty($_REQUEST['socid_id']))
 {
+	$_GET['socid'] = $_GET['socid_id'];
 	$_POST['socid'] = $_POST['socid_id'];
 	$_REQUEST['socid'] = $_REQUEST['socid_id'];
 }
@@ -117,7 +127,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
 		$_GET["action"] = 'create';
 	}
-	
+
 	if ($categorie->error =="")
 	{
 		$result = $categorie->create();
@@ -202,7 +212,7 @@ if ($user->rights->categorie->creer)
 		print '<td width="25%">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
 		print'</td></tr>';
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-		
+
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -215,7 +225,7 @@ if ($user->rights->categorie->creer)
 			print dol_htmlentitiesbr_decode($categorie->description);
 			print '</textarea>';
 		}
-		
+
 		print '</td></tr>';
 		if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{

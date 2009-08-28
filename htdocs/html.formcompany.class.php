@@ -471,7 +471,7 @@ class FormCompany
 				}
 
 				// We call a page after a small delay when a new input has been selected
-				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'newcompany_id\').value;";
+				$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."_id\').value;";
 				$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
 
 				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
@@ -479,8 +479,9 @@ class FormCompany
 				print '<td class="nobordernopadding">';
 				if ($obj->rowid == 0)
 				{
-					$langs->load("companies");
-					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
+					//$langs->load("companies");
+					//print '<input type="text" size="30" id="'.$htmlname.'_label" name="'.$htmlname.'" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
+					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="" '.$htmloption.' />';
 				}
 				else
 				{

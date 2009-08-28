@@ -35,6 +35,14 @@ $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
 
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['id_fourn_id']))
+{
+	$_GET['id_fourn'] = $_GET['id_fourn_id'];
+	$_POST['id_fourn'] = $_POST['id_fourn_id'];
+	$_REQUEST['id_fourn'] = $_REQUEST['id_fourn_id'];
+}
+
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
@@ -45,14 +53,6 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
-
-
-//R�cup�re le r�sultat de la recherche Ajax
-//Todo: voir pour le supprimer par la suite
-if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['id_fourn_id'])
-{
-	$_POST['id_fourn'] = $_POST['id_fourn_id'];
-}
 
 
 /*

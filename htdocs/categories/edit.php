@@ -17,32 +17,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/categories/edit.php
         \ingroup    category
         \brief      Page d'edition de categorie produit
-        \version    $Revision$
+        \version    $Id$
 */
 
 require "./pre.inc.php";
 
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['socid_id']))
+{
+	$_GET['socid'] = $_GET['socid_id'];
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
+// Security check
 if (!$user->rights->categorie->lire)
   accessforbidden();
 
 $type=$_REQUEST['type'];
 
-// If socid provided by ajax company selector
-if (! empty($_POST['socid_id']))
-{
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
 
-// Action mise à jour d'une catégorie
+/*
+ * Actions
+ */
+
+// Action mise a jour d'une categorie
 if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 {
 	$categorie = new Categorie ($db);

@@ -579,25 +579,33 @@ function newpopup(url,title) {
 
 
 /*=================================================================
-	Purpose:  Récupère l'id d'une autcompletion Ajax
+	Purpose:  Recupere id d'une autcompletion Ajax
 	Input:    field,item
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
 function ac_return(field, item){
-        /*alert('id='+field.name+'-'+item.id);*/
-        $(field.name+'_id').value = item.id;
-        /*alert('after='+$(field.name+'_id').value);*/
+/*        alert('field.name='+field.name+'-'+item.innerHTML); */
+        /* on met en place l'expression reguliere */
+        var regex = new RegExp('[0123456789]*-idcache', 'i');
+        /* on l'applique au contenu */
+        var idCache = regex.exec(item.innerHTML);
+        /* on recupere id */
+        id = idCache[0].replace('-idcache', '');
+/*        alert('field.name='+field.name+'-'+idCache[0]+'-'+id); */ 
+        /* et on l'affecte au champ cache */
+/*        alert('field.name='+field.name+'-'+item.innerHTML+'-id='+id); */
+        $(field.name+'_id').value = id;
 }
 
 /*=================================================================
-	Purpose:  Applique un délai avant execution
+	Purpose:  Applique un delai avant execution
 	Input:    funct, delay
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
-function ac_delay(funct,delay) {
-	/* delay before action start */
+ function ac_delay(funct,delay) {
+ 	// delay before start of action
   	setTimeout(funct,delay);
 }
 

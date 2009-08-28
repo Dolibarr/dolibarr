@@ -59,8 +59,9 @@ if ($_GET["id"] > 0 || ! empty($_GET["ref"]))
 }
 
 // If socid provided by ajax company selector
-if (! empty($_POST['socid_id']))
+if (! empty($_REQUEST['socid_id']))
 {
+	$_GET['socid'] = $_GET['socid_id'];
 	$_POST['socid'] = $_POST['socid_id'];
 	$_REQUEST['socid'] = $_REQUEST['socid_id'];
 }
@@ -72,9 +73,10 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 
 /*
- * Traitements des actions
+ * Actions
  */
-if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && ! $_REQUEST["id"] > 0 && empty($_REQUEST["ref"]))
+
+if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && ! ($_REQUEST["id"] > 0) && empty($_REQUEST["ref"]))
 {
 	Header("Location: index.php");
 	return;

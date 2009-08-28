@@ -134,6 +134,7 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 	$script.= 'new Ajax.Autocompleter(\''.$htmlname.'\',\'result'.$htmlname.'\',\''.DOL_URL_ROOT.$url.'\',{
 	           method: \'post\',
 	           paramName: \''.$htmlname.'\',
+	           minChars: \'1\',
 	           indicator: \'indicator'.$htmlname.'\',
 	           afterUpdateElement: ac_return
 	         });';	// Note: The ac_return will fill value inside the field htmlname (param of Autocompleter constructor) and htmlname_id (function ac_return)

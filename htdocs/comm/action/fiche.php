@@ -40,6 +40,14 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("agenda");
 
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['socid_id']))
+{
+	$_GET['socid'] = $_GET['socid_id'];
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
 // Security check
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 $id = isset($_GET["id"])?$_GET["id"]:'';
@@ -52,6 +60,14 @@ if (isset($_GET["error"])) $error=$_GET["error"];
 $cactioncomm = new CActionComm($db);
 $actioncomm = new ActionComm($db);
 $contact = new Contact($db);
+
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['socid_id']))
+{
+	$_GET['socid'] = $_GET['socid_id'];
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
 
 
 /*

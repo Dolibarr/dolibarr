@@ -36,12 +36,16 @@ $ref='';
 if (isset($_GET["id"]))  { $projetid=$_GET["id"]; }
 if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
 
+//var_dump($_REQUEST);exit;
+
 // If socid provided by ajax company selector
-if (! empty($_POST['socid_id']))
+if (! empty($_REQUEST['socid_id']))
 {
+	$_GET['socid'] = $_GET['socid_id'];
 	$_POST['socid'] = $_POST['socid_id'];
 	$_REQUEST['socid'] = $_REQUEST['socid_id'];
 }
+
 
 if ($projetid == '' && $ref == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 

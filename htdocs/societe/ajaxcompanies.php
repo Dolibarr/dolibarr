@@ -56,9 +56,10 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 		print '<ul>';
 		while ($company = $db->fetch_object($resql))
 		{
-			print '<li id="'.$company->rowid.'">';
+			print '<li>';
 			print $company->nom;
-			//print '<span id="object" class="informal" style="display:none">'.$company->rowid.'-idcache</span>';
+			// To output content that will not be inserted into selected field, we use span.
+			print '<span id="object" class="informal" style="display:none">'.$company->rowid.'-idcache</span>';
 			print '</li>';
 		}
 		print '</ul>';

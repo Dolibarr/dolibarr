@@ -40,6 +40,14 @@ $langs->load("users");
 $error = array();
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 
+// If socid provided by ajax company selector
+if (! empty($_REQUEST['socid_id']))
+{
+	$_GET['socid'] = $_GET['socid_id'];
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -256,7 +264,7 @@ if ($user->rights->societe->contact->creer)
 		}
 
 		print '<br>';
-		print '<form method="post" action="fiche.php">';
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<table class="border" width="100%">';
