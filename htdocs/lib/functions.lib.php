@@ -1567,8 +1567,8 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			else if (! $user->rights->societe->client->voir)
 			{
 				$sql = "SELECT sc.fk_soc";
-				$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-				$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+				$sql.= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				$sql.= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql.= " WHERE sc.fk_soc = ".$objectid;
 				$sql.= " AND sc.fk_user = ".$user->id;
 				$sql.= " AND sc.fk_soc = s.rowid";
@@ -1597,8 +1597,8 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			else if (! $user->rights->societe->client->voir)
 			{
 				$sql = "SELECT sc.fk_soc";
-				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+				$sql.= " FROM (".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql.= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield;
 				$sql.= " WHERE dbt.rowid = ".$objectid;
 				$sql.= " AND dbt.fk_soc = s.rowid";
