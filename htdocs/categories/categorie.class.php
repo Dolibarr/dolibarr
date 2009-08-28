@@ -55,8 +55,8 @@ class Categorie
 
 	/**
 	 * Constructeur
-	 * db : accès base de données
-	 * id : id de la catégorie
+	 * db : accï¿½s base de donnï¿½es
+	 * id : id de la catï¿½gorie
 	 */
 	function Categorie($db, $id=-1)
 	{
@@ -67,8 +67,8 @@ class Categorie
 	}
 
 	/**
-	 * Charge la catégorie
-	 * id : id de la catégorie à charger
+	 * Charge la catï¿½gorie
+	 * id : id de la catï¿½gorie ï¿½ charger
 	 */
 	function fetch($id)
 	{
@@ -117,17 +117,17 @@ class Categorie
 	}
 
 	/**
-	 * Ajoute la catégorie dans la base de données
+	 * Ajoute la catï¿½gorie dans la base de donnï¿½es
 	 * retour : -1 : erreur SQL
 	 *          -2 : nouvel ID inconnu
-	 *          -3 : catégorie invalide
+	 *          -3 : catï¿½gorie invalide
 	 */
 	function create()
 	{
 		global $conf,$langs;
 		$langs->load('categories');
 
-		if ($this->already_exists ())
+		if ($this->already_exists())
 		{
 			$this->error=$langs->trans("ImpossibleAddCat");
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
@@ -180,10 +180,10 @@ class Categorie
 	}
 
 	/**
-	 * Mise à jour de la catégorie
+	 * Mise ï¿½ jour de la catï¿½gorie
 	 * retour :  1 : OK
 	 *          -1 : erreur SQL
-	 *          -2 : catégorie invalide
+	 *          -2 : catï¿½gorie invalide
 	 */
 	function update()
 	{
@@ -248,9 +248,9 @@ class Categorie
 	}
 
 	/**
-	 * Supprime la catégorie
-	 * Les produits et sous-catégories deviennent orphelins
-	 * si $all = false, et sont (seront :) supprimés sinon
+	 * Supprime la catï¿½gorie
+	 * Les produits et sous-catï¿½gories deviennent orphelins
+	 * si $all = false, et sont (seront :) supprimï¿½s sinon
 	 */
 	function remove ($all = false)
 	{
@@ -291,11 +291,11 @@ class Categorie
 
 
 	/**
-	 * Ajout d'une sous-catégorie
-	 * $fille : objet catégorie
+	 * Ajout d'une sous-catï¿½gorie
+	 * $fille : objet catï¿½gorie
 	 * retour :  1 : OK
-	 *          -2 : $fille est déjà dans la famille de $this
-	 *          -3 : catégorie ($this ou $fille) invalide
+	 *          -2 : $fille est dï¿½jï¿½ dans la famille de $this
+	 *          -3 : catï¿½gorie ($this ou $fille) invalide
 	 */
 	function add_fille()
 	{
@@ -315,10 +315,10 @@ class Categorie
 	}
 
 	/**
-	 * Suppression d'une sous-catégorie (seulement "désassociation")
-	 * $fille : objet catégorie
+	 * Suppression d'une sous-catï¿½gorie (seulement "dï¿½sassociation")
+	 * $fille : objet catï¿½gorie
 	 * retour :  1 : OK
-	 *          -3 : catégorie ($this ou $fille) invalide
+	 *          -3 : catï¿½gorie ($this ou $fille) invalide
 	 */
 	function del_fille($fille)
 	{
@@ -377,7 +377,7 @@ class Categorie
 	}
 
 	/**
-	 * Suppresion d'un produit de la catégorie
+	 * Suppresion d'un produit de la catï¿½gorie
 	 * @param $prod est un objet de type produit
 	 * retour :  1 : OK
 	 *          -1 : erreur SQL
@@ -400,7 +400,7 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief	Retourne les produits de la catégorie
+	 * 	\brief	Retourne les produits de la catï¿½gorie
 	 * 	\param	field	Field name for select in table. Full field name will be fk_field.
 	 * 	\param	class	PHP Class of object to store entity
 	 * 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
@@ -440,7 +440,7 @@ class Categorie
 
 
 	/**
-	 * Retourne les filles de la catégorie
+	 * Retourne les filles de la catï¿½gorie
 	 */
 	function get_filles ()
 	{
@@ -468,7 +468,7 @@ class Categorie
 
 
 	/**
-	 * retourne la description d'une catégorie
+	 * retourne la description d'une catï¿½gorie
 	 */
 	function get_desc ($cate)
 	{
@@ -482,7 +482,7 @@ class Categorie
 	}
 
 	/**
-	 * La catégorie $fille est-elle une fille de cette catégorie ?
+	 * La catï¿½gorie $fille est-elle une fille de cette catï¿½gorie ?
 	 */
 	function is_fille ($fille)
 	{
@@ -498,8 +498,8 @@ class Categorie
 
 
 	/**
-	 * 	\brief		Reconstruit l'arborescence des catégories sous la forme d'un tableau
-	 *				Renvoi un tableau de tableau('id','id_mere',...) trié selon
+	 * 	\brief		Reconstruit l'arborescence des catï¿½gories sous la forme d'un tableau
+	 *				Renvoi un tableau de tableau('id','id_mere',...) triï¿½ selon
 	 *				arbre et avec:
 	 *				id = id de la categorie
 	 *				id_mere = id de la categorie mere
@@ -653,7 +653,7 @@ class Categorie
 
 
 	/**
-	 * 		\brief		Retourne toutes les catégories
+	 * 		\brief		Retourne toutes les catï¿½gories
 	 *		\return		array		Tableau d'objet Categorie
 	 */
 	function get_all_categories ()
@@ -679,7 +679,7 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief		Retourne le nombre total de catégories
+	 * 	\brief		Retourne le nombre total de catï¿½gories
 	 *	\return		int		Nombre de categories
 	 */
 	function get_nb_categories ()
@@ -700,38 +700,36 @@ class Categorie
 	}
 
 	/**
-	 * 		Vérifie si une catégorie porte le label $label
+	 * 		Check if no category with same label already exists
 	 */
 	function already_exists()
 	{
 		$sql = "SELECT count(c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
 		$sql.= " WHERE c.label = '".addslashes($this -> label)."' AND type=".$this->type;
-		if($this -> id_mere != "")
+		/*if($this -> id_mere != "")
 		{
 			$sql.= " AND c.rowid = ca.fk_categorie_fille";
 			$sql.= " AND ca.fk_categorie_mere = '".$this -> id_mere."'";
 		}
-
-		$res  = $this->db->query ($sql);
-		if($res)
+		*/
+		dol_syslog("Categorie::already_exists sql=".$sql);
+		$res  = $this->db->query($sql);
+		if ($res)
 		{
-			$res  = $this->db->fetch_array ($res);
-			if($res[0] > 0)
-			return true;
-			else
-			return false;
+			$obj = $this->db->fetch_array($res);
+			if($obj[0] > 0) return true;
+			else return false;
 		}
 		else
 		{
 			dol_print_error ($this->db);
 			return -1;
 		}
-
 	}
 
 	/**
-	 * 		\brief		Retourne les catégories de premier niveau (qui ne sont pas filles)
+	 * 		\brief		Retourne les catï¿½gories de premier niveau (qui ne sont pas filles)
 	 */
 	function get_main_categories ()
 	{
@@ -761,8 +759,8 @@ class Categorie
 	}
 
 	/**
-	 * Retourne les chemin de la catégorie, avec les noms des catégories
-	 * séparés par $sep (" >> " par défaut)
+	 * Retourne les chemin de la catï¿½gorie, avec les noms des catï¿½gories
+	 * sï¿½parï¿½s par $sep (" >> " par dï¿½faut)
 	 */
 	function print_all_ways ($sep = " &gt;&gt; ", $url='')
 	{
@@ -790,7 +788,7 @@ class Categorie
 
 
 	/**
-	 * get_primary_way() affiche le chemin le plus court pour se rendre à un produit
+	 * get_primary_way() affiche le chemin le plus court pour se rendre ï¿½ un produit
 	 */
 	function get_primary_way($id, $type="")
 	{
@@ -812,7 +810,7 @@ class Categorie
 	}
 
 	/**
-	 * print_primary_way() affiche le chemin le plus court pour se rendre à un produit
+	 * print_primary_way() affiche le chemin le plus court pour se rendre ï¿½ un produit
 	 */
 	function print_primary_way($id, $sep= " &gt;&gt; ", $url, $type="")
 	{
@@ -835,7 +833,7 @@ class Categorie
 	}
 
 	/**
-	 * Retourne un tableau contenant la liste des catégories mères
+	 * Retourne un tableau contenant la liste des catï¿½gories mï¿½res
 	 */
 	function get_meres ()
 	{
@@ -862,8 +860,8 @@ class Categorie
 	}
 
 	/**
-	 * Retourne dans un tableau tous les chemins possibles pour arriver à la catégorie
-	 * en partant des catégories principales, représentés par des tableaux de catégories
+	 * Retourne dans un tableau tous les chemins possibles pour arriver ï¿½ la catï¿½gorie
+	 * en partant des catï¿½gories principales, reprï¿½sentï¿½s par des tableaux de catï¿½gories
 	 */
 	function get_all_ways ()
 	{
@@ -921,7 +919,7 @@ class Categorie
 
 
 	/**
-	 * 	\brief	Retourne les catégories dont l'id ou le nom correspond
+	 * 	\brief	Retourne les catï¿½gories dont l'id ou le nom correspond
 	 * 			ajoute des wildcards au nom sauf si $exact = true
 	 */
 	function rechercher($id, $nom, $type, $exact = false)
