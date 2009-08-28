@@ -700,26 +700,21 @@ class Categorie
 	}
 
 	/**
-	 * 		Check if no category with same label already exists
+	 * 	\brief		Check if no category with same label already exists
+	 * 	\return		boolean		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{
 		$sql = "SELECT count(c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
 		$sql.= " WHERE c.label = '".addslashes($this -> label)."' AND type=".$this->type;
-		/*if($this -> id_mere != "")
-		{
-			$sql.= " AND c.rowid = ca.fk_categorie_fille";
-			$sql.= " AND ca.fk_categorie_mere = '".$this -> id_mere."'";
-		}
-		*/
 		dol_syslog("Categorie::already_exists sql=".$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
 			$obj = $this->db->fetch_array($res);
-			if($obj[0] > 0) return true;
-			else return false;
+			if($obj[0] > 0) return 1;
+			else return 0;
 		}
 		else
 		{

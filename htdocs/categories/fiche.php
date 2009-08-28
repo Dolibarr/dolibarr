@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
  */
 
 /**
-		\file       htdocs/categories/fiche.php
-		\ingroup    category
-		\brief      Page creation nouvelle categorie
-		\version	$Id$
-*/
+ *		\file       htdocs/categories/fiche.php
+ *		\ingroup    category
+ *		\brief      Page to create a new category
+ *		\version	$Id$
+ */
 
 require "./pre.inc.php";
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
@@ -128,7 +128,8 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		$_GET["action"] = 'create';
 	}
 
-	if ($categorie->error =="")
+	// Create category in database
+	if (! $categorie->error)
 	{
 		$result = $categorie->create();
 		if ($result > 0)
@@ -171,6 +172,9 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 }
 
 
+/*
+ * View
+ */
 
 llxHeader("","",$langs->trans("Categories"));
 $html = new Form($db);
@@ -182,12 +186,6 @@ if ($user->rights->categorie->creer)
 	 */
 	if ($_GET["action"] == 'create' || $_POST["addcat"] == 'addcat')
 	{
-		if($categorie->error != "")
-		{
-			print '<div class="error">';
-			print $categorie->error;
-			print '</div>';
-		}
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$_GET['type'].'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
@@ -206,6 +204,13 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="nom" value="'.$nom.'">';
 
 		print_fiche_titre($langs->trans("CreateCat"));
+
+		if ($categorie->error)
+		{
+			print '<div class="error">';
+			print $categorie->error;
+			print '</div>';
+		}
 
 		print '<table width="100%" class="border">';
 		print '<tr>';
