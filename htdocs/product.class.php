@@ -709,11 +709,13 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief		Lit le prix pratique par un fournisseur
-	 *				On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
-	 *    \param     prodfournprice      Id du tarif = rowid table product_fournisseur_price
-	 *    \param     qty                 Quantit� du produit
-	 *    \return    int 				<0 si ko, 0 si ok mais rien trouv�, id_product si ok et trouv�
+	 *    	\brief		Lit le prix pratique par un fournisseur
+	 *					On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
+	 *    	\param     	prodfournprice      Id du tarif = rowid table product_fournisseur_price
+	 *    	\param     	qty                 Quantity asked
+	 *		\param		product_id			Filter on a particular product id
+	 * 		\param		fourn_ref			Filter on a supplier ref
+	 *    	\return    	int 				<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
@@ -766,12 +768,13 @@ class Product extends CommonObject
 					}
 					else
 					{
-						return -1;	// Ce produit existe chez ce fournisseur mais qt� insuffisante
+						return -1;	// Ce produit existe chez ce fournisseur mais qte insuffisante
 					}
 				}
 				else
 				{
 					$this->error=$this->db->error();
+					dol_syslog("Product:get_buyprice ".$this->error, LOG_ERR);
 					return -3;
 				}
 			}
@@ -779,6 +782,7 @@ class Product extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
+			dol_syslog("Product:get_buyprice ".$this->error, LOG_ERR);
 			return -2;
 		}
 		return $result;

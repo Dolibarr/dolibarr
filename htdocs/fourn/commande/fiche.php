@@ -100,11 +100,13 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 		// Ecrase $txtva  par celui du produit
 		if ($_POST["idprodfournprice"])	// >0 or -1
 		{
+			$qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
+
 			$product = new ProductFournisseur($db);
-			$idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+			$idprod=$product->get_buyprice($_POST['idprodfournprice'], $qty);
 			if ($idprod > 0)
 			{
-				$product->fetch($idprod);
+				$res=$product->fetch($idprod);
 
 				// cas special pour lequel on a les meme reference que le fournisseur
 				// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
@@ -120,9 +122,7 @@ if ($_POST['action'] ==	'addline' && $user->rights->fournisseur->commande->creer
 				$desc = $product->description;
 				$desc.= $product->description && $_POST['np_desc'] ? "\n" : "";
 				$desc.= $_POST['np_desc'];
-				
-				$qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
-				
+
 				$remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
 				$tva_tx	= get_default_tva($societe,$mysoc,$product->tva_tx,$product->id);

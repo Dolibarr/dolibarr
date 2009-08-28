@@ -634,7 +634,9 @@ if ($user->statut < 1)
 }
 
 
-dol_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
+dol_syslog("Access to ".$_SERVER["PHP_SELF"]);
+//Another call for easy debugg
+//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
 // For backward compatibility
 if (! defined('MAIN_INFO_SOCIETE_PAYS')) define('MAIN_INFO_SOCIETE_PAYS','1');
