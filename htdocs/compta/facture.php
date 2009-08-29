@@ -346,10 +346,10 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 
 	$resteapayer = $fac->total_ttc - $totalpaye;
 
-	// On v�rifie si les lignes de factures ont �t� export�es en compta et/ou ventil�es
+	// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 	$ventilExportCompta = $fac->getVentilExportCompta();
 
-	// On v�rifie si aucun paiement n'a �t� effectu�
+	// On verifie si aucun paiement n'a ete effectue
 	if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
 	{
 		$fac->set_draft($user);
@@ -364,14 +364,14 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 	}
 }
 
-// Classe � "pay�e"
+// Classify "paid"
 if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
 	$result = $fac->set_paid($user);
 }
-// Classe � "pay�e partiellement"
+// Classif  "paid partialy"
 if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
@@ -387,7 +387,7 @@ if ($_REQUEST['action'] == 'confirm_paid_partially' && $_REQUEST['confirm'] == '
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
 	}
 }
-// Classe � "abandonn�e"
+// Classify "abandoned"
 if ($_REQUEST['action'] == 'confirm_canceled' && $_REQUEST['confirm'] == 'yes')
 {
 	$fac = new Facture($db);
@@ -836,9 +836,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	}
 }
 
-/*
- *  Ajout d'une ligne produit dans la facture
- */
+// Add a new line
 if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
@@ -854,8 +852,12 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
 		$result = -1 ;
 	}
-
-	if ($result >= 0 && $_POST['qty']!='' && (($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	if (! isset($_POST['qty']) || $_POST['qty']=='')
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Qty')).'</div>';
+		$result = -1 ;
+	}
+	if ($result >= 0 && ( ($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod'] ) )
 	{
 		$ret=$fac->fetch($_POST['facid']);
 		if ($ret < 0)
@@ -957,10 +959,6 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 				);
 			}
 		}
-	}
-	else
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Qty')).'</div>';
 	}
 
 	if ($result > 0)
