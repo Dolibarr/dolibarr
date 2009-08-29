@@ -258,8 +258,7 @@ if (! defined('NOREQUIREDB'))
 }
 
 /*
- * Creation objet $mysoc
- * Objet Societe qui contient carac de l'institution g�r�e par Dolibarr.
+ * Create object $mysoc (A "Societe" object that contains properties of companies managed by Dolibarr.
  */
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
@@ -329,7 +328,7 @@ if (! defined('NOREQUIRETRAN'))
 
 /*
  * Pour utiliser d'autres versions des librairies externes que les
- * versions embarqu�es dans Dolibarr, d�finir les constantes adequates:
+ * versions embarquees dans Dolibarr, definir les constantes adequates:
  * Pour FPDF:           FPDF_PATH
  * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
  * Pour MagpieRss:      MAGPIERSS_PATH
