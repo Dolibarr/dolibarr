@@ -257,21 +257,22 @@ else
 			print "</td></tr>";
 
 			// Last movement
-			$sql = "SELECT max( ".$db->pdate("m.datem").") as datem";
+			$sql = "SELECT max(m.datem) as datem";
 			$sql .= " FROM llx_stock_mouvement as m";
-			$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."';";
-			$resql = $db->query($sql);
-			if ($resql)
+			$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."'";
+			$resqlbis = $db->query($sql);
+			if ($resqlbis)
 			{
-				$row = $db->fetch_row($resql);
+				$obj = $db->fetch_object($resqlbis);
+				$lastmovementdate=$db->jdate($obj->datem);
 			}
 			else
 			{
 				dol_print_error($db);
 			}
-
 			print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
-			print '<a href="mouvement.php?id='.$entrepot->id.'">'.dol_print_date($row[0]).'</a>';
+			if ($lastmovementdate) print dol_print_date($lastmovementdate,'dayhour').' ';
+			print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id.'">'.$langs->trans("FullList").'</a>)';
 			print "</td></tr>";
 
 			print "</table>";

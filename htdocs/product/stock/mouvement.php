@@ -125,7 +125,7 @@ if ($resql)
 
 
 	/*
-	 * Affichage onglets
+	 * Show tab only if we ask a particular warehous
 	 */
 	if ($_GET["id"])
 	{
@@ -176,13 +176,14 @@ if ($resql)
 		print "</td></tr>";
 
 		// Last movement
-		$sql = "SELECT max( ".$db->pdate("m.datem").") as datem";
+		$sql = "SELECT max(m.datem) as datem";
 		$sql .= " FROM llx_stock_mouvement as m";
-		$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."';";
+		$sql .= " WHERE m.fk_entrepot = '".$entrepot->id."'";
 		$resqlbis = $db->query($sql);
 		if ($resqlbis)
 		{
-			$row = $db->fetch_row($resqlbis);
+			$obj = $db->fetch_object($resqlbis);
+			$lastmovementdate=$db->jdate($obj->datem);
 		}
 		else
 		{
@@ -190,7 +191,7 @@ if ($resql)
 		}
 
 		print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
-		print '<a href="mouvement.php?id='.$entrepot->id.'">'.dol_print_date($row[0]).'</a>';
+		if ($lastmovementdate) print dol_print_date($lastmovementdate,'dayhour');
 		print "</td></tr>";
 
 		print "</table>";
@@ -198,8 +199,11 @@ if ($resql)
 		print '</div>';
 	}
 
-
-	$param="&id=".$_GET["id"]."&sref=$sref&snom=$snom";
+	$param='';
+	if ($_GET["id"]) $param.='&id='.$_GET["id"];
+	if ($sref) $param.='&sref='.urlencode($sref);
+	if ($snom) $param.='&snom='.urlencode($snom);
+	if ($idproduct > 0) $param.='&idproduct='.$idproduct;
 	if ($_GET["id"]) print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num,0,'');
 	else print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num);
 

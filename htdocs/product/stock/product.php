@@ -235,6 +235,25 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<td>'.$product->seuil_stock_alerte.'</td>';
 		print '</tr>';
 
+		// Last movement
+		$sql = "SELECT max(m.datem) as datem";
+		$sql.= " FROM llx_stock_mouvement as m";
+		$sql.= " WHERE m.fk_product = '".$product->id."'";
+		$resqlbis = $db->query($sql);
+		if ($resqlbis)
+		{
+			$obj = $db->fetch_object($resqlbis);
+			$lastmovementdate=$db->jdate($obj->datem);
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+		if ($lastmovementdate) print dol_print_date($lastmovementdate,'dayhour').' ';
+		print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("FullList").'</a>)';
+		print "</td></tr>";
+
 		print "</table>";
 
 	}
