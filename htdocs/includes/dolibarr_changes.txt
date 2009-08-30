@@ -6,7 +6,9 @@ in Dolibarr root.
 
 FPDF:
 -----
-* All changes were added in fpdf.php file and marked with tag DOLCHANGE
+* All changes were added in fpdf.php file and marked with tag DOLCHANGE or DOL_CHANGE
+Example:
+$tmp=tempnam('.','gif') into $tmp=tempnam(DOL_DATA_ROOT,'gif') to avoid creating files in the htdocs directory.
 
 
 FPDFI and FPDF_TPL:

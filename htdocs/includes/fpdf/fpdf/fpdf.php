@@ -11,9 +11,9 @@
 /* Begin DOLCHANGE Added by Regis */
 // height of cell repect font height
 define("K_CELL_HEIGHT_RATIO", 1.25);
-// Répertoire des documents de fckeditor
+// Rï¿½pertoire des documents de fckeditor
 if (! empty($conf->fckeditor->dir_output)) define ("K_PATH_CACHE", $conf->fckeditor->dir_output);
-// url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera intégrée au pdf
+// url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera intï¿½grï¿½e au pdf
 if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document.php?modulepart=editor&amp;file=");
 /* End DOLCHANGE Added by Regis */
 
@@ -85,7 +85,7 @@ var $PDFVersion;         //PDF version number
 var $prevFontFamily;     //store previous font family
 var $prevFontStyle;      //store previous style family
 
-var $DisplayPreferences=''; //préférences d'affichage
+var $DisplayPreferences=''; //prï¿½fï¿½rences d'affichage
 
 		// variables pour HTML PARSER
 
@@ -1516,10 +1516,12 @@ function _parsegif($file)
 	if(!$im)
 		$this->Error('Missing or incorrect image file: '.$file);
 	imageinterlace($im,0);
-	$tmp=tempnam('.','gif');
+	// DOL_CHANGE
+	$tmp=tempnam(DOL_DATA_ROOT,'gif');
+	//$tmp=tempnam('.','gif');
 	if(!$tmp)
 		$this->Error('Unable to create a temporary file');
-	if(!imagepng($im,$tmp))
+		if(!imagepng($im,$tmp))
 		$this->Error('Error while saving to temporary file');
 	imagedestroy($im);
 	$info=$this->_parsepng($tmp);
@@ -1852,8 +1854,8 @@ function _putcatalog()
 
 
 	/* Begin DOLCHANGE Added by Regis */
-	//Préférences d'affichage - @author Michel Poulain
-	//affiche le document en plein écran (escape pour revenir en mode normal)
+	//Prï¿½fï¿½rences d'affichage - @author Michel Poulain
+	//affiche le document en plein ï¿½cran (escape pour revenir en mode normal)
 	if(is_int(strpos($this->DisplayPreferences,'FullScreen')))
         $this->_out('/PageMode /FullScreen');
     if($this->DisplayPreferences) {
@@ -1864,16 +1866,16 @@ function _putcatalog()
         //masque les barres d'outils
         if(is_int(strpos($this->DisplayPreferences,'HideToolbar')))
             $this->_out('/HideToolbar true');
-        //masque tous les éléments de la fenêtre (barres de défilement, contrôles de navigation, signets...)
+        //masque tous les ï¿½lï¿½ments de la fenï¿½tre (barres de dï¿½filement, contrï¿½les de navigation, signets...)
         if(is_int(strpos($this->DisplayPreferences,'HideWindowUI')))
             $this->_out('/HideWindowUI true');
         //affiche le titre du document au lieu du nom du fichier
         if(is_int(strpos($this->DisplayPreferences,'DisplayDocTitle')))
             $this->_out('/DisplayDocTitle true');
-        //centre la fenêtre
+        //centre la fenï¿½tre
         if(is_int(strpos($this->DisplayPreferences,'CenterWindow')))
             $this->_out('/CenterWindow true');
-        //ajuste la taille de la fenêtre (lorsqu'elle n'est pas maximisée) sur celle de la page
+        //ajuste la taille de la fenï¿½tre (lorsqu'elle n'est pas maximisï¿½e) sur celle de la page
         if(is_int(strpos($this->DisplayPreferences,'FitWindow')))
             $this->_out('/FitWindow true');
         $this->_out('>>');
@@ -1970,7 +1972,7 @@ function _enddoc()
 					}
 					elseif($this->tdbegin) {
 						if((strlen(trim($element)) > 0) AND ($element != "&nbsp;")) {
-							// Cette version ne gère pas UTF8
+							// Cette version ne gï¿½re pas UTF8
 							//$this->Cell($this->tdwidth, $this->tdheight, $this->unhtmlentities($element), $this->tableborder, '', $this->tdalign, $this->tdbgcolor);
 							$this->Cell($this->tdwidth, $this->tdheight, utf8_decode($this->unhtmlentities($element)), $this->tableborder, '', $this->tdalign, $this->tdbgcolor);
 						}
@@ -1979,7 +1981,7 @@ function _enddoc()
 						}
 					}
 					else {
-						// cette version ne gère pas UTF8
+						// cette version ne gï¿½re pas UTF8
 						//$this->Write($this->lasth, stripslashes($this->unhtmlentities($element)), '', $fill);
 						$this->Write($this->lasth, stripslashes(utf8_decode($this->unhtmlentities($element))), '', $fill);
 					}
@@ -2602,7 +2604,7 @@ function _enddoc()
 
 		/**
 		* Converti les noms des polices FckEditor.
-		* @string string chaine à convertir
+		* @string string chaine ï¿½ convertir
 		* @return string chaine convertie.
 		* @author Regis Houssin
 		*/
@@ -2636,8 +2638,8 @@ function _enddoc()
 		}
 
 		/**
-		* Paramétrage des préférences d'affichage.
-		* @string preference liste des préférences d'affichage (voir la fonction _putcatalog)
+		* Paramï¿½trage des prï¿½fï¿½rences d'affichage.
+		* @string preference liste des prï¿½fï¿½rences d'affichage (voir la fonction _putcatalog)
 		* @ex: $pdf->DisplayPreferences('HideMenubar,HideToolbar,HideWindowUI')
 		* @author Michel Poulain
 		*/
