@@ -61,3 +61,4 @@ FileMustHaveOneOfFollowingFormat=File to import must have one of following forma
 ChooseFileToImport=Upload or choose file to import then click on picto %s ...
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database
+NoFields=No fields

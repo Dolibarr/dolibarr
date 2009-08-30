@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/imports/import.php
  *      \ingroup    import
- *      \brief      Page d'edition d'un import
+ *      \brief      Edit import page
  *      \version    $Id$
  */
 
@@ -85,53 +85,6 @@ $sqlusedforimport='';
  * Actions
  */
 
-/*
-if ($action=='selectfield')
-{
-	if ($_GET["field"]=='all')
-	{
-		$fieldsarray=$objimport->array_import_alias[0];
-		foreach($fieldsarray as $key=>$val)
-		{
-			if (! empty($array_match_file_to_database[$key])) continue;		// If already selected, select next
-			$array_match_file_to_database[$key]=sizeof($array_match_file_to_database)+1;
-			//print_r($array_match_file_to_database);
-			$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
-		}
-	}
-	else
-	{
-		$array_match_file_to_database[$_GET["field"]]=sizeof($array_match_file_to_database)+1;
-		//print_r($array_match_file_to_database);
-		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
-	}
-
-}
-if ($action=='unselectfield')
-{
-	if ($_GET["field"]=='all')
-	{
-		$array_match_file_to_database=array();
-		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
-	}
-	else
-	{
-		unset($array_match_file_to_database[$_GET["field"]]);
-		// Renumber fields of array_selected (from 1 to nb_elements)
-		asort($array_match_file_to_database);
-		$i=0;
-		$array_match_file_to_database_save=$array_match_file_to_database;
-		foreach($array_match_file_to_database as $code=>$value)
-		{
-			$i++;
-			$array_match_file_to_database[$code]=$i;
-			//print "x $code x $i y<br>";
-		}
-		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
-	}
-}
-*/
-
 if ($action=='downfield' || $action=='upfield')
 {
 	$pos=$array_match_file_to_database[$_GET["field"]];
@@ -180,9 +133,9 @@ if ($action == 'deleteprof')
 	}
 }
 
+// Save import config to file
 if ($action == 'add_import_model')
 {
-	// TODO Save a matching model
 	if ($import_name)
 	{
 		asort($array_match_file_to_database);
@@ -222,7 +175,8 @@ if ($action == 'add_import_model')
 
 if ($step == 3 && $action == 'select_model')
 {
-	// TODO Use a matching model
+	// Load model from $importmodelid and set $array_match_file_to_database
+	// and $_SESSION["dol_array_match_file_to_database"]
 	$_SESSION["dol_array_match_file_to_database"]=array();
 	$array_match_file_to_database=array();
 	$result = $objimport->fetch($importmodelid);
@@ -468,6 +422,7 @@ if ($step == 2 && $datatoimport)
 
 }
 
+// Page to make matching between source file and database fields
 if ($step == 3 && $datatoimport)
 {
 	// Load source fields in input file
@@ -508,11 +463,9 @@ if ($step == 3 && $datatoimport)
 		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
 
+
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	/*
-	 * Affichage onglets
-	 */
 	$h = 0;
 
 	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
@@ -705,7 +658,7 @@ if ($step == 3 && $datatoimport)
 		print "\n";
 		print '<script type="text/javascript" language="javascript">';
 		print 'function updateOrder(){';
-	    print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));';
+		print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));';
 	    //print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));';
 	    print 'var boxorder = \'A:\' + left_list;';
 	    //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;';
@@ -715,7 +668,7 @@ if ($step == 3 && $datatoimport)
 	    print 'o_options = new Object();';
 	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};';
 	    print 'var myAjax = new Ajax.Request(url, o_options);';
-	  	print '}';
+	    print '}';
 	  	print "\n";
 
 	  	print '// <![CDATA['."\n";
@@ -959,11 +912,21 @@ function show_elem($fieldssource,$pos,$var,$key)
 	print '<tr class="liste_total" height="20">';
 	if (empty($key))
 	{
-		print '<td class="nocellnopadding" colspan="2">&nbsp;</td>';
+		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
+		print img_picto($langs->trans("MoveBox",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
+		print '</td>';
+		print '<td style="font-weight: normal">';
+		print $langs->trans("NoFields");
+		print '</td>';
 	}
 	elseif ($key == 'none')
 	{
-		print '<td class="nocellnopadding" colspan="2" style="font-weight: normal">'.$langs->trans("NoDiscardedFields").'</td>';
+		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
+		print img_picto($langs->trans("MoveBox",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
+		print '</td>';
+		print '<td style="font-weight: normal">';
+		print $langs->trans("NoFields");
+		print '</td>';
 	}
 	else
 	{
@@ -974,7 +937,7 @@ function show_elem($fieldssource,$pos,$var,$key)
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("Field").' '.$key.': ';
-		print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
+		print '<b>'.$fieldssource[$key]['name'].'</b> ('.$fieldssource[$key]['example1'].')';
 		print '</td>';
 	}
 	print '</tr>';

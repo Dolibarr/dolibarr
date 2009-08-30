@@ -209,7 +209,7 @@ class InfoBox
 				$part=split(':',$collist);
 				$colonne=$part[0];
 				$list=$part[1];
-				dol_syslog('InfoBox::saveboxorder colonne='.$colonne.' list='.$list);
+				dol_syslog('InfoBox::saveboxorder column='.$colonne.' list='.$list);
 
 				$i=0;
 				$listarray=split(',',$list);

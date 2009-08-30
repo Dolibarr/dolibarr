@@ -61,3 +61,4 @@ FileMustHaveOneOfFollowingFormat=Le fichier à importer doit avoir un des format
 ChooseFileToImport=Ajouter ou choisissez le fichier à importer puis cliquez sur le picto %s ...
 FieldsInSourceFile=Champs dans le fichier source
 FieldsInTargetDatabase=Champs cibles dans la base Dolibarr
+NoFields=Aucun champ
