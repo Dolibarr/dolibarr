@@ -58,9 +58,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 // Include configuration
 $result=@include_once("conf/conf.php");
-if (! $result && $_SERVER["GATEWAY_INTERFACE"])
+if (! $result && $_SERVER["GATEWAY_INTERFACE"])	// If install not done and we are in a web session
 {
-	// If install not done and we are in a web session
 	header("Location: install/index.php");
 	exit;
 }
@@ -140,7 +139,7 @@ if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swed
 $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
-if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey=''; // TODO la cle devra ne doit pas etre stockee sur le serveur
+if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 // Identifiant autres
 $conf->file->main_authentication = empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
@@ -177,6 +176,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	elseif (eregi('chrome',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='chrome';
 	elseif (eregi('opera',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
 	elseif (eregi('msie',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
+	else $conf->browser->name='unknown';
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 }
 
@@ -209,7 +209,7 @@ if (! defined('NOREQUIREDB'))
 }
 // Now database connexion is known, so we can forget password
 //$dolibarr_main_db_pass=''; 	// Comment this because this constant is used in a lot of pages
-$conf->db->pass='';				// This is to avoid password to be shown in dump
+$conf->db->pass='';				// This is to avoid password to be shown in memory/swap dump
 
 /*
  * Creation objet $user
@@ -254,7 +254,40 @@ if (! defined('NOREQUIREDB'))
 		}
 	}
 
-	$conf->setValues($db);
+	$conf->setValues($db);	// Here we read database (llx_const table) and define $conf->global->XXX var.
+}
+
+// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
+if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
+{
+	/*print '$_SERVER["GATEWAY_INTERFACE"]='.$_SERVER["GATEWAY_INTERFACE"].'<br>';
+	print 'session_id()='.session_id().'<br>';
+	print '$_SESSION["dol_login"]='.$_SESSION["dol_login"].'<br>';
+	print '$conf->global->MAIN_ONLY_LOGIN_ALLOWED='.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'<br>';
+	exit;*/
+	$ok=0;
+	if ((! session_id() || ! isset($_SESSION["dol_login"])) && ! isset($_POST["username"]) && ! empty($_SERVER["GATEWAY_INTERFACE"])) $ok=1;	// We let working pages if not logged and inside a web browser (login form, to allow login by admin)
+	elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;				// We let working pages that is a login submission (login submit, to allow login by admin)
+	elseif (defined('NOREQUIREDB'))   $ok=1;				// We let working pages that don't need database access (xxx.css.php)
+	elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) $ok=1;	// We let working pages that ask to work even if only login enabled (logout.php)
+	elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;	// We let working if user is allowed admin
+	if (! $ok)
+	{
+		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED)
+		{
+			print 'Sorry, your application is offline.'."\n";
+			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+			$nexturl=DOL_URL_ROOT.'/user/logout.php';
+			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
+		}
+		else
+		{
+			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
+			$nexturl=DOL_URL_ROOT.'/';
+			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
+		}
+		exit;
+	}
 }
 
 /*

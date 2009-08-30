@@ -36,7 +36,7 @@
  */
 class Conf
 {
-    /** \public */
+	/** \public */
 	//! Object with database handler
 	var $db;
 	//! To store properties found in conf file
@@ -71,10 +71,10 @@ class Conf
 
 
 	/**
-	*      \brief      Load setup values into conf object
-	*      \param      $db			    Handler d'acces base
-	*      \return     int         		< 0 if KO, >= 0 if OK
-	*/
+	 *      \brief      Load setup values into conf object (read llx_const)
+	 *      \param      $db			    Handler d'acces base
+	 *      \return     int         		< 0 if KO, >= 0 if OK
+	 */
 	function setValues($db)
 	{
 		dol_syslog("Conf::setValues");
@@ -312,7 +312,7 @@ class Conf
 		$this->compta->mode = 'RECETTES-DEPENSES';  // By default
 		if (isset($this->global->COMPTA_MODE)) {
 			// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
-		    $this->compta->mode = $this->global->COMPTA_MODE;
+			$this->compta->mode = $this->global->COMPTA_MODE;
 		}
 
 		// $this->defaulttx
@@ -344,17 +344,17 @@ class Conf
 			$this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
 		}
 		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
-	    $this->notification->email_from=$this->email_from;
+		$this->notification->email_from=$this->email_from;
 		if (! empty($this->global->NOTIFICATION_EMAIL_FROM))
 		{
-		    $this->notification->email_from=$this->global->NOTIFICATION_EMAIL_FROM;
+			$this->notification->email_from=$this->global->NOTIFICATION_EMAIL_FROM;
 		}
 
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->mailing->email_from=$this->email_from;;
 		if (! empty($this->global->MAILING_EMAIL_FROM))
 		{
-		    $this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
+			$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
 		}
 
 		// Defini MAIN_GRAPH_LIBRARY

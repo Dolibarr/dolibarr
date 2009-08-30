@@ -1097,6 +1097,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	print "\n";
 	print '<div class="fiche"> <!-- begin main area -->'."\n";
 
+	if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
 
 
