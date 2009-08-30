@@ -24,6 +24,14 @@
  *		\version    $Id$
  */
 
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1'); // We need to use translation files to know direction
+if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
+
 //require_once("../../conf/conf.php");
 require_once("../../master.inc.php");
 

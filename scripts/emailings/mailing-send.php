@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *
- * !!! Envoi mailing !!!
- *
- * L'utilisation d'adresses de courriers �lectroniques dans les op�rations
- * de prospection commerciale est subordonn�e au recueil du consentement
- * pr�alable des personnes concern�es.
- *
- * Le dispositif juridique applicable a �t� introduit par l'article 22 de
- * la loi du 21 juin 2004  pour la confiance dans l'�conomie num�rique.
- *
- * Les dispositions applicables sont d�finies par les articles L. 34-5 du
- * code des postes et des t�l�communications et L. 121-20-5 du code de la
- * consommation. L'application du principe du consentement pr�alable en
- * droit fran�ais r�sulte de la transposition de l'article 13 de la Directive
- * europ�enne du 12 juillet 2002 � Vie priv�e et communications �lectroniques �.
  */
 
 

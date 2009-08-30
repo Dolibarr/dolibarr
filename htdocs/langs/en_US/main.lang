@@ -527,6 +527,7 @@ PDFMerge=PDF Merge
 Merge=Merge
 PrintContentArea=Show page to print main content area
 NoMenu=No sub-menu
+WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only login <b>%s</b> is allowed to connect.
 # Week day
 Day1=Monday
 Day2=Tuesday

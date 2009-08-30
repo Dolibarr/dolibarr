@@ -25,8 +25,16 @@
  * 		\version	$Id$
  */
 
+//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Uncomment creates pb to relogon after a disconnect
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('EVEN_IF_ONLY_LOGIN_ALLOWED'))  define('EVEN_IF_ONLY_LOGIN_ALLOWED','1');
+
 require_once("../main.inc.php");
 
+// This can happen only with a bookmark or forged url call.
 if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser'
   	 || $_SESSION["dol_authmode"] == 'http'))
 {
@@ -36,7 +44,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 // Define url to go after disconnect
 $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
 
-// Phenix module
+// Destroy some cookies
 if ($conf->phenix->enabled && $conf->phenix->cookie)
 {
 	// Destroy cookie
@@ -61,6 +69,6 @@ if ($urlfrom)
 {
 	$url=DOL_URL_ROOT.$urlfrom;
 }
-
+//print 'url='.$url;exit;
 header("Location: ".$url);
 ?>
