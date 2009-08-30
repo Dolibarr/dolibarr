@@ -8,3 +8,5 @@ module_google-*.tgz
 module_pibarcode-1.0.tgz
 *.exe
 *.torrent
+version-phpsane.txt
+makepack-phpsane.conf
