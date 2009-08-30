@@ -122,7 +122,8 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 $form=new Form($db);
 $htmlother=new FormOther($db);
 
-llxHeader("",$langs->trans("Tasks"),"Tasks");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader("",$langs->trans("Tasks"),$help_url);
 
 $projet = new Project($db);
 

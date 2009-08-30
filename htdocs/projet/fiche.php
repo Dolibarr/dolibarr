@@ -142,7 +142,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && 
  *	View
  */
 
-llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+llxHeader("",$langs->trans("Projects"),$help_url);
 
 $html = new Form($db);
 
