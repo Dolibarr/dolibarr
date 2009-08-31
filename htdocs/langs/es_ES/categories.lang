@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - categories
+# Dolibarr language file - es_ES - categories 
 CHARSET = UTF-8
 Category = Categoría
 Categories = Categorías
@@ -53,7 +53,7 @@ SupplierHasNoCategory = Este proveedor no se encuentra en ninguna categoría en 
 CompanyHasNoCategory = Esta empresa no se encuentra en ninguna categoría en particular
 ClassifyInCategory = Esta categoría no contiene clientes
 NoneCategory = Ninguna
-CategoryExistsAtSameLevel = Esta categoría ya existe al mismo lugar
+CategoryExistsAtSameLevel = Esta categoría ya existe para esta referencia
 ReturnInProduct = Volver a la ficha producto/servicio
 ReturnInSupplier = Volver a la ficha proveedor
 ReturnInCompany = Volver a la ficha cliente/cliente potencial
@@ -81,6 +81,6 @@ AssignedToTheCustomer = Asigado a un cliente
 InternalCategory = Categoría interna
 CategoryContents = Contenido de la categoría
 CategId = Id categoría
-CatSupList=Lista de categorías proveedores
-CatCusList=Lista de categorías clientes/potenciales
-CatProdList=Lista de categorías productos
+CatSupList = Lista de categorías proveedores
+CatCusList = Lista de categorías clientes/potenciales
+CatProdList = Lista de categorías productos
