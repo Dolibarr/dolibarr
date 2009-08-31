@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - dict
+# Dolibarr language file - ca_ES - dict 
 CHARSET = UTF-8
 CountryFR = França
 CountryBE = Bèlgica
@@ -246,12 +246,12 @@ CountryJE = Jersey
 CountryME = Monténégro
 CountryBL = Saint-Barthélemy
 CountryMF = Saint-Martin
-##### Civilities ##### = 
+##### Civilities ##### = undefined = 
 CivilityMME = Senyora
 CivilityMR = Senyor
 CivilityMLE = Senyoreta
 CivilityMTRE = En
-##### Currencies ##### = 
+##### Currencies ##### = undefined = 
 Currencyeuros = Euros
 CurrencyAUD = Dòlars Aus.
 CurrencyCAD = Dòlars Can.
@@ -261,7 +261,12 @@ CurrencyFRF = Francs francesos
 CurrencyGBP = Lliura esterlina
 CurrencyMAD = Dhiram
 CurrencyMGA = Ariary
+CurrencyMUR = Rupies mauritanes
+CurrencyNOK = Corones noruegues
+CurrencySUR = Rubles
 CurrencyTND = TND
+CurrencyTRL = Lliures turques
 CurrencyUSD = Dòlars USA
 CurrencyXAF = Francs CFA BEAC
 CurrencyXOF = Francs CFA BCEAO
+CurrencyXPF = Francs CFP
