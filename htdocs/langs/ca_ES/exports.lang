@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - exports
+# Dolibarr language file - ca_ES - exports 
 CHARSET = UTF-8
 ExportsArea = Àrea exportació
 ImportArea = Àrea importació
@@ -61,3 +61,4 @@ FileMustHaveOneOfFollowingFormat = El fitxer d'importació ha de tenir un dels s
 ChooseFileToImport = Trieu el fitxer d'importació i feu clic al picto %s ...
 FieldsInSourceFile = Camps en el fitxer orige
 FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr
+NoFields = Cap camp
