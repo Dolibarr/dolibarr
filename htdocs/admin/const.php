@@ -41,7 +41,7 @@ $typeconst=array('yesno','texte','chaine');
  */
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]));
+	if (dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]) < 0)
 	{
 		print $db->error();
 	}
@@ -49,7 +49,7 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 
 if ($_GET["action"] == 'delete')
 {
-	if (! dolibarr_del_const($db, $_GET["rowid"],$_GET["entity"]));
+	if (dolibarr_del_const($db, $_GET["rowid"],$_GET["entity"]) < 0)
 	{
 		print $db->error();
 	}

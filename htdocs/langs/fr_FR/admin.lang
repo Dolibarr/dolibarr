@@ -18,6 +18,7 @@ LockNewSessions=Bloquer nouvelles connections
 ConfirmLockNewSessions=Etes-vous sur de vouloir restreindre l'accès Dolibarr à votre utilisateur. Seul le login <b>%s</b> pourra se connecter après cela. 
 UnlockNewSessions=Lever blocage des connections
 YourSession=Votre session
+Sessions=Sessions utilisateurs
 HTMLCharset = Charset des pages HTML générées
 DBStoringCharset = Charset base pour stockage données
 DBSortingCharset = Charset base pour tri données

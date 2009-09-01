@@ -297,12 +297,12 @@ function run_sql($sqlfile,$silent=1)
 
 
 /**
- \brief		Effacement d'une constante dans la base de donnees
- \sa			dolibarr_get_const, dolibarr_sel_const
- \param	    db          Handler d'acces base
- \param	    name				Nom ou rowid de la constante
- \param	    entity			Multi company id
- \return     int         <0 si ko, >0 si ok
+ *	\brief		Effacement d'une constante dans la base de donnees
+ *	\sa			dolibarr_get_const, dolibarr_sel_const
+ *	\param	    db          Handler d'acces base
+ *	\param	    name		Nom ou rowid de la constante
+ *	\param	    entity		Multi company id, -1 for all entities
+ *	\return     int         <0 if KO, >0 if OK
  */
 function dolibarr_del_const($db, $name, $entity=1)
 {
@@ -310,7 +310,7 @@ function dolibarr_del_const($db, $name, $entity=1)
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql.=" WHERE (".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."' OR rowid = '".addslashes($name)."')";
-	$sql.= " AND entity = ".$entity;
+	if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
 	dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
 	$resql=$db->query($sql);
@@ -321,6 +321,7 @@ function dolibarr_del_const($db, $name, $entity=1)
 	}
 	else
 	{
+		$this->error=$db->lasterror();
 		return -1;
 	}
 }
@@ -447,4 +448,76 @@ function security_prepare_head()
 	return $head;
 }
 
+
+/**
+ * 	Return list of session
+ *	@return		array			Array list of sessions
+ */
+function listOfSessions()
+{
+	$arrayofSessions = array();
+	$sessPath = get_cfg_var("session.save_path")."\\";
+	dol_syslog('admin.lib:listOfSessions sessPath='.$sessPath);
+
+	$dh = @opendir($sessPath);
+	while(($file = @readdir($dh)) !== false)
+	{
+		if ($file != "." && $file != "..")
+		{
+			$fullpath = $sessPath.$file;
+			if(! @is_dir($fullpath))
+			{
+				$tmp=split('_', $file);
+				$idsess=$tmp[1];
+				//print 'file='.$file.' id='.$idsess;
+				$sessValues = file_get_contents($fullpath);	// get raw session data
+				$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
+				$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
+				$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
+				$arrayofSessions[$idsess]["raw"] = $sessValues;
+			}
+		}
+	}
+	@closedir($dh);
+
+	return $arrayofSessions;
+}
+
+/**
+ * 	Purge existing sessions
+ * 	@param		mysessionid		To avoid to try to delete my own session
+ * 	@return		int		>0 if OK, <0 if KO
+ */
+function purgeSessions($mysessionid)
+{
+	$arrayofSessions = array();
+	$sessPath = get_cfg_var("session.save_path")."\\";
+
+	dol_syslog('admin.lib:purgeSessions mysessionid='.$mysessionid.' sessPath='.$sessPath);
+
+	$error=0;
+	$dh = @opendir($sessPath);
+	while(($file = @readdir($dh)) !== false)
+	{
+		if ($file != "." && $file != "..")
+		{
+			$fullpath = $sessPath.$file;
+			if(! @is_dir($fullpath))
+			{
+				$tmp=split('_', $file);
+				$idsess=$tmp[1];
+				// We remove session if it's not ourself
+				if ($idsess != $mysessionid)
+				{
+					$res=@unlink($fullpath);
+					if (! $res) $error++;
+				}
+			}
+		}
+	}
+	@closedir($dh);
+
+	if (! $error) return 1;
+	else return -$error;
+}
 ?>

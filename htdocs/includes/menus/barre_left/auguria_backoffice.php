@@ -32,10 +32,9 @@
 
 
 /**
- \class      MenuLeft
- \brief      Classe permettant la gestion du menu du gauche Auguria
+ *		\class      MenuLeft
+ *		\brief      Classe permettant la gestion du menu du gauche Auguria
  */
-
 class MenuLeft {
 
 	var $require_top=array("auguria_backoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
