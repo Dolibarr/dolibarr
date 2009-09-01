@@ -255,7 +255,10 @@ if (! defined('NOREQUIREDB'))
 		}
 	}
 
-	$conf->setValues($db);	// Here we read database (llx_const table) and define $conf->global->XXX var.
+	//dol_syslog("Will work with data into entity instance number ".$conf->entity);
+
+	// Here we read database (llx_const table) and define $conf->global->XXX var.
+	$conf->setValues($db);
 }
 
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
