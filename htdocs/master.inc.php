@@ -255,7 +255,7 @@ if (! defined('NOREQUIREDB'))
 		}
 	}
 
-	//print "Will work with data into entity instance number ".$conf->entity;
+	//print "Will work with data into entity instance number '".$conf->entity."'";
 
 	// Here we read database (llx_const table) and define $conf->global->XXX var.
 	$conf->setValues($db);
