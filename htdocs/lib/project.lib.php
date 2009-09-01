@@ -153,7 +153,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
  * @param unknown_type $tasksrole
  * @return unknown
  */
-function PLinesb(&$inc, $parent, $lines, &$level, $tasksrole)
+function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 {
 	global $user, $bc, $langs;
 	global $form;
@@ -238,7 +238,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, $tasksrole)
  * @param 	$showproject		Show project columns
  * @param	$taskrole			Array of task filtered on a particular user
  */
-function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject=1, &$taskrole='')
+function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole)
 {
 	global $user, $bc, $langs;
 
