@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin
+# Dolibarr language file - ca_ES - admin 
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -19,6 +19,7 @@ ConfirmLockNewSessions = Esteu segur de voler restringir l'accés a Dolibarr al 
 UnlockNewSessions = Eliminar bloqueig de connexions
 YourSession = La seva sessió
 Sessions = Sessions d'usuaris
+NoSessionFound = Sembla que el seu PHP no pot llistar les sessions actives. El directori de salvaguardat de sessions (<b>%s</b>) pot estar protegit (per exemple, pels permisos del sistema operatiu o per la directiva open_basedir del seu PHP)
 HTMLCharset = Charset de les pàgines HTML
 DBStoringCharset = Charset base de dades per emmagatzematge de dades
 DBSortingCharset = Charset base de dades per classificar les dades

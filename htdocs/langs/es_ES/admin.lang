@@ -19,6 +19,7 @@ ConfirmLockNewSessions = ¿ Está usted seguro de querer restringir el acceso a 
 UnlockNewSessions = Eliminar bloqueo de conexiones
 YourSession = Su sesión
 Sessions = Sesiones de usuarios
+NoSessionFound = Parece que su PHP no puede listar las sesiones activas. El directorio de salvaguardado de sesiones (<b>%s</b>) puede estar protegido (por ejemplo, por los permisos del sistema operativo o por la directiva open_basedir de su PHP).
 HTMLCharset = Charset de las páginas HTML
 DBStoringCharset = Charset base de datos para almacenamiento de datos
 DBSortingCharset = Charset base de datos para clasificar los datos
