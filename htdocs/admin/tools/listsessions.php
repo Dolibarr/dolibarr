@@ -235,6 +235,7 @@ if ($savehandler == 'files')
 
 print '</div>';
 
+print '<br>';
 
 $db->close();
 
