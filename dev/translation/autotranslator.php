@@ -55,9 +55,9 @@ $dir=DOL_DOCUMENT_ROOT."/langs";
 
 // Check parameters
 if (! isset($argv[2])) {
-    print "Usage:   ".$script_file." lang_code_src lang_code_dest  [langgile.lang]\n";
-    print "Example: ".$script_file." en_US         pt_PT\n";
-    print "Rem:     code to use can be found on http://www.google.com/language_tools\n";
+    print "Usage:   ".$script_file."  lang_code_src lang_code_dest [langfile.lang]\n";
+    print "Example: ".$script_file."  en_US         pt_PT\n";
+    print "Rem:     lang_code to use can be found on http://www.google.com/language_tools\n";
     exit;
 }
 
