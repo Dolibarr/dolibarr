@@ -71,7 +71,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
         if ($res > 0)
         {
-			$urlsource=isset($_REQUEST["urlsource"])?$_REQUEST["urlsource"]:DOL_URL_ROOT.'/bookmarks/liste.php';
+			$urlsource=! empty($_REQUEST["urlsource"])?urldecode($_REQUEST["urlsource"]):DOL_URL_ROOT.'/bookmarks/liste.php';
             header("Location: ".$urlsource);
             exit;
         }
@@ -133,7 +133,7 @@ if ($action == 'create')
      * Fiche bookmark en mode creation
      */
 
-    print '<form action="fiche.php" method="post">'."\n";
+    print '<form action="fiche.php" method="post" enctype="multipart/form-data">'."\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
@@ -180,11 +180,11 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
 
     if ($_GET["action"] == 'edit')
     {
-    	print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    	print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<input type="hidden" name="action" value="update">';
     	print '<input type="hidden" name="id" value="'.$bookmark->id.'">';
-    	print '<input type="hidden" name="urlsource" value="'.urlencode(DOL_URL_ROOT.'/bookmarks/fiche.php?id='.$bookmark->id).'">';
+    	print '<input type="hidden" name="urlsource" value="'.DOL_URL_ROOT.'/bookmarks/fiche.php?id='.$bookmark->id.'">';
     }
 
     print '<table class="border" width="100%">';
