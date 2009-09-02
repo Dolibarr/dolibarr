@@ -103,6 +103,53 @@ class FormOther
 
 
 	/**
+	 *    \brief      Retourne la liste des modeles d'import
+	 *    \param      selected          Id modele pre-selectionne
+	 *    \param      htmlname          Nom de la zone select
+	 *    \param      type              Type des modeles recherches
+	 *    \param      useempty          Affiche valeur vide dans liste
+	 */
+	function select_import_model($selected='',$htmlname='importmodelid',$type='',$useempty=0)
+	{
+		$sql = "SELECT rowid, label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."import_model";
+		$sql.= " WHERE type = '".$type."'";
+		$sql.= " ORDER BY rowid";
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			print '<select class="flat" name="'.$htmlname.'">';
+			if ($useempty)
+			{
+				print '<option value="-1">&nbsp;</option>';
+			}
+
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				if ($selected == $obj->rowid)
+				{
+					print '<option value="'.$obj->rowid.'" selected="true">';
+				}
+				else
+				{
+					print '<option value="'.$obj->rowid.'">';
+				}
+				print $obj->label;
+				print '</option>';
+				$i++;
+			}
+			print "</select>";
+		}
+		else {
+			dol_print_error($this->db);
+		}
+	}
+
+
+	/**
 	 *    \brief     Retourne la liste des ecotaxes avec tooltip sur le libelle
 	 *    \param     selected    code ecotaxes pre-selectionne
 	 *    \param     htmlname    nom de la liste deroulante

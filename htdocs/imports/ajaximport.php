@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/ajaximport.php
+ *       \file       htdocs/imports/ajaximport.php
  *       \brief      File to return Ajax response on Fields move in import page
  *       \version    $Id$
  */
@@ -28,7 +28,6 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -38,24 +37,55 @@ $entityCookieName = "DOLENTITYID_dolibarr";
 if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
 
 require('../master.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
 
 // Enregistrement de la position des champs
-
-//$_SESSION["dol_array_match_file_to_database"]
-dol_syslog("AjaxImport boxorder=".$_GET['boxorder']." userid=".$_GET['userid'], LOG_DEBUG);
-
-$part=split(':',$collist);
+dol_syslog("AjaxImport boxorder=".$_GET['boxorder']." userid=".$_GET['userid']." datatoimport=".$_GET["datatoimport"], LOG_DEBUG);
+$part=split(':',$_GET['boxorder']);
 $colonne=$part[0];
 $list=$part[1];
 dol_syslog('AjaxImport column='.$colonne.' list='.$list);
 
+// Init object $objimport that describe the predefined import
+$fuser->id=$_GET['userid'];
+$fuser->fetch();
+$objimport=new Import($db);
+$datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
+$objimport->load_arrays($fuser,$datatoimport);
 
-// We define array_match_file_to_database
+// Init targets fields array
+$fieldstarget=$objimport->array_import_fields[0];
+
+// We redefine array_match_file_to_database
 $array_match_file_to_database=array();
+$listelem=split(',',$list);
+$pos=0;
+foreach($listelem as $fieldnb)
+{
+	//dol_syslog("Fieldnb in file=".$fieldnb." => keynb in targets=".$pos);
 
+	// Get name of database field at position $pos into $namefield
+	$posbis=0;$namefield='';
+	foreach($fieldstarget as $key => $val)
+	{
+		if ($posbis < $pos)
+		{
+			$posbis++;
+			continue;
+		}
+		// We found the key of targets that is at position pos
+		$namefield=$key;
+		break;
+	}
 
+	if (! empty($fieldnb)) $array_match_file_to_database[$fieldnb]=$namefield;
+
+	$pos++;
+}
 
 // We save new matching in session
 $_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 
+dol_syslog('AjaxImport dol_array_match_file_to_database='.var_export($array_match_file_to_database,true));
 ?>

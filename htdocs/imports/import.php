@@ -327,7 +327,7 @@ if ($step == 2 && $datatoimport)
 	$fullpathfiletoimport='';
 	$var=true;
 
-	// Add help informations
+	// Add format informations and link to download example
 	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
@@ -337,7 +337,8 @@ if ($step == 2 && $datatoimport)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
-		print '<td colspan="5">'.$objmodelimport->getDriverLabel($key).'</td>';
+		print '<td>'.$objmodelimport->getDriverLabel($key).'</td>';
+		print '<td colspan="4" align="right"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		//print '<td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td>';
 		print '</tr>';
 	}
@@ -463,8 +464,12 @@ if ($step == 3 && $datatoimport)
 		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
 	}
 
+	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
+
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+
+	$param='step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($_GET["filetoimport"]);
 
 	$h = 0;
 
@@ -476,7 +481,7 @@ if ($step == 3 && $datatoimport)
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($_GET["filetoimport"]);
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?'.$param;
 	$head[$h][1] = $langs->trans("Step")." 3";
 	$hselected=$h;
 	$h++;
@@ -507,7 +512,18 @@ if ($step == 3 && $datatoimport)
 	print '<br>';
 
 
-	print $langs->trans("SelectImportFields",img_picto('','uparrow',''));
+    // Combo list of import models
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="select_model">';
+    print '<input type="hidden" name="step" value="3">';
+    print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
+    print '<table><tr><td colspan="2">';
+    print $langs->trans("SelectImportFields",img_picto('','uparrow','')).' ';
+    $htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
+    print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+    print '</td></tr></table>';
+    print '</form>';
 
 	// Title of array with fields
 	print '<table class="nobordernopadding" width="100%">';
@@ -616,36 +632,24 @@ if ($step == 3 && $datatoimport)
 
 	print '</td></tr>';
 
-
+	// List of not imported fields
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotImportedFields").'</td></tr>';
 
-	print '<tr valign="top"><td colspan="2">';
+	print '<tr valign="top"><td width="50%">';
 
 	print "\n<!-- Box forget container -->\n";
 	print '<div id="right">'."\n";
 
 	// Print all input fields discarded
-	if ($pos <= $maxpos)
-	{
-		while ($pos <= $maxpos)
-		{
-			print '<table summary="" width="100%" class="nobordernopadding">'."\n";
-			print '<tr class="liste_total" height="20">';
-			print '<td class="nocellnopadding" colspan="2">&nbsp;</td>';
-			print '</tr>';
-			print "</table>\n";
-
-			$pos++;
-		}
-	}
-	else
-	{
-		show_elem('','',$var,'none');
-	}
+	show_elem('','',$var,'');
 
 	print "</div>\n";
 	print "<!-- End box container -->\n";
 
+	print '</td>';
+	print '<td width="50%">';
+	// Print empty cells
+	show_elem('','',$var,'none');
 	print '</td></tr>';
 
 	print '</table>';
@@ -656,19 +660,21 @@ if ($step == 3 && $datatoimport)
 	if ($conf->use_javascript_ajax)
 	{
 		print "\n";
-		print '<script type="text/javascript" language="javascript">';
-		print 'function updateOrder(){';
-		print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));';
-	    //print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));';
-	    print 'var boxorder = \'A:\' + left_list;';
-	    //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;';
-	    //alert( \'boxorder=\' + boxorder );
-	    print 'var userid = \''.$user->id.'\';';
-	    print 'var url = "ajaximport.php";';
-	    print 'o_options = new Object();';
-	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};';
-	    print 'var myAjax = new Ajax.Request(url, o_options);';
-	    print '}';
+		print '<script type="text/javascript" language="javascript">'."\n";
+		print 'function updateOrder(){'."\n";
+		print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));'."\n";
+	    //print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));'."\n";
+	    print 'var boxorder = \'A:\' + left_list;'."\n";
+	    //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
+	    //alert( \'boxorder=\' + boxorder )."\n";
+	    print 'var userid = \''.$user->id.'\';'."\n";
+	    print 'var url = "ajaximport.php";'."\n";
+	    print 'var datatoimport = "'.$datatoimport.'";'."\n";
+	    print 'o_options = new Object();'."\n";
+	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'step=3&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
+	    print 'var myAjax = new Ajax.Request(url, o_options);'."\n";
+	    //print 'document.
+	    print '}'."\n";
 	  	print "\n";
 
 	  	print '// <![CDATA['."\n";
@@ -922,10 +928,10 @@ function show_elem($fieldssource,$pos,$var,$key)
 	elseif ($key == 'none')
 	{
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
-		print img_picto($langs->trans("MoveBox",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
+		print '&nbsp;';
 		print '</td>';
 		print '<td style="font-weight: normal">';
-		print $langs->trans("NoFields");
+		print '&nbsp;';
 		print '</td>';
 	}
 	else

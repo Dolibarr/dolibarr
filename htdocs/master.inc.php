@@ -27,6 +27,7 @@
  *	\file       htdocs/master.inc.php
  * 	\ingroup	core
  *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
+ * 				This script reads the conf.php file, init $lang, $db and empty $user
  *  \version    $Id$
  */
 

@@ -58,7 +58,8 @@ TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
 FileToImport=Source file to import
 FileMustHaveOneOfFollowingFormat=File to import must have one of following format
-ChooseFileToImport=Upload or choose file to import then click on picto %s ...
+DownloadEmptyExample=Download example of empty source file
+ChooseFileToImport=Upload file then click on picto %s to select file as source import file...
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=No fields

@@ -361,15 +361,14 @@ if ($step == 2 && $datatoexport)
     print '</table>';
     print '<br>';
 
-    // Liste deroulante des modeles d'export
-    print '<form action="export.php" method="post">';
+    // Combo list of export models
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
-    print '<table><tr><td>';
-    print $langs->trans("SelectExportFields");
-	print '</td><td>';
+    print '<table><tr><td colspan="2">';
+    print $langs->trans("SelectExportFields").' ';
     $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
