@@ -98,11 +98,13 @@ $listofsessions=listOfSessions();
 
 print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
 
-$savehandler=get_cfg_var("session.save_handler");
-$savepath=get_cfg_var("session.save_path");
+$savehandler=ini_get("session.save_handler");
+$savepath=ini_get("session.save_path");
+$openbasedir=ini_get("open_basedir");
 
 print '<b>'.$langs->trans("SessionSaveHandler").'</b>: '.$savehandler.'<br>';
 print '<b>'.$langs->trans("SessionSavePath").'</b>: '.$savepath.'<br>';
+if ($openbasedir) print '<b>'.$langs->trans("OpenBaseDir").'</b>: '.$openbasedir.'<br>';
 print '<br>';
 
 if ($_GET["action"] == 'purge')
@@ -197,8 +199,7 @@ if ($savehandler == 'files')
 
 	if (sizeof($listofsessions) == 0)
 	{
-		if ($usefilter) print '<tr><td colspan="6">'.$langs->trans("NoSessionsFound").'</td></tr>';
-		else print '<tr><td colspan="6">'.$langs->trans("NoSessionFound").'</td></tr>';
+		print '<tr><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
 	print "</table>";
 

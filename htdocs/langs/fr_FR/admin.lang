@@ -19,6 +19,7 @@ ConfirmLockNewSessions=Etes-vous sur de vouloir restreindre l'accès Dolibarr à
 UnlockNewSessions=Lever blocage des connexions
 YourSession=Votre session
 Sessions=Sessions utilisateurs
+NoSessionFound=Votre PHP se semble pas pouvoir lister les sessions actives. Le répertoire de sauvegarde des sessions (<b>%s</b>) est peut etre protégé (Par exemple, par les permissions de l'OS ou par la directive open_basedir de votre PHP).
 HTMLCharset = Charset des pages HTML générées
 DBStoringCharset = Charset base pour stockage données
 DBSortingCharset = Charset base pour tri données
