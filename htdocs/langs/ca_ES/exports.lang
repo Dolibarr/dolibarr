@@ -58,7 +58,8 @@ TypeOfLineServiceOrProduct = Tipus de línia (0 = producte, 1 = servei)
 FileWithDataToImport = Arxiu que conté les dades a importar
 FileToImport = Arxiu origen a importar
 FileMustHaveOneOfFollowingFormat = El fitxer d'importació ha de tenir un dels següents formats
-ChooseFileToImport = Trieu el fitxer d'importació i feu clic al picto %s ...
+ChooseFileToImport = Trieu el fitxer d'importació i feu clic al picto %s per seleccionar com a fitxer origen d'importació...
+DownloadEmptyExample = Descarregar fitxer d'exemple buit
 FieldsInSourceFile = Camps en el fitxer orige
 FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr
 NoFields = Cap camp

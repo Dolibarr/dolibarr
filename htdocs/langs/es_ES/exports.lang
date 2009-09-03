@@ -58,7 +58,8 @@ TypeOfLineServiceOrProduct = Tipo de línea (0=producto, 1=servicio)
 FileWithDataToImport = Archivo que contiene los datos a importar
 FileToImport = Archivo origen a importar
 FileMustHaveOneOfFollowingFormat = El archivo de importación debe tener uno de los siguientes formatos
-ChooseFileToImport = Elija el archivo de importación y haga clic en el picto %s ...
+ChooseFileToImport = Elija el archivo de importación y haga clic en el picto %s para seleccionarlo como archivo origen de importación...
+DownloadEmptyExample = Descargar archivo de ejemplo vacío
 FieldsInSourceFile = Campos en el archivo origen
 FieldsInTargetDatabase = Campos destino en la base de datos Dolibarr
 NoFields = Ningún campo
