@@ -665,7 +665,7 @@ else
 		print "\n";
 		print '<script language="JavaScript" type="text/javascript">';
 		print "function CheckVAT(a,b) {\n";
-		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".$langs->trans("VATIntraCheckableOnEUSite")."',500,260);\n";
+		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
 		print "}\n";
 		print '</script>';
 		print "\n";
@@ -684,12 +684,12 @@ else
 		$s.=' &nbsp; ';
 		if ($conf->use_javascript_ajax)
 		{
-			$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
+			$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
 		{
-			print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+			print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
 		}
 	}
 	else

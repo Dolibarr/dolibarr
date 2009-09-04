@@ -420,12 +420,20 @@ foreach ($orders as $key => $value)
 
         // Name
         print '<td valign="top">'.$objMod->getName();
-        print "</td>\n  <td valign=\"top\">";
-        print nl2br($objMod->getDesc());
-        print "</td>\n  <td align=\"center\" valign=\"top\">";
-        print $objMod->getVersion();
-        print "</td>\n  <td align=\"center\" valign=\"top\">";
+        print "</td>\n";
 
+        // Desc
+        print "<td valign=\"top\">";
+        print nl2br($objMod->getDesc());
+        print "</td>\n";
+
+        // Version
+        print "<td align=\"center\" valign=\"top\" nowrap=\"nowrap\">";
+        print $objMod->getVersion();
+        print "</td>\n";
+
+        // Tick
+        print "<td align=\"center\" valign=\"top\">";
         if (! empty($conf->global->$const_name))
         {
             print img_tick();

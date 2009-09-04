@@ -405,7 +405,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 					$obj = $db->fetch_object($result);
 					print "<tr ".$bc[$var].">";
 
-					print '<td width="100" align="left">'.dol_print_date($obj->dp,'dayhour')."</td>\n";
+					print '<td width="100" align="left" nowrap="nowrap">'.dol_print_date($obj->dp,'dayhour')."</td>\n";
 
 					// Picto warning
 					print '<td width="16">';
@@ -415,7 +415,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 
 					if ($obj->propalrowid)
 					{
-						print '<td width="140" ><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+						print '<td width="140"><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
 						$transcode=$langs->trans("Action".$obj->acode);
 						$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
 						print $libelle;
@@ -599,7 +599,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			print "<tr ".$bc[$var].">";
 
 			// Champ date
-			print '<td width="100" align="left">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
+			print '<td width="120" nowrap="nowrap">'.dol_print_date($histo[$key]['date'],'dayhour')."</td>\n";
 
 			// Picto
 			print '<td width="16">&nbsp;</td>';
