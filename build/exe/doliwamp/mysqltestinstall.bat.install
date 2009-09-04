@@ -3,6 +3,8 @@ REM ------------------------------------------------------------
 REM Launch a test to connect to mysql
 REM $Id$
 REM ------------------------------------------------------------
+REM To change password, run following SQL command: 
+REM GRANT ALL ON *.* TO login@localhost IDENTIFIED BY "newpassword"
 
 echo -----------------------------------------------------------
 echo This programm wil test a login on Mysql installed
@@ -12,6 +14,7 @@ echo Port: WAMPMYSQLPORT
 echo -----------------------------------------------------------
 echo If login is successull, type "quit" and enter twice to exit.
 echo ------------------------------------------------------------
+
 
 SET SAVES=
 SET /P SAVES=Enter password to test: 
