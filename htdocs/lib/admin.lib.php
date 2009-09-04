@@ -456,7 +456,7 @@ function security_prepare_head()
 function listOfSessions()
 {
 	$arrayofSessions = array();
-	$sessPath = get_cfg_var("session.save_path").'/';
+	$sessPath = ini_get("session.save_path").'/';
 	dol_syslog('admin.lib:listOfSessions sessPath='.$sessPath);
 
 	$dh = @opendir($sessPath);
@@ -491,8 +491,7 @@ function listOfSessions()
 function purgeSessions($mysessionid)
 {
 	$arrayofSessions = array();
-	$sessPath = get_cfg_var("session.save_path")."\\";
-
+	$sessPath = ini_get("session.save_path")."/";
 	dol_syslog('admin.lib:purgeSessions mysessionid='.$mysessionid.' sessPath='.$sessPath);
 
 	$error=0;
