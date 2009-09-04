@@ -59,7 +59,12 @@ if (! isset($force_install_databasepass))      $force_install_databasepass='';
 if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
 if (! isset($force_install_lockinstall))       $force_install_lockinstall='';
-if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+$usedoliwamp=false;
+if (file_exists("./install.forced.php"))
+{
+	$usedoliwamp=true;
+	include_once("./install.forced.php");
+}
 
 dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
 
@@ -186,6 +191,14 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 				$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."='MAIN_VERSION_LAST_INSTALL'");
 				$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",".$db->encrypt($targetversion,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'chaine',0,'Dolibarr version when install',0)");
 				$conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
+
+				if ($usedoliwamp)
+				{
+					dolibarr_install_syslog('install/etape5.php set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
+					$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."='MAIN_REMOVE_INSTALL_WARNING'");
+					$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",".$db->encrypt(1,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'chaine',1,'Disable install warnings',0)");
+					$conf->global->MAIN_REMOVE_INSTALL_WARNING=1;
+				}
 
 				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_DEBUG);
 				$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."='MAIN_NOT_INSTALLED'");
