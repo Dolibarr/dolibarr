@@ -462,7 +462,7 @@ function listOfSessions()
 	$dh = @opendir($sessPath);
 	while(($file = @readdir($dh)) !== false)
 	{
-		if ($file != "." && $file != "..")
+		if (eregi('^sess_',$file) && $file != "." && $file != "..")
 		{
 			$fullpath = $sessPath.$file;
 			if(! @is_dir($fullpath))
