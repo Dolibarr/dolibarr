@@ -1405,7 +1405,7 @@ if ($id > 0 || ! empty($ref))
 					$formMarkup.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">'."\n";
 					//$formMarkup.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">'."\n";
 					$formMarkup.= '</td></tr></table></form>'."\n";
-					$formMarkup.= ajax_updaterWithID("rate".$i,"markup","sellingprice_ht".$i,"/product/ajaxproducts.php","&count=".$i,"working")."\n";
+					$formMarkup.= ajax_updaterWithID("rate".$i,"markup","sellingprice_ht".$i,DOL_URL_ROOT."/product/ajaxproducts.php","&count=".$i,"working")."\n";
 
 
 					print '<td align="right">'."\n";

@@ -487,7 +487,7 @@ class FormCompany
 				{
 					print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
 				}
-				print ajax_autocompleter(($socid?$socid:-1),$htmlname,'/societe/ajaxcompanies.php','');
+				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','');
 				print '</td>';
 				print '<td class="nobordernopadding" align="left" width="16">';
 				print ajax_indicator($htmlname,'working');
