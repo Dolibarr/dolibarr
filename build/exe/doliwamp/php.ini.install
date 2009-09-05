@@ -482,7 +482,7 @@ register_argc_argv = Off
 auto_globals_jit = On
 
 ; Maximum size of POST data that PHP will accept.
-post_max_size = 8M
+post_max_size = 10M
 
 ; Magic quotes
 ;
