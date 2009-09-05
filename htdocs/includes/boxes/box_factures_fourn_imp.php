@@ -110,17 +110,21 @@ class box_factures_fourn_imp extends ModeleBoxes {
 					'text2'=> $late,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    'logo' => 'company',
+                    'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
+
+					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
+					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
                     'text' => dol_print_date($datelimite,'day'));
 
 					$fac = new FactureFournisseur($db);
 					$fac->fetch($objp->facid);
 					$alreadypaid=$fac->getSommePaiement();
-					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
+					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type));
 
 					$i++;

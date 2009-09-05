@@ -35,7 +35,7 @@ class box_factures_imp extends ModeleBoxes {
     var $boximg="object_bill";
     var $boxlabel;
     var $depends = array("facture");
-    
+
     var $db;
     var $param;
 
@@ -61,12 +61,12 @@ class box_factures_imp extends ModeleBoxes {
     function loadBox($max=5)
     {
     	global $conf, $user, $langs, $db;
-    	
+
     	$this->max=$max;
-    	
+
     	include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
     	$facturestatic=new Facture($db);
-    	
+
     	$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));
 
       if ($user->rights->facture->lire)
@@ -92,7 +92,7 @@ class box_factures_imp extends ModeleBoxes {
         {
         	$num = $db->num_rows($result);
         	$now=gmmktime();
-        	
+
         	$i = 0;
         	$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
@@ -100,7 +100,7 @@ class box_factures_imp extends ModeleBoxes {
           {
           	$objp = $db->fetch_object($result);
           	$datelimite=$db->jdate($objp->datelimite);
-					
+
                     $late='';
                     if ($datelimite < ($now - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
@@ -112,22 +112,26 @@ class box_factures_imp extends ModeleBoxes {
                     'text' => $objp->facnumber,
                     'text2'=> $late,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
-                    
-                    $this->info_box_contents[$i][2] = array('td' => 'align="left"',
+
+					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    'logo' => 'company',
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+
+					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'maxlength'=>44,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][3] = array('td' => 'align="right"',
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right"',
                     'text' => dol_print_date($datelimite,'day'),
                     );
 
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));                    
+                    $this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
+                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
 
                     $i++;
                 }
-                
+
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
             }
             else

@@ -59,9 +59,9 @@ class box_commandes extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db, $conf;
-            
+
 		$this->max=$max;
-        
+
 		include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
         $commandestatic=new Commande($db);
 
@@ -88,36 +88,40 @@ class box_commandes extends ModeleBoxes {
             if ($result)
             {
                 $num = $db->num_rows($result);
-				
+
                 $i = 0;
 
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->tms);
-                    
+
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
-                    
+
                     $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->ref,
                     'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
 
-                    $this->info_box_contents[$i][2] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    'logo' => 'company',
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+
+					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][3] = array('td' => 'align="right"',
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right"',
                     'text' => dol_print_date($datem,'day'),
                     );
-                    
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
+
+                    $this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
                     'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3));
 
                     $i++;
                 }
-                
+
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
             }
             else {

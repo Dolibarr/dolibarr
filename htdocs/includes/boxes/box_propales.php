@@ -34,13 +34,13 @@ class box_propales extends ModeleBoxes {
     var $boximg="object_propal";
     var $boxlabel;
     var $depends = array("propal");	// conf->propal->enabled
-    
+
     var $db;
     var $param;
 
     var $info_box_head = array();
     var $info_box_contents = array();
-    
+
 
     /**
      *      \brief      Constructeur de la classe
@@ -49,7 +49,7 @@ class box_propales extends ModeleBoxes {
     {
     	global $langs;
       $langs->load("boxes");
-      
+
       $this->boxlabel=$langs->trans("BoxLastProposals");
     }
 
@@ -60,12 +60,12 @@ class box_propales extends ModeleBoxes {
     function loadBox($max=5)
     {
     	global $user, $langs, $db, $conf;
-    	
+
     	$this->max=$max;
-    	
+
     	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
       $propalstatic=new Propal($db);
-        
+
       $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));
 
       if ($user->rights->propale->lire)
@@ -81,51 +81,55 @@ class box_propales extends ModeleBoxes {
         if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
         $sql.= " ORDER BY p.datep DESC, p.ref DESC ";
         $sql.= $db->plimit($max, 0);
-        
+
         $result = $db->query($sql);
-        
+
         if ($result)
         {
         	$num = $db->num_rows($result);
         	$now=gmmktime();
-        	
+
         	$i = 0;
-        	
+
         	while ($i < $num)
         	{
         		$objp = $db->fetch_object($result);
         		$datec=$db->jdate($objp->datec);
         		$dateterm=$db->jdate($objp->fin_validite);
         		$dateclose=$db->jdate($objp->date_cloture);
-        		
+
         		$late = '';
         		if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
-        		
+
         		$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
         		'logo' => $this->boximg,
         		'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
-        		
+
         		$this->info_box_contents[$i][1] = array('td' => 'align="left"',
         		'text' => $objp->ref,
         		'text2'=> $late,
         		'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
-        		
-        		$this->info_box_contents[$i][2] = array('td' => 'align="left"',
+
+				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                'logo' => 'company',
+                'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+
+				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
         		'text' => dol_trunc($objp->nom,40),
         		'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
-        		
-        		$this->info_box_contents[$i][3] = array('td' => 'align="right"',
+
+        		$this->info_box_contents[$i][4] = array('td' => 'align="right"',
         		'text' => dol_print_date($datec,'day'));
-        		
-        		$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
+
+        		$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
         		'text' => $propalstatic->LibStatut($objp->fk_statut,3));
-        		
+
         		$i++;
         	}
-        	
+
         	if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProposals"));
         }
-        else 
+        else
         {
         	dol_print_error($db);
         }
@@ -136,7 +140,7 @@ class box_propales extends ModeleBoxes {
       	'text' => $langs->trans("ReadPermissionNotAllowed"));
       }
     }
-    
+
     function showBox()
     {
         parent::showBox($this->info_box_head, $this->info_box_contents);

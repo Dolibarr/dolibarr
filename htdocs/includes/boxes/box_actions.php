@@ -19,12 +19,11 @@
  */
 
 /**
- \file       htdocs/includes/boxes/box_actions.php
- \ingroup    actions
- \brief      Module de generation de l'affichage de la box actions
- \version	$Id$
+ *	\file       htdocs/includes/boxes/box_actions.php
+ *	\ingroup    actions
+ *	\brief      Module de generation de l'affichage de la box actions
+ *	\version	$Id$
  */
-
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
@@ -114,17 +113,21 @@ class box_actions extends ModeleBoxes {
 					'text2'=> $late,
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
-					'text' => dol_trunc($objp->nom,20),
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+                    'logo' => 'company',
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
+					'text' => dol_trunc($objp->nom,12),
+					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+
+					$this->info_box_contents[$i][4] = array('td' => 'align="left" nowrap="nowrap"',
 					'text' => dol_print_date($datelimite, "dayhour"));
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
+					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
 					'text' => $objp->percentage. "%");
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
+					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
 		          	'text' => $actionstatic->LibStatut($objp->percentage,3));
 
 					$i++;
