@@ -129,51 +129,10 @@ WSADATA Data;
 #endif
 
 // Functions
-void chartospace(char *str,char c);
-int mail_connect();
 int Ack(SOCKET sc);
-int Ack_Stat(SOCKET sc,int *iNbUnread,unsigned long int *lSizeUnread);
-int Ack_Mail(SOCKET sc,int mailcpt,const unsigned long int liMailSize);
 int DoQuit(int iRet);
 
 
-
-
-void chartospace(char *str,char c)
-//---------------------------------------------------------------------------
-// Replace c char by space char in str string
-//---------------------------------------------------------------------------
-{
-    register int x;
-    for (x=0;str[x];x++) if(str[x] == c) str[x] = ' ';
-}
-
-char x2c(const char *what) 
-//---------------------------------------------------------------------------
-// Convert a string "XX" in a the char with XX ASCII value
-//---------------------------------------------------------------------------
-{
-    register char digit;
-    digit = (what[0] >= 'A' ? ((what[0] & 0xDF) - 'A')+10 : (what[0] - '0'));
-    digit = digit << 4;
-    digit += (what[1] >= 'A' ? ((what[1] & 0xDF) - 'A')+10 : (what[1] - '0'));
-    return(digit);
-}
-
-
-int printline(const char *s)
-//---------------------------------------------------------------------------
-// Print string s on stdout (Don't touch <> tags)
-//---------------------------------------------------------------------------
-{
-	int taghtml=0;
-	for (size_t i=0;i<strlen(s);i++) {
-		if (s[i]=='<') ++taghtml;
-		if (s[i]=='>') --taghtml;
-		else printf("%c",s[i]);
-	}
-	return(0);
-}
 
 
 int DoQuit(int iRet)
@@ -193,7 +152,7 @@ int testConnect()
 {
 	SOCKET sc;
 	char s[2048],t[256];
-	int i,firstmail,lastmail,mailcpt;
+	int i;
 	
 
 startgetmess:
@@ -234,14 +193,17 @@ startgetmess:
 	if (connect(sc,(const struct sockaddr *) &sin,sizeof(sin))) 
 #endif
 	{
+		printf("Failed to connect !\n");
 		return(DoQuit(FAILED_TO_CONNECT));
 	}
 
 	//***** Server welcome message
-//	if ((iRet=Ack(sc))) {
-//		return(DoQuit(iRet));
-//	}
-
+	printf("Connected !\n");
+/*
+	if ((iRet=Ack(sc))) {
+		return(DoQuit(iRet));
+	}
+*/
 
 	//***** Disconect
 	return(DoQuit(0));
@@ -287,8 +249,8 @@ int main(int argc, char **argv)
 //---------------------------------------------------------------------------
 {
 
-// Exploite parametres
-//--------------------
+// Read parameters
+//----------------
 int noarg,curseurarg,help=0,invalide=0;
 char option;
 
@@ -310,13 +272,14 @@ for (noarg=1;noarg<argc;noarg++) {
 
 help=!(Port > 0);
 
-// Affiche en-tete
-//----------------
+// Show usage
+//-----------
 Usage:
 if (help) {
 	printf("----- %s V%s (c)Laurent Destailleur -----\n",PROG,VERSION);
 	printf("%s is a software that allows you to know if a TCP/IP port is used\n",PROG);
-	printf("%s sources can be compiled for WIN32 (VC++ or GCC) or for Unix/Linux (GCC)\n",PROG);
+	printf("%s sources can be compiled for WIN32 (VC++, GCC CYGWIN, MINGW) or for\n");
+	printf("Unix/Linux (GCC)\n",PROG);
 	printf("\n");
 }
 
@@ -335,8 +298,8 @@ if (help|invalide) {
 	
 
 
-// If HTMLxxx is a file
-//---------------------
+// Print input values
+//-------------------
 printf("Port=%d\n",Port);
 printf("Host=%s\n",Host);
 
