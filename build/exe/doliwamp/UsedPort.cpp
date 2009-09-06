@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------
 // Tested with :
 // GCC CYGWIN  3.4.4 (May need cygwin1.dll, depending on functions used)
-// MINGW       3.4.5
+// GCC MINGW   3.4.5
 // Not tested with:
 // VC++        4.0.0	
 // GCC Linux   3.4.4

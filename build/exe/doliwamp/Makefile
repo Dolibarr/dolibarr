@@ -50,8 +50,6 @@ COPTIONS=-O3
 endif
 ifeq "$(OS)" "Windows_NT"
 # wsock32 required only if _WIN32 defined in source code and use WSA* functions
-# wsock32 of CYGWIN need cygwin1.dll to work
-#LOPTIONS=-lwsock32 -Bstatic
 LOPTIONS=-Bstatic
 endif
 ifeq "$(MACHTYPE)" "sparc"
@@ -105,7 +103,7 @@ endif
 #-----------------
 ifeq "$(OS)" "Windows_NT"
 RM              = rm -f
-CFLAGS  = $(COPTIONS) $(INCLUDES) -Ic:/langages/gcc/i386-mingw32/include/windows32
+CFLAGS  = $(COPTIONS) $(INCLUDES)
 else
 RM              = rm -f
 CFLAGS  = $(COPTIONS) $(INCLUDES)
