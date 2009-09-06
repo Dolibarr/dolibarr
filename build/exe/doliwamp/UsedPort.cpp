@@ -1,39 +1,28 @@
 //---------------------------------------------------------------------------
-// GetMess
-//
-// Get mails of POP3 account from command line or from a HTTP form (use CGI GET or POST method)
-// It applies to the RFC 821 and RFC 822 specs 
-// It supports MIME 1.0 encoding of European national characters.
-//
+// UsedPort
+//---------------------------------------------------------------------------
 // Tested with :
-// VC++ 4.0		(WIN32)
-// GCC 2.8.1	(WIN32)
-// GCC 2.7.3	(Aix 4.x)
-// GCC 2.9		(Linux 2.0.x)
+// VC++  4.0	
+// GCC   3.4.4 CYGWIN	(CYGWIN need cygwin1.dll)
+// MINGW 3.4.5
+// Not tested with:
+// GCC   3.4.4 Linux
 //---------------------------------------------------------------------------
-// 08/01/99	1.1		Laurent Destailleur	Creation
-// 15/10/99	1.2		Allow to delete several messages in action command
-// 29/12/99	1.8		Use now good fonctions base64_decode and quoted_decode
-//---------------------------------------------------------------------------
-// Required field if used as a CGI-BIN application:
-// HOST    = POP3 Server name
-// USER    = EMail POP3 account
-// PASSWD  = EMail POP3 password
-//
-// Optionnal fields if used as a CGI-BIN application:
-// ACTION  = Action to do (l,g,d)
-// LANG	   = Language of messages
+// 08/08/09	1.1		Laurent Destailleur	   Creation
 //---------------------------------------------------------------------------
 #define PROG	"UsedPort"
 #define VERSION	"1.0"
 
+// If GNU GCC CYGWIN: _WIN32 to defined manually,  __GNUC__ is defined,     _MSC_VER not defined
+// If GNU GCC MINGW:  _WIN32 automaticaly defined, __GNUC__ is defined,     _MSC_VER not defined
+// If VC:             _WIN32 automaticaly defined, __GNUC__ is not defined, _MSC_VER defined
+
+// If on Windows and Cygwin, we can use _WIN32 WSA pre function, if we want or not with Cygwin.
+//#define _WIN32
+
 #include <string.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <stdlib.h>
-#include <time.h>
-#include <malloc.h>
-#include <memory.h>
 
 #ifndef _WIN32
 // Pour Unix
@@ -47,6 +36,7 @@
 #define LPHOSTENT struct hostent *	// Non defini sous Unix
 #define MAXHOSTNAMELEN 256
 #endif
+
 #ifdef _WIN32
 #ifdef _MSC_VER
 // Pour VC++
@@ -55,14 +45,14 @@
 #define MAXHOSTNAMELEN 256
 #endif
 #ifdef __GNUC__
+#define MAXHOSTNAMELEN 256
 // Pour GCC WIN32 CYGWIN
 #include <winsock.h>
-#include <mingw32/dir.h>
 // Pour GCC WIN32 EGCS
 //#include <base.h>
 //#include <defines.h>
 //#include <structures.h>
-//#include <sockets.h>	// Fichier a modifier sous GCC WIN32 pour contourner bug !!!
+//#include <sockets.h>
 //#include <functions.h>
 #endif
 #endif
@@ -71,7 +61,6 @@
 
 #define MAX_ENTRIES 10					// SUBJECT, HOST, USER, PASSWD
 #define MAX_MAILS 	100					// Nb max of mails managed
-#define FILEINI "awmess.conf"
 #define SIZE_RECEIVE_BUFFER 4096		// Ko
 #define SIZE_BLOCK_FILELIST 256			// Size of block used to extend by alloc/realloc files list string
 
@@ -146,7 +135,6 @@ int Ack(SOCKET sc);
 int Ack_Stat(SOCKET sc,int *iNbUnread,unsigned long int *lSizeUnread);
 int Ack_Mail(SOCKET sc,int mailcpt,const unsigned long int liMailSize);
 int DoQuit(int iRet);
-char *cgiLookup(char *tag,char *default_tag);
 
 
 
@@ -204,11 +192,9 @@ int testConnect()
 //---------------------------------------------------------------------------
 {
 	SOCKET sc;
-	char bold[4],unbold[5];
 	char s[2048],t[256];
 	int i,firstmail,lastmail,mailcpt;
 	
-	strcpy(bold,"");strcpy(unbold,"");
 
 startgetmess:
 

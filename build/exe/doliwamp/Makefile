@@ -2,15 +2,15 @@
 # Makefile
 #-------------------------------------------------------------------#
 #       1.0     Laurent Destailleur     Creation 
-#       1.1     Works with VC++ and gcc, Windows and Unix
+#       1.1     Works with VC++ and GCC, Windows and Unix
 #-------------------------------------------------------------------#
 
 
 # Project options
 #-----------------
 
-# "GCC" to use GNU C++ compiler, "VC" to use Microsoft Visual C+
-COMP=GCC
+# "GCC" to use GCC GNU C++ (Cygwin or Linux), "MINGW" to use MINGW, "VC" to use Microsoft Visual C+
+COMP=MINGW
 # DEBUG=1 for debug
 DEBUG=0
 
@@ -27,6 +27,7 @@ PROGRAM = $(RUNDIR)UsedPort
 # Object files to build         (Ex: $(LIBDIR)yyy.o $(LIBDIR)zzz.o ...)
 OBJLIST = $(LIBDIR)UsedPort.o$(BJ)
 
+
 # Archive file for o files      (Ex: $(LIBDIR)libxxx.a)
 ifeq "$(OS)" "Windows_NT"
 ARCHIVE = "mylib.a"
@@ -34,9 +35,8 @@ else
 ARCHIVE = "mylib.a"
 endif
 
-# Compiler options
-#-----------------
-# Compilation par gcc
+# Compilation/Link by GCC
+#------------------------
 ifeq "$(COMP)" "GCC"
 CC              = gcc
 CPP             = g++
@@ -49,17 +49,40 @@ else
 COPTIONS=-O3
 endif
 ifeq "$(OS)" "Windows_NT"
-LOPTIONS=-lwsock32
+# wsock32 required only if _WIN32 defined in source code and use WSA* functions
+# wsock32 of CYGWIN need cygwin1.dll to work
+#LOPTIONS=-lwsock32 -Bstatic
+LOPTIONS=-Bstatic
 endif
 ifeq "$(MACHTYPE)" "sparc"
-LOPTIONS=-lsocket
+LOPTIONS=-lsocket -Bstatic
 endif
 ifeq "$(PROCESSOR_ARCHITECTURE)" "x86"
 LOPTIONS2=-m486
 endif
 endif
 
-# Compilation par vc
+# Compilation/Link by MINGW
+#--------------------------
+ifeq "$(COMP)" "MINGW"
+CC              = mingw32-gcc.exe
+CPP             = mingw32-g++.exe
+RSC             = mingw32-g++.exe
+AR              = ar r
+OUT=-o
+ifeq "$(DEBUG)" "1"
+COPTIONS=-Wall -g -DDEBUG
+else
+COPTIONS=-O3
+endif
+LOPTIONS=-lwsock32 -Bstatic
+ifeq "$(PROCESSOR_ARCHITECTURE)" "x86"
+LOPTIONS2=-m486
+endif
+endif
+
+# Compilation/Link by VC
+#-----------------------
 ifeq "$(COMP)" "VC"
 CC              = cl.exe
 CPP             = cl.exe
@@ -90,25 +113,33 @@ endif
 LDFLAGS = $(LOPTIONS) $(LOPTIONS2) $(LIBS)
 
 $(LIBDIR)%.o: %.cpp
-	@echo ----- Compilation C++ par $(COMP) - $@
+	@echo ----- Compilation C++ by $(COMP) $(CPP) - $@
+	@echo CPP=$(CPP)
+	@echo CFLAGS=$(CFLAGS)
 	$(CPP) -c $(CFLAGS) $(SRC)$< $(OUT)$@
 #       @echo ----- Archivage en $(ARCHIVE)
 #       $(AR) $(ARCHIVE) $@
 
 $(LIBDIR)%.obj: %.cpp
-	@echo ----- Compilation C++ par $(COMP) - $@
+	@echo ----- Compilation C++ by $(COMP) $(CPP) - $@
+	@echo CPP=$(CPP)
+	@echo CFLAGS=$(CFLAGS)
 	$(CPP) -c $(CFLAGS) $(SRC)$< $(OUT)$@
 #       @echo ----- Archivage en $(ARCHIVE)
 #       $(AR) $(ARCHIVE) $@
  
 $(LIBDIR)%.o: %.c
-	@echo ----- Compilation C   par $(COMP) - $@
+	@echo ----- Compilation C   by $(COMP) $(CC) - $@
+	@echo CC=$(CC)
+	@echo CFLAGS=$(CFLAGS)
 	$(CC) -c $(CFLAGS) $(SRC)$< $(OUT)$@
 #       @echo ----- Archivage en $(ARCHIVE)
 #       $(AR) $(ARCHIVE) $@
 
 $(LIBDIR)%.obj: %.c
-	@echo ----- Compilation C   par $(COMP) - $@
+	@echo ----- Compilation C   by $(COMP) $(CC) - $@
+	@echo CPP=$(CPP)
+	@echo CFLAGS=$(CFLAGS)
 	$(CC) -c $(CFLAGS) $(SRC)$< $(OUT)$@
 #       @echo ----- Archivage en $(ARCHIVE)
 #       $(AR) $(ARCHIVE) $@
@@ -123,13 +154,15 @@ all:	$(PROGRAM)
 
 # Program (if PROGRAM is just one exe)
 #$(PROGRAM1): $(OBJLIST1)
-#	@echo ----- Link - $@
+#	@echo ----- Link by $(COMP) $(CC) - $@
 #	rm -f $(RUNDIR)$@
 #	$(CC) -o $(RUNDIR)$@ $(OBJLIST) $(LDFLAGS) $(ARCHIVE)
 
 # Program (if PROGRAM are several exe)
 $(PROGRAM): $(OBJLIST)
-	@echo ----- Link - $@
+	@echo ----- Link by $(COMP) $(CC) - $@
+	@echo LIBDIR=$(LIBDIR)
+	@echo LDFLAGS=$(LDFLAGS)
 	rm -f $(RUNDIR)$@
 #	$(CC) -o $(RUNDIR)$@ $(LIBDIR)$@.o$(BJ) $(LDFLAGS) $(ARCHIVE)
 	$(CC) -o $(RUNDIR)$@ $(LIBDIR)$@.o$(BJ) $(LDFLAGS)
@@ -137,9 +170,8 @@ $(PROGRAM): $(OBJLIST)
 # Clean
 clean:
 	@echo ----- Clean
-	$(RM) $(LIBDIR)*.a $(LIBDIR)*.o $(LIBDIR)*.obj $(RUNDIR)core $(OBJLIST)
+	$(RM) $(LIBDIR)*.a $(LIBDIR)*.o $(LIBDIR)*.obj $(RUNDIR)UsedPort.exe $(RUNDIR)core $(OBJLIST)
 
 
 # Dependencies xxx.o: xxx.c xxxa.h xxxb.h
 #$(LIBDIR)UsedPort.o: $(SRCDIR)UsedPort.cpp
-#$(LIBDIR)SendMess.o: $(SRCDIR)SendMess.cpp
