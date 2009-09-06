@@ -73,6 +73,7 @@ Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; F
 Source: "build\exe\doliwamp\mysqltestinstall.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\builddemosslfiles.bat"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
 Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
@@ -267,7 +268,7 @@ end;
 
 //-----------------------------------------------
 
-//procedure qui ferme les services (si ils existent)
+// Stop all services (if exist)
 
 procedure close();
 var myResult: Integer;
@@ -292,6 +293,7 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 var myResult: Integer;
 var res: Boolean;
 var paramok: Boolean;
+var themessage: String;
 begin
 
    res := True;
@@ -378,23 +380,43 @@ begin
 		paramok := True;
 		// TODO Test if choice of param is ok if firstinstall
 
-		// Test port Apache
-		//batFile := pathWithSlashes+'/usedport.exe';
-		//MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
-		//Exec(batFile, myporta, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-		//if myResult > 0 && MsgBox('Revenez en arriere pour choisir un autre port Apache.',mbConfirmation,MB_YES) = IDYES then
-		//begin
-		//end;
+    if (firstinstall) then
+    begin
+    
+		  // Test serveur SMTP
+//  		batFile := pathWithSlashes+'/UsedPort.exe';
+//  		MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
+//  		Exec(batFile, '-s '+smtpServer+' -p 25', path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+      //themessage := 'Le serveur '+smtpServer+' semble ne pas etre joignable pour l envoi de mail SMTP (port 25). Si vous avez un firewall, verifiez sa configuration. Sinon, revenez en arriere pour choisir une autre valeur pour le serveur SMTP sortant d envoi de mail (Cette information est doit etre fournie par votre fournisseur d acces Internet).';
+//      themessage := 'The server '+smtpServer+' seems to be unreachable to send outgoing SMTP emails (port 25). If you have a firewall, check its setup. Otherwise, go back to choose another value for the SMTP server (This information shoud be given by your Internet Service Provider) or click "No" to ignore error.';
+//  		if ((IntToStr(myResult) <> '0') and (MsgBox(themessage,mbConfirmation,MB_YESNO) = IDYES)) then
+//      begin
+//  		  paramok := False;
+//  		end;
 		 			
-		// Test port Mysql
-		//batFile := pathWithSlashes+'/usedport.exe';
-		//MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
-		//Exec(batFile, myport, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-		//MsgBox(IntToStr(myResult),mbConfirmation,MB_YESNO);
-		//if myResult > 0 && MsgBox('Revenez en arriere pour choisir un autre port Mysql.',mbConfirmation,MB_YES) = IDYES then
-		//begin
-		//end;
+		  // Test port Apache
+  		batFile := pathWithSlashes+'/UsedPort.exe';
+  		MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
+  		Exec(batFile, '-s localhost -p '+myporta, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+      //themessage := 'Le port '+myporta+' semble deja pris. Revenez en arriere pour choisir une autre valeur pour le port Apache.';
+      themessage := 'Port '+myporta+' seems to be already in use. Go back to choose another value for Apache port or click "No" to ignore error.';
+  		if ((IntToStr(myResult) <> '0') and (MsgBox(themessage,mbConfirmation,MB_YESNO) = IDYES)) then
+      begin
+  		  paramok := False;
+  		end;
+		 			
+  		// Test port Mysql
+  		batFile := pathWithSlashes+'/UsedPort.exe';
+  		MsgBox('batFile = '+batFile,mbConfirmation,MB_YESNO)
+  		Exec(batFile, '-s localhost -p '+myport, path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+      //themessage := 'Le port '+myport+' semble deja pris. Revenez en arriere pour choisir une autre valeur pour le port MySQL.';
+      themessage := 'Port '+myport+' seems to be already in use. Go back to choose another value for MySQL port or click "No" to ignore error.';
+  		if ((IntToStr(myResult) <> '0') and (MsgBox(themessage,mbConfirmation,MB_YESNO) = IDYES)) then
+  		begin
+    		paramok := False;
+  		end;
 
+    end;
 		
 		if paramok
 		then

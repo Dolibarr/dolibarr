@@ -293,7 +293,7 @@ if (help|invalide) {
 	printf("  -v                     Print version and help information\n");
 	printf("  -help                  Print version and help information\n");
 	printf("\n");
-	exit(0);
+	exit(-1);
 }
 	
 
