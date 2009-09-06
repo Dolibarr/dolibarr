@@ -1,14 +1,14 @@
 //---------------------------------------------------------------------------
-// UsedPort
+// UsedPort.cpp
 //---------------------------------------------------------------------------
 // Tested with :
-// VC++  4.0	
-// GCC   3.4.4 CYGWIN	(CYGWIN need cygwin1.dll)
-// MINGW 3.4.5
+// GCC CYGWIN  3.4.4 (May need cygwin1.dll, depending on functions used)
+// MINGW       3.4.5
 // Not tested with:
-// GCC   3.4.4 Linux
+// VC++        4.0.0	
+// GCC Linux   3.4.4
 //---------------------------------------------------------------------------
-// 08/08/09	1.1		Laurent Destailleur	   Creation
+// 06/09/09	1.0		Laurent Destailleur	   Creation
 //---------------------------------------------------------------------------
 #define PROG	"UsedPort"
 #define VERSION	"1.0"
@@ -17,7 +17,7 @@
 // If GNU GCC MINGW:  _WIN32 automaticaly defined, __GNUC__ is defined,     _MSC_VER not defined
 // If VC:             _WIN32 automaticaly defined, __GNUC__ is not defined, _MSC_VER defined
 
-// If on Windows and Cygwin, we can use _WIN32 WSA pre function, if we want or not with Cygwin.
+// If on Windows and Cygwin, we can use _WIN32 WSA pre function, if we want or not.
 //#define _WIN32
 
 #include <string.h>
