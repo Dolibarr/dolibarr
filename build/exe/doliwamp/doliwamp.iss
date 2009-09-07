@@ -163,9 +163,7 @@ var value: String;
 
 
 //-----------------------------------------------
-
 //procedures lancees au debut de l'installation
-
 function InitializeSetup(): Boolean;
 begin
   Result := MsgBox('You will install or upgrade to DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install or upgrade Dolibarr ERP-CRM and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you have technical knowledge and plan to share your Apache, Mysql and PHP with other projects than Dolibarr, you should not use this assistant and make a manual installation of Dolibarr on an existing Apache, Mysql and PHP installation (WampServer for example).' #13#13 'Do you want to start installation/upgrade process ?', mbConfirmation, MB_YESNO) = idYes;
@@ -267,15 +265,12 @@ end;
 
 
 //-----------------------------------------------
-
 // Stop all services (if exist)
-
 procedure close();
 var myResult: Integer;
 begin
 path := ExpandConstant('{app}');
 winPath := ExpandConstant('{win}');
-
 pathWithSlashes := path;
 StringChange (pathWithSlashes, '\','/');
 
@@ -287,8 +282,7 @@ end;
 
 
 //-----------------------------------------------------------
-//
-
+// Install pages
 function NextButtonClick(CurPageID: Integer): Boolean;
 var myResult: Integer;
 var res: Boolean;
@@ -885,9 +879,7 @@ end;
 
 
 //-----------------------------------------------
-
 //procedure launched by the end of the installation, it deletes the installation files
-
 procedure DeinitializeSetup();
 begin
 //  DeleteFile(path+'\install_services.bat');
@@ -895,7 +887,8 @@ begin
 end;
 
 
-
+//-----------------------------------------------
+//procedure launched at beginning of the uninstallation
 function InitializeUninstall(): Boolean;
 begin
     Result := RegDeleteValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','smtpServer');
@@ -903,8 +896,21 @@ begin
     Result := RegDeleteValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','mysqlPort');
     Result := RegDeleteValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','newPassword');
     Result := RegDeleteKeyIncludingSubkeys(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp');
+
+    Result := True;
 end;
 
+//-----------------------------------------------
+//procedure launched by the end of the uninstallation
+procedure DeinitializeUninstall();
+begin
+  path := ExpandConstant('{app}');
+  winPath := ExpandConstant('{win}');
+  pathWithSlashes := path;
+  StringChange (pathWithSlashes, '\','/');
+
+  MsgBox('Dolibarr program files have been removed. However, all your old data files are still in directory '+path+'. You must remove this directory manually for a complete uninstall.',mbInformation,MB_OK);
+end;
 
 
 [Run]
