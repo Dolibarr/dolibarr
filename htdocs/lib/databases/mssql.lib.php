@@ -691,16 +691,41 @@ class DoliDb
 		}
 	}
 
+	/**
+	 *	\brief          Encrypt sensitive data in database
+	 *	\param	        fieldorvalue	Field name or value to encrypt
+	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+	 * 	\param			cryptKey		Encryption key
+	 * 	\param			isAValue		String in field can be a field name or a value
+	 * 	\return	        return			XXX(field) or XXX('value') or field or 'value'
+	 */
+	function encrypt($fieldorvalue, $cryptType=0, $cryptKey='', $isAValue=0)
+	{
+		$return = $fieldorvalue;
+		return ($isAValue?"'":"").$return.($isAValue?"'":"");
+	}
+
+	/**
+	 *	\brief          Decrypt sensitive data in database
+	 *	\param	        field			Field name to decrypt
+	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+	 * 	\param			cryptKey		Encryption key
+	 * 	\return	        return			Field to decrypt if used
+	 */
+	function decrypt($field, $cryptType=0, $cryptKey='')
+	{
+		$return = $field;
+		return $return;
+	}
+
 
 	// Next function are not required. Only minor features use them.
 	//--------------------------------------------------------------
 
-
-
 	/**
-		\brief          Renvoie l'id de la connexion
-		\return	        string      Id connexion
-		*/
+	 *	\brief          Renvoie l'id de la connexion
+	 *	\return	        string      Id connexion
+	 */
 	function DDLGetConnectId()
 	{
 		$resql=$this->query('SELECT CONNECTION_ID()');

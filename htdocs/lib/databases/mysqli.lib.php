@@ -688,35 +688,31 @@ class DoliDb
 		return mysqli_insert_id($this->db);
 	}
 
-
-
-	// Next functions are not required. Only minor features use them.
-	//---------------------------------------------------------------
-
 	/**
 	 *	\brief          Encrypt sensitive data in database
-	 *	\param	        field			Field name to encrypt
+	 *	\param	        fieldorvalue	Field name or value to encrypt
 	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 	 * 	\param			cryptKey		Encryption key
-	 * 	\return	        return			Field to encrypt if used
+	 * 	\param			isAValue		String in field can be a field name or a value
+	 * 	\return	        return			XXX(field) or XXX('value') or field or 'value'
 	 */
-	function encrypt($field, $cryptType=0, $cryptKey='')
+	function encrypt($fieldorvalue, $cryptType=0, $cryptKey='', $isAValue=0)
 	{
-		$return = $field;
+		$return = $fieldorvalue;
 
 		if ($cryptType && !empty($cryptKey))
 		{
 			if ($cryptType == 2)
 			{
-				$return = 'AES_ENCRYPT('.$field.',\''.$cryptKey.'\')';
+				$return = 'AES_ENCRYPT('.($isAValue?"'":"").$fieldorvalue.($isAValue?"'":"").',\''.$cryptKey.'\')';
 			}
 			else if ($cryptType == 1)
 			{
-				$return = 'DES_ENCRYPT('.$field.',\''.$cryptKey.'\')';
+				$return = 'DES_ENCRYPT('.($isAValue?"'":"").$fieldorvalue.($isAValue?"'":"").',\''.$cryptKey.'\')';
 			}
 		}
 
-		return $return;
+		return ($isAValue?"'":"").$return.($isAValue?"'":"");
 	}
 
 	/**
@@ -744,6 +740,10 @@ class DoliDb
 
 		return $return;
 	}
+
+
+	// Next functions are not required. Only minor features use them.
+	//---------------------------------------------------------------
 
 	/**
 	 *	\brief          Renvoie l'id de la connexion
