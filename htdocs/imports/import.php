@@ -199,8 +199,6 @@ if ($step == 3 && $action == 'select_model')
  * Affichage Pages des Etapes
  */
 
-$objmodelimport=new ModeleImports();
-
 
 if ($step == 1 || ! $datatoimport)
 {
@@ -338,7 +336,7 @@ if ($step == 2 && $datatoimport)
 		print '<tr '.$bc[$var].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
 		print '<td>'.$objmodelimport->getDriverLabel($key).'</td>';
-		print '<td colspan="4" align="right"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
+		print '<td colspan="4" align="right"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		//print '<td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td>';
 		print '</tr>';
 	}
@@ -432,6 +430,7 @@ if ($step == 3 && $datatoimport)
 		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2')
 		);
 
+
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
 
@@ -512,7 +511,7 @@ if ($step == 3 && $datatoimport)
 	print '<br>';
 
 
-    // Combo list of import models
+    // List of import models
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="select_model">';
@@ -919,7 +918,7 @@ function show_elem($fieldssource,$pos,$var,$key)
 	if (empty($key))
 	{
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
-		print img_picto($langs->trans("MoveBox",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
+		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("NoFields");
@@ -939,7 +938,7 @@ function show_elem($fieldssource,$pos,$var,$key)
 		//print '<td width="16">'.img_file('','').'</td>';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-		print img_picto($langs->trans("MoveBox",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
+		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("Field").' '.$key.': ';

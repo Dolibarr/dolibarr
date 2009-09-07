@@ -62,7 +62,7 @@ class Export
 	/**
 	 *    \brief  Load an exportable dataset
 	 *    \param  user      Object user making export
-	 *    \param  filter    Code export pour charger un lot de donnees particulier
+	 *    \param  filter    Load a particular dataset only
 	 */
 	function load_arrays($user,$filter='')
 	{

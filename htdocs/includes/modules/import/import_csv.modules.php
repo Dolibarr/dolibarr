@@ -68,7 +68,7 @@ class ImportCsv extends ModeleImports
         $this->version_lib=DOL_VERSION;
 
         $this->separator=',';
-        if (! empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+        if (! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->IMPORT_CSV_SEPARATOR_TO_USE;
     }
 
     function getDriverId()
@@ -100,6 +100,48 @@ class ImportCsv extends ModeleImports
     {
         return $this->version_lib;
     }
+
+
+    /**
+	 * 	\brief		Output header of an example file for this format
+	 * 	\param		langs		Output language
+	 */
+    function write_header_example($outputlangs)
+    {
+		return '';
+    }
+
+    /**
+	 * 	\brief		Output title line of an example file for this format
+	 * 	\param		langs		Output language
+	 */
+    function write_title_example($outputlangs,$headerlinefields)
+    {
+    	$s='';
+		$s.=join($this->separator,$headerlinefields);
+    	return $s."\n";
+    }
+
+    /**
+	 * 	\brief		Output record of an example file for this format
+	 * 	\param		langs		Output language
+	 */
+    function write_record_example($outputlangs,$contentlinevalues)
+    {
+    	$s='';
+		$s.=join($this->separator,$contentlinevalues);
+    	return $s."\n";
+    }
+
+	/**
+	 * 	\brief		Output footer of an example file for this format
+	 * 	\param		langs		Output language
+	 */
+    function write_footer_example($outputlangs)
+    {
+		return '';
+    }
+
 
 
     /**

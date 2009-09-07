@@ -63,3 +63,4 @@ DownloadEmptyExample=Télécharger fichier vierge exemple
 FieldsInSourceFile=Champs dans le fichier source
 FieldsInTargetDatabase=Champs cibles dans la base Dolibarr
 NoFields=Aucun champ
+MoveField=Déplacer champ colonne numéro %s

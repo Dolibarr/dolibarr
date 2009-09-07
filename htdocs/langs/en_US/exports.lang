@@ -63,3 +63,4 @@ ChooseFileToImport=Upload file then click on picto %s to select file as source i
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=No fields
+MoveField=Move field column number %s
