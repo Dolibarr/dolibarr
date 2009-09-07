@@ -390,8 +390,8 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	{
 		$sql = "INSERT INTO llx_const(name,value,type,visible,note,entity)";
 		$sql.= " VALUES (";
-		$sql.= $db->encrypt("'".$name."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
-		$sql.= ",".$db->encrypt("'".addslashes($value)."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+		$sql.= "'".addslashes($db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,0))."'";
+		$sql.= ",'".addslashes($db->encrypt($value,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,0))."'";
 		$sql.= ",'".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
 
 		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);

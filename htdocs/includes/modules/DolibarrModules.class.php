@@ -386,8 +386,8 @@ class DolibarrModules
 		$this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
-		$sql.= " (".$this->db->encrypt("'".$this->const_name."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
-		$sql.= ",".$this->db->encrypt('1',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+		$sql.= " (".$this->db->encrypt($this->const_name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+		$sql.= ",".$this->db->encrypt('1',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 		$sql.= ",0,".$entity.")";
 
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);

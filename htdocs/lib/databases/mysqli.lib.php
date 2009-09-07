@@ -693,10 +693,10 @@ class DoliDb
 	 *	\param	        fieldorvalue	Field name or value to encrypt
 	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 	 * 	\param			cryptKey		Encryption key
-	 * 	\param			isAValue		String in field can be a field name or a value
+	 * 	\param			withQuotes		Return string with quotes
 	 * 	\return	        return			XXX(field) or XXX('value') or field or 'value'
 	 */
-	function encrypt($fieldorvalue, $cryptType=0, $cryptKey='', $isAValue=0)
+	function encrypt($fieldorvalue, $cryptType=0, $cryptKey='', $withQuotes=0)
 	{
 		$return = $fieldorvalue;
 
@@ -704,15 +704,15 @@ class DoliDb
 		{
 			if ($cryptType == 2)
 			{
-				$return = 'AES_ENCRYPT('.($isAValue?"'":"").$fieldorvalue.($isAValue?"'":"").',\''.$cryptKey.'\')';
+				$return = 'AES_ENCRYPT('.($withQuotes?"'":"").$fieldorvalue.($withQuotes?"'":"").',\''.$cryptKey.'\')';
 			}
 			else if ($cryptType == 1)
 			{
-				$return = 'DES_ENCRYPT('.($isAValue?"'":"").$fieldorvalue.($isAValue?"'":"").',\''.$cryptKey.'\')';
+				$return = 'DES_ENCRYPT('.($withQuotes?"'":"").$fieldorvalue.($withQuotes?"'":"").',\''.$cryptKey.'\')';
 			}
 		}
 
-		return ($isAValue?"'":"").$return.($isAValue?"'":"");
+		return ($withQuotes?"'":"").$return.($withQuotes?"'":"");
 	}
 
 	/**
