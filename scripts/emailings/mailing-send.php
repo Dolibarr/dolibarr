@@ -20,7 +20,7 @@
 
 
 /**
- *      \file       scripts/mailing/mailing-send.php
+ *      \file       scripts/emailings/mailing-send.php
  *      \ingroup    mailing
  *      \brief      Script d'envoi d'un mailing prepare et valide
  *		\version	$Id$
@@ -30,13 +30,13 @@
 // Test if CLI mode
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PH for CGI/Web. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PH for CGI/Web. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-    print "Usage:  mailing-send.php ID_MAILING\n";
-    exit;
+	print "Usage:  mailing-send.php ID_MAILING\n";
+	exit;
 }
 $id=$argv[1];
 
@@ -91,37 +91,37 @@ $nbok=0; $nbko=0;
 
 // On choisit les mails non deja envoyes pour ce mailing (statut=0)
 // ou envoyes en erreur (statut=-1)
-$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
+$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 $sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
-    if ($num)
-    {
-        dol_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
+	if ($num)
+	{
+		dol_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
 
-        // Positionne date debut envoi
-        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
-        $resql2=$db->query($sql);
-        if (! $resql2)
-        {
-            dol_print_error($db);
-        }
+		// Positionne date debut envoi
+		$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
+		$resql2=$db->query($sql);
+		if (! $resql2)
+		{
+			dol_print_error($db);
+		}
 
-        // Boucle sur chaque adresse et envoie le mail
-        $i = 0;
-        while ($i < $num)
-        {
-            $res=1;
+		// Boucle sur chaque adresse et envoie le mail
+		$i = 0;
+		while ($i < $num)
+		{
+			$res=1;
 
-            $obj = $db->fetch_object($resql);
+			$obj = $db->fetch_object($resql);
 
-            // sendto en RFC2822
-            $sendto = eregi_replace(',',' ',$obj->prenom." ".$obj->nom) ." <".$obj->email.">";
+			// sendto en RFC2822
+			$sendto = eregi_replace(',',' ',$obj->prenom." ".$obj->nom) ." <".$obj->email.">";
 
 			// Make subtsitutions on topic and body
 			$other=split(';',$obj->other);
@@ -146,9 +146,9 @@ if ($resql)
 			$newsubject=make_substitutions($subject,$substitutionarray);
 			$newmessage=make_substitutions($message,$substitutionarray);
 
-            // Fabrication du mail
-            $mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
-            						array(), array(), array(),
+			// Fabrication du mail
+			$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
+			array(), array(), array(),
             						'', '', 0, $msgishtml, $errorsto);
 
 			if ($mail->error)
@@ -161,63 +161,63 @@ if ($resql)
 				$res=0;
 			}
 
-            // Send Email
+			// Send Email
 			if ($res)
 			{
-    			$res=$mail->sendfile();
+				$res=$mail->sendfile();
 			}
 
-            if ($res)
-            {
-                // Mail successful
-                $nbok++;
+			if ($res)
+			{
+				// Mail successful
+				$nbok++;
 
-		        dol_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+				dol_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
-                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
-                $resql2=$db->query($sql);
-                if (! $resql2)
-                {
-                    dol_print_error($db);
-                }
-            }
-            else
-            {
-                // Mail failed
-                $nbko++;
+				$resql2=$db->query($sql);
+				if (! $resql2)
+				{
+					dol_print_error($db);
+				}
+			}
+			else
+			{
+				// Mail failed
+				$nbko++;
 
-		        dol_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+				dol_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
-                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
-                $resql2=$db->query($sql);
-                if (! $resql2)
-                {
-                    dol_print_error($db);
-                }
-            }
+				$resql2=$db->query($sql);
+				if (! $resql2)
+				{
+					dol_print_error($db);
+				}
+			}
 
-            $i++;
-        }
-    }
+			$i++;
+		}
+	}
 
-    // Loop finished, set global statut of mail
-    $statut=2;
-    if (! $nbko) $statut=3;
+	// Loop finished, set global statut of mail
+	$statut=2;
+	if (! $nbko) $statut=3;
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-    dol_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
-    $resql2=$db->query($sql);
-    if (! $resql2)
-    {
-        dol_print_error($db);
-    }
+	$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+	dol_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
+	$resql2=$db->query($sql);
+	if (! $resql2)
+	{
+		dol_print_error($db);
+	}
 }
 else
 {
-    dol_syslog($db->error());
-    dol_print_error($db);
+	dol_syslog($db->error());
+	dol_print_error($db);
 }
 
 ?>
