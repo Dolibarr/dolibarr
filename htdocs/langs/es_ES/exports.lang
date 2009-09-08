@@ -63,3 +63,4 @@ DownloadEmptyExample = Descargar archivo de ejemplo vacío
 FieldsInSourceFile = Campos en el archivo origen
 FieldsInTargetDatabase = Campos destino en la base de datos Dolibarr
 NoFields = Ningún campo
+MoveField = Mover campo columna número %s
