@@ -63,3 +63,4 @@ DownloadEmptyExample = Descarregar fitxer d'exemple buit
 FieldsInSourceFile = Camps en el fitxer orige
 FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr
 NoFields = Cap camp
+MoveField = Moure camp columna número
