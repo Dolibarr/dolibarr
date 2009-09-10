@@ -22,7 +22,6 @@
  *		\file       htdocs/install/upgrade.php
  *      \brief      Run migration script
  *      \version    $Id$
- * 		\remarks	Can be also called directly with http://mydolibarr/install/upgrade.php?action=repair
  */
 
 include_once("./inc.php");
@@ -70,13 +69,13 @@ pHeader('',"upgrade2",$_REQUEST['action']);
 $actiondone=0;
 
 // Action to launch the repair or migrate script
-if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]) || $_GET["action"] == "repair")
+if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
 {
 	$actiondone=1;
 
 	print '<h3>'.$langs->trans("DatabaseMigration").'</h3>';
 
-	if ($_GET["action"] != "repair" && ! $versionfrom && ! $versionto)
+	if (! $versionfrom && ! $versionto)
 	{
 		print '<div class="error">Parameter versionfrom or version to missing.</div>';
 		exit;
@@ -154,127 +153,124 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]) || $_GET["actio
 	flush();
 
 
-	if ($_GET["action"] != "repair")
+	/*
+	 * Delete duplicates in table categorie_association
+	 */
+	$couples=array();
+	$filles=array();
+	$sql = "SELECT fk_categorie_mere, fk_categorie_fille";
+	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+	dolibarr_install_syslog("upgrade: search duplicate sql=".$sql);
+	$resql = $db->query($sql);
+	if ($resql)
 	{
-		/*
-		 * Delete duplicates in table categorie_association
-		 */
-		$couples=array();
-		$filles=array();
-		$sql = "SELECT fk_categorie_mere, fk_categorie_fille";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-		dolibarr_install_syslog("upgrade: search duplicate sql=".$sql);
-		$resql = $db->query($sql);
-		if ($resql)
+		$num=$db->num_rows($resql);
+		while ($obj=$db->fetch_object($resql))
 		{
-			$num=$db->num_rows($resql);
-			while ($obj=$db->fetch_object($resql))
+			if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
 			{
-				if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
+				if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
 				{
-					if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
-					{
-						$filles[$obj->fk_categorie_fille]=1;	// Set record for this child
-						$couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
-					}
+					$filles[$obj->fk_categorie_fille]=1;	// Set record for this child
+					$couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
+				}
+			}
+		}
+
+		dolibarr_install_syslog("upgrade: result is num=".$num." sizeof(couples)=".sizeof($couples));
+
+		// If there is duplicates couples or child with two parents
+		if (sizeof($couples) > 0 && $num > sizeof($couples))
+		{
+			$error=0;
+
+			$db->begin();
+
+			$sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+			dolibarr_install_syslog("upgrade: delete association sql=".$sql);
+			$resqld=$db->query($sql);
+			if ($resqld)
+			{
+				foreach($couples as $key => $val)
+				{
+					$sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
+					$sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
+					dolibarr_install_syslog("upgrade: insert association sql=".$sql);
+					$resqli=$db->query($sql);
+					if (! $resqli) $error++;
 				}
 			}
 
-			dolibarr_install_syslog("upgrade: result is num=".$num." sizeof(couples)=".sizeof($couples));
-
-			// If there is duplicates couples or child with two parents
-			if (sizeof($couples) > 0 && $num > sizeof($couples))
+			if (! $error)
 			{
-				$error=0;
+				print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
+				print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.sizeof($couples).')</td></tr>';
+				$db->commit();
+			}
+			else
+			{
+				print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
+				print '<td align="right">'.$langs->trans("Failed").'</td></tr>';
+				$db->rollback();
+			}
+		}
+	}
+	else
+	{
+		print '<div class="error">'.$langs->trans("Error").'</div>';
+	}
 
-				$db->begin();
-
-				$sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-				dolibarr_install_syslog("upgrade: delete association sql=".$sql);
-				$resqld=$db->query($sql);
-				if ($resqld)
+	/*
+	 * Remove deprecated indexes and constraints
+	 */
+	if ($ok)
+	{
+		$versioncommande=split('\.','4.0');
+		if (sizeof($versioncommande) && sizeof($versionarray)
+			&& versioncompare($versioncommande,$versionarray) <= 0)	// Si mysql >= 4.0
+		{
+			// Suppression vieilles contraintes sans noms et en doubles
+			// Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
+			/* $listtables=array(  'llx_product_fournisseur_price',
+								'llx_fichinter',
+								'llx_facture_fourn',
+								'llx_propal',
+								'llx_socpeople',
+								'llx_telephonie_adsl_fournisseur',
+								'llx_telephonie_client_stats',
+								'llx_telephonie_contact_facture',
+								'llx_telephonie_societe_ligne',
+								'llx_telephonie_tarif_client');
+			*/
+			$listtables = $db->DDLListTables($conf->db->name,'');
+		    foreach ($listtables as $val)
+			{
+				//print "x".$val."<br>";
+				$sql = "SHOW CREATE TABLE ".$val;
+				$resql = $db->query($sql);
+				if ($resql)
 				{
-					foreach($couples as $key => $val)
+					$values=$db->fetch_array($resql);
+					$i=0;
+					$createsql=$values[1];
+					while (eregi('CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`',$createsql,$reg) && $i < 100)
 					{
-						$sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
-						$sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
-						dolibarr_install_syslog("upgrade: insert association sql=".$sql);
-						$resqli=$db->query($sql);
-						if (! $resqli) $error++;
+						$sqldrop="ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
+						$resqldrop = $db->query($sqldrop);
+						if ($resqldrop)
+						{
+							print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
+						}
+						$createsql=eregi_replace('CONSTRAINT `'.$reg[1].'`','XXX',$createsql);
+						$i++;
 					}
-				}
-
-				if (! $error)
-				{
-					print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
-					print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.sizeof($couples).')</td></tr>';
-					$db->commit();
+					$db->free($resql);
 				}
 				else
 				{
-					print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
-					print '<td align="right">'.$langs->trans("Failed").'</td></tr>';
-					$db->rollback();
-				}
-			}
-		}
-		else
-		{
-			print '<div class="error">'.$langs->trans("Error").'</div>';
-		}
-
-		/*
-		 * Remove deprecated indexes and constraints
-		 */
-		if ($ok)
-		{
-			$versioncommande=split('\.','4.0');
-			if (sizeof($versioncommande) && sizeof($versionarray)
-				&& versioncompare($versioncommande,$versionarray) <= 0)	// Si mysql >= 4.0
-			{
-				// Suppression vieilles contraintes sans noms et en doubles
-				// Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
-				/* $listtables=array(  'llx_product_fournisseur_price',
-									'llx_fichinter',
-									'llx_facture_fourn',
-									'llx_propal',
-									'llx_socpeople',
-									'llx_telephonie_adsl_fournisseur',
-									'llx_telephonie_client_stats',
-									'llx_telephonie_contact_facture',
-									'llx_telephonie_societe_ligne',
-									'llx_telephonie_tarif_client');
-				*/
-				$listtables = $db->DDLListTables($conf->db->name,'');
-			    foreach ($listtables as $val)
-				{
-					//print "x".$val."<br>";
-					$sql = "SHOW CREATE TABLE ".$val;
-					$resql = $db->query($sql);
-					if ($resql)
+					if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
 					{
-						$values=$db->fetch_array($resql);
-						$i=0;
-						$createsql=$values[1];
-						while (eregi('CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`',$createsql,$reg) && $i < 100)
-						{
-							$sqldrop="ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
-							$resqldrop = $db->query($sqldrop);
-							if ($resqldrop)
-							{
-								print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
-							}
-							$createsql=eregi_replace('CONSTRAINT `'.$reg[1].'`','XXX',$createsql);
-							$i++;
-						}
-						$db->free($resql);
-					}
-					else
-					{
-						if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
-						{
-							print '<tr><td colspan="2"><font  class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
-						}
+						print '<tr><td colspan="2"><font  class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
 					}
 				}
 			}
@@ -306,28 +302,15 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]) || $_GET["actio
 		sort($filesindir);
 
 		# Define which file to run
-		if ($_GET["action"] != "repair")
+		foreach($filesindir as $file)
 		{
-			foreach($filesindir as $file)
+			if (eregi($from,$file))
 			{
-				if (eregi($from,$file))
-				{
-					$filelist[]=$file;
-				}
-				else if (eregi($to,$file))	// First test may be false if we migrate from x.y.* to x.y.*
-				{
-					$filelist[]=$file;
-				}
+				$filelist[]=$file;
 			}
-		}
-		else
-		{
-			foreach($filesindir as $file)
+			else if (eregi($to,$file))	// First test may be false if we migrate from x.y.* to x.y.*
 			{
-				if (eregi('repair',$file))
-				{
-					$filelist[]=$file;
-				}
+				$filelist[]=$file;
 			}
 		}
 
