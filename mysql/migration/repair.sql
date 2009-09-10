@@ -11,3 +11,6 @@
 delete from llx_facture where facnumber = '(PROV)';
 delete from llx_commande where ref = '(PROV)';
 delete from llx_propal where ref = '(PROV)';
+delete from llx_facture where facnumber = '';
+delete from llx_commande where ref = '';
+delete from llx_propal where ref = '';

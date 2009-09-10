@@ -512,9 +512,15 @@ class Commande extends CommonObject
 		// Clean parameters
 		$this->brouillon = 1;		// On positionne en mode brouillon la commande
 
-		dol_syslog("Commande::create");
+		dol_syslog("Commande::create user=".$user->id);
 
 		// Check parameters
+		if (empty($this->ref))
+	 	{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+			dol_syslog("Commande::create ".$this->error, LOG_ERR);
+			return -1;
+		}	
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));

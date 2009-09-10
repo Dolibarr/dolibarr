@@ -469,9 +469,9 @@ class User extends CommonObject
 
 
 	/**
-		\brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
-		\param      moduletag    nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
-		*/
+	 *	\brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
+	 *	\param      moduletag    nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
+	 */
 	function getrights($moduletag='')
 	{
 		global $conf;

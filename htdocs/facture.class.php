@@ -147,6 +147,14 @@ class Facture extends CommonObject
 
 		dol_syslog("Facture::Create user=".$user->id);
 
+		// Check parameters
+		if (empty($this->ref))
+	 	{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+			dol_syslog("Facture::create ".$this->error, LOG_ERR);
+			return -1;
+		}	
+
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
 

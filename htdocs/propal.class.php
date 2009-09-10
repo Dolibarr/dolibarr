@@ -518,13 +518,22 @@ class Propal extends CommonObject
 	{
 		global $langs,$conf,$mysoc;
 
-		// on verifie si la ref n'est pas utilisee
-		$soc = new Societe($this->db);
-		$soc->fetch($this->socid);
-		$this->verifyNumRef($soc);
-
 		// Clean parameters
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+		
+		dol_syslog("Propal::Create");
+		
+		// Check parameters
+		if (empty($this->ref))
+	 	{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+			dol_syslog("Facture::create ".$this->error, LOG_ERR);
+			return -1;
+		}	
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socid);
+		$this->verifyNumRef($soc);	// Check ref is not yet used
+
 
 		$this->db->begin();
 
