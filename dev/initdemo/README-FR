@@ -3,9 +3,10 @@ README (French)
 
 Ce script permet de reinitialiser une base de donnée Dolibarr avec des
 données de demo.
-ATTENTION: Ceci efface les données en cours de la base.
+ATTENTION: Ceci efface les données en cours de la base avec les données
+du fichier initdemo.sql.
 
 Faite un chmod 700 initdemo.sh
-puis ./initdemo.sh pour executer l'interface.
+puis ./initdemo.sh pour lancer l'interface graphique.
 
 L'installation du package "dialog" est indispensable.

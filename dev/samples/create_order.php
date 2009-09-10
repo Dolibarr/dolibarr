@@ -1,6 +1,5 @@
 <?PHP
-/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +17,14 @@
  */
 
 /**
- *      \file       dev/skeletons/skeleton_script.php
- *		\ingroup    mymodule othermodule1 othermodule2
+ *      \file       dev/samples/manage_order.php
  *      \brief      This file is an example for a command line script
  *      \version    $Id$
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
 
-// Test if batch mode and define path of script
+// Test if batch mode
 $sapi_type = php_sapi_name();
 $script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
@@ -45,11 +43,12 @@ $error=0;
 // -------------------- START OF YOUR CODE HERE --------------------
 // Include Dolibarr environment
 require_once($path."../../htdocs/master.inc.php");
+require_once($path."../../htdocs/commande/commande.class.php");
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
 $langs->load("main");				// To load language file for default language
-@set_time_limit(0);					// No timeout for this script
+@set_time_limit(0);
 
 // Load user and its permissions
 $result=$user->fetch('admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
@@ -70,87 +69,45 @@ print 'Argument 2='.$argv[2]."\n";
 
 print '--- start'."\n";
 
-
 // Start of transaction
 $db->begin();
 
+// Create order object
+$com = new Commande($db);
 
-// Examples for manipulating class skeleton_class
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-$myobject=new Skeleton_class($db);
+$com->ref            = 'ABCDE';
+$com->socid          = 4;	// Put id of third party (rowid in llx_societe table)
+$com->date_commande  = mktime();
+$com->note           = 'A comment';
+$com->source         = 1;
+$com->remise_percent = 0;
 
-// Example for inserting creating object in database
-/*
-dol_syslog($script_file." CREATE", LOG_DEBUG);
-$myobject->prop1='value_prop1';
-$myobject->prop2='value_prop2';
-$id=$myobject->create($user);
-if ($id < 0) { $error++; dol_print_error($db,$myobject->error); }
-else print "Object created with id=".$id."\n";
-*/
+$orderline1=new CommandeLigne($db);
+$orderline1->tva_tx=10.0;
+$orderline1->remise_percent=0;
+$orderline1->qty=1;
+$com->lines[]=$orderline1;
 
-// Example for reading object from database
-/*
-dol_syslog($script_file." FETCH", LOG_DEBUG);
-$result=$myobject->fetch($id);
-if ($result < 0) { $error; dol_print_error($db,$myobject->error); }
-else print "Object with id=".$id." loaded\n";
-*/
-
-// Example for updating object in database ($myobject must have been loaded by a fetch before)
-/*
-dol_syslog($script_file." UPDATE", LOG_DEBUG);
-$myobject->prop1='newvalue_prop1';
-$myobject->prop2='newvalue_prop2';
-$result=$myobject->update($user);
-if ($result < 0) { $error++; dol_print_error($db,$myobject->error); }
-else print "Object with id ".$myobject->id." updated\n";
-*/
-
-// Example for deleting object in database ($myobject must have been loaded by a fetch before)
-/*
-dol_syslog($script_file." DELETE", LOG_DEBUG);
-$result=$myobject->delete($user);
-if ($result < 0) { $error++; dol_print_error($db,$myobject->error); }
-else print "Object with id ".$myobject->id." deleted\n";
-*/
-
-
-// An example of a direct SQL read without using the fetch method
-/*
-$sql = "SELECT field1, field2";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-$sql.= " WHERE field3 = 'xxx'";
-$sql.= " ORDER BY field1 ASC";
-
-dol_syslog($script_file." sql=".$sql, LOG_DEBUG);
-$resql=$db->query($sql);
-if ($resql)
+// Create order
+$result=$com->create($user);
+if ($result >= 0)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	if ($num)
+	// Change status to validated
+	$result=$com->valid($user);
+	if ($result) print " OK";
+	else
 	{
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
-			{
-				// You can use here results
-				print $obj->field1;
-				print $obj->field2;
-			}
-			$i++;
-		}
+		$error++;
+		dol_print_error($db,$com->error);
 	}
 }
 else
 {
 	$error++;
-	dol_print_error($db);
+	dol_print_error($db,$com->error);
 }
-*/
 
+print "\n";
 
 // -------------------- END OF YOUR CODE --------------------
 
@@ -165,7 +122,7 @@ else
 	$db->rollback();
 }
 
-$db->close();	// Close database opened handler
+$db->close();
 
 return $error;
 ?>

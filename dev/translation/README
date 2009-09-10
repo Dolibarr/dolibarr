@@ -1,0 +1,6 @@
+README (English)
+--------------------------------
+This directory contains tools to generate translation files for a new languages
+or to update translation files for existing languages.
+See http://wiki.dolibarr.org/ in pages about "How to translate Dolibarr" for 
+more informations on how to use them.

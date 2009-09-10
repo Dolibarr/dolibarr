@@ -189,7 +189,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 	}
 	else
 	{
-		dol_print_error($db,$facture->error);
+		dol_print_error($db,$com->error);
 	}
 
 	print "\n";

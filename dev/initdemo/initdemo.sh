@@ -7,6 +7,7 @@
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # WARNING: This script erase all data of database
+# with data into initdemo.sql
 #------------------------------------------------------
 
 export mydir=`echo "$_" | sed -e 's/initdemo.sh//'`;
