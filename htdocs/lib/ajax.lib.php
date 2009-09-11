@@ -133,11 +133,14 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 	$script.= '<script type="text/javascript">';
 	$script.= 'new Ajax.Autocompleter(\''.$htmlname.'\',\'result'.$htmlname.'\',\''.$url.'\',{
 	           method: \'post\',
-	           paramName: \''.$htmlname.'\',
+	           paramName: \'socid\',
 	           minChars: \'1\',
 	           indicator: \'indicator'.$htmlname.'\',
 	           afterUpdateElement: ac_return
-	         });';	// Note: The ac_return will fill value inside the field htmlname (param of Autocompleter constructor) and htmlname_id (function ac_return)
+	         });';	// paramName must be 'socid', as it is the name of POST parameter to send value in htmlname field.
+					// and it is name of parameter read by ajaxcompanies.php
+		// Note: The ac_return will fill value inside field htmlname (param of Autocompleter constructor)
+		// and will also fill value inside field htmlname_id (using function ac_return)
 	$script.= '</script>';
 
 	return $script;

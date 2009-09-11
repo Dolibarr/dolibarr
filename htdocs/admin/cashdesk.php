@@ -28,11 +28,11 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 
 // If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
+if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 {
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+	$_GET['CASHDESK_ID_THIRDPARTY'] = $_GET['CASHDESK_ID_THIRDPARTY_id'];
+	$_POST['CASHDESK_ID_THIRDPARTY'] = $_POST['CASHDESK_ID_THIRDPARTY_id'];
+	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = $_REQUEST['CASHDESK_ID_THIRDPARTY_id'];
 }
 
 // Security check
@@ -89,7 +89,7 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'CASHDESK_ID_THIRDPARTY','',1);
+print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'CASHDESK_ID_THIRDPARTY','',1,1);
 print '</td></tr>';
 if ($conf->global->MAIN_MODULE_BANQUE)
 {

@@ -462,8 +462,9 @@ class Form
 	 *    	\param      filter          Optionnal filters criteras
 	 *		\param		showempty		Add an empty field
 	 * 		\param		showtype		Show if third party is customer, prospect or supplier
+	 * 		\param		forcecombo		Force to use combo box
 	 */
-	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0)
+	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
 	{
 		global $conf,$user,$langs;
 
@@ -473,7 +474,7 @@ class Form
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.entity = ".$conf->entity;
 		if ($filter) $sql.= " AND ".$filter;
-		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)	$sql.= " AND rowid = ".$selected;
+		if (is_numeric($selected) && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)	$sql.= " AND s.rowid = ".$selected;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		$sql.= " ORDER BY nom ASC";
 
@@ -481,7 +482,7 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
 			{
 				$socid = 0;
 				if ($selected)

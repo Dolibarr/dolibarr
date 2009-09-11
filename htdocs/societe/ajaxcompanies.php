@@ -36,6 +36,8 @@ top_htmlhead("", "", 1, 1);
 
 print '<body id="mainbody">';
 
+dol_syslog(join(',',$_POST));
+
 // Generation liste des societes
 if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST['id_fourn']))
 {
@@ -65,6 +67,10 @@ if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST[
 		}
 		print '</ul>';
 	}
+}
+else
+{
+
 }
 
 print "</body>";

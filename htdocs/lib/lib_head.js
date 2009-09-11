@@ -579,22 +579,22 @@ function newpopup(url,title) {
 
 
 /*=================================================================
-	Purpose:  Recupere id d'une autcompletion Ajax
-	Input:    field,item
+	Purpose:  Set value of a field after return of Ajax call
+	Input:    HTML field name, val
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
-function ac_return(field, item){
-/*        alert('field.name='+field.name+'-'+item.innerHTML); */
+function ac_return(field, val){
+/*        alert('field.name='+field.name+'-'+val.innerHTML); */
         /* on met en place l'expression reguliere */
         var regex = new RegExp('[0123456789]*-idcache', 'i');
         /* on l'applique au contenu */
-        var idCache = regex.exec(item.innerHTML);
+        var idCache = regex.exec(val.innerHTML);
         /* on recupere id */
         id = idCache[0].replace('-idcache', '');
 /*        alert('field.name='+field.name+'-'+idCache[0]+'-'+id); */ 
         /* et on l'affecte au champ cache */
-/*        alert('field.name='+field.name+'-'+item.innerHTML+'-id='+id); */
+/*        alert('field.name='+field.name+'-'+val.innerHTML+'-id='+id); */
         $(field.name+'_id').value = id;
 }
 
