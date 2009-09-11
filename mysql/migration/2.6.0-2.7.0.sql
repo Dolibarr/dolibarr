@@ -6,7 +6,7 @@
 -- when current version is 2.6.0 or higher. 
 --
 
-drop table llx_tmp_caisse;
+alter table llx_tmp_caisse modify fk_tva int(11) NOT NULL;
 
 drop table llx_facture_stats;
 drop table llx_stock_valorisation;
