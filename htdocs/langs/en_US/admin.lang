@@ -1079,7 +1079,7 @@ ClickToDialDesc=This module allows to add an icon after the phone number of Doli
 CashDeskSetup=Cash desk module setup
 CashDeskThirdPartyForSell=Generic third party to use for sells
 CashDeskBankAccountForSell=Cash account to use for sells
-CashDeskIdWareHouse=Datawarehous to user for sells
+CashDeskIdWareHouse=Warehouse to use for sells
 ##### Bookmark #####
 BookmarkSetup=Bookmark module setup
 BookmarkDesc=This module allows you to manage bookmarks. You can also add shortcuts to any Dolibarr pages or externale web sites on your left menu.
