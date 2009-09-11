@@ -1,6 +1,8 @@
 # Language file - en_US - cashdesk
 CHARSET=UTF-8
-CashDesk=Point of sales
+CashDeskMenu=Point of sale
+CashDesk=Point of sale
+CashDesks=Point of sales
 CashDeskBank=Bank account
 CashDeskWarehouse=Warehouse
 CashDeskThirdParty=Third party

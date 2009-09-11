@@ -25,14 +25,14 @@
 /**
  *      \file       htdocs/includes/modules/modCashDesk.class.php
  *      \ingroup    pos
- *      \brief      File to enable/disable module CashDesk
+ *      \brief      File to enable/disable module Point Of Sales
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- *       \class      modCategorie
- *       \brief      Classe de description et activation du module Categorie
+ *       \class      modCashDesk
+ *       \brief      Class to describe and enable module Point Of Sales
  */
 class modCashDesk extends DolibarrModules
 {
@@ -95,7 +95,7 @@ class modCashDesk extends DolibarrModules
 		// This is to declare the Top Menu entry:
 		$this->menu[$r]=array(	    'fk_menu'=>0,			// Put 0 if this is a top menu
 									'type'=>'top',			// This is a Top menu entry
-									'titre'=>'CashDesk',
+									'titre'=>'CashDeskMenu',
 									'mainmenu'=>'cashdesk',
 									'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 									'url'=>'/cashdesk/index.php',

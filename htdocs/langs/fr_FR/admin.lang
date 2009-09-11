@@ -1075,7 +1075,7 @@ AgendaSetup = Configuration du module actions et agenda
 PasswordTogetVCalExport = Clé pour autoriser lien export
 ##### ClickToDial ##### = undefined
 ClickToDialDesc = Ce module permet d'ajouter un petit picto a coté des numéros de téléphones des contacts. Un clic sur ce picto provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de provoquer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un system SIP par exemple.
-##### CashDesk ##### = undefined
+##### Point Of Sales (CashDesk) #####
 CashDeskSetup = Configuration du module Caisse enregistreuse
 CashDeskThirdPartyForSell = Tiers générique à utiliser pour les ventes
 CashDeskBankAccountForSell = Compte caisse à utiliser pour les ventes
