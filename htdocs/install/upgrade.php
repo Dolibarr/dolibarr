@@ -25,10 +25,13 @@
  */
 
 include_once("./inc.php");
-if (file_exists($conffile)) include_once($conffile);
+if (! file_exists($conffile))
+{
+	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/install.php" instead of "/install/upgrade.php").';
+}
+require_once($conffile);
 require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root."/lib/admin.lib.php");
-
 
 $grant_query='';
 $etape = 2;
