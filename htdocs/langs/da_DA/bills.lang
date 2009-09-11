@@ -350,7 +350,6 @@ BillShortStatusConverted=Forarbejdede
 Prélèvements=Stående ordre
 Prélèvements=Stående ordrer
 ShowInvoiceDeposit=Vis depositum faktura
-AlreadyPaidNoCreditNotesNoDeposits=Alreday betales (uden kreditnotaer og indskud)
 SetDate=Indstil dato
 Deposit=Indbetaling
 Deposits=Indlån

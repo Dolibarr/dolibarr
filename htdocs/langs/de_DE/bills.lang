@@ -351,7 +351,6 @@ BillShortStatusConverted=Verarbeitete
 Prélèvements=Dauerauftrag
 Prélèvements=Daueraufträge
 ShowInvoiceDeposit=Show Anzahlung Rechnung
-AlreadyPaidNoCreditNotesNoDeposits=Alreday bezahlt (ohne Kredit-Banknoten und Einlagen)
 SetDate=Datum
 Deposit=Anzahlung
 Deposits=Einlagen

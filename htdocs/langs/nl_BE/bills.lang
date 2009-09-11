@@ -370,7 +370,6 @@ AmountOfBills=Bedrag van de facturen
 AmountOfBillsByMonth=Bedrag van de facturen per maand
 ShowSocialContribution=Toon sociale bijdrage
 ShowInvoiceDeposit=Toon nederlegging factuur
-AlreadyPaidNoCreditNotesNoDeposits=Alreday betaald (zonder credit nota&#39;s en deposito&#39;s)
 Abandoned=Abandoned
 AmountExpected=Bedrag
 ExcessReceived=Overbagage ontvangen

@@ -346,7 +346,6 @@ BillShortStatusConverted=Jalostettu
 Prélèvements=Kestotilaus
 Prélèvements=Pysyvän tilaukset
 ShowInvoiceDeposit=Näytä tallettaa laskun
-AlreadyPaidNoCreditNotesNoDeposits=Alreday maksetaan (ilman hyvityslaskuja ja talletukset)
 SetDate=Aseta pvm
 Deposit=Talletuslokero
 Deposits=Talletukset

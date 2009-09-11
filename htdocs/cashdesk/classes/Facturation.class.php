@@ -80,7 +80,9 @@ class Facturation {
 //		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
 		global $sql;
-		$resql=$sql->query ('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva());
+		$req='SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva();
+		dol_syslog("ajoutArticle sql=".$req);
+		$resql=$sql->query ();
 
 		$tab_tva = $sql->fetch_array($resql);
 		$ret=array();
@@ -111,7 +113,7 @@ class Facturation {
 		$total_ttc = ($total_ht - $montant_remise) * (($tab_tva['taux'] / 100) + 1);
 
 
-		$sql->query('INSERT INTO '.MAIN_DB_PREFIX.'tmp_caisse (
+		$req='INSERT INTO '.MAIN_DB_PREFIX.'tmp_caisse (
 					fk_article,
 					qte,
 					fk_tva,
@@ -126,7 +128,9 @@ class Facturation {
 					'.$remise_percent.',
 					'.price2num($montant_remise).',
 					'.price2num($total_ht).',
-					'.price2num($total_ttc).')');
+					'.price2num($total_ttc).')';
+		dol_syslog("ajoutArticle sql=".$req);
+		$sql->query($req);
 
 		$this->raz();
 

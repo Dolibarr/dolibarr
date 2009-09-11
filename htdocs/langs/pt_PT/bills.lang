@@ -367,7 +367,6 @@ ConsumedBy=Consumida por
 NotConsumed=Não consumiu
 HelpPaymentHigherThanReminderToPay=Atenção, o montante do pagamento de uma ou mais letras é maior do que o resto a pagar. <br> Edite sua entrada, caso contrário, confirmar e pensar sobre como criar uma nota de crédito do excesso recebido para cada overpaid facturas.
 BillShortStatusConverted=Transformados
-AlreadyPaidNoCreditNotesNoDeposits=Alreday paga (sem notas de crédito e depósitos)
 SetDate=Definir a data
 Deposit=Depósito
 Deposits=Depósitos

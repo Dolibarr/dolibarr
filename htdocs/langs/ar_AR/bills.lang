@@ -368,7 +368,6 @@ ConfirmCancelBillQuestion=لماذا تريدها لتصنيف هذه الفات
 ConfirmClassifyPaidPartiallyQuestion=هذه الفاتورة لم تدفع بالكامل. ما هي أسباب قريبة لك هذه الفاتورة؟
 ConfirmClassifyPaidPartiallyReasonOther=التخلي عن المبلغ لسبب آخر
 AlreadyPaid=دفعت بالفعل
-AlreadyPaidNoCreditNotesNoDeposits=Alreday المدفوعة (بدون مذكرات الائتمان والودائع)
 NoSupplierBillsUnpaid=لا الفواتير غير المدفوعة للموردين
 CustomerBillsUnpaid=فواتير غير مدفوعة للعملاء
 InvoicePaid=دفعت الفاتورة

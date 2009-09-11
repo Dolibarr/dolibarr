@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class modCashDesk extends DolibarrModules
 		$this->description = "CashDesk module";
 
 		$this->revision = explode(' ','$Revision$');
-		$this->version = 'development';
+		$this->version = 'experimental';
 		//$this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);

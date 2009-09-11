@@ -388,7 +388,6 @@ HelpPaymentHigherThanReminderToPay=Attenzione, l&#39;importo del pagamento di un
 BillStatusConverted=Convertito in sconto
 BillShortStatusConverted=Re
 ShowInvoiceDeposit=Visualizza deposito fattura
-AlreadyPaidNoCreditNotesNoDeposits=Alreday pagata (senza note di credito e dei depositi)
 SetDate=Imposta data
 Deposit=Deposito
 Deposits=Depositi
