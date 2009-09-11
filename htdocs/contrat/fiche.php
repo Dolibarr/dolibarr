@@ -620,7 +620,11 @@ else
     {
         $contrat = new Contrat($db);
         $result=$contrat->fetch($_GET['id'],$_GET['ref']);
-        if ($result > 0) $result=$contrat->fetch_lignes();
+        if ($result > 0)
+        {
+        	$id = $contrat->id; // if $_GET['ref']
+        	$result=$contrat->fetch_lignes();
+        }
         if ($result < 0)
         {
             dol_print_error($db,$contrat->error);
@@ -975,7 +979,7 @@ else
 					$arraycontractid[$contractcursor->id]=$contractcursor->ref;
 				}
 				//var_dump($arraycontractid);
-				// Crée un tableau formulaire
+				// Cree un tableau formulaire
 				$formquestion=array(
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
