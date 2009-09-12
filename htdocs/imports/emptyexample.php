@@ -34,8 +34,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
 
+$langs->load("exports");
+
 // C'est un wrapper, donc header vierge
-function llxHeader() { print '<html><title>Export agenda cal</title><body>'; }
+function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
 function llxFooter() { print '</body></html>'; }
 
 // Check exportkey

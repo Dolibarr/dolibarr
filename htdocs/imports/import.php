@@ -502,7 +502,7 @@ if ($step == 3 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	$param='step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($_GET["filetoimport"]);
+	$param='step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 
 	$h = 0;
 

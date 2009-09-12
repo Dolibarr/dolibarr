@@ -193,5 +193,135 @@ class Import
 
 		return $s;
 	}
+
+	/**
+	 *  \brief	Save an export model in database
+	 *  \param	user 	Object user that save
+	 */
+	function create($user)
+	{
+		global $conf;
+
+		dol_syslog("Import.class.php::create");
+
+		// Check parameters
+		if (empty($this->model_name))	{ $this->error='ErrorWrongParameters'; return -1; }
+		if (empty($this->datatoimport)) { $this->error='ErrorWrongParameters'; return -1; }
+		if (empty($this->hexa)) 		{ $this->error='ErrorWrongParameters'; return -1; }
+
+		$this->db->begin();
+
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'import_model (';
+		$sql.= 'label, type, field)';
+		$sql.= " VALUES ('".$this->model_name."', '".$this->datatoimport."', '".$this->hexa."')";
+
+		dol_syslog("Import::create sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->errno=$this->db->lasterrno();
+			dol_syslog("Import::create error ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 *    \brief      Load an import profil from database
+	 *    \param      rowid       id of profil to load
+	 */
+	function fetch($id)
+	{
+		$sql = 'SELECT em.rowid, em.field, em.label, em.type';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
+		$sql.= ' WHERE em.rowid = '.$id;
+
+		dol_syslog("Import::fetch sql=".$sql, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+			if ($obj)
+			{
+				$this->id                   = $obj->rowid;
+				$this->hexa                 = $obj->field;
+				$this->model_name           = $obj->label;
+				$this->datatoimport         = $obj->type;
+				$this->fk_user              = $obj->fk_user;
+				return 1;
+			}
+			else
+			{
+				$this->error="Model not found";
+				return -2;
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -3;
+		}
+	}
+
+	/**
+	 *	\brief      Delete object in database
+	 *	\param      user        	User that delete
+	 *  \param      notrigger	    0=launch triggers after, 1=disable triggers
+	 *	\return		int				<0 if KO, >0 if OK
+	 */
+	function delete($user, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."import_model";
+		$sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::delete sql=".$sql);
+		$resql = $this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
 }
 ?>

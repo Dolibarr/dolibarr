@@ -65,3 +65,4 @@ FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=No fields
 MoveField=Move field column number %s
 ExampleOfImportFile=Example_of_import_file
+ErrorImportDuplicateProfil=Failed to save this import profile with this name. An existing profile already exists with this name.

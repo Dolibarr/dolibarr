@@ -65,3 +65,4 @@ FieldsInTargetDatabase=Champs cibles dans la base Dolibarr
 NoFields=Aucun champ
 MoveField=Déplacer champ colonne numéro %s
 ExampleOfImportFile=Exemple_de_fichier_import
+ErrorImportDuplicateProfil=Impossible de sauvegarder le profil d'import sous ce nom. Un profil existant existe déjà pour ce nom.

@@ -288,8 +288,8 @@ class Export
 	}
 
 	/**
-	 *  \brief	Create an export model in database
-	 *  \param	user Objet utilisateur qui cree
+	 *  \brief	Save an export model in database
+	 *  \param	user 	Object user that save
 	 */
 	function create($user)
 	{
@@ -359,9 +359,9 @@ class Export
 
 
 	/**
-	 *   \brief      Delete object in database
+	 *	\brief      Delete object in database
 	 *	\param      user        	User that delete
-	 *   \param      notrigger	    0=launch triggers after, 1=disable triggers
+	 *  \param      notrigger	    0=launch triggers after, 1=disable triggers
 	 *	\return		int				<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger=0)

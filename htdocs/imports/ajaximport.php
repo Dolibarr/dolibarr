@@ -36,7 +36,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 $entityCookieName = "DOLENTITYID_dolibarr";
 if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
 
-require('../master.inc.php');
+require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
 
@@ -47,28 +47,31 @@ $colonne=$part[0];
 $list=$part[1];
 dol_syslog('AjaxImport column='.$colonne.' list='.$list);
 
-// Init object $objimport that describe the predefined import
+$fuser=new User($db);
 $fuser->id=$_GET['userid'];
 $fuser->fetch();
+
+// Init object $objimport that describe the predefined import
 $objimport=new Import($db);
 $datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
 $objimport->load_arrays($fuser,$datatoimport);
 
+
 // Init targets fields array
 $fieldstarget=$objimport->array_import_fields[0];
 
-// We redefine array_match_file_to_database
+// Reinit match arrays. We redefine array_match_file_to_database
+$serialized_array_match_file_to_database='';
 $array_match_file_to_database=array();
-$listelem=split(',',$list);
+$fieldsarray=split(',',$list);
 $pos=0;
-foreach($listelem as $fieldnb)
+foreach($fieldsarray as $fieldnb)	// For each elem in list. fieldnb start from 1 to ...
 {
-	//dol_syslog("Fieldnb in file=".$fieldnb." => keynb in targets=".$pos);
-
-	// Get name of database field at position $pos into $namefield
+	// Get name of database fields at position $pos and put it into $namefield
 	$posbis=0;$namefield='';
-	foreach($fieldstarget as $key => $val)
+	foreach($fieldstarget as $key => $val)	// key:   val:
 	{
+		//dol_syslog('AjaxImport key='.$key.' val='.$val);
 		if ($posbis < $pos)
 		{
 			$posbis++;
@@ -76,16 +79,22 @@ foreach($listelem as $fieldnb)
 		}
 		// We found the key of targets that is at position pos
 		$namefield=$key;
+		//dol_syslog('AjaxImport Field name found for file field nb '.$fieldnb.'='.$namefield);
+
 		break;
 	}
 
-	if (! empty($fieldnb)) $array_match_file_to_database[$fieldnb]=$namefield;
+	if ($fieldnb && $namefield)
+	{
+		$array_match_file_to_database[$fieldnb]=$namefield;
+		if ($serialized_array_match_file_to_database) $serialized_array_match_file_to_database.=',';
+		$serialized_array_match_file_to_database.=($fieldnb.'='.$namefield);
+	}
 
 	$pos++;
 }
 
 // We save new matching in session
-$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
-
-dol_syslog('AjaxImport dol_array_match_file_to_database='.var_export($array_match_file_to_database,true));
+$_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;
+dol_syslog('AjaxImport dol_array_match_file_to_database='.$serialized_array_match_file_to_database);
 ?>
