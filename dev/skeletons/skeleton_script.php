@@ -63,8 +63,6 @@ if (! isset($argv[1])) {	// Check parameters
     exit;
 }
 print '--- start'."\n";
-
-// Show parameters
 print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
 
