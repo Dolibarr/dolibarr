@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       dev/samples/manage_order.php
+ *      \file       dev/samples/create_product.php
  *      \brief      This file is an example for a command line script
  *      \version    $Id$
  *		\author		Put author name here
@@ -68,43 +68,35 @@ print 'Argument 2='.$argv[2]."\n";
 // Start of transaction
 $db->begin();
 
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
-// Create order object
-$com = new Commande($db);
+// Create instance of object
+$myproduct=new Product($db);
 
-$com->ref            = 'ABCDE';
-$com->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$com->date_commande  = mktime();
-$com->note           = 'A comment';
-$com->source         = 1;
-$com->remise_percent = 0;
+// Définition des propriétés de l'instance product
+$myproduct->ref                = '1234';
+$myproduct->libelle            = 'libelle';
+$myproduct->price              = '10';
+$myproduct->price_base_type    = 'HT';
+$myproduct->tva_tx             = '19.6';
+$myproduct->type               = 0;
+$myproduct->status             = 1;
+$myproduct->description        = 'Description';
+$myproduct->note               = 'Note';
+$myproduct->weight             = 10;
+$myproduct->weight_units       = 0;
 
-$orderline1=new CommandeLigne($db);
-$orderline1->tva_tx=10.0;
-$orderline1->remise_percent=0;
-$orderline1->qty=1;
-$com->lines[]=$orderline1;
-
-// Create order
-$idobject=$com->create($user);
+// Create product in database
+$idobject = $myproduct->create($user);
 if ($idobject > 0)
 {
-	// Change status to validated
-	$result=$com->valid($user);
-	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
-		$error++;
-		dol_print_error($db,$com->error);
-	}
+	print "OK Object created with id ".$idobject."\n";
 }
 else
 {
 	$error++;
-	dol_print_error($db,$com->error);
+	dol_print_error($db,$myproduct->error);
 }
-
 
 // -------------------- END OF YOUR CODE --------------------
 
