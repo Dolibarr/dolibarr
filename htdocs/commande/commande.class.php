@@ -520,7 +520,7 @@ class Commande extends CommonObject
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
 			dol_syslog("Commande::create ".$this->error, LOG_ERR);
 			return -1;
-		}	
+		}
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
@@ -552,7 +552,9 @@ class Commande extends CommonObject
 		$sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
 		$sql.= ", '".addslashes($this->note)."'";
 		$sql.= ", '".addslashes($this->note_public)."'";
-		$sql.= ", '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."'";
+		$sql.= ", '".addslashes($this->ref_client)."', '".$this->modelpdf."'";
+		$sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
+		$sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
 		$sql.= ", ".($this->adresse_livraison_id>0?$this->adresse_livraison_id:'NULL');
 		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
