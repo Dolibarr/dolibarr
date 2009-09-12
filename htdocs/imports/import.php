@@ -63,8 +63,8 @@ $entitytolang=array(		// Translation code
 	'other'=>'Other'
 );
 
-$array_match_file_to_database=isset($_SESSION["dol_array_match_file_to_database"])?$_SESSION["dol_array_match_file_to_database"]:array();
 $datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
+$filetoimport=isset($_GET["filetoimport"])? $_GET["filetoimport"] : (isset($_POST["filetoimport"])?$_POST["filetoimport"]:'');
 $action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
 $step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"]:1);
 $import_name=isset($_POST["import_name"])? $_POST["import_name"] : '';
@@ -80,11 +80,26 @@ $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $sqlusedforimport='';
 
+// Init $array_match_file_to_database from _SESSION
+$serialized_array_match_file_to_database=isset($_SESSION["dol_array_match_file_to_database"])?$_SESSION["dol_array_match_file_to_database"]:'';
+$array_match_file_to_database=array();
+$fieldsarray=split(',',$serialized_array_match_file_to_database);
+foreach($fieldsarray as $elem)
+{
+	$tabelem=split('=',$elem,2);
+	$key=$tabelem[0];
+	$val=$tabelem[1];
+	if ($key && $val)
+	{
+		$array_match_file_to_database[$key]=$val;
+	}
+}
+
 
 /*
  * Actions
  */
-
+/*
 if ($action=='downfield' || $action=='upfield')
 {
 	$pos=$array_match_file_to_database[$_GET["field"]];
@@ -105,10 +120,10 @@ if ($action=='downfield' || $action=='upfield')
 	{
 		$array_match_file_to_database[$_GET["field"]]=$newpos;
 		$array_match_file_to_database[$newcode]=$pos;
-		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
+		$_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;
 	}
 }
-
+*/
 if ($action == 'builddoc')
 {
 	// Build import file
@@ -133,19 +148,17 @@ if ($action == 'deleteprof')
 	}
 }
 
-// Save import config to file
+// Save import config to database
 if ($action == 'add_import_model')
 {
 	if ($import_name)
 	{
-		asort($array_match_file_to_database);
-
 		// Set save string
 		$hexa='';
 		foreach($array_match_file_to_database as $key=>$val)
 		{
 			if ($hexa) $hexa.=',';
-			$hexa.=$key;
+			$hexa.=$key.'='.$val;
 		}
 
 		$objimport->model_name = $import_name;
@@ -175,21 +188,29 @@ if ($action == 'add_import_model')
 
 if ($step == 3 && $action == 'select_model')
 {
+	// Reinit match arrays
+	$_SESSION["dol_array_match_file_to_database"]='';
+	$serialized_array_match_file_to_database='';
+	$array_match_file_to_database=array();
+
 	// Load model from $importmodelid and set $array_match_file_to_database
 	// and $_SESSION["dol_array_match_file_to_database"]
-	$_SESSION["dol_array_match_file_to_database"]=array();
-	$array_match_file_to_database=array();
 	$result = $objimport->fetch($importmodelid);
 	if ($result > 0)
 	{
-		$fieldsarray=split(',',$objimport->hexa);
-		$i=1;
-		foreach($fieldsarray as $val)
+		$serialized_array_match_file_to_database=$objimport->hexa;
+		$fieldsarray=split(',',$serialized_array_match_file_to_database);
+		foreach($fieldsarray as $elem)
 		{
-			$array_match_file_to_database[$val]=$i;
-			$i++;
+			$tabelem=split('=',$elem);
+			$key=$tabelem[0];
+			$val=$tabelem[1];
+			if ($key && $val)
+			{
+				$array_match_file_to_database[$key]=$val;
+			}
 		}
-		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
+		$_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;
 	}
 }
 
@@ -202,6 +223,11 @@ if ($step == 3 && $action == 'select_model')
 
 if ($step == 1 || ! $datatoimport)
 {
+	// Clean saved file-database matching
+	$serialized_array_match_file_to_database='';
+	$array_match_file_to_database=array();
+	$_SESSION["dol_array_match_file_to_database"]='';
+
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	/*
@@ -311,8 +337,7 @@ if ($step == 2 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
-	print '<br>';
-
+	print '<br>'."\n";
 
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
@@ -389,7 +414,7 @@ if ($step == 2 && $datatoimport)
 			if (eregi('^\.',$file)) continue;
 
 			$modulepart='import';
-			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport;
+			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 			$relativepath=$file;
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
@@ -427,18 +452,22 @@ if ($step == 3 && $datatoimport)
 	// Load source fields in input file
 	$fieldssource=array(
 		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
-		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2')
+		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
+		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2')
 		);
-
 
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
 
 	$maxpos=max(sizeof($fieldssource),sizeof($fieldstarget));
 
+	// Is it a first time in page
 	if (sizeof($array_match_file_to_database) == 0)
 	{
-		// This is first input in screen, we need to define the $array_match_file_to_database array
+		// This is first input in screen, we need to define
+		// $array_match_file_to_database
+		// $serialized_array_match_file_to_database
+		// $_SESSION["dol_array_match_file_to_database"]
 		$pos=1;
 		while ($pos <= sizeof($fieldssource))
 		{
@@ -454,14 +483,19 @@ if ($step == 3 && $datatoimport)
 					}
 					// We found the key of targets that is at position pos
 					$array_match_file_to_database[$pos]=$key;
+					if ($serialized_array_match_file_to_database) $serialized_array_match_file_to_database.=',';
+					$serialized_array_match_file_to_database.=($pos.'='.$key);
 					break;
 				}
 			}
 			$pos++;
 		}
 		// Save the match array in session. We now will use the array in session.
-		$_SESSION["dol_array_match_file_to_database"]=$array_match_file_to_database;
+		$_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;
 	}
+	//print $serialized_array_match_file_to_database;
+	//print $_SESSION["dol_array_match_file_to_database"];
+	//var_dump($array_match_file_to_database);exit;
 
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
 
@@ -505,18 +539,20 @@ if ($step == 3 && $datatoimport)
 
 	// Nbre champs importes
 	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
-	print '<td>'.$_GET["filetoimport"].'</td></tr>';
+	print '<td>'.$filetoimport.'</td></tr>';
 
 	print '</table>';
-	print '<br>';
+	print '<br>'."\n";
 
 
     // List of import models
+    print '<!-- List of import models -->'."\n";
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="3">';
     print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
+    print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectImportFields",img_picto('','uparrow','')).' ';
     $htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
@@ -708,7 +744,7 @@ if ($step == 3 && $datatoimport)
 
 	if (sizeof($array_match_file_to_database))
 	{
-		print '<a class="butAction" href="import.php?step=4&datatoimport='.$datatoimport.'">'.$langs->trans("NextStep").'</a>';
+		print '<a class="butAction" href="import.php?step=4&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
 	}
 
 	print '</div>';
@@ -717,14 +753,16 @@ if ($step == 3 && $datatoimport)
 	// Area for profils import
 	if (sizeof($array_match_file_to_database))
 	{
-		print '<br>';
+		print '<br>'."\n";
+		print '<!-- Area to add new import profile -->'."\n";
 		print $langs->trans("SaveImportModel");
 
-		print '<form class="nocellnopadd" action="import.php" method="post">';
+		print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add_import_model">';
 		print '<input type="hidden" name="step" value="'.$step.'">';
 		print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
+    	print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 
 		print '<table summary="selectofimportprofil" class="noborder" width="100%">';
@@ -756,7 +794,7 @@ if ($step == 3 && $datatoimport)
 				print '<tr '.$bc[$var].'><td>';
 				print $obj->label;
 				print '</td><td align="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport.'&action=deleteprof&id='.$obj->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
