@@ -53,22 +53,20 @@ $langs->load("main");				// To load language file for default language
 
 // Load user and its permissions
 $result=$user->fetch('admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('',$user->error); exit; } 
+if (! $result > 0) { dol_print_error('',$user->error); exit; }
 $user->getrights();
 
-print "***** ".$script_file." (".$version.") *****\n";
 
-// Check parameters
-if (! isset($argv[1])) {
+print "***** ".$script_file." (".$version.") *****\n";
+if (! isset($argv[1])) {	// Check parameters
     print "Usage: ".$script_file." param1 param2 ...\n";
     exit;
 }
+print '--- start'."\n";
 
 // Show parameters
 print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
-
-print '--- start'."\n";
 
 
 // Start of transaction
