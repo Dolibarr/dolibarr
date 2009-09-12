@@ -64,3 +64,5 @@ FieldsInSourceFile = Camps en el fitxer orige
 FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr
 NoFields = Cap camp
 MoveField = Moure camp columna número %s
+ExampleOfImportFile = Exemple_de_fitxer_importacio
+ErrorImportDuplicateProfil = No es pot desar el perfil d'importació sota aquest nom. Ja existeix un perfil amb aquest nom.

@@ -64,3 +64,5 @@ FieldsInSourceFile = Campos en el archivo origen
 FieldsInTargetDatabase = Campos destino en la base de datos Dolibarr
 NoFields = Ningún campo
 MoveField = Mover campo columna número %s
+ExampleOfImportFile = Ejemplo_de_fichero_importacion
+ErrorImportDuplicateProfil = No se puede guardar el perfil de importación bajo este nombre. Ya existe un perfil con ese nombre.
