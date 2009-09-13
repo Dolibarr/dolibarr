@@ -17,6 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+
+/**
+ * Enter description here...
+ *
+ */
 class Facturation {
 
 	/**
@@ -82,36 +89,29 @@ class Facturation {
 		global $sql;
 		$req='SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva();
 		dol_syslog("ajoutArticle sql=".$req);
-		$resql=$sql->query ();
+		$resql=$sql->query($req);
 
-		$tab_tva = $sql->fetch_array($resql);
-		$ret=array();
-		foreach ( $tab_tva as $cle => $valeur )
-		{
-			$ret[$cle] = $valeur;
-		}
-		$tab_tva=$ret;
-//		var_dump($tab_tva);exit;
+		$obj = $sql->fetch_object($resql);
+		$vat_rate=$obj->taux;
+		//var_dump($vat_rate);exit;
 
-		// TODO Mettre methode de calcul arrondi TVA de Dolibarr
+		// Define part of HT, VAT, TTC
+		$resultarray=calcul_price_total($this->qte,$this->prix(),$this->remise_percent(),$vat_rate,0,'HT',0);
+
 
 		// Calcul du total ht sans remise
-		$total_ht = ( $this->qte * $this->prix() );
+		$total_ht = $resultarray[0];
+		$total_vat = $resultarray[1];
+		$total_ttc = $resultarray[2];
 		// Calcul du montant de la remise
-		if ( $this->remise_percent() ) {
-
+		if ($this->remise_percent())
+		{
 			$remise_percent = $this->remise_percent();
-
 		} else {
-
 			$remise_percent = 0;
-
 		}
-		$montant_remise = $total_ht * $remise_percent / 100;
-		$this->montant_remise ($montant_remise);
-		// Calcul du total ttc
-		$total_ttc = ($total_ht - $montant_remise) * (($tab_tva['taux'] / 100) + 1);
-
+		$montant_remise_ht = ($resultarray[6] - $resultarray[0]);
+		$this->montant_remise ($montant_remise_ht);
 
 		$req='INSERT INTO '.MAIN_DB_PREFIX.'tmp_caisse (
 					fk_article,
@@ -126,9 +126,9 @@ class Facturation {
 					'.$this->qte().',
 					'.$this->tva().',
 					'.$remise_percent.',
-					'.price2num($montant_remise).',
-					'.price2num($total_ht).',
-					'.price2num($total_ttc).')';
+					'.price2num($montant_remise_ht).',
+					'.price2num($total_ht,'MT').',
+					'.price2num($total_ttc,'MT').')';
 		dol_syslog("ajoutArticle sql=".$req);
 		$sql->query($req);
 

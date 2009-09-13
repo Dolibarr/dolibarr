@@ -56,14 +56,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 				$remise = $tab[$i]['remise'];
 				$total_ht = ($tab[$i]['total_ht'] - $remise);
 
-				echo ('<p>'.$tab[$i]['qte'].' x '.number_format ( $tab[$i]['price'], 2, '.', '' ).$remise_percent.' = '.number_format ($total_ht, 2, '.', '').'&#8364; HT ('.number_format ($tab[$i]['total_ttc'], 2, '.', '').'&#8364; TTC)</p>'."\n");
+				echo ('<p>'.$tab[$i]['qte'].' x '.price2num( $tab[$i]['price'], 'MT').$remise_percent.' = '.price2num($total_ht, 'MT').' '.$conf->monnaie.' HT ('.price2num($tab[$i]['total_ttc'], 'MT').' '.$conf->monnaire.' TTC)</p>'."\n");
 			echo ('</div>'."\n");
 
 		}
 
 		$obj_facturation->calculTotaux();
 		$total_ttc = $obj_facturation->prix_total_ttc();
-		echo ('<p class="cadre_prix_total">TOTAL : '.number_format ($total_ttc, 2, '.', '').' '.$conf->monnaie.'<br /></p>'."\n");
+		echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price2num($total_ttc, 'MT').' '.$conf->monnaie.'<br /></p>'."\n");
 
 	} else {
 

@@ -1,3 +1,6 @@
+<?php
+$langs->load("main");
+?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
@@ -112,7 +115,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 </div>
 
 <table class="liste_articles">
-	<tr class="titres"><th>Code</th><th>Label</th><th>Qté</th><th>Remise (%)</th><th>Tot HT</th></tr>
+	<tr class="titres"><th><?php print $langs->trans("Code"); ?></th><th><?php print $langs->trans("Label"); ?></th><th><?php print $langs->trans("Qty"); ?></th><th><?php print $langs->trans("Discount").' (%)'; ?></th><th><?php print $langs->trans("TotalHT"); ?></th></tr>
 
 	<?php
 
@@ -140,7 +143,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 				$remise = $tab[$i]['remise'];
 				$total_ht = $tab[$i]['total_ht'] - $remise;
 
-				echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.number_format ( $total_ht,2, '.', '').' &#8364;</td></tr>'."\n");
+				echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price2num($total_ht,'MT').' '.$conf->monnaie.'</td></tr>'."\n");
 
 			}
 
@@ -155,18 +158,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 <table class="totaux">
 	<?php
-		echo '<tr><th>Total HT</th><td>'.price2num($obj_facturation->prix_total_ht())." ".$conf->monnaie."</td></tr>\n";
-		if ( $obj_facturation->montant_tva() ) {
-
-			echo '<tr><th>TVA</th><td>'.price2num($obj_facturation->montant_tva())." ".$conf->monnaie."</td></tr>\n";
-
-		}
-		else {
-
-			echo '<tr><th></th><td>Pas de TVA</td><tr>'."\n";
-
-		}
-		echo '<tr><th>Total TTC</th><td>'.price2num($obj_facturation->prix_total_ttc())." ".$conf->monnaie."</td></tr>\n";
+		echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalHT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prix_total_ht(),'MT')." ".$conf->monnaie."</td></tr>\n";
+		echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalVAT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->montant_tva(),'MT')." ".$conf->monnaie."</td></tr>\n";
+		echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalTTC").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prix_total_ttc(),'MT')." ".$conf->monnaie."</td></tr>\n";
 	?>
 </table>
 
