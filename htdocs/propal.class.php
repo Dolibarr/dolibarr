@@ -512,27 +512,32 @@ class Propal extends CommonObject
 	/**
 	 *      \brief      Create commercial proposal
 	 * 		\param		user	User that create
-	 *      \return     int     <0 si ko, >=0 si ok
+	 *      \return     int     <0 if KO, >=0 if OK
+	 * 		\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
 	 */
 	function create($user='')
 	{
 		global $langs,$conf,$mysoc;
+		$error=0;
 
 		// Clean parameters
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
-		
+
 		dol_syslog("Propal::Create");
-		
+
 		// Check parameters
-		if (empty($this->ref))
-	 	{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
-			dol_syslog("Facture::create ".$this->error, LOG_ERR);
-			return -1;
-		}	
 		$soc = new Societe($this->db);
-		$soc->fetch($this->socid);
-		$this->verifyNumRef($soc);	// Check ref is not yet used
+		$result=$soc->fetch($this->socid);
+		if ($result < 0)
+		{
+			$this->error="Failed to fetch company";
+			dol_syslog("Propal::create ".$this->error, LOG_ERR);
+			return -2;
+		}
+		if (! empty($this->ref))
+		{
+			$this->verifyNumRef($soc);	// Check ref is not yet used
+		}
 
 
 		$this->db->begin();
@@ -1972,7 +1977,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      Verifie si la ref n'est pas deja utilisee
+	 *      \brief      Check if ref is used. And if used tkae next one.
 	 *      \param	    soc  		            objet societe
 	 */
 	function verifyNumRef($soc)

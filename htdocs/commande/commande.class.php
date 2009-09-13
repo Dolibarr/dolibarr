@@ -502,12 +502,15 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *  \brief		Create order
-	 *  \param		user 	Objet utilisateur qui cree
+	 *  	\brief		Create order
+	 *		\param		user 	Objet user that make creation
+	 * 		\return 	int		<0 if KO, >0 if OK
+	 *		\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
 	 */
 	function create($user)
 	{
 		global $conf,$langs,$mysoc;
+		$error=0;
 
 		// Clean parameters
 		$this->brouillon = 1;		// On positionne en mode brouillon la commande
@@ -515,11 +518,13 @@ class Commande extends CommonObject
 		dol_syslog("Commande::create user=".$user->id);
 
 		// Check parameters
-		if (empty($this->ref))
-	 	{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+		$soc = new Societe($this->db);
+		$result=$soc->fetch($this->socid);
+		if ($result < 0)
+		{
+			$this->error="Failed to fetch company";
 			dol_syslog("Commande::create ".$this->error, LOG_ERR);
-			return -1;
+			return -2;
 		}
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
@@ -530,14 +535,6 @@ class Commande extends CommonObject
 		if (! $remise) $remise=0;
 		if (! $this->projetid) $this->projetid = 0;
 
-		$soc = new Societe($this->db);
-		$result=$soc->fetch($this->socid);
-		if ($result < 0)
-		{
-			$this->error="Failed to fetch company";
-			dol_syslog("Commande::create ".$this->error, LOG_ERR);
-			return -2;
-		}
 
 		$this->db->begin();
 

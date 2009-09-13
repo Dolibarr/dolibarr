@@ -130,11 +130,13 @@ class Facture extends CommonObject
 	 *	\brief     	Create invoice in database
 	 *	\param     	user       		Object user that create
 	 *	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *	\return		int				<0 si ko, >0 si ok
+	 *	\return		int				<0 if KO, >0 if OK
+	 *	\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
 	 */
 	function create($user,$notrigger=0)
 	{
 		global $langs,$conf,$mysoc;
+		$error=0;
 
 		// Clean parameters
 		if (! $this->type) $this->type = 0;
@@ -148,21 +150,15 @@ class Facture extends CommonObject
 		dol_syslog("Facture::Create user=".$user->id);
 
 		// Check parameters
-		// TODO suppression de cette verification a confirmer
-		// la ref est toujours vide puisque c'est une création
-		/*
-		if (empty($this->ref))
-	 	{
-			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
-			dol_syslog("Facture::create ".$this->error, LOG_ERR);
-			return -1;
-		}
-		*/
-
 		$soc = new Societe($this->db);
-		$soc->fetch($this->socid);
+		$result=$soc->fetch($this->socid);
+		if ($result < 0)
+		{
+			$this->error="Failed to fetch company";
+			dol_syslog("Facture::create ".$this->error, LOG_ERR);
+			return -2;
+		}
 
-		$error=0;
 
 		$this->db->begin();
 
