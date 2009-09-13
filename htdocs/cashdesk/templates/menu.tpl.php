@@ -35,9 +35,9 @@ $logout='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->them
 
 print '<div class="menu_bloc">';
 print '<ul class="menu">';
-print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><span>Nouvelle vente</span></a></li>';
+print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><span>'.$langs->trans("NewSell").'</span></a></li>';
 
-print '<li class="menu_choix2"><a href="'.eregi_replace('cashdesk','',$conf_url_racine).'"><span>Gestion commerciale</span></a></li>';
+print '<li class="menu_choix2"><a href="'.eregi_replace('cashdesk','',$conf_url_racine).'"><span>'.$langs->trans("BackOffice").'</span></a></li>';
 
 print '<li class="menu_choix0">'.$langs->trans("User").' : '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
 print $langs->trans("CashDeskThirdParty").' : '.$company->getNomUrl(1).'<br>';

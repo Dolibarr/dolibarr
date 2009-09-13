@@ -1,3 +1,8 @@
+<?php
+$langs->load("main");
+$langs->load("bills");
+$langs->load("cashdesk");
+?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
@@ -17,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <div class="liste_articles_haut">
 <div class="liste_articles_bas">
 
-<p class="titre">Panier</p>
+<p class="titre"><?php echo $langs->trans("ShoppingCart"); ?></p>
 
 <?php
 	// Recuperation du contenu de la vente

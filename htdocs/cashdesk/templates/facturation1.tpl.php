@@ -1,3 +1,7 @@
+<?php
+$langs->load("main");
+$langs->load("bills");
+?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
@@ -18,14 +22,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <script type="text/javascript" src="javascript/dhtml.js"></script>
 
 <!-- ========================= Cadre "Article" ============================= -->
-<fieldset class="cadre_facturation"><legend class="titre1">Article</legend>
+<fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Article"); ?></legend>
 	<form id="frmFacturation" class="formulaire1" method="post" action="facturation_verif.php">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
 		<input type="hidden" name="hdnSource" value="NULL" />
 
 		<table>
-			<tr><th class="label1">Code</th><th class="label1">Designation</th></tr>
+			<tr><th class="label1"><?php echo $langs->trans("Code"); ?></th><th class="label1"><?php echo $langs->trans("Designation"); ?></th></tr>
 			<tr>
 			<!-- Affichage de la reference et de la designation -->
 			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" autocomplete="off" value="<?php echo $obj_facturation->ref() ?>"
@@ -106,7 +110,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="javascript: return verifSaisie();">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<table>
-			<tr><th class="label1">Quantite</th><th class="label1">Stock</th><th class="label1">Prix unitaire</th><th></th><th class="label1">Taux TVA</th><th class="label1">Remise (%)</th><th class="label1">Prix total</th></tr>
+			<tr><th class="label1"><?php echo $langs->trans("Qty"); ?></th><th class="label1"><?php echo $langs->trans("Stock"); ?></th><th class="label1"><?php echo $langs->trans("PriceUHT"); ?></th><th></th><th class="label1"><?php echo $langs->trans("VATRate"); ?></th><th class="label1"><?php echo $langs->trans("Discount"); ?> (%)</th><th class="label1"><?php echo $langs->trans("TotalHT"); ?></th></tr>
 			<tr>
 				<td><input class="texte1" type="text" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" /></td>
 				<!-- Affichage du stock pour l'article courant -->
@@ -141,7 +145,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			</tr>
 		</table>
 
-		<input class="bouton_ajout_article" type="submit" id="sbmtEnvoyer" value="Ajouter cet article" />
+		<input class="bouton_ajout_article" type="submit" id="sbmtEnvoyer" value="<?php echo $langs->trans("AddThisArticle"); ?>" />
 	</form>
 </fieldset>
 
@@ -149,12 +153,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 	<input type="hidden" name="hdnChoix" value="" />
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-<fieldset class="cadre_facturation"><legend class="titre1">Difference</legend>
+<fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Difference"); ?></legend>
 		<table>
-			<tr><th class="label1">Montant du</th><th class="label1">Encaisse</th><th class="label1">Rendu</th></tr>
+			<tr><th class="label1"><?php echo $langs->trans("DueAmount"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("RemainderToPay"); ?></th></tr>
 			<tr>
 			<!-- Affichage du montant du -->
-			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo number_format ($obj_facturation->prix_total_ttc (), 2, '.', ''); ?>" disabled="disabled" /></td>
+			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prix_total_ttc (), 'MT'); ?>" disabled="disabled" /></td>
 			<!-- Choix du montant encaisse -->
 			<td><input class="texte2" type="text" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" /></td>
 			<!-- Affichage du montant rendu -->
@@ -164,19 +168,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 		</table>
 </fieldset>
 
-<fieldset class="cadre_facturation"><legend class="titre1">Mode de paiement</legend>
+<fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("PaymentMode"); ?></legend>
 		<table>
 			<tr>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Especes" onclick="javascript: verifClic('ESP');" /></td>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Carte" onclick="javascript: verifClic('CB');" /></td>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Cheque" onclick="javascript: verifClic('CHQ');" /></td>
+			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Cash"); ?>" onclick="javascript: verifClic('ESP');" /></td>
+			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("CreditCard"); ?>" onclick="javascript: verifClic('CB');" /></td>
+			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Cheque"); ?>" onclick="javascript: verifClic('CHQ');" /></td>
 			</tr>
 		</table>
 		<table>
 			<tr>
 				<td>
-				<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Differe" onclick="javascript: verifClic('DIF');" />
-				Date limite de paiement :
+				<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
+				<?php echo $langs->trans("DateEcheance"); ?> :
 				<input class="texte2" type="text" id="txtDatePaiement" name="txtDatePaiement" value="" />
 				<input class="bouton_cal" type="image" src="images/calendrier.png" id="btnCalendrier" value="..." title="Cliquez pour afficher le calendrier" />
 				</td>

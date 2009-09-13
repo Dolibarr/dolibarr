@@ -18,7 +18,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 <html>
-<head><title>Impression du ticket</title>
+<head><title>Print ticket</title>
 
 <style type="text/css">
 
@@ -31,18 +31,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 /* 		position: relative; */
 	}
 
-		.logo {
-			background: url('<?php echo DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini); ?>') no-repeat top left;
-			height: 128px;
-			width: 650px;
-		}
-
-			.logo span {
-				display: none;
-			}
-
 		.adresse {
 /* 			float: left; */
+			font-size: 12px;
 		}
 
 		.date_heure {
@@ -99,17 +90,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <body>
 
 <div class="entete">
-	<div class="logo"><span>Logo</span></div>
+	<div class="logo">
+	<?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
+	</div>
 	<div class="infos">
-		<p class="adresse">SOCIETE<br />
-		RUE DU PORT<br />
-		75000 PARIS</p>
+		<p class="adresse"><?php echo $mysoc->nom; ?><br />
+		<?php echo $mysoc->adresse; ?><br />
+		<?php echo $mysoc->cp.' '.$mysoc->ville; ?></p>
 
 		<?php
 			// Recuperation et affichage de la date et de l'heure
-			$date = date ('d/m/Y');
-			$heure = date ('H:i');
-			echo ('<p class="date_heure">Le '.$date.' à '.$heure.'</p>');
+			$now = mktime();
+			print '<p class="date_heure">'.dol_print_date($now,'dayhourtext').'</p>';
 		?>
 	</div>
 </div>

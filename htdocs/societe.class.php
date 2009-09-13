@@ -5,7 +5,7 @@
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008	     Patrick Raguin       <patrick.raguin@auguria.net>
+ * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
  *	\brief      File for third party class
  *	\version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 
@@ -104,6 +103,9 @@ class Societe extends CommonObject
 
 	var $import_key;
 
+	var $logo;
+	var $logo_small;
+	var $logo_mini;
 
 	/**
 	 *    \brief  Constructeur de la classe

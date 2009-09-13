@@ -352,6 +352,7 @@ UsBillingContactAsIncoiveRecipientIfExist=Utiliser l'adresse du contact facturat
 ShowUnpaidAll=Afficher tous les impayés
 ShowUnpaidLateOnly=Afficher impayés en retard uniquement
 PaymentInvoiceRef=Paiement facture %s
+ValidateInvoice=Valider facture
 
 # oursin PDF model
 Of=du
