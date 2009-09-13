@@ -11,3 +11,5 @@ NewSell=Nouvelle vente
 BackOffice=Back office
 AddThisArticle=Ajouter cet article
 RestartSelling=Reprendre la vente
+SellFinished=Vente terminée
+PrintTicket=Imprimer ticket

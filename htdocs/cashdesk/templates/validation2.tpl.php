@@ -1,3 +1,6 @@
+<?php
+$langs->load("main");
+?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
@@ -14,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
-<h3 class="titre1">Vente termin&eacute;e</h3>
+<h3 class="titre1"><?php echo $langs->trans("SellFinished"); ?></h3>
 
 <div class="cadre_facturation">
 
@@ -33,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 </script>
 
-<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture.php?facid=<?php echo $_GET['facid']; ?>" target="_blank">Voir la facture</a></p>
-<p><a class="lien1" href="#" onclick="Javascript: popupTicket(); return(false);">Imprimer le ticket</a></p>
+<p><a class="lien1" href="<?php echo DOL_URL_ROOT ?>/compta/facture.php?facid=<?php echo $_GET['facid']; ?>" target="_blank"><?php echo $langs->trans("ShowInvoice"); ?></a></p>
+<p><a class="lien1" href="#" onclick="Javascript: popupTicket(); return(false);"><?php echo $langs->trans("PrintTicket"); ?></a></p>
 
 </div>
