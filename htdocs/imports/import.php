@@ -453,8 +453,14 @@ if ($step == 3 && $datatoimport)
 	$fieldssource=array(
 		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
 		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
-		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2')
-		);
+		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2'),
+		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
+		5=>array('name'=>'ee','example1'=>'valc1','example2'=>'valc2'),
+		6=>array('name'=>'ff','example1'=>'valc1','example2'=>'valc2'),
+		7=>array('name'=>'gg','example1'=>'valc1','example2'=>'valc2'),
+		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
+		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
+	);
 
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
@@ -567,6 +573,8 @@ if ($step == 3 && $datatoimport)
 	print '<td>'.$langs->trans("FieldsInTargetDatabase").'</td>';
 	print '</tr>';
 
+	//var_dump($array_match_file_to_database);
+
 	print '<tr valign="top"><td width="50%">';
 
 	$fieldsplaced=array();
@@ -574,8 +582,6 @@ if ($step == 3 && $datatoimport)
 	{
 		$listofkeys[$key]=1;
 	}
-
-	//var_dump($array_match_file_to_database);
 
 	print "\n<!-- Box left container -->\n";
 	print '<div id="left">'."\n";
