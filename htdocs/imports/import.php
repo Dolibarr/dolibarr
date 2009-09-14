@@ -64,6 +64,7 @@ $entitytolang=array(		// Translation code
 );
 
 $datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
+$format=isset($_GET["format"])? $_GET["format"] : (isset($_POST["format"])?$_POST["format"]:'');
 $filetoimport=isset($_GET["filetoimport"])? $_GET["filetoimport"] : (isset($_POST["filetoimport"])?$_POST["filetoimport"]:'');
 $action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
 $step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"]:1);
@@ -186,7 +187,7 @@ if ($action == 'add_import_model')
 	}
 }
 
-if ($step == 3 && $action == 'select_model')
+if ($step == 4 && $action == 'select_model')
 {
 	// Reinit match arrays
 	$_SESSION["dol_array_match_file_to_database"]='';
@@ -303,9 +304,6 @@ if ($step == 2 && $datatoimport)
 {
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	/*
-	 * Affichage onglets
-	 */
 	$h = 0;
 
 	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
@@ -351,6 +349,7 @@ if ($step == 2 && $datatoimport)
 	$var=true;
 
 	// Add format informations and link to download example
+	print '<tr><td colspan="4">'.$langs->trans("ChooseFormatOfFileToImport",img_picto('','filenew')).'</td></tr>';
 	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
@@ -361,12 +360,82 @@ if ($step == 2 && $datatoimport)
 		print '<tr '.$bc[$var].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
 		print '<td>'.$objmodelimport->getDriverLabel($key).'</td>';
-		print '<td colspan="4" align="right"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
-		//print '<td>'.$objmodelimport->getLibLabel($key).'</td><td>'.$objmodelimport->getLibVersion($key).'</td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
+		// Action button
+		print '<td align="right">';
+		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport.'&format='.$key.'">'.img_picto($langs->trans("SelectFormat"),'filenew').'</a>';
+		print '</td>';
 		print '</tr>';
 	}
 
-	print '<tr><td colspan="6">&nbsp;</td></tr>';
+	print '</table></form>';
+
+	print '</div>';
+
+	if ($mesg) print $mesg;
+}
+
+if ($step == 3 && $datatoimport)
+{
+	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+
+	$param='step=3&datatoimport='.$datatoimport.'&format='.$format;
+
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][1] = $langs->trans("Step")." 1";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][1] = $langs->trans("Step")." 2";
+	$hselected=$h;
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?'.$param;
+	$head[$h][1] = $langs->trans("Step")." 3";
+	$hselected=$h;
+	$h++;
+
+
+	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
+
+
+	print '<table width="100%" class="border">';
+
+	// Module
+	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<td>';
+	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
+	print $objimport->array_import_module[0]->getName();
+	print '</td></tr>';
+
+	// Lot de donnees a importer
+	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
+	print '<td>';
+	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
+	print $objimport->array_import_label[0];
+	print '</td></tr>';
+
+	// Source file format
+	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<td>';
+	print $format;
+	print '</td></tr>';
+
+	print '</table>';
+	print '<br>'."\n";
+
+
+	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+
+	$filetoimport='';
+	$fullpathfiletoimport='';
+	$var=true;
 
 	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</td></tr>';
 
@@ -378,6 +447,7 @@ if ($step == 2 && $datatoimport)
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'" name="sendit">';
 	print '<input type="hidden" value="'.$step.'" name="step">';
+	print '<input type="hidden" value="'.$format.'" name="format">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 	print "</tr>\n";
 
@@ -414,7 +484,7 @@ if ($step == 2 && $datatoimport)
 			if (eregi('^\.',$file)) continue;
 
 			$modulepart='import';
-			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
+			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 			$relativepath=$file;
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
@@ -425,12 +495,12 @@ if ($step == 2 && $datatoimport)
 			// Affiche date fichier
 			print '<td align="right">'.dol_print_date(filemtime($dir.'/'.$file),'dayhour').'</td>';
 			// Del button
-			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;setp=2&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&step=3&format='.$format.'&modulepart='.$modulepart.'&file='.urlencode($relativepath);
 			print '&amp;urlsource='.urlencode($urlsource);
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=4&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -443,24 +513,24 @@ if ($step == 2 && $datatoimport)
 	print '</div>';
 
 	if ($mesg) print $mesg;
-
 }
 
+
 // Page to make matching between source file and database fields
-if ($step == 3 && $datatoimport)
+if ($step == 4 && $datatoimport)
 {
 	// Load source fields in input file
 	$fieldssource=array(
 		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
 		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
 		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2'),
-		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
+/*		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
 		5=>array('name'=>'ee','example1'=>'valc1','example2'=>'valc2'),
 		6=>array('name'=>'ff','example1'=>'valc1','example2'=>'valc2'),
 		7=>array('name'=>'gg','example1'=>'valc1','example2'=>'valc2'),
 		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
 		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
-	);
+*/	);
 
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
@@ -505,10 +575,9 @@ if ($step == 3 && $datatoimport)
 
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
 
+	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
-
-	$param='step=3&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 
 	$h = 0;
 
@@ -520,8 +589,13 @@ if ($step == 3 && $datatoimport)
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
 	$head[$h][1] = $langs->trans("Step")." 3";
+	$hselected=$h;
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
+	$head[$h][1] = $langs->trans("Step")." 4";
 	$hselected=$h;
 	$h++;
 
@@ -543,7 +617,13 @@ if ($step == 3 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	// Nbre champs importes
+	// Source file format
+	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<td>';
+	print $format;
+	print '</td></tr>';
+
+	// File to import
 	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
 	print '<td>'.$filetoimport.'</td></tr>';
 
@@ -556,7 +636,8 @@ if ($step == 3 && $datatoimport)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="select_model">';
-    print '<input type="hidden" name="step" value="3">';
+    print '<input type="hidden" name="step" value="4">';
+    print '<input type="hidden" name="format" value="'.$format.'">';
     print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
     print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
     print '<table><tr><td colspan="2">';
@@ -708,7 +789,7 @@ if ($step == 3 && $datatoimport)
 	    print 'var url = "ajaximport.php";'."\n";
 	    print 'var datatoimport = "'.$datatoimport.'";'."\n";
 	    print 'o_options = new Object();'."\n";
-	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'step=3&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
+	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'step=4&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
 	    print 'var myAjax = new Ajax.Request(url, o_options);'."\n";
 	    //print 'document.
 	    print '}'."\n";
@@ -746,7 +827,7 @@ if ($step == 3 && $datatoimport)
 
 	if (sizeof($array_match_file_to_database))
 	{
-		print '<a class="butAction" href="import.php?step=4&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
+		print '<a class="butAction" href="import.php?step=5&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
 	}
 
 	print '</div>';
@@ -796,7 +877,7 @@ if ($step == 3 && $datatoimport)
 				print '<tr '.$bc[$var].'><td>';
 				print $obj->label;
 				print '</td><td align="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoimport='.$datatoimport.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&format='.$format.'&datatoimport='.$datatoimport.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
@@ -813,15 +894,14 @@ if ($step == 3 && $datatoimport)
 
 }
 
-if ($step == 4 && $datatoimport)
+if ($step == 5 && $datatoimport)
 {
 	asort($array_match_file_to_database);
 
+	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
+
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	/*
-	 * Affichage onglets
-	 */
 	$h = 0;
 
 	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
@@ -832,12 +912,16 @@ if ($step == 4 && $datatoimport)
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&'.$param;
 	$head[$h][1] = $langs->trans("Step")." 3";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4&'.$param;
 	$head[$h][1] = $langs->trans("Step")." 4";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5&'.$param;
+	$head[$h][1] = $langs->trans("Step")." 5";
 	$hselected=$h;
 	$h++;
 
@@ -859,79 +943,42 @@ if ($step == 4 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
+	// Source file format
+	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<td>';
+	print $format;
+	print '</td></tr>';
+
+	// File to import
+	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
+	print '<td>'.$filetoimport.'</td></tr>';
+
+	print '</table>';
+	print '<br>';
+
+
 	// Nbre champs importes
-	print '<tr><td width="25%">'.$langs->trans("ImportedFields").'</td>';
+	print $langs->trans("ImportedFields");
 	$list='';
 	foreach($array_match_file_to_database as $code=>$label)
 	{
 		$list.=($list?',':'');
 		$list.=$langs->trans($objimport->array_import_fields[0][$code]);
 	}
-	print '<td>'.$list.'</td></tr>';
 
-	print '</table>';
-	print '<br>';
 
-	print $langs->trans("NowClickToGenerateToBuildImportFile").'<br>';
+	print '<center>';
+	print $langs->trans("NowClickToLoadImportFile").'<br>';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?step=6&'.$param.'">';
 
-	// Liste des formats d'imports disponibles
-	$var=true;
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
-	print '<td>'.$langs->trans("LibraryUsed").'</td>';
-	print '<td alig="right">'.$langs->trans("LibraryVersion").'</td>';
-	print '</tr>';
+	print '<input class="button" type="submit" value="'.$langs->trans("ImportFile").'">';
 
-	$liste=$objmodelimport->liste_modeles($db);
-	foreach($liste as $key)
-	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
-		print '<td>'.$objmodelimport->getDriverLabel($key).'</td><td>'.$objmodelimport->getLibLabel($key).'</td><td align="right">'.$objmodelimport->getLibVersion($key).'</td></tr>';
-	}
-	print '</table>';
+	print '</form>';
+	print '</center>';
 
 	print '</div>';
 
-	print '<table width="100%">';
-	if ($mesg)
-	{
-		print '<tr><td colspan="2">';
-		print $mesg;
-		print '</td></tr>';
-	}
-	if ($sqlusedforimport && $user->admin)
-	{
-		print '<tr><td>';
-		print info_admin($langs->trans("SQLUsedForImport").':<br> '.$sqlusedforimport);
-		print '</td></tr>';
-	}
-	print '</table>';
-
-	print '<table width="100%"><tr><td width="50%">';
-
-	if (! is_dir($conf->import->dir_temp)) create_exdir($conf->import->dir_temp);
-
-	// Affiche liste des documents
-	// NB: La fonction show_documents rescanne les modules qd genallowed=1
-	$formfile->show_documents('import','',$conf->import->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoimport='.$datatoimport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),'',1);
-
-	print '</td><td width="50%">&nbsp;</td></tr>';
-	print '</table>';
-
-	// If external library PHPEXCELREADER is available
-	// and defined by PHPEXCELREADER constant.
-	if (file_exists(PHPEXCELREADER.'excelreader.php'))
-	{
-		// Test d'affichage du tableau excel et csv
-		//print '<table width="100%"><tr><td>';
-		//require_once(DOL_DOCUMENT_ROOT.'/lib/viewfiles.lib.php');
-		//viewExcelFileContent($conf->import->dir_temp.'/1/import_member_1.xls',5,3);
-		//viewCsvFileContent($conf->import->dir_temp.'/1/import_member_1.csv',5);
-		//print '</td></tr></table>';
-	}
+	if ($mesg) print $mesg;
 }
 
 
