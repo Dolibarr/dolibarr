@@ -201,13 +201,13 @@ if (! defined('NOTOKENRENEWAL'))
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 	$_SESSION['newtoken'] = $token;
 }
-if (empty($conf->global->MAIN_FEATURES_LEVEL))	// Check validity of token, only if not a dev instance (this make developper tests no more working)
+if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only if not option enabled (this option breaks some features sometimes)
 {
 	if (isset($_POST['token']) && isset($_SESSION['token']))
 	{
 		if (($_POST['token'] != $_SESSION['token']))
 		{
-			dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token']=".$_SESSION['token']);
+			dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token']=".$_SESSION['token'],LOG_WARNING);
 			//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 			unset($_POST);
 		}
