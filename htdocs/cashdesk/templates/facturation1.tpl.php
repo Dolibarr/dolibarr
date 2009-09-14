@@ -155,7 +155,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Difference"); ?></legend>
 		<table>
-			<tr><th class="label1"><?php echo $langs->trans("DueAmount"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("RemainderToPay"); ?></th></tr>
+			<tr><th class="label1"><?php echo $langs->trans("AmountExpected"); ?></th><th class="label1"><?php echo $langs->trans("Received"); ?></th><th class="label1"><?php echo $langs->trans("ExcessReceived"); ?></th></tr>
 			<tr>
 			<!-- Affichage du montant du -->
 			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prix_total_ttc (), 'MT'); ?>" disabled="disabled" /></td>

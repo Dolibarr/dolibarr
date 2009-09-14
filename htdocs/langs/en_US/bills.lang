@@ -351,6 +351,8 @@ UsBillingContactAsIncoiveRecipientIfExist=Use customer billing contact address i
 ShowUnpaidLateOnly=Show late unpaid invoice only
 PaymentInvoiceRef=Payment invoice %s
 ValidateInvoice=Validate invoice
+Cash=Cash
+Reported=Delayed
 
 # oursin PDF model
 Of=du

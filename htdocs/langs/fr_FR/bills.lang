@@ -353,6 +353,8 @@ ShowUnpaidAll=Afficher tous les impayés
 ShowUnpaidLateOnly=Afficher impayés en retard uniquement
 PaymentInvoiceRef=Paiement facture %s
 ValidateInvoice=Valider facture
+Cash=Liquide
+Reported=Différé
 
 # oursin PDF model
 Of=du

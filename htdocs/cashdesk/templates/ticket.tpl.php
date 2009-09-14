@@ -40,6 +40,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			position: absolute;
 			top: 0;
 			right: 0;
+			font-size: 16px;
 		}
 
 		.infos {
@@ -133,9 +134,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			for ( $i = 0; $i < count($tab); $i++ ) {
 
 				$remise = $tab[$i]['remise'];
-				$total_ht = $tab[$i]['total_ht'] - $remise;
-
-				echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price2num($total_ht,'MT').' '.$conf->monnaie.'</td></tr>'."\n");
+				echo ('<tr><td>'.$tab[$i]['ref'].'</td><td>'.$tab[$i]['label'].'</td><td>'.$tab[$i]['qte'].'</td><td>'.$tab[$i]['remise_percent'].'</td><td class="total">'.price2num($tab[$i]['total_ht'],'MT').' '.$conf->monnaie.'</td></tr>'."\n");
 
 			}
 

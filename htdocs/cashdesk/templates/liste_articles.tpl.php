@@ -59,9 +59,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 				}
 
 				$remise = $tab[$i]['remise'];
-				$total_ht = ($tab[$i]['total_ht'] - $remise);
 
-				echo ('<p>'.$tab[$i]['qte'].' x '.price2num( $tab[$i]['price'], 'MT').$remise_percent.' = '.price2num($total_ht, 'MT').' '.$conf->monnaie.' HT ('.price2num($tab[$i]['total_ttc'], 'MT').' '.$conf->monnaire.' TTC)</p>'."\n");
+				echo ('<p>'.$tab[$i]['qte'].' x '.price2num( $tab[$i]['price'], 'MT').$remise_percent.' = '.price2num($tab[$i]['total_ht'], 'MT').' '.$conf->monnaie.' HT ('.price2num($tab[$i]['total_ttc'], 'MT').' '.$conf->monnaie.' TTC)</p>'."\n");
 			echo ('</div>'."\n");
 
 		}
