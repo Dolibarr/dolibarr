@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main
+# Dolibarr language file - ca_ES - main 
 CHARSET = UTF-8
 DIRECTION = ltr
 SeparatorDecimal = ,
@@ -527,6 +527,7 @@ Merge = Fussió
 PrintContentArea = Mostrar pàgina d'impressió de la zona central
 NoMenu = Cap submenú
 WarningYouAreInMaintenanceMode = Atenció, està en mode manteniment, així que només el login <b>%s</b> està autoritzat per utilitzar l'aplicació en aquest moment.
+CreditCard = Targeta de crèdit
 # Week day =  = 
 Day1 = Dillus
 Day2 = Dimarts

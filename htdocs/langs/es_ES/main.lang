@@ -527,6 +527,7 @@ Merge = Fusión
 PrintContentArea = Mostrar página de impresión de la zona central
 NoMenu = Ningún submenú
 WarningYouAreInMaintenanceMode = Atención, está en modo mantenimiento, así que sólamente el login <b>%s</b> está autorizado para utilizar la aplicación en este momento.
+CreditCard = Tarjeta de crédito
 # Week day = 
 Day1 = Lunes
 Day2 = Martes

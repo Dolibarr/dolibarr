@@ -1,0 +1,15 @@
+# Language file - es_ES - cashdesk 
+CHARSET = UTF-8
+CashDeskMenu = Caja
+CashDesk = Caja registradora
+CashDesks = Cajas registradoras
+CashDeskBank = Cuenta bancaria
+CashDeskWarehouse = Almacén
+CashDeskThirdParty = Tercero
+ShoppingCart = Cesta
+NewSell = Nueva venta
+BackOffice = Salir
+AddThisArticle = Añadir este artículo
+RestartSelling = Retomar la venta
+SellFinished = Venta terminada
+PrintTicket = Imprimir ticket

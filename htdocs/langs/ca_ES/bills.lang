@@ -349,6 +349,9 @@ UsBillingContactAsIncoiveRecipientIfExist = Utilitzar l'adreça del contacte de 
 ShowUnpaidAll = Mostrar tots els pendents
 ShowUnpaidLateOnly = Mostrar els pendents en retard només
 PaymentInvoiceRef = Pagament factura %s
+ValidateInvoice = Validar factura
+Cash = Líquid
+Reported = Ajornat
 # oursin PDF model =  = 
 Of = de
 # bernique PDF model =  = 
