@@ -569,72 +569,45 @@ if ($step == 3 && $datatoimport)
 
 	print '<tr valign="top"><td width="50%">';
 
+	$fieldsplaced=array();
+	foreach($array_match_file_to_database as $key => $val)
+	{
+		$listofkeys[$key]=1;
+	}
+
 	//var_dump($array_match_file_to_database);
-	$pos=1;
 
 	print "\n<!-- Box left container -->\n";
 	print '<div id="left">'."\n";
 
 	// List of source fields
-//	print '<table width="100%" class="noborder">';
 	$var=true;
-	while ($pos <= $maxpos)
+	$lefti=1;
+	foreach ($array_match_file_to_database as $key => $val)
 	{
 		$var=!$var;
+		show_elem($fieldssource,$lefti,$key,$val,$var);		// key is field number is source file
+		//print '> '.$lefti.'-'.$key.'-'.$val;
+		$listofkeys[$key]=1;
+		$fieldsplaced[$key]=1;
+		$lefti++;
 
-//		print "<tr ".$bc[$var].' height="20">';
-//		print '<td>';
-		// Get name of database field at position $pos into $namefield
-		$namefield='';
-		$posbis=1;
-		foreach($fieldstarget as $key => $val)
-		{
-			if ($posbis < $pos)
-			{
-				$posbis++;
-				continue;
-			}
-			// We found the key of targets that is at position pos
-			$namefield=$key;
-			break;
-		}
-		// Now we check if there is a file field linked to this $namefield database field
-		$keyfound='';
-		foreach($fieldssource as $key => $val)
-		{
-			if (! empty($array_match_file_to_database[$key]) && $array_match_file_to_database[$key] == $namefield)
-			{
-//				print $langs->trans("Field").' '.$key.': ';
-//				print $fieldssource[$key]['name'].' ('.$fieldssource[$key]['example1'].')';
-				$keyfound=$key;
-				break;
-			}
-		}
-//		print '</td>';
-
-		show_elem($fieldssource,$pos,$var,$keyfound);
-
-		// Arrows
-//		print '<td align="center">&nbsp;';
-		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource))
-		{
-//	        if ($pos < $maxpos) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=downfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_down().'</a>';
-//    	    if ($pos > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoimport='.$datatoimport.'&action=upfield&fieldpos='.$pos.'&field='.$fieldssource[$pos]['name'].'&filetoimport='.urlencode($_GET["filetoimport"]).'">'.img_up().'</a>';
-		}
-//		print '&nbsp;</td>';
-
-//		print '<td>';
-//		if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource)) print ' -> ';
-//		print '</td>';
-
-//		print '</tr>';
-
-		$pos++;
-
-		if ($pos > sizeof($fieldstarget)) break;
+		if ($lefti > sizeof($fieldstarget)) break;	// Other fields are in the not imported area
 	}
 
-	//	print '</table>';
+	// Complete source fields from sizeof($fieldssource)+1 to sizeof($fieldstarget)
+	$more=1;
+	while ($lefti <= sizeof($fieldstarget))
+	{
+		$var=!$var;
+		$newkey=getnewkey($fieldssource,$listofkeys);
+		show_elem($fieldssource,$lefti,$newkey,'',$var);	// key start after field number in source file
+		//print '> '.$lefti.'-'.$newkey;
+		$listofkeys[$key]=1;
+		$lefti++;
+		$more++;
+	}
+
 
 	print "</div>\n";
 	print "<!-- End box container -->\n";
@@ -675,16 +648,39 @@ if ($step == 3 && $datatoimport)
 	print "\n<!-- Box forget container -->\n";
 	print '<div id="right">'."\n";
 
-	// Print all input fields discarded
-	show_elem('','',$var,'');
+	$nbofnotimportedfields=0;
+	foreach ($fieldssource as $key => $val)
+	{
+		if (empty($fieldsplaced[$key]))
+		{
+			$var=!$var;
+			$nbofnotimportedfields++;
+			show_elem($fieldssource,$lefti,$key,'',$var);
+			//print '> '.$lefti.'-'.$key;
+			$listofkeys[$key]=1;
+			$lefti++;
+		}
+	}
+
+	// Print one more empty field
+	$newkey=getnewkey($fieldssource,$listofkeys);
+	show_elem($fieldssource,$lefti,$newkey,'',$var);
+	//print '> '.$lefti.'-'.$newkey;
+	$listofkeys[$newkey]=1;
+	$nbofnotimportedfields++;
 
 	print "</div>\n";
 	print "<!-- End box container -->\n";
 
 	print '</td>';
 	print '<td width="50%">';
-	// Print empty cells
-	show_elem('','',$var,'none');
+	$i=0;
+	while ($i < $nbofnotimportedfields)
+	{
+		// Print empty cells
+		show_elem('','','','none',$var);
+		$i++;
+	}
 	print '</td></tr>';
 
 	print '</table>';
@@ -944,7 +940,7 @@ llxFooter('$Date$ - $Revision$');
 /*
  * Function to put the movable box of a source field
  */
-function show_elem($fieldssource,$pos,$var,$key)
+function show_elem($fieldssource,$i,$pos,$key,$var)
 {
 	global $langs,$bc;
 
@@ -953,7 +949,7 @@ function show_elem($fieldssource,$pos,$var,$key)
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	print '<tr class="liste_total" height="20">';
-	if (empty($key))
+	if ($pos && $pos > sizeof($fieldssource))	// NoFields
 	{
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
@@ -971,7 +967,7 @@ function show_elem($fieldssource,$pos,$var,$key)
 		print '&nbsp;';
 		print '</td>';
 	}
-	else
+	else	// Print field of source file
 	{
 		//print '<td width="16">'.img_file('','').'</td>';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
@@ -979,8 +975,8 @@ function show_elem($fieldssource,$pos,$var,$key)
 		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
-		print $langs->trans("Field").' '.$key.': ';
-		print '<b>'.$fieldssource[$key]['name'].'</b> ('.$fieldssource[$key]['example1'].')';
+		print $langs->trans("Field").' '.$pos.': ';
+		print '<b>'.$fieldssource[$pos]['name'].'</b> ('.$fieldssource[$pos]['example1'].')';
 		print '</td>';
 	}
 	print '</tr>';
@@ -992,4 +988,29 @@ function show_elem($fieldssource,$pos,$var,$key)
 }
 
 
+/**
+ * Return not used field number
+ *
+ * @param unknown_type $listofkey
+ * @return unknown
+ */
+function getnewkey(&$fieldssource,&$listofkey)
+{
+	$i=sizeof($fieldssource)+1;
+	// Max number of key
+	$maxkey=0;
+	foreach($listofkey as $key=>$val)
+	{
+		$maxkey=max($maxkey,$key);
+	}
+	// Found next empty key
+	while($i <= $maxkey)
+	{
+		if (empty($listofkey[$i])) break;
+		else $i++;
+	}
+
+	$listofkey[$i]=1;
+	return $i;
+}
 ?>
