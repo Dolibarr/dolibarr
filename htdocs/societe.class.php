@@ -1921,7 +1921,11 @@ class Societe extends CommonObject
 	}
 
 
-
+	/**
+	 * Add a line in log table to save status change.
+	 *
+	 * @param unknown_type $id_status
+	 */
 	function set_status($id_status)
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_log (datel, fk_soc, fk_statut, fk_user, author, label)";
