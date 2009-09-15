@@ -204,7 +204,9 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
 
 // Table 1
-print '<table class="login" cellpadding="0" cellspacing="0" border="0" align="center">'."\n";
+$title='Dolibarr '.DOL_VERSION;
+if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
+print '<table class="login" summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center">'."\n";
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 {
   print '<tr><td colspan="3" style="text-align:center;">';
@@ -212,7 +214,7 @@ if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 }
 else
 {
-  print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>'."\n";
+  print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>'."\n";
 }
 print '</table>'."\n";
 print '<br>'."\n";
@@ -266,7 +268,7 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
 	print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 	print '<td valign="top" nowrap="nowrap" align="left" class="e">';
 
-	print '<table><tr>';
+	print '<table style="width: 100px;"><tr>';	// Force width to a small value
 	print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2"></td>';
 	$width=128;$height=36;
 	if (! empty($conf->browser->phone)) $width=64; $height=24;
