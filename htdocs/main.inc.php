@@ -441,6 +441,7 @@ if (! isset($_SESSION["dol_login"]))
 	// New session for this login
 	$_SESSION["dol_login"]=$user->login;
 	$_SESSION["dol_authmode"]=$conf->authmode;
+	$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
 	if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
 	dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 

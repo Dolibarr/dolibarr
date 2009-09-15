@@ -471,7 +471,9 @@ function listOfSessions()
 			{
 				$sessValues = file_get_contents($fullpath);	// get raw session data
 				
-				if (eregi('dol_login',$sessValues) && eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues)) // limit to dolibarr session and current entity
+				if (eregi('dol_login',$sessValues) && // limit to dolibarr session
+					eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues) && // limit to current entity
+					eregi('dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
 				{
 					$tmp=split('_', $file);
 					$idsess=$tmp[1];
@@ -513,7 +515,9 @@ function purgeSessions($mysessionid)
 			{
 				$sessValues = file_get_contents($fullpath);	// get raw session data
 				
-				if (eregi('dol_login',$sessValues) && eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues)) // limit to dolibarr session and current entity
+				if (eregi('dol_login',$sessValues) && // limit to dolibarr session
+					eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues) && // limit to current entity
+					eregi('dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
 				{
 					$tmp=split('_', $file);
 					$idsess=$tmp[1];
