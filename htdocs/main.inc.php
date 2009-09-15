@@ -894,6 +894,9 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
 	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
+	$htmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
+	if (! empty($conf->browser->phone)) $htmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
+	 
 	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',split(',',$_SESSION["disablemodules"]));
 
 	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';

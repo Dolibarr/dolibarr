@@ -87,7 +87,7 @@ For developers:
 - If module numberwords is installed, code can use langs->getLabelFromNumber 
   to get value of an amount in text.
 - A module can add subsitution keys in makesubsitutions() functions.
-
+- Add $conf->browser->phone defined to optimise code for smartphone browsers.
 
 ***** Changelog for 2.6 compared to 2.5 *****
 

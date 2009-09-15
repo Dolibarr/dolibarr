@@ -171,6 +171,7 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
+	// Name
 	if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"]))       $conf->browser->name='firefox';
 	elseif (eregi('iceweasel',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->name='iceweasel';
 	elseif (eregi('safari',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='safari';
@@ -178,6 +179,16 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	elseif (eregi('opera',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
 	elseif (eregi('msie',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
 	else $conf->browser->name='unknown';
+	// If phone/smartphone, we set osname.
+	if (eregi('android',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
+	elseif (eregi('blackberry',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
+	elseif (eregi('iphone',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='iphone';
+	elseif (eregi('palm',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
+	elseif (eregi('symbian',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
+	elseif (eregi('webos',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
+	elseif (eregi('iemobile',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='windowsmobile';
+	elseif (eregi('windows ce',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='windowsmobile';
+	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 }
 

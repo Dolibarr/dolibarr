@@ -163,7 +163,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '" tabindex="1" /></td>';
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
-	$title='';
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
 	if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
@@ -179,9 +178,14 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	print '<td rowspan="2" align="center"><img alt="Logo" title="'.$title.'" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
-	print '></td>';
+	print '<td rowspan="2" align="center">';
+	if (empty($conf->browser->phone))
+	{
+		print '<img alt="Logo" title="" src="'.$urllogo.'"';
+		if ($width) print ' width="'.$width.'"';
+		print '>';
+	}
+	print '</td>';
 	print '</tr>'."\n";
 
 	// Password field
