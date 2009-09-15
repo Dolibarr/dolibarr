@@ -174,7 +174,7 @@ if ($savehandler == 'files')
 
 		print "<tr $bc[$var]>";
 
-		// Age
+		// Login
 		print '<td>'.$sessionentry['login'].'</td>';
 		
 		// ID
