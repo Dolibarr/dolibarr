@@ -496,6 +496,8 @@ function listOfSessions()
  */
 function purgeSessions($mysessionid)
 {
+	global $conf;
+	
 	$arrayofSessions = array();
 	$sessPath = ini_get("session.save_path")."/";
 	dol_syslog('admin.lib:purgeSessions mysessionid='.$mysessionid.' sessPath='.$sessPath);
@@ -509,13 +511,18 @@ function purgeSessions($mysessionid)
 			$fullpath = $sessPath.$file;
 			if(! @is_dir($fullpath))
 			{
-				$tmp=split('_', $file);
-				$idsess=$tmp[1];
-				// We remove session if it's not ourself
-				if ($idsess != $mysessionid)
+				$sessValues = file_get_contents($fullpath);	// get raw session data
+				
+				if (eregi('dol_login',$sessValues) && eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues)) // limit to dolibarr session and current entity
 				{
-					$res=@unlink($fullpath);
-					if (! $res) $error++;
+					$tmp=split('_', $file);
+					$idsess=$tmp[1];
+					// We remove session if it's not ourself
+					if ($idsess != $mysessionid)
+					{
+						$res=@unlink($fullpath);
+						if (! $res) $error++;
+					}
 				}
 			}
 		}
