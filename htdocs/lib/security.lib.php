@@ -70,12 +70,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<style type="text/css">'."\n";
 	print '<!--'."\n";
 	print '#login {';
-	print '  margin-top: 70px;';
-	print '  margin-bottom: 30px;';
+	print '  margin-top: '.(empty($conf->browser->phone)?'70px;':'10px;');
+	print '  margin-bottom: '.(empty($conf->browser->phone)?'30px;':'5px;');
 	print '  text-align: center;';
 	print '  font: 12px arial,helvetica;';
 	print '}'."\n";
 	print '#login table {';
+	if (empty($conf->browser->phone)) print '  width: 498px;';
 	print '  border: 1px solid #C0C0C0;';
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 	{
@@ -95,11 +96,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	else print "document.getElementById('password').focus();\n";
 	print "}\n";
 	print '</script>'."\n";
+	print '<!-- HTTP_USER_AGENT = '.$_SERVER["HTTP_USER_AGENT"].' -->'."\n";
 	print '</head>'."\n";
 
 	// Body
 	print '<body class="body" onload="donnefocus();">'."\n\n";
-
 	// Start Form
 	print '<form id="login" name="login" method="post" action="';
 	print $_SERVER['PHP_SELF'];
@@ -112,13 +113,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Table 1
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
-	print '<table summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center" width="498">'."\n";;
+	print '<table class="login" summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center">'."\n";;
 	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>'."\n";
 	print '</table>'."\n";
 	print '<br>'."\n\n";
 
 	// Table 2
-	print '<table summary="Login area" cellpadding="2" align="center" width="498">'."\n";
+	print '<table class="login" summary="Login area" cellpadding="2" align="center">'."\n";
 
 	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
@@ -126,7 +127,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$demologin='';
 	$demopassword='';
-
 	global $dolibarr_main_demo;
 	if (! empty($dolibarr_main_demo))
 	{
@@ -220,7 +220,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 		print '<table><tr>';
 		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>';
-		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
+		$width=128;$height=36;
+		if (! empty($conf->browser->phone)) $width=64; $height=24;
+		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="'.$width.'" height="'.$height.'"></td>';
 		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
 		print '</tr></table>';
 

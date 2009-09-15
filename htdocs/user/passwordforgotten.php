@@ -167,12 +167,13 @@ print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->cs
 print '<style type="text/css">'."\n";
 print '<!--'."\n";
 print '#login {';
-print '  margin-top: 70px;';
-print '  margin-bottom: 30px;';
+print '  margin-top: '.(empty($conf->browser->phone)?'70px;':'10px;');
+print '  margin-bottom: '.(empty($conf->browser->phone)?'30px;':'5px;');
 print '  text-align: center;';
 print '  font: 10px arial,helvetica;';
 print '}'."\n";
 print '#login table {';
+if (empty($conf->browser->phone)) print '  width: 498px;';
 print '  border: 1px solid #C0C0C0;';
 if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 {
@@ -203,7 +204,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
 
 // Table 1
-print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="498">'."\n";
+print '<table class="login" cellpadding="0" cellspacing="0" border="0" align="center">'."\n";
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 {
   print '<tr><td colspan="3" style="text-align:center;">';
@@ -222,7 +223,7 @@ if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
 if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';				// To force button enabled
 
 // Table 2
-print '<table cellpadding="2" align="center" width="498">'."\n";
+print '<table class="login" cellpadding="2" align="center">'."\n";
 
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
@@ -248,9 +249,14 @@ elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.pn
 {
 	$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
 }
-print '<td rowspan="2" align="center"><img title="'.$title.'" src="'.$urllogo.'"';
-if ($width) print ' width="'.$width.'"';
-print '></td>';
+print '<td rowspan="2" align="center">';
+if (empty($conf->browser->phone))
+{
+	print '<img title="'.$title.'" src="'.$urllogo.'"';
+	if ($width) print ' width="'.$width.'"';
+	print '>';
+}
+print '</td>';
 print '</tr>'."\n";
 
 
@@ -262,7 +268,9 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
 
 	print '<table><tr>';
 	print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2"></td>';
-	print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
+	$width=128;$height=36;
+	if (! empty($conf->browser->phone)) $width=64; $height=24;
+	print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="'.$width.'" height="'.$height.'"></td>';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
 	print '</tr></table>';
 

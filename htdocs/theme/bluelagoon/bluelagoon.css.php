@@ -34,6 +34,7 @@ if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
 
 //require_once("../../conf/conf.php");
 require_once("../../master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -855,7 +856,7 @@ td.small {
 #dhtmltooltip
 {
 position: absolute;
-width: 450px;
+width: <?php print dol_size(450,'width'); ?>px;
 border: 1px solid #444444;
 padding: 2px;
 background-color: #FFFFE0;

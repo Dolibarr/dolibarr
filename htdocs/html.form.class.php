@@ -108,7 +108,7 @@ class Form
 			$s.= $htmltext."\n";
 			$s.= '</div>'."\n";
 			$s.= '<script type=\'text/javascript\'>'."\n";
-			$s.= 'TooltipManager.init("","",{width:'.$width.', shiftX:'.$shiftX.'});'."\n";
+			$s.= 'TooltipManager.init("","",{width:'.dol_size($width,'width').', shiftX:'.$shiftX.'});'."\n";
 			$s.= 'TooltipManager.addHTML("tip'.$i.'", "tooltip_content");'."\n";
 			$s.= '</script>'."\n";
 		}

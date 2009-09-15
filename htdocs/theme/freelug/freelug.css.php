@@ -33,6 +33,7 @@ if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
 
 //require_once("../../conf/conf.php");
 require_once("../../master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -59,7 +60,7 @@ body {
 <?php } ?>
 	text-decoration: none ;
 	color: #101010;
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     margin-top: 0;
     margin-bottom: 0;
@@ -73,7 +74,7 @@ a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bol
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
 {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
     font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
@@ -82,7 +83,7 @@ input
 }
 input.flat
 {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
     font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
@@ -90,7 +91,7 @@ input.flat
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
     font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
@@ -99,7 +100,7 @@ textarea  {
 }
 textarea.flat
 {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
     font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
@@ -108,7 +109,7 @@ textarea.flat
 }
 select.flat
 {
-    font-size: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px;
+    font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;
     border: 1px solid #ACBCBB;
@@ -116,7 +117,6 @@ select.flat
     margin: 0px 0px 0px 0px;
 }
 .button  {
-	font-size: 11px;
 	font-family: arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
@@ -129,7 +129,6 @@ select.flat
 	background-repeat: repeat-x;
 }
 .buttonajax  {
-	font-size: 11px;
 	font-family: arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
@@ -176,7 +175,6 @@ div.tmenu
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
     font-weight: bold;
-    font-size: 12px;
     height: 20px;
     background: #dddddd;
     color: #000000;
@@ -187,7 +185,6 @@ div.tmenu
 a.tmenudisabled
 {
 	color: #757575;
-	font-size: 12px;
     padding: 0px 8px;
     margin: 0px 0px 6px 0px;
 	cursor: not-allowed;
@@ -220,7 +217,6 @@ a.tmenu:link
   margin: 0px 0px 6px 0px;
   border: 1px solid #dddddd;
   font-weight: bold;
-  font-size:12px;
 }
 a.tmenu:visited
 {
@@ -229,7 +225,6 @@ a.tmenu:visited
   margin: 0px 0px 6px 0px;
   border: 1px solid #dddddd;
   font-weight: bold;
-  font-size:12px;
 }
 a.tmenu:hover
 {
@@ -342,7 +337,6 @@ a.login
   margin: 0px 0px 6px 0px;
   border: 1px solid #dcdcd0;
   font-weight:bold;
-  font-size:12px;
 }
 a.login:hover
 {
@@ -393,18 +387,19 @@ a.vmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align
 a.vmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-font.vmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; }
+font.vmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; }
 
 a.vsmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
 a.vsmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
 a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
 a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1px 1px 1px 6px; }
 
 a.help:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+
 
 div.blockvmenupair
 {
@@ -446,14 +441,13 @@ div.help
 }
 
 td.barre {
-           border-right: 1px solid #000000;
-           border-bottom: 1px solid #000000;
-           background: #DDDDDD;
-		   font-size: 12px;
-           font-family: helvetica, verdana;
-           color: #000000;
-           text-align:left;
-           text-decoration: none
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    background: #DDDDDD;
+    font-family: helvetica, verdana;
+    color: #000000;
+    text-align:left;
+    text-decoration: none
 }
 
 td.barre_select {
@@ -732,9 +726,6 @@ div.titre {
 }
 
 
-/*
- * Widgets standard
- */
 input.liste_titre {
     background: #777799;
     border: 0px;
@@ -790,18 +781,15 @@ th {
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
-    font-size: 1.0em;
 }
 
 
 .pair {
     background: #dcdcd0;
-    font-size: 12px;
     }
 
 .impair {
     background: #eeeedd;
-    font-size: 12px;
     }
 
 /*
@@ -811,30 +799,29 @@ tr.box_titre {
                color: #FFFFFF;
                background: #777799;
                font-family: Helvetica, Verdana;
-               font-size: 1.0em;
                font-weight: bold; }
 
 tr.box_pair {
               background: #dcdcd0;
-              font-size: 0.95em; }
+}
 
 tr.box_impair {
                 background: #eeeedd;
                 font-family: Helvetica, Verdana;
-                font-size: 0.95em; }
+}
 
 tr.fiche {
            font-family: Helvetica, Verdana;
-           font-size: 0.6em; }
+}
 
 td.delete {
   background: red;
   font-weight: bold;
-  }
+}
 
 td.small {
-           font-size: 10px;
-           }
+  font-size: <?php print empty($conf->browser->phone)?'10':'9'; ?>px;
+}
 
 
 /* ============================================================================== */
@@ -1017,7 +1004,7 @@ table.valid {
 #dhtmltooltip
 {
 position: absolute;
-width: 450px;
+width: <?php print dol_size(450,'width'); ?>px;
 border-top: solid 1px #BBBBBB;
 border-left: solid 1px #BBBBBB;
 border-right: solid 1px #444444;

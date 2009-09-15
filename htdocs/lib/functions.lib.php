@@ -55,6 +55,20 @@ function dol_clone($object)
 	return $myclone;
 }
 
+/**
+ *	\brief          Optimize a size for some browsers (phone, smarphone, ...)
+ * 	\param			size		Size we want
+ * 	\param			type		Type of optimizing(''=Optimize for a truncate, 'width'=Optimize for screen width)
+ *	\return         int			New size after optimizing
+ */
+function dol_size($size,$type='')
+{
+	global $conf;
+	if (empty($conf->browser->phone)) return $size;
+	if ($type == 'width') return 250;
+	else return 10;
+}
+
 
 /**
  *	\brief          Return date for now

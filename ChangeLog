@@ -45,6 +45,7 @@ For users:
 - New: Add an admin page of PHP sessions with a way to lock new connections
        for other users than yourself. Can also purge existing sessions.
 - New: Add experimental point of sale module.
+- New: Better usage when using with smartphones.
 - Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.

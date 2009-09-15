@@ -34,6 +34,7 @@ if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
 
 //require_once("../../conf/conf.php");
 require_once("../../master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 
 // Define css type
 header('Content-type: text/css');
@@ -60,7 +61,7 @@ body {
 	background: #f9f9f9 url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg.jpg' ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
     font-family: arial,tahoma,verdana,helvetica;
     margin-top: 0;
     margin-bottom: 0;
@@ -75,7 +76,7 @@ a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bol
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 input
 {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -84,7 +85,7 @@ input
 }
 input.flat
 {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -92,7 +93,7 @@ input.flat
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -101,7 +102,7 @@ textarea  {
 }
 textarea.flat
 {
-	font-size: 12px;
+	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -110,7 +111,7 @@ textarea.flat
 }
 select.flat
 {
-    font-size: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px;
+    font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;
     border: 1px solid #ACBCBB;
@@ -401,22 +402,22 @@ img.printer
 }
 <?php } ?>
 
-a.vmenu:link        { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:visited     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:active      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:hover       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
+a.vmenu:link        { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:visited     { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:active      { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:hover       { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+font.vmenudisabled  { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:visited    { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:active     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:hover      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
+a.vsmenu:link       { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:visited    { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:active     { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:hover      { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
 
-a.help:link         { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:visited      { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:link         { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:visited      { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:active       { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:hover        { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
 
 
 div.blockvmenupair
@@ -806,30 +807,18 @@ width: 100%;
 
 tr.liste_titre {
 height: 16px;
-<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
-background: #91ABB3;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre_2.png' ?>);
-background-repeat: repeat-y;
-<?php } else { ?>
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
-<?php } ?>
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 td.liste_titre {
-<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
-background: #91ABB3;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
-background-repeat: repeat-x;
-<?php } else { ?>
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
-<?php } ?>
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -838,15 +827,9 @@ white-space: nowrap;
 }
 td.liste_titre_sel
 {
-<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
-background: #91ABB3;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
-background-repeat: repeat-x;
-<?php } else { ?>
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
-<?php } ?>
 color: #F5FFFF;
 font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -854,15 +837,9 @@ border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
 input.liste_titre {
-<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
-background: #91ABB3;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
-background-repeat: repeat-x;
-<?php } else { ?>
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
-<?php } ?>
 border: 0px;
 }
 
@@ -925,17 +902,10 @@ margin: 2px;
 }
 
 tr.box_titre {
-<?php if (eregi('xfirefox',$_SERVER['HTTP_USER_AGENT'])) { // Does not work with IE ?>
-background: #91ABB3;
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre_2.png' ?>);
-background-repeat: repeat-y;
-<?php } else { ?>
 background: #7699A9;
 background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' ?>);
 background-repeat: repeat-x;
-<?php } ?>
 color: #334444;
-font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
@@ -946,13 +916,11 @@ white-space: nowrap;
 
 tr.box_impair {
 background: #e6ebed;
-font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
 }
 
 tr.box_pair {
 background: #d0d4d7;
-font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
 }
 
@@ -1014,8 +982,8 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 td.small {
-           font-size: 10px;
-           }
+   font-size: <?php print empty($conf->browser->phone)?'10':'9'; ?>px;
+}
 
 
 /*
@@ -1206,7 +1174,7 @@ table.valid {
 #dhtmltooltip
 {
 position: absolute;
-width: 450px;
+width: <?php print dol_size(450,'width'); ?>px;
 border-top: solid 1px #BBBBBB;
 border-<?php print $left; ?>: solid 1px #BBBBBB;
 border-<?php print $right; ?>: solid 1px #444444;
