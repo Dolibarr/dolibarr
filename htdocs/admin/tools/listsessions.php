@@ -124,6 +124,7 @@ if ($savehandler == 'files')
 {
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SessionId"),$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateModification"),$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
@@ -173,6 +174,9 @@ if ($savehandler == 'files')
 
 		print "<tr $bc[$var]>";
 
+		// Age
+		print '<td>'.$sessionentry['login'].'</td>';
+		
 		// ID
 		print '<td align="left" nowrap="nowrap">';
 		if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));

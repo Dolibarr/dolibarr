@@ -477,7 +477,8 @@ function listOfSessions()
 				{
 					$tmp=split('_', $file);
 					$idsess=$tmp[1];
-					//print 'file='.$file.' id='.$idsess;
+					$login = eregi('dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"',$sessValues,$regs);
+					$arrayofSessions[$idsess]["login"] = $regs[1]; 
 					$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
 					$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
 					$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
