@@ -712,7 +712,7 @@ class DoliDb
 			}
 		}
 
-		return ($withQuotes?"'":"").$return.($withQuotes?"'":"");
+		return $return;
 	}
 
 	/**
