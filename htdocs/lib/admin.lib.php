@@ -455,6 +455,8 @@ function security_prepare_head()
  */
 function listOfSessions()
 {
+	global $conf;
+	
 	$arrayofSessions = array();
 	$sessPath = ini_get("session.save_path").'/';
 	dol_syslog('admin.lib:listOfSessions sessPath='.$sessPath);
@@ -467,14 +469,18 @@ function listOfSessions()
 			$fullpath = $sessPath.$file;
 			if(! @is_dir($fullpath))
 			{
-				$tmp=split('_', $file);
-				$idsess=$tmp[1];
-				//print 'file='.$file.' id='.$idsess;
 				$sessValues = file_get_contents($fullpath);	// get raw session data
-				$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
-				$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
-				$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
-				$arrayofSessions[$idsess]["raw"] = $sessValues;
+				
+				if (eregi('dol_login',$sessValues) && eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues)) // limit to dolibarr session and current entity
+				{
+					$tmp=split('_', $file);
+					$idsess=$tmp[1];
+					//print 'file='.$file.' id='.$idsess;
+					$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
+					$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
+					$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
+					$arrayofSessions[$idsess]["raw"] = $sessValues;
+				}
 			}
 		}
 	}
