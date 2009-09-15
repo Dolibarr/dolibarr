@@ -694,15 +694,15 @@ class DoliDb
 		{
 			if ($cryptType == 2)
 			{
-				$return = 'AES_ENCRYPT('.($withQuotes?"'":"").$fieldorvalue.($withQuotes?"'":"").',\''.$cryptKey.'\')';
+				$return = 'AES_ENCRYPT('.($withQuotes?"'":"").addslashes($fieldorvalue).($withQuotes?"'":"").',\''.$cryptKey.'\')';
 			}
 			else if ($cryptType == 1)
 			{
-				$return = 'DES_ENCRYPT('.($withQuotes?"'":"").$fieldorvalue.($withQuotes?"'":"").',\''.$cryptKey.'\')';
+				$return = 'DES_ENCRYPT('.($withQuotes?"'":"").addslashes($fieldorvalue).($withQuotes?"'":"").',\''.$cryptKey.'\')';
 			}
 		}
 
-		return ($withQuotes?"'":"").$return.($withQuotes?"'":"");
+		return $return;
 	}
 
 	/**
