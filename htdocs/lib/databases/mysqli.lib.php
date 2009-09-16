@@ -698,17 +698,17 @@ class DoliDb
 	 */
 	function encrypt($fieldorvalue, $cryptType=0, $cryptKey='', $withQuotes=0)
 	{
-		$return = $fieldorvalue;
+		$return = ($withQuotes?"'":"").addslashes($fieldorvalue).($withQuotes?"'":"");
 
 		if ($cryptType && !empty($cryptKey))
 		{
 			if ($cryptType == 2)
 			{
-				$return = 'AES_ENCRYPT('.($withQuotes?"'":"").addslashes($fieldorvalue).($withQuotes?"'":"").',\''.$cryptKey.'\')';
+				$return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
 			}
 			else if ($cryptType == 1)
 			{
-				$return = 'DES_ENCRYPT('.($withQuotes?"'":"").addslashes($fieldorvalue).($withQuotes?"'":"").',\''.$cryptKey.'\')';
+				$return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
 			}
 		}
 
