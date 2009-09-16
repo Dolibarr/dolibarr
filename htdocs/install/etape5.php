@@ -190,7 +190,7 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const to '.$targetversion, LOG_DEBUG);
 				$resql=$db->query("DELETE FROM llx_const WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)."='MAIN_VERSION_LAST_INSTALL'");
 				if (! $resql) dol_print_error($db,'Error in setup program');
-				$resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",".$db->encrypt($targetversion,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",'chaine',0,'Dolibarr version when install',0)");
+				$resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",".$db->encrypt("'".$targetversion."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",'chaine',0,'Dolibarr version when install',0)");
 				if (! $resql) dol_print_error($db,'Error in setup program');
 				$conf->global->MAIN_VERSION_LAST_INSTALL=$targetversion;
 
