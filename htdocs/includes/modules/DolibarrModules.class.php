@@ -672,9 +672,9 @@ class DolibarrModules
 			$sql.= ", entity";
 			$sql.= ")";
 			$sql.= " VALUES (";
-			$sql.= $this->db->encrypt("'".$this->const_name."_CSS'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+			$sql.= $this->db->encrypt($this->const_name."_CSS",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 			$sql.= ", 'chaine'";
-			$sql.= ", ".$this->db->encrypt("'".$this->style_sheet."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+			$sql.= ", ".$this->db->encrypt($this->style_sheet,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 			$sql.= ", 'Style sheet for module ".$this->name."'";
 			$sql.= ", '0'";
 			$sql.= ", ".$conf->entity;
@@ -719,9 +719,9 @@ class DolibarrModules
 					$sql.= ", entity";
 					$sql.= ")";
 					$sql.= " VALUES (";
-					$sql.= $this->db->encrypt("'".$this->const_name."_TABS_".$i."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+					$sql.= $this->db->encrypt($this->const_name."_TABS_".$i,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 					$sql.= ", 'chaine'";
-					$sql.= ", ".$this->db->encrypt("'".$value."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+					$sql.= ", ".$this->db->encrypt($value,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 					$sql.= ", null";
 					$sql.= ", '0'";
 					$sql.= ", ".$conf->entity;
@@ -777,9 +777,9 @@ class DolibarrModules
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
 						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt("'".$name."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$type."'";
-						$sql.= ",".$this->db->encrypt("'".$val."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+						$sql.= ",".$this->db->encrypt($val,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$note."'";
 						$sql.= ",'".$visible."'";
 						$sql.= ",".$conf->entity;
@@ -789,9 +789,9 @@ class DolibarrModules
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible,entity)";
 						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt("'".$name."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$type."'";
-						$sql.= ",".$this->db->encrypt("'".$val."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+						$sql.= ",".$this->db->encrypt($val,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$visible."'";
 						$sql.= ",".$conf->entity;
 						$sql.= ")";
@@ -800,7 +800,7 @@ class DolibarrModules
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible,entity)";
 						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt("'".$name."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$type."'";
 						$sql.= ",'".$visible."'";
 						$sql.= ",".$conf->entity;
@@ -1131,7 +1131,7 @@ class DolibarrModules
 			if ($row[0] == 0)
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
-				$sql.= " VALUES (".$this->db->encrypt("'".$name."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'chaine',".$this->db->encrypt("'".$dir."'",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey).",'Directory for module ".$this->name."','0',".$conf->entity.")";
+				$sql.= " VALUES (".$this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",'chaine',".$this->db->encrypt($dir,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",'Directory for module ".$this->name."','0',".$conf->entity.")";
 
 				dol_syslog("DolibarrModules::insert_dirs sql=".$sql);
 				$resql=$this->db->query($sql);
