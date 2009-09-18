@@ -509,20 +509,16 @@ class Product extends CommonObject
 	 */
 	function delete($id)
 	{
-		global $conf,$user;
+		global $conf,$user,$langs;
 
 		if ($user->rights->produit->supprimer)
 		{
 			$prod_use = $this->verif_prod_use($id);
 			if ($prod_use == 0)
 			{
-				$sqla = "DELETE from ".MAIN_DB_PREFIX."product";
-				$sqla.= " WHERE rowid = ".$id;
+				$sqla = "DELETE from ".MAIN_DB_PREFIX."product_price";
+				$sqla.= " WHERE fk_product = ".$id;
 				$resulta = $this->db->query($sqla);
-
-				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price";
-				$sqlb.= " WHERE fk_product = ".$id;
-				$resultb = $this->db->query($sqlb);
 
 				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price_min";
 				$sqlb.= " WHERE fk_product = ".$id;
@@ -535,8 +531,23 @@ class Product extends CommonObject
 				$sqld = "DELETE from ".MAIN_DB_PREFIX."categorie_product";
 				$sqld.= " WHERE fk_product = ".$id;
 				$resultd = $this->db->query($sqld);
-
-				return 0;
+				
+				$sqlz = "DELETE from ".MAIN_DB_PREFIX."product";
+				$sqlz.= " WHERE rowid = ".$id;
+				$resultz = $this->db->query($sqlz);
+				 
+                if ( !$resultz ){ 
+                    dol_syslog('Product::delete error sqlz='.$sqlz, LOG_INFO); 
+                } 
+                 
+                // Appel des triggers 
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php"); 
+                $interface=new Interfaces($this->db); 
+                $result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf); 
+                if ($result < 0) { $error++; $this->errors=$interface->errors; } 
+                // Fin appel triggers 
+                 
+                return 0;
 			}
 			else
 			{
