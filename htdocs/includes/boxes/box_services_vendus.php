@@ -77,14 +77,8 @@ class box_services_vendus extends ModeleBoxes {
 			$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
 			$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= ", ".MAIN_DB_PREFIX."product as p";
-			if (!$user->rights->societe->client->voir && !$user->societe_id)
-			{
-				$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc)";
-			}
-			else
-			{
-				$sql.= ")";
-			}
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= ")";
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
