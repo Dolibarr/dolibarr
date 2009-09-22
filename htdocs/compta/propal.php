@@ -769,7 +769,7 @@ else
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-			if ($objp->fk_statut == 1 && $objp->din < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			if ($objp->fk_statut == 1 && $objp->dfin < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';
@@ -799,7 +799,7 @@ else
 			$d = dol_print_date($objp->dp,"%d");
 			print $d."\n";
 			print " <a href=\"propal.php?year=$y&month=$m\">";
-			print $b."</a>\n";
+			print $mt."</a>\n";
 			print " <a href=\"propal.php?year=$y\">";
 			print $y."</a></td>\n";
 
