@@ -11,6 +11,7 @@ class simplemail {
 
 	var $Xsender;
 	var $ErrorsTo;
+	var $returnpath;
 	var $XMailer = 'PHP';
 	var $XPriority = 3;
 
