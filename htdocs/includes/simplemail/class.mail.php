@@ -332,6 +332,7 @@ class simplemail {
 	// Mail send by PHPmail
 
 	function phpmail() {
+		global $conf;
 		// DOLCHANGE LDR Fix the To in header was not filled
 		foreach ($this->recipientlist as $key => $to)
 		{
