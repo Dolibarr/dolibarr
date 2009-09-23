@@ -1052,7 +1052,7 @@ class CMailFile
 				}
 				if ($format == 1)
 				{
-					$neweamil='<'.$email.'>';
+					$newemail='<'.$email.'>';
 				}
 				if ($format == 0)
 				{
