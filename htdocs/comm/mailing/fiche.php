@@ -304,7 +304,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest);
 
 		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
-		$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,'',$arr_css);
+		$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$mil->email_errorsto,$arr_css);
 
 		$result=$mailfile->sendfile();
 		if ($result)
