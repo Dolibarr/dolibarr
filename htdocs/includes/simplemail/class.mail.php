@@ -293,6 +293,7 @@ class simplemail {
 		if ( !empty($this->hfrom) ) $this->AddField2Header("From",$this->hfrom);
 
 		if ( !empty($this->returnpath) ) $this->AddField2Header("Return-Path",$this->returnpath);
+		else { $this->AddField2Header("Return-Path",$this->hfrom); }
 
 		if ( !empty($this->replyto) ) $this->AddField2Header("Reply-To",$this->replyto);
 
