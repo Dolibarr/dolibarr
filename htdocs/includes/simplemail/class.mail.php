@@ -339,8 +339,17 @@ class simplemail {
 		}
 		foreach ($this->recipientlist as $key => $to)
 		{
+			$bounce = '';
+			if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
+			{
+				// DOLCHANGE LDR
+				// le return-path dans les header ne fonctionne pas avec tous les MTA
+				// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+				// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
+				$bounce = $this->returnpath != '' ? "-f {$this->returnpath}" : "";
+			}
 			// $this->recipient = $to['mail'];		DOLCHANGE LDR Fix the To in header was not filled
-			if ( mail($to['mail'], $this->subject, $this->body, $this->makeheader() ) ) {
+			if ( mail($to['mail'], $this->subject, $this->body, $this->makeheader() , $bounce ) ) {
 				$this->error_log("envoie vers {$to['nameplusmail']} reussi");
 			} else {
 				$this->error_log("envoie vers {$to['nameplusmail']} echoue");
