@@ -81,8 +81,10 @@ $pagenext = $page + 1;
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"));
 
 
-$sql = "select rowid, prenom, nom, societe, cp, ville, email, naiss, photo";
-$sql.= " from ".MAIN_DB_PREFIX."adherent where statut=1 and public=1";
+$sql = "SELECT rowid, prenom, nom, societe, cp, ville, email, naiss, photo";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
+$sql.= " WHERE statut = 1";
+$sql.= " AND public = 1";
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 //$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, cp, ville, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
@@ -101,11 +103,11 @@ if ($result)
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
-	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">".$langs->trans("Company")."</a></td>\n";
-	print_liste_field_titre($langs->trans("Birthdate"),"priv_liste.php","naiss","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EMail"),"priv_liste.php","email","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"),"priv_liste.php","cp","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),"priv_liste.php","ville","",$param,$sortfield,$sortorder);
+	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=societe\">".$langs->trans("Company")."</a></td>\n";
+	print_liste_field_titre($langs->trans("Birthdate"),"public_list.php","naiss","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),"public_list.php","cp","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),"public_list.php","ville","",$param,$sortfield,$sortorder);
 	print "<td>".$langs->trans("Photo")."</td>\n";
 	print "</tr>\n";
 
