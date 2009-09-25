@@ -1851,7 +1851,7 @@ function migrate_commande_livraison($db,$langs,$conf)
 }
 
 /*
- * Migration des d�tails commandes dans les d�tails livraisons
+ * Migration des details commandes dans les details livraisons
  */
 function migrate_detail_livraison($db,$langs,$conf)
 {

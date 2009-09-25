@@ -128,7 +128,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -285,10 +285,10 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + $j * $height,
 							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
 							$tab_height+=4;
-
+							
 							$pdf->SetXY (10, $tab_top + 4 + $j * $height);
-							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + 4 + $j * $height,
-							dol_htmlentitiesbr($outputlangs->convToOutputCharset($fichinterligne->desc),1), 0, 1, 0);
+							$desc = dol_htmlentitiesbr($fichinterligne->desc,1);
+							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + 4 + $j * $height, $desc, 0, 1, 0);
 							$tab_height+=dol_nboflines_bis($fichinterligne->desc,52,$outputlangs->charset_output)*4;
 
 							$j++;
