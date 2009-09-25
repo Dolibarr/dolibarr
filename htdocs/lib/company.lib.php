@@ -499,7 +499,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " a.propalrowid as pid, a.fk_commande as oid, a.fk_facture as fid,";
 		$sql.= " a.fk_user_author, a.fk_contact,";
 		$sql.= " c.code as acode, c.libelle,";
-		$sql.= " u.login, u.rowid,";
+		$sql.= " u.login, u.rowid as user_id,";
 		$sql.= " sp.name, sp.firstname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
