@@ -152,13 +152,6 @@ if ($_POST["action"] == 'addcat')
 	$fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-// defini les constantes du modele orchidee
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'updatePrefixCommande') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_PREFIX",$_POST["prefixcommande"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
-
-
 /*
  * View
  */

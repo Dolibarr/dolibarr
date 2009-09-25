@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/includes/modules/supplier_order/mod_commande_fournisseur_orchidee.php
  *	\ingroup    commande
- *	\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Orchidee
+ *	\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Orchidee
  *	\version    $Id$
  */
 
@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/modules_comman
 
 /**
 	\class      mod_commande_fournisseur_orchidee
-	\brief      Classe du modèle de numerotation de référence de commande fournisseur Orchidee
+	\brief      Classe du modele de numerotation de reference de commande fournisseur Orchidee
 */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
@@ -109,7 +109,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
 
-		// On défini critere recherche compteur
+		// On defini critere recherche compteur
 		$mask=$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK;
 
 		if (! $mask)
@@ -118,13 +118,13 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_client,$commande->date_commande);
+		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_fournisseur,$commande->date_commande);
 
 		return  $numFinal;
 	}
 
 
-    /**     \brief      Renvoie la référence de commande suivante non utilisee
+    /**     \brief      Renvoie la reference de commande suivante non utilisee
      *      \param      objsoc      Objet societe
      *      \param      commande		Objet commande
      *      \return     string      Texte descripif
