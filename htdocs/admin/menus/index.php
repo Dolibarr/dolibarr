@@ -163,7 +163,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 	{
 		$db->commit();
 
-		Header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?mesg='.urlencode($langs->trans("MenuDeleted")));
+		Header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler.'&mesg='.urlencode($langs->trans("MenuDeleted")));
 		exit ;
 	}
 	else
@@ -208,7 +208,7 @@ $h++;
 
 dol_fiche_head($head, 'editor', $langs->trans("Menus"));
 
-// Confirmation de la suppression menu
+// Confirmation for remove menu entry
 if ($_GET["action"] == 'delete')
 {
 	$sql = "SELECT m.titre";
@@ -249,20 +249,20 @@ if ($conf->use_javascript_ajax)
 	tree_addjs();
 
 	/*-------------------- MAIN -----------------------
-	tableau des éléments de l'arbre:
-	c'est un tableau à 2 dimensions.
-	Une ligne représente un élément : data[$x]
-	chaque ligne est décomposée en 3 données:
-	  - l'index de l'élément
-	  - l'index de l'élément parent
-	  - la chaîne à afficher
+	tableau des ï¿½lï¿½ments de l'arbre:
+	c'est un tableau ï¿½ 2 dimensions.
+	Une ligne reprï¿½sente un ï¿½lï¿½ment : data[$x]
+	chaque ligne est dï¿½composï¿½e en 3 donnï¿½es:
+	  - l'index de l'ï¿½lï¿½ment
+	  - l'index de l'ï¿½lï¿½ment parent
+	  - la chaï¿½ne ï¿½ afficher
 	ie: data[]= array (index, index parent, chaine )
 	*/
-	//il faut d'abord déclarer un élément racine de l'arbre
+	//il faut d'abord dï¿½clarer un ï¿½lï¿½ment racine de l'arbre
 
 	$data[] = array(0,-1,"racine");
 
-	//puis tous les éléments enfants
+	//puis tous les ï¿½lï¿½ments enfants
 
 
 	$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
@@ -286,7 +286,7 @@ if ($conf->use_javascript_ajax)
 		}
 	}
 
-	// Appelle de la fonction récursive (ammorce)
+	// Appelle de la fonction rï¿½cursive (ammorce)
 	// avec recherche depuis la racine.
 	// array($menu['rowid'],$menu['fk_menu'],$titre);
 	tree_recur($data,0,0);
