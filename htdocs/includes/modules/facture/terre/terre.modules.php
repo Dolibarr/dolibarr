@@ -19,17 +19,17 @@
  */
 
 /**
-        \file       htdocs/includes/modules/facture/terre/terre.modules.php
-		\ingroup    facture
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Terre
-		\version    $Id$
-*/
+ \file       htdocs/includes/modules/facture/terre/terre.modules.php
+ \ingroup    facture
+ \brief      Fichier contenant la classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de facture Terre
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 /**	    \class      mod_facture_terre
-		\brief      Classe du modèle de numérotation de référence de facture Terre
-*/
+ \brief      Classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de facture Terre
+ */
 
 class mod_facture_terre extends ModeleNumRefFactures
 {
@@ -37,132 +37,133 @@ class mod_facture_terre extends ModeleNumRefFactures
 	var $prefixinvoice='FA';
 	var $prefixcreditnote='AV';
 	var $error='';
-	
-    /**     \brief      Renvoi la description du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
-    	global $langs;
-    	
-    	$langs->load("bills");
-		
-    	return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote);
-    }
 
-    /**     \brief      Renvoi un exemple de numérotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-    	return $this->prefixinvoice."0501-0001";
-    }
+	/**     \brief      Renvoi la description du modele de numï¿½rotation
+	 *      \return     string      Texte descripif
+	 */
+	function info()
+	{
+		global $langs;
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
-    {
-    	global $langs,$conf;
-    	
-    	$langs->load("bills");
-    	
-    	// Check invoice num
-    	$fayymm='';
-    	
-    	$sql = "SELECT MAX(facnumber)";
-      $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-      $sql.= " WHERE facnumber like '".$this->prefixinvoice."%'";
-      $sql.= " AND entity = ".$conf->entity;
-      
-      $resql=$db->query($sql);
-      if ($resql)
-      {
-      	$row = $db->fetch_row($resql);
-      	if ($row) $fayymm = substr($row[0],0,6);
-      }
-      if ($fayymm && ! eregi($this->prefixinvoice.'[0-9][0-9][0-9][0-9]',$fayymm))
-      {
-      	$this->error=$langs->trans('TerreNumRefModelError');
-        return false;    
-      }
-      
-      // Check credit note num
-      $fayymm='';
-      
-      $sql = "SELECT MAX(facnumber)";
-      $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-      $sql.= " WHERE facnumber like '".$this->prefixcreditnote."%'";
-      $sql.= " AND entity = ".$conf->entity;
-      
-      $resql=$db->query($sql);
-      if ($resql)
-      {
-      	$row = $db->fetch_row($resql);
-      	if ($row) $fayymm = substr($row[0],0,6);
-      }
-      if ($fayymm && ! eregi($this->prefixcreditnote.'[0-9][0-9][0-9][0-9]',$fayymm))
-      {
-      	$this->error=$langs->trans('TerreNumRefModelError');
-      	return false;    
-      }
+		$langs->load("bills");
 
-      return true;
-    }
+		return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote);
+	}
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \param      objsoc		Objet societe
-     *      \param      facture		Objet facture
-     *      \return     string      Valeur
-     */
-    function getNextValue($objsoc,$facture)
-    {
-    	global $db,$conf;
-    	
-    	if ($facture->type == 2) $prefix=$this->prefixcreditnote;
-    	else $prefix=$this->prefixinvoice;
-    	
-    	// D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-      $posindice=8;
-      
-      $sql = "SELECT MAX(0+SUBSTRING(facnumber,".$posindice.")) as max";
-      $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-      $sql.= " WHERE facnumber like '".$prefix."%'";
-      $sql.= " AND entity = ".$conf->entity;
+	/**     \brief      Renvoi un exemple de numerotation
+	 *      \return     string      Example
+	 */
+	function getExample()
+	{
+		return $this->prefixinvoice."0501-0001";
+	}
 
-      $resql=$db->query($sql);
-      if ($resql)
-      {
-      	$obj = $db->fetch_object($resql);
-        if ($obj) $max = $obj->max;
-        else $max=0;
-      }
-      else
-      {
-      	dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
-        return -1;
-       }
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numï¿½rotation de fonctionner.
+	 *      \return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		global $langs,$conf;
 
-       //$date=time();
-       $date=$facture->date;
-       $yymm = strftime("%y%m",$date);
-       $num = sprintf("%04s",$max+1);
-        
-       dol_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
-       return $prefix.$yymm."-".$num;
-    }
-    
+		$langs->load("bills");
+
+		// Check invoice num
+		$fayymm='';
+
+		$sql = "SELECT MAX(facnumber)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber like '".$this->prefixinvoice."%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) $fayymm = substr($row[0],0,6);
+		}
+		if ($fayymm && ! eregi($this->prefixinvoice.'[0-9][0-9][0-9][0-9]',$fayymm))
+		{
+			$this->error=$langs->trans('TerreNumRefModelError');
+			return false;
+		}
+
+		// Check credit note num
+		$fayymm='';
+
+		$sql = "SELECT MAX(facnumber)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber like '".$this->prefixcreditnote."%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) $fayymm = substr($row[0],0,6);
+		}
+		if ($fayymm && ! eregi($this->prefixcreditnote.'[0-9][0-9][0-9][0-9]',$fayymm))
+		{
+			$this->error=$langs->trans('TerreNumRefModelError');
+			return false;
+		}
+
+		return true;
+	}
+
+	/**     \brief      Renvoi prochaine valeur attribuee
+	 *      \param      objsoc		Objet societe
+	 *      \param      facture		Objet facture
+	 *      \return     string      Valeur
+	 */
+	function getNextValue($objsoc,$facture)
+	{
+		global $db,$conf;
+
+		if ($facture->type == 2) $prefix=$this->prefixcreditnote;
+		else $prefix=$this->prefixinvoice;
+
+		// D'abord on recupere la valeur max (reponse immediate car champ indï¿½xï¿½)
+		$posindice=8;
+
+		$sql = "SELECT MAX(0+SUBSTRING(facnumber,".$posindice.")) as max";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber like '".$prefix."%'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $max = $obj->max;
+			else $max=0;
+		}
+		else
+		{
+			dol_syslog("mod_facture_terre::getNextValue sql=".$sql, LOG_ERR);
+			return -1;
+		}
+
+		//$date=time();
+		$date=$facture->date;
+		$yymm = strftime("%y%m",$date);
+		$num = sprintf("%04s",$max+1);
+
+		dol_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
+		return $prefix.$yymm."-".$num;
+	}
+
 	/**		\brief      Return next free value
-    *      	\param      objsoc      Object third party
-	* 		\param		objforref	Object for number to search
-    *   	\return     string      Next free value
-    */
-    function getNumRef($objsoc,$objforref)
-    {
-        return $this->getNextValue($objsoc,$objforref);
-    }
-    
+	 *     	\param      objsoc      Object third party
+	 * 		\param		objforref	Object for number to search
+	 *   	\return     string      Next free value
+	 */
+	function getNumRef($objsoc,$objforref)
+	{
+		return $this->getNextValue($objsoc,$objforref);
+	}
+
 }
 
 ?>
