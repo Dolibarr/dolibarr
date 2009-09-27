@@ -2155,10 +2155,10 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *      \brief      Renvoie la r�f�rence de facture suivante non utilis�e en fonction du module
-	 *                  de num�rotation actif d�fini dans FACTURE_ADDON
-	 *      \param	    soc  		            objet societe
-	 *      \return     string                  reference libre pour la facture
+	 *      \brief      Return next reference of invoice not already used
+	 *                  according to numbering module defined into constant FACTURE_ADDON
+	 *      \param	    soc  		            objet company
+	 *      \return     string                  free ref
 	 */
 	function getNextNumRef($soc)
 	{
@@ -2171,7 +2171,7 @@ class Facture extends CommonObject
 		{
 			$file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
 
-			// Chargement de la classe de num�rotation
+			// Chargement de la classe de numerotation
 			$classname = "mod_facture_".FACTURE_ADDON;
 			require_once($dir.$file);
 
