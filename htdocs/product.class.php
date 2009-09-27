@@ -510,6 +510,7 @@ class Product extends CommonObject
 	function delete($id)
 	{
 		global $conf,$user,$langs;
+		$error=0;
 
 		if ($user->rights->produit->supprimer)
 		{
@@ -531,27 +532,35 @@ class Product extends CommonObject
 				$sqld = "DELETE from ".MAIN_DB_PREFIX."categorie_product";
 				$sqld.= " WHERE fk_product = ".$id;
 				$resultd = $this->db->query($sqld);
-				
+
 				$sqlz = "DELETE from ".MAIN_DB_PREFIX."product";
 				$sqlz.= " WHERE rowid = ".$id;
 				$resultz = $this->db->query($sqlz);
-				 
-                if ( !$resultz ){ 
-                    dol_syslog('Product::delete error sqlz='.$sqlz, LOG_INFO); 
-                } 
-                 
-                // Appel des triggers 
-                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php"); 
-                $interface=new Interfaces($this->db); 
-                $result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf); 
-                if ($result < 0) { $error++; $this->errors=$interface->errors; } 
-                // Fin appel triggers 
-                 
-                return 0;
+
+                if ( !$resultz )
+                {
+                    dol_syslog('Product::delete error sqlz='.$sqlz, LOG_ERR);
+                }
+
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Fin appel triggers
+
+                if ($error)
+                {
+                	return -$error;
+                }
+                else
+                {
+                	return 0;
+                }
 			}
 			else
 			{
-				$this->error .= "Impossible de supprimer le produit.\n";
+				$this->error .= "FailedToDeleteProduct. Already used.\n";
 				return -1;
 			}
 		}
