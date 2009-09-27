@@ -356,7 +356,7 @@ Module2400Desc = Gestion des actions (évènements et taches) et de l'agenda
 Module2500Name = Gestion Electronique de Document
 Module2500Desc = Permet de stocker et administrer une base de documents
 Module2600Name = WebServices
-Module2600Desc = Permet les web services de serveur Dolibarr
+Module2600Desc = Active le serveur de Web Services de Dolibarr
 Module2700Name = Gravatar
 Module2700Desc = Utilise le service en ligne Gravatar (www.gravatar.com) pour affichage les photos d'utilisateurs/membres (qui se trouve avec leurs e-mails). Besoin d'un accès Internet
 Module5000Name = Multi-société
@@ -364,7 +364,7 @@ Module5000Desc = Permet de gérer plusieurs sociétés
 Module10000Name = PayBox
 Module10000Desc = Module d'offrir en ligne une page de paiement par carte de crédit avec PayBox
 Module13452Name = SpeedFinder
-Module13452Desc = Moteur de recherche en AJAX pour trouver un nom à partir d'une partie d'un numéro de téléphone dans 2 secondes
+Module13452Desc = Moteur de recherche en AJAX pour trouver un nom à partir d'une partie d'un numéro de téléphone en 2 secondes
 Module50100Name = Caisse
 Module50100Desc = Caisse enregistreuse
 Permission11 = Consulter les factures
@@ -1104,3 +1104,5 @@ BankSetupModule=Configuration du module Banque
 FreeLegalTextOnChequeReceipts=Mention complémentaire sur les bordereaux de remises de chèques
 ##### Multicompany #####
 MultiCompanySetup=Configuration du module Multi-société
+##### Suppliers #####
+SuppliersSetup=Configuration du module Fournisseurs

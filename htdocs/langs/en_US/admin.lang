@@ -989,7 +989,7 @@ BarcodeDescC128=Barcode of type C128
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
-ExternalRSSSetup=External RSS imports setup<textarea></textarea>
+ExternalRSSSetup=External RSS imports setup
 NewRSS=New RSS Feed
 ##### Mailing #####
 MailingSetup=EMailing module setup
@@ -1105,3 +1105,5 @@ BankSetupModule=Bank module setup
 FreeLegalTextOnChequeReceipts=Free text on cheque receipts
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
+##### Suppliers #####
+SuppliersSetup=Supplier module setup

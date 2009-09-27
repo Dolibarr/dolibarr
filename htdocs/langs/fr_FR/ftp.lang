@@ -1,0 +1,12 @@
+# Dolibarr language file - fr_FR - ftp
+CHARSET=UTF-8
+FTPClientSetup=Configuration du module FTP Client
+NewFTPClient=Nouvelle connexion FTP cliente
+FTPArea=Espace FTP
+FTPAreaDesc=Cet écran vous présente une vue de serveur FTP
+SetupOfFTPClientModuleNotComplete=La configuration du module FTP Client semble incomplète
+FTPFeatureNotSupportedByYourPHP=Votre PHP ne supporte pas les fonctions FTP
+FailedToConnectToFTPServer=Echec de connexion au serveur FTP (serveur: %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Echec de login avec le login/mot de passe FTP configuré
+FTPFailedToRemoveFile=Echec suppression fichier <b>%s</b>.
+FTPFailedToRemoveDir=Echec suppression répertoire <b>%s</b> (Vérifiez les permissions et que le répertoire est vide).

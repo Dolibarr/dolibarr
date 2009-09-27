@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/admin/external_rss.php
-        \ingroup    external_rss
-        \brief      Page d'administration/configuration du module ExternalRss
-        \version    $Id$
-*/
+ *      \file       htdocs/admin/external_rss.php
+ *      \ingroup    external_rss
+ *      \brief      Page d'administration/configuration du module ExternalRss
+ *      \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -92,7 +92,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 	            $err++;
 	        }
 		}
-		
+
 		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . $_POST["norss"],$_POST[$external_rss_title],'chaine',0,'',$conf->entity);
 		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$_POST[$external_rss_urlrss],'chaine',0,'',$conf->entity);
 
@@ -120,7 +120,7 @@ if ($_POST["delete"])
 		// Supprime boite box_external_rss de definition des boites
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
         $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
-        
+
 		$resql=$db->query($sql);
 		if ($resql)
         {
@@ -144,7 +144,7 @@ if ($_POST["delete"])
 					dol_print_error($db,"sql=$sql");
 					exit;
 				}
-				
+
 				$i++;
 			}
 
@@ -160,7 +160,7 @@ if ($_POST["delete"])
 
 		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . $_POST["norss"],$conf->entity);
 		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . $_POST["norss"],$conf->entity);
-		
+
         if ($result1 && $result2)
         {
             $db->commit();
@@ -188,10 +188,10 @@ print_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'setup');
 print '<br>';
 
 // Formulaire ajout
-print '<form name="externalrssconfig" action="external_rss.php" method="post">';
+print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="nobordernopadding" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("NewRSS").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
@@ -205,7 +205,7 @@ print '</tr>';
 <tr class="pair">
   <td>URL du RSS</td>
   <td><input type="text" name="external_rss_urlrss_<?php echo ($lastexternalrss+1) ?>" value="<?php echo @constant("EXTERNAL_RSS_URLRSS_" . ($lastexternalrss+1)) ?>" size="64"></td>
-  <td>http://wiki.april.org/RecentChanges?format=rss<br>http://linuxfr.org/backend/news/rss20.rss<br>http://back.fr.lolix.org/jobs.rss.php3
+  <td>http://wiki.april.org/RecentChanges?format=rss<br>http://linuxfr.org/backend/news/rss20.rss<br>http://back.fr.lolix.org/jobs.rss.php3</td>
 </tr>
 <tr><td colspan="3" align="center">
 <input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>">
@@ -216,13 +216,12 @@ print '</tr>';
 <?php
 print '</table>';
 print '</form>';
-?>
 
-<br>
 
-<table class="noborder" width="100%">
+print '<br>';
 
-<?php
+
+print '<table class="nobordernopadding" width="100%">';
 
 $sql ="select rowid, file, note from ".MAIN_DB_PREFIX."boxes_def";
 $sql.=" WHERE file = 'box_external_rss.php'";
@@ -238,22 +237,22 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 	    eregi('^([0-9]+)',$obj->note,$reg);
 		$idrss = $reg[1];
 		//print "x".$idrss;
 
 		$var=true;
-		
+
 		$rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_".$idrss) );
 		// fetch_rss initialise les objets suivant:
 		// print_r($rss->channel);
 		// print_r($rss->image);
 		// print_r($rss->items);
-		
-		print "<form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">";
+
+		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		
+
 		print "<tr class=\"liste_titre\">";
 		print "<td colspan=\"2\">".$langs->trans("RSS")." ".($i+1)."</td>";
 		print "</tr>";
@@ -307,7 +306,7 @@ if ($resql)
 		print "</tr>";
 
 		print "</form>";
-		
+
 		$i++;
 	}
 }
@@ -315,11 +314,8 @@ else
 {
 	dol_print_error($db);
 }
-?>
 
-</table>
-
-<?php 
+print '</table>'."\n";
 
 
 $db->close();

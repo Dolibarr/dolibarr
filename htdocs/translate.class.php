@@ -342,7 +342,7 @@ class Translate {
 	 */
 	function list_domainloaded()
 	{
-		$ret='';
+		$ret='Loaded from '.join(',',$this->dir).': ';
 		foreach($this->tab_loaded as $key=>$val)
 		{
 			if ($ret) $ret.=',';

@@ -861,7 +861,7 @@ BarcodeDescC128								   =Codice a barre di tipo C128
 ##### Prelevements #####						   
 WithdrawalsSetup							   =Ritiro del modulo di impostazione
 ##### ExternalRSS #####							   
-ExternalRSSSetup							   =Impostazioni importazioni esterne RSS <textarea> </textarea>
+ExternalRSSSetup							   =Impostazioni importazioni esterne RSS
 NewRSS									   =Nuovo feed RSS
 ##### Mailing #####							   
 MailingSetup								   =Impostazioni modulo E-mail
