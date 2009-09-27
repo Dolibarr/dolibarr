@@ -69,21 +69,21 @@ if ( $nbr_enreg > 1 ) {
 
 	if ( $nbr_enreg > $conf_taille_listes ) {
 
-		$top_liste_produits = '----- '.$conf_taille_listes.' produits affiches sur un total de '.$nbr_enreg.' -----';
+		$top_liste_produits = '----- '.$conf_taille_listes.' '.$langs->transnoentitiesnoconv("Products").' '.$langs->trans("on").' '.$nbr_enreg.' -----';
 
 	} else {
 
-		$top_liste_produits = '----- '.$nbr_enreg.' produits affiches sur un total de '.$nbr_enreg.' -----';
+		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("Products").' '.$langs->trans("on").' '.$nbr_enreg.' -----';
 
 	}
 
 } else if ( $nbr_enreg == 1 ) {
 
-	$top_liste_produits = '----- 1 article trouve -----';
+	$top_liste_produits = '----- 1 '.$langs->transnoentitiesnoconv("ProductFound"). ' -----';
 
 } else {
 
-	$top_liste_produits = '----- Aucun article trouve -----';
+	$top_liste_produits = '----- '.$langs->transnoentitiesnoconv("NoProductFound"). ' -----';
 
 }
 

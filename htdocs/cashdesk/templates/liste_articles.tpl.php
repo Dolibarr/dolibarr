@@ -1,7 +1,7 @@
 <?php
 $langs->load("main");
 $langs->load("bills");
-$langs->load("cashdesk");
+$langs->load("@cashdesk");
 ?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
@@ -71,7 +71,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 	} else {
 
-		echo ('<p class="cadre_aucun_article">Aucun article pour le moment</p>'."\n");
+		echo ('<p class="cadre_aucun_article">'.$langs->trans("NoArticle").'</p>'."\n");
 
 	}
 

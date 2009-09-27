@@ -52,11 +52,11 @@ if ( $retour >= 0 ) {
 	$_SESSION['nom'] = $tab['name'];
 	$_SESSION['prenom'] = $tab['firstname'];
 
-	header ('Location: affIndex.php?menu=facturation&id=NOUV');
+	header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&id=NOUV');
 
 } else {
 
-	header ('Location: index.php?err='.$retour.'&user='.$username);
+	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.$retour.'&user='.$username);
 
 }
 

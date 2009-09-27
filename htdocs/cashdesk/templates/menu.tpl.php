@@ -42,7 +42,10 @@ print '<li class="menu_choix2"><a href="'.eregi_replace('cashdesk','',$conf_url_
 print '<li class="menu_choix0">'.$langs->trans("User").' : '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
 print $langs->trans("CashDeskThirdParty").' : '.$company->getNomUrl(1).'<br>';
 print $langs->trans("CashDeskBank").' : '.$bank->getNomUrl(1).'<br>';
-print $langs->trans("CashDeskWarehouse").' : '.$warehouse->getNomUrl(1);
+if ($conf->stock->enabled)
+{
+	print $langs->trans("CashDeskWarehouse").' : '.$warehouse->getNomUrl(1);
+}
 print '</li></ul>';
 print '</div>';
 ?>

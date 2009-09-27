@@ -34,7 +34,7 @@ include('../master.inc.php');
 
 if ( $_SESSION['uid'] > 0 )
 {
-	header ('Location: affIndex.php');
+	header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php');
 	exit;
 }
 
@@ -44,7 +44,7 @@ if ( $_SESSION['uid'] > 0 )
 
 <html>
 <head>
-<title>Caisse : identification</title>
+<title>Point of Sale login</title>
 
 <meta name="robots" content="none" />
 
@@ -76,11 +76,11 @@ if ( $_SESSION['uid'] > 0 )
 <table>
 
 	<tr>
-		<td class="label1">Nom d'utilisateur</td>
+		<td class="label1"><?php echo $langs->trans("Login"); ?></td>
 		<td><input name="txtUsername" class="texte_login" type="text"	value="<?php echo $_GET['user']; ?>" /></td>
 	</tr>
 	<tr>
-		<td class="label1">Mot de passe</td>
+		<td class="label1"><?php echo $langs->trans("Password"); ?></td>
 		<td><input name="pwdPassword" class="texte_login" type="password"	value="" /></td>
 	</tr>
 

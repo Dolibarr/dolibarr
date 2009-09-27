@@ -13,3 +13,7 @@ AddThisArticle=Ajouter cet article
 RestartSelling=Reprendre la vente
 SellFinished=Vente terminée
 PrintTicket=Imprimer ticket
+NoResults=Aucun résultat
+NoProductFound=Aucun article trouvé
+ProductFound=produit trouvé
+ProductsFound=produits trouvés

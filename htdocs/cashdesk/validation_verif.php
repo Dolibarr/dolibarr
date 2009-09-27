@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
+ * Copyright (C) 2008-2009 Laurent Destailleur <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  */
 
 require ('../master.inc.php');
-require ('include/environnement.php');
-require ('classes/Facturation.class.php');
+require (DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+require (DOL_DOCUMENT_ROOT.'/cashdesk/classes/Facturation.class.php');
+require (DOL_DOCUMENT_ROOT.'/Facture.class.php');
 
 $obj_facturation = unserialize ($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
@@ -28,46 +29,20 @@ switch ( $_GET['action'] ) {
 
 	default:
 
-		$redirection = 'affIndex.php?menu=validation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=validation';
 		break;
 
 	case 'valide_achat':
 
-		// R�cup�ration du dernier num�ro de facture
-		$res = $sql->query (
-		"SELECT facnumber
-					FROM ".MAIN_DB_PREFIX."facture
-					WHERE facnumber LIKE 'FA%'
-					ORDER BY rowid DESC");
+		$company=new Societe($db);
+		$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
 
-		if ( $sql->num_rows ($res) ) {
+		$invoice=new Facture($db);
+		$invoice->date=dol_now('tzserver');
+		$invoice->type=0;
+		$num=$invoice->getNextNumRef($company);
 
-			$ret=array();
-			$tab = $sql->fetch_array($res);
-			foreach ( $tab as $cle => $valeur )
-			{
-				$ret[$cle] = $valeur;
-			}
-
-			$tab_num_facture = $ret;
-
-			$tab = explode ('-', $tab_num_facture['facnumber']);
-			$num_txt = $tab[1];
-			$num = $num_txt + 1;
-
-			// Formatage du num�ro sur quatre caract�res
-			if ( $num < 1000 ) { $num = '0'.$num; }
-			if ( $num < 100 ) { $num = '0'.$num; }
-			if ( $num < 10 ) { $num = '0'.$num; }
-
-			$obj_facturation->num_facture ('FA'.date('ym').'-'.$num);
-
-		} else {
-
-			$obj_facturation->num_facture ( 'FA'.date('ym').'-0001' );
-
-		}
-
+		$obj_facturation->num_facture($num);
 
 		$obj_facturation->mode_reglement ($_POST['hdnChoix']);
 

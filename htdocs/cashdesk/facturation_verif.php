@@ -80,7 +80,7 @@ switch ( $_GET['action'] ) {
 				}
 
 
-				$redirection = 'affIndex.php?menu=facturation&filtre='.$filtre;
+				$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$filtre;
 
 			} else {
 
@@ -88,11 +88,11 @@ switch ( $_GET['action'] ) {
 
 				if ( $_POST['hdnSource'] == 'REF' ) {
 
-					$redirection = 'affIndex.php?menu=facturation&filtre='.$_POST['txtRef'];
+					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$_POST['txtRef'];
 
 				} else {
 
-					$redirection = 'affIndex.php?menu=facturation';
+					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
 
 				}
 
@@ -100,7 +100,7 @@ switch ( $_GET['action'] ) {
 
 		} else {
 
-			$redirection = 'affIndex.php?menu=facturation';
+			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
 
 		}
 
@@ -112,13 +112,13 @@ switch ( $_GET['action'] ) {
 	$obj_facturation->remise_percent($_POST['txtRemise']);
 	$obj_facturation->ajoutArticle();
 
-	$redirection = 'affIndex.php?menu=facturation';
+	$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
 	break;
 
 	case 'suppr_article':
 		$obj_facturation->supprArticle($_GET['suppr_id']);
 
-		$redirection = 'affIndex.php?menu=facturation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
 		break;
 
 }

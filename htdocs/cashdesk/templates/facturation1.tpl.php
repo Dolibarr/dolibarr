@@ -1,6 +1,7 @@
 <?php
 $langs->load("main");
 $langs->load("bills");
+$langs->load("@cashdesk");
 ?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
@@ -110,11 +111,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="javascript: return verifSaisie();">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<table>
-			<tr><th class="label1"><?php echo $langs->trans("Qty"); ?></th><th class="label1"><?php echo $langs->trans("Stock"); ?></th><th class="label1"><?php echo $langs->trans("PriceUHT"); ?></th><th></th><th class="label1"><?php echo $langs->trans("VATRate"); ?></th><th class="label1"><?php echo $langs->trans("Discount"); ?> (%)</th><th class="label1"><?php echo $langs->trans("TotalHT"); ?></th></tr>
+			<tr><th class="label1"><?php echo $langs->trans("Qty"); ?></th>
+			<th class="label1"><?php echo $langs->trans("Stock"); ?></th>
+			<th class="label1"><?php echo $langs->trans("PriceUHT"); ?></th><th></th><th class="label1"><?php echo $langs->trans("VATRate"); ?></th><th class="label1"><?php echo $langs->trans("Discount"); ?> (%)</th><th class="label1"><?php echo $langs->trans("TotalHT"); ?></th></tr>
 			<tr>
 				<td><input class="texte1" type="text" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" /></td>
 				<!-- Affichage du stock pour l'article courant -->
-				<td><input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled="disabled" /></td>
+				<td>
+				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled="disabled" />
+				</td>
 				<!-- Affichage du prix unitaire -->
 				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo number_format( $obj_facturation->prix(), 2, '.', '') ?>" disabled="disabled" /></td>
 				<td>&#8364;</td>

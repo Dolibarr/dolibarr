@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-	include('../master.inc.php');
-	require ('include/environnement.php');
 
-	// Verification
-	if ( strlen ($_GET["code"]) > 1 ) {
+include('../master.inc.php');
+require ('include/environnement.php');
 
-		$res = $sql->query (
+$langs->load("@cashdesk");
+
+// Verification
+if ( strlen ($_GET["code"]) > 1 ) {
+
+	$res = $sql->query (
 			"SELECT ".MAIN_DB_PREFIX."product.rowid, ref, label, tva_tx
 			FROM ".MAIN_DB_PREFIX."product
 			LEFT JOIN ".MAIN_DB_PREFIX."product_stock ON ".MAIN_DB_PREFIX."product.rowid = ".MAIN_DB_PREFIX."product_stock.fk_product
@@ -33,45 +36,44 @@
 				OR label LIKE '%".$_GET['code']."%'
 			ORDER BY label");
 
-		if ( $nbr = $sql->num_rows($res) ) {
+	if ( $nbr = $sql->num_rows($res) ) {
 
-			$resultat = '<ul class="dhtml_bloc">';
+		$resultat = '<ul class="dhtml_bloc">';
 
-			$ret=array(); $i=0;
-			while ( $tab = $sql->fetch_array($res) )
+		$ret=array(); $i=0;
+		while ( $tab = $sql->fetch_array($res) )
+		{
+			foreach ( $tab as $cle => $valeur )
 			{
-				foreach ( $tab as $cle => $valeur )
-				{
-					$ret[$i][$cle] = $valeur;
-				}
-				$i++;
+				$ret[$i][$cle] = $valeur;
 			}
-			$tab=$ret;
+			$i++;
+		}
+		$tab=$ret;
 
-			for ( $i = 0; $i < count ($tab); $i++ ) {
+		for ( $i = 0; $i < count ($tab); $i++ ) {
 
-				$resultat .= '
+			$resultat .= '
 					<li class="dhtml_defaut" title="'.$tab[$i]['ref'].'"
 						onMouseOver="javascript: this.className = \'dhtml_selection\';"
 						onMouseOut="javascript: this.className = \'dhtml_defaut\';"
 					">'.htmlentities($tab[$i]['ref'].' - '.$tab[$i]['label']).'</li>
 				';
 
-			}
+		}
 
-			$resultat .= '</ul>';
+		$resultat .= '</ul>';
 
-			echo $resultat;
+		echo $resultat;
 
-		} else {
-
-			echo ('
+	} else {
+		echo ('
 				<ul class="dhtml_bloc">
-					<li class="dhtml_defaut">'.htmlentities ('Aucun r�sultat').'</li>
+					<li class="dhtml_defaut">'.$langs->trans("NoResults").'</li>
 				</ul>
 			');
 
-		}
-
 	}
+
+}
 ?>

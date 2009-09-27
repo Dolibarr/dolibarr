@@ -13,3 +13,7 @@ AddThisArticle=Add this article
 RestartSelling=Go back on sell
 SellFinished=Sell finished
 PrintTicket=Print ticket
+NoResults=No results
+NoProductFound=No article found
+ProductFound=product found
+ProductsFound=products found
