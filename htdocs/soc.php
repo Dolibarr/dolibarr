@@ -472,7 +472,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="autofilltownfromzip_save_refresh_create()"':'');
+		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_create()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
@@ -826,7 +826,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="autofilltownfromzip_save_refresh_edit()"':'');
+		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="company_save_refresh_edit()"':'');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
