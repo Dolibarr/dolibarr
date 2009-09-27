@@ -40,7 +40,7 @@ if (!$user->admin)
 accessforbidden();
 
 $langs->load("admin");
-$langs->load("cashdesk");
+$langs->load("@cashdesk");
 
 
 /*

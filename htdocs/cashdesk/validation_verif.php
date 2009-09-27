@@ -25,12 +25,14 @@ require (DOL_DOCUMENT_ROOT.'/Facture.class.php');
 $obj_facturation = unserialize ($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
-switch ( $_GET['action'] ) {
+switch ( $_GET['action'] )
+{
 
 	default:
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=validation';
 		break;
+
 
 	case 'valide_achat':
 
@@ -77,18 +79,20 @@ switch ( $_GET['action'] ) {
 		$redirection = 'affIndex.php?menu=validation';
 		break;
 
+
 	case 'retour':
 
 		$redirection = 'affIndex.php?menu=facturation';
 		break;
 
+
 	case 'valide_facture':
 
-		// R�cup�ration de la date et de l'heure
+		// Recuperation de la date et de l'heure
 		$date = date ('Y-m-d');
 		$heure = date ('H:i:s');
 
-		// R�cup�ration du mode de r�glement et cr�ation de la note priv�e ...
+		// Recuperation du mode de reglement et cr�ation de la note privee ...
 		$note = '';
 
 		switch ( $obj_facturation->mode_reglement() ) {
@@ -116,10 +120,17 @@ switch ( $_GET['action'] ) {
 		// ... on termine la note
 		$note .= addslashes ($_POST['txtaNotes']);
 
-		// Si paiement differe ...
-		if ( $obj_facturation->mode_reglement() == 'DIF' ) {
 
-			// ... ajout d'une facture sans mode de r�glement, avec la date d'�ch�ance
+		// TODO Add records into database using the Dolibarr business classes
+		// instead of direct access.
+		// Also add a transaction and error management
+
+
+		// Si paiement differe ...
+		if ( $obj_facturation->mode_reglement() == 'DIF' )
+		{
+
+			// ... ajout d'une facture sans mode de reglement, avec la date d'�ch�ance
 			$sql->query (
 			"INSERT INTO ".MAIN_DB_PREFIX."facture (
 							facnumber,
@@ -200,7 +211,9 @@ switch ( $_GET['action'] ) {
 
 
 			// Sinon ...
-		} else {
+		}
+		else
+		{
 
 			// ... ajout d'une facture et d'un paiement
 			$sql->query ("INSERT INTO ".MAIN_DB_PREFIX."facture (
@@ -262,7 +275,7 @@ switch ( $_GET['action'] ) {
 							'".$date."',
 							'".$note."',
 							NULL)
-				;");
+				");
 
 
 			// Recuperation de l'id de la facture nouvellement creee
@@ -285,8 +298,9 @@ switch ( $_GET['action'] ) {
 
 
 
-			// Ajout d'une op�ration sur le compte de caisse, uniquement si le paiement est en esp�ces
-			if ( $obj_facturation->mode_reglement() == 'ESP' ) {
+			// Ajout d'une operation sur le compte de caisse, uniquement si le paiement est en especes
+			if ( $obj_facturation->mode_reglement() == 'ESP' )
+			{
 
 				$sql->query (
 				"INSERT INTO ".MAIN_DB_PREFIX."bank (
@@ -314,7 +328,7 @@ switch ( $_GET['action'] ) {
 								0,
 								0
 							)
-					;");
+					");
 
 			}
 
@@ -360,9 +374,9 @@ switch ( $_GET['action'] ) {
 							'".$date." 12:00:00',
 							".$obj_facturation->prix_total_ttc().",
 							".$mode_reglement.",
-							NULL,
-							NULL,
-							$id_op,
+			NULL,
+			NULL,
+			$id_op,
 							".$_SESSION['uid'].",
 							NULL,
 							1,
@@ -370,8 +384,8 @@ switch ( $_GET['action'] ) {
 						)");
 
 
-			// R�cup�ration de l'id du paiement nouvellement cr�
- 			$resql=$sql->query (
+			// Recuperation de l'id du paiement nouvellement cr�
+			$resql=$sql->query (
 			"SELECT rowid
 					FROM ".MAIN_DB_PREFIX."paiement
 					WHERE 1
@@ -401,24 +415,9 @@ switch ( $_GET['action'] ) {
 							".$id.",
 							".$obj_facturation->prix_total_ttc()."
 						)
-				;");
+				");
 
 		}
-
-		// Ajout d'un r�glement tva
-		$sql->query (
-		"INSERT INTO llx_facture_tva_sum (
-						fk_facture,
-						amount,
-						tva_tx
-					)
-
-					VALUES (
-						".$id.",
-						".$obj_facturation->montant_tva().",
-						19.6
-					)
-			;");
 
 
 		// Recuperation de la liste des articles du panier
@@ -439,7 +438,9 @@ switch ( $_GET['action'] ) {
 
 		$tab_liste = $ret;
 
-		for ($i = 0; $i < count ($tab_liste); $i++) {
+		// Loop on each product
+		for ($i = 0; $i < count ($tab_liste); $i++)
+		{
 
 			// Recuperation de l'article
 			$res = $sql->query (
@@ -478,15 +479,8 @@ switch ( $_GET['action'] ) {
 			$qte = $tab_liste[$i]['qte'];
 			$stock = $reel - $qte;
 
-			// Mise � jour du stock
-			$sql->query (
-			'UPDATE '.MAIN_DB_PREFIX.'product_stock
-					SET reel = '.$stock."
-					WHERE fk_product = ".$tab_liste[$i]['fk_article']."
-					LIMIT 1");
 
-
-			// Ajout d'une entr�e dans le d�tail de la facture
+			// Ajout d'une entree dans le detail de la facture
 			$sql->query (
 			'INSERT INTO '.MAIN_DB_PREFIX.'facturedet (
 							fk_facture,
@@ -536,7 +530,12 @@ switch ( $_GET['action'] ) {
 		$redirection = 'affIndex.php?menu=validation_ok&facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		break;
 
+	// End of case: valide_facture
+
 }
+
+
+
 
 $_SESSION['serObjFacturation'] = serialize ($obj_facturation);
 
