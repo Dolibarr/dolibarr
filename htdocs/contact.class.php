@@ -790,7 +790,7 @@ class Contact extends CommonObject
 			if ($this->firstname && $this->name) $ret.=' ';
 			if ($this->firstname) $ret.=$this->firstname;
 		}
-		return $langs->convToOutputCharset(trim($ret));
+		return trim($ret);
 	}
 
 
