@@ -1,0 +1,37 @@
+# Dolibarr language file - pt_BR rev. 0.0 - withdrawals
+CHARSET=UTF-8
+StandingOrdersArea=Área de Débitos Diretos
+CustomersStandingOrdersArea=Área de Débitos Diretos de Clientes
+StandingOrders=Débitos Diretos
+StandingOrder=Débitos Diretos
+NewStandingOrder=Novo Débito Direto
+Withdrawals=Levantamentos
+Withdrawal=Levantamento
+WithdrawalsReceipts=Ordens de Levantamento
+WithdrawalReceipt=Ordem de Levantamento
+WithdrawalReceiptShort=Ordem
+LastWithdrawalReceipts=As %s últimas ordens de levantamento
+WithdrawedBills=Faturas de Levantamentos
+WithdrawalsLines=Linhas de Levantamento
+RequestStandingOrderToTreat=Pedidos de Débitos Diretos a Tratar
+RequestStandingOrderTreated=Pedidos de Débitos Diretos Processados
+CustomersStandingOrders=Débitos Diretos de Clientes
+CustomerStandingOrder=Débito Direto de Cliente
+NbOfInvoiceToWithdraw=N� de Faturas Pendentes de Levantamento
+InvoiceWaitingWithdraw=Faturas em Espera de Levantamento
+AmountToWithdraw=Quantidade a Levantar
+WithdrawsRefused=Débitos Diretos Rejeitados
+NoInvoiceToWithdraw=Nenhuma fatura a cliente com modo de pagamento 'Débito Directo' em espera. Ir ao separador 'Débito Directo' na ficha da fatura para fazer um pedido.
+ResponsibleUser=Usuário Responsável dos Débitos Diretos
+WithdrawalsSetup=Configuração dos Débitos Diretos
+WithdrawStatistics=Estatísticas de Débitos Diretos
+WithdrawRejectStatistics=Estatísticas de Débitos Diretos Rejeitados
+LastWithdrawalReceipt=Os %s últimos Débitos Diretos Recebidos
+MakeWithdrawRequest=Realizar um Pedido de Débito Direto
+ThirdPartyBankCode=Código Banco do Fornecedor
+ThirdPartyDeskCode=Código da Escritório do Fornecedor
+NoInvoiceCouldBeWithdrawed=Não há fatura de débito direto com sucesso. Verifique se a fatura da empresa tem um válido IBAN.
+ClassCredited=Classificar Acreditados
+ClassCreditedConfirm=? Tem certeza que quer classificar este débito direto como realizado sobre a sua conta bancaria?
+
+

@@ -99,7 +99,7 @@ class Translate {
 	 */
 	function setDefaultLang($srclang='fr_FR')
 	{
-		//dol_syslog("Translate::setDefaultLang ".$this->defaultlang,LOG_DEBUG);
+		//dol_syslog("Translate::setDefaultLang srclang=".$srclang,LOG_DEBUG);
 
 		$this->origlang=$srclang;
 
@@ -169,14 +169,20 @@ class Translate {
 	 *  \param      domain      		File name to load (.lang file). Use @ before value if domain is in a module directory.
 	 *  \param      alt         		Use alternate file even if file in target language is found
 	 * 	\param		soptafterdirection	Stop when the DIRECTION tag is found
+	 * 	\param		forcelangdir		To force a lang directory
 	 *	\return		int					<0 if KO, >0 if OK
 	 *	\remarks	tab_loaded is completed with $domain key.
-	 *				Value for key is: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
+	 *				Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
+	 * TODO Make a code simpler:
+	 * First call is with alt=0. if xx=YY, then force alt to 1. If xx_YY == en_US, fr_FR or es_ES, then force alt=2
+	 * $langofdir=$this->defaultlang or forcelangdir.
+	 * Define lang file and try to load it if exists.
+	 * Then if alt < 2, we call again with alt=alt+1 and a forcelangdir;
+	 * We set the tab_loaded when alt == 2
 	 */
-	function Load($domain,$alt=0,$stopafterdirection=0)
+	function Load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
 	{
 		global $conf;
-		//dol_syslog("Translate::Load domain=".$domain." alt=".$alt);
 
 		// Check parameters
 		if (empty($domain))
@@ -185,8 +191,10 @@ class Translate {
 			exit;
 		}
 
+		//dol_syslog("Translate::Load domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
+
 		// Check cache
-		if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
+		if (empty($forcelangdir) && ! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
 
 		foreach($this->dir as $searchdir)
 		{
@@ -202,7 +210,7 @@ class Translate {
 			else $searchdir=$searchdir."/langs";
 
 			// Directory of translation files
-			$scandir = $searchdir."/".$this->defaultlang;
+			$scandir = $searchdir."/".(empty($forcelangdir)?$this->defaultlang:$forcelangdir);
 			$file_lang =  $scandir . "/".$domain.".lang";
 			$filelangexists=is_file($file_lang);
 			//print 'Load default_lang='.$this->defaultlang.' alt='.$alt.' newalt='.$newalt.' '.$file_lang."-".$filelangexists.'<br>';

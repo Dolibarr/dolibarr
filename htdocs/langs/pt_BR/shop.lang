@@ -1,0 +1,13 @@
+# Dolibarr language file - pt_BR rev. 0.0 - shop
+CHARSET=UTF-8
+Shop=Loja
+ShopWeb=Loja web
+LastOrders=últimos pedidos
+OnStandBy=Em espera
+TreatmentInProgress=Em progresso
+LastCustomers=últimos clientes
+OSCommerceShop=Loja OS Commerce
+OSCommerce=OSCommerce
+AddProd=Venda em linha
+
+

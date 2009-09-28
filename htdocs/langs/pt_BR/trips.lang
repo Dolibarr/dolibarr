@@ -1,0 +1,22 @@
+# Dolibarr language file - pt_BR rev. 0.0 - trips
+CHARSET=UTF-8
+Trip=Deslocamento
+Trips=Deslocamentos
+TripsAndExpenses=Deslocamentos e Despesas
+TripId=Id de Viagens/Despesas notas
+TripCard=Ficha de Deslocamento
+AddTrip=Adicionar Deslocamento
+ListOfTrips=Lista de Deslocamentos
+ListOfFees=Lista de Taxas
+NewTrip=Nova Deslocamento
+CompanyVisited=Empresa/Instituição Visitada
+Kilometers=Kilometros
+FeesKilometersOrAmout=Quantidade de Kilometros
+DeleteTrip=Eliminar Deslocamento
+ConfirmDeleteTrip=? Tem certeza que quer eliminar esta deslocamento?
+TF_OTHER=Outro
+TF_LUNCH=Alimentação
+TF_TRIP=Viagem
+ListTripsAndExpenses=Lista de viagens e despesas
+
+

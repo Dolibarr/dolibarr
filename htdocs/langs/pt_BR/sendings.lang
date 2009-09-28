@@ -1,0 +1,60 @@
+# Dolibarr language file - pt_BR rev. 0.0 - sendings
+CHARSET=UTF-8
+RefSending=Ref. Envio
+Sending=Envio
+Sendings=Envios
+Receivings=Recepções
+SendingsArea=Área Envios
+ListOfSendings=Lista de Envios
+SendingMethod=Método de Envio
+SendingReceipt=Entrega
+LastSendings=Os %s últimos Envios
+SearchASending=Procurar Envio
+StatisticsOfSendings=Estatísticas de Envios
+NbOfSendings=Número de Envios
+SendingCard=Ficha de Envio
+NewSending=Novo Envio
+CreateASending=Criar um Envio
+CreateSending=Criar Envio
+QtyOrdered=Quant. Pedida
+QtyShipped=Quant. Enviada
+QtyToShip=Quant. a Enviar
+QtyReceived=Quant. Recibida
+KeepToShip=Fica por Enviar
+OtherSendingsForSameOrder=Outros Envios deste Pedido
+DateSending=Data de Expedição
+DateSendingShort=Data de Expedição
+SendingsForSameOrder=Expedições deste Pedido
+SendingsAndReceivingForSameOrder=Envios e Recepções deste pedido
+SendingsToValidate=Envios a Confirmar
+StatusSendingDraft=Rascunho
+StatusSendingValidated=Validado (produtos a enviar o enviados)
+StatusSendingDraftShort=Rascunho
+StatusSendingValidatedShort=Validado
+SendingSheet=Ficha de envio
+Carriers=Transportadoras
+Carrier=Transportadora
+CarriersArea=Área Transportadoras
+NewCarrier=Novo Transportadora
+ConfirmDeleteSending=? Tem certeza que quer eliminar esta expedição?
+ConfirmValidateSending=? Tem certeza que quer Confirmar esta expedição?
+ConfirmCancelSending=? Tem certeza que quer anular esta expedição?
+GenericTransport=Transporte Genérico
+Enlevement=Pick-up por o Cliente
+DocumentModelSimple=Modelo Simples
+WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
+StatsOnShipmentsOnlyValidated=Estatísticas sobre as transferências realizadas apenas validadas.
+
+# Sending methods
+SendingMethodCATCH=Remoção pelo cliente
+SendingMethodTRANS=Transportadora
+SendingMethodCOLSUI=Acompanhamento
+
+# NumRef
+NumRefModelJade=Devolve um número de referencia em formato l BLYY00001 ... donde AA é o ano. o incremento para o ano seguinte não se restablece ao inicio de ano.
+# ModelDocument
+
+DocumentModelSirocco=Modelo de Documento Sirocco
+DocumentModelTyphon=Modelo de Documento Typhon
+
+
