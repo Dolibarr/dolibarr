@@ -181,7 +181,7 @@ begin
 
   smtpServer := 'localhost';
   apachePort := '80';
-  mysqlPort := '3307';
+  mysqlPort := '3306';
   newPassword := 'changeme';
 
   firstinstall := true;
