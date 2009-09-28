@@ -116,7 +116,7 @@ class Propal extends CommonObject
 		$this->remise_percent = 0;
 		$this->remise_absolue = 0;
 
-		$langs->load("propals");
+		$langs->load("propal");
 		$this->labelstatut[0]=$langs->trans("PropalStatusDraft");
 		$this->labelstatut[1]=$langs->trans("PropalStatusValidated");
 		$this->labelstatut[2]=$langs->trans("PropalStatusSigned");
