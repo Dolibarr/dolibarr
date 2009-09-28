@@ -438,22 +438,24 @@ else
 				if ($is_directory) print '</a>';
 				print '</td>';
 				// Size
-				print '<td align="center">';
+				print '<td align="center" nowrap="nowrap">';
 				if (! $is_directory && ! $is_link) print $vals[4];
 				else print '&nbsp;';
-				print '</td><td align="center">';
+				print '</td>';
+				// Date
+				print '<td align="center" nowrap="nowrap">';
 				print $vals[5].' '.$vals[6].' '.$vals[7];
 				print '</td>';
 				// User
-				print '<td align="center">';
+				print '<td align="center" nowrap="nowrap">';
 				print $vals[2];
 				print '</td>';
 				// Group
-				print '<td align="center">';
+				print '<td align="center" nowrap="nowrap">';
 				print $vals[3];
 				print '</td>';
 				// Permissions
-				print '<td align="center">';
+				print '<td align="center" nowrap="nowrap">';
 				print $vals[0];
 				print '</td>';
 				// Action
