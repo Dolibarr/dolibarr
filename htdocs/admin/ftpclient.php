@@ -55,11 +55,12 @@ else
 
 if ($_POST["action"] == 'add' || $_POST["modify"])
 {
-    $ftp_server = "FTP_SERVER_" . $_POST["numero_entry"];
+    $ftp_name = "FTP_NAME_" . $_POST["numero_entry"];
+	$ftp_server = "FTP_SERVER_" . $_POST["numero_entry"];
 
-    if(isset($_POST[$ftp_server]))
+    if (isset($_POST[$ftp_name]) && isset($_POST[$ftp_server]))
     {
-        $ftp_port = "FTP_PORT_" . $_POST["numero_entry"];
+    	$ftp_port = "FTP_PORT_" . $_POST["numero_entry"];
         $ftp_user = "FTP_USER_" . $_POST["numero_entry"];
         $ftp_password = "FTP_PASSWORD_" . $_POST["numero_entry"];
 
@@ -69,8 +70,9 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 		if ($result1) $result2=dolibarr_set_const($db, "FTP_SERVER_" . $_POST["numero_entry"],$_POST[$ftp_server],'chaine',0,'',$conf->entity);
 		if ($result2) $result3=dolibarr_set_const($db, "FTP_USER_" . $_POST["numero_entry"],$_POST[$ftp_user],'chaine',0,'',$conf->entity);
 		if ($result3) $result4=dolibarr_set_const($db, "FTP_PASSWORD_" . $_POST["numero_entry"],$_POST[$ftp_password],'chaine',0,'',$conf->entity);
+		if ($result4) $result5=dolibarr_set_const($db, "FTP_NAME_" . $_POST["numero_entry"],$_POST[$ftp_name],'chaine',0,'',$conf->entity);
 
-        if ($result1 && $result2 && $result3 && $result4)
+        if ($result1 && $result2 && $result3 && $result4 && $result5)
         {
             $db->commit();
 	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
@@ -91,53 +93,13 @@ if ($_POST["delete"])
     {
         $db->begin();
 
-		// Supprime boite box_external_rss de definition des boites
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
-        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["numero_entry"]." %'";
-
-		$resql=$db->query($sql);
-		if ($resql)
-        {
-			$num = $db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
-				$obj=$db->fetch_object($resql);
-
-		        $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-		        $sql.= " WHERE box_id = ".$obj->rowid;
-				$resql=$db->query($sql);
-
-		        $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
-		        $sql.= " WHERE rowid = ".$obj->rowid;
-				$resql=$db->query($sql);
-
-				if (! $resql)
-				{
-					$db->rollback();
-					dol_print_error($db,"sql=$sql");
-					exit;
-				}
-
-				$i++;
-			}
-
-			$db->commit();
-		}
-		else
-		{
-			$db->rollback();
-			dol_print_error($db,"sql=$sql");
-			exit;
-        }
-
-
 		$result1=dolibarr_del_const($db,"ftp_port_" . $_POST["numero_entry"],$conf->entity);
 		if ($result1) $result2=dolibarr_del_const($db,"ftp_server_" . $_POST["numero_entry"],$conf->entity);
 		if ($result2) $result3=dolibarr_del_const($db,"ftp_user_" . $_POST["numero_entry"],$conf->entity);
 		if ($result3) $result4=dolibarr_del_const($db,"ftp_password_" . $_POST["numero_entry"],$conf->entity);
+		if ($result4) $result5=dolibarr_del_const($db,"ftp_name_" . $_POST["numero_entry"],$conf->entity);
 
-        if ($result1 && $result2 && $result3 && $result4)
+        if ($result1 && $result2 && $result3 && $result4 && $result5)
         {
             $db->commit();
 	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
@@ -178,6 +140,12 @@ else
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("NewFTPClient").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
+	print '</tr>';
+
+	print '<tr class="pair">';
+	print '<td>'.$langs->trans("Label").'</td>';
+	print '<td><input type="text" name="FTP_NAME_'.($lastftpentry+1).'" value="'.@constant("FTP_NAME_" . ($lastftpentry+1)).'" size="64"></td>';
+	print '<td>My FTP access</td>';
 	print '</tr>';
 
 	print '<tr class="impair">';
@@ -237,9 +205,9 @@ else
 		{
 			$obj = $db->fetch_object($resql);
 
-		    eregi('^([0-9]+)',$obj->note,$reg);
-			$idrss = $reg[1];
-			//print "x".$idrss;
+		    eregi('([0-9]+)$',$obj->name,$reg);
+			$idrss = $reg[0];
+			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 
 			$var=true;
 
@@ -247,7 +215,13 @@ else
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 			print "<tr class=\"liste_titre\">";
-			print "<td colspan=\"2\">".$langs->trans("FTP")." ".($i+1)."</td>";
+			print "<td colspan=\"2\">".$langs->trans("FTP")." ".($idrss)."</td>";
+			print "</tr>";
+
+			$var=!$var;
+			print "<tr ".$bc[$var].">";
+			print "<td>".$langs->trans("Name")."</td>";
+			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . @constant("FTP_NAME_" . $idrss) . "\" size=\"64\"></td>";
 			print "</tr>";
 
 			$var=!$var;
