@@ -81,7 +81,7 @@ if ($resql)
 /*
  * Comptes courants (courant = 1)
  */
-print '<table class="noborder" width="100%">';
+print '<table class="nobordernopadding" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</td>';
