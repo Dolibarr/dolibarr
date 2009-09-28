@@ -339,7 +339,7 @@ ul.tmenu {
 	list-style: none;
 }
 li.tmenu {
-	float: left;
+	float: <?php print $left; ?>;
 	padding-left:5px;
 	padding-right:5px;
 	padding-top: 2px;

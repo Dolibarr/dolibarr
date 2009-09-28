@@ -167,18 +167,12 @@ class Translate {
 	 *              If data for file already loaded, do nothing.
 	 * 				All data in translation array are stored in UTF-8 format.
 	 *  \param      domain      		File name to load (.lang file). Use @ before value if domain is in a module directory.
-	 *  \param      alt         		Use alternate file even if file in target language is found
-	 * 	\param		soptafterdirection	Stop when the DIRECTION tag is found
+	 *  \param      alt         		0,1,2
+	 * 	\param		soptafterdirection	Stop when the DIRECTION tag is found (optimize)
 	 * 	\param		forcelangdir		To force a lang directory
-	 *	\return		int					<0 if KO, >0 if OK
+	 *	\return		int					<0 if KO, 0 if already loaded, >0 if OK
 	 *	\remarks	tab_loaded is completed with $domain key.
 	 *				Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
-	 * TODO Make a code simpler:
-	 * First call is with alt=0. if xx=YY, then force alt to 1. If xx_YY == en_US, fr_FR or es_ES, then force alt=2
-	 * $langofdir=$this->defaultlang or forcelangdir.
-	 * Define lang file and try to load it if exists.
-	 * Then if alt < 2, we call again with alt=alt+1 and a forcelangdir;
-	 * We set the tab_loaded when alt == 2
 	 */
 	function Load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
 	{
@@ -191,45 +185,39 @@ class Translate {
 			exit;
 		}
 
-		//dol_syslog("Translate::Load domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
+		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
+
+		$newdomain=eregi_replace('@','',$domain);	// Remove the @ if present
 
 		// Check cache
-		if (empty($forcelangdir) && ! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
+		if (! empty($this->tab_loaded[$newdomain]))	// File already loaded for this domain
+		{
+			//dol_syslog("Translate::Load already loaded for ".$domain);
+			return 0;
+		}
+
+		$langofdir=(empty($forcelangdir)?$this->defaultlang:$forcelangdir);
+		$fileread=0;
+		//dol_syslog("Translate::Load langofdir=".$langofdir);
+
+		// Redefine alt
+		$langarray=split('_',$langofdir);
+		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
+		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
 
 		foreach($this->dir as $searchdir)
 		{
-			$newalt=$alt;
-
 			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang
 			// instead of global lang file htdocs/langs/code_CODE/xxx.lang
-			if (eregi('@',$domain))	// It's a language file of a module, we look in dir of this module.
-			{
-				$domain=eregi_replace('@','',$domain);
-				$searchdir=$searchdir ."/".$domain."/langs";
-			}
+			if (eregi('@',$domain))	$searchdir=$searchdir ."/".$newdomain."/langs";
 			else $searchdir=$searchdir."/langs";
 
 			// Directory of translation files
-			$scandir = $searchdir."/".(empty($forcelangdir)?$this->defaultlang:$forcelangdir);
-			$file_lang =  $scandir . "/".$domain.".lang";
+			$scandir = $searchdir."/".$langofdir;
+			$file_lang =  $scandir . "/".$newdomain.".lang";
 			$filelangexists=is_file($file_lang);
-			//print 'Load default_lang='.$this->defaultlang.' alt='.$alt.' newalt='.$newalt.' '.$file_lang."-".$filelangexists.'<br>';
 
-			// Check in "always available" alternate file if not found or if asked
-			if ($newalt || ! $filelangexists)
-			{
-				// Dir of ALWAYS available alternate file (en_US, fr_FR, es_ES)
-				if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
-				elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $searchdir."/fr_FR";
-				elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
-				elseif (eregi('^es',$this->defaultlang) && $this->defaultlang != 'es_ES') $scandiralt = $searchdir."/es_ES";
-				else $scandiralt = $searchdir."/en_US";
-
-				$file_lang = $scandiralt . "/".$domain.".lang";
-				$filelangexists=is_file($file_lang);
-				$newalt=1;
-			}
-			//print 'Load alt='.$alt.' newalt='.$newalt.' '.$file_lang."-".$filelangexists.'<br>';
+			//dol_syslog('Translate::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' file_lang='.$file_lang." => ".$filelangexists);
 
 			if ($filelangexists)
 			{
@@ -237,12 +225,12 @@ class Translate {
 				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 				$enablelangcacheinsession=false;
 
-				if ($enablelangcacheinsession && isset($_SESSION['lang_'.$domain]))
+				if ($enablelangcacheinsession && isset($_SESSION['lang_'.$newdomain]))
 				{
-					foreach($_SESSION['lang_'.$domain] as $key => $value)
+					foreach($_SESSION['lang_'.$newdomain] as $key => $value)
 					{
 						$this->tab_translate[$key]=$value;
-						$this->tab_loaded[$domain]=3;           // Marque ce fichier comme charge depuis cache session
+						$this->tab_loaded[$newdomain]=3;           // Set this file as loaded from cache in session
 					}
 				}
 				else
@@ -264,13 +252,12 @@ class Translate {
 
 									if (eregi('^CHARSET$',$key))		// This is to declare in which charset files are encoded
 									{
-										$this->charset_inputfile[$domain]=strtoupper($value);
-										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$domain].'<br>';
+										$this->charset_inputfile[$newdomain]=strtoupper($value);
+										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
 									}
 									elseif (eregi('^DIRECTION$',$key))	// This is to declare direction of language
 									{
-										// We do not load Separator values for alternate files
-										if (! $newalt)
+										if ($alt < 2)	// We do not load direction for alternate files 2
 										{
 											$this->direction=$value;
 											if ($stopafterdirection) break;
@@ -279,34 +266,22 @@ class Translate {
 									else
 									{
 										// On stocke toujours dans le tableau Tab en UTF-8
-										//if (empty($this->charset_inputfile[$domain]) || $this->charset_inputfile[$domain] == 'UTF-8')      $value=utf8_decode($value);
-										if (empty($this->charset_inputfile[$domain]) || $this->charset_inputfile[$domain] == 'ISO-8859-1') $value=utf8_encode($value);
+										//if (empty($this->charset_inputfile[$newdomain]) || $this->charset_inputfile[$newdomain] == 'UTF-8')      $value=utf8_decode($value);
+										if (empty($this->charset_inputfile[$newdomain]) || $this->charset_inputfile[$newdomain] == 'ISO-8859-1') $value=utf8_encode($value);
 
-										// We do not load Separator values for alternate files
-										if (! $newalt || (! eregi('^Separator',$key)))
-										{
-											//print 'XX'.$key;
-											$this->tab_translate[$key]=$value;
-										}
+										//print 'XX'.$key;
+										$this->tab_translate[$key]=$value;
+
 										if ($enablelangcacheinsession) $tabtranslatedomain[$key]=$value;	// To save lang in session
 									}
 								}
 							}
 						}
+						$fileread=1;
 						fclose($fp);
 
-						// For language other than fr_FR and en_US, we also load alternate file
-						if (! $newalt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
-						{
-							// This function MUST NOT contains call to syslog
-							//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
-							$this->load($domain,1,$stopafterdirection);
-						}
-
-						$this->tab_loaded[$domain]=1;           // Marque ce fichier comme charge
-
 						// To save lang in session
-						if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$domain]=$tabtranslatedomain;
+						if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$newdomain]=$tabtranslatedomain;
 
 						break;		// Break loop on each root dir
 					}
@@ -314,21 +289,45 @@ class Translate {
 			}
 		}
 
-		// Format for date
-		if ($domain == 'main')
+		// Now we load alternate file
+		if ($alt == 0)
 		{
-			$conf->format_date_short=empty($this->tab_translate['FormatDateShort'])?"%d/%m/%Y":$this->tab_translate['FormatDateShort'];					# Format of day with PHP/C tags (strftime functions)
-			$conf->format_date_short_java=empty($this->tab_translate['FormatDateShortJava'])?"dd/MM/yyyy":$this->tab_translate['FormatDateShortJava'];	# Format of day with Java tags
-			$conf->format_hour_short=empty($this->tab_translate['FormatHourShort'])?"%H:%M":$this->tab_translate['FormatHourShort'];
-			$conf->format_date_text_short=empty($this->tab_translate['FormatDateTextShort'])?"%d %b %Y":$this->tab_translate['FormatDateTextShort'];
-			$conf->format_date_text=empty($this->tab_translate['FormatDateText'])?"%d %B %Y":$this->tab_translate['FormatDateText'];
-			$conf->format_date_hour_short=empty($this->tab_translate['FormatDateHourShort'])?"%d/%m/%Y %H:%M":$this->tab_translate['FormatDateHourShort'];
-			$conf->format_date_hour_text_short=empty($this->tab_translate['FormatDateHourTextShort'])?"%d %b %Y %H:%M":$this->tab_translate['FormatDateHourTextShort'];
-			$conf->format_date_hour_text=empty($this->tab_translate['FormatDateHourText'])?"%d %B %Y %H:%M":$this->tab_translate['FormatDateHourText'];
-			//print $domain." => ".$this->defaultlang." ".$conf->format_date_hour_short." ".$this->tab_translate['FormatDateHourShort'];
+			// This function MUST NOT contains call to syslog
+			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
+			$langofdir=strtolower($langarray[0]).'_'.strtoupper($langarray[0]);
+			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
-		if (empty($this->tab_loaded[$domain])) $this->tab_loaded[$domain]=2;           // Marque ce fichier comme non trouve
+		if ($alt == 1)
+		{
+			// This function MUST NOT contains call to syslog
+			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
+			$langofdir='en_US';
+			if (eregi('^fr',$langarray[0])) $langofdir='fr_FR';
+			if (eregi('^es',$langarray[0])) $langofdir='es_ES';
+			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
+		}
+
+		if ($alt == 2)
+		{
+			if ($fileread) $this->tab_loaded[$newdomain]=1;	// Set domain file as loaded
+
+			// Format for date
+			if ($newdomain == 'main')
+			{
+				$conf->format_date_short=empty($this->tab_translate['FormatDateShort'])?"%d/%m/%Y":$this->tab_translate['FormatDateShort'];					# Format of day with PHP/C tags (strftime functions)
+				$conf->format_date_short_java=empty($this->tab_translate['FormatDateShortJava'])?"dd/MM/yyyy":$this->tab_translate['FormatDateShortJava'];	# Format of day with Java tags
+				$conf->format_hour_short=empty($this->tab_translate['FormatHourShort'])?"%H:%M":$this->tab_translate['FormatHourShort'];
+				$conf->format_date_text_short=empty($this->tab_translate['FormatDateTextShort'])?"%d %b %Y":$this->tab_translate['FormatDateTextShort'];
+				$conf->format_date_text=empty($this->tab_translate['FormatDateText'])?"%d %B %Y":$this->tab_translate['FormatDateText'];
+				$conf->format_date_hour_short=empty($this->tab_translate['FormatDateHourShort'])?"%d/%m/%Y %H:%M":$this->tab_translate['FormatDateHourShort'];
+				$conf->format_date_hour_text_short=empty($this->tab_translate['FormatDateHourTextShort'])?"%d %b %Y %H:%M":$this->tab_translate['FormatDateHourTextShort'];
+				$conf->format_date_hour_text=empty($this->tab_translate['FormatDateHourText'])?"%d %B %Y %H:%M":$this->tab_translate['FormatDateHourText'];
+				//print $domain." => ".$this->defaultlang." ".$conf->format_date_hour_short." ".$this->tab_translate['FormatDateHourShort'];
+			}
+
+			if (empty($this->tab_loaded[$newdomain])) $this->tab_loaded[$newdomain]=2;           // Marque ce fichier comme non trouve
+		}
 
 		return 1;
 	}
