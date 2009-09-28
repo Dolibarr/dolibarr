@@ -1083,7 +1083,7 @@ AgendaSetup = Módulo configuración de acciones y agenda
 PasswordTogetVCalExport = Clave de autorización vcal export link
 ##### ClickToDial ##### = undefined = 
 ClickToDialDesc = Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
-##### CashDesk ##### = undefined = 
+##### Point Of Sales (CashDesk) ##### = 
 CashDeskSetup = configuración del módulo de Caja registradora
 CashDeskThirdPartyForSell = Tercero genérico a usar para la venta
 CashDeskBankAccountForSell = Cuenta de efectivo que se utilizará para las ventas
@@ -1102,3 +1102,5 @@ BankSetupModule = Configuración del módulo Banco
 FreeLegalTextOnChequeReceipts = Mención complementaria en las remesas de cheques
 ##### Multicompany ##### = 
 MultiCompanySetup = Configuración del módulo Multi-empresa
+##### Suppliers ##### = 
+SuppliersSetup = Configuración del módulo Proveedores

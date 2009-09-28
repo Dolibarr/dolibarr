@@ -1083,7 +1083,7 @@ AgendaSetup = Mòdul configuració d'accions i agenda
 PasswordTogetVCalExport = Clau d'autorització vCal export link
 ##### ClickToDial ##### = undefined =  = 
 ClickToDialDesc = Aquest mòdul permet afegir una icona després del número de telèfon de contactes Dolibarr. Un clic en aquesta icona, Truca a un servidor amb un URL que s'indica a continuació. Això pot ser usat per anomenar al sistema centre de Dolibarr que pot trucar al número de telèfon en un sistema SIP, per exemple.
-##### CashDesk ##### = undefined =  = 
+##### Point Of Sales (CashDesk) ##### =  = 
 CashDeskSetup = Mòdul de configuració Caixa registradora
 CashDeskThirdPartyForSell = Tercer genéric a utilitzar per a les vendes
 CashDeskBankAccountForSell = Compte d'efectiu que s'utilitzarà per a les vendes
@@ -1102,3 +1102,5 @@ BankSetupModule = Configuració del mòdul Banc
 FreeLegalTextOnChequeReceipts = Menció complementària a les remeses de xecs
 ##### Multicompany ##### =  = 
 MultiCompanySetup = Configuració del mòdul Multi-empresa
+##### Suppliers ##### =  = 
+SuppliersSetup = Configuració del mòdul Proveïdors
