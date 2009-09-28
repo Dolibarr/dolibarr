@@ -2136,7 +2136,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."co_exp as ce";
 	$sql.= " WHERE c.rowid = ce.fk_commande";
-	$sql.= " AND c.fk_adresse_livraison IS NOT NULL";
+	$sql.= " AND c.fk_adresse_livraison IS NOT NULL AND c.fk_adresse_livraison != 0";
 
 	$resql = $db->query($sql);
 	if ($resql)
