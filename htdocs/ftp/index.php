@@ -338,9 +338,6 @@ else
 			if ($ret == 'html') print '<br>';
 		}
 
-		if ($mesg) { print $mesg."<br>"; }
-
-
 		// Confirmation de la suppression d'une ligne categorie
 		if ($_GET['action'] == 'delete_section')
 		{
@@ -354,6 +351,8 @@ else
 
 		print $langs->trans("Directory").': <b>'.$section.'</b><br>';
 		print "<br>\n";
+
+		if ($mesg) { print $mesg."<br>"; }
 
 		// Construit liste des repertoires
 		print '<table width="100%" class="nobordernopadding">'."\n";
