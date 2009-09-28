@@ -13,3 +13,7 @@ AddThisArticle = Afegeix aquest article
 RestartSelling = Reprendre la venda
 SellFinished = Venda acabada
 PrintTicket = Imprimir tiquet
+NoResults = Cap resultat
+NoProductFound = Cap article trobat
+ProductFound = Producte trobat
+ProductsFound = Productes trobats
