@@ -62,10 +62,12 @@ $offset = $limit * $page ;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
+$s_ftp_name='FTP_NAME_'.$numero_ftp;
 $s_ftp_server='FTP_SERVER_'.$numero_ftp;
 $s_ftp_port='FTP_PORT_'.$numero_ftp;
 $s_ftp_user='FTP_USER_'.$numero_ftp;
 $s_ftp_password='FTP_PASSWORD_'.$numero_ftp;
+$ftp_name=$conf->global->$s_ftp_name;
 $ftp_server=$conf->global->$s_ftp_server;
 $ftp_port=$conf->global->$s_ftp_port;
 $ftp_user=$conf->global->$s_ftp_user;
@@ -319,7 +321,6 @@ $userstatic = new User($db);
 print_fiche_titre($langs->trans("FTPArea"));
 
 print $langs->trans("FTPAreaDesc")."<br>";
-print "<br>\n";
 
 if (! function_exists('ftp_connect'))
 {
@@ -333,7 +334,7 @@ else
 		// Confirm remove file
 		if ($_GET['action'] == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -343,7 +344,7 @@ else
 		// Confirmation de la suppression d'une ligne categorie
 		if ($_GET['action'] == 'delete_section')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -365,7 +366,7 @@ else
 		print '<td class="liste_titre" align="center">'.$langs->trans("Group").'</td>'."\n";
 		print '<td class="liste_titre" align="center">'.$langs->trans("Permissions").'</td>'."\n";
 		print '<td class="liste_titre" align="right">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.urlencode($section):'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>&nbsp;';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($section?'&section='.urlencode($section):'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>&nbsp;';
 		print '</td>'."\n";
 		print '</tr>'."\n";
 
@@ -460,7 +461,7 @@ else
 				print '<td align="right" width="64" nowrap="nowrap">';
 				if ($is_directory)
 				{
-					if ($file != '..') print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_section&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
+					if ($file != '..') print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_section&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
 					else print '&nbsp;';
 				}
 				else if ($is_link)
@@ -469,9 +470,9 @@ else
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&section='.urlencode($section).'&file='.urlencode($file).'">'.img_file().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_file().'</a>';
 					print ' &nbsp; ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -524,43 +525,58 @@ llxFooter('$Date$ - $Revision$');
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section)
 {
+	global $langs;
+
 	$ok=1;
 
-	$conn_id = ftp_connect($ftp_server, $ftp_port, 20);
-	if ($conn_id)
-	{
-		// turn on passive mode transfers
-		//ftp_pasv ($conn_id, true) ;
-
-		if ($ftp_user)
-		{
-			if (ftp_login($conn_id, $ftp_user, $ftp_password))
-		    {
-		        // Change the dir
-				$newsectioniso=utf8_decode($section);
-		        ftp_chdir($conn_id, $newsectioniso);
-		    }
-		    else
-		    {
-				$mesg=$langs->trans("FailedToConnectToFTPServerWithCredentials");
-				$ok=0;
-		    }
-		}
-	}
-	else
+	if (! is_numeric($ftp_port))
 	{
 		$mesg=$langs->trans("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
 		$ok=0;
 	}
 
-	$arrayresult=array('conn_id'=>$conn_id, 'ok'=>$ok, 'mesg'=>$mesg);
+	if ($ok)
+	{
+		$conn_id = ftp_connect($ftp_server, $ftp_port, 20);
+		if ($conn_id)
+		{
+			// turn on passive mode transfers
+			//ftp_pasv ($conn_id, true) ;
 
+			if ($ftp_user)
+			{
+				if (ftp_login($conn_id, $ftp_user, $ftp_password))
+			    {
+			        // Change the dir
+					$newsectioniso=utf8_decode($section);
+			        ftp_chdir($conn_id, $newsectioniso);
+			    }
+			    else
+			    {
+					$mesg=$langs->trans("FailedToConnectToFTPServerWithCredentials");
+					$ok=0;
+			    }
+			}
+		}
+		else
+		{
+			$mesg=$langs->trans("FailedToConnectToFTPServer",$ftp_server,$ftp_port);
+			$ok=0;
+		}
+	}
+
+	$arrayresult=array('conn_id'=>$conn_id, 'ok'=>$ok, 'mesg'=>$mesg);
 	return $arrayresult;
 }
 
 
 /**
-*/
+ * Tell if an entry is a FTP directory
+ *
+ * @param unknown_type $connect_id
+ * @param unknown_type $dir
+ * @return unknown
+ */
 function ftp_isdir($connect_id,$dir)
 {
     if(ftp_chdir($connect_id,$dir))

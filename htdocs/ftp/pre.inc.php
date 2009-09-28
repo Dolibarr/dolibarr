@@ -36,6 +36,20 @@ function llxHeader($head = '', $title='', $help_url='', $morehtml='')
 
 	$menu = new Menu();
 
+	$MAXFTP=20;
+	$i=1;
+	while ($i <= $MAXFTP)
+	{
+		$paramkey='FTP_NAME_'.$i;
+		//print $paramkey;
+		if (! empty($conf->global->$paramkey))
+		{
+			$link=DOL_URL_ROOT."/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
+
+			$menu->add($link, dol_trunc($conf->global->$paramkey,24));
+		}
+		$i++;
+	}
 
 
 	left_menu($menu->liste, $help_url, $morehtml);

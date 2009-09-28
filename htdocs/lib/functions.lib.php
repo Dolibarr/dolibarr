@@ -927,6 +927,7 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *	\param      string				String to truncate
  *	\param      size				Max string size. 0 for no limit.
  *	\param		trunc				Where to trunc: right, left, middle
+ * 	\param		stringencoding		Tell what is source string encoding
  *	\return     string				Truncated string
  *	\remarks	USE_SHORT_TITLE=0 can disable all truncings
  */
