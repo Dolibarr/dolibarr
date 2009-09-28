@@ -709,7 +709,7 @@ if ($step == 4 && $datatoimport)
 	foreach($fieldstarget as $code=>$label)
 	{
 		$var=!$var;
-		print '<tr class="liste_total" height="20">';
+		print '<tr '.$bc[$var].' height="20">';
 
 		$i++;
 
@@ -717,8 +717,13 @@ if ($step == 4 && $datatoimport)
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
 		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-		print '<td nowrap="nowrap" style="font-weight: normal">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
-		print '<td style="font-weight: normal">'.$langs->trans($label).' ('.$code.')</td>';
+		print '<td nowrap="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td style="font-weight: normal">';
+		$text=$langs->trans($label);
+		if (eregi('\*$',$label)) $text='<b>'.$text.'</b>';
+		$htmltext=$langs->trans("Table").": ?<br>".$langs->trans("Field").': '.$code;
+		print $html->textwithpicto($text,$htmltext);
+		print '</td>';
 
 		print '</tr>';
 		$save_select.=$bit;
@@ -740,7 +745,7 @@ if ($step == 4 && $datatoimport)
 	{
 		if (empty($fieldsplaced[$key]))
 		{
-			$var=!$var;
+			//$var=!$var;
 			$nbofnotimportedfields++;
 			show_elem($fieldssource,$lefti,$key,'',$var);
 			//print '> '.$lefti.'-'.$key;
@@ -855,8 +860,8 @@ if ($step == 4 && $datatoimport)
 		print '</tr>';
 		$var=false;
 		print '<tr '.$bc[$var].'>';
-		print '<td><input name="import_name" size="32" value=""></td><td align="right">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<td><input name="import_name" size="48" value=""></td><td align="right">';
+		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
 
 		// List of existing import profils
@@ -1001,7 +1006,7 @@ function show_elem($fieldssource,$i,$pos,$key,$var)
 	print '<div style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
-	print '<tr class="liste_total" height="20">';
+	print '<tr '.$bc[$var].' height="20">';
 	if ($pos && $pos > sizeof($fieldssource))	// NoFields
 	{
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';

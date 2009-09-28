@@ -81,6 +81,7 @@ class ModeleExports
 				$this->picto[$module->id]=$module->picto;
 				// Driver properties
 				$this->driverlabel[$module->id]=$module->getDriverLabel();
+				$this->driverdesc[$module->id]=$module->getDriverDesc();
 				$this->driverversion[$module->id]=$module->getDriverVersion();
 				// If use an external lib
 				$this->liblabel[$module->id]=$module->getLibLabel();
@@ -108,6 +109,14 @@ class ModeleExports
 	function getDriverLabel($key)
 	{
 		return $this->driverlabel[$key];
+	}
+
+	/**
+	 *      \brief      Renvoi le descriptif d'un driver export
+	 */
+	function getDriverDesc($key)
+	{
+		return $this->driverdesc[$key];
 	}
 
 	/**

@@ -72,9 +72,9 @@ class Form
 	}
 
 	/**
-	 *	\brief	Affiche un texte+picto avec tooltip sur texte ou sur picto
+	 *	\brief	Show a text and picto with tooltip on text or picto
 	 *	\param  text				Texte a afficher
-	 *	\param  htmltext	    	Contenu html du tooltip, code en html
+	 *	\param  htmltext	    	Contenu html du tooltip, code en Html / UTF8
 	 *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et force en Ajax
 	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
 	 *	\param	img					Code img du picto
@@ -93,11 +93,12 @@ class Form
 		$paramfortooltippicto ='';
 
 		// Sanitize tooltip
-		$htmltext=ereg_replace("'","\'",$htmltext);
-		$htmltext=ereg_replace("&#039;","\'",$htmltext);
-		$htmltext=ereg_replace("\r","",$htmltext);
-		$htmltext=ereg_replace("<br>\n","<br>",$htmltext);
-		$htmltext=ereg_replace("\n","",$htmltext);
+		$htmltext=str_replace("\\","\\\\",$htmltext);
+		$htmltext=str_replace("'","\'",$htmltext);
+		$htmltext=str_replace("&#039;","\'",$htmltext);
+		$htmltext=str_replace("\r","",$htmltext);
+		$htmltext=str_replace("<br>\n","<br>",$htmltext);
+		$htmltext=str_replace("\n","",$htmltext);
 
 		if ($conf->use_javascript_ajax && $tooltipon == 4)
 		{
@@ -116,7 +117,7 @@ class Form
 		{
 			if ($conf->use_javascript_ajax)
 			{
-				$htmltext=eregi_replace('"',"\'",$htmltext);
+				$htmltext=eregi_replace('"',"&quot;",$htmltext);
 				if ($tooltipon==1 || $tooltipon==3)
 				{
 					$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';

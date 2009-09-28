@@ -57,7 +57,8 @@ class ExportTsv extends ModeleExports
         $this->db = $db;
 
         $this->id='tsv';                // Same value then xxx in file name export_xxx.modules.php
-        $this->label='Tsv (Tab Separated Value)';             // Label of driver
+        $this->label='Tsv';             // Label of driver
+        $this->desc='<b>Tab Separated Value</b> file format (.tsv)';
         $this->extension='tsv';         // Extension for generated file by this driver
         $this->picto='mime/other';		// Picto
         $ver=split(' ','$Revision$');
@@ -76,6 +77,11 @@ class ExportTsv extends ModeleExports
     function getDriverLabel()
     {
         return $this->label;
+    }
+
+    function getDriverDesc()
+    {
+        return $this->desc;
     }
 
     function getDriverExtension()

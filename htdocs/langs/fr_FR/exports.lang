@@ -63,8 +63,9 @@ ChooseFileToImport=Ajouter le fichier à importer puis cliquez sur le picto %s p
 DownloadEmptyExample=Télécharger fichier vierge exemple
 SourceFileFormat=Format du fichier source
 FieldsInSourceFile=Champs dans le fichier source
-FieldsInTargetDatabase=Champs cibles dans la base Dolibarr
+FieldsInTargetDatabase=Champs cibles dans la base Dolibarr (*=obligatoire)
 NoFields=Aucun champ
 MoveField=Déplacer champ colonne numéro %s
 ExampleOfImportFile=Exemple_de_fichier_import
+SaveImportProfile=Sauvegarder ce profil d'import
 ErrorImportDuplicateProfil=Impossible de sauvegarder le profil d'import sous ce nom. Un profil existant existe déjà pour ce nom.

@@ -155,7 +155,6 @@ MemberDeletedInDolibarr = Membre %s eliminat de Dolibarr
 MemberSubscriptionAddedInDolibarr = Subscripció del membre %s afegida a Dolibar
 ##### Export ##### =  = 
 ExportsArea = Àrea d'exportacions
-AvailableFormats = Formats disponibles
 LibraryUsed = Llibreria utilitzada
 LibraryVersion = Versió
 ExportableDatas = Dades exportables

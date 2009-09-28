@@ -80,6 +80,7 @@ class ModeleImports
 				$this->picto[$module->id]=$module->picto;
 				// Driver properties
 				$this->driverlabel[$module->id]=$module->getDriverLabel();
+				$this->driverdesc[$module->id]=$module->getDriverDesc();
 				$this->driverversion[$module->id]=$module->getDriverVersion();
 				// If use an external lib
 				$this->liblabel[$module->id]=$module->getLibLabel();
@@ -102,7 +103,7 @@ class ModeleImports
 	}
 
 	/**
-	 *      \brief      Renvoi libelle d'un driver export
+	 *      \brief      Renvoi libelle d'un driver import
 	 */
 	function getDriverLabel($key)
 	{
@@ -110,7 +111,15 @@ class ModeleImports
 	}
 
 	/**
-	 *      \brief      Renvoi version d'un driver export
+	 *      \brief      Renvoi la description d'un driver import
+	 */
+	function getDriverDesc($key)
+	{
+		return $this->driverdesc[$key];
+	}
+
+	/**
+	 *      \brief      Renvoi version d'un driver import
 	 */
 	function getDriverVersion($key)
 	{

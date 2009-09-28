@@ -63,6 +63,7 @@ class ExportExcel extends ModeleExports
 
 		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Excel';               // Label of driver
+		$this->desc='Native <b>Excel 95</b> file format (.xls)';
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
 		$ver=split(' ','$Revision$');
@@ -84,6 +85,11 @@ class ExportExcel extends ModeleExports
 	{
 		return $this->label;
 	}
+
+    function getDriverDesc()
+    {
+        return $this->desc;
+    }
 
 	function getDriverExtension()
 	{

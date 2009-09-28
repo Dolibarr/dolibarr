@@ -39,6 +39,8 @@ $import->load_arrays($user);
  * View
  */
 
+$html=new Form($db);
+
 llxHeader('',$langs->trans("ImportArea"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 print_fiche_titre($langs->trans("ImportArea"));
@@ -70,7 +72,8 @@ foreach($liste as $key)
     $var=!$var;
     print '<tr '.$bc[$var].'>';
     print '<td width="16">'.img_picto_common($model->getDriverLabel($key),$model->getPicto($key)).'</td>';
-    print '<td>'.dol_trunc($model->getDriverLabel($key),24).'</td>';
+    $text=$model->getDriverDesc($key);
+    print '<td>'.$html->textwithpicto($model->getDriverLabel($key),$text).'</td>';
     print '<td>'.$model->getLibLabel($key).'</td>';
     print '<td nowrap="nowrap" align="right">'.$model->getLibVersion($key).'</td>';
     print '</tr>';

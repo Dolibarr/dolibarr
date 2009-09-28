@@ -58,11 +58,12 @@ class ImportCsv extends ModeleImports
 
         $this->separator=',';
         if (! empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
-        $this->escape="\\";
+        $this->escape='"';
         $this->string='"';
 
         $this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
-        $this->label='Csv (Comma Separated Value, separator="'.$this->separator.'")';             // Label of driver
+        $this->label='Csv';             // Label of driver
+        $this->desc='<b>Comma Separated Value</b> file format (.csv). This is a text file format.<br>Fields are separated by separator [ '.$this->separator.' ]. If separator is found inside a field content, field is rounded by round character [ '.$this->string.' ]. Escape character to escape round character is [ '.$this->escape.' ].';
         $this->extension='csv';         // Extension for generated file by this driver
         $this->picto='mime/other';		// Picto
         $ver=split(' ','$Revision$');
@@ -81,6 +82,11 @@ class ImportCsv extends ModeleImports
     function getDriverLabel()
     {
         return $this->label;
+    }
+
+    function getDriverDesc()
+    {
+        return $this->desc;
     }
 
     function getDriverExtension()
