@@ -121,9 +121,12 @@ $next_year  = $next['year'];
 $next_month = $next['month'];
 
 $max_day_in_prev_month = date("t",dol_mktime(0,0,0,$prev_month,1,$prev_year));	// Nb of days in previous month
-$max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));				// Nb of days in next month
+$max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));					// Nb of days in next month
+// tmpday is a negative or null cursor to know how many days before the 1 to show on month view (if tmpday=0 we start on monday)
 $tmpday = -date("w",dol_mktime(0,0,0,$month,1,$year))+2;
+$tmpday+=((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)-1);
 if ($tmpday >= 1) $tmpday -= 7;
+// Define firstdaytoshow and lastdaytoshow
 $firstdaytoshow=dol_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
 $next_day=7-($max_day_in_month+1-$tmpday)%7;
 if ($next_day < 6) $next_day+=7;
@@ -433,17 +436,16 @@ else $link.=$langs->trans("AgendaHideBirthdayEvents");
 $link.='</a>';
 print_fiche_titre('',$link);
 
-if ($_GET["action"] != 'show_day')
+if ($_GET["action"] != 'show_day')		// View by month
 {
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
-	echo '  <td align="center">'.$langs->trans("Day1")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Day2")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Day3")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Day4")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Day5")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Day6")."</td>\n";
-	echo '  <td align="center">'.$langs->trans("Day0")."</td>\n";
+	$i=0;
+	while ($i < 7)
+	{
+		echo '  <td align="center">'.$langs->trans("Day".(($i+$conf->global->MAIN_START_WEEK) % 7))."</td>\n";
+		$i++;
+	}
 	echo " </tr>\n";
 
 	// In loops, tmpday contains day nb in current month (can be negative for days of previous month)
@@ -491,22 +493,15 @@ if ($_GET["action"] != 'show_day')
 	}
 	echo "</table>\n";
 }
-else
+else	// View by day
 {
 	// Code to show just one day
 	$style='cal_current_month';
 	$timestamp=dol_mktime(12,0,0,$month,$_GET["day"],$year);
 	$arraytimestamp=adodb_getdate(dol_mktime(12,0,0,$month,$_GET["day"],$year));
-	$dayname=array( '0'=>'Sunday',
-					'1'=>'Monday',
-					'2'=>'Tuesday',
-					'3'=>'Wednesday',
-					'4'=>'Thursday',
-					'5'=>'Friday',
-					'6'=>'Saturday');
 	echo '<table width="100%" class="nocellnopadd">';
 	echo ' <tr class="liste_titre">';
-	echo '  <td align="center">'.$langs->trans($dayname[$arraytimestamp['wday']])."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';

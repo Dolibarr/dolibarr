@@ -462,8 +462,8 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="action" value="add_action">';
 	if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="backtopage" value="'.($_REQUEST["backtopage"] != 1 ? $_REQUEST["backtopage"] : $_SERVER["HTTP_REFERER"]).'">';
 
-	if ($_GET["actioncode"] == 'AC_RDV') print_titre ($langs->trans("AddActionRendezVous"));
-	else print_titre ($langs->trans("AddAnAction"));
+	if ($_GET["actioncode"] == 'AC_RDV') print_fiche_titre ($langs->trans("AddActionRendezVous"));
+	else print_fiche_titre ($langs->trans("AddAnAction"));
 
 	if ($mesg) print $mesg.'<br>';
 	else print "<br>";
