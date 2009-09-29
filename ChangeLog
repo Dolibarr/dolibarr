@@ -47,6 +47,7 @@ For users:
 - New: Add experimental point of sale module.
 - New: Better usage when using with smartphones.
 - New: Add module FTP client.
+- New: Can set first day of week.
 - Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
