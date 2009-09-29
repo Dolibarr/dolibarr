@@ -105,7 +105,6 @@ RunCommandSummary							   =Backup sar� realizzato attraverso il seguente coma
 WebServerMustHavePermissionForCommand					   =Il tuo server web devono avere il permesso di eseguire tali comandi
 BackupResult								   =Backup risultato
 BackupFileSuccessfullyCreated						   =File di backup generati con successo
-YouCanDownloadBackupFile						   =File generati possono ora essere downlaoded
 NoBackupFileAvailable							   =Nessun file di backup disponibile.
 ExportMethod								   =Metodo di esportazione
 ImportMethod								   =Importa metodo

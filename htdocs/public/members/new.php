@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/public/members/new.php
  *	\ingroup    adherent
- *	\brief      Form example to add a new member
+ *	\brief      Example of form to add a new member
  *	\version    $Id$
  */
 
@@ -41,7 +41,7 @@ if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
 $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
-
+$langs->load("install");
 
 // Function for page HTML header
 function llxHeaderVierge($title, $head = "")
@@ -104,11 +104,12 @@ if ($_POST["action"] == 'add')
 	if ($num !=0)
 	{
 		$error+=1;
-		$errmsg .= $langs->trans("ErrorLoginAlreadyUsed")."<br>\n";
+		$errmsg .= $langs->trans("ErrorLoginAlreadyExists")."<br>\n";
 	}
 	if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"])
 	{
 		$error+=1;
+		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
 	}
 	if (isset($_POST["naiss"]) && $_POST["naiss"] !='')
@@ -209,10 +210,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'added')
  * View
  */
 
-llxHeaderVierge("New member form");
+llxHeaderVierge($langs->trans("NewSubscription"));
 $html = new Form($db);
 
-print_titre($langs->trans("NewMember"));
+print_titre($langs->trans("NewSubscription"));
 
 $adht = new AdherentType($db);
 $adho = new AdherentOptions($db);
@@ -224,7 +225,7 @@ if ($errmsg != '')
 {
 	print '<br>';
 	print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-	print '<th>Erreur dans le formulaire</th>';
+	print '<th>'.$langs->trans("Error").'</th>';
 	print '<tr><td class="delete"><b>'.$errmsg.'</b></td></tr>'."\n";
 	//  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
 	print '</table>';
@@ -235,10 +236,8 @@ if (defined("ADH_TEXT_NEW_ADH") && ADH_TEXT_NEW_ADH !='')
 	print ADH_TEXT_NEW_ADH;
 	print "<BR>\n";
 }
-print '<ul>';
-print '<li> Les champs Commencant par un <FONT COLOR="red">*</FONT> sont obligatoire';
-print '<li> Les champs Commencant par un <FONT COLOR="blue">*</FONT> seront affiche sur la liste publique des membres. Si vous ne souhaite pas cela <b>DECOCHEZ</b> la case public ci dessous';
-print "</ul><BR>\n";
+print '<br>'.$langs->trans("FieldsWithAreMandatory",'*').'<br>';
+print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 print "<form action=\"new.php\" method=\"POST\">\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -249,35 +248,39 @@ print '<table cellspacing="0" border="1" width="100%" cellpadding="3">'."\n";
 print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
 $html->select_array("type",  $adht->liste_array());
 print "</td>\n";
+print '</tr>'."\n";
 
-print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>'."\n";
-
-$morphys["phy"] = "Physique";
-$morphys["mor"] = "Morale";
+$morphys["phy"] = $langs->trans("Physical");
+$morphys["mor"] = $langs->trans("Moral");
 print '<tr><td>'.$langs->trans("MorPhy")."</td><td>\n";
 $html->select_array("morphy",  $morphys);
 print "</td>\n";
+print '</tr>';
 
-print '<td valign="top" rowspan="14"><textarea name="comment" wrap="soft" cols="40" rows="25">'.$comment.'</textarea></td></tr>'."\n";
-
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>'."\n";
-
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Surname").'</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> '.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td><input type="text" name="societe" size="40" value="'.$societe.'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adresse.'</textarea></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$cp.'"> <input type="text" name="ville" size="40" value="'.$ville.'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$pays.'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> Email</td><td><input type="text" name="email" size="40" value="'.$email.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> Email</td><td><input type="text" name="email" size="40" value="'.$email.'"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$login.'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"><BR><input type="password" name="pass2" size="40"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("PasswordAgain").'</td><td><input type="password" name="pass2" size="40"></td></tr>'."\n";
 print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>'."\n";
-print '<tr><td><FONT COLOR="blue">*</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>'."\n";
+print '<tr><td><FONT COLOR="blue">**</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
 foreach($adho->attribute_label as $key=>$value){
 	print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>"."\n";
 }
-print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>'."\n";
+print '<tr>';
+print '<td valign="top">'.$langs->trans("Comments").' :</td>';
+print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_5.'">'.$comment.'</textarea></td>';
+print '</tr>'."\n";
+
+print '<tr><td align="center" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>'."\n";
+
 print "</table>\n";
 
 print "</form>\n";

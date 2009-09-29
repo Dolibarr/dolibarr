@@ -130,7 +130,6 @@ RunCommandSummary=النسخ الاحتياطي وسيتم ذلك من خلال 
 WebServerMustHavePermissionForCommand=مركز خدمة الويب الخاص بك يجب أن يكون التصريح اللازم لتشغيل هذه الأوامر
 BackupResult=ونتيجة لالاحتياطية
 BackupFileSuccessfullyCreated=ملف النسخة الاحتياطية بنجاح المتولدة
-YouCanDownloadBackupFile=ولدت الملفات ويمكن الآن downlaoded
 NoBackupFileAvailable=أي ملفات احتياطية.
 ExportMethod=طريقة التصدير
 ImportMethod=طريقة الاستيراد

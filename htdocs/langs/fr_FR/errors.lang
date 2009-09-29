@@ -50,4 +50,4 @@ ErrorPleaseTypeBankTransactionReportName=Veuiller saisir le nom de relevé banca
 ErrorRecordHasChildren=Impossible de supprimer l'enregistrement car il possède des fils.
 WarningConfFileMustBeReadOnly=Attention, votre fichier de configuration (<b>htdocs/conf/conf.php</b>) est accessible en écriture au serveur Web. Ceci représente une faille sérieuse de sécurité. Modifier les permissions pour qu'il soit en lecture seule pour le compte sous lequel tourne le serveur Web.<br>Si vous êtes sous Windows sur un disque dur utilisant un formatage FAT, sachez que ce système de fichier ne permet pas de protéger des fichiers et n'offre donc aucune solution pour réduire les risques de manipulation de ce fichier.
 ErrorModuleRequireJavascript=Le javascript ne doit pas etre désactivé pour que cette fonctionnalité soit utilisable. Pour activer/désactiver l'utilisation de javascript, aller dans le menu Accueil->Configuration->Affichage.
- 
+ErrorPasswordsMustMatch=Les 2 mots de passe saisis doivent correspondre

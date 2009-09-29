@@ -123,7 +123,6 @@ RunCommandSummary=Backup wird durch den folgenden Befehl ein
 WebServerMustHavePermissionForCommand=Ihr Web-Server muss die Berechtigung zum Ausführen solcher Befehle
 BackupResult=Backup-Ergebnis
 BackupFileSuccessfullyCreated=Backup-Datei erfolgreich erzeugt
-YouCanDownloadBackupFile=Generierte Dateien können nun downlaoded
 NoBackupFileAvailable=Keine Backup-Dateien zur Verfügung.
 ExportMethod=Export-Methode
 ImportMethod=Import-Methode

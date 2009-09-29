@@ -125,7 +125,6 @@ RunCommandSummary=Back-up zal worden gedaan door het volgende commando
 WebServerMustHavePermissionForCommand=Uw webserver moet de toestemming te lopen zo&#39;n commando
 BackupResult=Backup resultaat
 BackupFileSuccessfullyCreated=Backup-bestand gegenereerd met succes
-YouCanDownloadBackupFile=Gegenereerde bestanden kunnen nu worden downlaoded
 NoBackupFileAvailable=Geen backup-bestanden beschikbaar.
 ExportMethod=Export methode
 ImportMethod=Import methode

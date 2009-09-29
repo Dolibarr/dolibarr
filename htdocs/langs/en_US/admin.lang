@@ -132,7 +132,7 @@ RunCommandSummary=Backup will be done through the following command
 WebServerMustHavePermissionForCommand=Your web server must have the permission to run such commands
 BackupResult=Backup result
 BackupFileSuccessfullyCreated=Backup file successfully generated
-YouCanDownloadBackupFile=Generated files can now be downlaoded
+YouCanDownloadBackupFile=Generated files can now be downloaded
 NoBackupFileAvailable=No backup files available.
 ExportMethod=Export method
 ImportMethod=Import method
@@ -255,7 +255,7 @@ DisableLinkToHelp=Hide link "<b>%s Online help</b>" on left menu
 AddCRIfTooLong=There is no automatic wrapping, so if line is out of page on documents because too long, you must add yourself carriage returns in the textarea.
 ModuleDisabled=Module disabled
 ModuleDisabledSoNoEvent=Module disabled so event never created
-ConfirmPurge=Are you sure you want to execute this purge ?<br>This will delete definitely all your file data with no way to restore them (ECM files, attached files...). 
+ConfirmPurge=Are you sure you want to execute this purge ?<br>This will delete definitely all your data files with no way to restore them (ECM files, attached files...). 
 MinLength=Minimum length
 
 # Modules
@@ -711,13 +711,15 @@ NoEventFoundWithCriteria=No security event has been found for such search criter
 SeeLocalSendMailSetup=See your local sendmail setup
 BackupDesc=To make a complete backup of Dolibarr, you must:
 BackupDesc2=* Save content of documents directory (<b>%s</b>) that contains all uploaded and generated files (you can make a zip for example).
-BackupDesc3=* Save content of your database with a dump. for this, you can use following assistant.
+BackupDesc3=* Save content of your database into a dump file. for this, you can use following assistant.
 BackupDescX=Archived directory should be stored in a secure place.
 BackupDescY=The generated dump file should be stored in a secure place.
 RestoreDesc=To restore a Dolibarr backup, you must:
 RestoreDesc2=* Restore archive file (zip file for example) of documents directory to extract tree of files in documents directory of a new Dolibarr installation or into this current documents directoy (<b>%s</b>).
 RestoreDesc3=* Restore the data, from a backup dump file, into the database of the new Dolibarr installation or into the database of this current installation. Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore a backup database into this current installation, you can follow this assistant.
 ForcedToByAModule = This rule is forced to <b>%s</b> by an activated module
+PreviousDumpFiles=Available database backup dump files
+WeekStartOnDay=First day of week 
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

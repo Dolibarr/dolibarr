@@ -529,6 +529,9 @@ PrintContentArea=Show page to print main content area
 NoMenu=No sub-menu
 WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only login <b>%s</b> is allowed to use application at the moment.
 CreditCard=Credit card
+FieldsWithAreMandatory=Fields with <b>%s</b> are mandatory
+FieldsWithIsForPublic=Fields with <b>%s</b> are shown on public list of members. If you don't want this, check the "public" box.
+
 # Week day
 Day1=Monday
 Day2=Tuesday

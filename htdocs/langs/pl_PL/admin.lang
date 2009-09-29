@@ -125,7 +125,6 @@ RunCommandSummary=Kopia zapasowa zostanie wykonana za pomocą następującego po
 WebServerMustHavePermissionForCommand=Twój serwer WWW musi mieć pozwolenie na uruchomienie takiego polecenia
 BackupResult=Backup wynik
 BackupFileSuccessfullyCreated=Tworzenie kopii zapasowych plików generowanych pomyślnie
-YouCanDownloadBackupFile=Wygenerowano plików można teraz downlaoded
 NoBackupFileAvailable=Nr kopii zapasowych plików.
 ExportMethod=Eksport metody
 ImportMethod=Import metody

@@ -123,7 +123,6 @@ RunCommandSummary=Copie de rezervă se va face prin următoarea comandă
 WebServerMustHavePermissionForCommand=Serverul de web trebuie să aibă permisiunea de a rula astfel de comenzi
 BackupResult=Backup rezultat
 BackupFileSuccessfullyCreated=Backup fişier cu succes a generat
-YouCanDownloadBackupFile=Generat fişiere pot fi acum downlaoded
 NoBackupFileAvailable=Nu de rezervă fişiere disponibile.
 ExportMethod=Export metodă
 ImportMethod=Import metodă

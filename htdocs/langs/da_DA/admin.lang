@@ -125,7 +125,6 @@ RunCommandSummary=Backup vil ske ved hjælp af følgende kommando
 WebServerMustHavePermissionForCommand=Webserveren skal have tilladelse til at køre disse kommandoer
 BackupResult=Backup resultat
 BackupFileSuccessfullyCreated=Backup filen genereret
-YouCanDownloadBackupFile=Genererede filer kan nu downlaoded
 NoBackupFileAvailable=Nr. backup filer til rådighed.
 ExportMethod=Eksporter metode
 ImportMethod=Import metode

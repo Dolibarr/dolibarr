@@ -123,7 +123,6 @@ RunCommandSummary=Varmuuskopiointi tapahtuu seuraava komento
 WebServerMustHavePermissionForCommand=Web-palvelin on lupa suorittaa tällaisia komentoja
 BackupResult=Backup tulos
 BackupFileSuccessfullyCreated=Backup tiedoston onnistuneesti luotu
-YouCanDownloadBackupFile=Muodostettu tiedostot voidaan nyt downlaoded
 NoBackupFileAvailable=N: o backup-tiedostoja on saatavilla.
 ExportMethod=Vienti menetelmä
 ImportMethod=Tuo menetelmä
