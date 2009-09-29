@@ -18,7 +18,7 @@
 
 /**
  *		\file 		htdocs/admin/tools/export.php
- *		\brief      Page export de la base
+ *		\brief      Page to export a database into a dump file
  *		\version    $Id$
  */
 
@@ -223,7 +223,7 @@ if ($what)
 	}
 }
 
-$result=$formfile->show_documents('systemtools','',$conf->admin->dir_temp,$_SERVER['PHP_SELF'],0,1,'',array(),0,0,48,0,'',$langs->trans("Files"));
+$result=$formfile->show_documents('systemtools','',$conf->admin->dir_temp,$_SERVER['PHP_SELF'],0,1,'',array(),0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
 
 if ($result == 0)
 {

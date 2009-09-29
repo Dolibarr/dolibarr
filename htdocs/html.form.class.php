@@ -2703,10 +2703,51 @@ class Form
 	}
 
 	/**
-	 *    \brief      Retourne la liste des mois
-	 *    \param      selected          Id mois pre-selectionne
-	 *    \param      htmlname          Nom de la zone select
-	 *    \param      useempty          Affiche valeur vide dans liste
+	 *    	\brief      Return HTML combo list of week
+	 *    	\param      selected          Preselected value
+	 *    	\param      htmlname          Nom de la zone select
+	 *    	\param      useempty          Affiche valeur vide dans liste
+	 * 		TODO Move into html.formother
+	 */
+	function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
+	{
+		global $langs;
+
+		$week = array(	0=>$langs->trans("Day0"),
+						1=>$langs->trans("Day1"),
+						2=>$langs->trans("Day2"),
+						3=>$langs->trans("Day3"),
+						4=>$langs->trans("Day4"),
+						5=>$langs->trans("Day5"),
+						6=>$langs->trans("Day6"));
+						
+		$select_week = '<select class="flat" name="'.$htmlname.'">';
+		if ($useempty)
+		{
+			$select_week .= '<option value="-1">&nbsp;</option>';
+		}
+		foreach ($week as $key => $val)
+		{
+			if ($selected == $key)
+			{
+				$select_week .= '<option value="'.$key.'" selected="true">';
+			}
+			else
+			{
+				$select_week .= '<option value="'.$key.'">';
+			}
+			$select_week .= $val;
+		}
+		$select_week .= '</select>';
+		return $select_week;
+	}
+	
+	/**
+	 *    	\brief      Return HTML combo list of month
+	 *    	\param      selected          Preselected value
+	 *    	\param      htmlname          Nom de la zone select
+	 *    	\param      useempty          Affiche valeur vide dans liste
+	 * 		TODO Move into html.formother
 	 */
 	function select_month($selected='',$htmlname='monthid',$useempty=0)
 	{
@@ -2732,13 +2773,15 @@ class Form
 		$select_month .= '</select>';
 		return $select_month;
 	}
+	
 	/**
-	 *    \brief      Retourne la liste des annees
-	 *    \param      selected          Annee pre-selectionne
-	 *    \param      htmlname          Nom de la zone select
-	 *    \param      useempty          Affiche valeur vide dans liste
-	 *    \param      $min_year         Valeur minimum de l'annee dans la liste (par defaut annee courante -10)
-	 *    \param      $max_year         Valeur maximum de l'annee dans la liste (par defaut annee courante + 5)
+	 *    	\brief      Return HTML combo list of years
+	 *    	\param      selected          Preselected value
+	 *    	\param      htmlname          Name of HTML select object
+	 *    	\param      useempty          Affiche valeur vide dans liste
+	 *    	\param      $min_year         Valeur minimum de l'annee dans la liste (par defaut annee courante -10)
+	 *    	\param      $max_year         Valeur maximum de l'annee dans la liste (par defaut annee courante + 5)
+	 * 		TODO Move into html.formother
 	 */
 	function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year='', $max_year='')
 	{

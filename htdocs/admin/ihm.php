@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/admin/ihm.php
- *       \brief      Page de configuration de l'interface homme machine
+ *       \brief      Page to setup GUI display options
  *       \version    $Id$
  */
 
@@ -63,7 +63,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["main_confirm_ajax"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
-
+	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
+	
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
@@ -101,7 +102,7 @@ print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
 
 
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')
+if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -171,7 +172,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Activate previeuw tab on element card
+    // Activate preview tab on element card
     if (function_exists("imagick_readimage"))
 	{
 	    $var=!$var;
@@ -182,7 +183,15 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '</tr>';
 	}
 
-    print '</table><br>';
+    // First day for weeks
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
+    print $html->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:''),'MAIN_START_WEEK',0);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
+	print '</table><br>';
 
 
     // Themes
@@ -275,7 +284,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</form>';
     print '<br>';
 }
-else
+else	// Show
 {
     $var=true;
 
@@ -323,7 +332,7 @@ else
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
-    // Activate previeuw tab on element card
+    // Activate preview tab on element card
     if (function_exists("imagick_readimage"))
 	{
 		$var=!$var;
@@ -332,6 +341,14 @@ else
 		print '<td width="20">&nbsp;</td>';
 		print "</tr>";
 	}
+
+	// First day for weeks
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
+    print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'0'));
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
     print '</table><br>';
 

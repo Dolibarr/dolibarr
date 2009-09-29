@@ -354,7 +354,7 @@ print '<br>';
             </td>
         </tr>
         <tr><td><label for="latex_structure_label">
-                    Cl� de l'�tiquette</label></td>
+                    Cle etiquette</label></td>
             <td><input type="text" name="latex_structure_label" size="30"
                     value="tab:__TABLE__-structure"
                     id="latex_structure_label" />
@@ -373,7 +373,7 @@ print '<br>';
                         return false;
                     else return true;" />
             <label for="checkbox_latex_data">
-                Donn�es</label>
+                Donnees</label>
 
         </legend>
         <input type="checkbox" name="latex_showcolumns" value="yes"
@@ -399,7 +399,7 @@ print '<br>';
         </tr>
         <tr><td><label for="latex_data_label">
 
-                    Cl� de l'�tiquette</label></td>
+                    Cle de l'etiquette</label></td>
             <td><input type="text" name="latex_data_label" size="30"
                     value="tab:__TABLE__-data"
                     id="latex_data_label" />
@@ -426,14 +426,14 @@ print '<br>';
     <table>
 
     <tr><td><label for="export_separator">
-                Champs termin�s par</label></td>
+                Champs termines par</label></td>
         <td><input type="text" name="export_separator" size="2"
                 id="export_separator"
                 value=";" />
         </td>
     </tr>
     <tr><td><label for="enclosed">
-                Champs entour�s par</label></td>
+                Champs entoures par</label></td>
         <td><input type="text" name="enclosed" size="2"
                 id="enclosed"
                 value="&quot;" />
@@ -441,7 +441,7 @@ print '<br>';
         </td>
     </tr>
     <tr><td><label for="escaped">
-                Caract�re sp�cial</label></td>
+                Caractere special</label></td>
         <td><input type="text" name="escaped" size="2"
                 id="escaped"
                 value="\" />
@@ -449,7 +449,7 @@ print '<br>';
     </tr>
     <tr><td><label for="add_character">
 
-                Lignes termin�es par</label></td>
+                Lignes terminees par</label></td>
         <td><input type="text" name="add_character" size="2"
                 id="add_character"
                 value="\r\n" />
@@ -468,7 +468,7 @@ print '<br>';
         id="checkbox_dump_showcsvnames"
           />
     <label for="checkbox_dump_showcsvnames">
-        Afficher les noms de champ en premi�re ligne</label>
+        Afficher les noms de champ en premiere ligne</label>
 </fieldset>
 -->
 
@@ -598,7 +598,7 @@ if (window.parent.frames[1]) {
 <?php
 
 
-$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'','',0,0,48,0,'',$langs->trans("Files"));
+$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'','',0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
 //if ($result) print '<br><br>';
 
 
