@@ -260,14 +260,12 @@ class Conf
 		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';
 		// Module propal
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
-		// Module voyage
-		$this->voyage->enabled=0;
 		// Module oscommerce 1
 		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
 		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
 
 		/*
-		 * Modification de quelques variable de conf en fonction des Constantes
+		 * Set some default values
 		 */
 
 		// System tools

@@ -111,13 +111,6 @@ function llxHeader($head = '', $title='', $help_url='')
 		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
 	}
 
-	if (! empty($conf->voyage->enabled) && $user->societe_id == 0)
-	{
-		$menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
-		$menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages",1);
-		$menu->add(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc",1);
-	}
-
 	if (! empty($conf->domaine->enabled))
 	{
 		$menu->add(DOL_URL_ROOT."/domain/index.php", "Domaines");
