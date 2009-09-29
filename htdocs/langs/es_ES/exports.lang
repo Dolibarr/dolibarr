@@ -63,8 +63,9 @@ ChooseFileToImport = Elija el archivo de importación y haga clic en el picto %s
 DownloadEmptyExample = Descargar archivo de ejemplo vacío
 SourceFileFormat = Formato del archivo origen
 FieldsInSourceFile = Campos en el archivo origen
-FieldsInTargetDatabase = Campos destino en la base de datos Dolibarr
+FieldsInTargetDatabase = Campos destino en la base de datos Dolibarr (*=obligatorio)
 NoFields = Ningún campo
 MoveField = Mover campo columna número %s
 ExampleOfImportFile = Ejemplo_de_fichero_importacion
+SaveImportProfile = Guardar este perfil de importación
 ErrorImportDuplicateProfil = No se puede guardar el perfil de importación bajo este nombre. Ya existe un perfil con ese nombre.

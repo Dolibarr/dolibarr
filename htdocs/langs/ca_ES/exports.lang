@@ -63,8 +63,9 @@ ChooseFileToImport = Trieu el fitxer d'importació i feu clic al picto %s per se
 DownloadEmptyExample = Descarregar fitxer d'exemple buit
 SourceFileFormat = Format de l'arxiu origen
 FieldsInSourceFile = Camps en el fitxer orige
-FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr
+FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr (*=obligatori)
 NoFields = Cap camp
 MoveField = Moure camp columna número %s
 ExampleOfImportFile = Exemple_de_fitxer_importacio
+SaveImportProfile = Desar aquest perfil d'importació
 ErrorImportDuplicateProfil = No es pot desar el perfil d'importació sota aquest nom. Ja existeix un perfil amb aquest nom.
