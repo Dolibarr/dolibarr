@@ -69,7 +69,7 @@ $s_ftp_user='FTP_USER_'.$numero_ftp;
 $s_ftp_password='FTP_PASSWORD_'.$numero_ftp;
 $ftp_name=$conf->global->$s_ftp_name;
 $ftp_server=$conf->global->$s_ftp_server;
-$ftp_port=$conf->global->$s_ftp_port;
+$ftp_port=$conf->global->$s_ftp_port; if (empty($ftp_port)) $ftp_port=21;
 $ftp_user=$conf->global->$s_ftp_user;
 $ftp_password=$conf->global->$s_ftp_password;
 

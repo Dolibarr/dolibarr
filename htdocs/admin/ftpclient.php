@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +26,15 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
-
 $langs->load("admin");
 
+// Security check
 if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastftpentry=0;
 
-// positionne la variable pour le nombre de rss externes
+// Positionne la variable pour le nombre de rss externes
 $sql ="select MAX(name) name from ".MAIN_DB_PREFIX."const";
 $sql.=" WHERE name like 'FTP_SERVER_%'";
 $result=$db->query($sql);
@@ -58,7 +54,22 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
     $ftp_name = "FTP_NAME_" . $_POST["numero_entry"];
 	$ftp_server = "FTP_SERVER_" . $_POST["numero_entry"];
 
-    if (isset($_POST[$ftp_name]) && isset($_POST[$ftp_server]))
+	$error=0;
+	$mesg='';
+	
+	if (empty($_POST[$ftp_name]))
+	{
+		$error=1;
+		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
+	}
+	
+	if (empty($_POST[$ftp_server]))
+	{
+		$error=1;
+		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server")).'</div>';
+	}
+	
+    if (! $error)
     {
     	$ftp_port = "FTP_PORT_" . $_POST["numero_entry"];
         $ftp_user = "FTP_USER_" . $_POST["numero_entry"];
@@ -131,7 +142,8 @@ if (! function_exists('ftp_connect'))
 }
 else
 {
-
+	if ($mesg) print $mesg;
+	
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
