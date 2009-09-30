@@ -187,8 +187,9 @@ function dol_mimetype($file)
 
 
 /**
- * 	\brief	Test if a folder is empty
- * 	\return true is empty or non-existing, false if it contains files
+ * 	\brief		Test if a folder is empty
+ * 	\param		folder		Name of folder
+ * 	\return 	boolean		True if dir is empty or non-existing, false if it contains files
  */
 function dol_dir_is_emtpy($folder)
 {
@@ -210,6 +211,33 @@ function dol_dir_is_emtpy($folder)
 	}
 	else
 	return true; // Le repertoire n'existe pas
+}
+
+/**
+ * 	\brief		Count number of lines in a file
+ * 	\param		file		Filename
+ * 	\return 	int			<0 if KO, Number of lines in files if OK
+ */
+function dol_count_nb_of_line($file)
+{
+	$nb=0;
+	//print 'x'.$file;
+	$fp=fopen($file,'r');
+	if ($fp)
+	{
+	    while (!feof($fp))
+	    {
+	        $line=fgets($fp);
+	        $nb++;
+	    }
+	    fclose($fp);
+	}
+	else
+	{
+		$nb=-1;
+	}
+
+	return $nb;
 }
 
 ?>

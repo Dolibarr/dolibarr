@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 $langs->load("exports");
 
@@ -184,6 +185,26 @@ if ($action == 'add_import_model')
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("ImportModelName")).'</div>';
+	}
+}
+
+if ($step == 3 && $datatoimport)
+{
+	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	{
+		create_exdir($conf->import->dir_temp);
+		$nowyearmonth=dol_date('YmdHis',dol_now(),0);
+
+		$fullpath=$conf->import->dir_temp . "/" . $nowyearmonth . '-'.$_FILES['userfile']['name'];
+		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath,1) > 0)
+		{
+			dol_syslog("File ".$fullpath." was added for import");
+		}
+		else
+		{
+			$langs->load("errors");
+			$mesg = $langs->trans("ErrorFailedToSaveFile");
+		}
 	}
 }
 
@@ -345,7 +366,6 @@ if ($step == 2 && $datatoimport)
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
-	$fullpathfiletoimport='';
 	$var=true;
 
 	// Add format informations and link to download example
@@ -359,7 +379,8 @@ if ($step == 2 && $datatoimport)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
-		print '<td>'.$objmodelimport->getDriverLabel($key).'</td>';
+    	$text=$objmodelimport->getDriverDesc($key);
+    	print '<td>'.$html->textwithpicto($objmodelimport->getDriverLabel($key),$text).'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
 		print '<td align="right">';
@@ -434,7 +455,6 @@ if ($step == 3 && $datatoimport)
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
-	$fullpathfiletoimport='';
 	$var=true;
 
 	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</td></tr>';
@@ -450,23 +470,6 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" value="'.$format.'" name="format">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 	print "</tr>\n";
-
-	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
-	{
-		create_exdir($conf->import->dir_temp);
-		$nowyearmonth=dol_date('YmdHis',dol_now(),0);
-
-		$fullpath=$conf->import->dir_temp . "/" . $nowyearmonth . '-'.$_FILES['userfile']['name'];
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath,1) > 0)
-		{
-			dol_syslog("File ".$fullpath." was added for import");
-		}
-		else
-		{
-			$langs->load("errors");
-			$mesg = $langs->trans("ErrorFailedToSaveFile");
-		}
-	}
 
 	$dir = $conf->import->dir_temp;
 
@@ -901,6 +904,8 @@ if ($step == 4 && $datatoimport)
 
 if ($step == 5 && $datatoimport)
 {
+	if (empty($dontimportfirstline)) $dontimportfirstline=0;
+
 	asort($array_match_file_to_database);
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
@@ -958,26 +963,60 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
 	print '<td>'.$filetoimport.'</td></tr>';
 
-	print '</table>';
+/*	print '</table>';
 	print '<br>';
 
 
-	// Nbre champs importes
-	print $langs->trans("ImportedFields");
-	$list='';
+	print '<b>'.$langs->trans("ImportSummary").'</b>';
+
+	// Show import summary
+	print '<table summary="importsummary" width="100%" class="border">';
+*/
+
+	// Nb of fields
+	print '<tr><td>';
+	print $langs->trans("NbOfSourceLines");
+	print '</td><td>';
+	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
+	print $nboflines;
+	print '</td></tr>';
+
+	// Checkbox do not import first line
+	print '<tr><td>';
+	print $langs->trans("DoNotImportFirstLine");
+	print '</td><td>';
+	print '<input type="checkbox" name="nofirstline" value='.$dontimportfirstline.'>';
+	print '</td></tr>';
+
+	// Tables imported
+	print '<tr><td>';
+	print $langs->trans("TablesTarget");
+	print '</td><td>';
+	$listtables='';
+	print $listables?$listables:$langs->trans("Error");
+	print '</td></tr>';
+
+	// Fields imported
+	print '<tr><td>';
+	print $langs->trans("FieldsTarget").'</td><td>';
+	$listfields='';
 	foreach($array_match_file_to_database as $code=>$label)
 	{
-		$list.=($list?',':'');
-		$list.=$langs->trans($objimport->array_import_fields[0][$code]);
+		$listfields.=($listfields?',':'');
+		$listfields.=$langs->trans($objimport->array_import_fields[0][$code]);
 	}
+	print $listfields?$listfields:$langs->trans("Error");
+	print '</td></tr>';
 
+	print '</table>';
 
+	print '<br>';
+
+	print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
+	print '<br>';
 	print '<center>';
-	print $langs->trans("NowClickToLoadImportFile").'<br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?step=6&'.$param.'">';
-
-	print '<input class="button" type="submit" value="'.$langs->trans("ImportFile").'">';
-
+	print '<input class="button" type="submit" value="'.$langs->trans("RunSimulateImportFile").'">';
 	print '</form>';
 	print '</center>';
 
