@@ -717,6 +717,8 @@ RestoreDesc = Per restaurar una còpia de seguretat de Dolibarr, vostè ha de:
 RestoreDesc2 = * Prendre el fitxer (fitxer zip, per exemple) de la carpeta dels documents i descomprimir-lo a la carpeta dels documents d'una nova instal·lació de Dolibarr o en la carpeda dels documents d'aquesta instal·lació (<b>%s</b>).
 RestoreDesc3 = * Recarregar el fitxer de bolcat guardat a la base de dades d'una nova instal·lació de Dolibarr o d'aquesta instal·lació. Atenció, una vegada realitzada la restauració, haurà d'utilitzar un login/contrasenya d'administrador existent en el moment de la còpia de seguretat per connectar-se. Per restaurar la base de dades en la instal·lació actual, pot utilitzar l'assistent a continuació.
 ForcedToByAModule = Aquesta regla està forçada a <b>%s</b> per un dels mòduls activats
+PreviousDumpFiles = Arxius de còpia de seguretat de la base de dades disponibles
+WeekStartOnDay = Primer dia de la setmana
 ##### Module password generation = undefined =  = 
 PasswordGenerationStandard = Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone = No ofereix contrasenyes. La contrasenya s'introdueix manualment.

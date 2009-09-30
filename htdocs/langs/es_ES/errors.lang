@@ -50,3 +50,4 @@ ErrorPleaseTypeBankTransactionReportName = Introduzca el nombre del registro ban
 ErrorRecordHasChildren = No se puede eliminar el registro porque tiene hijos.
 WarningConfFileMustBeReadOnly = Atención, su fichero (<b>htdocs/conf/conf.php</b>) es accesible en escritura al servidor Web. Esto representa un fallo serio de seguridad. Modifique los permisos para ser leído únicamente por la cuenta que ejecuta el servidor Web.<br>Si está ejecutando Windows en un disco con formato FAT, sea consciente que este sistema de archivos no protege los archivos y no ofrece ninguna solución para reducir los riesgos de manipulación de este fichero.
 ErrorModuleRequireJavascript = Javascript no debe estar desactivado para que esta opción pueda utilizarse. Para activar/desactivar JavaScript, vaya al menú Inicio->Configuración->Entorno.
+ErrorPasswordsMustMatch = Las 2 contraseñas indicadas deben corresponderse
