@@ -26,12 +26,12 @@
 
 /**
  *	\class 		Import
- *	\brief 		Classe permettant la gestion des imports
+ *	\brief 		Class to manage imports
  */
 class Import
 {
 	/**
-	 *    \brief  Constructeur de la classe
+	 *    \brief  Constructor
 	 *    \param  DB        Database handler
 	 */
 	function Import($DB)
@@ -126,7 +126,9 @@ class Import
 									$this->array_import_code[$i]=$module->import_code[$r];
 									// Libelle du dataset export
 									$this->array_import_label[$i]=$module->getDatasetLabel($r);
-									// Tableau des champ a exporter (cle=champ, valeur=libelle)
+									// Array of tables to import (key=alias, value=tablename)
+									$this->array_import_tables[$i]=$module->import_tables_array[$r];
+									// Array of fiels to import (key=field, value=label)
 									$this->array_import_fields[$i]=$module->import_fields_array[$r];
 									// Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_import_entities[$i]=$module->import_entities_array[$r];

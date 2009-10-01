@@ -153,6 +153,7 @@ class modProduit extends DolibarrModules
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]="Products";	// Translation key
 		//$this->import_permission[$r]=array(array("societe","import"));
+		$this->import_tables_array[$r]=array('p'=>MAIN_DB_PREFIX.'produit');
 		$this->import_fields_array[$r]=array('p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.envente'=>"OnSell*",'p.duration'=>"Duration");
 		$this->import_entities_array[$r]=array('p.ref'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
 		$this->import_examplevalues_array[$r]=array('p.ref'=>"PR123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.envente'=>"0 or 1",'p.duration'=>"1y");

@@ -717,6 +717,8 @@ if ($step == 4 && $datatoimport)
 		$i++;
 
 		$entity=$objimport->array_import_entities[0][$code];
+		$tablealias=eregi_replace('\..*$','',$code);
+		$tablename=$objimport->array_import_tables[0][$tablealias];
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
 		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
@@ -724,7 +726,7 @@ if ($step == 4 && $datatoimport)
 		print '<td style="font-weight: normal">';
 		$text=$langs->trans($label);
 		if (eregi('\*$',$label)) $text='<b>'.$text.'</b>';
-		$htmltext=$langs->trans("Table").": ?<br>".$langs->trans("Field").': '.$code;
+		$htmltext=$langs->trans("Table").": ".$tablename."<br>".$langs->trans("Field").': '.$code;
 		print $html->textwithpicto($text,$htmltext);
 		print '</td>';
 
