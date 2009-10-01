@@ -64,6 +64,7 @@ ChooseFileToImport=Upload file then click on picto %s to select file as source i
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database (*=mandatory)
+Field=Field
 NoFields=No fields
 MoveField=Move field column number %s
 ExampleOfImportFile=Example_of_import_file

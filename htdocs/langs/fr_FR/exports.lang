@@ -64,6 +64,7 @@ DownloadEmptyExample=Télécharger fichier vierge exemple
 SourceFileFormat=Format du fichier source
 FieldsInSourceFile=Champs dans le fichier source
 FieldsInTargetDatabase=Champs cibles dans la base Dolibarr (*=obligatoire)
+Field=Champ
 NoFields=Aucun champ
 MoveField=Déplacer champ colonne numéro %s
 ExampleOfImportFile=Exemple_de_fichier_import
