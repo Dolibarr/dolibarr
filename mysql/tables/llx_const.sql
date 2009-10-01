@@ -28,9 +28,9 @@
 create table llx_const
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  name        varchar(255),
+  name        varchar(255) NOT NULL,
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
-  value       text, -- max 65535 caracteres
+  value       text NOT NULL, -- max 65535 caracteres
   type        varchar(6),
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,

@@ -326,3 +326,12 @@ INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VA
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15211,  152, '', 0, 'Les îles Agaléga', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (15212,  152, '', 0, 'Les écueils des Cargados Carajos', 1);
 
+alter table llx_const modify column name        varchar(255) NOT NULL;
+alter table llx_const modify column value       text NOT NULL;
+
+-- SWEDEN (id 20)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (201,20,  '25','0','VAT standard rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (202,20,  '12','0','VAT reduced rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (203,20,   '6','0','VAT super-reduced rate',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (204,20,   '0','0','VAT Rate 0',  1);
+
