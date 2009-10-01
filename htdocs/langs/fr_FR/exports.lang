@@ -78,3 +78,5 @@ NowClickToTestTheImport=Vérifiez les paramètres d'import que vous avez défini
 RunSimulateImportFile=Lancer la simulation d'import
 FieldNeedSource=Ce champ en base requiert obligatoirement une donnée source
 SomeMandatoryFieldHaveNoSource=Certains champs obligatoires n'ont pas de champ source issus du fichier
+InformationOnSourceFile=Informations sur le fichier source
+InformationOnTargetTables=Informations sur les champs cibles

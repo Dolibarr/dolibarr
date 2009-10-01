@@ -78,3 +78,5 @@ NowClickToTestTheImport=Check import parameters you have defined. If they are co
 RunSimulateImportFile=Launch the import simulation 
 FieldNeedSource=This fiels in database require a data from source file
 SomeMandatoryFieldHaveNoSource=Some mandatory fields have no source from data file
+InformationOnSourceFile=Informations on source file
+InformationOnTargetTables=Informations on target fields

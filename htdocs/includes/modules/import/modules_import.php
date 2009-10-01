@@ -142,40 +142,6 @@ class ModeleImports
 		return $this->libversion[$key];
 	}
 
-
-
-	/**
-	 *      \brief      Lance lecture fichier
-	 *      \remarks    Les tableaux array_import_xxx sont deja chargees pour le bon datatoexport
-	 */
-	function load_file($model, $array_selected)
-	{
-		global $langs;
-
-		dol_syslog("Import::load_file $model, $array_selected");
-
-		// Creation de la classe d'export du model ImportXXX
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
-		$file = "import_".$model.".modules.php";
-		$classname = "Import".$model;
-		require_once($dir.$file);
-		$obj = new $classname($db);
-
-		// Execute requete import
-		$sql=$this->array_export_sql[0];
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			dol_syslog("Error: sql=$sql ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
-
 }
 
 

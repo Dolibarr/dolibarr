@@ -153,11 +153,11 @@ class ImportCsv extends ModeleImports
 
 
     /**
- 	 *	\brief		Open output file
+ 	 *	\brief		Open input file
 	 *	\param		file		Path of filename
 	 *	\return		int			<0 if KO, >=0 if OK
 	 */
-	function open_file($file,$outputlangs)
+	function import_open_file($file)
     {
     	global $langs;
 
@@ -165,8 +165,7 @@ class ImportCsv extends ModeleImports
 
 		$ret=1;
 
-        $outputlangs->load("exports");
-		$this->handle = fread($file, "wt");
+		$this->handle = fopen($file, "r");
         if (! $this->handle)
 		{
 			$langs->load("errors");
@@ -178,19 +177,18 @@ class ImportCsv extends ModeleImports
     }
 
 	/**
-	 * 	\brief		Output header into file
-	 * 	\param		langs		Output language
+	 * 	\brief		Input header line from file
 	 */
-    function read_header($outputlangs)
+    function import_read_header()
     {
 		return 0;
     }
 
 
 	/**
-	 * 	\brief		Output record line into file
+	 * 	\brief		Input record line from file
 	 */
-    function read_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
+    function import_read_record($array_alias,$array_selected_sorted,$objp)
     {
     	global $conf;
     	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
@@ -220,11 +218,12 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	\brief		Close file handle
 	 */
-    function close_file()
+    function import_close_file()
     {
         fclose($this->handle);
         return 0;
     }
+
 
     /**
      * Clean a cell to respect rules of CSV file cells

@@ -77,10 +77,10 @@ $objimport=new Import($db);
 $objimport->load_arrays($user,$datatoimport);
 
 $objmodelimport=new ModeleImports();
+
 $html = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
-$sqlusedforimport='';
 
 // Init $array_match_file_to_database from _SESSION
 $serialized_array_match_file_to_database=isset($_SESSION["dol_array_match_file_to_database"])?$_SESSION["dol_array_match_file_to_database"]:'';
@@ -137,7 +137,6 @@ if ($action == 'builddoc')
 	else
 	{
 		$mesg='<div class="ok">'.$langs->trans("FileSuccessfullyBuilt").'</div>';
-		$sqlusedforimport=$objimport->sqlusedforimport;
 	}
 }
 
@@ -490,6 +489,8 @@ if ($step == 3 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
+	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
+
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
@@ -574,7 +575,17 @@ if ($step == 3 && $datatoimport)
 // Page to make matching between source file and database fields
 if ($step == 4 && $datatoimport)
 {
+	$model=$format;
+
+	// Create classe to use for import
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+	$file = "import_".$model.".modules.php";
+	$classname = "Import".ucfirst($model);
+	require_once($dir.$file);
+	$obj = new $classname($db);
+
 	// Load source fields in input file
+	$obj->import_open_file($dir.$file,$langs);
 	$fieldssource=array(
 		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
 		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
@@ -586,6 +597,7 @@ if ($step == 4 && $datatoimport)
 		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
 		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
 */	);
+	$obj->import_close_file();
 
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
@@ -671,6 +683,8 @@ if ($step == 4 && $datatoimport)
 	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
+
+	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
@@ -860,14 +874,14 @@ if ($step == 4 && $datatoimport)
 	    //alert( \'boxorder=\' + boxorder )."\n";
 	    //print 'var userid = \''.$user->id.'\';'."\n";
 	    //print 'var url = "ajaximport.php";'."\n";
-	    print 'var datatoimport = "'.$datatoimport.'";'."\n";
-	    print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4&action=saveorder&boxorder=\' + boxorder + \'&datatoimport=\' + datatoimport;'."\n";
+	    //print 'var datatoimport = "'.$datatoimport.'";'."\n";
+	    print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&action=saveorder&boxorder=\' + boxorder;'."\n";
 	    //print 'alert(newlocation);';
 	    //print 'o_options = new Object();'."\n";
 	    //print 'o_options = {asynchronous:false,method: \'get\',parameters: \'step=4&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
 	    //print 'var myAjax = new Ajax.Request(url, o_options);'."\n";
 	    // Now reload page
-	    print 'window.location.href=newlocation';
+	    print 'window.location.href=newlocation;'."\n";
 	    print '}'."\n";
 	  	print "\n";
 
@@ -981,7 +995,17 @@ if ($step == 5 && $datatoimport)
 {
 	if (empty($dontimportfirstline)) $dontimportfirstline=0;
 
+	$model=$format;
+
+	// Create classe to use for import
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+	$file = "import_".$model.".modules.php";
+	$classname = "Import".ucfirst($model);
+	require_once($dir.$file);
+	$obj = new $classname($db);
+
 	// Load source fields in input file
+	$obj->import_open_file($dir.$file,$langs);
 	$fieldssource=array(
 		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
 		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
@@ -993,6 +1017,7 @@ if ($step == 5 && $datatoimport)
 		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
 		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
 */	);
+	$obj->import_close_file();
 
 	ksort($array_match_file_to_database);
 	//var_dump($array_match_file_to_database);
@@ -1042,6 +1067,8 @@ if ($step == 5 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
+	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
+
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
@@ -1077,6 +1104,8 @@ if ($step == 5 && $datatoimport)
 	print '<input type="checkbox" name="nofirstline" value='.$dontimportfirstline.'>';
 	print '</td></tr>';
 
+	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
+
 	// Tables imported
 	print '<tr><td>';
 	print $langs->trans("TablesTarget");
@@ -1090,7 +1119,7 @@ if ($step == 5 && $datatoimport)
 		$alias=eregi_replace('\..*$','',$label);
 		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
 	}
-	print sizeof($listtables)?(join(',',$listtables)):$langs->trans("Error");
+	print sizeof($listtables)?(join(', ',$listtables)):$langs->trans("Error");
 	print '</td></tr>';
 
 	// Fields imported
@@ -1107,7 +1136,7 @@ if ($step == 5 && $datatoimport)
 		$alias=eregi_replace('\..*$','',$label);
 		$listfields[$i]=$label;
 	}
-	print sizeof($listfields)?(join(',',$listfields)):$langs->trans("Error");
+	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
