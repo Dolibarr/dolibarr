@@ -236,10 +236,62 @@ if ($step == 4 && $action == 'select_model')
 	}
 }
 
+if ($action == 'saveorder')
+{
+	// Enregistrement de la position des champs
+	dol_syslog("boxorder=".$_GET['boxorder']." datatoimport=".$_GET["datatoimport"], LOG_DEBUG);
+	$part=split(':',$_GET['boxorder']);
+	$colonne=$part[0];
+	$list=$part[1];
+	dol_syslog('column='.$colonne.' list='.$list);
+
+	// Init targets fields array
+	$fieldstarget=$objimport->array_import_fields[0];
+
+	// Reinit match arrays. We redefine array_match_file_to_database
+	$serialized_array_match_file_to_database='';
+	$array_match_file_to_database=array();
+	$fieldsarray=split(',',$list);
+	$pos=0;
+	foreach($fieldsarray as $fieldnb)	// For each elem in list. fieldnb start from 1 to ...
+	{
+		// Get name of database fields at position $pos and put it into $namefield
+		$posbis=0;$namefield='';
+		foreach($fieldstarget as $key => $val)	// key:   val:
+		{
+			//dol_syslog('AjaxImport key='.$key.' val='.$val);
+			if ($posbis < $pos)
+			{
+				$posbis++;
+				continue;
+			}
+			// We found the key of targets that is at position pos
+			$namefield=$key;
+			//dol_syslog('AjaxImport Field name found for file field nb '.$fieldnb.'='.$namefield);
+
+			break;
+		}
+
+		if ($fieldnb && $namefield)
+		{
+			$array_match_file_to_database[$fieldnb]=$namefield;
+			if ($serialized_array_match_file_to_database) $serialized_array_match_file_to_database.=',';
+			$serialized_array_match_file_to_database.=($fieldnb.'='.$namefield);
+		}
+
+		$pos++;
+	}
+
+	// We save new matching in session
+	$_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;
+	dol_syslog('dol_array_match_file_to_database='.$serialized_array_match_file_to_database);
+}
+
+
 
 
 /*
- * Affichage Pages des Etapes
+ * View
  */
 
 
@@ -662,6 +714,7 @@ if ($step == 4 && $datatoimport)
 	print '<tr valign="top"><td width="50%">';
 
 	$fieldsplaced=array();
+	$valforsourcefieldnb=array();
 	foreach($array_match_file_to_database as $key => $val)
 	{
 		$listofkeys[$key]=1;
@@ -680,10 +733,12 @@ if ($step == 4 && $datatoimport)
 		//print '> '.$lefti.'-'.$key.'-'.$val;
 		$listofkeys[$key]=1;
 		$fieldsplaced[$key]=1;
+		$valforsourcefieldnb[$lefti]=$key;
 		$lefti++;
 
 		if ($lefti > sizeof($fieldstarget)) break;	// Other fields are in the not imported area
 	}
+	//var_dump($valforsourcefieldnb);
 
 	// Complete source fields from sizeof($fieldssource)+1 to sizeof($fieldstarget)
 	$more=1;
@@ -698,7 +753,6 @@ if ($step == 4 && $datatoimport)
 		$more++;
 	}
 
-
 	print "</div>\n";
 	print "<!-- End box container -->\n";
 
@@ -708,6 +762,7 @@ if ($step == 4 && $datatoimport)
 	// List of targets fields
 	$i = 0;
 	$var=true;
+	$mandatoryfieldshavesource=true;
 	print '<table width="100%" class="nobordernopadding">';
 	foreach($fieldstarget as $code=>$label)
 	{
@@ -724,9 +779,18 @@ if ($step == 4 && $datatoimport)
 
 		print '<td nowrap="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td style="font-weight: normal">';
-		$text=$langs->trans($label);
-		if (eregi('\*$',$label)) $text='<b>'.$text.'</b>';
+		$newlabel=eregi_replace('\*$','',$label);
+		$text=$langs->trans($newlabel);
+		$more='';
+		if (eregi('\*$',$label))
+		{
+			$text='<b>'.$text.'*</b>';
+			$more=((! empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= sizeof($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
+			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= sizeof($fieldssource)));
+			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
+		}
 		$htmltext=$langs->trans("Table").": ".$tablename."<br>".$langs->trans("Field").': '.$code;
+		$text.=$more;
 		print $html->textwithpicto($text,$htmltext);
 		print '</td>';
 
@@ -742,7 +806,7 @@ if ($step == 4 && $datatoimport)
 
 	print '<tr valign="top"><td width="50%">';
 
-	print "\n<!-- Box forget container -->\n";
+	print "\n<!-- Box ignore container -->\n";
 	print '<div id="right">'."\n";
 
 	$nbofnotimportedfields=0;
@@ -767,7 +831,7 @@ if ($step == 4 && $datatoimport)
 	$nbofnotimportedfields++;
 
 	print "</div>\n";
-	print "<!-- End box container -->\n";
+	print "<!-- End box ignore container -->\n";
 
 	print '</td>';
 	print '<td width="50%">';
@@ -784,7 +848,6 @@ if ($step == 4 && $datatoimport)
 
 	print '</div>';
 
-
 	if ($conf->use_javascript_ajax)
 	{
 		print "\n";
@@ -795,13 +858,16 @@ if ($step == 4 && $datatoimport)
 	    print 'var boxorder = \'A:\' + left_list;'."\n";
 	    //print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
 	    //alert( \'boxorder=\' + boxorder )."\n";
-	    print 'var userid = \''.$user->id.'\';'."\n";
-	    print 'var url = "ajaximport.php";'."\n";
+	    //print 'var userid = \''.$user->id.'\';'."\n";
+	    //print 'var url = "ajaximport.php";'."\n";
 	    print 'var datatoimport = "'.$datatoimport.'";'."\n";
-	    print 'o_options = new Object();'."\n";
-	    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'step=4&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
-	    print 'var myAjax = new Ajax.Request(url, o_options);'."\n";
-	    //print 'document.
+	    print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4&action=saveorder&boxorder=\' + boxorder + \'&datatoimport=\' + datatoimport;'."\n";
+	    //print 'alert(newlocation);';
+	    //print 'o_options = new Object();'."\n";
+	    //print 'o_options = {asynchronous:false,method: \'get\',parameters: \'step=4&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
+	    //print 'var myAjax = new Ajax.Request(url, o_options);'."\n";
+	    // Now reload page
+	    print 'window.location.href=newlocation';
 	    print '}'."\n";
 	  	print "\n";
 
@@ -837,7 +903,14 @@ if ($step == 4 && $datatoimport)
 
 	if (sizeof($array_match_file_to_database))
 	{
-		print '<a class="butAction" href="import.php?step=5&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
+		if ($mandatoryfieldshavesource)
+		{
+			print '<a class="butAction" href="import.php?step=5&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
+		}
 	}
 
 	print '</div>';
@@ -908,7 +981,21 @@ if ($step == 5 && $datatoimport)
 {
 	if (empty($dontimportfirstline)) $dontimportfirstline=0;
 
-	asort($array_match_file_to_database);
+	// Load source fields in input file
+	$fieldssource=array(
+		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
+		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
+		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2'),
+/*		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
+		5=>array('name'=>'ee','example1'=>'valc1','example2'=>'valc2'),
+		6=>array('name'=>'ff','example1'=>'valc1','example2'=>'valc2'),
+		7=>array('name'=>'gg','example1'=>'valc1','example2'=>'valc2'),
+		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
+		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
+*/	);
+
+	ksort($array_match_file_to_database);
+	//var_dump($array_match_file_to_database);
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 
@@ -994,20 +1081,33 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td>';
 	print $langs->trans("TablesTarget");
 	print '</td><td>';
-	$listtables='';
-	print $listables?$listables:$langs->trans("Error");
+	$listtables=array();
+	foreach($array_match_file_to_database as $code=>$label)
+	{
+		//var_dump($fieldssource);
+		if ($code > sizeof($fieldssource)) continue;
+		//print $code.'-'.$label;
+		$alias=eregi_replace('\..*$','',$label);
+		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
+	}
+	print sizeof($listtables)?(join(',',$listtables)):$langs->trans("Error");
 	print '</td></tr>';
 
 	// Fields imported
 	print '<tr><td>';
 	print $langs->trans("FieldsTarget").'</td><td>';
-	$listfields='';
+	$listfields=array();
+	$i=0;
 	foreach($array_match_file_to_database as $code=>$label)
 	{
-		$listfields.=($listfields?',':'');
-		$listfields.=$langs->trans($objimport->array_import_fields[0][$code]);
+		$i++;
+		//var_dump($fieldssource);
+		if ($code > sizeof($fieldssource)) continue;
+		//print $code.'-'.$label;
+		$alias=eregi_replace('\..*$','',$label);
+		$listfields[$i]=$label;
 	}
-	print $listfields?$listfields:$langs->trans("Error");
+	print sizeof($listfields)?(join(',',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';

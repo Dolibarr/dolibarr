@@ -75,4 +75,6 @@ FieldsTarget=Champs cibles
 DoNotImportFirstLine=Ne pas importer la première ligne du fichier source
 NbOfSourceLines=Nombre de lignes du fichier source
 NowClickToTestTheImport=Vérifiez les paramètres d'import que vous avez défini. S'ils vous conviennent, cliquez sur le bouton "<b>%s</b>" pour lancer une simulation d'import (aucune donnée ne sera modifié, il s'agit dans un premier temps d'une simple simulation)...
-RunSimulateImportFile=Lancer la simulation d'import 
+RunSimulateImportFile=Lancer la simulation d'import
+FieldNeedSource=Ce champ en base requiert obligatoirement une donnée source
+SomeMandatoryFieldHaveNoSource=Certains champs obligatoires n'ont pas de champ source issus du fichier

@@ -76,3 +76,5 @@ DoNotImportFirstLine=Do not import first line of source file
 NbOfSourceLines=Number of lines in source file
 NowClickToTestTheImport=Check import parameters you have defined. If they are correct, click on button "<b>%s</b>" to launch a simulation of import process (no data will be changed in your database, it's only a simulation for the moment)...
 RunSimulateImportFile=Launch the import simulation 
+FieldNeedSource=This fiels in database require a data from source file
+SomeMandatoryFieldHaveNoSource=Some mandatory fields have no source from data file
