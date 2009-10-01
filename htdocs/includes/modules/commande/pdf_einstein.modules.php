@@ -462,7 +462,8 @@ class pdf_einstein extends ModelePDFCommandes
 
 	            $pdf->SetFont('Arial','',8);
 	            $pdf->SetXY(50, $posy);
-	            $lib_mode_reg=$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code)!=('PaymentMode'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
+	            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
+	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 	            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
 
 	            $posy=$pdf->GetY()+2;
