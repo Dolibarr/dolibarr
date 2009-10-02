@@ -449,6 +449,8 @@ if ($step == 2 && $datatoimport)
 
 if ($step == 3 && $datatoimport)
 {
+	$liste=$objmodelimport->liste_modeles($db);
+
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	$param='step=3&datatoimport='.$datatoimport.'&format='.$format;
@@ -494,7 +496,8 @@ if ($step == 3 && $datatoimport)
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
-	print $format;
+    $text=$objmodelimport->getDriverDesc($format);
+    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
 	print '</td></tr>';
 
 	print '</table>';
@@ -576,6 +579,7 @@ if ($step == 3 && $datatoimport)
 if ($step == 4 && $datatoimport)
 {
 	$model=$format;
+	$liste=$objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
@@ -585,19 +589,37 @@ if ($step == 4 && $datatoimport)
 	$obj = new $classname($db);
 
 	// Load source fields in input file
-	$obj->import_open_file($dir.$file,$langs);
-	$fieldssource=array(
+	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+	if ($result >= 0)
+	{
+		// Read first line
+		$arrayrecord=$obj->import_read_record();
+		$fieldssource=array();
+		// Put array into an array starting with 1.
+		$i=1;
+		foreach($arrayrecord as $key => $val)
+		{
+			$newval=dol_trunc($val,24);
+			// Autodetect format (UTF8 or ISO)
+			if (utf8_check($val)) $fieldssource[$i]['example1']=$newval;
+			else $fieldssource[$i]['example1']=utf8_encode($newval);
+			$i++;
+		}
+		$obj->import_close_file();
+	}
+
+/*$fieldssource=array(
 		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
 		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
 		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2'),
-/*		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
+		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
 		5=>array('name'=>'ee','example1'=>'valc1','example2'=>'valc2'),
 		6=>array('name'=>'ff','example1'=>'valc1','example2'=>'valc2'),
 		7=>array('name'=>'gg','example1'=>'valc1','example2'=>'valc2'),
 		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
 		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
-*/	);
-	$obj->import_close_file();
+	);
+*/
 
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
@@ -689,7 +711,8 @@ if ($step == 4 && $datatoimport)
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
-	print $format;
+    $text=$objmodelimport->getDriverDesc($format);
+    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
 	print '</td></tr>';
 
 	// File to import
@@ -803,7 +826,11 @@ if ($step == 4 && $datatoimport)
 			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= sizeof($fieldssource)));
 			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
 		}
-		$htmltext=$langs->trans("Table").": ".$tablename."<br>".$langs->trans("Field").': '.$code;
+		$htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
+		$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
+		$htmltext.=$langs->trans("Required").': <b>'.yn(eregi('\*$',$label)).'</b>';
+		$note='';
+		if ($note) $htmltext.=$langs->trans("Note").': '.$note;
 		$text.=$more;
 		print $html->textwithpicto($text,$htmltext);
 		print '</td>';
@@ -1203,8 +1230,8 @@ function show_elem($fieldssource,$i,$pos,$key,$var)
 		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
-		print $langs->trans("Field").' '.$pos.': ';
-		print '<b>'.$fieldssource[$pos]['name'].'</b> ('.$fieldssource[$pos]['example1'].')';
+		print $langs->trans("Field").' '.$pos;
+		if (isset($fieldssource[$pos]['example1'])) print ' (<i>'.$fieldssource[$pos]['example1'].'</i>)';
 		print '</td>';
 	}
 	print '</tr>';

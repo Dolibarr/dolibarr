@@ -58,12 +58,12 @@ class ImportCsv extends ModeleImports
 
         $this->separator=',';
         if (! empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+        $this->enclosure='"';
         $this->escape='"';
-        $this->string='"';
 
         $this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
         $this->label='Csv';             // Label of driver
-        $this->desc='<b>Comma Separated Value</b> file format (.csv). This is a text file format.<br>Fields are separated by separator [ '.$this->separator.' ]. If separator is found inside a field content, field is rounded by round character [ '.$this->string.' ]. Escape character to escape round character is [ '.$this->escape.' ].';
+        $this->desc='<b>Comma Separated Value</b> file format (.csv). This is a text file format.<br>Fields are separated by separator [ '.$this->separator.' ]. If separator is found inside a field content, field is rounded by round character [ '.$this->enclosure.' ]. Escape character to escape round character is [ '.$this->escape.' ].';
         $this->extension='csv';         // Extension for generated file by this driver
         $this->picto='mime/other';		// Picto
         $ver=split(' ','$Revision$');
@@ -172,6 +172,10 @@ class ImportCsv extends ModeleImports
 			$this->error=$langs->trans("ErrorFailToOpenFile",$file);
 			$ret=-1;
 		}
+		else
+		{
+			$this->file=$file;
+		}
 
 		return $ret;
     }
@@ -188,31 +192,29 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	\brief		Input record line from file
 	 */
-    function import_read_record($array_alias,$array_selected_sorted,$objp)
+    function import_read_record()
     {
     	global $conf;
-    	if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) $outputlangs->charset_output=$conf->global->EXPORT_CSV_FORCE_CHARSET;
+		//$importlang=new Translate($this->db);
+    	//if (! empty($conf->global->IMPORT_CSV_FORCE_CHARSET)) $importlang->charset_output=$conf->global->IMPORT_CSV_FORCE_CHARSET;
 
-    	$this->col=0;
- 		foreach($array_selected_sorted as $code => $value)
-        {
-            $alias=$array_alias[$code];
-            if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
-			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
-
-            // Translation newvalue
-			if (eregi('^\((.*)\)$',$newvalue,$reg))
-			{
-				$newvalue=$outputlangs->transnoentities($reg[1]);
-			}
-
-			$newvalue=$this->csv_clean($newvalue);
-
-			fwrite($this->handle,$newvalue.$this->separator);
-            $this->col++;
+    	$arrayres=array();
+    	if (version_compare(phpversion(), '5.3') < 0)
+		{
+	    	$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure);
 		}
-        fwrite($this->handle,"\n");
-        return 0;
+		else
+		{
+	    	$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
+		}
+//	    var_dump($this->handle);
+	    //var_dump($arrayres);exit;
+		if ($arrayres && is_array($arrayres))
+        {
+    		$this->col=sizeof($arrayres);
+        }
+
+        return $arrayres;
     }
 
 	/**
