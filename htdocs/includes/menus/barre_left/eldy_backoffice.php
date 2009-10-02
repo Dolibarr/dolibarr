@@ -179,7 +179,7 @@ class MenuLeft {
 			 */
 			if ($mainmenu == 'companies')
 			{
-				// Soci�t�s
+				// Societes
 				if ($conf->societe->enabled)
 				{
 					$langs->load("companies");
@@ -204,7 +204,6 @@ class MenuLeft {
 				{
 					$newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 
-					// S�curit� acc�s client
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
