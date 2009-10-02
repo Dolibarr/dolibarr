@@ -64,6 +64,7 @@ DownloadEmptyExample = Descarregar fitxer d'exemple buit
 SourceFileFormat = Format de l'arxiu origen
 FieldsInSourceFile = Camps en el fitxer orige
 FieldsInTargetDatabase = Camps destinació a la base de dades Dolibarr (*=obligatori)
+Field = Camp
 NoFields = Cap camp
 MoveField = Moure camp columna número %s
 ExampleOfImportFile = Exemple_de_fitxer_importacio
@@ -76,3 +77,7 @@ DoNotImportFirstLine = No importar la primera línia del fitxer font
 NbOfSourceLines = Nombre de línies de l'arxiu font
 NowClickToTestTheImport = Comproveu els paràmetres d'importació establerts. Si està d'acord, feu clic al botó "<b>%s</b>" per executar una simulació d'importació (cap dada serà modificat, iinicialmente només serà una simulació)...
 RunSimulateImportFile = Executar la simulació d'importació
+FieldNeedSource = Aquest camp requereix obligatòriament una font de dades
+SomeMandatoryFieldHaveNoSource = Alguns camps obligatoris no tenen camp font a l'arxiu d'origen
+InformationOnSourceFile = Informació de l'arxiu origen
+InformationOnTargetTables = Informació sobre els camps de destinació

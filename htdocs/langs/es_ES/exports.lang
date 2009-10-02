@@ -64,6 +64,7 @@ DownloadEmptyExample = Descargar archivo de ejemplo vacío
 SourceFileFormat = Formato del archivo origen
 FieldsInSourceFile = Campos en el archivo origen
 FieldsInTargetDatabase = Campos destino en la base de datos Dolibarr (*=obligatorio)
+Field = Campo
 NoFields = Ningún campo
 MoveField = Mover campo columna número %s
 ExampleOfImportFile = Ejemplo_de_fichero_importacion
@@ -76,3 +77,7 @@ DoNotImportFirstLine = No importar la primera línea del archivo fuente
 NbOfSourceLines = Número de líneas del archivo fuente
 NowClickToTestTheImport = Compruebe los parámetros de importación establecidos. Si está de acuerdo, haga clic en el botón "<b>%s</b>" para ejecutar una simulación de importación (ningún dato será modificado, iinicialmente sólo será una simulación)...
 RunSimulateImportFile = Ejecutar la simulación de importación
+FieldNeedSource = Este campo requiere obligatoriamente una fuente de datos
+SomeMandatoryFieldHaveNoSource = Algunos campos obligatorios no tienen campo fuente en el archivo de origen
+InformationOnSourceFile = Información del archivo origen
+InformationOnTargetTables = Información sobre los campos de destino
