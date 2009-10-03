@@ -857,7 +857,7 @@ if ($step == 4 && $datatoimport)
 		{
 			//$var=!$var;
 			$nbofnotimportedfields++;
-			show_elem($fieldssource,$lefti,$key,'',$var);
+			show_elem($fieldssource,$lefti,$key,'',$var,'nostyle');
 			//print '> '.$lefti.'-'.$key;
 			$listofkeys[$key]=1;
 			$lefti++;
@@ -866,7 +866,7 @@ if ($step == 4 && $datatoimport)
 
 	// Print one more empty field
 	$newkey=getnewkey($fieldssource,$listofkeys);
-	show_elem($fieldssource,$lefti,$newkey,'',$var);
+	show_elem($fieldssource,$lefti,$newkey,'',$var,'nostyle');
 	//print '> '.$lefti.'-'.$newkey;
 	$listofkeys[$newkey]=1;
 	$nbofnotimportedfields++;
@@ -880,7 +880,7 @@ if ($step == 4 && $datatoimport)
 	while ($i < $nbofnotimportedfields)
 	{
 		// Print empty cells
-		show_elem('','','','none',$var);
+		show_elem('','','','none',$var,'nostyle');
 		$i++;
 	}
 	print '</td></tr>';
@@ -1172,14 +1172,23 @@ if ($step == 5 && $datatoimport)
 	print '<br>';
 
 	print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
-	print '<br>';
-	print '<center>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'?step=6&'.$param.'">';
-	print '<input class="button" type="submit" value="'.$langs->trans("RunSimulateImportFile").'">';
-	print '</form>';
-	print '</center>';
 
 	print '</div>';
+
+	// Actions
+	print '<center>';
+	if ($user->rights->import->run)
+	{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
+	}
+	/*print '<form action="'.$_SERVER["PHP_SELF"].'?step=6&'.$param.'">';
+	print '<input class="button" type="submit" value="'.$langs->trans("RunSimulateImportFile").'">';
+	print '</form>';*/
+	print '</center>';
 
 	if ($mesg) print $mesg;
 }
@@ -1196,7 +1205,7 @@ llxFooter('$Date$ - $Revision$');
 /*
  * Function to put the movable box of a source field
  */
-function show_elem($fieldssource,$i,$pos,$key,$var)
+function show_elem($fieldssource,$i,$pos,$key,$var,$nostyle='')
 {
 	global $langs,$bc;
 
@@ -1204,27 +1213,31 @@ function show_elem($fieldssource,$i,$pos,$key,$var)
 	print '<div style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
-	print '<tr '.$bc[$var].' height="20">';
 	if ($pos && $pos > sizeof($fieldssource))	// NoFields
 	{
+		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("NoFields");
 		print '</td>';
+		print '</tr>';
 	}
 	elseif ($key == 'none')
 	{
+		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
+		print '</tr>';
 	}
 	else	// Print field of source file
 	{
+		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
 		//print '<td width="16">'.img_file('','').'</td>';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
@@ -1234,8 +1247,8 @@ function show_elem($fieldssource,$i,$pos,$key,$var)
 		print $langs->trans("Field").' '.$pos;
 		if (! empty($fieldssource[$pos]['example1'])) print ' (<i>'.$fieldssource[$pos]['example1'].'</i>)';
 		print '</td>';
+		print '</tr>';
 	}
-	print '</tr>';
 
 	print "</table>\n";
 

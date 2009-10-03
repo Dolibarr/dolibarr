@@ -117,11 +117,21 @@ else
     print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
 }
 print '</table>';
+print '<br>';
 
+print '<center>';
 if (sizeof($import->array_import_code))
 {
-	print '<center><form action="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import"><input type="submit" class="button" value="'.$langs->trans("NewImport").'"></form></center>';
+	//if ($user->rights->import->run)
+	//{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import">'.$langs->trans("NewImport").'</a>';
+	//}
+	//else
+	//{
+	//	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
+	//}
 }
+print '</center>';
 
 /*
 // Affiche les profils d'exports
