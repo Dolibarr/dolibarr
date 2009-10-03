@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/export/export_excel.modules.php
- \ingroup    export
- \brief      Fichier de la classe permettant de g�n�rer les export au format Excel
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/includes/modules/export/export_excel.modules.php
+ *	\ingroup    export
+ *	\brief      Fichier de la classe permettant de g�n�rer les export au format Excel
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/export/modules_export.php");
@@ -32,10 +32,9 @@ require_once(PHP_WRITEEXCEL_PATH."/functions.writeexcel_utility.inc.php");
 
 
 /**
- \class      ExportExcel
- \brief      Classe permettant de g�n�rer les export au format Excel
+ *	\class      ExportExcel
+ *	\brief      Class to build export files with Excel format
  */
-
 class ExportExcel extends ModeleExports
 {
 	var $id;
@@ -53,8 +52,8 @@ class ExportExcel extends ModeleExports
 
 
 	/**
-	 \brief      Constructeur
-	 \param	    db      Handler acc�s base de donn�e
+	 *	\brief      Constructor
+	 *	\param	    db      databse handler
 	 */
 	function ExportExcel($db)
 	{
@@ -63,7 +62,7 @@ class ExportExcel extends ModeleExports
 
 		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Excel';               // Label of driver
-		$this->desc='Native <b>Excel 95</b> file format (.xls)';
+		$this->desc='<b>Excel</b> file format (.xls)<br>This is native Excel 95 format.';
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
 		$ver=split(' ','$Revision$');

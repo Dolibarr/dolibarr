@@ -379,7 +379,7 @@ if ($step == 2 && $datatoexport)
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportableFields").'</td>';
-    print '<td width="12" align="middle">';
+    print '<td width="100" align="center">';
     print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
     print '/';
     print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
@@ -389,6 +389,8 @@ if ($step == 2 && $datatoexport)
 
     // Champs exportables
     $fieldsarray=$objexport->array_export_fields[0];
+    // Select request if all fields are selected
+    $sqlmaxforexport=$objexport->build_sql(0,array());
 
 #    $this->array_export_module[0]=$module;
 #    $this->array_export_code[0]=$module->export_code[$r];
@@ -418,13 +420,27 @@ if ($step == 2 && $datatoexport)
             // Selected fields
             print '<td>&nbsp;</td>';
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
-            print '<td>'.$langs->trans($label).' ('.$code.')</td>';
+            print '<td>';
+            $text=$langs->trans($label);
+            $tablename=getablenamefromfield($code,$sqlmaxforexport);
+            $htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
+			$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
+			print $html->textwithpicto($text,$htmltext);
+			//print ' ('.$code.')';
+            print '</td>';
             $bit=1;
         }
         else
         {
         	// Fields not selected
-            print '<td>'.$langs->trans($label).' ('.$code.')</td>';
+            print '<td>';
+            $text=$langs->trans($label);
+           	$tablename=getablenamefromfield($code,$sqlmaxforexport);
+            $htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
+			$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
+			print $html->textwithpicto($text,$htmltext);
+			//print ' ('.$code.')';
+            print '</td>';
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
             $bit=0;
@@ -452,7 +468,7 @@ if ($step == 2 && $datatoexport)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#">'.$langs->trans("NextStep").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("SelectAtLeastOneField")).'">'.$langs->trans("NextStep").'</a>';
 	}
 
     print '</div>';
@@ -506,13 +522,16 @@ if ($step == 3 && $datatoexport)
     $list='';
     foreach($array_selected as $code=>$value)
     {
-        $list.=($list?',':'');
+        $list.=($list?', ':'');
         $list.=$langs->trans($objexport->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
 
     print '</table>';
     print '<br>';
+
+    // Select request if all fields are selected
+    $sqlmaxforexport=$objexport->build_sql(0,array());
 
     print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
 
@@ -521,8 +540,8 @@ if ($step == 3 && $datatoexport)
     print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportedFields").'</td>';
     print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
-    print '<td>&nbsp;</td>';
-    print '<td>'.$langs->trans("FieldsTitle").'</td>';
+    //print '<td>&nbsp;</td>';
+    //print '<td>'.$langs->trans("FieldsTitle").'</td>';
     print '</tr>';
 
     $var=true;
@@ -537,7 +556,14 @@ if ($step == 3 && $datatoexport)
 
         print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 
-        print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).' ('.$code.')</td>';
+        print '<td>';
+        $text=$langs->trans($objexport->array_export_fields[0][$code]);
+        $tablename=getablenamefromfield($code,$sqlmaxforexport);
+        $htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
+		$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
+		print $html->textwithpicto($text,$htmltext);
+		//print ' ('.$code.')';
+        print '</td>';
 
         print '<td align="right" width="100">';
         print $value.' ';
@@ -546,9 +572,8 @@ if ($step == 3 && $datatoexport)
         if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
         print '</td>';
 
-        print '<td>&nbsp;</td>';
-
-        print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).'</td>';
+        //print '<td>&nbsp;</td>';
+        //print '<td>'.$langs->trans($objexport->array_export_fields[0][$code]).'</td>';
 
         print '</tr>';
     }
@@ -684,7 +709,7 @@ if ($step == 4 && $datatoexport)
     $list='';
     foreach($array_selected as $code=>$label)
     {
-        $list.=($list?',':'');
+        $list.=($list?', ':'');
         $list.=$langs->trans($objexport->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
@@ -763,4 +788,25 @@ print '<br>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
+
+
+/**
+ * 	\brief		Return table name of an alias. For this, we look for the "tablename as alias" in sql string.
+ * 	\param		code				Alias.Fieldname
+ * 	\param		sqlmaxforexport		SQL request to parse
+ */
+function getablenamefromfield($code,$sqlmaxforexport)
+{
+	$newsql=$sqlmaxforexport;
+	$newsql=eregi_replace('^.* FROM ','',$newsql);
+	$newsql=eregi_replace(' WHERE .*$','',$newsql);
+	$alias=eregi_replace('\..*$','',$code);
+	//print $newsql.' '.$alias;
+	if (eregi('([a-zA-Z_]+) as '.$alias.'[, \)]',$newsql,$reg))
+	{
+		return $reg[1];
+	}
+	else return '';
+}
+
 ?>

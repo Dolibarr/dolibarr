@@ -1232,7 +1232,7 @@ function show_elem($fieldssource,$i,$pos,$key,$var)
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("Field").' '.$pos;
-		if (isset($fieldssource[$pos]['example1'])) print ' (<i>'.$fieldssource[$pos]['example1'].'</i>)';
+		if (! empty($fieldssource[$pos]['example1'])) print ' (<i>'.$fieldssource[$pos]['example1'].'</i>)';
 		print '</td>';
 	}
 	print '</tr>';

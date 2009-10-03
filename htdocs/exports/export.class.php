@@ -171,12 +171,41 @@ class Export
 		}
 	}
 
+
 	/**
-	 *      \brief      Lance la generation du fichier
-	 *      \param      user                User qui exporte
-	 *      \param      model               Modele d'export
-	 *      \param      datatoexport        Lot de donnee a exporter
-	 *      \param      array_selected      Tableau des champs a exporter
+	 *      \brief      Build the sql export request
+	 *      \param      indice				Indice of export
+	 *      \param      array_selected      Filter on array of fields to export
+	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
+	 *                  aussi le parametre datatoexport est inutilise
+	 */
+	function build_sql($indice,$array_selected)
+	{
+		// Build the sql request
+		$sql=$this->array_export_sql_start[$indice];
+		$i=0;
+		//print_r($array_selected);
+		foreach ($this->array_export_alias[$indice] as $key => $value)
+		{
+			if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
+
+			if ($i > 0) $sql.=', ';
+			else $i++;
+			$newfield=$key.' as '.$value;
+
+			$sql.=$newfield;
+		}
+		$sql.=$this->array_export_sql_end[$indice];
+
+		return $sql;
+	}
+
+	/**
+	 *      \brief      Build export file
+	 *      \param      user                User that export
+	 *      \param      model               Export format
+	 *      \param      datatoexport        Name of dataset to export
+	 *      \param      array_selected      Filter on array of fields to export
 	 *      \remarks    Les tableaux array_export_xxx sont deja chargees pour le bon datatoexport
 	 *                  aussi le parametre datatoexport est inutilise
 	 */
@@ -196,21 +225,7 @@ class Export
 		require_once($dir.$file);
 		$objmodel = new $classname($db);
 
-		// Build the sql request
-		$sql=$this->array_export_sql_start[$indice];
-		$i=0;
-		//print_r($array_selected);
-		foreach ($this->array_export_alias[$indice] as $key => $value)
-		{
-			if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
-
-			if ($i > 0) $sql.=', ';
-			else $i++;
-			$newfield=$key.' as '.$value;
-
-			$sql.=$newfield;
-		}
-		$sql.=$this->array_export_sql_end[$indice];
+		$sql=$this->build_sql($indice,$array_selected);
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
