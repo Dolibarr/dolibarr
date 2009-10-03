@@ -36,6 +36,7 @@ class ModeleImports
 	var $error='';
 
 	var $driverlabel=array();
+	var $driverdesc=array();
 	var $driverversion=array();
 
 	var $liblabel=array();
@@ -55,7 +56,7 @@ class ModeleImports
 	 */
 	function liste_modeles($db)
 	{
-		dol_syslog("ModeleImport::loadFormat");
+		dol_syslog("ModeleImport::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/includes/modules/import/";
 		$handle=opendir($dir);

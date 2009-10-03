@@ -18,9 +18,9 @@
 */
 
 /**
- *		\file       htdocs/includes/modules/export/export_csv.modules.php
- *		\ingroup    export
- *		\brief      File to build exports with CSV format
+ *		\file       htdocs/includes/modules/import/import_csv.modules.php
+ *		\ingroup    import
+ *		\brief      File to load import files with CSV format
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */
@@ -190,13 +190,12 @@ class ImportCsv extends ModeleImports
 
 
 	/**
-	 * 	\brief		Input record line from file
+	 * 	\brief		Return array of next record in input file.
+	 * 	\return		Array		Array of field values. Data are UTF8 encoded.
 	 */
     function import_read_record()
     {
     	global $conf;
-		//$importlang=new Translate($this->db);
-    	//if (! empty($conf->global->IMPORT_CSV_FORCE_CHARSET)) $importlang->charset_output=$conf->global->IMPORT_CSV_FORCE_CHARSET;
 
     	$arrayres=array();
     	if (version_compare(phpversion(), '5.3') < 0)
@@ -207,14 +206,30 @@ class ImportCsv extends ModeleImports
 		{
 	    	$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
 		}
-//	    var_dump($this->handle);
+
+		//var_dump($this->handle);
 	    //var_dump($arrayres);exit;
+		$newarrayres=array();
 		if ($arrayres && is_array($arrayres))
         {
-    		$this->col=sizeof($arrayres);
+			foreach($arrayres as $key => $val)
+			{
+		    	if (! empty($conf->global->IMPORT_CSV_FORCE_CHARSET))	// Forced charset
+		    	{
+		    		if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') $newarrayres[$key]=$val;
+		    		else $newarrayres[$key]=utf8_encode($val);
+		    	}
+		    	else	// Autodetect format (UTF8 or ISO)
+		    	{
+					if (utf8_check($val)) $newarrayres[$key]=$val;
+					else $newarrayres[$key]=utf8_encode($val);
+		    	}
+			}
+
+        	$this->col=sizeof($newarrayres);
         }
 
-        return $arrayres;
+        return $newarrayres;
     }
 
 	/**
@@ -228,36 +243,57 @@ class ImportCsv extends ModeleImports
 
 
     /**
-     * Clean a cell to respect rules of CSV file cells
-     * @param 	newvalue	String to clean
-     * @return 	string		Value cleaned
+     * Insert a record into database
+     * @param 	arrayrecord						Array of field values
+     * @param	array_match_file_to_database
+     * @param 	objimport
+     * @return	int								<0 if KO, >0 if OK
      */
-    function csv_clean($newvalue)
+    function import_insert($arrayrecord,$array_match_file_to_database,$objimport)
     {
-    	$addquote=0;
+    	$error=0;
 
-		// Rule Dolibarr: No HTML
-		$newvalue=dol_string_nohtmltag($newvalue);
-
-		// Rule 1 CSV: No CR, LF in cells
-    	$newvalue=ereg_replace("\r",'',$newvalue);
-        $newvalue=ereg_replace("\n",'\n',$newvalue);
-
-        // Rule 2 CSV: If value contains ", we must duplicate ", and add "
-		if (ereg('"',$newvalue))
+		// For each table to insert, me make a separate insert
+		foreach($objimport->array_import_tables[0] as $alias=>$tablename)
 		{
-			$addquote=1;
-			$newvalue=ereg_replace('"','""',$newvalue);
+			// Build sql request
+			$sql='';
+			$listfields='';
+			$listvalues='';
+			foreach($array_match_file_to_database as $key => $val)
+			{
+				if ($listfields) { $listfields.=', '; $listvalues.=', '; }
+				$listfields.=$val;
+				$listvalues.='ee';
+			}
+			if ($listfields)
+			{
+				$sql='INSERT INTO '.$tablename.'('.$listfields.') VALUES('.$listvalues.')';
+			}
+
+			//print '> '.join(',',$arrayrecord);
+			print 'sql='.$sql;
+			print '<br>'."\n";
+
+			// Run insert request
+			if ($sql)
+			{
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					print '.';
+				}
+				else
+				{
+					print 'E';
+					$this->error=$this->db->lasterror();
+					$error++;
+				}
+			}
 		}
 
-		// Rule 3 CSV: If value contains separator, we must add "
-    	if (ereg($this->separator,$newvalue))
-    	{
-    		$addquote=1;
-    	}
-
-    	return ($addquote?'"':'').$newvalue.($addquote?'"':'');
-    }
+		return $error?-$error:1;
+	}
 
 }
 

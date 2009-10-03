@@ -294,6 +294,7 @@ if ($action == 'saveorder')
  */
 
 
+// STEP 1: Page to select dataset to import
 if ($step == 1 || ! $datatoimport)
 {
 	// Clean saved file-database matching
@@ -372,6 +373,8 @@ if ($step == 1 || ! $datatoimport)
 
 }
 
+
+// STEP 2: Page to select input format file
 if ($step == 2 && $datatoimport)
 {
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
@@ -447,6 +450,8 @@ if ($step == 2 && $datatoimport)
 	if ($mesg) print $mesg;
 }
 
+
+// STEP 3: Page to select file
 if ($step == 3 && $datatoimport)
 {
 	$liste=$objmodelimport->liste_modeles($db);
@@ -491,7 +496,10 @@ if ($step == 3 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
+	print '</table><br>';
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<table width="100%" class="border">';
+	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
@@ -575,7 +583,7 @@ if ($step == 3 && $datatoimport)
 }
 
 
-// Page to make matching between source file and database fields
+// STEP 4: Page to make matching between source file and database fields
 if ($step == 4 && $datatoimport)
 {
 	$model=$format;
@@ -589,37 +597,21 @@ if ($step == 4 && $datatoimport)
 	$obj = new $classname($db);
 
 	// Load source fields in input file
+	$fieldssource=array();
 	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
 	if ($result >= 0)
 	{
 		// Read first line
 		$arrayrecord=$obj->import_read_record();
-		$fieldssource=array();
-		// Put array into an array starting with 1.
+		// Put into array fieldssource starting with 1.
 		$i=1;
 		foreach($arrayrecord as $key => $val)
 		{
-			$newval=dol_trunc($val,24);
-			// Autodetect format (UTF8 or ISO)
-			if (utf8_check($val)) $fieldssource[$i]['example1']=$newval;
-			else $fieldssource[$i]['example1']=utf8_encode($newval);
+			$fieldssource[$i]['example1']=dol_trunc($val,24);
 			$i++;
 		}
 		$obj->import_close_file();
 	}
-
-/*$fieldssource=array(
-		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
-		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
-		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2'),
-		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
-		5=>array('name'=>'ee','example1'=>'valc1','example2'=>'valc2'),
-		6=>array('name'=>'ff','example1'=>'valc1','example2'=>'valc2'),
-		7=>array('name'=>'gg','example1'=>'valc1','example2'=>'valc2'),
-		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
-		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
-	);
-*/
 
 	// Load targets fields in database
 	$fieldstarget=$objimport->array_import_fields[0];
@@ -706,7 +698,10 @@ if ($step == 4 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
+	print '</table><br>';
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<table width="100%" class="border">';
+	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
@@ -1019,11 +1014,14 @@ if ($step == 4 && $datatoimport)
 
 }
 
+
+// STEP 5: Summary of choices
 if ($step == 5 && $datatoimport)
 {
 	if (empty($dontimportfirstline)) $dontimportfirstline=0;
 
 	$model=$format;
+	$liste=$objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
@@ -1033,22 +1031,21 @@ if ($step == 5 && $datatoimport)
 	$obj = new $classname($db);
 
 	// Load source fields in input file
-	$obj->import_open_file($dir.$file,$langs);
-	$fieldssource=array(
-		1=>array('name'=>'aa','example1'=>'val1','example2'=>'val2'),
-		2=>array('name'=>'bb','example1'=>'valb1','example2'=>'valb2'),
-		3=>array('name'=>'cc','example1'=>'valc1','example2'=>'valc2'),
-/*		4=>array('name'=>'dd','example1'=>'valc1','example2'=>'valc2'),
-		5=>array('name'=>'ee','example1'=>'valc1','example2'=>'valc2'),
-		6=>array('name'=>'ff','example1'=>'valc1','example2'=>'valc2'),
-		7=>array('name'=>'gg','example1'=>'valc1','example2'=>'valc2'),
-		8=>array('name'=>'hh','example1'=>'valc1','example2'=>'valc2'),
-		9=>array('name'=>'ii','example1'=>'valc1','example2'=>'valc2'),
-*/	);
-	$obj->import_close_file();
-
-	ksort($array_match_file_to_database);
-	//var_dump($array_match_file_to_database);
+	$fieldssource=array();
+	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+	if ($result >= 0)
+	{
+		// Read first line
+		$arrayrecord=$obj->import_read_record();
+		// Put into array fieldssource starting with 1.
+		$i=1;
+		foreach($arrayrecord as $key => $val)
+		{
+			$fieldssource[$i]['example1']=dol_trunc($val,24);
+			$i++;
+		}
+		$obj->import_close_file();
+	}
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 
@@ -1095,27 +1092,21 @@ if ($step == 5 && $datatoimport)
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
-	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
+	print '</table><br>';
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<table width="100%" class="border">';
+	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
-	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td width="40%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
-	print $format;
+    $text=$objmodelimport->getDriverDesc($format);
+    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
 	print '</td></tr>';
 
 	// File to import
-	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
+	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>'.$filetoimport.'</td></tr>';
-
-/*	print '</table>';
-	print '<br>';
-
-
-	print '<b>'.$langs->trans("ImportSummary").'</b>';
-
-	// Show import summary
-	print '<table summary="importsummary" width="100%" class="border">';
-*/
 
 	// Nb of fields
 	print '<tr><td>';
@@ -1132,10 +1123,13 @@ if ($step == 5 && $datatoimport)
 	print '<input type="checkbox" name="nofirstline" value='.$dontimportfirstline.'>';
 	print '</td></tr>';
 
-	print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
+	print '</table>';
+	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print '<table width="100%" class="border">';
+	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
 
 	// Tables imported
-	print '<tr><td>';
+	print '<tr><td width="40%">';
 	print $langs->trans("TablesTarget");
 	print '</td><td>';
 	$listtables=array();
@@ -1147,7 +1141,28 @@ if ($step == 5 && $datatoimport)
 		$alias=eregi_replace('\..*$','',$label);
 		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
 	}
-	print sizeof($listtables)?(join(', ',$listtables)):$langs->trans("Error");
+	if (sizeof($listtables))
+	{
+		$newval='';
+		foreach ($listtables as $val)
+		{
+			if ($newval) print ', ';
+			$newval=$val;
+			// Link to Dolibarr wiki pages
+			/*$helppagename='EN:Table_'.$newval;
+			if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
+			{
+				// Get helpbaseurl, helppage and mode from helppagename and langs
+				$arrayres=getHelpParamFor($helppagename,$langs);
+				$helpbaseurl=$arrayres['helpbaseurl'];
+				$helppage=$arrayres['helppage'];
+				$mode=$arrayres['mode'];
+				$newval.=' <a href="'.sprintf($helpbaseurl,$helppage).'">'.img_picto($langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage'),DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).'</a>';
+			}*/
+			print $newval;
+		}
+	}
+	else print $langs->trans("Error");
 	print '</td></tr>';
 
 	// Fields imported
@@ -1155,6 +1170,8 @@ if ($step == 5 && $datatoimport)
 	print $langs->trans("FieldsTarget").'</td><td>';
 	$listfields=array();
 	$i=0;
+	//print 'fieldsource='.$fieldssource;
+	//var_dump($array_match_file_to_database);
 	foreach($array_match_file_to_database as $code=>$label)
 	{
 		$i++;
@@ -1193,6 +1210,230 @@ if ($step == 5 && $datatoimport)
 	if ($mesg) print $mesg;
 }
 
+
+// STEP 6: Result of simulation
+if ($step == 6 && $datatoimport)
+{
+	if (empty($dontimportfirstline)) $dontimportfirstline=0;
+
+	$model=$format;
+	$liste=$objmodelimport->liste_modeles($db);
+
+	// Create classe to use for import
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/import/";
+	$file = "import_".$model.".modules.php";
+	$classname = "Import".ucfirst($model);
+	require_once($dir.$file);
+	$obj = new $classname($db);
+
+	// Load source fields in input file
+	$fieldssource=array();
+	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+	if ($result >= 0)
+	{
+		// Read first line
+		$arrayrecord=$obj->import_read_record();
+		// Put into array fieldssource starting with 1.
+		$i=1;
+		foreach($arrayrecord as $key => $val)
+		{
+			$fieldssource[$i]['example1']=dol_trunc($val,24);
+			$i++;
+		}
+		$obj->import_close_file();
+	}
+
+	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
+
+	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][1] = $langs->trans("Step")." 1";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][1] = $langs->trans("Step")." 2";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&'.$param;
+	$head[$h][1] = $langs->trans("Step")." 3";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4&'.$param;
+	$head[$h][1] = $langs->trans("Step")." 4";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5&'.$param;
+	$head[$h][1] = $langs->trans("Step")." 5";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6&'.$param;
+	$head[$h][1] = $langs->trans("Step")." 6";
+	$hselected=$h;
+	$h++;
+
+	dol_fiche_head($head, $hselected, $langs->trans("NewImport"));
+
+	print '<table width="100%" class="border">';
+
+	// Module
+	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<td>';
+	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
+	print $objimport->array_import_module[0]->getName();
+	print '</td></tr>';
+
+	// Lot de donnees a importer
+	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
+	print '<td>';
+	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
+	print $objimport->array_import_label[0];
+	print '</td></tr>';
+
+	print '</table><br>';
+	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
+	print '<table width="100%" class="border">';
+	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
+
+	// Source file format
+	print '<tr><td width="40%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<td>';
+    $text=$objmodelimport->getDriverDesc($format);
+    print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+	print '</td></tr>';
+
+	// File to import
+	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
+	print '<td>'.$filetoimport.'</td></tr>';
+
+	// Nb of fields
+	print '<tr><td>';
+	print $langs->trans("NbOfSourceLines");
+	print '</td><td>';
+	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
+	print $nboflines;
+	print '</td></tr>';
+
+	// Checkbox do not import first line
+	print '<tr><td>';
+	print $langs->trans("DoNotImportFirstLine");
+	print '</td><td>';
+	print '<input type="checkbox" name="nofirstline" value='.$dontimportfirstline.'>';
+	print '</td></tr>';
+
+	print '</table>';
+	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
+	print '<table width="100%" class="border">';
+	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
+
+	// Tables imported
+	print '<tr><td width="40%">';
+	print $langs->trans("TablesTarget");
+	print '</td><td>';
+	$listtables=array();
+	foreach($array_match_file_to_database as $code=>$label)
+	{
+		//var_dump($fieldssource);
+		if ($code > sizeof($fieldssource)) continue;
+		//print $code.'-'.$label;
+		$alias=eregi_replace('\..*$','',$label);
+		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
+	}
+	if (sizeof($listtables))
+	{
+		$newval='';
+		foreach ($listtables as $val)
+		{
+			if ($newval) print ', ';
+			$newval=$val;
+			// Link to Dolibarr wiki pages
+			/*$helppagename='EN:Table_'.$newval;
+			if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
+			{
+				// Get helpbaseurl, helppage and mode from helppagename and langs
+				$arrayres=getHelpParamFor($helppagename,$langs);
+				$helpbaseurl=$arrayres['helpbaseurl'];
+				$helppage=$arrayres['helppage'];
+				$mode=$arrayres['mode'];
+				$newval.=' <a href="'.sprintf($helpbaseurl,$helppage).'">'.img_picto($langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage'),DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).'</a>';
+			}*/
+			print $newval;
+		}
+	}
+	else print $langs->trans("Error");
+	print '</td></tr>';
+
+	// Fields imported
+	print '<tr><td>';
+	print $langs->trans("FieldsTarget").'</td><td>';
+	$listfields=array();
+	$i=0;
+	foreach($array_match_file_to_database as $code=>$label)
+	{
+		$i++;
+		//var_dump($fieldssource);
+		if ($code > sizeof($fieldssource)) continue;
+		//print $code.'-'.$label;
+		$alias=eregi_replace('\..*$','',$label);
+		$listfields[$i]=$label;
+	}
+	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
+	print '</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
+
+	// Launch import
+	$arrayofresult=array();
+	$db->begin();
+
+	// Open input file
+	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+	if ($result > 0)
+	{
+		$i=1;
+		// Loop on each input file record
+		while ($arrayrecord=$obj->import_read_record())
+		{
+			$i++;
+			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport);
+			$arrayofresult[$result]++;
+		}
+		// Close file
+		$obj->import_close_file();
+	}
+
+	$db->rollback();	// We force rollback because this was just a simulation.
+
+
+	// Print $arrayofresult
+	// TODO
+
+
+	print $langs->trans("NowClickToRunTheImport",$langs->transnoentitiesnoconv("RunImportFile")).'<br>';
+
+	print '</div>';
+
+	// Actions
+	print '<center>';
+	if ($user->rights->import->run)
+	{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=7&'.$param.'">'.$langs->trans("RunImportFile").'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
+	}
+	/*print '<form action="'.$_SERVER["PHP_SELF"].'?step=6&'.$param.'">';
+	print '<input class="button" type="submit" value="'.$langs->trans("RunSimulateImportFile").'">';
+	print '</form>';*/
+	print '</center>';
+
+	if ($mesg) print $mesg;
+}
 
 print '<br>';
 

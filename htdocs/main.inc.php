@@ -897,7 +897,7 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
 	$htmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
 	if (! empty($conf->browser->phone)) $htmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
-	 
+
 	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',split(',',$_SESSION["disablemodules"]));
 
 	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
@@ -1028,34 +1028,14 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		$langs->load("help");
 
 		$helpbaseurl='';
-		if (eregi('^http',$helppagename))
-		{
-			// If complete URL
-			$helpbaseurl='%s';
-			$helppage=$helppagename;
-			$mode='local';
-		}
-		else
-		{
-			// If WIKI URL
-			$helppage='';
-			if (eregi('^es',$langs->defaultlang))
-			{
-				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-				if (eregi('ES:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
-			}
-			if (eregi('^fr',$langs->defaultlang))
-			{
-				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-				if (eregi('FR:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
-			}
-			if (empty($helppage))	// If help page not already found
-			{
-				$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-				if (eregi('EN:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
-			}
-			$mode='wiki';
-		}
+		$helppage='';
+		$mode='';
+
+		// Get helpbaseurl, helppage and mode from helppagename and langs
+		$arrayres=getHelpParamFor($helppagename,$langs);
+		$helpbaseurl=$arrayres['helpbaseurl'];
+		$helppage=$arrayres['helppage'];
+		$mode=$arrayres['mode'];
 
 		// Link to help pages
 		if ($helpbaseurl && $helppage)
@@ -1104,6 +1084,43 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 	if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
 
+
+/**
+ *  \brief   Return helpbaseurl, helppage and mode
+ *  \param   helppagename		Page name (EN:xxx,ES:eee,FR:fff...)
+ *  \param   langs				Language
+ */
+function getHelpParamFor($helppagename,$langs)
+{
+	if (eregi('^http',$helppagename))
+	{
+		// If complete URL
+		$helpbaseurl='%s';
+		$helppage=$helppagename;
+		$mode='local';
+	}
+	else
+	{
+		// If WIKI URL
+		if (eregi('^es',$langs->defaultlang))
+		{
+			$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+			if (eregi('ES:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
+		}
+		if (eregi('^fr',$langs->defaultlang))
+		{
+			$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+			if (eregi('FR:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
+		}
+		if (empty($helppage))	// If help page not already found
+		{
+			$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+			if (eregi('EN:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
+		}
+		$mode='wiki';
+	}
+	return array('helpbaseurl'=>$helpbaseurl,'helppage'=>$helppage,'mode'=>$mode);
+}
 
 
 /**

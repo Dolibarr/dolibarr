@@ -237,8 +237,8 @@ class modSociete extends DolibarrModules
 		$this->import_entities_array[$r]=array('s.nom'=>"company",'s.prefix_comm'=>"company",'s.client'=>"company",'s.fournisseur'=>"company",'s.datec'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company",'s.fk_type'=>"company",'s.fk_effectif'=>"company","s.fk_status"=>"company",'s.fk_prospectlevel'=>'company','s.fk_stcomm'=>'company');
 		$this->import_examplevalues_array[$r]=array('s.nom'=>"A company",'s.prefix_comm'=>"comp",'s.client'=>'0 or 1','s.fournisseur'=>'0 or 1','s.datec'=>dol_print_date(mktime(),'YYYY-MM-DD'),'s.code_client'=>"CU01-0001",'s.code_fournisseur'=>"SU01-0001",'s.address'=>"61 jump street",'s.cp'=>"123456",'s.ville'=>"Big town",'p.code'=>"US",'s.tel'=>"0101010101",'s.fax'=>"0101010102",'s.url'=>"http://mycompany.com",'s.email'=>"test@mycompany.com",'s.siret'=>"",'s.siren'=>"",'s.ape'=>"",'s.idprof4'=>"",'s.tva_intra'=>"FR0123456789",'s.capital'=>"10000",'s.note'=>"This is an example of note for record",'s.fk_type'=>"XXX",'s.fk_effectif'=>"YYY","s.fk_status"=>"ZZZ",'s.fk_prospectlevel'=>'AAA','s.fk_stcomm'=>'BBB');
 
-		$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'societe as s';
-		$this->import_sql_end[$r]  ='';
+		//$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'societe as s';
+		//$this->import_sql_end[$r]  ='';
 
 	}
 

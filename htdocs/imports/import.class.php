@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/admin/import/import.class.php
+ *	\file       htdocs/import/import.class.php
  *	\ingroup    import
- *	\brief      Fichier de la classe des imports
+ *	\brief      File of class to manage imports
  *	\version    $Id$
  */
 
@@ -30,6 +30,19 @@
  */
 class Import
 {
+	var $array_import_module;
+	var $array_import_perms;
+	var $array_import_icon;
+	var $array_import_code;
+	var $array_import_label;
+	var $array_import_tables;
+	var $array_import_fields;
+	var $array_import_entities;
+	var $array_import_examplevalues;
+	//var $array_import_sql_start;
+	//var $array_import_sql_end;
+
+
 	/**
 	 *    \brief  Constructor
 	 *    \param  DB        Database handler
@@ -135,8 +148,8 @@ class Import
 									// Tableau des alias a exporter (cle=champ, valeur=alias)
 									$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
 									// Requete sql du dataset
-									$this->array_import_sql_start[$i]=$module->import_sql_start[$r];
-									$this->array_import_sql_end[$i]=$module->import_sql_end[$r];
+									//$this->array_import_sql_start[$i]=$module->import_sql_start[$r];
+									//$this->array_import_sql_end[$i]=$module->import_sql_end[$r];
 									//$this->array_import_sql[$i]=$module->import_sql[$r];
 
 									dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".sizeof($module->import_fields_code[$r]));
