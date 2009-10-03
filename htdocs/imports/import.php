@@ -968,6 +968,7 @@ if ($step == 4 && $datatoimport)
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add_import_model">';
 		print '<input type="hidden" name="step" value="'.$step.'">';
+		print '<input type="hidden" name="format" value="'.$format.'">';
 		print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
     	print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
