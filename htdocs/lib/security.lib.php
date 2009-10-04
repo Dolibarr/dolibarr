@@ -121,7 +121,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Table 2
 	print '<table class="login" summary="Login area" cellpadding="2" align="center">'."\n";
 
-	print '<tr><td colspan="3">&nbsp;</td></tr>';
+	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	print '<tr>';
 
@@ -157,10 +157,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Login field
-	print '<td valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b> &nbsp; </td>';
+	print '<td valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b> &nbsp; </td>'."\n";
 	print '<td valign="bottom" nowrap="nowrap"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="';
 	print (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
-	print '" tabindex="1" /></td>';
+	print '" tabindex="1" /></td>'."\n";
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
@@ -178,7 +178,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	print '<td rowspan="2" align="center">';
+	print '<td rowspan="2" align="center">'."\n";
 	if (empty($conf->browser->phone))
 	{
 		print '<img alt="Logo" title="" src="'.$urllogo.'"';
@@ -189,11 +189,11 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '</tr>'."\n";
 
 	// Password field
-	print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
+	print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>'."\n";
 	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="';
 	print $demopassword;
 	print '" tabindex="2">';
-	print '</td></tr>';
+	print '</td></tr>'."\n";
 
 	// Entity field
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
@@ -203,32 +203,33 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		//TODO: creer class
 		$entity = array('1'=>'company1','2'=>'company2');
 
-		print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>';
+		print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>'."\n";
 		print '<td valign="top" nowrap="nowrap">';
 		print $html->selectarray('entity',$entity,$lastentity,0,0,0,1,'tabindex="3"');
-		print '</td></tr>';
+		print '</td></tr>'."\n";
+		print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 	}
-
-	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	// Security graphical code
 	if (function_exists("imagecreatefrompng") && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
 		//print "Info session: ".session_name().session_id();print_r($_SESSION);
-		print '<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
-		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
+		print '<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>'."\n";
+		print '<td valign="top" nowrap="nowrap" align="left" class="e">'."\n";
 
-		print '<table><tr>';
-		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>';
+		print '<table><tr>'."\n";
+		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>'."\n";
 		$width=128;$height=36;
 		if (! empty($conf->browser->phone)) $width=64; $height=24;
-		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="'.$width.'" height="'.$height.'"></td>';
-		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
-		print '</tr></table>';
+		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="'.$width.'" height="'.$height.'"></td>'."\n";
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>'."\n";
+		print '</tr></table>'."\n";
 
 		print '</td>';
-		print '</tr>';
+		print '</tr>'."\n";
 	}
+	
+	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	print '<tr><td colspan="3" style="text-align:center;"><br>';
 	print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="5" />';
