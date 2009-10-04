@@ -100,7 +100,7 @@ if ($_GET["facid"])
     print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<tr><td width="20%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $html->showrefnav($fac,'facid','',1,'rowid','ref',$morehtmlref);
 	print '</td>';
 	print "</tr>\n";

@@ -116,7 +116,7 @@ llxHeader();
 
 $html = new Form($db);
 
-$id = $_GET['propalid'];
+$id = $_GET['propalid']?$_GET['propalid']:$_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {

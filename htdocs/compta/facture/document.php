@@ -117,7 +117,7 @@ llxHeader();
 
 $html = new Form($db);
 
-$id = $_GET['facid'];
+$id = $_GET['facid']?$_GET['facid']:$_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {

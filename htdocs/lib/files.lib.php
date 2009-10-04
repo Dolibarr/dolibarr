@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  */
 
 /**
- *  \brief		Scan a directory and return a list of files/directories
+ *  \brief		Scan a directory and return a list of files/directories. Content for string is UTF8.
  *  \param		$path        	Starting path from which to search
  *  \param		$types        	Can be "directories", "files", or "all"
  *  \param		$recursive		Determines whether subdirectories are searched
@@ -43,7 +43,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$loadsize=$mode?true:false;
 
 	// Clean parameters
-	$path=eregi_replace('[\\/]+$','',$path);
+	$path=eregi_replace('[\\/]+$','',utf8_check($path)?utf8_decode($path):$path);
 
 	if (! is_dir($path)) return array();
 
@@ -52,6 +52,9 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		$file_list = array();
 		while (false !== ($file = readdir($dir)))
 		{
+			// readdir return value in ISO and we want UTF8 in memory
+			if (! utf8_check($file)) $file=utf8_encode($file);
+
 			$qualified=1;
 
 			// Check if file is qualified
@@ -64,8 +67,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				if (is_dir($path."/".$file) && (($types=="directories") || ($types=="all")))
 				{
 					// Add entry into file_list array
-					if ($loaddate || $sortcriteria == 'date') $filedate=filemtime($path."/".$file);
-					if ($loadsize || $sortcriteria == 'size') $filesize=filesize($path."/".$file);
+					if ($loaddate || $sortcriteria == 'date') $filedate=filemtime(utf8_check($path."/".$file)?utf8_decode($path."/".$file):$path."/".$file);
+					if ($loadsize || $sortcriteria == 'size') $filesize=filesize(utf8_check($path."/".$file)?utf8_decode($path."/".$file):$path."/".$file);
 
 					if (! $filter || eregi($filter,$path.'/'.$file))
 					{
@@ -87,8 +90,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				else if (! is_dir($path."/".$file) && (($types == "files") || ($types == "all")))
 				{
 					// Add file into file_list array
-					if ($loaddate || $sortcriteria == 'date') $filedate=filemtime($path."/".$file);
-					if ($loadsize || $sortcriteria == 'size') $filesize=filesize($path."/".$file);
+					if ($loaddate || $sortcriteria == 'date') $filedate=filemtime(utf8_check($path."/".$file)?utf8_decode($path."/".$file):$path."/".$file);
+					if ($loadsize || $sortcriteria == 'size') $filesize=filesize(utf8_check($path."/".$file)?utf8_decode($path."/".$file):$path."/".$file);
 					if (! $filter || eregi($filter,$path.'/'.$file))
 					{
 						$file_list[] = array(
@@ -193,19 +196,18 @@ function dol_mimetype($file)
  */
 function dol_dir_is_emtpy($folder)
 {
-	if (is_dir($folder))
+	$newfolder=utf8_check($folder)?utf8_decode($folder):$folder;	// The opendir need ISO strings
+	if (is_dir($newfolder))
 	{
-		$handle = opendir($folder);
-		while( (gettype( $name = readdir($handle)) != "boolean")){
+		$handle = opendir($newfolder);
+		while ((gettype( $name = readdir($handle)) != "boolean"))
+		{
 			$name_array[] = $name;
 		}
-		foreach($name_array as $temp)
-		$folder_content .= $temp;
+		foreach($name_array as $temp) $folder_content .= $temp;
 
-		if($folder_content == "...")
-		return true;
-		else
-		return false;
+		if ($folder_content == "...") return true;
+		else return false;
 
 		closedir($handle);
 	}
@@ -221,16 +223,18 @@ function dol_dir_is_emtpy($folder)
 function dol_count_nb_of_line($file)
 {
 	$nb=0;
+
+	$newfile=utf8_check($file)?utf8_decode($file):$file;	// The fopen need ISO strings
 	//print 'x'.$file;
-	$fp=fopen($file,'r');
+	$fp=fopen($newfile,'r');
 	if ($fp)
 	{
-	    while (!feof($fp))
-	    {
-	        $line=fgets($fp);
-	        $nb++;
-	    }
-	    fclose($fp);
+		while (!feof($fp))
+		{
+			$line=fgets($fp);
+			$nb++;
+		}
+		fclose($fp);
 	}
 	else
 	{

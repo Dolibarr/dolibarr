@@ -698,13 +698,33 @@ function dol_date($fmt, $timestamp, $gm=0)
 /**
  * \brief		Return string with formated size
  * \param		size		Size to print
+ * \param		shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
+ * \param		shortunit	Use short value of size unit
  * \return		string		Link
  */
-function dol_print_size($size)
+function dol_print_size($size,$shortvalue=0,$shortunit=0)
 {
 	global $langs;
+	$level=1024;
 
-	return $size.' '.$langs->trans("Bytes");
+	// Set value text
+	if (empty($shortvalue) || $size < ($level*10))
+	{
+		$ret=$size;
+		$textunitshort=$langs->trans("b");
+		$textunitlong=$langs->trans("Bytes");
+	}
+	else
+	{
+		$ret=round($size/$level,0);
+		$textunitshort=$langs->trans("Kb");
+		$textunitlong=$langs->trans("KiloBytes");
+	}
+	// Use long or short text unit
+	if (empty($shortunit)) { $ret.=' '.$textunitlong; }
+	else { $ret.=' '.$textunitshort; }
+
+	return $ret;
 }
 
 /**
@@ -2111,11 +2131,12 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 function dol_delete_file($file)
 {
 	$ok=true;
-	foreach (glob($file) as $filename)
+	$newfile=utf8_check($file)?utf8_decode($file):$file;	// glob function accepts only ISO string
+	foreach (glob($newfile) as $filename)
 	{
 		$ok=unlink($filename);
-		if ($ok) dol_syslog("Removed file $filename",LOG_DEBUG);
-		else dol_syslog("Failed to remove file $filename",LOG_ERR);
+		if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
+		else dol_syslog("Failed to remove file ".$filename,LOG_ERR);
 	}
 	return $ok;
 }
@@ -2128,7 +2149,8 @@ function dol_delete_file($file)
  */
 function dol_delete_dir($dir)
 {
-	return rmdir($dir);
+	$newdir=utf8_check($dir)?utf8_decode($dir):$dir;
+	return rmdir($newdir);
 }
 
 /**
@@ -2140,7 +2162,8 @@ function dol_delete_dir($dir)
 function dol_delete_dir_recursive($dir,$count=0)
 {
 	//dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
-	if ($handle = opendir("$dir"))
+	$newdir=utf8_check($dir)?utf8_decode($dir):$dir;
+	if ($handle = opendir("$newdir"))
 	{
 		while (false !== ($item = readdir($handle)))
 		{

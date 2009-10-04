@@ -431,7 +431,7 @@ class FormFile
 		if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
 		else { $bc[true]=''; $bc[false]=''; };
 		$url=$_SERVER["PHP_SELF"];
-		print '<table width="100%" class="noborder">';
+		print '<table width="100%" class="nobordernopadding">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Documents2"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
@@ -457,14 +457,15 @@ class FormFile
 
 				$var=!$var;
 				print "<tr $bc[$var]><td>";
+				//print "XX".$file['name'];	//$file['name'] must be utf8
 				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				if ($forcedownload) print '&type=application/binary';
 				print '&file='.urlencode($relativepath.$file['name']).'">';
-				print img_mime($file['name']).' ';
-				print htmlentities(dol_trunc($file['name'],$maxlength,'middle'));
+				print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+				print dol_trunc($file['name'],$maxlength,'middle');
 				print '</a>';
 				print "</td>\n";
-				print '<td align="right">'.dol_print_size($file['size']).'</td>';
+				print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
 				print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
 				print '<td align="right">';
 				//print '&nbsp;';

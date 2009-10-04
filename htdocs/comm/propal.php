@@ -907,7 +907,7 @@ $companystatic=new Societe($db);
 
 $now=gmmktime();
 
-$id = $_GET['propalid'];
+$id = $_GET['propalid']?$_GET['propalid']:$_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
@@ -920,7 +920,7 @@ if ($id > 0 || ! empty($ref))
 	$product_static=new Product($db);
 
 	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid'],$_GET['ref']);
+	$propal->fetch($id,$ref);
 
 	$societe = new Societe($db);
 	$societe->fetch($propal->socid);

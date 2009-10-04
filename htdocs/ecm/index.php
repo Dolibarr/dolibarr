@@ -256,7 +256,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSections").'</td>';
 	print '<td class="liste_titre" colspan="5" align="right">';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>&nbsp;';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
 	print '</td>';
 	print '</tr>';
 
