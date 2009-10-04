@@ -20,14 +20,15 @@
  */
 
 /**
- \file       htdocs/compta/facture/document.php
- \ingroup    facture
- \brief      Page de gestion des documents attach�es � une facture
- \version    $Id$
+ *	\file       htdocs/compta/facture/document.php
+ *	\ingroup    facture
+ *	\brief      Page for attached files on invoices
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/invoice.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -109,15 +110,19 @@ if ($action=='delete')
 }
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader();
 
-if ($facid > 0)
+$html = new Form($db);
+
+$id = $_GET['facid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$facture = new Facture($db);
-	if ($facture->fetch($facid))
+	if ($facture->fetch($id,$ref) > 0)
 	{
 		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($facture->ref);
 
@@ -141,9 +146,23 @@ if ($facid > 0)
 		print '<table class="border"width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$facture->ref.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans('Ref').'</td>';
+		print '<td colspan="3">';
+		$morehtmlref='';
+		$discount=new DiscountAbsolute($db);
+		$result=$discount->fetch(0,$facture->id);
+		if ($result > 0)
+		{
+			$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+		}
+		if ($result < 0)
+		{
+			dol_print_error('',$discount->error);
+		}
+		print $html->showrefnav($facture,'ref','',1,'facnumber','ref',$morehtmlref);
+		print '</td></tr>';
 
-		// Soci�t�
+		// Company
 		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';

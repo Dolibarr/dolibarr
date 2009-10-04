@@ -42,6 +42,7 @@ class Product extends CommonObject
 	var $errno = 0;
 	var $element='product';
 	var $table_element='product';
+	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	//! Identifiant unique
 	var $id ;
@@ -970,8 +971,6 @@ class Product extends CommonObject
 			$this->pmp                = $result["pmp"];
 
 			$this->import_key         = $result["import_key"];
-
-			$this->next_prev_filter = 'entity = '.$conf->entity;
 
 			$this->db->free();
 

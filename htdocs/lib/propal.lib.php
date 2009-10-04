@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,10 @@ function propal_prepare_head($propal)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?propalid='.$propal->id;
+	/*$filesdir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
+	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+	$listoffiles=dol_dir_list($filesdir,'files',1);
+	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'document';
 	$h++;

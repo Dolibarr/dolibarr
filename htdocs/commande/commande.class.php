@@ -42,6 +42,7 @@ class Commande extends CommonObject
 	var $table_element='commande';
 	var $table_element_line = 'commandedet';
 	var $fk_element = 'fk_commande';
+	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id ;
 

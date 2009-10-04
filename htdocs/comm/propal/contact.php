@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/comm/propal/contact.php
-        \ingroup    propal
-        \brief      Onglet de gestion des contacts de propal
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/propal/contact.php
+ *       \ingroup    propal
+ *       \brief      Onglet de gestion des contacts de propal
+ *       \version    $Id$
+ */
 
 require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -162,11 +162,12 @@ $contactstatic=new Contact($db);
 /* *************************************************************************** */
 if (isset($mesg)) print $mesg;
 
-$id = $_GET["propalid"];
-if ($id > 0)
+$id = $_GET['propalid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$propal = New Propal($db);
-	if ( $propal->fetch($_GET['propalid']) > 0)
+	if ( $propal->fetch($id,$ref) > 0)
 	{
 		$soc = new Societe($db, $propal->socid);
 		$soc->fetch($propal->socid);
@@ -181,10 +182,12 @@ if ($id > 0)
 		*/
 		print '<table class="border" width="100%">';
 
+		$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $propal->ref;
-		print "</td></tr>";
+		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+		print '</td></tr>';
 
 		// Ref client
 		print '<tr><td>';

@@ -2720,7 +2720,7 @@ class Form
 						4=>$langs->trans("Day4"),
 						5=>$langs->trans("Day5"),
 						6=>$langs->trans("Day6"));
-						
+
 		$select_week = '<select class="flat" name="'.$htmlname.'">';
 		if ($useempty)
 		{
@@ -2741,7 +2741,7 @@ class Form
 		$select_week .= '</select>';
 		return $select_week;
 	}
-	
+
 	/**
 	 *    	\brief      Return HTML combo list of month
 	 *    	\param      selected          Preselected value
@@ -2773,7 +2773,7 @@ class Form
 		$select_month .= '</select>';
 		return $select_month;
 	}
-	
+
 	/**
 	 *    	\brief      Return HTML combo list of years
 	 *    	\param      selected          Preselected value
@@ -2826,6 +2826,7 @@ class Form
 	{
 		$ret='';
 
+		//print "$paramid,$morehtml,$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
 		$object->load_previous_next_ref($object->next_prev_filter,$fieldid);
 		$previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.img_previous().'</a>':'';
 		$next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.img_next().'</a>':'';

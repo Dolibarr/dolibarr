@@ -38,11 +38,13 @@ class FactureFournisseur extends Facture
 {
 	var $id;
 	var $db;
+	var $error;
 
 	var $element='facture_fourn';
 	var $table_element='facture_fourn';
 	var $table_element_line='facture_fourn_det';
 	var $fk_element='fk_facture_fourn';
+	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $ref;
 	var $ref_supplier;
@@ -212,6 +214,8 @@ class FactureFournisseur extends Facture
 	 */
 	function fetch($rowid)
 	{
+		global $conf;
+
 		$sql = 'SELECT libelle, facnumber, amount, remise, '.$this->db->pdate(datef).'as df,';
 		$sql.= ' total_ht, total_tva, total_ttc, fk_user_author,';
 		$sql.= ' fk_statut, fk_projet as fk_project, paye, f.note, f.note_public,';

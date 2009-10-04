@@ -151,15 +151,14 @@ if ($id > 0 || ! empty($ref))
 
 
 	/*
-	 * Fiche propal
-	 *
+	 * Proposal card
 	 */
 	print '<table class="border" width="100%">';
 
-	$linkback="<a href=\"propal.php?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+	$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
 
 	// Ref
-	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
+	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">';
 	print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 

@@ -47,6 +47,7 @@ class Facture extends CommonObject
 	var $table_element='facture';
 	var $table_element_line = 'facturedet';
 	var $fk_element = 'fk_facture';
+	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $table;
 	var $tabledetail;

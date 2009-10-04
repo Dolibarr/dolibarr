@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Marc Barilley / Ocebo <marc@ocebo.com>
+/* Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
  */
 
 /**
-	    \file       htdocs/lib/fourn.lib.php
-		\brief      Ensemble de fonctions de base pour le module fournisseur
-		\version    $Id$
-*/
+ *	    \file       htdocs/lib/fourn.lib.php
+ *		\brief      Ensemble de fonctions de base pour le module fournisseur
+ *		\version    $Id$
+ */
 
 function facturefourn_prepare_head($fac)
 {
@@ -46,6 +46,10 @@ function facturefourn_prepare_head($fac)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$fac->id;
+	/*$filesdir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($fac->id,2).$fac->id;
+	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+	$listoffiles=dol_dir_list($filesdir,'files',1);
+	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
@@ -107,7 +111,11 @@ function ordersupplier_prepare_head($commande)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$commande->id;
-	$head[$h][1] = $langs->trans("Documents");
+	/*$filesdir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);
+	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+	$listoffiles=dol_dir_list($filesdir,'files',1);
+	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
+	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
 

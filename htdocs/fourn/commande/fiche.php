@@ -478,7 +478,6 @@ if ($_GET["action"]	== 'create')
 
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
-
 $html =	new	Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
@@ -501,7 +500,7 @@ if ($id > 0 || ! empty($ref))
 
 	$commande =	new	CommandeFournisseur($db);
 
-	$result=$commande->fetch($_REQUEST['id'],$_REQUEST['ref']);
+	$result=$commande->fetch($id,$ref);
 	if ($result >= 0)
 	{
 		$soc = new Societe($db);

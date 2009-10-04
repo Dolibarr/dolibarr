@@ -18,13 +18,15 @@
  */
 
 /**
-        \file       htdocs/compta/facture/note.php
-        \ingroup    facture
-        \brief      Fiche de notes sur une facture
-		\version    $Id$
+ *      \file       htdocs/compta/facture/note.php
+ *      \ingroup    facture
+ *      \brief      Fiche de notes sur une facture
+ *		\version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
@@ -93,9 +95,14 @@ llxHeader();
 
 $html = new Form($db);
 
-if ($_GET["facid"])
+$id = $_GET['facid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
-    $soc = new Societe($db, $fac->socid);
+	$fac = new Facture($db);
+	$fac->fetch($id,$ref);
+
+	$soc = new Societe($db, $fac->socid);
     $soc->fetch($fac->socid);
 
     $head = facture_prepare_head($fac);
@@ -104,10 +111,24 @@ if ($_GET["facid"])
 
     print '<table class="border" width="100%">';
 
-    // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
+	// Ref
+	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+	print '<td colspan="3">';
+	$morehtmlref='';
+	$discount=new DiscountAbsolute($db);
+	$result=$discount->fetch(0,$fac->id);
+	if ($result > 0)
+	{
+		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+	}
+	if ($result < 0)
+	{
+		dol_print_error('',$discount->error);
+	}
+	print $html->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
+	print '</td></tr>';
 
-    // Soci�t�
+    // Company
     print '<tr><td>'.$langs->trans("Company").'</td>';
     print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
 

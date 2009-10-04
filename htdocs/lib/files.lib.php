@@ -32,7 +32,7 @@
  *  \param		$exludefilter  	Regex for exclude filter (example: '\.meta$')
  *  \param		$sortcriteria	Sort criteria ("name","date","size")
  *  \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	\param		$mode			0=Return array with only keys needed, 1=Force all keys to be loaded
+ *	\param		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower)
  *  \return		array			Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
@@ -189,7 +189,7 @@ function dol_mimetype($file)
 /**
  * 	\brief		Test if a folder is empty
  * 	\param		folder		Name of folder
- * 	\return 	boolean		True if dir is empty or non-existing, false if it contains files
+ * 	\return 	boolean		True if dir is empty or non-existing, False if it contains files
  */
 function dol_dir_is_emtpy($folder)
 {
@@ -210,7 +210,7 @@ function dol_dir_is_emtpy($folder)
 		closedir($handle);
 	}
 	else
-	return true; // Le repertoire n'existe pas
+	return true; // Dir does not exists
 }
 
 /**

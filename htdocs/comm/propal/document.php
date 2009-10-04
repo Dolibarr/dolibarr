@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/comm/propal/document.php
-        \ingroup    propale
-        \brief      Page de gestion des documents attach�es � une proposition commerciale
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/propal/document.php
+ *       \ingroup    propale
+ *       \brief      Page de gestion des documents attach�es � une proposition commerciale
+ *       \version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -109,15 +109,19 @@ if ($action=='delete')
 
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader();
 
-if ($propalid > 0)
+$html = new Form($db);
+
+$id = $_GET['propalid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	$propal = new Propal($db);
-	if ($propal->fetch($propalid))
+	if ($propal->fetch($id,$ref))
     {
 		$upload_dir = $conf->propale->dir_output.'/'.dol_sanitizeFileName($propal->ref);
 
@@ -139,11 +143,29 @@ if ($propalid > 0)
 
         print '<table class="border"width="100%">';
 
-		// Ref
-        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
+		$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
 
-        // Soci�t�
-        print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
+		// Ref
+		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+		print '</td></tr>';
+
+		// Ref client
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+		print $langs->trans('RefCustomer').'</td><td align="left">';
+		print '</td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		print $propal->ref_client;
+		print '</td>';
+		print '</tr>';
+
+		// Customer
+		if ( is_null($propal->client) )
+			$propal->fetch_client();
+		print "<tr><td>".$langs->trans("Company")."</td>";
+		print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
         print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

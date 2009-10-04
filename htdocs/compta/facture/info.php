@@ -18,13 +18,15 @@
  */
 
 /**
-        \file       htdocs/compta/facture/info.php
-        \ingroup    facture
-		\brief      Page des informations d'une facture
-		\version    $Id$
+ *      \file       htdocs/compta/facture/info.php
+ *      \ingroup    facture
+ *		\brief      Page des informations d'une facture
+ *		\version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 

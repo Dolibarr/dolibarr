@@ -94,10 +94,10 @@ if ( $societe->fetch($socid) )
 
 	// Phone
 	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dol_print_phone($societe->tel,$societe->pays_code,0,$societe->id,'AC_TEL').'</td>';
-	
+
 	// Fax
 	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
-	
+
     // EMail
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
 
@@ -140,114 +140,107 @@ if ( $societe->fetch($socid) )
 		print '</a></td></tr></table>';
 	}
 
-	
+
 	print '<br>';
 
 	/*
-	 * Liste des commandes associees
+	 * Last orders
 	 */
 	$orderstatic = new CommandeFournisseur($db);
 
-	$sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
-	$sql.= " WHERE p.fk_soc =".$societe->id;
-	$sql.= " ORDER BY p.date_commande DESC";
-	$sql.= " ".$db->plimit($MAXLIST);
-	$resql=$db->query($sql);
-	if ($resql)
+	if ($user->rights->fournisseur->commande->lire)
 	{
-		$i = 0 ;
-		$num = $db->num_rows($resql);
-		if ($num > 0)
+		$sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+		$sql.= " WHERE p.fk_soc =".$societe->id;
+		$sql.= " ORDER BY p.date_commande DESC";
+		$sql.= " ".$db->plimit($MAXLIST);
+		$resql=$db->query($sql);
+		if ($resql)
 		{
+			$i = 0 ;
+			$num = $db->num_rows($resql);
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">';
 			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?$num:$MAXLIST)).'</td>';
 			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table>';
 			print '</td></tr>';
-		}
-		while ($i < $num && $i <= $MAXLIST)
-		{
-			$obj = $db->fetch_object($resql);
-			$var=!$var;
+			while ($i < $num && $i <= $MAXLIST)
+			{
+				$obj = $db->fetch_object($resql);
+				$var=!$var;
 
-			print "<tr $bc[$var]>";
-			print '<td><a href="commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref.'</a></td>';
-			print '<td align="center" width="80">';
-			if ($obj->dc)
-			{
-				print dol_print_date($obj->dc,'day');
+				print "<tr $bc[$var]>";
+				print '<td><a href="commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref.'</a></td>';
+				print '<td align="center" width="80">';
+				if ($obj->dc)
+				{
+					print dol_print_date($obj->dc,'day');
+				}
+				else
+				{
+					print "-";
+				}
+				print '</td>';
+				print '<td align="right" nowrap="nowrap">'.$orderstatic->LibStatut($obj->fk_statut,5).'</td>';
+				print '</tr>';
+				$i++;
 			}
-			else
-			{
-				print "-";
-			}
-			print '</td>';
-			print '<td align="right" nowrap="nowrap">'.$orderstatic->LibStatut($obj->fk_statut,5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-		$db->free($resql);
-		if ($num > 0)
-		{
+			$db->free($resql);
 			print "</table>";
 		}
+		else
+		{
+			dol_print_error($db);
+		}
 	}
-	else
-	{
-		dol_print_error($db);
-	}
-
 
 	/*
-	 * Liste des factures associees
+	 * Last invoices
 	 */
 	$MAXLIST=5;
 
 	$langs->load('bills');
 	$facturestatic = new FactureFournisseur($db);
 
-	$sql = 'SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut,'.$db->pdate('p.datef').' as df, total_ttc as amount, paye';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as p';
-	$sql.= ' WHERE p.fk_soc = '.$societe->id;
-	$sql.= ' ORDER BY p.datef DESC';
-	$resql=$db->query($sql);
-	if ($resql)
+	if ($user->rights->fournisseur->facture->lire)
 	{
-		$i = 0 ;
-		$num = $db->num_rows($resql);
-		if ($num > 0)
+		$sql = 'SELECT p.rowid,p.libelle,p.facnumber,p.fk_statut,'.$db->pdate('p.datef').' as df, total_ttc as amount, paye';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as p';
+		$sql.= ' WHERE p.fk_soc = '.$societe->id;
+		$sql.= ' ORDER BY p.datef DESC';
+		$resql=$db->query($sql);
+		if ($resql)
 		{
+			$i = 0 ;
+			$num = $db->num_rows($resql);
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="4">';
 			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td></tr></table>';
 			print '</td></tr>';
-		}
-		while ($i < min($num,$MAXLIST))
-		{
-			$obj = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
-			print '<td>';
-			print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
-			print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dol_trunc($obj->libelle,14).'</td>';
-			print '<td align="center" nowrap="nowrap">'.dol_print_date($obj->df,'day').'</td>';
-			print '<td align="right" nowrap="nowrap">'.price($obj->amount).'</td>';
-			print '<td align="right" nowrap="nowrap">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,5).'</td>';
-			print '</tr>';
-			$i++;
-		}
-		$db->free($resql);
-		if ($num > 0)
-		{
+			while ($i < min($num,$MAXLIST))
+			{
+				$obj = $db->fetch_object($resql);
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+				print '<td>';
+				print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
+				print img_object($langs->trans('ShowBill'),'bill').' '.$obj->facnumber.'</a> '.dol_trunc($obj->libelle,14).'</td>';
+				print '<td align="center" nowrap="nowrap">'.dol_print_date($obj->df,'day').'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($obj->amount).'</td>';
+				print '<td align="right" nowrap="nowrap">'.$facturestatic->LibStatut($obj->paye,$obj->fk_statut,5).'</td>';
+				print '</tr>';
+				$i++;
+			}
+			$db->free($resql);
 			print '</table>';
 		}
-	}
-	else
-	{
-		dol_print_error($db);
+		else
+		{
+			dol_print_error($db);
+		}
 	}
 
 	print '</td></tr>';

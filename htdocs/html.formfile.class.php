@@ -121,7 +121,7 @@ class FormFile
 
 
 	/**
-	 *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
+	 *      \brief      Show the box with list of available documents for object
 	 *      \param      modulepart          propal=propal, facture=facture, ...
 	 *      \param      filename            Sub dir to scan (use '' if filedir already complete)
 	 *      \param      filedir             Dir to scan
@@ -130,8 +130,8 @@ class FormFile
 	 *      \param      delallowed          Remove is allowed (1/0)
 	 *      \param      modelselected       Model to preselect by default
 	 *      \param      modelliste			Tableau des modeles possibles. Use '' to hide combo select list.
-	 *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS defini
-	 *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
+	 *      \param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+	 *      \param      iconPDF             Show only PDF icon with link (1/0)
 	 * 		\param		maxfilenamelength	Max length for filename shown
 	 * 		\param		noform				Do not output html form start and end
 	 * 		\param		param				More param on http links
@@ -295,7 +295,7 @@ class FormFile
 			print '<input type="hidden" name="action" value="builddoc">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-			print_titre($langs->trans("BuildDocuments"));
+			print_titre($langs->trans("Documents"));
 			print '<table class="border" summary="listofdocumentstable" width="100%">';
 
 			print '<tr '.$bc[$var].'>';

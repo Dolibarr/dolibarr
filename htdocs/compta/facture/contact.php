@@ -27,6 +27,7 @@
 require ("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
@@ -159,11 +160,13 @@ $contactstatic=new Contact($db);
 /*                                                                             */
 /* *************************************************************************** */
 if (isset($mesg)) print $mesg;
-$id = $_GET["facid"];
-if ($id > 0)
+
+$id = $_GET['facid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
-	$facture = New Facture($db);
-	if ( $facture->fetch($_GET['facid'], $user->societe_id) > 0)
+	$facture = new Facture($db);
+	if ($facture->fetch($id, $ref) > 0)
 	{
 		$facture->fetch_client();
 
@@ -176,10 +179,22 @@ if ($id > 0)
 		 */
 		print '<table class="border" width="100%">';
 
-		// Reference du facture
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $facture->ref;
-		print "</td></tr>";
+		// Ref
+		print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+		print '<td colspan="3">';
+		$morehtmlref='';
+		$discount=new DiscountAbsolute($db);
+		$result=$discount->fetch(0,$facture->id);
+		if ($result > 0)
+		{
+			$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+		}
+		if ($result < 0)
+		{
+			dol_print_error('',$discount->error);
+		}
+		print $html->showrefnav($facture,'ref','',1,'facnumber','ref',$morehtmlref);
+		print '</td></tr>';
 
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";

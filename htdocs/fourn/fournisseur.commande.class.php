@@ -36,15 +36,17 @@ require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
  */
 class CommandeFournisseur extends Commande
 {
+	var $id ;
 	var $db ;
 	var $error;
+
 	var $element='order_supplier';
 	var $table_element='commande_fournisseur';
 	var $table_element_line = 'commande_fournisseurdet';
 	var $fk_element = 'fk_commande';
-	var $table_optional = 'societe as s';
+	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $id ;
+	var $ref;
 	var $brouillon;
 
 
@@ -119,8 +121,6 @@ class CommandeFournisseur extends Commande
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;
-
-			$this->next_prev_filter = 'fk_soc = s.rowid AND s.entity = '.$conf->entity;
 
 			$this->db->free();
 

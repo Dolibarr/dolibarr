@@ -28,16 +28,16 @@ if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php")
 
 
 /**
- \class      UserGroup
- \brief      Classe permettant la gestion des groupes d'utilisateur
+ *	\class      UserGroup
+ *	\brief      Classe permettant la gestion des groupes d'utilisateur
  */
-
 class UserGroup extends CommonObject
 {
 	var $db;			// Database handler
 	var $error;
 	var $errors=array();
 	var $table_element='usergroup';
+	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;			// Group id
 	var $entity;  // Entity of group
@@ -93,8 +93,6 @@ class UserGroup extends CommonObject
 				$this->note = $obj->note;
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
-
-				$this->next_prev_filter = 'entity IN (0,'.$conf->entity.')';
 
 				// Sav current LDAP Current DN
 				//$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);

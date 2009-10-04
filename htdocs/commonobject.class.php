@@ -406,22 +406,29 @@ class CommonObject
 	/**
 	 *      \brief      Load properties id_previous and id_next
 	 *      \param      filter		Optional filter
-	 *	   \param      fieldid   	Nom du champ a utiliser pour select next et previous
-	 *      \return     int         	<0 if KO, >0 if OK
+	 *	 	\param      fieldid   	Name of field to use for the select MAX and MIN
+	 *      \return     int         <0 if KO, >0 if OK
 	 */
 	function load_previous_next_ref($filter='',$fieldid)
 	{
+		global $conf;
+
 		if (! $this->table_element)
 		{
 			dol_syslog("CommonObject::load_previous_next was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
+ 		// this->ismultientitymanaged contains
+		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
 		$sql = "SELECT MAX(".$fieldid.")";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		if ($this->table_optional) $sql.= ", ".MAIN_DB_PREFIX.$this->table_optional;
-		$sql.= " WHERE ".$fieldid." < '".addslashes($this->ref)."'";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
+		if ($this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+		$sql.= " WHERE te.".$fieldid." < '".addslashes($this->ref)."'";
 		if (isset($filter)) $sql.=" AND ".$filter;
+		if ($this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
+		if ($this->ismultientitymanaged > 0) $sql.= ' AND entity IN (0,'.$conf->entity.')';
 
 		//print $sql."<br>";
 		$result = $this->db->query($sql) ;
@@ -435,11 +442,13 @@ class CommonObject
 
 
 		$sql = "SELECT MIN(".$fieldid.")";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		if ($this->table_optional) $sql.= ", ".MAIN_DB_PREFIX.$this->table_optional;
-		$sql.= " WHERE ".$fieldid." > '".addslashes($this->ref)."'";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
+		if ($this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+		$sql.= " WHERE te.".$fieldid." > '".addslashes($this->ref)."'";
 		if (isset($filter)) $sql.=" AND ".$filter;
-		// Rem: Bug in some mysql version: SELECT rowid FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
+		if ($this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
+		if ($this->ismultientitymanaged > 0) $sql.= ' AND entity IN (0,'.$conf->entity.')';
+		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
 		//print $sql."<br>";
 		$result = $this->db->query($sql) ;

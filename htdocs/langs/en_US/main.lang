@@ -497,6 +497,7 @@ Canceled=Canceled
 YouCanChangeValuesForThisListFromDictionnarySetup=You can change values for this list from menu setup - dictionnary
 Color=Color
 Documents=Linked files
+DocumentsNb=Linked files (%s)
 Documents2=Documents
 BuildDocuments=Generated documents
 UploadDisabled=Upload disabled

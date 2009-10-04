@@ -496,6 +496,7 @@ Canceled=Annulé
 YouCanChangeValuesForThisListFromDictionnarySetup=Vous pouvez changer ces valeurs depuis le menu configuration - dictionnaires
 Color=Couleur
 Documents=Fichiers joints
+DocumentsNb=Fichiers joints (%s)
 Documents2=Documents
 BuildDocuments=Documents générés
 UploadDisabled=Transfert désactivé

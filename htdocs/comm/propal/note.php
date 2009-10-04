@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/comm/propal/note.php
- \ingroup    propale
- \brief      Fiche d'information sur une proposition commerciale
- \version    $Id$
+ *	\file       htdocs/comm/propal/note.php
+ *	\ingroup    propale
+ *	\brief      Fiche d'information sur une proposition commerciale
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
@@ -94,14 +94,16 @@ llxHeader();
 
 $html = new Form($db);
 
-if ($_GET['propalid'])
+$id = $_GET['propalid'];
+$ref= $_GET['ref'];
+if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print $mesg;
 
 	$now=gmmktime();
 
 	$propal = new Propal($db);
-	if ( $propal->fetch($_GET['propalid']) )
+	if ($propal->fetch($id, $ref))
 	{
 		$societe = new Societe($db);
 		if ( $societe->fetch($propal->socid) )
@@ -111,10 +113,29 @@ if ($_GET['propalid'])
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
+			$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
 
-			// Societe
-			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
+			// Ref
+			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+			print $html->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+			print '</td></tr>';
+
+			// Ref client
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print $langs->trans('RefCustomer').'</td><td align="left">';
+			print '</td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			print $propal->ref_client;
+			print '</td>';
+			print '</tr>';
+
+			// Customer
+			if ( is_null($propal->client) )
+				$propal->fetch_client();
+			print "<tr><td>".$langs->trans("Company")."</td>";
+			print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
 
 			// Ligne info remises tiers
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
@@ -122,7 +143,7 @@ if ($_GET['propalid'])
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$societe->getAvailableDiscounts();
 			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';

@@ -1977,7 +1977,7 @@ else
 		$facstatic = new Facture($db);
 
 		$fac = new Facture($db);
-		$result=$fac->fetch($_GET['facid'],$_GET['ref']);
+		$result=$fac->fetch($id,$ref);
 		if ($result > 0)
 		{
 			if ($user->societe_id>0 && $user->societe_id!=$fac->socid)  accessforbidden('',0);

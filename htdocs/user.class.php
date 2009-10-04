@@ -49,6 +49,7 @@ class User extends CommonObject
 	var $errors=array();
 	var $element='user';
 	var $table_element='user';
+	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id=0;
 	var $ldap_sid;
@@ -210,8 +211,6 @@ class User extends CommonObject
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
-
-				$this->next_prev_filter     = 'entity IN (0,'.$conf->entity.')';
 
 				if (! $this->lang) $this->lang='fr_FR';
 

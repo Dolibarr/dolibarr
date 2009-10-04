@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ function commande_prepare_head($commande)
 		$h++;
 	}
 
-	// Commande à facturer
+	// Commande a facturer
 	if ($conf->facture->enabled)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$commande->id;
@@ -76,6 +76,10 @@ function commande_prepare_head($commande)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$commande->id;
+	/*$filesdir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($commande->ref);
+	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+	$listoffiles=dol_dir_list($filesdir,'files',1);
+	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
