@@ -153,17 +153,17 @@ if ($_GET["id"] > 0) {
 					print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
 
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
-					print '<td align="right">'.filesize($file). ' bytes</td>';
-					print '<td align="right">'.dol_print_date(filemtime($file),'dayhour').'</td>';
+					print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
+					print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
 					if (file_exists($filedetail)) { // commande d�taill�e suppl�mentaire
-						print "<tr $bc[$var]><td>Commande d�taill�e</td>";
+						print "<tr $bc[$var]><td>Commande detaillee</td>";
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$commande->ref.'-detail.pdf</a></td>';
-						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-						print '<td align="right">'.dol_print_date(filemtime($filedetail),'dayhour').'</td>';
+						print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
+						print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 						print '</tr>';
 					}
 					print "</table>\n";

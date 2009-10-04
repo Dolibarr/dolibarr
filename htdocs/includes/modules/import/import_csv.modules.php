@@ -160,12 +160,12 @@ class ImportCsv extends ModeleImports
 	function import_open_file($file)
     {
     	global $langs;
+		$ret=1;
 
         dol_syslog("ImportCsv::open_file file=".$file);
 
-		$ret=1;
-
-		$this->handle = fopen($file, "r");
+		$newfile=utf8_check($file)?utf8_decode($file):$file;	// fopen need ISO file name
+		$this->handle = fopen($newfile, "r");
         if (! $this->handle)
 		{
 			$langs->load("errors");

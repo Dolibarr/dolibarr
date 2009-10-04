@@ -171,8 +171,8 @@ if ($year)
 	  	$tfile = $dir . '/'.$year.'/'.$file;
 	  	$relativepath = $year.'/'.$file;
 	  	print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
-	  	print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
-	  	print '<td align="right">'.dol_print_date(filemtime($tfile),"dayhour").'</td></tr>';
+	  	print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
+	  	print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
 	  }
 		}
 		print '</table>';

@@ -253,7 +253,7 @@ function dol_count_nb_of_line($file)
  */
 function dol_filesize($pathoffile)
 {
-	$newpathoffile=check_utf8($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	$newpathoffile=utf8_check($pathoffile)?utf8_decode($pathoffile):$pathoffile;
 	return filesize($pathoffile);
 }
 
@@ -263,10 +263,10 @@ function dol_filesize($pathoffile)
  * @param 	$pathoffile
  * @return 	timestamp	Time of file
  */
-function dol_filetime($pathoffile)
+function dol_filemtime($pathoffile)
 {
-	$newpathoffile=check_utf8($pathoffile)?utf8_decode($pathoffile):$pathoffile;
-	return filemtime($nrwpathoffile);
+	$newpathoffile=utf8_check($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	return filemtime($newpathoffile);
 }
 
 /**

@@ -24,7 +24,7 @@
 /**
 		\file		htdocs/fichinter/apercu.php
 		\ingroup	fichinter
-		\brief		Page de l'onglet aperçu d'une fiche d'intervention
+		\brief		Page de l'onglet aperï¿½u d'une fiche d'intervention
 		\version	$Revision$
 */
 
@@ -107,7 +107,7 @@ if ($_GET["id"] > 0) {
 				$relativepath = "${fichinterref}/${fichinterref}.pdf";
 				$relativepathdetail = "${fichinterref}/${fichinterref}-detail.pdf";
 
-        // Chemin vers png aperçus
+        // Chemin vers png aperï¿½us
 				$relativepathimage = "${fichinterref}/${fichinterref}.pdf.png";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
@@ -124,17 +124,17 @@ if ($_GET["id"] > 0) {
 					print "<tr $bc[$var]><td>".$langs->trans("Intervention")." PDF</td>";
 
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'">'.$fichinter->ref.'.pdf</a></td>';
-					print '<td align="right">'.filesize($file). ' bytes</td>';
-					print '<td align="right">'.dol_print_date(filemtime($file),'dayhour').'</td>';
+					print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
+					print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
-					if (file_exists($filedetail)) { // fichinter détaillée supplémentaire
-						print "<tr $bc[$var]><td>Fiche d'intervention détaillée</td>";
+					if (file_exists($filedetail)) { // fichinter dï¿½taillï¿½e supplï¿½mentaire
+						print "<tr $bc[$var]><td>Fiche d'intervention dï¿½taillï¿½e</td>";
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepathdetail).'">'.$fichinter->ref.'-detail.pdf</a></td>';
-						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-						print '<td align="right">'.dol_print_date(filemtime($filedetail),'dayhour').'</td>';
+						print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
+						print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 						print '</tr>';
 					}
 					print "</table>\n";
@@ -193,17 +193,17 @@ if ($_GET["id"] > 0) {
 			dol_print_error($db);
 		}
 	} else {
-	// Intervention non trouvée
+	// Intervention non trouvï¿½e
 	print $langs->trans("ErrorFichinterNotFound",$_GET["id"]);
 	}
 }
 
-// Si fichier png PDF d'1 page trouvé
+// Si fichier png PDF d'1 page trouvï¿½
 if (file_exists($fileimage))
 	{
 	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($relativepathimage).'">';
 	}
-// Si fichier png PDF de plus d'1 page trouvé
+// Si fichier png PDF de plus d'1 page trouvï¿½
 elseif (file_exists($fileimagebis))
 	{
 		$multiple = $relativepathimage . ".";

@@ -376,9 +376,9 @@ class FormFile
 			print '</a>';
 			if (!$iconPDF) print '</td>';
 			// Affiche taille fichier
-			if (!$iconPDF) print '<td align="right">'.dol_print_size(filesize($filedir."/".$file["name"])).'</td>';
+			if (!$iconPDF) print '<td align="right">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
 			// Affiche date fichier
-			if (!$iconPDF) print '<td align="right">'.dol_print_date(filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+			if (!$iconPDF) print '<td align="right">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
 
 			if ($delallowed)
 			{

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
+ * Copyright (C) 2005      Marc Barilley / Ocï¿½bo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/install/check.php
  *	\ingroup    install
- *	\brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
+ *	\brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilitï¿½ de le crï¿½er
  *	\version    $Id$
  */
 include_once("./inc.php");
@@ -151,7 +151,7 @@ if ($memmaxorig != '')
 }
 
 
-// Si fichier présent et lisible et renseigné
+// Si fichier present et lisible et renseigne
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
@@ -159,13 +159,13 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 	$confexists=1;
 	include_once($conffile);
 
-	// Deja installé, on peut upgrader
+	// Deja installï¿½, on peut upgrader
 	// \todo Test if database ok
 	$allowupgrade=1;
 }
 else
 {
-	// Si non on le crée
+	// Si non on le crï¿½e
 	dolibarr_install_syslog("check: we try to creat conf file '$conffile'");
 	$confexists=0;
 
@@ -196,7 +196,7 @@ else
 
 
 
-// Si fichier absent et n'a pu etre créé
+// Si fichier absent et n'a pu etre crï¿½ï¿½
 if (! file_exists($conffile))
 {
 	//print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
@@ -210,7 +210,7 @@ if (! file_exists($conffile))
 }
 else
 {
-	// Si fichier présent mais ne peut etre modifié
+	// Si fichier prï¿½sent mais ne peut etre modifiï¿½
 	if (!is_writable($conffile))
 	{
 		if ($confexists)
@@ -227,7 +227,7 @@ else
 
 		$allowinstall=0;
 	}
-	// Si fichier présent et peut etre modifié
+	// Si fichier prï¿½sent et peut etre modifiï¿½
 	else
 	{
 		if ($confexists)
@@ -246,7 +246,7 @@ else
 	}
 	print "<br />\n";
 
-	// Si prerequis ok, on affiche le bouton pour passer à l'étape suivante
+	// Si prerequis ok, on affiche le bouton pour passer ï¿½ l'ï¿½tape suivante
 	if ($checksok)
 	{
 		$ok=0;

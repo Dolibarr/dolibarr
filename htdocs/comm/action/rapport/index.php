@@ -27,6 +27,7 @@
  */
 
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/action/rapport.pdf.php");
@@ -121,8 +122,8 @@ if ($resql)
 			if (file_exists($file))
 			{
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a></td>';
-				print '<td align="center">'.dol_print_date(filemtime($file),'dayhour').'</td>';
-				print '<td align="center">'.filesize($file). ' '.$langs->trans("Bytes").'</td>';
+				print '<td align="center">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
+				print '<td align="center">'.dol_print_size(dol_filesize($file)).'</td>';
 			}
 			else {
 				print '<td>&nbsp;</td>';

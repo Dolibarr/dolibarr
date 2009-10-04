@@ -240,8 +240,8 @@ if ($socid > 0)
 					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
 					print "</td>\n";
 
-					print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-					print '<td align="center">'.dol_print_date(filemtime($courrier_dir."/".$file),"dayhour").'</td>';
+					print '<td align="right">'.dol_print_size(dol_filesize($courrier_dir."/".$file)).'</td>';
+					print '<td align="center">'.dol_print_date(dol_filemtime($courrier_dir."/".$file),'dayhour').'</td>';
 					print "</tr>\n";
 				}
 			}

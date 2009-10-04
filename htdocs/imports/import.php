@@ -561,9 +561,9 @@ if ($step == 3 && $datatoimport)
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>'.$file.'</td>';
 			// Affiche taille fichier
-			print '<td align="right">'.dol_print_size(filesize($newdir.'/'.$newfile)).'</td>';
+			print '<td align="right">'.dol_print_size(dol_filesize($newdir.'/'.$newfile)).'</td>';
 			// Affiche date fichier
-			print '<td align="right">'.dol_print_date(filemtime($newdir.'/'.$newfile),'dayhour').'</td>';
+			print '<td align="right">'.dol_print_date(dol_filemtime($newdir.'/'.$newfile),'dayhour').'</td>';
 			// Del button
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&step=3&format='.$format.'&modulepart='.$modulepart.'&file='.urlencode($relativepath);
 			print '&amp;urlsource='.urlencode($urlsource);
@@ -621,6 +621,8 @@ if ($step == 4 && $datatoimport)
 
 	$maxpos=max(sizeof($fieldssource),sizeof($fieldstarget));
 
+	//var_dump($array_match_file_to_database);
+
 	// Is it a first time in page
 	if (sizeof($array_match_file_to_database) == 0)
 	{
@@ -631,7 +633,7 @@ if ($step == 4 && $datatoimport)
 		$pos=1;
 		while ($pos <= sizeof($fieldssource))
 		{
-			if (sizeof($fieldssource) > 1 && $pos <= sizeof($fieldssource))
+			if (sizeof($fieldssource) >= 1 && $pos <= sizeof($fieldssource))
 			{
 				$posbis=1;
 				foreach($fieldstarget as $key => $val)
@@ -750,6 +752,7 @@ if ($step == 4 && $datatoimport)
 
 	$fieldsplaced=array();
 	$valforsourcefieldnb=array();
+	$listofkeys=array();
 	foreach($array_match_file_to_database as $key => $val)
 	{
 		$listofkeys[$key]=1;

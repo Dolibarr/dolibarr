@@ -230,10 +230,10 @@ class CMailFile
 			$mail->B3B = $this->alternative_boundary;
 
 			$mail->XMailer = "Dolibarr version " . DOL_VERSION ." (using simplemail)";
-			
+
 			// Add Errors-To
 			$mail->ErrorsTo = $this->getValidAddress($errors_to,1);
-			
+
 			//Add Return-Path
 			$mail->returnpath = $this->getValidAddress($errors_to,1);
 

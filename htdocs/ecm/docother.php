@@ -125,8 +125,8 @@ if ($handle)
 		if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 		{
 			$filearray[$i]->name=$file;
-			$filearray[$i]->size=filesize($upload_dir."/".$file);
-			$filearray[$i]->date=filemtime($upload_dir."/".$file);
+			$filearray[$i]->size=dol_filesize($upload_dir."/".$file);
+			$filearray[$i]->date=dol_filemtime($upload_dir."/".$file);
 			$totalsize+=$filearray[$i]->size;
 			$i++;
 		}
