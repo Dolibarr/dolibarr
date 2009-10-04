@@ -178,7 +178,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	print '<td rowspan="2" align="center">'."\n";
+	$rowspan = 2;
+	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
+	print '<td rowspan="'.$rowspan.'" align="center" valign="top">'."\n";
 	if (empty($conf->browser->phone))
 	{
 		print '<img alt="Logo" title="" src="'.$urllogo.'"';
@@ -207,7 +209,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '<td valign="top" nowrap="nowrap">';
 		print $html->selectarray('entity',$entity,$lastentity,0,0,0,1,'tabindex="3"');
 		print '</td></tr>'."\n";
-		print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 	}
 
 	// Security graphical code
@@ -217,7 +218,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>'."\n";
 		print '<td valign="top" nowrap="nowrap" align="left" class="e">'."\n";
 
-		print '<table><tr>'."\n";
+		print '<table style="width: 100px;"><tr>'."\n";	// Force width to a small value
 		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>'."\n";
 		$width=128;$height=36;
 		if (! empty($conf->browser->phone)) $width=64; $height=24;
