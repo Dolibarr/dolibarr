@@ -22,8 +22,8 @@
 /**
  \file       htdocs/includes/modules/fichinter/modules_fichinter.php
  \ingroup    ficheinter
- \brief      Fichier contenant la classe mère de generation des fiches interventions en PDF
- et la classe mère de numérotation des fiches interventions
+ \brief      Fichier contenant la classe mï¿½re de generation des fiches interventions en PDF
+ et la classe mï¿½re de numï¿½rotation des fiches interventions
  \version    $Id$
  */
 
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 /**
  \class      ModelePDFFicheinter
- \brief      Classe mère des modèles de fiche intervention
+ \brief      Classe mï¿½re des modï¿½les de fiche intervention
  */
 class ModelePDFFicheinter extends FPDF
 {
@@ -48,7 +48,7 @@ class ModelePDFFicheinter extends FPDF
 	}
 
 	/**
-	 \brief      Renvoi le dernier message d'erreur de création de fiche intervention
+	 \brief      Renvoi le dernier message d'erreur de crï¿½ation de fiche intervention
 	 */
 	function pdferror()
 	{
@@ -56,12 +56,12 @@ class ModelePDFFicheinter extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des modèles actifs
+	 *      \brief      Renvoi la liste des modï¿½les actifs
 	 */
 	function liste_modeles($db)
 	{
 		global $conf;
-		
+
 		$type='ficheinter';
 		$liste=array();
 		$sql = "SELECT nom as id, nom as lib";
@@ -93,7 +93,7 @@ class ModelePDFFicheinter extends FPDF
 
 /**
  \class      ModeleNumRefFicheinter
- \brief      Classe mère des modèles de numérotation des références de fiches d'intervention
+ \brief      Classe mï¿½re des modï¿½les de numï¿½rotation des rï¿½fï¿½rences de fiches d'intervention
  */
 
 class ModeleNumRefFicheinter
@@ -108,7 +108,7 @@ class ModeleNumRefFicheinter
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de numérotation
+	/**     \brief      Renvoi la description par defaut du modele de numï¿½rotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -118,7 +118,7 @@ class ModeleNumRefFicheinter
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de numérotation
+	/**     \brief      Renvoi un exemple de numï¿½rotation
 	 *      \return     string      Example
 	 */
 	function getExample()
@@ -128,8 +128,8 @@ class ModeleNumRefFicheinter
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numérotation de fonctionner.
+	/**     \brief      Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numï¿½rotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -137,7 +137,7 @@ class ModeleNumRefFicheinter
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuée
+	/**     \brief      Renvoi prochaine valeur attribuï¿½e
 	 *      \return     string      Valeur
 	 */
 	function getNextValue()
@@ -163,10 +163,10 @@ class ModeleNumRefFicheinter
 
 
 /**
- \brief      Crée une fiche intervention sur disque en fonction du modèle de FICHEINTER_ADDON_PDF
- \param	    db  			objet base de donnée
+ \brief      Crï¿½e une fiche intervention sur disque en fonction du modï¿½le de FICHEINTER_ADDON_PDF
+ \param	    db  			objet base de donnï¿½e
  \param	    object			Object fichinter
- \param	    modele			force le modele à utiliser ('' par defaut)
+ \param	    modele			force le modele ï¿½ utiliser ('' par defaut)
  \param		outputlangs		objet lang a utiliser pour traduction
  \return     int         	0 si KO, 1 si OK
  */
@@ -177,7 +177,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
 
-	// Positionne modele sur le nom du modele de facture à utiliser
+	// Positionne modele sur le nom du modele de facture ï¿½ utiliser
 	if (! strlen($modele))
 	{
 		if ($conf->global->FICHEINTER_ADDON_PDF)
@@ -226,10 +226,10 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 }
 
 /**
- \brief     Supprime l'image de prévisualitation, pour le cas de régénération de propal
- \param	    db  		objet base de donnée
- \param	    propalid	id de la propal à effacer
- \param     propalref référence de la propal si besoin
+ \brief     Supprime l'image de prï¿½visualitation, pour le cas de rï¿½gï¿½nï¿½ration de propal
+ \param	    db  		objet base de donnï¿½e
+ \param	    propalid	id de la propal ï¿½ effacer
+ \param     propalref rï¿½fï¿½rence de la propal si besoin
  */
 function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 {
@@ -251,7 +251,7 @@ function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 
 		if ( file_exists( $file ) && is_writable( $file ) )
 		{
-			if ( ! unlink($file) )
+			if ( ! dol_delete_file($file,1) )
 			{
 				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
 				return 0;
@@ -264,7 +264,7 @@ function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 				$preview = $multiple.$i;
 				if ( file_exists( $preview ) && is_writable( $preview ) )
 				{
-					if ( ! unlink($preview) )
+					if ( ! dol_delete_file($preview,1) )
 					{
 						$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
 						return 0;
@@ -273,6 +273,8 @@ function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 			}
 		}
 	}
+
+	return 1;
 }
 
 ?>

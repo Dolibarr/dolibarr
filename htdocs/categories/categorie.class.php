@@ -1094,7 +1094,7 @@ class Categorie
 		$filename = eregi_replace($dir,'',$file); // Nom du fichier
 
 		// On efface l'image d'origine
-		unlink($file);
+		dol_delete_file($file,1);
 
 		// Si elle existe, on efface la vignette
 		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
@@ -1102,7 +1102,7 @@ class Categorie
 			$photo_vignette=eregi_replace($regs[0],'',$filename).'_small'.$regs[0];
 			if (file_exists($dirthumb.$photo_vignette))
 			{
-				unlink($dirthumb.$photo_vignette);
+				dol_delete_file($dirthumb.$photo_vignette,1);
 			}
 		}
 	}

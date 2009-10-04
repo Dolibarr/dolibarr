@@ -58,7 +58,7 @@ class ModelePDFFactures extends FPDF
 	function liste_modeles($db)
 	{
 		global $conf;
-		
+
 		$type='invoice';
 		$liste=array();
 		$sql = "SELECT nom as id, nom as lib";
@@ -266,8 +266,8 @@ CLIENT=\"" . $client . "\"
 TOTAL_HT=\"" . $fac->total_ht . "\"
 TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
 
-	  		for ($i = 0 ; $i < $nblignes ; $i++)
-	  		{
+			for ($i = 0 ; $i < $nblignes ; $i++)
+			{
 	  	//Pour les articles
 	  	$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
 ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lignes[$i]->price . "\"
@@ -280,16 +280,16 @@ ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->
 		fputs($fp,$meta);
 		fclose($fp);
 		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 	}
 }
 
 
 /**
- \brief       Supprime l'image de previsualitation, pour le cas de regeneration de facture
- \param	    db  		objet base de donnee
- \param	    facid		id de la facture a creer
+ *	\brief      Supprime l'image de previsualitation, pour le cas de regeneration de facture
+ *	\param	    db  		objet base de donnee
+ *	\param	    facid		id de la facture a creer
  */
 function facture_delete_preview($db, $facid)
 {
@@ -306,12 +306,14 @@ function facture_delete_preview($db, $facid)
 
 		if ( file_exists( $file ) && is_writable( $file ) )
 		{
-	  if ( ! unlink($file) )
-	  {
-	  	return 0;
-	  }
+			if ( ! dol_delete_file($file,1) )
+			{
+				return 0;
+			}
 		}
 	}
+
+	return 1;
 }
 
 ?>

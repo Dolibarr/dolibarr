@@ -376,17 +376,16 @@ if ($modulepart == 'barcode')
 		$result=$module->buildBarCode($code,$encoding,$readable);
 	}
 }
-else
+else					// Open and return file
 {
-	// Ouvre et renvoi fichier
 	clearstatcache();
 
-	// Output files on disk
-	$filename = basename($original_file);
+	// Output files on browser
+	dol_syslog("viewimage.php return file $original_file content-type=$type");
+	$neworiginal_file=utf8_check($original_file)?utf8_decode($original_file):$original_file;
 
-	dol_syslog("viewimage.php return file $original_file $filename content-type=$type");
-
-	if (! file_exists($original_file))
+	// This test if file exists should be useless. We keep it to find bug more easily
+	if (! file_exists($neworiginal_file))
 	{
 		$langs->load("main");
 		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
@@ -403,7 +402,7 @@ else
 		header('Content-type: image/png');
 	}
 
-	readfile($original_file);
+	readfile($neworiginal_file);	// Need a path in ISO
 }
 
 ?>

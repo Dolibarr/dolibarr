@@ -454,23 +454,21 @@ if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 }
 
 
-
-if ($action == 'remove_file')
+if ($action == 'remove_file')	// Remove a file
 {
-	/*
-	 * Suppression fichier
-	 */
 	clearstatcache();
-	$filename = basename($original_file);
 
-	dol_syslog("document.php remove $original_file $filename $urlsource", LOG_DEBUG);
+	dol_syslog("document.php remove $original_file $urlsource", LOG_DEBUG);
 
-	if (! file_exists($original_file))
+	// This test should be useless. We keep it to find bug more easily
+	$neworiginal_file=utf8_check($original_file)?utf8_decode($original_file):$original_file;
+	if (! file_exists($neworiginal_file))
 	{
 		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 		exit;
 	}
-	unlink($original_file);
+
+	dol_delete_file($original_file);
 
 	dol_syslog("document.php back to ".urldecode($urlsource), LOG_DEBUG);
 
@@ -478,22 +476,22 @@ if ($action == 'remove_file')
 
 	return;
 }
-else
+else						// Open and return file
 {
-	/*
-	 * Open and return file
-	 */
 	clearstatcache();
+
 	$filename = basename($original_file);
 
+	// Output file on browser
 	dol_syslog("document.php download $original_file $filename content-type=$type");
+	$neworiginal_file=utf8_check($original_file)?utf8_decode($original_file):$original_file;
 
-	if (! file_exists($original_file))
+	// This test if file exists should be useless. We keep it to find bug more easily
+	if (! file_exists($neworiginal_file))
 	{
 		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
 		exit;
 	}
-
 
 	// Les drois sont ok et fichier trouve, on l'envoie
 
@@ -506,7 +504,7 @@ else
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
 
-	readfile($original_file);
+	readfile($neworiginal_file);	// Need a path in ISO
 }
 
 ?>

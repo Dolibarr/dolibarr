@@ -54,10 +54,10 @@ class ModelePDFDeliveryOrder extends FPDF
 	function liste_modeles($db)
 	{
 		global $conf;
-		
+
 		$type='delivery';
 		$liste=array();
-		
+
 		$sql = "SELECT nom as id, nom as lib";
 		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 		$sql.= " WHERE type = '".$type."'";
@@ -161,9 +161,9 @@ class ModeleNumRefDeliveryOrder
 
 /**
  *		\brief      Create object on disk
- *		\param	    db  			objet base de donnée
+ *		\param	    db  			objet base de donnï¿½e
  *		\param	    deliveryid		id object
- *		\param	    modele			force le modele à utiliser ('' to not force)
+ *		\param	    modele			force le modele ï¿½ utiliser ('' to not force)
  *		\param		outputlangs		objet lang a utiliser pour traduction
  *      \return     int         	0 si KO, 1 si OK
  */
@@ -240,12 +240,14 @@ function delivery_order_delete_preview($db, $deliveryid)
 
 		if ( file_exists( $file ) && is_writable( $file ) )
 		{
-			if ( ! unlink($file) )
+			if ( ! dol_delete_file($file,1) )
 			{
 				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
 				return 0;
 			}
 		}
 	}
+
+	return 1;
 }
 ?>

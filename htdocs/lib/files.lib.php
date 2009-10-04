@@ -196,7 +196,7 @@ function dol_mimetype($file)
  */
 function dol_dir_is_emtpy($folder)
 {
-	$newfolder=utf8_check($folder)?utf8_decode($folder):$folder;	// The opendir need ISO strings
+	$newfolder=utf8_check($folder)?utf8_decode($folder):$folder;	// The is_dir and opendir need ISO strings
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
@@ -242,6 +242,43 @@ function dol_count_nb_of_line($file)
 	}
 
 	return $nb;
+}
+
+
+/**
+ * Return size of a file
+ *
+ * @param 	$pathoffile
+ * @return 	string		File size
+ */
+function dol_filesize($pathoffile)
+{
+	$newpathoffile=check_utf8($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	return filesize($pathoffile);
+}
+
+/**
+ * Return time of a file
+ *
+ * @param 	$pathoffile
+ * @return 	timestamp	Time of file
+ */
+function dol_filetime($pathoffile)
+{
+	$newpathoffile=check_utf8($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	return filemtime($nrwpathoffile);
+}
+
+/**
+ * Return if path is a file
+ *
+ * @param 	$pathoffile
+ * @return 	boolean			True or false
+ */
+function dol_is_file($pathoffile)
+{
+	$newpathoffile=utf8_check($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	return is_file($newpathoffile);
 }
 
 ?>

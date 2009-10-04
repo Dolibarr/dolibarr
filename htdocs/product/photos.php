@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -171,7 +171,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print "\n</div>\n";
 
 		/*
-		 * Ajouter une photo
+		 * Add a photo
 		 */
 		if ($_GET["action"] == 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
@@ -204,7 +204,7 @@ if ($_GET["id"] || $_GET["ref"])
 				if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
 				if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
-				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
+				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="'.dol_escape_htmltag($langs->trans("OriginalSize")).'" target="_blank">';
 
 				// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
 				if ($obj['photo_vignette'])

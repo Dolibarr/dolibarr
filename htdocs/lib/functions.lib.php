@@ -2124,19 +2124,29 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 
 
 /**
- *	\brief  	Remove a file
- *	\param		file			Fichier a effacer ou masque de fichier a effacer
- *	\param		boolean			true if file deleted, false if error
+ *	\brief  	Remove a file or several files with a mask
+ *	\param		file			File to delete or mask of file to delete
+ * 	\param		disableglob		Disable usage of globa like *
+ *	\param		boolean			True if file deleted, False if error
  */
-function dol_delete_file($file)
+function dol_delete_file($file,$disableglob=0)
 {
 	$ok=true;
 	$newfile=utf8_check($file)?utf8_decode($file):$file;	// glob function accepts only ISO string
-	foreach (glob($newfile) as $filename)
+	if (empty($disableglob))
 	{
-		$ok=unlink($filename);
-		if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
-		else dol_syslog("Failed to remove file ".$filename,LOG_ERR);
+		foreach (glob($newfile) as $filename)
+		{
+			$ok=unlink($filename);	// The unlink encapsulated by dolibarr
+			if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
+			else dol_syslog("Failed to remove file ".$filename,LOG_ERR);
+		}
+	}
+	else
+	{
+		$ok=unlink($newfile);		// The unlink encapsulated by dolibarr
+		if ($ok) dol_syslog("Removed file ".$newfile,LOG_DEBUG);
+		else dol_syslog("Failed to remove file ".$newfile,LOG_ERR);
 	}
 	return $ok;
 }
@@ -3005,6 +3015,5 @@ function utf8_check($Str)
 	}
 	return true;
 }
-
 
 ?>

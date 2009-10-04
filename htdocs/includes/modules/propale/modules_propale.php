@@ -20,12 +20,12 @@
  */
 
 /**
-        \file       htdocs/includes/modules/propale/modules_propale.php
-		\ingroup    propale
-		\brief      Fichier contenant la classe mère de generation des propales en PDF
-	                et la classe mère de numérotation des propales
-		\version    $Id$
-*/
+ \file       htdocs/includes/modules/propale/modules_propale.php
+ \ingroup    propale
+ \brief      Fichier contenant la classe mï¿½re de generation des propales en PDF
+ et la classe mï¿½re de numï¿½rotation des propales
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
@@ -33,118 +33,118 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
 
 
 /**
-    	\class      ModelePDFPropales
-		\brief      Classe mere des modeles de propale
-*/
+ \class      ModelePDFPropales
+ \brief      Classe mere des modeles de propale
+ */
 
 class ModelePDFPropales extends FPDF
 {
-    var $error='';
+	var $error='';
 
-    /**
-     *      \brief      Renvoi le dernier message d'erreur de creation de propale
-     */
-    function pdferror()
-    {
-        return $this->error;
-    }
+	/**
+	 *      \brief      Renvoi le dernier message d'erreur de creation de propale
+	 */
+	function pdferror()
+	{
+		return $this->error;
+	}
 
-    /**
-     *      \brief      Renvoi la liste des modeles actifs
-     */
-    function liste_modeles($db)
-    {
-    	global $conf;
-    	
-    	$type='propal';
-      $liste=array();
-      
-      $sql = "SELECT nom as id, nom as lib";
-      $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-      $sql.= " WHERE type = '".$type."'";
-      $sql.= " AND entity = ".$conf->entity;
+	/**
+	 *      \brief      Renvoi la liste des modeles actifs
+	 */
+	function liste_modeles($db)
+	{
+		global $conf;
 
-      dol_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
-      $resql = $db->query($sql);
-      if ($resql)
-      {
-      	$num = $db->num_rows($resql);
-        $i = 0;
-        while ($i < $num)
-        {
-        	$row = $db->fetch_row($resql);
-          $liste[$row[0]]=$row[1];
-          $i++;
-        }
-      }
-      else
-      {
-      	$this->error=$db->error();
-      	return -1;
-      }
-      return $liste;
-    }
+		$type='propal';
+		$liste=array();
+
+		$sql = "SELECT nom as id, nom as lib";
+		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.= " WHERE type = '".$type."'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		dol_syslog("modules_propale::liste_modeles sql=".$sql, LOG_DEBUG);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$liste[$row[0]]=$row[1];
+				$i++;
+			}
+		}
+		else
+		{
+			$this->error=$db->error();
+			return -1;
+		}
+		return $liste;
+	}
 }
 
 
 /**
-        \class      ModeleNumRefPropales
-        \brief      Classe mere des modeles de numerotation des references de propales
-*/
+ \class      ModeleNumRefPropales
+ \brief      Classe mere des modeles de numerotation des references de propales
+ */
 
 class ModeleNumRefPropales
 {
-    var $error='';
+	var $error='';
 
 	/**     \brief     	Return if a module can be used or not
-	*      	\return		boolean     true if module can be used
-	*/
+	 *      	\return		boolean     true if module can be used
+	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-    /**     \brief      Renvoi la description par defaut du modele de numerotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
-        global $langs;
-        $langs->load("propale");
-        return $langs->trans("NoDescription");
-    }
+	/**     \brief      Renvoi la description par defaut du modele de numerotation
+	 *      \return     string      Texte descripif
+	 */
+	function info()
+	{
+		global $langs;
+		$langs->load("propale");
+		return $langs->trans("NoDescription");
+	}
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-        global $langs;
-        $langs->load("propale");
-        return $langs->trans("NoExample");
-    }
+	/**     \brief      Renvoi un exemple de numerotation
+	 *      \return     string      Example
+	 */
+	function getExample()
+	{
+		global $langs;
+		$langs->load("propale");
+		return $langs->trans("NoExample");
+	}
 
-    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numerotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
-    {
-        return true;
-    }
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
+	 *      \return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		return true;
+	}
 
-    /**     \brief      Renvoi prochaine valeur attribuee
-     *      \return     string      Valeur
-     */
-    function getNextValue()
-    {
-        global $langs;
-        return $langs->trans("NotAvailable");
-    }
+	/**     \brief      Renvoi prochaine valeur attribuee
+	 *      \return     string      Valeur
+	 */
+	function getNextValue()
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
 
 	/**     \brief      Renvoi version du module numerotation
-	*      	\return     string      Valeur
-	*/
+	 *      	\return     string      Valeur
+	 */
 	function getVersion()
 	{
 		global $langs;
@@ -159,13 +159,13 @@ class ModeleNumRefPropales
 
 
 /**
-		\brief      Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
-		\param	    db  			objet base de donnee
-		\param	    id				id de la propale à creer
-		\param	    modele			force le modele à utiliser ('' to not force)
-		\param		outputlangs		objet lang a utiliser pour traduction
-        \return     int         	0 si KO, 1 si OK
-*/
+ \brief      Cree une propale sur disque en fonction du modele de PROPALE_ADDON_PDF
+ \param	    db  			objet base de donnee
+ \param	    id				id de la propale ï¿½ creer
+ \param	    modele			force le modele ï¿½ utiliser ('' to not force)
+ \param		outputlangs		objet lang a utiliser pour traduction
+ \return     int         	0 si KO, 1 si OK
+ */
 function propale_pdf_create($db, $id, $modele, $outputlangs)
 {
 	global $langs;
@@ -178,28 +178,28 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 	$file = "pdf_propale_".$modele.".modules.php";
 	if ($modele && file_exists($dir.$file)) $modelisok=1;
 
-    // Si model pas encore bon
+	// Si model pas encore bon
 	if (! $modelisok)
 	{
 		if ($conf->global->PROPALE_ADDON_PDF) $modele = $conf->global->PROPALE_ADDON_PDF;
-      	$file = "pdf_propale_".$modele.".modules.php";
-    	if (file_exists($dir.$file)) $modelisok=1;
+		$file = "pdf_propale_".$modele.".modules.php";
+		if (file_exists($dir.$file)) $modelisok=1;
 	}
 
-    // Si model pas encore bon
+	// Si model pas encore bon
 	if (! $modelisok)
 	{
 		$liste=array();
 		$model=new ModelePDFPropales();
 		$liste=$model->liste_modeles($db);
-    $modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
-    $file = "pdf_propale_".$modele.".modules.php";
-    if (file_exists($dir.$file)) $modelisok=1;
+		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
+		$file = "pdf_propale_".$modele.".modules.php";
+		if (file_exists($dir.$file)) $modelisok=1;
 	}
 
 
 	// Charge le modele
-    if ($modelisok)
+	if ($modelisok)
 	{
 		$classname = "pdf_propale_".$modele;
 		require_once($dir.$file);
@@ -226,66 +226,68 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 	}
 	else
 	{
-        if (! $conf->global->PROPALE_ADDON_PDF)
-        {
+		if (! $conf->global->PROPALE_ADDON_PDF)
+		{
 			print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_PDF_NotDefined");
-        }
-        else
-        {
-    		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
-        }
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		}
 		return 0;
 	}
 }
 
 /**
-   \brief      Supprime l'image de previsualitation, pour le cas de regeneration de propal
-   \param	    db  		objet base de donnée
-   \param	    propalid	id de la propal a effacer
-   \param     propalref reference de la propal si besoin
-*/
+ \brief      Supprime l'image de previsualitation, pour le cas de regeneration de propal
+ \param	    db  		objet base de donnï¿½e
+ \param	    propalid	id de la propal a effacer
+ \param     propalref reference de la propal si besoin
+ */
 function propale_delete_preview($db, $propalid, $propalref='')
 {
-        global $langs,$conf;
+	global $langs,$conf;
 
-        if (!$propalref)
-        {
-        	$propal = new Propal($db,"",$propalid);
-        	$propal->fetch($propalid);
-        	$propalref = $propal->ref;
-        }
+	if (!$propalref)
+	{
+		$propal = new Propal($db,"",$propalid);
+		$propal->fetch($propalid);
+		$propalref = $propal->ref;
+	}
 
-        if ($conf->propale->dir_output)
-        {
-        	$propalref = dol_sanitizeFileName($propalref);
-        	$dir = $conf->propale->dir_output . "/" . $propalref ;
-        	$file = $dir . "/" . $propalref . ".pdf.png";
-        	$multiple = $file . ".";
+	if ($conf->propale->dir_output)
+	{
+		$propalref = dol_sanitizeFileName($propalref);
+		$dir = $conf->propale->dir_output . "/" . $propalref ;
+		$file = $dir . "/" . $propalref . ".pdf.png";
+		$multiple = $file . ".";
 
-        	if ( file_exists( $file ) && is_writable( $file ) )
-        	{
-        		if ( ! unlink($file) )
-        			{
-        				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-        				return 0;
-        			}
-        	}
-        	else
-        	{
-        		for ($i = 0; $i < 20; $i++)
-        		{
-        			$preview = $multiple.$i;
+		if ( file_exists( $file ) && is_writable( $file ) )
+		{
+			if ( ! dol_delete_file($file,1) )
+			{
+				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+				return 0;
+			}
+		}
+		else
+		{
+			for ($i = 0; $i < 20; $i++)
+			{
+				$preview = $multiple.$i;
 
-        		if ( file_exists( $preview ) && is_writable( $preview ) )
-        		{
-        			if ( ! unlink($preview) )
-        			{
-        				$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
-        				return 0;
-        			}
-        		}
-        	}
-        }
-      }
+				if ( file_exists( $preview ) && is_writable( $preview ) )
+				{
+					if ( ! unlink($preview) )
+					{
+						$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+						return 0;
+					}
+				}
+			}
+		}
+	}
+
+	return 1;
 }
 ?>

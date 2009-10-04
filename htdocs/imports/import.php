@@ -535,10 +535,10 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 	print "</tr>\n";
 
-	$dir = $conf->import->dir_temp;
-
 	// Search available imports
-	$handle=@opendir($dir);
+	$dir = $conf->import->dir_temp;
+	$newdir=utf8_check($dir)?utf8_decode($dir):$dir;	// opendir need ISO
+	$handle=@opendir($newdir);
 	if ($handle)
 	{
 		//print '<tr><td colspan="4">';
@@ -548,6 +548,9 @@ if ($step == 3 && $datatoimport)
 		$i=0;
 		while (($file = readdir($handle))!==false)
 		{
+			// readdir return value in ISO and we want UTF8 in memory
+			if (! utf8_check($file)) $file=utf8_encode($file);
+
 			if (eregi('^\.',$file)) continue;
 
 			$modulepart='import';
@@ -558,9 +561,9 @@ if ($step == 3 && $datatoimport)
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>'.$file.'</td>';
 			// Affiche taille fichier
-			print '<td align="right">'.dol_filesize($dir.'/'.$file).'</td>';
+			print '<td align="right">'.dol_print_size(filesize($newdir.'/'.$newfile)).'</td>';
 			// Affiche date fichier
-			print '<td align="right">'.dol_print_date(filemtime($dir.'/'.$file),'dayhour').'</td>';
+			print '<td align="right">'.dol_print_date(filemtime($newdir.'/'.$newfile),'dayhour').'</td>';
 			// Del button
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&step=3&format='.$format.'&modulepart='.$modulepart.'&file='.urlencode($relativepath);
 			print '&amp;urlsource='.urlencode($urlsource);

@@ -538,26 +538,26 @@ class Product extends CommonObject
 				$sqlz.= " WHERE rowid = ".$id;
 				$resultz = $this->db->query($sqlz);
 
-                if ( !$resultz )
-                {
-                    dol_syslog('Product::delete error sqlz='.$sqlz, LOG_ERR);
-                }
+				if ( !$resultz )
+				{
+					dol_syslog('Product::delete error sqlz='.$sqlz, LOG_ERR);
+				}
 
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 
-                if ($error)
-                {
-                	return -$error;
-                }
-                else
-                {
-                	return 0;
-                }
+				if ($error)
+				{
+					return -$error;
+				}
+				else
+				{
+					return 0;
+				}
 			}
 			else
 			{
@@ -1619,17 +1619,17 @@ class Product extends CommonObject
 
 		if ($result = $this->db->query($sql))
 		{
-	  while ($row = $this->db->fetch_row($result) )
-	  {
-	  	$this->subproducts_id[$i] = $row[0];
-	  	$i++;
-	  }
-	  $this->db->free($result);
-	  return 0;
+			while ($row = $this->db->fetch_row($result) )
+			{
+				$this->subproducts_id[$i] = $row[0];
+				$i++;
+			}
+			$this->db->free($result);
+			return 0;
 		}
 		else
 		{
-	  return -1;
+	 		return -1;
 		}
 	}
 
@@ -2487,33 +2487,38 @@ class Product extends CommonObject
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+
 		$nbphoto=0;
 		$tabobj=array();
 
-		$dirthumb = $dir.'thumbs/';
+		$newdir=utf8_check($dir)?utf8_decode($dir):$dir;
 
-		if (file_exists($dir))
+		$handle=@opendir($newdir);
+		if ($handle)
 		{
-			$handle=opendir($dir);
-
 			while (($file = readdir($handle)) != false)
 			{
-				if (is_file($dir.$file))
+				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
+
+				if (dol_is_file($dir.$file))
 				{
 					$nbphoto++;
-					$photo = $file;
 
 					// On determine nom du fichier vignette
+					$photo=$file;
 					$photo_vignette='';
 					if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
 					{
 						$photo_vignette=eregi_replace($regs[0],'',$photo).'_small'.$regs[0];
 					}
 
+					$dirthumb = $dir.'thumbs/';
+
 					// Objet
 					$obj=array();
 					$obj['photo']=$photo;
-					if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+					if ($photo_vignette && dol_is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
 					else $obj['photo_vignette']="";
 
 					$tabobj[$nbphoto-1]=$obj;
@@ -2540,7 +2545,7 @@ class Product extends CommonObject
 		$filename = eregi_replace($dir,'',$file); // Nom du fichier
 
 		// On efface l'image d'origine
-		unlink($file);
+		dol_delete_file($file);
 
 		// Si elle existe, on efface la vignette
 		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
@@ -2548,7 +2553,7 @@ class Product extends CommonObject
 			$photo_vignette=eregi_replace($regs[0],'',$filename).'_small'.$regs[0];
 			if (file_exists($dirthumb.$photo_vignette))
 			{
-				unlink($dirthumb.$photo_vignette);
+				dol_delete_file($dirthumb.$photo_vignette);
 			}
 		}
 	}
@@ -2559,7 +2564,8 @@ class Product extends CommonObject
 	 */
 	function get_image_size($file)
 	{
-		$infoImg = getimagesize($file); // Get information on image
+		$newfile=utf8_check($file)?utf8_decode($file):$file;
+		$infoImg = getimagesize($newfile); // Get information on image
 		$this->imgWidth = $infoImg[0]; // Largeur de l'image
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}

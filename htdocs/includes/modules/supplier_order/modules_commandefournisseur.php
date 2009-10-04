@@ -55,10 +55,10 @@ class ModelePDFSuppliersOrders extends FPDF
 	function liste_modeles($db)
 	{
 		global $conf;
-		
+
 		$type='supplier_order';
 		$liste=array();
-		
+
 		$sql = "SELECT nom as id, nom as lib";
 		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 		$sql.= " WHERE type = '".$type."'";
@@ -238,12 +238,14 @@ function supplier_order_delete_preview($db, $propalid)
 
 		if ( file_exists( $file ) && is_writable( $file ) )
 		{
-			if ( ! unlink($file) )
+			if ( ! dol_delete_file($file) )
 			{
 				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
 				return 0;
 			}
 		}
 	}
+
+	return 1;
 }
 ?>
