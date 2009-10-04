@@ -109,8 +109,8 @@ if ($_GET["facid"])
 	print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
 	print "</tr>\n";
 
-    // Soci�t�
-    print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$fac->fournisseur->getNomUrl(1).'</td></tr>';
+    // Company
+    print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$fac->fournisseur->getNomUrl(1).'</td></tr>';
 
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';

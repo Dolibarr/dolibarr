@@ -1297,12 +1297,12 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 			print $langs->trans('RefCustomer').'</td><td align="left">';
 			print '</td>';
-			if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+			if ($_GET['action'] != 'refcustomer' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcustomer&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
+			if ($user->rights->commande->creer && $_GET['action'] == 'refcustomer')
 			{
-				print '<form action="fiche.php?id='.$id.'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="set_ref_client">';
 				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';

@@ -409,6 +409,37 @@ class FactureFournisseur extends Facture
 		}
 	}
 
+	/**
+	 *      \brief      Set supplier ref
+	 *      \param      user            User that make change
+	 *      \param      ref_supplier    Supplier ref
+	 *      \return     int             <0 if KO, >0 if OK
+	 */
+	function set_ref_supplier($user, $ref_supplier)
+	{
+		if ($user->rights->fournisseur->facture->creer)
+		{
+			dol_syslog('FactureFournisseur::set_ref_supplier this->id='.$this->id.', ref_supplier='.$ref_supplier);
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET facnumber = '.(empty($ref_supplier) ? 'NULL' : '\''.addslashes($ref_supplier).'\'');
+			$sql.= ' WHERE rowid = '.$this->id;
+			if ($this->db->query($sql))
+			{
+				$this->ref_supplier = $ref_supplier;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog('FactureFournisseur::set_ref_supplier '.$this->error.' - '.$sql, LOG_ERR);
+				return -2;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 	/**
 	 *      \brief      Tag la facture comme payee completement

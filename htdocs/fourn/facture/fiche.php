@@ -28,6 +28,7 @@
  */
 
 require_once('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
@@ -127,7 +128,15 @@ if ($_REQUEST['action'] == 'confirm_paid' && $_REQUEST['confirm'] == 'yes' && $u
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
-	$facturefourn->set_paid($user);
+	$result=$facturefourn->set_paid($user);
+}
+
+// Set supplier ref
+if ($_POST['action'] == 'set_ref_supplier' && $user->rights->fournisseur->facture->creer)
+{
+	$facturefourn = new FactureFournisseur($db);
+	$facturefourn->fetch($_GET['facid']);
+	$result=$facturefourn->set_ref_supplier($user, $_POST['ref_supplier']);
 }
 
 if($_GET['action'] == 'deletepaiement')
@@ -397,6 +406,8 @@ if ($_POST['action'] == 'classin')
 
 llxHeader('','','');
 
+$formfile = new FormFile($db);
+
 
 // Mode creation
 if ($_GET['action'] == 'create')
@@ -515,8 +526,8 @@ else
 			print '<input type="hidden" name="action" value="update">';
 
 			print '<table class="border" width="100%">';
-			print '<tr><td>'.$langs->trans('Company').'</td>';
 
+			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td>'.$societe->getNomUrl(1).'</td>';
 			print '<td width="50%" valign="top">'.$langs->trans('NotePublic').'</td>';
 			print '</tr>';
@@ -524,15 +535,15 @@ else
 			// Ref
 			print '<tr><td valign="top">'.$langs->trans('Ref').'</td><td valign="top">';
 			print $fac->ref.'</td>';
+			$rownb=10;
+			print '<td rowspan="'.$rownb.'" valign="top">';
+			print '<textarea name="note" wrap="soft" cols="60" rows="'.$rownb.'">';
+			print $fac->note;
+			print '</textarea></td></tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('RefSupplier').'</td><td valign="top">';
 			print '<input name="facnumber" type="text" value="'.$fac->ref_supplier.'"></td>';
-
-			$rownb=9;
-			print '<td rowspan="'.$rownb.'" valign="top">';
-			print '<textarea name="note" wrap="soft" cols="60" rows="'.ROWS_9.'">';
-			print $fac->note;
-			print '</textarea></td></tr>';
+			print '</tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('Label').'</td><td>';
 			print '<input size="30" name="libelle" type="text" value="'.$fac->libelle.'"></td></tr>';
@@ -665,11 +676,31 @@ else
 			print "</tr>\n";
 
 			// Ref supplier
-			print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="4">'.$fac->ref_supplier.'</td>';
-			print "</tr>\n";
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+			print $langs->trans('RefSupplier').'</td><td align="left">';
+			print '</td>';
+			if ($_GET['action'] != 'refsupplier' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refsupplier&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="5">';
+			if ($user->rights->fournisseur->facture->creer && $_GET['action'] == 'refsupplier')
+			{
+				print '<form action="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="set_ref_supplier">';
+				print '<input type="text" class="flat" size="20" name="ref_supplier" value="'.$fac->ref_supplier.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $fac->ref_supplier;
+			}
+			print '</td>';
+			print '</tr>';
 
 			// Third party
-			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="4">'.$societe->getNomUrl(1).' (<a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td></tr>';
+			print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1).' (<a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td></tr>';
 
 			// Type
 			print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
@@ -1153,6 +1184,42 @@ else
 			print '<a class="butActionDelete" href="fiche.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
 		print '</div>';
+
+
+
+		if ($_GET['action'] != 'presend')
+		{
+			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
+
+			/*
+			 * Documents generes
+			 */
+			$filename=dol_sanitizeFileName($fac->ref);
+			$filedir=$conf->fournisseur->dir_output.'/facture/'.get_exdir($fac->id,2).$fac->id;
+			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
+			//$genallowed=$user->rights->fournisseur->facture->creer;
+			$genallowed=false;	// TODO Waiting for supplier invoice generation
+			$delallowed=$user->rights->fournisseur->facture->supprimer;
+
+			$var=true;
+
+			$somethingshown=$formfile->show_documents('facture_fournisseur',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+
+
+			print '</td><td valign="top" width="50%">';
+
+			print '<br>';
+
+			// List of actions on element
+			/*
+			include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+			$formactions=new FormActions($db);
+			$somethingshown=$formactions->showactions($fac,'invoice_supplier',$socid);
+			*/
+
+			print '</td></tr></table>';
+		}
 	}
 }
 

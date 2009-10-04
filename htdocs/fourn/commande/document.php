@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php";
 
 $langs->load('orders');
+$langs->load('other');
 $langs->load('sendings');
 $langs->load('companies');
 $langs->load('bills');

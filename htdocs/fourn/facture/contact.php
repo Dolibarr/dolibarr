@@ -187,7 +187,7 @@ if ($id > 0)
         print "</tr>\n";
 
 		// Third party
-		print "<tr><td>".$langs->trans("Company")."</td>";
+		print "<tr><td>".$langs->trans("Supplier")."</td>";
 		print '<td colspan="3">'.$facture->client->getNomUrl(1,'compta').'</td></tr>';
 		print "</table>";
 

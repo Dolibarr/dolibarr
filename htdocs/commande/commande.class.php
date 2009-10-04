@@ -1601,14 +1601,14 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				dol_syslog('Commande::cond_reglement Erreur '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
+				dol_syslog('Commande::cond_reglement Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
+				$this->error=$this->db->lasterror();
 				return -1;
 			}
 		}
 		else
 		{
-			dol_syslog('Commande::cond_reglement, etat commande incompatible');
+			dol_syslog('Commande::cond_reglement, etat commande incompatible', LOG_ERR);
 			$this->error='Etat commande incompatible '.$this->statut;
 			return -2;
 		}
@@ -1635,24 +1635,24 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				dol_syslog('Commande::mode_reglement Erreur '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
+				dol_syslog('Commande::mode_reglement Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
+				$this->error=$this->db->lasterror();
 				return -1;
 			}
 		}
 		else
 		{
-			dol_syslog('Commande::mode_reglement, etat facture incompatible');
+			dol_syslog('Commande::mode_reglement, etat facture incompatible', LOG_ERR);
 			$this->error='Etat commande incompatible '.$this->statut;
 			return -2;
 		}
 	}
 
 	/**
-	 *      \brief      Positionne numero reference commande client
-	 *      \param      user            Utilisateur qui modifie
-	 *      \param      ref_client      Reference commande client
-	 *      \return     int             <0 si ko, >0 si ok
+	 *      \brief      Set customer ref
+	 *      \param      user            User that make change
+	 *      \param      ref_client      Customer ref
+	 *      \return     int             <0 if KO, >0 if OK
 	 */
 	function set_ref_client($user, $ref_client)
 	{
@@ -1669,8 +1669,8 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error();
-				dol_syslog('Commande::set_ref_client Erreur '.$this->error.' - '.$sql);
+				$this->error=$this->db->lasterror();
+				dol_syslog('Commande::set_ref_client Erreur '.$this->error.' - '.$sql, LOG_ERR);
 				return -2;
 			}
 		}

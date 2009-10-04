@@ -91,7 +91,7 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Delete
 if ($action=='delete')
 {
-	$facid=$_GET["id"];
+	$facid=$_GET['id'];
 
 	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
@@ -148,7 +148,7 @@ if ($facid > 0)
 		print "</tr>\n";
 
 		// Societe
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans('NbOfAttachedFiles').'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 
