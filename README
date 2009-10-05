@@ -22,13 +22,12 @@ http://www.dolibarr.org/downloads/cat_view/62-stable-versions
 If you already have installed a Web server and a Mysql database, you can
 install this version like this:
 
-- Copy directory 'dolibarr' and all its files inside your web server root,
-  or set up your web server to use dolibarr/htdocs as root for a new web
-  server virtual host (second choice need to be web server administrator).
+- Copy directory "dolibarr" and all its files inside your web server root,
+  or copy directory anywhere and set up your web server to use "dolibarr/htdocs"
+  as root for a new web server virtual host (second choice need to be web 
+  server administrator).
   
-- Create an empty mysql database (postgresql support is experimental).
-
-- Set write permissions on directory 'dolibarr/htdocs/conf' for your web
+- Create an empty file "htdocs/conf/config.php" and set permissions for your web
   server user (write permissions will be removed once install is finished).
   
 - From your browser, call the dolibarr "install/" page. Url depends on choice
@@ -39,9 +38,10 @@ install this version like this:
    
 - Follow instructions provided by installer...
 
-- If your web hosting does not allow you to place the folder "documents" outside
-  the site root, add the /dev/security/htaccess.txt in the root directory of
-  folder "documents" by renaming .htaccess
+- If your web hosting does not allow you to place the folder "documents" 
+  outside the site root, add the file "/dev/security/htaccess.txt" in this 
+  folder "documents" en rename it into ".htaccess". This will protect this
+  folder from direct accesses.
 
 
 II - DOLIBARR UPGRADE

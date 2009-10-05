@@ -14,37 +14,38 @@ I - INSTALLER DOLIBARR
 ----------------------
 
 Si vous n'avez pas de connaissances techniques, que vous êtes sous Windows et
-que vous recherchez un programme d'installation qui install ERP/CRM en quelques
-clics, vous devez vous réorienter vers DoliWamp (la version tout-en-un de Dolibarr
-pour Windows). Vous pouvez la télécharger à l'adresse: 
+que vous recherchez un programme d'installation qui install Dolibarr ERP/CRM en 
+quelques clics, vous devez vous réorienter vers DoliWamp (la version tout-en-un
+de Dolibarr pour Windows). Vous pouvez la télécharger à l'adresse: 
 http://www.dolibarr.fr/telechargements/cat_view/62-versions-stables
 
-Si vous avez déjà installé un serveur Web et une base de donnée (Mysql), vous pouvez
-installer Dolibarr avec cette version de la manière suivante:
+Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (Mysql),
+vous pouvez installer Dolibarr avec cette version de la manière suivante:
 
-- Copier le repertoire 'dolibarr' et tous ses fichiers dans la racine de
-  votre serveur web or configurer votre serveur pour utiliser 
-  dolibarr/htdocs comme racine d'un nouveau virtual host (ce second choix
-  requiert des compétences et habilitations en administration du serveur web).
+- Copier le répertoire "dolibarr" et son contenu dans la racine de votre serveur
+  web, ou bien copier le répertoire sur le serveur et configurer ce serveur pour
+  utiliser "dolibarr/htdocs" comme racine d'un nouveau virtual host (ce second 
+  choix requiert des compétences et habilitations en administration du serveur
+  web).
   
-- Créez une base vide mysql (support postgresql experimentale).
+- Créer un fichier vide "htdocs/conf/conf.php" et attribuer les permissions
+  en lecture et écriture pour le user du serveur web (les permissions en 
+  écriture seront supprimées une fois l'installation terminée).
 
-- Définissez les permissions sur le repertoire 'dolibarr/htdocs/conf' pour votre
-  user du serveur web (les permissions en ecriture seront supprimes une fois
-  l'installation terminee).
-  
-- Depuis votre navigateur, appeler la page "install/" de dolibarr. L'url depend du
-  choix fait a la premiere etape:
+- Depuis votre navigateur, appeler la page "install/" de dolibarr. L'url dépend 
+  du choix fait à la première etape:
    http://localhost/dolibarr/htdocs/install/
   ou
    http://yourdolibarrvirtualhost/install/
    
-- Suivez les instructions fournis par l'installeur...
+- Suivez les instructions fournies par l'installeur...
 
-- Si votre hébergement ne permet pas de placer le répertoire "documents" en dehors
-  de la racine du site, ajoutez le fichier /dev/security/htaccess.txt à la racine
-  du répertoire documents en le renommant en .htaccess
-  
+- Si votre hébergement ne permet pas de placer le répertoire "documents" (créé
+  par l'installeur) en dehors de la racine du site, ajouter le fichier 
+  "dev/security/htaccess.txt" dans ce répertoire "documents" une fois 
+  l'installation terminée, en le renommant en .htaccess (afin de protéger son
+  accès).
+
 
 
 II - METTRE A JOUR DOLIBARR
