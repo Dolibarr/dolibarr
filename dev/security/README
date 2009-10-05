@@ -1,0 +1,6 @@
+README (English)
+--------------------------------
+
+If your web hosting does not allow you to place the folder "documents" outside
+the site root, add the htaccess.txt in the root directory of
+folder "documents" by renaming .htaccess
