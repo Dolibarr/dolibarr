@@ -38,10 +38,6 @@ install this version like this:
    
 - Follow instructions provided by installer...
 
-- If your web hosting does not allow you to place the folder "documents" 
-  outside the site root, add the file "/dev/security/htaccess.txt" in this 
-  folder "documents" en rename it into ".htaccess". This will protect this
-  folder from direct accesses.
 
 
 II - DOLIBARR UPGRADE

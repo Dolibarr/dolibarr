@@ -40,12 +40,6 @@ vous pouvez installer Dolibarr avec cette version de la manière suivante:
    
 - Suivez les instructions fournies par l'installeur...
 
-- Si votre hébergement ne permet pas de placer le répertoire "documents" (créé
-  par l'installeur) en dehors de la racine du site, ajouter le fichier 
-  "dev/security/htaccess.txt" dans ce répertoire "documents" une fois 
-  l'installation terminée, en le renommant en .htaccess (afin de protéger son
-  accès).
-
 
 
 II - METTRE A JOUR DOLIBARR
