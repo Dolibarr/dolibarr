@@ -151,22 +151,29 @@ if ($memmaxorig != '')
 }
 
 
-// Si fichier present et lisible et renseigne
+// If config file presente and filled
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
-	dolibarr_install_syslog("check: conf file '$conffile' already exists");
+	dolibarr_install_syslog("check: conf file '$conffile' already defined");
 	$confexists=1;
 	include_once($conffile);
 
-	// Deja install�, on peut upgrader
-	// \todo Test if database ok
-	$allowupgrade=1;
+	$databaseok=1;	// TODO Check if database is ok
+	if ($databaseok)
+	{
+		// Already installed for all parts (config and database). We can propose upgrade.
+		$allowupgrade=1;
+	}
+	else
+	{
+		$allowupgrade=0;
+	}
 }
 else
 {
-	// Si non on le cr�e
-	dolibarr_install_syslog("check: we try to creat conf file '$conffile'");
+	// If not, we create it
+	dolibarr_install_syslog("check: we try to create conf file '$conffile'");
 	$confexists=0;
 
 	# First we try by copying example
@@ -196,7 +203,7 @@ else
 
 
 
-// Si fichier absent et n'a pu etre cr��
+// Si fichier absent et n'a pu etre cree
 if (! file_exists($conffile))
 {
 	//print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
@@ -210,7 +217,7 @@ if (! file_exists($conffile))
 }
 else
 {
-	// Si fichier pr�sent mais ne peut etre modifi�
+	// Si fichier present mais ne peut etre modifie
 	if (!is_writable($conffile))
 	{
 		if ($confexists)
@@ -246,7 +253,7 @@ else
 	}
 	print "<br />\n";
 
-	// Si prerequis ok, on affiche le bouton pour passer � l'�tape suivante
+	// Si prerequis ok, on affiche le bouton pour passer a l'etape suivante
 	if ($checksok)
 	{
 		$ok=0;

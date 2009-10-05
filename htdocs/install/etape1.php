@@ -64,7 +64,7 @@ if (substr($_POST["main_url"], strlen($_POST["main_url"]) -1) == "/")
 	$_POST["main_url"] = substr($_POST["main_url"], 0, strlen($_POST["main_url"])-1);
 }
 
-// R�pertoire des documents g�n�r�s (factures, etc...)
+// Directory for generated documents (invoices, orders, ecm, etc...)
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 
@@ -120,7 +120,7 @@ if ($_POST["action"] == "set")
 	// Create subdirectory main_data_dir
 	if (! $error)
 	{
-		// R�pertoire des documents
+		// Create directory for documents
 		if (! is_dir($main_data_dir))
 		{
 			create_exdir($main_data_dir);
@@ -138,7 +138,23 @@ if ($_POST["action"] == "set")
 		}
 		else
 		{
-			// Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre t�l�charg�s en passant outre l'authentification
+			// Create .htaccess file in document directory
+			$pathhtaccess=$main_data_dir.'/.htaccess';
+			if (! file_exists($pathhtaccess))
+			{
+				dolibarr_install_syslog("etape1: .htaccess file does not exists, we create it in '".$main_data_dir."'");
+				$handlehtaccess=@fopen($pathhtaccess,'w');
+				if ($handlehtaccess)
+				{
+					fwrite($handlehtaccess,'Order allow,deny'."\n");
+					fwrite($handlehtaccess,'Deny from all'."\n");
+
+					fclose($handlehtaccess);
+					dolibarr_install_syslog("etape1: .htaccess file created");
+				}
+			}
+
+			// Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre telecharges en passant outre l'authentification
 			$dir[0] = "$main_data_dir/facture";
 			$dir[1] = "$main_data_dir/users";
 			$dir[2] = "$main_data_dir/propale";
