@@ -80,6 +80,7 @@ if (empty($dolibarr_main_data_root))
 // Define some constants
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem pages php (htdocs)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem donnes (documents)
+if ($dolibarr_main_url_root == 'auto') $dolibarr_main_url_root=$_SERVER["SERVER_NAME"];	// This make possible to reach web site with different URLs (works only if dolibarr dir is virtual web root dir).
 define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);	// $suburi contains url without http*
 $suburi = strstr ($uri, '/');		// $suburi contains url without domain
