@@ -942,9 +942,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 }
 
 div.titre {
-	font-weight: bold;
+	font-weight: normal;
 	color: #57A2CA;
-	text-decoration: none
+	text-decoration: none;
 }
 
 

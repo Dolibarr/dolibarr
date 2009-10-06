@@ -651,9 +651,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
-            font-weight: bold;
-            color: #666633;
-            text-decoration: none
+    font-weight: normal;
+    color: #666633;
+    text-decoration: none;
 }
 
 

@@ -823,7 +823,7 @@ background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' 
 background-repeat: repeat-x;
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
+font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
@@ -834,7 +834,7 @@ background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/liste_titre.png' 
 background-repeat: repeat-x;
 color: #F5FFFF;
 font-family: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
+font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }
@@ -993,9 +993,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
-	font-weight: bold;
+	font-weight: normal;
 	color: #336666;
-	text-decoration: none
+	text-decoration: none;
 }
 
 
