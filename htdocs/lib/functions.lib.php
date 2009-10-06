@@ -1983,7 +1983,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 
 	print "\n";
 	print '<table summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-	if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding" valign="middle">';
 	print '<div class="titre">'.$titre.'</div>';
 	print '</td>';
