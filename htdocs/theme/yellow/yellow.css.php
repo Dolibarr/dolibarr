@@ -706,13 +706,20 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 /*
- *  ???
+ *  Other
  */
+
+#pictotitle {
+	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
+}
+
 div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
             font-weight: bold;
             color: #666633;
-            text-decoration: none }
+            text-decoration: none
+}
+
 
 /*
  *  Tableaux
@@ -810,10 +817,6 @@ td.delete {
             background: red;
             font-weight: bold;
             }
-
-td.small {
-           font-size: 10px;
-           }
 
 
 /* ============================================================================== */

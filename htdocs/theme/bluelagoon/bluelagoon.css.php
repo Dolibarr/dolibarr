@@ -614,14 +614,21 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 /*
- *  Lignes titre espace
+ *  Other
  */
+
+#pictotitle {
+	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
+}
+
 div.titre {
             font-family: Helvetica, Verdana;
             font-size: 0.9em;
             font-weight: bold;
             color: #336666;
-            text-decoration: none }
+            text-decoration: none
+}
+
 
 /*
  *  Tableaux
@@ -694,10 +701,6 @@ td.delete {
 td.valid {
            background: pink;
            font-weight: bold;
-           }
-
-td.small {
-           font-size: 0.8em;
            }
 
 

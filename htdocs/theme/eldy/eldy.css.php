@@ -48,6 +48,8 @@ if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If languag
 $langs->load("main",0,1);
 $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
+$fontsize=empty($conf->browser->phone)?'12':'9';
+$fontsizesmaller=empty($conf->browser->phone)?'11':'9';
 ?>
 
 /* ============================================================================== */
@@ -61,7 +63,7 @@ body {
 	background: #f9f9f9 url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg.jpg' ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: <?php print $fontsize ?>px;
     font-family: arial,tahoma,verdana,helvetica;
     margin-top: 0;
     margin-bottom: 0;
@@ -76,7 +78,7 @@ a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bol
 a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 input
 {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -85,7 +87,7 @@ input
 }
 input.flat
 {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -93,7 +95,7 @@ input.flat
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -102,7 +104,7 @@ textarea  {
 }
 textarea.flat
 {
-	font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+	font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
@@ -111,7 +113,7 @@ textarea.flat
 }
 select.flat
 {
-    font-size: <?php print empty($conf->browser->phone)?'12':'9'; ?>px;
+    font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;
     border: 1px solid #ACBCBB;
@@ -398,26 +400,26 @@ img.printer
 
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 .vmenu {
-	display:none;
+	display: none;
 }
 <?php } ?>
 
-a.vmenu:link        { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:visited     { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:active      { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:hover       { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
+a.vmenu:link        { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:visited     { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:active      { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:hover       { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link       { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:visited    { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:active     { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:hover      { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:<?php print empty($conf->browser->phone)?'12':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
+a.vsmenu:link       { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:visited    { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:active     { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:hover      { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
 
-a.help:link         { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:visited      { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:active       { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:hover        { font-size:<?php print empty($conf->browser->phone)?'11':'9'; ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:link         { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:visited      { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:active       { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:hover        { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
 
 
 div.blockvmenupair
@@ -981,19 +983,20 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 
-td.small {
-   font-size: <?php print empty($conf->browser->phone)?'10':'9'; ?>px;
+/*
+ *  Other
+ */
+
+#pictotitle {
+	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
 }
 
-
-/*
- *  Lignes titre espace
- */
 div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: bold;
 	color: #336666;
-	text-decoration: none }
+	text-decoration: none
+}
 
 
 /* ============================================================================== */

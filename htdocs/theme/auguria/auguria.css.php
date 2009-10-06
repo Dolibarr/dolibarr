@@ -932,18 +932,20 @@ a.impayee:active { font-weight: bold; color: #550000; }
 a.impayee:hover { font-weight: bold; color: #550000; }
 
 
-td.small {
-           font-size: 10px;
-           }
-
 
 /*
- *  Lignes titre espace
+ *	Other
  */
+
+#pictotitle {
+	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
+}
+
 div.titre {
 	font-weight: bold;
 	color: #57A2CA;
-	text-decoration: none }
+	text-decoration: none
+}
 
 
 /* ============================================================================== */

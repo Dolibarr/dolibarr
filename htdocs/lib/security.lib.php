@@ -272,7 +272,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Message
 	if (! empty($_SESSION["dol_loginmesg"]))
 	{
-		print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
+		print '<center><table width="60%"><tr><td align="center"><div class="error">';
 		print $_SESSION["dol_loginmesg"];
 		$_SESSION["dol_loginmesg"]="";
 		print '</div></td></tr></table></center>'."\n";

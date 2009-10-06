@@ -716,14 +716,20 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 /*
- *  Lignes titre espace
+ *  Other
  */
+
+#pictotitle {
+	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
+}
+
 div.titre {
     font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     color: #777799;
     text-decoration: none
 }
+
 
 
 input.liste_titre {
@@ -819,9 +825,6 @@ td.delete {
   font-weight: bold;
 }
 
-td.small {
-  font-size: <?php print empty($conf->browser->phone)?'10':'9'; ?>px;
-}
 
 
 /* ============================================================================== */
