@@ -161,7 +161,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<td valign="bottom" nowrap="nowrap"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="';
 	print (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
 	print '" tabindex="1" /></td>'."\n";
-
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
@@ -190,6 +189,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '</td>';
 	print '</tr>'."\n";
 
+	if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
+
 	// Password field
 	print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>'."\n";
 	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="';
@@ -204,6 +205,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 		//TODO: creer class
 		$entity = array('1'=>'company1','2'=>'company2');
+
+		if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
 
 		print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>'."\n";
 		print '<td valign="top" nowrap="nowrap">';
@@ -229,7 +232,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '</td>';
 		print '</tr>'."\n";
 	}
-	
+
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	print '<tr><td colspan="3" style="text-align:center;"><br>';
@@ -238,6 +241,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK) || empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
 	{
+		if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
+
 		print '<tr><td colspan="3" align="center">';
 		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 		{

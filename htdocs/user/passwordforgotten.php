@@ -264,6 +264,8 @@ print '</tr>'."\n";
 
 if (function_exists("imagecreatefrompng") && ! $disabled)
 {
+	if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
+
 	//print "Info session: ".session_name().session_id();print_r($_SESSION);
 	print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 	print '<td valign="top" nowrap="nowrap" align="left" class="e">';
