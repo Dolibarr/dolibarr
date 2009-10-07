@@ -46,7 +46,6 @@
 */htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
 */htdocs/oscommerce_ws/ws_client_demo/*
 */htdocs/theme/rodolphe/*
-*/mssql/*
 */scripts/addons/*
 */scripts/courrier/*
 */scripts/lolix/*

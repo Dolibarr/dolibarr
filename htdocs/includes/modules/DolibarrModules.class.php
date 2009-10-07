@@ -473,7 +473,7 @@ class DolibarrModules
 					closedir($handle);
 				}
 
-				// Run data.sql files
+				// Run .sql files
 				$handle=@opendir($dir);			// Dir may not exist
 				if ($handle)
 				{

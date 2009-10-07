@@ -173,9 +173,8 @@ Section "Dolibarr" Dolibarr
 	SetOutPath $INSTDIR
 	File /x CVS /x .cvsignore /x Thumbs.db "..\..\*"
 	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\doc"
+	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\dev"
 	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\htdocs"
-	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\mysql"
-	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\pgsql"
 	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\scripts"
 	
 	;Store install folder

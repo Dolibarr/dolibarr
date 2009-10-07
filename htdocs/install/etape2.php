@@ -118,7 +118,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
-        $dir = "../../mysql/tables/";
+        $dir = "mysql/tables/";
 
         $ok = 0;
         $handle=opendir($dir);
@@ -218,7 +218,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
-        $dir = "../../mysql/tables/";
+        $dir = "mysql/tables/";
 
         $okkeys = 0;
         $handle=opendir($dir);
@@ -328,9 +328,9 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
     	// For this file, we use directory according to database type
-        if ($choix==1) $dir = "../../mysql/functions/";
-        elseif ($choix==2) $dir = "../../pgsql/functions/";
-        elseif ($choix==3) $dir = "../../mssql/functions/";
+        if ($choix==1) $dir = "mysql/functions/";
+        elseif ($choix==2) $dir = "pgsql/functions/";
+        elseif ($choix==3) $dir = "mssql/functions/";
 
         // Creation donnees
         $file = "functions.sql";
@@ -350,7 +350,7 @@ if ($_POST["action"] == "set")
             }
 
             // Si plusieurs requetes, on boucle sur chaque
-            $listesql=split('§',eregi_replace(";';",";'§",$buffer));
+            $listesql=split('ï¿½',eregi_replace(";';",";'ï¿½",$buffer));
             foreach ($listesql as $buffer) {
                 if (trim($buffer)) {
 
@@ -396,7 +396,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
-        $dir = "../../mysql/data/";
+        $dir = "mysql/data/";
 
         // Creation donnees
         $file = "data.sql";

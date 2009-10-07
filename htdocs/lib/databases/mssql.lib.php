@@ -21,7 +21,7 @@
 
 /**
  *	\file       	htdocs/lib/databases/mssql.lib.php
- *	\brief			Fichier de la classe permettant de g�rer une base mssql
+ *	\brief			Fichier de la classe permettant de gerer une base mssql
  *	\version		$Id$
  */
 

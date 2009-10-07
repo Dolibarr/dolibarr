@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------
 # Ce script est une version modifiee de mysql2pgsql afin de:
 # - gerer les base mysql innodb
-# - traiter tous les fichiers ../mysq/data/*.sql vers ./pgsql/data
+# - traiter tous les fichiers mysql/data/*.sql vers pgsql/data
 # - gerer les autoincrement en SERIAL plutot qu'en sequenceurs
 # - utiliser le CHECK plutot que des sous-tables pour les types enum
 # - corriger de nombreux bugs
@@ -36,8 +36,8 @@ my $table="";
 ($DIR=$0) =~ s/([^\/\\]+)$//; ($PROG=$1) =~ s/\.([^\.]*)$//; $Extension=$1;
 $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
-$SOURCE="$DIR/../mysql/tables";
-$DESTI="$DIR/../pgsql/tables";
+$SOURCE="$DIR/install/mysql/tables";
+$DESTI="$DIR/install/pgsql/tables";
 
 # Recherche tous les fichiers .sql
 opendir(DIR, $SOURCE);

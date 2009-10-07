@@ -285,9 +285,9 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
 	 */
 	if ($ok)
 	{
-		if ($choix==1) $dir = "../../mysql/migration/";
-		elseif ($choix==2) $dir = "../../pgsql/migration/";
-		else $dir = "../../mssql/migration/";
+		if ($choix==1) $dir = "mysql/migration/";
+		elseif ($choix==2) $dir = "pgsql/migration/";
+		else $dir = "mssql/migration/";
 
 		$filelist=array();
 		$i = 0;
