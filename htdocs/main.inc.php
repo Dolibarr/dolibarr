@@ -907,7 +907,7 @@ function top_menu($head, $title='', $target='')
 	print $html->textwithtooltip('',$htmltext,2,1,$text);
 
 	// Link to print main content area
-	if (empty($conf->global->MAIN_PRINT_DISABLELINK))
+	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
 	{
 		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_blank">';
 		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';

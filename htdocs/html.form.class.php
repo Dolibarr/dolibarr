@@ -68,6 +68,7 @@ class Form
 	 */
 	function textwithhelp($text,$htmltext,$tooltipon=1)
 	{
+		global $conf;
 		return $this->textwithtooltip($text,$htmltext,$tooltipon);
 	}
 
@@ -172,11 +173,24 @@ class Form
 		if ("$type" == "0") $type='info';	// For backward compatibility
 
 		$alt='';
-		if (empty($conf->use_javascript_ajax)) $alt='Help disabled (javascript disabled)';
+		// If info or help with no javascript, show only text
+		if (empty($conf->use_javascript_ajax))
+		{
+			if ($type == 'info' || $type == 'help')	return $text;
+			else { $alt=$htmltext; $htmltext=''; }
+		}
+		// If info or help with smartphone, show only text
+		if (! empty($conf->browser->phone))
+		{
+			if ($type == 'info' || $type == 'help') return $text;
+		}
+		// Info or help	
 		if ($type == 'info') 				$img=img_help(0,$alt);
 		if ($type == 'help' || $type ==1)	$img=img_help(1,$alt);
-		if ($type == 'warning') 			$img=img_warning($alt);
 		if ($type == 'superadmin') 			$img=img_redstar($alt);
+		// Warnings
+		if ($type == 'warning') 			$img=img_warning($alt);
+
 		return $this->textwithtooltip($text,$htmltext,2,$direction,$img);
 	}
 
