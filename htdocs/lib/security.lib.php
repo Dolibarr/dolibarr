@@ -219,7 +219,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		//print "Info session: ".session_name().session_id();print_r($_SESSION);
 		print '<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>'."\n";
-		print '<td valign="top" nowrap="nowrap" align="left" class="e">'."\n";
+		print '<td valign="top" nowrap="nowrap" align="left" class="none">'."\n";
 
 		print '<table style="width: 100px;"><tr>'."\n";	// Force width to a small value
 		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>'."\n";
@@ -232,7 +232,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '</td>';
 		print '</tr>'."\n";
 	}
-
+	
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	print '<tr><td colspan="3" style="text-align:center;"><br>';
@@ -261,7 +261,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print ')</a>';
 		print '</td></tr>';
 	}
-
+	
 	print '</table>'."\n";
 
 	// Hidden fields
@@ -279,7 +279,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	if (! empty($conf->global->MAIN_HOME))
 	{
-		print '<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
+		print '<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center"'.(empty($conf->browser->phone)?' width="750"':'').'><tr><td align="center">';
 		$i=0;
 		while (eregi('__\(([a-zA-Z]+)\)__',$conf->global->MAIN_HOME,$reg) && $i < 100)
 		{
