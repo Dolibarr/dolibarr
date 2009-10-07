@@ -168,7 +168,7 @@ $dolibarr_main_force_https="0";
 # Parameters not used yet
 # dolibarr_smarty_libs_dir,dolibarr_smarty_compile,dolibarr_smarty_cache
 # Examples:
-# $dolibarr_smarty_libs_dir="/var/www/dolibarr/external-libs/smarty/libs/";
+# $dolibarr_smarty_libs_dir="/var/www/dolibarr/htdocs/includes/smarty/libs/";
 # $dolibarr_smarty_compile="/var/www/dolibarr/documents/temp/smarty_templates";
 # $dolibarr_smarty_cache="/var/www/dolibarr/documents/temp/smarty_cache";
 #

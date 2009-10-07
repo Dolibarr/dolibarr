@@ -424,7 +424,7 @@ class DolGraph
 		$class='';
 		if ($this->type == 'bars')  $class='BarPlot';
 		if ($this->type == 'lines') $class='LinePlot';
-		include_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/".$class.".class.php";
+		include_once DOL_DOCUMENT_ROOT."/includes/artichow/".$class.".class.php";
 
 		// Definition de couleurs
 		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);
@@ -586,8 +586,8 @@ class DolGraph
 	 */
 	function BarLineAnnualArtichow($file='', $barvalues, $linevalues, $legends='')
 	{
-		require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
-		require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
+		require_once DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php";
+		require_once DOL_DOCUMENT_ROOT."/includes/artichow/LinePlot.class.php";
 
 		$graph = new Graph(240, 200);
 
@@ -685,8 +685,8 @@ class DolGraph
 
 		if (( sizeof($barvalues) * sizeof($linevalues) ) > 0)
 		{
-			require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
-			require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
+			require_once DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php";
+			require_once DOL_DOCUMENT_ROOT."/includes/artichow/LinePlot.class.php";
 
 			$graph = new Graph(540, 200);
 
@@ -772,7 +772,7 @@ class DolGraph
 	 */
 	function BarAnnualArtichow($file='', $values='', $legends='')
 	{
-		require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+		require_once DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php";
 
 		$ok = 0;
 		foreach($values as $val)

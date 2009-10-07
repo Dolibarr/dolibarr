@@ -265,7 +265,7 @@ if (! isset($_SESSION["dol_login"]))
 	// Verification du code securite graphique
 	if ($test && isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
-		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
+		require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 		require_once ARTICHOW."/AntiSpam.class.php";
 
 		// On cree l'objet anti-spam
@@ -598,10 +598,10 @@ else                        // Si utilisateur externe
 if (sizeof($conf->need_smarty) > 0)
 {
 	// SMARTY (Defined into conf file)
-	// $dolibarr_smarty_libs_dir="/home/www/dolibarr/external-libs/smarty/libs/";
+	// $dolibarr_smarty_libs_dir="/home/www/dolibarr/htdocs/includes/smarty/libs/";
 	// $dolibarr_smarty_compile="/home/www/dolibarr/documents/smarty/templates/temp";
 	// $dolibarr_smarty_cache="/home/www/dolibarr/documents/smarty/cache/temp";
-	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/../external-libs/smarty/libs/';
+	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
 

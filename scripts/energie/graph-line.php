@@ -25,7 +25,7 @@ require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieCompteur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieGroupe.class.php");
 
-require_once (DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php");
+require_once (DOL_DOCUMENT_ROOT."/includes/artichow/LinePlot.class.php");
 
 $error = 0;
 
@@ -158,7 +158,7 @@ if ($resql_c)
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
 
-		  $graph->title->set("Consommation journalière");
+		  $graph->title->set("Consommation journaliï¿½re");
 		  $graph->title->setFont(new Tuffy(10));
 
 		  $bgcolor= new Color(222,231,236);
@@ -182,7 +182,7 @@ if ($resql_c)
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
 
-		  $graph->title->set("Consommation journalière");
+		  $graph->title->set("Consommation journaliï¿½re");
 		  $graph->title->setFont(new Tuffy(10));
 
 		  $bgcolor= new Color(222,231,236);

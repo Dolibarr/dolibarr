@@ -89,7 +89,7 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 // Action modif mot de passe
 if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 {
-	require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
+	require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 	require_once ARTICHOW."/AntiSpam.class.php";
 
 	// We create anti-spam object

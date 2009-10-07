@@ -24,8 +24,8 @@ require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieCompteur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieGroupe.class.php");
 
-require_once (DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php");
-require_once (DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php");
+require_once (DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php");
+require_once (DOL_DOCUMENT_ROOT."/includes/artichow/LinePlot.class.php");
 
 $error = 0;
 

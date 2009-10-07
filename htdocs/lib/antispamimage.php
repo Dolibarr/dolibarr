@@ -39,7 +39,7 @@ session_name($sessionname);
 session_start();
 
 require_once("../master.inc.php");
-require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 require_once ARTICHOW."/AntiSpam.class.php";
 
 // On cree l'objet anti-spam

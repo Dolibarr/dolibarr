@@ -16,10 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
-require_once (DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php");
+
+require_once (DOL_DOCUMENT_ROOT."/includes/artichow/BarPlot.class.php");
 
 class DolibarrSimpleBar {
 
