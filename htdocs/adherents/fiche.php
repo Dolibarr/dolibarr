@@ -1003,7 +1003,7 @@ if ($rowid && $action != 'edit')
     {
 		// Cree un tableau formulaire
 		$formquestion=array();
-		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => 'true');
+		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
 
         $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion);
         if ($ret == 'html') print '<br>';
@@ -1209,7 +1209,7 @@ if ($rowid && $action != 'edit')
      */
     print '<div class="tabsAction">';
 
-    if ($action != 'editlogin' && $action != 'editthirdparty')
+    if ($action != 'valid' && $action != 'editlogin' && $action != 'editthirdparty')
     {
 	    // Modify
 		if ($user->rights->adherent->creer)

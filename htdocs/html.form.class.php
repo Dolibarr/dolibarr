@@ -184,7 +184,7 @@ class Form
 		{
 			if ($type == 'info' || $type == 'help') return $text;
 		}
-		// Info or help	
+		// Info or help
 		if ($type == 'info') 				$img=img_help(0,$alt);
 		if ($type == 'help' || $type ==1)	$img=img_help(1,$alt);
 		if ($type == 'superadmin') 			$img=img_redstar($alt);
@@ -1641,7 +1641,9 @@ class Form
 					$more.='<tr>';
 					$more.='<td valign="top">'.$input['label'].' &nbsp;';
 					$more.='<input type="checkbox" class="flat" name="'.$input['name'].'"';
-					if ($input['value'] != 'false') $more.=' checked="true"';
+					//print 'xx'.$input['value'].'-'.!empty($input['value']).'-'.($input['value'] != 'false');
+					if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
+					if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
 					if ($input['disabled']) $more.=' disabled="true"';
 					$more.='></td>';
 					$more.='<td valign="top" align="left">&nbsp;</td>';

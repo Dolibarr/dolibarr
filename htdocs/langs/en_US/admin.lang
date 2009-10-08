@@ -821,7 +821,7 @@ MembersSetup=Members module setup
 MemberMainOptions=Main options
 AddSubscriptionIntoAccount=Add subscriptions into bank or cash account, of bank module
 AdherentMailRequired=EMail required to create a new member
-MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members is on by default
+MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members (validation or new subscription) is on by default
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPGlobalParameters=Global parameters
