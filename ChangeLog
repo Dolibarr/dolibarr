@@ -92,6 +92,9 @@ For developers:
   to get value of an amount in text.
 - A module can add subsitution keys in makesubsitutions() functions.
 - Add $conf->browser->phone defined to optimise code for smartphone browsers.
+- All external libs are now in same directory /includes.
+- All install files are now in same directory /install.
+
 
 ***** Changelog for 2.6 compared to 2.5 *****
 
