@@ -8,12 +8,9 @@ However it uses some external libraries under different licences. This is compat
 
 Composant         Version  License                     Compatible GPL   Usage
 ----------------------------------------------------------------------------
-In alphabetical order of external-lib directory:
-ArtiChow          1.07     Public Domain               Yes              Graphics
-Smarty            2.6.26   LGPL 2.1                    Yes              Templates engine used by some pages
-
 In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
+ArtiChow          1.07     Public Domain               Yes              Graphics
 Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
 FCKEditor         2.6.4    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
 FPDF              1.53     Public domain               Yes              PDF generation (original code is modified)
@@ -28,6 +25,7 @@ Prototype         1.6.0.3  MIT License                 Yes              Ajax lib
 PWC               1.3      MIT License                 Yes              Ajax library
 Scriptaculous     1.8.2    MIT License                 Yes              Ajax library
 SimpleMail        1.2      GPL                         Yes              SMTP library
+Smarty            2.6.26   LGPL 2.1                    Yes              Templates engine used by some pages
 SMTPs             1.15     GPL                         Yes              SMTPS library
 VCard             2.0      GPL 2.0                     Yes              Fonctions vcard
 
