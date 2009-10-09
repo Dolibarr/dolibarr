@@ -131,13 +131,13 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		{
 			$error = 1;
 			$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
-			$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
+			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
 		}
 		if ($soc->fournisseur && ! $conf->fournisseur->enabled)
 		{
 			$error = 1;
 			$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
-			$_GET["action"]= $_POST["action"]=='add'?'add':'edit';
+			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
 		}
 	}
 
