@@ -294,7 +294,7 @@ if ($_POST["action"] == "set")
 
 		print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
 
-		print '<center><a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+		print '<center><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 		print $langs->trans("GoToSetupArea");
 		print '</a></center>';
 	}
@@ -332,7 +332,7 @@ elseif (eregi('upgrade',$_POST["action"]))
 
 		print "<br>";
 
-		print '<center><a href="'.$dolibarr_main_url_root .'/index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+		print '<center><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 		print $langs->trans("GoToDolibarr");
 		print '</a></center>';
 	}
@@ -344,7 +344,7 @@ elseif (eregi('upgrade',$_POST["action"]))
 
 		print "<br>";
 
-		print '<center><a href="'.$dolibarr_main_url_root .'/install/index.php">';
+		print '<center><a href="../install/index.php">';
 		print $langs->trans("GoToUpgradePage");
 		print '</a></center>';
 	}

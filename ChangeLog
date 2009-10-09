@@ -83,8 +83,8 @@ For developers:
 - Updated wiki documentation.
 - Better W3C standard.
 - Can add init data when enabling a module.
-- Can fix some corruptions in database by calling the update page with
-  action=repair
+- Can fix some corruptions in database by calling the update page 
+  /install/repair.ksh
 - Log files contains more information (PHP_SELD added and OS user used for 
   log of command lines scripts) 
 - Can protect a module to not being enabled if javascript disabled.
