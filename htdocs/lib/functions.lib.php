@@ -1818,6 +1818,18 @@ function dol_print_error($db='',$error='')
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
 
+/**
+ * Show email to contact if technical error
+ */
+function dol_print_error_email()
+{
+	global $langs,$conf;
+
+	$langs->load("errors");
+	print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date(mktime(),'%Y%m%d%')).'</div>';
+}
+
+
 
 /**
  *	\brief  Deplacer les fichiers telecharges, apres quelques controles divers

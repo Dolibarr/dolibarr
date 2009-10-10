@@ -190,6 +190,7 @@ print '<table with="100%">';
 print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found=false;
+$error=0;
 $var=false;
 
 
@@ -249,6 +250,7 @@ if ($_REQUEST["amount"] == 'order')
 	if ($result < 0)
 	{
 		$mesg=$order->error;
+		$error++;
 	}
 	else
 	{
@@ -322,6 +324,7 @@ if ($_REQUEST["amount"] == 'invoice')
 	if ($result < 0)
 	{
 		$mesg=$invoice->error;
+		$error++;
 	}
 	else
 	{
@@ -394,6 +397,7 @@ if ($_REQUEST["amount"] == 'contractline')
 	if ($result < 0)
 	{
 		$mesg=$contractline->error;
+		$error++;
 	}
 	else
 	{
@@ -408,11 +412,13 @@ if ($_REQUEST["amount"] == 'contractline')
 			else
 			{
 				$mesg=$contract->error;
+				$error++;
 			}
 		}
 		else
 		{
 			$mesg='ErrorRecordNotFound';
+			$error++;
 		}
 	}
 
@@ -557,6 +563,7 @@ if ($_REQUEST["amount"] == 'membersubscription')
 	if ($result < 0)
 	{
 		$mesg=$member->error;
+		$error++;
 	}
 	else
 	{
@@ -624,13 +631,18 @@ if (! $found && ! $mesg) $mesg=$langs->trans("ErrorBadParameters");
 
 if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>';
 
-if ($found)
+print '</table>';
+
+if ($found && ! $error)	// We are in a management option and no error
 {
-	print '<tr><td align="center" colspan="2"><br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'"></td></tr>';
+	print '<br><input class="button" type="submit" name="dopayment" value="'.$langs->trans("PayBoxDoPayment").'">';
 	//print '<tr><td align="center" colspan="2">'.$langs->trans("YouWillBeRedirectedOnPayBox").'...</td></tr>';
 }
+else
+{
+	dol_print_error_email();
+}
 
-print '</table>';
 print '</td></tr>';
 
 print '</table>';
