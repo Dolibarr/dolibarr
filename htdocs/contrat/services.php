@@ -200,7 +200,7 @@ if ($resql)
 		$productstatic->id=$obj->pid;
 		$productstatic->type=$obj->ptype;
 		$productstatic->ref=$obj->label?$obj->label:$obj->pid;
-		print $productstatic->getNomUrl(1,20);
+		print $productstatic->getNomUrl(1,'',20);
 		print '</td>';
 
 		// Third party
