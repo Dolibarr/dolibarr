@@ -154,10 +154,12 @@ print '<table style="font-size:14px;" summary="Logo" width="80%">'."\n";
 // Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
 // Define logo and logosmall
-$logosmall=$mysoc->logo_small; $logo=$mysoc->logo;
+$logosmall=$mysoc->logo_small;
+$logo=$mysoc->logo;
 $paramlogo='PAYBOX_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
 else if (! empty($conf->global->PAYBOX_LOGO)) $logosmall=$conf->global->PAYBOX_LOGO;
+print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.' -->'."\n";
 // Define urllogo
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
