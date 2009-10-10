@@ -943,7 +943,8 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
 }
 
 /**
- *	\brief      Truncate a string to a particular length adding '...' if string larger than length
+ *	\brief      Truncate a string to a particular length adding '...' if string larger than length.
+ * 				If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
  *	\param      string				String to truncate
  *	\param      size				Max string size. 0 for no limit.
  *	\param		trunc				Where to trunc: right, left, middle
@@ -962,7 +963,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 		if ($trunc == 'right')
 		{
 			$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-			if (dol_strlen($newstring,$stringencoding) > $size)
+			if (dol_strlen($newstring,$stringencoding) > ($size+1))
 			return dol_substr($newstring,0,$size,$stringencoding).'...';
 			else
 			return $string;
@@ -970,7 +971,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 		if ($trunc == 'middle')
 		{
 			$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-			if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > $size)
+			if (dol_strlen($newstring,$stringencoding) > 2 && dol_strlen($newstring,$stringencoding) > ($size+1))
 			{
 				$size1=round($size/2);
 				$size2=round($size/2);
@@ -982,7 +983,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 		if ($trunc == 'left')
 		{
 			$newstring=dol_textishtml($string)?dol_string_nohtmltag($string,1):$string;
-			if (dol_strlen($newstring,$stringencoding) > $size)
+			if (dol_strlen($newstring,$stringencoding) > ($size+1))
 			return '...'.dol_substr($newstring,dol_strlen($newstring,$stringencoding) - $size,$size,$stringencoding);
 			else
 			return $string;
