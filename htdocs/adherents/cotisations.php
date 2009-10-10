@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/adherents/cotisations.php
- *      \ingroup    adherent
+ *      \ingroup    member
  *		\brief      Page de consultation et insertion d'une cotisation
  *		\version    $Id$
  */

@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/adherents/card_subscriptions.php
- *       \ingroup    adherent
+ *       \ingroup    member
  *       \brief      Onglet d'ajout, edition, suppression des adh�sions d'un adh�rent
  *       \version    $Id$
  */

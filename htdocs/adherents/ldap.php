@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/adherents/ldap.php
- *       \ingroup    ldap
+ *       \ingroup    ldap member
  *       \brief      Page fiche LDAP adherent
  *       \version    $Id$
  */

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,8 @@
 
 /**
  * 	\file 		htdocs/adherents/adherent_options.class.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Fichier de la classe de gestion de la table des champs optionels adherents
- *	\author     Rodolphe Quiedville
- *	\author	    Jean-Louis Bergamo
- *	\author     Sebastien Di Cintio
- *	\author     Benoit Mortier
  *	\version    $Id$
  */
 

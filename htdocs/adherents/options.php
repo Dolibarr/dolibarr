@@ -20,7 +20,7 @@
 
 /**
  *      \file       htdocs/adherents/options.php
- *		\ingroup    adherent
+ *		\ingroup    member
  *		\brief      Page de configuratin des champs optionnels
  *		\version    $Id$
  */

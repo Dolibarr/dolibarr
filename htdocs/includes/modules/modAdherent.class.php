@@ -27,8 +27,8 @@
 
 /**
  *		\file       htdocs/includes/modules/modAdherent.class.php
- *      \ingroup    adherent
- *      \brief      Fichier de description et activation du module adherents
+ *      \ingroup    member
+ *      \brief      File descriptor or module Member
  *		\version	$Id$
  */
 

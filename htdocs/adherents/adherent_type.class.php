@@ -18,19 +18,19 @@
  */
 
 /**
- \file       htdocs/adherents/adherent_type.class.php
- \ingroup    adherent
- \brief      Fichier de la classe gérant les types d'adhérents
- \author     Rodolphe Quiedeville
- \version    $Id$
+ *	\file       htdocs/adherents/adherent_type.class.php
+ *	\ingroup    member
+ *	\brief      Fichier de la classe gerant les types d'adherents
+ *	\author     Rodolphe Quiedeville
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 
 /**
- \class      AdherentType
- \brief      Classe gérant les types d'adhérents
+ *	\class      AdherentType
+ *	\brief      Classe gerant les types d'adherents
  */
 class AdherentType extends CommonObject
 {
@@ -42,7 +42,7 @@ class AdherentType extends CommonObject
 	var $id;
 	var $libelle;
 	var $statut;
-	var $cotisation;  /**< Soumis à la cotisation */
+	var $cotisation;  /**< Soumis ï¿½ la cotisation */
 	var $vote;		/**< droit de vote ? */
 	var $note; 		/**< commentaire */
 	var $mail_valid;	/**< mail envoye lors de la validation */
@@ -51,7 +51,7 @@ class AdherentType extends CommonObject
 
 	/**
 	 \brief AdherentType
-	 \param DB				handler accès base de données
+	 \param DB				handler accï¿½s base de donnï¿½es
 	 */
 	function AdherentType($DB)
 	{
@@ -75,8 +75,8 @@ class AdherentType extends CommonObject
 
 
 	/**
-	 \brief      Fonction qui permet de créer le status de l'adhérent
-	 \param      userid			userid de l'adhérent
+	 \brief      Fonction qui permet de crï¿½er le status de l'adhï¿½rent
+	 \param      userid			userid de l'adhï¿½rent
 	 \return     > 0 si ok, < 0 si ko
 	 */
 	function create($userid)
@@ -102,7 +102,7 @@ class AdherentType extends CommonObject
 
 
 	/**
-		\brief      Met a jour en base données du type
+		\brief      Met a jour en base donnï¿½es du type
 		\return     > 0 si ok, < 0 si ko
 		*/
 	function update()
@@ -134,7 +134,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *	\brief      Fonction qui permet de supprimer le status de l'adhérent
+	 *	\brief      Fonction qui permet de supprimer le status de l'adhï¿½rent
 	 *	\param      rowid
 	 */
 	function delete($rowid)
@@ -161,7 +161,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-		\brief 		Fonction qui permet de récupérer le status de l'adhérent
+		\brief 		Fonction qui permet de rï¿½cupï¿½rer le status de l'adhï¿½rent
 		\param 		rowid
 		\return		int			<0 si KO, >0 si OK
 		*/

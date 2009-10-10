@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/adherents/index.php
- *       \ingroup    adherent
+ *       \ingroup    member
  *       \brief      Page accueil module adherents
  */
 

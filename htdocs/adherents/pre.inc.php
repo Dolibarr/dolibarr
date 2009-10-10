@@ -18,10 +18,10 @@
  */
 
 /**     \file       htdocs/adherents/pre.inc.php
-        \ingroup    adherent
-		\brief      Fichier de gestion du menu gauche du module adherent
-		\version    $Id$
-*/
+ *      \ingroup    member
+ *		\brief      Fichier de gestion du menu gauche du module adherent
+ *		\version    $Id$
+ */
 
 require("../main.inc.php");
 

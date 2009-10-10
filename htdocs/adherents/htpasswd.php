@@ -20,7 +20,7 @@
 
 /**
 		\file 		htdocs/adherents/htpasswd.php
-        \ingroup    adherent
+        \ingroup    member
 		\brief      Page d'export htpasswd du fichier des adherents
 		\author     Rodolphe Quiedeville
 		\version    $Id$

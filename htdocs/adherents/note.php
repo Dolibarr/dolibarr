@@ -18,10 +18,10 @@
  */
 
 /**
-        \file       htdocs/adherents/note.php
-        \ingroup    member
-        \brief      Fiche de notes sur un adherent
-		\version    $Id$
+ *      \file       htdocs/adherents/note.php
+ *      \ingroup    member
+ *      \brief      Fiche de notes sur un adherent
+ *		\version    $Id$
 */
 
 require("./pre.inc.php");

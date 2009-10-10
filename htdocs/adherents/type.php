@@ -20,8 +20,8 @@
 
 /**
  *      \file       htdocs/adherents/type.php
- *      \ingroup    adherent
- *		\brief      Page de configuration des types d'adh�rents
+ *      \ingroup    member
+ *		\brief      Page de configuration des types d'adherents
  *		\version    $Id$
  */
 

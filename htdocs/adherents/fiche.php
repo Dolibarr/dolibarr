@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/adherents/fiche.php
- *       \ingroup    adherent
+ *       \ingroup    member
  *       \brief      Page d'ajout, edition, suppression d'une fiche adherent
  *       \version    $Id$
  */

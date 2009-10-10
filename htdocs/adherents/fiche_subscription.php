@@ -18,8 +18,8 @@
 
 /**
  *       \file       htdocs/adherents/fiche_subscription.php
- *       \ingroup    adherent
- *       \brief      Page d'ajout, edition, suppression d'une fiche adhésion
+ *       \ingroup    member
+ *       \brief      Page d'ajout, edition, suppression d'une fiche adhï¿½sion
  *       \version    $Id$
  */
 
@@ -147,7 +147,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("SubscriptionCard"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $form = new Form($db);
 
@@ -287,11 +287,11 @@ if ($rowid && $action != 'edit')
 	$head[$h][2] = 'info';
 	$h++;
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"));
+	dol_fiche_head($head, 'general', $langs->trans("Subscription"), '', 'payment');
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
-    // Confirmation de la suppression de l'adhérent
+    // Confirmation to delete subscription
     if ($action == 'delete')
     {
 		//$formquestion=array();

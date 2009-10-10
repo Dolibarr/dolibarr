@@ -22,7 +22,7 @@
 
 /**
  *	\file       htdocs/adherents/adherent.class.php
- *	\ingroup    adherent
+ *	\ingroup    member
  *	\brief      Fichier de la classe permettant la gestion d'un adherent
  *	\version    $Id$
  */
@@ -36,7 +36,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
  *      \class      Adherent
  *		\brief      Classe permettant la gestion d'un adherent
  */
-
 class Adherent extends CommonObject
 {
 	var $db;
@@ -571,7 +570,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 \brief 		Fonction qui met a jour le chp denormalise date fin adhésion
+	 \brief 		Fonction qui met a jour le chp denormalise date fin adhï¿½sion
 	 \param		user			Utilisateur qui realise la mise a jour
 	 \return		int				<0 si KO, >0 si OK
 	 */

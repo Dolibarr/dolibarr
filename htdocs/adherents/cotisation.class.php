@@ -18,23 +18,25 @@
  */
 
 /**
-		\file 		htdocs/adherents/cotisation.class.php
-        \ingroup    adherent
-		\brief      Fichier de la classe permettant de gèrer les cotisations
-		\version    $Id$
-*/
+ *		\file 		htdocs/adherents/cotisation.class.php
+ *      \ingroup    member
+ *		\brief      File of class to manage subscriptions
+ *		\version    $Id$
+ */
 
 
 /**
-	\class 		Cotisation
-	\brief      Classe permettant de gèrer les cotisations
-*/
+ *	\class 		Cotisation
+ *	\brief      Class to manage subscriptions
+ */
 class Cotisation extends CommonObject
 {
 	var $id;
 	var $db;
 	var $error;
 	var $errors;
+	var $element='subscription';
+	var $table_element='cotisation';
 
 	var $datec;
 	var $datem;
@@ -47,9 +49,9 @@ class Cotisation extends CommonObject
 
 
 	/**
-			\brief Cotisation
-			\param DB				Handler base de données
-	*/
+	 *		\brief Constructor
+	 *		\param DB				Handler base de donnees
+	 */
 	function Cotisation($DB)
 	{
 		$this->db = $DB;
@@ -57,10 +59,10 @@ class Cotisation extends CommonObject
 
 
 	/**
-		\brief 		Fonction qui permet de créer le don
-		\param 		userid		userid de celui qui insere
-		\return		int			<0 si KO, Id cotisation créé si OK
-	*/
+	 *	\brief 		Fonction qui permet de creer la cotisation
+	 *	\param 		userid		userid de celui qui insere
+	 *	\return		int			<0 si KO, Id cotisation cree si OK
+	 */
 	function create($userid)
 	{
 		// Check parameters
@@ -92,7 +94,7 @@ class Cotisation extends CommonObject
 
 
 	/**
-		\brief 		Fonction qui permet de récupèrer une cotisation
+		\brief 		Fonction qui permet de rï¿½cupï¿½rer une cotisation
 		\param 		rowid		Id cotisation
 		\return		int			<0 si KO, =0 si OK mais non trouve, >0 si OK
 	*/
