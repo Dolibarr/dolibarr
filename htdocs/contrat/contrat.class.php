@@ -1094,11 +1094,11 @@ class Contrat extends CommonObject
 
 
 	/**
-		\brief      Renvoie nom clicable (avec eventuellement le picto)
-		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		maxlength		Max length of ref
-		\return		string			Chaine avec URL
-		*/
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\param		maxlength		Max length of ref
+	 *	\return		string			Chaine avec URL
+	 */
 	function getNomUrl($withpicto=0,$maxlength=0)
 	{
 		global $langs;

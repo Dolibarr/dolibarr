@@ -27,6 +27,7 @@
 
 require("./pre.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+require_once (DOL_DOCUMENT_ROOT."/product.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 
 $langs->load("products");
@@ -72,7 +73,8 @@ llxHeader();
 
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
 $sql.= " s.rowid as socid, s.nom,";
-$sql.= " cd.rowid, cd.description, cd.statut, p.rowid as pid, p.label as label,";
+$sql.= " cd.rowid, cd.description, cd.statut,";
+$sql.= " p.rowid as pid, p.label as label, p.fk_product_type as ptype,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_ouverture_prevue,";
 $sql.= " ".$db->pdate("cd.date_ouverture")." as date_ouverture,";
@@ -151,13 +153,13 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="filter" value="'.$filter.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<input type="text" class="flat" size="3" name="search_contract" value="'.stripslashes($search_contract).'">';
+	print '<input type="text" class="flat" size="3" name="search_contract" value="'.$search_contract.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="18" name="search_service" value="'.stripslashes($search_service).'">';
+	print '<input type="text" class="flat" size="18" name="search_service" value="'.$search_service.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="24" name="search_nom" value="'.stripslashes($search_nom).'">';
+	print '<input type="text" class="flat" size="24" name="search_nom" value="'.$search_nom.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
@@ -178,6 +180,9 @@ if ($resql)
 	print "</tr>\n";
 	print '</form>';
 
+	$contractstatic=new Contrat($db);
+	$productstatic=new Product($db);
+
 	$var=True;
 	while ($i < min($num,$limit))
 	{
@@ -185,7 +190,6 @@ if ($resql)
 		$var=!$var;
 		print "<tr $bc[$var]>";
 		print '<td>';
-		$contractstatic=new Contrat($db);
 		$contractstatic->id=$obj->cid;
 		$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
 		print $contractstatic->getNomUrl(1,16);
@@ -193,14 +197,10 @@ if ($resql)
 
 		// Service
 		print '<td>';
-		if ($obj->pid)
-		{
-			print '<a href="../product/fiche.php?id='.$obj->pid.'">'.img_object($langs->trans("ShowService"),"service").' '.dol_trunc($obj->label,20).'</a>';
-		}
-		else
-		{
-			print dol_trunc($obj->description,20);
-		}
+		$productstatic->id=$obj->pid;
+		$productstatic->type=$obj->ptype;
+		$productstatic->ref=$obj->label?$obj->label:$obj->pid;
+		print $productstatic->getNomUrl(1,20);
 		print '</td>';
 
 		// Third party

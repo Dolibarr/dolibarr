@@ -2050,7 +2050,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *    	\brief      Return clicable link of object (with eventually picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
 	 *		\param		option			Sur quoi pointe le lien
 	 *		\param		maxlength		Maxlength of ref
@@ -2084,9 +2084,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Retourne le libell� du statut d'une facture (brouillon, valid�e, abandonn�e, pay�e)
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string		Libelle
+	 *    	\brief      Return label of status of object
+	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *    	\return     string      Label of status
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -2094,10 +2094,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donne
+	 *    	\brief      Return label of a given status
 	 *    	\param      status      Statut
-	 *		\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string      Libell� du statut
+	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *    	\return     string      Label of status
 	 */
 	function LibStatut($status,$mode=0)
 	{
