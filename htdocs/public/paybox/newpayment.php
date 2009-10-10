@@ -159,7 +159,7 @@ $logo=$mysoc->logo;
 $paramlogo='PAYBOX_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
 else if (! empty($conf->global->PAYBOX_LOGO)) $logosmall=$conf->global->PAYBOX_LOGO;
-print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.' -->'."\n";
+//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
