@@ -819,7 +819,7 @@ MembersSetup = Configuración del módulo Asociaciones
 MemberMainOptions = Opciones principales
 AddSubscriptionIntoAccount = Registrar cotizaciones en cuenta bancaria o caja del módulo bancario
 AdherentMailRequired = E-Mail obligatorio para crear un miembro nuevo
-MemberSendInformationByMailByDefault = Casilla de verificación para enviar el correo de confirmación a los miembros es por defecto "sí"
+MemberSendInformationByMailByDefault = Casilla de verificación para enviar el correo de confirmación (validación ó nueva cotización) a los miembros es por defecto "sí"
 ##### LDAP setup ##### = undefined = 
 LDAPSetup = Configuracón del módulo LDAP
 LDAPGlobalParameters = Parámetros globales

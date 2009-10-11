@@ -819,7 +819,7 @@ MembersSetup = Configuració del mòdulo Associacions
 MemberMainOptions = Opcions principals
 AddSubscriptionIntoAccount = Registrar cotitzacions en compte bancari o la caixa del mòdul bancari
 AdherentMailRequired = E-Mail obligatori per crear un membre nou
-MemberSendInformationByMailByDefault = Casella de verificació per enviar un missatge de confirmació als membres és per defecte "sí"
+MemberSendInformationByMailByDefault = Casella de verificació per enviar un missatge de confirmació (validació o nova cotització) als membres és per defecte "sí"
 ##### LDAP setup ##### = undefined =  = 
 LDAPSetup = Configuracón del mòdul LDAP
 LDAPGlobalParameters = Paràmetres globals
