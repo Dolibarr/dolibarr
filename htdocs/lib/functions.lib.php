@@ -2190,22 +2190,26 @@ function dol_delete_dir_recursive($dir,$count=0)
 	{
 		while (false !== ($item = readdir($handle)))
 		{
+			// readdir return value in ISO and we want UTF8 in memory
+			$newitem=$item;
+			if (! utf8_check($item)) $item=utf8_encode($item);
+
 			if ($item != "." && $item != "..")
 			{
-				if (is_dir("$dir/$item"))
+				if (is_dir("$newdir/$newitem"))
 				{
 					$count=dol_delete_dir_recursive("$dir/$item",$count);
 				}
 				else
 				{
-					unlink("$dir/$item");
+					unlink("$newdir/$newitem");
 					$count++;
 					//echo " removing $dir/$item<br>\n";
 				}
 			}
 		}
 		closedir($handle);
-		rmdir($dir);
+		rmdir($newdir);
 		$count++;
 		//echo "removing $dir<br>\n";
 	}
