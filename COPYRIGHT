@@ -17,7 +17,6 @@ FPDF              1.53     Public domain               Yes              PDF gene
 FPDF_TPL          1.1.2    Apache Software License 2.0 No GPL3 only     PDF templates management
 FPDI              1.2.1    Apache Software License 2.0 No GPL3 only     PDF templates management
 FPDI_Protection   1.0.2    Apache Software License 2.0 No GPL3 only     PDF encryption (8 files)
-GeoIP             x.x                                  Yes              GeoIP Maxmind conversion
 MagPieRss         0.72     GPL 2.0                     Yes              Load RSS
 NuSoap            0.6.5    LGPL 2.1                    Yes              Interfaces with third tools
 PHP_WriteExcel    0.3.0    LGPL 2.1                    Yes              Excel files generation
@@ -29,6 +28,7 @@ SimpleMail        1.2      GPL                         Yes              SMTP lib
 Smarty            2.6.26   LGPL 2.1                    Yes              Templates engine used by some pages
 SMTPs             1.15     GPL                         Yes              SMTPS library
 VCard             2.0      GPL 2.0                     Yes              Fonctions vcard
+GeoIP             x.x                                  Yes              GeoIP Maxmind conversion
 
 For licenses compatibility informations:
 http://www.fsf.org/licensing/licenses/index_html
