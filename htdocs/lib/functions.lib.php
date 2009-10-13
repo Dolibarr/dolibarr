@@ -860,6 +860,32 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 	return $newphone;
 }
 
+function dol_print_ip($ip)
+{
+	global $conf,$langs;
+
+	print $ip;
+	if (! empty($conf->geoipmaxmind->enabled))
+	{
+		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+
+		//$ip='24.24.24.24';
+		$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
+
+		include_once(DOL_DOCUMENT_ROOT.'/lib/dolgeoip.class.php');
+		$geoip=new DolGeoIP('country',$datafile);
+		$countrycode=$geoip->getCountryCodeFromIP($ip);
+		if ($countrycode)	// If success, countrycode is us, fr, ...
+		{
+			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png'))
+			{
+				print ' '.img_picto($langs->trans("AccordingToGeoIPDatabase"),DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png','',1);
+			}
+			else print ' ('.$countrycode.')';
+		}
+	}
+}
+
 /**
  *	\brief      Return true if email syntax is ok
  *	\param	    address     email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
