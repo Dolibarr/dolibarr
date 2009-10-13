@@ -176,6 +176,7 @@ For developers:
 - Rewrite clone feature for supplier invoice to work like other clone features.
 - First change to manage a future feature "stock PMP value".
 - A module can add a new tab in third party view tabs.
+- First change for future geoip module.
 
 
 ***** Changelog for 2.5 compared to 2.4 *****

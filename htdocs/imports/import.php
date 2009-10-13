@@ -570,9 +570,9 @@ if ($step == 3 && $datatoimport)
     		print '</a>';
 			print '</td>';
 			// Affiche taille fichier
-			print '<td align="right">'.dol_print_size(dol_filesize($newdir.'/'.$newfile)).'</td>';
+			print '<td align="right">'.dol_print_size(dol_filesize($dir.'/'.$file)).'</td>';
 			// Affiche date fichier
-			print '<td align="right">'.dol_print_date(dol_filemtime($newdir.'/'.$newfile),'dayhour').'</td>';
+			print '<td align="right">'.dol_print_date(dol_filemtime($dir.'/'.$file),'dayhour').'</td>';
 			// Del button
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&step=3&format='.$format.'&modulepart='.$modulepart.'&file='.urlencode($relativepath);
 			print '&amp;urlsource='.urlencode($urlsource);
@@ -1069,7 +1069,9 @@ if ($step == 5 && $datatoimport)
 		$obj->import_close_file();
 	}
 
-	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
+	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
+
+	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -1140,7 +1142,6 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td>';
 	print $langs->trans("NbOfSourceLines");
 	print '</td><td>';
-	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
 	print $nboflines;
 	print '</td></tr>';
 
@@ -1275,7 +1276,9 @@ if ($step == 6 && $datatoimport)
 		$obj->import_close_file();
 	}
 
-	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
+	$nboflines=(! empty($_GET["nboflines"])?$_GET["nboflines"]:dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
+
+	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -1318,7 +1321,7 @@ if ($step == 6 && $datatoimport)
 	print '</td></tr>';
 
 	// Lot de donnees a importer
-	print '<tr><td width="25%">'.$langs->trans("DatasetToImport").'</td>';
+	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
@@ -1330,7 +1333,7 @@ if ($step == 6 && $datatoimport)
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
-	print '<tr><td width="40%">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
     print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
@@ -1350,7 +1353,6 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td>';
 	print $langs->trans("NbOfSourceLines");
 	print '</td><td>';
-	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
 	print $nboflines;
 	print '</td></tr>';
 
@@ -1367,7 +1369,7 @@ if ($step == 6 && $datatoimport)
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
 
 	// Tables imported
-	print '<tr><td width="40%">';
+	print '<tr><td width="25%">';
 	print $langs->trans("TablesTarget");
 	print '</td><td>';
 	$listtables=array();
@@ -1434,11 +1436,13 @@ if ($step == 6 && $datatoimport)
 	$maxnbofwarnings=empty($conf->global->IMPORT_MAX_NB_OF_WARNINGS)?100:$conf->global->IMPORT_MAX_NB_OF_WARNINGS;
 	$nboferrors=0;
 	$nbofwarnings=0;
-	
+
+	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
+
 	$db->begin();
 
 	//var_dump($array_match_file_to_database);
-	
+
 	// Open input file
 	$pathfile=$conf->import->dir_temp.'/'.$filetoimport;
 	$result=$obj->import_open_file($pathfile,$langs);
@@ -1449,14 +1453,14 @@ if ($step == 6 && $datatoimport)
 		while ($arrayrecord=$obj->import_read_record())
 		{
 			$sourcelinenb++;
-			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource));
+			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
 			if (sizeof($obj->errors))
 			{
-				$arrayoferrors[$sourcelinenb]=$obj->errors;	
+				$arrayoferrors[$sourcelinenb]=$obj->errors;
 			}
 			if (sizeof($obj->warnings))
 			{
-				$arrayofwarnings[$sourcelinenb]=$obj->warnings;	
+				$arrayofwarnings[$sourcelinenb]=$obj->warnings;
 			}
 		}
 		// Close file

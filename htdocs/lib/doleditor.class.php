@@ -19,14 +19,14 @@
 
 /**
  *       \file       htdocs/lib/doleditor.class.php
- *       \brief      Classe permettant de gérer FCKEditor
+ *       \brief      Classe permettant de gï¿½rer FCKEditor
  *       \version    $Id$
 */
 
 /**
- *       \class      DolEditor
- *       \brief      Classe de gestion de FCKEditor
- *       \remarks    Usage:
+ * 		\class      DolEditor
+ *      \brief      Classe de gestion de FCKEditor
+ *      \remarks    Usage:
  *		\remarks	$doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
  *		\remarks	$doleditor->Create();
  */
@@ -38,13 +38,13 @@ class DolEditor
     /**
             \brief 	DolEditor
             \param 	htmlname		        Nom formulaire html WYSIWIG
-            \param 	content			        Contenu édition WYSIWIG
-            \param 	height			        Hauteur en pixel de la zone édition
-            \param 	toolbarname		        Nom barre de menu éditeur
+            \param 	content			        Contenu ï¿½dition WYSIWIG
+            \param 	height			        Hauteur en pixel de la zone ï¿½dition
+            \param 	toolbarname		        Nom barre de menu ï¿½diteur
             \param  toolbarlocation       	Emplacement de la barre de menu :
-                                          	'In' chaque fenêtre d'édition a ça propre barre d'outils
-                                          	'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
-            \param  toolbarstartexpanded  	visible ou non au démarrage
+                                          	'In' chaque fenï¿½tre d'ï¿½dition a ï¿½a propre barre d'outils
+                                          	'Out:nom' partage de la barre d'outils oï¿½ 'nom' est le nom du DIV qui affiche la barre
+            \param  toolbarstartexpanded  	visible ou non au dï¿½marrage
 			\param	modulepart				modulepart pour protection wrapper download viewimage
 	*/
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true)

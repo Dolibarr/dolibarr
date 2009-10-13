@@ -130,6 +130,7 @@ if ($result)
 	print '<input class="flat" type="text" size="10" name="search_code" value="'.$_GET["search_code"].'">';
 	print '</td>';
 
+	// IP
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_ip" value="'.$_GET["search_ip"].'">';
 	print '</td>';
@@ -166,7 +167,30 @@ if ($result)
 		print '<td>'.$obj->type.'</td>';
 
 		// IP
-		print '<td>'.$obj->ip.'</td>';
+		print '<td>';
+		print $obj->ip;
+
+		if (! empty($conf->geoip_maxmind->enabled))
+		{
+			$datafile=$conf->global->GEOIP_MAXMIND_COUNTRY_DATAFILE;
+			$ip=$obj->ip;
+
+			$ip='24.24.24.24';
+			$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
+
+			include_once(DOL_DOCUMENT_ROOT.'/lib/dolgeoip.class.php');
+			$geoip=new DolGeoIP('country',$datafile);
+			$countrycode=$geoip->getCountryCodeFromIP($ip);
+			if ($countrycode)	// If success, countrycode is us, fr, ...
+			{
+				if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png'))
+				{
+					print ' '.img_picto($langs->trans("AccordingToGeoIPDatabase"),DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png','',1);
+				}
+				else print ' ('.$countrycode.')';
+			}
+		}
+		print '</td>';
 
 		// Login
 		print '<td>';

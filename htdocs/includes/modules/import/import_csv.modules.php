@@ -37,7 +37,7 @@ class ImportCsv extends ModeleImports
     var $id;
     var $error;
     var $errors=array();
-    
+
     var $label;
     var $extension;
     var $version;
@@ -220,7 +220,7 @@ class ImportCsv extends ModeleImports
 			{
 		    	if (! empty($conf->global->IMPORT_CSV_FORCE_CHARSET))	// Forced charset
 		    	{
-		    		if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') 
+		    		if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8')
 		    		{
 		    			$newarrayres[$key]['val']=$val;
 		    			$newarrayres[$key]['type']=1;
@@ -233,12 +233,12 @@ class ImportCsv extends ModeleImports
 		    	}
 		    	else	// Autodetect format (UTF8 or ISO)
 		    	{
-					if (utf8_check($val)) 
+					if (utf8_check($val))
 					{
 						$newarrayres[$key]['val']=$val;
 						$newarrayres[$key]['type']=1;
 					}
-					else 
+					else
 					{
 						$newarrayres[$key]['val']=utf8_encode($val);
 						$newarrayres[$key]['type']=1;
@@ -270,18 +270,17 @@ class ImportCsv extends ModeleImports
      * @param	maxfields						Max number of fiels to use
      * @return	int								<0 if KO, >0 if OK
      */
-    function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields)
+    function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
     {
     	$error=0;
     	$warning=0;
     	$this->errors=array();
     	$this->warnings=array();
-    	
-    	dol_syslog("import_csv.modules maxfields=".$maxfields);
-    	//print "X".$maxfields;
-    	
-		var_dump($array_match_file_to_database);
-		var_dump($arrayrecord);
+
+    	//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
+
+		//var_dump($array_match_file_to_database);
+		//var_dump($arrayrecord);
     	$sort_array_match_file_to_database=$array_match_file_to_database;
     	ksort($sort_array_match_file_to_database);
 		//var_dump($sort_array_match_file_to_database);
@@ -290,7 +289,7 @@ class ImportCsv extends ModeleImports
 			(sizeof($arrayrecord) == 1 && empty($arrayrecord[0]['val'])))
 		{
 			print 'W';
-			$this->warnings[$warning]['lib']='Empty line';	
+			$this->warnings[$warning]['lib']='Empty line';
 			$this->warnings[$warning]['type']='EMPTY';
 			$warning++;
 		}
@@ -305,6 +304,7 @@ class ImportCsv extends ModeleImports
 				$listvalues='';
 				$i=0;
 				$errorforthistable=0;
+				// Loop on each fields in the match array
 				foreach($sort_array_match_file_to_database as $key => $val)
 				{
 					if ($key <= $maxfields)
@@ -325,22 +325,23 @@ class ImportCsv extends ModeleImports
 							$newval=$arrayrecord[($key-1)]['val'];
 							$listvalues.="'".$arrayrecord[($key-1)]['val']."'";
 						}
-						
+
 						// Make some tests
-	
+
 						// Required field is ok
 						if (eregi('\*',$objimport->array_import_fields[0][$val]) && empty($newval))
 						{
-							$this->errors[$error]['lib']='ErrorMissingMandatoryValue field nb '.$key.' target='.$val;	
+							$this->errors[$error]['lib']='ErrorMissingMandatoryValue field nb '.$key.' target='.$val;
 							$this->errors[$error]['type']='NOTNULL';
 							$errorforthistable++;
 							$error++;
 						}
 						// Test format
-	
+						// TODO
+
 						// Other tests
-						// ...
-						
+						// TODO...
+
 					}
 					$i++;
 				}
@@ -350,11 +351,11 @@ class ImportCsv extends ModeleImports
 					{
 						$sql='INSERT INTO '.$tablename.'('.$listfields.') VALUES('.$listvalues.')';
 		    			dol_syslog("import_csv.modules sql=".$sql);
-						
+
 						//print '> '.join(',',$arrayrecord);
 						//print 'sql='.$sql;
 						//print '<br>'."\n";
-			
+
 						// Run insert request
 						if ($sql)
 						{
@@ -366,7 +367,7 @@ class ImportCsv extends ModeleImports
 							else
 							{
 								print 'E';
-								$this->errors[$error]['lib']='ErrorSQL '.$this->db->lasterror();	
+								$this->errors[$error]['lib']='ErrorSQL '.$this->db->lasterror();
 								$this->errors[$error]['type']='SQL';
 								$error++;
 							}
@@ -379,7 +380,7 @@ class ImportCsv extends ModeleImports
 				}
 			}
 		}
-		
+
 		return 1;
 	}
 
