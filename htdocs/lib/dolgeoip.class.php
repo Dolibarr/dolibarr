@@ -52,13 +52,15 @@ class DolGeoIP
 
 		if (empty($type) || empty($datfile))
 		{
-			dol_syslog("DolGeoIP::DolGeoIP parameter datafile not defined", LOG_ERR);
-			dol_print_error('DolGeoIP constructor was called with no datafile parameter');
+			//dol_syslog("DolGeoIP::DolGeoIP parameter datafile not defined", LOG_ERR);
+			$this->errorlabel='DolGeoIP constructor was called with no datafile parameter';
+			//dol_print_error('','DolGeoIP constructor was called with no datafile parameter');
+			print $this->errorlabel;
 			return 0;
 		}
 		if (! file_exists($datfile))
 		{
-			dol_syslog("DolGeoIP::DolGeoIP datafile ".$datfile." can not be read", LOG_ERR);
+			//dol_syslog("DolGeoIP::DolGeoIP datafile ".$datfile." can not be read", LOG_ERR);
 			$this->error='ErrorGeoIPClassNotInitialized';
 			$this->errorlabel="Datafile ".$datfile." not found";
 			print $this->errorlabel;

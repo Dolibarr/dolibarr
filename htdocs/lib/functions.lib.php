@@ -868,9 +868,8 @@ function dol_print_ip($ip)
 	if (! empty($conf->geoipmaxmind->enabled))
 	{
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
-
 		//$ip='24.24.24.24';
-		$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
+		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/dolgeoip.class.php');
 		$geoip=new DolGeoIP('country',$datafile);
