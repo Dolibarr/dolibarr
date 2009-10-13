@@ -82,3 +82,7 @@ SomeMandatoryFieldHaveNoSource=Certains champs obligatoires n'ont pas de champ s
 InformationOnSourceFile=Informations sur le fichier source
 InformationOnTargetTables=Informations sur les champs cibles
 SelectAtLeastOneField=Basculer au moins un champ source dans la colonne des champs à exporter
+SelectFormat=Choisir ce format de fichier import
+RunImportFile=Lancer l'import en base
+NowClickToRunTheImport=Vérifiez le résultat de la simulation. Si tout est ok, lancer l'import définitif en base.
+DataLoadedWithId=Toutes les données seront importées avec l'id d'import suivant: <b>%s</b>

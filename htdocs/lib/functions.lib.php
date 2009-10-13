@@ -2641,8 +2641,9 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
 }
 
 /**
- *	\brief		This function is called to encode a string into a HTML string.
- * 				All entities except &,<,> are converted. This permits to encode special chars to entities with no double encoded for already encoded HTML strings.
+ *	\brief		This function is called to encode a string into a HTML string but differs from htmlentities because
+ * 				all entities but &,<,> are converted. This permits to encode special chars to entities with no double
+ *              encoding for already encoded HTML strings.
  * 				This function also remove last CR/BR.
  *	\param		stringtoencode		String to encode
  *	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)

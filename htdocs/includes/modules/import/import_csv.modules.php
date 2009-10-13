@@ -35,6 +35,9 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/import/modules_import.php");
 class ImportCsv extends ModeleImports
 {
     var $id;
+    var $error;
+    var $errors=array();
+    
     var $label;
     var $extension;
     var $version;
@@ -192,6 +195,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	\brief		Return array of next record in input file.
 	 * 	\return		Array		Array of field values. Data are UTF8 encoded.
+	 * 							[0]=>(['val']=>val,['type']=>-1=null,0=blank,1=string)
 	 */
     function import_read_record()
     {
@@ -216,13 +220,29 @@ class ImportCsv extends ModeleImports
 			{
 		    	if (! empty($conf->global->IMPORT_CSV_FORCE_CHARSET))	// Forced charset
 		    	{
-		    		if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') $newarrayres[$key]=$val;
-		    		else $newarrayres[$key]=utf8_encode($val);
+		    		if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') 
+		    		{
+		    			$newarrayres[$key]['val']=$val;
+		    			$newarrayres[$key]['type']=1;
+		    		}
+		    		else
+		    		{
+		    			$newarrayres[$key]['val']=utf8_encode($val);
+		    			$newarrayres[$key]['type']=1;
+		    		}
 		    	}
 		    	else	// Autodetect format (UTF8 or ISO)
 		    	{
-					if (utf8_check($val)) $newarrayres[$key]=$val;
-					else $newarrayres[$key]=utf8_encode($val);
+					if (utf8_check($val)) 
+					{
+						$newarrayres[$key]['val']=$val;
+						$newarrayres[$key]['type']=1;
+					}
+					else 
+					{
+						$newarrayres[$key]['val']=utf8_encode($val);
+						$newarrayres[$key]['type']=1;
+					}
 		    	}
 			}
 
@@ -247,52 +267,120 @@ class ImportCsv extends ModeleImports
      * @param 	arrayrecord						Array of field values
      * @param	array_match_file_to_database
      * @param 	objimport
+     * @param	maxfields						Max number of fiels to use
      * @return	int								<0 if KO, >0 if OK
      */
-    function import_insert($arrayrecord,$array_match_file_to_database,$objimport)
+    function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields)
     {
     	$error=0;
+    	$warning=0;
+    	$this->errors=array();
+    	$this->warnings=array();
+    	
+    	dol_syslog("import_csv.modules maxfields=".$maxfields);
+    	//print "X".$maxfields;
+    	
+		var_dump($array_match_file_to_database);
+		var_dump($arrayrecord);
+    	$sort_array_match_file_to_database=$array_match_file_to_database;
+    	ksort($sort_array_match_file_to_database);
+		//var_dump($sort_array_match_file_to_database);
 
-		// For each table to insert, me make a separate insert
-		foreach($objimport->array_import_tables[0] as $alias=>$tablename)
+		if (sizeof($arrayrecord) == 0 ||
+			(sizeof($arrayrecord) == 1 && empty($arrayrecord[0]['val'])))
 		{
-			// Build sql request
-			$sql='';
-			$listfields='';
-			$listvalues='';
-			foreach($array_match_file_to_database as $key => $val)
+			print 'W';
+			$this->warnings[$warning]['lib']='Empty line';	
+			$this->warnings[$warning]['type']='EMPTY';
+			$warning++;
+		}
+		else
+		{
+			// For each table to insert, me make a separate insert
+			foreach($objimport->array_import_tables[0] as $alias=>$tablename)
 			{
-				if ($listfields) { $listfields.=', '; $listvalues.=', '; }
-				$listfields.=$val;
-				$listvalues.='ee';
-			}
-			if ($listfields)
-			{
-				$sql='INSERT INTO '.$tablename.'('.$listfields.') VALUES('.$listvalues.')';
-			}
-
-			//print '> '.join(',',$arrayrecord);
-			print 'sql='.$sql;
-			print '<br>'."\n";
-
-			// Run insert request
-			if ($sql)
-			{
-				$resql=$this->db->query($sql);
-				if ($resql)
+				// Build sql request
+				$sql='';
+				$listfields='';
+				$listvalues='';
+				$i=0;
+				$errorforthistable=0;
+				foreach($sort_array_match_file_to_database as $key => $val)
 				{
-					print '.';
+					if ($key <= $maxfields)
+					{
+						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
+						$listfields.=$val;
+						$newval='';
+						if ($arrayrecord[($key-1)]['type'] < 0)
+						{
+							$listvalues.="null";
+						}
+						else if ($arrayrecord[($key-1)]['type'] == 0)
+						{
+							$listvalues.="''";
+						}
+						else if ($arrayrecord[($key-1)]['type'] > 0)
+						{
+							$newval=$arrayrecord[($key-1)]['val'];
+							$listvalues.="'".$arrayrecord[($key-1)]['val']."'";
+						}
+						
+						// Make some tests
+	
+						// Required field is ok
+						if (eregi('\*',$objimport->array_import_fields[0][$val]) && empty($newval))
+						{
+							$this->errors[$error]['lib']='ErrorMissingMandatoryValue field nb '.$key.' target='.$val;	
+							$this->errors[$error]['type']='NOTNULL';
+							$errorforthistable++;
+							$error++;
+						}
+						// Test format
+	
+						// Other tests
+						// ...
+						
+					}
+					$i++;
 				}
-				else
+				if (! $errorforthistable)
 				{
-					print 'E';
-					$this->error=$this->db->lasterror();
-					$error++;
+					if ($listfields)
+					{
+						$sql='INSERT INTO '.$tablename.'('.$listfields.') VALUES('.$listvalues.')';
+		    			dol_syslog("import_csv.modules sql=".$sql);
+						
+						//print '> '.join(',',$arrayrecord);
+						//print 'sql='.$sql;
+						//print '<br>'."\n";
+			
+						// Run insert request
+						if ($sql)
+						{
+							$resql=$this->db->query($sql);
+							if ($resql)
+							{
+								print '.';
+							}
+							else
+							{
+								print 'E';
+								$this->errors[$error]['lib']='ErrorSQL '.$this->db->lasterror();	
+								$this->errors[$error]['type']='SQL';
+								$error++;
+							}
+						}
+					}
+					else
+					{
+						dol_print_error('Ne doit pas arriver AAA');
+					}
 				}
 			}
 		}
-
-		return $error?-$error:1;
+		
+		return 1;
 	}
 
 }
