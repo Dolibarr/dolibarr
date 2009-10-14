@@ -82,3 +82,7 @@ SomeMandatoryFieldHaveNoSource = Alguns camps obligatoris no tenen camp font a l
 InformationOnSourceFile = Informació de l'arxiu origen
 InformationOnTargetTables = Informació sobre els camps de destinació
 SelectAtLeastOneField = Bascular com a mínim un camp origen a la columna de camps a exportar
+SelectFormat = Seleccioneu aquest format de fitxer d'importació
+RunImportFile = Llançar la importació
+NowClickToRunTheImport = Comproveu els resultats de la simulació. Si tot està bé, inicieu la importació definitiva.
+DataLoadedWithId = Totes les dades seran importades amb la id d'importació: <b>%s</b>

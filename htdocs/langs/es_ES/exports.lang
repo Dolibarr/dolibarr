@@ -82,3 +82,7 @@ SomeMandatoryFieldHaveNoSource = Algunos campos obligatorios no tienen campo fue
 InformationOnSourceFile = Información del archivo origen
 InformationOnTargetTables = Información sobre los campos de destino
 SelectAtLeastOneField = Bascular al menos un campo origen en la columna de campos a exportar
+SelectFormat = Seleccione este formato de archivo de importación
+RunImportFile = Lanzar la importación
+NowClickToRunTheImport = Compruebe los resultados de la simulación. Si todo está bien, inicie la importación definitiva.
+DataLoadedWithId = Todos los datos serán importados con la siguiente id de importación: <b>%s</b>
