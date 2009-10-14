@@ -153,11 +153,11 @@ print '<table class="nocellnopadd">';
 print img_picto_common('','mail.png','',1);
 print '</td></tr>';*/
 print '<tr><td align="center">';
-print '<br>'.$langs->trans("FeatureNotYetAvailable").'.<br>';
+print '<br>'.$langs->trans("ToSeeListOfAvailableRessources").'<br>';
+print '<b><a href="'.$urlwiki.'">'.$langs->trans("ClickHere").'</a></b><br>';
+print '<br><br>';
+print '<br><br>';
 print '</td></tr></table>';
-print '<br><br>';
-print '<br><br>';
-print '<br>';
 print '</td>';
 print '</tr>';
 print '</table>';
