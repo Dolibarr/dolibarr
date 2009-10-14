@@ -67,7 +67,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 if ($_POST['addfile'] || $_POST['addfilehtml'])
 {
 	// Set tmp user directory
-	$vardir=$conf->users->dir_output."/".$user->id;
+	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
 	if (! empty($_FILES['addedfile']['tmp_name']))

@@ -366,7 +366,7 @@ if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
 if ($_POST['addfile'])
 {
 	// Set tmp user directory
-	$vardir=$conf->users->dir_output."/".$user->id;
+	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
@@ -809,7 +809,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#builddoc');
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -1897,12 +1897,6 @@ if ($id > 0 || ! empty($ref))
 		print '<br>';
 		print_titre($langs->trans('SendPropalByMail'));
 
-		$liste[0]="&nbsp;";
-		foreach ($societe->thirdparty_and_contact_email_array() as $key=>$value)
-		{
-			$liste[$key]=$value;
-		}
-
 		// Create form object
 		include_once('../html.formmail.class.php');
 		$formmail = new FormMail($db);
@@ -1911,8 +1905,12 @@ if ($id > 0 || ! empty($ref))
 		$formmail->fromname = $user->fullname;
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;
-		$formmail->withto=$liste;
+		$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
+		$formmail->withtosocid=$societe->id;
 		$formmail->withtocc=1;
+		$formmail->withtoccsocid=0;
+		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+		$formmail->withtocccsocid=0;
 		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;

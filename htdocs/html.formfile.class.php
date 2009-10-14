@@ -291,7 +291,7 @@ class FormFile
 			$buttonlabeltoshow=$buttonlabel;
 			if (empty($buttonlabel)) $buttonlabel=$langs->trans('Generate');
 
-			if (empty($noform)) print '<form action="'.$urlsource.'#builddoc" method="post">';
+			if (empty($noform)) print '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" method="post">';
 			print '<input type="hidden" name="action" value="builddoc">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 

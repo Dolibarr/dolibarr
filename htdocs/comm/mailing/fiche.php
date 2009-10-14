@@ -599,7 +599,7 @@ else
 
 			// Status
 			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
-			
+
 			// Nb of distinct emails
 			print '<tr><td width="25%">';
 			print $langs->trans("TotalNbOfDistinctRecipients");
@@ -716,6 +716,7 @@ else
 				$formmail->withfrom=0;
 				$formmail->withto=$user->email?$user->email:1;
 				$formmail->withtocc=0;
+				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 				$formmail->withtopic=0;
 				$formmail->withtopicreadonly=1;
 				$formmail->withfile=0;

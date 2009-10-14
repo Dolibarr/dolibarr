@@ -417,7 +417,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#builddoc');
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ include_once DOL_DOCUMENT_ROOT."/actioncomm.class.php";
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
     $action = '';
@@ -70,12 +70,12 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	  $soc = new Societe($db, $fac->socid);
 
 	  if ($_POST["sendto"]) {
-	    // Le destinataire a été fourni via le champ libre
+	    // Le destinataire a ï¿½tï¿½ fourni via le champ libre
 	    $sendto = $_POST["sendto"];
 	    $sendtoid = 0;
 	  }
 	  elseif ($_POST["receiver"]) {
-	    // Le destinataire a été fourni via la liste déroulante
+	    // Le destinataire a ï¿½tï¿½ fourni via la liste dï¿½roulante
 	    $sendto = $soc->contact_get_email($_POST["receiver"]);
 	    $sendtoid = $_POST["receiver"];
 	  }
@@ -88,9 +88,9 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	      if ($_POST["action"] == 'send') {
 		$subject = $langs->trans("Bill")." $fac->ref";
 		$actiontypeid=9;
-		$actionmsg ="Mail envoyé par ".$from." à ".$sendto.".\n";
+		$actionmsg ="Mail envoyï¿½ par ".$from." ï¿½ ".$sendto.".\n";
 		if ($message) {
-		  $actionmsg.="Texte utilisé dans le corps du message:\n";
+		  $actionmsg.="Texte utilisï¿½ dans le corps du message:\n";
 		  $actionmsg.=$message;
 		}
 		$actionmsg2="Envoi facture par mail";
@@ -98,9 +98,9 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	      if ($_POST["action"] == 'relance') 	{
 		$subject = "Relance facture $fac->ref";
 		$actiontypeid=9;
-		$actionmsg="Mail envoyé par ".$from." à ".$sendto.".\n";
+		$actionmsg="Mail envoyï¿½ par ".$from." ï¿½ ".$sendto.".\n";
 		if ($message) {
-		  $actionmsg.="Texte utilisé dans le corps du message:\n";
+		  $actionmsg.="Texte utilisï¿½ dans le corps du message:\n";
 		  $actionmsg.=$message;
 		}
 		$actionmsg2="Relance facture par mail";
@@ -158,7 +158,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
     }
     else
       {
-        dol_syslog("Impossible de lire les données de la facture. Le fichier facture n'a peut-être pas été généré.");
+        dol_syslog("Impossible de lire les donnï¿½es de la facture. Le fichier facture n'a peut-ï¿½tre pas ï¿½tï¿½ gï¿½nï¿½rï¿½.");
       }
 }
 
@@ -178,7 +178,7 @@ if ($_GET["facid"] > 0)
 
       if (!$soc->perm_read)
 	{
-	  print "Lecture non authorisée";
+	  print "Lecture non authorisï¿½e";
 	}
 
       if ($soc->perm_read)
@@ -212,7 +212,7 @@ if ($_GET["facid"] > 0)
 	  print '<td colspan="3">';
 	  print '<b><a href="fiche.php?id='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 
-	  print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
+	  print "<td>Conditions de rï¿½glement</td><td>" . $fac->cond_reglement ."</td></tr>";
 
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td colspan=\"3\">".dol_print_date($fac->date,"dayhourtext")."</td>\n";
@@ -284,7 +284,7 @@ if ($_GET["facid"] > 0)
 	  if ($fac->paye == 0)
 	    {
 	      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
-	      print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
+	      print "<tr><td colspan=\"2\" align=\"right\">Facturï¿½ :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 
 	      $resteapayer = $fac->total_ttc - $totalpaye;
 
@@ -493,8 +493,8 @@ if ($_GET["facid"] > 0)
       print '<table width="100%"><tr><td width="50%" valign="top">';
 
       /*
-       * Documents générés
-       * Le fichier de facture détaillée est de la forme
+       * Documents gï¿½nï¿½rï¿½s
+       * Le fichier de facture dï¿½taillï¿½e est de la forme
        * REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
        */
 
@@ -524,7 +524,7 @@ if ($_GET["facid"] > 0)
 	    {
 	      if (is_readable($dir.$file) && substr($file, -10) == 'detail.pdf')
 		{
-		  print "<tr $bc[$var]><td>Facture détaillée</td>";
+		  print "<tr $bc[$var]><td>Facture dï¿½taillï¿½e</td>";
 		  $relativepathdetail = "${facref}/$file";
 
 		  print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';
@@ -586,7 +586,7 @@ if ($_GET["facid"] > 0)
       print '</td><td valign="top" width="50%">';
 
       /*
-       * Liste des actions propres à la facture
+       * Liste des actions propres ï¿½ la facture
        */
       $sql = "SELECT id, ".$db->pdate("a.datep")." as da, a.label, a.note";
       $sql .= ", u.login";
@@ -642,25 +642,24 @@ if ($_GET["facid"] > 0)
 	  print '<br>';
 	  print_titre($langs->trans("SendBillByMail"));
 
-	  $liste[0]="&nbsp;";
-	  foreach ($soc->contact_email_array() as $key=>$value) {
-	    $liste[$key]=$value;
-	  }
-
-	  // Créé l'objet formulaire mail
+	  // Cree l'objet formulaire mail
 	  include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
 	  $formmail = new FormMail($db);
 	  $formmail->fromname = $user->fullname;
 	  $formmail->frommail = $user->email;
 	  $formmail->withfrom=1;
-	  $formmail->withto=$liste;
+	  $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
+	  $formmail->withtosocid=$soc->id;
 	  $formmail->withtocc=1;
+	  $formmail->withtoccsocid=0;
+	  $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+	  $formmail->withtocccsocid=0;
 	  $formmail->withtopic=$langs->trans("SendBillRef","__FACREF__");
 	  $formmail->withfile=1;
 	  $formmail->withbody=1;
 	  // Tableau des substitutions
 	  $formmail->substit["__FACREF__"]=$fac->ref;
-	  // Tableau des paramètres complémentaires du post
+	  // Tableau des paramï¿½tres complï¿½mentaires du post
 	  $formmail->param["action"]="send";
 	  $formmail->param["models"]="facture_send";
 	  $formmail->param["facid"]=$fac->id;
@@ -688,7 +687,7 @@ if ($_GET["facid"] > 0)
 	      $liste[$key]=$value;
 	    }
 
-	  // Créé l'objet formulaire mail
+	  // Crï¿½ï¿½ l'objet formulaire mail
 	  include_once("../html.formmail.class.php");
 	  $formmail = new FormMail($db);
 	  $formmail->fromname = $user->fullname;
@@ -701,7 +700,7 @@ if ($_GET["facid"] > 0)
 	  $formmail->withbody=1;
 	  // Tableau des substitutions
 	  $formmail->substit["__FACREF__"]=$fac->ref;
-	  // Tableau des paramètres complémentaires
+	  // Tableau des paramï¿½tres complï¿½mentaires
 	  $formmail->param["action"]="relance";
 	  $formmail->param["models"]="facture_relance";
 	  $formmail->param["facid"]=$fac->id;
@@ -722,7 +721,7 @@ if ($_GET["facid"] > 0)
     }
   else
     {
-      /* Facture non trouvée */
+      /* Facture non trouvï¿½e */
       print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
     }
 }

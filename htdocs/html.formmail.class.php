@@ -101,7 +101,7 @@ class FormMail
 		global $conf,$user;
 
 		// Set tmp user directory
-		$vardir=$conf->users->dir_output."/".$user->id;
+		$vardir=$conf->user->dir_output."/".$user->id;
 		$upload_dir = $vardir.'/temp/';
 		if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
 
@@ -285,11 +285,20 @@ class FormMail
 			}
 			else
 			{
-				print "<input size=\"".(is_array($this->withto)?"30":"60")."\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_POST["sendto"])?$_POST["sendto"]:$this->withto) :"")."\">";
-				if (is_array($this->withto))
+				print "<input size=\"".(is_array($this->withto)?"30":"60")."\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"")."\">";
+				if ($this->withtosocid > 0)
 				{
+					$liste=array();
+					$liste[0]='&nbsp;';
+					$soc=new Societe($this->db);
+					$soc->fetch($this->withtosocid);
+					foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+					{
+						$liste[$key]=$value;
+					}
 					print " ".$langs->trans("or")." ";
-					print $form->selectarray("receiver", isset($_POST["receiver"])?$_POST["receiver"]:$this->withto);
+					//var_dump($_REQUEST);exit;
+					print $form->selectarray("receiver", $liste, isset($_REQUEST["receiver"])?$_REQUEST["receiver"]:0);
 				}
 			}
 			print "</td></tr>\n";
@@ -308,10 +317,18 @@ class FormMail
 			else
 			{
 				print "<input size=\"".(is_array($this->withtocc)?"30":"60")."\" name=\"sendtocc\" value=\"".((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") )."\">";
-				if (is_array($this->withtocc))
+				if ($this->withtoccsocid > 0)
 				{
+					$liste=array();
+					$liste[0]='&nbsp;';
+					$soc=new Societe($this->db);
+					$soc->fetch($this->withtoccsocid);
+					foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+					{
+						$liste[$key]=$value;
+					}
 					print " ".$langs->trans("or")." ";
-					$form->select_array("receivercc", isset($_POST["receivercc"])?$_POST["receivercc"]:$this->withtocc);
+					$form->select_array("receivercc", $liste, isset($_REQUEST["receivercc"])?$_REQUEST["receivercc"]:0);
 				}
 			}
 			print "</td></tr>\n";
@@ -330,10 +347,18 @@ class FormMail
 			else
 			{
 				print "<input size=\"".(is_array($this->withtoccc)?"30":"60")."\" name=\"sendtoccc\" value=\"".((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") )."\">";
-				if (is_array($this->withtoccc))
+				if ($this->withtocccsocid > 0)
 				{
+					$liste=array();
+					$liste[0]='&nbsp;';
+					$soc=new Societe($this->db);
+					$soc->fetch($this->withtosocid);
+					foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+					{
+						$liste[$key]=$value;
+					}
 					print " ".$langs->trans("or")." ";
-					$form->select_array("receiverccc", isset($_POST["receiverccc"])?$_POST["receiverccc"]:$this->withtoccc);
+					$form->select_array("receiverccc", $liste, isset($_REQUEST["receiverccc"])?$_REQUEST["receiverccc"]:0);
 				}
 			}
 			print "</td></tr>\n";

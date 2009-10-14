@@ -183,7 +183,7 @@ if ($_REQUEST['action'] == 'builddoc')
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?rowid='.$donation->id.'#builddoc');
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?rowid='.$donation->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

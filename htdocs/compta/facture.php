@@ -1117,7 +1117,7 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 if ($_POST['addfile'])
 {
 	// Set tmp user directory
-	$vardir=$conf->users->dir_output."/".$user->id;
+	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
@@ -1342,7 +1342,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	}
 	else
 	{
-		Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'#builddoc');
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -3510,12 +3510,6 @@ else
 				print '<br>';
 				print_titre($langs->trans('SendBillByMail'));
 
-				$liste[0]='&nbsp;';
-				foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
-				{
-					$liste[$key]=$value;
-				}
-
 				// Cree l'objet formulaire mail
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
@@ -3524,9 +3518,12 @@ else
 				$formmail->fromname = $user->fullname;
 				$formmail->frommail = $user->email;
 				$formmail->withfrom=1;
-				$formmail->withto=$liste;
+				$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
+				$formmail->withtosocid=$soc->id;
 				$formmail->withtocc=1;
-				$formmail->withtoccc=$conf->global->FACTURE_EMAIL_USECCC;
+				$formmail->withtoccsocid=0;
+				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withtocccsocid=0;
 				$formmail->withtopic=$langs->transnoentities('SendBillRef','__FACREF__');
 				$formmail->withfile=2;
 				$formmail->withbody=1;
@@ -3534,7 +3531,7 @@ else
 				$formmail->withcancel=1;
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
-				// Tableau des param�tres compl�mentaires du post
+				// Tableau des parametres complementaires du post
 				$formmail->param['action']='send';
 				$formmail->param['models']='facture_send';
 				$formmail->param['facid']=$fac->id;

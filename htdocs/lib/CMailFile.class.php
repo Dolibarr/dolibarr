@@ -579,16 +579,19 @@ class CMailFile
 	}
 
 	/**
-	 *	\brief      Permet d'encoder un fichier
+	 *	\brief      Read a file on disk and return encoded content for emails
 	 *	\param      sourcefile
-	 *	\return     <0 si erreur, fichier encode si ok
+	 *	\return     <0 if KO, encoded string if OK
 	 */
 	function _encode_file($sourcefile)
 	{
-		if (is_readable($sourcefile))
+		$newsourcefile=utf8_check($sourcefile)?utf8_decode($sourcefile):$sourcefile;	// is_readable and file_get_contents need ISO filename
+
+		if (is_readable($newsourcefile))
 		{
-			$fd = fopen($sourcefile, "r");
-			$contents = fread($fd, filesize($sourcefile));
+			//$fd = fopen($newsourcefile, "rb");
+			//$contents = fread($fd, filesize($newsourcefile));
+			$contents = file_get_contents($newsourcefile);	// Need PHP 4.3
 			$encoded = chunk_split(base64_encode($contents), 68, $this->eol);
 			fclose($fd);
 			return $encoded;
