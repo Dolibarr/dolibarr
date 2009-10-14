@@ -72,6 +72,7 @@ $step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"
 $import_name=isset($_POST["import_name"])? $_POST["import_name"] : '';
 $hexa=isset($_POST["hexa"])? $_POST["hexa"] : '';
 $importmodelid=isset($_POST["importmodelid"])? $_POST["importmodelid"] : '';
+$excludefirstline=isset($_GET["excludefirstline"])? $_GET["excludefirstline"] : (isset($_POST["excludefirstline"])?$_POST["excludefirstline"]:0);
 
 $objimport=new Import($db);
 $objimport->load_arrays($user,$datatoimport);
@@ -1040,8 +1041,6 @@ if ($step == 4 && $datatoimport)
 // STEP 5: Summary of choices
 if ($step == 5 && $datatoimport)
 {
-	if (empty($dontimportfirstline)) $dontimportfirstline=0;
-
 	$model=$format;
 	$liste=$objmodelimport->liste_modeles($db);
 
@@ -1072,7 +1071,8 @@ if ($step == 5 && $datatoimport)
 	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-
+	if ($excludefirstline) $param.='&excludefirstline=1';
+	
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	$h = 0;
@@ -1149,7 +1149,9 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td>';
 	print $langs->trans("DoNotImportFirstLine");
 	print '</td><td>';
-	print '<input type="checkbox" name="nofirstline" value='.$dontimportfirstline.'>';
+	print '<input type="checkbox" name="excludefirstline" value="1"';
+	print ($excludefirstline?' checked="true"':'');
+	print '>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -1247,8 +1249,6 @@ if ($step == 5 && $datatoimport)
 // STEP 6: Result of simulation
 if ($step == 6 && $datatoimport)
 {
-	if (empty($dontimportfirstline)) $dontimportfirstline=0;
-
 	$model=$format;
 	$liste=$objmodelimport->liste_modeles($db);
 
@@ -1279,7 +1279,8 @@ if ($step == 6 && $datatoimport)
 	$nboflines=(! empty($_GET["nboflines"])?$_GET["nboflines"]:dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-
+	if ($excludefirstline) $param.='&excludefirstline=1';
+	
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	$h = 0;
@@ -1360,7 +1361,9 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td>';
 	print $langs->trans("DoNotImportFirstLine");
 	print '</td><td>';
-	print '<input type="checkbox" name="nofirstline" value='.$dontimportfirstline.'>';
+	print '<input type="checkbox" name="excludefirstline" value="1"';
+	print ($excludefirstline?' checked="true"':'');
+	print '>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -1432,8 +1435,8 @@ if ($step == 6 && $datatoimport)
 	// Launch import
 	$arrayoferrors=array();
 	$arrayofwarnings=array();
-	$maxnboferrors=empty($conf->global->IMPORT_MAX_NB_OF_ERRORS)?100:$conf->global->IMPORT_MAX_NB_OF_ERRORS;
-	$maxnbofwarnings=empty($conf->global->IMPORT_MAX_NB_OF_WARNINGS)?100:$conf->global->IMPORT_MAX_NB_OF_WARNINGS;
+	$maxnboferrors=empty($conf->global->IMPORT_MAX_NB_OF_ERRORS)?50:$conf->global->IMPORT_MAX_NB_OF_ERRORS;
+	$maxnbofwarnings=empty($conf->global->IMPORT_MAX_NB_OF_WARNINGS)?50:$conf->global->IMPORT_MAX_NB_OF_WARNINGS;
 	$nboferrors=0;
 	$nbofwarnings=0;
 
@@ -1453,6 +1456,8 @@ if ($step == 6 && $datatoimport)
 		while ($arrayrecord=$obj->import_read_record())
 		{
 			$sourcelinenb++;
+			if ($excludefirstline && $sourcelinenb == 1) continue;
+			
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
 			if (sizeof($obj->errors))
 			{
@@ -1473,13 +1478,54 @@ if ($step == 6 && $datatoimport)
 
 	$db->rollback();	// We force rollback because this was just a simulation.
 
-	var_dump($arrayoferrors);
-	// Print result $arrayoferrors
-	foreach ($arrayoferrors as $key => $val)
+	// Errors
+	//var_dump($arrayoferrors);
+	print '<b>'.$langs->trans("Errors").'</b>';
+	print '<hr>';
+	if (sizeof($arrayoferrors))
 	{
-		//print $langs->trans("Result".$key)." ".$arrayofresult[$key].'<br>';
+		foreach ($arrayoferrors as $key => $val)
+		{
+			$nboferrors++;
+			if ($nboferrors > $maxnboferrors)
+			{
+				print $langs->trans("TooMuchErrors",(sizeof($arrayoferrors)-$nboferrors))."<br>";
+				break;
+			}
+			print '* '.$langs->trans("Line").' '.$key.'<br>';
+			foreach($val as $i => $err)
+			{
+				print ' &nbsp; - '.$err['lib'].'<br>';
+			}
+		}
 	}
+	else print $langs->trans("None"); 
+	
+	print '<br>';
 
+	// Warnings
+	//var_dump($arrayoferrors);
+	print '<b>'.$langs->trans("Warnings").'</b>';
+	print '<hr>';
+	if (sizeof($arrayofwarnings))
+	{
+		foreach ($arrayofwarnings as $key => $val)
+		{
+			$nbofwarnings++;
+			if ($nbofwarnings > $maxnbofwarnings)
+			{
+				print $langs->trans("TooMuchWarnings",(sizeof($arrayofwarnings)-$nbofwarnings))."<br>";
+				break;
+			}
+			print ' * '.$langs->trans("Line").' '.$key.'<br>';
+			foreach($val as $i => $err)
+			{
+				print ' &nbsp; - '.$err['lib'].'<br>';
+			}
+		}
+	}
+	else print $langs->trans("None"); 
+	
 	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
 
 	print '<br>';
@@ -1492,7 +1538,14 @@ if ($step == 6 && $datatoimport)
 	print '<center>';
 	if ($user->rights->import->run)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=7&'.$param.'">'.$langs->trans("RunImportFile").'</a>';
+		if (empty($nboferrors))
+		{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=7&'.$param.'">'.$langs->trans("RunImportFile").'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
+		}
 	}
 	else
 	{

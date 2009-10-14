@@ -272,6 +272,8 @@ class ImportCsv extends ModeleImports
      */
     function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
     {
+    	global $langs,$conf;
+    	
     	$error=0;
     	$warning=0;
     	$this->errors=array();
@@ -288,8 +290,8 @@ class ImportCsv extends ModeleImports
 		if (sizeof($arrayrecord) == 0 ||
 			(sizeof($arrayrecord) == 1 && empty($arrayrecord[0]['val'])))
 		{
-			print 'W';
-			$this->warnings[$warning]['lib']='Empty line';
+			//print 'W';
+			$this->warnings[$warning]['lib']=$langs->trans('EmptyLine');
 			$this->warnings[$warning]['type']='EMPTY';
 			$warning++;
 		}
@@ -310,7 +312,7 @@ class ImportCsv extends ModeleImports
 					if ($key <= $maxfields)
 					{
 						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
-						$listfields.=$val;
+						$listfields.=eregi_replace('^.*\.','',$val);
 						$newval='';
 						if ($arrayrecord[($key-1)]['type'] < 0)
 						{
@@ -331,7 +333,7 @@ class ImportCsv extends ModeleImports
 						// Required field is ok
 						if (eregi('\*',$objimport->array_import_fields[0][$val]) && empty($newval))
 						{
-							$this->errors[$error]['lib']='ErrorMissingMandatoryValue field nb '.$key.' target='.$val;
+							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue',$key);
 							$this->errors[$error]['type']='NOTNULL';
 							$errorforthistable++;
 							$error++;
@@ -349,7 +351,7 @@ class ImportCsv extends ModeleImports
 				{
 					if ($listfields)
 					{
-						$sql='INSERT INTO '.$tablename.'('.$listfields.') VALUES('.$listvalues.')';
+						$sql='INSERT INTO '.$tablename.'('.$listfields.',import_key) VALUES('.$listvalues.",'".$importid."')";
 		    			dol_syslog("import_csv.modules sql=".$sql);
 
 						//print '> '.join(',',$arrayrecord);
@@ -362,12 +364,13 @@ class ImportCsv extends ModeleImports
 							$resql=$this->db->query($sql);
 							if ($resql)
 							{
-								print '.';
+								//print '.';
 							}
 							else
 							{
-								print 'E';
-								$this->errors[$error]['lib']='ErrorSQL '.$this->db->lasterror();
+								//print 'E';
+print $sql;
+								$this->errors[$error]['lib']=$this->db->lasterror();
 								$this->errors[$error]['type']='SQL';
 								$error++;
 							}
