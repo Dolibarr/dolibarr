@@ -58,6 +58,7 @@ $style2='color: #5D4455; font-weight: bold;';
 print "\n";
 print '<table border="0" style="spacing: 4px; padding: 0px" width="100%">';
 print '<tr><td width="50%" valign="top">';
+print "\n";
 
 // Forum/wiki support
 print '<table class="login" width="100%">';
@@ -74,7 +75,9 @@ print $langs->trans("TypeHelpDev").'/'.img_picto_common('','redstar','',1).img_p
 print '</td></tr></table>';
 
 print '</td>';
-print '</tr><tr>';
+print '</tr>';
+
+print '<tr>';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 /*print '<tr><td align="center" valign="top">';
@@ -92,10 +95,13 @@ print '<br>'.$langs->trans("ForAnswersSeeForum",$urlforum,$urlforum).'<br>';
 print '</td></tr></table>';
 print '</td>';
 print '</tr>';
-print '</table>';
+print '</table>'."\n";
+print "\n";
 
 
-print '</td><td width="50%" valign="top">';
+print '</td><td width="50%" valign="top">'."\n";
+print "\n";
+
 
 // Online support
 print '<table class="login" width="100%">';
@@ -126,10 +132,11 @@ print '<br><br>';
 print '</td></tr></table>';
 print '</td>';
 print '</tr>';
-print '</table>';
+print '</table>'."\n";
 
 print '</td></tr>';
-print '<tr><td width="50%" valign="top">';
+print '<tr><td width="50%" valign="top">'."\n";
+print "\n";
 
 // EMail support
 print '<table class="login" width="100%">';
@@ -160,9 +167,10 @@ print '<br><br>';
 print '</td></tr></table>';
 print '</td>';
 print '</tr>';
-print '</table>';
+print '</table>'."\n";
 
-print '</td><td width="50%" valign="top">';
+print '</td><td width="50%" valign="top">'."\n";
+print "\n";
 
 // Other support
 print '<table class="login" width="100%">';
@@ -195,7 +203,8 @@ print '<br><br>';
 print '</td></tr></table>';
 print '</td>';
 print '</tr>';
-print '</table>';
+print '</table>'."\n";
+print "\n";
 
 print '</td>';
 print '</tr>';
