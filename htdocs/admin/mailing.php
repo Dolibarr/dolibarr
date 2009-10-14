@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
  
 /**
 	    \file       htdocs/admin/mailing.php
 		\ingroup    mailing
-		\brief      Page d'administration/configuration du module mailing
-		\version    $Revision$
+		\brief      Page to setup emailing module
+		\version    $Id$
 */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -33,6 +31,10 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+
+/*
+ * Actions
+ */
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
@@ -50,8 +52,7 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
 
 /*
- *
- *
+ *	View
  */
 
 llxHeader();
@@ -68,7 +69,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 $var=true;
 
-print '<table class="noborder" width="100%">';
+print '<table class="nobordernopadding" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';

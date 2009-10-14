@@ -71,7 +71,8 @@ class DolGeoIP
 	}
 
 	/**
-	 * Return in lower cas the country code
+	 * Return in lower case the country code from an ip
+	 *
 	 * @param	$ip		IP to scan
 	 * @return	string	Country code (two letters)
 	 */
@@ -84,19 +85,35 @@ class DolGeoIP
 		return strtolower(geoip_country_code_by_addr($this->gi, $ip));
 	}
 
-	function getCountryCodeFromName($ip)
+	/**
+	 * Return in lower case the country code from a host name
+	 * 
+	 * @param	$name	FQN of host (example: myserver.xyz.com)
+	 * @return	string	Country code (two letters)
+	 */
+	function getCountryCodeFromName($name)
 	{
 		if (empty($this->gi))
 		{
 			return '';
 		}
-		return geoip_country_code_by_name($this->gi, $ip);
+		return geoip_country_code_by_name($this->gi, $name);
 	}
 
+	/**
+	 * Return verion of data file
+	 */
+	function getVersion()
+	{
+		return '';
+	}
+
+	/**
+	 * Close geoip object
+	 */
 	function close()
 	{
 		geoip_close($this->gi);
 	}
-
 }
 ?>

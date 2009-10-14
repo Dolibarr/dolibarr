@@ -1108,3 +1108,10 @@ FreeLegalTextOnChequeReceipts=Mention complémentaire sur les bordereaux de remi
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####
 SuppliersSetup=Configuration du module Fournisseurs
+##### GeoIPMaxmind #####
+GeoIPMaxmindSetup=Configuration du module GeoIP Maxmind
+PathToGeoIPMaxmindCountryDataFile=Chemin du fichier Maxmind contenant les conversions IP->Pays.<br>Exemple: /usr/local/share/GeoIP/GeoIP.dat
+NoteOnPathLocation=Notez que ce fichier doit etre dans un répertoire accessible à votre PHP (Vérifiez le paramètre open_basedir de votre PHP et les permissions du fichier/répertoires).
+YouCanDownloadFreeDatFileTo=Vous pouvez téléchargez une <b>version demo gratuite</b> de la base Maxmind à l'adresse %s.
+YouCanDownloadAdvancedDatFileTo=Vous pouvez aussi télécharger une <b>version plus complète avec mise à jours</b> de la base Maxmind à l'adresse %s.
+TestGeoIPResult=Test de conversion IP -> Pays

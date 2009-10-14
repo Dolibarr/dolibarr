@@ -860,12 +860,21 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 	return $newphone;
 }
 
-function dol_print_ip($ip)
+/**
+ * 	\brief 		Return an IP formated to be shown on screen
+ * 	\param 		ip			IP
+ * 	\param		mode		1=return only country/flag,2=return only IP
+ * 	\return 	string 		Formated IP, with country if GeoIP module is enabled
+ */
+function dol_print_ip($ip,$mode=0)
 {
 	global $conf,$langs;
 
-	print $ip;
-	if (! empty($conf->geoipmaxmind->enabled))
+	$ret='';
+	
+	if (empty($mode)) $ret.=$ip;
+	
+	if (! empty($conf->geoipmaxmind->enabled) && $mode != 2)
 	{
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
 		//$ip='24.24.24.24';
@@ -878,11 +887,13 @@ function dol_print_ip($ip)
 		{
 			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png'))
 			{
-				print ' '.img_picto($langs->trans("AccordingToGeoIPDatabase"),DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png','',1);
+				$ret.=' '.img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"),DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png','',1);
 			}
-			else print ' ('.$countrycode.')';
+			else $ret.=' ('.$countrycode.')';
 		}
 	}
+	
+	return $ret;
 }
 
 /**

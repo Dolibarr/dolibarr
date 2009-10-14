@@ -239,7 +239,7 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 	if (! empty($conf->global->GENBARCODE_LOCATION) && ! file_exists($conf->global->GENBARCODE_LOCATION))
 	{
 		$langs->load("errors");
-		print '<br><font class="error">'.$langs->trans("ErrorGenbarCodeNotfound").'</font>';
+		print '<br><font class="error">'.$langs->trans("ErrorFileNotFound",$conf->global->GENBARCODE_LOCATION).'</font>';
 	}
 	print '</td>';
 	print '<td width="60" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';

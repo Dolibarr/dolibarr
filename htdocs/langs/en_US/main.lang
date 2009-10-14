@@ -539,6 +539,7 @@ WarningYouAreInMaintenanceMode=Warning, you are in a maintenance mode, so only l
 CreditCard=Credit card
 FieldsWithAreMandatory=Fields with <b>%s</b> are mandatory
 FieldsWithIsForPublic=Fields with <b>%s</b> are shown on public list of members. If you don't want this, check the "public" box.
+AccordingToGeoIPDatabase=(according to GeoIP convertion)
 
 # Week day
 Day1=Monday

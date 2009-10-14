@@ -1109,3 +1109,10 @@ FreeLegalTextOnChequeReceipts=Free text on cheque receipts
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####
 SuppliersSetup=Supplier module setup
+##### GeoIPMaxmind #####
+GeoIPMaxmindSetup=GeoIP Maxmind module setup
+PathToGeoIPMaxmindCountryDataFile=Path to file containing Maxmind ip to country translation.<br>Example: /usr/local/share/GeoIP/GeoIP.dat
+NoteOnPathLocation=Note that your ip to country data file must be inside a directory your PHP can read (Check your PHP open_basedir setup and filesystem permissions).
+YouCanDownloadFreeDatFileTo=You can download a <b>free demo version</b> of the Maxmind GeoIP country file at %s.
+YouCanDownloadAdvancedDatFileTo=You can also download a more <b>complete version, with updates,</b> of the Maxmind GeoIP country file at %s.
+TestGeoIPResult=Test of a conversion IP -> country
