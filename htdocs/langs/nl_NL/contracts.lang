@@ -1,56 +1,45 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:57:49
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - contracts
 CHARSET=UTF-8
 ContractsArea=Contracten gebied
 ListOfContracts=Lijst van opdrachten
-LastContracts=Last% s bewerkt contracten
+LastContracts=Laatste %s bewerkt contracten
 AllContracts=Alle contracten
 ContractCard=Contract kaart
 ContractStatus=Contract status
 ContractStatusNotRunning=Niet actief
-ContractStatusRunning=Hardlopen
+ContractStatusRunning=Actief
 ContractStatusDraft=Ontwerp
 ContractStatusValidated=Gevalideerd
 ContractStatusClosed=Gesloten
 ServiceStatusInitial=Niet actief
-ServiceStatusRunning=Hardlopen
-ServiceStatusLate=Hardlopen, verstreken
-ServiceStatusClosed=Gesloten
-ServicesLegend=Diensten legende
+ServiceStatusRunning=Actief
+ServiceStatusLate=Actief, verlopen
+ServiceStatusClosed=Verlopen
+ServicesLegend=Diensten legenda
 Contracts=Contracten
 Contract=Contract
 ContractContacts=Contract contacten
 NoContracts=Geen contracten
 MenuServices=Diensten
 MenuInactiveServices=Diensten die niet actief
-MenuRunningServices=Services
-MenuExpiredServices=Verstreken diensten
+MenuRunningServices=Actieve diensten
+MenuExpiredServices=Verlopen diensten
 MenuClosedServices=Gesloten diensten
 NewContract=Nieuw contract
 AddContract=Toevoegen contract
 SearchAContract=Zoek een contract
-DeleteAContract=Verwijderen van een contract
+DeleteAContract=Verwijder een contract
 CloseAContract=Sluit een contract
-ConfirmDeleteAContract=Weet u zeker dat u wilt verwijderen van dit contract en al haar diensten?
-ConfirmValidateContract=Weet u zeker dat u wilt valideren van dit contract?
-ConfirmCloseContract=Dit sluit alle diensten (actief of niet). Weet u zeker dat u wilt afsluiten van dit contract?
-ConfirmCloseService=Weet u zeker dat u wilt afsluiten van deze dienst met <b>datum% s?</b>
-ValidateAContract=Valideren van een contract
-ActivateService=Activering
-ConfirmActivateService=Weet u zeker dat u wilt activeren van deze dienst met de datum <b>van% s?</b>
+ConfirmDeleteAContract=Weet u zeker dat u van dit contract wilt verwijderen met alle diensten?
+ConfirmValidateContract=Weet u zeker dat u dit contract wilt valideren?
+ConfirmCloseContract=Dit beeindigd alle diensten (actief of niet). Weet u zeker dat u van dit contract wilt sluiten?
+ConfirmCloseService=Weet u zeker dat u de dienst met datum <b>%s</b> wilt sluiten?
+ValidateAContract=Valideer een contract
+ActivateService=Activeer een contract
+ConfirmActivateService=Weet u zeker dat u de dienst met de datum van <b>%s</b> wilt activeren?
 DateContract=Contractdatum
-DateServiceActivate=Datum van de activering van de dienst
-DateServiceUnactivate=Datum van betekening unactivation
+DateServiceActivate=Datum van de dienst activering
+DateServiceUnactivate=Datum van dienst deactivatie
 DateServiceStart=Datum voor het begin van de dienst
 DateServiceEnd=Datum voor het einde van de dienst
 ShowContract=Toon contract
@@ -59,10 +48,10 @@ ListOfRunningContractsLines=Lijst van de lopende contract lijnen
 ListOfRunningServices=Lijst van services
 NotActivatedServices=Niet geactiveerd diensten (onder gevalideerde contracten)
 BoardNotActivatedServices=Diensten te activeren onder gevalideerde contracten
-LastContracts=Laatst% contracten
-LastActivatedServices=Last% s geactiveerd diensten
-LastModifiedServices=Last% s bewerkt diensten
-EditServiceLine=Bewerken service lijn
+LastContracts=Laatste % contracten
+LastActivatedServices=Laatste %s geactiveerd diensten
+LastModifiedServices=Laatste %s bewerkt diensten
+EditServiceLine=Bewerk service lijn
 ContractStartDate=Begindatum
 ContractEndDate=Einddatum
 DateStartPlanned=Geplande startdatum
@@ -71,39 +60,22 @@ DateEndPlanned=Geplande einddatum
 DateEndPlannedShort=Geplande einddatum
 DateStartReal=Werkelijke start datum
 DateStartRealShort=Werkelijke start datum
-DateEndReal=Real einddatum
-DateEndRealShort=Real einddatum
+DateEndReal=Werkelijke einddatum
+DateEndRealShort=Werkelijke einddatum
 NbOfServices=Nb van diensten
-CloseService=Sluiten dienst
-ServicesNomberShort=% s service (s)
-RunningServices=Services
-BoardRunningServices=Verstreken services
+CloseService=Sluit dienst
+ServicesNomberShort=%s dienst(en)
+RunningServices=Werkende diensten
+BoardRunningServices=Verstreken diensten
 ServiceStatus=Status van de dienst
-DraftContracts=Concepten contracten
-CloseRefusedBecauseOneServiceActive=Overeenkomst niet kan worden gesloten als er ten minste een open dienst op het
+DraftContracts=Contract concepten
+CloseRefusedBecauseOneServiceActive=Contract kan niet worden gesloten zolang er mininmaal een open dienst actief voor is
 CloseAllContracts=Sluit alle contracten
-MoveToAnotherContract=Verplaats dienst in een ander contract.
-ConfirmMoveToAnotherContract=Ik gekozen nieuwe doelstelling opdracht te bevestigen en ik wil verplaatsen van deze dienst in dit contract.
-ConfirmMoveToAnotherContractQuestion=Kies in dat de bestaande overeenkomst (van dezelfde derde partij), die u wilt verplaatsen deze dienst aan?
-TypeContact_contrat_internal_SALESREPSIGN=Verkoopvertegenwoordiger ondertekening contract
-TypeContact_contrat_internal_SALESREPFOLL=Verkoopvertegenwoordiger follow-up contract
-TypeContact_contrat_external_BILLING=Billing Customer Contact
-TypeContact_contrat_external_CUSTOMER=Follow-up van het contact met klanten
-TypeContact_contrat_external_SALESREPSIGN=Ondertekening contract Customer Contact
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-ServiceStatusNotLate=Hardlopen, niet is verstreken
-ServiceStatusNotLateShort=Niet is verstreken
-ServiceStatusLateShort=Verlopen
-ListOfInactiveServices=Lijst van de niet actieve services
-ListOfExpiredServices=Lijst van verstreken actieve services
-ListOfClosedServices=Lijst van diensten gesloten
-DeleteContractLine=Verwijderen van een contract lijn
-ConfirmDeleteContractLine=Weet u zeker dat u wilt verwijderen van dit contract lijn?
-PaymentRenewContractId=Hernieuwen contract lijn (aantal% s)
-ExpiredSince=Vervaldatum
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+MoveToAnotherContract=Verplaats dienst naar een ander contract.
+ConfirmMoveToAnotherContract=Ik koos een nieuwe doel-contract en bevestig dat ik  deze dienst wil verplaatsen naar dit contract.
+ConfirmMoveToAnotherContractQuestion=Kies naar welke bestaand contract (van dezelfde derden), die u deze dienst wilt verplaatsen?
+TypeContact_contrat_internal_SALESREPSIGN=Vertegenwoordiger ondertekening contract
+TypeContact_contrat_internal_SALESREPFOLL=Vertegenwoordiger opvolging contract
+TypeContact_contrat_external_BILLING=Factuurcontact klant
+TypeContact_contrat_external_CUSTOMER=Opvolgingscontact klant
+TypeContact_contrat_external_SALESREPSIGN=Ondertekening contract klant Contact

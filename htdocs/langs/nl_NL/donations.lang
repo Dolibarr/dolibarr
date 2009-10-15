@@ -1,44 +1,25 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:57:49
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_BE - donations
 CHARSET=UTF-8
 Donation=Donatie
 Donationss=Donaties
 Donor=Donor
 Donors=Donoren
-AddDonation=Voeg een donatie
+AddDonation=Een donatie toevoegen
 NewDonation=Nieuwe donatie
-DonationPromise=Gift belofte
-PromisesNotValid=Niet gevalideerd beloften
-PromisesValid=Gevalideerde beloften
-DonationsPaid=Donaties betaald
+DonationPromise=Donatie toezegging
+PromisesNotValid=Niet gevalideerd toezegging
+PromisesValid=Gevalideerde toezegging
+DonationsPayed=Donaties betaald
 DonationsReceived=Donaties ontvangen
 PublicDonation=Openbare donatie
 DonationsNumber=Donatienummer
 DonationsArea=Donaties gebied
-DonationStatusPromiseNotValidated=Ontwerp belofte
-DonationStatusPromiseValidated=Gevalideerde belofte
-DonationStatusPaid=Donatie ontvangen
-DonationStatusPromiseNotValidatedShort=Ontwerp
+DonationStatusPromiseNotValidated=Klad toezegging
+DonationStatusPromiseValidated=Gevalideerde toezegging
+DonationStatusPayed=Donatie ontvangen
+DonationStatusPromiseNotValidatedShort=Klad
 DonationStatusPromiseValidatedShort=Gevalideerd
-DonationStatusPaidShort=Ontvangen
-ValidPromise=Valideer belofte
-BuildDonationReceipt=Build-ontvangst
+DonationStatusPayedShort=Ontvangen
+ValidPromise=Valideer toezegging
+BuildDonationReceipt=Creëer donatie ontvangst
 DonationsModels=Documenten modellen voor donatie ontvangsten
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-Donations=Donaties
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

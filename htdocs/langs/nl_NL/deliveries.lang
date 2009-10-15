@@ -1,35 +1,22 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:57:49
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - deliveries
 CHARSET=UTF-8
-Delivery=Aflevering
+Delivery=Levering
 Deliveries=Leveringen
-DeliveryCard=Bezorging kaart
+DeliveryCard=Bezorgingskaart
 DeliveryOrder=Leveringsbon
 DeliveryOrders=Levering orders
 DeliveryDate=Leveringstermijn
-DeliveryDateShort=Geleverd. datum
+DeliveryDateShort=Geleverde datum
 CreateDeliveryOrder=Genereer leveringsbon
 QtyDelivered=Qty uitgebracht
-SetDeliveryDate=Stel verzendkosten datum
+SetDeliveryDate=Zet verzendkosten datum
 ValidateDeliveryReceipt=Valideer ontvangstbewijs
-ValidateDeliveryReceiptConfirm=Weet u zeker dat u wilt valideren dit ontvangstbewijs?
+ValidateDeliveryReceiptConfirm=Weet u zeker dat u dit ontvangstbewijs wilt valideren?
 DeliveryMethod=Leveringsmethode
 TrackingNumber=Volgnummer
 NameAndSignature=Naam en handtekening:
 ToAndDate=To___________________________________ op ____ / _____ / __________
-GoodStatusDeclaration=Hebben ontvangen van de goederen hoger in goede conditie,
-Deliverer=Verlosser:
+GoodStatusDeclaration=Hebben de bovenstaande goederen in goede conditie ontvangen,
+Deliverer=Bezorger :
 Sender=Afzender
 Recipient=Ontvanger
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser

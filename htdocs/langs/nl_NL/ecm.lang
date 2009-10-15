@@ -1,66 +1,53 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - ecm
 CHARSET=UTF-8
 MenuECM=Documenten
 DocsMine=Mijn documenten
-DocsGenerated=Gegenereerd documenten
+DocsGenerated=Gegenereerde documenten
 DocsElements=Elementen documenten
 DocsThirdParties=Documenten van derden
-DocsContracts=Documenten contracten
-DocsProposals=Documenten voorstellen
-DocsOrders=Documenten bestellingen
-DocsInvoices=Documenten facturen
+DocsContracts=Contract documenten
+DocsProposals=Voorstel/ offertes documenten
+DocsOrders=Documenten orders
+DocsInvoices=Factuur documenten
 ECMNbOfDocs=Nb van documenten in de directory
 ECMNbOfDocsSmall=Nb van doc.
 ECMSection=Bedrijvengids
-ECMSectionManual=Handleiding directory
+ECMSectionManual=Manuele map
 ECMSectionAuto=Automatisch map
-ECMSectionsManual=Handleiding abonneelijsten
+ECMSectionsManual=Manuele abonneelijsten
 ECMSectionsAuto=Automatische abonneelijsten
-ECMSections=Directories
+ECMSections=mappen
 ECMRoot=Root
 ECMNewSection=Nieuwe map
-ECMAddSection=Voeg een handleiding directory
-ECMNewSection=Nieuwe handleiding directory
+ECMAddSection=Voeg een manuele map toe
+ECMNewSection=Nieuwe manuele map
 ECMNewDocument=Nieuw document
-ECMCreationDate=Creation date
-ECMNbOfFilesInDir=Aantal bestanden in de directory
+ECMCreationDate=Creeer datum
+ECMNbOfFilesInDir=Aantal bestanden in de map
 ECMNbOfSubDir=Aantal sub-directories
-ECMNbOfFilesInSubDir=Nunber van Iles in sub-directories
+ECMNbOfFilesInSubDir=Aantal bestanden in sub-directories
 ECMCreationUser=Ontwerper
 ECMArea=ECM gebied
-ECMAreaDesc=De ECM (Electronic Content Management) ruimte kunt u opslaan, delen en zoeken snel allerlei documenten in Dolibarr.
-ECMAreaDesc2=* Automatische directories zijn gevuld automatisch bij het toevoegen van documenten vanaf kaart van een element. <br> * Handleiding abonneelijsten kunnen worden gebruikt voor het opslaan van documenten die niet gekoppeld zijn aan een bepaald element.
-ECMSectionWasRemoved=<b>Directory% s</b> is verwijderd.
-ECMDocumentsSection=Document van directory
+ECMAreaDesc=Door de ECM (Electronic Content Management) ruimte kunt u allerlei documenten in Dolibarr opslaan, delen en snel zoeken.
+ECMAreaDesc2=* Automatische mappen zijn automatisch gevuld bij het toevoegen, vanaf kaart van een object, van documenten. <br> * Manuele mappen kunnen worden gebruikt voor het opslaan van documenten die niet gekoppeld zijn aan een bepaald object.
+ECMSectionWasRemoved=Map<b> %s</b> is verwijderd.
+ECMDocumentsSection=Mapdocument
 ECMSearchByKeywords=Zoeken op trefwoorden
-ECMSearchByEntity=Zoek op doel
+ECMSearchByEntity=Zoek op object
 ECMSectionOfDocuments=Repertoria van documenten
-ECMTypeManual=Handleiding
+ECMTypeManual=Manual
 ECMTypeAuto=Automatische
-ECMDocsByThirdParties=Documenten in verband met derden
-ECMDocsByProposals=Documenten in verband met voorstellen
-ECMDocsByOrders=Documenten in verband met klanten orders
-ECMDocsByContracts=Documenten in verband met contracten
-ECMDocsByInvoices=Documenten in verband met klanten facturen
-ECMDocsByProducts=Documenten in verband met producten
+ECMDocsByThirdParties=Documenten verbonden met derden
+ECMDocsByProposals=Documenten verbonden met voorstellen
+ECMDocsByOrders=Documenten verbonden met klantorders
+ECMDocsByContracts=Documenten verbonden met contracten
+ECMDocsByInvoices=Documenten verbonden met klantenfacturen
+ECMDocsByProducts=Documenten verbonden met producten
 ECMNoDirecotyYet=Geen map aangemaakt
 ShowECMSection=Toon map
 DeleteSection=Verwijder map
-ConfirmDeleteSection=Kunt u bevestigen dat u wilt verwijderen van de <b>directory% s?</b>
-ECMDirectoryForFiles=Relatieve directory voor bestanden
-CannotRemoveDirectoryContainsFiles=Verwijderd niet mogelijk omdat het bevat een aantal bestanden
+ConfirmDeleteSection=Kunt u bevestigen dat u de map <b>%s</b> wilt verwijderen?
+ECMDirectoryForFiles=Relatieve map voor bestanden
+CannotRemoveDirectoryContainsFiles=Verwijderen is niet mogelijk omdat het een aantal bestanden bevat
 ECMFileManager=Bestandsbeheer
-ECMSelectASection=Selecteer een map op de linker boom ...
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
+ECMSelectASection=Selecteer een map van de linker structuur ...

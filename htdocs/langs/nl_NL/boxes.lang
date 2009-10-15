@@ -1,85 +1,51 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:57:49
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=RSS informatie
-BoxLastProducts=Laatste producten / diensten
-BoxLastProductsInContract=Laatste gecontracteerde producten / diensten
+BoxLastProducts=Laatste producten/diensten
+BoxLastProductsInContract=Laatste gecontracteerde producten/diensten
 BoxLastSupplierBills=Laatste leverancier facturen
 BoxLastCustomerBills=Laatste klant facturen
+BoxOldestUnpayedCustomerBills=Oudste onbetaalde klant facturen
+BoxOldestUnpayedSupplierBills=Oudste onbetaalde leverancier facturen
 BoxLastProposals=Laatste commerciële voorstellen
-BoxLastProspects=Laatste kans
+BoxLastProspects=Laatste prospects
 BoxLastCustomers=Laatste klanten
-BoxLastCustomerOrders=Laatste klantenbestellingen
+BoxLastCustomerOrders=Laatste klantbestellingen
 BoxLastSuppliers=Laatste leveranciers
-BoxLastBooks=Laatste boeken
+BoxLastBooks=Laatste boekingen
 BoxLastActions=Laatste acties
-BoxCurrentAccounts=Lopende rekeningen evenwicht
+BoxCurrentAccounts=Lopende rekeningen balans
 BoxSalesTurnover=Omzet
-BoxTitleLastBooks=Last% s geregistreerd boeken
-BoxTitleNbOfCustomers=Nombre de client
-BoxTitleLastRssInfos=Laatste nieuws uit% s% s
-BoxTitleLastProducts=Last% s gemodificeerde producten / diensten
-BoxTitleLastCustomerOrders=Last% s bewerkt klantenbestellingen
-BoxTitleLastSuppliers=Last% s geregistreerd leveranciers
-BoxTitleLastCustomers=Last% s geregistreerd klanten
-BoxTitleLastCustomersOrProspects=Last% s geregistreerd klanten of prospecten
-BoxTitleLastPropals=Last% s opgenomen voorstellen
-BoxTitleLastCustomerBills=Last% s klant facturen
-BoxTitleLastSupplierBills=Last% s leverancier facturen
-BoxTitleLastProspects=Last% s geregistreerd vooruitzichten
-BoxTitleCurrentAccounts=Lopende rekening van de saldi
+BoxTotalUnpayedCustomerBills=Totaal onbetaalde klant facturen
+BoxTotalUnpayedSuppliersBills=Totaal onbetaalde leverancier facturen
+BoxTitleLastBooks=Laatste %s geregistreerde boekingen
+BoxTitleNbOfCustomers=Klantnummer
+BoxTitleLastRssInfos=Laatste %s nieuws uit %s
+BoxTitleLastProducts=Laatste %s gewijzigde producten/diensten
+BoxTitleLastCustomerOrders=Laatste %s bewerkte klantenbestellingen
+BoxTitleLastSuppliers=Laatste %s geregistreerde leveranciers
+BoxTitleLastCustomers=Laatste %s geregistreerde klanten
+BoxTitleLastCustomersOrProspects=Laatste %s geregistreerde klanten of prospects
+BoxTitleLastPropals=Laatste %s opgenomen voorstellen
+BoxTitleLastCustomerBills=Laatste %s klant facturen
+BoxTitleLastSupplierBills=Laatste %s leverancier facturen
+BoxTitleLastProspects=Laatste %s geregistreerde prospects
+BoxTitleLastProductsInContract=Last% s derniers producten/diensten
+BoxTitleOldestUnpayedCustomerBills=Oudste %s onbetaalde klant facturen
+BoxTitleOldestUnpayedSupplierBills=Oudste %s onbetaalde leverancier facturen
+BoxTitleCurrentAccounts=Saldi lopende rekening
 BoxTitleSalesTurnover=Omzet
-BoxMyLastBookmarks=Mijn laatste% s bladwijzers
-FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Laatste succesvolle refresh datum:% s
-NoRecordedBookmarks=No bookmarks defined. Click <a href=Geen bladwijzers gedefinieerd. Klik <a href="%s">hier</a> om bladwijzers toe te voegen.
+BoxTitleTotalUnpayedCustomerBills=Onbetaalde klant facturen
+BoxTitleTotalUnpayedSuppliersBills=Onbetaalde leverancier facturen
+BoxMyLastBookmarks=Mijn laatste %s weblinks
+FailedToRefreshDataInfoNotUpToDate=Verversen RSS feed mislukt. Laatste succesvolle refresh datum: %s
+NoRecordedBookmarks=Geen weblinks gedefinieerd. Klik <a href="%s">weblinks</a> om deze toe te voegen.
 NoRecordedCustomers=Geen geregistreerde klanten
-BoxTitleLastActionsToDo=Last% s acties te doen
+BoxTitleLastActionsToDo=Laatste %s acties te doen
 NoActionsToDo=Geen acties te doen
-NoRecordedOrders=Nr. geregistreerd klant orders
-NoRecordedProposals=Nr. opgenomen voorstellen
-NoRecordedInvoices=Nr. geregistreerd klant facturen
-NoRecordedSupplierInvoices=Nr. geregistreerd leverancier facturen
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-NoRecordedBookmarks=No bookmarks defined. Click <a href=Geen bladwijzers gedefinieerd. Klik <a href="%s">hier</a> om bladwijzers toe te voegen.
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-LastRefreshDate=Laatste refresh datum
-NoRecordedProducts=Nr. geregistreerd producten / diensten
-NoRecordedProspects=Nr. geregistreerd vooruitzichten
-NoContractedProducts=Geen producten / diensten die
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-BoxOldestUnpaidCustomerBills=Oudste klant onbetaalde facturen
-BoxOldestUnpaidSupplierBills=Oudste onbetaalde leverancier facturen
-BoxTotalUnpaidCustomerBills=Totaal onbetaalde klant facturen
-BoxTotalUnpaidSuppliersBills=Totaal leverancier onbetaalde facturen
-BoxTitleOldestUnpaidCustomerBills=Oudste% s klant onbetaalde facturen
-BoxTitleOldestUnpaidSupplierBills=Oudste% s onbetaalde leverancier facturen
-BoxTitleTotalUnpaidCustomerBills=Klant onbetaalde facturen
-BoxTitleTotalUnpaidSuppliersBills=Onbetaalde leverancier facturen
-NoUnpaidCustomerBills=Geen klant onbetaalde facturen
-NoUnpaidSupplierBills=Geen onbetaalde leverancier facturen
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+NoRecordedOrders=Geen geregistreerde klant orders
+NoRecordedProposals=Geen opgenomen voorstellen
+NoRecordedInvoices=Geen geregistreerde klant facturen
+NoUnpayedCustomerBills=Geen onbetaalde klant facturen
+NoRecordedSupplierInvoices=Geen geregistreerd leverancier facturen
+NoUnpayedSupplierBills=Geen onbetaalde leverancier facturen

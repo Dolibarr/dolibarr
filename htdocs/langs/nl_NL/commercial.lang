@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:57:49
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - commercial
 CHARSET=UTF-8
 Commercial=Commercieel
 CommercialArea=Commerciële ruimte
@@ -19,76 +8,70 @@ Customer=Klant
 Customers=Klanten
 Prospect=Prospect
 Prospects=Vooruitzichten
-DeleteAction=Verwijder een actie / taak
-NewAction=Nieuwe actie / taak
-AddAction=Toevoegen actie / taak
-AddAnAction=Voeg een actie / taak
-ConfirmDeleteAction=Weet u zeker dat u wilt verwijderen van deze taak?
+DeleteAction=Verwijder een actie/taak
+NewAction=Nieuwe actie/taak
+AddAction=Toevoegen actie/taak
+AddAnAction=Voeg een actie/taak toe
+AddActionRendezVous=Voeg een Rendez-Vous taak toe
+ConfirmDeleteAction=Weet u zeker dat u deze taak wilt verwijderen?
 CardAction=Actie kaart
 PercentDone=Percentage gedaan
 ActionOnCompany=Taak over bedrijf
 ActionOnContact=Taak over contact
 TaskRDV=Vergaderingen
-TaskRDVWith=Ontmoeting met% s
+TaskRDVWith=Ontmoeting met %s
 ShowTask=Toon taak
 ShowAction=Toon actie
 ActionsReport=Acties verslag
-SalesRepresentative=Sales Representative
-SalesRepresentatives=Verkoopvertegenwoordigers
-SalesRepresentativeFollowUp=Sales Representative (follow-up)
-SalesRepresentativeSignature=Sales Representative (handtekening)
+SalesRepresentative=Vertegenwoordiger
+SalesRepresentatives=Vertegenwoordigers
+SalesRepresentativeFollowUp=Vertegenwoordiger (opvolging)
+SalesRepresentativeSignature=Vertegenwoordiger (handtekening)
 CommercialInterlocutor=Commerciële gesprekspartner
 ErrorWrongCode=Verkeerde code
-NoSalesRepresentativeAffected=Geen bijzondere verkoopvertegenwoordiger getroffen
+NoSalesRepresentativeAffected=Geen specifieke vertegenwoordiger betrokken
 ShowCustomer=Toon klant
 ShowProspect=Toon vooruitzicht
 ListOfProspects=Lijst van de vooruitzichten
 ListOfCustomers=Lijst van klanten
-LastDoneTasks=Last% s gedaan taken
+LastDoneTasks=Laatste %s gedane taken
 LastRecordedTasks=Laatste taken
-LastActionsToDo=Last% s oudste acties niet voltooid
-DoneAndToDoActionsFor=Gedaan en doe taken voor% s
+LastActionsToDo=Laatste %s oudste acties niet voltooid
+DoneAndToDoActionsFor=Gedaan en doe taken voor %s
 DoneAndToDoActions=Gedaan en doe taken
 DoneActions=Gedaan acties
-DoneActionsFor=Gedaan acties voor% s
-SendPropalRef=Stuur commerciële voorstel% s
-SendOrderRef=Stuur Om% s
-NoRecordedProspects=Geen uitzicht geregistreerd
+DoneActionsFor=Gedaan acties voor %s
+ToDoActions=Onvolledige acties
+ToDoActionsFor=Onvolledige acties voor %s
+SendPropalRef=Stuur offerte %s
+SendOrderRef=Stuur Opdracht %s
+NoRecordedProspects=Geen prospect geregistreerd
 StatusActionToDo=Te doen
 StatusActionDone=Gedaan
-MyActionsAsked=Acties ik heb opgenomen
-MyActionsToDo=Acties ik moet doen
-MyActionsDone=Maatregelen getroffen voor mij
-StatusActionInProcess=In process
+MyActionsAsked=Acties die ik heb opgenomen
+MyActionsToDo=Acties die ik moet doen
+MyActionsDone=Acties van invloed voor mij
+StatusActionInProcess=In uitvoering
 TasksHistoryForThisContact=Acties voor deze contactpersoon
-LastProspectDoNotContact=Geen contact
-LastProspectNeverContacted=Nooit contact
+LastProspectDoNotContact=Geen contact opnemen
+LastProspectNeverContacted=Nooit contact gehad
 LastProspectToContact=Contact op te nemen met
-LastProspectContactInProcess=Contact in proces
-LastProspectContactDone=Contact gedaan
+LastProspectContactInProcess=Contact in uitvoering
+LastProspectContactDone=Contact opgevolgd
 DateActionPlanned=Datum actie gepland voor
-DateActionDone=Datum beroep gedaan
+DateActionDone=Datum actie uitgevoerd
 ActionAskedBy=Actie gevraagd door
-ActionAffectedTo=Actie getroffen om
-ActionDoneBy=Actie door
+ActionAffectedTo=Actie van invloed op
+ActionDoneBy=Actie gedaan door
 ActionUserAsk=Geregistreerd door
-ErrorStatusCantBeZeroIfStarted=Als veld <b>&#39;Datum done&#39;</b> is gevuld, de actie is gestart (of eindproducten), dus veld <b>&#39;Status&#39;</b> niet kan worden 0%%.
+ErrorStatusCantBeZeroIfStarted=Als veld '<b>Datum uitgevoerd</b> is gevuld, is de actie gestart (of afgelopen), dus veld '<b>Status</b>' kan niet 0%% worden.
 ActionAC_TEL=Telefoongesprek
 ActionAC_FAX=Verzenden per fax
-ActionAC_PROP=Stuur voorstel
+ActionAC_PROP=Verstuur offerte
 ActionAC_EMAIL=E-mail verzenden
 ActionAC_RDV=Vergaderingen
-ActionAC_FAC=Stuur facturering
-ActionAC_REL=Stuur facturering (herinnering)
+ActionAC_FAC=Stuur factuur
+ActionAC_REL=Stuur factuur (herinnering)
 ActionAC_CLO=Sluiten
-ActionAC_EMAILING=Stuur massa e-mailen
-ActionAC_COM=Verstuur bestelling per mail
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-AddActionRendezVous=Voeg een Rendezvous taak
-Rendez-Vous=Rendezvous
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+ActionAC_EMAILING=Stuur bulkmail
+ActionAC_COM=Verstuur order per mail
