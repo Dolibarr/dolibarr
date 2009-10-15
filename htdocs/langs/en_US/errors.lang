@@ -1,5 +1,7 @@
 # Dolibarr language file - en_US - errors
 CHARSET=UTF-8
+Error=Error
+Errors=Errors
 MenuManager=Menu manager
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
@@ -51,4 +53,6 @@ ErrorRecordHasChildren=Failed to delete records since it has some childs.
 WarningConfFileMustBeReadOnly=Warning, your config file (<b>htdocs/conf/conf.php</b>) can be overwritten by the web server. This is a serious security hole. Modify permissions on file to be in read only mode for operating system user used by Web server. If you use Windows and FAT format for your disk, you must know that this file system does not allow to add permissions on file, so can't be completely safe.
 ErrorModuleRequireJavascript=Javascript must not be disabled to have this feature working. To enable/disable Javascript, go to menu Home->Setup->Display.
 ErrorPasswordsMustMatch=Both typed passwords must match each other
-ErrorContactEMail=A technical error occured. Pleas, contact administrator to folowwing email <b>%</b> en provide the error code <b>%s</b> in your message, or even better by adding a screen copy of this page.
+ErrorContactEMail=A technical error occured. Please, contact administrator to folowwing email <b>%</b> en provide the error code <b>%s</b> in your message, or even better by adding a screen copy of this page.
+ErrorsOnXLines=Errors on <b>%s</b> source lines
+WarningsOnXLines=Warnings on <b>%s</b> source lines

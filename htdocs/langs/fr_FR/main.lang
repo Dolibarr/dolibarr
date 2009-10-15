@@ -539,6 +539,7 @@ CreditCard=Carte de crédit
 FieldsWithAreMandatory=Les champs marqués par un <b>%s</b> sont obligatoires
 FieldsWithIsForPublic=Les champs marqués par <b>%s</b> seront affiches sur la liste publique des membres. Si vous ne le souhaitez pas, décochez la case "public".
 AccordingToGeoIPDatabase=(obtenu par conversion GeoIP)
+Line=Ligne
 
 # Week day
 Day1=Lundi

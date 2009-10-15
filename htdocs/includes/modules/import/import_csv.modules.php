@@ -273,7 +273,7 @@ class ImportCsv extends ModeleImports
     function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
     {
     	global $langs,$conf;
-    	
+
     	$error=0;
     	$warning=0;
     	$this->errors=array();
@@ -331,7 +331,7 @@ class ImportCsv extends ModeleImports
 						// Make some tests
 
 						// Required field is ok
-						if (eregi('\*',$objimport->array_import_fields[0][$val]) && empty($newval))
+						if (eregi('\*',$objimport->array_import_fields[0][$val]) && ($newval==''))
 						{
 							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue',$key);
 							$this->errors[$error]['type']='NOTNULL';
@@ -351,7 +351,7 @@ class ImportCsv extends ModeleImports
 				{
 					if ($listfields)
 					{
-						$sql='INSERT INTO '.$tablename.'('.$listfields.',import_key) VALUES('.$listvalues.",'".$importid."')";
+						$sql='INSERT INTO '.$tablename.'('.$listfields.', import_key) VALUES('.$listvalues.", '".$importid."')";
 		    			dol_syslog("import_csv.modules sql=".$sql);
 
 						//print '> '.join(',',$arrayrecord);
@@ -369,7 +369,6 @@ class ImportCsv extends ModeleImports
 							else
 							{
 								//print 'E';
-print $sql;
 								$this->errors[$error]['lib']=$this->db->lasterror();
 								$this->errors[$error]['type']='SQL';
 								$error++;
