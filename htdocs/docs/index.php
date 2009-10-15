@@ -17,11 +17,11 @@
  */
 
 /**
-   \file       htdocs/docs/index.php
-   \ingroup    document
-   \brief      Page d'accueil module document
-   \version    $Id$
-*/
+ *  \file       htdocs/docs/index.php
+ *  \ingroup    document
+ *  \brief      Page d'accueil module document
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -57,7 +57,7 @@ if ($resql)
       print '<td>';
       $loc = get_exdir($obj->rowid).$obj->rowid.".pdf";
       $file = stripslashes($obj->name);
-      echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=ged&type=application/binary&file='.urlencode($loc).'">'.$file.'</a></td>';
+      echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=ged&attachment=1&file='.urlencode($loc).'">'.$file.'</a></td>';
       print '<td>'.dol_print_date($obj->date_generation,'dayhour').'</td>';
 
       print "</tr>\n";

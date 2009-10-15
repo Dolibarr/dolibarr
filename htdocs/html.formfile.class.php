@@ -414,7 +414,7 @@ class FormFile
 	 * 		\param		object				Object on which document is linked to
 	 * 		\param		modulepart			Value for modulepart used by download wrapper
 	 * 		\param		param				Parameters on sort links
-	 * 		\param		forcedownload		Mime type is forced to 'application/binary' to have a download
+	 * 		\param		forcedownload		Force to open dialog box "Save As" when clicking on file
 	 * 		\param		relativepath		Relative path of docs (autodefined if not provided)
 	 * 		\param		permtodelete		Permission to delete
 	 * 		\param		useinecm			Change output for use in ecm module
@@ -459,7 +459,7 @@ class FormFile
 				print "<tr $bc[$var]><td>";
 				//print "XX".$file['name'];	//$file['name'] must be utf8
 				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
-				//if ($forcedownload) print '&type=application/binary';
+				if ($forcedownload) print '&attachment=1';
 				print '&file='.urlencode($relativepath.$file['name']).'">';
 				print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
 				print dol_trunc($file['name'],$maxlength,'middle');

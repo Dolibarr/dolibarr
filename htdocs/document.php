@@ -102,6 +102,7 @@ if (eregi('\.tiff$',$original_file)) 	{ $attachment = true; }
 // Calendar
 if (eregi('\.vcs$',$original_file))  	{ $attachment = true; }
 if (eregi('\.ics$',$original_file))  	{ $attachment = true; }
+if ($_REQUEST["attachment"])            { $attachment = true; }
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 //print "XX".$attachment;exit;
 

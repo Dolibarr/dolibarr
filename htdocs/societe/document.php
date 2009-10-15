@@ -237,7 +237,7 @@ if ($socid > 0)
 					$var=!$var;
 					print "<tr $bc[$var]><td>";
 					$loc = "courrier/".get_exdir($socid);
-					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
+					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&attachment=1&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
 					print "</td>\n";
 
 					print '<td align="right">'.dol_print_size(dol_filesize($courrier_dir."/".$file)).'</td>';
