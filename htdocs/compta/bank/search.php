@@ -82,7 +82,7 @@ $sql.= MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu on (bu.fk_bank = b.rowid AND type = 'company')";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
-if (! empty($_REQUEST["bid"])) 
+if (! empty($_REQUEST["bid"]))
 {
 	$sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$_REQUEST["bid"];
 }
@@ -132,7 +132,7 @@ if ($resql)
 	{
 		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
-	
+
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
@@ -144,7 +144,7 @@ if ($resql)
 	print '<td class="liste_titre" align="center">'.$langs->trans("Type").'</td>';
 	print '<td class="liste_titre" align="left">'.$langs->trans("Account").'</td>';
 	print "</tr>\n";
-	
+
 	print '<form method="post" action="search.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<tr class="liste_titre">';
@@ -169,9 +169,9 @@ if ($resql)
 	print '<input type="image" class="liste_titre" name="submit" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
 	print '</tr>';
-	
-	// Loop on each record	
-	while ($i < min($num,$limit)) 
+
+	// Loop on each record
+	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
 
@@ -189,7 +189,7 @@ if ($resql)
 
 		print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
 		$reg=array();
-		eregi('\((.+)\)',$objp->label,$reg);	// Si texte entouré de parenthèe on tente recherche de traduction
+		eregi('\((.+)\)',$objp->label,$reg);	// Si texte entourï¿½ de parenthï¿½e on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 		else print dol_trunc($objp->label,40);
 		print "</a>&nbsp;";
@@ -207,7 +207,7 @@ if ($resql)
 			print '&nbsp;';
 		}
 		print '</td>';
-		
+
 		// Debit/Credit
 		if ($objp->amount < 0)
 		{
@@ -223,7 +223,7 @@ if ($resql)
 
 		// Bank account
 		print '<td align="left" nowrap="nowrap">';
-		$bankaccountstatic->id=$objp->url_id;
+		$bankaccountstatic->id=$objp->bankid;
 		$bankaccountstatic->label=$objp->bankref;
 		print $bankaccountstatic->getNomUrl(1);
 		print "</td>\n";
@@ -233,7 +233,7 @@ if ($resql)
 	}
 
 	print "</table>";
-	
+
 	$db->free($resql);
 }
 else
@@ -241,8 +241,8 @@ else
 	dol_print_error($db);
 }
 
-// Si accès issu d'une recherche et rien de trouvé
-if ($_POST["action"] == "search" && ! $num) 
+// Si accï¿½s issu d'une recherche et rien de trouvï¿½
+if ($_POST["action"] == "search" && ! $num)
 {
 	print $langs->trans("NoRecordFound");
 }
