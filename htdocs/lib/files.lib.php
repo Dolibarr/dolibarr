@@ -168,24 +168,42 @@ function dol_compare_file($a, $b)
 function dol_mimetype($file)
 {
 	$mime='application/octet-stream';
+	// Text files
 	if (eregi('\.txt',$file))         $mime='text/plain';
-	if (eregi('\.sql$',$file))        $mime='text/plain';
-	if (eregi('\.(html|htm)$',$file)) $mime='text/html';
 	if (eregi('\.csv$',$file))        $mime='text/csv';
 	if (eregi('\.tsv$',$file))        $mime='text/tab-separated-values';
+	// MS office
+	if (eregi('\.mdb$',$file))        $mime='application/msaccess';
+	if (eregi('\.doc$',$file))        $mime='application/msword';
+	if (eregi('\.dot$',$file))        $mime='application/msword';
+	if (eregi('\.xls$',$file))        $mime='application/vnd.ms-excel';
+	if (eregi('\.ppt$',$file))        $mime='application/vnd.ms-powerpoint';
+	// Open office
+	if (eregi('\.odp$',$file))        $mime='application/vnd.oasis.opendocument.presentation';
+	if (eregi('\.ods$',$file))        $mime='application/vnd.oasis.opendocument.spreadsheet';
+	if (eregi('\.odt$',$file))        $mime='application/vnd.oasis.opendocument.text';
+	// Mix
+	if (eregi('\.(html|htm)$',$file)) $mime='text/html';
 	if (eregi('\.pdf$',$file))        $mime='application/pdf';
-	if (eregi('\.xls$',$file))        $mime='application/x-msexcel';
+	if (eregi('\.sql$',$file))        $mime='text/plain';
+	if (eregi('\.(sh|ksh|bash)$',$file))        $mime='text/plain';
+	// Images
 	if (eregi('\.jpg$',$file)) 	      $mime='image/jpeg';
 	if (eregi('\.jpeg$',$file)) 	  $mime='image/jpeg';
 	if (eregi('\.png$',$file)) 	      $mime='image/png';
 	if (eregi('\.gif$',$file)) 	      $mime='image/gif';
 	if (eregi('\.bmp$',$file)) 	      $mime='image/bmp';
 	if (eregi('\.tiff$',$file))       $mime='image/tiff';
+	// Calendar
 	if (eregi('\.vcs$',$file))        $mime='text/calendar';
 	if (eregi('\.ics$',$file))        $mime='text/calendar';
+	// Other
 	if (eregi('\.torrent$',$file))    $mime='application/x-bittorrent';
+	// Audio
 	if (eregi('\.(mp3|ogg|au)$',$file))           $mime='audio';
+	// Video
 	if (eregi('\.(avi|mvw|divx|xvid)$',$file))    $mime='video';
+	// Archive
 	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)$',$file)) $mime='archive';
 	return $mime;
 }

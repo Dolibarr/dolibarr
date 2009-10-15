@@ -459,7 +459,7 @@ class FormFile
 				print "<tr $bc[$var]><td>";
 				//print "XX".$file['name'];	//$file['name'] must be utf8
 				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
-				if ($forcedownload) print '&type=application/binary';
+				//if ($forcedownload) print '&type=application/binary';
 				print '&file='.urlencode($relativepath.$file['name']).'">';
 				print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
 				print dol_trunc($file['name'],$maxlength,'middle');

@@ -70,28 +70,40 @@ function llxHeader() { }
 $type = 'application/octet-stream';
 if (! empty($_GET["type"])) $type=$_GET["type"];
 else $type=dol_mimetype($original_file);
+//print 'X'.$type.'-'.$original_file;exit;
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
-// Documents
-if (eregi('\.doc$',$original_file))     { $attachment = true; }
-if (eregi('\.ppt$',$original_file))     { $attachment = true; }
-if (eregi('\.xls$',$original_file))     { $attachment = true; }
-if (eregi('\.pdf$',$original_file))  	{ $attachment = true; }
-// Misc
-if (eregi('\.sql$',$original_file))     { $attachment = true; }
-if (eregi('\.html$',$original_file)) 	{ $attachment = false; }
 // Text files
+if (eregi('\.txt$',$original_file))  	{ $attachment = false; }
 if (eregi('\.csv$',$original_file))  	{ $attachment = true; }
 if (eregi('\.tsv$',$original_file))  	{ $attachment = true; }
+// Documents MS office
+if (eregi('\.doc$',$original_file))     { $attachment = true; }
+if (eregi('\.dot$',$original_file))     { $attachment = true; }
+if (eregi('\.mdb$',$original_file))     { $attachment = true; }
+if (eregi('\.ppt$',$original_file))     { $attachment = true; }
+if (eregi('\.xls$',$original_file))     { $attachment = true; }
+// Documents Open office
+if (eregi('\.odp$',$original_file))     { $attachment = true; }
+if (eregi('\.ods$',$original_file))     { $attachment = true; }
+if (eregi('\.odt$',$original_file))     { $attachment = true; }
+// Misc
+if (eregi('\.(html|htm)$',$original_file)) 	{ $attachment = false; }
+if (eregi('\.pdf$',$original_file))  	{ $attachment = true; }
+if (eregi('\.sql$',$original_file))     { $attachment = true; }
 // Images
 if (eregi('\.jpg$',$original_file)) 	{ $attachment = true; }
+if (eregi('\.jpeg$',$original_file)) 	{ $attachment = true; }
 if (eregi('\.png$',$original_file)) 	{ $attachment = true; }
+if (eregi('\.gif$',$original_file)) 	{ $attachment = true; }
+if (eregi('\.bmp$',$original_file)) 	{ $attachment = true; }
 if (eregi('\.tiff$',$original_file)) 	{ $attachment = true; }
 // Calendar
 if (eregi('\.vcs$',$original_file))  	{ $attachment = true; }
 if (eregi('\.ics$',$original_file))  	{ $attachment = true; }
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+//print "XX".$attachment;exit;
 
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", $original_file);
