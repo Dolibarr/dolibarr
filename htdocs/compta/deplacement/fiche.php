@@ -50,9 +50,16 @@ $mesg = '';
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->deplacement->supprimer)
 {
 	$deplacement = new Deplacement($db);
-	$deplacement->delete($_GET["id"]);
-	Header("Location: index.php");
-	exit;
+	$result=$deplacement->delete($_GET["id"]);
+	if ($result >= 0)
+	{
+		Header("Location: index.php");
+		exit;
+	}
+	else
+	{
+		$mesg=$deplacement->error;
+	}
 }
 
 if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
@@ -307,8 +314,22 @@ print '<div class="tabsAction">';
 
 if ($_GET["action"] != 'create' && $_GET["action"] != 'edit')
 {
-	print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+	if ($user->rights->deplacement->creer)
+	{
+		print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+	}
+	if ($user->rights->deplacement->supprimer)
+	{
+		print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
+	}
 }
 
 print '</div>';

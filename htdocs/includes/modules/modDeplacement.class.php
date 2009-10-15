@@ -18,25 +18,23 @@
  */
 
 /**
- \defgroup   deplacement     Module trips
- \brief      Module pour gerer les deplacements et notes de frais
- \version	$Id$
+ *	\defgroup   deplacement     Module trips
+ *	\brief      Module pour gerer les deplacements et notes de frais
+ *	\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modDeplacement.class.php
- \ingroup    deplacement
- \brief      Fichier de description et activation du module Deplacement et notes de frais
+ *	\file       htdocs/includes/modules/modDeplacement.class.php
+ *	\ingroup    deplacement
+ *	\brief      Fichier de description et activation du module Deplacement et notes de frais
  */
-
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class      modDeplacement
- \brief      Classe de description et activation du module Deplacement
+ *	\class      modDeplacement
+ *	\brief      Classe de description et activation du module Deplacement
  */
-
 class modDeplacement extends DolibarrModules
 {
 
@@ -102,11 +100,11 @@ class modDeplacement extends DolibarrModules
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
 
-		$this->rights[3][0] = 178;
-		$this->rights[3][1] = 'Exporter les deplacements';
-		$this->rights[3][2] = 'd';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'export';
+		$this->rights[4][0] = 178;
+		$this->rights[4][1] = 'Exporter les deplacements';
+		$this->rights[4][2] = 'd';
+		$this->rights[4][3] = 0;
+		$this->rights[4][4] = 'export';
 
 		// Exports
 		$r=0;
