@@ -1,8 +1,8 @@
 --
 -- $Id$
 --
--- Attention à l ordre des requetes.
--- Ce fichier doit être chargé sur une version 2.2.0 
+-- Attention a l ordre des requetes.
+-- Ce fichier doit etre charge sur une version 2.2.0 
 --
 
 DROP TABLE llx_facture_tva_sum;

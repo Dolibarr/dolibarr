@@ -28,7 +28,7 @@ alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;
 -- V4.1 delete c from llx_categorie as c where c.rowid in (select distinct c2.rowid from tmp_categorie1 as c2, tmp_categorie2 as cc2 where c2.rowid != cc2.rowid and c2.type = cc2.type and c2.label = cc2.label) and c.rowid not in (select min(c3.rowid) from tmp_categorie1 as c3, tmp_categorie2 as cc3 where c3.rowid != cc3.rowid and c3.type = cc3.type and c3.label = cc3.label group by c3.label,c3.type);
 -- V4.1 DROP TABLE tmp_categorie1;
 -- V4.1 DROP TABLE tmp_categorie2;
--- Si suppression des doublons precedente a ete faite, on monte la cl� sur les categories
+-- Si suppression des doublons precedente a ete faite, on monte la cle sur les categories
 -- V4.1 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
 
 -- On migre les categories fournisseur de la table llx_fournisseur_categorie qui est obsolete vers table llx_categories qui est generique pour gerer les categories de tout type
@@ -43,7 +43,7 @@ alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;
 -- V4.1 delete c from llx_categorie as c where c.rowid in (select distinct c2.rowid from tmp_categorie1 as c2, tmp_categorie2 as cc2 where c2.rowid != cc2.rowid and c2.type = cc2.type and c2.label = cc2.label) and c.rowid not in (select min(c3.rowid) from tmp_categorie1 as c3, tmp_categorie2 as cc3 where c3.rowid != cc3.rowid and c3.type = cc3.type and c3.label = cc3.label group by c3.label,c3.type);
 -- V4.1 DROP TABLE tmp_categorie1;
 -- V4.1 DROP TABLE tmp_categorie2;
--- Si suppression des doublons precedente a ete faite, on monte la cl� sur les categories
+-- Si suppression des doublons precedente a ete faite, on monte la cle sur les categories
 -- V4.1 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
 
 
@@ -92,7 +92,7 @@ alter table llx_chargesociales modify fk_type integer NOT NULL;
 alter table llx_chargesociales modify libelle varchar(80) NOT NULL;
 
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');
-update llx_rights_def set libelle='Cr�er/modifier/supprimer �criture bancaire' where perms='modifier' AND module='banque';
+update llx_rights_def set libelle='Creer/modifier/supprimer ecriture bancaire' where perms='modifier' AND module='banque';
 
 -- Supprime colone en doublon avec fk_user_creat
 alter table llx_paiement drop column author;
@@ -140,7 +140,7 @@ alter table llx_tva add fk_user_modif   integer;
 -- V4.1 UPDATE llx_tva as t set fk_user_creat = (SELECT MIN(fk_user_author) FROM llx_bank as b WHERE b.datev = t.datev AND b.amount = -t.amount AND b.label like 'R%glement TVA') WHERE t.fk_user_creat IS NULL;
 
 
--- Extention de la gestion des cat�gories
+-- Extention de la gestion des categories
 alter table llx_categorie ADD type int not null default '0';
 -- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 
@@ -168,7 +168,7 @@ alter table `llx_categorie_product`
   add constraint `fk_categorie_product_product_rowid` foreign key(`fk_product`) REFERENCES `llx_product` (`rowid`);
 
   
--- Ajout gestion du droit de pr�t
+-- Ajout gestion du droit de pret
 drop table if exists `llx_droitpret_rapport`;
 create table `llx_droitpret_rapport` (
   `rowid` int(11) NOT NULL auto_increment,
@@ -762,7 +762,7 @@ ALTER TABLE llx_societe_remise_except MODIFY  amount_ttc    double(24,8) DEFAULT
 ALTER TABLE llx_societe_remise_except MODIFY  tva_tx        double(6,3)  DEFAULT 0;
 
 
--- Supprimme orphelins pour permettre mont�e de la cl�
+-- Supprimme orphelins pour permettre montee de la cle
 -- V4 DELETE llx_commande_fournisseur FROM llx_commande_fournisseur LEFT JOIN llx_societe ON llx_commande_fournisseur.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL; 
 
 
@@ -994,7 +994,7 @@ ALTER TABLE llx_product ADD COLUMN partnumber varchar(32) after gencode;
 
 ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_socpeople);
 
--- Supprimme orphelins pour permettre mont�e de la cl�
+-- Supprimme orphelins pour permettre montee de la cle
 -- V4 DELETE llx_fichinter FROM llx_fichinter LEFT JOIN llx_societe ON llx_fichinter.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
 
 
@@ -1065,31 +1065,31 @@ create table llx_societe_log
 )type=innodb;
 
 
--- Pour la Tunisie (Formes les plus utilis�es)
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Soci�t� � responsabilit� limit�e SARL');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Soci�t� en Nom Collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Soci�t� en Commandite Simple');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','soci�t� en participation');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Soci�t� Anonyme SA');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Soci�t� Unipersonnelle � Responsabilit� Limit�e SUARL');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'int�r�t �conomique GEI');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de soci�t�s');
+-- Pour la Tunisie (Formes les plus utilisees)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Société à responsabilité limitée SARL');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Société en Nom Collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Société en Commandite Simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Société Anonyme SA');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Société Unipersonnelle à Responsabilité Limitée SUARL');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intérêt économique GEI');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
 
 -- Regions de Tunisie (id pays=10)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1001,10,1001, '',0,'Ariana');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'B�ja');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'Béja');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1003,10,1003, '',0,'Ben Arous');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1004,10,1004, '',0,'Bizerte');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1005,10,1005, '',0,'Gab�s');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1005,10,1005, '',0,'Gabès');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1006,10,1006, '',0,'Gafsa');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1007,10,1007, '',0,'Jendouba');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1008,10,1008, '',0,'Kairouan');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1009,10,1009, '',0,'Kasserine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1010,10,1010, '',0,'K�bili');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1010,10,1010, '',0,'Kèbili');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1011,10,1011, '',0,'La Manouba');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1012,10,1012, '',0,'Le Kef');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1013,10,1013, '',0,'Mahdia');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1014,10,1014, '',0,'M�denine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1014,10,1014, '',0,'Médenine');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1015,10,1015, '',0,'Monastir');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1016,10,1016, '',0,'Nabeul');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1017,10,1017, '',0,'Sfax');
@@ -1105,23 +1105,23 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (101,10, '6','0','TVA 6%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (102,10, '12','0','TVA 12%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (103,10, '18','0','VAT 18%',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (104,10, '7.5','0','TVA 6% Major� � 25% (7.5%)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10, '15','0','TVA 12% Major� � 25% (15%)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Major� � 25% (22.5%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (104,10, '7.5','0','TVA 6% Majoré à 25% (7.5%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10, '15','0','TVA 12% Majoré à 25% (15%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
 
 -- GUADELOUPE (id 105)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 111, 105, '8.5','0','VAT Rate 8.5',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 112, 105, '8.5','1','VAT Rate 8.5 non per�u par le vendeur mais r�cup�rable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 112, 105, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 113, 105,   '0','0','VAT Rate 0 ou non applicable',1);
 
 -- MARTINIQUE (id 150)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 121, 150, '8.5','0','VAT Rate 8.5',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 122, 150, '8.5','1','VAT Rate 8.5 non per�u par le vendeur mais r�cup�rable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 122, 150, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 123, 150,   '0','0','VAT Rate 0 ou non applicable',1);
 
 -- REUNION (id 187)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 131, 187, '8.5','0','VAT Rate 8.5',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 187, '8.5','1','VAT Rate 8.5 non per�u par le vendeur mais r�cup�rable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 187, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 133, 187,   '0','0','VAT Rate 0 ou non applicable',1);
 
 ALTER TABLE llx_bank_account MODIFY iban_prefix varchar(50);
@@ -1129,15 +1129,15 @@ ALTER TABLE llx_bank_account ADD COLUMN country_iban varchar(2) after iban_prefi
 ALTER TABLE llx_bank_account ADD COLUMN cle_iban varchar(2) after country_iban;
 
 
--- Mise � jour des pays
+-- Mise a jour des pays
 update llx_c_pays set libelle = 'Palaos' where rowid = 176 and code = 'PW' and libelle = 'Belau';
 update llx_c_pays set libelle = 'Serbie' where rowid = 198 and code = 'CS';
 update llx_c_pays set code = 'RS' where rowid = 198 and code = 'CS';
 insert into llx_c_pays (rowid,code,libelle) values (241, 'GG', 'Guernesey'     );
 insert into llx_c_pays (rowid,code,libelle) values (242, 'IM', 'Ile de Man'    );
 insert into llx_c_pays (rowid,code,libelle) values (243, 'JE', 'Jersey'        );
-insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Mont�n�gro'    );
-insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barth�lemy');
+insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Monténégro'    );
+insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barthélemy');
 insert into llx_c_pays (rowid,code,libelle) values (246, 'MF', 'Saint-Martin'  );
 
 

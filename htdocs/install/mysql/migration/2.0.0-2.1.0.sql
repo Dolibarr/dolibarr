@@ -89,7 +89,7 @@ ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label);
 alter table llx_c_actioncomm  add module varchar(16) DEFAULT NULL after libelle;
 
 delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,50);
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Appel T�l�phonique' ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Appel Téléphonique' ,NULL);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 2, 'AC_FAX',  'system', 'Envoi Fax'          ,NULL);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 3, 'AC_PROP', 'system', 'Envoi Proposition'  ,'propal');
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 4, 'AC_EMAIL','system', 'Envoi Email'        ,NULL);
@@ -272,16 +272,16 @@ insert into llx_c_pays (rowid,code,libelle) values (9,  'CN', 'Chine'          )
 insert into llx_c_pays (rowid,code,libelle) values (10, 'TN', 'Tunisie'        );
 insert into llx_c_pays (rowid,code,libelle) values (11, 'US', 'Etats Unis'     );
 insert into llx_c_pays (rowid,code,libelle) values (12, 'MA', 'Maroc'          );
-insert into llx_c_pays (rowid,code,libelle) values (13, 'DZ', 'Alg�rie'        );
+insert into llx_c_pays (rowid,code,libelle) values (13, 'DZ', 'Algérie'        );
 insert into llx_c_pays (rowid,code,libelle) values (14, 'CA', 'Canada'         );
 insert into llx_c_pays (rowid,code,libelle) values (15, 'TG', 'Togo'           );
 insert into llx_c_pays (rowid,code,libelle) values (16, 'GA', 'Gabon'          );
 insert into llx_c_pays (rowid,code,libelle) values (17, 'NL', 'Pays Bas'       );
 insert into llx_c_pays (rowid,code,libelle) values (18, 'HU', 'Hongrie'        );
 insert into llx_c_pays (rowid,code,libelle) values (19, 'RU', 'Russie'         );
-insert into llx_c_pays (rowid,code,libelle) values (20, 'SE', 'Su�de'          );
-insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'C�te d\'Ivoire' );
-insert into llx_c_pays (rowid,code,libelle) values (22, 'SN', 'S�n�gal'        );
+insert into llx_c_pays (rowid,code,libelle) values (20, 'SE', 'Suède'          );
+insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'Côte d\'Ivoire' );
+insert into llx_c_pays (rowid,code,libelle) values (22, 'SN', 'Sénégal'        );
 insert into llx_c_pays (rowid,code,libelle) values (23, 'AR', 'Argentine'      );
 insert into llx_c_pays (rowid,code,libelle) values (24, 'CM', 'Cameroun'       );
 insert into llx_c_pays (rowid,code,libelle) values (25, 'PT', 'Portugal'       );
@@ -292,31 +292,31 @@ insert into llx_c_pays (rowid,code,libelle) values (29, 'SG', 'Singapoure'     )
 insert into llx_c_pays (rowid,code,libelle) values (30, 'AF', 'Afghanistan'    );
 insert into llx_c_pays (rowid,code,libelle) values (31, 'AX', 'Iles Aland'     );
 insert into llx_c_pays (rowid,code,libelle) values (32, 'AL', 'Albanie'        );
-insert into llx_c_pays (rowid,code,libelle) values (33, 'AS', 'Samoa am�ricaines');
+insert into llx_c_pays (rowid,code,libelle) values (33, 'AS', 'Samoa américaines');
 insert into llx_c_pays (rowid,code,libelle) values (34, 'AD', 'Andorre'        );
 insert into llx_c_pays (rowid,code,libelle) values (35, 'AO', 'Angola'         );
 insert into llx_c_pays (rowid,code,libelle) values (36, 'AI', 'Anguilla'       );
 insert into llx_c_pays (rowid,code,libelle) values (37, 'AQ', 'Antarctique'    );
 insert into llx_c_pays (rowid,code,libelle) values (38, 'AG', 'Antigua-et-Barbuda');
-insert into llx_c_pays (rowid,code,libelle) values (39, 'AM', 'Arm�nie'        );
+insert into llx_c_pays (rowid,code,libelle) values (39, 'AM', 'Arménie'        );
 insert into llx_c_pays (rowid,code,libelle) values (40, 'AW', 'Aruba'          );
 insert into llx_c_pays (rowid,code,libelle) values (41, 'AT', 'Autriche'       );
-insert into llx_c_pays (rowid,code,libelle) values (42, 'AZ', 'Azerba�djan'    );
+insert into llx_c_pays (rowid,code,libelle) values (42, 'AZ', 'Azerbaïdjan'    );
 insert into llx_c_pays (rowid,code,libelle) values (43, 'BS', 'Bahamas'        );
-insert into llx_c_pays (rowid,code,libelle) values (44, 'BH', 'Bahre�n'        );
+insert into llx_c_pays (rowid,code,libelle) values (44, 'BH', 'Bahreïn'        );
 insert into llx_c_pays (rowid,code,libelle) values (45, 'BD', 'Bangladesh'     );
 insert into llx_c_pays (rowid,code,libelle) values (46, 'BB', 'Barbade'        );
-insert into llx_c_pays (rowid,code,libelle) values (47, 'BY', 'Bi�lorussie'    );
+insert into llx_c_pays (rowid,code,libelle) values (47, 'BY', 'Biélorussie'    );
 insert into llx_c_pays (rowid,code,libelle) values (48, 'BZ', 'Belize'         );
-insert into llx_c_pays (rowid,code,libelle) values (49, 'BJ', 'B�nin'          );
+insert into llx_c_pays (rowid,code,libelle) values (49, 'BJ', 'Bénin'          );
 insert into llx_c_pays (rowid,code,libelle) values (50, 'BM', 'Bermudes'       );
 insert into llx_c_pays (rowid,code,libelle) values (51, 'BT', 'Bhoutan'        );
 insert into llx_c_pays (rowid,code,libelle) values (52, 'BO', 'Bolivie'        );
-insert into llx_c_pays (rowid,code,libelle) values (53, 'BA', 'Bosnie-Herz�govine');
+insert into llx_c_pays (rowid,code,libelle) values (53, 'BA', 'Bosnie-Herzégovine');
 insert into llx_c_pays (rowid,code,libelle) values (54, 'BW', 'Botswana'       );
 insert into llx_c_pays (rowid,code,libelle) values (55, 'BV', 'Ile Bouvet'     );
-insert into llx_c_pays (rowid,code,libelle) values (56, 'BR', 'Br�sil'         );
-insert into llx_c_pays (rowid,code,libelle) values (57, 'IO', 'Territoire britannique de l\'Oc�an Indien');
+insert into llx_c_pays (rowid,code,libelle) values (56, 'BR', 'Brésil'         );
+insert into llx_c_pays (rowid,code,libelle) values (57, 'IO', 'Territoire britannique de l\'Océan Indien');
 insert into llx_c_pays (rowid,code,libelle) values (58, 'BN', 'Brunei'         );
 insert into llx_c_pays (rowid,code,libelle) values (59, 'BG', 'Bulgarie'       );
 insert into llx_c_pays (rowid,code,libelle) values (60, 'BF', 'Burkina Faso'   );
@@ -324,7 +324,7 @@ insert into llx_c_pays (rowid,code,libelle) values (61, 'BI', 'Burundi'        )
 insert into llx_c_pays (rowid,code,libelle) values (62, 'KH', 'Cambodge'       );
 insert into llx_c_pays (rowid,code,libelle) values (63, 'CV', 'Cap-Vert'       );
 insert into llx_c_pays (rowid,code,libelle) values (64, 'KY', 'Iles Cayman'    );
-insert into llx_c_pays (rowid,code,libelle) values (65, 'CF', 'R�publique centrafricaine');
+insert into llx_c_pays (rowid,code,libelle) values (65, 'CF', 'République centrafricaine');
 insert into llx_c_pays (rowid,code,libelle) values (66, 'TD', 'Tchad'          );
 insert into llx_c_pays (rowid,code,libelle) values (67, 'CL', 'Chili'          );
 insert into llx_c_pays (rowid,code,libelle) values (68, 'CX', 'Ile Christmas'  );
@@ -332,64 +332,64 @@ insert into llx_c_pays (rowid,code,libelle) values (69, 'CC', 'Iles des Cocos (K
 insert into llx_c_pays (rowid,code,libelle) values (70, 'CO', 'Colombie'       );
 insert into llx_c_pays (rowid,code,libelle) values (71, 'KM', 'Comores'        );
 insert into llx_c_pays (rowid,code,libelle) values (72, 'CG', 'Congo'          );
-insert into llx_c_pays (rowid,code,libelle) values (73, 'CD', 'R�publique d�mocratique du Congo');
+insert into llx_c_pays (rowid,code,libelle) values (73, 'CD', 'République démocratique du Congo');
 insert into llx_c_pays (rowid,code,libelle) values (74, 'CK', 'Iles Cook'      );
 insert into llx_c_pays (rowid,code,libelle) values (75, 'CR', 'Costa Rica'     );
 insert into llx_c_pays (rowid,code,libelle) values (76, 'HR', 'Croatie'        );
 insert into llx_c_pays (rowid,code,libelle) values (77, 'CU', 'Cuba'           );
 insert into llx_c_pays (rowid,code,libelle) values (78, 'CY', 'Chypre'         );
-insert into llx_c_pays (rowid,code,libelle) values (79, 'CZ', 'R�publique Tch�que');
+insert into llx_c_pays (rowid,code,libelle) values (79, 'CZ', 'République Tchèque');
 insert into llx_c_pays (rowid,code,libelle) values (80, 'DK', 'Danemark'       );
 insert into llx_c_pays (rowid,code,libelle) values (81, 'DJ', 'Djibouti'       );
 insert into llx_c_pays (rowid,code,libelle) values (82, 'DM', 'Dominique'      );
-insert into llx_c_pays (rowid,code,libelle) values (83, 'DO', 'R�publique Dominicaine');
+insert into llx_c_pays (rowid,code,libelle) values (83, 'DO', 'République Dominicaine');
 insert into llx_c_pays (rowid,code,libelle) values (84, 'EC', 'Equateur'       );
 insert into llx_c_pays (rowid,code,libelle) values (85, 'EG', 'Egypte'         );
 insert into llx_c_pays (rowid,code,libelle) values (86, 'SV', 'Salvador'       );
-insert into llx_c_pays (rowid,code,libelle) values (87, 'GQ', 'Guin�e Equatoriale');
-insert into llx_c_pays (rowid,code,libelle) values (88, 'ER', 'Erythr�e'       );
+insert into llx_c_pays (rowid,code,libelle) values (87, 'GQ', 'Guinée Equatoriale');
+insert into llx_c_pays (rowid,code,libelle) values (88, 'ER', 'Erythrée'       );
 insert into llx_c_pays (rowid,code,libelle) values (89, 'EE', 'Estonie'        );
 insert into llx_c_pays (rowid,code,libelle) values (90, 'ET', 'Ethiopie'       );
 insert into llx_c_pays (rowid,code,libelle) values (91, 'FK', 'Iles Falkland'  );
-insert into llx_c_pays (rowid,code,libelle) values (92, 'FO', 'Iles F�ro�'     );
+insert into llx_c_pays (rowid,code,libelle) values (92, 'FO', 'Iles Féroé'     );
 insert into llx_c_pays (rowid,code,libelle) values (93, 'FJ', 'Iles Fidji'     );
 insert into llx_c_pays (rowid,code,libelle) values (94, 'FI', 'Finlande'       );
-insert into llx_c_pays (rowid,code,libelle) values (95, 'GF', 'Guyane fran�aise');
-insert into llx_c_pays (rowid,code,libelle) values (96, 'PF', 'Polyn�sie fran�aise');
-insert into llx_c_pays (rowid,code,libelle) values (97, 'TF', 'Terres australes fran�aises');
+insert into llx_c_pays (rowid,code,libelle) values (95, 'GF', 'Guyane française');
+insert into llx_c_pays (rowid,code,libelle) values (96, 'PF', 'Polynésie française');
+insert into llx_c_pays (rowid,code,libelle) values (97, 'TF', 'Terres australes françaises');
 insert into llx_c_pays (rowid,code,libelle) values (98, 'GM', 'Gambie'         );
-insert into llx_c_pays (rowid,code,libelle) values (99, 'GE', 'G�orgie'       );
+insert into llx_c_pays (rowid,code,libelle) values (99, 'GE', 'Géorgie'       );
 insert into llx_c_pays (rowid,code,libelle) values (100, 'GH', 'Ghana'         );
 insert into llx_c_pays (rowid,code,libelle) values (101, 'GI', 'Gibraltar'     );
-insert into llx_c_pays (rowid,code,libelle) values (102, 'GR', 'Gr�ce'         );
+insert into llx_c_pays (rowid,code,libelle) values (102, 'GR', 'Grèce'         );
 insert into llx_c_pays (rowid,code,libelle) values (103, 'GL', 'Groenland'     );
 insert into llx_c_pays (rowid,code,libelle) values (104, 'GD', 'Grenade'       );
 insert into llx_c_pays (rowid,code,libelle) values (105, 'GP', 'Guadeloupe'    );
 insert into llx_c_pays (rowid,code,libelle) values (106, 'GU', 'Guam'          );
 insert into llx_c_pays (rowid,code,libelle) values (107, 'GT', 'Guatemala'     );
-insert into llx_c_pays (rowid,code,libelle) values (108, 'GN', 'Guin�e'        );
-insert into llx_c_pays (rowid,code,libelle) values (109, 'GW', 'Guin�e-Bissao' );
+insert into llx_c_pays (rowid,code,libelle) values (108, 'GN', 'Guinée'        );
+insert into llx_c_pays (rowid,code,libelle) values (109, 'GW', 'Guinée-Bissao' );
 insert into llx_c_pays (rowid,code,libelle) values (110, 'GY', 'Guyana'        );
-insert into llx_c_pays (rowid,code,libelle) values (111, 'HT', 'Ha�ti'         );
+insert into llx_c_pays (rowid,code,libelle) values (111, 'HT', 'Haïti'         );
 insert into llx_c_pays (rowid,code,libelle) values (112, 'HM', 'Iles Heard et McDonald');
-insert into llx_c_pays (rowid,code,libelle) values (113, 'VA', 'Saint-Si�ge (Vatican)');
+insert into llx_c_pays (rowid,code,libelle) values (113, 'VA', 'Saint-Siège (Vatican)');
 insert into llx_c_pays (rowid,code,libelle) values (114, 'HN', 'Honduras'      );
 insert into llx_c_pays (rowid,code,libelle) values (115, 'HK', 'Hong Kong'     );
 insert into llx_c_pays (rowid,code,libelle) values (116, 'IS', 'Islande'       );
 insert into llx_c_pays (rowid,code,libelle) values (117, 'IN', 'Inde'          );
-insert into llx_c_pays (rowid,code,libelle) values (118, 'ID', 'Indon�sie'     );
+insert into llx_c_pays (rowid,code,libelle) values (118, 'ID', 'Indonésie'     );
 insert into llx_c_pays (rowid,code,libelle) values (119, 'IR', 'Iran'          );
 insert into llx_c_pays (rowid,code,libelle) values (120, 'IQ', 'Iraq'          );
-insert into llx_c_pays (rowid,code,libelle) values (121, 'IL', 'Isra�l'        );
-insert into llx_c_pays (rowid,code,libelle) values (122, 'JM', 'Jama�que'      );
+insert into llx_c_pays (rowid,code,libelle) values (121, 'IL', 'Israël'        );
+insert into llx_c_pays (rowid,code,libelle) values (122, 'JM', 'Jamaïque'      );
 insert into llx_c_pays (rowid,code,libelle) values (123, 'JP', 'Japon'         );
 insert into llx_c_pays (rowid,code,libelle) values (124, 'JO', 'Jordanie'      );
 insert into llx_c_pays (rowid,code,libelle) values (125, 'KZ', 'Kazakhstan'    );
 insert into llx_c_pays (rowid,code,libelle) values (126, 'KE', 'Kenya'         );
 insert into llx_c_pays (rowid,code,libelle) values (127, 'KI', 'Kiribati'      );
-insert into llx_c_pays (rowid,code,libelle) values (128, 'KP', 'Cor�e du Nord' );
-insert into llx_c_pays (rowid,code,libelle) values (129, 'KR', 'Cor�e du Sud'  );
-insert into llx_c_pays (rowid,code,libelle) values (130, 'KW', 'Kowe�t'        );
+insert into llx_c_pays (rowid,code,libelle) values (128, 'KP', 'Corée du Nord' );
+insert into llx_c_pays (rowid,code,libelle) values (129, 'KR', 'Corée du Sud'  );
+insert into llx_c_pays (rowid,code,libelle) values (130, 'KW', 'Koweït'        );
 insert into llx_c_pays (rowid,code,libelle) values (131, 'KG', 'Kirghizistan'  );
 insert into llx_c_pays (rowid,code,libelle) values (132, 'LA', 'Laos'          );
 insert into llx_c_pays (rowid,code,libelle) values (133, 'LV', 'Lettonie'      );
@@ -401,7 +401,7 @@ insert into llx_c_pays (rowid,code,libelle) values (138, 'LI', 'Liechtenstein' )
 insert into llx_c_pays (rowid,code,libelle) values (139, 'LT', 'Lituanie'      );
 insert into llx_c_pays (rowid,code,libelle) values (140, 'LU', 'Luxembourg'    );
 insert into llx_c_pays (rowid,code,libelle) values (141, 'MO', 'Macao'         );
-insert into llx_c_pays (rowid,code,libelle) values (142, 'MK', 'ex-R�publique yougoslave de Mac�doine');
+insert into llx_c_pays (rowid,code,libelle) values (142, 'MK', 'ex-République yougoslave de Macédoine');
 insert into llx_c_pays (rowid,code,libelle) values (143, 'MG', 'Madagascar'    );
 insert into llx_c_pays (rowid,code,libelle) values (144, 'MW', 'Malawi'        );
 insert into llx_c_pays (rowid,code,libelle) values (145, 'MY', 'Malaisie'      );
@@ -414,7 +414,7 @@ insert into llx_c_pays (rowid,code,libelle) values (151, 'MR', 'Mauritanie'    )
 insert into llx_c_pays (rowid,code,libelle) values (152, 'MU', 'Maurice'       );
 insert into llx_c_pays (rowid,code,libelle) values (153, 'YT', 'Mayotte'       );
 insert into llx_c_pays (rowid,code,libelle) values (154, 'MX', 'Mexique'       );
-insert into llx_c_pays (rowid,code,libelle) values (155, 'FM', 'Micron�sie'    );
+insert into llx_c_pays (rowid,code,libelle) values (155, 'FM', 'Micronésie'    );
 insert into llx_c_pays (rowid,code,libelle) values (156, 'MD', 'Moldavie'      );
 insert into llx_c_pays (rowid,code,libelle) values (157, 'MN', 'Mongolie'      );
 insert into llx_c_pays (rowid,code,libelle) values (158, 'MS', 'Monserrat'     );
@@ -422,82 +422,82 @@ insert into llx_c_pays (rowid,code,libelle) values (159, 'MZ', 'Mozambique'    )
 insert into llx_c_pays (rowid,code,libelle) values (160, 'MM', 'Birmanie'      );
 insert into llx_c_pays (rowid,code,libelle) values (161, 'NA', 'Namibie'       );
 insert into llx_c_pays (rowid,code,libelle) values (162, 'NR', 'Nauru'         );
-insert into llx_c_pays (rowid,code,libelle) values (163, 'NP', 'N�pal'         );
-insert into llx_c_pays (rowid,code,libelle) values (164, 'AN', 'Antilles n�erlandaises');
-insert into llx_c_pays (rowid,code,libelle) values (165, 'NC', 'Nouvelle-Cal�donie');
-insert into llx_c_pays (rowid,code,libelle) values (166, 'NZ', 'Nouvelle-Z�lande');
+insert into llx_c_pays (rowid,code,libelle) values (163, 'NP', 'Népal'         );
+insert into llx_c_pays (rowid,code,libelle) values (164, 'AN', 'Antilles néerlandaises');
+insert into llx_c_pays (rowid,code,libelle) values (165, 'NC', 'Nouvelle-Calédonie');
+insert into llx_c_pays (rowid,code,libelle) values (166, 'NZ', 'Nouvelle-Zélande');
 insert into llx_c_pays (rowid,code,libelle) values (167, 'NI', 'Nicaragua'     );
 insert into llx_c_pays (rowid,code,libelle) values (168, 'NE', 'Niger'         );
 insert into llx_c_pays (rowid,code,libelle) values (169, 'NG', 'Nigeria'       );
-insert into llx_c_pays (rowid,code,libelle) values (170, 'NU', 'Niou�'         );
+insert into llx_c_pays (rowid,code,libelle) values (170, 'NU', 'Nioué'         );
 insert into llx_c_pays (rowid,code,libelle) values (171, 'NF', 'Ile Norfolk'   );
 insert into llx_c_pays (rowid,code,libelle) values (172, 'MP', 'Mariannes du Nord');
-insert into llx_c_pays (rowid,code,libelle) values (173, 'NO', 'Norv�ge'       );
+insert into llx_c_pays (rowid,code,libelle) values (173, 'NO', 'Norvège'       );
 insert into llx_c_pays (rowid,code,libelle) values (174, 'OM', 'Oman'          );
 insert into llx_c_pays (rowid,code,libelle) values (175, 'PK', 'Pakistan'      );
 insert into llx_c_pays (rowid,code,libelle) values (176, 'PW', 'Palaos'        );
-insert into llx_c_pays (rowid,code,libelle) values (177, 'PS', 'territoire Palestinien Occup�');
+insert into llx_c_pays (rowid,code,libelle) values (177, 'PS', 'territoire Palestinien Occupé');
 insert into llx_c_pays (rowid,code,libelle) values (178, 'PA', 'Panama'        );
-insert into llx_c_pays (rowid,code,libelle) values (179, 'PG', 'Papouasie-Nouvelle-Guin�e');
+insert into llx_c_pays (rowid,code,libelle) values (179, 'PG', 'Papouasie-Nouvelle-Guinée');
 insert into llx_c_pays (rowid,code,libelle) values (180, 'PY', 'Paraguay'      );
-insert into llx_c_pays (rowid,code,libelle) values (181, 'PE', 'P�rou'         );
+insert into llx_c_pays (rowid,code,libelle) values (181, 'PE', 'Pérou'         );
 insert into llx_c_pays (rowid,code,libelle) values (182, 'PH', 'Philippines'   );
 insert into llx_c_pays (rowid,code,libelle) values (183, 'PN', 'Iles Pitcairn' );
 insert into llx_c_pays (rowid,code,libelle) values (184, 'PL', 'Pologne'       );
 insert into llx_c_pays (rowid,code,libelle) values (185, 'PR', 'Porto Rico'    );
 insert into llx_c_pays (rowid,code,libelle) values (186, 'QA', 'Qatar'         );
-insert into llx_c_pays (rowid,code,libelle) values (187, 'RE', 'R�union'       );
+insert into llx_c_pays (rowid,code,libelle) values (187, 'RE', 'Réunion'       );
 insert into llx_c_pays (rowid,code,libelle) values (188, 'RO', 'Roumanie'      );
 insert into llx_c_pays (rowid,code,libelle) values (189, 'RW', 'Rwanda'        );
-insert into llx_c_pays (rowid,code,libelle) values (190, 'SH', 'Sainte-H�l�ne' );
-insert into llx_c_pays (rowid,code,libelle) values (191, 'KN', 'Saint-Christophe-et-Ni�v�s');
+insert into llx_c_pays (rowid,code,libelle) values (190, 'SH', 'Sainte-Hélène' );
+insert into llx_c_pays (rowid,code,libelle) values (191, 'KN', 'Saint-Christophe-et-Niévès');
 insert into llx_c_pays (rowid,code,libelle) values (192, 'LC', 'Sainte-Lucie'  );
 insert into llx_c_pays (rowid,code,libelle) values (193, 'PM', 'Saint-Pierre-et-Miquelon');
 insert into llx_c_pays (rowid,code,libelle) values (194, 'VC', 'Saint-Vincent-et-les-Grenadines');
 insert into llx_c_pays (rowid,code,libelle) values (195, 'WS', 'Samoa'         );
 insert into llx_c_pays (rowid,code,libelle) values (196, 'SM', 'Saint-Marin'   );
-insert into llx_c_pays (rowid,code,libelle) values (197, 'ST', 'Sao Tom�-et-Principe');
+insert into llx_c_pays (rowid,code,libelle) values (197, 'ST', 'Sao Tomé-et-Principe');
 insert into llx_c_pays (rowid,code,libelle) values (198, 'RS', 'Serbie'        );
 insert into llx_c_pays (rowid,code,libelle) values (199, 'SC', 'Seychelles'    );
 insert into llx_c_pays (rowid,code,libelle) values (200, 'SL', 'Sierra Leone'  );
 insert into llx_c_pays (rowid,code,libelle) values (201, 'SK', 'Slovaquie'     );
-insert into llx_c_pays (rowid,code,libelle) values (202, 'SI', 'Slov�nie'      );
+insert into llx_c_pays (rowid,code,libelle) values (202, 'SI', 'Slovénie'      );
 insert into llx_c_pays (rowid,code,libelle) values (203, 'SB', 'Iles Salomon'  );
 insert into llx_c_pays (rowid,code,libelle) values (204, 'SO', 'Somalie'       );
 insert into llx_c_pays (rowid,code,libelle) values (205, 'ZA', 'Afrique du Sud');
-insert into llx_c_pays (rowid,code,libelle) values (206, 'GS', 'Iles G�orgie du Sud et Sandwich du Sud');
+insert into llx_c_pays (rowid,code,libelle) values (206, 'GS', 'Iles Géorgie du Sud et Sandwich du Sud');
 insert into llx_c_pays (rowid,code,libelle) values (207, 'LK', 'Sri Lanka'     );
 insert into llx_c_pays (rowid,code,libelle) values (208, 'SD', 'Soudan'        );
 insert into llx_c_pays (rowid,code,libelle) values (209, 'SR', 'Suriname'      );
 insert into llx_c_pays (rowid,code,libelle) values (210, 'SJ', 'Iles Svalbard et Jan Mayen');
 insert into llx_c_pays (rowid,code,libelle) values (211, 'SZ', 'Swaziland'     );
 insert into llx_c_pays (rowid,code,libelle) values (212, 'SY', 'Syrie'         );
-insert into llx_c_pays (rowid,code,libelle) values (213, 'TW', 'Ta�wan'        );
+insert into llx_c_pays (rowid,code,libelle) values (213, 'TW', 'Taïwan'        );
 insert into llx_c_pays (rowid,code,libelle) values (214, 'TJ', 'Tadjikistan'   );
 insert into llx_c_pays (rowid,code,libelle) values (215, 'TZ', 'Tanzanie'      );
-insert into llx_c_pays (rowid,code,libelle) values (216, 'TH', 'Tha�lande'     );
+insert into llx_c_pays (rowid,code,libelle) values (216, 'TH', 'Thaïlande'     );
 insert into llx_c_pays (rowid,code,libelle) values (217, 'TL', 'Timor Oriental');
-insert into llx_c_pays (rowid,code,libelle) values (218, 'TK', 'Tok�laou'      );
+insert into llx_c_pays (rowid,code,libelle) values (218, 'TK', 'Tokélaou'      );
 insert into llx_c_pays (rowid,code,libelle) values (219, 'TO', 'Tonga'         );
-insert into llx_c_pays (rowid,code,libelle) values (220, 'TT', 'Trinit�-et-Tobago');
+insert into llx_c_pays (rowid,code,libelle) values (220, 'TT', 'Trinité-et-Tobago');
 insert into llx_c_pays (rowid,code,libelle) values (221, 'TR', 'Turquie'       );
-insert into llx_c_pays (rowid,code,libelle) values (222, 'TM', 'Turkm�nistan'  );
+insert into llx_c_pays (rowid,code,libelle) values (222, 'TM', 'Turkménistan'  );
 insert into llx_c_pays (rowid,code,libelle) values (223, 'TC', 'Iles Turks-et-Caicos');
 insert into llx_c_pays (rowid,code,libelle) values (224, 'TV', 'Tuvalu'        );
 insert into llx_c_pays (rowid,code,libelle) values (225, 'UG', 'Ouganda'       );
 insert into llx_c_pays (rowid,code,libelle) values (226, 'UA', 'Ukraine'       );
-insert into llx_c_pays (rowid,code,libelle) values (227, 'AE', '�mirats arabes unis');
-insert into llx_c_pays (rowid,code,libelle) values (228, 'UM', 'Iles mineures �loign�es des �tats-Unis');
+insert into llx_c_pays (rowid,code,libelle) values (227, 'AE', 'Emirats arabes unis');
+insert into llx_c_pays (rowid,code,libelle) values (228, 'UM', 'Iles mineures éloignées des états-Unis');
 insert into llx_c_pays (rowid,code,libelle) values (229, 'UY', 'Uruguay'       );
-insert into llx_c_pays (rowid,code,libelle) values (230, 'UZ', 'Ouzb�kistan'   );
+insert into llx_c_pays (rowid,code,libelle) values (230, 'UZ', 'Ouzbékistan'   );
 insert into llx_c_pays (rowid,code,libelle) values (231, 'VU', 'Vanuatu'       );
-insert into llx_c_pays (rowid,code,libelle) values (232, 'VE', 'V�n�zuela'     );
-insert into llx_c_pays (rowid,code,libelle) values (233, 'VN', 'Vi�t Nam'      );
+insert into llx_c_pays (rowid,code,libelle) values (232, 'VE', 'Vénézuela'     );
+insert into llx_c_pays (rowid,code,libelle) values (233, 'VN', 'Viêt Nam'      );
 insert into llx_c_pays (rowid,code,libelle) values (234, 'VG', 'Iles Vierges britanniques');
-insert into llx_c_pays (rowid,code,libelle) values (235, 'VI', 'Iles Vierges am�ricaines');
+insert into llx_c_pays (rowid,code,libelle) values (235, 'VI', 'Iles Vierges américaines');
 insert into llx_c_pays (rowid,code,libelle) values (236, 'WF', 'Wallis-et-Futuna');
 insert into llx_c_pays (rowid,code,libelle) values (237, 'EH', 'Sahara occidental');
-insert into llx_c_pays (rowid,code,libelle) values (238, 'YE', 'Y�men'         );
+insert into llx_c_pays (rowid,code,libelle) values (238, 'YE', 'Yémen'         );
 insert into llx_c_pays (rowid,code,libelle) values (239, 'ZM', 'Zambie'        );
 insert into llx_c_pays (rowid,code,libelle) values (240, 'ZW', 'Zimbabwe'      );
 
@@ -656,7 +656,7 @@ ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_source_fk_facture FOREIGN KEY 
 alter table llx_facture add column type smallint DEFAULT 0 NOT NULL after facnumber;
 
 
--- Supprimme orphelins pour permettre mont�e de la cl�
+-- Supprimme orphelins pour permettre montée de la clé
 -- V4 DELETE llx_commandedet FROM llx_commandedet LEFT JOIN llx_commande ON llx_commandedet.fk_commande = llx_commande.rowid WHERE llx_commande.rowid IS NULL;
 
 ALTER TABLE llx_commandedet ADD INDEX idx_commandedet_fk_commande (fk_commande);
@@ -683,7 +683,7 @@ alter table llx_societe_remise_except ADD COLUMN fk_facture_source integer after
 update llx_societe_remise_except set amount_tva=0, tva_tx=0, amount_ttc = amount_ht where amount_ttc = 0;
 delete from llx_societe_remise_except WHERE amount_ht=0;
 
--- Supprimme orphelins pour permettre mont�e de la cl�
+-- Supprimme orphelins pour permettre montée de la clé
 -- V4 DELETE llx_societe_remise_except FROM llx_societe_remise_except LEFT JOIN llx_facturedet ON llx_societe_remise_except.fk_facture = llx_facturedet.rowid WHERE llx_facturedet.rowid IS NULL;
 
 ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_facture;
@@ -701,7 +701,7 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_factur
 update llx_societe_remise_except set description='Remise sans description' where description is NULL or description ='';
 alter table llx_societe_remise_except modify description varchar(255) NOT NULL;
 
-insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION', '15', 'chaine', 0, 'Dur�e de validit�e des propales');
+insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION', '15', 'chaine', 0, 'Durée de validitée des propales');
 
 alter table llx_propal add column ref_client varchar(30) after ref;
 
@@ -755,7 +755,7 @@ alter table llx_propal drop column fk_soc_contact;
 alter table llx_commandedet drop column label;
 
 
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUUPLIER','Validation commande fournisseur','D�clench� lors de la validation d\'une commande fournisseur','order_supplier');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUUPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
 
 
 
@@ -807,7 +807,7 @@ update llx_facture set fk_statut=2 where close_code is not null and close_code !
 update llx_boxes set fk_user = 0 where fk_user IS NULL;
 ALTER TABLE llx_boxes modify fk_user integer default 0 NOT NULL;
 
--- Supprimme orphelins pour permettre mont�e de la cl�
+-- Supprimme orphelins pour permettre montee de la cle
 -- V4 DELETE llx_boxes FROM llx_boxes LEFT JOIN llx_boxes_def ON llx_boxes.box_id = llx_boxes_def.rowid WHERE llx_boxes_def.rowid IS NULL;
 
 ALTER TABLE llx_boxes ADD INDEX idx_boxes_boxid (box_id);
@@ -860,10 +860,10 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX (fk_commande);
 create table llx_stock_valorisation
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  tms                timestamp,             -- date technique mise � jour automatiquement
+  tms                timestamp,             -- date technique mise a jour automatiquement
   date_valo          datetime,              -- date de valorisation
   fk_product         integer NOT NULL,      -- id du produit concerne par l'operation
-  qty_ope            float(9,3),            -- quantit� de l'operation
+  qty_ope            float(9,3),            -- quantite de l'operation
   price_ope          float(12,4),           -- prix unitaire du produit concerne par l'operation
   valo_ope           float(12,4),           -- valorisation de l'operation
   price_pmp          float(12,4),           -- valeur PMP de l'operation
@@ -878,7 +878,7 @@ create table llx_stock_valorisation
 create table llx_entrepot_valorisation
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,      -- date technique mise � jour automatiquement
+  tms             timestamp,      -- date technique mise a jour automatiquement
   date_calcul     date,           -- date auquel a ete calcule la valeur
   fk_entrepot     integer UNSIGNED NOT NULL ,
   valo_pmp        float(12,4),    -- valoristaion du stock en PMP
