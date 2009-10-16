@@ -39,14 +39,14 @@ if ($_REQUEST["socid"])
 {
 	if ($_REQUEST["typeid"] == 1) { $type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
 	if ($_REQUEST["typeid"] == 2) { $type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
-	$objecttype = 'societe&&categorie';
+	$objecttype = 'societe&categorie';
 	$objectid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 	$fieldid = 'rowid';
 }
 else if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
 	$type = 'produit';
-	$objecttype = 'produit|service&&categorie';
+	$objecttype = 'produit|service&categorie';
 	$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["ref"])?$_REQUEST["ref"]:'');
 	$dbtablename = 'product';
 	$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';

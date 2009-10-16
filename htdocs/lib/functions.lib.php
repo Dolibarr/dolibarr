@@ -1518,7 +1518,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 	//print ", user_societe_contact_lire=".$user->rights->societe->contact->lire."<br>";
 	
 	// More features to check
-	$features = explode("&&",$features);
+	$features = explode("&",$features);
 	
 	// Check read permission from module
 	// TODO Replace "feature" param by permission for reading
