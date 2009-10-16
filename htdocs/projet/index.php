@@ -41,6 +41,8 @@ if ($user->societe_id > 0)
  * View
  */
 
+$company=new Societe($db);
+
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $text=$langs->trans("Projects");
@@ -127,14 +129,16 @@ if ( $resql )
 		print '<td nowrap="nowrap">';
 		if ($obj->socid)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom.'</a>';
+			$company->id=$obj->socid;
+			$company->nom=$obj->nom;
+			print $company->getNomUrl(1);
 		}
 		else
 		{
 			print $langs->trans("Public");
 		}
 		print '</td>';
-		print '<td align="right">'.$obj->nb.'</td>';
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$obj->socid.'">'.$obj->nb.'</a></td>';
 		print "</tr>\n";
 
 		$i++;
