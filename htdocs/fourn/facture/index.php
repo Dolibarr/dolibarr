@@ -183,7 +183,7 @@ if ($resql)
     print '<input class="flat" size="16" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'" size="12">';
+    print '<input class="flat" type="text" size="8" name="search_societe" value="'.$_GET["search_societe"].'">';
     print '</td><td class="liste_titre" align="right">';
     print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
     print '</td><td class="liste_titre" align="right">';
@@ -208,6 +208,7 @@ if ($resql)
         print '<td nowrap>';
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
+		$facturestatic->ref_supplier=$obj->facnumber;
 		print $facturestatic->getNomUrl(1);
         print "</td>\n";
         print '<td nowrap>'.dol_trunc($obj->facnumber,10)."</td>";

@@ -802,6 +802,7 @@ class FactureFournisseur extends Facture
 		$lienfin='</a>';
 
 		$label=$langs->trans("ShowInvoice").': '.$this->ref;
+		if ($this->ref_supplier) $label.=' / '.$this->ref_supplier;
 
 		if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
 		$result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
