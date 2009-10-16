@@ -50,7 +50,7 @@ function product_prepare_head($product, $user)
 	$h++;
 
 	// Show category tab
-	if ($conf->categorie->enabled)
+	if ($conf->categorie->enabled && $user->rights->categorie->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$product->id;
 		$head[$h][1] = $langs->trans('Categories');
@@ -59,7 +59,7 @@ function product_prepare_head($product, $user)
 	}
 
 	// Show barcode tab
-	if ($conf->global->MAIN_MODULE_BARCODE)
+	if ($conf->global->MAIN_MODULE_BARCODE && $user->rights->barcode->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
 		$head[$h][1] = $langs->trans("BarCode");
@@ -85,7 +85,7 @@ function product_prepare_head($product, $user)
 		$h++;
 	}
 
-	if ($conf->fournisseur->enabled)
+	if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
 		$head[$h][1] = $langs->trans("Suppliers");
@@ -110,7 +110,7 @@ function product_prepare_head($product, $user)
 
 	if($product->isproduct())	// Si produit stockable
 	{
-		if ($conf->stock->enabled)
+		if ($conf->stock->enabled && $user->rights->stock->lire)
 		{
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
 			$head[$h][1] = $langs->trans("Stock");
