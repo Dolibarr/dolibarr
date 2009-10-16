@@ -1,5 +1,7 @@
 # Dolibarr language file - es_ES - errors 
 CHARSET = UTF-8
+Error = Error
+Errors = Errores
 MenuManager = Gestor de menú
 ErrorLoginAlreadyExists = El login %s ya existe.
 ErrorGroupAlreadyExists = El grupo %s ya existe.
@@ -53,3 +55,5 @@ WarningConfFileMustBeReadOnly = Atención, su fichero (<b>htdocs/conf/conf.php</
 ErrorModuleRequireJavascript = Javascript no debe estar desactivado para que esta opción pueda utilizarse. Para activar/desactivar JavaScript, vaya al menú Inicio->Configuración->Entorno.
 ErrorPasswordsMustMatch = Las 2 contraseñas indicadas deben corresponderse
 ErrorContactEMail = Se ha producido un error técnico. Contacte con el administrador al e-mail <b>%s</b>, indicando el código de error <b>%s</b> en su mensaje, o puede también adjuntar una copia de pantalla de esta página.
+ErrorsOnXLines = Errores en <b>%s</b> líneas fuente
+WarningsOnXLines = Alertas en <b>%s</b> líneas fuente

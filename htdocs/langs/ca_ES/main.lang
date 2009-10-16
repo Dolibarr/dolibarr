@@ -538,6 +538,8 @@ WarningYouAreInMaintenanceMode = Atenció, està en mode manteniment, així que 
 CreditCard = Targeta de crèdit
 FieldsWithAreMandatory = Els camps marcats per un <b>%s</b> són obligatoris
 FieldsWithIsForPublic = Els camps marcats per <b>%s</b> es mostren en la llista pública de membres. Si no voleu veure'ls, desactiveu la casella "públic".
+AccordingToGeoIPDatabase = (Obtingut per conversió GeoIP)
+Line = Línia
 # Week day =  = 
 Day1 = Dillus
 Day2 = Dimarts
