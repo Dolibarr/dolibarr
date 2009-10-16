@@ -508,7 +508,7 @@ if ($step == 3 && $datatoimport)
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
     print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
-    print '</td><td align="right" nowrap="nowrap" width="100"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+    print '</td><td align="right" nowrap="nowrap" width="100"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
 
