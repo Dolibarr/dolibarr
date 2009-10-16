@@ -761,20 +761,6 @@ tr.fiche {
            font-family: Helvetica, Verdana;
 }
 
-/*
- * Widgets standard
- */
-
-td.delete {
-            background: red;
-            font-weight: bold;
-            }
-
-td.valid {
-           background: pink;
-           font-weight: bold;
-           }
-
 
 /* ============================================================================== */
 /* Formulaire confirmation (HTML)                                                 */

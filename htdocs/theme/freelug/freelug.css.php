@@ -805,7 +805,7 @@ tr.box_titre {
                color: #FFFFFF;
                background: #777799;
                font-family: Helvetica, Verdana;
-               font-weight: bold; }
+}
 
 tr.box_pair {
               background: #dcdcd0;
@@ -818,11 +818,6 @@ tr.box_impair {
 
 tr.fiche {
            font-family: Helvetica, Verdana;
-}
-
-td.delete {
-  background: red;
-  font-weight: bold;
 }
 
 

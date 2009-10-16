@@ -808,14 +808,6 @@ tr.fiche {
            font-family: Helvetica, Verdana;
 }
 
-/*
- * Widgets standard
- */
-
-td.delete {
-            background: red;
-            font-weight: bold;
-            }
 
 
 /* ============================================================================== */

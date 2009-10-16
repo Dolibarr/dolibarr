@@ -687,21 +687,6 @@ tr.liste_total td {
 
 
 
-/*
- *
- */
-
-td.delete {
-            background: red;
-            font-weight: bold;
-            }
-
-td.valid {
-           background: pink;
-           font-weight: bold;
-           }
-
-
 /* ============================================================================== */
 /* Formulaire confirmation (AJAX)                                                 */
 /* ============================================================================== */
