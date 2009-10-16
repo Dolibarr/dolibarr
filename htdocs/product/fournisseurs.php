@@ -333,7 +333,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 			if ($user->rights->fournisseur->lire)
 			{
-				// Titre liste des fournisseurs
+				// Suppliers list title
 				print '<table class="noborder" width="100%">';
 				if ($product->isproduct()) $nblignefour=4;
 				else $nblignefour=4;
@@ -346,7 +346,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<td>&nbsp;</td>';
 				print '</tr>';
 
-				// Liste des fournisseurs
+				// Suppliers list
 				$sql = "SELECT s.nom, s.rowid as socid,";
 				$sql.= " pf.ref_fourn,";
 				$sql.= " pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice";
@@ -375,25 +375,25 @@ if ($_GET["id"] || $_GET["ref"])
 						print "<tr $bc[$var]>";
 						print '<td><a href="../fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$objp->nom.'</a></td>';
 
-						// Fournisseur
+						// Supplier
 						print '<td align="left">'.$objp->ref_fourn.'</td>';
 
-						// Quantit�
+						// Quantity
 						print '<td align="center">';
 						print $objp->quantity;
 						print '</td>';
 
-						// Prix quantit�
+						// Price quantity
 						print '<td align="right">';
 						print $objp->price?price($objp->price):"";
 						print '</td>';
 
-						// Prix unitaire
+						// Unit price
 						print '<td align="right">';
 						print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
 						print '</td>';
 
-						// Modifier-Supprimer
+						// Modify-Remove
 						print '<td align="center">';
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
