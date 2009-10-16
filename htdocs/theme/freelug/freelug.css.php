@@ -638,6 +638,10 @@ table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
 }
+table.nobordernopadding tr {
+border: 0px;
+padding: 0px 0px;
+}
 table.nobordernopadding td {
 border: 0px;
 padding: 0px 0px;
@@ -741,7 +745,6 @@ tr.liste_titre {
     color: #FFFFFF;
     background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-left: 1px solid #FFFFFF;
     border-right: 1px solid #FFFFFF;
     border-top: 1px solid #FFFFFF;
@@ -753,7 +756,6 @@ td.liste_titre {
     color: #FFFFFF;
     background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
@@ -764,7 +766,6 @@ td.liste_titre {
     color: #DCCCBB;
     background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
@@ -781,7 +782,6 @@ th {
     color: #FFFFFF;
     background: #777799;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-left: 1px solid #FFFFFF;
     border-right: 1px solid #FFFFFF;
     border-top: 1px solid #FFFFFF;

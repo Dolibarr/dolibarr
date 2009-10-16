@@ -537,6 +537,10 @@ border-collapse: collapse;
 border: 0px;
 padding: 0px 0px;
 }
+table.nobordernopadding tr {
+border: 0px;
+padding: 0px 0px;
+}
 table.nobordernopadding td {
 border: 0px;
 padding: 0px 0px;
@@ -652,7 +656,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
     font-weight: normal;
-    color: #666633;
+    color: #333333;
     text-decoration: none;
 }
 
@@ -668,26 +672,23 @@ input.liste_titre {
 tr.liste_titre {
     background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
-                 border-top: 1px solid #78746d;
-                 border-left: 1px solid #78746d;
-                 border-right: 1px solid #78746d;
-                 white-space: nowrap;
+    border-top: 1px solid #78746d;
+    border-left: 1px solid #78746d;
+    border-right: 1px solid #78746d;
+    white-space: nowrap;
 }
 
 tr.liste_search {
     background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
-                 border-left: 1px solid #78746d;
-                 border-right: 1px solid #78746d;
-                  white-space: nowrap;
+    border-left: 1px solid #78746d;
+    border-right: 1px solid #78746d;
+    white-space: nowrap;
 }
 
 td.liste_titre {
     background: #cc9966;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
@@ -698,26 +699,22 @@ td.liste_titre {
     color: #fcfffc;
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
 }
 
 tr.liste_total {
-                 background: #F0F0F0;
-                 font-weight: bold;
-                 white-space: nowrap;
-                 border-top: 1px solid #FFFFFF;
-                 border-bottom: 1px solid #78746d;
-
-
+    background: #F0F0F0;
+    white-space: nowrap;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #78746d;
+    font-weight: bold;
 }
 
 th {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-left: 1px solid #FFFFFF;
     border-right: 1px solid #FFFFFF;
     border-top: 1px solid #FFFFFF;
@@ -742,23 +739,28 @@ tr.impair {
  *
  */
 tr.box_titre {
-               background: #BBBB88;
+               background: #cc9966;
                font-family: Helvetica, Verdana;
-               font-size: 1.0em;
-               font-weight: bold; }
+    border-top: 1px solid #78746d;
+    border-left: 1px solid #78746d;
+    border-right: 1px solid #78746d;
+    white-space: nowrap;
+}
 
 tr.box_pair {
               background: #ded8d2;
-              font-size: 0.95em; }
+         border: 1px solid #78746d;
+}
 
 tr.box_impair {
-                background: #78746d;
-                font-family: Helvetica, Verdana;
-                font-size: 0.95em; }
+              background: #ded8d2;
+         border: 1px solid #78746d;
+}
 
 tr.fiche {
            font-family: Helvetica, Verdana;
-           font-size: 0.6em; }
+}
+
 /*
  * Widgets standard
  */

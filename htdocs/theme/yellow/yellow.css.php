@@ -608,6 +608,10 @@ table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
 }
+table.nobordernopadding tr {
+border: 0px;
+padding: 0px 0px;
+}
 table.nobordernopadding td {
 border: 0px;
 padding: 0px 0px;
@@ -733,7 +737,6 @@ input.liste_titre {
 tr.liste_titre {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-bottom: 1px solid #000000;
     white-space: nowrap;
 }
@@ -741,7 +744,6 @@ tr.liste_titre {
 td.liste_titre {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
@@ -752,7 +754,6 @@ td.liste_titre {
     color: #fcfffc;
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
@@ -760,31 +761,27 @@ td.liste_titre {
 
 tr.liste_total td {
     background: #F0F0F0;
-    font-weight: bold;
     white-space: nowrap;
+    font-weight: bold;
     border-top: 1px solid #888888;
 }
 
 th {
     background: #BBBB88;
     font-family: helvetica, verdana, arial, sans-serif;
-    font-weight: bold;
     border-left: 1px solid #FFFFFF;
     border-right: 1px solid #FFFFFF;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
     white-space: nowrap;
-    font-size: 1.0em;
 }
 
 .pair {
     background: #eeeecc;
-    font-size: 1.0em;
 }
 
 .impair {
     background: #dcdcb3;
-    font-size: 1.0em;
 }
 
 
@@ -792,23 +789,25 @@ th {
  *  Boxes
  */
 tr.box_titre {
-               background: #BBBB88;
-               font-family: Helvetica, Verdana;
-               font-size: 1.0em;
-               font-weight: bold; }
+    background: #BBBB88;
+    border-top: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    font-family: Helvetica, Verdana;
+}
 
 tr.box_pair {
               background: #dcdcb3;
-              font-size: 0.95em; }
+}
 
 tr.box_impair {
                 background: #eeeecc;
                 font-family: Helvetica, Verdana;
-                font-size: 0.95em; }
+}
 
 tr.fiche {
            font-family: Helvetica, Verdana;
-           font-size: 0.6em; }
+}
+
 /*
  * Widgets standard
  */

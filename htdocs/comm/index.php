@@ -136,7 +136,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 }
 
 /*
- * Liste des propal brouillons
+ * Draft proposals
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
@@ -199,7 +199,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 
 /*
- * Commandes brouillons
+ * Draft orders
  */
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {

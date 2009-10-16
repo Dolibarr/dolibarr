@@ -329,7 +329,6 @@ div.blockvmenuimpair
 }
 
 a.leftmenu {
-             font-size: 0.9em;
              font-weight: bold;
              color: #202020;
              }
@@ -339,7 +338,6 @@ td.barre {
            border-bottom: 1px solid #000000;
            background: #b3cccc;
            font-family: Helvetica, Verdana;
-           font-size: 0.9em;
            color: #000000;
            text-decoration: none;
 }
@@ -490,6 +488,10 @@ border-collapse: collapse;
 border: 0px;
 padding: 0px 0px;
 }
+table.nobordernopadding tr {
+border: 0px;
+padding: 0px 0px;
+}
 table.nobordernopadding td {
 border: 0px;
 padding: 0px 0px;
@@ -527,13 +529,12 @@ div.menus {
 
 .menu {
         background: #b3cccc;
-        font-size: 0.9em; font-weight: bold;
+        font-weight: bold;
         color: #000000;
         text-decoration: none }
 
 .submenu {
            background: #b3cccc;
-           font-size: 0.9em;
            color: #000000;
            text-decoration: none }
 
@@ -677,13 +678,11 @@ tr.liste_total td {
 .pair	{
     background: #b3cccc;
     font-family: Helvetica, Verdana;
-    font-size: 0.9em;
 }
 
 .impair {
     background: #cceeee;
     font-family: Helvetica, Verdana;
-    font-size: 0.9em;
 }
 
 

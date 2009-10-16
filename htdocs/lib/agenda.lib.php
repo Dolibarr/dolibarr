@@ -80,7 +80,7 @@ function show_array_actions_to_do($max=5)
 	            $staticaction->id=$obj->id;
 	            print '<td>'.$staticaction->getNomUrl(1,12).'</td>';
 
-	            print '<td>'.dol_trunc($obj->label,24).'</td>';
+	            print '<td>'.dol_trunc($obj->label,22).'</td>';
 
 	            $customerstatic->id=$obj->rowid;
 	            $customerstatic->nom=$obj->sname;

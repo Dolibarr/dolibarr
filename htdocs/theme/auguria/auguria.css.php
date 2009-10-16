@@ -755,6 +755,10 @@ table.nobordernopadding td {
 border: 0px;
 padding: 0px 0px;
 }
+table.nobordernopadding tr {
+border: 0px;
+padding: 0px 0px;
+}
 
 table.liste {
 border-collapse: collapse;

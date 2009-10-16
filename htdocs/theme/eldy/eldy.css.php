@@ -788,6 +788,23 @@ border-bottom-width: 1px;
 border-bottom-color: #BBBBBB;
 border-bottom-style: solid;
 }
+/*
+table.noborder tr {
+border-top-color: #FEFEFE;
+
+border-right-width: 1px;
+border-right-color: #BBBBBB;
+border-right-style: solid;
+
+border-left-width: 1px;
+border-left-color: #BBBBBB;
+border-left-style: solid;
+
+border-bottom-width: 1px;
+border-bottom-color: #BBBBBB;
+border-bottom-style: solid;
+}
+*/
 table.noborder td {
 border: 0px;
 padding: 1px 2px;
@@ -796,6 +813,10 @@ padding: 1px 2px;
 table.nobordernopadding {
 border-collapse: collapse;
 border: 0px;
+}
+table.nobordernopadding tr {
+border: 0px;
+padding: 0px 0px;
 }
 table.nobordernopadding td {
 border: 0px;
