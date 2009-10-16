@@ -96,6 +96,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	else print "document.getElementById('password').focus();\n";
 	print "}\n";
 	print '</script>'."\n";
+	if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
 	print '<!-- HTTP_USER_AGENT = '.$_SERVER["HTTP_USER_AGENT"].' -->'."\n";
 	print '</head>'."\n";
 
@@ -232,7 +233,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print '</td>';
 		print '</tr>'."\n";
 	}
-	
+
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	print '<tr><td colspan="3" style="text-align:center;"><br>';
@@ -261,7 +262,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print ')</a>';
 		print '</td></tr>';
 	}
-	
+
 	print '</table>'."\n";
 
 	// Hidden fields
@@ -312,6 +313,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<!-- authentication mode = '.$conf->file->main_authentication.' -->'."\n";
 	print '<!-- cookie name used for this session = '.session_name().' -->'."\n";
 	print '<!-- urlfrom in this session = '.(isset($_SESSION["urlfrom"])?$_SESSION["urlfrom"]:'').' -->'."\n";
+
+	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
 	// Fin entete html
 	print "\n</body>\n</html>";

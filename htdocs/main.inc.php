@@ -816,7 +816,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '""];';
 		print '</script>'."\n";
 
-		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."<br>\n";
+		if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
 
 		print "</head>\n\n";
 	}
@@ -1212,7 +1212,7 @@ function llxFooter($foot='')
 	print "\n";
 	if ($foot) print '<!-- '.$foot.' -->'."\n";
 
-	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."<br>\n";
+	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
 	print "</body>\n";
 	print "</html>\n";
