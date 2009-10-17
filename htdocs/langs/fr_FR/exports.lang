@@ -89,5 +89,7 @@ DataLoadedWithId=Toutes les données seront importées avec l'id d'import suivan
 ErrorMissingMandatoryValue=Donnée obligatoire non renseignées dans le fichier source, champ numéro <b>%s</b>.
 TooMuchErrors=Il y a encore <b>%s</b> autres lignes en erreur mais leur affichage a été limité.
 TooMuchWarnings=Il y a encore <b>%s</b> autres lignes en warnings mais leur affichage a été limité.
-EmptyLine=Ligne vide
+EmptyLine=Ligne vide (sera ignorée)
 CorrectErrorBeforeRunningImport=Vous devez d'abord corriger toutes les erreurs avant de pouvoir lancer l'import définitif.
+FileWasImported=Le fichier a été importé sous le numéro d'import <b>%s</b>. 
+YouCanUseImportIdToFindRecord=Vous pourrez retrouver les enregistrements issus de cet import dans votre base par un filtrage sur le champ <b>import_key='%s'</b>.

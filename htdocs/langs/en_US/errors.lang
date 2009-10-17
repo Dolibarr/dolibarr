@@ -54,5 +54,6 @@ WarningConfFileMustBeReadOnly=Warning, your config file (<b>htdocs/conf/conf.php
 ErrorModuleRequireJavascript=Javascript must not be disabled to have this feature working. To enable/disable Javascript, go to menu Home->Setup->Display.
 ErrorPasswordsMustMatch=Both typed passwords must match each other
 ErrorContactEMail=A technical error occured. Please, contact administrator to folowwing email <b>%</b> en provide the error code <b>%s</b> in your message, or even better by adding a screen copy of this page.
+ErrorWrongValueForField=Wrong value for field number <b>%s</b> (value '<b>%s</b>' does not match regex rule <b>%s</b>)
 ErrorsOnXLines=Errors on <b>%s</b> source lines
 WarningsOnXLines=Warnings on <b>%s</b> source lines

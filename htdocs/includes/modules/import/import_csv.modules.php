@@ -272,7 +272,7 @@ class ImportCsv extends ModeleImports
      */
     function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
     {
-    	global $langs,$conf;
+    	global $langs,$conf,$user;
 
     	$error=0;
     	$warning=0;
@@ -298,7 +298,7 @@ class ImportCsv extends ModeleImports
 		else
 		{
 			// For each table to insert, me make a separate insert
-			foreach($objimport->array_import_tables[0] as $alias=>$tablename)
+			foreach($objimport->array_import_tables[0] as $alias => $tablename)
 			{
 				// Build sql request
 				$sql='';
@@ -338,12 +338,19 @@ class ImportCsv extends ModeleImports
 							$errorforthistable++;
 							$error++;
 						}
-						// Test format
-						// TODO
+						// Test format only if field is not a missing mandatory field
+						else {
+							if (! empty($objimport->array_import_regex[0][$val]) && ! eregi($objimport->array_import_regex[0][$val],$newval))
+							{
+								$this->errors[$error]['lib']=$langs->trans('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
+								$this->errors[$error]['type']='REGEX';
+								$errorforthistable++;
+								$error++;
+							}
 
-						// Other tests
-						// TODO...
-
+							// Other tests
+							// ...
+						}
 					}
 					$i++;
 				}
@@ -351,7 +358,12 @@ class ImportCsv extends ModeleImports
 				{
 					if ($listfields)
 					{
-						$sql='INSERT INTO '.$tablename.'('.$listfields.', import_key) VALUES('.$listvalues.", '".$importid."')";
+						// Build SQL request
+						$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
+						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
+						$sql.=') VALUES('.$listvalues.", '".$importid."'";
+						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$user->id;
+						$sql.=')';
 		    			dol_syslog("import_csv.modules sql=".$sql);
 
 						//print '> '.join(',',$arrayrecord);

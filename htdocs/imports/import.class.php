@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +37,8 @@ class Import
 	var $array_import_tables;
 	var $array_import_fields;
 	var $array_import_entities;
+	var $array_import_regex;
 	var $array_import_examplevalues;
-	//var $array_import_sql_start;
-	//var $array_import_sql_end;
 
 
 	/**
@@ -141,16 +139,16 @@ class Import
 									$this->array_import_label[$i]=$module->getDatasetLabel($r);
 									// Array of tables to import (key=alias, value=tablename)
 									$this->array_import_tables[$i]=$module->import_tables_array[$r];
+									// Array of tables creator field to import (key=alias, value=creator field)
+									$this->array_import_tables_creator[$i]=$module->import_tables_creator_array[$r];
 									// Array of fiels to import (key=field, value=label)
 									$this->array_import_fields[$i]=$module->import_fields_array[$r];
 									// Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_import_entities[$i]=$module->import_entities_array[$r];
 									// Tableau des alias a exporter (cle=champ, valeur=alias)
+									$this->array_import_regex[$i]=$module->import_regex_array[$r];
+									// Tableau des alias a exporter (cle=champ, valeur=alias)
 									$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
-									// Requete sql du dataset
-									//$this->array_import_sql_start[$i]=$module->import_sql_start[$r];
-									//$this->array_import_sql_end[$i]=$module->import_sql_end[$r];
-									//$this->array_import_sql[$i]=$module->import_sql[$r];
 
 									dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".sizeof($module->import_fields_code[$r]));
 									$i++;

@@ -89,5 +89,7 @@ DataLoadedWithId=All data will be loaded with the following import id: <b>%s<b>
 ErrorMissingMandatoryValue=Mandatory data is empty in source file for field <b>%s</b>.
 TooMuchErrors=There is still <b>%s</b> other source lines with errors but output has been limited.
 TooMuchWarnings=There is still <b>%s</b> other source lines with warnings but output has been limited.
-EmptyLine=Empty line
+EmptyLine=Empty line (will be discarded)
 CorrectErrorBeforeRunningImport=You must first correct all errors before running definitive import.
+YouCanUseImportIdToFindRecord=You can find all imported records in your database by filtering on field <b>import_key='%s'</b>.
+

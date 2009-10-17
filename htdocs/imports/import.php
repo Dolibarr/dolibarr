@@ -304,14 +304,14 @@ if ($step == 1 || ! $datatoimport)
 	$array_match_file_to_database=array();
 	$_SESSION["dol_array_match_file_to_database"]='';
 
+	$parm='';
+	if ($excludefirstline) $param.='&excludefirstline=1';
+
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	/*
-	 * Affichage onglets
-	 */
 	$h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
 	$head[$h][1] = $langs->trans("Step")." 1";
 	$hselected=$h;
 	$h++;
@@ -352,7 +352,7 @@ if ($step == 1 || ! $datatoimport)
 			print '</td><td align="right">';
 			if ($objimport->array_import_perms[$key])
 			{
-				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 			}
 			else
 			{
@@ -379,6 +379,9 @@ if ($step == 1 || ! $datatoimport)
 // STEP 2: Page to select input format file
 if ($step == 2 && $datatoimport)
 {
+	$param='&datatoimport='.$datatoimport;
+	if ($excludefirstline) $param.='&excludefirstline=1';
+
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	$h = 0;
@@ -387,7 +390,7 @@ if ($step == 2 && $datatoimport)
 	$head[$h][1] = $langs->trans("Step")." 1";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$hselected=$h;
 	$h++;
@@ -437,10 +440,10 @@ if ($step == 2 && $datatoimport)
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
     	$text=$objmodelimport->getDriverDesc($key);
     	print '<td>'.$html->textwithpicto($objmodelimport->getDriverLabel($key),$text).'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
 		print '<td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&datatoimport='.$datatoimport.'&format='.$key.'">'.img_picto($langs->trans("SelectFormat"),'filenew').'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"),'filenew').'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -456,24 +459,26 @@ if ($step == 2 && $datatoimport)
 // STEP 3: Page to select file
 if ($step == 3 && $datatoimport)
 {
+	$param='&datatoimport='.$datatoimport.'&format='.$format;
+	if ($excludefirstline) $param.='&excludefirstline=1';
+
 	$liste=$objmodelimport->liste_modeles($db);
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-	$param='step=3&datatoimport='.$datatoimport.'&format='.$format;
 
 	$h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
 	$head[$h][1] = $langs->trans("Step")." 1";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$hselected=$h;
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
 	$head[$h][1] = $langs->trans("Step")." 3";
 	$hselected=$h;
 	$h++;
@@ -508,7 +513,7 @@ if ($step == 3 && $datatoimport)
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
     print $html->textwithpicto($objmodelimport->getDriverLabel($format),$text);
-    print '</td><td align="right" nowrap="nowrap" width="100"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.'&datatoimport='.$datatoimport.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+    print '</td><td align="right" nowrap="nowrap" width="100"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
 
@@ -536,6 +541,7 @@ if ($step == 3 && $datatoimport)
 	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'" name="sendit">';
 	print '<input type="hidden" value="'.$step.'" name="step">';
 	print '<input type="hidden" value="'.$format.'" name="format">';
+	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 	print "</tr>\n";
 
@@ -558,16 +564,15 @@ if ($step == 3 && $datatoimport)
 			if (eregi('^\.',$file)) continue;
 
 			$modulepart='import';
-			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.'&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
+			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.$param.'&filetoimport='.urlencode($filetoimport);
 			$relativepath=$file;
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
-			$param='format='.$format.'&datatoimport='.$datatoimport;
 			$modulepart='import';
 			//$relativepath=$filetoimport;
-    		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3&format='.$format.'&datatoimport='.$datatoimport.'" target="_blank">';
+    		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
     		print $file;
     		print '</a>';
 			print '</td>';
@@ -576,12 +581,12 @@ if ($step == 3 && $datatoimport)
 			// Affiche date fichier
 			print '<td align="right">'.dol_print_date(dol_filemtime($dir.'/'.$file),'dayhour').'</td>';
 			// Del button
-			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&step=3&format='.$format.'&modulepart='.$modulepart.'&file='.urlencode($relativepath);
-			print '&amp;urlsource='.urlencode($urlsource);
+			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&step=3'.$param.'&modulepart='.$modulepart.'&file='.urlencode($relativepath);
+			print '&urlsource='.urlencode($urlsource);
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=4&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -673,16 +678,17 @@ if ($step == 4 && $datatoimport)
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
+	if ($excludefirstline) $param.='&excludefirstline=1';
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	$h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
 	$head[$h][1] = $langs->trans("Step")." 1";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
@@ -729,10 +735,9 @@ if ($step == 4 && $datatoimport)
 	// File to import
 	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
-	$param='format='.$format.'&datatoimport='.$datatoimport;
 	$modulepart='import';
 	//$relativepath=$filetoimport;
-    print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4&format='.$format.'&datatoimport='.$datatoimport.'" target="_blank">';
+    print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
     print $filetoimport;
     print '</a>';
 	print '</td></tr>';
@@ -750,6 +755,7 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="format" value="'.$format.'">';
     print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
     print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
+    print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectImportFields",img_picto('','uparrow','')).' ';
     $htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
@@ -921,7 +927,7 @@ if ($step == 4 && $datatoimport)
 	    //print 'var userid = \''.$user->id.'\';'."\n";
 	    //print 'var url = "ajaximport.php";'."\n";
 	    //print 'var datatoimport = "'.$datatoimport.'";'."\n";
-	    print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&action=saveorder&boxorder=\' + boxorder;'."\n";
+	    print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&filetoimport='.urlencode($filetoimport).'&action=saveorder&boxorder=\' + boxorder;'."\n";
 	    //print 'alert(newlocation);';
 	    //print 'o_options = new Object();'."\n";
 	    //print 'o_options = {asynchronous:false,method: \'get\',parameters: \'step=4&boxorder=\' + boxorder + \'&userid=\' + userid + \'&datatoimport=\' + datatoimport};'."\n";
@@ -965,7 +971,7 @@ if ($step == 4 && $datatoimport)
 	{
 		if ($mandatoryfieldshavesource)
 		{
-			print '<a class="butAction" href="import.php?step=5&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
+			print '<a class="butAction" href="import.php?step=5'.$param.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
 		}
 		else
 		{
@@ -1021,7 +1027,7 @@ if ($step == 4 && $datatoimport)
 				print '<tr '.$bc[$var].'><td>';
 				print $obj->label;
 				print '</td><td align="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&format='.$format.'&datatoimport='.$datatoimport.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
@@ -1072,29 +1078,30 @@ if ($step == 5 && $datatoimport)
 	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
+	$param2='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
 	if ($excludefirstline) $param.='&excludefirstline=1';
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	$h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
 	$head[$h][1] = $langs->trans("Step")." 1";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
 	$head[$h][1] = $langs->trans("Step")." 3";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
 	$head[$h][1] = $langs->trans("Step")." 4";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param;
 	$head[$h][1] = $langs->trans("Step")." 5";
 	$hselected=$h;
 	$h++;
@@ -1152,7 +1159,7 @@ if ($step == 5 && $datatoimport)
 	print '</td><td>';
 	print '<input type="checkbox" name="excludefirstline" value="1"';
 	print ($excludefirstline?' checked="true"':'');
-	print '>';
+	print ' onClick="javascript: window.location=\''.$_SERVER["PHP_SELF"].'?leftmenu=import&excludefirstline='.($excludefirstline?'0':'1').'&step=5'.$param2.'\';">';
 	print ' '.$langs->trans("DoNotImportFirstLine");
 	print '</td></tr>';
 
@@ -1219,18 +1226,20 @@ if ($step == 5 && $datatoimport)
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
 		$alias=eregi_replace('\..*$','',$label);
-		$listfields[$i]=$label;
+		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
 	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
 
+	print '</div>';
+
+
+	// Show import id
+	print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
 	print '<br>';
 
-	print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
-
-	print '</div>';
 
 	// Actions
 	print '<center>';
@@ -1290,27 +1299,27 @@ if ($step == 6 && $datatoimport)
 
 	$h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
 	$head[$h][1] = $langs->trans("Step")." 1";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
 	$head[$h][1] = $langs->trans("Step")." 3";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
 	$head[$h][1] = $langs->trans("Step")." 4";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param;
 	$head[$h][1] = $langs->trans("Step")." 5";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6'.$param;
 	$head[$h][1] = $langs->trans("Step")." 6";
 	$hselected=$h;
 	$h++;
@@ -1433,14 +1442,12 @@ if ($step == 6 && $datatoimport)
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
 		$alias=eregi_replace('\..*$','',$label);
-		$listfields[$i]=$label;
+		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
 	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
-
-	print '<br>';
 
 	// Launch import
 	$arrayoferrors=array();
@@ -1452,9 +1459,9 @@ if ($step == 6 && $datatoimport)
 
 	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
 
-	$db->begin();
-
 	//var_dump($array_match_file_to_database);
+
+	$db->begin();
 
 	// Open input file
 	$pathfile=$conf->import->dir_temp.'/'.$filetoimport;
@@ -1469,14 +1476,8 @@ if ($step == 6 && $datatoimport)
 			if ($excludefirstline && $sourcelinenb == 1) continue;
 
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
-			if (sizeof($obj->errors))
-			{
-				$arrayoferrors[$sourcelinenb]=$obj->errors;
-			}
-			if (sizeof($obj->warnings))
-			{
-				$arrayofwarnings[$sourcelinenb]=$obj->warnings;
-			}
+			if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
+			if (sizeof($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
 		}
 		// Close file
 		$obj->import_close_file();
@@ -1488,15 +1489,17 @@ if ($step == 6 && $datatoimport)
 
 	$db->rollback();	// We force rollback because this was just a simulation.
 
-	// If nothing
+	print '</div>';
+
+	// If no errors and no warnings
 	if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoErrors").'</b><br>';
 
-	// Errors
+	// Show Errors
 	//var_dump($arrayoferrors);
 	if (sizeof($arrayoferrors))
 	{
 		print img_error().' <b>'.$langs->trans("ErrorsOnXLines",sizeof($arrayoferrors)).'</b><br>';
-		//print '<table width="100%" class="border"><tr><td>';
+		print '<table width="100%" class="border"><tr><td>';
 		foreach ($arrayoferrors as $key => $val)
 		{
 			$nboferrors++;
@@ -1511,17 +1514,17 @@ if ($step == 6 && $datatoimport)
 				print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
 			}
 		}
-		//print '</td></tr></table>';
+		print '</td></tr></table>';
 		print '<br>';
 	}
 
 
-	// Warnings
+	// Show Warnings
 	//var_dump($arrayoferrors);
 	if (sizeof($arrayofwarnings))
 	{
 		print img_warning().' <b>'.$langs->trans("WarningsOnXLines",sizeof($arrayofwarnings)).'</b><br>';
-		//print '<table width="100%" class="border"><tr><td>';
+		print '<table width="100%" class="border"><tr><td>';
 		foreach ($arrayofwarnings as $key => $val)
 		{
 			$nbofwarnings++;
@@ -1536,19 +1539,19 @@ if ($step == 6 && $datatoimport)
 				print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
 			}
 		}
-		//print '</td></tr></table>';
+		print '</td></tr></table>';
 		print '<br>';
 	}
 
+	// Show import id
 	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
 
-	print '<br>';
 	print '<center>';
 	print $langs->trans("NowClickToRunTheImport",$langs->transnoentitiesnoconv("RunImportFile")).'<br>';
 	print $langs->trans("DataLoadedWithId",$importid).'<br>';
 	print '</center>';
 
-	print '</div>';
+	print '<br>';
 
 	// Actions
 	print '<center>';
@@ -1577,7 +1580,7 @@ if ($step == 6 && $datatoimport)
 
 
 
-// STEP 6: Result of simulation
+// STEP 7: Real import
 if ($step == 7 && $datatoimport)
 {
 	$model=$format;
@@ -1618,31 +1621,31 @@ if ($step == 7 && $datatoimport)
 
 	$h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1';
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=1'.$param;
 	$head[$h][1] = $langs->trans("Step")." 1";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$datatoimport;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=2'.$param;
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=3'.$param;
 	$head[$h][1] = $langs->trans("Step")." 3";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=4'.$param;
 	$head[$h][1] = $langs->trans("Step")." 4";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=5'.$param;
 	$head[$h][1] = $langs->trans("Step")." 5";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=6'.$param;
 	$head[$h][1] = $langs->trans("Step")." 6";
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=7&'.$param;
+	$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step=7'.$param;
 	$head[$h][1] = $langs->trans("Step")." 7";
 	$hselected=$h;
 	$h++;
@@ -1764,14 +1767,12 @@ if ($step == 7 && $datatoimport)
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
 		$alias=eregi_replace('\..*$','',$label);
-		$listfields[$i]=$label;
+		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
 	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
-
-	print '<br>';
 
 	// Launch import
 	$arrayoferrors=array();
@@ -1783,9 +1784,9 @@ if ($step == 7 && $datatoimport)
 
 	$importid=dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S');
 
-	$db->begin();
-
 	//var_dump($array_match_file_to_database);
+
+	$db->begin();
 
 	// Open input file
 	$pathfile=$conf->import->dir_temp.'/'.$filetoimport;
@@ -1800,14 +1801,8 @@ if ($step == 7 && $datatoimport)
 			if ($excludefirstline && $sourcelinenb == 1) continue;
 
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
-			if (sizeof($obj->errors))
-			{
-				$arrayoferrors[$sourcelinenb]=$obj->errors;
-			}
-			if (sizeof($obj->warnings))
-			{
-				$arrayofwarnings[$sourcelinenb]=$obj->warnings;
-			}
+			if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
+			if (sizeof($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
 		}
 		// Close file
 		$obj->import_close_file();
@@ -1817,18 +1812,18 @@ if ($step == 7 && $datatoimport)
 		print $langs->trans("ErrorFailedToOpenFile",$pathfile);
 	}
 
-	$db->rollback();	// We force rollback because this was just a simulation.
-
-
-	// TODO Show result
-
-
-	print '<br>';
-	print '<center>';
-	print $langs->trans("xxxx",$importid).'<br>';
-	print '</center>';
+	if (sizeof($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
+	else  $db->commit();	// We can commit if no errors.
 
 	print '</div>';
+
+
+	// Show result
+	print '<br>';
+	print '<center>';
+	print $langs->trans("FileWasImported",$importid).'<br>';
+	print $langs->trans("YouCanUseImportIdToFindRecord",$importid).'<br>';
+	print '</center>';
 
 	if ($mesg) print $mesg;
 }
