@@ -19,4 +19,4 @@
 -- ===========================================================================
 
 
-ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY uk_dolibarr_modules (numero, entity);
+ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);

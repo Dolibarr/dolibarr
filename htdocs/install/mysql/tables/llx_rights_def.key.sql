@@ -19,4 +19,4 @@
 -- ===========================================================================
 
 
-ALTER TABLE llx_rights_def ADD PRIMARY KEY(id, entity);
+ALTER TABLE llx_rights_def ADD PRIMARY KEY pk_rights_def (id, entity);
