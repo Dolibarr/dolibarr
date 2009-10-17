@@ -871,9 +871,9 @@ function dol_print_ip($ip,$mode=0)
 	global $conf,$langs;
 
 	$ret='';
-	
+
 	if (empty($mode)) $ret.=$ip;
-	
+
 	if (! empty($conf->geoipmaxmind->enabled) && $mode != 2)
 	{
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
@@ -892,7 +892,7 @@ function dol_print_ip($ip,$mode=0)
 			else $ret.=' ('.$countrycode.')';
 		}
 	}
-	
+
 	return $ret;
 }
 
@@ -1857,9 +1857,11 @@ function dol_print_error($db='',$error='')
 	}
 	if ($_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
 	{
+		xdebug_print_function_stack();
 		$out.='<b>XDebug informations:</b>'."<br>\n";
 		$out.='File: '.xdebug_call_file()."<br>\n";
 		$out.='Line: '.xdebug_call_line()."<br>\n";
+		$out.='Function: '.xdebug_call_function()."<br>\n";
 		$out.="<br>\n";
 	}
 
