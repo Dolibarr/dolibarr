@@ -92,4 +92,5 @@ TooMuchWarnings=There is still <b>%s</b> other source lines with warnings but ou
 EmptyLine=Empty line (will be discarded)
 CorrectErrorBeforeRunningImport=You must first correct all errors before running definitive import.
 YouCanUseImportIdToFindRecord=You can find all imported records in your database by filtering on field <b>import_key='%s'</b>.
-
+NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>.
+NbOfLinesImported=Number of lines successfully imported: <b>%s</b>.

@@ -811,11 +811,11 @@ class Product extends CommonObject
 
 
 	/**
-	 *	\brief  	Modifie le prix d'un produit/service
-	 *	\param  	id          	Id du produit/service a modifier
-	 *	\param  	newprice		Nouveau prix
-	 *	\param  	newpricebase	HT ou TTC
-	 *	\param  	user        	Objet utilisateur qui modifie le prix
+	 *	\brief  	Modify price of a product/Service
+	 *	\param  	id          	Id of product/service to change
+	 *	\param  	newprice		New price
+	 *	\param  	newpricebase	HT or TTC
+	 *	\param  	user        	Object user that make change
 	 *	\param  	newvat			New VAT Rate
 	 *  \param		newminprice		New price min
 	 *  \param		level			0=standard, >0 = level if multilevel prices
@@ -827,6 +827,10 @@ class Product extends CommonObject
 
 		dol_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level, LOG_DEBUG);
 
+		// Clean parameters
+		if (empty($this->tva_tx)) $this->tva_tx=0;
+
+		// Check parameters
 		if ($newvat == '') $newvat=$this->tva_tx;
 
 		if ($newprice!='' || $newprice==0)

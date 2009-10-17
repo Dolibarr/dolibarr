@@ -1464,20 +1464,23 @@ if ($step == 6 && $datatoimport)
 	$db->begin();
 
 	// Open input file
+	$nbok=0;
 	$pathfile=$conf->import->dir_temp.'/'.$filetoimport;
 	$result=$obj->import_open_file($pathfile,$langs);
 	if ($result > 0)
 	{
 		$sourcelinenb=0;
 		// Loop on each input file record
-		while ($arrayrecord=$obj->import_read_record())
+		while ($sourcelinenb < $nboflines)
 		{
 			$sourcelinenb++;
+			$arrayrecord=$obj->import_read_record();
 			if ($excludefirstline && $sourcelinenb == 1) continue;
 
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
 			if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
 			if (sizeof($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
+			if (! sizeof($obj->errors) && ! sizeof($obj->warnings)) $nbok++;
 		}
 		// Close file
 		$obj->import_close_file();
@@ -1491,8 +1494,9 @@ if ($step == 6 && $datatoimport)
 
 	print '</div>';
 
-	// If no errors and no warnings
-	if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoErrors").'</b><br>';
+	// Show OK
+	if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoErrors").'</b><br><br>';
+	else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
 
 	// Show Errors
 	//var_dump($arrayoferrors);
@@ -1789,20 +1793,22 @@ if ($step == 7 && $datatoimport)
 	$db->begin();
 
 	// Open input file
+	$nbok=0;
 	$pathfile=$conf->import->dir_temp.'/'.$filetoimport;
 	$result=$obj->import_open_file($pathfile,$langs);
 	if ($result > 0)
 	{
 		$sourcelinenb=0;
-		// Loop on each input file record
-		while ($arrayrecord=$obj->import_read_record())
+		while ($sourcelinenb < $nboflines)
 		{
 			$sourcelinenb++;
+			$arrayrecord=$obj->import_read_record();
 			if ($excludefirstline && $sourcelinenb == 1) continue;
 
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,sizeof($fieldssource),$importid);
 			if (sizeof($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
 			if (sizeof($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
+			if (! sizeof($obj->errors) && ! sizeof($obj->warnings)) $nbok++;
 		}
 		// Close file
 		$obj->import_close_file();
@@ -1817,10 +1823,10 @@ if ($step == 7 && $datatoimport)
 
 	print '</div>';
 
-
 	// Show result
-	print '<br>';
 	print '<center>';
+	print '<br>';
+	print $langs->trans("NbOfLinesImported",$nbok).'</b><br><br>';
 	print $langs->trans("FileWasImported",$importid).'<br>';
 	print $langs->trans("YouCanUseImportIdToFindRecord",$importid).'<br>';
 	print '</center>';
