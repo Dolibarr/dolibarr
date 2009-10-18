@@ -1,32 +1,24 @@
-/*
- * Language code: nl_NL
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 21:00:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
+# Dolibarr language file - nl_NL - paybox
 CHARSET=UTF-8
 PayBoxSetup=PayBox module setup
-PayBoxDesc=Deze module biedt pagina&#39;s om betaling op <a href="http://www.paybox.com" target="_blank">Paybox</a> door de klanten. Dit kan gebruikt worden voor een gratis betaling of een betaling op een bepaalde Dolibarr object (factuur, bestelling, ...)
-FollowingUrlAreAvailableToMakePayments=Volgende URL&#39;s beschikbaar om een pagina naar een klant om een betaling op Dolibarr voorwerpen
-PaymentForm=Betaling vorm
-WelcomeOnPaymentPage=Welkom op onze online betalingsdienstaanbieders
-ThisScreenAllowsYouToPay=Dit scherm kunt u bij het maken van een online betaling aan% s.
-ThisIsInformationOnPayment=Dit is informatie over de betaling te doen
-ToComplete=Te voltooien
-YourEMail=E-mailadres voor de betaling bevestiging
-Creditor=Creditor
-PaymentCode=Betaling code
-PayBoxDoPayment=Ga op de betaling
-YouWillBeRedirectedOnPayBox=U wordt omgeleid over Paybox beveiligde pagina naar input je creditcard informatie
-PleaseBePatient=Gelieve even geduld
+PayBoxDesc=Deze module bied pagina's om betalingen via <a href="http://www.paybox.com" target="_blank">Paybox</a> te doen door klanten. Dit kan gebruikt worden voor een vrije betaling (donatie) of voor een specifiek Dolibar object (factuur, orde, ...)
+FollowingUrlAreAvailableToMakePayments=De volgende URL's zijn beschikbaar om een pagina te bieden voor het maken van een betaling van een Dolibarr object
+PaymentForm=Betalings formulier
+WelcomeOnPaymentPage=Welkom bij onze online betalingsservice
+ThisScreenAllowsYouToPay=DiT scherm staat u toe om een online betaling te doen voor %s
+ThisIsInformationOnPayment=Dit is informatie over nog uit te voeren betalingen
+ToComplete=Afmaken
+YourEMail=Email voor betalingsbevestiging
+Creditor=Crediteur
+PaymentCode=Betalingscode
+PayBoxDoPayment=Ga naar betaling
+YouWillBeRedirectedOnPayBox=U wordt doorverwezen naar een beveiligde Paybox pagina voor uw credit card informatie gegevens
+PleaseBePatient=Wees alstublieft geduldig
 Continue=Volgende
-ToOfferALinkForOnlinePaymentOnOrder=URL om een online betaling% s user interface voor een bestelling
-ToOfferALinkForOnlinePaymentOnInvoice=URL om een online betaling% s user interface voor een factuur
-ToOfferALinkForOnlinePaymentOnContractLine=URL om een online betaling% s user interface voor een contract lijn
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL om een online betaling% s user interface voor een gratis bedrag
-YouCanAddTagOnUrl=U kunt ook url parameter <b>&amp; tag = <i>waarde</i></b> voor een van deze URL (enkel vereist voor de vrije betaling) om uw eigen commentaar betaling tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Uw PayBox met <b>url% s</b> om de betaling automatisch gemaakt wanneer gevalideerd door paybox.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+ToOfferALinkForOnlinePaymentOnOrder=URL om een %s online betalings gebruikers interface aan te bieden voor een order
+ToOfferALinkForOnlinePaymentOnInvoice=URL om een %s online betalings gebruikers interface aan te bieden voor een factuur
+ToOfferALinkForOnlinePaymentOnContractLine=URL om een %s online betalings gebruikers interface aan te bieden voor een contract lijn
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL om een %s online betalings gebruikers interface aan te bieden voor een donatie
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL om een %s online betalings gebruikers interface aan te bieden voor een leden abonnement subscription
+YouCanAddTagOnUrl=U kunt ook url parameter <b>&tag=<i>waarde</i></b> toevoegen voor elk van deze URL (enkel nodig voor een donatie) om van uw eigen betalings commentaar te voorzien
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup uw PayBox met url <b>%s</b> om een betalings automatisch te maken zodra de betalings is gevallideerd door paybox.

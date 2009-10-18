@@ -1,19 +1,8 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - suppliers
 CHARSET=UTF-8
-Suppliers=Leveranciers
 Supplier=Leverancier
-AddSupplier=Voeg een leverancier
+Suppliers=Leveranciers
+AddSupplier=Voeg een leverancier toe
 SupplierRemoved=Leverancier verwijderd
 SuppliersInvoice=Leveranciers factuur
 SuppliersInvoices=Leveranciers facturen
@@ -22,33 +11,26 @@ History=Geschiedenis
 ListOfSuppliers=Lijst van de leveranciers
 ShowSupplier=Toon leverancier
 OrderDate=Bestel datum
-BuyingPrice=Aankoop prijs
-AddSupplierPrice=Toevoegen leverancier prijs
-ChangeSupplierPrice=Change leverancier prijs
+BuyingPrice=Aankoopprijs
+AddSupplierPrice=Leveranciersprijs toevoegen
+ChangeSupplierPrice=Verander leveranciersprijs
 ErrorQtyTooLowForThisSupplier=Hoeveelheid te laag voor deze leverancier of geen prijs vastgesteld op dit product voor deze leverancier
-ErrorSupplierCountryIsNotDefined=Land voor deze leverancier is niet gedefinieerd. Corrigeer dit eerste.
-ProductHasAlreadyReferenceInThisSupplier=Dit product is al een referentie in deze leverancier
+ErrorSupplierCountryIsNotDefined=Land voor deze leverancier is niet gedefinieerd. Corrigeer dit eerst.
+ProductHasAlreadyReferenceInThisSupplier=Dit product heeft al een referentie naar deze leverancier
 NoRecordedSuppliers=Geen leveranciers geregistreerd
 SupplierPayment=Leverancier betaling
 SuppliersArea=Leveranciers gebied
 RefSupplierShort=Ref. Leverancier
-ExportDataset_fournisseur_1=Leverancier lijst facturen en facturen &#39;lijnen
+ExportDataset_fournisseur_1=Leverancier facturenlijst en facturen' lijnen
 ExportDataset_fournisseur_2=Leverancier facturen en betalingen
-ApproveThisOrder=Goedkeuren van deze bestelling
-ConfirmApproveThisOrder=Weet u zeker dat u wilt goedkeuren deze bestelling?
-DenyingThisOrder=Weigeren deze bestelling
-ConfirmDenyingThisOrder=Weet u zeker dat u wilt weigeren deze bestelling?
-ConfirmCancelThisOrder=Weet u zeker dat u wilt annuleren deze bestelling?
-AddCustomerOrder=Maak bestelling van de klant
-AddCustomerInvoice=Maak de klant de factuur
-AddSupplierOrder=Maak Leverancier bestelling
-AddSupplierInvoice=Maak leverancier factuur
-ListOfSupplierProductForSupplier=Lijst van producten en de prijzen van <b>leverancier% s</b>
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-NoneOrBatchFileNeverRan=Geen of <b>partij% s</b> niet liep onlangs
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+ApproveThisOrder=Bestelling goedkeuren
+ConfirmApproveThisOrder=Weet u zeker dat u deze bestelling wilt goedkeuren?
+DenyingThisOrder=Bestelling weigeren
+ConfirmDenyingThisOrder=Weet u zeker dat u deze bestelling wilt weigeren?
+ConfirmCancelThisOrder=Weet u zeker dat u deze bestelling wilt annuleren?
+AddCustomerOrder=Klantenbestelling maken
+AddCustomerInvoice=Klantfactuur maken
+AddSupplierOrder=Leveranciersbestelling maken
+AddSupplierInvoice=Leverancierfactuur maken
+ListOfSupplierProductForSupplier=Lijst van producten en de prijzen van leverancier <b>%s</b>
+NoneOrBatchFileNeverRan=Geen of batch <b>%s</b> niet recent gedraaid

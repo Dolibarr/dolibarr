@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - interventions
 CHARSET=UTF-8
 Intervention=Interventie
 Interventions=Interventies
@@ -17,35 +6,27 @@ InterventionCard=Interventie-kaart
 NewIntervention=Nieuwe interventie
 AddIntervention=Toevoegen interventie
 ListOfInterventions=Lijst van interventies
-EditIntervention=Editer interventie
-LastInterventions=Last% s interventies
+EditIntervention=Aanpassen interventie
+LastInterventions=Laatste %s interventies
 AllInterventions=Alle interventies
-CreateDraftIntervention=Maak ontwerp
+CreateDraftIntervention=Maak klad
 CustomerDoesNotHavePrefix=Klant heeft geen voorvoegsel
 InterventionContact=Interventie contact
 DeleteIntervention=Verwijderen interventie
 ValidateIntervention=Valideer interventie
 DeleteInterventionLine=Verwijderen interventie lijn
-ConfirmDeleteIntervention=Weet u zeker dat u wilt verwijderen deze interventie?
-ConfirmValidateIntervention=Weet u zeker dat u wilt valideren van deze interventie?
-ConfirmModifyIntervention=Weet u zeker dat u wilt wijzigen deze interventie?
-ConfirmDeleteInterventionLine=Weet u zeker dat u wilt verwijderen interventie lijn?
+ConfirmDeleteIntervention=Weet u zeker dat u deze interventie wilt verwijderen?
+ConfirmValidateIntervention=Weet u zeker dat u deze interventie wilt valideren?
+ConfirmModifyIntervention=Weet u zeker dat u deze interventie wilt wijzigen?
+ConfirmDeleteInterventionLine=Weet u zeker dat u deze interventie wilt verwijderen?
 NameAndSignatureOfInternalContact=Naam en handtekening van de tussenliggende:
 NameAndSignatureOfExternalContact=Naam en handtekening van de klant:
-DocumentModelStandard=Standaard document model voor interventies
-TypeContact_fichinter_internal_INTERREPFOLL=Vertegenwoordiger van de follow-up van interventie
-TypeContact_fichinter_internal_INTERVENING=Tussenliggende
-TypeContact_fichinter_external_BILLING=Billing Customer Contact
-TypeContact_fichinter_external_CUSTOMER=Follow-up van het contact met klanten
-ArcticNumRefModelDesc1=Aantal generieke model
-ArcticNumRefModelError=Mislukt te activeren
-PacificNumRefModelDesc1=Terugkeren numero met format% syymm-nnnn waar jj jaar is, MM de maand en het is nnnn een sequentie zonder pauze en geen terugkeer naar 0
-PacificNumRefModelError=Een interventie kaart te beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of de naam van het activeren van deze module.
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-ModifyIntervention=Wijzigen interventie
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+DocumentModelStandard=Standaard modeldocument voor interventies
+TypeContact_fichinter_internal_INTERREPFOLL=Vertegenwoordiger van de opvolging van de interventie
+TypeContact_fichinter_internal_INTERVENING=Tussenkomst
+TypeContact_fichinter_external_BILLING=Rekening klanten contact
+TypeContact_fichinter_external_CUSTOMER=Opvolging klanten contact
+ArcticNumRefModelDesc1=Generiek nummer model
+ArcticNumRefModelError=Activeren mislukt
+PacificNumRefModelDesc1=Nummer met formaat %syymm-nnnn waar yy het jaar is, mm de maand is en nnnn een sequentie is zonder pauze en geen terugkeer naar 0
+PacificNumRefModelError=Een interventie kaart te beginnen met %s syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijder of hernoem het om deze module te activeren.

@@ -1,24 +1,11 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - shop
 CHARSET=UTF-8
 Shop=Winkel
-ShopWeb=Web Winkel
-LastOrders=Last orders
+ShopWeb=Webwinkel
+LastOrders=Laatste bestellingen
 OnStandBy=Op stand-by
 TreatmentInProgress=Behandeling in uitvoering
 LastCustomers=Laatste klanten
 OSCommerceShop=OSCommerce shop
 OSCommerce=OSCommerce
 AddProd=Verkopen online
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser

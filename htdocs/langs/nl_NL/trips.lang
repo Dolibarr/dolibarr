@@ -1,42 +1,19 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - trips
 CHARSET=UTF-8
 Trip=Reis
-Trips=Uitstapjes
-TripsAndExpenses=Uitstapjes en lasten
-TripCard=Trip kaart
-AddTrip=Toevoegen reis
-ListOfTrips=Lijst van excursies
+Trips=Reizen
+TripsAndExpenses=Reiskosten
+TripCard=Verplaatsingskaart
+AddTrip=Reis toevoegen
+ListOfTrips=Lijst van reizen
 ListOfFees=Lijst van de vergoedingen
-NewTrip=Nieuwe tocht
+NewTrip=Nieuwe reis
+CompanyVisited=Bedrijf / particulier bezocht
 Kilometers=Kilometers
-FeesKilometersOrAmout=Bedrag of kilometers
-DeleteTrip=Verwijderen reis
-ConfirmDeleteTrip=Weet u zeker dat u wilt verwijderen van deze reis?
+FeesKilometersOrAmout=Kilometerskosten
+DeleteTrip=Verwijder reis
+ConfirmDeleteTrip=Weet u zeker dat u deze reis wilt verwijderen?
+Person=Persoon
 TF_OTHER=Ander
 TF_LUNCH=Lunch
 TF_TRIP=Reis
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-ListTripsAndExpenses=Lijst van reizen en onkosten
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-CompanyVisited=Bedrijf / stichting bezocht
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
