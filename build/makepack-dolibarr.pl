@@ -20,7 +20,7 @@ $RPMSUBVERSION="1";		# A incrementer au moment de la release
 "TGZ"=>"tar",
 "ZIP"=>"7z",
 "RPM"=>"rpmbuild",
-"DEB"=>"dpkg-buildpackage",
+"DEB"=>"dpkg",
 "EXE"=>"makensis.exe",
 "EXEDOLIWAMP"=>"iscc.exe"
 );
@@ -247,10 +247,14 @@ if ($nboftargetok) {
         print "\nBuild package for target $target\n";
 
     	if ($target eq 'SNAPSHOT') {
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
     		unlink $FILENAMESNAPSHOT.tgz;
-    		print "Compress $SOURCE into $FILENAMESNAPSHOT.tgz...\n";
-   		    $cmd="tar --exclude $FILENAMESNAPSHOT.tgz --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+    		
+    		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
+   		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+   		    $cmd="tar --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
+			print $cmd."\n";
 			$ret=`$cmd`;
             if ($OS =~ /windows/i)
             {
@@ -265,6 +269,7 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'TGZ') {
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
@@ -283,19 +288,25 @@ if ($nboftargetok) {
     	}
 
     	if ($target eq 'ZIP') {
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMEZIP.zip;
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
+     		print "Go to directory $BUILDROOT\n";
      		chdir("$BUILDROOT");
-    		$cmd= "7z a -r -tzip -xr\@\"$DESTI\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*";
+    		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMETGZ\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*";
+			print $cmd."\n";
 			$ret= `$cmd`;
 			#print $ret;
+			#print "Go to directory $DESTI\n";
+     		#chdir("$DESTI");
 			print "Move $FILENAMEZIP.zip to $DESTI\n";
     		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
     		next;
     	}
     
     	if ($target eq 'RPM') {                 # Linux only
+    		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
@@ -306,9 +317,9 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
     		$BUILDFIC="$FILENAME.spec";
-    		print "Copy $SOURCE/make/rpm/${BUILDFIC} to $BUILDROOT\n";
-#    		$ret=`cp -p "$SOURCE/make/rpm/${BUILDFIC}" "$BUILDROOT"`;
-            open (SPECFROM,"<$SOURCE/make/rpm/${BUILDFIC}") || die "Error";
+    		print "Copy $SOURCE/build/rpm/${BUILDFIC} to $BUILDROOT\n";
+#    		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
+            open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFIC}") || die "Error";
             open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
             while (<SPECFROM>) {
                 $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
@@ -327,7 +338,24 @@ if ($nboftargetok) {
     	}
     	
     	if ($target eq 'DEB') {
-            print "Automatic build for DEB is not yet supported.\n";
+#            print "Automatic build for DEB is not yet supported.\n";
+    		print "Create directory $BUILDROOT/DEBIAN\n";
+    		$ret=`mkdir "$BUILDROOT/$PROJECT/DEBIAN"`;
+    		print "Copy $SOURCE/build/deb to $BUILDROOT/$PROJECTDEBIAN\n";
+    		$ret=`cp -p "$SOURCE/build/deb" "$BUILDROOT/$PROJECTDEBIAN"`;
+ 
+            open (SPECFROM,"<$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
+            open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
+            while (<SPECFROM>) {
+                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
+                print SPECTO $_;
+            }
+            close SPECFROM;
+            close SPECTO;
+        
+    		print "Launch DEB build (dpkg -b $PROJECT)\n";
+    		$ret=`$DEB -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb`;
+        	next;
         }
         
     	if ($target eq 'EXE') {
