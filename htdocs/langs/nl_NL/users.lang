@@ -1,131 +1,102 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - users
 CHARSET=UTF-8
-UserCard=Gebruiker kaart
+UserCard=Gebruikerskaart
 ContactCard=Contactkaart
-GroupCard=Groep kaart
-NoContactCard=Geen kaart bij de contacten
+GroupCard=Groepskaart
+NoContactCard=Geen contactkaart
 Permission=Toestemming
-Permissions=Machtigingen
-EditPassword=Bewerken wachtwoord
-SendNewPassword=Stuur nieuw wachtwoord
+Permissions=Toestemmingen
+EditPassword=Wijzig wachtwoord
+SendNewPassword=Genereer en stuur nieuw wachtwoord
 ReinitPassword=Genereer een nieuw wachtwoord
-PasswordChangedTo=Wachtwoord veranderd naar:% s
+PasswordChangedTo=Wachtwoord gewijzigd in: %s
 SubjectNewPassword=Uw nieuwe wachtwoord voor Dolibarr
-AvailableRights=Beschikbare machtigingen
-OwnedRights=Owned machtigingen
-GroupRights=Groep machtigingen
-UserRights=Gebruiker machtigingen
-UserGUISetup=Gebruiker display setup
+AvailableRights=Beschikbare rechten
+OwnedRights=Verkregen rechten
+GroupRights=Groepsrechten
+UserRights=Gebruikersrechten
+UserGUISetup=Gebruiker setup scherm
 DisableUser=Uitschakelen
-DisableAUser=Uitschakelen van een gebruiker
-DeleteUser=Wissen
-DeleteAUser=Verwijderen van een gebruiker
+DisableAUser=Schakel een gebruiker uit
+DeleteUser=Verwijderen
+DeleteAUser=Verwijder een gebruiker
 DisableGroup=Uitschakelen
-DisableAGroup=Uitschakelen van een groep
+DisableAGroup=Schakel een groep uit
 EnableAUser=Activeer een gebruiker
-EnableAGroup=Inschakelen van een groep
-DeleteGroup=Wissen
-DeleteAGroup=Verwijderen van een groep
-ConfirmDisableUser=Weet u zeker dat u wilt uitschakelen <b>gebruiker% s?</b>
-ConfirmDisableGroup=Weet u zeker dat u wilt uitschakelen <b>groep% s?</b>
-ConfirmDeleteUser=Weet u zeker dat u wilt verwijderen <b>gebruiker% s?</b>
-ConfirmDeleteGroup=Weet u zeker dat u wilt verwijderen <b>groep% s?</b>
-ConfirmEnableUser=Weet u zeker dat u wilt inschakelen <b>gebruiker% s?</b>
-ConfirmEnableGroup=Weet u zeker dat u wilt inschakelen <b>groep% s?</b>
-ConfirmReinitPassword=Weet u zeker dat u wilt een nieuw wachtwoord voor <b>gebruiker% s?</b>
-ConfirmSendNewPassword=Weet u zeker dat u wilt genereren en verzenden van een nieuw wachtwoord voor <b>gebruiker% s?</b>
+EnableAGroup=Activeer een groep
+DeleteGroup=Verwijderen
+DeleteAGroup=Verwijder een groep
+ConfirmDisableUser=Weet u zeker dat u gebruiker <b>%s</b> wilt uitschakelen?
+ConfirmDisableGroup=Weet u zeker dat u groep <b>%s</b> wilt uitschakelen?
+ConfirmDeleteUser=Weet u zeker dat u gebruiker <b>%s</b> wilt verwijderen?
+ConfirmDeleteGroup=Weet u zeker dat u groep <b>%s</b> wilt verwijderen?
+ConfirmEnableUser=Weet u zeker dat u gebruiker <b>%s</b> wilt activeren?
+ConfirmEnableGroup=Weet u zeker dat u groep <b>%s</b> wilt activeren?
+ConfirmReinitPassword=Weet u zeker dat u voor gebruiker <b>%s</b> een nieuw wachtwoord wilt genereren?
+ConfirmSendNewPassword=Weet u zeker dat u een nieuw wachtwoord wilt genereren en verzenden voor gebruiker <b>%s</b>?
 NewUser=Nieuwe gebruiker
-CreateUser=Maak gebruiker
+CreateUser=Creëer gebruiker
 SearchAGroup=Zoek een groep
 SearchAUser=Zoek een gebruiker
-ErrorFailedToSendPassword=Mislukt te sturen wachtwoord
-LoginNotDefined=Inloggen is niet gedefinieerd.
-NameNotDefined=Naam is niet gedefinieerd.
+ErrorFailedToSendPassword=Wachtwoord verzenden mislukt
+LoginNotDefined=Inlog is niet gedefiniëerd.
+NameNotDefined=Naam is niet gedefiniëerd.
 ListOfUsers=Lijst van gebruikers
 Administrator=Administrator
-DefaultRights=Standaardmachtigingen
-DefaultRightsDesc=Definieer hier standaard machtigingen die automatisch worden toegekend aan een nieuwe gebruiker aangemaakt.
+DefaultRights=Standaardrechten
+DefaultRightsDesc=Definiëer hier standaardrechten die automatisch toegekend worden aan een nieuwe gebruiker.
 DolibarrUsers=Dolibarr gebruikers
-LastName=Naam
+LastName=Achternaam
 FirstName=Voornaam
 ListOfGroups=Lijst van groepen
 NewGroup=Nieuwe groep
 CreateGroup=Groep maken
 RemoveFromGroup=Verwijderen uit groep
-PasswordChangedAndSentTo=Wachtwoord veranderd en verstuurd <b>naar% s.</b>
-PasswordChangeRequestSent=Verzoek om wachtwoord wijzigen <b>voor% s naar% s.</b>
-MenuUsersAndGroups=Gebruikers en groepen
-LastGroupsCreated=Last% s gemaakt groepen
-LastUsersCreated=Last% s gebruikers gecreëerde
+PasswordChangedAndSentTo=Wachtwoord veranderd en verstuurd naar <b>%s</b>.
+PasswordChangeRequestSent=Verzoek om wachtwoord te wijzigen van <b>%s</b> verstuurt naar <b>%s</b>.
+MenuUsersAndGroups=Gebruikers & groepen
+LastGroupsCreated=Laatste %s gemaakte groep(en)
+LastUsersCreated=Laatste %s gemaakte gebruiker(s)
 ShowGroup=Toon groep
 ShowUser=Toon gebruiker
 NonAffectedUsers=Niet betrokken gebruikers
-UserModified=Gebruikershandleiding gemodificeerde succes
-GroupModified=Groep bewerkt succes
+UserModified=Gebruiker met succes gewijzigd
+GroupModified=Groep met succes gewijzigd
 PhotoFile=Foto bestand
-UserWithDolibarrAccess=Gebruiker met toegang Dolibarr
+UserWithDolibarrAccess=Gebruiker met Dolibarr toegang
 ListOfUsersInGroup=Lijst van gebruikers in deze groep
 ListOfGroupsForUser=Lijst van groepen voor deze gebruiker
 UsersToAdd=Gebruikers toe te voegen aan deze groep
 GroupsToAdd=Groepen toe te voegen aan deze gebruiker
 NoLogin=Geen login
-CreateDolibarrLogin=Maak Dolibarr rekening
-LoginAccountDisable=De account is uitgeschakeld, zet een nieuwe login te activeren.
+CreateDolibarrLogin=Maak Dolibarr login
+CreateDolibarrThirdParty=Maak Derden
+LoginAccountDisable=Dit account is uitgeschakeld, zet een nieuwe login om te activeren.
 LoginAccountDisableInDolibarr=Account uitgeschakeld in Dolibarr.
-LoginAccountDisableInLdap=Met een handicap in het domein.
+LoginAccountDisableInLdap=Account uitgeschakeld in het domein.
 UsePersonalValue=Gebruik persoonlijke waarde
-GuiLanguage=Taal van de interface
+GuiLanguage=Interfacetaal
 InternalUser=Interne gebruiker
 MyInformations=Mijn gegevens
-ExportDataset_user_1=Dolibarr gebruikers en eigenschappen
-DomainUser=Domeingebruikersaccount% s
+ExportDataset_user_1=Dolibarr's gebruikers en eigenschappen
+DomainUser=Domeingebruikersaccount %s
 Reactivate=Reactiveren
-InternalExternalDesc=Een <b>interne</b> gebruiker is een gebruiker die deel uitmaakt van uw bedrijf / fundation. <br> Een <b>externe</b> gebruiker is een klant, de leverancier of de andere. <br><br> In beide gevallen, machtigingen omschrijft de rechten op Dolibarr, ook externe gebruiker kan beschikken over een ander menu manager dan interne gebruiker (Zie Home - Setup - Display)
-IdPhoneCaller=Id telefoon beller
-UserLogged=Gebruiker% s aangesloten
-NewUserCreated=Gebruiker% s gemaakt
-NewUserPassword=Wachtwoord wijzigen voor% s
-EventUserModified=Gebruiker% s bewerkt
-UserDisabled=Gebruiker% s uitgeschakeld
-UserEnabled=Gebruiker% s geactiveerd
-UserDeleted=Gebruiker% s verwijderd
-NewGroupCreated=Groep% s gemaakt
-GroupModified=Groep% s bewerkt
+CreateInternalUserDesc=Dit formulier staat u toe om een interne gebruiker van uw bedrijf te maken. Als u een externe gebruiker (klant, leverancier, ...) wilt maken, gebruik de knop "Creëer Dolibarr gebruiker" uit derden contactkaart.
+InternalExternalDesc=Een <b>interne</b> gebruiker is een gebruiker die deel uitmaakt van uw bedrijf. <br> Een <b>externe</b> gebruiker is een klant, leverancier of andere. <br><br> In beide gevallen, machtigingen omschrijven de rechten voor Dolibarr, ook kan een externe gebruiker over een ander menu manager beschikken dan een interne gebruiker (Zie Home - Setup - Scherm)
+PermissionInheritedFromAGroup=Toestemming verleend, omdat deze voort komt uit een bepaalde gebruikersgroep.
+IdPhoneCaller=Beller ID (telefoon)
+UserLogged=Gebruiker %s ingelogd
+NewUserCreated=Gebruiker %s gemaakt
+NewUserPassword=Wachtwoord wijzigen voor %s
+EventUserModified=Gebruiker %s gewijzigd
+UserDisabled=Gebruiker %s uitgeschakeld
+UserEnabled=Gebruiker %s geactiveerd
+UserDeleted=Gebruiker %s verwijderd
+NewGroupCreated=Groep %s gemaakt
+GroupModified=Groep %s bewerkt
 GroupDeleted=Groep% s verwijderd
-ConfirmCreateContact=Weet u zeker dat yu wilt maken Dolibarr een account voor deze contactpersoon?
-LoginToCreate=Login maken
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-SuperAdministrator=Super Administrator
-SuperAdministratorDesc=Administrator met alle rechten
-LinkToCompanyContact=Link naar derden / contact
-LinkedToDolibarrMember=Link naar lid
-LinkedToDolibarrUser=Link naar Dolibarr gebruiker
-LinkedToDolibarrThirdParty=Link naar Dolibarr derde
-CreateDolibarrThirdParty=Maak een derde partij
-ConfirmCreateLogin=Weet u zeker dat u wilt maken Dolibarr een account voor deze leden?
-ConfirmCreateThirdParty=Weet u zeker dat u wilt maken van een derde partij voor dit lid worden?
-NameToCreate=Naam van de derde partij te creëren
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-CreateInternalUserDesc=Dit formulier kunt u maken van een gebruiker binnen uw bedrijf / stichting. Maak een externe gebruiker (klant, leverancier, ...), gebruik knop &#39;Create Dolibarr gebruiker&#39; uit derde partij contactkaart.
-PermissionInheritedFromAGroup=Toestemming verleend, omdat geërfd van een van een gebruiker van de groep.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+ConfirmCreateContact=Weet u zeker dat u een Dolibarr account wilt maken voor deze contactpersoon?
+ConfirmCreateLogin=Weet u zeker dat u een Dolibarr account wilt maken voor dit lid?
+ConfirmCreateThirdParty=Weet u zeker dat u een derden partij wilt maken voor dit lid?
+LoginToCreate=Login te creëren
+NameToCreate=Naam van derde partij te creëren
