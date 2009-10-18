@@ -292,8 +292,10 @@ if ($nboftargetok) {
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMEZIP.zip;
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
+ 
      		print "Go to directory $BUILDROOT\n";
      		chdir("$BUILDROOT");
+ 
     		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMETGZ\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*";
 			print $cmd."\n";
 			$ret= `$cmd`;
@@ -319,6 +321,8 @@ if ($nboftargetok) {
     		$BUILDFIC="$FILENAME.spec";
     		print "Copy $SOURCE/build/rpm/${BUILDFIC} to $BUILDROOT\n";
 #    		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
+
+ 			print "Edit version in file $BUILDROOT/$BUILDFIC\n";
             open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFIC}") || die "Error";
             open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
             while (<SPECFROM>) {
@@ -341,10 +345,11 @@ if ($nboftargetok) {
 #            print "Automatic build for DEB is not yet supported.\n";
     		print "Create directory $BUILDROOT/DEBIAN\n";
     		$ret=`mkdir "$BUILDROOT/$PROJECT/DEBIAN"`;
-    		print "Copy $SOURCE/build/deb to $BUILDROOT/$PROJECTDEBIAN\n";
-    		$ret=`cp -p "$SOURCE/build/deb" "$BUILDROOT/$PROJECTDEBIAN"`;
+    		print "Copy $SOURCE/build/deb to $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`cp -r "$SOURCE/build/deb" "$BUILDROOT/$PROJECT/DEBIAN"`;
  
-            open (SPECFROM,"<$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
+ 			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
+            open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
             while (<SPECFROM>) {
                 $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
@@ -353,8 +358,13 @@ if ($nboftargetok) {
             close SPECFROM;
             close SPECTO;
         
-    		print "Launch DEB build (dpkg -b $PROJECT)\n";
-    		$ret=`$DEB -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb`;
+     		print "Go to directory $BUILDROOT\n";
+     		chdir("$BUILDROOT");
+ 
+    		print "Launch DEB build (dpkg -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb)\n";
+    		$cmd="$DEB -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb";
+    		$ret=`$cmd`;
+    		print $ret."\n";
         	next;
         }
         
