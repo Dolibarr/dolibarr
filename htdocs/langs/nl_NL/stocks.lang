@@ -1,87 +1,69 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - stocks
 CHARSET=UTF-8
-WarehouseCard=Warehouse kaart
-Warehouse=Warehouse
-NewWarehouse=Nieuw magazijn / Stock gebied
+WarehouseCard=Magazijn kaart
+Warehouse=Magazijn
+NewWarehouse=Nieuw magazijn / Materieel gebied
 MenuNewWarehouse=Nieuw magazijn
 WarehouseOpened=Magazijn geopend
-WarehouseClosed=Warehouse gesloten
+WarehouseClosed=Magazijn gesloten
 WarehouseSource=Bron magazijn
-WarehouseTarget=Target magazijn
-ValidateSending=Wissen verzenden
+WarehouseTarget=Doel magazijn
+ValidateSending=Valideer verzenden
 CancelSending=Verzenden annuleren
 DeleteSending=Wissen verzenden
 Stock=Voorraad
-Stocks=Aandelen
-Movement=Verkeer
-Movements=Mutaties
-ErrorWarehouseRefRequired=Warehouse verwijzing naam is verplicht
-ErrorWarehouseLabelRequired=Warehouse etiket wordt vereist
+Stocks=Voorraden
+Movement=Verplaatsing
+Movements=Verplaatsingen
+ErrorWarehouseRefRequired=Magazijn verwijzingsnaam is verplicht
+ErrorWarehouseLabelRequired=Magazijn etiket is vereist
 CorrectStock=Juiste materieel
-ListOfWarehouses=Lijst van opslagplaatsen
-ListOfStockMovements=Lijst van de voorraden
-StocksArea=Aandelen gebied
-Location=Lieu
+ListOfWarehouses=Opslagplaatsenlijst
+ListOfStockMovements=Voorradenlijst
+StocksArea=Materielen gebied
+Location=Lokatie
 LocationSummary=Korte naam locatie
 NumberOfProducts=Totaal aantal producten
-LastMovement=Laatste verkeer
-LastMovements=Laatste bewegingen
+LastMovement=Laatste verplaatsing
+LastMovements=Laatste verplaatsingen
 Units=Eenheden
 Unit=Eenheid
 StockCorrection=Juiste materieel
-StockMovement=Overschrijving
+StockMovement=Overdracht
 StockMovements=Voorraad overdrachten
 NumberOfUnit=Aantal eenheden
 TotalStock=Totaal in voorraad
 StockTooLow=Voorraad te laag
 EnhancedValue=Prijs
-PMPValue=Prijs
-EnhancedValueOfWarehouses=Opslagruimtes waarde
-UserWarehouseAutoCreate=Maak een bestand automatisch bij het aanmaken van een gebruiker
-QtyDispatched=Hoeveelheid verzonden
-OrderDispatch=Bestel dispatching
-RuleForStockManagementDecrease=Regel voor voorraadbeheer daling
-RuleForStockManagementIncrease=Regel voor voorraadbeheer verhogen
-DeStockOnBill=Daling van de reële voorraad op de facturen / creditnota&#39;s (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
-DeStockOnValidateOrder=Daling van de reële voorraad op bestellingen notities (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
-DeStockOnShipment=Daling van de reële voorraad op overbrenging (aanbevolen)
-ReStockOnBill=Toename echte voorraden op facturen / creditnota&#39;s (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
-ReStockOnValidateOrder=Toename voorraden echt op bestellingen notities (waarschuwing, in deze versie, het is alleen in het magazijn nummer 1 dat bestand is gewijzigd)
-StockDiffPhysicTeoric=Reden voor het verschil voorraad fysieke en theoretische
+PMPValue=Gewogen Gemiddelde Prijs
+PMPValueShort=GGP
+EnhancedValueOfWarehouses=Magazijn waarde
+UserWarehouseAutoCreate=Maak een voorraad automatisch aan, bij het aanmaken van een gebruiker
+QtyDispatched=Hoeveelheid gekoppeld
+OrderDispatch=Voorraad gekoppeld
+RuleForStockManagementDecrease=Regel bij daling voorraadbeheer
+RuleForStockManagementIncrease=Regel bij verhogen voorraadbeheer
+DeStockOnBill=Daling van de reële voorraad door de facturen/creditnota's validatie (waarschuwing, in deze versie is het alleen in het magazijn nummer 1 dat de voorraad is gewijzigd)
+DeStockOnValidateOrder=Daling van de reële voorraad door bestellingen notities validatie (waarschuwing, in deze versie is het alleen in het magazijn nummer 1 dat de voorraad is gewijzigd)
+DeStockOnShipment=Daling van de reële voorraad door verzendings validatie (aanbevolen)
+ReStockOnBill=Toename echte voorraden door facturen/creditnota's validatie (waarschuwing, in deze versie is het alleen in het magazijn nummer 1 dat de voorraad is gewijzigd)
+ReStockOnValidateOrder=Toename voorraden echt door bestellingen notities validatie(waarschuwing, in deze versie is het alleen in het magazijn nummer 1 dat de voorraad is gewijzigd)
+StockDiffPhysicTeoric=Reden voor het verschil feitelijke en theoretische voorraad
 StockLimitShort=Limiet
-StockLimit=Voorraad limiet voor signaleringen
-PhysicalStock=Fysieke voorraad
-RealStock=Real Voorraad
-TheoreticalStock=Therocial voorraad
+StockLimit=Voorraad limiet voor waarschuwen
+PhysicalStock=Feitelijke voorraad
+RealStock=Reele Voorraad
+TheoreticalStock=Theoretische voorraad
 VirtualStock=Virtuele voorraad
 MininumStock=Minimumvoorraad
-StockUp=Stock up
+StockUp=Maximale voorraad
 MininumStockShort=Voorraad min
-StockUpShort=Stock up
-IdWarehouse=Id-entrepot
+StockUpShort=Max voorraad
+IdWarehouse=Id-magazijn
 DescWareHouse=Beschrijving magazijn
 LieuWareHouse=Localisatie magazijn
-WarehousesAndProducts=Opslagruimtes en producten
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-PMPValueShort=WAP
-AverageUnitPricePMPShort=Gemiddelde prijs input
-AverageUnitPricePMP=Gemiddelde prijs input
-EstimatedStockValueShort=Geschatte waarde van de voorraad
+WarehousesAndProducts=Magazijn en producten
+AverageUnitPricePMPShort=Gem. in. prijs
+AverageUnitPricePMP=Gemiddelde invoer prijs
+EstimatedStockValueShort=Geschatte voorraadwaarde
 EstimatedStockValue=Geschatte waarde van de voorraad
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).

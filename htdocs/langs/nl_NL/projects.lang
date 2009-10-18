@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - projects
 CHARSET=UTF-8
 Project=Project
 Projects=Projecten
@@ -18,55 +7,48 @@ Myprojects=Mijn projecten
 ProjectsArea=Projecten gebied
 NewProject=Nieuw project
 AddProject=Toevoegen project
-DeleteAProject=Verwijderen van een project
-DeleteATask=Verwijderen van een taak
-ConfirmDeleteAProject=Weet u zeker dat u wilt verwijderen dit project?
-ConfirmDeleteATask=Weet u zeker dat u wilt verwijderen van deze taak?
-OfficerProject=Project officer
-LastProjects=Last% s projecten
+DeleteAProject=Verwijder project
+DeleteATask=Verwijder taak
+ConfirmDeleteAProject=Weet u zeker dat u dit project wilt verwijderen?
+ConfirmDeleteATask=Weet u zeker dat u deze taak wilt verwijderen?
+OfficerProject=Projectleider
+LastProjects=Laatste %s projecten
 AllProjects=Alle projecten
-ProjectsList=Lijst van projecten
+ProjectsList=Projectenlijst
 ShowProject=Toon project
-SetProject=Stel project
+SetProject=Stel project in
 NoProject=Geen enkel project gedefinieerd
-NbOpenTasks=Nb geopend van taken
-NbOfProjects=Nb van projecten
+NbOpenTasks=Aantal geopende taken
+NbOfProjects=Aantal projecten
 TimeSpent=Bestede tijd
 RefTask=Ref. taak
 LabelTask=Label taak
-NewTimeSpent=Nieuwe tijd
-MyTimeSpent=Mijn tijd besteed
+NewTimeSpent=Nieuwe bestede tijd
+MyTimeSpent=Mijn bestede tijd
 MyTasks=Mijn taken
 Tasks=Taken
 Task=Taak
 NewTask=Nieuwe taak
 AddTask=Toevoegen taak
-AddDuration=Voeg duur
+AddDuration=Voeg doorlooptijd toe
 Activity=Activiteit
-Activities=Taken / activiteiten
+Activities=Taken/activiteiten
 MyActivity=Mijn activiteit
-MyActivities=Mijn taken / activiteiten
+MyActivities=Mijn taken/activiteiten
 DurationEffective=Effectieve looptijd
 MyProjects=Mijn projecten
 Time=Tijd
-ListProposalsAssociatedProject=Lijsten van de commerciële voorstellen in verband met het project
-ListOrdersAssociatedProject=Lijsten van de orders in verband met het project
-ListInvoicesAssociatedProject=Lijsten van de facturen in verband met het project
-ListSupplierOrdersAssociatedProject=Lijst van de leveranciers orders in verband met het project
-ListSupplierInvoicesAssociatedProject=Lijst van de leveranciers facturen in verband met het project
+ListProposalsAssociatedProject=Lijst van commerciële voorstellen in verband met het project
+ListOrdersAssociatedProject=Lijst van orders in verband met het project
+ListInvoicesAssociatedProject=Lijst van facturen in verband met het project
+ListSupplierOrdersAssociatedProject=Lijst van leveranciers orders in verband met het project
+ListSupplierInvoicesAssociatedProject=Lijst van leveranciers facturen in verband met het project
 ListContractAssociatedProject=Lijst van opdrachten in verband met het project
 ActivityOnProjectThisWeek=Activiteit op project deze week
 ActivityOnProjectThisMonth=Activiteit op project deze maand
 ActivityOnProjectThisYear=Activiteit op project dit jaar
-ChildOfTaks=Kind van het project / taak
+ChildOfTaks=Sub- van het project/taak
 NotOwnerOfProject=Geen eigenaar van dit prive-project
 AffectedTo=Beïnvloed in
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-ListPredefinedInvoicesAssociatedProject=Lijst van klanten vooraf facturen in verband met project
-CantRemoveProject=Dit project kan niet worden verwijderd, als zij wordt verwezen door een andere voorwerpen (facturen, bestellingen of andere). Zie referers tabblad.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+ListPredefinedInvoicesAssociatedProject=Lijst van vooraf te factureren klanten in verband met project
+CantRemoveProject=Dit project kan niet worden verwijderd, daar er wordt verwezen door een andere object (facturen, bestellingen of andere). Zie verwijzings tabblad.
