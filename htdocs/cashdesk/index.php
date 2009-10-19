@@ -23,6 +23,9 @@
  *  \version    $Id$
  */
 
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+
 // Init session. Name of session is specific to Dolibarr instance.
 $sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 $sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
@@ -30,13 +33,17 @@ if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKI
 session_name($sessionname);
 session_start();
 
-include('../master.inc.php');
+// Set and init common variables
+// This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
+require_once("../master.inc.php");
+
 
 if ( $_SESSION['uid'] > 0 )
 {
 	header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php');
 	exit;
 }
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
