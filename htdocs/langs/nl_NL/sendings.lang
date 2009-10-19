@@ -1,70 +1,53 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - sendings
 CHARSET=UTF-8
 RefSending=Ref. verzenden
-Sending=Thuisinstelling
+Sending=Zending
 Sendings=Verzendingen
-Receivings=Receivings
+Receivings=Ontvangsten
 SendingsArea=Verzendingen gebied
-ListOfSendings=Lijst van de verzendingen
+ListOfSendings=Verzendlijst
 SendingMethod=Verzendmethode
-SendingReceipt=Thuisinstelling in ontvangst
-LastSendings=Last% s verzendingen
-SearchASending=Zoek een zendorganisatie
+SendingReceipt=Ontvangstbewijs
+LastSendings=Laatste %s verzendingen
+SearchASending=Zoek een zending
 StatisticsOfSendings=Statistieken van verzendingen
 NbOfSendings=Aantal zendingen
-SendingCard=Thuisinstelling in kaart
-NewSending=Nieuwe verzenden
-CreateASending=Maak een zendorganisatie
-CreateSending=Maak verzenden
-QtyOrdered=Aantal besteld
+SendingCard=Verzendkaart
+NewSending=Nieuwe zending
+CreateASending=Maak een verzending
+CreateSending=Maak verzending
+QtyOrdered=Aantal bestellingen
 QtyShipped=Aantal verzonden
-QtyToShip=Qty Verzendklaar
+QtyToShip=Aantal Verzendklaar
 QtyReceived=Aantal ontvangen
-KeepToShip=Houd Verzendklaar
+KeepToShip=Houd verzendklaar
 OtherSendingsForSameOrder=Andere verzendingen voor deze bestelling
-DateSending=Datum sturen teneinde
-DateSendingShort=Datum sturen teneinde
+DateSending=Datum versturing bestelling
+DateSendingShort=Datum versturing bestelling
 SendingsForSameOrder=Verzendingen voor deze bestelling
-SendingsAndReceivingForSameOrder=Verzendingen en receivings voor deze bestelling
-SendingsToValidate=Thuisinstelling te valideren
+SendingsAndReceivingForSameOrder=Verzendingen en ontvangsten voor deze bestelling
+SendingsToValidate=Valideer verzending
 StatusSendingDraft=Ontwerp
-StatusSendingValidated=Gevalideerd (producten naar het schip of reeds verzonden)
+StatusSendingValidated=Gevalideerd (producten te versturen of reeds verzonden)
 StatusSendingDraftShort=Ontwerp
 StatusSendingValidatedShort=Gevalideerd
-SendingSheet=Thuisinstelling vel
+SendingSheet=Veerzendbrief
 Carriers=Vervoerders
 Carrier=Vervoerder
 CarriersArea=Vervoerders gebied
 NewCarrier=Nieuwe vervoerder
-ConfirmDeleteSending=Weet u zeker dat u wilt verwijderen verzenden?
-ConfirmValidateSending=Weet u zeker dat u wilt valdate deze zending?
+ConfirmDeleteSending=Weet u zeker dat u deze zending wilt verwijderen?
+ConfirmValidateSending=Weet u zeker dat u deze zending wilt valideren?
 ConfirmCancelSending=Weet u zeker dat u wilt annuleren dit sturen?
-GenericTransport=Generieke vervoer
-Enlevement=Geworden door klant
+GenericTransport=Algemeen vervoer
+Enlevement=Verkregen door klant
 DocumentModelSimple=Eenvoudig document model
-WarningNoQtyLeftToSend=Waarschuwing, geen producten nog moeten worden verzonden.
-NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... waar is YY jaar. Aantal op het einde is nooit op nul.
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-StatsOnShipmentsOnlyValidated=Statistieken uitgevoerd betreffende de overbrenging slechts gevalideerd
-SendingMethodCATCH=Vangst per klant
-SendingMethodTRANS=Transporter
+WarningNoQtyLeftToSend=Waarschuwing, geen product moeten nog worden verzonden.
+# Sending methods
+SendingMethodCATCH=Verwijdering door de klant
+SendingMethodTRANS=Vervoerder
 SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Eenvoudig document model voor de levering van aandelen
-DocumentModelTyphon=Meer volledige document model voor de levering van aandelen (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+# NumRef
+NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... waar is YY jaar. Aantal op het einde is nooit nul.
+DocumentModelSirocco=Voorbeeld voor eenvoudige ontvangstbewijs
+DocumentModelTyphon=Model ontvangstbewijs volledige levering (logo...)
