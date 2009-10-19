@@ -293,7 +293,6 @@ function dol_syslog($message, $level=LOG_INFO)
 			{
 				$facility = LOG_USER;
 
-				//define_syslog_variables(); already defined in master.inc.php
 				if (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY)
 				{
 					// Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
