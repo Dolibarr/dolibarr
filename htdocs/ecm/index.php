@@ -504,13 +504,13 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	    	$newref=eregi_replace('_',' ',$ref);
 	    	$lienfin='</a>';
 	    	print $lien.$newref.$lienfin;
-			if (! in_array($val['id'],$expandedsectionarray)) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
-			else print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder-expanded.gif','',1);
+			if (! in_array($val['id'],$expandedsectionarray)) print img_picto($ecmdirstatic->ref,DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
+			else print img_picto($ecmdirstatic->ref,DOL_URL_ROOT.'/theme/common/treemenu/folder-expanded.gif','',1);
 			print '</td>';
 			// Show link
 			print '<td valign="middle">';
 			if ($section == $val['id']) print ' <u>';
-			print $ecmdirstatic->getNomUrl(0,'index');
+			print $ecmdirstatic->getNomUrl(0,'index',20);
 			if ($section == $val['id']) print '</u>';
 			print '</td>';
 			print '<td>&nbsp;</td>';

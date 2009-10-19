@@ -365,12 +365,12 @@ class EcmDirectory // extends CommonObject
 
 
   	/**
-     \brief      	Renvoie nom clicable (avec eventuellement le picto)
+     \brief      	Return directory name you can click (and picto)
      \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      \param			option			Sur quoi pointe le lien
      \return		string			Chaine avec URL
    	*/
-  	function getNomUrl($withpicto=0,$option='')
+  	function getNomUrl($withpicto=0,$option='',$max=0)
   	{
 	    global $langs;
 
@@ -390,7 +390,7 @@ class EcmDirectory // extends CommonObject
 
 	    if ($withpicto) $result.=($lien.img_object($newlabel,$picto,'',1).$lienfin);
 	    if ($withpicto && $withpicto != 2) $result.=' ';
-	    if ($withpicto != 2) $result.=$lien.$newref.$lienfin;
+	    if ($withpicto != 2) $result.=$lien.($max?dol_trunc($newref,$max,'middle'):$newref).$lienfin;
 	    return $result;
   	}
 
