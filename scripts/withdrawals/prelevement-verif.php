@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
- *       \file       scripts/prelevement/prelevement-verif.php
- *       \ingroup    prelevement
- *       \brief      Vérifie que les sociétés qui doivent être prélevées ont bien un RIB correct
+ *      \file       scripts/prelevement/prelevement-verif.php
+ *      \ingroup    prelevement
+ *      \brief      Verifie que les societes qui doivent etre prelevees ont bien un RIB correct
+ *		\version	$Id$
  */
 
 // Test si mode CLI
@@ -48,10 +46,10 @@ $error = 0;
 
 $puser = new user($db, PRELEVEMENT_USER);
 $puser->fetch();
-dol_syslog("Prélèvements effectués par ".$puser->fullname." [".PRELEVEMENT_USER."]");
+dol_syslog("Prï¿½lï¿½vements effectuï¿½s par ".$puser->fullname." [".PRELEVEMENT_USER."]");
 
 dol_syslog("Raison sociale : ".PRELEVEMENT_RAISON_SOCIALE);
-dol_syslog("Numéro Nation Emetteur : ".PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR);
+dol_syslog("Numï¿½ro Nation Emetteur : ".PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR);
 
 dol_syslog("Code etablissement : ".PRELEVEMENT_CODE_BANQUE);
 dol_syslog("Code guichet       : ". PRELEVEMENT_CODE_GUICHET);
@@ -59,7 +57,7 @@ dol_syslog("Numero compte      : ".PRELEVEMENT_NUMERO_COMPTE);
 
 /*
  *
- * Lectures des factures a prélever
+ * Lectures des factures a prï¿½lever
  *
  */
 
@@ -95,7 +93,7 @@ if (!$error)
 	  $i++;
 	}
       $db->free();
-      dol_syslog("$i factures à prélever");
+      dol_syslog("$i factures ï¿½ prï¿½lever");
     }
   else
     {
@@ -107,18 +105,18 @@ if (!$error)
 
 /*
  *
- * Vérification des clients
+ * Vï¿½rification des clients
  *
  */
 
 if (!$error)
 {
   /*
-   * Vérification des RIB
+   * Vï¿½rification des RIB
    *
    */
   $i = 0;
-  dol_syslog("Début vérification des RIB");
+  dol_syslog("Dï¿½but vï¿½rification des RIB");
 
   if (sizeof($factures) > 0)
     {
@@ -146,7 +144,7 @@ if (!$error)
 		}
 	      else
 		{
-		  dol_syslog("Impossible de lire la société");
+		  dol_syslog("Impossible de lire la sociï¿½tï¿½");
 		}
 	    }
 	  else
@@ -161,7 +159,7 @@ if (!$error)
     }
 }
 
-dol_syslog(sizeof($factures_prev)." factures sur ".sizeof($factures)." seront prélevées");
+dol_syslog(sizeof($factures_prev)." factures sur ".sizeof($factures)." seront prï¿½levï¿½es");
 
 $db->close();
 

@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/bookmarks/bookmark.class.php
         \ingroup    bookmark
         \brief      Fichier de la classe des bookmark
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -47,7 +44,7 @@ class Bookmark
 
     /**
      *    \brief      Constructeur
-     *    \param      db          Handler d'accès base de données
+     *    \param      db          Handler d'accï¿½s base de donnï¿½es
      *    \param      id          Id du bookmark
      */
     function Bookmark($db, $id=-1)
@@ -58,7 +55,7 @@ class Bookmark
 
     /**
      *    \brief      Charge le bookmark
-     *    \param      id          Id du bookmark à charger
+     *    \param      id          Id du bookmark ï¿½ charger
      */
     function fetch($id)
     {
@@ -95,7 +92,7 @@ class Bookmark
 
     /**
      *      \brief      Insere bookmark en base
-     *      \return     int     <0 si ko, rowid du bookmark créé si ok
+     *      \return     int     <0 si ko, rowid du bookmark crï¿½ï¿½ si ok
      */
     function create()
     {
@@ -145,7 +142,7 @@ class Bookmark
     }
 
     /**
-     *      \brief      Mise à jour du bookmark
+     *      \brief      Mise ï¿½ jour du bookmark
      *      \return     int         <0 si ko, >0 si ok
      */
     function update()
@@ -177,7 +174,7 @@ class Bookmark
 
     /**
      *      \brief      Supprime le bookmark
-     *      \param      id          Id bookmark à supprimer
+     *      \param      id          Id bookmark ï¿½ supprimer
      *      \return     int         <0 si ko, >0 si ok
      */
     function remove($id)

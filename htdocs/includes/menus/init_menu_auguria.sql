@@ -1,6 +1,5 @@
 --
 -- $Id$
--- $Source$
 -- $Revision$
 --
 -- Menu auguria entries

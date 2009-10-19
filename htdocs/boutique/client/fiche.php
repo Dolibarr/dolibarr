@@ -63,8 +63,9 @@ if ($_GET['id'])
        */
       $sql = "SELECT o.orders_id, o.customers_id,".$dbosc->pdate("date_purchased")." as date_purchased, t.value as total";
       $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
-      $sql .= " WHERE o.customers_id = " . $client->id;
+      $sql .= " WHERE o.customers_id = " . $_GET['id'];
       $sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
+	//echo $sql;
       if ( $dbosc->query($sql) )
 	{
 	  $num = $dbosc->num_rows();

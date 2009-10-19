@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/includes/modules/societe/mod_codecompta_digitaria.class.php
         \ingroup    societe
         \brief      Fichier de la classe des gestion digitaria des codes compta des societes clientes
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
@@ -53,11 +50,11 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
   /**
    *    \brief      Renvoi code
-   *    \param      DB              Handler d'accès base
+   *    \param      DB              Handler d'accï¿½s base
    *    \param      societe         Objet societe
    */
   function get_code($DB, $societe)
-  {    
+  {
     $i = 0;
     $this->db = $DB;
 
@@ -87,7 +84,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
       }
 
   }
-  
+
   function verif($db, $code)
   {
     $sql = "SELECT code_compta FROM ".MAIN_DB_PREFIX."societe";

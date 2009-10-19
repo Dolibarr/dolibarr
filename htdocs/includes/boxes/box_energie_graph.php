@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -48,8 +47,8 @@ class box_energie_graph extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les données en mémoire pour affichage ultérieur
-	 *      \param      $max        Nombre maximum d'enregistrements à charger
+	 *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+	 *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
 	 */
 	function loadBox($max=5)
 	{
@@ -66,7 +65,7 @@ class box_energie_graph extends ModeleBoxes {
 		$file = "small-all.1.png";
 		$libelle = '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
 
-		 
+
 		$this->info_box_contents[0][0] = array('td' => 'align="left" width="16"',
 					      'logo' => $this->boximg,
 					      'url' => DOL_URL_ROOT."/energie/compteur.php?id=".$objp->rowid);

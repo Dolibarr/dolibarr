@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
- \file   	htdocs/fourn/facture/pre.inc.php
- \ingroup    fournisseur,facture
- \brief  	Fichier gestionnaire du menu factures fournisseurs
- */
+	\file   	htdocs/fourn/facture/pre.inc.php
+	\ingroup    fournisseur,facture
+	\brief  	Fichier gestionnaire du menu factures fournisseurs
+	\version	$Id$
+*/
 
 require("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
@@ -49,7 +47,7 @@ function llxHeader($head = '', $title = '', $help_url='')
 	  		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
 		}
 
-		// Sécurité accés client
+		// Sï¿½curitï¿½ accï¿½s client
 		if ($user->societe_id == 0 && $user->rights->societe->creer)
 		{
 	  		$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
@@ -107,7 +105,7 @@ function llxHeader($head = '', $title = '', $help_url='')
 	  		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
 		}
 
-		// Sécurité accés client
+		// Sï¿½curitï¿½ accï¿½s client
 		if ($user->societe_id == 0 && $user->rights->societe->creer)
 		{
 			$menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=f",$langs->trans("NewSupplier"));

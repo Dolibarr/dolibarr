@@ -16,9 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
+
 require("./pre.inc.php");
 
 require("./AtomeFactureValidee.class.php");
@@ -34,21 +33,21 @@ print_fiche_titre("Rapports");
  * Initialisation d'un atome
  *
  * Parametre
- * - id de connexion à la bdd
- * - période 'year' ou 'month' (Reste à faire les hebdo)
- * - une date dans la période voulue
+ * - id de connexion ï¿½ la bdd
+ * - pï¿½riode 'year' ou 'month' (Reste ï¿½ faire les hebdo)
+ * - une date dans la pï¿½riode voulue
  * -> retourne un objet
  *
  */
 $x = new AtomeFactureValidee($db,'year', time());
 
 /*
- * Lecture des données
+ * Lecture des donnï¿½es
  * -> retourne un tableau
  */
 $arr = $x->fetch();
 /*
- * Création du graph 
+ * Crï¿½ation du graph
  * -> retounre le nom du fichier
  */
 $img = $x->ShowGraph();
@@ -66,10 +65,10 @@ for ($i = 1 ; $i < 5; $i++)
 {
   $x = new AtomeFactureValidee($db,'month', mktime(12,0,0,$i,12,2003));
   $x->periode = 'month';
-  
+
   $arr = $x->fetch('month');
-  
-  
+
+
   $img = $x->ShowGraph();
   print $img."<br>";
 }

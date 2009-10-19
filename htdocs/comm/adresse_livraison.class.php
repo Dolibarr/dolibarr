@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/comm/adresse_livraison.class.php
         \ingroup    societe, expedition
         \brief      Fichier de la classe des adresses de livraison
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -37,7 +34,7 @@
 class AdresseLivraison
 {
 	var $db;
-	
+
 	var $id;
 	var $label;
 	var $socid;
@@ -60,7 +57,7 @@ class AdresseLivraison
   function AdresseLivraison($DB, $id=0)
   {
 	global $conf;
-	
+
     $this->db = $DB;
 
     $this->id = $id;
@@ -85,7 +82,7 @@ class AdresseLivraison
         dol_syslog("societe.class.php::create delivery adress ".$this->label);
 
         $this->db->begin();
-        
+
         $result = $this->verify();
 
         if ($result >= 0)
@@ -170,7 +167,7 @@ class AdresseLivraison
         dol_syslog("Societe::Update");
 
 		// Nettoyage des parametres
-		
+
         $this->fk_societe = $socid;
         $this->label      = trim($this->label);
         $this->nom        = trim($this->nom);
@@ -191,33 +188,33 @@ class AdresseLivraison
         if ($result >= 0)
         {
             dol_syslog("Societe::Update delivery adress verify ok");
-        
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe_adresse_livraison";
             $sql.= " SET label = '" . addslashes($this->label) ."'"; // Champ obligatoire
             $sql.= ",nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
             $sql.= ",address = '" . addslashes($this->adresse) ."'";
-        
+
             if ($this->cp)
             { $sql .= ",cp = '" . $this->cp ."'"; }
-        
+
             if ($this->ville)
             { $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
 
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
             $sql.= ",note = '" . addslashes($this->note) ."'";
-            
+
             if ($this->tel)
             { $sql .= ",tel = '" . $this->tel ."'"; }
-            
+
             if ($this->fax)
             { $sql .= ",fax = '" . $this->fax ."'"; }
 
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
             $sql .= " WHERE fk_societe = '" . $socid ."' AND rowid = '" . $id ."'";
-        
+
             $resql=$this->db->query($sql);
             if ($resql)
-            {        
+            {
                 $result = 1;
             }
             else
@@ -230,7 +227,7 @@ class AdresseLivraison
                 }
                 else
                 {
-        
+
                     $this->error = $langs->trans("Error sql=$sql");
                     dol_syslog("Societe::Update delivery adress echec sql=$sql");
                     $result =  -2;
@@ -255,25 +252,25 @@ class AdresseLivraison
 		   $sql = 'SELECT rowid, nom, client, fournisseur';
 		   $sql .= ' FROM '.MAIN_DB_PREFIX.'societe';
 		   $sql .= ' WHERE rowid = '.$socid;
-		   
+
 		   $resqlsoc=$this->db->query($sql);
-    
+
         if ($resqlsoc)
         {
             if ($this->db->num_rows($resqlsoc))
             {
                 $obj = $this->db->fetch_object($resqlsoc);
-                
+
                 $this->nom_societe = $obj->nom;
                 $this->socid       = $obj->rowid;
                 $this->id          = $obj->rowid;
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
              }
-             
+
              $this->lignes = array();
              $this->db->free($resqlsoc);
-             
+
              // Adresses de livraison liees a la societe
              if ($this->socid)
              {
@@ -284,7 +281,7 @@ class AdresseLivraison
              	  $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
              	  $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
              	  $sql .= ' WHERE a.fk_societe = '.$this->socid;
-             	  
+
              	  $resql=$this->db->query($sql);
 		            if ($resql)
 		            {
@@ -293,7 +290,7 @@ class AdresseLivraison
 			            while ($i < $num)
 			            {
 				            $objp                  = $this->db->fetch_object($resql);
-				            
+
 				            $ligne                 = new AdresseLivraisonLigne();
 
 				            $ligne->id              = $objp->id;
@@ -311,7 +308,7 @@ class AdresseLivraison
 				            $ligne->tel             = $objp->tel;
 				            $ligne->fax             = $objp->fax;
 				            $ligne->note            = $objp->note;
-				            
+
 				            $this->lignes[$i]       = $ligne;
 				            $i++;
                    }
@@ -336,7 +333,7 @@ class AdresseLivraison
 			    $this->error=$this->db->error();
 			  }
      }
-     
+
          /**
      *    \brief      Charge depuis la base l'objet adresse de livraison
      *    \param      id       Id de l'adresse de livraison a charger en memoire
@@ -404,7 +401,7 @@ class AdresseLivraison
 
 		return $result;
 	}
-     
+
 
     /**
      *    \brief      Suppression d'une adresse de livraison
@@ -419,7 +416,7 @@ class AdresseLivraison
 
       $result = $this->db->query($sql);
 
-      if (!$result) 
+      if (!$result)
       {
 	       print $this->db->error() . '<br>' . $sql;
       }
@@ -473,9 +470,9 @@ class AdresseLivraison
 
 }
 
-class AdresseLivraisonLigne  
+class AdresseLivraisonLigne
 {
-    
+
     var $id;
     var $date_creation;
     var $date_update;

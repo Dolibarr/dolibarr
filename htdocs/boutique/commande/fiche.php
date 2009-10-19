@@ -39,7 +39,6 @@ if ($_GET['id'])
 {
   $commande = new Commande($db);
   $result = $commande->fetch($_GET['id']);
-
   if ( $result )
     {
 
@@ -67,8 +66,9 @@ if ($_GET['id'])
        */
       $sql = "SELECT orders_id, products_id, products_model, products_name, products_price, final_price, products_quantity";
       $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_products";
-      $sql .= " WHERE orders_id = " . $commande->id;
-
+      $sql .= " WHERE orders_id = " . $_GET['id'];
+//$commande->id;
+//	echo $sql;
       if ( $dbosc->query($sql) )
 	{
 	  $num = $dbosc->num_rows();
@@ -112,7 +112,7 @@ if ($_GET['id'])
 
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
-      print '<td width="20%">Frais d\'expéditions</td><td width="80%">'.price($commande->total_ot_shipping).' EUR</td></tr>';
+      print '<td width="20%">Frais d\'expeditions</td><td width="80%">'.price($commande->total_ot_shipping).' EUR</td></tr>';
       print '<td width="20%">'.$langs->trans("Lastname").'</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
       print "</table>";
 

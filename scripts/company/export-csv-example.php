@@ -16,8 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  *
  * Export simple des contacts
  */
@@ -49,13 +47,13 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
 
-  print "Lignes traitées $num\n";
+  print "Lignes traitï¿½es $num\n";
 
   $i = 0;
   $j = 1;
 
-  $page->write_string(0, 0,  "Société");
-  $page->write_string(0, 1,  "Prénom");
+  $page->write_string(0, 0,  "Sociï¿½tï¿½");
+  $page->write_string(0, 1,  "Prï¿½nom");
   $page->write_string(0, 2,  "Nom");
   $page->write_string(0, 3,  "Email");
 
@@ -63,7 +61,7 @@ if ($db->query($sql))
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object();	
+      $obj = $db->fetch_object();
 
       if ($obj->email <> $oldemail)
 	{
@@ -76,7 +74,7 @@ if ($db->query($sql))
 
 	  $oldemail = $obj->email;
 	}
-     
+
       $i++;
 
     }

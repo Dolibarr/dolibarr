@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/droitpret/droitpret.class.php
         \ingroup    pret
-        \brief      Fichier de la classe ddes droits de prêts
-        \version    $Revision$
+        \brief      Fichier de la classe ddes droits de prï¿½ts
+        \version    $Id$
 */
 
 
@@ -35,8 +32,8 @@
 
 class DroitPret
 {
-	
-	
+
+
 	var $index;
 	var $dated;
 	var $datef;
@@ -45,11 +42,11 @@ class DroitPret
 	var $refFile;
 	var $fp;
 	var $nbfact;
-	
+
     function DroitPret($DB,$dated,$datef)
     {
        	global $conf;
-       
+
         $this->db=$DB;
         $this->index = 0;
         $this->dated = $dated;
@@ -57,16 +54,16 @@ class DroitPret
         $this->dateEnvoie = getdate();
         $this->format = "aa";
         $this->refFile = $conf->global->MAIN_INFO_SOCIETE_GENCOD."_".date("dmY",mktime($this->dateEnvoie['hours'],$this->dateEnvoie['minutes'],$this->dateEnvoie['seconds'],$this->dateEnvoie['mon'],$this->dateEnvoie['mday'],$this->dateEnvoie['year'])).".csv";
-		
+
 
     }
-    
+
     function CreateNewRapport()
     {
     	global $conf;
-    	
+
     	$this->nbfact = 0;
-    	
+
     	$dateEnvoie = date("Y-m-d H:i:s",mktime($this->dateEnvoie['hours'],$this->dateEnvoie['minutes'],$this->dateEnvoie['seconds'],$this->dateEnvoie['mon'],$this->dateEnvoie['mday'],$this->dateEnvoie['year']));
 
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX."droitpret_rapport(date_envoie,format,date_debut,date_fin,fichier,nbfact) VALUES('".$dateEnvoie."','".$this->format."','".date("Y-m-d H:i:s",$this->dated)."','".date("Y-m-d H:i:s",$this->datef)."','".$this->refFile."',0)";
@@ -80,26 +77,26 @@ class DroitPret
 		$this->WriteTET();
 		$this->WriteFin();
 		fclose($this->fp);
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."droitpret_rapport SET nbfact = ".$this->nbfact." WHERE rowid = ".$ref;
 		$this->db->query($sql);
     }
-    
+
     function WriteDEB($ref)
     {
-		
+
 		$dateEnvoie = date("Ymd",mktime($this->dateEnvoie['hours'],$this->dateEnvoie['minutes'],$this->dateEnvoie['seconds'],$this->dateEnvoie['mon'],$this->dateEnvoie['mday'],$this->dateEnvoie['year']));
 		$ligne = "DEB".$this->ComplChar($ref,"0",8).$dateEnvoie;
 		$ligne .= $this->ComplChar($this->format," ",10);
 		fwrite($this->fp,$ligne."\n");
 
     }
- 
+
     function WriteTET()
     {
     		global $conf;
 
-   
+
     		$sql = "SELECT f.rowid, f.facnumber, f.datec, f.total_ttc, f.total ";
     		$sql.= "FROM llx_facture AS f, llx_facturedet AS d, llx_product AS p, llx_societe AS s, llx_categorie_societe AS c ";
     		$sql.= "WHERE f.fk_soc = s.rowid ";
@@ -107,7 +104,7 @@ class DroitPret
     		$sql.= "AND d.fk_product = p.rowid ";
       		$sql.= "AND f.rowid = d.fk_facture ";
       		$sql.= "AND f.datec >= '".date("Y-m-d H:i:s",$this->dated)."' ";
-      		$sql.= "AND f.datec < '".date("Y-m-d H:i:s",$this->datef)."' "; 
+      		$sql.= "AND f.datec < '".date("Y-m-d H:i:s",$this->datef)."' ";
     		$sql.= "AND c.fk_categorie = ".$conf->global->DROITPRET_CAT." ";
 			$sql.= "GROUP BY f.rowid";
 
@@ -117,26 +114,26 @@ class DroitPret
 			{
 				$num = $this->db->num_rows($result);
 		    	$i = 0;
-	
+
 			    while ($i < $num)
 	    		{
-	        		$obj = $this->db->fetch_object($result);	
+	        		$obj = $this->db->fetch_object($result);
 	        		$ligne = "TET380".$this->ComplChar($obj->facnumber,"0",25);
 	        		$ligne.= $this->FormatDate($obj->datec);
 	        		$ligne.= $this->ComplChar("","",25).$this->ComplChar(str_replace(".","",$obj->total_ttc),"0",10);
 	        		$ligne.= $this->ComplChar(str_replace(".","",$obj->total),"0",10)."EUR";
 	        		fwrite($this->fp,$ligne."\n");
-	        		
+
 	        		$this->WriteInt($obj->rowid);
 	        		$this->WriteLin($obj->rowid);
-	        		
+
 	        		$this->nbfact++;
 	        		$i++;
-	    		}	
+	    		}
 			}
-    	
+
     }
-    
+
     function WriteINT($fac)
     {
     	global $conf;
@@ -144,7 +141,7 @@ class DroitPret
 		$sql.= "FROM llx_facture AS f, llx_societe AS s ";
 		$sql.= "WHERE f.fk_soc = s.rowid ";
 		$sql.= "AND f.rowid = ".$fac." ";
-		
+
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -159,12 +156,12 @@ class DroitPret
         		fwrite($this->fp,$ligne."\n");
         		$i++;
     		}
-		}    
-    
-    
-    
-    }	   
-    
+		}
+
+
+
+    }
+
     function WriteLIN($fac)
     {
 		$sql = "SELECT p.gencode, d.total_ttc,d.qty ";
@@ -172,7 +169,7 @@ class DroitPret
 		$sql.= "WHERE d.fk_product = p.rowid ";
 		$sql.= "AND f.rowid = d.fk_facture ";
 		$sql.= "AND f.rowid = ".$fac." ";
-		
+
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -190,21 +187,21 @@ class DroitPret
         		$i++;
     		}
 		}
-    
+
     }
-    
+
 	function WriteFIN()
     {
- 
+
     	$ligne = "FIN".$this->ComplChar($obj->nbfact,"0",8);
     	fwrite($this->fp,$ligne);
     }
-    
-    
+
+
     function EnvoiMail()
     {
 		global $langs, $conf;
-		
+
 		$subject = ":::EDLFDT01".$this->ComplChar($conf->global->MAIN_INFO_SOCIETE_GENCOD,"0",13);
 		$sendto = $conf->global->DROITPRET_MAIL;
 		$from = $conf->global->MAIN_INFO_SOCIETE_MAIL;
@@ -233,7 +230,7 @@ class DroitPret
 			else
 			{
 				$mesg='<div class="error">';
-				if ($mailfile->error) 
+				if ($mailfile->error)
 				{
 					$mesg.="error";
 					$mesg.='<br>'.$mailfile->error;
@@ -243,12 +240,12 @@ class DroitPret
 					$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 				}
 				$mesg.='</div>';
-				
+
 			}
 		}
     	return $mesg;
     }
-    
+
     function ComplChar($chaine,$char,$size)
     {
 		$chaineSize=strlen ($chaine);
@@ -259,16 +256,16 @@ class DroitPret
 		}
 
 		return $ComplChar;
-		
+
     }
-    
+
     function FormatDate($datetime)
     {
     	$FormatDate = str_replace("-","",$datetime);
     	$FormatDate = substr($FormatDate,0,8);
     	return $FormatDate;
     }
-    
+
 }
 
 ?>

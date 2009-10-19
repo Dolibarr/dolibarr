@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
- \file   	htdocs/fourn/commande/pre.inc.php
- \ingroup    compta
- \brief  	Fichier gestionnaire du menu commandes fournisseurs
+ *	\file   	htdocs/fourn/commande/pre.inc.php
+ *	\ingroup    compta
+ *	\brief  	Fichier gestionnaire du menu commandes fournisseurs
+ * 	\version	$Id$
  */
 
 require("../../main.inc.php");

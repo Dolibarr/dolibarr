@@ -15,42 +15,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/droitpret/modules_droipret.php
         \ingroup    droitpret
-        \brief      Fichier contenant la classe mère de generation des exports de droits de prets
-        \version    $Revision$
+        \brief      Fichier contenant la classe mï¿½re de generation des exports de droits de prets
+        \version    $Id$
 */
 
 
 /**
    \class      ModeleDroitPret
-   \brief      Classe mère des modèles de format d'export de droits de prêts
+   \brief      Classe mï¿½re des modï¿½les de format d'export de droits de prï¿½ts
 */
 
 class ModeleDroitPret
 {
 
-    
+
     /**
      *      \brief      Constructeur
      */
     function ModeleDroitPret()
     {
     }
-    
+
     /**
-     *      \brief      Charge en memoire et renvoie la liste des modèles actifs
+     *      \brief      Charge en memoire et renvoie la liste des modï¿½les actifs
      *      \param      db      Handler de base
      */
     function liste_rapport($db)
     {
-        
+
         $liste=array();
         $sql ="SELECT rowid, fichier";
         $sql.=" FROM ".MAIN_DB_PREFIX."droitpret_rapport";
@@ -71,8 +68,8 @@ class ModeleDroitPret
 		{
 			dol_print_error($db);
 			return -1;
-		}              
-    
+		}
+
         return $liste;
     }
 
@@ -80,7 +77,7 @@ class ModeleDroitPret
 
 
 
-    
+
 }
 
 

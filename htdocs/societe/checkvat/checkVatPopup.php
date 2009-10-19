@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 *		\file       htdocs/societe/checkvat/checkVatPopup.php
 *		\ingroup    societe
-*		\brief      Onglet societe d'une societe
-*		\version    $Revision$
+*		\brief      Popup screen to validate VAT
+*		\version    $Id$
 */
 
 require ("../../main.inc.php");
@@ -59,15 +56,15 @@ else
 	print '<b>'.$langs->trans("Country").'</b>: '.$_REQUEST["countryCode"].'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$_REQUEST["vatNumber"].'<br>';
 	print '<br>';
-	
+
 	// Set the parameters to send to the WebService
 	$parameters = array("countryCode" => $_REQUEST["countryCode"],
 						"vatNumber" => $_REQUEST["vatNumber"]);
-	
+
 	// Set the WebService URL
 	dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
 	$soapclient = new soapclient_nusoap($WS_DOL_URL);
-	
+
 	// Call the WebService and store its result in $result.
 	dol_syslog("Call method ".$WS_METHOD);
 	$result = $soapclient->call($WS_METHOD,$parameters);
@@ -76,7 +73,7 @@ else
 //	print_r($result);
 //	print $soapclient->request.'<br>';
 //	print $soapclient->response.'<br>';
-	
+
 	$messagetoshow='';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
@@ -88,16 +85,16 @@ else
 	}
 	elseif (eregi('TIMEOUT',$result['faultstring']))
 	{
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';	
+		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
 	elseif (eregi('SERVER_BUSY',$result['faultstring']))
 	{
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';	
+		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
 	// Syntaxe ko
-	elseif (eregi('INVALID_INPUT',$result['faultstring']) 
+	elseif (eregi('INVALID_INPUT',$result['faultstring'])
 			|| ($result['requestDate'] && ! $result['valid']))
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
@@ -113,11 +110,11 @@ else
 		print $langs->trans("VATIntraValueIsValid").': ';
 		if (eregi('MS_UNAVAILABLE',$result['faultstring']))
 		{
-			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$_REQUEST["countryCode"]).'</font><br>';	
+			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$_REQUEST["countryCode"]).'</font><br>';
 		}
 		else
 		{
-			if ($result['valid']) 
+			if ($result['valid'])
 			{
 				print '<font class="ok">'.$langs->trans("Yes").'</font>';
 				print '<br>';

@@ -17,11 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
-class ExpeditionStats 
+class ExpeditionStats
 {
   var $db;
 
@@ -30,13 +28,13 @@ class ExpeditionStats
     $this->db = $DB;
   }
   /**
-   * Renvoie le nombre de expedition par année
+   * Renvoie le nombre de expedition par annï¿½e
    *
    */
   function getNbExpeditionByYear()
   {
   	global $conf;
-  	
+
     $result = array();
     $sql = "SELECT count(*), date_format(e.date_expedition,'%Y') as dm";
     $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -45,7 +43,7 @@ class ExpeditionStats
     $sql.= " AND e.fk_soc = s.rowid";
     $sql.= " s.entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";
-    
+
     if ($this->db->query($sql))
     {
     	$num = $this->db->num_rows();
@@ -54,7 +52,7 @@ class ExpeditionStats
     	{
     		$row = $this->db->fetch_row($i);
     		$result[$i] = $row;
-    		
+
     		$i++;
     	}
     	$this->db->free();
@@ -62,13 +60,13 @@ class ExpeditionStats
     return $result;
   }
   /**
-   * Renvoie le nombre de expedition par mois pour une année donnée
+   * Renvoie le nombre de expedition par mois pour une annï¿½e donnï¿½e
    *
    */
   function getNbExpeditionByMonth($year)
   {
   	global $conf;
-  	
+
     $result = array();
     $sql = "SELECT count(*), date_format(e.date_expedition,'%m') as dm";
     $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
@@ -96,14 +94,14 @@ class ExpeditionStats
     {
     	$res[$i] = $result[$i] + 0;
     }
-    
+
     $data = array();
-    
+
     for ($i = 1 ; $i < 13 ; $i++)
     {
     	$data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"), $res[$i]);
     }
-    
+
     return $data;
   }
 
@@ -117,7 +115,7 @@ class ExpeditionStats
 
     for ($i = 1 ; $i < 13 ; $i++)
     {
-    	$data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"), 
+    	$data[$i-1] = array(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),
 			$data1[$i][1],
 			$data2[$i][1]);
     }

@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
         \file   	htdocs/fourn/paiement/pre.inc.php
         \ingroup    fournisseur,facture
         \brief  	Fichier gestionnaire du menu paiements factures fournisseurs
+		\version	$Id$
 */
 
 require("../../main.inc.php");
@@ -49,15 +46,15 @@ function llxHeader($head = "", $title = "", $addons='') {
     }
 
 
-  if ($conf->fournisseur->enabled) 
+  if ($conf->fournisseur->enabled)
     {
     	if ($user->rights->societe->lire)
     	{
         $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
       }
 
-        // Sécurité accés client
-        if ($user->societe_id == 0 && $user->rights->societe->creer) 
+        // Sï¿½curitï¿½ accï¿½s client
+        if ($user->societe_id == 0 && $user->rights->societe->creer)
         {
           $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
         }
@@ -70,14 +67,14 @@ function llxHeader($head = "", $title = "", $addons='') {
          $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
       }
     }
-  
+
 
   $langs->load("bills");
   if ($user->rights->fournisseur->facture->lire)
   {
       $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
   }
-  
+
 
   if ($user->rights->fournisseur->facture->creer)
     {
@@ -88,7 +85,7 @@ function llxHeader($head = "", $title = "", $addons='') {
       $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
   }
 
-  
+
   $langs->load("orders");
   if ($user->rights->fournisseur->commande->lire)
   {
@@ -100,7 +97,7 @@ function llxHeader($head = "", $title = "", $addons='') {
   {
       $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
   }
-  
+
   left_menu($menu->liste);
 }
 

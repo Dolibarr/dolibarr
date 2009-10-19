@@ -14,19 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
- 
+
 /**
         \file       htdocs/comm/bookmark.php
         \brief      Page affichage des bookmarks
-        \version    $Revision$
+        \version    $Id$
 */
 
- 
+
 require("./pre.inc.php");
 
 
@@ -47,7 +43,7 @@ $pagenext = $page + 1;
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == 'add')
 {
     $bookmark=new Bookmark($db);
@@ -56,7 +52,7 @@ if ($_GET["action"] == 'add')
     $bookmark->target=$user->id;
     $bookmark->title='xxx';
     $bookmark->favicon='xxx';
-    
+
     $res=$bookmark->create();
     if ($res > 0)
     {
@@ -76,7 +72,7 @@ if ($_GET["action"] == 'delete')
     $bookmark->target=$user->id;
     $bookmark->title='xxx';
     $bookmark->favicon='xxx';
-    
+
     $res=$bookmark->remove();
     if ($res > 0)
     {
@@ -91,7 +87,7 @@ if ($_GET["action"] == 'delete')
 
 
 print_fiche_titre($langs->trans("Bookmarks"));
- 
+
 $sql = "SELECT s.rowid, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE b.fk_soc = s.rowid AND b.fk_user=u.rowid";
@@ -124,7 +120,7 @@ if ($resql)
   while ($i < $num)
     {
       $obj = $db->fetch_object($resql);
-      
+
       $var=!$var;
       print "<tr $bc[$var]>";
       //print "<td>" . ($i + 1 + ($limit * $page)) . "</td>";

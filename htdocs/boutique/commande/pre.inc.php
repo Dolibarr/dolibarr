@@ -15,19 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/boutique/commande/pre.inc.php
 		\brief      Fichier gestionnaire du menu de gauche
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/boutique/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
 
 
@@ -35,7 +32,8 @@ function llxHeader($head = "", $urlp = "")
 {
 	global $user,$conf, $langs;
 	$langs->load("shop");
-	
+	$langs->load("products");
+
 	top_menu($head);
 	
 	$menu = new Menu();
@@ -47,7 +45,7 @@ function llxHeader($head = "", $urlp = "")
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/promotion/index.php", $langs->trans("Promotion"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/notification/", $langs->trans("Notifications"));
 	$menu->add_submenu(DOL_URL_ROOT."/boutique/client/", $langs->trans("Customers"));
-	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Orders"));
+	$menu->add_submenu(DOL_URL_ROOT."/boutique/commande/", $langs->trans("Commandes"));
   
 	left_menu($menu->liste);
 }

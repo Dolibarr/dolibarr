@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
-   \file       htdocs/docs/document.class.php
-   \ingroup    editeurs
-   \brief      Classe de generation des courriers pour les editeurs
+ *   	\file       htdocs/docs/document.class.php
+ *  	\ingroup    editeurs
+ *  	\brief		Classe de generation des courriers pour les editeurs
+ *		\version	$Id$
 */
 
 
@@ -31,7 +28,7 @@ class Document
 {
   /**
      \brief      Constructeur
-     \param	 db	     Handler accès base de donnée
+     \param	 db	     Handler accï¿½s base de donnï¿½e
   */
   function Document ($db)
   {
@@ -41,7 +38,7 @@ class Document
 
 
   /**
-     \brief Génère le document
+     \brief Gï¿½nï¿½re le document
      \return int 0= ok, <> 0 = ko
   */
   function Generate ($id)

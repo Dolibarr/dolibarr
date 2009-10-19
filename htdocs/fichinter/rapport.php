@@ -17,9 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$ 
- * $Source$ 
- *
+ * $Id$
  */
 
 require("./pre.inc.php");
@@ -107,7 +105,7 @@ if ( $db->query($sql) )
   if (empty($socid))
     print '<td>'.$langs->trans("Customers").'</td>';
   print '<td align="center">'.$langs->trans("Description").'</td>';
-    
+
   print '<td align="center">Date</td>';
   print '<td align="center">'.$langs->trans("Duration").'</td>';
   print "</tr>\n";
@@ -132,7 +130,7 @@ if ( $db->query($sql) )
       print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
       $DureeTotal += $objp->duree;
       print "</tr>\n";
-      
+
       $i++;
     }
   print "</table>";

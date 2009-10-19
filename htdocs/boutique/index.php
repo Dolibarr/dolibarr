@@ -15,21 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/boutique/index.php
         \ingroup    boutique
 		\brief      Page accueil zone boutique
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
 
 $langs->load("boutique");
-
+$langs->load("orders");
 
 
 llxHeader("",$langs->trans("OSCommerceShop"),"");
@@ -140,7 +138,7 @@ if ( $dbosc->query($sql) )
 		$i = 0;
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="4">'.$langs->trans("Dernières commandes").'</td></tr>';
+		print '<td colspan="4">'.$langs->trans("LastOrders").'</td></tr>';
 
 		$num = min($num,OSC_MAXNBCOM);
 		while ($i < $num)

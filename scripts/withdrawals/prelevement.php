@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
- *       \file       scripts/prelevement/prelevement.php
- *       \ingroup    prelevement
- *       \brief      Script de prelevement
+ *      \file       scripts/prelevement/prelevement.php
+ *      \ingroup    prelevement
+ *      \brief      Script de prelevement
+ * 		\version	$Id$
  */
 
 // Test si mode CLI
@@ -97,7 +95,7 @@ if (!$error)
 	  $i++;
 		}
 		$db->free();
-		dol_syslog("$i factures à prelever");
+		dol_syslog("$i factures ï¿½ prelever");
 	}
 	else
 	{
@@ -116,7 +114,7 @@ if (!$error)
 if (!$error)
 {
 	/*
-	 * Vérification des RIB
+	 * Vï¿½rification des RIB
 	 *
 	 */
 	$i = 0;
@@ -266,7 +264,7 @@ if (sizeof($factures_prev) > 0)
 				$pai->amounts = array();
 				$pai->amounts[$fac[0]] = $fact->total_ttc;
 				$pai->datepaye = $db->idate($datetimeprev);
-				$pai->paiementid = 3; // prélèvement
+				$pai->paiementid = 3; // prï¿½lï¿½vement
 				$pai->num_paiement = $ref;
 
 				if ($pai->create($user, 1) == -1)  // on appelle en no_commit
@@ -282,7 +280,7 @@ if (sizeof($factures_prev) > 0)
 					$pai->valide();
 
 					/*
-					 * Ajout d'une ligne de prélèvement
+					 * Ajout d'une ligne de prï¿½lï¿½vement
 					 *
 					 *
 					 * $fac[3] : banque
@@ -302,7 +300,7 @@ if (sizeof($factures_prev) > 0)
 					}
 
 					/*
-					 * Mise à jour des demandes
+					 * Mise ï¿½ jour des demandes
 					 *
 					 */
 					$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
@@ -363,7 +361,7 @@ if (sizeof($factures_prev) > 0)
 	}
 
 	/*
-	 * Mise à jour du total
+	 * Mise ï¿½ jour du total
 	 *
 	 */
 
@@ -375,7 +373,7 @@ if (sizeof($factures_prev) > 0)
 	if (!$db->query($sql))
 	{
 		$error++;
-		dol_syslog("Erreur mise à jour du total");
+		dol_syslog("Erreur mise ï¿½ jour du total");
 		dol_syslog($sql);
 	}
 

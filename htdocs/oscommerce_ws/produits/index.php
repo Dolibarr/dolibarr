@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 require("./pre.inc.php");
@@ -58,7 +57,7 @@ elseif (!($err = $client->getError()) )
 
 // un produit osc
 	$OscProd = new Osc_Product($db);
-	
+
   	if ($num > 0) {
 		print "<TABLE width=\"100%\" class=\"noborder\">";
 		print '<TR class="liste_titre">';
@@ -71,7 +70,7 @@ elseif (!($err = $client->getError()) )
 		print '<TD align="center">Status</TD>';
 		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
-	   
+
 		while ($i < $num) {
       		$var=!$var;
       		$prodid = $OscProd->get_productid($result[$i][OSC_id]);
@@ -97,7 +96,7 @@ elseif (!($err = $client->getError()) )
 	}
 }
 else {
-	dol_print_error('',"Erreur service web ".$client->faultstring); 
+	dol_print_error('',"Erreur service web ".$client->faultstring);
 }
 
 print "</TABLE>";

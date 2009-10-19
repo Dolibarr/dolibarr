@@ -16,8 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 include_once(DOL_DOCUMENT_ROOT.'/rapport/Atome.class.php');
@@ -39,7 +37,7 @@ class AtomePropaleValidee extends Atome
     }
 
   /**
-   * 
+   *
    *
    *
    */
@@ -48,7 +46,7 @@ class AtomePropaleValidee extends Atome
       $sql = "SELECT date_format(f.datep,'%Y%m'), sum(f.price) as am";
       $sql .= " FROM ".MAIN_DB_PREFIX."propal as f";
       $sql .= " WHERE f.fk_statut = 2";
-      
+
       if ($this->year)
 	{
 	  $sql .= " AND date_format(f.datep,'%Y') = $this->year ";
@@ -63,7 +61,7 @@ class AtomePropaleValidee extends Atome
 	  while ($i < $num)
 	    {
 	      $row = $this->db->fetch_row($i);
-	      
+
 	      $arr[$row[0]] = $row[1];
 
 	      $i++;
@@ -76,7 +74,7 @@ class AtomePropaleValidee extends Atome
 	{
 	  print $this->db->error();
 	  return -3;
-	}    
-    }  
+	}
+    }
 }
 ?>

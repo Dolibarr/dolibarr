@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
  *	\brief      Page de traduction des produits
- *	\version    $Revision$
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");

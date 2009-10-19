@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 require_once("../../htdocs/master.inc.php");
@@ -47,7 +46,7 @@ if ($resql_c)
 
 	  $labels = array();
 	  $datas = array();
-	  
+
 	  $ydatas = array();
 	  $mdatas = array();
 	  $wdatas = array();
@@ -64,67 +63,67 @@ if ($resql_c)
 	    {
 	      $num = $db->num_rows($resql);
 	      $i = 0;
-	      
+
 	      if ($num > 0)
 		{
 		  $obj = $db->fetch_object($resql);
-		  
+
 		  //print strftime("%Y-%m-%d", $obj->date_releve) . "\t\t".$obj->valeur."\n";
-		  
+
 		  $previous_date  = $obj->date_releve;
 		  $previous_value = $obj->valeur;
-		  
+
 		  $i++;
 		}
-	      
+
 	      $datas = array();
 	      $k = 0;
-	      
+
 	      while ($i < $num)
 		{
 		  $obj = $db->fetch_object($resql);
-		  
+
 		  $delta = (($obj->date_releve - $previous_date) / 86400 );
-		  
+
 		  if ($delta > 1)
 		    {
 		      for ($j = 1 ; $j < $delta ; $j++)
 			{
 			  $value = $previous_value + ((($obj->valeur - $previous_value) / $delta) * $j);
-			  
+
 			  $datas[$k][0] = $value;
 			  $datas[$k][1] = ($previous_date + (86400 * $j));
 			  $k++;
-			  
+
 			  //print strftime("%Y-%m-%d", ($previous_date + (86400 * $j))) . "\t$j\t".$value."\n";
 			}
 		    }
-		  
+
 		  //print strftime("%Y-%m-%d", $obj->date_releve) . "\t\t".$obj->valeur."\n";
-		  
+
 		  $datas[$k][0] = $obj->valeur;
 		  $datas[$k][1] = $obj->date_releve;
 		  $k++;
-		  
+
 		  $previous_date = $obj->date_releve;
 		  $previous_value = $obj->valeur;
-		  $i++;      
+		  $i++;
 		}
-	      
+
 	      // Graph
 	      $maxa = 0;
- 
+
 	      for ($i = 1 ; $i < sizeof($datas) ; $i++)
 		{
 		  $xa = ($datas[$i][0] - $datas[($i-1)][0]);
-		  
+
 		  $maxa = max($maxa, $xa);
-		  
+
 		  $gdatas[$i-1] = $xa;
 		  $glabels[$i-1] = '';//strftime("%d%m",$datas[$i][1]);
-		  
+
 		  $month = strftime("%m%y",$datas[$i][1]);
-		  
+
 		  $mdatas[$compteur_id][$month] = $mdatas[$compteur_id][$month] + $xa;
 
 		  $week = strftime("%W%y",$datas[$i][1]);
@@ -135,7 +134,7 @@ if ($resql_c)
 
 		  $ydatas[$compteur_id][$year] = $ydatas[$compteur_id][$year] + $xa;
 		}
-	      
+
 	      $width = 750;
 	      $height = 300;
 	      if (sizeof($gdatas) > 2)
@@ -144,7 +143,7 @@ if ($resql_c)
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
-    
+
 		  $graph = new Graph($width, $height);
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
@@ -154,18 +153,18 @@ if ($resql_c)
 
 		  $bgcolor= new Color(222,231,236);
 		  $graph->setBackgroundColor($bgcolor);
-    
+
 		  $plot = new LinePlot($gdatas);
-    
+
 		  $plot->xAxis->setLabelText($glabels);
 		  $plot->xAxis->label->setFont(new Tuffy(7));
-		  
+
 		  $graph->add($plot);
 		  $graph->draw($file);
 		}
 	      $width = 450;
 	      $height = 300;
-	      
+
 	      // Mensuel
 	      $i=0;
 	      foreach ($mdatas[$compteur_id] as $key => $value)
@@ -180,7 +179,7 @@ if ($resql_c)
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
-    
+
 		  $graph = new Graph($width, $height);
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
@@ -190,14 +189,14 @@ if ($resql_c)
 
 		  $bgcolor= new Color(222,231,236);
 		  $graph->setBackgroundColor($bgcolor);
-    
+
 		  $plot = new BarPlot($gmdatas);
 		  $col = "blue";
 		  $color = new $col ;
 		  $plot->setBarColor($color);
 		  $plot->xAxis->setLabelText($gmlabels);
 		  $plot->xAxis->label->setFont(new Tuffy(7));
-		  
+
 		  $graph->add($plot);
 		  $graph->draw($file);
 		}
@@ -217,7 +216,7 @@ if ($resql_c)
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
-    
+
 		  $graph = new Graph($width, $height);
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
@@ -227,14 +226,14 @@ if ($resql_c)
 
 		  $bgcolor= new Color(222,231,236);
 		  $graph->setBackgroundColor($bgcolor);
-    
+
 		  $plot = new BarPlot($gwdatas);
 		  $col = "blue";
 		  $color = new $col ;
 		  $plot->setBarColor($color);
 		  $plot->xAxis->setLabelText($gwlabels);
 		  $plot->xAxis->label->setFont(new Tuffy(7));
-		  
+
 		  $graph->add($plot);
 		  $graph->draw($file);
 		}
@@ -249,14 +248,14 @@ if ($resql_c)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	     
+
 	      if (sizeof($gydatas))
 		{
 		  $file = $conf->energie->dir_graph."/year.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
-    
+
 		  $graph = new Graph($width, $height);
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
@@ -266,17 +265,17 @@ if ($resql_c)
 
 		  $bgcolor= new Color(222,231,236);
 		  $graph->setBackgroundColor($bgcolor);
-    
+
 		  $plot = new BarPlot($gydatas);
 		  $col = "blue";
 		  $color = new $col ;
 		  $plot->setBarColor($color);
 		  $plot->xAxis->setLabelText($gylabels);
 		  $plot->xAxis->label->setFont(new Tuffy(7));
-		  
+
 		  $graph->add($plot);
 		  $graph->draw($file);
-		}	      
+		}
 	    }
 	  else
 	    {
@@ -294,7 +293,7 @@ else
 }
 /*************************************************************
  * Groupes
- * 
+ *
  */
 
 $sql_g = "SELECT distinct fk_energie_groupe";
@@ -310,52 +309,52 @@ if ($resql_g)
   while ($i_g < $num_g)
     {
       $row_g = $db->fetch_row($resql_g);
-            
+
       $sql_c = "SELECT fk_energie_compteur";
       $sql_c .= " FROM ".MAIN_DB_PREFIX."energie_compteur_groupe";
-      $sql_c .= " WHERE fk_energie_groupe = ".$row_g[0];	  
-      
+      $sql_c .= " WHERE fk_energie_groupe = ".$row_g[0];
+
       $resql_c = $db->query($sql_c);
-      
+
       if ($resql_c)
 	{
 	  $num_c = $db->num_rows($resql_c);
 	  $i_c = 0;
-	  
+
 	  $compteurs = array();
 	  while ($i_c < $num_c)
 	    {
 	      $obj_c = $db->fetch_object($resql_c);
-	      
+
 	      array_push($compteurs,$obj_c->fk_energie_compteur);
 	      $i_c++;
 	    }
-	  	  	 	  
+
 	  $width = 450;
 	  $height = 300;
 
 	  // Hebdo
 	  $file = $conf->energie->dir_graph."/groupe.week.".$row_g[0].".png";
-	  
+
 	  $group = new PlotGroup;
 	  $group->setPadding(30, 10, NULL, NULL);
-	  
+
 	  $graph = new Graph($width, $height);
 	  $graph->border->hide();
 	  $graph->setAntiAliasing(true);
-	  
+
 	  $graph->title->set("Consommation hebdomadaire");
 	  $graph->title->setFont(new Tuffy(10));
-	  
+
 	  $bgcolor= new Color(222,231,236);
 	  $graph->setBackgroundColor($bgcolor);
-	  
+
 	  $gbspl = array();
 	  foreach ($compteurs as $cx)
 	    {
 	      $gydatas = array();
 	      $gylabels = array();
-	      
+
 	      $i=0;
 	      foreach ($wdatas[$cx] as $key => $value)
 		{
@@ -363,7 +362,7 @@ if ($resql_g)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	      
+
 	      array_push($gbspl, $bplot);
 
 	      $plot = new BarPlot($gydatas);
@@ -372,33 +371,33 @@ if ($resql_g)
 	      $plot->setBarColor($color);
 	      $plot->xAxis->setLabelText($gylabels);
 	      $plot->xAxis->label->setFont(new Tuffy(7));
-	      $graph->add($plot);	      	      
+	      $graph->add($plot);
 	    }
-	  
+
 	  $graph->draw($file);
 	  //
 	  //
 	  //
-	  $file = $conf->energie->dir_graph."/groupe.month.".$row_g[0].".png";	  
+	  $file = $conf->energie->dir_graph."/groupe.month.".$row_g[0].".png";
 	  $group = new PlotGroup;
 	  $group->setPadding(30, 10, NULL, NULL);
-	  
+
 	  $graph = new Graph($width, $height);
 	  $graph->border->hide();
 	  $graph->setAntiAliasing(true);
-	  
+
 	  $graph->title->set("Consommation mensuelle");
 	  $graph->title->setFont(new Tuffy(10));
-	  
+
 	  $bgcolor= new Color(222,231,236);
 	  $graph->setBackgroundColor($bgcolor);
-	  
+
 	  $gbspl = array();
 	  foreach ($compteurs as $cx)
 	    {
 	      $gydatas = array();
 	      $gylabels = array();
-	      
+
 	      $i=0;
 	      foreach ($mdatas[$cx] as $key => $value)
 		{
@@ -406,7 +405,7 @@ if ($resql_g)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	      
+
 	      array_push($gbspl, $bplot);
 
 	      $plot = new BarPlot($gydatas);
@@ -416,9 +415,9 @@ if ($resql_g)
 	      $plot->xAxis->setLabelText($gylabels);
 	      $plot->xAxis->label->setFont(new Tuffy(7));
 	      $graph->add($plot);
-	      	      
+
 	    }
-	  
+
 	  $graph->draw($file);
 
 	  //
@@ -427,23 +426,23 @@ if ($resql_g)
 	  $file = $conf->energie->dir_graph."/groupe.year.".$row_g[0].".png";
 	  $group = new PlotGroup;
 	  $group->setPadding(30, 10, NULL, NULL);
-	  
+
 	  $graph = new Graph($width, $height);
 	  $graph->border->hide();
 	  $graph->setAntiAliasing(true);
-	  
+
 	  $graph->title->set("Consommation annuelle");
 	  $graph->title->setFont(new Tuffy(10));
-	  
+
 	  $bgcolor= new Color(222,231,236);
 	  $graph->setBackgroundColor($bgcolor);
-	  
+
 	  $gbspl = array();
 	  foreach ($compteurs as $cx)
 	    {
 	      $gydatas = array();
 	      $gylabels = array();
-	      
+
 	      $i=0;
 	      foreach ($ydatas[$cx] as $key => $value)
 		{
@@ -451,7 +450,7 @@ if ($resql_g)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	      
+
 	      array_push($gbspl, $bplot);
 
 	      $plot = new BarPlot($gydatas);
@@ -461,9 +460,9 @@ if ($resql_g)
 	      $plot->xAxis->setLabelText($gylabels);
 	      $plot->xAxis->label->setFont(new Tuffy(7));
 	      $graph->add($plot);
-	      	      
+
 	    }
-	  
+
 	  $graph->draw($file);
 	  //
 	}

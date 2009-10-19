@@ -15,24 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-	    \file       htdocs/societe/notify.index.php
+	    \file       htdocs/societe/notify/index.php
 		\ingroup    notification
-		\brief      Liste des notifications réalisées
-		\version    $Revision$
+		\brief      List of done notifications
+		\version    $Id$
 */
- 
+
 require("./pre.inc.php");
 $langs->load("companies");
 $langs->load("banks");
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
+// Sï¿½curitï¿½ accï¿½s client
+if ($user->societe_id > 0)
 {
 	$action = '';
 	$socid = $user->societe_id;
@@ -76,10 +73,10 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
-	
+
 	$paramlist='';
 	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, "index.php", $paramlist, $sortfield,$sortorder,'',$num);
-	
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield,$sortorder);
@@ -90,9 +87,9 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-	
+
 		$var=!$var;
-	
+
 		print "<tr $bc[$var]>";
 		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">$obj->nom</A></td>\n";
 		print "<td>".$obj->firstname." ".$obj->name."</td>\n";

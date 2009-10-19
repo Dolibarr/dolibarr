@@ -16,8 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 include_once(DOL_DOCUMENT_ROOT.'/rapport/Atome.class.php');
@@ -41,12 +39,12 @@ class AtomeFactureValidee extends Atome
     }
 
   /**
-   * 
+   *
    *
    *
    */
   function fetch()
-    {      
+    {
       if ($this->periode == 'year')
 	{
 	  $sql = "SELECT date_format(f.datef,'%Y%m'), sum(f.amount) as am";
@@ -74,7 +72,7 @@ class AtomeFactureValidee extends Atome
 	  while ($i < $num)
 	    {
 	      $row = $this->db->fetch_row($i);
-	      
+
 	      $arr[$row[0]] = $row[1];
 	      //print $row[0] .'-'.$row[1]. '<br>';
 	      $i++;
@@ -89,7 +87,7 @@ class AtomeFactureValidee extends Atome
 	  print $this->db->error();
 	  print "<br>$sql";
 	  return -3;
-	}    
-    }  
+	}
+    }
 }
 ?>

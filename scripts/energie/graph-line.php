@@ -16,8 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 require_once("../../htdocs/master.inc.php");
@@ -64,66 +62,66 @@ if ($resql_c)
 	    {
 	      $num = $db->num_rows($resql);
 	      $i = 0;
-	      
+
 	      if ($num > 0)
 		{
 		  $obj = $db->fetch_object($resql);
-		  
+
 		  $previous_date  = $obj->date_releve;
 		  $previous_value = $obj->valeur;
-		  
+
 		  $i++;
 		}
-	      
+
 	      $datas = array();
 	      $k = 0;
-	      
+
 	      while ($i < $num)
 		{
 		  $obj = $db->fetch_object($resql);
-		  
+
 		  $delta = (($obj->date_releve - $previous_date) / 86400 );
-		  
+
 		  if ($delta > 1)
 		    {
 		      for ($j = 1 ; $j < $delta ; $j++)
 			{
 			  $value = $previous_value + ((($obj->valeur - $previous_value) / $delta) * $j);
-			  
+
 			  $datas[$k][0] = $value;
 			  $datas[$k][1] = ($previous_date + (86400 * $j));
 			  $k++;
-			  
+
 			  //print strftime("%Y-%m-%d", ($previous_date + (86400 * $j))) . "\t$j\t".$value."\n";
 			}
 		    }
-		  
+
 		  //print strftime("%Y-%m-%d", $obj->date_releve) . "\t\t".$obj->valeur."\n";
-		  
+
 		  $datas[$k][0] = $obj->valeur;
 		  $datas[$k][1] = $obj->date_releve;
 		  $k++;
-		  
+
 		  $previous_date = $obj->date_releve;
 		  $previous_value = $obj->valeur;
-		  $i++;      
+		  $i++;
 		}
-	      
+
 	      // Graph
 	      $maxa = 0;
- 
+
 	      $xdatas = array();
 	      $xlabels = array();
 
 	      for ($i = 1 ; $i < sizeof($datas) ; $i++)
 		{
 		  $xa = ($datas[$i][0] - $datas[($i-1)][0]);
-		  
+
 		  $maxa = max($maxa, $xa);
-		  
+
 		  $gdatas[$i-1] = $xa;
 		  $glabels[$i-1] = strftime("%d%m",$datas[$i][1]);
-		  
+
 		  $xdatas[$glabels[$i-1]] = $gdatas[$i-1];
 		}
 
@@ -143,17 +141,17 @@ if ($resql_c)
 		  $day += 86400;
 		  $xyear = strftime("%Y",$day);
 		}
-	      
+
 	      if (sizeof($xydatas) > 2)
 		{
 		  $width = 750;
 		  $height = 300;
-      
+
 		  $file = $conf->energie->dir_graph."/all.".$obj_c->rowid.".png";
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
-    
+
 		  $graph = new Graph($width, $height);
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
@@ -163,10 +161,10 @@ if ($resql_c)
 
 		  $bgcolor= new Color(222,231,236);
 		  $graph->setBackgroundColor($bgcolor);
-    
+
 		  $plot = new LinePlot($xydatas);
 		  $plot->xAxis->Hide();
-		  
+
 		  $graph->add($plot);
 		  $graph->draw($file);
 
@@ -177,7 +175,7 @@ if ($resql_c)
 
 		  $group = new PlotGroup;
 		  $group->setPadding(30, 10, NULL, NULL);
-    
+
 		  $graph = new Graph($width, $height);
 		  $graph->border->hide();
 		  $graph->setAntiAliasing(true);
@@ -187,10 +185,10 @@ if ($resql_c)
 
 		  $bgcolor= new Color(222,231,236);
 		  $graph->setBackgroundColor($bgcolor);
-    
+
 		  $plot = new LinePlot($xydatas);
 		  $plot->xAxis->Hide();
-		  
+
 		  $graph->add($plot);
 		  $graph->draw($file);
 		}

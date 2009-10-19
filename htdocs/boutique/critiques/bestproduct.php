@@ -45,7 +45,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des produits classés pas critiques", $page, "bestproduct.php");
+print_barre_liste("Liste des produits classes par critiques", $page, "bestproduct.php");
 
 $sql = "SELECT sum(r.reviews_rating)/count(r.reviews_rating) as rat, r.products_id, p.products_model, p.products_quantity, p.products_status";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."reviews as r,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products as p ";
@@ -58,7 +58,7 @@ $sql .= $dbosc->plimit( $limit ,$offset);
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\"><td>".$langs->trans("Ref");
 print '</td><TD align="center">Indice critiques</TD>';
-print '</td><td align="center">Quantité';
+print '</td><td align="center">Quantite';
 print '</td><td align="center">Status</TD>';
 print "</TR>\n";
 
