@@ -91,3 +91,7 @@ TooMuchErrors = Todavía hay <b>%s</b> líneas con error, pero su visualización
 TooMuchWarnings = Todavía hay <b>%s</b> líneas con warnings, pero su visualización ha sido limitada.
 EmptyLine = Línea en blanco
 CorrectErrorBeforeRunningImport = Debe corregir todos los errores antes de iniciar la importación definitiva.
+FileWasImported = El archivo se ha importado con el número de importación <b>%s</b>. 
+YouCanUseImportIdToFindRecord = Puede encontrar los registros de esta importación en su base de datos filtrando el campo <b>import_key='%s'</b>.
+NbOfLinesOK = Número de líneas sin errores ni warnings: <b>%s</b>.
+NbOfLinesImported = Número de líneas correctamente importadas: <b>%s</b>.

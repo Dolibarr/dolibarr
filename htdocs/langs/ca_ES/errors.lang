@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - errors 
+# Dolibarr language file - ca_ES - errors
 CHARSET = UTF-8
 Error = Error
 Errors = Errors
@@ -55,5 +55,6 @@ WarningConfFileMustBeReadOnly = Atenció, el seu fitxer (<b>htdocs/conf/conf.php
 ErrorModuleRequireJavascript = Javascript ha d'estar activat per a que aquesta opció pugui utilitzar-se. Per activar/desactivar JavaScript, aneu al menú Inici->Configuració->Entorn.
 ErrorPasswordsMustMatch = Les 2 contrasenyes indicades s'han de correspondre
 ErrorContactEMail = S'ha produït un error tècnic. Contacti amb l'administrador al e-mail <b>%s</b>, indicant el codi d'error <b>%s</b> en el seu missatge, o pot també adjuntar una còpia de pantalla d'aquesta pàgina.
+ErrorWrongValueForField = Valor incorrecte per al camp nombre <b>%s</b> (el valor '<b>%s</b>' no compleix amb la regla <b>%s</b>)
 ErrorsOnXLines = Errors a <b>%s</b> línies font
 WarningsOnXLines = Alertes a <b>%s</b> línies font

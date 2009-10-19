@@ -91,3 +91,7 @@ TooMuchErrors = Encara hi ha <b>%s</b> línies amb error, però la seva visualit
 TooMuchWarnings = Encara hi ha <b>%s</b> línies amb warnings, però la seva visualització ha estat limitada.
 EmptyLine = Línia en blanc
 CorrectErrorBeforeRunningImport = Ha de corregir tots els errors abans d'iniciar la importació definitiva.
+FileWasImported = El fitxer s'ha importat amb el número d'importació <b>%s</b>. 
+YouCanUseImportIdToFindRecord = Podeu trobar els registres d'aquesta importació a la base de dades filtrant el camp <b>import_key='%s'</b>.
+NbOfLinesOK = Nombre de línies sense errors ni warnings: <b>%s</b>. 
+NbOfLinesImported = Nombre de línies correctament importades: <b>%s</b>. 
