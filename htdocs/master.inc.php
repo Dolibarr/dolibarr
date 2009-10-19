@@ -37,7 +37,10 @@ define('EURO',chr(128));
 // Definition des constantes syslog
 if (function_exists("define_syslog_variables"))
 {
-	define_syslog_variables();
+	if (version_compare(PHP_VERSION, '5.3.0', '<'))
+	{
+		define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
+	}
 }
 else
 {
