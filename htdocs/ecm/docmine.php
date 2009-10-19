@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,7 +245,7 @@ while ($tmpecmdir && $result > 0)
 	$tmpecmdir->ref=$tmpecmdir->label;
 	if ($i == 0 && $_GET["action"] == 'edit')
 	{
-		$s='<input type="text" name="label" size="32" value="'.$tmpecmdir->label.'">';
+		$s='<input type="text" name="label" size="40" maxlength="32" value="'.$tmpecmdir->label.'">';
 	}
 	else $s=$tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
