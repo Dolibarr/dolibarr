@@ -510,7 +510,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			// Show link
 			print '<td valign="middle">';
 			if ($section == $val['id']) print ' <u>';
-			print $ecmdirstatic->getNomUrl(0,'index',20);
+			print $ecmdirstatic->getNomUrl(0,'index',24);
 			if ($section == $val['id']) print '</u>';
 			print '</td>';
 			print '<td>&nbsp;</td>';
