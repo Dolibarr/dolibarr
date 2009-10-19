@@ -87,10 +87,10 @@ $formfile = new FormFile($db);
 // Init $array_match_file_to_database from _SESSION
 $serialized_array_match_file_to_database=isset($_SESSION["dol_array_match_file_to_database"])?$_SESSION["dol_array_match_file_to_database"]:'';
 $array_match_file_to_database=array();
-$fieldsarray=split(',',$serialized_array_match_file_to_database);
+$fieldsarray=explode(',',$serialized_array_match_file_to_database);
 foreach($fieldsarray as $elem)
 {
-	$tabelem=split('=',$elem,2);
+	$tabelem=explode('=',$elem,2);
 	$key=$tabelem[0];
 	$val=$tabelem[1];
 	if ($key && $val)
@@ -222,10 +222,10 @@ if ($step == 4 && $action == 'select_model')
 	if ($result > 0)
 	{
 		$serialized_array_match_file_to_database=$objimport->hexa;
-		$fieldsarray=split(',',$serialized_array_match_file_to_database);
+		$fieldsarray=explode(',',$serialized_array_match_file_to_database);
 		foreach($fieldsarray as $elem)
 		{
-			$tabelem=split('=',$elem);
+			$tabelem=explode('=',$elem);
 			$key=$tabelem[0];
 			$val=$tabelem[1];
 			if ($key && $val)
@@ -241,7 +241,7 @@ if ($action == 'saveorder')
 {
 	// Enregistrement de la position des champs
 	dol_syslog("boxorder=".$_GET['boxorder']." datatoimport=".$_GET["datatoimport"], LOG_DEBUG);
-	$part=split(':',$_GET['boxorder']);
+	$part=explode(':',$_GET['boxorder']);
 	$colonne=$part[0];
 	$list=$part[1];
 	dol_syslog('column='.$colonne.' list='.$list);
@@ -252,7 +252,7 @@ if ($action == 'saveorder')
 	// Reinit match arrays. We redefine array_match_file_to_database
 	$serialized_array_match_file_to_database='';
 	$array_match_file_to_database=array();
-	$fieldsarray=split(',',$list);
+	$fieldsarray=explode(',',$list);
 	$pos=0;
 	foreach($fieldsarray as $fieldnb)	// For each elem in list. fieldnb start from 1 to ...
 	{

@@ -165,10 +165,10 @@ FILE_SKIP_EMPTY_LINES);
 	private function translateTexts($src_texts = array(), $src_lang,
 $dest_lang){
 
-		$tmp=split('_',$src_lang);
+		$tmp=explode('_',$src_lang);
 		if ($tmp[0] == $tmp[1]) $src_lang=$tmp[0];
 
-		$tmp=split('_',$dest_lang);
+		$tmp=explode('_',$dest_lang);
 		if ($tmp[0] == $tmp[1]) $dest_lang=$tmp[0];
 
 		//setting language pair

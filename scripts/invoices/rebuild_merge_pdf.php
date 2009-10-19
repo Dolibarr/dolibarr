@@ -77,7 +77,7 @@ foreach ($argv as $key => $value)
 	if (eregi('^lang=',$value))
 	{
 		$found=true;
-		$valarray=split('=',$value);
+		$valarray=explode('=',$value);
 		$newlangid=$valarray[1];
 		print 'Use language '.$newlangid.".\n";
 	}
