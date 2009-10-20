@@ -2328,7 +2328,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	//print "amount=".$amount."-";
 	$amount = ereg_replace(',','.',$amount);	// should be useless
 	//print $amount."-";
-	$datas = split('\.',$amount);
+	$datas = explode('.',$amount);
 	$decpart = isset($datas[1])?$datas[1]:'';
 	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie decimale
 	//print "decpart=".$decpart."<br>";
@@ -2793,7 +2793,7 @@ function dol_string_is_good_iso($s)
 function dol_nboflines($s,$maxchar=0)
 {
 	if ($s == '') return 0;
-	$arraystring=split("\n",$s);
+	$arraystring=explode("\n",$s);
 	$nb=sizeof($arraystring);
 
 	return $nb;

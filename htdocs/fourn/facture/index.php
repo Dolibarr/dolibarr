@@ -102,10 +102,10 @@ if ($socid)
 }
 if ($_GET["filtre"])
   {
-    $filtrearr = split(",", $_GET["filtre"]);
+    $filtrearr = explode(",", $_GET["filtre"]);
     foreach ($filtrearr as $fil)
       {
-	$filt = split(":", $fil);
+	$filt = explode(":", $fil);
 	$sql .= " AND " . $filt[0] . " = " . $filt[1];
       }
   }

@@ -108,13 +108,13 @@ class Translate {
 			$langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
 			$langpref=eregi_replace(";[^,]*","",$langpref);
 			$langpref=eregi_replace("-","_",$langpref);
-			$langlist=split("[;,]",$langpref);
+			$langlist=preg_split("/[;,]/",$langpref);
 			$codetouse=$langlist[0];
 		}
 		else $codetouse=$srclang;
 
 		// We redefine $srclang
-		$langpart=split("_",$codetouse);
+		$langpart=explode("_",$codetouse);
 		//print "Short before _ : ".$langpart[0].'/ Short after _ : '.$langpart[1];
 
 		if (isset($langpart[1]))	// If its a long code xx_YY
@@ -201,7 +201,7 @@ class Translate {
 		//dol_syslog("Translate::Load langofdir=".$langofdir);
 
 		// Redefine alt
-		$langarray=split('_',$langofdir);
+		$langarray=explode('_',$langofdir);
 		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
 
@@ -243,7 +243,7 @@ class Translate {
 						{
 							if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
 							{
-								$tab=split('=',$ligne,2);
+								$tab=explode('=',$ligne,2);
 								$key=trim($tab[0]);
 								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 								if (empty($this->tab_translate[$key]) && isset($tab[1]))
@@ -589,7 +589,7 @@ class Translate {
 		global $conf;
 
 		$outlang=$this->defaultlang;	// Output language we want
-		$outlangarray=split('_',$outlang,2);
+		$outlangarray=explode('_',$outlang,2);
 		// If lang is xx_XX, then we use xx
 		if (strtolower($outlangarray[0]) == strtolower($outlangarray[1])) $outlang=$outlangarray[0];
 

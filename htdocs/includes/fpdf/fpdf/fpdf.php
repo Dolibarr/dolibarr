@@ -2296,7 +2296,7 @@ function _enddoc()
 							if (eregi("rgb",$attr['style'])){
 								//print 'style rgb '.$attr['style'].'<br>';
 								$coul = substr($attr['style'],11,-2);
-								list($R, $G, $B) = split(', ', $coul);
+								list($R, $G, $B) = explode(', ', $coul);
 							}
 							else if (eregi("#",$attr['style'])){
 								//print 'style hexa '.$attr['style'].'<br>';

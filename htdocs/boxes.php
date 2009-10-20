@@ -203,16 +203,16 @@ class InfoBox
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$colonnes=split('-',$boxorder);
+			$colonnes=explode('-',$boxorder);
 			foreach ($colonnes as $collist)
 			{
-				$part=split(':',$collist);
+				$part=explode(':',$collist);
 				$colonne=$part[0];
 				$list=$part[1];
 				dol_syslog('InfoBox::saveboxorder column='.$colonne.' list='.$list);
 
 				$i=0;
-				$listarray=split(',',$list);
+				$listarray=explode(',',$list);
 				foreach ($listarray as $id)
 				{
 					if (is_numeric($id))

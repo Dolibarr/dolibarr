@@ -395,7 +395,7 @@ else
 	        $i=0;
 	        while ($i < $nboflines && $i < 1000)
 	        {
-	        	$vals=split(' +',utf8_encode($buff[$i]),9);
+	        	$vals=explode(' +',utf8_encode($buff[$i]),9);
 
 	        	$file=$vals[8];
 				if (empty($file))

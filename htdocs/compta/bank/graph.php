@@ -757,7 +757,7 @@ if ($account)
 	else
 	{
 		$bankaccount=new Account($db);
-		$listid=split(',',$account);
+		$listid=explode(',',$account);
 		foreach($listid as $key => $id)
 		{
 			$bankaccount->fetch($id);

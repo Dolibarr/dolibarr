@@ -116,7 +116,7 @@ class Conf
 					// If this is constant for a new tab page activated by a module
 					if (eregi('^MAIN_MODULE_([A-Z_]+)_TABS_',$key) && $value)
 					{
-						$params=split(':',$value,2);
+						$params=explode(':',$value,2);
 						$this->tabs_modules[$params[0]][]=$value;
 						//print 'xxx'.$params[0].'-'.$value;
 					}

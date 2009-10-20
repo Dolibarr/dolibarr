@@ -47,8 +47,8 @@ class FormAdmin
 
 
 	/**
-	 *    \brief      Retourne la liste déroulante des langues disponibles
-	 *    \param      selected        Langue pré-sélectionnée
+	 *    \brief      Retourne la liste dï¿½roulante des langues disponibles
+	 *    \param      selected        Langue prï¿½-sï¿½lectionnï¿½e
 	 *    \param      htmlname        Nom de la zone select
 	 *    \param      showauto        Affiche choix auto
 	 */
@@ -131,7 +131,7 @@ class FormAdmin
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
-			$tab=split('_',$key);
+			$tab=explode('_',$key);
 			$newprefix=$tab[0];
 			if (! empty($conf->browser->firefox) && $newprefix != $oldprefix)	// Add separators
 			{
@@ -179,7 +179,7 @@ class FormAdmin
         $oldprefix='';
 		foreach ($menuarray as $key => $val)
 		{
-			$tab=split('_',$key);
+			$tab=explode('_',$key);
 			$newprefix=$tab[0];
 			print '<option value="'.$key.'"';
             if ($key == $selected)

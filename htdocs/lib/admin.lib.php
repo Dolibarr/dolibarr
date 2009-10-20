@@ -73,7 +73,7 @@ function versioncompare($versionarray1,$versionarray2)
  */
 function versionphparray()
 {
-	return split('\.',PHP_VERSION);
+	return explode('.',PHP_VERSION);
 }
 
 /**
@@ -82,7 +82,7 @@ function versionphparray()
  */
 function versiondolibarrarray()
 {
-	return split('\.',DOL_VERSION);
+	return explode('.',DOL_VERSION);
 }
 
 
@@ -116,7 +116,7 @@ function run_sql($sqlfile,$silent=1)
 			// Cas special de lignes autorisees pour certaines versions uniquement
 			if (eregi('^-- V([0-9\.]+)',$buf,$reg))
 			{
-				$versioncommande=split('\.',$reg[1]);
+				$versioncommande=explode('.',$reg[1]);
 				//print var_dump($versioncommande);
 				//print var_dump($versionarray);
 				if (sizeof($versioncommande) && sizeof($versionarray)
@@ -475,7 +475,7 @@ function listOfSessions()
 					eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues) && // limit to current entity
 					eregi('dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
 				{
-					$tmp=split('_', $file);
+					$tmp=explode('_', $file);
 					$idsess=$tmp[1];
 					$login = eregi('dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"',$sessValues,$regs);
 					$arrayofSessions[$idsess]["login"] = $regs[1]; 
@@ -520,7 +520,7 @@ function purgeSessions($mysessionid)
 					eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues) && // limit to current entity
 					eregi('dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
 				{
-					$tmp=split('_', $file);
+					$tmp=explode('_', $file);
 					$idsess=$tmp[1];
 					// We remove session if it's not ourself
 					if ($idsess != $mysessionid)

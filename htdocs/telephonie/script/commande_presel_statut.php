@@ -19,7 +19,7 @@
  * $Source$
  *
  *
- * Recupération des fichiers CDR
+ * Recupï¿½ration des fichiers CDR
  *
  */
 require ("../../master.inc.php");
@@ -58,7 +58,7 @@ else
 
 if (sizeof($ids) == 0)
 {
-  _log($GLOBALS["argv"][0]. " Aucune lignes à traiter - fin", LOG_NOTICE);
+  _log($GLOBALS["argv"][0]. " Aucune lignes ï¿½ traiter - fin", LOG_NOTICE);
   exit(0);
 }
 
@@ -85,7 +85,7 @@ while ( $childrenNow < $childrenTotal )
     }
   elseif ( $pid  )
     {
-      // Père
+      // Pï¿½re
       $childrenNow++;
     }
   else
@@ -144,7 +144,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 
 	      if (preg_match("/<Preselection .* \/>/",$line))
 		{	      
-		  $results = split(" ",trim($line));
+		  $results = explode(" ",trim($line));
 		  //print_r($results);
 		  
 		  $array = array();
@@ -300,7 +300,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 	    }
 	  else
 	    {
-	      _log("$cli ERREUR impossible de récupérer les infos", LOG_ERR);
+	      _log("$cli ERREUR impossible de rï¿½cupï¿½rer les infos", LOG_ERR);
 	    }
 	  _log("$cli Fin Traitement ligne", LOG_NOTICE);
 	}

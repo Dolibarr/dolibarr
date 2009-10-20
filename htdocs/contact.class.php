@@ -248,7 +248,7 @@ class Contact extends CommonObject
 		global $conf,$langs;
 
 		// Object classes
-		$info["objectclass"]=split(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		// Champs
 		if ($this->getFullName($langs) && $conf->global->LDAP_CONTACT_FIELD_FULLNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->getFullName($langs);

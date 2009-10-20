@@ -240,7 +240,7 @@ if ($_POST["action"] == "set")
                         // Cas special de lignes autorisees pour certaines versions uniquement
                         if (eregi('^-- V([0-9\.]+)',$buf,$reg))
                         {
-                            $versioncommande=split('\.',$reg[1]);
+                            $versioncommande=explode('.',$reg[1]);
 							//print var_dump($versioncommande);
 							//print var_dump($versionarray);
                             if (sizeof($versioncommande) && sizeof($versionarray)
@@ -258,7 +258,7 @@ if ($_POST["action"] == "set")
                     fclose($fp);
 
 	                // Si plusieurs requetes, on boucle sur chaque
-	                $listesql=split(';',$buffer);
+	                $listesql=explode(';',$buffer);
 	                foreach ($listesql as $req)
 	                {
 	                	$buffer=trim($req);
@@ -350,7 +350,7 @@ if ($_POST["action"] == "set")
             }
 
             // Si plusieurs requetes, on boucle sur chaque
-            $listesql=split('�',eregi_replace(";';",";'�",$buffer));
+            $listesql=explode('§',preg_replace(";';",";'§",$buffer)); // TODO vérifier expression
             foreach ($listesql as $buffer) {
                 if (trim($buffer)) {
 

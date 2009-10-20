@@ -165,7 +165,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 					$sendto = eregi_replace(',',' ',$obj->prenom." ".$obj->nom)." <".$obj->email.">";
 
 					// Make subtsitutions on topic and body
-					$other=split(';',$obj->other);
+					$other=explode(';',$obj->other);
 					$other1=$other[0];
 					$other2=$other[1];
 					$other3=$other[2];

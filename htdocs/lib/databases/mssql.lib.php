@@ -214,7 +214,7 @@ class DoliDb
 	 */
 	function getVersionArray()
 	{
-		return split('\.',$this->getVersion());
+		return explode('.',$this->getVersion());
 	}
 
 
@@ -442,7 +442,7 @@ class DoliDb
 	 */
 	function affected_rows($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		// mssql necessite un link de base pour cette fonction contrairement
 		// a pqsql qui prend un resultset
@@ -453,22 +453,22 @@ class DoliDb
 
 
 	/**
-	 \brief      Lib�re le dernier resultset utilis� sur cette connexion.
+	 \brief      Libere le dernier resultset utilise sur cette connexion.
 	 \param      resultset   Curseur de la requete voulue
 	 */
 	function free($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
-		// Si resultset en est un, on libere la m�moire
+		// Si resultset en est un, on libere la memoire
 		if (is_resource($resultset)) mssql_free_result($resultset);
 	}
 
 
 	/**
-	 \brief      D�fini les limites de la requ�te.
-	 \param	    limit       nombre maximum de lignes retourn�es
-	 \param	    offset      num�ro de la ligne � partir de laquelle recup�rer les ligne
+	 \brief      Defini les limites de la requete.
+	 \param	    limit       nombre maximum de lignes retournees
+	 \param	    offset      numero de la ligne a partir de laquelle recuperer les ligne
 	 \return	    string      chaine exprimant la syntax sql de la limite
 	 */
 	function plimit($limit=0,$offset=0)
@@ -492,7 +492,7 @@ class DoliDb
 		if ($sortfield)
 		{
 			$return='';
-			$fields=split(',',$sortfield);
+			$fields=explode(',',$sortfield);
 			foreach($fields as $val)
 			{
 				if (! $return) $return.=' ORDER BY ';

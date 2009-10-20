@@ -1433,12 +1433,12 @@ class SMTPs
 
                 // Seperate "Real Name" from eMail address
                 $_tmpaddr = null;
-                $_tmpaddr = split ( '\<', $_strAddr );
+                $_tmpaddr = explode ( '<', $_strAddr );
 
                 // We have a "Real Name" and eMail address
                 if ( count ($_tmpaddr) == 2 )
                 {
-                    $_tmpHost = split ( '@', $_tmpaddr[1] );
+                    $_tmpHost = explode ( '@', $_tmpaddr[1] );
                     $_tmpaddr[0] = trim ( $_tmpaddr[0], ' ">' );
                     $aryHost[$_tmpHost[1]][$_type][$_tmpHost[0]] = $_tmpaddr[0];
                 }
@@ -1448,7 +1448,7 @@ class SMTPs
                     // Strip off the beggining '<'
                     $_strAddr = str_replace ( '<', '', $_strAddr );
 
-                    $_tmpHost = split ( '@', $_strAddr );
+                    $_tmpHost = explode ( '@', $_strAddr );
                     $_tmpHost[0] = trim ( $_tmpHost[0] );
                     $_tmpHost[1] = trim ( $_tmpHost[1] );
 
@@ -2499,6 +2499,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.9  2009/10/20 13:14:47  hregis
+  * Fix: function "split" is deprecated since php 5.3.0
+  *
   * Revision 1.8  2009/05/13 19:10:07  eldy
   * New: Can use inline images.Everything seems to work with thunderbird and webmail gmail. New to be tested on other mail browsers.
   *

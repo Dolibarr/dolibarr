@@ -248,7 +248,7 @@ class CMailFile
 			}
 
 			// Add to
-			$arrayTo=split(',',$to);
+			$arrayTo=explode(',',$to);
 			foreach($arrayTo as $val)
 			{
 				$mail->recipientlist[] = array( 'mail'=>$this->getValidAddress($val,2), 'nameplusmail' => $this->getValidAddress($val,0,1));
@@ -257,7 +257,7 @@ class CMailFile
 			// Add carbon copy
 			if (!empty($addr_cc))
 			{
-				$arrayTocc=split(',',$addr_cc);
+				$arrayTocc=explode(',',$addr_cc);
 				foreach($arrayTocc as $val)
 				{
 					if (!empty($mail->hcc)) $mail->hcc.= ",";
@@ -268,7 +268,7 @@ class CMailFile
 			// Add carbon copy cache
 			if (!empty($addr_bcc))
 			{
-				$arrayTobcc=split(',',$addr_bcc);
+				$arrayTobcc=explode(',',$addr_bcc);
 				foreach($arrayTobcc as $val)
 				{
 					if (!empty($mail->hbcc)) $mail->hbcc.= ",";
@@ -1030,7 +1030,7 @@ class CMailFile
 
 		$ret='';
 
-		$arrayaddress=split(',',$adresses);
+		$arrayaddress=explode(',',$adresses);
 
 		// Boucle sur chaque composant de l'adresse
 		foreach($arrayaddress as $val)

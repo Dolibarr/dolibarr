@@ -170,7 +170,7 @@ $var=True;
 // Loop on each trigger
 foreach ($orders as $key => $value)
 {
-    $tab=split('_',$value);
+    $tab=explode('_',$value);
     $family=$tab[0]; $numero=$tab[1];
 
     $modName = $modules[$key];

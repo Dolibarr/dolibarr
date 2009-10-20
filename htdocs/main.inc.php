@@ -153,7 +153,7 @@ if ($conf->file->main_force_https)
 		if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
 		{
 			$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
-			$val=split('/',$uri);
+			$val=explode('/',$uri);
 			$domaineport=$val[0];	// $domaineport contient nom domaine et port
 
 			$newurl='https://'.$domaineport.$_SERVER["REQUEST_URI"];
@@ -183,8 +183,8 @@ if (! empty($conf->global->MAIN_NOT_INSTALLED) || ! empty($conf->global->MAIN_NO
 if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
 {
 	require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
-	$dolibarrversionlastupgrade=split('[\.-]',$conf->global->MAIN_VERSION_LAST_UPGRADE);
-	$dolibarrversionprogram=split('[\.-]',DOL_VERSION);
+	$dolibarrversionlastupgrade=preg_split('/[.-]/',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+	$dolibarrversionprogram=preg_split('/[.-]/',DOL_VERSION);
 	if (versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade) > 0)	// Programs have a version higher than database
 	{
 		dol_syslog("main.inc: database version ".$conf->global->MAIN_VERSION_LAST_UPGRADE." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
@@ -218,7 +218,7 @@ if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only
 if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
 if (! empty($_SESSION["disablemodules"]))
 {
-	$disabled_modules=split(',',$_SESSION["disablemodules"]);
+	$disabled_modules=explode(',',$_SESSION["disablemodules"]);
 	foreach($disabled_modules as $module)
 	{
 		$conf->$module->enabled=false;
@@ -900,7 +900,7 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
 	if (! empty($conf->browser->phone)) $htmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
 
-	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',split(',',$_SESSION["disablemodules"]));
+	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',explode(',',$_SESSION["disablemodules"]));
 
 	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
 	//        print ' alt="'.$title.'" title="'.$title.'"';

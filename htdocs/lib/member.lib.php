@@ -19,7 +19,7 @@
 
 /**
  *	    \file       htdocs/lib/member.lib.php
- *		\brief      Ensemble de fonctions de base pour les adhérents
+ *		\brief      Ensemble de fonctions de base pour les adhï¿½rents
  *		\version    $Id$
  *
  *		Ensemble de fonctions de base de dolibarr sous forme d'include
@@ -73,7 +73,7 @@ function member_prepare_head($member)
 		$i=0;
 		foreach ($conf->tabs_modules['member'] as $value)
 		{
-			$values=split(':',$value);
+			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
 			$head[$h][0] = eregi_replace('__ID__',$member->id,$values[3]);
 			$head[$h][1] = $langs->trans($values[1]);

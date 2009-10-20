@@ -40,7 +40,7 @@ $langs->setDefaultLang($setuplang);
 $targetversion=DOL_VERSION;		// It it's last upgrade
 if (isset($_POST["action"]) && eregi('upgrade',$_POST["action"]))	// If it's an old upgrade
 {
-	$tmp=split('_',$_POST["action"],2);
+	$tmp=explode('_',$_POST["action"],2);
 	if ($tmp[0]=='upgrade' && ! empty($tmp[1])) $targetversion=$tmp[1];
 }
 
@@ -228,8 +228,8 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 			if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) $tagdatabase=true;	// We don't know what it was before, so now we consider we are version choosed.
 			else
 			{
-				$mainversionlastupgradearray=split('[\.-]',$conf->global->MAIN_VERSION_LAST_UPGRADE);
-				$targetversionarray=split('[\.-]',$targetversion);
+				$mainversionlastupgradearray=preg_split('/[.-]/',$conf->global->MAIN_VERSION_LAST_UPGRADE);
+				$targetversionarray=preg_split('/[.-]/',$targetversion);
 				if (versioncompare($targetversionarray,$mainversionlastupgradearray) > 0) $tagdatabase=true;
 			}
 

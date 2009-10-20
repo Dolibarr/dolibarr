@@ -19,7 +19,7 @@
  * $Source$
  *
  *
- * Recupération des fichiers CDR
+ * Recupï¿½ration des fichiers CDR
  *
  */
 require ("../../master.inc.php");
@@ -96,7 +96,7 @@ function GetPreselection_byRef($db, $host, $user_login, $user_passwd, $ids)
 		  
 		  if (preg_match("/<Preselection .* \/>/",$line))
 		    {	      
-		      $results = split(" ",trim($line));
+		      $results = explode(" ",trim($line));
 		      //print_r($results);
 		      
 		      $array = array();

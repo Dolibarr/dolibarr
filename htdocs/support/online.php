@@ -75,8 +75,8 @@ print '<table summary="listofgoldcoaches"><tr>';
 foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 {
 	if ($found >= $limit) break;
-	$listofwidgets=split(',',$arraywidget['id']);
-	$listoflangs=split(',',$arraywidget['lang']);
+	$listofwidgets=explode(',',$arraywidget['id']);
+	$listoflangs=explode(',',$arraywidget['lang']);
 	$pos=0;
 	foreach($listoflangs as $langcode)		// Loop on each lang of user
 	{

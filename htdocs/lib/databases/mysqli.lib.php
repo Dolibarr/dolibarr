@@ -249,7 +249,7 @@ class DoliDb
 	function getIntVersion()
 	{
 		$version=	$this->getVersion();
-		$vlist=split('[.-]',$version);
+		$vlist=preg_split('/[.-]/',$version);
 		if (strlen($vlist[1])==1){
 			$vlist[1]="0".$vlist[1];
 		}
@@ -265,7 +265,7 @@ class DoliDb
 	 */
 	function getVersionArray()
 	{
-		return split('\.',$this->getVersion());
+		return explode('.',$this->getVersion());
 	}
 
 
@@ -498,7 +498,7 @@ class DoliDb
 		if ($sortfield)
 		{
 			$return='';
-			$fields=split(',',$sortfield);
+			$fields=explode(',',$sortfield);
 			foreach($fields as $val)
 			{
 				if (! $return) $return.=' ORDER BY ';

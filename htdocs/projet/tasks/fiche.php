@@ -56,7 +56,7 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 		if (! $error)
 		{
-			$tmparray=split('_',$_POST['task_parent']);
+			$tmparray=explode('_',$_POST['task_parent']);
 			$projectid=$tmparray[0];
 			$task_parent=$tmparray[1];
 			if (empty($task_parent)) $task_parent=0;	// If task_parent is ''

@@ -241,10 +241,10 @@ $sortorder=$_GET["sortorder"];
  */
 if ($_POST["actionadd"] || $_POST["actionmodify"])
 {
-	$listfield=split(',',$tabfield[$_POST["id"]]);
-	$listfieldinsert=split(',',$tabfieldinsert[$_POST["id"]]);
-	$listfieldmodify=split(',',$tabfieldinsert[$_POST["id"]]);
-	$listfieldvalue=split(',',$tabfieldvalue[$_POST["id"]]);
+	$listfield=explode(',',$tabfield[$_POST["id"]]);
+	$listfieldinsert=explode(',',$tabfieldinsert[$_POST["id"]]);
+	$listfieldmodify=explode(',',$tabfieldinsert[$_POST["id"]]);
+	$listfieldvalue=explode(',',$tabfieldvalue[$_POST["id"]]);
 
 	// Check that all fields are filled
 	$ok=1;
@@ -493,7 +493,7 @@ if ($_GET["id"])
 	$sql.=$tabsqlsort[$_GET["id"]];
 	//print $sql;
 
-	$fieldlist=split(',',$tabfield[$_GET["id"]]);
+	$fieldlist=explode(',',$tabfield[$_GET["id"]]);
 
 	print '<form action="dict.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -505,7 +505,7 @@ if ($_GET["id"])
 		$alabelisused=0;
 		$var=false;
 
-		$fieldlist=split(',',$tabfield[$_GET["id"]]);
+		$fieldlist=explode(',',$tabfield[$_GET["id"]]);
 		//        print '<table class="noborder" width="100%">';
 
 		// Line for title

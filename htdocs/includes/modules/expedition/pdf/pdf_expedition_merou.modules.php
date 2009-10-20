@@ -483,7 +483,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$blSocY+=3;
 		//Adresse Client
 		//Gestion des Retours chariots
-		$Out=split("\n",$outputlangs->convToOutputCharset($this->expediteur->adresse));
+		$Out=explode("\n",$outputlangs->convToOutputCharset($this->expediteur->adresse));
 		for ($i=0;$i<count($Out);$i++) {
 			$pdf->SetXY($blExpX,$Yoff+$blSocY);
 			$pdf->MultiCell($blW,5,$Out[$i],  0, 'L');

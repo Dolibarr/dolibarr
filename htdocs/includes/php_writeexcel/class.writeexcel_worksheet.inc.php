@@ -1681,7 +1681,7 @@ function _write_url_external() {
     if (isset($sheet)) {
         $link_type |= 0x08;
         $sheet_len  = pack("V", length($sheet) + 0x01);
-        $sheet      = join("\0", split('', $sheet));
+        $sheet      = join("\0", explode('', $sheet));
         $sheet     .= "\0\0\0";
     } else {
         $sheet_len   = '';

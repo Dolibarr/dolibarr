@@ -54,10 +54,10 @@ $offset = $limit * $page ;
 if (empty($_REQUEST['typeid']))
 {
 	$newfiltre=eregi_replace('filtre=','',$filtre);
-	$filterarray=split('-',$newfiltre);
+	$filterarray=explode('-',$newfiltre);
 	foreach($filterarray as $val)
 	{
-		$part=split(':',$val);
+		$part=explode(':',$val);
 		if ($part[0] == 's.fk_type') $typeid=$part[1];
 	}
 }

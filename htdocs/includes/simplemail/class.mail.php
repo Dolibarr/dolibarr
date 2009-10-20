@@ -404,7 +404,7 @@ class simplemail {
 		$this->error_log("Socket vers $to");
 
 		// DOLCHANGE LDR: From has to be the raw email address, strip the "name" off
-		$fromarray=split(' ',$this->hfrom);
+		$fromarray=explode(' ',$this->hfrom);
 		$from=(empty($fromarray[1])?$fromarray[0]:$fromarray[1]);
 		$this->SocketSend( "MAIL FROM: ".$from."\r\n", '250');
 		$this->SocketSend( "RCPT TO: <".$to.">\r\n", '250');

@@ -164,12 +164,12 @@ foreach($fulltree as $key => $val)
 
 // Update expandedsectionarray in session
 $expandedsectionarray=array();
-if (isset($_SESSION['dol_catexpandedsectionarray'.$type])) $expandedsectionarray=split(',',$_SESSION['dol_catexpandedsectionarray'.$type]);
+if (isset($_SESSION['dol_catexpandedsectionarray'.$type])) $expandedsectionarray=explode(',',$_SESSION['dol_catexpandedsectionarray'.$type]);
 
 if ($section && $_GET['sectionexpand'] == 'true')
 {
 	// We add all sections that are parent of opened section
-	$pathtosection=split('_',$fullpathselected);
+	$pathtosection=explode('_',$fullpathselected);
 	foreach($pathtosection as $idcursor)
 	{
 		if ($idcursor && ! in_array($idcursor,$expandedsectionarray))	// Not already in array

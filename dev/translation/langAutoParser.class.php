@@ -142,12 +142,12 @@ FILE_SKIP_EMPTY_LINES);
 
 
 	private function getLineKey($line){
-		$arraykey = split('=',$line,2);
+		$arraykey = explode('=',$line,2);
 		return trim( $arraykey[0] );
 	}
 
 	private function getLineValue($line){
-		$arraykey = split('=',$line,2);
+		$arraykey = explode('=',$line,2);
 		return trim( $arraykey[1] );
 	}
 

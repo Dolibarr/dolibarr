@@ -92,10 +92,10 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if ($_GET["filtre"])
 	{
-		$filtrearr = split(",", $_GET["filtre"]);
+		$filtrearr = explode(",", $_GET["filtre"]);
 		foreach ($filtrearr as $fil)
 		{
-			$filt = split(":", $fil);
+			$filt = explode(":", $fil);
 			$sql .= " AND " . $filt[0] . " = " . $filt[1];
 		}
 	}
@@ -131,7 +131,7 @@ if ($user->rights->fournisseur->facture->lire)
 	$sql.= " GROUP BY f.facnumber";
 
 	$sql.= " ORDER BY ";
-	$listfield=split(',',$sortfield);
+	$listfield=explode(',',$sortfield);
 	foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
 	$sql.= " f.facnumber DESC";
 

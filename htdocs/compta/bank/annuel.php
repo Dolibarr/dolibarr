@@ -147,7 +147,7 @@ if ($_GET["account"])
 	else
 	{
 		$bankaccount=new Account($db);
-		$listid=split(',',$_GET["account"]);
+		$listid=explode(',',$_GET["account"]);
 		foreach($listid as $key => $id)
 		{
 			$bankaccount->fetch($id);

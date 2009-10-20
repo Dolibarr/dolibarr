@@ -188,7 +188,7 @@ if ($result)
 		$text=$langs->trans($obj->description);
 		if (eregi('\((.*)\)',$obj->description,$reg))
 		{
-			$val=split(',',$reg[1]);
+			$val=explode(',',$reg[1]);
 			$text=$langs->trans($val[0], isset($val[1])?$val[1]:'', isset($val[2])?$val[2]:'', isset($val[3])?$val[3]:'', isset($val[4])?$val[4]:'');
 		}
 		print $text;

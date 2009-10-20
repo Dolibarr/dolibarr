@@ -555,7 +555,7 @@ class UserGroup extends CommonObject
 		$info=array();
 
 		// Object classes
-		$info["objectclass"]=split(',',$conf->global->LDAP_GROUP_OBJECT_CLASS);
+		$info["objectclass"]=explode(',',$conf->global->LDAP_GROUP_OBJECT_CLASS);
 
 		// Champs
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_FULLNAME) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;

@@ -147,7 +147,7 @@ class Notify
                 {
                     $subject = $langs->transnoentitiesnoconv("DolibarrNotification");
                     $message = $texte;
-                    $filename = split("/",$file);
+                    $filename = explode("/",$file);
 					$msgishtml=0;
 
                     $replyto = $conf->notification->email_from;

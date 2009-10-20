@@ -129,7 +129,7 @@ function societe_prepare_head($objsoc)
         $i=0;
         foreach ($conf->tabs_modules['thirdparty'] as $value)
         {
-            $values=split(':',$value);
+            $values=explode(':',$value);
             if ($values[2]) $langs->load($values[2]);
             $head[$h][0] = eregi_replace('__ID__',$objsoc->id,$values[3]);
             $head[$h][1] = $langs->trans($values[1]);

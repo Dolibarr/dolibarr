@@ -228,7 +228,7 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
 	 */
 	if ($ok)
 	{
-		$versioncommande=split('\.','4.0');
+		$versioncommande=explode('.','4.0');
 		if (sizeof($versioncommande) && sizeof($versionarray)
 			&& versioncompare($versioncommande,$versionarray) <= 0)	// Si mysql >= 4.0
 		{

@@ -65,7 +65,7 @@ class ExportExcel extends ModeleExports
 		$this->desc='<b>Excel</b> file format (.xls)<br>This is native Excel 95 format.';
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
-		$ver=split(' ','$Revision$');
+		$ver=explode(' ','$Revision$');
 		$this->version=$ver[2];             // Driver version
 
 		// If driver use an external library, put its name here
@@ -214,14 +214,14 @@ class ExportExcel extends ModeleExports
 
 			if (eregi('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',$newvalue))
 			{
-				$arrayvalue=split('[\.,]',xl_parse_date($newvalue));
+				$arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
 				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
 				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
 				$this->worksheet->write($this->row, $this->col, $newvalue, $formatdate);
 			}
 			elseif (eregi('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$',$newvalue))
 			{
-				$arrayvalue=split('[\.,]',xl_parse_date($newvalue));
+				$arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
 				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
 				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
 				$this->worksheet->write($this->row, $this->col, $newvalue, $formatdatehour);

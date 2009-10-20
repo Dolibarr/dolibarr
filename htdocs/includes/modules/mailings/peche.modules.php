@@ -136,7 +136,7 @@ class mailing_peche extends MailingTargets
 					{
 						$cpt++;
 				        $buffer = trim(fgets($handle));
-			        	$tab=split(';',$buffer,4);
+			        	$tab=explode(';',$buffer,4);
 				        $email=$tab[0];
 				        $name=$tab[1];
 				        $firstname=$tab[2];

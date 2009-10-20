@@ -210,7 +210,7 @@ function dol_print_object_info($object)
  */
 function isValidMailDomain($mail)
 {
-	list($user, $domain) = split("@", $mail, 2);
+	list($user, $domain) = explode("@", $mail, 2);
 	if (checkdnsrr($domain, "MX"))
 	{
 		return true;

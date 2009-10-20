@@ -1944,7 +1944,7 @@ class Adherent extends CommonObject
 		$info=array();
 
 		// Object classes
-		$info["objectclass"]=split(',',$conf->global->LDAP_MEMBER_OBJECT_CLASS);
+		$info["objectclass"]=explode(',',$conf->global->LDAP_MEMBER_OBJECT_CLASS);
 
 		// Member
 		if ($this->fullname  && $conf->global->LDAP_MEMBER_FIELD_FULLNAME) $info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;

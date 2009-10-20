@@ -131,7 +131,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	global $dolibarr_main_demo;
 	if (! empty($dolibarr_main_demo))
 	{
-		$tab=split(',',$dolibarr_main_demo);
+		$tab=explode(',',$dolibarr_main_demo);
 		$demologin=$tab[0];
 		$demopassword=$tab[1];
 	}
@@ -152,7 +152,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 				$entityCookie = new DolCookie($cryptkey);
 				$cookieValue = $entityCookie->_getCookie($entityCookieName);
-				list($lastuser, $lastentity) = split('\|', $cookieValue);
+				list($lastuser, $lastentity) = explode('|', $cookieValue);
 			}
 		}
 	}
