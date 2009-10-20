@@ -38,8 +38,8 @@ if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 $urldolibarr='http://www.dolibarr.org/downloads/cat_view/62-stable-versions';
 $urldolibarrmodules='http://www.dolibarr.org/downloads/cat_view/65-modulesaddon';
 $urldolibarrthemes='http://www.dolibarr.org/';
-$dolibarrroot=eregi_replace('[\\\/]+$','',DOL_DOCUMENT_ROOT);
-$dolibarrroot=eregi_replace('[^\\\/]+$','',$dolibarrroot);
+$dolibarrroot=preg_replace('/([\\/]+)$/i','',DOL_DOCUMENT_ROOT);
+$dolibarrroot=preg_replace('/([^\\/]+)$/i','',$dolibarrroot);
 
 
 /*

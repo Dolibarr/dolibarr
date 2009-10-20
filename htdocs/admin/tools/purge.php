@@ -38,7 +38,7 @@ $filelog='';
 if ($conf->syslog->enabled)
 {
 	$filelog=SYSLOG_FILE;
-	$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 }
 
 
