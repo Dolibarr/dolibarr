@@ -49,8 +49,8 @@ print '<table class="border" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("URL").'</td></tr>';
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $firstpart=$dolibarr_main_url_root;
-$regex=DOL_URL_ROOT.'$';
-$firstpart=eregi_replace($regex,'',$firstpart);
+$regex='/'.DOL_URL_ROOT.'$/i';
+$firstpart=preg_replace($regex,'',$firstpart);
 print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/members/new.php'.'">'.$firstpart.DOL_URL_ROOT.'/public/members/new.php'.'</a></td></tr>';
 print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/members/public_list.php'.'">'.$firstpart.DOL_URL_ROOT.'/public/members/public_list.php'.'</a></td></tr>';
 print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.$firstpart.DOL_URL_ROOT.'/public/members/public_card.php?id=xxx'.'</td></tr>';

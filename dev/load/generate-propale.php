@@ -33,7 +33,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=eregi_replace('generate-propale.php','',$_SERVER["PHP_SELF"]);
+$path=preg_replace('/generate-propale.php/i','',$_SERVER["PHP_SELF"]);
 require ($path."../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");

@@ -26,8 +26,8 @@
 // Test if batch mode
 $sapi_type = php_sapi_name();
 $script_file=__FILE__;
-if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
-$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+if (preg_match('/([^\\/]+)$/i',$script_file,$reg)) $script_file = '/'.$reg[1].'/i';
+$path=preg_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 if (substr($sapi_type, 0, 3) == 'cgi')
 {
@@ -123,7 +123,7 @@ else
 
 // Define working variables
 $table=strtolower($table);
-$tablenollx=eregi_replace('llx_','',$table);
+$tablenollx=preg_replace('/llx_/i','',$table);
 $class=ucfirst($tablenollx);
 $classmin=strtolower($class);
 

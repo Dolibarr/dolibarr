@@ -713,7 +713,7 @@ class Adherent extends CommonObject
 
 		$error=0;
 
-		dol_syslog("Adherent::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
+		dol_syslog("Adherent::Password user=".$user->id." password=".preg_replace('/./i','*',$password)." isencrypted=".$isencrypted);
 
 		// Si nouveau mot de passe non communique, on genere par module
 		if (! $password)
