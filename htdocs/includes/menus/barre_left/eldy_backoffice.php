@@ -385,7 +385,7 @@ class MenuLeft {
 					$langs->load("suppliers");
 					$newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=suppliers", $langs->trans("Suppliers"),0,$user->rights->societe->lire && $user->rights->fournisseur->lire);
 
-					// S�curit� acc�s client
+					// Security check
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer && $user->rights->fournisseur->lire);
@@ -471,7 +471,7 @@ class MenuLeft {
 					if ($leftmenu=="donations") $newmenu->add(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 				}
 
-				// D�placements
+				// Deplacements
 				if ($conf->deplacement->enabled)
 				{
 					$langs->load("trips");
@@ -518,7 +518,7 @@ class MenuLeft {
 
 				}
 
-				// Pr�l�vements
+				// Prelevements
 				if ($conf->prelevement->enabled)
 				{
 					$langs->load("withdrawals");
@@ -559,7 +559,7 @@ class MenuLeft {
 				// Rapports
 				if ($conf->compta->enabled || $conf->accounting->enabled)
 				{
-					// Bilan, r�sultats
+					// Bilan, resultats
 					$newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
 					if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca",$langs->trans("ReportInOut"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
@@ -675,7 +675,7 @@ class MenuLeft {
 				{
 					$newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 0, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 
-					// S�curit� acc�s client
+					// Security check
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);

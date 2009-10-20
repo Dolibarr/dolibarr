@@ -58,9 +58,7 @@ class modDroitPret  extends DolibarrModules
 		$this->special = 3;
 
 		// Dir
-		global $dolibarr_smarty_compile;
-		global $dolibarr_smarty_cache;
-		$this->dirs = array($dolibarr_smarty_compile,$dolibarr_smarty_cache);
+		$this->dirs = array('/smarty/cache','/smarty/template');
 
 		// Dependances
 		$this->depends = array();

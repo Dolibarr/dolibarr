@@ -475,7 +475,6 @@ function write_conf_file($conffile)
 	global $dolibarr_main_url_root,$dolibarr_main_document_root,$dolibarr_main_data_root,$dolibarr_main_db_host;
 	global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
 	global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
-	global $dolibarr_smarty_libs_dir,$dolibarr_smarty_compile,$dolibarr_smarty_cache;
 
 	$error=0;
 
@@ -537,17 +536,6 @@ function write_conf_file($conffile)
 			fputs($fp, '$dolibarr_main_authentication="dolibarr";');
 		}
 		fputs($fp,"\n");
-
-		/* Preparation integration SMARTY */
-		fputs($fp, '$dolibarr_smarty_libs_dir="";');
-		fputs($fp,"\n");
-
-		fputs($fp, '$dolibarr_smarty_compile="";');
-		fputs($fp,"\n");
-
-		fputs($fp, '$dolibarr_smarty_cache="";');
-		fputs($fp,"\n");
-		/* Fin Smarty*/
 
 		fputs($fp, '?>');
 		fclose($fp);

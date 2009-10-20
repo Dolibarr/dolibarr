@@ -114,11 +114,7 @@ $configfileparameters=array(
 							'dolibarr_main_auth_ldap_dn',
 							'dolibarr_main_auth_ldap_admin_login',
 							'dolibarr_main_auth_ldap_admin_pass',
-							'dolibarr_main_auth_ldap_debug',
-							'separator',
-							'dolibarr_smarty_libs_dir',
-							'dolibarr_smarty_compile',
-							'dolibarr_smarty_cache'
+							'dolibarr_main_auth_ldap_debug'
 						);
 $configfilelib=array(
 //					'separator',
@@ -144,11 +140,7 @@ $configfilelib=array(
 					'dolibarr_main_auth_ldap_dn',
 					'dolibarr_main_auth_ldap_admin_login',
 					'dolibarr_main_auth_ldap_admin_pass',
-					'dolibarr_main_auth_ldap_debug',
-					'separator',
-					$langs->trans("SmartyLibs"),
-					$langs->trans("SmartyCompile"),
-					$langs->trans("SmartyCache")
+					'dolibarr_main_auth_ldap_debug'
 					);
 $var=true;
 print '<table class="noborder" width="100%">';

@@ -597,10 +597,7 @@ else                        // Si utilisateur externe
 // If there is at least one module using Smarty
 if (sizeof($conf->need_smarty) > 0)
 {
-	// SMARTY (Defined into conf file)
-	// $dolibarr_smarty_libs_dir="/home/www/dolibarr/htdocs/includes/smarty/libs/";
-	// $dolibarr_smarty_compile="/home/www/dolibarr/documents/smarty/templates/temp";
-	// $dolibarr_smarty_cache="/home/www/dolibarr/documents/smarty/cache/temp";
+	// Usage of constats in conf.php file is no more required.
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';

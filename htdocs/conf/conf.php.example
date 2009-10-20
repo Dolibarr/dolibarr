@@ -165,18 +165,6 @@ $dolibarr_main_force_https="0";
 # $dolibarr_main_auth_ldap_debug="false";
 
 
-# Parameters not used yet
-# dolibarr_smarty_libs_dir,dolibarr_smarty_compile,dolibarr_smarty_cache
-# Examples:
-# $dolibarr_smarty_libs_dir="/var/www/dolibarr/htdocs/includes/smarty/libs/";
-# $dolibarr_smarty_compile="/var/www/dolibarr/documents/temp/smarty_templates";
-# $dolibarr_smarty_cache="/var/www/dolibarr/documents/temp/smarty_cache";
-#
-$dolibarr_smarty_libs_dir="";
-$dolibarr_smarty_compile="";
-$dolibarr_smarty_cache="";
-
-
 # Login and pass to use in a demo mode
 # Default value: 0
 # Possible values: 0 or 1
