@@ -61,7 +61,6 @@ function afficheDonnees (aId, aTexte) {
 
 // aCible : id du bloc de destination; aCode : argument à passer à la page php chargée du traitement et de l'affichage
 function verifResultat (aCible, aCode) {
-
 	if (aCode != '') {
 
 		if (texte = file ('facturation_dhtml.php?code='+escape(aCode))) {

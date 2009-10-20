@@ -575,7 +575,7 @@ class Translate {
 
 
 	/**
-	 *      \brief      Return full text translated to languagea label for a key. Store key-label in a cache.
+	 *      \brief      Return full text translated to language label for a key. Store key-label in a cache.
 	 *		\number		number		Number to encode in full text
 	 * 		\param		isamount	1=It's an amount, 0=it's just a number
 	 *      \return     string		Label translated in UTF8 (but without entities)
@@ -617,7 +617,6 @@ class Translate {
 	 * 		\param		tablename	Table name without prefix
 	 * 		\param		fieldkey	Field for key
 	 * 		\param		fieldlabel	Field for label
-	 * 		\param		fieldval	Value to find record
 	 *      \return     string		Label in UTF8 (but without entities)
 	 *		\remarks	This function can be used to get label in database but more often to get code from key id.
 	 */

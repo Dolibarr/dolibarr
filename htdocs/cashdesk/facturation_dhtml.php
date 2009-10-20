@@ -17,24 +17,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/**
+ * This page is called each time we press a key in the code or description
+ * search form to show product combo list
+ */
 include('../master.inc.php');
 require ('include/environnement.php');
 
 $langs->load("@cashdesk");
 
 // Verification
-if ( strlen ($_GET["code"]) > 1 ) {
-
-	$res = $sql->query (
-			"SELECT ".MAIN_DB_PREFIX."product.rowid, ref, label, tva_tx
-			FROM ".MAIN_DB_PREFIX."product
-			LEFT JOIN ".MAIN_DB_PREFIX."product_stock ON ".MAIN_DB_PREFIX."product.rowid = ".MAIN_DB_PREFIX."product_stock.fk_product
-			WHERE envente = 1
-				AND fk_product_type = 0
-				AND fk_entrepot = '".$conf_fkentrepot."'
-				AND ref LIKE '%".$_GET['code']."%'
-				OR label LIKE '%".$_GET['code']."%'
-			ORDER BY label");
+if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
+{
+	$request="SELECT p.rowid, p.ref, p.label, p.tva_tx
+			FROM ".MAIN_DB_PREFIX."product as p
+			LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product
+			WHERE p.envente = 1
+				AND p.fk_product_type = 0";
+	if ($conf->stock->enabled) $request.="	AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	$request.="	AND (p.ref LIKE '%".$_GET['code']."%'
+				OR p.label LIKE '%".$_GET['code']."%')
+			ORDER BY label";
+	dol_syslog($request);
+	$res = $sql->query ($request);
 
 	if ( $nbr = $sql->num_rows($res) ) {
 

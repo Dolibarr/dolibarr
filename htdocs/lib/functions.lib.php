@@ -521,6 +521,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
  *				DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
  *				19700101020000 -> 7200
  *  \return		date			Date
+ * 	\see		dol_date, dol_mktime
  */
 function dol_stringtotime($string)
 {
@@ -614,7 +615,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
  *	@param		gm				1=Input informations are GMT values, otherwise local to user
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
  *	@return		timestamp		Date en timestamp, '' if error
- * 	@see 		dol_date
+ * 	@see 		dol_date, dol_stringtotime
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 {
@@ -673,7 +674,7 @@ function dolibarr_date($fmt, $timestamp, $gm=0)
  *	\param		timestamp		Date. Example: If timestamp=0 and gm=1, return 01/01/1970 00:00:00
  *	\param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
  *	\return		string			Formated date
- * 	\see		dol_mktime
+ * 	\see		dol_mktime, dol_stringtotime
  */
 function dol_date($fmt, $timestamp, $gm=0)
 {
@@ -1515,10 +1516,10 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", object_id=".$objectid;
 	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
 	//print ", user_societe_contact_lire=".$user->rights->societe->contact->lire."<br>";
-	
+
 	// More features to check
 	$features = explode("&",$features);
-	
+
 	// Check read permission from module
 	// TODO Replace "feature" param by permission for reading
 	$readok=1;
@@ -1617,7 +1618,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 				&& empty($user->rights->$feature->write)) $createok=0;
 			}
 		}
-		
+
 		if (! $createok) accessforbidden();
 		//print "Write access is ok";
 	}
@@ -1628,10 +1629,10 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		foreach ($features as $feature)
 		{
 			$sql='';
-			
+
 			// If dbtable not defined, we use same name for table than module name
 			if (empty($dbtablename)) $dbtablename = $feature;
-			
+
 			// Check permission for object with entity
 			if ($feature == 'user' || $feature == 'usergroup' || $feature == 'produit' || $feature == 'service' || $feature == 'produit|service')
 			{
@@ -1698,7 +1699,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " AND dbt.entity = ".$conf->entity;
 				}
 			}
-			
+
 			//print $sql."<br>";
 			if ($sql)
 			{
@@ -3083,6 +3084,50 @@ function utf8_check($Str)
 		}
 	}
 	return true;
+}
+
+
+/**
+ *      \brief      Return an id from a Code. Store Code-Id in a cache.
+ * 		\param		db			Database handler
+ * 		\param		key			Code to get Id
+ * 		\param		tablename	Table name without prefix
+ * 		\param		fieldkey	Field for code
+ * 		\param		fieldid		Field for id
+ *      \return     int			Id of code
+ */
+function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
+{
+	global $cache_codes;
+
+	// If key empty
+	if ($key == '') return '';
+
+	// Check in cache
+	if (isset($cache_codes[$tablename][$key]))	// Can be defined to 0 or ''
+	{
+		return $cache_codes[$tablename][$key];   // Found in cache
+	}
+
+	$sql = "SELECT ".$fieldid." as id";
+	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
+	$sql.= " WHERE ".$fieldkey." = '".$key."'";
+	dol_syslog('dol_getIdFromCode sql='.$sql,LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($obj) $cache_codes[$tablename][$key]=$obj->id;
+		else $cache_codes[$tablename][$key]='';
+		$db->free($resql);
+		return $cache_codes[$tablename][$key];
+	}
+	else
+	{
+		$this->error=$db->lasterror();
+		dol_syslog("dol_getIdFromCode error=".$this->error,LOG_ERR);
+		return -1;
+	}
 }
 
 ?>

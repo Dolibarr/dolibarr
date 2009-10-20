@@ -17,41 +17,52 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// Recuperation de la liste des articles
+// Get list of articles (in warehouse '$conf_fkentrepot' if stock module enabled)
 if ( $_GET['filtre'] ) {
 
 	// Avec filtre
 	$ret=array(); $i=0;
-	$resql=$sql->query (
-			'SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
-			FROM '.MAIN_DB_PREFIX.'product
-			LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
-			WHERE envente = 1
-				AND fk_product_type = 0
-				AND fk_entrepot = '.$conf_fkentrepot.'
-				AND ref LIKE \'%'.$_GET['filtre'].'%\'
-				OR label LIKE \'%'.$_GET['filtre'].'%\'
-			ORDER BY label');
-	while ( $tab = $sql->fetch_array($resql) )
+
+	$request="SELECT p.rowid, p.ref, p.label, p.tva_tx
+			FROM ".MAIN_DB_PREFIX."product as p
+			LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product
+			WHERE p.envente = 1
+				AND p.fk_product_type = 0";
+	if ($conf->stock->enabled) $request.="	AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	$request.="	AND (p.ref LIKE '%".$_GET['filtre']."%'
+				OR p.label LIKE '%".$_GET['filtre']."%')
+			ORDER BY label";
+	dol_syslog($request);
+	$resql=$sql->query ($request);
+	if ($resql)
 	{
-		foreach ( $tab as $cle => $valeur )
+		while ( $tab = $sql->fetch_array($resql) )
 		{
-			$ret[$i][$cle] = $valeur;
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$i][$cle] = $valeur;
+			}
+			$i++;
 		}
-		$i++;
+	}
+	else
+	{
+		dol_print_error($db);
 	}
 	$tab_designations=$ret;
 } else {
 
 	// Sans filtre
 	$ret=array(); $i=0;
-	$resql=$sql->query ('SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
+	$request='SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
 			FROM '.MAIN_DB_PREFIX.'product
 			LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 			WHERE envente = 1
 				AND fk_product_type = 0
 				AND fk_entrepot = '.$conf_fkentrepot.'
-			ORDER BY label');
+			ORDER BY label';
+	dol_syslog($request);
+	$resql=$sql->query ($request);
 	while ( $tab = $sql->fetch_array($resql) )
 	{
 		foreach ( $tab as $cle => $valeur )

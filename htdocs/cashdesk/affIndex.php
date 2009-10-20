@@ -46,8 +46,8 @@ print '<style type="text/css">'."\n";
 print '@import url(include/jscalendar/calendar-blue.css);'."\n";
 print '</style>'."\n";
 print '<script type="text/javascript" src="include/jscalendar/calendar.js"></script>'."\n";
-print '<script type="text/javascript"	src="include/jscalendar/lang/calendar-fr.js"></script>'."\n";
-print '<script type="text/javascript"	src="include/jscalendar/calendar-setup.js"></script>'."\n";
+print '<script type="text/javascript" src="include/jscalendar/lang/calendar-fr.js"></script>'."\n";
+print '<script type="text/javascript" src="include/jscalendar/calendar-setup.js"></script>'."\n";
 print '</head>'."\n";
 
 print '<body>'."\n";

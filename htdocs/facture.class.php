@@ -69,8 +69,9 @@ class Facture extends CommonObject
 	var $type;
 	var $amount;
 	var $remise;
-	var $tva;
-	var $total;
+	var $total_ht;
+	var $total_tva;
+	var $total_ttc;
 	var $note;
 	var $note_public;
 	//! 0=draft,
@@ -90,10 +91,10 @@ class Facture extends CommonObject
 	var $propalid;
 	var $projetid;
 	var $date_lim_reglement;
-	var $cond_reglement_id;
-	var $cond_reglement_code;
-	var $mode_reglement_id;
-	var $mode_reglement_code;
+	var $cond_reglement_id;			// Id in llx_cond_reglement
+	var $cond_reglement_code;		// Code in llx_cond_reglement
+	var $mode_reglement_id;			// Id in llx_c_paiement
+	var $mode_reglement_code;		// Code in llx_c_paiement
 	var $modelpdf;
 	var $products=array();
 	var $lignes=array();
@@ -120,8 +121,9 @@ class Facture extends CommonObject
 		$this->amount = 0;
 		$this->remise = 0;
 		$this->remise_percent = 0;
-		$this->tva = 0;
-		$this->total = 0;
+		$this->total_ht = 0;
+		$this->total_tva = 0;
+		$this->total_ttc = 0;
 		$this->propalid = 0;
 		$this->projetid = 0;
 		$this->remise_exceptionnelle = 0;
@@ -131,10 +133,11 @@ class Facture extends CommonObject
 	 *	\brief     	Create invoice in database
 	 *	\param     	user       		Object user that create
 	 *	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
+	 * 	\param		forceduedate	Do not recalculate due date from payment condition but force it with value
 	 *	\return		int				<0 if KO, >0 if OK
 	 *	\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
 	 */
-	function create($user,$notrigger=0)
+	function create($user,$notrigger=0,$forceduedate=0)
 	{
 		global $langs,$conf,$mysoc;
 		$error=0;
@@ -190,8 +193,8 @@ class Facture extends CommonObject
 			$this->brouillon = 1;
 		}
 
-		// Definition de la date limite
-		$datelim=$this->calculate_date_lim_reglement();
+		// Define due date if not already defined
+		$datelim=(empty($forceduedate)?$this->calculate_date_lim_reglement():$forceduedate);
 
 		// Insert into database
 		$socid  = $this->socid;
@@ -1080,7 +1083,7 @@ class Facture extends CommonObject
 		// 1 : ajout du nombre de jours
 		$datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
 
-		// 2 : application de la r�gle "fin de mois"
+		// 2 : application de la regle "fin de mois"
 		if ($cdr_fdm)
 		{
 			$mois=date('m', $datelim);
@@ -1094,21 +1097,21 @@ class Facture extends CommonObject
 			{
 				$mois += 1;
 			}
-			// On se d�place au d�but du mois suivant, et on retire un jour
+			// On se deplace au debut du mois suivant, et on retire un jour
 			$datelim=dol_mktime(12,0,0,$mois,1,$annee);
 			$datelim -= (3600 * 24);
 		}
 
-		// 3 : application du d�calage
+		// 3 : application du decalage
 		$datelim += ( $cdr_decalage * 3600 * 24);
 
 		return $datelim;
 	}
 
 	/**
-	 *      \brief      Tag la facture comme pay�e compl�tement (close_code non renseign�) ou partiellement (close_code renseign�) + appel trigger BILL_PAYED
+	 *      \brief      Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
 	 *      \param      user      	Objet utilisateur qui modifie
-	 *	   \param      close_code	Code renseign� si on classe � pay�e compl�tement alors que paiement incomplet (cas ecompte par exemple)
+	 *	   \param      close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas ecompte par exemple)
 	 *	   \param      close_note	Commentaire renseign� si on classe � pay�e alors que paiement incomplet (cas ecompte par exemple)
 	 *      \return     int         	<0 si ok, >0 si ok
 	 */

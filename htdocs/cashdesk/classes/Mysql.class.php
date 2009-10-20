@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008      Laurent Destailleur   <eldy@uers.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -30,7 +30,7 @@ class Sql implements intSql {
 		* @param $aBase Nom de la base de donn�es � utiliser
 		*/
 	public function __construct ($aHost, $aUser, $aPass, $aBase) {
-	
+
 		$db = mysql_connect ($aHost, $aUser, $aPass);
 		mysql_select_db ($aBase, $db);
 
@@ -47,8 +47,8 @@ class Sql implements intSql {
 	// 		}
 
 	/**
-		* Effectue une requ�te sur la base de donn�es, et renvoi la ressource correspondante
-		* @param $aRequete Requ�te SQL (ex : SELECT nom, prenom FROM table1 WHERE id = 127)
+		* Effectue une requete sur la base de donn�es, et renvoi la ressource correspondante
+		* @param $aRequete Requete SQL (ex : SELECT nom, prenom FROM table1 WHERE id = 127)
 		* @return Ressource vers la requ�te venant d'�tre effectu�e
 		*/
 	public function query ($aRequete) {
