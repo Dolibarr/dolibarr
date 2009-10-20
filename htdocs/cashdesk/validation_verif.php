@@ -238,20 +238,21 @@ switch ( $_GET['action'] )
 		*/
 		}
 
+		$invoice->socid=$conf_fksoc;
+		$invoice->date_creation=$now;
+		$invoice->date=$now;
+		$invoice->date_lim_reglement=0;
+		$invoice->total_ht=$obj_facturation->prix_total_ht();
+		$invoice->total_tva=$obj_facturation->montant_tva();
+		$invoice->total_ttc=$obj_facturation->prix_total_ttc();
+		$invoice->note=$note;
+		$invoice->cond_reglement_id=$cond_reglement_id;
+		$invoice->mode_reglement_id=$mode_reglement_id;
+		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
 		if ( $obj_facturation->mode_reglement() == 'DIF' )
 		{
-			$invoice->socid=$conf_fksoc;
-			$invoice->date_creation=$now;
-			$invoice->date=$now;
-			$invoice->total_ht=$obj_facturation->prix_total_ht();
-			$invoice->total_tva=$obj_facturation->montant_tva();
-			$invoice->total_ttc=$obj_facturation->prix_total_ttc();
-			$invoice->note=$note;
-			$invoice->cond_reglement_id=$cond_reglement_id;
-			$invoice->mode_reglement_id=$mode_reglement_id;
-			//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 			$result=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiement_le()));
 			$result=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
 
@@ -259,19 +260,6 @@ switch ( $_GET['action'] )
 		}
 		else
 		{
-			$now=dol_now('tzserver');
-			$invoice=new Facture($sql,$conf_fksoc);
-			$invoice->socid=$conf_fksoc;
-			$invoice->date_creation=$now;
-			$invoice->date=$now;
-			$invoice->date_lim_reglement=0;
-			$invoice->total_ht=$obj_facturation->prix_total_ht();
-			$invoice->total_tva=$obj_facturation->montant_tva();
-			$invoice->total_ttc=$obj_facturation->prix_total_ttc();
-			$invoice->note=$note;
-			$invoice->cond_reglement_id=$cond_reglement_id;
-			$invoice->mode_reglement_id=$mode_reglement_id;
-
 			$result=$invoice->create($user,0,0);
 			$result=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
 
