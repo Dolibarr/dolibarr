@@ -80,6 +80,8 @@ For developers:
 - Can use an alternate document_root directory to develop with 
   sources on two repositories.
 - Removed useless code of old commercial module.
+- Move some modules into the CVS modules repository dolibarrmod. This reduces
+  amount of code in main branch.
 - Updated wiki documentation.
 - Better W3C standard.
 - Can add init data when enabling a module.

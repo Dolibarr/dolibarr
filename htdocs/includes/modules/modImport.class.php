@@ -50,7 +50,8 @@ class modImport extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Outils d'imports de donnees Dolibarr (via un assistant)";
-		$this->version = 'development';                        // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'experimental' or 'dolibarr' or version
+		$this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = '';
