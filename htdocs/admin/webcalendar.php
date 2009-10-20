@@ -202,7 +202,7 @@ print "<tr class=\"impair\">";
 print "<td>".$langs->trans("Password")."</td>";
 print "<td><input type=\"password\" class=\"flat\" name=\"phpwebcalendar_pass\" value=\"" . ($_POST["phpwebcalendar_pass"]?$_POST["phpwebcalendar_pass"]:$conf->global->PHPWEBCALENDAR_PASS) . "\" size=\"30\"></td>";
 print '<td>';
-//if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.eregi_replace('.','*',$dolibarr_main_db_pass).')</i>';
+//if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.preg_replace('/./i','*',$dolibarr_main_db_pass).')</i>';
 print '&nbsp;</td>';
 print "</tr>";
 
@@ -313,7 +313,9 @@ print "<br>";
 
 // Show message
 $message='';
-$urlwithouturlroot=eregi_replace(DOL_URL_ROOT.'$','',$dolibarr_main_url_root);
+$slash = '/';
+$backslash = strtr($slash, '/', '\\');
+$urlwithouturlroot=eregi_replace('/'.$backslash.DOL_URL_ROOT.'$/i','',$dolibarr_main_url_root);
 $urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';

@@ -270,13 +270,13 @@ if (function_exists("ldap_connect"))
 				if ($result == 2)
 				{
 					print img_picto('','info').' ';
-					print '<font class="ok">'.$langs->trans("LDAPBindOK",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT,$conf->global->LDAP_ADMIN_DN,eregi_replace('.','*',$conf->global->LDAP_ADMIN_PASS)).'</font>';
+					print '<font class="ok">'.$langs->trans("LDAPBindOK",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT,$conf->global->LDAP_ADMIN_DN,preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)).'</font>';
 					print '<br>';
 				}
 				else
 				{
 					print img_picto('','error').' ';
-					print '<font class="error">'.$langs->trans("LDAPBindKO",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT,$conf->global->LDAP_ADMIN_DN,eregi_replace('.','*',$conf->global->LDAP_ADMIN_PASS)).'</font>';
+					print '<font class="error">'.$langs->trans("LDAPBindKO",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT,$conf->global->LDAP_ADMIN_DN,preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)).'</font>';
 					print '<br>';
 					print $langs->trans("Error").' '.$ldap->error;
 					print '<br>';

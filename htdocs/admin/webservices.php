@@ -92,7 +92,9 @@ print '<br><br>';
 
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $firstpart=$dolibarr_main_url_root;
-$regex=DOL_URL_ROOT.'$';
+$slash = '/';
+$backslash = strtr($slash, '/', '\\');
+$regex='/'.$backslash.DOL_URL_ROOT.'$/i';
 $firstpart=eregi_replace($regex,'',$firstpart);
 
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';

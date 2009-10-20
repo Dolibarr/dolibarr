@@ -58,10 +58,10 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 	// Define list of menu handlers to initialize
  	$listofmenuhandler=array();
-	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menu_barretop"])]=1;
-	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menufront_barretop"])]=1;
-	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menu_barreleft"])]=1;
-	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menufront_barreleft"])]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_barretop"])]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barretop"])]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menu_barreleft"])]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["main_menufront_barreleft"])]=1;
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		//print "x".$key;
@@ -181,11 +181,11 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
     print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRETOP);
+    $filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_BARRETOP);
     print $filelib;
     print '</td>';
     print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENUFRONT_BARRETOP);
+    $filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_BARRETOP);
     print $filelib;
     print '</td>';
     print '</tr>';
@@ -194,11 +194,11 @@ else
     print '<tr '.$bc[$var].'>';
     print '<td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
     print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRELEFT);
+    $filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENU_BARRELEFT);
     print $filelib;
     print '</td>';
     print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENUFRONT_BARRELEFT);
+    $filelib=preg_replace('/.php$/i','',$conf->global->MAIN_MENUFRONT_BARRELEFT);
     print $filelib;
     print '</td>';
     print '</tr>';

@@ -32,7 +32,7 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
-// Définition des positions possibles pour les boites
+// Dï¿½finition des positions possibles pour les boites
 $pos_array = array(0);                             // Positions possibles pour une boite (0,1,2,...)
 $pos_name = array(0=>$langs->trans("Home"));       // Nom des positions 0=Homepage, 1=...
 $boxes = array();
@@ -170,7 +170,7 @@ if ($resql)
 		array_push($actives,$obj->box_id);
 
 		if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
-		// On renumérote l'ordre des boites si l'une d'elle est à ''
+		// On renumï¿½rote l'ordre des boites si l'une d'elle est ï¿½ ''
 		// This occurs just after an insert.
 		if ($decalage)
 		{
@@ -261,7 +261,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 	
-		$module=eregi_replace('.php$','',$obj->file);
+		$module=preg_replace('/.php$/i','',$obj->file);
 		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
 	
 		$box=new $module($db,$obj->note);
@@ -269,7 +269,7 @@ if ($resql)
 //		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
 		if (in_array($obj->rowid, $actives))
 		{
-			// La boite est déjà activée
+			// La boite est deja activee
 		}
 		else
 		{
@@ -277,7 +277,7 @@ if ($resql)
 	
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			$logo=eregi_replace("^object_","",$box->boximg);
+			$logo=preg_replace("/^object_/i","",$box->boximg);
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
 			print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
@@ -303,7 +303,7 @@ if ($resql)
 print '</table>';
 
 /*
- * Boites activées
+ * Boites activï¿½es
  *
  */
 
@@ -346,11 +346,11 @@ if ($resql)
 		$var = ! $var;
 		$objnext = $db->fetch_object($resql);
 	
-		$module=eregi_replace('.php$','',$obj->file);
+		$module=preg_replace('/.php$/i','',$obj->file);
 		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
 		$box=new $module($db,$obj->note);
 	
-		$logo=eregi_replace("^object_","",$box->boximg);
+		$logo=preg_replace("/^object_/i","",$box->boximg);
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
 		print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';

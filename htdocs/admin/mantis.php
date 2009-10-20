@@ -182,7 +182,7 @@ print "<tr class=\"impair\">";
 print "<td>".$langs->trans("Password")."</td>";
 print "<td><input type=\"password\" class=\"flat\" name=\"phpmantis_pass\" value=\"" . ($_POST["phpmantis_pass"]?$_POST["phpmantis_pass"]:$conf->global->PHPMANTIS_PASS) . "\" size=\"30\"></td>";
 print '<td>';
-//if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.eregi_replace('.','*',$dolibarr_main_db_pass).')</i>';
+//if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.preg_replace('/./i','*',$dolibarr_main_db_pass).')</i>';
 print '&nbsp;</td>';
 print "</tr>";
 

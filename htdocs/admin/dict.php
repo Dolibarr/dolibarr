@@ -484,8 +484,8 @@ if ($_GET["id"])
 		}
 		$sql.=", ";
 		// Remove from default sort order the choosed order
-		$tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].' '.$_GET["sortorder"].',','',$tabsqlsort[$_GET["id"]]);
-		$tabsqlsort[$_GET["id"]]=eregi_replace($_GET["sortfield"].',','',$tabsqlsort[$_GET["id"]]);
+		$tabsqlsort[$_GET["id"]]=preg_replace('/'.$_GET["sortfield"].' '.$_GET["sortorder"].',/i','',$tabsqlsort[$_GET["id"]]);
+		$tabsqlsort[$_GET["id"]]=preg_replace('/'.$_GET["sortfield"].',/i','',$tabsqlsort[$_GET["id"]]);
 	}
 	else {
 		$sql.=" ORDER BY ";
