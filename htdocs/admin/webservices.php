@@ -95,7 +95,7 @@ $firstpart=$dolibarr_main_url_root;
 $slash = '/';
 $backslash = strtr($slash, '/', '\\');
 $regex='/'.$backslash.DOL_URL_ROOT.'$/i';
-$firstpart=eregi_replace($regex,'',$firstpart);
+$firstpart=preg_replace($regex,'',$firstpart);
 
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
 $url=$firstpart.DOL_URL_ROOT.'/webservices/server.php?wsdl';

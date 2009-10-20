@@ -189,7 +189,7 @@ foreach ($orders as $key => $value)
     if (eregi('^interface_([^_]+)_(.+)\.class\.php',$files[$key],$reg))
 	{
 		// Check if trigger file is for a particular module
-		$module=eregi_replace('^mod','',$reg[1]);
+		$module=preg_replace('/^mod/i','',$reg[1]);
 		$constparam='MAIN_MODULE_'.strtoupper($module);
 		if (strtolower($reg[1]) == 'all') $disabledbymodule=0;
 		else if (empty($conf->global->$constparam)) $disabledbymodule=2;

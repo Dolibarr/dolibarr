@@ -67,7 +67,7 @@ if (! empty($_POST["action"]) && $_POST["action"] == 'set')
 	if ($optionlogoutput == "file")
 	{
 		$filelog=$_POST["filename"];
-		$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+		$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 		$file=fopen($filelog,"a+");
 		if ($file)
 		{
