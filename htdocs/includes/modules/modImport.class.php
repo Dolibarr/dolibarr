@@ -51,7 +51,7 @@ class modImport extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Outils d'imports de donnees Dolibarr (via un assistant)";
 		// Possible values for version are: 'experimental' or 'dolibarr' or version
-		$this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
+		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = '';
