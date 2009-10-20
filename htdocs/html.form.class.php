@@ -74,7 +74,7 @@ class Form
 
 	/**
 	 *	\brief	Show a text and picto with tooltip on text or picto
-	 *	\param  text				Texte a afficher
+	 *	\param  text				Texte to show
 	 *	\param  htmltext	    	Contenu html du tooltip, code en Html / UTF8
 	 *	\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et force en Ajax
 	 *	\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
@@ -83,6 +83,7 @@ class Form
 	 * 	\param	width				Width of tooltip
 	 * 	\param	shiftX				Shift of tooltip
 	 *	\return	string				Code html du tooltip (texte+picto)
+	 * 	\remarks	Use function textwithpicto if you can.
 	 */
 	function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10')
 	{

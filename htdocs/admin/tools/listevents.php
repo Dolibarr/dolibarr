@@ -81,7 +81,7 @@ $form=new Form($db);
 $userstatic=new User($db);
 $usefilter=0;
 
-$sql = "SELECT e.rowid, e.type, e.ip, e.dateevent,";
+$sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
 $sql.= " e.fk_user, e.description,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
@@ -91,6 +91,7 @@ if ($_GET["search_code"]) { $usefilter++; $sql.=" AND e.type like '%".$_GET["sea
 if ($_GET["search_ip"])   { $usefilter++; $sql.=" AND e.ip like '%".$_GET["search_ip"]."%'"; }
 if ($_GET["search_user"]) { $usefilter++; $sql.=" AND u.login like '%".$_GET["search_user"]."%'"; }
 if ($_GET["search_desc"]) { $usefilter++; $sql.=" AND e.description like '%".$_GET["search_desc"]."%'"; }
+if ($_GET["search_ua"])   { $usefilter++; $sql.=" AND e.user_agent like '%".$_GET["search_ua"]."%'"; }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
@@ -193,7 +194,11 @@ if ($result)
 		print $text;
 		print '</td>';
 
-		print '<td>&nbsp;</td>';
+		// More informations
+		print '<td align="right">';
+		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.$obj->user_agent;
+		print $form->textwithpicto('',$htmltext);
+		print '</td>';
 
 		print "</tr>\n";
 		$i++;

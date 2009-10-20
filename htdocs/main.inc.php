@@ -242,7 +242,7 @@ if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,do
 if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
 
 // Set authmode
-$authmode=split(',',$dolibarr_main_authentication);
+$authmode=explode(',',$dolibarr_main_authentication);
 
 // No authentication mode
 if (! sizeof($authmode))

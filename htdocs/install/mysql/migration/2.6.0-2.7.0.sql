@@ -215,6 +215,8 @@ UPDATE llx_const SET entity=0 WHERE name='SYSLOG_LEVEL';
 ALTER TABLE llx_dolibarr_modules drop primary KEY;
 ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
 
+ALTER TABLE llx_events add column user_agent     varchar(128) NULL after ip;
+
 
 alter table llx_commande_fournisseur add column   ref_supplier        varchar(30) after entity;
 

@@ -100,11 +100,11 @@ class InterfaceLogevents
     function run_trigger($action,$object,$user,$langs,$conf,$entity=1)
     {
     	if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
-    	
+
     	$key='MAIN_LOGEVENTS_'.$action;
     	//dol_syslog("xxxxxxxxxxx".$key);
     	if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
-    	
+
     	if (empty($conf->entity)) $conf->entity = $entity;  // forcing of the entity if it's not defined (ex: in login form)
 
         // Actions
@@ -241,6 +241,7 @@ class InterfaceLogevents
             $event->dateevent=$this->date;
             $event->label=$this->texte;
             $event->description=$this->desc;
+			$event->user_agent=$_SERVER["HTTP_USER_AGENT"];
 
             $result=$event->create($user);
             if ($result > 0)
