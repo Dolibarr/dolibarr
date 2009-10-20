@@ -19,7 +19,7 @@
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
- *		\brief      Page des infos système de php
+ *		\brief      Page des infos systeme de php
  *		\version    $Id$
  */
 
@@ -87,32 +87,31 @@ $chaine = ob_get_contents();
 ob_end_clean();
 
 // Nettoie la sortie php pour inclusion dans une page deja existante
-$chaine = eregi_replace('background-color: #ffffff;','',$chaine);
-$chaine = eregi_replace('.*<style','<style',$chaine);
-$chaine = eregi_replace('<title>.*<body>','',$chaine);
-$chaine = eregi_replace('<title>.*<body>','',$chaine);
-$chaine = eregi_replace('a:link \{[^\}]*}','',$chaine);
-$chaine = eregi_replace('a:hover \{[^\}]*}','',$chaine);
-$chaine = eregi_replace('td, th \{[^\}]*}','',$chaine);
-$chaine = eregi_replace('img \{[^\}]*}','',$chaine);
-$chaine = eregi_replace('table.*important; }','',$chaine);
-$chaine = eregi_replace('<hr />','',$chaine);
-$chaine = eregi_replace('</body></html>','',$chaine);
-$chaine = eregi_replace('body, td, th, h1, h2 \{font-family: sans-serif;\}','',$chaine);
-$chaine = eregi_replace('cellpadding="3" ','cellpadding="1" cellspacing="1" ',$chaine);
-$chaine = eregi_replace('class="h"','class="liste_titre"',$chaine);
-$chaine = eregi_replace('<th colspan="2">','<td>',$chaine);
-$chaine = eregi_replace('th>','td>',$chaine);
+$chaine = preg_replace('/background-color: #ffffff;/i','',$chaine);
+$chaine = preg_replace('/(.*)<style/i','<style',$chaine);
+$chaine = preg_replace('/<title>(.*)<body>/i','',$chaine);
+$chaine = preg_replace('/a:link \{([^\}]*)\}/i','',$chaine);
+$chaine = preg_replace('/a:hover \{([^\}]*)\}/i','',$chaine);
+$chaine = preg_replace('/td, th \{([^\}]*)\}/i','',$chaine);
+$chaine = preg_replace('/img \{([^\}]*)\}/i','',$chaine);
+$chaine = preg_replace('/table(.*)important; \}/i','',$chaine);
+$chaine = preg_replace('/<hr \/>/i','',$chaine);
+$chaine = preg_replace('/<\/body><\/html>/i','',$chaine);
+$chaine = preg_replace('/body, td, th, h1, h2 \{font-family: sans-serif;\}/i','',$chaine);
+$chaine = preg_replace('/cellpadding="3" /i','cellpadding="1" cellspacing="1" ',$chaine);
+$chaine = preg_replace('/class="h"/i','class="liste_titre"',$chaine);
+$chaine = preg_replace('/<th colspan="2">/i','<td>',$chaine);
+$chaine = preg_replace('/th>/i','td>',$chaine);
 // Titres
-$chaine = eregi_replace('<h1([^>]*)>','<div class="titre">',$chaine);
-$chaine = eregi_replace('<h2>','<div class="titre">',$chaine);
-$chaine = eregi_replace('</h1>','</div><br>',$chaine);
-$chaine = eregi_replace('</h2>','</div>',$chaine);
+$chaine = preg_replace('/<h1([^>]*)>/i','<div class="titre">',$chaine);
+$chaine = preg_replace('/<h2>/i','<div class="titre">',$chaine);
+$chaine = preg_replace('/<\/h1>/i','</div><br>',$chaine);
+$chaine = preg_replace('/<\/h2>/i','</div>',$chaine);
 
-$chaine = eregi_replace('<td class="e">','<td class="impair">',$chaine);
-$chaine = eregi_replace('<td class="v">','<td class="pair">',$chaine);
+$chaine = preg_replace('/<td class="e">/i','<td class="impair">',$chaine);
+$chaine = preg_replace('/<td class="v">/i','<td class="pair">',$chaine);
 
-$chaine = eregi_replace('<div class="titre">Configuration</div><br>','',$chaine);
+$chaine = preg_replace('/<div class="titre">Configuration<\/div><br>/i','',$chaine);
 
 if (isset($title))
 {
@@ -120,7 +119,7 @@ if (isset($title))
 	print '<br>';
 }
 
-print "$chaine\n";	// Ne pas centrer la réponse php car certains tableau du bas très large rendent ceux du haut complètement à droite
+print "$chaine\n";	// Ne pas centrer la reponse php car certains tableau du bas tres large rendent ceux du haut completement a droite
 print "<br>\n";
 
 llxfooter('$Date$ - $Revision$');

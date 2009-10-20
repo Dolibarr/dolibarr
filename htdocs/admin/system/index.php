@@ -169,7 +169,7 @@ foreach($configfileparameters as $key)
 	{
 		print "<td>".$configfilelib[$i].'</td><td>'.$key.'</td>';
 		print "<td>";
-		if ($key == 'dolibarr_main_db_pass') print eregi_replace('.','*',${$key});
+		if ($key == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$key});
 		else print ${$key};
 		// TODO Afficher charset effectif de base $db
 		if ($key == 'dolibarr_main_db_charset')

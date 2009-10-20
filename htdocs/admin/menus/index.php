@@ -40,12 +40,12 @@ $dirleft = "../../includes/menus/barre_left";
 
 $mesg=$_GET["mesg"];
 
-$menu_handler_top=eregi_replace('\.php','',$conf->global->MAIN_MENU_BARRETOP);
-$menu_handler_left=eregi_replace('\.php','',$conf->global->MAIN_MENU_BARRELEFT);
-$menu_handler_top=eregi_replace('_backoffice','',$menu_handler_top);
-$menu_handler_top=eregi_replace('_frontoffice','',$menu_handler_top);
-$menu_handler_left=eregi_replace('_backoffice','',$menu_handler_left);
-$menu_handler_left=eregi_replace('_frontoffice','',$menu_handler_left);
+$menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
+$menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
+$menu_handler_top=preg_replace('/_backoffice.php/i','',$menu_handler_top);
+$menu_handler_top=preg_replace('/_frontoffice.php/i','',$menu_handler_top);
+$menu_handler_left=preg_replace('/_backoffice.php/i','',$menu_handler_left);
+$menu_handler_left=preg_replace('/_frontoffice.php/i','',$menu_handler_left);
 
 $menu_handler=$menu_handler_left;
 
