@@ -60,7 +60,7 @@ class modEditeur extends DolibarrModules
 		$this->picto='book';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array('/smarty/cache','/smarty/template');
+		$this->dirs = array('/smarty/cache/temp','/smarty/templates/temp');
 
 		// Config pages
 		$this->config_page_url = array("editeur.php");

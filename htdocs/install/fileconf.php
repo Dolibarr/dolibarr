@@ -150,19 +150,18 @@ print $langs->trans("Examples").":<br>";
 <?php echo $langs->trans("URLRoot"); ?>
 </b></td><td valign="top" class="label"><input type="text" size="60" name="main_url" value="
 <?php
-if (isset($main_url) && $main_url)
-  $dolibarr_main_url_root=$main_url;
-if (! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
+if (! empty($main_url)) $dolibarr_main_url_root=$main_url;
+if (empty($dolibarr_main_url_root))
 {
-	# If defined (Ex: Apache sous Linux)
+	# If defined (Ie: Apache with Linux)
 	if (isset($_SERVER["SCRIPT_URI"])) {
 		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
 	}
-	# If defined (Ex: Apache sous Caudium)
+	# If defined (Ie: Apache with Caudium)
 	elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
 		$dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
 	}
-	# Si SCRIPT_URI, SERVER_URL, DOCUMENT_URI non d�fini (Ex: Apache 2.0.44 pour Windows)
+	# If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
 	else
 	{
 		$proto='http';
