@@ -296,7 +296,7 @@ if ($nboftargetok) {
      		print "Go to directory $BUILDROOT\n";
      		chdir("$BUILDROOT");
  
-    		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMETGZ\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*";
+    		$cmd= "7z a -r -tzip -xr\@\"$BUILDROOT\/$FILENAMETGZ\/build\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*";
 			print $cmd."\n";
 			$ret= `$cmd`;
 			#print $ret;
