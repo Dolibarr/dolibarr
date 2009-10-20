@@ -160,9 +160,8 @@ print '<br><br>';
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $firstpart=$dolibarr_main_url_root;
-$slash = '/';
-$backslash = strtr($slash, '/', '\\');
-$regex='/'.$backslash.DOL_URL_ROOT.'$/i';
+$pattern = str_replace('/','\/',DOL_URL_ROOT); // Add backslashes for regular expression
+$regex='/'.$pattern.'$/i';
 $firstpart=preg_replace($regex,'',$firstpart);
 print '<br>';
 print img_picto('','puce.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';

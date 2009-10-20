@@ -313,9 +313,8 @@ print "<br>";
 
 // Show message
 $message='';
-$slash = '/';
-$backslash = strtr($slash, '/', '\\');
-$urlwithouturlroot=preg_replace('/'.$backslash.DOL_URL_ROOT.'$/i','',$dolibarr_main_url_root);
+$pattern = str_replace('/','\/',DOL_URL_ROOT); // Add backslashes for regular expression
+$urlwithouturlroot=preg_replace('/'.$pattern.'$/i','',$dolibarr_main_url_root);
 $urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';

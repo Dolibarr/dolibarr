@@ -612,7 +612,7 @@ class Categorie
 			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
 		}
 		// We count number of _ to have level
-		$this->cats[$id_categ]['level']=strlen(eregi_replace('[^_]','',$this->cats[$id_categ]['fullpath']));
+		$this->cats[$id_categ]['level']=strlen(preg_replace('/[^_]/i','',$this->cats[$id_categ]['fullpath']));
 
 		// Process all childs on several levels of this category
 		$protection++;
@@ -1059,9 +1059,9 @@ class Categorie
 
 					// On determine nom du fichier vignette
 					$photo_vignette='';
-					if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
+					if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
 					{
-						$photo_vignette=eregi_replace($regs[0],'',$photo).'_small'.$regs[0];
+						$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo).'_small'.$regs[0];
 					}
 
 					// Objet
@@ -1091,15 +1091,16 @@ class Categorie
 	{
 		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
-		$filename = eregi_replace($dir,'',$file); // Nom du fichier
+		$dir = str_replace('/','\/',$dir); // Add backslashes for regular expression
+		$filename = preg_replace('/'.$dir.'/i','',$file); // Nom du fichier
 
 		// On efface l'image d'origine
 		dol_delete_file($file,1);
 
 		// Si elle existe, on efface la vignette
-		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
+		if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$filename,$regs))
 		{
-			$photo_vignette=eregi_replace($regs[0],'',$filename).'_small'.$regs[0];
+			$photo_vignette=preg_replace('/'.$regs[0].'/i','',$filename).'_small'.$regs[0];
 			if (file_exists($dirthumb.$photo_vignette))
 			{
 				dol_delete_file($dirthumb.$photo_vignette,1);
