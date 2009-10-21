@@ -254,7 +254,7 @@ function dol_syslog($message, $level=LOG_INFO)
 		if (defined("SYSLOG_FILE") && SYSLOG_FILE)
 		{
 			$filelog=SYSLOG_FILE;
-			$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+			$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
 			else $file=fopen($filelog,"a+");
 
@@ -542,7 +542,7 @@ function dol_stringtotime($string)
 		$string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
 	}
 
-	$string=eregi_replace('[^0-9]','',$string);
+	$string=preg_replace('/([^0-9])/i','',$string);
 	$tmp=$string.'000000';
 	$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 	return $date;
@@ -2282,14 +2282,14 @@ function dol_delete_dir_recursive($dir,$count=0)
 function vatrate($rate,$addpercent=false,$info_bits=0)
 {
 	// Test for compatibility
-	if (eregi('%',$rate))
+	if (preg_match('/%/',$rate))
 	{
-		$rate=eregi_replace('%','',$rate);
+		$rate=str_replace('%','',$rate);
 		$addpercent=true;
 	}
-	if (eregi('\*',$rate) || eregi(MAIN_LABEL_MENTION_NPR,$rate))
+	if (preg_match('/\*/',$rate) || preg_match('/'.MAIN_LABEL_MENTION_NPR.'/i',$rate))
 	{
-		$rate=eregi_replace('\*','',$rate);
+		$rate=str_replace('*','',$rate);
 		$info_bits |= 1;
 	}
 
@@ -2327,11 +2327,11 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	//print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec=".$dec." thousand=".$thousand;
 
 	//print "amount=".$amount."-";
-	$amount = ereg_replace(',','.',$amount);	// should be useless
+	$amount = str_replace(',','.',$amount);	// should be useless
 	//print $amount."-";
 	$datas = explode('.',$amount);
 	$decpart = isset($datas[1])?$datas[1]:'';
-	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie decimale
+	$decpart = preg_replace('/0+$/i','',$decpart);	// Supprime les 0 de fin de partie decimale
 	//print "decpart=".$decpart."<br>";
 	$end='';
 
@@ -2341,7 +2341,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN)
 	{
 		$nbdecimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
-		if (eregi('\.\.\.',$conf->global->MAIN_MAX_DECIMALS_SHOWN))
+		if (preg_match('/\.\.\./i',$conf->global->MAIN_MAX_DECIMALS_SHOWN))
 		{
 			// Si un affichage est tronque, on montre des ...
 			$end='...';
@@ -2351,7 +2351,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	// Format number
 	if ($html)
 	{
-		$output=ereg_replace(' ','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
+		$output=preg_replace('/\s/','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
 	}
 	else
 	{
@@ -2572,8 +2572,8 @@ function yn($yesno, $case=1, $color=0)
 function get_exdir($num,$level=3,$alpha=0)
 {
 	$path = '';
-	if (empty($alpha)) $num = eregi_replace('[^0-9]','',$num);
-	else $num = eregi_replace('^.*\-','',$num);
+	if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
+	else $num = preg_replace('/^.*\-/i','',$num);
 	$num = substr("000".$num, -$level);
 	if ($level == 1) $path = substr($num,0,1).'/';
 	if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1).'/';
@@ -2710,8 +2710,8 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 	if (dol_textishtml($stringtoencode))
 	{
 		//$trans = get_html_translation_table(HTML_ENTITIES, ENT_COMPAT); var_dump($trans);
-		$newstring=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
-		$newstring=eregi_replace('<br>$','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?/i>','<br>',$stringtoencode);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		$newstring=preg_replace('/<br>$/i','',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$newstring=strtr($newstring,array('&'=>'__and__','<'=>'__lt__','>'=>'__gt__','"'=>'__dquot__'));
 		$newstring=@htmlentities($newstring,ENT_COMPAT,$pagecodefrom);	// Make entity encoding
 		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
@@ -2734,10 +2734,10 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
 	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
 	$ret=@html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
-	$ret=eregi_replace("\r\n".'<br( [ a-zA-Z_="]*)?/?>',"<br>",$ret);
-	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\r\n","\r\n",$ret);
-	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\n","\n",$ret);
-	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>',"\n",$ret);
+	$ret=preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i',"<br>",$ret);
+	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i',"\r\n",$ret);
+	$ret=eregi_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i',"\n",$ret);
+	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i',"\n",$ret);
 	return $ret;
 }
 
@@ -2747,7 +2747,7 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
-	$ret=eregi_replace('(<br>|<br( [ a-zA-Z_="]*)?/?>|'."\n".'|'."\r".')+$',"",$stringtodecode);
+	$ret=preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|'."\n".'|'."\r".')+$/i',"",$stringtodecode);
 	return $ret;
 }
 

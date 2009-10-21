@@ -212,7 +212,7 @@ class CMailFile
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
 			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
 			// comme des injections mail par les serveurs de messagerie.
-			$this->headers = eregi_replace("[\r\n]+$","",$this->headers);
+			$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
 		}
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
 		{

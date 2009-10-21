@@ -559,7 +559,7 @@ class DoliDb
 	 */
 	function jdate($string)
 	{
-		$string=eregi_replace('[^0-9]','',$string);
+		$string=preg_replace('/([^0-9])/i','',$string);
 		$tmp=$string.'000000';
 		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;

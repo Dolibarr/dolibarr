@@ -156,15 +156,15 @@ class DoliDb
     		return '';
 		}
 		# comments or empty lines
-    	if (eregi('^#',$line) || eregi('^$',$line) || eregi('^--',$line))
+    	if (preg_match('/^#/i',$line) || preg_match('/^$/i',$line) || preg_match('/^--/i',$line))
     	{
     		return $line;
     	}
     	if ($create_sql != "")
     	{ 		# we are inside create table statement so lets process datatypes
-    		if (eregi('(ISAM|innodb)',$line)) { # end of create table sequence
-    			$line=eregi_replace('\) *type=(MyISAM|innodb);',');');
-    			$line=eregi_replace('\) *engine=(MyISAM|innodb);',');');
+    		if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
+    			$line=preg_replace('/\) *type=(MyISAM|innodb);/i',');');
+    			$line=preg_replace('/\) *engine=(MyISAM|innodb);/i',');');
     		}
 
             # int, auto_increment -> serial
@@ -187,21 +187,21 @@ class DoliDb
     			s/\w*int\(\d+\)/$out/g;
     		}
 */
-    		$line=eregi_replace('tinyint','smallint');
+    		$line=str_replace('tinyint','smallint',$line);
 
     		# nuke unsigned
-    		if (eregi_replace('(int\w+|smallint)\s+unsigned','smallint',$reg))
+    		if (preg_replace('/(int\w+|smallint)\s+unsigned/i','smallint',$reg))
     		{
-    			$line=eregi_replace('(int\w+|smallint)\s+unsigned',$reg[1]);
+    			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i',$reg[1]);
     		}
 
 
     		# blob -> text
-   			$line=eregi_replace('\w*blob','text');
+   			$line=preg_replace('/\w*blob/i','text');
 
     		# tinytext/mediumtext -> text
-   			$line=eregi_replace('tinytext','text');
-   			$line=eregi_replace('mediumtext','text');
+   			$line=preg_replace('/tinytext/i','text');
+   			$line=preg_replace('/mediumtext/i','text');
 
     		# char -> varchar
     		# PostgreSQL would otherwise pad with spaces as opposed
@@ -215,8 +215,8 @@ class DoliDb
 
     		# change not null datetime field to null valid ones
     		# (to support remapping of "zero time" to null
-   			$line=eregi_replace('datetime not null','datetime');
-   			$line=eregi_replace('datetime','timestamp');
+   			$line=preg_replace('/datetime not null/i','datetime');
+   			$line=preg_replace('/datetime/i','timestamp');
 
     		# nuke size of timestamp
 //    		s/timestamp\([^)]*\)/timestamp/i;
@@ -677,7 +677,7 @@ class DoliDb
 	 */
 	function jdate($string)
 	{
-		$string=eregi_replace('[^0-9]','',$string);
+		$string=preg_replace('/([^0-9])/i','',$string);
 		$tmp=$string.'000000';
 		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 		return $date;

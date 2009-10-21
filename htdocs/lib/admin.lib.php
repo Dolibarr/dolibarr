@@ -123,17 +123,17 @@ function run_sql($sqlfile,$silent=1)
 				&& versioncompare($versioncommande,$versionarray) <= 0)
 				{
 					// Version qualified, delete SQL comments
-					$buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
+					$buf=preg_replace('/^-- V([0-9\.]+)/i','',$buf);
 					//print "Ligne $i qualifi?e par version: ".$buf.'<br>';
 				}
 			}
 
 			// Ajout ligne si non commentaire
-			if (! eregi('^--',$buf)) $buffer .= $buf;
+			if (! preg_match('/^--/i',$buf)) $buffer .= $buf;
 
 			//          print $buf.'<br>';
 
-			if (eregi(';',$buffer))
+			if (preg_match('/;/',$buffer))
 			{
 				// Found new request
 				$arraysql[$i]=trim($buffer);
@@ -155,7 +155,7 @@ function run_sql($sqlfile,$silent=1)
 			$newsql=$sql;
 
 			// Replace __+MAX_table__ with max of table
-			while (eregi('__\+MAX_([A-Za-z_]+)__',$newsql,$reg))
+			while (preg_match('/__\+MAX_([A-Za-z_]+)__/i',$newsql,$reg))
 			{
 				$table=$reg[1];
 				if (! isset($listofmaxrowid[$table]))
@@ -236,10 +236,10 @@ function run_sql($sqlfile,$silent=1)
 			$result=$db->query($newsql);
 			if ($result)
 			{
-				if (eregi('insert into ([^ ]+)',$newsql,$reg))
+				if (preg_match('/insert into ([^\s]+)/i',$newsql,$reg))
 				{
 					// It's an insert
-					$table=eregi_replace('[^a-zA-Z_]+','',$reg[1]);
+					$table=preg_replace('/([^a-zA-Z_]+)/i','',$reg[1]);
 					$insertedrowid=$db->last_insert_id($table);
 					$listofinsertedrowid[$cursorinsert]=$insertedrowid;
 					dol_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);

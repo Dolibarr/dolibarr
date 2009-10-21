@@ -43,7 +43,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$loadsize=$mode?true:false;
 
 	// Clean parameters
-	$path=eregi_replace('[\\/]+$','',$path);
+	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=(utf8_check($path)?utf8_decode($path):$path);
 
 	if (! is_dir($newpath)) return array();
