@@ -66,9 +66,9 @@ class geoipdnsrecord {
 
 function getrecordwithdnsservice($str){
   $record = new geoipdnsrecord;
-  $keyvalue = split(";",$str);
+  $keyvalue = explode(";",$str);
   foreach ($keyvalue as $keyvalue2){
-    list($key,$value) = split("=",$keyvalue2);
+    list($key,$value) = explode("=",$keyvalue2);
     if ($key == "co"){
       $record->country_code = $value;
     }
