@@ -312,7 +312,7 @@ class ImportCsv extends ModeleImports
 					if ($key <= $maxfields)
 					{
 						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
-						$listfields.=eregi_replace('^.*\.','',$val);
+						$listfields.=preg_replace('/^.*\./i','',$val);
 						$newval='';
 						if ($arrayrecord[($key-1)]['type'] < 0)
 						{

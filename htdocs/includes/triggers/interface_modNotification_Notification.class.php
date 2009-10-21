@@ -40,7 +40,7 @@ class InterfaceNotification
     {
         $this->db = $DB ;
 
-        $this->name = eregi_replace('Interface','',get_class($this));
+        $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "notification";
         $this->description = "Triggers of this module send email notifications according to Notification module setup.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version

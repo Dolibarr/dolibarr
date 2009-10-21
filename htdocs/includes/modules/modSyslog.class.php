@@ -51,7 +51,7 @@ class modSyslog extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "base";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Activate debug logs (syslog)";
 		// Can be enabled / disabled only in the main company

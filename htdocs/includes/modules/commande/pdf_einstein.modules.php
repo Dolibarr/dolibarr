@@ -570,7 +570,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$tvacompl='';
 				if (eregi('\*',$tvakey))
 				{
-					$tvakey=eregi_replace('\*','',$tvakey);
+					$tvakey=str_replace('*','',$tvakey);
 					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 				}
 				$totalvat =$outputlangs->transnoentities("TotalVAT").' ';

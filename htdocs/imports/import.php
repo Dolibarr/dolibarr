@@ -834,14 +834,14 @@ if ($step == 4 && $datatoimport)
 		$i++;
 
 		$entity=$objimport->array_import_entities[0][$code];
-		$tablealias=eregi_replace('\..*$','',$code);
+		$tablealias=preg_replace('/(\..*)$/i','',$code);
 		$tablename=$objimport->array_import_tables[0][$tablealias];
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
 		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
 		print '<td nowrap="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td style="font-weight: normal">';
-		$newlabel=eregi_replace('\*$','',$label);
+		$newlabel=preg_replace('/\*$/i','',$label);
 		$text=$langs->trans($newlabel);
 		$more='';
 		if (eregi('\*$',$label))
@@ -1182,7 +1182,7 @@ if ($step == 5 && $datatoimport)
 		//var_dump($fieldssource);
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
-		$alias=eregi_replace('\..*$','',$label);
+		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
 	}
 	if (sizeof($listtables))
@@ -1225,7 +1225,7 @@ if ($step == 5 && $datatoimport)
 		//var_dump($fieldssource);
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
-		$alias=eregi_replace('\..*$','',$label);
+		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
 	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
@@ -1400,7 +1400,7 @@ if ($step == 6 && $datatoimport)
 		//var_dump($fieldssource);
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
-		$alias=eregi_replace('\..*$','',$label);
+		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
 	}
 	if (sizeof($listtables))
@@ -1441,7 +1441,7 @@ if ($step == 6 && $datatoimport)
 		//var_dump($fieldssource);
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
-		$alias=eregi_replace('\..*$','',$label);
+		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
 	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");
@@ -1729,7 +1729,7 @@ if ($step == 7 && $datatoimport)
 		//var_dump($fieldssource);
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
-		$alias=eregi_replace('\..*$','',$label);
+		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listtables[$alias]=$objimport->array_import_tables[0][$alias];
 	}
 	if (sizeof($listtables))
@@ -1770,7 +1770,7 @@ if ($step == 7 && $datatoimport)
 		//var_dump($fieldssource);
 		if ($code > sizeof($fieldssource)) continue;
 		//print $code.'-'.$label;
-		$alias=eregi_replace('\..*$','',$label);
+		$alias=preg_replace('/(\..*)$/i','',$label);
 		$listfields[$i]=$langs->trans("Field").' '.$code.'->'.$label;
 	}
 	print sizeof($listfields)?(join(', ',$listfields)):$langs->trans("Error");

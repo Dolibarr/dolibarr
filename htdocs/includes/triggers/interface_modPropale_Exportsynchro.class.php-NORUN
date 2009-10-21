@@ -42,7 +42,7 @@ class InterfaceExportsynchro
     {
         $this->db = $DB ;
     
-        $this->name = eregi_replace('^Interface','',get_class($this));
+        $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "propale";
         $this->description = "Triggers of this module allows to export signed propal for synchro with an other application. (in csv files)";
         $this->version = 'development';            // 'development', 'experimental', 'dolibarr' or version

@@ -31,7 +31,7 @@ define('NOTOKENRENEWAL',1); // Disables token renewal
 // is a security hole if anybody can access without
 // being an authenticated user.
 require_once("../../../../../../main.inc.php");	
-$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
+$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);

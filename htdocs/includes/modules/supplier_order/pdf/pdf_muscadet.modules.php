@@ -453,7 +453,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				if (eregi('\*',$tvakey))
 				{
-					$tvakey=eregi_replace('\*','',$tvakey);
+					$tvakey=str_replace('*','',$tvakey);
 					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 				}
 

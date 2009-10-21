@@ -798,11 +798,11 @@ llxFooter('$Date$ - $Revision$');
 function getablenamefromfield($code,$sqlmaxforexport)
 {
 	$newsql=$sqlmaxforexport;
-	$newsql=eregi_replace('^.* FROM ','',$newsql);
-	$newsql=eregi_replace(' WHERE .*$','',$newsql);
-	$alias=eregi_replace('\..*$','',$code);
+	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);
+	$newsql=preg_replace('/ WHERE (.*)$/i','',$newsql);
+	$alias=preg_replace('/\.(.*)$/i','',$code);
 	//print $newsql.' '.$alias;
-	if (eregi('([a-zA-Z_]+) as '.$alias.'[, \)]',$newsql,$reg))
+	if (preg_match('/([a-zA-Z_]+) as /i'.$alias.'[, \)]',$newsql,$reg))
 	{
 		return $reg[1];
 	}

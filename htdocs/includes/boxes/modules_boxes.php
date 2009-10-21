@@ -178,9 +178,9 @@ class ModeleBoxes
 
 						if (empty($contents[$i][$j]['text'])) $contents[$i][$j]['text']="";
 						$texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-						$textewithnotags=eregi_replace('<[^>]+>','',$texte);
+						$textewithnotags=preg_replace('/<([^>]+)>/i','',$texte);
 						$texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-						$texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
+						$texte2withnotags=preg_replace('/<([^>]+)>/i','',$texte2);
 						//print "xxx $textewithnotags y";
 
 						print '<td'.$tdparam.'>';
@@ -196,7 +196,7 @@ class ModeleBoxes
 						// Logo
 						if (! empty($contents[$i][$j]['logo']))
 						{
-							$logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
+							$logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
 							print img_object($langs->trans("Show"),$logo);
 						}
 
@@ -204,13 +204,13 @@ class ModeleBoxes
 						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
 						if ($maxlength) $textewithnotags=dol_trunc($textewithnotags,$maxlength);
-						if (eregi('^<img',$texte)) print $texte;	// show text with no html cleaning
+						if (preg_match('/^<img/i',$texte)) print $texte;	// show text with no html cleaning
 						else print $textewithnotags;				// show text with html cleaning
 
 						// End Url
 						if (! empty($contents[$i][$j]['url'])) print '</a>';
 
-						if (eregi('^<img',$texte2)) print $texte2;	// show text with no html cleaning
+						if (preg_match('/^<img/i',$texte2)) print $texte2;	// show text with no html cleaning
 						else print $texte2withnotags;				// show text with html cleaning
 
 						print "</td>";

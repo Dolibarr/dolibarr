@@ -106,7 +106,7 @@ class box_prospect extends ModeleBoxes {
  			           'text' => dol_print_date($datem, "day"));
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-     			       'text' => eregi_replace('img ','img height="14" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
+     			       'text' => str_replace('img ','img height="14" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
 
 					$i++;
 				}

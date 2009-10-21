@@ -2319,7 +2319,7 @@ function _enddoc()
 						}
 						if (eregi("font-size",$attr['style'])){
 							$headsize = substr($attr['style'],11);
-							$headsize = eregi_replace('[;-]','',$headsize);
+							$headsize = preg_replace('/[;-]/','',$headsize);
 							//print 'headsize1: '.$headsize.'<br>';
 							//print 'recupheadsize: '.$this->$headsize.'<br>';
 							$headsize = intval($this->$headsize);

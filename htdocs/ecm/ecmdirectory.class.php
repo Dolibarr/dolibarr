@@ -91,7 +91,7 @@ class EcmDirectory // extends CommonObject
 			$parent->fetch($this->fk_parent);
 			$relativepath=$parent->getRelativePath().$relativepath;
 		}
-		$relativepath=eregi_replace('[\/]+','/',$relativepath);	// Avoid duplicate / or \
+		$relativepath=preg_replace('/([\/])+/i','/',$relativepath);	// Avoid duplicate / or \
         //print $relativepath.'<br>';
 
 		$cat = new ECMDirectory($this->db);
@@ -99,7 +99,7 @@ class EcmDirectory // extends CommonObject
 		$pathfound=0;
 		foreach ($cate_arbo as $key => $categ)
 		{
-			$path=eregi_replace('[ -><\/]+','/',$categ['fulllabel']);
+			$path=preg_replace('/([\s-><\/])+/i','/',$categ['fulllabel']);
 			//print $path.'<br>';
 			if ($path == $relativepath)
 			{
@@ -385,7 +385,7 @@ class EcmDirectory // extends CommonObject
 	    //$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
 		$picto='dir';
 
-		$newref=eregi_replace('_',' ',$this->ref);
+		$newref=str_replace('_',' ',$this->ref);
 		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
 	    if ($withpicto) $result.=($lien.img_object($newlabel,$picto,'',1).$lienfin);
@@ -588,7 +588,7 @@ class EcmDirectory // extends CommonObject
 			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
 		}
 		// We count number of _ to have level
-		$this->cats[$id_categ]['level']=strlen(eregi_replace('[^_]','',$this->cats[$id_categ]['fullpath']));
+		$this->cats[$id_categ]['level']=strlen(preg_replace('/([^_])/i','',$this->cats[$id_categ]['fullpath']));
 
 		// Traite ces enfants
 		$protection++;

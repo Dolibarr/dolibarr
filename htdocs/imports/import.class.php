@@ -76,13 +76,13 @@ class Import
 				$i=0;
 				while (($file = readdir($handle))!==false)
 				{
-					if (eregi("^(mod.*)\.class\.php",$file,$reg))
+					if (preg_match("/^(mod.*)\.class\.php/i",$file,$reg))
 					{
 						$modulename=$reg[1];
 
 						// Defined if module is enabled
 						$enabled=true;
-						$part=strtolower(eregi_replace('^mod','',$modulename));
+						$part=strtolower(preg_replace('/^mod/i','',$modulename));
 						if (empty($conf->$part->enabled)) $enabled=false;
 
 						if ($enabled)

@@ -969,7 +969,7 @@ class DolibarrModules
 			{
 				//print 'xxx'.$this->menu[$key]['fk_menu'];exit;
 				$numparent=$this->menu[$key]['fk_menu'];
-				$numparent=eregi_replace('r=','',$numparent);
+				$numparent=str_replace('r=','',$numparent);
 				if (isset($this->menu[$numparent]['rowid']))
 				{
 					$menu->fk_menu=$this->menu[$numparent]['rowid'];

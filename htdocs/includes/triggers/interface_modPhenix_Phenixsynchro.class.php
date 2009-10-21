@@ -50,7 +50,7 @@ class InterfacePhenixsynchro
     {
         $this->db = $DB ;
 
-        $this->name = eregi_replace('Interface','',get_class($this));
+        $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "phenix";
         $this->description = "Triggers of this module allows to add an event inside Phenix calenar for each Dolibarr business event.";
         $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version

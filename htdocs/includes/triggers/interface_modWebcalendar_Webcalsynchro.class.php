@@ -49,7 +49,7 @@ class InterfaceWebcalsynchro
     {
         $this->db = $DB ;
 
-        $this->name = eregi_replace('Interface','',get_class($this));
+        $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "webcal";
         $this->description = "Triggers of this module allows to add an event inside Webcalendar for each Dolibarr business event.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version

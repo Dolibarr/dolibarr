@@ -80,7 +80,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if ($type == 'supplier') $codetouse = $prefixcodecomptasupplier;
 		if ($type == 'customer') $codetouse.=$societe->code_client;
 		if ($type == 'supplier') $codetouse.=$societe->code_fournisseur;
-		$codetouse=strtoupper(eregi_replace('[^a-z0-9]','',$codetouse));
+		$codetouse=strtoupper(preg_replace('/([^a-z0-9])/i','',$codetouse));
 
 		$is_dispo = $this->verif($DB, $codetouse, $societe, $type);
 		if (! $is_dispo)

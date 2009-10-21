@@ -48,7 +48,7 @@ class InterfaceDemo
     {
         $this->db = $DB ;
     
-        $this->name = eregi_replace('^Interface','',get_class($this));
+        $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "demo";
         $this->description = "Triggers of this module are empty functions. They have no effect. They are provided for tutorial purpose only.";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version

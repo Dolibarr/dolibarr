@@ -19,7 +19,7 @@
 
 /**
         \defgroup   category       Module categories
-        \brief      Module pour gérer les catégories
+        \brief      Module pour gï¿½rer les catï¿½gories
 		\version	$Id$
 */
 
@@ -38,8 +38,8 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 class modCategorie extends DolibarrModules
 {
 	/**
-	 *		\brief	Constructeur. définit les noms, constantes et boîtes
-	 * 		\param	DB	handler d'accès base
+	 *		\brief	Constructeur. dï¿½finit les noms, constantes et boï¿½tes
+	 * 		\param	DB	handler d'accï¿½s base
 	 */
 	function modCategorie ($DB)
 	{
@@ -48,8 +48,8 @@ class modCategorie extends DolibarrModules
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = eregi_replace('^mod','',get_class($this));
-		$this->description = "Gestion des catégories (produits, clients, fournisseurs...)";
+		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->description = "Gestion des categories (produits, clients, fournisseurs...)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -82,29 +82,29 @@ class modCategorie extends DolibarrModules
 
 		$this->rights[$r][0] = 241; // id de la permission
 		$this->rights[$r][1] = 'Lire les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
 		$this->rights[$r][0] = 242; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
 		$this->rights[$r][0] = 243; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'd'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 
 		$this->rights[$r][0] = 244; // id de la permission
 		$this->rights[$r][1] = 'Voir le contenu des categories cachees'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'voir';
 		$r++;
 
@@ -151,8 +151,8 @@ class modCategorie extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-	 *               Définit également les répertoires de données à créer pour ce module.
+	 *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+	 *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
 	 */
 	function init()
 	{
@@ -165,7 +165,7 @@ class modCategorie extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appelée lors de la désactivation d'un module.
+	 *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

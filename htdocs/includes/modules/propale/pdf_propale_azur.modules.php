@@ -599,7 +599,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$tvacompl='';
 					if (eregi('\*',$tvakey))
 					{
-						$tvakey=eregi_replace('\*','',$tvakey);
+						$tvakey=str_replace('*','',$tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
 					$totalvat =$outputlangs->transnoentities("TotalVAT").' ';

@@ -21,7 +21,7 @@
  */
 
 /**     \defgroup   banque     Module bank
- *		\brief      Module pour gérer la tenue d'un compte bancaire et rapprochements
+ *		\brief      Module pour gï¿½rer la tenue d'un compte bancaire et rapprochements
  *		\version	$Id$
  */
 
@@ -43,7 +43,7 @@ class modBanque extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'accès base
+	 *   \param      DB      handler d'accï¿½s base
 	 */
 	function modBanque($DB)
 	{
@@ -54,7 +54,7 @@ class modBanque extends DolibarrModules
 
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -92,50 +92,50 @@ class modBanque extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 111; // id de la permission
 		$this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 112; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'modifier';
 
 		$r++;
 		$this->rights[$r][0] = 113; // id de la permission
 		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)'; // libelle de la permission
-		$this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'a'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'configurer';
 
 		$r++;
 		$this->rights[$r][0] = 114; // id de la permission
 		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'consolidate';
 
 		$r++;
 		$this->rights[$r][0] = 115; // id de la permission
 		$this->rights[$r][1] = 'Exporter transactions et releves'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 116; // id de la permission
 		$this->rights[$r][1] = 'Virements entre comptes'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'transfer';
 
 		$r++;
 		$this->rights[$r][0] = 117; // id de la permission
 		$this->rights[$r][1] = 'Gerer les envois de cheques'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+		$this->rights[$r][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 		$this->rights[$r][4] = 'cheque';
 
 
@@ -146,7 +146,7 @@ class modBanque extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Ecritures bancaires et relevés';
+		$this->export_label[$r]='Ecritures bancaires et relevï¿½s';
 		$this->export_permission[$r]=array(array("banque","export"));
 		$this->export_fields_array[$r]=array('b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','b.num_chq'=>'ChequeOrTransferNumber','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode");
 		$this->export_entities_array[$r]=array('b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','b.num_chq'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account","bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company");
@@ -164,8 +164,8 @@ class modBanque extends DolibarrModules
 
 
 	/**
-	 *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-	 *               Définit également les répertoires de données à créer pour ce module.
+	 *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+	 *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
 	 */
 	function init()
 	{
@@ -180,7 +180,7 @@ class modBanque extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appelée lors de la désactivation d'un module.
+	 *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()
