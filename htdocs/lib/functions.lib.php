@@ -438,22 +438,22 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 
 	//print 'x'.$time;
 
-	if (eregi('%b',$format))		// There is some text to translate
+	if (preg_match('/%b/i',$format))		// There is some text to translate
 	{
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
-		$format=ereg_replace('%b','__b__',$format);
-		$format=ereg_replace('%B','__B__',$format);
+		$format=str_replace('%b','__b__',$format);
+		$format=str_replace('%B','__B__',$format);
 	}
-	if (eregi('%a',$format))		// There is some text to translate
+	if (preg_match('/%a/i',$format))		// There is some text to translate
 	{
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
-		$format=ereg_replace('%a','__a__',$format);
-		$format=ereg_replace('%A','__A__',$format);
+		$format=str_replace('%a','__a__',$format);
+		$format=str_replace('%A','__A__',$format);
 	}
 
 	// Analyse de la date (deprecated)   Ex: 19700101, 19700101010000
-	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg)
-	|| eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
+	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$time,$reg)
+	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i',$time,$reg))
 	{
 		// This part of code should not be used.
 		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
@@ -480,7 +480,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 
-	if (eregi('__b__',$format))
+	if (preg_match('/__b__/i',$format))
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
 		$month=adodb_strftime('%m',$time);
@@ -495,17 +495,17 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 			$monthtextshort=$outputlangs->transnoentitiesnoconv('MonthShort'.$month);
 		}
 		//print 'monthtext='.$monthtext.' monthtextshort='.$monthtextshort;
-		$ret=ereg_replace('__b__',$monthtextshort,$ret);
-		$ret=ereg_replace('__B__',$monthtext,$ret);
+		$ret=str_replace('__b__',$monthtextshort,$ret);
+		$ret=str_replace('__B__',$monthtext,$ret);
 		//print 'x'.$outputlangs->charset_output.'-'.$ret.'x';
 		//return $ret;
 	}
-	if (eregi('__a__',$format))
+	if (preg_match('/__a__/i',$format))
 	{
 		$w=adodb_strftime('%w',$time);
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
-		$ret=ereg_replace('__A__',$dayweek,$ret);
-		$ret=ereg_replace('__a__',dol_substr($dayweek,0,3),$ret);
+		$ret=str_replace('__A__',$dayweek,$ret);
+		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);
 	}
 
 	return $ret;
@@ -525,7 +525,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
  */
 function dol_stringtotime($string)
 {
-	if (eregi('^([0-9]+)\/([0-9]+)\/([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$string,$reg))
+	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
 	{
 		// This part of code should not be used.
 		dol_syslog("Functions.lib::dol_stringtotime call to function with deprecated parameter", LOG_WARN);
@@ -807,7 +807,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 	global $conf,$user,$langs;
 
 	// Clean phone parameter
-	$phone = ereg_replace("[ .-]","",trim($phone));
+	$phone = preg_replace("/[\s.-]/","",trim($phone));
 	if (empty($phone)) { return ''; }
 
 	$newphone=$phone;
@@ -1980,7 +1980,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 
 	// Le champ de tri est mis en evidence.
 	// Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field)))
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field)))
 	{
 		print '<td class="liste_titre_sel" '. $td.'>';
 	}
@@ -2658,9 +2658,9 @@ function picto_required()
  */
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 {
-	$pattern = "<[^>]+>";
+	$pattern = "/<[^>]+>/";
 	$temp = dol_entity_decode($StringHtml);
-	$temp = ereg_replace($pattern,"",$temp);
+	$temp = preg_replace($pattern,"",$temp);
 
 	// Supprime aussi les retours
 	if ($removelinefeed) $temp=str_replace("\n"," ",$temp);
@@ -2686,8 +2686,8 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
 	if (! $nl2brmode) return nl2br($stringtoencode);
 	else
 	{
-		$ret=ereg_replace("\r","",$stringtoencode);
-		$ret=ereg_replace("\n","<br>",$ret);
+		$ret=str_replace("\r","",$stringtoencode);
+		$ret=str_replace("\n","<br>",$ret);
 		return $ret;
 	}
 }
@@ -2911,7 +2911,7 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs='',$object='
 	// Make substitition
 	foreach ($substitutionarray as $key => $value)
 	{
-		$chaine=ereg_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
+		$chaine=str_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
 	}
 	return $chaine;
 }
