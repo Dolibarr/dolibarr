@@ -96,7 +96,7 @@ if ($_POST["action"] == 'add')
 		$error+=1;
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name"))."<br>\n";
 	}
-	if (!isset($_POST["email"]) || $_POST["email"] == '' || !ereg('@',$_POST["email"]))
+	if (!isset($_POST["email"]) || $_POST["email"] == '' || !preg_match('/@/',$_POST["email"]))
 	{
 		$error+=1;
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("EMail"))."<br>\n";
@@ -151,7 +151,7 @@ if ($_POST["action"] == 'add')
 		$adh->morphy      = $_POST["morphy"];
 
 		foreach($_POST as $key => $value){
-			if (ereg("^options_",$key)){
+			if (preg_match("/^options_/",$key)){
 				$adh->array_options[$key]=$_POST[$key];
 			}
 		}

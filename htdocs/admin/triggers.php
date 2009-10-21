@@ -136,7 +136,7 @@ $orders = array();
 $i = 0;
 while (($file = readdir($handle))!==false)
 {
-    if (is_readable($dir.'/'.$file) && ereg('^interface_([^_]+)_(.+)\.class\.php',$file,$reg))
+    if (is_readable($dir.'/'.$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php/',$file,$reg))
     {
         $modName = 'Interface'.ucfirst($reg[2]);
 		//print "file=$file"; print "modName=$modName"; exit;

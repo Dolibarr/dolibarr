@@ -250,7 +250,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 
 		foreach($_POST as $key => $value)
 		{
-			if (ereg("^options_",$key))
+			if (preg_match("/^options_/",$key))
 			{
 				//escape values from POST, at least with addslashes, to avoid obvious SQL injections
 				//(array_options is directly input in the DB in adherent.class.php::update())
@@ -374,7 +374,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $adh->fk_soc      = $socid;
     foreach($_POST as $key => $value)
     {
-        if (ereg("^options_",$key))
+        if (preg_match("/^options_/",$key))
         {
 			//escape values from POST, at least with addslashes, to avoid obvious SQL injections
 			//(array_options is directly input in the DB in adherent.class.php::update())

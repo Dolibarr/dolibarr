@@ -150,7 +150,7 @@ class Ldap
 	{
 		foreach ($this->server as $key => $host)
 		{
-			if (ereg('^ldap',$host))
+			if (preg_match('/^ldap/',$host))
 			{
 				$this->connection = ldap_connect($host);
 			}
@@ -198,7 +198,7 @@ class Ldap
 		{
 			if ($connected) break;
 
-			if (ereg('^ldap',$host))
+			if (preg_match('/^ldap/',$host))
 			{
 				$this->connection = ldap_connect($host);
 			}
@@ -635,7 +635,7 @@ class Ldap
 		$content='';
 
 		// Create file content
-		if (ereg('^ldap',$this->server[0]))
+		if (preg_match('/^ldap/',$this->server[0]))
 		{
 			$target="-H ".join(',',$this->server);
 		}

@@ -345,7 +345,7 @@ if (is_dir($aliasDir))
 	
 	foreach($listoffiles as $file) 
 	{
-	    if (is_file($aliasDir.$file) && ereg('.conf',$file))
+	    if (is_file($aliasDir.$file) && preg_match('/\.conf/',$file))
 	    {		
 		    $msg = '';
 
