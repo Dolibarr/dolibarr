@@ -38,26 +38,23 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	@# Add here commands to install the package into debian/tmp
+	@# Add here commands to install the package into debian/dolibarr
 
 	install --mode=644 -D --group=www-data --owner=www-data \
-		debian/apache.conf \
+		DEBIAN/apache.conf \
 		debian/dolibarr/etc/dolibarr/apache.conf
 
 	mkdir -p debian/dolibarr/usr/share/dolibarr
-	cp -rp htdocs/* debian/dolibarr/usr/share/dolibarr
-	mkdir -p debian/dolibarr/usr/share/dolibarr/document
-	install --mode 644 --group=www-data --owner=www-data debian/conf.php debian/dolibarr/usr/share/dolibarr/conf/conf.php
+	cp -rp htdocs/* debian/dolibarr/usr/share/dolibarr/htdocs
+	mkdir -p debian/dolibarr/usr/share/dolibarr/documents
 	chmod -R 644 debian/dolibarr/usr/share/dolibarr
+
 	find debian/dolibarr/usr/share/dolibarr -type d | xargs chmod 755
 
 	find debian/dolibarr \( -name CVS -o -name .cvsignore \) | xargs rm -fr
 
 	mkdir -p debian/dolibarr/usr/lib/dolibarr
-	install --mode=444 mysql/mysql.sql debian/dolibarr/usr/lib/dolibarr/mysql.sql
-	for i in count-dons.pl file-dons.pl ; do \
-		install --mode=755 scripts/$$i debian/dolibarr/usr/lib/dolibarr/$$i ; \
-	done
+	cp -rp scripts/* debian/dolibarr/usr/lib/dolibarr
 
 # Build architecture-independent files here.
 binary-indep: build install

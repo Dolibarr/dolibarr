@@ -1,0 +1,122 @@
+#!/bin/sh
+# postinst script for dolibarr
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see /usr/share/doc/packaging-manual/
+
+. /usr/share/debconf/confmodule
+db_version 2.0
+
+#
+# Description:	Verifies that the env module is loaded in the apache config file.
+# Needs:	$server the apache server to use,
+#			anything that matches /etc/$server/*.conf
+#
+env_enable()
+{
+    envverm="env_module"
+    if grep -e "^[[:space:]]*#[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf > /dev/null 2>&1; then
+		# Uncommenting
+	sed -e "s#\([[:space:]]*\)\#[[:space:]]\+\(LoadModule $envverm\)#\1\2#" /etc/$server/httpd.conf > /etc/$server/httpd.conf.tmp
+	status=uncomment
+	if grep -e "^[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf.tmp >/dev/null 2>&1; then
+			# Uncomment successful.
+	    cp /etc/$server/httpd.conf /etc/$server/httpd.conf.back >/dev/null 2>&1
+	    mv /etc/$server/httpd.conf.tmp /etc/$server/httpd.conf
+	else
+			# Uncomment unsuccessful.
+	    status=error
+	    rm /etc/$server/httpd.conf.tmp
+	fi
+    fi
+}
+
+echo Run the postinst script
+
+case "$1" in
+	configure)
+		config="/etc/dolibarr/apache.conf"
+
+		#db_reset "dolibarr/webserver"
+
+		# Get the web server type.
+		db_get "dolibarr/webserver"		# Ask/read value for webserver.
+#		webserver="$RET"
+		webserver="Both"
+		case $webserver in
+			Apache)		webservers="apache2" ;;
+			Apache-SSL)	webservers="apache2-ssl" ;;
+			Both)		webservers="apache2 apache2-ssl" ;;
+			*)		webservers="" ;;
+		esac
+		. /usr/share/wwwconfig-common/php.get
+
+		# Set up web server.
+		for server in $webservers ; do
+			echo Complete config of server $server
+			env_enable
+			typestr='application/x-httpd-php'
+			extension='.php'
+			. /usr/share/wwwconfig-common/apache-addtype_all.sh
+		        . /usr/share/wwwconfig-common/apache-php.sh
+		        . /usr/share/wwwconfig-common/apache-run.get
+			trustuser=$webuser
+			#
+			# That may lead to problems if apache & apache-ssl do
+			# not have the same user/group.
+			#
+			chown -R $webuser.$webgroup /usr/share/dolibarr
+
+			# TODO This add alias into http.conf but it should go into apache2.conf
+			includefile="/etc/dolibarr/apache.conf"
+			#echo "$includefile $server" 
+			. /usr/share/wwwconfig-common/apache-include_all.sh
+			test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
+			for index in index.php; do
+				. /usr/share/wwwconfig-common/apache-index_all.sh
+				test "$status" = "added" && restart="$server $restart"
+			done
+		done
+
+		echo "Go on page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
+
+		# TODO Create the file to force parameters in Web installer
+		#if grep DBHOST /usr/share/dolibarr/htdocs/conf/conf.php > /dev/null
+		#then
+		#    perl -pi -e "s/DBHOST/$dbserver/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#    perl -pi -e "s/DBNAME/$dbname/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#    perl -pi -e "s/DBUSER/$dbuser/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#    perl -pi -e "s/DBPASS/$dbpass/" /usr/share/dolibarr/htdocs/conf/conf.php
+		#fi
+
+		servers="apache2-ssl apache2 mysql"
+		. /usr/share/wwwconfig-common/restart.sh
+
+	;;
+
+	abort-upgrade|abort-remove|abort-deconfigure)
+
+	;;
+
+	*)
+		echo "postinst called with unknown argument \`$1'" >&2
+		exit 0
+	;;
+esac
+
+db_stop
+
+#DEBHELPER#
+
+exit 0

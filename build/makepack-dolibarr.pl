@@ -232,8 +232,12 @@ if ($nboftargetok) {
 	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/dolibarr"`;
 	    }
 	    print "Clean $BUILDROOT\n";
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
@@ -342,27 +346,58 @@ if ($nboftargetok) {
     	}
     	
     	if ($target eq 'DEB') {
-#            print "Automatic build for DEB is not yet supported.\n";
-    		print "Create directory $BUILDROOT/DEBIAN\n";
+    		print "Move $BUILDROOT/$PROJECT $BUILDROOT/$PROJECT.tmp\n";
+    		$cmd="mv \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
+            $ret=`$cmd`;
+
+    		print "Create directory $BUILDROOT/$PROJECT/usr/share\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share"`;
+
+    		print "Move $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT/usr/share/$PROJECT\n";
+    		$cmd="mv \"$BUILDROOT/$PROJECT.tmp\" \"$BUILDROOT/$PROJECT/usr/share/$PROJECT\"";
+            $ret=`$cmd`;
+    		
+    		print "Create directory $BUILDROOT/$PROJECT/DEBIAN\n";
     		$ret=`mkdir "$BUILDROOT/$PROJECT/DEBIAN"`;
-    		print "Copy $SOURCE/build/deb to $BUILDROOT/$PROJECT/DEBIAN\n";
-    		$ret=`cp -r "$SOURCE/build/deb" "$BUILDROOT/$PROJECT/DEBIAN"`;
+    		print "Copy $SOURCE/build/deb/* to $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`cp -r "$SOURCE/build/deb/." "$BUILDROOT/$PROJECT/DEBIAN"`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/DEBIAN/CVS`;
+		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
  
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
             while (<SPECFROM>) {
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
+            	$newbuild = $BUILD;
+                $newbuild =~ s/alpha/0/gi;
+                $newbuild =~ s/beta/1/gi;
+                if ($newbuild !~ /-/) { $newbuild.='-2'; }
+                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
                 print SPECTO $_;
             }
             close SPECFROM;
             close SPECTO;
-        
+
+    		print "Create directory $BUILDROOT/$PROJECT/etc/dolibarr\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/dolibarr"`;
+
+    		#print "Copy changelog file into $BUILDROOT/$PROJECT/DEBIAN\n";
+    		#$ret=`cp "$SOURCE/ChangeLog" "$BUILDROOT/$PROJECT/DEBIAN/changelog"`;
+
+    		print "Copy README file into $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`cp "$SOURCE/README" "$BUILDROOT/$PROJECT/DEBIAN/README"`;
+
+    		print "Copy copyright file into $BUILDROOT/$PROJECT/DEBIAN\n";
+    		$ret=`cp "$SOURCE/COPYRIGHT" "$BUILDROOT/$PROJECT/DEBIAN/copyright"`;
+
+    		print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/dolibarr\n";
+    		$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/dolibarr"`;
+
      		print "Go to directory $BUILDROOT\n";
      		chdir("$BUILDROOT");
  
-    		print "Launch DEB build (dpkg -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb)\n";
-    		$cmd="$DEB -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb";
+    		$cmd="dpkg -b $BUILDROOT/$PROJECT $BUILDROOT/${FILENAMEDEB}.deb";
+    		print "Launch DEB build ($cmd)\n";
     		$ret=`$cmd`;
     		print $ret."\n";
         	next;

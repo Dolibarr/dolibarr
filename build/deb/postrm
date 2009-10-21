@@ -23,9 +23,9 @@ webserver="$RET"
 
 # Allows us to loop and substitute in one pass
 case $webserver in
-	Apache)		webservers="apache" ;;
-	Apache-SSL)	webservers="apache-ssl" ;;
-	Both)		webservers="apache apache-ssl" ;;
+	Apache)		webservers="apache2" ;;
+	Apache-SSL)	webservers="apache2-ssl" ;;
+	Both)		webservers="apache2 apache2-ssl" ;;
 	*)		webservers="" ;;
 esac
 includefile=/etc/dolibarr/apache.conf
@@ -35,12 +35,7 @@ case "$1" in
 		db_get "dolibarr/postrm"
 		if [ "$RET" = "true" ] ; then
 			# Get database configuration
-			db_get "dolibarr/db/user/name"
-			dbuser="$RET"
-			db_get "dolibarr/db/user/password"
-			dbpass="$RET"
-			db_get "dolibarr/db/host"
-			dbserver="$RET"
+			dbserver="localhost"
 			db_get "dolibarr/db/name"
 			dbname="$RET"
 			db_get "dolibarr/db/admin/name"
@@ -63,7 +58,7 @@ case "$1" in
 			fi
 		done
 
-		servers="apache-ssl apache mysql"
+		servers="apache2-ssl apache2 mysql"
 		. /usr/share/wwwconfig-common/restart.sh
 
 		for dir in /usr/share/dolibarr ; do

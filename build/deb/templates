@@ -34,8 +34,15 @@ Description: dolibarr DB setup NOTE.
 Template: dolibarr/db/host
 Type: string
 Default: localhost
-Description: Please, insert dolibarr DB host name:
+Description: Please, insert your database host name:
  This should be the host-name or IP address that dolibarr will use to access
+ the DB.
+
+Template: dolibarr/db/port
+Type: string
+Default: 3306
+Description: Please, insert your database port:
+ This should be the port value that dolibarr will use to access
  the DB.
 
 Template: dolibarr/db/name
@@ -69,11 +76,12 @@ Description: Passwords mismatch.
 
 Template: dolibarr/db/admin/name
 Type: string
+Default: root
 Description: Please, insert the DBMS administrator user-name:
  This user-name will be used to access the DBMS to create (if needed):
  .
-  (1) The DB
-  (2) The new DBMS account that dolibarr will use to access the DB
+  (1) The new dolibarr database
+  (2) The new database account that dolibarr will use to access the DB
  .
  It should be 'root' for MySql.
 
@@ -91,4 +99,4 @@ Default: true
 Description: Delete *ALL*?
  Datas subjected to this question are the DBMS account, the DB and the
  dolibarr users ang group files. Do I have to delete *ALL* datas whenever
- the the dolibarr package will be completely removed from the system?
+ the dolibarr package will be completely removed from the system?

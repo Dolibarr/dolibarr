@@ -1,0 +1,73 @@
+#!/bin/sh
+# Debian install package run: config, preinst, prerm, postinst, postrm
+#
+# dpkg -b is to build package
+# dpkg -c package.deb list content of package
+# dpkg -I package.deb give informations on package
+# dpkg -i package.deb install a package
+#
+# dpkg -L packagename list content of installed package 
+# dpkg --purge remove interactive saved answers
+#
+
+set -e
+
+. /usr/share/debconf/confmodule
+
+db_version 2.0
+
+
+echo Run the configuration script
+
+# Rotate old configuration
+if [ "$1" = "reconfigure" ] ; then
+	config="/etc/dolibarr/apache.conf"
+	for i in $(seq 8 -1 0) ; do
+		if [ -f ${config}.$i ]
+			then mv ${config}.$i ${config}.$(($i +1))
+		fi
+	done
+	mv ${config} ${config}.0
+fi
+
+
+
+db_capb backup
+
+
+# Ask for web server type.
+db_input critical "dolibarr/webserver" || true
+
+db_title "dolibarr" || true
+if db_go ; then
+    okcancel="1"
+else
+	okcancel="0"
+fi
+
+
+# Ask on wich host the DBMS is installed.
+#db_input critical "dolibarr/db/host" || true
+
+# Get the database administrator name and password.
+#db_beginblock
+#	db_input critical "dolibarr/db/admin/name" || true
+#	db_input critical "dolibarr/db/admin/password" || true
+#db_endblock
+
+# Ask for DB name.
+#db_input critical "dolibarr/db/name" || true
+
+# Get the DBMS account username
+#db_input critical "dolibarr/db/user/name" || true
+
+# Get the DBMS account password
+#db_input critical "dolibarr/db/user/password" || true
+
+# Ask for deleting all the database on package purge.
+#db_input medium "dolibarr/postrm" || true
+#onsuccess='finished="true"'
+
+
+db_stop
+exit 0

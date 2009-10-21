@@ -7,9 +7,10 @@ Package: dolibarr
 Section: web
 Architecture: all
 Essential: no
-Depends: apache2, httpd, libapache2-mod-php5, libapache-mod-php5, php5, php5-cgi, libapache2-mod-php4, libapache-mod-php4, php4-cgi, php4, perl
+Depends: wwwconfig-common, apache2, httpd, libapache2-mod-php5, php5, php5-cgi, php5-curl, php5-gd, php5-imagick, php5-ldap, php5-mcrypt, php5-mysql, perl
 Recommends: mozilla | netscape
 Installed-Size: 30000000
+Homepage: http://www.dolibarr.org
 Description: Company or foundation management software.
  Dolibarr is a small and simple Web interface with ERP and CRM
  capabilities. It is designed for small companies freelancers, or
