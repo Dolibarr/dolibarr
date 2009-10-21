@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      ï¿½ric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -58,8 +58,8 @@ class box_external_rss extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
+     *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+     *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
      */
     function loadBox($max=5)
     {
@@ -105,7 +105,7 @@ class box_external_rss extends ModeleBoxes {
         		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.(isset($rss->date)?dol_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
 		}
 
-		// INFO sur le élements
+		// INFO sur le ï¿½lements
         for($i = 0; $i < $max && $i < sizeof($rss->items); $i++)
         {
             $item = $rss->items[$i];
@@ -135,8 +135,8 @@ class box_external_rss extends ModeleBoxes {
 	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title); 
 	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title); 
 
-	        $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
-            $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
+	        $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/","\\1'\\2",$title);   // Gere probleme des apostrophes mal codee/decodee par utf8
+            $title=preg_replace("/^\s+/","",$title);                                  // Supprime espaces de debut
             $this->info_box_contents["$href"]="$title";
 
             $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',

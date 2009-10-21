@@ -1960,11 +1960,11 @@ function _enddoc()
 			}
 
 			foreach($a as $key=>$element) {
-				$element = ereg_replace('&ndash;','-',$element); //remplace les &ndash; par un tiret
-				$element = ereg_replace('&rsquo;','\'',$element); //remplace les &rsquo; par un apostrophe
-				$element = ereg_replace('&quot;','"',$element); //remplace les &quot; par une guillemet
-				$element = ereg_replace('&euro;',chr(128),$element); //remplace les &euro; par le signe euro
-				$element = ereg_replace('&oelig;',chr(156),$element); //remplace les &oelig; par le signe e dans l'o
+				$element = str_replace('&ndash;','-',$element); //remplace les &ndash; par un tiret
+				$element = str_replace('&rsquo;','\'',$element); //remplace les &rsquo; par un apostrophe
+				$element = str_replace('&quot;','"',$element); //remplace les &quot; par une guillemet
+				$element = str_replace('&euro;',chr(128),$element); //remplace les &euro; par le signe euro
+				$element = str_replace('&oelig;',chr(156),$element); //remplace les &oelig; par le signe e dans l'o
 				if (!preg_match($pattern, $element)) {
 					//Text
 					if($this->HREF) {

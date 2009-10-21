@@ -351,10 +351,10 @@ if (is_dir($aliasDir))
 
 			$aliasContents.='<tr><td><ul class="aliases">';
 
-		    $aliasContents .= '<li><a href="'.ereg_replace('.conf','',$file).'/">';
-			$file = ereg_replace('.conf','',$file);
-			if (eregi('dolibarr',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>http://<i>ipofyourserver</i>'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td></tr>';
-			elseif (eregi('phpmyadmin',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
+		    $aliasContents .= '<li><a href="'.preg_replace('/\.conf/','',$file).'/">';
+			$file = preg_replace('/\.conf/','',$file);
+			if (preg_match('/dolibarr/i',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>http://<i>ipofyourserver</i>'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td></tr>';
+			elseif (preg_match('/phpmyadmin/i',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
 			else $aliasContents .= $file.'</a></li></ul></td> <td> </td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
 			
 			$aliasarray[]=$file;

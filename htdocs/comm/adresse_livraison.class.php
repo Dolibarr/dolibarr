@@ -176,11 +176,11 @@ class AdresseLivraison
         $this->ville      = trim($this->ville);
         $this->pays_id    = trim($this->pays_id);
         $this->tel        = trim($this->tel);
-        $this->tel        = ereg_replace(" ","",$this->tel);
-	    $this->tel        = ereg_replace("\.","",$this->tel);
+        $this->tel        = preg_replace("/\s/","",$this->tel);
+	    $this->tel        = preg_replace("/\./","",$this->tel);
 	    $this->fax        = trim($this->fax);
-	    $this->fax        = ereg_replace(" ","",$this->fax);
-	    $this->fax        = ereg_replace("\.","",$this->fax);
+	    $this->fax        = preg_replace("/\s/","",$this->fax);
+	    $this->fax        = preg_replace("/\./","",$this->fax);
         $this->note       = trim($this->note);
 
         $result = $this->verify();		// Verifie que nom et label obligatoire

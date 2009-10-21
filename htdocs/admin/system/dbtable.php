@@ -86,10 +86,10 @@ else
 
 		foreach  ($cons as $cc)
 		{
-			$cx = ereg_replace("\) REFER", "", $cc);
-			$cx = ereg_replace("\(`", "", $cx);
-			$cx = ereg_replace("`\)", "", $cx);
-			$cx = ereg_replace("` ", "", $cx);
+			$cx = preg_replace("/\)\sREFER/", "", $cc);
+			$cx = preg_replace("/\(`/", "", $cx);
+			$cx = preg_replace("/`\)/", "", $cx);
+			$cx = preg_replace("/`\s/", "", $cx);
 
 			$val = explode("`",$cx);
 

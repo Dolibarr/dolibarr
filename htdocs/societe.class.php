@@ -334,10 +334,10 @@ class Societe extends CommonObject
 		$this->pays_id=trim($this->pays_id);
 		$this->tel=trim($this->tel);
 		$this->fax=trim($this->fax);
-		$this->tel = ereg_replace(" ","",$this->tel);
-		$this->tel = ereg_replace("\.","",$this->tel);
-		$this->fax = ereg_replace(" ","",$this->fax);
-		$this->fax = ereg_replace("\.","",$this->fax);
+		$this->tel = preg_replace("/\s/","",$this->tel);
+		$this->tel = preg_replace("/\./","",$this->tel);
+		$this->fax = preg_replace("/\s/","",$this->fax);
+		$this->fax = preg_replace("/\./","",$this->fax);
 		$this->email=trim($this->email);
 		$this->url=$this->url?clean_url($this->url,0):'';
 		$this->siren=trim($this->siren);

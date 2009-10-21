@@ -101,7 +101,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 					$post=intval($post)+(($post-intval($post))*(1+2/3));
 					$post=price2num($post);
 
-					$id = ereg_replace("task","",$key);
+					$id = str_replace("task","",$key);
 
 					$date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
 					$project->TaskAddTime($user, $id , $post, $date);

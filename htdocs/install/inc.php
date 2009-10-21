@@ -76,9 +76,9 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 
 		// Remove last / or \ on directories or url value
-		if (! empty($dolibarr_main_document_root) && ! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
-		if (! empty($dolibarr_main_url_root)      && ! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
-		if (! empty($dolibarr_main_data_root)     && ! ereg('^[\\\/]+$',$dolibarr_main_data_root))     $dolibarr_main_data_root=ereg_replace('[\\\/]+$','',$dolibarr_main_data_root);
+		if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
+		if (! empty($dolibarr_main_url_root)      && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))      $dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
+		if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
 
 		// Create conf object
 		if (! empty($dolibarr_main_document_root))
@@ -128,7 +128,7 @@ if (empty($conf->db->user)) $conf->db->user='';
 
 
 // Security check
-if (eregi('install.lock',$_SERVER["SCRIPT_FILENAME"]))
+if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
 	print 'Install pages have been disabled for security reason (directory renamed with .lock).';
 	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';

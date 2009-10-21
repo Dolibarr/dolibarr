@@ -152,7 +152,7 @@ class ProductLivreContrat extends Product
   {
     dol_syslog("ProductLivreContrat::UpdateCanvas");
 
-    $taux   = ereg_replace(',','.',trim($datas["contrat_taux"]));
+    $taux   = str_replace(',','.',trim($datas["contrat_taux"]));
     $quant  = trim($datas["contrat_quant"]);
     $duree  = trim($datas["contrat_duree"]);
 

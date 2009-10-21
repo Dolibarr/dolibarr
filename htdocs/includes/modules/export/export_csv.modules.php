@@ -245,18 +245,18 @@ class ExportCsv extends ModeleExports
 		$newvalue=dol_string_nohtmltag($newvalue);
 
 		// Rule 1 CSV: No CR, LF in cells
-		$newvalue=ereg_replace("\r",'',$newvalue);
-		$newvalue=ereg_replace("\n",'\n',$newvalue);
+		$newvalue=str_replace("\r",'',$newvalue);
+		$newvalue=str_replace("\n",'\n',$newvalue);
 
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
-		if (ereg('"',$newvalue))
+		if (preg_match('/"/',$newvalue))
 		{
 			$addquote=1;
-			$newvalue=ereg_replace('"','""',$newvalue);
+			$newvalue=str_replace('"','""',$newvalue);
 		}
 
 		// Rule 3 CSV: If value contains separator, we must add "
-		if (ereg($this->separator,$newvalue))
+		if (preg_match('/'.$this->separator.'/',$newvalue))
 		{
 			$addquote=1;
 		}

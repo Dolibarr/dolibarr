@@ -93,7 +93,7 @@ if ($year > 0)
     $sql .= ")";
 }
 if ($filtre) {
-    $filtre=ereg_replace(":","=",$filtre);
+    $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
 }
 if ($typeid) {

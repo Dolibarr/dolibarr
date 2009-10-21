@@ -98,7 +98,7 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
         $dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);
 
         // Supprime les slash ou antislash de fins
-        $dolibarr_main_document_root = ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
+        $dolibarr_main_document_root = preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
     }
 }
 //echo $PMA_MYSQL_INT_VERSION;
@@ -124,7 +124,7 @@ if (empty($dolibarr_main_data_root))
     // Si le repertoire documents non defini, on en propose un par defaut
     if (empty($force_install_main_data_root))
 	{
-		$dolibarr_main_data_root=ereg_replace("/htdocs$","",$dolibarr_main_document_root);
+		$dolibarr_main_data_root=preg_replace("/\/htdocs$/","",$dolibarr_main_document_root);
 		$dolibarr_main_data_root.="/documents";
 	}
 	else
@@ -170,10 +170,10 @@ if (empty($dolibarr_main_url_root))
 		$dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
 	}
 	# Clean proposed URL
-	$dolibarr_main_url_root = ereg_replace('\/fileconf\.php$','',$dolibarr_main_url_root);	# Supprime le /fileconf.php
-	$dolibarr_main_url_root = ereg_replace('\/$','',$dolibarr_main_url_root);				# Supprime le /
-	$dolibarr_main_url_root = ereg_replace('\/index\.php$','',$dolibarr_main_url_root);		# Supprime le /index.php
-	$dolibarr_main_url_root = ereg_replace('\/install$','',$dolibarr_main_url_root);		# Supprime le /install
+	$dolibarr_main_url_root = preg_replace('/\/fileconf\.php$/','',$dolibarr_main_url_root);	# Supprime le /fileconf.php
+	$dolibarr_main_url_root = preg_replace('/\/$/','',$dolibarr_main_url_root);				# Supprime le /
+	$dolibarr_main_url_root = preg_replace('/\/index\.php$/','',$dolibarr_main_url_root);		# Supprime le /index.php
+	$dolibarr_main_url_root = preg_replace('/\/install$/','',$dolibarr_main_url_root);		# Supprime le /install
 }
 
 print $dolibarr_main_url_root;

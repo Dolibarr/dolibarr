@@ -69,7 +69,7 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 				$post=intval($post)+(($post-intval($post))*(1+2/3));
 				$post=price2num($post);
 
-				$id = ereg_replace("task","",$key);
+				$id = str_replace("task","",$key);
 
 				$task=new Task($db);
 				$task->fetch($id);

@@ -248,14 +248,14 @@ class Translate {
 								//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 								if (empty($this->tab_translate[$key]) && isset($tab[1]))
 								{
-									$value=trim(ereg_replace('\\\n',"\n",$tab[1]));
+									$value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
-									if (eregi('^CHARSET$',$key))		// This is to declare in which charset files are encoded
+									if (preg_match('/^CHARSET$/',$key))		// This is to declare in which charset files are encoded
 									{
 										$this->charset_inputfile[$newdomain]=strtoupper($value);
 										//print 'File '.$file_lang.' is declared to have format '.$this->charset_inputfile[$newdomain].'<br>';
 									}
-									elseif (eregi('^DIRECTION$',$key))	// This is to declare direction of language
+									elseif (preg_match('/^DIRECTION$/',$key))	// This is to declare direction of language
 									{
 										if ($alt < 2)	// We do not load direction for alternate files 2
 										{

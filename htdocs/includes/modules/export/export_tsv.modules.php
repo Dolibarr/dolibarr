@@ -214,13 +214,13 @@ class ExportTsv extends ModeleExports
 		$newvalue=dol_string_nohtmltag($newvalue);
 
 		// Rule 1 TSV: No CR, LF in cells
-    	$newvalue=ereg_replace("\r",'',$newvalue);
-        $newvalue=ereg_replace("\n",'\n',$newvalue);
+    	$newvalue=str_replace("\r",'',$newvalue);
+        $newvalue=str_replace("\n",'\n',$newvalue);
 
         // Rule 2 TSV: If value contains tab, we must replace by space
-		if (ereg($this->separator,$newvalue))
+		if (preg_match('/'.$this->separator.'/',$newvalue))
 		{
-			$newvalue=ereg_replace("\t"," ",$newvalue);
+			$newvalue=str_replace("\t"," ",$newvalue);
 		}
 
     	return $newvalue;

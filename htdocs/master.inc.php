@@ -77,7 +77,7 @@ if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour com
 if (empty($dolibarr_main_data_root))
 {
 	// Si repertoire documents non defini, on utilise celui par defaut
-	$dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
+	$dolibarr_main_data_root=str_replace("/htdocs","",$dolibarr_main_document_root);
 	$dolibarr_main_data_root.="/documents";
 }
 // Define some constants
