@@ -52,8 +52,8 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 }
 
 // Destroy object of session
-session_unregister("dol_login");
-session_unregister("dol_entity");
+unset($_SESSION['dol_login']);
+unset($_SESSION['dol_entity']);
 
 // Destroy session
 $sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
