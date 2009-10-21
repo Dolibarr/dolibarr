@@ -364,6 +364,9 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/DEBIAN/CVS`;
 		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
  
+ 			print "Remove config file\n";
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
+
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
