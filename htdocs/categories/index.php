@@ -200,7 +200,7 @@ foreach($fulltree as $key => $val)
 {
 	$var=false;
 
-	//$fullpathparent=eregi_replace('_[^_]+$','',$val['fullpath']);
+	//$fullpathparent=preg_replace('/_[^_]+$/i','',$val['fullpath']);
 
 	// Define showline
 	$showline=0;
@@ -241,7 +241,7 @@ foreach($fulltree as $key => $val)
 		else $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop'.$n.'.gif','',1);
 		if ($option == 'indexexpanded') $lien = '<a href="'.$_SERVER["PHP_SELF"].'?section='.$val['id'].'&amp;type='.$type.'&amp;sectionexpand=false">';
     	if ($option == 'indexnotexpanded') $lien = '<a href="'.$_SERVER["PHP_SELF"].'?section='.$val['id'].'&amp;type='.$type.'&amp;sectionexpand=true">';
-    	$newref=eregi_replace('_',' ',$ref);
+    	$newref=str_replace('_',' ',$ref);
     	$lienfin='</a>';
     	print $lien.$newref.$lienfin;
 		if (! in_array($val['id'],$expandedsectionarray)) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);

@@ -162,7 +162,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 					$obj = $db->fetch_object($resql);
 
 					// sendto en RFC2822
-					$sendto = eregi_replace(',',' ',$obj->prenom." ".$obj->nom)." <".$obj->email.">";
+					$sendto = str_replace(',',' ',$obj->prenom." ".$obj->nom)." <".$obj->email.">";
 
 					// Make subtsitutions on topic and body
 					$other=explode(';',$obj->other);

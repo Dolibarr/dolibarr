@@ -677,8 +677,8 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 		else
 		{
 			$pu_ht=$_POST['np_price'];
-			$tva_tx=eregi_replace('\*','',$_POST['np_tva_tx']);
-			$tva_npr=eregi('\*',$_POST['np_tva_tx'])?1:0;
+			$tva_tx=str_replace('*','',$_POST['np_tva_tx']);
+			$tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
@@ -745,11 +745,11 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 
 	// Define info_bits
 	$info_bits=0;
-	if (eregi('\*',$_POST['tva_tx'])) $info_bits |= 0x01;
+	if (preg_match('/\*/',$_POST['tva_tx'])) $info_bits |= 0x01;
 
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
-	$vat_rate=eregi_replace('\*','',$vat_rate);
+	$vat_rate=str_replace('*','',$vat_rate);
 
 	// On verifie que le prix minimum est respecte
 	$productid = $_POST['productid'] ;

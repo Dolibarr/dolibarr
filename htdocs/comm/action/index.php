@@ -426,7 +426,7 @@ if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), arr
 
 // Add link to show birthdays
 $link='<a href="'.$_SERVER['PHP_SELF'];
-$newparam=eregi_replace('showbirthday=[0-1]','showbirthday='.(empty($showbirthday)?1:0),$param);
+$newparam=preg_replace('/showbirthday=[0-1]/i','showbirthday='.(empty($showbirthday)?1:0),$param);
 if (! eregi('showbirthday=',$newparam)) $newparam.='&showbirthday=1';
 if ($_REQUEST['action']) $newparam.='&action='.$_REQUEST['action'];
 $link.='?'.$newparam;
