@@ -349,8 +349,8 @@ else
 			$count++;
 			$versionfrom=$migarray['from'];
 			$versionto=$migarray['to'];
-		    $newversionfrom=eregi_replace('\.[0-9]+$','.*',$versionfrom);
-		    $newversionto=eregi_replace('\.[0-9]+$','.*',$versionto);
+		    $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
+		    $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
 			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
 			print '<td>';
 			print $langs->trans("UpgradeDesc");

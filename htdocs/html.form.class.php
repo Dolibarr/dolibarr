@@ -119,7 +119,7 @@ class Form
 		{
 			if ($conf->use_javascript_ajax)
 			{
-				$htmltext=eregi_replace('"',"&quot;",$htmltext);
+				$htmltext=str_replace('"',"&quot;",$htmltext);
 				if ($tooltipon==1 || $tooltipon==3)
 				{
 					$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
@@ -2130,8 +2130,8 @@ class Form
 
 		// Define defaultnpr and defaultttx
 		$defaultnpr=($info_bits & 0x01);
-		$defaultnpr=(eregi('\*',$selectedrate) ? 1 : $defaultnpr);
-		$defaulttx=eregi_replace('\*','',$selectedrate);
+		$defaultnpr=(preg_match('/\*/',$selectedrate) ? 1 : $defaultnpr);
+		$defaulttx=str_replace('*','',$selectedrate);
 
 		//print $societe_vendeuse."-".$societe_acheteuse;
 		if (is_object($societe_vendeuse) && ! $societe_vendeuse->pays_code)

@@ -88,12 +88,12 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
 	$error=0;
 
 	// If password is encoded, we decode it
-	if (eregi('crypted:',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+	if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 	{
 		require_once($dolibarr_main_document_root."/lib/security.lib.php");
-		if (eregi('crypted:',$dolibarr_main_db_pass))
+		if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
 		{
-			$dolibarr_main_db_pass = eregi_replace('crypted:', '', $dolibarr_main_db_pass);
+			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
 		}
@@ -256,7 +256,7 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
 					$values=$db->fetch_array($resql);
 					$i=0;
 					$createsql=$values[1];
-					while (eregi('CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`',$createsql,$reg) && $i < 100)
+					while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i',$createsql,$reg) && $i < 100)
 					{
 						$sqldrop="ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
 						$resqldrop = $db->query($sqldrop);
@@ -264,7 +264,7 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
 						{
 							print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
 						}
-						$createsql=eregi_replace('CONSTRAINT `'.$reg[1].'`','XXX',$createsql);
+						$createsql=preg_replace('/CONSTRAINT `'.$reg[1].'`/i','XXX',$createsql);
 						$i++;
 					}
 					$db->free($resql);

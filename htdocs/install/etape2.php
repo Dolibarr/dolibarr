@@ -247,7 +247,7 @@ if ($_POST["action"] == "set")
                             	&& versioncompare($versioncommande,$versionarray) <= 0)
                             {
                             	// Version qualified, delete SQL comments
-                                $buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
+                                $buf=preg_replace('/^-- V([0-9\.]+)/i','',$buf);
                                 //print "Ligne $i qualifiee par version: ".$buf.'<br>';
                             }
                         }

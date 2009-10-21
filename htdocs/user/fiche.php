@@ -585,7 +585,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		if ($ldap_pass)
 		{
 			print '<input type="hidden" name="password" value="'.$ldap_pass.'">';
-			print eregi_replace('.','*',$ldap_pass);
+			print preg_replace('/./i','*',$ldap_pass);
 		}
 		else
 		{
@@ -887,7 +887,7 @@ else
 			else
 			{
 				print '<td>';
-				if ($fuser->pass) print eregi_replace('.','*',$fuser->pass);
+				if ($fuser->pass) print preg_replace('/./i','*',$fuser->pass);
 				else
 				{
 					if ($user->admin) print $langs->trans("Crypted").': '.$fuser->pass_indatabase_crypted;
@@ -982,7 +982,7 @@ else
 				print '<td>'.$fuser->phenix_login.'&nbsp;</td>';
 				print "</tr>\n";
 				print '<tr><td width="25%" valign="top">'.$langs->trans("PassPhenix").'</td>';
-				print '<td>'.eregi_replace('.','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
+				print '<td>'.preg_replace('/./i','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
 				print "</tr>\n";
 			}
 
@@ -1360,7 +1360,7 @@ else
 			}
 			else
 			{
-				$text=eregi_replace('.','*',$fuser->pass);
+				$text=preg_replace('/./i','*',$fuser->pass);
 			}
 			print $text;
 			print "</td></tr>\n";
@@ -1500,7 +1500,7 @@ else
 				print "<tr>".'<td valign="top">'.$langs->trans("PassPhenix").'</td>';
 				print '<td>';
 				if ($caneditfield) print '<input size="30" type="password" class="flat" name="phenix_pass" value="'.$fuser->phenix_pass_crypted.'">';
-				else print eregi_replace('.','*',$fuser->phenix_pass_crypted);
+				else print preg_replace('/./i','*',$fuser->phenix_pass_crypted);
 				print '</td></tr>';
 			}
 

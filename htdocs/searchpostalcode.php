@@ -53,7 +53,7 @@ function run_request($table)
     $sql.= " WHERE";
     if ($cp)
     {
-    	$cp=eregi_replace('\*','%',$cp);
+    	$cp=str_replace('*','%',$cp);
     	$sql.= " cp LIKE '".addslashes($cp)."' AND";
     	$sql.= " (ville IS NOT NULL OR fk_departement IS NOT NULL OR fk_pays IS NOT NULL)";
     }

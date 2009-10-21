@@ -71,7 +71,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && ($user->rights->
 				$newprice_min=price2num($_POST["price_min_".$i],'MU');
 				$newpricebase=$_POST["multiprices_base_type_".$i];
 				$newnpr=(eregi('\*',$_POST["tva_tx_".$i]) ? 1 : 0);
-				$newvat=eregi_replace('\*','',$_POST["tva_tx_".$i]);
+				$newvat=str_replace('*','',$_POST["tva_tx_".$i]);
 				break;	// We found submited price
 			}
 		}
@@ -83,7 +83,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && ($user->rights->
 		$newprice_min=price2num($_POST["price_min"],'MU');
 		$newpricebase=$_POST["price_base_type"];
 		$newnpr=(eregi('\*',$_POST["tva_tx"]) ? 1 : 0);
-		$newvat=eregi_replace('\*','',$_POST["tva_tx"]);
+		$newvat=str_replace('*','',$_POST["tva_tx"]);
 	}
 
 	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat,$newprice_min, $level) > 0)

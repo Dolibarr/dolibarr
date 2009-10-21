@@ -85,10 +85,10 @@ define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem pages 
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem donnes (documents)
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
-	$dolibarr_main_url_root=eregi_replace($_SERVER["SCRIPT_URL"].'$','',$_SERVER["SCRIPT_URI"]);
+	$dolibarr_main_url_root=preg_replace('/'.$_SERVER["SCRIPT_URL"].'$/i','',$_SERVER["SCRIPT_URI"]);
 }
 define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
-$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);	// $suburi contains url without http*
+$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);	// $suburi contains url without http*
 $suburi = strstr ($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);	// URL relative root ('/', '/dolibarr', ...)
@@ -113,12 +113,12 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
 
 // If password is encoded, we decode it
-if (eregi('crypted:',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
 	require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
-	if (eregi('crypted:',$dolibarr_main_db_pass))
+	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
 	{
-		$dolibarr_main_db_pass = eregi_replace('crypted:', '', $dolibarr_main_db_pass);
+		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
 	}

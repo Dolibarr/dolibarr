@@ -106,8 +106,8 @@ class Translate {
 		if (empty($srclang) || $srclang == 'auto')
 		{
 			$langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-			$langpref=eregi_replace(";[^,]*","",$langpref);
-			$langpref=eregi_replace("-","_",$langpref);
+			$langpref=preg_replace("/;([^,]*)/i","",$langpref);
+			$langpref=str_replace("-","_",$langpref);
 			$langlist=preg_split("/[;,]/",$langpref);
 			$codetouse=$langlist[0];
 		}
@@ -187,7 +187,7 @@ class Translate {
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
-		$newdomain=eregi_replace('@','',$domain);	// Remove the @ if present
+		$newdomain=str_replace('@','',$domain);	// Remove the @ if present
 
 		// Check cache
 		if (! empty($this->tab_loaded[$newdomain]))	// File already loaded for this domain
@@ -405,13 +405,13 @@ class Translate {
 	{
 		if ($this->getTransFromTab($key))	// Translation is available
 		{
-			$str=eregi_replace('\\\"','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
+			$str=preg_replace('/\\\"/','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
 			$str=sprintf($str,$param1,$param2,$param3,$param4);
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
 			// On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
-			$newstr=ereg_replace('<','__lt__',$str);
-			$newstr=ereg_replace('>','__gt__',$newstr);
-			$newstr=ereg_replace('"','__quot__',$newstr);
+			$newstr=str_replace('<','__lt__',$str);
+			$newstr=str_replace('>','__gt__',$newstr);
+			$newstr=str_replace('"','__quot__',$newstr);
 
 			$newstr=$this->convToOutputCharset($newstr);	// Convert string to $this->charset_output
 
@@ -420,9 +420,9 @@ class Translate {
 			$newstr=htmlentities($newstr,ENT_QUOTES,$this->charset_output);
 
 			// On restaure les tags HTML
-			$newstr=ereg_replace('__lt__','<',$newstr);
-			$newstr=ereg_replace('__gt__','>',$newstr);
-			$newstr=ereg_replace('__quot__','"',$newstr);
+			$newstr=str_replace('__lt__','<',$newstr);
+			$newstr=str_replace('__gt__','>',$newstr);
+			$newstr=str_replace('__quot__','"',$newstr);
 			return $newstr;
 		}
 		else								// Translation is not available

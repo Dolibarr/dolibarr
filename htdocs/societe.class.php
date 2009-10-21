@@ -1693,7 +1693,7 @@ class Societe extends CommonObject
 		if ($idprof == 1 && $soc->pays_code == 'FR')
 		{
 			$chaine=trim($this->siren);
-			$chaine=eregi_replace(' ','',$chaine);
+			$chaine=preg_replace('/(\s)/','',$chaine);
 
 			if (strlen($chaine) != 9) return -1;
 
@@ -1722,7 +1722,7 @@ class Societe extends CommonObject
 		if ($idprof == 2 && $soc->pays_code == 'FR')
 		{
 			$chaine=trim($this->siret);
-			$chaine=eregi_replace(' ','',$chaine);
+			$chaine=preg_replace('/(\s)/','',$chaine);
 
 			if (strlen($chaine) != 14) return -1;
 		}

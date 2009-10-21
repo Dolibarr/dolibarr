@@ -138,9 +138,9 @@ if ($conf->file->main_force_https)
 {
 	if (! empty($_SERVER["SCRIPT_URI"]))	// If SCRIPT_URI supported by server
 	{
-		if (eregi('^http:',$_SERVER["SCRIPT_URI"]) && ! eregi('^https:',$_SERVER["SCRIPT_URI"]))	// If link is http
+		if (preg_match('/^http:/i',$_SERVER["SCRIPT_URI"]) && ! preg_match('/^https:/i',$_SERVER["SCRIPT_URI"]))	// If link is http
 		{
-			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
+			$newurl=preg_replace('/^http:/i','https:',$_SERVER["SCRIPT_URI"]);
 
 			dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 			header("Location: ".$newurl);
@@ -152,7 +152,7 @@ if ($conf->file->main_force_https)
 		// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
 		if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
 		{
-			$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
+			$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
 			$val=explode('/',$uri);
 			$domaineport=$val[0];	// $domaineport contient nom domaine et port
 

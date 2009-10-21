@@ -45,7 +45,7 @@ class Webcal {
 
 
     /**
-    		\brief      Constructeur de la classe d'interface à Webcalendar
+    		\brief      Constructeur de la classe d'interface a Webcalendar
     */
     function Webcal()
     {
@@ -53,15 +53,15 @@ class Webcal {
         global $dolibarr_main_db_type,$dolibarr_main_db_host,$dolibarr_main_db_user;
         global $dolibarr_main_db_pass,$dolibarr_main_db_name;
 
-        // Défini parametres webcal (avec substitution eventuelle)
-        $webcaltype=eregi_replace('__dolibarr_main_db_type__',$dolibarr_main_db_type,$conf->webcal->db->type);
-        $webcalhost=eregi_replace('__dolibarr_main_db_host__',$dolibarr_main_db_host,$conf->webcal->db->host);
-        $webcalport=eregi_replace('__dolibarr_main_db_port__',$dolibarr_main_db_port,$conf->webcal->db->port);
-        $webcaluser=eregi_replace('__dolibarr_main_db_user__',$dolibarr_main_db_user,$conf->webcal->db->user);
-        $webcalpass=eregi_replace('__dolibarr_main_db_pass__',$dolibarr_main_db_pass,$conf->webcal->db->pass);
-        $webcalname=eregi_replace('__dolibarr_main_db_name__',$dolibarr_main_db_name,$conf->webcal->db->name);
+        // Defini parametres webcal (avec substitution eventuelle)
+        $webcaltype=preg_replace('/__dolibarr_main_db_type__/i',$dolibarr_main_db_type,$conf->webcal->db->type);
+        $webcalhost=preg_replace('/__dolibarr_main_db_host__/i',$dolibarr_main_db_host,$conf->webcal->db->host);
+        $webcalport=preg_replace('/__dolibarr_main_db_port__/i',$dolibarr_main_db_port,$conf->webcal->db->port);
+        $webcaluser=preg_replace('/__dolibarr_main_db_user__/i',$dolibarr_main_db_user,$conf->webcal->db->user);
+        $webcalpass=preg_replace('/__dolibarr_main_db_pass__/i',$dolibarr_main_db_pass,$conf->webcal->db->pass);
+        $webcalname=preg_replace('/__dolibarr_main_db_name__/i',$dolibarr_main_db_name,$conf->webcal->db->name);
 
-        // On initie la connexion à la base Webcalendar
+        // On initie la connexion a la base Webcalendar
         require_once (DOL_DOCUMENT_ROOT ."/lib/databases/".$webcaltype.".lib.php");
         $this->localdb = new DoliDb($webcaltype,$webcalhost,$webcaluser,$webcalpass,$webcalname,$webcalport);
     }
@@ -70,7 +70,7 @@ class Webcal {
     /**
     		\brief      Ajoute objet en tant qu'entree dans le calendrier de l'utilisateur
     		\param[in]  user		Le login de l'utilisateur
-            \return     int         1 en cas de succès, -1,-2,-3 en cas d'erreur, -4 si login webcal non défini
+            \return     int         1 en cas de succes, -1,-2,-3 en cas d'erreur, -4 si login webcal non defini
     */
     function add($user)
 	{
@@ -78,7 +78,7 @@ class Webcal {
 
         dol_syslog("Webcal::add user=".$user->id);
 
-        // Test si login webcal défini pour le user
+        // Test si login webcal defini pour le user
         if (! $user->webcal_login)
 		{
 			$langs->load("other");
@@ -89,7 +89,7 @@ class Webcal {
 
         $this->localdb->begin();
 
-        // Recupère l'id max+1 dans la base webcalendar
+        // Recupere l'id max+1 dans la base webcalendar
         $id = $this->get_next_id();
 
         if ($id > 0)

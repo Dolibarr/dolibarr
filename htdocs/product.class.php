@@ -2376,8 +2376,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Affiche la premi�re photo du produit
-	 *    \param      sdir        R�pertoire � scanner
+	 *    \brief      Affiche la premiere photo du produit
+	 *    \param      sdir        Repertoire a scanner
 	 *    \return     boolean     true si photo dispo, false sinon
 	 */
 	function is_photo_available($sdir)
@@ -2401,11 +2401,11 @@ class Product extends CommonObject
 
 	/**
 	 *    \brief      Affiche toutes les photos du produit (nbmax maximum)
-	 *    \param      sdir        R�pertoire � scanner
+	 *    \param      sdir        Repertoire a scanner
 	 *    \param      size        0=taille origine, 1 taille vignette
 	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
 	 *    \param      nbbyrow     Nombre vignettes par ligne (si mode vignette)
-	 *    \return     int         Nombre de photos affich�es
+	 *    \return     int         Nombre de photos affichees
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5)
 	{
@@ -2431,8 +2431,8 @@ class Product extends CommonObject
 					if ($size == 1) {   // Format vignette
 						// On determine nom du fichier vignette
 						$photo_vignette='';
-						if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
-							$photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
+						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs)) {
+							$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo)."_small".$regs[0];
 						}
 
 
@@ -2485,7 +2485,7 @@ class Product extends CommonObject
 
 	/**
 	 *    \brief      Retourne tableau de toutes les photos du produit
-	 *    \param      dir         R�pertoire � scanner
+	 *    \param      dir         Repertoire a scanner
 	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
 	 *    \return     array       Tableau de photos
 	 */
@@ -2512,9 +2512,9 @@ class Product extends CommonObject
 					// On determine nom du fichier vignette
 					$photo=$file;
 					$photo_vignette='';
-					if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
+					if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs))
 					{
-						$photo_vignette=eregi_replace($regs[0],'',$photo).'_small'.$regs[0];
+						$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo).'_small'.$regs[0];
 					}
 
 					$dirthumb = $dir.'thumbs/';
@@ -2546,15 +2546,16 @@ class Product extends CommonObject
 	{
 		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
-		$filename = eregi_replace($dir,'',$file); // Nom du fichier
+		$pattern = str_replace('/','\/',$dir); // Add backslashes for regular expression
+		$filename = preg_replace('/'.$pattern.'/i','',$file); // Nom du fichier
 
 		// On efface l'image d'origine
 		dol_delete_file($file);
 
 		// Si elle existe, on efface la vignette
-		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
+		if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$filename,$regs))
 		{
-			$photo_vignette=eregi_replace($regs[0],'',$filename).'_small'.$regs[0];
+			$photo_vignette=preg_replace('/'.$regs[0].'/i','',$filename).'_small'.$regs[0];
 			if (file_exists($dirthumb.$photo_vignette))
 			{
 				dol_delete_file($dirthumb.$photo_vignette);

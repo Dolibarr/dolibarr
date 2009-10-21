@@ -24,7 +24,7 @@
  */
 
 include_once("./inc.php");
-$uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
+$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);	// URL racine relative

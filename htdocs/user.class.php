@@ -1165,7 +1165,7 @@ class User extends CommonObject
 
 		$error=0;
 
-		dol_syslog("User::setPassword user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
+		dol_syslog("User::setPassword user=".$user->id." password=".preg_replace('/./i','*',$password)." changelater=".$changelater." notrigger=".$notrigger." nosyncmember=".$nosyncmember, LOG_DEBUG);
 
 		// Si nouveau mot de passe non communique, on genere par module
 		if (! $password)

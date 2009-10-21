@@ -83,7 +83,7 @@ class Interfaces
 				}
 
 				// Check if trigger file is disabled by name
-				if (eregi('NORUN$',$file))
+				if (preg_match('/NORUN$/i',$file))
 				{
 					continue;
 				}
@@ -91,7 +91,7 @@ class Interfaces
 				$qualified=true;
 				if (strtolower($reg[1]) != 'all')
 				{
-					$module=eregi_replace('^mod','',$reg[1]);
+					$module=preg_replace('/^mod/i','',$reg[1]);
 					$constparam='MAIN_MODULE_'.strtoupper($module);
 					if (empty($conf->global->$constparam)) $qualified=false;
 				}

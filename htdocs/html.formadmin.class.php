@@ -36,7 +36,7 @@ class FormAdmin
 
 	/**
 		\brief     Constructeur
-		\param     DB      handler d'acc�s base de donn�e
+		\param     DB      handler d'acces base de donnee
 	*/
 	function FormAdmin($DB)
 	{
@@ -47,8 +47,8 @@ class FormAdmin
 
 
 	/**
-	 *    \brief      Retourne la liste d�roulante des langues disponibles
-	 *    \param      selected        Langue pr�-s�lectionn�e
+	 *    \brief      Retourne la liste deroulante des langues disponibles
+	 *    \param      selected        Langue pre-selectionnee
 	 *    \param      htmlname        Nom de la zone select
 	 *    \param      showauto        Affiche choix auto
 	 */
@@ -97,7 +97,7 @@ class FormAdmin
     {
         global $langs,$conf;
 
-        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilit�
+        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilite
 
 		$menuarray=array();
         $handle=opendir($dirmenu);
@@ -105,13 +105,13 @@ class FormAdmin
         {
             if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
             {
-                $filelib=eregi_replace('\.php$','',$file);
+                $filelib=preg_replace('/\.php$/i','',$file);
 				$prefix='';
-				if (eregi('^eldy',$file)) $prefix='0';			// Recommanded
-				else if (eregi('^auguria',$file)) $prefix='2';	// Other
-				else if (eregi('^default',$file)) $prefix='2';	// Other
-				else if (eregi('^rodolphe',$file)) $prefix='2';	// Other
-				else if (eregi('^empty',$file)) $prefix='2';	// Other
+				if (preg_match('/^eldy/i',$file)) $prefix='0';			// Recommanded
+				else if (preg_match('/^auguria/i',$file)) $prefix='2';	// Other
+				else if (preg_match('/^default/i',$file)) $prefix='2';	// Other
+				else if (preg_match('/^rodolphe/i',$file)) $prefix='2';	// Other
+				else if (preg_match('/^empty/i',$file)) $prefix='2';	// Other
 				else $prefix='1';								// Experimental
 
                 if ($file == $selected)
@@ -149,10 +149,10 @@ class FormAdmin
     }
 
     /**
-     *    \brief      Retourne la liste d�roulante des menus disponibles (eldy)
-     *    \param      selected        Menu pr�-s�lectionn�e
+     *    \brief      Retourne la liste deroulante des menus disponibles (eldy)
+     *    \param      selected        Menu pre-selectionnee
      *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repertoire � scanner
+     *    \param      dirmenu         Repertoire a scanner
      */
     function select_menu_families($selected='',$htmlname,$dirmenu)
     {
@@ -164,9 +164,9 @@ class FormAdmin
         {
             if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
             {
-                $filelib=eregi_replace('(_backoffice|_frontoffice)?\.php$','',$file);
-				if (eregi('^default',$filelib)) continue;
-				if (eregi('^empty',$filelib)) continue;
+                $filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
+				if (preg_match('/^default/i',$filelib)) continue;
+				if (preg_match('/^empty/i',$filelib)) continue;
 
 				$menuarray[$filelib]=1;
             }
@@ -198,8 +198,8 @@ class FormAdmin
 
 
     /**
-     *    \brief      Retourne la liste d�roulante des menus disponibles (eldy)
-     *    \param      selected        Menu pr�-s�lectionn�e
+     *    \brief      Retourne la liste deroulante des menus disponibles (eldy)
+     *    \param      selected        Menu pre-selectionnee
      *    \param      htmlname        Nom de la zone select
      */
     function select_timezone($selected='',$htmlname)

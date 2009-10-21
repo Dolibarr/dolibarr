@@ -46,7 +46,7 @@ class Mantis {
 
   
     /**
-    		\brief      Constructeur de la classe d'interface à mantisendar
+    		\brief      Constructeur de la classe d'interface a mantisendar
     */
     function Mantis()
     {
@@ -54,20 +54,18 @@ class Mantis {
         global $dolibarr_main_db_type,$dolibarr_main_db_host,$dolibarr_main_db_user;
         global $dolibarr_main_db_pass,$dolibarr_main_db_name;
 
-        // Défini parametres mantis (avec substitution eventuelle)
-        $mantistype=eregi_replace('__dolibarr_main_db_type__',$dolibarr_main_db_type,$conf->mantis->db->type);
-        $mantishost=eregi_replace('__dolibarr_main_db_host__',$dolibarr_main_db_host,$conf->mantis->db->host);
-        $mantisport=eregi_replace('__dolibarr_main_db_port__',$dolibarr_main_db_port,$conf->mantis->db->port);
-        $mantisuser=eregi_replace('__dolibarr_main_db_user__',$dolibarr_main_db_user,$conf->mantis->db->user);
-        $mantispass=eregi_replace('__dolibarr_main_db_pass__',$dolibarr_main_db_pass,$conf->mantis->db->pass);
-        $mantisname=eregi_replace('__dolibarr_main_db_name__',$dolibarr_main_db_name,$conf->mantis->db->name);
+        // Defini parametres mantis (avec substitution eventuelle)
+        $mantistype=preg_replace('/__dolibarr_main_db_type__/i',$dolibarr_main_db_type,$conf->mantis->db->type);
+        $mantishost=preg_replace('/__dolibarr_main_db_host__/i',$dolibarr_main_db_host,$conf->mantis->db->host);
+        $mantisport=preg_replace('/__dolibarr_main_db_port__/i',$dolibarr_main_db_port,$conf->mantis->db->port);
+        $mantisuser=preg_replace('/__dolibarr_main_db_user__/i',$dolibarr_main_db_user,$conf->mantis->db->user);
+        $mantispass=preg_replace('/__dolibarr_main_db_pass__/i',$dolibarr_main_db_pass,$conf->mantis->db->pass);
+        $mantisname=preg_replace('/__dolibarr_main_db_name__/i',$dolibarr_main_db_name,$conf->mantis->db->name);
 
-        // On initie la connexion à la base mantisendar
+        // On initie la connexion a la base mantisendar
         require_once (DOL_DOCUMENT_ROOT ."/lib/databases/".$mantistype.".lib.php");
         $this->localdb = new DoliDb($mantistype,$mantishost,$mantisuser,$mantispass,$mantisname,$mantisport);
     }
-
-
-   
+ 
 }
 ?>

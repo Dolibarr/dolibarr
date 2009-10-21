@@ -46,36 +46,36 @@ class Phenix {
 
 
     /**
-    		\brief      Constructeur de la classe d'interface à Phenix
+    		\brief      Constructeur de la classe d'interface a Phenix
     */
     function Phenix()
     {
     	global $conf;
-      global $dolibarr_main_db_type,$dolibarr_main_db_host,$dolibarr_main_db_user;
-      global $dolibarr_main_db_pass,$dolibarr_main_db_name;
-
-      // Défini parametres phenix (avec substitution eventuelle)
-      $phenixtype=eregi_replace('__dolibarr_main_db_type__',$dolibarr_main_db_type,$conf->phenix->db->type);
-      $phenixhost=eregi_replace('__dolibarr_main_db_host__',$dolibarr_main_db_host,$conf->phenix->db->host);
-      $phenixport=eregi_replace('__dolibarr_main_db_port__',$dolibarr_main_db_port,$conf->phenix->db->port);
-      $phenixuser=eregi_replace('__dolibarr_main_db_user__',$dolibarr_main_db_user,$conf->phenix->db->user);
-      $phenixpass=eregi_replace('__dolibarr_main_db_pass__',$dolibarr_main_db_pass,$conf->phenix->db->pass);
-      $phenixname=eregi_replace('__dolibarr_main_db_name__',$dolibarr_main_db_name,$conf->phenix->db->name);
-
-      // On initie la connexion à la base Phenix
-      require_once (DOL_DOCUMENT_ROOT ."/lib/databases/".$phenixtype.".lib.php");
-      $this->localdb = new DoliDb($phenixtype,$phenixhost,$phenixuser,$phenixpass,$phenixname,$phenixport);
+    	global $dolibarr_main_db_type,$dolibarr_main_db_host,$dolibarr_main_db_user;
+    	global $dolibarr_main_db_pass,$dolibarr_main_db_name;
+    	
+    	// Defini parametres phenix (avec substitution eventuelle)
+    	$phenixtype=preg_replace('/__dolibarr_main_db_type__/i',$dolibarr_main_db_type,$conf->phenix->db->type);
+    	$phenixhost=preg_replace('/__dolibarr_main_db_host__/i',$dolibarr_main_db_host,$conf->phenix->db->host);
+    	$phenixport=preg_replace('/__dolibarr_main_db_port__/i',$dolibarr_main_db_port,$conf->phenix->db->port);
+    	$phenixuser=preg_replace('/__dolibarr_main_db_user__/i',$dolibarr_main_db_user,$conf->phenix->db->user);
+    	$phenixpass=preg_replace('/__dolibarr_main_db_pass__/i',$dolibarr_main_db_pass,$conf->phenix->db->pass);
+    	$phenixname=preg_replace('/__dolibarr_main_db_name__/i',$dolibarr_main_db_name,$conf->phenix->db->name);
+    	
+    	// On initie la connexion a la base Phenix
+    	require_once (DOL_DOCUMENT_ROOT ."/lib/databases/".$phenixtype.".lib.php");
+    	$this->localdb = new DoliDb($phenixtype,$phenixhost,$phenixuser,$phenixpass,$phenixname,$phenixport);
     }
 
 // TODO : Modifier la suite....
 // Ajouter variable pour l'extension du nom des tables "px_" qui peut etre different
-// récupérer id du user à partir de son login
+// recuperer id du user a partir de son login
 
 
     /**
     		\brief      Ajoute objet en tant qu'entree dans le calendrier de l'utilisateur
     		\param[in]  user		    Le login de l'utilisateur
-        \return     int         1 en cas de succès, -1,-2,-3 en cas d'erreur, -4 si login phenix non défini
+        \return     int         1 en cas de succes, -1,-2,-3 en cas d'erreur, -4 si login phenix non defini
     */
     function add($user)
     {
@@ -83,7 +83,7 @@ class Phenix {
 
       dol_syslog("Phenix::add user=".$user->id);
 
-      // Test si login phenix défini pour le user
+      // Test si login phenix defini pour le user
       if (! $user->phenix_login)
       {
       	$langs->load("other");
@@ -94,7 +94,7 @@ class Phenix {
 
       $this->localdb->begin();
 
-      // Recupère l'id max+1 dans la base webcalendar
+      // Recupere l'id max+1 dans la base webcalendar
       $id = $this->get_next_id();
 
       if ($id > 0)

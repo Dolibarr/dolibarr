@@ -81,7 +81,7 @@ class InfoBox
 				while ($j < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					$boxname=eregi_replace('\.php$','',$obj->file);
+					$boxname=preg_replace('/\.php$/i','',$obj->file);
 					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
 					$box=new $boxname($this->db,$obj->note);
 					$box->rowid=$obj->rowid;
@@ -129,7 +129,7 @@ class InfoBox
 				while ($j < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					$boxname=eregi_replace('\.php$','',$obj->file);
+					$boxname=preg_replace('/\.php$/i','',$obj->file);
 					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
 					$box=new $boxname($this->db,$obj->note);
 					$box->rowid=$obj->rowid;
