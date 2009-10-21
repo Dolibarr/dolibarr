@@ -53,7 +53,7 @@ $offset = $limit * $page ;
 
 if (empty($_REQUEST['typeid']))
 {
-	$newfiltre=eregi_replace('filtre=','',$filtre);
+	$newfiltre=str_replace('filtre=','',$filtre);
 	$filterarray=explode('-',$newfiltre);
 	foreach($filterarray as $val)
 	{

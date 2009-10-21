@@ -261,8 +261,8 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
         {
 	        $pu_ht=$_POST['pu'];
 			$price_base_type = 'HT';
-	        $tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
-			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
+	        $tva_tx=str_replace('*','',$_POST['tva_tx']);
+			$tva_npr=preg_match('/\*/',$_POST['tva_tx'])?1:0;
 	        $desc=$_POST['desc'];
         }
 

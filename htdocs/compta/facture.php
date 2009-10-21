@@ -921,8 +921,8 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 		else
 		{
 			$pu_ht=$_POST['pu'];
-			$tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
-			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
+			$tva_tx=str_replace('*','',$_POST['tva_tx']);
+			$tva_npr=preg_match('/\*/',$_POST['tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 			$type=$_POST["type"];
 		}
@@ -1002,11 +1002,11 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 	// Define info_bits
 	$info_bits=0;
-	if (eregi('\*',$_POST['tva_tx'])) $info_bits |= 0x01;
+	if (preg_match('/\*/',$_POST['tva_tx'])) $info_bits |= 0x01;
 
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
-	$vat_rate=eregi_replace('\*','',$vat_rate);
+	$vat_rate=str_replace('*','',$vat_rate);
 
 	// Check parameters
 	if (empty($_POST['productid']) && $_POST["type"] < 0)

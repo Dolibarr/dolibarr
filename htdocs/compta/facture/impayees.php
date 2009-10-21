@@ -246,7 +246,7 @@ if ($result)
 	if ($_REQUEST["late"])               $param.='&amp;late='.urlencode($_REQUEST["search_late"]);
 
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource.=eregi_replace('&amp;','&',$param);
+	$urlsource.=str_replace('&amp;','&',$param);
 
 	$titre=($socid?$langs->trans("BillsCustomersUnpaidForCompany",$soc->nom):$langs->trans("BillsCustomersUnpaid"));
 	if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
