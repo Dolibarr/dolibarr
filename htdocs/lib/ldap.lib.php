@@ -151,7 +151,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 		else
 		{
 			$newstring=@htmlentities($val,ENT_COMPAT,'UTF-8');	// Make entity encoding
-			if ($hide) print eregi_replace('.','*',$newstring);
+			if ($hide) print preg_replace('/./i','*',$newstring);
 			else print $newstring;
 			print '</td></tr>';
 		}

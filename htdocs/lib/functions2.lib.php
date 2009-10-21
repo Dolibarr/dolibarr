@@ -281,7 +281,7 @@ function clean_url($url,$http=1)
 	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
 	// To include the minus sign in a char class, we must not escape it but put it at the end of the class
 	// Also, there's no need of escape a dot sign in a class
-	if (eregi('^(https?:[\\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?',$url,$regs))
+	if (preg_match('/^(https?:[\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?/i',$url,$regs))
 	{
 		$proto=$regs[1];
 		$domain=$regs[2];
@@ -294,15 +294,18 @@ function clean_url($url,$http=1)
 		$newproto=$proto;
 		if ($http==0)
 		{
-			if (eregi('^http:[\\\/]+',$url))
+			if (preg_match('/^http:[\\/]+/i',$url))
 			{
-				$url = eregi_replace('^http:[\\\/]+','',$url);
+				$url = preg_replace('/^http:[\\/]+/i','',$url);
 				$newproto = '';
 			}
 		}
 
+		// Add backslashes for regular expression
+		$proto = str_replace('/','\/',$proto);
+		
 		// On passe le nom de domaine en minuscule
-		$CleanUrl = eregi_replace('^'.$proto.$domain, $newproto.strtolower($domain), $url);
+		$CleanUrl = preg_replace('/^'.$proto.$domain.'/i', $newproto.strtolower($domain), $url);
 
 		return $CleanUrl;
 	}
@@ -386,34 +389,34 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	else $maskrefclient='';
 
 	$maskwithonlyymcode=$mask;
-	$maskwithonlyymcode=eregi_replace('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$maskcounter,$maskwithonlyymcode);
-	$maskwithonlyymcode=eregi_replace('\{dd\}','dd',$maskwithonlyymcode);
-	$maskwithonlyymcode=eregi_replace('\{(c+)(0*)\}',$maskrefclient,$maskwithonlyymcode);
+	$maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$maskcounter,$maskwithonlyymcode);
+	$maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
+	$maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
 	$maskwithnocode=$maskwithonlyymcode;
-	$maskwithnocode=eregi_replace('\{yyyy\}','yyyy',$maskwithnocode);
-	$maskwithnocode=eregi_replace('\{yy\}','yy',$maskwithnocode);
-	$maskwithnocode=eregi_replace('\{y\}','y',$maskwithnocode);
-	$maskwithnocode=eregi_replace('\{mm\}','mm',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{y\}/i','y',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{mm\}/i','mm',$maskwithnocode);
 	// Now maskwithnocode = 0000ddmmyyyyccc for example
 	// and maskcounter    = 0000 for example
 	//print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
 
 	// If an offset is asked
-	if (! empty($reg[2]) && eregi('^\+',$reg[2])) $maskoffset=eregi_replace('^\+','',$reg[2]);
-	if (! empty($reg[3]) && eregi('^\+',$reg[3])) $maskoffset=eregi_replace('^\+','',$reg[3]);
+	if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
+	if (! empty($reg[3]) && preg_match('/^\+/',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
 
 	// Define $sqlwhere
 
 	// If a restore to zero after a month is asked we check if there is already a value for this year.
-	if (! empty($reg[2]) && eregi('^@',$reg[2]))  $maskraz=eregi_replace('^@','',$reg[2]);
-	if (! empty($reg[3]) && eregi('^@',$reg[3]))  $maskraz=eregi_replace('^@','',$reg[3]);
+	if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))  $maskraz=preg_replace('/^@/','',$reg[2]);
+	if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
 	if ($maskraz >= 0)
 	{
 		if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
 		// Define reg
-		if ($maskraz > 1 && ! eregi('^(.*)\{(y+)\}\{(m+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-		if ($maskraz <= 1 && ! eregi('^(.*)\{(y+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+		if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+		if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
 		//print "x".$maskwithonlyymcode." ".$maskraz;
 
 		// Define $yearcomp and $monthcomp (that will be use in the select where to search max number)
@@ -593,34 +596,34 @@ function check_value($mask,$value)
 	else $maskrefclient='';
 
 	$maskwithonlyymcode=$mask;
-	$maskwithonlyymcode=eregi_replace('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$maskcounter,$maskwithonlyymcode);
-	$maskwithonlyymcode=eregi_replace('\{dd\}','dd',$maskwithonlyymcode);
-	$maskwithonlyymcode=eregi_replace('\{(c+)(0*)\}',$maskrefclient,$maskwithonlyymcode);
+	$maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$maskcounter,$maskwithonlyymcode);
+	$maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
+	$maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
 	$maskwithnocode=$maskwithonlyymcode;
-	$maskwithnocode=eregi_replace('\{yyyy\}','yyyy',$maskwithnocode);
-	$maskwithnocode=eregi_replace('\{yy\}','yy',$maskwithnocode);
-	$maskwithnocode=eregi_replace('\{y\}','y',$maskwithnocode);
-	$maskwithnocode=eregi_replace('\{mm\}','mm',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{y\}/i','y',$maskwithnocode);
+	$maskwithnocode=preg_replace('/\{mm\}/i','mm',$maskwithnocode);
 	// Now maskwithnocode = 0000ddmmyyyyccc for example
 	// and maskcounter    = 0000 for example
 	//print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
 
 	// If an offset is asked
-	if (! empty($reg[2]) && eregi('^\+',$reg[2])) $maskoffset=eregi_replace('^\+','',$reg[2]);
-	if (! empty($reg[3]) && eregi('^\+',$reg[3])) $maskoffset=eregi_replace('^\+','',$reg[3]);
+	if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
+	if (! empty($reg[3]) && preg_match('^\+',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
 
 	// Define $sqlwhere
 
 	// If a restore to zero after a month is asked we check if there is already a value for this year.
-	if (! empty($reg[2]) && eregi('^@',$reg[2]))  $maskraz=eregi_replace('^@','',$reg[2]);
-	if (! empty($reg[3]) && eregi('^@',$reg[3]))  $maskraz=eregi_replace('^@','',$reg[3]);
+	if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))  $maskraz=preg_replace('/^@/','',$reg[2]);
+	if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))  $maskraz=preg_replace('/^@/','',$reg[3]);
 	if ($maskraz >= 0)
 	{
 		if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
 		// Define reg
-		if ($maskraz > 1 && ! eregi('^(.*)\{(y+)\}\{(m+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
-		if ($maskraz <= 1 && ! eregi('^(.*)\{(y+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+		if ($maskraz > 1 && ! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+		if ($maskraz <= 1 && ! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
 		//print "x".$maskwithonlyymcode." ".$maskraz;
 	}
 	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
@@ -724,7 +727,7 @@ function numero_semaine($time)
 {
 	$stime = strftime('%Y-%m-%d',$time);
 
-	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?',$stime,$reg))
+	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i',$stime,$reg))
 	{
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		$annee = $reg[1];
@@ -767,7 +770,7 @@ function numero_semaine($time)
 		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
 	}
 
-	// D�finition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
+	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine =     (
 	(
 	date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine)))
@@ -779,7 +782,7 @@ function numero_semaine($time)
 	// Cas particulier de la semaine 53
 	if ($numeroSemaine==53)
 	{
-		// Les annees qui commence un Jeudi et les ann�es bissextiles commencant un Mercredi en possede 53
+		// Les annees qui commence un Jeudi et les annees bissextiles commencant un Mercredi en possede 53
 		if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==4 || (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==3 && date("z",mktime(12,0,0,12,31,date("Y",$jeudiSemaine)))==365))
 		{
 			$numeroSemaine = 53;

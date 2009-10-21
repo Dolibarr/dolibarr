@@ -27,7 +27,7 @@
 // Test si mode CLI
 $sapi_type = php_sapi_name();
 $script_file=__FILE__;
-if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
+if (preg_match('/([^\\/]+)$/i',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere env dolibarr
 $version='$Revision$';
-$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
@@ -95,7 +95,7 @@ if (!$error)
 	  $i++;
 		}
 		$db->free();
-		dol_syslog("$i factures � prelever");
+		dol_syslog("$i factures a prelever");
 	}
 	else
 	{
@@ -114,7 +114,7 @@ if (!$error)
 if (!$error)
 {
 	/*
-	 * V�rification des RIB
+	 * Verification des RIB
 	 *
 	 */
 	$i = 0;
@@ -264,7 +264,7 @@ if (sizeof($factures_prev) > 0)
 				$pai->amounts = array();
 				$pai->amounts[$fac[0]] = $fact->total_ttc;
 				$pai->datepaye = $db->idate($datetimeprev);
-				$pai->paiementid = 3; // pr�l�vement
+				$pai->paiementid = 3; // prelevement
 				$pai->num_paiement = $ref;
 
 				if ($pai->create($user, 1) == -1)  // on appelle en no_commit
@@ -280,7 +280,7 @@ if (sizeof($factures_prev) > 0)
 					$pai->valide();
 
 					/*
-					 * Ajout d'une ligne de pr�l�vement
+					 * Ajout d'une ligne de prelevement
 					 *
 					 *
 					 * $fac[3] : banque
@@ -300,7 +300,7 @@ if (sizeof($factures_prev) > 0)
 					}
 
 					/*
-					 * Mise � jour des demandes
+					 * Mise a jour des demandes
 					 *
 					 */
 					$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
@@ -361,7 +361,7 @@ if (sizeof($factures_prev) > 0)
 	}
 
 	/*
-	 * Mise � jour du total
+	 * Mise a jour du total
 	 *
 	 */
 
@@ -373,7 +373,7 @@ if (sizeof($factures_prev) > 0)
 	if (!$db->query($sql))
 	{
 		$error++;
-		dol_syslog("Erreur mise � jour du total");
+		dol_syslog("Erreur mise a jour du total");
 		dol_syslog($sql);
 	}
 

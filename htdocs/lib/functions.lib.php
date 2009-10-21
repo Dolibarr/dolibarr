@@ -2736,7 +2736,7 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 	$ret=@html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
 	$ret=preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i',"<br>",$ret);
 	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i',"\r\n",$ret);
-	$ret=eregi_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i',"\n",$ret);
+	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i',"\n",$ret);
 	$ret=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i',"\n",$ret);
 	return $ret;
 }

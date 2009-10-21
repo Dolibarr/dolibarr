@@ -282,9 +282,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		print '<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center"'.(empty($conf->browser->phone)?' width="750"':'').'><tr><td align="center">';
 		$i=0;
-		while (eregi('__\(([a-zA-Z]+)\)__',$conf->global->MAIN_HOME,$reg) && $i < 100)
+		while (preg_match('/__\(([a-zA-Z]+)\)__/i',$conf->global->MAIN_HOME,$reg) && $i < 100)
 		{
-			$conf->global->MAIN_HOME=eregi_replace('__\('.$reg[1].'\)__',$langs->trans($reg[1]),$conf->global->MAIN_HOME);
+			$conf->global->MAIN_HOME=preg_replace('/__\('.$reg[1].'\)__/i',$langs->trans($reg[1]),$conf->global->MAIN_HOME);
 			$i++;
 		}
 		print nl2br($conf->global->MAIN_HOME);
@@ -369,11 +369,11 @@ function encodedecode_dbpassconf($level=0)
 
 			$lineofpass=0;
 
-			if (eregi('^[^#]*dolibarr_main_db_encrypted_pass[ ]*=[ ]*(.*)',$buffer,$reg))	// Old way to save crypted value
+			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i',$buffer,$reg))	// Old way to save crypted value
 			{
 				$val = trim($reg[1]);	// This also remove CR/LF
-				$val=eregi_replace('^["\']','',$val);
-				$val=eregi_replace('["\'][ ;]*$','',$val);
+				$val=preg_replace('/^["\']/','',$val);
+				$val=preg_replace('/["\'][\s;]*$/','',$val);
 				if (! empty($val))
 				{
 					$passwd_crypted = $val;
@@ -382,14 +382,14 @@ function encodedecode_dbpassconf($level=0)
 					$lineofpass=1;
 				}
 			}
-			elseif (eregi('^[^#]*dolibarr_main_db_pass[ ]*=[ ]*(.*)',$buffer,$reg))
+			elseif (preg_match('/^[^#]*dolibarr_main_db_pass[\s]*=[\s]*(.*)/i',$buffer,$reg))
 			{
 				$val = trim($reg[1]);	// This also remove CR/LF
-				$val=eregi_replace('^["\']','',$val);
-				$val=eregi_replace('["\'][ ;]*$','',$val);
+				$val=preg_replace('/^["\']/','',$val);
+				$val=preg_replace('/["\'][\s;]*$/','',$val);
 				if (eregi('crypted:',$buffer))
 				{
-					$val = eregi_replace('crypted:','',$val);
+					$val = preg_replace('/crypted:/i','',$val);
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;

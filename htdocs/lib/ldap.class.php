@@ -33,7 +33,7 @@ class Ldap
 {
 
 	/**
-	 * Tableau des serveurs (IP addresses ou nom d'hôtes)
+	 * Tableau des serveurs (IP addresses ou nom d'hï¿½tes)
 	 */
 	var $server=array();
 	/**
@@ -67,7 +67,7 @@ class Ldap
 	 */
 	var $groups;
 	/**
-	 * Code erreur retourné par le serveur Ldap
+	 * Code erreur retournï¿½ par le serveur Ldap
 	 */
 	var $ldapErrorCode;
 	/**
@@ -404,8 +404,8 @@ class Ldap
 		 */
 		if ($this->serverType == "activedirectory") {
 			// FQDN domain
-			$domain = eregi_replace('dc=','',$this->domain);
-			$domain = eregi_replace(',','.',$domain);
+			$domain = str_replace('dc=','',$this->domain);
+			$domain = str_replace(',','.',$domain);
 			$checkDn = "$uname@$domain";
 		} else {
 			$checkDn = $this->getUserIdentifier()."=".$uname.", ".$this->setDn(true);
@@ -736,9 +736,9 @@ class Ldap
 
 	/**
 	 * 		\brief		Returns an array containing a details of elements
-	 *		\param		$search			 	Valeur champ clé recherché, sinon '*' pour tous.
+	 *		\param		$search			 	Valeur champ clï¿½ recherchï¿½, sinon '*' pour tous.
 	 *		\param		$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
-	 *		\param		$useridentifier 	Nom du champ clé (Ex: uid)
+	 *		\param		$useridentifier 	Nom du champ clï¿½ (Ex: uid)
 	 *		\param		$attributeArray 	Array of fields required (Ex: sn,userPassword)
 	 *		\param		$activefilter		1=utilise le champ this->filter comme filtre
 	 *		\return		array				Array of [id_record][ldap_field]=value
@@ -794,7 +794,7 @@ class Ldap
 
 		$info = @ldap_get_entries($this->connection, $this->result);
 
-		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passé
+		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passï¿½
 		// a ldap_search en majuscule !!!
 		//print_r($info);
 
@@ -812,7 +812,7 @@ class Ldap
 					$keyattributelower=strtolower($attributeArray[$j]);
 					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
 
-					//permet de récupérer le SID avec Active Directory
+					//permet de rï¿½cupï¿½rer le SID avec Active Directory
 					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid")
 					{
 						$objectsid = $this->getObjectSid($recordid);
@@ -843,7 +843,7 @@ class Ldap
 
 
 	/**
-	 * Récupère le SID de l'utilisateur
+	 * Rï¿½cupï¿½re le SID de l'utilisateur
 	 * ldapuser. le login de l'utilisateur
 	 * Indispensable pour Active Directory
 	 */
@@ -875,7 +875,7 @@ class Ldap
 
 			if (!$entry)
 			{
-				// Si pas de résultat on cherche dans le domaine
+				// Si pas de rï¿½sultat on cherche dans le domaine
 				$searchDN = $this->domain;
 				$i++;
 			}
@@ -919,11 +919,11 @@ class Ldap
 
 	/**
 	 * 	\brief 		Fonction de recherche avec filtre
-	 *	\remarks	this->connection doit etre défini donc la methode bind ou bindauth doit avoir deja été appelée
+	 *	\remarks	this->connection doit etre dï¿½fini donc la methode bind ou bindauth doit avoir deja ï¿½tï¿½ appelï¿½e
 	 * 	\param 		checkDn			DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
 	 * 	\param 		filter			Filtre de recherche (ex: (sn=nom_personne) )
-	 *	\return		array			Tableau des reponses (clé en minuscule-valeur)
-	 *	\remarks	Ne pas utiliser pour recherche d'une liste donnée de propriétés
+	 *	\return		array			Tableau des reponses (clï¿½ en minuscule-valeur)
+	 *	\remarks	Ne pas utiliser pour recherche d'une liste donnï¿½e de propriï¿½tï¿½s
 	 *				car conflit majuscule-minuscule. A n'utiliser que pour les pages
 	 *				'Fiche LDAP' qui affiche champ lisibles par defaut.
 	 */
@@ -956,8 +956,8 @@ class Ldap
 
 
 	/**
-	 * 		\brief 		Récupère les attributs de l'utilisateur
-	 * 		\param 		$user		Utilisateur ldap à lire
+	 * 		\brief 		Rï¿½cupï¿½re les attributs de l'utilisateur
+	 * 		\param 		$user		Utilisateur ldap ï¿½ lire
 	 *		\return		int			>0 if ok, <0 if ko
 	 */
 	function fetch($user)
@@ -994,7 +994,7 @@ class Ldap
 
 			if (!$result)
 			{
-				// Si pas de résultat on cherche dans le domaine
+				// Si pas de rï¿½sultat on cherche dans le domaine
 				$searchDN = $this->domain;
 				$i++;
 			}
@@ -1033,8 +1033,8 @@ class Ldap
 			$this->badpwdtime = $this->convert_time($this->convToOutputCharset($result[0]["badpasswordtime"][0],$this->ldapcharset));
 
 			// FQDN domain
-			$domain = eregi_replace('dc=','',$this->domain);
-			$domain = eregi_replace(',','.',$domain);
+			$domain = str_replace('dc=','',$this->domain);
+			$domain = str_replace(',','.',$domain);
 			$this->domainFQDN = $domain;
 
 			ldap_free_result($this->result);

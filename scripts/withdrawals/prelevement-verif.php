@@ -27,7 +27,7 @@
 // Test si mode CLI
 $sapi_type = php_sapi_name();
 $script_file=__FILE__;
-if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
+if (preg_match('/([^\\/]+)$/i',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere env dolibarr
 $version='$Revision$';
-$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -46,10 +46,10 @@ $error = 0;
 
 $puser = new user($db, PRELEVEMENT_USER);
 $puser->fetch();
-dol_syslog("Pr�l�vements effectu�s par ".$puser->fullname." [".PRELEVEMENT_USER."]");
+dol_syslog("Prelevements effectues par ".$puser->fullname." [".PRELEVEMENT_USER."]");
 
 dol_syslog("Raison sociale : ".PRELEVEMENT_RAISON_SOCIALE);
-dol_syslog("Num�ro Nation Emetteur : ".PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR);
+dol_syslog("Numero Nation Emetteur : ".PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR);
 
 dol_syslog("Code etablissement : ".PRELEVEMENT_CODE_BANQUE);
 dol_syslog("Code guichet       : ". PRELEVEMENT_CODE_GUICHET);
@@ -57,7 +57,7 @@ dol_syslog("Numero compte      : ".PRELEVEMENT_NUMERO_COMPTE);
 
 /*
  *
- * Lectures des factures a pr�lever
+ * Lectures des factures a prelever
  *
  */
 
@@ -93,7 +93,7 @@ if (!$error)
 	  $i++;
 	}
       $db->free();
-      dol_syslog("$i factures � pr�lever");
+      dol_syslog("$i factures a prelever");
     }
   else
     {
@@ -105,18 +105,18 @@ if (!$error)
 
 /*
  *
- * V�rification des clients
+ * Verification des clients
  *
  */
 
 if (!$error)
 {
   /*
-   * V�rification des RIB
+   * Verification des RIB
    *
    */
   $i = 0;
-  dol_syslog("D�but v�rification des RIB");
+  dol_syslog("Debut verification des RIB");
 
   if (sizeof($factures) > 0)
     {
@@ -144,7 +144,7 @@ if (!$error)
 		}
 	      else
 		{
-		  dol_syslog("Impossible de lire la soci�t�");
+		  dol_syslog("Impossible de lire la societe");
 		}
 	    }
 	  else
@@ -159,7 +159,7 @@ if (!$error)
     }
 }
 
-dol_syslog(sizeof($factures_prev)." factures sur ".sizeof($factures)." seront pr�lev�es");
+dol_syslog(sizeof($factures_prev)." factures sur ".sizeof($factures)." seront prelevees");
 
 $db->close();
 

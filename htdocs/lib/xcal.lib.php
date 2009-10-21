@@ -87,7 +87,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$email 		  = $event['email'];
 				$url		  = $event['url'];
 				$transparency = $event['transparency'];		// OPAQUE or TRANSPARENT
-				$description=eregi_replace('<br[ \/]?>',"\n",$event['desc']);
+				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
 
 				// Uncomment for tests
@@ -296,7 +296,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 				$url		  = $event['url'];
 				$author		  = $event['author'];
 				$category	  = $event['category'];
-				$description=eregi_replace('<br[ \/]?>',"\n",$event['desc']);
+				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
  				
 				fwrite ($fichier, "<item>\n");
@@ -348,9 +348,9 @@ function format_cal($format,$string)
 	if ($format == 'ical')
 	{
 		// Replace new lines chars by '\n'
-		$newstring=eregi_replace("\r\n","\n",$newstring);
-		$newstring=eregi_replace("\n\r","\n",$newstring);
-		$newstring=eregi_replace("\n",'\n',$newstring);
+		$newstring=preg_replace('/'."\r\n".'/i',"\n",$newstring);
+		$newstring=preg_replace('/'."\n\r".'/i',"\n",$newstring);
+		$newstring=preg_replace('/'."\n".'/i','\n',$newstring);
 		// Must not exceed 75 char. Cut with "\r\n"+Space
 		$newstring=CalEncode($newstring);
 	}

@@ -75,7 +75,7 @@ function member_prepare_head($member)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = eregi_replace('__ID__',$member->id,$values[3]);
+			$head[$h][0] = preg_replace('/__ID__/i',$member->id,$values[3]);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

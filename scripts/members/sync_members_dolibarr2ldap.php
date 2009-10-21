@@ -27,7 +27,7 @@
 // Test si mode batch
 $sapi_type = php_sapi_name();
 $script_file=__FILE__;
-if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
+if (preg_match('/([^\\/]+)$/i',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Main
 $version='$Revision$';
-$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
 @set_time_limit(0);
 $error=0;
 
@@ -64,14 +64,14 @@ print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
 print "login=".$conf->db->user."\n";
-//print "pass=".eregi_replace('.','*',$conf->db->password)."\n";	// Not defined for security reasons
+//print "pass=".preg_replace('/./i','*',$conf->db->password)."\n";	// Not defined for security reasons
 print "database=".$conf->db->name."\n";
 print "\n";
 print "----- To LDAP database:\n";
 print "host=".$conf->global->LDAP_SERVER_HOST."\n";
 print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".eregi_replace('.','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN target=".$conf->global->LDAP_MEMBER_DN."\n";
 print "\n";
 print "Press a key to confirm...\n";

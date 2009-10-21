@@ -21,7 +21,7 @@
 /**
  *		\file       	scripts/banque/graph-solde.php
  *		\ingroup    	banque
- *		\brief      	Script de génération des images des soldes des comptes
+ *		\brief      	Script de gï¿½nï¿½ration des images des soldes des comptes
  *		\deprecated		Ce script n'est plus utilise car les graphiques sont generes dynamiquement maintenant.
  *		\version		$Id$
  */
@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=eregi_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
+$path=str_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
@@ -56,7 +56,7 @@ else
 }
 
 
-// Crée répertoire accueil
+// Crï¿½e rï¿½pertoire accueil
 create_exdir($conf->banque->dir_temp);
 
 
@@ -209,7 +209,7 @@ foreach ($accounts as $account)
 		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
 		if ($day > time())
 		{
-			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
+			$datas[$i] = ''; // Valeur spï¿½ciale permettant de ne pas tracer le graph
 		}
 		else
 		{
@@ -303,7 +303,7 @@ foreach ($accounts as $account)
 		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 		if ($day > time())
 		{
-			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
+			$datas[$i] = ''; // Valeur spï¿½ciale permettant de ne pas tracer le graph
 		}
 		else
 		{
@@ -380,7 +380,7 @@ foreach ($accounts as $account)
 		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 		if ($day > ($max+86400))
 		{
-			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
+			$datas[$i] = ''; // Valeur spï¿½ciale permettant de ne pas tracer le graph
 		}
 		else
 		{

@@ -41,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $id=$argv[1];
 
 // Recupere root dolibarr
-$path=eregi_replace('mailing-send.php','',$_SERVER["PHP_SELF"]);
+$path=str_replace('mailing-send.php','',$_SERVER["PHP_SELF"]);
 
 
 require_once ($path."../../htdocs/master.inc.php");
@@ -121,7 +121,7 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			// sendto en RFC2822
-			$sendto = eregi_replace(',',' ',$obj->prenom." ".$obj->nom) ." <".$obj->email.">";
+			$sendto = str_replace(',',' ',$obj->prenom." ".$obj->nom) ." <".$obj->email.">";
 
 			// Make subtsitutions on topic and body
 			$other=explode(';',$obj->other);
