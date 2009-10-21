@@ -358,6 +358,8 @@ Module2600Name = WebServices
 Module2600Desc = Activa els serveis de servidor web services de Dolibarr
 Module2700Name = Gravatar
 Module2700Desc = Utilitza el servei en línia de Gravatar (www.gravatar.com) per mostrar fotos dels usuaris/membres (que es troben en els seus missatges de correu electrònic). Necessita un accés a Internet
+Module2900Name = GeoIPMaxmind
+Module2900Desc = Capacitats de conversió GeoIP Maxmind
 Module5000Name = Multi-empresa
 Module5000Desc = Permet gestionar diverses empreses
 Module10000Name = PayBox
@@ -1086,6 +1088,7 @@ PasswordTogetVCalExport = Clau d'autorització vCal export link
 ##### ClickToDial ##### = undefined =  = 
 ClickToDialDesc = Aquest mòdul permet afegir una icona després del número de telèfon de contactes Dolibarr. Un clic en aquesta icona, Truca a un servidor amb un URL que s'indica a continuació. Això pot ser usat per anomenar al sistema centre de Dolibarr que pot trucar al número de telèfon en un sistema SIP, per exemple.
 ##### Point Of Sales (CashDesk) ##### =  = 
+CashDesk = Caixa registradora
 CashDeskSetup = Mòdul de configuració Caixa registradora
 CashDeskThirdPartyForSell = Tercer genéric a utilitzar per a les vendes
 CashDeskBankAccountForSell = Compte d'efectiu que s'utilitzarà per a les vendes
@@ -1106,3 +1109,10 @@ FreeLegalTextOnChequeReceipts = Menció complementària a les remeses de xecs
 MultiCompanySetup = Configuració del mòdul Multi-empresa
 ##### Suppliers ##### =  = 
 SuppliersSetup = Configuració del mòdul Proveïdors
+##### GeoIPMaxmind ##### =  = 
+GeoIPMaxmindSetup = Configuració del mòdul GeoIP  Maxmind
+PathToGeoIPMaxmindCountryDataFile = Ruta de l'arxiu Maxmind que conté les conversions IP-> País.<br>Exemple: /usr/local/share/GeoIP/GeoIP.dat
+NoteOnPathLocation = Tingueu en compte que aquest arxiu ha d'estar en una carpeta accessible desde la seva PHP (Comproveu la configuració de open_basedir de la seva PHP i els permisos d'arxiu/carpetes).
+YouCanDownloadFreeDatFileTo = Pot descarregar-se una <b>versió demo gratuïta</b> de l'arxiu de països  Maxmind GeoIP a l'adreça %s.
+YouCanDownloadAdvancedDatFileTo = També pot descarregar-se una <b>versió més completa</b> de l'arxiu de països Maxmind GeoIP a l'adreça %s.
+TestGeoIPResult = Test de conversió IP -> País

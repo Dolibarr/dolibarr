@@ -359,6 +359,8 @@ Module2600Name = WebServices
 Module2600Desc = Active le serveur de Web Services de Dolibarr
 Module2700Name = Gravatar
 Module2700Desc = Utilise le service en ligne Gravatar (www.gravatar.com) pour affichage les photos d'utilisateurs/membres (qui se trouve avec leurs e-mails). Besoin d'un accès Internet
+Module2900Name = GeoIPMaxmind
+Module2900Desc = Capacités de conversion GeoIP Maxmind 
 Module5000Name = Multi-société
 Module5000Desc = Permet de gérer plusieurs sociétés
 Module10000Name = PayBox
@@ -1088,6 +1090,7 @@ PasswordTogetVCalExport = Clé pour autoriser lien export
 ##### ClickToDial ##### = undefined
 ClickToDialDesc = Ce module permet d'ajouter un petit picto a coté des numéros de téléphones des contacts. Un clic sur ce picto provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de provoquer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un system SIP par exemple.
 ##### Point Of Sales (CashDesk) #####
+CashDesk=Caisse enregistreuse
 CashDeskSetup = Configuration du module Caisse enregistreuse
 CashDeskThirdPartyForSell = Tiers générique à utiliser pour les ventes
 CashDeskBankAccountForSell = Compte caisse à utiliser pour les ventes
