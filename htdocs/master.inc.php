@@ -54,6 +54,15 @@ else
 	define('LOG_INFO',6);
 	define('LOG_DEBUG',7);
 }
+// Definition of missing functions
+if (! function_exists("preg_replace"))
+{
+	function preg_replace($a,$b,$c)
+	{
+
+	}
+}
+
 
 // Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
 error_reporting(E_ALL ^ E_NOTICE);
@@ -80,15 +89,16 @@ if (empty($dolibarr_main_data_root))
 	$dolibarr_main_data_root=str_replace("/htdocs","",$dolibarr_main_document_root);
 	$dolibarr_main_data_root.="/documents";
 }
+
 // Define some constants
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem pages php (htdocs)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem donnes (documents)
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
-	$dolibarr_main_url_root=preg_replace('/'.$_SERVER["SCRIPT_URL"].'$/i','',$_SERVER["SCRIPT_URI"]);
+	$dolibarr_main_url_root=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
 }
 define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
-$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);	// $suburi contains url without http*
+$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);	// $uri contains url without http*
 $suburi = strstr ($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);	// URL relative root ('/', '/dolibarr', ...)
@@ -96,8 +106,9 @@ if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', 
 
 
 /*
- * Controle validite fichier conf
+ * Include functions
  */
+
 if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 {
 	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
@@ -105,12 +116,8 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 	exit;
 }
 
-
-/*
- * Create $conf object
- */
-
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
+
 
 // If password is encoded, we decode it
 if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
@@ -125,6 +132,11 @@ if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_d
 	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
 //print memory_get_usage();
+
+
+/*
+ * Create $conf object
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/core/conf.class.php");
 
@@ -284,10 +296,10 @@ if (! defined('NOREQUIREDB'))
 if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 {
 	/*print '$_SERVER["GATEWAY_INTERFACE"]='.$_SERVER["GATEWAY_INTERFACE"].'<br>';
-	print 'session_id()='.session_id().'<br>';
-	print '$_SESSION["dol_login"]='.$_SESSION["dol_login"].'<br>';
-	print '$conf->global->MAIN_ONLY_LOGIN_ALLOWED='.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'<br>';
-	exit;*/
+	 print 'session_id()='.session_id().'<br>';
+	 print '$_SESSION["dol_login"]='.$_SESSION["dol_login"].'<br>';
+	 print '$conf->global->MAIN_ONLY_LOGIN_ALLOWED='.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'<br>';
+	 exit;*/
 	$ok=0;
 	if ((! session_id() || ! isset($_SESSION["dol_login"])) && ! isset($_POST["username"]) && ! empty($_SERVER["GATEWAY_INTERFACE"])) $ok=1;	// We let working pages if not logged and inside a web browser (login form, to allow login by admin)
 	elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;				// We let working pages that is a login submission (login submit, to allow login by admin)
@@ -408,4 +420,19 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
+
+
+/**
+ * Convert a string into a regex
+ *
+ * @param unknown_type $s string to convert
+ */
+function dol_regify($s)
+{
+	$news=str_replace('/','\/',$s);
+	$news=str_replace('.','\.',$news);
+	$news=str_replace('*','\*',$news);
+	return $news;
+}
+
 ?>

@@ -19,17 +19,17 @@
  */
 
 /**
-        \file       htdocs/paiement.class.php
-        \ingroup    facture
-        \brief      Fichier de la classe des paiement de factures clients
-        \remarks	Cette classe est presque identique a paiementfourn.class.php
-        \version    $Id$
-*/
+ \file       htdocs/paiement.class.php
+ \ingroup    facture
+ \brief      Fichier de la classe des paiement de factures clients
+ \remarks	Cette classe est presque identique a paiementfourn.class.php
+ \version    $Id$
+ */
 
 
 /**     \class      Paiement
-  	    \brief      Classe permettant la gestion des paiements des factures clients
-*/
+ \brief      Classe permettant la gestion des paiements des factures clients
+ */
 
 class Paiement
 {
@@ -41,8 +41,8 @@ class Paiement
 	var $total;
 	var $author;
 	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
-						// de llx_paiement qui est lie aux types de
-						//paiement de llx_c_paiement
+	// de llx_paiement qui est lie aux types de
+	//paiement de llx_c_paiement
 	var $num_paiement;	// Numero du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
 	var $bank_line;     // Id de la ligne d'ecriture bancaire
@@ -62,12 +62,12 @@ class Paiement
 		$this->db = $DB ;
 	}
 
-    /**
-     *    \brief      Recupere l'objet paiement
-     *    \param      id      id du paiement a recuperer
-     *    \return     int     <0 si ko, 0 si non trouve, >0 si ok
-     */
-    function fetch($id)
+	/**
+	 *    \brief      Recupere l'objet paiement
+	 *    \param      id      id du paiement a recuperer
+	 *    \return     int     <0 si ko, 0 si non trouve, >0 si ok
+	 */
+	function fetch($id)
 	{
 		$sql = 'SELECT p.rowid,'.$this->db->pdate('p.datep').' as dp, p.amount, p.statut, p.fk_bank';
 		$sql.= ', c.code as type_code, c.libelle as type_libelle';
@@ -88,6 +88,7 @@ class Paiement
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 				$this->date           = $obj->dp;
+				$this->datepaye       = $obj->dp;
 				$this->numero         = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
@@ -114,9 +115,9 @@ class Paiement
 	}
 
 	/**
- 	 *    \brief      Creation du paiement en base
-	 *    \param      user        object utilisateur qui cree
-	 *    \return     int         id du paiement cree, < 0 si erreur
+	 *    \brief      Create payment in database
+	 *    \param      user        object user
+	 *    \return     int         id of created payment, < 0 if error
 	 */
 	function create($user)
 	{
@@ -124,14 +125,13 @@ class Paiement
 
 		$error = 0;
 
-		// Nettoyage parametres
+		// Clean parameters
 		$this->total = 0;
-		foreach ($this->amounts as $key => $value)
+		foreach ($this->amounts as $key => $value)	// How payment is dispatch
 		{
-			$value = price2num($value);
-			$val = round($value, 2);
-			$this->amounts[$key] = $val;
-			$this->total += $val;
+			$value = price2num($value,'MT');
+			$this->amounts[$key] = $value;
+			$this->total += $value;
 		}
 		$this->total = price2num($this->total);
 
@@ -157,7 +157,7 @@ class Paiement
 					{
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
-						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
+						$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\')';
 
 						dol_syslog("Paiement::Create insert paiement_facture sql=".$sql);
 						$resql=$this->db->query($sql);
@@ -170,18 +170,18 @@ class Paiement
 					}
 					else
 					{
-						dol_syslog('Paiement::Create Montant non numérique');
+						dol_syslog('Paiement::Create Montant non numerique');
 					}
 				}
 
 				if (! $error)
 				{
-		            // Appel des triggers
-		            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		            $interface=new Interfaces($this->db);
-		            $result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		            // Fin appel triggers
+					// Fin appel triggers
 				}
 			}
 			else
@@ -205,51 +205,51 @@ class Paiement
 	}
 
 
-    /**
-     *      \brief      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
-     *                  Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
-     *                  Si le paiement porte sur au moins une facture a "payee", on refuse
-     *      \return     int     <0 si ko, >0 si ok
-     */
+	/**
+	 *      \brief      Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+	 *                  Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
+	 *                  Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *      \return     int     <0 si ko, >0 si ok
+	 */
 	function delete()
 	{
-      	$bank_line_id = $this->bank_line;
+		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
 
-        // Verifier si paiement porte pas sur une facture classee
-        // Si c'est le cas, on refuse la suppression
-        $billsarray=$this->getBillsArray('fk_statut > 1');
-        if (is_array($billsarray))
-        {
-            if (sizeof($billsarray))
-            {
-                $this->error="Impossible de supprimer un paiement portant sur au moins une facture fermee";
-                $this->db->rollback();
-                return -1;
-            }
-        }
-        else
-        {
-            $this->db->rollback();
-            return -2;
-        }
+		// Verifier si paiement porte pas sur une facture classee
+		// Si c'est le cas, on refuse la suppression
+		$billsarray=$this->getBillsArray('fk_statut > 1');
+		if (is_array($billsarray))
+		{
+			if (sizeof($billsarray))
+			{
+				$this->error="Impossible de supprimer un paiement portant sur au moins une facture fermee";
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			return -2;
+		}
 
-      	// Verifier si paiement ne porte pas sur ecriture bancaire rapprochee
-      	// Si c'est le cas, on refuse le paiement
+		// Verifier si paiement ne porte pas sur ecriture bancaire rapprochee
+		// Si c'est le cas, on refuse le paiement
 		if ($bank_line_id)
 		{
 			$accline = new AccountLine($this->db,$bank_line_id);
-            $accline->fetch($bank_line_id);
-            if ($accline->rappro)
-            {
-                $this->error="Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee";
-                $this->db->rollback();
-                return -3;
-            }
-        }
+			$accline->fetch($bank_line_id);
+			if ($accline->rappro)
+			{
+				$this->error="Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee";
+				$this->db->rollback();
+				return -3;
+			}
+		}
 
-        // Efface la ligne de paiement (dans paiement_facture et paiement)
+		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
 		$sql.= ' WHERE fk_paiement = '.$this->id;
 		$result = $this->db->query($sql);
@@ -258,29 +258,29 @@ class Paiement
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement';
 			$sql.= ' WHERE rowid = '.$this->id;
 			$result = $this->db->query($sql);
-            if (! $result)
-            {
-        		$this->error=$this->db->error();
-                $this->db->rollback();
-    			return -3;
-    	    }
+			if (! $result)
+			{
+				$this->error=$this->db->error();
+				$this->db->rollback();
+				return -3;
+			}
 
-    		// Supprimer l'ecriture bancaire si paiement lie a ecriture
-    		if ($bank_line_id)
-    		{
-    			$accline = new AccountLine($this->db);
-    			$accline->fetch($bank_line_id);
+			// Supprimer l'ecriture bancaire si paiement lie a ecriture
+			if ($bank_line_id)
+			{
+				$accline = new AccountLine($this->db);
+				$accline->fetch($bank_line_id);
 				$result=$accline->delete();
-    			if ($result < 0)
-    			{
-                    $this->error=$accline->error;
-                    $this->db->rollback();
-    	    		return -4;
-    		    }
-    		}
+				if ($result < 0)
+				{
+					$this->error=$accline->error;
+					$this->db->rollback();
+					return -4;
+				}
+			}
 
-            $this->db->commit();
-            return 1;
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
@@ -290,10 +290,10 @@ class Paiement
 		}
 	}
 
-    /**
-     *      \brief      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
-     *      \param      id_bank     Id compte bancaire
-     */
+	/**
+	 *      \brief      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
+	 *      \param      id_bank     Id compte bancaire
+	 */
 	function update_fk_bank($id_bank)
 	{
 		$sql = 'UPDATE llx_paiement set fk_bank = '.$id_bank;
@@ -310,10 +310,10 @@ class Paiement
 		}
 	}
 
-    /**
-     *    \brief      Valide le paiement
-     *    \return     int     <0 si ko, >0 si ok
-     */
+	/**
+	 *    \brief      Valide le paiement
+	 *    \return     int     <0 si ko, >0 si ok
+	 */
 	function valide()
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiement SET statut = 1 WHERE rowid = '.$this->id;
@@ -331,11 +331,11 @@ class Paiement
 		}
 	}
 
-    /*
-     *    \brief      Information sur l'objet
-     *    \param      id      id du paiement dont il faut afficher les infos
-     */
-    function info($id)
+	/*
+	 *    \brief      Information sur l'objet
+	 *    \param      id      id du paiement dont il faut afficher les infos
+	 */
+	function info($id)
 	{
 		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec, fk_user_creat, fk_user_modif';
 		$sql .= ', '.$this->db->pdate('tms').' as tms';
@@ -374,11 +374,11 @@ class Paiement
 		}
 	}
 
-    /**
-     *      \brief      Retourne la liste des factures sur lesquels porte le paiement
-     *      \param      filter          Critere de filtre
-     *      \return     array           Tableau des id de factures
-     */
+	/**
+	 *      \brief      Retourne la liste des factures sur lesquels porte le paiement
+	 *      \param      filter          Critere de filtre
+	 *      \return     array           Tableau des id de factures
+	 */
 	function getBillsArray($filter='')
 	{
 		$sql = 'SELECT fk_facture';
@@ -388,22 +388,22 @@ class Paiement
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-            $i=0;
+			$i=0;
 			$num=$this->db->num_rows($resql);
-            $billsarray=array();
+			$billsarray=array();
 
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-                $billsarray[$i]=$obj->fk_facture;
-                $i++;
-            }
+				$billsarray[$i]=$obj->fk_facture;
+				$i++;
+			}
 
 			return $billsarray;
 		}
 		else
 		{
-            $this->error=$this->db->error();
+			$this->error=$this->db->error();
 			dol_syslog('Paiement::getBillsArray Error '.$this->error.' - sql='.$sql);
 			return -1;
 		}
@@ -432,21 +432,21 @@ class Paiement
 	}
 
 	/**
-	*    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
-	*    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*    	\return     string		Libelle
-	*/
+	 *    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
+	 */
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
 
 	/**
-	*    	\brief      Renvoi le libelle d'un statut donne
-	*    	\param      status      Statut
-	*		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*    	\return     string      Libelle du statut
-	*/
+	 *    	\brief      Renvoi le libelle d'un statut donne
+	 *    	\param      status      Statut
+	 *		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string      Libelle du statut
+	 */
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
