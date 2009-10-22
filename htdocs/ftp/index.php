@@ -168,7 +168,7 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 	{
 		// Remote file
 		$filename=$file;
-		$remotefile=$section.(eregi('[\\\/]$',$section)?'':'/').$file;
+		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
 		$newremotefileiso=utf8_decode($remotefile);
 
 		//print "x".$newremotefileiso;
@@ -209,7 +209,7 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 	{
 		// Remote file
 		$filename=$file;
-		$remotefile=$section.(eregi('[\\\/]$',$section)?'':'/').$file;
+		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
 		$newremotefileiso=utf8_decode($remotefile);
 
 		$result=ftp_rmdir($conn_id, $newremotefileiso);
@@ -252,14 +252,14 @@ if ($_REQUEST['action'] == 'download')
 
 		// Remote file
 		$filename=$file;
-		$remotefile=$section.(eregi('[\\\/]$',$section)?'':'/').$file;
+		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
 		$newremotefileiso=utf8_decode($remotefile);
 
 		$result=ftp_get($conn_id,$localfile,$newremotefileiso,FTP_BINARY);
 		if ($result)
 		{
 			if (! empty($conf->global->MAIN_UMASK))
-				@chmod($localfile, octdec($conf->global->MAIN_UMASK));
+			@chmod($localfile, octdec($conf->global->MAIN_UMASK));
 
 			// Define mime type
 			$type = 'application/octet-stream';
@@ -384,55 +384,61 @@ else
 			//$type = ftp_systype($conn_id);
 
 			$newsectioniso=utf8_decode($section);
-	        $buff = ftp_rawlist($conn_id, $newsectioniso);
-	        $contents = ftp_nlist($conn_id, $newsectioniso);	// Sometimes rawlist fails but never nlist
-	        //var_dump($contents);
+			$buff = ftp_rawlist($conn_id, $newsectioniso);
+			$contents = ftp_nlist($conn_id, $newsectioniso);	// Sometimes rawlist fails but never nlist
+			//var_dump($contents);
 			//var_dump($buff);
 
-	        $nboflines=sizeof($contents);
-	        $var=true;
+			$nboflines=sizeof($contents);
+			$var=true;
 			$rawlisthasfailed=false;
-	        $i=0;
-	        while ($i < $nboflines && $i < 1000)
-	        {
-	        	$vals=explode(' +',utf8_encode($buff[$i]),9);
-
-	        	$file=$vals[8];
+			$i=0;
+			while ($i < $nboflines && $i < 1000)
+			{
+				$vals=preg_split('@ +@',utf8_encode($buff[$i]),9);
+				//$vals=preg_split('@ +@','drwxr-xr-x 2 root root 4096 Aug 30 2008 backup_apollon1',9);
+				//var_dump($vals);
+				$file=$vals[8];
 				if (empty($file))
 				{
 					$rawlisthasfailed=true;
 					$file=utf8_encode($contents[$i]);
 				}
 
-	        	if ($file == '.' || ($file == '..' && $section == '/'))
+				if ($file == '.' || ($file == '..' && $section == '/'))
 				{
 					$i++;
 					continue;
 				}
 
 				// Is it a directory ?
-	        	$is_directory=0;
+				$is_directory=0;
 				if ($file == '..') $is_directory=1;
 				else if (! $rawlisthasfailed)
 				{
-					if (eregi('^d',$vals[0])) $is_directory=1;
-					if (eregi('^l',$vals[0])) $is_link=1;
+					if (preg_match('/^d/',$vals[0])) $is_directory=1;
+					if (preg_match('/^l/',$vals[0])) $is_link=1;
 				}
 				else
 				{
 					// Remote file
 					$filename=$file;
-					$remotefile=$section.(eregi('[\\\/]$',$section)?'':'/').$file;
+					//print "section=".$section.' file='.$file.'X';
+					//print preg_match('@[\/]$@','aaa/').'Y';
+					//print preg_match('@[\\\/]$@',"aaa\\").'Y';
+					$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').preg_replace('@^[\\\/]@','',$file);
+					//print 'A'.$remotefile.'A';
 					$newremotefileiso=utf8_decode($remotefile);
+					//print 'Z'.$newremotefileiso.'Z';
 					$is_directory=ftp_isdir($conn_id, $newremotefileiso);
 				}
 
-	        	$var=!$var;
+				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				// Name
 				print '<td>';
-				$newsection=$section.(eregi('[\\\/]$',$section)?'':'/').$file;
-				$newsection=eregi_replace('[\\\/][^\\\/]+[\\\/]\.\.$','/',$newsection);	// Change aaa/xxx/.. to new aaa
+				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
+				$newsection=preg_replace('@[\\\/][^\\\/]+[\\\/]\.\.$@','/',$newsection);	// Change aaa/xxx/.. to new aaa
 				if ($is_directory) print '<a href="'.$_SERVER["PHP_SELF"].'?section='.urlencode($newsection).'">';
 				print $file;
 				if ($is_directory) print '</a>';
@@ -492,7 +498,7 @@ else
 		/*
 		if ($user->rights->ftp->write && ! empty($section))
 		{
-			$formfile->form_attach_new_file(DOL_URL_ROOT.'/ftp/index.php','',0,$section,1);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/ftp/index.php','',0,$section,1);
 		}
 		else print '&nbsp;';
 		*/
@@ -547,16 +553,16 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 			if ($ftp_user)
 			{
 				if (ftp_login($conn_id, $ftp_user, $ftp_password))
-			    {
-			        // Change the dir
+				{
+					// Change the dir
 					$newsectioniso=utf8_decode($section);
-			        ftp_chdir($conn_id, $newsectioniso);
-			    }
-			    else
-			    {
+					ftp_chdir($conn_id, $newsectioniso);
+				}
+				else
+				{
 					$mesg=$langs->trans("FailedToConnectToFTPServerWithCredentials");
 					$ok=0;
-			    }
+				}
 			}
 		}
 		else
@@ -580,16 +586,16 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
  */
 function ftp_isdir($connect_id,$dir)
 {
-    if(ftp_chdir($connect_id,$dir))
-    {
-        ftp_cdup($connect_id);
-        return 1;
+	if (@ftp_chdir($connect_id,$dir))
+	{
+		ftp_cdup($connect_id);
+		return 1;
 
-    }
-    else
-    {
-        return 0;
-    }
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 ?>
