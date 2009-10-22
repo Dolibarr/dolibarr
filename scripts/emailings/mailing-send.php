@@ -27,11 +27,15 @@
  */
 
 
-// Test if CLI mode
 $sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=preg_replace('@[\\\/]+$@','',$path).'/';
+
+// Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PH for CGI/Web. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit;
+    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    exit;
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
@@ -39,10 +43,6 @@ if (! isset($argv[1]) || ! $argv[1]) {
 	exit;
 }
 $id=$argv[1];
-
-// Recupere root dolibarr
-$path=str_replace('mailing-send.php','',$_SERVER["PHP_SELF"]);
-
 
 require_once ($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");

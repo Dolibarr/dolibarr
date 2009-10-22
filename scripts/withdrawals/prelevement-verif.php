@@ -24,19 +24,19 @@
  *		\version	$Id$
  */
 
-// Test si mode CLI
 $sapi_type = php_sapi_name();
-$script_file=__FILE__;
-if (preg_match('/([^\\/]+)$/i',$script_file,$reg)) $script_file=$reg[1];
+$script_file = basename(__FILE__);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=preg_replace('@[\\\/]+$@','',$path).'/';
 
+// Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
-	exit;
+    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    exit;
 }
 
 // Recupere env dolibarr
 $version='$Revision$';
-$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");

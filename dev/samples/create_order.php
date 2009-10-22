@@ -24,14 +24,14 @@
  *		\remarks	Put here some comments
  */
 
-// Test if batch mode
 $sapi_type = php_sapi_name();
-$script_file = __FILE__;
-if (preg_match('/([^\\/]+)$/i',$script_file,$reg)) $script_file = '/'.$reg[1].'/i';
-$path=preg_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$script_file = basename(__FILE__);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=preg_replace('@[\\\/]+$@','',$path).'/';
 
+// Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI/Web. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
