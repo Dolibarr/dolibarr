@@ -844,7 +844,9 @@ function fieldList($fieldlist,$obj='')
 		}
 		else
 		{
-			print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" name="'.$fieldlist[$field].'" ></td>';
+			print '<td>';
+			print '<input type="text" '.($fieldlist[$field]=='libelle'?'size="32" ':'').' class="flat" value="'.$obj->$fieldlist[$field].'" name="'.$fieldlist[$field].'">';
+			print '</td>';
 		}
 	}
 }
