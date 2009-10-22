@@ -1089,9 +1089,11 @@ PasswordTogetVCalExport = Clave de autorización vcal export link
 ClickToDialDesc = Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) ##### = 
 CashDesk = Caja registradora
-CashDeskSetup = configuración del módulo de Caja registradora
+CashDeskSetup = Configuración del módulo de Caja registradora
 CashDeskThirdPartyForSell = Tercero genérico a usar para la venta
-CashDeskBankAccountForSell = Cuenta de efectivo que se utilizará para las ventas
+CashDeskBankAccountForSell = Cuenta a utilizar para los cobros en efectivo (caja)
+CashDeskBankAccountForCheque = Cuenta a utilizar para los cobros con cheques
+CashDeskBankAccountForCB = Cuenta a utilizar para los cobros con tarjeta de crédito
 CashDeskIdWareHouse = Almacén que se utiliza para las ventas
 ##### Bookmark ##### = undefined = 
 BookmarkSetup = Configuración del módulo Bookmark

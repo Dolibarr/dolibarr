@@ -1091,7 +1091,9 @@ ClickToDialDesc = Aquest mòdul permet afegir una icona després del número de 
 CashDesk = Caixa registradora
 CashDeskSetup = Mòdul de configuració Caixa registradora
 CashDeskThirdPartyForSell = Tercer genéric a utilitzar per a les vendes
-CashDeskBankAccountForSell = Compte d'efectiu que s'utilitzarà per a les vendes
+CashDeskBankAccountForSell = Compte a utilitzar per als cobraments en efectiu (caixa)
+CashDeskBankAccountForCheque = Compte a utilitzar per als cobraments amb xecs
+CashDeskBankAccountForCB = Compte a utilitzar per als cobraments amb targeta de crèdit
 CashDeskIdWareHouse = Magatzem a ultilitzar per a les vendes
 ##### Bookmark ##### = undefined =  = 
 BookmarkSetup = Configuració del mòdul Bookmark
