@@ -831,7 +831,7 @@ class Account extends CommonObject
 		if (! empty($this->iban))
 		{
 			// If IBAN defined, we can know country of account from it
-			if (eregi("^([a-zA-Z][a-zA-Z])",$this->iban,$reg)) return $reg[1];
+			if (preg_match("/^([a-zA-Z][a-zA-Z])/i",$this->iban,$reg)) return $reg[1];
 		}
 
 		// We return country code

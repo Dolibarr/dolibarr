@@ -158,9 +158,9 @@ class MenuLeft {
 
 				// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
 				$url=$this->menu_array[$i]['url'];
-				if (! eregi('mainmenu=',$this->menu_array[$i]['url']))
+				if (! preg_match('/mainmenu=/i',$this->menu_array[$i]['url']))
 				{
-					if (! eregi('\?',$url)) $url.='?';
+					if (! preg_match('/\?/',$url)) $url.='?';
 					else $url.='&';
 					$url.='mainmenu='.$mainmenu;
 				}

@@ -69,7 +69,7 @@ if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
 
 
 $acct = new Account($db);
-if ($_GET["account"] && ! eregi(',',$_GET["account"]))	// if for a particular account and not a list
+if ($_GET["account"] && ! preg_match('/,/',$_GET["account"]))	// if for a particular account and not a list
 {
 	$result=$acct->fetch($_GET["account"]);
 }
@@ -739,7 +739,7 @@ print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 if ($account)
 {
-	if (! eregi(',',$account))
+	if (! preg_match('/,/',$account))
 	{
 		$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
 		if ($_GET["option"]!='all')

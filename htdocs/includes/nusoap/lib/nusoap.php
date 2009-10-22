@@ -3725,7 +3725,7 @@ class nusoap_server extends nusoap_base {
 			// get the character encoding of the incoming request
 			if(isset($this->headers['content-type']) && strpos($this->headers['content-type'],'=')){
 				$enc = str_replace('"','',substr(strstr($this->headers["content-type"],'='),1));
-				if(eregi('^(ISO-8859-1|US-ASCII|UTF-8)$',$enc)){
+				if(preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i',$enc)){
 					$this->xml_encoding = strtoupper($enc);
 				} else {
 					$this->xml_encoding = 'US-ASCII';
@@ -3754,7 +3754,7 @@ class nusoap_server extends nusoap_base {
 						$enc = substr(strstr($v, '='), 1);
 						$enc = str_replace('"', '', $enc);
 						$enc = str_replace('\\', '', $enc);
-						if (eregi('^(ISO-8859-1|US-ASCII|UTF-8)$', $enc)) {
+						if (preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i', $enc)) {
 							$this->xml_encoding = strtoupper($enc);
 						} else {
 							$this->xml_encoding = 'US-ASCII';
@@ -3788,7 +3788,7 @@ class nusoap_server extends nusoap_base {
 						$enc = substr(strstr($v, '='), 1);
 						$enc = str_replace('"', '', $enc);
 						$enc = str_replace('\\', '', $enc);
-						if (eregi('^(ISO-8859-1|US-ASCII|UTF-8)$', $enc)) {
+						if (preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i', $enc)) {
 							$this->xml_encoding = strtoupper($enc);
 						} else {
 							$this->xml_encoding = 'US-ASCII';
@@ -4214,7 +4214,7 @@ class nusoap_server extends nusoap_base {
 		if (strpos($headers['content-type'], '=')) {
 			$enc = str_replace('"', '', substr(strstr($headers["content-type"], '='), 1));
 			$this->debug('Got response encoding: ' . $enc);
-			if(eregi('^(ISO-8859-1|US-ASCII|UTF-8)$',$enc)){
+			if(preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i',$enc)){
 				$this->xml_encoding = strtoupper($enc);
 			} else {
 				$this->xml_encoding = 'US-ASCII';
@@ -7506,7 +7506,7 @@ class nusoap_client extends nusoap_base  {
 		if (strpos($headers['content-type'], '=')) {
 			$enc = str_replace('"', '', substr(strstr($headers["content-type"], '='), 1));
 			$this->debug('Got response encoding: ' . $enc);
-			if(eregi('^(ISO-8859-1|US-ASCII|UTF-8)$',$enc)){
+			if(preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/i',$enc)){
 				$this->xml_encoding = strtoupper($enc);
 			} else {
 				$this->xml_encoding = 'US-ASCII';

@@ -109,12 +109,12 @@ class Conf
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
 					$this->global->$key=$value;
 					// If this is constant for a css file activated by a module
-					if (eregi('^MAIN_MODULE_([A-Z_]+)_CSS$',$key) && $value)
+					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key) && $value)
 					{
 						$this->css_modules[]=$value;
 					}
 					// If this is constant for a new tab page activated by a module
-					if (eregi('^MAIN_MODULE_([A-Z_]+)_TABS_',$key) && $value)
+					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key) && $value)
 					{
 						$params=explode(':',$value,2);
 						$this->tabs_modules[$params[0]][]=$value;
@@ -122,18 +122,18 @@ class Conf
 					}
 					// If this is constant to force a module directories (used to manage some exceptions)
 					// Should not be used by modules
-					if (eregi('^MAIN_MODULE_([A-Z_]+)_DIR_',$key,$reg) && $value)
+					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_DIR_/i',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
 						// If with submodule name
-						if (eregi('_DIR_([A-Z_]+)?_([A-Z]+)$',$key,$reg))
+						if (preg_match('/_DIR_([A-Z_]+)?_([A-Z]+)$/i',$key,$reg))
 						{
 							$dir_name  = "dir_".strtolower($reg[2]);
 							$submodule = strtolower($reg[1]);
 							$this->$module->$submodule->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
 							//print '->'.$module.'->'.$submodule.'->'.$dir_name.' = '.$this->$module->$submodule->$dir_name.'<br>';
 						}
-						else if (eregi('_DIR_([A-Z]+)$',$key,$reg))
+						else if (preg_match('/_DIR_([A-Z]+)$/i',$key,$reg))
 						{
 							$dir_name  = "dir_".strtolower($reg[1]);
 							$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
@@ -141,14 +141,14 @@ class Conf
 						}
 					}
 					// If this is constant for a smarty need by a module
-					if (eregi('^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$',$key) && $value)
+					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$/i',$key) && $value)
 					{
 						$module=strtolower($reg[1]);
 						// Add this module in list of modules that need smarty
 						$this->need_smarty[]=$module;
 					}
 					// If this is a module constant
-					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
+					if (preg_match('/^MAIN_MODULE_([A-Z]+)$/i',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
 						//print "Module ".$module." is enabled<br>\n";

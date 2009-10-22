@@ -167,7 +167,7 @@ if ($action == 'create')
 }
 
 
-if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
+if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 {
     /*
      * Fiche bookmark en mode visu ou edition
@@ -198,7 +198,7 @@ if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
 
     print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td>';
     if ($_GET["action"] == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
-    else print '<a href="'.(eregi('^http',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
+    else print '<a href="'.(preg_match('/^http/i',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';

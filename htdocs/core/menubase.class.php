@@ -392,7 +392,7 @@ class Menubase
 					$title = $langs->trans($menu['titre']);
 					$langs->load($menu['langs']);
 				}
-				if (eregi("/",$title))
+				if (preg_match("/\//",$title))
 				{
 					$tab_titre = explode("/",$title);
 					$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
@@ -424,9 +424,9 @@ class Menubase
 				$tabMenu[$b][0] = $menu['rowid'];
 				$tabMenu[$b][1] = $menu['fk_menu'];
 				$tabMenu[$b][2] = $menu['url'];
-				if (! eregi("^(http:\/\/|https:\/\/)",$tabMenu[$b][2]))
+				if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b][2]))
 				{
-					if (eregi('\?',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
+					if (preg_match('/\?/',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
 					else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
 				}
 				$tabMenu[$b][3] = $chaine;
@@ -500,7 +500,7 @@ class Menubase
 					{
 						//				print "x".$pere." ".$tab[$x][6];
 
-						$this->newmenu->add((! eregi("^(http:\/\/|https:\/\/)",$tab[$x][2])) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
+						$this->newmenu->add((! preg_match("/^(http:\/\/|https:\/\/)/i",$tab[$x][2])) ? DOL_URL_ROOT . $tab[$x][2] : $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
 					}
 				}
@@ -622,7 +622,7 @@ class Menubase
 						$langs->load($objm->langs);
 					}
 
-					if (eregi("/",$title))
+					if (preg_match("/\//",$title))
 					{
 						$tab_titre = explode("/",$title);
 						$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);

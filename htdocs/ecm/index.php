@@ -238,7 +238,7 @@ print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
 
 
-if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $action == 'delete')
+if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
 	$userstatic = new User($db);
 	$ecmdirstatic = new ECMDirectory($db);
@@ -451,7 +451,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		$ecmdirstatic->ref=$val['label'];
 
 		// Refresh cache
-		if (eregi('refresh',$_GET['action']))
+		if (preg_match('/refresh/i',$_GET['action']))
 		{
 			$result=$ecmdirstatic->fetch($val['id']);
 			$ecmdirstatic->ref=$ecmdirstatic->label;
@@ -470,7 +470,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		// If directory is brother of selected directory, we show line
 		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
 		// If directory is parent of selected directory or is selected directory, we show line
-		elseif (eregi($val['fullpath'].'_',$fullpathselected.'_')) $showline=2;
+		elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
 		// If we are level one we show line
 		elseif ($val['level'] < 2) $showline=1;
 
@@ -604,7 +604,7 @@ print '</td></tr>';
 
 // Actions buttons
 print '<tr height="22"><td align="center">';
-if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
+if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action))
 {
 	if ($user->rights->ecm->setup)
 	{

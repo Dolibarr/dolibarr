@@ -75,7 +75,7 @@ while (($file = readdir($handle))!==false)
 {
     if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-        if (eregi("(.*)\.(.*)\.(.*)",$file,$reg))
+        if (preg_match("/(.*)\.(.*)\.(.*)/i",$file,$reg))
         {
             $modulename=$reg[1];
    			if ($modulename == 'example') continue;

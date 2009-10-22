@@ -47,7 +47,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13"){
     $guards=array("9a1a","1a1a1","a1a");
 
     $ean=trim($ean);
-    if (eregi("[^0-9]",$ean)){
+    if (preg_match("/[^0-9]/i",$ean)){
 	return array("text"=>"Invalid EAN-Code");
     }
     $encoding=strtoupper($encoding);

@@ -417,16 +417,16 @@ class MenuTop {
 				$idsel=(empty($tabMenu[$i]['mainmenu'])?'none':$tabMenu[$i]['mainmenu']);
 				if ($tabMenu[$i]['right'] == true)	// Is allowed
 				{
-					if (eregi("^(http:\/\/|https:\/\/)",$tabMenu[$i]['url']))
+					if (preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$i]['url']))
 					{
 						$url = $tabMenu[$i]['url'];
 					}
 					else
 					{
 						$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-						if (! eregi('\?',$url)) $url.='?';
+						if (! preg_match('/\?/',$url)) $url.='?';
 						else $url.='&';
-						if (! eregi('mainmenu',$url) || ! eregi('leftmenu',$url))
+						if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 						{
 							$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=&';
 						}

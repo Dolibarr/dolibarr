@@ -171,7 +171,7 @@ class ExportTsv extends ModeleExports
             $newvalue=$objp->$alias;
 
             // Translation newvalue
-			if (eregi('^\((.*)\)$',$newvalue,$reg))
+			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}

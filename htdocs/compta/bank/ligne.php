@@ -312,7 +312,7 @@ if ($result)
 		{
 			print '<td colspan="3">';
 			print '<input name="label" class="flat" value="';
-			if (eregi('^\((.*)\)$',$objp->label,$reg))
+			if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
 			{
 				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
@@ -328,7 +328,7 @@ if ($result)
 		else
 		{
 			print '<td colspan="4">';
-			if (eregi('^\((.*)\)$',$objp->label,$reg))
+			if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
 			{
 				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);

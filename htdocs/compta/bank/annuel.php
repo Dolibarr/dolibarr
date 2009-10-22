@@ -57,7 +57,7 @@ $form = new Form($db);
 
 // Get account informations
 $acct = new Account($db);
-if ($_GET["account"] && ! eregi(',',$_GET["account"]))	// if for a particular account and not a list
+if ($_GET["account"] && ! preg_match('/,/',$_GET["account"]))	// if for a particular account and not a list
 {
 	$result=$acct->fetch($_GET["account"]);
 }
@@ -140,7 +140,7 @@ print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 if ($_GET["account"])
 {
-	if (! eregi(',',$_GET["account"]))
+	if (! preg_match('/,/',$_GET["account"]))
 	{
 		print $form->showrefnav($acct,'ref','',1,'ref');
 	}

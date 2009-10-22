@@ -510,7 +510,7 @@ if ($account || $_GET["ref"])
 				//if ($isbanktransfert || $issocialcontrib) $showlabel=true;
 				if ($showlabel)
 				{
-					if (eregi('^\((.*)\)$',$objp->label,$reg))
+					if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
 					{
 						// Genereic description because between (). We show it after translating.
 						print $langs->trans($reg[1]);
@@ -565,9 +565,9 @@ if ($account || $_GET["ref"])
 					else {
 						//print ' - ';
 						print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
 						{
-							// Label g�n�rique car entre parenth�ses. On l'affiche en le traduisant
+							// Label generique car entre parentheses. On l'affiche en le traduisant
 							if ($reg[1]=='paiement') $reg[1]='Payment';
 							print $langs->trans($reg[1]);
 						}
@@ -592,7 +592,7 @@ if ($account || $_GET["ref"])
 					}
 					/*else if ($links[$key]['type']=='sc') {
 					 $chargestatic->id=$links[$key]['url_id'];
-						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
 						{
 						if ($reg[1]=='socialcontribution') $reg[1]='SocialContribution';
 						$chargestatic->lib=$langs->trans($reg[1]);

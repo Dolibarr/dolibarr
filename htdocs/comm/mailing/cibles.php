@@ -239,7 +239,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 					{
 						if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 						{
-							if (eregi("(.*)\.modules\.php$",$file,$reg))
+							if (preg_match("/(.*)\.modules\.php$/i",$file,$reg))
 							{
 								$modulename=$reg[1];
 								if ($modulename == 'example') continue;

@@ -79,7 +79,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
             $row = $db->fetch_row($resql);
             if ($row) $pryymm = substr($row[0],0,6);
         }
-        if (! $pryymm || eregi('PR[0-9][0-9][0-9][0-9]',$pryymm))
+        if (! $pryymm || preg_match('/PR[0-9][0-9][0-9][0-9]/i',$pryymm))
         {
             return true;
         }

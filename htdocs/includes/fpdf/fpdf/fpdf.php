@@ -2292,13 +2292,13 @@ function _enddoc()
 				}
 				case 'span': {
 					if (isset($attr['style']) && $attr['style']!='') {
-						if (eregi("color",$attr['style'])){
-							if (eregi("rgb",$attr['style'])){
+						if (preg_match("/color/i",$attr['style'])){
+							if (preg_match("/rgb/i",$attr['style'])){
 								//print 'style rgb '.$attr['style'].'<br>';
 								$coul = substr($attr['style'],11,-2);
 								list($R, $G, $B) = explode(', ', $coul);
 							}
-							else if (eregi("#",$attr['style'])){
+							else if (preg_match("/#/",$attr['style'])){
 								//print 'style hexa '.$attr['style'].'<br>';
 								$R = hexdec(substr($attr['style'],8,2));
 								$G = hexdec(substr($attr['style'],10,2));
@@ -2308,7 +2308,7 @@ function _enddoc()
 							$this->SetTextColor($R,$G,$B);
 							$this->issetcolor=true;
 						}
-						if (eregi("font-family",$attr['style'])){
+						if (preg_match("/font-family/i",$attr['style'])){
 							$fontName = substr($attr['style'],13,-1);
 							$fontName = $this->convertNameFont($fontName);
 							if (isset($fontName) && in_array(strtolower($fontName), $this->fontlist)) {
@@ -2317,7 +2317,7 @@ function _enddoc()
 								//print 'fontfamily: '.$this->FontFamily.'<br>';
 							}
 						}
-						if (eregi("font-size",$attr['style'])){
+						if (preg_match("/font-size/i",$attr['style'])){
 							$headsize = substr($attr['style'],11);
 							$headsize = preg_replace('/[;-]/','',$headsize);
 							//print 'headsize1: '.$headsize.'<br>';

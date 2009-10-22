@@ -360,14 +360,14 @@ class MenuTop {
         		$idsel=(empty($tabMenu[$i]['mainmenu'])?'id="none" ':'id="'.$tabMenu[$i]['mainmenu'].'" ');
         		if ($tabMenu[$i]['right'] == true)
 	        	{
-	        		if (eregi("^(http:\/\/|https:\/\/)",$tabMenu[$i]['url']))
+	        		if (preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$i]['url']))
 	        		{
 	        			$url = $tabMenu[$i]['url'];
 	        		}
 	        		else
 	        		{
 	        			$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-	        			if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+	        			if (! preg_match('/\?/',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
 	        			else $url.='&';
 	        			$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
 	        			$url.="&idmenu=".$tabMenu[$i]['rowid'];

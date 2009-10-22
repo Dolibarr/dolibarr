@@ -82,7 +82,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         }
     
         // Si au moins un champ respectant le modele a ete trouvee
-        if (eregi('BL[0-9][0-9]',$blyy))
+        if (preg_match('/BL[0-9][0-9]/i',$blyy))
         {
             // Recherche rapide car restreint par un like sur champ indexe
             $posindice=5;

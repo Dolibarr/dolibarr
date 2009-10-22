@@ -79,7 +79,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
       	$row = $db->fetch_row($resql);
         if ($row) $coyymm = substr($row[0],0,6);
       }
-      if ($coyymm && ! eregi($this->prefix.'[0-9][0-9][0-9][0-9]',$coyymm))
+      if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
       {
       	$this->error='Une commande commencant par $coyymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
       	return false;    

@@ -189,7 +189,7 @@ if ($resql)
 
 		print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
 		$reg=array();
-		eregi('\((.+)\)',$objp->label,$reg);	// Si texte entour� de parenth�e on tente recherche de traduction
+		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 		else print dol_trunc($objp->label,40);
 		print "</a>&nbsp;";

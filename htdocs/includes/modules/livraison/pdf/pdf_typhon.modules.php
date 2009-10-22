@@ -144,7 +144,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->expedition->dir_output."/receipt";
-			if (! eregi('specimen',$objectref)) $dir.= "/" . $objectref;
+			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".pdf";
 
 			if (! file_exists($dir))

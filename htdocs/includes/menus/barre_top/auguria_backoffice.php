@@ -90,7 +90,7 @@ class MenuTop {
 						$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
 						if (! preg_match('/\?/',$url)) $url.='?';
 						else $url.='&';
-						if (! preg_match('/mainmenu/i',$url) || ! eregi('leftmenu',$url))
+						if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 						{
 							$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=&';
 						}

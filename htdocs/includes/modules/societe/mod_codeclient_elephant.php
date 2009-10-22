@@ -187,10 +187,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		global $conf;
 
 		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-		if (eregi('\{pre\}',$mask)) return 1;
+		if (preg_match('/\{pre\}/i',$mask)) return 1;
 
 		$mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
-		if (eregi('\{pre\}',$mask)) return 1;
+		if (preg_match('/\{pre\}/i',$mask)) return 1;
 
 		return 0;
 	}

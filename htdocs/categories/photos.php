@@ -279,7 +279,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<br>';
 
 				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-				if (!$obj['photo_vignette'] && eregi('(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$',$obj['photo']) && ($c->imgWidth > $maxWidth || $c->imgHeight > $maxHeight))
+				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($c->imgWidth > $maxWidth || $c->imgHeight > $maxHeight))
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
 				}

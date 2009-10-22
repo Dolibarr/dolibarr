@@ -61,7 +61,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 
 	foreach($_POST as $key => $value)
 	{
-		if ( eregi('^product_([0-9]+)$', $key, $reg) )
+		if ( preg_match('/^product_([0-9]+)$/i', $key, $reg) )
 		{
 	  $prod = "product_".$reg[1];
 	  $qty = "qty_".$reg[1];

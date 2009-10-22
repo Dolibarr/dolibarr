@@ -331,7 +331,7 @@ class ImportCsv extends ModeleImports
 						// Make some tests
 
 						// Required field is ok
-						if (eregi('\*',$objimport->array_import_fields[0][$val]) && ($newval==''))
+						if (preg_match('/\*/',$objimport->array_import_fields[0][$val]) && ($newval==''))
 						{
 							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue',$key);
 							$this->errors[$error]['type']='NOTNULL';
@@ -340,7 +340,7 @@ class ImportCsv extends ModeleImports
 						}
 						// Test format only if field is not a missing mandatory field
 						else {
-							if (! empty($objimport->array_import_regex[0][$val]) && ! eregi($objimport->array_import_regex[0][$val],$newval))
+							if (! empty($objimport->array_import_regex[0][$val]) && ! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
 							{
 								$this->errors[$error]['lib']=$langs->trans('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
 								$this->errors[$error]['type']='REGEX';

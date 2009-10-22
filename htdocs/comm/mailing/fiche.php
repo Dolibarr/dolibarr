@@ -120,7 +120,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 		$errorsto = $mil->email_errorsto;
 		// Le message est-il en html
 		$msgishtml=-1;	// Unknown by default
-		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;
+		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		// Warning, we must not use begin-commit transaction here
 		// because we want to save update for each mail sent.
@@ -297,7 +297,7 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 
 		// Le message est-il en html
 		$msgishtml=-1;	// Inconnu par defaut
-		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;
+		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		// Pratique les substitutions sur le sujet et message
 		$mil->sujet=make_substitutions($mil->sujet,$substitutionarrayfortest);

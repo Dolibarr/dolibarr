@@ -300,7 +300,7 @@ else
 			// Libelle
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 			$reg=array();
-			eregi('\((.+)\)',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
+			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 			else print $objp->label;
 			print '</a>';

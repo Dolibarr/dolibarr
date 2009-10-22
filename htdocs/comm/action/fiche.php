@@ -532,7 +532,7 @@ if ($_GET["action"] == 'create')
 	print '<br>';
 	print '<table class="border" width="100%">';
 
-	if (! empty($_GET["datep"]) && eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$_GET["datep"],$reg))
+	if (! empty($_GET["datep"]) && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',$_GET["datep"],$reg))
 	{
 		$actioncomm->datep=dol_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
 	}

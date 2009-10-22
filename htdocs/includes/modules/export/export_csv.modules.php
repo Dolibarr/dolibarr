@@ -199,7 +199,7 @@ class ExportCsv extends ModeleExports
 			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
 
 			// Translation newvalue
-			if (eregi('^\((.*)\)$',$newvalue,$reg))
+			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}

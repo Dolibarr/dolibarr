@@ -151,7 +151,7 @@ if ($modecompta != 'CREANCES-DETTES') {
             $encaiss_ttc[$row->dm] += $row->amount_ttc;
 
 			// For DEBUG Only
-			if (eregi('^2007',$row->dm))
+			if (preg_match('/^2007/',$row->dm))
 			{
 			$subtotal_ht = $subtotal_ht + $row->amount_ht;
 			$subtotal_ttc = $subtotal_ttc + $row->amount_ttc;
@@ -210,7 +210,7 @@ if ($result)
         $decaiss_ttc[$row->dm] = $row->amount_ttc;
 
 		// For DEBUG Only
-		if (eregi('^2007',$row->dm))
+		if (preg_match('/^2007/',$row->dm))
 		{
 		$subtotal_ht = $subtotal_ht + $row->amount_ht;
 		$subtotal_ttc = $subtotal_ttc + $row->amount_ttc;
@@ -311,7 +311,7 @@ else {
             $decaiss[$obj->dm] += $obj->amount;
             $decaiss_ttc[$obj->dm] += $obj->amount;
 			// For DEBUG Only
-			if (eregi('^2007',$obj->dm))
+			if (preg_match('/^2007/',$obj->dm))
 			{
 			$subtotal_ht = $subtotal_ht + $obj->amount;
 			$subtotal_ttc = $subtotal_ttc + $obj->amount;
@@ -342,7 +342,7 @@ else {
             $encaiss[$obj->dm] += $obj->amount;
             $encaiss_ttc[$obj->dm] += $obj->amount;
 			// For DEBUG Only
-			if (eregi('^2007',$obj->dm))
+			if (preg_match('/^2007/',$obj->dm))
 			{
 			$subtotal_ht = $subtotal_ht + $obj->amount;
 			$subtotal_ttc = $subtotal_ttc + $obj->amount;
@@ -410,7 +410,7 @@ if ($result) {
         $decaiss_ttc[$obj->dm] += $obj->amount_ttc;
 
 		// For DEBUG Only
-		if (eregi('^2007',$obj->dm))
+		if (preg_match('/^2007/',$obj->dm))
 		{
 		$subtotal_ht = $subtotal_ht + $obj->amount_ht;
 		$subtotal_ttc = $subtotal_ttc + $obj->amount_ttc;
@@ -478,7 +478,7 @@ if ($result) {
         $decaiss_ttc[$obj->dm] += $obj->amount_ttc;
 
 		// For DEBUG Only
-		if (eregi('^2007',$obj->dm))
+		if (preg_match('/^2007/',$obj->dm))
 		{
 		$subtotal_ht = $subtotal_ht + $obj->amount_ht;
 		$subtotal_ttc = $subtotal_ttc + $obj->amount_ttc;

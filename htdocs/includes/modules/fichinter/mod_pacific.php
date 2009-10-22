@@ -21,7 +21,7 @@
 /**
     \file       htdocs/includes/modules/fichinter/mod_pacific.php
 	\ingroup    fiche intervention
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de fiche intervention Pacific
+	\brief      Fichier contenant la classe du modele de numerotation de reference de fiche intervention Pacific
 	\version    $Id$
 */
 
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.p
 
 /**
     \class      mod_pacific
-		\brief      Classe du modèle de numérotation de référence de fiche intervention Pacific
+		\brief      Classe du moderotation de reference de fiche intervention Pacific
 */
 
 class mod_pacific extends ModeleNumRefFicheinter
@@ -46,7 +46,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	}
 
 
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
     function info()
@@ -58,7 +58,7 @@ class mod_pacific extends ModeleNumRefFicheinter
     	return $langs->trans('PacificNumRefModelDesc1',$this->prefix);
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -66,8 +66,8 @@ class mod_pacific extends ModeleNumRefFicheinter
         return $this->prefix."0501-0001";
     }
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
 	function canBeActivated()
@@ -88,7 +88,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 			$row = $db->fetch_row($resql);
 			if ($row) $fayymm = substr($row[0],0,6);
 		}
-		if (! $fayymm || eregi($this->prefix.'[0-9][0-9][0-9][0-9]',$fayymm))
+		if (! $fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$fayymm))
 		{
 			return true;
 		}
@@ -99,8 +99,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 		}
 	}
 
-	/**		\brief      Renvoi prochaine valeur attribuée
-	*      	\param      objsoc      Objet société
+	/**		\brief      Renvoi prochaine valeur attribuee
+	*      	\param      objsoc      Objet societe
 	*      	\param      ficheinter	Object ficheinter
 	*      	\return     string      Valeur
 	*/
@@ -108,7 +108,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	{
 		global $db,$conf;
 		
-		// D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
     $posindice=8;
     
     $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";

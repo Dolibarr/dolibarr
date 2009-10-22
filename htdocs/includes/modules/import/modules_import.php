@@ -66,7 +66,7 @@ class ModeleImports
 		$i=0;
 		while (($file = readdir($handle))!==false)
 		{
-			if (eregi("^import_(.*)\.modules\.php",$file,$reg))
+			if (preg_match("/^import_(.*)\.modules\.php/i",$file,$reg))
 			{
 				$moduleid=$reg[1];
 

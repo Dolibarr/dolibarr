@@ -484,7 +484,7 @@ class PaiementFourn
 		$lienfin='</a>';
 
 		$text=$this->ref;	// Sometimes ref contains label
-		if (eregi('^\((.*)\)$',$text,$reg))
+		if (preg_match('/^\((.*)\)$/i',$text,$reg))
 		{
 			// Label g诩rique car entre parenth粥s. On l'affiche en le traduisant
 			if ($reg[1]=='paiement') $reg[1]='Payment';

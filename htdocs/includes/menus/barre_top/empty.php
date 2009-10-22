@@ -86,7 +86,7 @@ class MenuTop {
 	        	if ($tabMenu[$i]['right'] == true)
 	        	{
 					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-					if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+					if (! preg_match('/\?/',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
 					else $url.='&';
 					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
 					$url.="&idmenu=".$tabMenu[$i]['rowid'];

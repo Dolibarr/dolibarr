@@ -203,7 +203,7 @@ class ExportExcel extends ModeleExports
 			$newvalue=$this->excel_clean($newvalue);
 
 			// Traduction newvalue
-			if (eregi('^\((.*)\)$',$newvalue,$reg))
+			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
@@ -212,14 +212,14 @@ class ExportExcel extends ModeleExports
 				$newvalue=$outputlangs->convToOutputCharset($newvalue);
 			}
 
-			if (eregi('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',$newvalue))
+			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i',$newvalue))
 			{
 				$arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
 				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
 				$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
 				$this->worksheet->write($this->row, $this->col, $newvalue, $formatdate);
 			}
-			elseif (eregi('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$',$newvalue))
+			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i',$newvalue))
 			{
 				$arrayvalue=preg_split('/[.,]/',xl_parse_date($newvalue));
 				//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';

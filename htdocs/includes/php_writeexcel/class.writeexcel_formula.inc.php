@@ -1436,7 +1436,7 @@ function _fact()
         $this->_advance();
         return $result;
     }
- elseif (eregi("^[A-Z0-9\xc0-\xdc\.]+$",$this->_current_token))
+ elseif (preg_match("/^[A-Z0-9\xc0-\xdc\.]+$/i",$this->_current_token))
  {
     // if it's a function call
         $result = $this->_func();

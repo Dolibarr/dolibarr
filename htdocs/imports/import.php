@@ -561,7 +561,7 @@ if ($step == 3 && $datatoimport)
 			// readdir return value in ISO and we want UTF8 in memory
 			if (! utf8_check($file)) $file=utf8_encode($file);
 
-			if (eregi('^\.',$file)) continue;
+			if (preg_match('/^\./',$file)) continue;
 
 			$modulepart='import';
 			$urlsource=$_SERVER["PHP_SELF"].'?step='.$step.$param.'&filetoimport='.urlencode($filetoimport);
@@ -841,10 +841,10 @@ if ($step == 4 && $datatoimport)
 
 		print '<td nowrap="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td style="font-weight: normal">';
-		$newlabel=preg_replace('/\*$/i','',$label);
+		$newlabel=preg_replace('/\*$/','',$label);
 		$text=$langs->trans($newlabel);
 		$more='';
-		if (eregi('\*$',$label))
+		if (preg_match('/\*$/',$label))
 		{
 			$text='<b>'.$text.'*</b>';
 			$more=((! empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= sizeof($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
@@ -853,7 +853,7 @@ if ($step == 4 && $datatoimport)
 		}
 		$htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
 		$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
-		$htmltext.=$langs->trans("Required").': <b>'.yn(eregi('\*$',$label)).'</b>';
+		$htmltext.=$langs->trans("Required").': <b>'.yn(preg_match('/\*$/',$label)).'</b>';
 		$note=$objimport->array_import_examplevalues[0][$code];
 		if ($note) $htmltext.='<br>'.$langs->trans("Note").'/'.$langs->trans("Example").': '.$note;
 		$text.=$more;

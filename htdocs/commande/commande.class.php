@@ -240,7 +240,7 @@ class Commande extends CommonObject
 		$result=$soc->set_as_client();
 
 		// Define new ref
-		if (! $error && (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref)))
+		if (! $error && (preg_match('/^\(PROV/i', $this->ref) || preg_match('/^PROV/i', $this->ref)))
 		{
 			$num = $this->getNextNumRef($soc);
 		}
@@ -291,7 +291,7 @@ class Commande extends CommonObject
 		if (! $error)
 		{
 			// Rename directory if dir was a temporary ref
-			if (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref))
+			if (preg_match('/^\(PROV/i', $this->ref) || preg_match('/^PROV/i', $this->ref))
 			{
 				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
 				// afin de ne pas perdre les fichiers attaches

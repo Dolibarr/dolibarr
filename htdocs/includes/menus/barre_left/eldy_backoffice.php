@@ -429,21 +429,21 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),1,$user->rights->facture->lire);
 					if ($user->societe_id == 0)
 					{
-						if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/clients.php?action=facturer&amp;leftmenu=customers_bills",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+						if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/clients.php?action=facturer&amp;leftmenu=customers_bills",$langs->trans("NewBill"),2,$user->rights->facture->creer);
 					}
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),2,$user->rights->facture->lire);
+					if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),2,$user->rights->facture->lire);
 
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpaid"),2,$user->rights->facture->lire);
+					if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpaid"),2,$user->rights->facture->lire);
 
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
+					if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
 
 					if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 					{
-						if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add(DOL_URL_ROOT."/compta/paiement/avalider.php?leftmenu=customers_bills_payments",$langs->trans("MenuToValid"),3,$user->rights->facture->lire);
+						if (preg_match("/customers_bills_payments/i",$leftmenu))  $newmenu->add(DOL_URL_ROOT."/compta/paiement/avalider.php?leftmenu=customers_bills_payments",$langs->trans("MenuToValid"),3,$user->rights->facture->lire);
 					}
-					if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),3,$user->rights->facture->lire);
+					if (preg_match("/customers_bills_payments/i",$leftmenu))  $newmenu->add(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),3,$user->rights->facture->lire);
 
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),2,$user->rights->facture->lire);
+					if (preg_match("/customers_bills/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),2,$user->rights->facture->lire);
 				}
 
 				// Proposals
@@ -484,17 +484,17 @@ class MenuLeft {
 				if ($conf->tax->enabled)
 				{
 					$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax&amp;mainmenu=accountancy",$langs->trans("MenuTaxAndDividends"), 0, $user->rights->tax->charges->lire);
-					if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
-					if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
-					if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"), 2, $user->rights->tax->charges->lire);
+					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
+					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
+					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"), 2, $user->rights->tax->charges->lire);
 					// VAT
 					if ($conf->compta->tva)
 					{
-						if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=tax_vat&amp;mainmenu=accountancy",$langs->trans("VAT"),1,$user->rights->tax->charges->lire);
-						if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/fiche.php?leftmenu=tax_vat&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
-						if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/reglement.php?leftmenu=tax_vat",$langs->trans("List"),2,$user->rights->tax->charges->lire);
-						if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
-						if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+						if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=tax_vat&amp;mainmenu=accountancy",$langs->trans("VAT"),1,$user->rights->tax->charges->lire);
+						if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/fiche.php?leftmenu=tax_vat&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
+						if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/reglement.php?leftmenu=tax_vat",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+						if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
+						if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
 					}
 				}
 
@@ -545,8 +545,8 @@ class MenuLeft {
 				if ($conf->facture->enabled && $conf->banque->enabled)
 				{
 					$newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
-					if (eregi("checks",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
-					if (eregi("checks",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
+					if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
+					if (preg_match("/checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
 				}
 
 				// Bank-Caisse
@@ -851,8 +851,8 @@ class MenuLeft {
 					{
 						$langs->load("bills");
 						$newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=members_checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->adherent->cotisation->lire);
-						if (eregi("members_checks",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=members_checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->adherent->cotisation->creer);
-						if (eregi("members_checks",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=members_checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->adherent->cotisation->lire);
+						if (preg_match("/members_checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=members_checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->adherent->cotisation->creer);
+						if (preg_match("/members_checks/i",$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=members_checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->adherent->cotisation->lire);
 					}
 
 					if ($conf->banque->enabled)

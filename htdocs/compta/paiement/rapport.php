@@ -127,7 +127,7 @@ print '<br>';
 
 clearstatcache();
 
-// Affiche lien sur autres ann�es
+// Affiche lien sur autres annees
 $linkforyear=array();
 $found=0;
 if (is_dir($dir))
@@ -135,7 +135,7 @@ if (is_dir($dir))
 	$handle=opendir($dir);
 	while (($file = readdir($handle))!==false)
 	{
-		if (is_dir($dir.'/'.$file) && ! eregi('^\.',$file))
+		if (is_dir($dir.'/'.$file) && ! preg_match('/^\./',$file))
 		{
 			$found=1;
 			$linkforyear[]=$file;
@@ -165,7 +165,7 @@ if ($year)
 		$var=true;
 		while (($file = readdir($handle))!==false)
 		{
-	  if (eregi('^payment',$file))
+	  if (preg_match('/^payment/i',$file))
 	  {
 	  	$var=!$var;
 	  	$tfile = $dir . '/'.$year.'/'.$file;

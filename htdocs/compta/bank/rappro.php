@@ -145,7 +145,7 @@ if ($resql)
 
     if ($mesg) print $mesg."<br>";
 
-    // Affiche nom des derniers relevés
+    // Affiche nom des derniers relevï¿½s
     $nbmax=5;
     $liste="";
 
@@ -230,7 +230,7 @@ if ($resql)
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 		$reg=array();
-		eregi('\((.+)\)',$objp->label,$reg);	// Si texte entouré de parenthèe on tente recherche de traduction
+		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 		else print $objp->label;
         print '</a>';
@@ -300,9 +300,9 @@ if ($resql)
 			else {
 				//print ' - ';
 				print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-				if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+				if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
 				{
-					// Label générique car entre parenthèses. On l'affiche en le traduisant
+					// Label generique car entre parentheses. On l'affiche en le traduisant
 					if ($reg[1]=='paiement') $reg[1]='Payment';
 					print $langs->trans($reg[1]);
 				}
@@ -327,12 +327,12 @@ if ($resql)
 
         if ($objp->rappro)
         {
-            // Si ligne déjà rapprochée, on affiche relevé.
+            // Si ligne dï¿½jï¿½ rapprochï¿½e, on affiche relevï¿½.
             print "<td align=\"center\" nowrap=\"nowrap\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
         }
         else
         {
-            // Si pas encore rapprochée
+            // Si pas encore rapprochï¿½e
             if ($user->rights->banque->modifier)
             {
                 print '<td align="center" width="30" nowrap="nowrap">';
@@ -347,7 +347,7 @@ if ($resql)
                     print '</a>';
                 }
                 else {
-                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'après la date passée et que l'écriture apparaisse bien sur le compte.
+                    print "&nbsp;";	// On n'empeche la suppression car le raprochement ne pourra se faire qu'aprï¿½s la date passï¿½e et que l'ï¿½criture apparaisse bien sur le compte.
                 }
                 print "</td>";
             }
@@ -358,7 +358,7 @@ if ($resql)
         }
 
 
-        // Affiche zone saisie relevé + bouton "Rapprocher"
+        // Affiche zone saisie relevï¿½ + bouton "Rapprocher"
         if ($objp->do <= gmmktime())
         {
             print '<td align="center" nowrap="nowrap">';

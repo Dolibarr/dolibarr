@@ -639,7 +639,7 @@ class pdf_oursin extends ModelePDFFactures
 					$index++;
 					$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 					$tvacompl='';
-					if (eregi('\*',$tvakey))
+					if (preg_match('/\*/',$tvakey))
 					{
 						$tvakey=str_replace('*','',$tvakey);
 						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";

@@ -210,7 +210,7 @@ foreach($fulltree as $key => $val)
 	// If directory is brother of selected directory, we show line
 	elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
 	// If directory is parent of selected directory or is selected directory, we show line
-	elseif (eregi($val['fullpath'].'_',$fullpathselected.'_')) $showline=2;
+	elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
 	// If we are level one we show line
 	elseif ($val['level'] < 2) $showline=1;
 
