@@ -1,5 +1,12 @@
-# Dolibarr language file - nl_BE - energy
+# Dolibarr language file - nl_NL - energy
 CHARSET=UTF-8
 Energy=Energie
+Compteur=Teller
+Compteurs=Tellers
 NewCounter=Nieuwe teller
 NewGroup=Nieuwe groep
+Group=Groep
+Electricity=Electriciteit
+Water=water
+NaturalGaz=Gas
+Releves=Transcripties
