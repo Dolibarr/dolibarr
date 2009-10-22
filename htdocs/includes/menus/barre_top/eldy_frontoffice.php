@@ -292,7 +292,8 @@ class MenuTop {
 		if (! empty($conf->telephonie->enabled) && $user->rights->telephonie->lire)
 		{
 			$class="";
-			if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
+			$pattern = str_replace('/','\/',DOL_URL_ROOT); // Add backslashes for regular expression
+			if (preg_match("/^".$pattern."\/telephonie\//",$_SERVER["PHP_SELF"]))
 			{
 				$class='class="tmenusel"'; $_SESSION['idmenu']='';
 			}
@@ -312,7 +313,8 @@ class MenuTop {
 		{
 			$langs->load("energy");
 			$class="";
-			if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
+			$pattern = str_replace('/','\/',DOL_URL_ROOT); // Add backslashes for regular expression
+			if (preg_match("/^".$pattern."\/energie\//",$_SERVER["PHP_SELF"]))
 			{
 				$class='class="tmenusel"'; $_SESSION['idmenu']='';
 			}

@@ -52,9 +52,9 @@ function barcode_encode_ean($ean, $encoding = "EAN-13"){
     }
     $encoding=strtoupper($encoding);
     if ($encoding=="ISBN"){
-	if (!ereg("^978", $ean)) $ean="978".$ean;
+	if (!preg_match("/^978/", $ean)) $ean="978".$ean;
     }
-    if (ereg("^978", $ean)) $encoding="ISBN";
+    if (preg_match("/^978/", $ean)) $encoding="ISBN";
     if (strlen($ean)<12 || strlen($ean)>13){
 	return array("text"=>"Invalid $encoding Code (must have 12/13 numbers)");
     }

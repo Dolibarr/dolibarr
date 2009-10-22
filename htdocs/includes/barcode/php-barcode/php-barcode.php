@@ -134,7 +134,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
 	    $width=false;
 	    continue;
 	}
-	if (ereg("[a-z]", $val)){
+	if (preg_match("/[a-z]/", $val)){
 	    /* tall bar */
 	    $val=ord($val)-ord('a')+1;
 	}
@@ -184,7 +184,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png",
 	    $width=false;
 	    continue;
 	}
-	if (ereg("[a-z]", $val)){
+	if (preg_match("/[a-z]/", $val)){
 	    /* tall bar */
 	    $val=ord($val)-ord('a')+1;
 	    $h=$height2;
@@ -253,7 +253,7 @@ function barcode_outtext($code,$bars){
 	    for ($a=0;$a<$val;$a++) $bar_line.="-";
 	    continue;
 	}
-	if (ereg("[a-z]", $val)){
+	if (preg_match("/[a-z]/", $val)){
 	    $val=ord($val)-ord('a')+1;
 	    $h=$heigh2;
 	    for ($a=0;$a<$val;$a++) $bar_line.="I";
@@ -312,7 +312,7 @@ function barcode_outhtml($code, $bars, $scale = 1, $total_y = 0, $space = ''){
 	    $width=false;
 	    continue;
 	}
-	if (ereg("[a-z]", $val)){
+	if (preg_match("/[a-z]/", $val)){
 	    //hoher strich
 	    $val=ord($val)-ord('a')+1;
 	    $h=$height2;
@@ -395,16 +395,16 @@ function barcode_encode_genbarcode($code,$encoding){
 function barcode_encode($code,$encoding){
     global $genbarcode_loc;
     if (
-		((eregi("^ean$", $encoding)
+		((preg_match("/^ean$/i", $encoding)
 		 && ( strlen($code)==12 || strlen($code)==13)))
 
 		|| (($encoding) && (eregi("^isbn$", $encoding))
 		 && (( strlen($code)==9 || strlen($code)==10) ||
-		 (((ereg("^978", $code) && strlen($code)==12) ||
+		 (((preg_match("/^978/", $code) && strlen($code)==12) ||
 		  (strlen($code)==13)))))
 
 		|| (( !isset($encoding) || !$encoding || (eregi("^ANY$", $encoding) ))
-		 && (ereg("^[0-9]{12,13}$", $code)))
+		 && (preg_match("/^[0-9]{12,13}$/", $code)))
 
 		){
 	/* use built-in EAN-Encoder */

@@ -69,7 +69,7 @@ class box_external_rss extends ModeleBoxes {
 		$this->max=$max;
         
 		// On recupere numero de param de la boite
-		ereg('^([0-9]+) ',$this->param,$reg);
+		preg_match('/^([0-9]+) /',$this->param,$reg);
 		$site=$reg[1];
 
 		// Creation rep (pas besoin, on le cree apres recup flux)
