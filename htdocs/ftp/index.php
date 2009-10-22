@@ -212,7 +212,7 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
 		$newremotefileiso=utf8_decode($remotefile);
 
-		$result=ftp_rmdir($conn_id, $newremotefileiso);
+		$result=@ftp_rmdir($conn_id, $newremotefileiso);
 		if ($result)
 		{
 			$mesg = '<div class="ok">'.$langs->trans("DirWasRemoved",$file).'</div>';
