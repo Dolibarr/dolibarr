@@ -77,7 +77,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 pHeader('','etape5',$_REQUEST["action"]);
 
 
-if (isset($_POST['action']) && eregi('upgrade',$_POST["action"]))
+if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 {
 	print '<h3>'.$langs->trans('DataMigration').'</h3>';
 

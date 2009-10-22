@@ -38,7 +38,7 @@ $langs->setDefaultLang($setuplang);
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
 $targetversion=DOL_VERSION;		// It it's last upgrade
-if (isset($_POST["action"]) && eregi('upgrade',$_POST["action"]))	// If it's an old upgrade
+if (isset($_POST["action"]) && preg_match('/upgrade/i',$_POST["action"]))	// If it's an old upgrade
 {
 	$tmp=explode('_',$_POST["action"],2);
 	if ($tmp[0]=='upgrade' && ! empty($tmp[1])) $targetversion=$tmp[1];
@@ -102,7 +102,7 @@ if ($_POST["action"] == "set")
 
 pHeader($langs->trans("SetupEnd"),"etape5");
 
-if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
+if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
 {
 	print '<table cellspacing="0" cellpadding="2" width="100%">';
 	$error=0;
@@ -217,7 +217,7 @@ if ($_POST["action"] == "set" || eregi('upgrade',$_POST["action"]))
 		}
 	}
 	// If upgrade
-	elseif (eregi('upgrade',$_POST["action"]))
+	elseif (preg_match('/upgrade/i',$_POST["action"]))
 	{
 		if ($db->connected == 1)
 		{
@@ -312,7 +312,7 @@ if ($_POST["action"] == "set")
 	}
 }
 // If upgrade
-elseif (eregi('upgrade',$_POST["action"]))
+elseif (preg_match('/upgrade/i',$_POST["action"]))
 {
 	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
 	{

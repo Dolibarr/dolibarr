@@ -72,7 +72,7 @@ pHeader('',"upgrade2",$_REQUEST['action']);
 $actiondone=0;
 
 // Action to launch the repair or migrate script
-if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
+if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 {
 	$actiondone=1;
 
@@ -300,18 +300,18 @@ if (! isset($_GET["action"]) || eregi('upgrade',$_GET["action"]))
 		$handle=opendir($dir);
 		while (($file = readdir($handle))!==false)
 		{
-			if (eregi('\.sql$',$file)) $filesindir[]=$file;
+			if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
 		}
 		sort($filesindir);
 
 		# Define which file to run
 		foreach($filesindir as $file)
 		{
-			if (eregi($from,$file))
+			if (preg_match('/'.$from.'/i',$file))
 			{
 				$filelist[]=$file;
 			}
-			else if (eregi($to,$file))	// First test may be false if we migrate from x.y.* to x.y.*
+			else if (preg_match('/'.$to.'/i',$file))	// First test may be false if we migrate from x.y.* to x.y.*
 			{
 				$filelist[]=$file;
 			}

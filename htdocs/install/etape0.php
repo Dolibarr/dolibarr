@@ -59,14 +59,14 @@ dolibarr_install_syslog("etape0: Entering etape0.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"etape1");
 
-// On reporte champ formulaire pr�c�dent pour propagation
+// On reporte champ formulaire precedent pour propagation
 if ($_POST["action"] == "set")
 {
 	umask(0);
 	foreach($_POST as $cle=>$valeur)
 	{
 		echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
-		if (! eregi('^db_pass',$cle)) dolibarr_install_syslog("Choice for ".$cle." = ".$valeur);
+		if (! preg_match('/^db_pass/i',$cle)) dolibarr_install_syslog("Choice for ".$cle." = ".$valeur);
 	}
 }
 
@@ -255,7 +255,7 @@ if (! $error && $db->connected)
 			{
 				// We keep only utf8 and iso
 				$linedisabled=false;
-				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! eregi('(utf8|latin1)',$characterSet['charset'])) $linedisabled=true;
+				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8|latin1)/i',$characterSet['charset'])) $linedisabled=true;
 
 				if ($defaultCharacterSet == $characterSet['charset'] )
 				{
@@ -298,7 +298,7 @@ if (! $error && $db->connected)
 			{
 				// We keep only utf8 and iso
 				$linedisabled=false;
-				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! eregi('(utf8_general|latin1_swedish)',$collation['collation'])) $linedisabled=true;
+				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! preg_match('/(utf8_general|latin1_swedish)/i',$collation['collation'])) $linedisabled=true;
 
 				if ($defaultCollationConnection == $collation['collation'])
 				{

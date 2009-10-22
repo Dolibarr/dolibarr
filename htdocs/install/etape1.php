@@ -79,7 +79,7 @@ if ($_POST["action"] == "set")
 	umask(0);
 	foreach($_POST as $cle=>$valeur)
 	{
-		if (! eregi('^db_pass',$cle)) dolibarr_install_syslog("Choice for ".$cle." = ".$valeur);
+		if (! preg_match('/^db_pass/i',$cle)) dolibarr_install_syslog("Choice for ".$cle." = ".$valeur);
 	}
 
 	// Show title of step

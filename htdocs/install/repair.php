@@ -165,13 +165,13 @@ if ($ok)
 	$handle=opendir($dir);
 	while (($file = readdir($handle))!==false)
 	{
-		if (eregi('\.sql$',$file)) $filesindir[]=$file;
+		if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
 	}
 	sort($filesindir);
 
 	foreach($filesindir as $file)
 	{
-		if (eregi('repair',$file))
+		if (preg_match('/repair/i',$file))
 		{
 			$filelist[]=$file;
 		}

@@ -126,7 +126,7 @@ if ($_POST["action"] == "set")
         $tablefound = 0;
         while (($file = readdir($handle))!==false)
         {
-            if (eregi('\.sql$',$file) && eregi('^llx_',$file) && ! eregi('\.key\.sql$',$file))
+            if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && ! preg_match('/\.key\.sql$/i',$file))
             {
                 $tablefound++;
 
@@ -225,7 +225,7 @@ if ($_POST["action"] == "set")
         dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
         while (($file = readdir($handle))!==false)
         {
-            if (eregi('\.sql$',$file) && eregi('^llx_',$file) && eregi('\.key\.sql$',$file))
+            if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && preg_match('/\.key\.sql$/i',$file))
             {
                 $name = substr($file, 0, strlen($file) - 4);
                 //print "<tr><td>Creation de la table $name</td>";
@@ -238,7 +238,7 @@ if ($_POST["action"] == "set")
                         $buf = fgets($fp, 4096);
 
                         // Cas special de lignes autorisees pour certaines versions uniquement
-                        if (eregi('^-- V([0-9\.]+)',$buf,$reg))
+                        if (preg_match('/^--\sV([0-9\.]+)/i',$buf,$reg))
                         {
                             $versioncommande=explode('.',$reg[1]);
 							//print var_dump($versioncommande);
@@ -253,7 +253,7 @@ if ($_POST["action"] == "set")
                         }
 
                         // Ajout ligne si non commentaire
-                        if (! eregi('^--',$buf)) $buffer .= $buf;
+                        if (! preg_match('/^--/i',$buf)) $buffer .= $buf;
                     }
                     fclose($fp);
 
@@ -281,7 +281,7 @@ if ($_POST["action"] == "set")
 	                            if ($db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS' ||
 	                                $db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
 	                                $db->errno() == 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS' ||
-	                                eregi('duplicate key name',$db->error()))
+	                                preg_match('/duplicate key name/i',$db->error()))
 	                            {
 	                                //print "<td>Deja existante</td></tr>";
 	                                $key_exists = 1;

@@ -81,11 +81,11 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 
     // Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
     // ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
-    if (eregi('^php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('[\\\/]php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"]))
+    if (preg_match('/^php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i',$_SERVER["SCRIPT_FILENAME"]))
     {
         $dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
 
-        if (! eregi('[\/\\]dolibarr[\/\\]htdocs$',$dolibarr_main_document_root))
+        if (! preg_match('/[\\/]dolibarr[\\/]htdocs$/i',$dolibarr_main_document_root))
         {
             $dolibarr_main_document_root.="/dolibarr/htdocs";
         }
@@ -219,7 +219,7 @@ $option='';
 
 while (($file = readdir($handle))!==false)
 {
-    if (is_readable($dir."/".$file) && eregi('^(.*)\.lib\.php',$file,$reg))
+    if (is_readable($dir."/".$file) && preg_match('/^(.*)\.lib\.php/i',$file,$reg))
     {
         $type=$reg[1];
 
