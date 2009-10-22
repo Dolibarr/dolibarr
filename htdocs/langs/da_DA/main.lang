@@ -13,6 +13,14 @@
 CHARSET=UTF-8
 SeparatorDecimal=.
 SeparatorThousand=,
+FormatDateShort=%d/%m/%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatHourShort=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Database forbindelse
 Error=Fejl
 ErrorFieldRequired=Felt &#39;% s&#39; er påkrævet
@@ -494,14 +502,6 @@ ShortSunday=S
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 // Reference language: en_US
 DIRECTION=ltr
-FormatDateShort=% d /% m /% Y
-FormatDateShortJava=DD / MM / ÅÅÅÅ
-FormatHourShort=% I:% M% p
-FormatDateTextShort=% b% d,% Y
-FormatDateText=% B% d,% Y
-FormatDateHourShort=% d /% m /% Y% I:% M% p
-FormatDateHourTextShort=% b% d,% Y,% I:% M% p
-FormatDateHourText=% B% d,% Y,% I:% M% p
 GoToWikiHelpPage=Læs online hjælp (har brug for Internet-adgang)
 GoToHelpPage=Læs hjælpe
 ConnectedOnMultiCompany=Connected på enhed
