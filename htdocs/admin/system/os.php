@@ -42,15 +42,15 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 
-// R�cup�re l'OS au sens PHP
+// Recupere l'OS au sens PHP
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
 
-// R�cup�re la version de l'OS
+// Recupere la version de l'OS
 ob_start();
 phpinfo();
 $chaine = ob_get_contents();
 ob_end_clean();
-eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
+preg_match('/System <\/td><td class="v">([^\\/]*)<\/td>/i',$chaine,$reg);
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';
 

@@ -100,7 +100,7 @@ print '<br>';
 	<?php
 	// Parameteres execution
 	$command='mysql';
-	if (eregi(" ",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
 	$param=$dolibarr_main_db_name;
 	$param.=" -h ".$dolibarr_main_db_host;

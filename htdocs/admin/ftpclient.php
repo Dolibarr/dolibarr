@@ -41,7 +41,7 @@ $result=$db->query($sql);
 if ($result)
 {
     $obj = $db->fetch_object($result);
-    eregi('([0-9]+)$',$obj->name,$reg);
+    preg_match('/([0-9]+)$/i',$obj->name,$reg);
 	if ($reg[1]) $lastftpentry = $reg[1];
 }
 else
@@ -217,7 +217,7 @@ else
 		{
 			$obj = $db->fetch_object($resql);
 
-		    eregi('([0-9]+)$',$obj->name,$reg);
+		    preg_match('/([0-9]+)$/i',$obj->name,$reg);
 			$idrss = $reg[0];
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 

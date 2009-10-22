@@ -97,7 +97,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 			{
 				if (is_readable($dir.$file))
 				{
-					if (eregi('(.*)\.modules\.php$',$file,$reg))
+					if (preg_match('/(.*)\.modules\.php$/i',$file,$reg))
 					{
 						$filebis=$reg[1];
 

@@ -175,8 +175,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
  */
 
 $linuxlike=1;
-if (eregi('^win',PHP_OS)) $linuxlike=0;
-if (eregi('^mac',PHP_OS)) $linuxlike=0;
+if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
+if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
 
 
 if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';

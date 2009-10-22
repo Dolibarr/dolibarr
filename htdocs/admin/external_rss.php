@@ -46,7 +46,7 @@ $result=$db->query($sql);
 if ($result)
 {
     $obj = $db->fetch_object($result);
-    eregi('([0-9]+)$',$obj->name,$reg);
+    preg_match('/([0-9]+)$/i',$obj->name,$reg);
 	if ($reg[1]) $lastexternalrss = $reg[1];
 }
 else
@@ -238,7 +238,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-	    eregi('^([0-9]+)',$obj->note,$reg);
+	    preg_match('/^([0-9]+)/i',$obj->note,$reg);
 		$idrss = $reg[1];
 		//print "x".$idrss;
 

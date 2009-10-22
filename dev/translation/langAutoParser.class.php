@@ -154,7 +154,7 @@ FILE_SKIP_EMPTY_LINES);
 	private function getTranslationFilesArray($lang){
 		$dir = new DirectoryIterator($this->langDir.$lang);
 		while($dir->valid()) {
-			if(!$dir->isDot() && $dir->isFile() && ! eregi('^\.',$dir->getFilename())) {
+			if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./',$dir->getFilename())) {
 				$files[] =  $dir->getFilename();
 			}
 			$dir->next();

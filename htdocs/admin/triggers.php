@@ -185,8 +185,8 @@ foreach ($orders as $key => $value)
     $disabledbyname=0;
     $disabledbymodule=1;
 	$module='';
-    if (eregi('NORUN$',$files[$key])) $disabledbyname=1;
-    if (eregi('^interface_([^_]+)_(.+)\.class\.php',$files[$key],$reg))
+    if (preg_match('/NORUN$/i',$files[$key])) $disabledbyname=1;
+    if (preg_match('/^interface_([^_]+)_(.+)\.class\.php/i',$files[$key],$reg))
 	{
 		// Check if trigger file is for a particular module
 		$module=preg_replace('/^mod/i','',$reg[1]);

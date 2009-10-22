@@ -190,9 +190,9 @@ $handle=opendir($dir);
 $i=1;
 while (($file = readdir($handle))!==false)
 {
-    if (eregi('(modGeneratePass[a-z]+).class.php',$file,$reg))
+    if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i',$file,$reg))
     {
-        // Chargement de la classe de num�rotation
+        // Chargement de la classe de numerotation
         $classname = $reg[1];
         require_once($dir.'/'.$file);
 
@@ -299,7 +299,7 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
-if (eregi('crypted:',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
 	print img_tick();
 }

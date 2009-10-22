@@ -55,7 +55,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["gencod"],'chaine',0,'',$conf->entity);
 	if ($_FILES["logo"]["tmp_name"])
 	{
-		if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
+		if (preg_match('/([^\\/:]+)$/i',$_FILES["logo"]["name"],$reg))
 		{
 			$original_file=$reg[1];
 
@@ -77,7 +77,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						$quality = 80;
 
 						$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, 200, 100, '_small', $quality);
-						if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+						if (preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 						{
 							$imgThumbSmall = $reg[1];
 							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
@@ -86,7 +86,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 						// Creation de la vignette de la page "Societe/Institution"
 						$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, 100, 30, '_mini', $quality);
-						if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+						if (preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 						{
 							$imgThumbMini = $reg[1];
 							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
@@ -137,7 +137,7 @@ if ($_GET["action"] == 'addthumb')
 		{
 			// Creation de la vignette de la page login
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], 200, 100, '_small',80);
-			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 			{
 				$imgThumbSmall = $reg[1];
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
@@ -146,7 +146,7 @@ if ($_GET["action"] == 'addthumb')
 
 			// Creation de la vignette de la page "Societe/Institution"
 			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], 100, 30, '_mini',80);
-			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 			{
 				$imgThumbMini = $reg[1];
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
@@ -551,7 +551,7 @@ else
 	print '</td><td valign="center" align="right">';
 
 	// On propose la generation de la vignette si elle n'existe pas
-	if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && eregi('(\.jpg|\.jpeg|\.png)$',$mysoc->logo))
+	if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
 	}

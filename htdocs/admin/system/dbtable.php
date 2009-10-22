@@ -46,7 +46,7 @@ print_fiche_titre($langs->trans("Table") . " ".$_GET["table"],'','setup');
 
 // Define request to get table description
 $base=0;
-if (eregi('mysql',$conf->db->type))
+if (preg_match('/mysql/i',$conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS LIKE '".$_GET["table"]."'";
 	$base=1;

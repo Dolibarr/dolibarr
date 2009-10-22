@@ -96,7 +96,7 @@ else
 
 		// arraytest is an array of test to do
 		$arraytest=array();
-		if (eregi('mysql',$db->type))
+		if (preg_match('/mysql/i',$db->type))
 		{
 			$arraytest=array(
 //				"character_set_connection"=>'UTF-8',

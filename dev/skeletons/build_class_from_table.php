@@ -102,8 +102,8 @@ if ($resql)
 		{
 			$property[$i]['istime']=false;
 		}
-		if (eregi('varchar',$property[$i]['type'])
-			|| eregi('text',$property[$i]['type']))
+		if (preg_match('/varchar/i',$property[$i]['type'])
+			|| preg_match('/text/i',$property[$i]['type']))
 		{
 			$property[$i]['ischar']=true;
 		}

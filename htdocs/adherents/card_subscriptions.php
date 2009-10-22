@@ -221,7 +221,7 @@ print "</div>\n";
 
 if ($errmsg)
 {
-	if (eregi('^Error',$errmsg))
+	if (preg_match('/^Error/i',$errmsg))
 	{
 		$langs->load("errors");
 		$errmsg=$langs->trans($errmsg);

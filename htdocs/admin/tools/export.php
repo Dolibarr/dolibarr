@@ -89,7 +89,7 @@ if ($what == 'mysql')
 
 	// Parameteres execution
 	$command=$mysqldump;
-	if (eregi(" ",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
 	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
@@ -188,7 +188,7 @@ if ($what == 'mysql')
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
 		if ($compression == 'bz')   bzclose($handle);
-		if (eregi('^-- MySql',$errormsg)) $errormsg='';	// Pas erreur
+		if (preg_match('/^-- MySql/i',$errormsg)) $errormsg='';	// Pas erreur
 		else
 		{
 			// Renommer fichier sortie en fichier erreur

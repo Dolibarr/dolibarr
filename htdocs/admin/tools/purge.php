@@ -45,7 +45,7 @@ if ($conf->syslog->enabled)
 /*
  *	Actions
  */
-if ($_REQUEST["action"]=='purge' && ! eregi('^confirm',$_REQUEST["choice"]) && ($_REQUEST["choice"] != 'allfiles' || $_REQUEST["confirm"] == 'yes') )
+if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice"]) && ($_REQUEST["choice"] != 'allfiles' || $_REQUEST["confirm"] == 'yes') )
 {
 	$filesarray=array();
 
@@ -163,7 +163,7 @@ if ($message)
 	print "\n";
 }
 
-if (eregi('^confirm',$_REQUEST["choice"]))
+if (preg_match('/^confirm/i',$_REQUEST["choice"]))
 {
 	print '<br>';
 	$formquestion=array();

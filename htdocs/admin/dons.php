@@ -179,7 +179,7 @@ $handle=opendir($dir);
 $var=True;
 while (($file = readdir($handle))!==false)
 {
-    if (eregi('\.modules\.php$',$file))
+    if (preg_match('/\.modules\.php$/i',$file))
     {
         $var = !$var;
         $name = substr($file, 0, strlen($file) -12);

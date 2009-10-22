@@ -46,7 +46,7 @@ print_fiche_titre($langs->trans("Constraints"),'','setup');
 
 // Define request to get table description
 $base=0;
-if (eregi('mysql',$conf->db->type))
+if (preg_match('/mysql/i',$conf->db->type))
 {
     $sql = "SHOW TABLE STATUS";
     $base=1;

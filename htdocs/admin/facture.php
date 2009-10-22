@@ -387,7 +387,7 @@ $handle=opendir($dir);
 $var=True;
 while (($file = readdir($handle))!==false)
 {
-    if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
+    if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
     {
         $var = !$var;
         $name = substr($file, 4, strlen($file) -16);

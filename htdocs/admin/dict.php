@@ -670,7 +670,7 @@ if ($_GET["id"])
 					print '<td align="center" nowrap="nowrap">';
 					// Est-ce une entree du dictionnaire qui peut etre desactivee ?
 					$iserasable=1;  // Oui par defaut
-					if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || eregi('unknown',$obj->code))) $iserasable=0;
+					if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) $iserasable=0;
 					if ($obj->type && $obj->type == 'system') $iserasable=0;
 
 					if ($iserasable) {

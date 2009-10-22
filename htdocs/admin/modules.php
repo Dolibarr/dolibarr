@@ -409,7 +409,7 @@ foreach ($orders as $key => $value)
         print '  <td valign="top" width="14" align="center">';
         if (! empty($objMod->picto))
         {
-        	if (eregi('^/',$objMod->picto)) print img_picto('',$objMod->picto,'',1);
+        	if (preg_match('/^\//i',$objMod->picto)) print img_picto('',$objMod->picto,'',1);
         	else print img_object('',$objMod->picto);
         }
         else
