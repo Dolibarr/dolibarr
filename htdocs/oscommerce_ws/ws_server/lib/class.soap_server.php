@@ -5,16 +5,15 @@
 
 /**
 *
-* soap_server allows the user to create a SOAP server
+* nusoap_server allows the user to create a SOAP server
 * that is capable of receiving messages and returning responses
 *
-* NOTE: WSDL functionality is experimental
-*
 * @author   Dietrich Ayala <dietrich@ganx4.com>
+* @author   Scott Nichol <snichol@users.sourceforge.net>
 * @version  $Id$
 * @access   public
 */
-class soap_server extends nusoap_base {
+class nusoap_server extends nusoap_base {
 	/**
 	 * HTTP headers of request
 	 * @var array
@@ -33,6 +32,12 @@ class soap_server extends nusoap_base {
 	 * @access public
 	 */
 	var $requestHeaders = '';
+	/**
+	 * SOAP Headers from request (parsed)
+	 * @var mixed
+	 * @access public
+	 */
+	var $requestHeader = NULL;
 	/**
 	 * SOAP body request portion (incomplete namespace resolution; special characters not escaped) (text)
 	 * @var string
@@ -95,8 +100,8 @@ class soap_server extends nusoap_base {
 	 */
 	var $response = '';
 	/**
-	 * SOAP headers for response (text)
-	 * @var string
+	 * SOAP headers for response (text or array of soapval or associative array)
+	 * @var mixed
 	 * @access public
 	 */
 	var $responseHeaders = '';
@@ -165,7 +170,7 @@ class soap_server extends nusoap_base {
     * @param mixed $wsdl file path or URL (string), or wsdl instance (object)
 	* @access   public
 	*/
-	function soap_server($wsdl=false){
+	function nusoap_server($wsdl=false){
 		parent::nusoap_base();
 		// turn on debugging?
 		global $debug;
@@ -182,13 +187,13 @@ class soap_server extends nusoap_base {
 		}
 
 		if (isset($debug)) {
-			$this->debug("In soap_server, set debug_flag=$debug based on global flag");
+			$this->debug("In nusoap_server, set debug_flag=$debug based on global flag");
 			$this->debug_flag = $debug;
 		} elseif (isset($_SERVER['QUERY_STRING'])) {
 			$qs = explode('&', $_SERVER['QUERY_STRING']);
 			foreach ($qs as $v) {
 				if (substr($v, 0, 6) == 'debug=') {
-					$this->debug("In soap_server, set debug_flag=" . substr($v, 6) . " based on query string #1");
+					$this->debug("In nusoap_server, set debug_flag=" . substr($v, 6) . " based on query string #1");
 					$this->debug_flag = substr($v, 6);
 				}
 			}
@@ -196,7 +201,7 @@ class soap_server extends nusoap_base {
 			$qs = explode('&', $HTTP_SERVER_VARS['QUERY_STRING']);
 			foreach ($qs as $v) {
 				if (substr($v, 0, 6) == 'debug=') {
-					$this->debug("In soap_server, set debug_flag=" . substr($v, 6) . " based on query string #2");
+					$this->debug("In nusoap_server, set debug_flag=" . substr($v, 6) . " based on query string #2");
 					$this->debug_flag = substr($v, 6);
 				}
 			}
@@ -204,7 +209,7 @@ class soap_server extends nusoap_base {
 
 		// wsdl
 		if($wsdl){
-			$this->debug("In soap_server, WSDL is specified");
+			$this->debug("In nusoap_server, WSDL is specified");
 			if (is_object($wsdl) && (get_class($wsdl) == 'wsdl')) {
 				$this->wsdl = $wsdl;
 				$this->externalWSDLURL = $this->wsdl->wsdl;
@@ -240,7 +245,7 @@ class soap_server extends nusoap_base {
 		}
 		$this->debug("In service, query string=$qs");
 
-		if (ereg('wsdl', $qs) ){
+		if (preg_match('/wsdl/', $qs) ){
 			$this->debug("In service, this is a request for WSDL");
 			if($this->externalWSDLURL){
               if (strpos($this->externalWSDLURL,"://")!==false) { // assume URL
@@ -324,9 +329,9 @@ class soap_server extends nusoap_base {
 			$this->debug("In parse_http_headers, use _SERVER");
 			foreach ($_SERVER as $k => $v) {
 				if (substr($k, 0, 5) == 'HTTP_') {
-					$k = str_replace(' ', '-', strtolower(str_replace('_', ' ', substr($k, 5)))); 	                                         $k = strtolower(substr($k, 5));
+					$k = str_replace(' ', '-', strtolower(str_replace('_', ' ', substr($k, 5))));
 				} else {
-					$k = str_replace(' ', '-', strtolower(str_replace('_', ' ', $k))); 	                                         $k = strtolower($k);
+					$k = str_replace(' ', '-', strtolower(str_replace('_', ' ', $k)));
 				}
 				if ($k == 'soapaction') {
 					// get SOAPAction header
@@ -431,11 +436,11 @@ class soap_server extends nusoap_base {
 					} elseif ($this->headers['content-encoding'] == 'gzip' && $degzdata = gzinflate(substr($data, 10))) {
 						$data = $degzdata;
 					} else {
-						$this->fault('Client', 'Errors occurred when trying to decode the data');
+						$this->fault('SOAP-ENV:Client', 'Errors occurred when trying to decode the data');
 						return;
 					}
 				} else {
-					$this->fault('Client', 'This Server does not support compressed data');
+					$this->fault('SOAP-ENV:Client', 'This Server does not support compressed data');
 					return;
 				}
 			}
@@ -477,7 +482,7 @@ class soap_server extends nusoap_base {
 				$this->methodname = $this->opData['name'];
 			} else {
 				$this->debug('in invoke_method, no WSDL for operation=' . $this->methodname);
-				$this->fault('Client', "Operation '" . $this->methodname . "' is not defined in the WSDL for this service");
+				$this->fault('SOAP-ENV:Client', "Operation '" . $this->methodname . "' is not defined in the WSDL for this service");
 				return;
 			}
 		} else {
@@ -510,7 +515,7 @@ class soap_server extends nusoap_base {
 			if (!function_exists($this->methodname)) {
 				$this->debug("in invoke_method, function '$this->methodname' not found!");
 				$this->result = 'fault: method not found';
-				$this->fault('Client',"method '$this->methodname' not defined in service");
+				$this->fault('SOAP-ENV:Client',"method '$this->methodname' not defined in service");
 				return;
 			}
 		} else {
@@ -518,7 +523,7 @@ class soap_server extends nusoap_base {
 			if (!in_array($method_to_compare, get_class_methods($class))) {
 				$this->debug("in invoke_method, method '$this->methodname' not found in class '$class'!");
 				$this->result = 'fault: method not found';
-				$this->fault('Client',"method '$this->methodname' not defined in service");
+				$this->fault('SOAP-ENV:Client',"method '$this->methodname' not defined in service");
 				return;
 			}
 		}
@@ -530,7 +535,7 @@ class soap_server extends nusoap_base {
 			$this->debug('ERROR: request not verified against method signature');
 			$this->result = 'fault: request failed validation against method signature';
 			// return fault
-			$this->fault('Client',"Operation '$this->methodname' not defined in service.");
+			$this->fault('SOAP-ENV:Client',"Operation '$this->methodname' not defined in service.");
 			return;
 		}
 
@@ -556,8 +561,8 @@ class soap_server extends nusoap_base {
 			}
 			if ($this->methodparams) {
 				foreach ($this->methodparams as $param) {
-					if (is_array($param)) {
-						$this->fault('Client', 'NuSOAP does not handle complexType parameters correctly when using eval; call_user_func_array must be available');
+					if (is_array($param) || is_object($param)) {
+						$this->fault('SOAP-ENV:Client', 'NuSOAP does not handle complexType parameters correctly when using eval; call_user_func_array must be available');
 						return;
 					}
 					$funcCall .= "\"$param\",";
@@ -579,11 +584,15 @@ class soap_server extends nusoap_base {
 				$instance = new $class ();
 				$call_arg = array(&$instance, $method);
 			}
-			$this->methodreturn = call_user_func_array($call_arg, $this->methodparams);
+			if (is_array($this->methodparams)) {
+				$this->methodreturn = call_user_func_array($call_arg, array_values($this->methodparams));
+			} else {
+				$this->methodreturn = call_user_func_array($call_arg, array());
+			}
 		}
         $this->debug('in invoke_method, methodreturn:');
         $this->appendDebug($this->varDump($this->methodreturn));
-		$this->debug("in invoke_method, called method $this->methodname, received $this->methodreturn of type ".gettype($this->methodreturn));
+		$this->debug("in invoke_method, called method $this->methodname, received data of type ".gettype($this->methodreturn));
 	}
 
 	/**
@@ -600,7 +609,7 @@ class soap_server extends nusoap_base {
 	function serialize_return() {
 		$this->debug('Entering serialize_return methodname: ' . $this->methodname . ' methodURI: ' . $this->methodURI);
 		// if fault
-		if (isset($this->methodreturn) && (get_class($this->methodreturn) == 'soap_fault')) {
+		if (isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
 			$this->debug('got a fault object from method');
 			$this->fault = $this->methodreturn;
 			return;
@@ -611,11 +620,15 @@ class soap_server extends nusoap_base {
 			$this->debug('got a(n) '.gettype($this->methodreturn).' from method');
 			$this->debug('serializing return value');
 			if($this->wsdl){
-				// weak attempt at supporting multiple output params
-				if(sizeof($this->opData['output']['parts']) > 1){
+				if (sizeof($this->opData['output']['parts']) > 1) {
+					$this->debug('more than one output part, so use the method return unchanged');
 			    	$opParams = $this->methodreturn;
-			    } else {
-			    	// TODO: is this really necessary?
+			    } elseif (sizeof($this->opData['output']['parts']) == 1) {
+					$this->debug('exactly one output part, so wrap the method return in a simple array');
+					// TODO: verify that it is not already wrapped!
+			    	//foreach ($this->opData['output']['parts'] as $name => $type) {
+					//	$this->debug('wrap in element named ' . $name);
+			    	//}
 			    	$opParams = array($this->methodreturn);
 			    }
 			    $return_val = $this->wsdl->serializeRPCParameters($this->methodname,'output',$opParams);
@@ -623,7 +636,7 @@ class soap_server extends nusoap_base {
 			    $this->wsdl->clearDebug();
 				if($errstr = $this->wsdl->getError()){
 					$this->debug('got wsdl error: '.$errstr);
-					$this->fault('Server', 'unable to serialize result');
+					$this->fault('SOAP-ENV:Server', 'unable to serialize result');
 					return;
 				}
 			} else {
@@ -644,7 +657,8 @@ class soap_server extends nusoap_base {
 			if ($this->opData['style'] == 'rpc') {
 				$this->debug('style is rpc for serialization: use is ' . $this->opData['output']['use']);
 				if ($this->opData['output']['use'] == 'literal') {
-					$payload = '<'.$this->methodname.'Response xmlns="'.$this->methodURI.'">'.$return_val.'</'.$this->methodname."Response>";
+					// http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html R2735 says rpc/literal accessor elements should not be in a namespace
+					$payload = '<ns1:'.$this->methodname.'Response xmlns:ns1="'.$this->methodURI.'">'.$return_val.'</ns1:'.$this->methodname."Response>";
 				} else {
 					$payload = '<ns1:'.$this->methodname.'Response xmlns:ns1="'.$this->methodURI.'">'.$return_val.'</ns1:'.$this->methodname."Response>";
 				}
@@ -667,7 +681,7 @@ class soap_server extends nusoap_base {
 				$encodingStyle = '';
 			}
 			// Added: In case we use a WSDL, return a serialized env. WITH the usedNamespaces.
-			$this->responseSOAP = $this->serializeEnvelope($payload,$this->responseHeaders,$this->wsdl->usedNamespaces,$this->opData['style'],$encodingStyle);
+			$this->responseSOAP = $this->serializeEnvelope($payload,$this->responseHeaders,$this->wsdl->usedNamespaces,$this->opData['style'],$this->opData['output']['use'],$encodingStyle);
 		} else {
 			$this->responseSOAP = $this->serializeEnvelope($payload,$this->responseHeaders);
 		}
@@ -703,7 +717,7 @@ class soap_server extends nusoap_base {
         	$payload .= $this->getDebugAsXMLComment();
         }
 		$this->outgoing_headers[] = "Server: $this->title Server v$this->version";
-		ereg('\$Revisio' . 'n: ([^ ]+)', $this->revision, $rev);
+		preg_match('/\$Revisio' . 'n: ([^ ]+)/', $this->revision, $rev);
 		$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".$rev[1].")";
 		// Let the Web server decide about this
 		//$this->outgoing_headers[] = "Connection: Close\r\n";
@@ -800,25 +814,27 @@ class soap_server extends nusoap_base {
 			// should be US-ASCII for HTTP 1.0 or ISO-8859-1 for HTTP 1.1
 			$this->xml_encoding = 'ISO-8859-1';
 		}
-		$this->debug('Use encoding: ' . $this->xml_encoding . ' when creating soap_parser');
+		$this->debug('Use encoding: ' . $this->xml_encoding . ' when creating nusoap_parser');
 		// parse response, get soap parser obj
-		$parser = new soap_parser($data,$this->xml_encoding,'',$this->decode_utf8);
+		$parser = new nusoap_parser($data,$this->xml_encoding,'',$this->decode_utf8);
 		// parser debug
 		$this->debug("parser debug: \n".$parser->getDebug());
 		// if fault occurred during message parsing
 		if($err = $parser->getError()){
 			$this->result = 'fault: error in msg parsing: '.$err;
-			$this->fault('Client',"error in msg parsing:\n".$err);
+			$this->fault('SOAP-ENV:Client',"error in msg parsing:\n".$err);
 		// else successfully parsed request into soapval object
 		} else {
 			// get/set methodname
 			$this->methodURI = $parser->root_struct_namespace;
 			$this->methodname = $parser->root_struct_name;
 			$this->debug('methodname: '.$this->methodname.' methodURI: '.$this->methodURI);
-			$this->debug('calling parser->get_response()');
-			$this->methodparams = $parser->get_response();
+			$this->debug('calling parser->get_soapbody()');
+			$this->methodparams = $parser->get_soapbody();
 			// get SOAP headers
 			$this->requestHeaders = $parser->getHeaders();
+			// get SOAP Header
+			$this->requestHeader = $parser->get_soapheader();
             // add document for doclit support
             $this->document = $parser->document;
 		}
@@ -908,13 +924,20 @@ class soap_server extends nusoap_base {
 			if (isset($_SERVER)) {
 				$SERVER_NAME = $_SERVER['SERVER_NAME'];
 				$SCRIPT_NAME = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
+				$HTTPS = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : (isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off');
 			} elseif (isset($HTTP_SERVER_VARS)) {
 				$SERVER_NAME = $HTTP_SERVER_VARS['SERVER_NAME'];
 				$SCRIPT_NAME = isset($HTTP_SERVER_VARS['PHP_SELF']) ? $HTTP_SERVER_VARS['PHP_SELF'] : $HTTP_SERVER_VARS['SCRIPT_NAME'];
+				$HTTPS = isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off';
 			} else {
 				$this->setError("Neither _SERVER nor HTTP_SERVER_VARS is available");
 			}
-			$soapaction = "http://$SERVER_NAME$SCRIPT_NAME/$name";
+        	if ($HTTPS == '1' || $HTTPS == 'on') {
+        		$SCHEME = 'https';
+        	} else {
+        		$SCHEME = 'http';
+        	}
+			$soapaction = "$SCHEME://$SERVER_NAME$SCRIPT_NAME/$name";
 		}
 		if(false == $style) {
 			$style = "rpc";
@@ -953,7 +976,7 @@ class soap_server extends nusoap_base {
 		if ($faultdetail == '' && $this->debug_flag) {
 			$faultdetail = $this->getDebug();
 		}
-		$this->fault = new soap_fault($faultcode,$faultactor,$faultstring,$faultdetail);
+		$this->fault = new nusoap_fault($faultcode,$faultactor,$faultstring,$faultdetail);
 		$this->fault->soap_defencoding = $this->soap_defencoding;
 	}
 
@@ -976,14 +999,19 @@ class soap_server extends nusoap_base {
 			$SERVER_NAME = $_SERVER['SERVER_NAME'];
 			$SERVER_PORT = $_SERVER['SERVER_PORT'];
 			$SCRIPT_NAME = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
-			$HTTPS = $_SERVER['HTTPS'];
+			$HTTPS = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : (isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off');
 		} elseif (isset($HTTP_SERVER_VARS)) {
 			$SERVER_NAME = $HTTP_SERVER_VARS['SERVER_NAME'];
 			$SERVER_PORT = $HTTP_SERVER_VARS['SERVER_PORT'];
 			$SCRIPT_NAME = isset($HTTP_SERVER_VARS['PHP_SELF']) ? $HTTP_SERVER_VARS['PHP_SELF'] : $HTTP_SERVER_VARS['SCRIPT_NAME'];
-			$HTTPS = $HTTP_SERVER_VARS['HTTPS'];
+			$HTTPS = isset($HTTP_SERVER_VARS['HTTPS']) ? $HTTP_SERVER_VARS['HTTPS'] : 'off';
 		} else {
 			$this->setError("Neither _SERVER nor HTTP_SERVER_VARS is available");
+		}
+		// If server name has port number attached then strip it (else port number gets duplicated in WSDL output) (occurred using lighttpd and FastCGI)
+		$colon = strpos($SERVER_NAME,":");
+		if ($colon) {
+		    $SERVER_NAME = substr($SERVER_NAME, 0, $colon);
 		}
 		if ($SERVER_PORT == 80) {
 			$SERVER_PORT = '';
@@ -1016,7 +1044,10 @@ class soap_server extends nusoap_base {
 		if ($schemaTargetNamespace != $namespace) {
 			$this->wsdl->namespaces['types'] = $schemaTargetNamespace;
 		}
-        $this->wsdl->schemas[$schemaTargetNamespace][0] = new xmlschema('', '', $this->wsdl->namespaces);
+        $this->wsdl->schemas[$schemaTargetNamespace][0] = new nusoap_xmlschema('', '', $this->wsdl->namespaces);
+        if ($style == 'document') {
+	        $this->wsdl->schemas[$schemaTargetNamespace][0]->schemaInfo['elementFormDefault'] = 'qualified';
+        }
         $this->wsdl->schemas[$schemaTargetNamespace][0]->schemaTargetNamespace = $schemaTargetNamespace;
         $this->wsdl->schemas[$schemaTargetNamespace][0]->imports['http://schemas.xmlsoap.org/soap/encoding/'][0] = array('location' => '', 'loaded' => true);
         $this->wsdl->schemas[$schemaTargetNamespace][0]->imports['http://schemas.xmlsoap.org/wsdl/'][0] = array('location' => '', 'loaded' => true);
@@ -1032,7 +1063,11 @@ class soap_server extends nusoap_base {
     }
 }
 
-
+/**
+ * Backward compatibility
+ */
+class soap_server extends nusoap_server {
+}
 
 
 ?>

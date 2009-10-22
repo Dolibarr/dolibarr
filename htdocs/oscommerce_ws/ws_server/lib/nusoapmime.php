@@ -20,6 +20,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+The NuSOAP project home is:
+http://sourceforge.net/projects/nusoap/
+
+The primary support for NuSOAP is the mailing list:
+nusoap-general@lists.sourceforge.net
+
 If you have any questions or comments, please email:
 
 Dietrich Ayala
@@ -37,15 +43,15 @@ require_once('Mail/mimeDecode.php');
 require_once('Mail/mimePart.php');
 
 /**
-* soapclientmime client supporting MIME attachments defined at
+* nusoap_client_mime client supporting MIME attachments defined at
 * http://www.w3.org/TR/SOAP-attachments.  It depends on the PEAR Mail_MIME library.
 *
-* @author   Scott Nichol <snichol@sourceforge.net>
+* @author   Scott Nichol <snichol@users.sourceforge.net>
 * @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
 * @version  $Id$
 * @access   public
 */
-class soapclientmime extends soapclient_nusoap {
+class nusoap_client_mime extends nusoap_client {
 	/**
 	 * @var array Each array element in the return is an associative array with keys
 	 * data, filename, contenttype, cid
@@ -126,7 +132,7 @@ class soapclientmime extends soapclient_nusoap {
 	*/
 	function getHTTPBody($soapmsg) {
 		if (count($this->requestAttachments) > 0) {
-			$params['content_type'] = 'multipart/related; type=text/xml';
+			$params['content_type'] = 'multipart/related; type="text/xml"';
 			$mimeMessage =& new Mail_mimePart('', $params);
 			unset($params);
 
@@ -231,8 +237,9 @@ class soapclientmime extends soapclient_nusoap {
 			$structure = Mail_mimeDecode::decode($params);
 
 			foreach ($structure->parts as $part) {
-				if (!isset($part->disposition)) {
+				if (!isset($part->disposition) && (strstr($part->headers['content-type'], 'text/xml'))) {
 					$this->debug('Have root part of type ' . $part->headers['content-type']);
+					$root = $part->body;
 					$return = parent::parseResponse($part->headers, $part->body);
 				} else {
 					$this->debug('Have an attachment of type ' . $part->headers['content-type']);
@@ -245,27 +252,36 @@ class soapclientmime extends soapclient_nusoap {
 			}
 		
 			if (isset($return)) {
+				$this->responseData = $root;
 				return $return;
 			}
 			
 			$this->setError('No root part found in multipart/related content');
-			return;
+			return '';
 		}
 		$this->debug('Not multipart/related');
 		return parent::parseResponse($headers, $data);
 	}
 }
 
+/*
+ *	For backwards compatiblity, define soapclientmime unless the PHP SOAP extension is loaded.
+ */
+if (!extension_loaded('soap')) {
+	class soapclientmime extends nusoap_client_mime {
+	}
+}
+
 /**
-* nusoapservermime server supporting MIME attachments defined at
+* nusoap_server_mime server supporting MIME attachments defined at
 * http://www.w3.org/TR/SOAP-attachments.  It depends on the PEAR Mail_MIME library.
 *
-* @author   Scott Nichol <snichol@sourceforge.net>
+* @author   Scott Nichol <snichol@users.sourceforge.net>
 * @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
 * @version  $Id$
 * @access   public
 */
-class nusoapservermime extends soap_server {
+class nusoap_server_mime extends nusoap_server {
 	/**
 	 * @var array Each array element in the return is an associative array with keys
 	 * data, filename, contenttype, cid
@@ -346,7 +362,7 @@ class nusoapservermime extends soap_server {
 	*/
 	function getHTTPBody($soapmsg) {
 		if (count($this->responseAttachments) > 0) {
-			$params['content_type'] = 'multipart/related; type=text/xml';
+			$params['content_type'] = 'multipart/related; type="text/xml"';
 			$mimeMessage =& new Mail_mimePart('', $params);
 			unset($params);
 
@@ -451,7 +467,7 @@ class nusoapservermime extends soap_server {
 			$structure = Mail_mimeDecode::decode($params);
 
 			foreach ($structure->parts as $part) {
-				if (!isset($part->disposition)) {
+				if (!isset($part->disposition) && (strstr($part->headers['content-type'], 'text/xml'))) {
 					$this->debug('Have root part of type ' . $part->headers['content-type']);
 					$return = parent::parseRequest($part->headers, $part->body);
 				} else {
@@ -475,4 +491,11 @@ class nusoapservermime extends soap_server {
 		return parent::parseRequest($headers, $data);
 	}
 }
+
+/*
+ *	For backwards compatiblity
+ */
+class nusoapservermime extends nusoap_server_mime {
+}
+
 ?>

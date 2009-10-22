@@ -87,7 +87,7 @@ class soapval extends nusoap_base {
 	* @access   public
 	*/
 	function serialize($use='encoded') {
-		return $this->serialize_val($this->value,$this->name,$this->type,$this->element_ns,$this->type_ns,$this->attributes,$use);
+		return $this->serialize_val($this->value, $this->name, $this->type, $this->element_ns, $this->type_ns, $this->attributes, $use, true);
     }
 
 	/**

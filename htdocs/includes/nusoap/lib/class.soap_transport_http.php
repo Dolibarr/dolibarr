@@ -66,7 +66,7 @@ class soap_transport_http extends nusoap_base {
 			$this->ch_options = $curl_options;
 		}
 		$this->use_curl = $use_curl;
-		ereg('\$Revisio' . 'n: ([^ ]+)', $this->revision, $rev);
+		preg_match('/\$Revisio' . 'n: ([^ ]+)/', $this->revision, $rev);
 		$this->setHeader('User-Agent', $this->title.'/'.$this->version.' ('.$rev[1].')');
 	}
 
@@ -829,7 +829,7 @@ class soap_transport_http extends nusoap_base {
 				}
 			}
 			// remove 100 headers
-			if (isset($lb) && ereg('^HTTP/1.1 100',$data)) {
+			if (isset($lb) && preg_match('/^HTTP\/1.1 100/',$data)) {
 				unset($lb);
 				$data = '';
 			}//
@@ -995,7 +995,7 @@ class soap_transport_http extends nusoap_base {
 		if ($data == '') {
 			// have nothing left; just remove 100 header(s)
 			$data = $savedata;
-			while (ereg('^HTTP/1.1 100',$data)) {
+			while (preg_match('/^HTTP\/1.1 100/',$data)) {
 				if ($pos = strpos($data,"\r\n\r\n")) {
 					$data = ltrim(substr($data,$pos));
 				} elseif($pos = strpos($data,"\n\n") ) {

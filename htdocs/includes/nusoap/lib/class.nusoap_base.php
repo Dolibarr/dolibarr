@@ -562,7 +562,7 @@ class nusoap_base {
 			case (is_array($val) || $type):
 				// detect if struct or array
 				$valueType = $this->isArraySimpleOrStruct($val);
-                if($valueType=='arraySimple' || ereg('^ArrayOf',$type)){
+                if($valueType=='arraySimple' || preg_match('/^ArrayOf/',$type)){
 			   		$this->debug("serialize_val: serialize array");
 					$i = 0;
 					if(is_array($val) && count($val)> 0){
@@ -765,7 +765,7 @@ class nusoap_base {
 	*/
 	function expandQname($qname){
 		// get element prefix
-		if(strpos($qname,':') && !ereg('^http://',$qname)){
+		if(strpos($qname,':') && !preg_match('/^http:\/\//',$qname)){
 			// get unqualified name
 			$name = substr(strstr($qname,':'),1);
 			// get ns prefix
@@ -905,16 +905,16 @@ function timestamp_to_iso8601($timestamp,$utc=true){
 	$datestr = date('Y-m-d\TH:i:sO',$timestamp);
 	if($utc){
 		$eregStr =
-		'([0-9]{4})-'.	// centuries & years CCYY-
+		'/([0-9]{4})-'.	// centuries & years CCYY-
 		'([0-9]{2})-'.	// months MM-
 		'([0-9]{2})'.	// days DD
 		'T'.			// separator T
 		'([0-9]{2}):'.	// hours hh:
 		'([0-9]{2}):'.	// minutes mm:
 		'([0-9]{2})(\.[0-9]*)?'. // seconds ss.ss...
-		'(Z|[+\-][0-9]{2}:?[0-9]{2})?'; // Z to indicate UTC, -/+HH:MM:SS.SS... for local tz's
+		'(Z|[+\-][0-9]{2}:?[0-9]{2})?/'; // Z to indicate UTC, -/+HH:MM:SS.SS... for local tz's
 
-		if(ereg($eregStr,$datestr,$regs)){
+		if(preg_match($eregStr,$datestr,$regs)){
 			return sprintf('%04d-%02d-%02dT%02d:%02d:%02dZ',$regs[1],$regs[2],$regs[3],$regs[4],$regs[5],$regs[6]);
 		}
 		return false;
@@ -931,15 +931,15 @@ function timestamp_to_iso8601($timestamp,$utc=true){
 */
 function iso8601_to_timestamp($datestr){
 	$eregStr =
-	'([0-9]{4})-'.	// centuries & years CCYY-
+	'/([0-9]{4})-'.	// centuries & years CCYY-
 	'([0-9]{2})-'.	// months MM-
 	'([0-9]{2})'.	// days DD
 	'T'.			// separator T
 	'([0-9]{2}):'.	// hours hh:
 	'([0-9]{2}):'.	// minutes mm:
 	'([0-9]{2})(\.[0-9]+)?'. // seconds ss.ss...
-	'(Z|[+\-][0-9]{2}:?[0-9]{2})?'; // Z to indicate UTC, -/+HH:MM:SS.SS... for local tz's
-	if(ereg($eregStr,$datestr,$regs)){
+	'(Z|[+\-][0-9]{2}:?[0-9]{2})?/'; // Z to indicate UTC, -/+HH:MM:SS.SS... for local tz's
+	if(preg_match($eregStr,$datestr,$regs)){
 		// not utc
 		if($regs[8] != 'Z'){
 			$op = substr($regs[8],0,1);

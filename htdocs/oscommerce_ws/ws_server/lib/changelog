@@ -436,3 +436,149 @@
 - soap_server: when generating a fault while debug_flag is true, put debug into faultdetail
 - wsdl: add enumeration parameter to addSimpleType
 - xmlschema: add enumeration parameter to addSimpleType
+
+2006-02-02, version 0.7.2
+- soapclient: initialize paramArrayStr to improve proxy generation
+- soap_parser: handle PHP5 soapclient's incorrect transmission of WSDL-described SOAP encoded arrays.
+- soap_server: don't assume _SERVER['HTTPS'] is set; try HTTP_SERVER_VARS['HTTPS'] if it is not
+- soap_server: "flatten out" the parameter array to call_user_func_array (thanks André Mamitzsch)
+- soap_server: make thrown exceptions conform to specs
+- wsdl: use serialize_val to serialize an array when the XSD type is soapenc:Array (JBoss/Axis does this)
+- wsdl: change formatting of serialized XML for the WSDL
+- xmlschema: change formatting of namespaces when serializing XML for the schema
+
+2006-04-07, version 0.7.2
+- soap_server: if methodparams is not an array, call call_user_func_array with an empty array (thanks Eric Grossi)
+- wsdl: distinguish parts with element specified from those with type specified by suffixing element names with ^
+- wsdl: do a case-insensitive match on schema URI when looking for type
+- xmlschema: only get element (not type) when name has ^ suffix
+
+2006-05-16, version 0.7.2
+- soapclient: add getHeader to get parsed SOAP Header
+- soap_parser: check status when receiving Header or Body element
+- soap_parser: add soapheader
+- soap_server: add requestHeader with parsed SOAP Header
+
+2006-06-15, version 0.7.2
+- wsdl: fix bug in addComplexType (thanks Maarten Meijer)
+- soap_transport_http: change cURL message
+
+2007-03-19, version 0.7.2
+- soapclient: declare as nusoapclient, then also subclass soapclient if SOAP extension not loaded
+- soapclientmime: declare as nusoapclientmime, then also subclass soapclientmime if SOAP extension not loaded
+
+2007-03-28, version 0.7.2
+- nusoap_base: fix serialization of a soapval when its value is a soapval
+- soapval: fix serialization of a soapval when its value is a soapval
+- soapval: add __toString (cf. http://article.gmane.org/gmane.comp.php.nusoap.general/2776)
+- nusoapclient: use lazy retrieval of WSDL instead of always getting it in the constructor
+- nusoapclient: fix getProxy that was broken in last revision
+- wsdl: add ability to set authorization credentials and retrieve WSDL outside of constructor
+
+2007-04-05, version 0.7.2
+- nusoapclientmime: don't rely exclusively on Content-Disposition to distinguish the root part from attachment; also check Content-Type (thanks Ben Bosman)
+- nusoapclientmime: obey RFC 2045 Section 5.1 (thanks Chris Butler)
+- nusoapservermime: don't rely exclusively on Content-Disposition to distinguish the root part from attachment; also check Content-Type (thanks Ben Bosman)
+- nusoapservermime: obey RFC 2045 Section 5.1 (thanks Chris Butler)
+- nusoap_base: remove extra whitespace from some XML elements
+- nusoap_base: allow SOAP headers to be specified as an associative array (thanks Unique)
+- nusoap_base: implement __toString
+- nusoap_base: improve doc accuracy and consistency (thanks Martin K?gler)
+- iso8601_to_timestamp: avoid problem with negative hours after calculation, etc. (thanks Guntram Trebs)
+- nusoapclient: support user-settable cURL options (thanks Ciprian Popovici)
+- nusoapclient: call SOAP 1.2 binding operations if no SOAP 1.1 present (there is no reason to believe this will always work!)
+- nusoapclient: improve doc accuracy and consistency (thanks Martin K?gler)
+- soap_server: don't try to use eval to call function when any parameter is an object
+- soap_server: don't print return value within debug string; returned objects would need __toString in PHP 5.2
+- soap_server: use URL scheme for WSDL access as the scheme in SOAPAction
+- soap_server: strip port number from server name (some FastCGI implementations include port in server name)
+- soap_transport_http: support user-settable cURL options (thanks Ciprian Popovici)
+- soap_transport_http: use cURL for NTLM authentication
+- soap_transport_http: make digest authentication work for GET as well as POST
+- soap_transport_http: improve doc accuracy and consistency (thanks Martin K?gler)
+- soapval: remove __toString
+- wsdl: set operation style if necessary, but do not override one already provided (thanks Raffaele Capobianco)
+- wsdl: check SOAP 1.2 binding operations if no SOAP 1.1 present
+- wsdl: improve doc accuracy and consistency (thanks Martin K?gler)
+- xmlschema: fix simpleType serialization
+- xmlschema: improve doc accuracy and consistency (thanks Martin K?gler)
+
+2007-04-09, version 0.7.2
+- nusoapclient: set decode_utf8 when creating a proxy (thanks Dmitri Dmitrienko)
+- nusoapclient: rename class to nusoap_client
+- soap_fault: also provide a class named nusoap_fault
+- soap_parser: also provide a class named nusoap_parser
+- soap_server: also provide a class named nusoap_server
+- soap_transport_http: skip HTTP responses 301 and 401 when using cURL
+- soap_transport_http: don't force HTTP Connection header when using cURL
+- soap_transport_http: don't set HTTP Host and Content-Length headers when using cURL
+- soap_transport_http: support CURLOPT_SSLCERTPASSWD (thanks David Blanco)
+- wsdl: support user-settable cURL options (thanks Ciprian Popovici)
+- wsdl: serialize parameters for non-SOAP 1.1 binding operations (there is no reason to believe this will always work!)
+- xmlschema: also provide a class named nusoap_xmlschema
+- nusoapclientmime: rename class to nusoap_client_mime
+- nusoapservermime: rename class to nusoap_server_mime
+
+2007-04-11, version 0.7.2
+- nusoap_client: enable cURL usage to be forced (thanks Giunta Gaetano)
+- soap_transport_http: enable cURL proxy usage (thanks Giunta Gaetano)
+- soap_transport_http: enable cURL usage to be forced (thanks Giunta Gaetano)
+- soap_transport_http: use cURL's HTTP authentication options for basic, digest
+- wsdl: enable cURL usage to be forced (thanks Giunta Gaetano)
+
+2007-04-12, version 0.7.2
+- nusoap_client: add debug
+- nusoap_xmlschema: don't add elements of complexTypes to elements array (thanks Heiko Hund)
+- soap_transport_http: set cURL connection timeout if supported
+- soap_transport_http: add debug when setting cURL option
+- soap_transport_http: fix digest authentication broken in previous revision
+- wsdl: add debug
+- wsdlcache: address some issues with non-existing cache-files and PHP Warnings which came in such cases (thanks Ingo Fischer)
+- wsdlcache: change class name to nusoap_wsdlcache
+
+2007-04-13, version 0.7.2
+- wsdl: wrap parameters if unwrapped values are supplied and WSDL specifies Microsoft-style wrapping
+
+2007-04-16, version 0.7.2
+- nusoap_base: avoid warning in getDebugAsXMLComment
+- nusoap_client: small debug change
+- nusoap_client_mime: set responseData when the root part is found
+
+2007-04-17, version 0.7.2
+- soap_transport_http: improve detection of undefined cURL options (thanks Ingo Fischer)
+
+2007-05-28, version 0.7.2
+- soap_transport_http: support digest authentication opaque feature (cf. RFC 2617) (thanks Daniel Lacroix)
+- soap_transport_http: check safe_mode and open_basedir before setting CURLOPT_FOLLOWLOCATION
+- soap_transport_http: skip "HTTP/1.0 200 Connection established" header when cURL returns it (thanks Raimund Jacob)
+- nusoap_client: improve handling when getProxy is called and WSDL is not being used
+- nusoap_base: add comments about which specifications are used/implemented by NuSOAP
+- nusoap_xmlschema: create names for unnamed types that are unique by scope within XML Schema
+
+2007-06-11, version 0.7.2
+- wsdl: wrap return value if unwrapped value is supplied and WSDL specifies Microsoft-style wrapping
+
+2007-06-22, version 0.7.2
+- nusoap_xmlschema: fix serialization of simpleType restriction (thanks Rizwan Tejpar)
+
+2007-07-30, version 0.7.2
+- nusoap_server: Per http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html R2735, rpc/literal accessor elements should not be in a namespace (thanks Kostas Kalevras)
+- nusoap_client: Per http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html R2735, rpc/literal accessor elements should not be in a namespace (thanks Kostas Kalevras)
+
+2007-10-21, version 0.7.2
+- nusoap_server: Per http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html R2735, rpc/literal accessor elements should not be in a namespace (thanks Kostas Kalevras)
+- nusoap_client: Per http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html R2735, rpc/literal accessor elements should not be in a namespace (thanks Kostas Kalevras)
+
+2007-10-26, version 0.7.2
+- nusoap_server: Fix munging of _SERVER variables that start with HTTP_ (thanks Thomas Wieczorek)
+
+2007-10-30, version 0.7.2
+- nusoap_xmlschema: Serialize values for elementFormDefault, attributeFormDefault
+- wsdl: Improve consistency between doc/lit schema auto-wrapping and client's parsed schema
+- nusoap_server: Correct bug that placed encodingType in Envelope for doc/lit
+- nusoap_server: Specify elementFormDefault for schema within doc/lit wsdl
+
+2007-10-31, version 0.7.2
+- wsdl: Fix typo in parametersMatchWrapped (thanks Sam Stepanyan)
+- soap_transport_http: Fix three typos in setProxy (thanks Sam Stepanyan)
+- nusoap_xmlschema: Fix typo in serializeTypeDef (thanks Sam Stepanyan)
