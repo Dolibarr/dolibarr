@@ -1,101 +1,97 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - products
 CHARSET=UTF-8
-ProductServiceCard=Producten / Diensten kaart
+ProductRef=Product ref.
+ProductLabel=Productlabel
+ProductServiceCard=Producten/Diensten kaart
 Products=Producten
 Services=Diensten
 Product=Product
-Service=Service
-ProductId=Product / dienst id
+Service=Dienst
+ProductId=Product/service id
 Create=Maak
 Reference=Referentie
 NewProduct=Nieuw product
 NewBook=Nieuw boek
 Book=Boek
 Books=Boeken
-BookList=Lijst van boeken
+BookList=Boekenlijst
 NewService=Nieuwe dienst
 ProductCode=Productcode
-ServiceCode=Service-code
+ServiceCode=Servicecode
 ProductOrService=Product of Dienst
 ProductsAndServices=Producten en Diensten
 ProductsOrServices=Producten of diensten
-ProductsAndServicesOnSell=Producten en diensten verkopen
-ProductsAndServicesNotOnSell=Producten en Diensten van de verkopen
+ProductsAndServicesOnSell=Producten en diensten ter verkoop
+ProductsAndServicesNotOnSell=Producten en Diensten niet langer ter verkoop
 ProductsAndServicesStatistics=Producten en Diensten statistieken
 ProductsStatistics=Producten statistieken
-ProductsOnSell=Producten op verkopen
-ProductsNotOnSell=Producten van de verkopen
-ServicesOnSell=Diensten op verkopen
-ServicesNotOnSell=Diensten van de verkopen
-InternalRef=Verslag
-LastRecorded=Laatste producten / diensten verkopen geregistreerd
-LastModifiedProductsAndServices=Last% s gemodificeerde producten / diensten
-LastRecordedProducts=Last% s producten geregistreerd
-LastRecordedServices=Last% s diensten opgenomen
+ProductsOnSell=Producten ter verkoop
+ProductsNotOnSell=Producten niet langer ter verkoop
+ServicesOnSell=Diensten ter verkoop
+ServicesNotOnSell=Diensten niet langer ter verkoop
+InternalRef=Interne referentie
+LastRecorded=Laatste verkopen geregistreerde producten/diensten
+LastRecordedProductsAndServices=De %s nieuwste geregistreerde producten/diensten
+LastModifiedProductsAndServices=Laatste %s gemodificeerde producten/diensten
+LastRecordedProducts=Laatste %s geregistreerde producten
+LastRecordedServices=Laatste %s opgenomen diensten
 LastProducts=Laatste producten
 CardProduct0=Product kaart
 CardProduct1=Service kaart
 CardContract=Contract kaart
-Warehouse=Warehouse
-Warehouses=Opslagruimtes
+Warehouse=Magazijn
+Warehouses=Magazijnen
 WarehouseOpened=Magazijn geopend
-WarehouseClosed=Warehouse gesloten
+WarehouseClosed=Magazijn gesloten
 Stock=Voorraad
-Stocks=Aandelen
-Movement=Verkeer
+Stocks=Voorraden
+Movement=Mutatie
 Movements=Mutaties
-OnSell=Op verkopen
-NotOnSell=Out of Verkopen
-ProductStatusOnSell=Op verkopen
-ProductStatusNotOnSell=Out of verkopen
-ProductStatusOnSellShort=Op verkopen
-ProductStatusNotOnSellShort=Out of verkopen
+OnSell=Ter verkoop
+NotOnSell=Niet ter verkoop
+ProductStatusOnSell=Ter verkoop
+ProductStatusNotOnSell=Niet ter verkoop
+ProductStatusOnSellShort=Ter verkoop
+ProductStatusNotOnSellShort=Niet ter verkoop
 UpdatePrice=Update prijs
 AppliedPricesFrom=Toegepaste prijzen vanaf
 SellingPrice=Verkoopprijs
-PublicPrice=Openbare prijs
+SellingPriceHT=Verkoop HT
+SellingPriceTTC=Verkoopprijs TTC
+PublicPrice=Adviesprijs
 CurrentPrice=Huidige prijs
 NewPrice=Nieuwe prijs
+MinPrice=Minimum verkoopprijs
+CantBeLessThanMinPrice=De verkoopprijs kan niet lager zijn dan de minimumprijs voor dit product ( %s zonder belasting)
 ContractStatus=Contract status
 ContractStatusClosed=Gesloten
-ContractStatusRunning=Hardlopen
-ContractStatusExpired=verstreken
+ContractStatusRunning=Lopende
+ContractStatusExpired=Verstreken
 ContractStatusOnHold=Niet actief
-ContractStatusToRun=Een METTRE en service
+ContractStatusToRun=In gebruik
 ContractNotRunning=Dit contract is niet actief
-ErrorProductAlreadyExists=Een product met verwijzing% s bestaat reeds.
-ErrorProductBadRefOrLabel=Verkeerde waarde voor de referentie-of etiket.
+ErrorProductAlreadyExists=Een product met verwijzing %s bestaat reeds.
+ErrorProductBadRefOrLabel=Verkeerde waarde voor de referentie of etiket.
 Suppliers=Leveranciers
 SupplierRef=Leverancier ref.
 ShowProduct=Toon producten
 ShowService=Toon dienst
 ProductsAndServicesArea=Producten en Diensten gebied
-ProductsArea=Productgroep
+ProductsArea=Product gebied
 ServicesArea=Diensten gebied
-AddToMyProposals=Voeg toe aan mijn voorstellen
-AddToOtherProposals=Toevoegen aan andere voorstellen
+AddToMyProposals=Voeg toe aan mijn offertes
+AddToOtherProposals=Toevoegen aan andere offertes
 AddToMyBills=Voeg toe aan mijn facturen
 AddToOtherBills=Toevoegen aan andere rekeningen
-CorrectStock=Juiste materieel
+CorrectStock=Juiste voorraad
 AddPhoto=Foto toevoegen
-ListOfStockMovements=Lijst van de voorraden
-NoPhotoYet=Geen foto&#39;s beschikbaar
+ListOfStockMovements=Voorradenlijst
+NoPhotoYet=Geen foto's beschikbaar
 BuiingPrice=Aankoop prijs
 SupplierCard=Leverancier kaart
-CommercialCard=Commerciële kaart
-AllWays=Pad naar het vinden van uw product in voorraad
-NoCat=Uw product is niet in elke categorie
+CommercialCard=Offerte
+AllWays=Pad naar het product in de voorraad
+NoCat=Uw product is niet in enige categorie
 PrimaryWay=Primaire weg
 DeleteFromCat=Verwijderen uit de categorie
 PriceRemoved=Prijs verwijderd
@@ -103,72 +99,55 @@ BarCode=Barcode
 BarcodeType=Barcode type
 SetDefaultBarcodeType=Stel barcode type
 BarcodeValue=Barcode waarde
-GenbarcodeLocation=Bar code generatie command-line tool (gebruikt door phpbarcode motor voor enkele streepjescode typen)
-NoteNotVisibleOnBill=Nota (niet zichtbaar op facturen, voorstellen ...)
+GenbarcodeLocation=Bar code generatie command-line tool (gebruikt door phpbarcode voor enkele streepjescode typen)
+NoteNotVisibleOnBill=Nota (niet zichtbaar op facturen, offertes ...)
 CreateCopy=Maak kopie
-ServiceLimitedDuration=Als product is een dienst met een beperkte duur:
+ServiceLimitedDuration=Als product een dienst is met een beperkte houdbaarheid:
 MultiPricesAbility=Activeer de multi-prijzen
 MultiPricesNumPrices=Aantal prijs
 MultiPriceLevelsName=Prijscategorieën
 AssociatedProductsAbility=Activeer de aanverwante producten
 AssociatedProducts=Aanverwante producten
 AssociatedProductsNumber=Aantal aanverwante producten
-EditAssociate=Universitair
+EditAssociate=Associatie
 Translation=Vertaling
 KeywordFilter=Zoekwoord filter
 CategoryFilter=Categorie filter
-ProductToAddSearch=Zoek product toe te voegen
-AddDel=Toevoegen / Verwijderen
+ProductToAddSearch=Zoek product om toe te voegen
+AddDel=Toevoegen/Verwijderen
 Quantity=Hoeveelheid
 NoMatchFound=Geen resultaten gevonden
-ProductAssociationList=Lijst van gerelateerde producten / diensten: naam van het product / de dienst (hoeveelheid aangetast)
-ErrorAssociationIsFatherOfThis=Een van de geselecteerde product is ouder met huidige product
-DeleteProduct=Het verwijderen van een product / dienst
-ConfirmDeleteProduct=Weet u zeker dat u wilt verwijderen van dit product / dienst?
-ProductDeleted=Product / Dienst: &quot;% s&quot; geschrapt uit de database.
+ProductAssociationList=Lijst van gerelateerde producten/diensten: naam van het product/de dienst (hoeveelheid aanpassend)
+ErrorAssociationIsFatherOfThis=Een van de geselecteerde product is ouder van huidige product
+DeleteProduct=Het verwijderen van een product/dienst
+ConfirmDeleteProduct=Weet u zeker dat u dit product/dienst wilt verwijderen?
+ProductDeleted=Product/Dienst: "%s" uit de database verwijderd.
 DeletePicture=Verwijderen van een beeld
-ConfirmDeletePicture=Weet u zeker dat u wilt verwijderen van deze foto?
-ExportDataset_produit_1=Producten en diensten
+ConfirmDeletePicture=Weet u zeker dat u deze foto wilt verwijderen?
+ExportDataset_produit_1=Producten
+ExportDataset_service_1=Diensten
 DeleteProductLine=Verwijderen productlijn
-ConfirmDeleteProductLine=Weet u zeker dat u wilt verwijderen van dit product lijn?
-NoProductMatching=Geen product / dienst voldoen aan uw criteria
-MatchingProducts=Gevonden producten / diensten
+ConfirmDeleteProductLine=Weet u zeker dat u deze productlijn wilt verwijderen?
+NoProductMatching=Geen product/dienst voldoet aan uw criteria
+MatchingProducts=Gevonden producten/diensten
 NoStockForThisProduct=Geen voorraad voor dit product
 NoStock=Nr. Voorraad
 Restock=Voorraadbericht
-ProductSpecial=Speciale
+ProductSpecial=Speciaal
 QtyMin=Minimale hoeveelheid
 PriceQty=Prijs voor deze hoeveelheid
 PriceQtyMin=Prijs hoeveelheid min.
-NoPriceDefinedForThisSupplier=Geen prijs / Qty gedefinieerd voor deze leverancier / product
-NoSupplierPriceDefinedForThisProduct=Geen enkele leverancier prijs / Qty gedefinieerd voor dit product
-RecordedProducts=Producten geregistreerd
-RecordedProductsAndServices=Producten / diensten opgenomen
+NoPriceDefinedForThisSupplier=Geen prijs/aantal gedefinieerd voor deze leverancier/product
+NoSupplierPriceDefinedForThisProduct=Geen enkele leverancier prijs/aantal voor dit product gedefinieerd
+RecordedProducts=Geregistreerde producten
+RecordedProductsAndServices=Opgenomen producten/diensten
 GenerateThumb=Genereer duim
-ProductCanvasAbility=Gebruik speciale &quot;doek&quot; addons
-ServiceNb=Service #% s
-ListProductByPopularity=Lijst van producten / diensten op populariteit
+ProductCanvasAbility=Gebruik speciale "canvas" addons
+ServiceNb=Service #%s
+ListProductByPopularity=Producten/diensten lijst op populariteit
 Finished=Fabrikaat
-RowMaterial=Eerste materiaal
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-ProductRef=Product ref.
-ProductLabel=Productlabel
-MinPrice=Minim. verkoopprijs
-CantBeLessThanMinPrice=De verkoopprijs kan niet lager zijn dan de minimumnormen voor dit product (% s zonder belasting)
-ExportDataset_service_1=Diensten
-CloneProduct=Kloon product of dienst
-ConfirmCloneProduct=Weet u zeker dat u wilt kloon product of <b>dienst% s?</b>
-CloneContentProduct=Clone alle belangrijke informatie van het product / dienst
-ClonePricesProduct=Clone belangrijkste informatie en prijzen
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-LastRecordedProductsAndServices=Last% s opgenomen producten / diensten
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+RowMaterial=Ruw materiaal
+CloneProduct=Kopieer product of dienst
+ConfirmCloneProduct=Weet u zeker dat u het product of dienst <b>%s</b> wilt kopieren?
+CloneContentProduct=Kopieer alle belangrijke informatie van het product/dienst
+ClonePricesProduct=Kopieer belangrijkste informatie en prijzen
