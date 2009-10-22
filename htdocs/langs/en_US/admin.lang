@@ -1093,7 +1093,9 @@ ClickToDialDesc=This module allows to add an icon after the phone number of Doli
 CashDesk=Point of sales
 CashDeskSetup=Point of sales module setup
 CashDeskThirdPartyForSell=Generic third party to use for sells
-CashDeskBankAccountForSell=Cash account to use for sells
+CashDeskBankAccountForSell=Account to use to receive cash payments
+CashDeskBankAccountForCheque = Account to use to receive payments by cheque
+CashDeskBankAccountForCB = Account to use to receive cash payments by credit cards
 CashDeskIdWareHouse=Warehouse to use for sells
 ##### Bookmark #####
 BookmarkSetup=Bookmark module setup

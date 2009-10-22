@@ -39,7 +39,11 @@ $conf_url_racine = $dolibarr_main_url_root.'/cashdesk';
 // Identifiant unique correspondant au tiers generique pour la vente
 $conf_fksoc = $conf->global->CASHDESK_ID_THIRDPARTY;
 // Identifiant unique correspondant au compte caisse / liquide
-$conf_fkaccount = $conf->global->CASHDESK_ID_BANKACCOUNT > 0?$conf->global->CASHDESK_ID_BANKACCOUNT:$_SESSION["CASHDESK_ID_BANKACCOUNT"];
+$conf_fkaccount_cash = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH > 0?$conf->global->CASHDESK_ID_BANKACCOUNT_CASH:$_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"];
+// Identifiant unique correspondant au compte cheque
+$conf_fkaccount_cheque = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE > 0?$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE:$_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"];
+// Identifiant unique correspondant au compte cb
+$conf_fkaccount_cb = $conf->global->CASHDESK_ID_BANKACCOUNT_CB > 0?$conf->global->CASHDESK_ID_BANKACCOUNT_CB:$_SESSION["CASHDESK_ID_BANKACCOUNT_CB"];
 // Identifiant unique correspondant a l'entrepot associe a la caisse
 $conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHDESK_ID_WAREHOUSE:$_SESSION["CASHDESK_ID_WAREHOUSE"];
 

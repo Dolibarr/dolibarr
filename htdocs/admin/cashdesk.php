@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,12 +49,14 @@ $langs->load("@cashdesk");
 if ($_POST["action"] == 'set')
 {
 	if ($_POST["CASHDESK_ID_THIRDPARTY"] < 0) $_POST["CASHDESK_ID_THIRDPARTY"]='';
-	if ($_POST["CASHDESK_ID_WAREHOUSE"] < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';
 	if ($_POST["CASHDESK_ID_BANKACCOUNT"] < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
+//	if ($_POST["CASHDESK_ID_WAREHOUSE"] < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';
 
 	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["CASHDESK_ID_THIRDPARTY"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT",$_POST["CASHDESK_ID_BANKACCOUNT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",$_POST["CASHDESK_ID_BANKACCOUNT_CASH"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",$_POST["CASHDESK_ID_BANKACCOUNT_CHEQUE"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",$_POST["CASHDESK_ID_BANKACCOUNT_CB"],'chaine',0,'',$conf->entity);
+//	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"],'chaine',0,'',$conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".$_POST["level"]);
 }
@@ -96,9 +98,22 @@ if ($conf->global->MAIN_MODULE_BANQUE)
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT,'CASHDESK_ID_BANKACCOUNT',0,"courant=2",1);
+	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH,'CASHDESK_ID_BANKACCOUNT_CASH',0,"courant=2",1);
+	print '</td></tr>';
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
+	print '<td colspan="2">';
+	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE,'CASHDESK_ID_BANKACCOUNT_CHEQUE',0,"courant=1",1);
+	print '</td></tr>';
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
+	print '<td colspan="2">';
+	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB,'CASHDESK_ID_BANKACCOUNT_CB',0,"courant=1",1);
 	print '</td></tr>';
 }
+/*
 if ($conf->global->MAIN_MODULE_STOCK)
 {
 	$var=!$var;
@@ -107,7 +122,7 @@ if ($conf->global->MAIN_MODULE_STOCK)
 	$formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1);
 	print '</td></tr>';
 }
-
+*/
 
 print '</table>';
 

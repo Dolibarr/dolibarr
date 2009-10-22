@@ -27,9 +27,10 @@ $company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
 $bank=new Account($db);
 $bank->fetch($conf->global->CASHDESK_ID_BANKACCOUNT);
 $warehouse=new Entrepot($db);
-$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
+//$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
 
 $langs->load("@cashdesk");
+$langs->load("main");
 
 $logout='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png">';
 
@@ -42,7 +43,7 @@ print '<li class="menu_choix2"><a href=".."><span>'.$langs->trans("BackOffice").
 print '<li class="menu_choix0">'.$langs->trans("User").' : '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
 print $langs->trans("CashDeskThirdParty").' : '.$company->getNomUrl(1).'<br>';
 print $langs->trans("CashDeskBank").' : '.$bank->getNomUrl(1).'<br>';
-if ($conf->stock->enabled)
+if ($conf->stock->enabled && $warehouse->id)	// Disabled because warehouse->fetch disabled before
 {
 	print $langs->trans("CashDeskWarehouse").' : '.$warehouse->getNomUrl(1);
 }

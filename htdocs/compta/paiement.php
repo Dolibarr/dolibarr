@@ -59,7 +59,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 	$_POST['reyear']);
 	$paiement_id = 0;
 
-	// Verifie si des paiements sont sup�rieurs au montant facture
+	// Verifie si des paiements sont superieurs au montant facture
 	foreach ($_POST as $key => $value)
 	{
 		if (substr($key,0,7) == 'amount_')
@@ -93,8 +93,8 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 		// d'un paiement
 		if (! $_POST['accountid'])
 		{
-	  $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
-	  $error++;
+	  		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
+			$error++;
 		}
 	}
 
@@ -155,9 +155,9 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 				// Insertion dans llx_bank
 				$label = "(CustomerInvoicePayment)";
 				$acc = new Account($db, $_POST['accountid']);
-				//paiementid contient "CHQ ou VIR par exemple"
+
 				$bank_line_id = $acc->addline($paiement->datepaye,
-				$paiement->paiementid,
+				$paiement->paiementid,	// Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				$totalpaiement,
 				$paiement->num_paiement,
@@ -167,7 +167,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 				$_POST['chqbank']);
 
 				// Mise a jour fk_bank dans llx_paiement.
-				// On connait ainsi le paiement qui a g�n�r� l'�criture bancaire
+				// On connait ainsi le paiement qui a genere l'ecriture bancaire
 				if ($bank_line_id > 0)
 				{
 					$paiement->update_fk_bank($bank_line_id);

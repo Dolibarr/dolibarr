@@ -3124,8 +3124,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	}
 	else
 	{
-		$this->error=$db->lasterror();
-		dol_syslog("dol_getIdFromCode error=".$this->error,LOG_ERR);
+		dol_syslog("dol_getIdFromCode error=".$db->lasterror(),LOG_ERR);
 		return -1;
 	}
 }
