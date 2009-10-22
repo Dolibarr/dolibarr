@@ -1,34 +1,26 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:57:49
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - dict
 CHARSET=UTF-8
 CountryFR=Frankrijk
 CountryBE=België
 CountryIT=Italië
 CountryES=Spanje
 CountryDE=Duitsland
+CountryCH=Zwitserland
 CountryGB=Groot-Brittannië
+CountryIE=Ierland
 CountryCN=China
 CountryTN=Tunesië
 CountryUS=Verenigde Staten
+CountryMA=Marokko
 CountryDZ=Algerije
 CountryCA=Canada
 CountryTG=Togo
 CountryGA=Gabon
 CountryNL=Nederland
-CountryHU=Hongria
+CountryHU=Hongarije
 CountryRU=Rusland
 CountrySE=Zweden
-CountryCI=Ivoiry Coast
+CountryCI=Ivoorkust
 CountrySN=Senegal
 CountryAR=Argentinië
 CountryCM=Kameroen
@@ -38,7 +30,7 @@ CountryMC=Monaco
 CountryAU=Australië
 CountrySG=Singapore
 CountryAF=Afghanistan
-CountryAX=Land Eilanden
+CountryAX=Åland Eilanden
 CountryAL=Albanië
 CountryAS=Amerikaans Samoa
 CountryAD=Andorra
@@ -71,16 +63,16 @@ CountryBF=Burkina Faso
 CountryBI=Burundi
 CountryKH=Cambodja
 CountryCV=Kaapverdië
-CountryKY=Caymaneilanden
+CountryKY=Cayman eilanden
 CountryCF=Centraal-Afrikaanse Republiek
 CountryTD=Tsjaad
 CountryCL=Chili
-CountryCX=Christmas Island
+CountryCX=Christmas Eiland
 CountryCC=Cocos (Keeling) Eilanden
 CountryCO=Colombia
 CountryKM=Comoren
 CountryCG=Congo
-CountryCD=Congo, de Democratische Republiek van de
+CountryCD=Congo, de Democratische Republiek van 
 CountryCK=Cook Eilanden
 CountryCR=Costa Rica
 CountryHR=Kroatië
@@ -98,7 +90,7 @@ CountryGQ=Equatoriaal-Guinea
 CountryER=Eritrea
 CountryEE=Estland
 CountryET=Ethiopië
-CountryFK=Falklandeilanden
+CountryFK=Falkland Eilanden
 CountryFO=Faroer Eilanden
 CountryFJ=Fiji-eilanden
 CountryFI=Finland
@@ -144,7 +136,7 @@ CountryLV=Letland
 CountryLB=Libanon
 CountryLS=Lesotho
 CountryLR=Liberia
-CountryLY=Libische
+CountryLY=Libië
 CountryLI=Liechtenstein
 CountryLT=Lituania
 CountryLU=Luxemburg
@@ -186,11 +178,11 @@ CountryPK=Pakistan
 CountryPW=Palau
 CountryPS=Palestijnse Gebieden, Bezette
 CountryPA=Panama
-CountryPG=Papoea-Nieuw-Guinea
+CountryPG=Papoea Nieuw-Guinea
 CountryPY=Paraguay
 CountryPE=Peru
 CountryPH=Filipijnen
-CountryPN=Pitcairn Islands
+CountryPN=Pitcairn Eilanden
 CountryPL=Polen
 CountryPR=Puerto Rico
 CountryQA=Qatar
@@ -254,30 +246,27 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
-CivilityMME=Mevr.
+
+##### Civilities #####
+CivilityMME=Mej.
 CivilityMR=Dhr
 CivilityMLE=Mevr.
 CivilityMTRE=Meester
+
+##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=Dollar AU
 CurrencyCAD=Dollar KAN
 CurrencyCHF=Zwitserse franken
 CurrencyEUR=Euro
 CurrencyFRF=Franse franken
+CurrencyGBP=Britse ponden
 CurrencyMAD=Dirham
 CurrencyMGA=Ariary
-CurrencyGBP=GB Pounds
-CurrencyTND=TND
+CurrencyMUR=Mauritius rupee
+CurrencyNOK=Noorse kronen
+CurrencyTND=Tunisian dinars
 CurrencyUSD=Dollar US
-CurrencyXAF=CFA Frank BEAC
-CurrencyXOF=FCFA BCEAO
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-CountryCH=Zwitserland
-CountryIE=Ierland
-CountryMA=Marokko
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+CurrencyXAF=CFA Francs BEAC
+CurrencyXOF=CFA Francs BCEAO
+CurrencyXPF=CFP Francs

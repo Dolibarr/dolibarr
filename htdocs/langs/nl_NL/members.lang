@@ -1,84 +1,85 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - members
 CHARSET=UTF-8
-MembersArea=Members Area
+MembersArea=Leden gebied
 PublicMembersArea=Openbare leden gebied
-MemberCard=Lid kaart
+MemberCard=Lidmaatschapskaart
 SubscriptionCard=Inschrijvings-kaart
 Member=Lid
 Members=Leden
 MemberAccount=Lid logon
-ShowMember=Toon lidkaart
+ShowMember=Toon lidmaatschapskaart
 UserNotLinkedToMember=Gebruiker niet gekoppeld aan een lid
 MembersTickets=Leden Tickets
+FundationMembers=Stichting leden/donateurs
 Attributs=Attributen
+
 Person=Persoon
+
 ErrorMemberTypeNotDefined=Lid type niet gedefinieerd
 ListOfPublicMembers=Lijst van de openbare leden
 ListOfValidatedPublicMembers=Lijst van gevalideerde openbare leden
 ErrorThisMemberIsNotPublic=Dit lid is niet openbaar
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Een ander lid <b>(naam: %s, login: %s)</b> is al gekoppeld aan een derden <b>%s</b>. Verwijder deze link eerste omdat een derden niet kan worden gekoppeld aan slechts een lid (en vice versa).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Om veiligheidsredenen moet u machtigingen verleend voor het bewerken van alle gebruikers te kunnen koppelen van een lid aan een gebruiker die niet de jouwe.
+ThisIsContentOfYourCard=Dit is de details van uw kaart
+CardContent=Inhoud van uw lidkaart
+SetLinkToUser=Link naar een Dolibarr gebruiker
+SetLinkToThirdParty=Link naar een Dolibarr derden
 MembersCards=Leden print kaarten
-MembersList=Lijst van de leden
+MembersList=Ledenlijst
 MembersListToValid=Lijst van de ontwerp-leden (te valideren)
 MembersListValid=Lijst van geldige leden
-MembersListUpToDate=Lijst van geldige leden met up-to-date abonnement
-MembersListNotUpToDate=Lijst van geldige leden met abonnement out of date
-MembersListResiliated=Lijst van resiliated leden
+MembersListUpToDate=Lijst van geldig lidmaatschap
+MembersListNotUpToDate=Lijst van ongeldig lidmaatschap
+MembersListResiliated=Ledenlijst beëindigd abonnement
 MembersListQualified=Lijst van gekwalificeerde leden
 MenuMembersToValidate=Ontwerp-leden
 MenuMembersValidated=Gevalideerde leden
-MenuMembersUpToDate=Up-to-date leden
-MenuMembersNotUpToDate=Out of date leden
-MenuMembersResiliated=Resiliated leden
+MenuMembersUpToDate=Bijgewerkte leden
+MenuMembersNotUpToDate=Niet bijgewerkte leden
+MenuMembersResiliated=Lidmaatschap beëindigd
 DateAbonment=Inschrijvings-datum
 DateSubscription=Inschrijvings-datum
 DateNextSubscription=Volgende abonnement
 DateEndSubscription=Abonnement einddatum
 EndSubscription=Einde abonnement
+SubscriptionId=Inschrijvings-id
+MemberId=Lid ID
 NewMember=Nieuw lid
 NewType=Nieuw lid type
-MemberType=Lid type
-MemberTypeId=Lid type id
-MemberTypeLabel=Lid type etiket
+MemberType=Soort lid
+MemberTypeId=Lidsoort id
+MemberTypeLabel=Lidsoort etiket
 MembersTypes=Leden soorten
 MembersAttributes=Leden attributen
 SearchAMember=Zoek een lid
 MemberStatusDraft=Ontwerp (moet worden gevalideerd)
 MemberStatusDraftShort=Te valideren
-MemberStatusActive=Gevalideerd (wachttijd abonnement)
+MemberStatusActive=Gevalideerd (wachtend op abonnement)
 MemberStatusActiveShort=Gevalideerd
 MemberStatusActiveLate=abonnement verlopen
 MemberStatusActiveLateShort=Verlopen
-MemberStatusPaid=Abonnement up-to-date
-MemberStatusPaidShort=Up-to-date
-MemberStatusResiliated=Resiliated lid
-MemberStatusResiliatedShort=Resiliated
+MemberStatusPaid=Abonnement bijgewerkt
+MemberStatusPaidShort=Bijgewerkt
+MemberStatusResiliated=Beëindigd lidmaatschap
+MemberStatusResiliatedShort=Beëindigd
 MembersStatusToValid=Ontwerp-leden
 MembersStatusToValidShort=Ontwerp-leden
 MembersStatusValidated=Gevalideerde leden
-MembersStatusPaid=Abonnement up-to-date
-MembersStatusPaidShort=Up-to-date
-MembersStatusNotPaid=Abonnement van de datum
-MembersStatusNotPaidShort=Out of date
-MembersStatusResiliated=Resiliated leden
-MembersStatusResiliatedShort=Resiliated leden
+MembersStatusPaid=Abonnement betaald
+MembersStatusPaidShort=betaald
+MembersStatusNotPaid=Verlopen abonnement
+MembersStatusNotPaidShort=Verlopen
+MembersStatusResiliated=Beëindigd lidmaatschap
+MembersStatusResiliatedShort=Beëindigd lidmaatschap
 NewCotisation=Nieuwe bijdrage
-EditMember=Edit Lid
-SubscriptionEndDate=Abonnement de einddatum
-NewAttribute=Nieuwe attribut
+PaymentSubscription=Nieuwe bijdrage betaling
+EditMember=Wijzig Lid
+SubscriptionEndDate=Einddatum abonnement
+NewAttribute=Nieuwe attribuut
 AttributeCode=Attribuut code
 OptionalFieldsSetup=Optionele velden setup
-MembersTypeSetup=Leden type installatie
+MembersTypeSetup=Leden type setup
 NewSubscription=Nieuw abonnement
 Subscription=Abonnement
 Subscriptions=Abonnementen
@@ -86,86 +87,66 @@ SubscriptionLate=Laat
 SubscriptionNotReceived=Abonnement nooit ontvangen
 SubscriptionLateShort=Laat
 SubscriptionNotReceivedShort=Nooit ontvangen
-ListOfSubscriptions=Lijst van abonnementen
+ListOfSubscriptions=Abonnementenlijst
 SendCardByMail=Stuur kaart
-AddMember=Toevoegen lid
-MemberType=Lid type
+AddMember=Lid toevoegen
+MemberType=Type lid
 NoTypeDefinedGoToSetup=Geen lid types gedefinieerd. Ga naar Setup - Leden soorten
-NewMemberType=Nieuw lid type
+NewMemberType=Nieuw lidsoort
 WelcomeEMail=Welkom e-mail
 SubscriptionRequired=Abonnement nodig
-EditType=Bewerken lid type
+EditType=Bewerken lidsoort
 DeleteType=Wissen
 VoteAllowed=Stemming toegestaan
-Physical=Fysieke
-Moral=Morele
-MorPhy=Morele / Fysische
+Physical=Fysiek
+Moral=Moreel
+MorPhy=Moreel/Fysiek
 Reenable=Opnieuw inschakelen
-ResiliateMember=Resiliate een lid
-ConfirmResiliateMember=Weet u zeker dat u wilt resiliate dit lid?
-DeleteMember=Verwijderen van een lid
-ConfirmDeleteMember=Weet u zeker dat u wilt verwijderen lid (verwijderen van een lid zal u alle abonnementen zijn)?
-DeleteSubscription=Verwijderen van een abonnement
-ConfirmDeleteSubscription=Weet u zeker dat u wilt verwijderen dit abonnement?
+ResiliateMember=Beëindigd lidmaatschap
+ConfirmResiliateMember=Weet u zeker dat u het lidmaatschap van dit lid wilt beëindigd?
+DeleteMember=Lid verwijderen
+ConfirmDeleteMember=Weet u zeker dat u dit lid wilt verwijderen (verwijderen van een lid betreft ook alle abonnementen)?
+DeleteSubscription=Abonnement verwijderen
+ConfirmDeleteSubscription=Weet u zeker dat u dit abonnement wilt verwijderen?
 Filehtpasswd=htpasswd bestand
 ValidateMember=Valideren van een lid
 ConfirmValidateMember=Weet u zeker dat u wilt valideren dit lid?
-FollowingLinksArePublic=De volgende links zijn open pagina&#39;s niet beschermd door een Dolibarr toestemming. Ze zijn niet geformatteerde pagina&#39;s, als voorbeeld om te laten zien hoe de lijst leden database.
+FollowingLinksArePublic=De volgende links zijn open pagina's, niet beschermd door een Dolibarr afscherming. Ze zijn niet geformatteerde pagina's, als voorbeeld om te laten zien hoe de ledenlijst database eruit ziet.
 PublicMemberList=Publieke ledenlijst
 BlankSubscriptionForm=Inschrijvingsformulier
-MemberPublicLinks=Openbare links / pages
+MemberPublicLinks=Openbare links/pagina's
 ExportDataset_member_1=Leden en abonnementen
-LastMembers=Last% s leden
-LastMembersModified=Last% s bewerkt leden
+LastMembers=Laatste %s leden
+LastMembersModified=Laatste %s bewerkte leden
 AttributeName=Attribuut naam
 FieldEdition=% Gebied uitgave
-AlphaNumOnlyCharsAndNoSpace=alleen alphanumericals tekens zonder spaties
+AlphaNumOnlyCharsAndNoSpace=alleen alphanumerieke tekens zonder spaties
 String=String
 Text=Tekst
-Int=Int
+Int=Numeriek
 Date=Datum
 DateAndTime=Datum en tijd
-PublicMemberCard=Lid publiek kaart
+PublicMemberCard=Publieke ledenkaart
 MemberNotOrNoMoreExpectedToSubscribe=Lid niet of niet meer verwacht te abonneren
 AddSubscription=Toevoegen abonnement
 ShowSubscription=Toon abonnement
 MemberModifiedInDolibarr=Lid gewijzigd in Dolibarr
 SendAnEMailToMember=Stuur informatie email naar lid
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Onderwerp van de e-mail verzonden als een automatische gast inschrijving
+DescADHERENT_AUTOREGISTER_MAIL=Mail verzonden als een automatische gast inschrijving
 DescADHERENT_MAIL_VALID_SUBJECT=Email onderwerp voor de Lid-validatie
 DescADHERENT_MAIL_VALID=EMail voor lid validatie
 DescADHERENT_MAIL_COTIS_SUBJECT=Email onderwerp voor de inschrijving
 DescADHERENT_MAIL_COTIS=EMail voor abonnement
 DescADHERENT_MAIL_RESIL_SUBJECT=Email onderwerp voor lid resiliation
 DescADHERENT_MAIL_RESIL=EMail voor lid resiliation
-DescADHERENT_MAIL_FROM=Sender EMail voor automatische e-mails
+DescADHERENT_MAIL_FROM=Zender EMail voor automatische e-mails
 DescADHERENT_ETIQUETTE_TYPE=Etiketten formaat
-DescADHERENT_CARD_HEADER_TEXT=Tekst op de top van de Lid-kaarten
-DescADHERENT_CARD_TEXT=Tekst op member kaarten
-DescADHERENT_CARD_FOOTER_TEXT=Tekst op bodem van lid kaarten
-ShowTypeCard=Toon type &#39;% s&#39;
+DescADHERENT_CARD_HEADER_TEXT=Koptekst van de Lidmaatschaps-kaarten
+DescADHERENT_CARD_TEXT=Tekst op de Lidmaatschaps-kaarten
+DescADHERENT_CARD_FOOTER_TEXT=Voettekst van de Lidmaatschaps-kaarten
+ShowTypeCard=Toon type "%s"
 HTPasswordExport=htpassword bestand generatie
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Een ander lid <b>(naam:% s, login:% s)</b> is al gekoppeld aan een derde <b>partij% s.</b> Verwijder deze link eerste omdat een derde partij niet kan worden gekoppeld aan slechts een lid (en vice versa).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Om veiligheidsredenen moet u machtigingen verleend voor het bewerken van alle gebruikers te kunnen koppelen van een lid aan een gebruiker die niet de jouwe.
-ThisIsContentOfYourCard=Dit is de details van uw kaart
-CardContent=Inhoud van uw lidkaart
-SetLinkToUser=Link naar een Dolibarr gebruiker
-SetLinkToThirdParty=Link naar een Dolibarr derden
-SubscriptionId=Inschrijvings-id
-MemberId=Lid ID
-PaymentSubscription=Nieuwe bijdrage betaling
 NoThirdPartyAssociatedToMember=Geen derde partij betrokken bij dit lid
-ThirdPartyDolibarr=Dolibarr derde partij
-MembersAndSubscriptions=Leden en Suscriptions
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-FundationMembers=Stichting leden
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+ThirdPartyDolibarr=Dolibarr derden
+MembersAndSubscriptions=Leden en Openingsformulier
