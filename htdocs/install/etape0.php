@@ -125,7 +125,7 @@ if (! $error)
 			$databasefortest=$_POST["db_name"];
 			if (! empty($_POST["db_create_database"]))
 			{
-				if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
+				if ($_POST["db_type"] == 'mysql' || $_POST["db_type"] == 'mysqli')
 				{
 					$databasefortest='mysql';
 				}
@@ -255,7 +255,7 @@ if (! $error && $db->connected)
 			{
 				// We keep only utf8 and iso
 				$linedisabled=false;
-				if (! eregi('(utf8|latin1)',$characterSet['charset'])) $linedisabled=true;
+				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! eregi('(utf8|latin1)',$characterSet['charset'])) $linedisabled=true;
 
 				if ($defaultCharacterSet == $characterSet['charset'] )
 				{
@@ -298,7 +298,7 @@ if (! $error && $db->connected)
 			{
 				// We keep only utf8 and iso
 				$linedisabled=false;
-				if (! eregi('(utf8_general|latin1_swedish)',$collation['collation'])) $linedisabled=true;
+				if (($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli') && ! eregi('(utf8_general|latin1_swedish)',$collation['collation'])) $linedisabled=true;
 
 				if ($defaultCollationConnection == $collation['collation'])
 				{

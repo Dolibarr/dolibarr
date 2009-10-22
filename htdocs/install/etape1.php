@@ -321,7 +321,7 @@ if ($_POST["action"] == "set")
 
 			if ($db->connected)
 			{
-				if ($db->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation))
+				if ($db->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_db_user))
 				{
 					print '<tr><td>';
 					print $langs->trans("DatabaseCreation").' : ';
@@ -378,7 +378,7 @@ if ($_POST["action"] == "set")
 
 
 		/*
-		* On test maintenant l'acc�s par le user admin dolibarr
+		* On test maintenant l'acces par le user admin dolibarr
 		*/
 		if (! $error)
 		{

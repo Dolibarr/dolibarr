@@ -761,11 +761,12 @@ class DoliDb
 	 *	\param	        database		Database name to create
 	 * 	\param			charset			Charset used to store data
 	 * 	\param			collation		Charset used to sort data
+	 * 	\param			owner			Username of database owner
 	 * 	\return	        resource		resource defined if OK, null if KO
 	 *	\remarks        Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
 	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
 	 */
-	function DDLCreateDb($database,$charset='',$collation='')
+	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
 		if (empty($charset))   $charset=$this->forcecharset;
 		if (empty($collation)) $collation=$this->collation;
@@ -976,12 +977,12 @@ class DoliDb
 
 
 	/**
-	 *	\brief      Create a user
-	 *	\param	    dolibarr_main_db_host 		Ip serveur
-	 *	\param	    dolibarr_main_db_user 		Nom user a creer
-	 *	\param	    dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	\brief      Create a user and privileges to connect to database (even if database does not exists yet)
+	 *	\param	    dolibarr_main_db_host 		Ip server
+	 *	\param	    dolibarr_main_db_user 		Username to create
+	 *	\param	    dolibarr_main_db_pass 		Password
 	 *	\param		dolibarr_main_db_name		Database name where user must be granted
-	 *	\return	    int							<0 si KO, >=0 si OK
+	 *	\return	    int							<0 if KO, >=0 if OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
