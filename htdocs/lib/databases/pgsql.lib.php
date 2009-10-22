@@ -145,7 +145,7 @@ class DoliDb
 
 
 	/**
-	 *	\brief		Convert a SQL request in mysql syntax to database syntax
+	 *	\brief		Convert a SQL request in Mysql syntax to PostgreSQL syntax
 	 * 	\param		line		SQL request line to convert
 	 * 	\return		string		SQL request line converted
 	 */
@@ -160,48 +160,43 @@ class DoliDb
 		{
 			return $line;
 		}
-		if ($create_sql != "")
+		if ($line != "")
 		{ 		# we are inside create table statement so lets process datatypes
 			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
-				$line=preg_replace('/\) *type=(MyISAM|innodb);/i',');');
-				$line=preg_replace('/\) *engine=(MyISAM|innodb);/i',');');
+				$line=preg_replace('/\) *type=(MyISAM|innodb);/i',');',$line);
+				$line=preg_replace('/\) *engine=(MyISAM|innodb);/i',');',$line);
+				$line=preg_replace('/,$/','',$line);
 			}
 
-			# int, auto_increment -> serial
-			//    		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) {
-			//    			$seq = qq~${table}_${1}_seq~;
-			//    			s/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/  $1 SERIAL PRIMARY KEY/ig;
-			//    			$create_sql.=$_;
+			if (preg_match('/[\s\t]*(\w*)\s*.*int.*auto_increment/i',$line,$reg)) {
+				$line=preg_replace('/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/i','\\1 SERIAL PRIMARY KEY',$line);
+			}
 
 			# int type conversion
 			/*    		} elsif (/(\w*)int\(\d+\)/i) {
-			 $size=$1;
-			 $size =~ tr [A-Z] [a-z];
-			 if ($size eq "tiny" || $size eq "small") {
-			 $out = "int2";
-			 } elsif ($size eq "big") {
-			 $out = "int8";
-			 } else {
-			 $out = "int4";
-			 }
-			 s/\w*int\(\d+\)/$out/g;
-			 }
-			 */
+			$size=$1;
+			$size =~ tr [A-Z] [a-z];
+			if ($size eq "tiny" || $size eq "small") {
+			$out = "int2";
+			} elsif ($size eq "big") {
+			$out = "int8";
+			} else {
+			$out = "int4";
+			}
+			s/\w*int\(\d+\)/$out/g;
+			}
+			*/
 			$line=str_replace('tinyint','smallint',$line);
 
 			# nuke unsigned
-			if (preg_replace('/(int\w+|smallint)\s+unsigned/i','smallint',$reg))
-			{
-				$line=preg_replace('/(int\w+|smallint)\s+unsigned/i',$reg[1]);
-			}
-
+			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
 
 			# blob -> text
-			$line=preg_replace('/\w*blob/i','text');
+			$line=preg_replace('/\w*blob/i','text',$line);
 
 			# tinytext/mediumtext -> text
-			$line=preg_replace('/tinytext/i','text');
-			$line=preg_replace('/mediumtext/i','text');
+			$line=preg_replace('/tinytext/i','text',$line);
+			$line=preg_replace('/mediumtext/i','text',$line);
 
 			# char -> varchar
 			# PostgreSQL would otherwise pad with spaces as opposed
@@ -215,8 +210,8 @@ class DoliDb
 
 			# change not null datetime field to null valid ones
 			# (to support remapping of "zero time" to null
-			$line=preg_replace('/datetime not null/i','datetime');
-			$line=preg_replace('/datetime/i','timestamp');
+			$line=preg_replace('/datetime not null/i','datetime',$line);
+			$line=preg_replace('/datetime/i','timestamp',$line);
 
 			# nuke size of timestamp
 			//    		s/timestamp\([^)]*\)/timestamp/i;
@@ -227,104 +222,104 @@ class DoliDb
 
 			# unique key(field1,field2)
 			/*    		if (/unique key\s*\((\w+\s*,\s*\w+)\)/i) {
-			 s/unique key\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
-			 $create_sql.=$_;
-			 next;
-			 }
-			 */
+			s/unique key\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
+			$create_sql.=$_;
+			next;
+			}
+			*/
 			# unique index(field1,field2)
 			/*    		if (/unique index\s*\((\w+\s*,\s*\w+)\)/i) {
-			 s/unique index\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
-			 $create_sql.=$_;
-			 next;
-			 }
-			 */
+			s/unique index\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
+			$create_sql.=$_;
+			next;
+			}
+			*/
 			# unique key [name] (field)
 			/*            if (/unique key\s*(\w*)\s*\((\w+)\)/i) {
-			 s/unique key\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
-			 my $idxname=($1?"$1":"idx_${table}_$2");
-			 $create_sql.=$_;
-			 $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
-			 next;
-			 }
-			 */
+			s/unique key\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
+			my $idxname=($1?"$1":"idx_${table}_$2");
+			$create_sql.=$_;
+			$create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+			next;
+			}
+			*/
 			# unique index [name] (field)
 			/*            if (/unique index\s*(\w*)\s*\((\w+)\)/i) {
-			 s/unique index\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
-			 my $idxname=($1?"$1":"idx_${table}_$2");
-			 $create_sql.=$_;
-			 $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
-			 next;
-			 }
-			 */
+			s/unique index\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
+			my $idxname=($1?"$1":"idx_${table}_$2");
+			$create_sql.=$_;
+			$create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+			next;
+			}
+			*/
 			# unique (field) et unique (field1, field2 ...)
 			/*            if (/unique\s*\(([\w,\s]+)\)/i) {
-			 s/unique\s*\(([\w,\s]+)\)/UNIQUE\($1\)/i;
-			 my $fieldlist="$1";
-			 my $idxname="idx_${table}_${fieldlist}";
-			 $idxname =~ s/\W/_/g; $idxname =~ tr/_/_/s;
-			 $create_sql.=$_;
-			 $create_index .= "CREATE INDEX $idxname ON $table ($fieldlist);\n";
-			 next;
-			 }
-			 */
+			s/unique\s*\(([\w,\s]+)\)/UNIQUE\($1\)/i;
+			my $fieldlist="$1";
+			my $idxname="idx_${table}_${fieldlist}";
+			$idxname =~ s/\W/_/g; $idxname =~ tr/_/_/s;
+			$create_sql.=$_;
+			$create_index .= "CREATE INDEX $idxname ON $table ($fieldlist);\n";
+			next;
+			}
+			*/
 			# index(field)
 			/*            if (/index\s*(\w*)\s*\((\w+)\)/i) {
-			 my $idxname=($1?"$1":"idx_${table}_$2");
-			 $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
-			 next;
-			 }
-			 */
+			my $idxname=($1?"$1":"idx_${table}_$2");
+			$create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+			next;
+			}
+			*/
 			# primary key
 			/*    		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
-			 s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
-			 }
-			 */
+			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
+			}
+			*/
 			# key(xxx)
 			/*            if (/key\s*\((\w+)\)/i) {
-			 my $idxname="idx_${table}_$1";
-			 $create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
-			 next;
-			 }
-			 */
+			my $idxname="idx_${table}_$1";
+			$create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
+			next;
+			}
+			*/
 			# Quote column names
 			/*    		s/(^\s*)([^\s\-\(]+)(\s*)/$1"$2"$3/gi if (!/\bkey\b/i);
-			 */
+			*/
 			# Remap colums with names of existing system attribute
 			/*    		if (/"oid"/i) {
-			 s/"oid"/"_oid"/g;
-			 print STDERR "WARNING: table $table uses column \"oid\" which is renamed to \"_oid\"\nYou should fix application manually! Press return to continue.";
-			 my $wait=<STDIN>;
-			 }
-			 s/oid/_oid/i if (/key/i && /oid/i); # fix oid in key
-			 $create_sql.=$_;
-			 */
+			s/"oid"/"_oid"/g;
+			print STDERR "WARNING: table $table uses column \"oid\" which is renamed to \"_oid\"\nYou should fix application manually! Press return to continue.";
+			my $wait=<STDIN>;
+			}
+			s/oid/_oid/i if (/key/i && /oid/i); # fix oid in key
+			$create_sql.=$_;
+			*/
 		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
 		else {	# not inside create table
 			#---- fix data in inserted data: (from MS world)
 			# FIX: disabled for now
 			/*    		if (00 && /insert into/i) {
-			 s!\x96!-!g;	# --
-			 s!\x93!"!g;	# ``
-			 s!\x94!"!g;	# ''
-			 s!\x85!... !g;	# \ldots
-			 s!\x92!`!g;
-			 }
-			 */
+			s!\x96!-!g;	# --
+			s!\x93!"!g;	# ``
+			s!\x94!"!g;	# ''
+			s!\x85!... !g;	# \ldots
+			s!\x92!`!g;
+			}
+			*/
 			# fix dates '0000-00-00 00:00:00' (should be null)
 			/*    		s/'0000-00-00 00:00:00'/null/gi;
-			 s/'0000-00-00'/null/gi;
-			 s/'00:00:00'/null/gi;
-			 s/([12]\d\d\d)([01]\d)([0-3]\d)([0-2]\d)([0-6]\d)([0-6]\d)/'$1-$2-$3 $4:$5:$6'/;
+			s/'0000-00-00'/null/gi;
+			s/'00:00:00'/null/gi;
+			s/([12]\d\d\d)([01]\d)([0-3]\d)([0-2]\d)([0-6]\d)([0-6]\d)/'$1-$2-$3 $4:$5:$6'/;
 
-			 if (/create\s+table\s+(\w+)/i) {
-			 $create_sql = $_;
-			 /create\s*table\s*(\w+)/i;
-			 $table=$1 if (defined($1));
-			 } else {
-			 print OUT $_;
-			 }
-			 */
+			if (/create\s+table\s+(\w+)/i) {
+			$create_sql = $_;
+			/create\s*table\s*(\w+)/i;
+			$table=$1 if (defined($1));
+			} else {
+			print OUT $_;
+			}
+			*/
 		} # end of if inside create_table
 
 
@@ -365,6 +360,8 @@ class DoliDb
 		if ($this->db)
 		{
 			$this->database_name = $name;
+			pg_set_error_verbosity($this->db, PGSQL_ERRORS_VERBOSE);	// Set verbosity to max
+
 		}
 		return $this->db;
 	}
@@ -492,9 +489,9 @@ class DoliDb
 	{
 		$query = trim($query);
 
-		if ($this->forcecharset=="UTF-8"){
-			$buffer=utf8_encode ($buffer);
-		}
+		// Convert MySQL syntax to PostgresSQL syntax
+		$query=$this->convertSQLFromMysql($query);
+
 		$ret = pg_query($this->db, $query);
 		if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
 		{
@@ -504,6 +501,7 @@ class DoliDb
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
+				print '>>'.$this->lasterrno.' - '.$this->lasterror.' - '.$this->laqtqueryerror."<br>\n";
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;
@@ -738,6 +736,56 @@ class DoliDb
 	 */
 	function errno()
 	{
+		if (! $this->connected) {
+			// Si il y a eu echec de connexion, $this->db n'est pas valide.
+			return 'DB_ERROR_FAILED_TO_CONNECT';
+		}
+		else {
+			// Constants to convert a MySql error code to a generic Dolibarr error code
+			$errorcode_map = array(
+			1004 => 'DB_ERROR_CANNOT_CREATE',
+			1005 => 'DB_ERROR_CANNOT_CREATE',
+			1006 => 'DB_ERROR_CANNOT_CREATE',
+			1007 => 'DB_ERROR_ALREADY_EXISTS',
+			1008 => 'DB_ERROR_CANNOT_DROP',
+			1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
+			1044 => 'DB_ERROR_ACCESSDENIED',
+			1046 => 'DB_ERROR_NODBSELECTED',
+			1048 => 'DB_ERROR_CONSTRAINT',
+			'42P07' => 'DB_ERROR_TABLE_ALREADY_EXISTS',
+			1051 => 'DB_ERROR_NOSUCHTABLE',
+			1054 => 'DB_ERROR_NOSUCHFIELD',
+			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+			1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+			1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+			1064 => 'DB_ERROR_SYNTAX',
+			1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
+			1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
+			1091 => 'DB_ERROR_NOSUCHFIELD',
+			1100 => 'DB_ERROR_NOT_LOCKED',
+			1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
+			1146 => 'DB_ERROR_NOSUCHTABLE',
+			1216 => 'DB_ERROR_NO_PARENT',
+			1217 => 'DB_ERROR_CHILD_EXISTS',
+			1451 => 'DB_ERROR_CHILD_EXISTS'
+			);
+
+			$errorlabel=pg_last_error($this->db);
+			$errorcode='';
+			if (preg_match('/: *([0-9P]+):/',$errorlabel,$reg))
+			{
+				$errorcode=$reg[1];
+			}
+
+			if (isset($errorcode_map[$errorcode]))
+			{
+				return $errorcode_map[$errorcode];
+			}
+			$errno=$errorlabel;
+			return ($errno?'DB_ERROR_'.$errno:'0');
+		}
+
+		// TODO Virer cela
 		if (empty($error_regexps))
 		{
 			$error_regexps = array(
@@ -751,12 +799,14 @@ class DoliDb
                 '/referential integrity violation/'     => 'DB_ERROR_CONSTRAINT'
                 );
 		}
+		print 'WW'.pg_last_error($this->db).'WW';
+		$valerror=pg_last_error($this->db);
 		foreach ($error_regexps as $regexp => $code) {
-			if (preg_match($regexp, pg_last_error($this->db))) {
+			if (preg_match($regexp,$valerror)) {
 				return $code;
 			}
 		}
-		$errno=pg_last_error($this->db);
+		$errno=$valerror;
 		return ($errno?'DB_ERROR':'0');
 	}
 
