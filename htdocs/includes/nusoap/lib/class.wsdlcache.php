@@ -1,16 +1,21 @@
 <?php
+/*
+The NuSOAP project home is:
+http://sourceforge.net/projects/nusoap/
 
-
+The primary support for NuSOAP is the mailing list:
+nusoap-general@lists.sourceforge.net
+*/
 
 /**
 * caches instances of the wsdl class
 * 
-* @author   Scott Nichol <snichol@computer.org>
+* @author   Scott Nichol <snichol@users.sourceforge.net>
 * @author	Ingo Fischer <ingo@apollon.de>
 * @version  $Id$
 * @access public 
 */
-class wsdlcache {
+class nusoap_wsdlcache {
 	/**
 	 *	@var resource
 	 *	@access private
@@ -39,7 +44,7 @@ class wsdlcache {
 	* @param integer $cache_lifetime lifetime for caching-files in seconds or 0 for unlimited
 	* @access public
 	*/
-	function wsdlcache($cache_dir='.', $cache_lifetime=0) {
+	function nusoap_wsdlcache($cache_dir='.', $cache_lifetime=0) {
 		$this->fplock = array();
 		$this->cache_dir = $cache_dir != '' ? $cache_dir : '.';
 		$this->cache_lifetime = $cache_lifetime;
@@ -86,6 +91,11 @@ class wsdlcache {
   				}
 			}
 			// see what there is to return
+			if (!file_exists($filename)) {
+				$this->debug("$wsdl ($filename) not in cache (1)");
+				$this->releaseMutex($filename);
+				return null;
+			}
 			$fp = @fopen($filename, "r");
 			if ($fp) {
 				$s = implode("", @file($filename));
@@ -93,7 +103,7 @@ class wsdlcache {
 				$this->debug("Got $wsdl ($filename) from cache");
 			} else {
 				$s = null;
-				$this->debug("$wsdl ($filename) not in cache");
+				$this->debug("$wsdl ($filename) not in cache (2)");
 			}
 			$this->releaseMutex($filename);
 			return (!is_null($s)) ? unserialize($s) : null;
@@ -136,6 +146,11 @@ class wsdlcache {
 		$s = serialize($wsdl_instance);
 		if ($this->obtainMutex($filename, "w")) {
 			$fp = fopen($filename, "w");
+			if (! $fp) {
+				$this->debug("Cannot write $wsdl_instance->wsdl ($filename) in cache");
+				$this->releaseMutex($filename);
+				return false;
+			}
 			fputs($fp, $s);
 			fclose($fp);
 			$this->debug("Put $wsdl_instance->wsdl ($filename) in cache");
@@ -173,6 +188,10 @@ class wsdlcache {
 	*/
 	function remove($wsdl) {
 		$filename = $this->createFilename($wsdl);
+		if (!file_exists($filename)) {
+			$this->debug("$wsdl ($filename) not in cache to be removed");
+			return false;
+		}
 		// ignore errors obtaining mutex
 		$this->obtainMutex($filename, "w");
 		$ret = unlink($filename);
@@ -180,5 +199,11 @@ class wsdlcache {
 		$this->releaseMutex($filename);
 		return $ret;
 	}
+}
+
+/**
+ * For backward compatibility
+ */
+class wsdlcache extends nusoap_wsdlcache {
 }
 ?>
