@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - companies
 CHARSET=UTF-8
 ErrorBadEMail=e-mail %s invalide
+ErrorBadUrl=Url %s invalide
 ErrorCompanyNameAlreadyExists=Le nom de société %s existe déjà. Veuillez en choisir un autre.
 ErrorPrefixAlreadyExists=Le préfixe %s existe déjà. Veuillez en choisir un autre.
 ErrorSetACountryFirst=Définissez d'abord le pays

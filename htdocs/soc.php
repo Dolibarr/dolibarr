@@ -133,6 +133,12 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 			$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
 			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
 		}
+		if (! empty($soc->url) && ! isValidUrl($soc->url))
+		{
+			$error = 1;
+			$soc->error = $langs->trans("ErrorBadUrl",$soc->url);
+			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
+		}
 		if ($soc->fournisseur && ! $conf->fournisseur->enabled)
 		{
 			$error = 1;
