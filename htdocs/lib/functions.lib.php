@@ -739,10 +739,10 @@ function dol_print_url($url,$target='_blank',$max=32)
 	if (empty($url)) return '';
 
 	$link='<a href="';
-	if (! eregi('^http',$url)) $link.='http://';
+	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=$url;
 	if ($target) $link.='" target="'.$target.'">';
-	if (! eregi('^http',$url)) $link.='http://';
+	if (! preg_match('/^http/i',$url)) $link.='http://';
 	$link.=dol_trunc($url,$max);
 	$link.='</a>';
 	return $link;
@@ -768,7 +768,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 	if (! empty($addlink))
 	{
 		$newemail='<a href="';
-		if (! eregi('^mailto:',$email)) $newemail.='mailto:';
+		if (! preg_match('/^mailto:/i',$email)) $newemail.='mailto:';
 		$newemail.=$email;
 		$newemail.='">';
 		$newemail.=dol_trunc($email,$max);
@@ -903,12 +903,12 @@ function dol_print_ip($ip,$mode=0)
  */
 function isValidEmail($address)
 {
-	if (eregi(".*<(.+)>", $address, $regs)) {
+	if (preg_match("/.*<(.+)>/i", $address, $regs)) {
 		$address = $regs[1];
 	}
 	// 2 letters domains extensions are for countries
 	// 3 letters domains extensions: biz|com|edu|gov|int|mil|net|org|pro|...
-	if (eregi("^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2,3}|asso|aero|coop|info|name)\$",$address))
+	if (preg_match("/^[^@\s\t]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2,3}|asso|aero|coop|info|name)\$/i",$address))
 	{
 		return true;
 	}
@@ -1055,7 +1055,7 @@ function img_object($alt, $object)
 function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
 	global $conf;
-	if (! eregi('(\.png|\.gif)$',$picto)) $picto.='.png';
+	if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
 	if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
@@ -1071,7 +1071,7 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 {
 	global $conf;
-	if (! eregi('(\.png|\.gif)$',$picto)) $picto.='.png';
+	if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
 	if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 	return '<img src="'.DOL_URL_ROOT.'/theme/common/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
@@ -1449,20 +1449,20 @@ function img_mime($file,$alt='')
 {
 	$mime='other';
 
-	if (eregi('\.xls',$file) || eregi('\.xlsx',$file))        { $mime='xls'; }
-	if (eregi('\.ppt',$file) || eregi('\.pptx',$file))        { $mime='ppt'; }
-	if (eregi('\.doc',$file) || eregi('\.docx',$file))        { $mime='doc'; }
+	if (preg_match('/\.xls(x)?$/i',$file))							$mime='xls';
+	if (preg_match('/\.ppt(x)?$/i',$file))							$mime='ppt';
+	if (preg_match('/\.doc(x)?$/i',$file))							$mime='doc';
 
-	if (eregi('\.pdf',$file))        { $mime='pdf'; }
-	if (eregi('\.(html|htm)',$file)) { $mime='html'; }
-	if (eregi('\.txt',$file))        { $mime='other'; }
-	if (eregi('\.php',$file))        { $mime='php'; }
-	if (eregi('\.pl',$file))         { $mime='pl'; }
-	if (eregi('\.js',$file))         { $mime='jscript'; }
-	if (eregi('\.(png|bmp|jpg|jpeg|gif)',$file)) 		$mime='image';
-	if (eregi('\.(mp3|ogg|au)',$file))           		$mime='audio';
-	if (eregi('\.(avi|mvw|divx|xvid)',$file))    		$mime='video';
-	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)',$file))	$mime='archive';
+	if (preg_match('/\.pdf$/i',$file))								$mime='pdf';
+	if (preg_match('/\.(html|htm)$/i',$file))						$mime='html';
+	if (preg_match('/\.txt$/i',$file))								$mime='other';
+	if (preg_match('/\.php$/i',$file))								$mime='php';
+	if (preg_match('/\.pl$/i',$file))								$mime='pl';
+	if (preg_match('/\.js$/i',$file))								$mime='jscript';
+	if (preg_match('/\.(png|bmp|jpg|jpeg|gif)$/i',$file)) 			$mime='image';
+	if (preg_match('/\.(mp3|ogg|au|wav|wma)$/i',$file))				$mime='audio';
+	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$file))		$mime='video';
+	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z)$/i',$file))	$mime='archive';
 	if (empty($alt)) $alt='Mime type: '.$mime;
 
 	$mime.='.png';
@@ -1909,7 +1909,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// On renomme les fichiers avec extention script web car si on a mis le rep
 	// documents dans un rep de la racine web (pas bien), cela permet d'executer
 	// du code a la demande.
-	if (eregi('\.htm|\.html|\.php|\.pl|\.cgi$',$file_name))
+	if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$file_name))
 	{
 		$file_name.= '.noexe';
 	}
@@ -1917,7 +1917,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// Security:
 	// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans
 	// les noms de fichiers.
-	if (eregi('^\.',$src_file) || eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
+	if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
 	{
 		dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
 		return -1;
@@ -1926,7 +1926,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// Security:
 	// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
 	// les noms de fichiers.
-	if (eregi('^\.',$dest_file) || eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
+	if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
 	{
 		dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
 		return -1;
@@ -2603,7 +2603,7 @@ function create_exdir($dir)
 	{
 		if ($i > 0) $ccdir .= '/'.$cdir[$i];
 		else $ccdir = $cdir[$i];
-		if (eregi("^.:$",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
+		if (preg_match("/^.:$/",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
 
 		// Attention, le is_dir() peut echouer bien que le rep existe.
 		// (ex selon config de open_basedir)
@@ -2857,25 +2857,25 @@ function dol_textishtml($msg,$option=0)
 {
 	if ($option == 1)
 	{
-		if (eregi('<html',$msg))     return true;
-		elseif (eregi('<body',$msg)) return true;
-		elseif (eregi('<br',$msg))   return true;
+		if (preg_match('/<html/i',$msg))				return true;
+		elseif (preg_match('/<body/i',$msg))			return true;
+		elseif (preg_match('/<br/i',$msg))				return true;
 		return false;
 	}
 	else
 	{
-		if (eregi('<html',$msg))                 return true;
-		elseif (eregi('<body',$msg))             return true;
-		elseif (eregi('<br',$msg))               return true;
-		elseif (eregi('<span',$msg))             return true;
-		elseif (eregi('<div',$msg))              return true;
-		elseif (eregi('<table',$msg))            return true;
-		elseif (eregi('<font',$msg))             return true;
-		elseif (eregi('<strong',$msg))           return true;
-		elseif (eregi('<img',$msg))              return true;
-		elseif (eregi('<i>',$msg))               return true;
-		elseif (eregi('<b>',$msg))               return true;
-		elseif (eregi('&[A-Z0-9]{1,6};',$msg))   return true;
+		if (preg_match('/<html/i',$msg))				return true;
+		elseif (preg_match('/<body/i',$msg))			return true;
+		elseif (preg_match('/<br/i',$msg))				return true;
+		elseif (preg_match('/<span/i',$msg))			return true;
+		elseif (preg_match('/<div/i',$msg))				return true;
+		elseif (preg_match('/<table/i',$msg))			return true;
+		elseif (preg_match('/<font/i',$msg))			return true;
+		elseif (preg_match('/<strong/i',$msg))			return true;
+		elseif (preg_match('/<img/i',$msg))				return true;
+		elseif (preg_match('/<i>/i',$msg))				return true;
+		elseif (preg_match('/<b>/i',$msg))				return true;
+		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;
 		return false;
 	}
 }
