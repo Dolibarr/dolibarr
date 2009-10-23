@@ -1,6 +1,5 @@
--- ===================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+-- ========================================================================
+-- Copyright (C) 2007 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,11 +16,6 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- ===================================================================
+-- ========================================================================
 
-create table llx_adherent_options
-(
-  optid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
-  adhid            integer NOT NULL -- id de l'adherent auquel correspond ces attributs optionnel 
-)type=innodb;
+ALTER TABLE llx_c_ecotaxe ADD INDEX uk_c_ecotaxe (code);

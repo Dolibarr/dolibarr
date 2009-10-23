@@ -240,7 +240,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	$urlregex = '';
 
 	// SCHEME
-	if ($http) $urlregex .= "/^(http:\/\/|https:\/\/)";
+	if ($http) $urlregex .= "^(http:\/\/|https:\/\/)";
 
 	// USER AND PASS
 	if ($pass) $urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)";
@@ -258,10 +258,10 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	// GET Query
 	if ($query) $urlregex .= "(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)";
 	// ANCHOR
-	if($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)$/i";
+	if ($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)$/i";
 
 	// check
-	if (preg_match($urlregex, $url))
+	if (preg_match('!'.$urlregex.'!', $url))
 	{
 		$ValidUrl = 1;
 	}
@@ -300,7 +300,7 @@ function clean_url($url,$http=1)
 				$newproto = '';
 			}
 		}
-		
+
 		// On passe le nom de domaine en minuscule
 		$CleanUrl = preg_replace('/^'.preg_quote($proto.$domain,'/').'/i', $newproto.strtolower($domain), $url);
 

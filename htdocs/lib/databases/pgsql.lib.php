@@ -214,11 +214,14 @@ class DoliDb
 			$line=preg_replace('/datetime/i','timestamp',$line);
 
 			# nuke size of timestamp
-			//    		s/timestamp\([^)]*\)/timestamp/i;
+    		$line=preg_replace('/timestamp\([^)]*\)/i','timestamp',$line);
 
-			# double -> real
-			//    		s/^double/real/i;
-			//    		s/(\s*)double/${1}real/i;
+			# double -> numeric
+    		$line=preg_replace('/^double/i','numeric',$line);
+    		$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
+			# float -> numeric
+    		$line=preg_replace('/^float/i','numeric',$line);
+    		$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
 			# unique key(field1,field2)
 			/*    		if (/unique key\s*\((\w+\s*,\s*\w+)\)/i) {
@@ -228,12 +231,10 @@ class DoliDb
 			}
 			*/
 			# unique index(field1,field2)
-			/*    		if (/unique index\s*\((\w+\s*,\s*\w+)\)/i) {
-			s/unique index\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
-			$create_sql.=$_;
-			next;
+			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
+			{
+				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
 			}
-			*/
 			# unique key [name] (field)
 			/*            if (/unique key\s*(\w*)\s*\((\w+)\)/i) {
 			s/unique key\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
@@ -492,7 +493,7 @@ class DoliDb
 		// Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query);
 
-		$ret = pg_query($this->db, $query);
+		$ret = @pg_query($this->db, $query);
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
@@ -501,7 +502,8 @@ class DoliDb
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
-				print '>>'.$this->lasterrno.' - '.$this->lasterror.' - '.$this->laqtqueryerror."<br>\n";
+				//print "\n>> ".$query."<br>\n";
+				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->laqtqueryerror."<br>\n";
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;
@@ -758,7 +760,8 @@ class DoliDb
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-			1064 => 'DB_ERROR_SYNTAX',
+			'42704' => 'DB_ERROR_SYNTAX',
+			'42601' => 'DB_ERROR_SYNTAX',
 			1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
 			1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
 			1091 => 'DB_ERROR_NOSUCHFIELD',
@@ -775,13 +778,12 @@ class DoliDb
 			if (preg_match('/: *([0-9P]+):/',$errorlabel,$reg))
 			{
 				$errorcode=$reg[1];
+				if (isset($errorcode_map[$errorcode]))
+				{
+					return $errorcode_map[$errorcode];
+				}
 			}
-
-			if (isset($errorcode_map[$errorcode]))
-			{
-				return $errorcode_map[$errorcode];
-			}
-			$errno=$errorlabel;
+			$errno=$errorcode?$errorcode:$errorlabel;
 			return ($errno?'DB_ERROR_'.$errno:'0');
 		}
 

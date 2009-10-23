@@ -241,10 +241,14 @@ foreach my $file (keys %filelist) {
     		# nuke size of timestamp
     		s/timestamp\([^)]*\)/timestamp/i;
     
-    		# double -> real
-    		s/^double/real/i;
-    		s/(\s*)double/${1}real/i;
+    		# double -> numeric
+    		s/^double/numeric/i;
+    		s/(\s*)double/${1}numeric/i;
     
+    		# float -> numeric
+    		s/^float/numeric/i;
+    		s/(\s*)float/${1}numeric/i;
+
     		# unique key(field1,field2)
     		if (/unique key\s*\((\w+\s*,\s*\w+)\)/i) {
     		    s/unique key\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;

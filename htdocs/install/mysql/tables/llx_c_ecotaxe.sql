@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2007 Régis Houssin  <regis@dolibarr.fr>
+-- Copyright (C) 2007 Rï¿½gis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
 create table llx_c_ecotaxe
 (
   rowid        integer      AUTO_INCREMENT PRIMARY KEY,
-  code         varchar(64)  UNIQUE NOT NULL,  -- Code servant à la traduction et à la référence interne
-  libelle      varchar(255),                  -- Description
-  price        double(24,8),                  -- Montant HT
-  organization varchar(255),                  -- Organisme gérant le barème tarifaire
-  fk_pays      integer NOT NULL,              -- Pays correspondant
+  code         varchar(64)  NOT NULL,  		-- Code servant a la traduction et a la reference interne
+  libelle      varchar(255),                -- Description
+  price        double(24,8),                -- Montant HT
+  organization varchar(255),                -- Organisme gerant le bareme tarifaire
+  fk_pays      integer NOT NULL,            -- Pays correspondant
   active       tinyint DEFAULT 1  NOT NULL
 )type=innodb;

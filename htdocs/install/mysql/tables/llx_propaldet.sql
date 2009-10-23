@@ -31,9 +31,9 @@ create table llx_propaldet
   remise            real         DEFAULT 0,          -- montant de la remise (obsolete)
   price             real,                            -- prix final (obsolete)
   subprice          double(24,8) DEFAULT 0,          -- prix unitaire article
-  total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva         double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc         double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantitï¿½ et incluant remise ligne et globale
+  total_tva         double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantitï¿½ et incluant remise ligne et globale
+  total_ttc         double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantitï¿½ et incluant remise ligne et globale
   product_type		  integer    DEFAULT 0,
   date_start          datetime   DEFAULT NULL,       -- date debut si service
   date_end            datetime   DEFAULT NULL,       -- date fin si service
@@ -43,7 +43,7 @@ create table llx_propaldet
   marge_tx          double(6,3)  DEFAULT 0,          -- taux de marge (marge sur prix d'achat)
   marque_tx         double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
 
-  special_code      tinyint(4)   UNSIGNED DEFAULT 0, -- code pour les lignes speciales
+  special_code      integer UNSIGNED DEFAULT 0,      -- code pour les lignes speciales
   rang              integer      DEFAULT 0           -- ordre affichage sur la propal
 )type=innodb;
 

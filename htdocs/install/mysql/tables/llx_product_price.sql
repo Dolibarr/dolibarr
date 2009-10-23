@@ -24,7 +24,7 @@ create table llx_product_price
   tms             timestamp,
   fk_product      integer NOT NULL,
   date_price      datetime NOT NULL,
-  price_level	    tinyint(4) NULL DEFAULT 1,
+  price_level	    smallint NULL DEFAULT 1,
   price           double(24,8) DEFAULT NULL,
   price_ttc       double(24,8) DEFAULT NULL,
   price_min              double(24,8) default NULL,

@@ -449,3 +449,15 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('52', 409, '', 9, 'MELILLA', 'Melilla', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('53', 420, '', 20, 'OTROS', 'Otros', 1);
 
+
+alter table llx_product_price modify price_level smallint NULL DEFAULT 1;
+alter table llx_commandedet modify special_code integer UNSIGNED DEFAULT 0;
+alter table llx_facturedet modify special_code integer UNSIGNED DEFAULT 0;
+alter table llx_propaldet modify special_code integer UNSIGNED DEFAULT 0;
+alter table llx_societe modify special_code integer NULL;
+
+ALTER TABLE llx_adherent_options ADD INDEX uk_adherent_options (adhid);
+ALTER TABLE llx_bank_class ADD UNIQUE INDEX idx_bank_class_lineid (lineid);
+ALTER TABLE llx_c_ecotaxe ADD INDEX uk_c_ecotaxe (code);
+
+

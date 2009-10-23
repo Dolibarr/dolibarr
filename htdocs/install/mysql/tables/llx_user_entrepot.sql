@@ -23,6 +23,6 @@ create table llx_user_entrepot
   rowid        integer AUTO_INCREMENT PRIMARY KEY,
   fk_entrepot  integer UNSIGNED, -- pointe sur llx_entrepot
   fk_user      integer UNSIGNED, -- pointe sur llx_user
-  consult      tinyint(1) UNSIGNED,
-  send         tinyint(1) UNSIGNED
+  consult      smallint UNSIGNED,
+  send         smallint UNSIGNED
 )type=innodb;

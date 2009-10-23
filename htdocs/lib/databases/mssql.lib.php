@@ -297,9 +297,9 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Effectue une requete et renvoi le resultset de reponse de la base
-	 \param	    query	    Contenu de la query
-	 \return	    resource    Resultset de la reponse
+	 *	\brief      Effectue une requete et renvoi le resultset de reponse de la base
+	 *	\param	    query	    Contenu de la query
+	 *	\return	    resource    Resultset de la reponse
 	 */
 	function query($query)
 	{

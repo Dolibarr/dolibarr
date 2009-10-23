@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,25 +16,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
---
 -- $Id$
 -- ===================================================================
 
---
--- Bordereaux de remise de cheque
---
-create table llx_bordereau_cheque
-(
-  rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  datec             datetime NOT NULL,
-  date_bordereau    date,					-- A quoi sert cette date ?
-  number            varchar(16) NOT NULL,
-  entity            integer DEFAULT 1 NOT NULL,	-- multi company id
-  amount            double(24,8) NOT NULL,
-  nbcheque          smallint NOT NULL,
-  fk_bank_account   integer,
-  fk_user_author    integer,
-  note              text,
-  statut            smallint NOT NULL DEFAULT 0
-  
-)type=innodb;
+ALTER TABLE llx_adherent_options ADD INDEX uk_adherent_options (adhid);
