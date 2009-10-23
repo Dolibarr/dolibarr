@@ -44,7 +44,7 @@ For users:
        access to any users except the one defined in constant.
 - New: Add an admin page of PHP sessions with a way to lock new connections
        for other users than yourself. Can also purge existing sessions.
-- New: Add experimental point of sale module.
+- New: Add point of sale module.
 - New: Better usage when using with smartphones.
 - New: Add module FTP client.
 - New: Can set first day of week.
