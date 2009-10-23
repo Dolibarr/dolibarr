@@ -60,8 +60,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			$qualified=1;
 
 			// Check if file is qualified
-			if (eregi('^\.',$file)) $qualified=0;
-			if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
+			if (preg_match('/^\./',$file)) $qualified=0;
+			if ($excludefilter && preg_match('/'.$excludefilter.'/i',$file)) $qualified=0;
 
 			if ($qualified)
 			{
@@ -72,7 +72,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-					if (! $filter || eregi($filter,$path.'/'.$file))
+					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
 					{
 						$file_list[] = array(
 						"name" => $file,
@@ -94,7 +94,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 					// Add file into file_list array
 					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
-					if (! $filter || eregi($filter,$path.'/'.$file))
+					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
 					{
 						$file_list[] = array(
 						"name" => $file,
@@ -169,42 +169,45 @@ function dol_mimetype($file)
 {
 	$mime='application/octet-stream';
 	// Text files
-	if (eregi('\.txt',$file))         $mime='text/plain';
-	if (eregi('\.csv$',$file))        $mime='text/csv';
-	if (eregi('\.tsv$',$file))        $mime='text/tab-separated-values';
+	if (preg_match('/\.txt$/i',$file))						$mime='text/plain';
+	if (preg_match('/\.csv$/i',$file))						$mime='text/csv';
+	if (preg_match('/\.tsv$/i',$file))						$mime='text/tab-separated-values';
 	// MS office
-	if (eregi('\.mdb$',$file))        $mime='application/msaccess';
-	if (eregi('\.doc$',$file))        $mime='application/msword';
-	if (eregi('\.dot$',$file))        $mime='application/msword';
-	if (eregi('\.xls$',$file))        $mime='application/vnd.ms-excel';
-	if (eregi('\.ppt$',$file))        $mime='application/vnd.ms-powerpoint';
+	if (preg_match('/\.mdb$/i',$file))						$mime='application/msaccess';
+	if (preg_match('/\.doc(x|m)?$/i',$file))				$mime='application/msword';
+	if (preg_match('/\.dot(x|m)?$/i',$file))				$mime='application/msword';
+	if (preg_match('/\.xls(b|m|x)?$/i',$file))				$mime='application/vnd.ms-excel';
+	if (preg_match('/\.xlt(x)?$/i',$file))					$mime='application/vnd.ms-excel';
+	if (preg_match('/\.xla(m)?$/i',$file))					$mime='application/vnd.ms-excel';
+	if (preg_match('/\.pps(m|x)?$/i',$file))				$mime='application/vnd.ms-powerpoint';
+	if (preg_match('/\.ppt(m|x)?$/i',$file))				$mime='application/x-mspowerpoint';
 	// Open office
-	if (eregi('\.odp$',$file))        $mime='application/vnd.oasis.opendocument.presentation';
-	if (eregi('\.ods$',$file))        $mime='application/vnd.oasis.opendocument.spreadsheet';
-	if (eregi('\.odt$',$file))        $mime='application/vnd.oasis.opendocument.text';
+	if (preg_match('/\.odp$/i',$file))						$mime='application/vnd.oasis.opendocument.presentation';
+	if (preg_match('/\.ods$/i',$file))						$mime='application/vnd.oasis.opendocument.spreadsheet';
+	if (preg_match('/\.odt$/i',$file))						$mime='application/vnd.oasis.opendocument.text';
 	// Mix
-	if (eregi('\.(html|htm)$',$file)) $mime='text/html';
-	if (eregi('\.pdf$',$file))        $mime='application/pdf';
-	if (eregi('\.sql$',$file))        $mime='text/plain';
-	if (eregi('\.(sh|ksh|bash)$',$file))        $mime='text/plain';
+	if (preg_match('/\.(html|htm)$/i',$file))				$mime='text/html';
+	if (preg_match('/\.pdf$/i',$file))						$mime='application/pdf';
+	if (preg_match('/\.sql$/i',$file))						$mime='text/plain';
+	if (preg_match('/\.(sh|ksh|bash)$/i',$file))			$mime='text/plain';
 	// Images
-	if (eregi('\.jpg$',$file)) 	      $mime='image/jpeg';
-	if (eregi('\.jpeg$',$file)) 	  $mime='image/jpeg';
-	if (eregi('\.png$',$file)) 	      $mime='image/png';
-	if (eregi('\.gif$',$file)) 	      $mime='image/gif';
-	if (eregi('\.bmp$',$file)) 	      $mime='image/bmp';
-	if (eregi('\.tiff$',$file))       $mime='image/tiff';
+	if (preg_match('/\.jpg$/i',$file))						$mime='image/jpeg';
+	if (preg_match('/\.jpeg$/i',$file))						$mime='image/jpeg';
+	if (preg_match('/\.png$/i',$file))						$mime='image/png';
+	if (preg_match('/\.gif$/i',$file))						$mime='image/gif';
+	if (preg_match('/\.bmp$/i',$file))						$mime='image/bmp';
+	if (preg_match('/\.tiff$/i',$file))						$mime='image/tiff';
 	// Calendar
-	if (eregi('\.vcs$',$file))        $mime='text/calendar';
-	if (eregi('\.ics$',$file))        $mime='text/calendar';
+	if (preg_match('/\.vcs$/i',$file))						$mime='text/calendar';
+	if (preg_match('/\.ics$/i',$file))						$mime='text/calendar';
 	// Other
-	if (eregi('\.torrent$',$file))    $mime='application/x-bittorrent';
+	if (preg_match('/\.torrent$/i',$file))					$mime='application/x-bittorrent';
 	// Audio
-	if (eregi('\.(mp3|ogg|au)$',$file))           $mime='audio';
+	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$file))			$mime='audio';
 	// Video
-	if (eregi('\.(avi|mvw|divx|xvid)$',$file))    $mime='video';
+	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$file))		$mime='video';
 	// Archive
-	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)$',$file)) $mime='archive';
+	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z)$/i',$file))	$mime='archive';
 	return $mime;
 }
 

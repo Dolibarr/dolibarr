@@ -111,8 +111,8 @@ class DoliDb
 		$this->db = $this->connect($host, $user, $pass, $name, $port);
 		if ($this->db)
 		{
-			// Si client connect� avec charset different de celui de la base Dolibarr
-			// (La base Dolibarr a �t� forc�e en this->forcecharset � l'install)
+			// Si client connecte avec charset different de celui de la base Dolibarr
+			// (La base Dolibarr a ete forcee en this->forcecharset a l'install)
 			$this->connected = 1;
 			$this->ok = 1;
 		}
@@ -125,7 +125,7 @@ class DoliDb
 			dol_syslog("DoliDB::DoliDB : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
 		}
 
-		// Si connexion serveur ok et si connexion base demand�e, on essaie connexion base
+		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
 		if ($this->connected && $name)
 		{
 			if ($this->select_db($name))
@@ -179,7 +179,7 @@ class DoliDb
 	 \param	    passwd		mot de passe
 	 \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
 	 \param		port		Port of database server
-	 \return	resource	handler d'acc�s � la bas
+	 \return	resource	handler d'acces a la base
 	 \seealso	close
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
@@ -188,9 +188,9 @@ class DoliDb
 		$newhost=$host;
 		if ($port) $newhost.=':'.$port;
 		$this->db  = @mssql_connect($newhost, $login, $passwd);
-		//force les enregistrement en latin1 si la base est en utf8 par d�faut
-		// Supprim� car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
-		// les nouvelles version de Dolibarr car forc� par l'install Dolibarr.
+		//force les enregistrement en latin1 si la base est en utf8 par defaut
+		// Supprime car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
+		// les nouvelles version de Dolibarr car force par l'install Dolibarr.
 		//$this->query('SET NAMES '.$this->forcecharset);
 		//print "Resultat fonction connect: ".$this->db;
 		return $this->db;
@@ -297,7 +297,7 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Effectue une requete et renvoi le resultset de r�ponse de la base
+	 \brief      Effectue une requete et renvoi le resultset de reponse de la base
 	 \param	    query	    Contenu de la query
 	 \return	    resource    Resultset de la reponse
 	 */
@@ -327,7 +327,7 @@ class DoliDb
 			// Extraire le nombre limite
 			$number = stristr($query, " limit ");
 			$number = substr($number, 7);
-			// Ins�rer l'instruction TOP et le nombre limite
+			// Inserer l'instruction TOP et le nombre limite
 			$query = str_ireplace("select ", "select top ".$number." ", $query);
 			// Supprimer l'instruction MySql
 			$query = str_ireplace(" limit ".$number, "", $query);
@@ -335,20 +335,20 @@ class DoliDb
 
 		$itemfound = stripos($query, " week(");
 		if ($itemfound !== false) {
-			// Recr�er une requ�te sans instruction Mysql
+			// Recreer une requete sans instruction Mysql
 			$positionMySql = stripos($query, " week(");
 			$newquery = substr($query, 0, $positionMySql);
 
-			// R�cup�rer la date pass�e en param�tre
+			// Recuperer la date passee en parametre
 			$extractvalue = stristr($query, " week(");
 			$extractvalue = substr($extractvalue, 6);
 			$positionMySql = stripos($extractvalue, ")");
-			// Conserver la fin de la requ�te
+			// Conserver la fin de la requete
 			$endofquery = substr($extractvalue, $positionMySql);
 			$extractvalue = substr($extractvalue, 0, $positionMySql);
 
 			// Remplacer l'instruction MySql en Sql Server
-			// Ins�rer la date en param�tre et le reste de la requ�te
+			// Inserer la date en parametre et le reste de la requete
 			$query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
 		}
 
@@ -356,7 +356,7 @@ class DoliDb
 
 		if (! $this->database_name)
 		{
-			// Ordre SQL ne n�cessitant pas de connexion � une base (exemple: CREATE DATABASE)
+			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
 			$ret = mssql_query($query, $this->db);
 		}
 		else
@@ -364,7 +364,7 @@ class DoliDb
 			$ret = mssql_query($query, $this->db);
 		}
 
-		if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
 			if (! $ret)
@@ -391,32 +391,32 @@ class DoliDb
 	 */
 	function fetch_object($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mssql_fetch_object($resultset);
 	}
 
 	/**
-	 \brief      Renvoie les donn�es dans un tableau.
+	 \brief      Renvoie les donnees dans un tableau.
 	 \param      resultset   Curseur de la requete voulue
 	 \return	    array
 	 */
 	function fetch_array($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mssql_fetch_array($resultset);
 	}
 
 
 	/**
-	 \brief      Renvoie les donn�es comme un tableau.
+	 \brief      Renvoie les donnees comme un tableau.
 	 \param      resultset   Curseur de la requete voulue
 	 \return	    array
 	 */
 	function fetch_row($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return @mssql_fetch_row($resultset);
 	}
@@ -429,7 +429,7 @@ class DoliDb
 	 */
 	function num_rows($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mssql_num_rows($resultset);
 	}
@@ -481,7 +481,7 @@ class DoliDb
 
 
 	/**
-	 \brief      D�fini le tri de la requ�te.
+	 \brief      Defini le tri de la requete.
 	 \param	    sortfield   liste des champ de tri
 	 \param	    sortorder   ordre du tri
 	 \return	    string      chaine exprimant la syntax sql de l'ordre de tri
@@ -565,7 +565,7 @@ class DoliDb
 	 *	\param		test            chaine test
 	 *	\param		resok           resultat si test egal
 	 *	\param		resko           resultat si test non egal
-	 *	\return		string          chaine format� SQL
+	 *	\return		string          chaine formate SQL
 	 */
 	function ifsql($test,$resok,$resko)
 	{
@@ -674,8 +674,8 @@ class DoliDb
 	}
 
 	/**
-	 \brief     R�cup�re l'id gen�r� par le dernier INSERT.
-	 \param     tab     Nom de la table concern�e par l'insert. Ne sert pas sous mssql mais requis pour compatibilit� avec Postgresql
+	 \brief     Recupere l'id genere par le dernier INSERT.
+	 \param     tab     Nom de la table concernee par l'insert. Ne sert pas sous mssql mais requis pour compatibilite avec Postgresql
 	 \return    int     id
 	 */
 	function last_insert_id($tab)
@@ -750,7 +750,7 @@ class DoliDb
 		$ret=$this->query($sql);
 		if (! $ret)
 		{
-			// On r�essaie pour compatibilit� avec mssql < 5.0
+			// On reessaie pour compatibilite avec mssql < 5.0
 			$sql = 'CREATE DATABASE '.$database;
 			$ret=$this->query($sql);
 		}
@@ -770,19 +770,19 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Cr�e une table
+	 \brief      Cree une table
 	 \param	    table 			Nom de la table
 	 \param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
 	 \param	    primary_key 	Nom du champ qui sera la clef primaire
 	 \param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-	 \param	    fulltext 		Tableau des Nom de champs qui seront index�s en fulltext
-	 \param	    key 			Tableau des champs cl�s noms => valeur
+	 \param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
+	 \param	    key 			Tableau des champs cles noms => valeur
 	 \param	    type 			Type de la table
 	 \return	    int				<0 si KO, >=0 si OK
 	 */
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
-		// cl�s recherch�es dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
+		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "create table ".$table."(";
 		$i=0;
@@ -790,21 +790,21 @@ class DoliDb
 		{
 			$sqlfields[$i] = $field_name." ";
 			$sqlfields[$i]  .= $field_desc['type'];
-			if( eregi("^[^ ]",$field_desc['value']))
+			if( preg_match("/^[^\s]/i",$field_desc['value']))
 			$sqlfields[$i]  .= "(".$field_desc['value'].")";
-			else if( eregi("^[^ ]",$field_desc['attribute']))
+			else if( preg_match("/^[^\s]/i",$field_desc['attribute']))
 			$sqlfields[$i]  .= " ".$field_desc['attribute'];
-			else if( eregi("^[^ ]",$field_desc['default']))
+			else if( preg_match("/^[^\s]/i",$field_desc['default']))
 			{
-				if(eregi("null",$field_desc['default']))
+				if(preg_match("/null/i",$field_desc['default']))
 				$sqlfields[$i]  .= " default ".$field_desc['default'];
 				else
 				$sqlfields[$i]  .= " default '".$field_desc['default']."'";
 			}
-			else if( eregi("^[^ ]",$field_desc['null']))
+			else if( preg_match("/^[^\s]/i",$field_desc['null']))
 			$sqlfields[$i]  .= " ".$field_desc['null'];
 
-			else if( eregi("^[^ ]",$field_desc['extra']))
+			else if( preg_match("/^[^\s]/i",$field_desc['extra']))
 			$sqlfields[$i]  .= " ".$field_desc['extra'];
 			$i++;
 		}
@@ -846,7 +846,7 @@ class DoliDb
 	}
 
 	/**
-	 \brief      d�crit une table dans une database.
+	 \brief      decrit une table dans une database.
 		\param	    table	Nom de la table
 		\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
 		\return	    resource
@@ -864,28 +864,28 @@ class DoliDb
 	 *	\brief      Insert a new field in table
 	 *	\param	    table 			Nom de la table
 	 *	\param		field_name 		Nom du champ a inserer
-	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du param�tre]
+	 *	\param	    field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 *	\param	    field_position 	Optionnel ex.: "after champtruc"
 	 *	\return	    int				<0 si KO, >0 si OK
 	 */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
-		// cl�s recherch�es dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if( eregi("^[^ ]",$field_desc['value']))
+		if( preg_match("/^[^\s]/i",$field_desc['value']))
 		$sql  .= "(".$field_desc['value'].")";
-		if( eregi("^[^ ]",$field_desc['attribute']))
+		if( preg_match("/^[^\s]/i",$field_desc['attribute']))
 		$sql  .= " ".$field_desc['attribute'];
-		if( eregi("^[^ ]",$field_desc['null']))
+		if( preg_match("/^[^\s]/i",$field_desc['null']))
 		$sql  .= " ".$field_desc['null'];
-		if( eregi("^[^ ]",$field_desc['default']))
-		if(eregi("null",$field_desc['default']))
+		if( preg_match("/^[^\s]/i",$field_desc['default']))
+		if(preg_match("/null/i",$field_desc['default']))
 		$sql  .= " default ".$field_desc['default'];
 		else
 		$sql  .= " default '".$field_desc['default']."'";
-		if( eregi("^[^ ]",$field_desc['extra']))
+		if( preg_match("/^[^\s]/i",$field_desc['extra']))
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
@@ -978,7 +978,7 @@ class DoliDb
 			}
 			return $liste;
 			*/
-		return ''; // attente d�bugage
+		return ''; // attente debugage
 	}
 
 }

@@ -55,8 +55,8 @@ function versioncompare($versionarray1,$versionarray2)
 	{
 		$operande1=isset($versionarray1[$level])?$versionarray1[$level]:0;
 		$operande2=isset($versionarray2[$level])?$versionarray2[$level]:0;
-		if (eregi('beta|alpha',$operande1)) $operande1=-1;
-		if (eregi('beta|alpha',$operande2)) $operande2=-1;
+		if (preg_match('/beta|alpha/i',$operande1)) $operande1=-1;
+		if (preg_match('/beta|alpha/i',$operande2)) $operande2=-1;
 		$level++;
 		//print 'level '.$level.' '.$operande1.'-'.$operande2;
 		if ($operande1 < $operande2) { $ret = -$level; break; }
@@ -114,7 +114,7 @@ function run_sql($sqlfile,$silent=1)
 			$buf = fgets($fp, 4096);
 
 			// Cas special de lignes autorisees pour certaines versions uniquement
-			if (eregi('^-- V([0-9\.]+)',$buf,$reg))
+			if (preg_match('/^--\sV([0-9\.]+)/i',$buf,$reg))
 			{
 				$versioncommande=explode('.',$reg[1]);
 				//print var_dump($versioncommande);
@@ -123,13 +123,13 @@ function run_sql($sqlfile,$silent=1)
 				&& versioncompare($versioncommande,$versionarray) <= 0)
 				{
 					// Version qualified, delete SQL comments
-					$buf=preg_replace('/^-- V([0-9\.]+)/i','',$buf);
+					$buf=preg_replace('/^--\sV([0-9\.]+)/i','',$buf);
 					//print "Ligne $i qualifi?e par version: ".$buf.'<br>';
 				}
 			}
 
 			// Ajout ligne si non commentaire
-			if (! preg_match('/^--/i',$buf)) $buffer .= $buf;
+			if (! preg_match('/^--/',$buf)) $buffer .= $buf;
 
 			//          print $buf.'<br>';
 
@@ -200,14 +200,14 @@ function run_sql($sqlfile,$silent=1)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
 			dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 
-			if (eregi('insert into ([^ ]+)',$newsql,$reg))
+			if (preg_match('/insert into ([^\s]+)/i',$newsql,$reg))
 			{
 				// It's an insert
 				$cursorinsert++;
 			}
 
 			// Replace __x__ with rowid of insert nb x
-			while (eregi('__([0-9]+)__',$newsql,$reg))
+			while (preg_match('/__([0-9]+)__/',$newsql,$reg))
 			{
 				$cursor=$reg[1];
 				if (empty($listofinsertedrowid[$cursor]))
@@ -225,7 +225,7 @@ function run_sql($sqlfile,$silent=1)
 			}
 
 			// Replace __ENTITY__ with current entity id
-			while (eregi('(__ENTITY__)',$newsql,$reg))
+			while (preg_match('/(__ENTITY__)/i',$newsql,$reg))
 			{
 				$from   = $reg[1];
 				$to     = $conf->entity;
@@ -464,20 +464,20 @@ function listOfSessions()
 	$dh = @opendir($sessPath);
 	while(($file = @readdir($dh)) !== false)
 	{
-		if (eregi('^sess_',$file) && $file != "." && $file != "..")
+		if (preg_match('/^sess_/i',$file) && $file != "." && $file != "..")
 		{
 			$fullpath = $sessPath.$file;
 			if(! @is_dir($fullpath))
 			{
 				$sessValues = file_get_contents($fullpath);	// get raw session data
 				
-				if (eregi('dol_login',$sessValues) && // limit to dolibarr session
-					eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues) && // limit to current entity
-					eregi('dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
+				if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
+					preg_match('/dol_entity\|s:([0-9]+):"(/i'.$conf->entity.')"',$sessValues) && // limit to current entity
+					preg_match('/dol_company\|s:([0-9]+):"(/i'.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
 				{
 					$tmp=explode('_', $file);
 					$idsess=$tmp[1];
-					$login = eregi('dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"',$sessValues,$regs);
+					$login = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i',$sessValues,$regs);
 					$arrayofSessions[$idsess]["login"] = $regs[1]; 
 					$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
 					$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
@@ -516,9 +516,9 @@ function purgeSessions($mysessionid)
 			{
 				$sessValues = file_get_contents($fullpath);	// get raw session data
 				
-				if (eregi('dol_login',$sessValues) && // limit to dolibarr session
-					eregi('dol_entity\|s:([0-9]+):"('.$conf->entity.')"',$sessValues) && // limit to current entity
-					eregi('dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
+				if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
+					preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i',$sessValues) && // limit to current entity
+					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name
 				{
 					$tmp=explode('_', $file);
 					$idsess=$tmp[1];

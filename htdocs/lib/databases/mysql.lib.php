@@ -139,8 +139,8 @@ class DoliDb
 
 				// If client connected with different charset than Dolibarr HTML output
 				$clientmustbe='';
-				if (eregi('UTF-8',$conf->file->character_set_client))      $clientmustbe='utf8';
-				if (eregi('ISO-8859-1',$conf->file->character_set_client)) $clientmustbe='latin1';
+				if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
+				if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
 				if (mysql_client_encoding($this->db) != $clientmustbe)
 				{
 					$this->query("SET NAMES '".$clientmustbe."'", $this->db);
@@ -165,8 +165,8 @@ class DoliDb
 			{
 				// If client connected with different charset than Dolibarr HTML output
 				$clientmustbe='';
-				if (eregi('UTF-8',$conf->file->character_set_client))      $clientmustbe='utf8';
-				if (eregi('ISO-8859-1',$conf->file->character_set_client)) $clientmustbe='latin1';
+				if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
+				if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
 				if (mysql_client_encoding($this->db) != $clientmustbe)
 				{
 					$this->query("SET NAMES '".$clientmustbe."'", $this->db);
@@ -361,7 +361,7 @@ class DoliDb
 			$ret = mysql_db_query($this->database_name, $query, $this->db);
 		}
 
-		if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
 			if (! $ret)
@@ -838,21 +838,21 @@ class DoliDb
 		{
 			$sqlfields[$i] = $field_name." ";
 			$sqlfields[$i]  .= $field_desc['type'];
-			if( eregi("^[^ ]",$field_desc['value']))
+			if( preg_match("/^[^\s]/i",$field_desc['value']))
 			$sqlfields[$i]  .= "(".$field_desc['value'].")";
-			else if( eregi("^[^ ]",$field_desc['attribute']))
+			else if( preg_match("/^[^\s]/i",$field_desc['attribute']))
 			$sqlfields[$i]  .= " ".$field_desc['attribute'];
-			else if( eregi("^[^ ]",$field_desc['default']))
+			else if( preg_match("/^[^\s]/i",$field_desc['default']))
 			{
-				if(eregi("null",$field_desc['default']))
+				if(preg_match("/null/i",$field_desc['default']))
 				$sqlfields[$i]  .= " default ".$field_desc['default'];
 				else
 				$sqlfields[$i]  .= " default '".$field_desc['default']."'";
 			}
-			else if( eregi("^[^ ]",$field_desc['null']))
+			else if( preg_match("/^[^\s]/i",$field_desc['null']))
 			$sqlfields[$i]  .= " ".$field_desc['null'];
 
-			else if( eregi("^[^ ]",$field_desc['extra']))
+			else if( preg_match("/^[^\s]/i",$field_desc['extra']))
 			$sqlfields[$i]  .= " ".$field_desc['extra'];
 			$i++;
 		}
@@ -922,18 +922,18 @@ class DoliDb
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if( eregi("^[^ ]",$field_desc['value']))
+		if( preg_match("/^[^\s]/i",$field_desc['value']))
 		$sql  .= "(".$field_desc['value'].")";
-		if( eregi("^[^ ]",$field_desc['attribute']))
+		if( preg_match("/^[^\s]/i",$field_desc['attribute']))
 		$sql  .= " ".$field_desc['attribute'];
-		if( eregi("^[^ ]",$field_desc['null']))
+		if( preg_match("/^[^\s]/i",$field_desc['null']))
 		$sql  .= " ".$field_desc['null'];
-		if( eregi("^[^ ]",$field_desc['default']))
-		if(eregi("null",$field_desc['default']))
+		if( preg_match("/^[^\s]/i",$field_desc['default']))
+		if(preg_match("/null/i",$field_desc['default']))
 		$sql  .= " default ".$field_desc['default'];
 		else
 		$sql  .= " default '".$field_desc['default']."'";
-		if( eregi("^[^ ]",$field_desc['extra']))
+		if( preg_match("/^[^\s]/i",$field_desc['extra']))
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 

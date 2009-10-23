@@ -104,8 +104,8 @@ class CMailFile
 
 		// On definit fin de ligne
 		$this->eol="\n";
-		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
-		if (eregi('^mac',PHP_OS)) $this->eol="\r";
+		if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
+		if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
 
 		// On defini mime_boundary
 		$this->mime_boundary = md5(uniqid("dolibarr"));
@@ -744,7 +744,7 @@ class CMailFile
 	 */
 	function checkIfHTML($msg)
 	{
-		if (!eregi('^[ \t]*<html',$msg))
+		if (!preg_match('/^[\s\t]*<html/i',$msg))
 		{
 			$out = "<html><head><title></title>";
 			if (!empty($this->styleCSS)) $out.= $this->styleCSS;
@@ -946,7 +946,7 @@ class CMailFile
 			$i=0;
 			foreach ($matches[1] as $full)
 			{
-				eregi('file=([A-Za-z0-9_\-\/]+[.]?[A-Za-z0-9]+)?$',$full,$regs);
+				preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i',$full,$regs);
 				$img = $regs[1];
 
 				if (file_exists($images_dir.'/'.$img))
@@ -961,13 +961,13 @@ class CMailFile
 					$this->html_images[$i]["name"] = $img;
 
 					// Content type
-					$ext = preg_replace('#^.*\.(\w{3,4})$#e', 'strtolower("$1")', $img);
+					$ext = preg_replace('/^.*\.(\w{3,4})$/e', 'strtolower("$1")', $img);
 					$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 
 					// cid
 					$this->html_images[$i]["cid"] = md5(uniqid(time()));
 
-					$this->html = preg_replace("#src=\"$src\"|src='$src'#", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
+					$this->html = preg_replace("/src=\"$src\"|src='$src'/i", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
 				}
 				$i++;
 			}
@@ -989,7 +989,7 @@ class CMailFile
 						if ($image = file_get_contents($fullpath))
 						{
 							// On garde que le nom de l'image
-							eregi('([A-Za-z0-9_-]+[.]?[A-Za-z0-9]+)?$',$img["name"],$regs);
+							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i',$img["name"],$regs);
 							$imgName = $regs[1];
 
 							$this->images_encoded[$i]['name'] = $imgName;
@@ -1035,7 +1035,7 @@ class CMailFile
 		// Boucle sur chaque composant de l'adresse
 		foreach($arrayaddress as $val)
 		{
-			if (eregi('^(.*)<(.*)>$',trim($val),$regs))
+			if (preg_match('/^(.*)<(.*)>$/i',trim($val),$regs))
 			{
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);

@@ -152,7 +152,7 @@ class DoliDb
 	function convertSQLFromMysql($line)
 	{
 		# comments or empty lines
-		if (eregi('^-- \$Id',$line)) {
+		if (preg_match('/^--\s\$Id/i',$line)) {
 			return '';
 		}
 		# comments or empty lines
@@ -163,13 +163,13 @@ class DoliDb
 		if ($line != "")
 		{ 		# we are inside create table statement so lets process datatypes
 			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
-				$line=preg_replace('/\) *type=(MyISAM|innodb);/i',');',$line);
-				$line=preg_replace('/\) *engine=(MyISAM|innodb);/i',');',$line);
+				$line=preg_replace('/\)[\s\t]*type=(MyISAM|innodb);/i',');',$line);
+				$line=preg_replace('/\)[\s\t]*engine=(MyISAM|innodb);/i',');',$line);
 				$line=preg_replace('/,$/','',$line);
 			}
 
 			if (preg_match('/[\s\t]*(\w*)\s*.*int.*auto_increment/i',$line,$reg)) {
-				$line=preg_replace('/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/i','\\1 SERIAL PRIMARY KEY',$line);
+				$line=preg_replace('/[\s\t]*([a-zA-Z_0-9]*)[\s\t]*.*int.*auto_increment[^,]*/i','\\1 SERIAL PRIMARY KEY',$line);
 			}
 
 			# int type conversion
@@ -493,7 +493,7 @@ class DoliDb
 		$query=$this->convertSQLFromMysql($query);
 
 		$ret = pg_query($this->db, $query);
-		if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
 			if (! $ret)
@@ -965,18 +965,18 @@ class DoliDb
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if( eregi("^[^ ]",$field_desc['value']))
+		if( preg_match("/^[^\s]/i",$field_desc['value']))
 		$sql  .= "(".$field_desc['value'].")";
-		if( eregi("^[^ ]",$field_desc['attribute']))
+		if( preg_match("/^[^\s]/i",$field_desc['attribute']))
 		$sql  .= " ".$field_desc['attribute'];
-		if( eregi("^[^ ]",$field_desc['null']))
+		if( preg_match("/^[^\s]/i",$field_desc['null']))
 		$sql  .= " ".$field_desc['null'];
-		if( eregi("^[^ ]",$field_desc['default']))
-		if(eregi("null",$field_desc['default']))
+		if( preg_match("/^[^\s]/i",$field_desc['default']))
+		if(preg_match("/null/i",$field_desc['default']))
 		$sql  .= " default ".$field_desc['default'];
 		else
 		$sql  .= " default '".$field_desc['default']."'";
-		if( eregi("^[^ ]",$field_desc['extra']))
+		if( preg_match("/^[^\s]/i",$field_desc['extra']))
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
