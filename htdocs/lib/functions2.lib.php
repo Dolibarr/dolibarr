@@ -265,6 +265,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	{
 		$ValidUrl = 1;
 	}
+	//print $urlregex.' - '.$url.' - '.$ValidUrl;exit;
 
 	return $ValidUrl;
 }
