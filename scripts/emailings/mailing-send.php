@@ -80,7 +80,7 @@ if ($resql)
 
 		// Le message est-il en html
 		$msgishtml=-1;	// Inconnu par defaut
-		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;
+		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		$i++;
 	}

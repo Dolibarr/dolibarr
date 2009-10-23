@@ -387,7 +387,7 @@ function encodedecode_dbpassconf($level=0)
 				$val = trim($reg[1]);	// This also remove CR/LF
 				$val=preg_replace('/^["\']/','',$val);
 				$val=preg_replace('/["\'][\s;]*$/','',$val);
-				if (eregi('crypted:',$buffer))
+				if (preg_match('/crypted:/i',$buffer))
 				{
 					$val = preg_replace('/crypted:/i','',$val);
 					$passwd_crypted = $val;

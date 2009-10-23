@@ -61,7 +61,7 @@ function is_in_subtree($fulltree,$parentid,$childid)
 		if ($record['id'] == $childid)
 		{
 			//print $record['fullpath'].'_'.' - '.$fullpathparent.'_';
-			if (eregi($fullpathparent.'_',$record['fullpath'].'_')) 
+			if (preg_match('/'.$fullpathparent.'_/i',$record['fullpath'].'_')) 
 			{
 				//print 'DEL='.$childid;
 				return 1;
@@ -150,7 +150,7 @@ function tree_addjs()
 }
 
 
-/* cette fonction gère le décallage des éléments
+/* cette fonction gï¿½re le dï¿½callage des ï¿½lï¿½ments
  suivant leur position dans l'arborescence
  */
 function tree_showline($tab,$rang)
@@ -219,10 +219,10 @@ function tree_showline($tab,$rang)
 }
 
 
-/*fonction récursive d'affichage de l'arbre
- $tab  :tableau des éléments
- $pere :index de l'élément courant
- $rang :décallage de l'élément
+/*fonction rï¿½cursive d'affichage de l'arbre
+ $tab  :tableau des ï¿½lï¿½ments
+ $pere :index de l'ï¿½lï¿½ment courant
+ $rang :dï¿½callage de l'ï¿½lï¿½ment
  */
 function tree_recur($tab,$pere,$rang) 
 {
@@ -233,15 +233,15 @@ function tree_recur($tab,$pere,$rang)
 	//ballayage du tableau
 	for ($x=0;$x<count($tab);$x++)
 	{
-		//si un élément a pour père : $pere
+		//si un ï¿½lï¿½ment a pour pï¿½re : $pere
 		if ($tab[$x][1]==$pere)
 		{
-			//on l'affiche avec le décallage courrant
+			//on l'affiche avec le dï¿½callage courrant
 			tree_showline($tab[$x],$rang);
 				
 			/*et on recherche ses fils
 			 en rappelant la fonction recur()
-			 (+ incrémentation du décallage)*/
+			 (+ incrï¿½mentation du dï¿½callage)*/
 			tree_recur($tab,$tab[$x][0],$rang+1);
 		}
 	}

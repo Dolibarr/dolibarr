@@ -85,12 +85,12 @@ print img_picto_common('','who.png','',1);
 print '</td></tr>';*/
 print '<tr><td align="center">';
 $urlwiki='http://wiki.dolibarr.org';
-if (eregi('fr',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Accueil';
-if (eregi('es',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Portada';
+if (preg_match('/fr/i',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Accueil';
+if (preg_match('/es/i',$langs->defaultlang)) $urlwiki='http://wiki.dolibarr.org/index.php/Portada';
 print '<br>'.$langs->trans("ForDocumentationSeeWiki",$urlwiki,$urlwiki);
 print '<br>';
 $urlforum='http://www.dolibarr.org/forum/';
-if (eregi('fr',$langs->defaultlang)) $urlforum='http://www.dolibarr.fr/forum/';
+if (preg_match('/fr/i',$langs->defaultlang)) $urlforum='http://www.dolibarr.fr/forum/';
 print '<br>'.$langs->trans("ForAnswersSeeForum",$urlforum,$urlforum).'<br>';
 print '</td></tr></table>';
 print '</td>';

@@ -236,7 +236,7 @@ if ($resql)
 		$textprofid[$key]='';
 		if ($label != "ProfId".$key.$mysoc->pays_code)
 		{	// Get only text between ()
-			if (eregi('\((.*)\)',$label,$reg)) $label=$reg[1];
+			if (preg_match('/\((.*)\)/i',$label,$reg)) $label=$reg[1];
 			$textprofid[$key]=$langs->trans("ProfIdShortDesc",$key,$mysoc->pays_code,$label);
 		}
 	}

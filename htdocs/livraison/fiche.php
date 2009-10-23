@@ -561,7 +561,7 @@ else
 			{
 				print '<div class="tabsAction">';
 
-//				if (! eregi('^(valid|delete)',$_REQUEST["action"]))
+//				if (! preg_match('/^(valid|delete)/i',$_REQUEST["action"]))
 //				{
 					if ($livraison->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
 					{

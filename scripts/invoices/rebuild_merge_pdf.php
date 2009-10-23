@@ -74,7 +74,7 @@ foreach ($argv as $key => $value)
 	$found=false;
 
 	// Define options
-	if (eregi('^lang=',$value))
+	if (preg_match('/^lang=/i',$value))
 	{
 		$found=true;
 		$valarray=explode('=',$value);
@@ -122,7 +122,7 @@ foreach ($argv as $key => $value)
 		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
 	}
 
-	if (! $found && eregi('filter=',$value))
+	if (! $found && preg_match('/filter=/i',$value))
 	{
 		usage();
 		exit;

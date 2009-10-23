@@ -318,7 +318,7 @@ class Contact extends CommonObject
 
 		if ($this->birthday)	// <0 si avant 1970, >0 si apres 1970
 		{
-			if (eregi('^[0-9]+\-',$this->birthday))
+			if (preg_match('/^[0-9]+\-/',$this->birthday))
 			{
 				// Si date = chaine (ne devrait pas arriver)
 				$sql .= ", birthday='".$this->birthday."'";

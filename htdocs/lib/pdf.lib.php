@@ -154,14 +154,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if ($fromcompany->profid1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->profid2))
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid1);
 	}
 	// Prof Id 2
 	if ($fromcompany->profid2)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid2);
 	}
 
@@ -171,14 +171,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if ($fromcompany->profid3)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid3);
 	}
 	// Prof Id 4
 	if ($fromcompany->profid4)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid4);
 	}
 	// IntraCommunautary VAT

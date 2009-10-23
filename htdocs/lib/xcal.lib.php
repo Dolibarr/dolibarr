@@ -260,7 +260,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		'<generator>Dolibarr</generator>'."\n";
 
 		$url=$dolibarr_main_url_root;
-		if (! eregi('\/$',$url)) $url.='/';
+		if (! preg_match('/\/$/',$url)) $url.='/';
 		$url.='comm/action/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
 		$html.='<link><![CDATA['.$url.']]></link>'."\n";
 //		'<managingEditor>editor@example.com</managingEditor>'."\n"

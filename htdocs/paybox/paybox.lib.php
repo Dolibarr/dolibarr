@@ -126,12 +126,12 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     $IBS_BKGD="#FFFFFF";
     $IBS_WAIT="2000";
 	$IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
-	if (eregi('^FR',$langs->defaultlang)) $IBS_LANG="FRA";
-	if (eregi('^ES',$langs->defaultlang)) $IBS_LANG="ESP";
-	if (eregi('^IT',$langs->defaultlang)) $IBS_LANG="ITA";
-	if (eregi('^DE',$langs->defaultlang)) $IBS_LANG="DEU";
-	if (eregi('^NL',$langs->defaultlang)) $IBS_LANG="NLD";
-	if (eregi('^SE',$langs->defaultlang)) $IBS_LANG="SWE";
+	if (preg_match('/^FR/i',$langs->defaultlang)) $IBS_LANG="FRA";
+	if (preg_match('/^ES/i',$langs->defaultlang)) $IBS_LANG="ESP";
+	if (preg_match('/^IT/i',$langs->defaultlang)) $IBS_LANG="ITA";
+	if (preg_match('/^DE/i',$langs->defaultlang)) $IBS_LANG="DEU";
+	if (preg_match('/^NL/i',$langs->defaultlang)) $IBS_LANG="NLD";
+	if (preg_match('/^SE/i',$langs->defaultlang)) $IBS_LANG="SWE";
 	$IBS_OUTPUT='E';
 	$PBX_SOURCE='HTML';
 	$PBX_TYPEPAIEMENT='CARTE';
@@ -253,14 +253,14 @@ function html_print_footer($fromcompany,$langs)
 	if ($fromcompany->profid1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->profid2))
 	{
 		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne1.=($ligne1?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->profid1);
 	}
 	// Prof Id 2
 	if ($fromcompany->profid2)
 	{
 		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne1.=($ligne1?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->profid2);
 	}
 
@@ -270,14 +270,14 @@ function html_print_footer($fromcompany,$langs)
 	if ($fromcompany->profid3)
 	{
 		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne2.=($ligne2?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->profid3);
 	}
 	// Prof Id 4
 	if ($fromcompany->profid4)
 	{
 		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
-		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
 		$ligne2.=($ligne2?" - ":"").$field.": ".$langs->convToOutputCharset($fromcompany->profid4);
 	}
 	// IntraCommunautary VAT

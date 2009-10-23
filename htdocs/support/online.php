@@ -81,7 +81,7 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 	foreach($listoflangs as $langcode)		// Loop on each lang of user
 	{
 		$pos++;
-		if (eregi($langcode,$langs->defaultlang) || $langcode == 'en')	// If lang qualified
+		if (preg_match('/'.$langcode.'/i',$langs->defaultlang) || $langcode == 'en')	// If lang qualified
 		{
 			print '<td align="center">';
 			print $arraywidget['name'].'<br>';
@@ -90,7 +90,7 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 			foreach ($listoflangs as $langcode2)
 			{
 				if (empty($widgetid)) $widgetid=$listoflangs[$pos-1];
-				if (! eregi($langcode,$langs->defaultlang) && $langcode2 != 'en') continue;	// Show only english
+				if (! preg_match('/'.$langcode.'/i',$langs->defaultlang) && $langcode2 != 'en') continue;	// Show only english
 				print $langcode2.' ';
 			}
 			print '<br>';

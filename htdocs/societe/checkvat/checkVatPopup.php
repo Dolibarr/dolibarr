@@ -78,23 +78,23 @@ else
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
 	// Service indisponible
-	if (! is_array($result) || eregi('SERVICE_UNAVAILABLE',$result['faultstring']))
+	if (! is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i',$result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
-	elseif (eregi('TIMEOUT',$result['faultstring']))
+	elseif (preg_match('/TIMEOUT/i',$result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
-	elseif (eregi('SERVER_BUSY',$result['faultstring']))
+	elseif (preg_match('/SERVER_BUSY/i',$result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow=$soapclient->response;
 	}
 	// Syntaxe ko
-	elseif (eregi('INVALID_INPUT',$result['faultstring'])
+	elseif (preg_match('/INVALID_INPUT/i',$result['faultstring'])
 			|| ($result['requestDate'] && ! $result['valid']))
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
@@ -108,7 +108,7 @@ else
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
 		print $langs->trans("VATIntraValueIsValid").': ';
-		if (eregi('MS_UNAVAILABLE',$result['faultstring']))
+		if (preg_match('/MS_UNAVAILABLE/i',$result['faultstring']))
 		{
 			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$_REQUEST["countryCode"]).'</font><br>';
 		}

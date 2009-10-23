@@ -237,7 +237,7 @@ class Webcal {
 					$event['type']=$type;
 					$date=$obj->cal_date;
 					$time=$obj->cal_time;
-					if (eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$date,$reg))
+					if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/',$date,$reg))
 					{
 						$year=$reg[1];
 						$month=$reg[2];
@@ -246,7 +246,7 @@ class Webcal {
 						if (! empty($filters['month']) && $year != $filters['month']) $qualified=false;
 						if (! empty($filters['day'])   && $year != $filters['day'])   $qualified=false;
 					}
-					if (eregi('^([0-9]?[0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
+					if (preg_match('/^([0-9]?[0-9])([0-9][0-9])([0-9][0-9])$/',$time,$reg))
 					{
 						$hour=sprintf("%02d",$reg[1]);
 						$min=sprintf("%02d",$reg[2]);
@@ -261,7 +261,7 @@ class Webcal {
 					$event['author']=$obj->cal_create_by;
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
 					$url=$conf->global->PHPWEBCALENDAR_URL;
-					if (! eregi('\/$',$url)) $url.='/';
+					if (! preg_match('/\/$/',$url)) $url.='/';
 					$url.='view_entry.php?id='.$obj->cal_id;
 					$event['url']=$url;
 

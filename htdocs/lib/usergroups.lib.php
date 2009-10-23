@@ -162,7 +162,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     while (($subdir = readdir($handle))!==false)
     {
         if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-        	&& substr($subdir, 0, 3) <> 'CVS' && ! eregi('common',$subdir))
+        	&& substr($subdir, 0, 3) <> 'CVS' && ! preg_match('/common/i',$subdir))
         {
             if ($i % $thumbsbyrow == 0)
             {

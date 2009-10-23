@@ -68,7 +68,7 @@ print '<li>';
 print '<a target="blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
 // Si langue francaise, on affiche site web francophone
-if (eregi('^fr_',$langs->getDefaultLang()))
+if (preg_match('/^fr_/i',$langs->getDefaultLang()))
 {
 	print '<li>';
 	print '<a target="blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
@@ -81,7 +81,7 @@ print '<li>';
 print '<a target="blank" href="http://demo.dolibarr.org/public/demo">'.$langs->trans("OfficialDemo").'</a>';
 print '</li>';
 
-if (eregi('^fr_',$langs->getDefaultLang()))
+if (preg_match('/^fr_/i',$langs->getDefaultLang()))
 {
 	print '<li>';
 	print 'Les t&acirc;ches en cours de r&eacute;alisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projets</a> sur Savannah.';

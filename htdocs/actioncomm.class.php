@@ -701,7 +701,7 @@ class ActionComm
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
 					$event['category']=$langs->convToOutputCharset($obj->libelle);	// libelle type action
 					$url=$dolibarr_main_url_root;
-					if (! eregi('\/$',$url)) $url.='/';
+					if (! preg_match('/\/$/',$url)) $url.='/';
 					$url.='comm/action/fiche.php?id='.$obj->id;
 					$event['url']=$url;
 
