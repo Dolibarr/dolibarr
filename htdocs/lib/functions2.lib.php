@@ -240,7 +240,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	$urlregex = '';
 
 	// SCHEME
-	if ($http) $urlregex .= "^(http:\/\/|https:\/\/)";
+	if ($http) $urlregex .= "/^(http:\/\/|https:\/\/)";
 
 	// USER AND PASS
 	if ($pass) $urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)";
@@ -258,10 +258,10 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	// GET Query
 	if ($query) $urlregex .= "(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)";
 	// ANCHOR
-	if($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)\$";
+	if($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)$/i";
 
 	// check
-	if (eregi($urlregex, $url))
+	if (preg_match($urlregex, $url))
 	{
 		$ValidUrl = 1;
 	}
@@ -364,7 +364,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	// but we should use local year and month of user
 
 	// Extract value for mask counter, mask raz and mask offset
-	if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
+	if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
 	$masktri=$reg[1].$reg[2].$reg[3];
 	$maskcounter=$reg[1];
 	$maskraz=-1;
@@ -372,7 +372,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	if (strlen($maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
 
 	// Extract value for third party mask counter
-	if (eregi('\{(c+)(0*)\}',$mask,$regClientRef))
+	if (preg_match('/\{(c+)(0*)\}/i',$mask,$regClientRef))
 	{
 		$maskrefclient=$regClientRef[1].$regClientRef[2];
 		$maskrefclient_maskclientcode=$regClientRef[1];
@@ -476,7 +476,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		$counter = $obj->val;
 	}
 	else dol_print_error($db);
-	if (empty($counter) || eregi('[^0-9]',$counter)) $counter=$maskoffset;
+	if (empty($counter) || preg_match('/[^0-9]/i',$counter)) $counter=$maskoffset;
 	$counter++;
 
 	if ($maskrefclient_maskcounter)
@@ -519,7 +519,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 			$maskrefclient_counter = $maskrefclient_obj->val;
 		}
 		else dol_print_error($db);
-		if (empty($maskrefclient_counter) || eregi('[^0-9]',$maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
+		if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i',$maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
 		$maskrefclient_counter++;
 	}
 
@@ -571,7 +571,7 @@ function check_value($mask,$value)
 	$result=0;
 
 	// Extract value for mask counter, mask raz and mask offset
-	if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
+	if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
 	$masktri=$reg[1].$reg[2].$reg[3];
 	$maskcounter=$reg[1];
 	$maskraz=-1;
@@ -579,7 +579,7 @@ function check_value($mask,$value)
 	if (strlen($maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
 
 	// Extract value for third party mask counter
-	if (eregi('\{(c+)(0*)\}',$mask,$regClientRef))
+	if (preg_match('/\{(c+)(0*)\}/i',$mask,$regClientRef))
 	{
 		$maskrefclient=$regClientRef[1].$regClientRef[2];
 		$maskrefclient_maskclientcode=$regClientRef[1];
@@ -692,7 +692,7 @@ function hexbin($hexa)
 function image_format_supported($file)
 {
 	// Case filename is not a format image
-	if (! eregi('(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$',$file,$reg)) return -1;
+	if (! preg_match('/(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$/i',$file,$reg)) return -1;
 
 	// Case filename is a format image but not supported by this PHP
 	$imgfonction='';
@@ -926,7 +926,7 @@ function version_os()
 	phpinfo();
 	$chaine = ob_get_contents();
 	ob_end_clean();
-	eregi('System </td><td class="v">([^<]*)</td>',$chaine,$reg);
+	preg_match('/System </td><td class="v">([^<]*)</td>/i',$chaine,$reg);
 	$osversion=$reg[1];
 	return $osversion;
 }
