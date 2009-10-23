@@ -117,11 +117,11 @@ if ($_socid > 0)
 
 	// Nouvelle valeur
 	print '<tr><td colspan="2">';
-	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">%</td></tr>';
+	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:$objsoc->remise_client).'">%</td></tr>';
 
 	// Motif/Note
 	print '<tr><td colspan="2" width="25%">';
-	print $langs->trans("NoteReason").'</td><td colspan="2"><input type="text" size="60" name="note" value=""></td></tr>';
+	print $langs->trans("NoteReason").'</td><td colspan="2"><input type="text" size="60" name="note" value="'.$_POST["note"].'"></td></tr>';
 
 	print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 
