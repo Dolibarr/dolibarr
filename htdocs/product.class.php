@@ -2546,8 +2546,7 @@ class Product extends CommonObject
 	{
 		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
-		$pattern = str_replace('/','\/',$dir); // Add backslashes for regular expression
-		$filename = preg_replace('/'.$pattern.'/i','',$file); // Nom du fichier
+		$filename = preg_replace('/'.preg_quote($dir,'/').'/i','',$file); // Nom du fichier
 
 		// On efface l'image d'origine
 		dol_delete_file($file);

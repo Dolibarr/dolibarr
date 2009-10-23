@@ -300,12 +300,9 @@ function clean_url($url,$http=1)
 				$newproto = '';
 			}
 		}
-
-		// Add backslashes for regular expression
-		$proto = str_replace('/','\/',$proto);
 		
 		// On passe le nom de domaine en minuscule
-		$CleanUrl = preg_replace('/^'.$proto.$domain.'/i', $newproto.strtolower($domain), $url);
+		$CleanUrl = preg_replace('/^'.preg_quote($proto.$domain,'/').'/i', $newproto.strtolower($domain), $url);
 
 		return $CleanUrl;
 	}

@@ -120,8 +120,7 @@ print "<br>";
 
 // Show message
 $message='';
-$pattern = str_replace('/','\/',DOL_URL_ROOT); // Add backslashes for regular expression
-$urlwithouturlroot=preg_replace('/'.$pattern.'$/i','',$dolibarr_main_url_root);
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 $urlvcal='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'...').'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'KEYNOTDEFINED').'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';

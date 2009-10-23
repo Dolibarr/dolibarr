@@ -92,9 +92,7 @@ print '<br><br>';
 
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 $firstpart=$dolibarr_main_url_root;
-$pattern = str_replace('/','\/',DOL_URL_ROOT); // Add backslashes for regular expression
-$regex='/'.$pattern.'$/i';
-$firstpart=preg_replace($regex,'',$firstpart);
+$firstpart=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$firstpart);
 
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
 $url=$firstpart.DOL_URL_ROOT.'/webservices/server.php?wsdl';
