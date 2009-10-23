@@ -24,8 +24,12 @@ include_once(DOL_DOCUMENT_ROOT.'/product/stock/entrepot.class.php');
 
 $company=new Societe($db);
 $company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
-$bank=new Account($db);
-$bank->fetch($conf->global->CASHDESK_ID_BANKACCOUNT);
+$bankcash=new Account($db);
+$bankcash->fetch($conf->global->CASHDESK_ID_BANKACCOUNT);
+$bankcb=new Account($db);
+$bankcb->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CB);
+$bankcheque=new Account($db);
+$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 $warehouse=new Entrepot($db);
 //$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
 
@@ -42,7 +46,9 @@ print '<li class="menu_choix2"><a href=".."><span>'.$langs->trans("BackOffice").
 
 print '<li class="menu_choix0">'.$langs->trans("User").' : '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
 print $langs->trans("CashDeskThirdParty").' : '.$company->getNomUrl(1).'<br>';
-print $langs->trans("CashDeskBank").' : '.$bank->getNomUrl(1).'<br>';
+print $langs->trans("CashDeskBankCash").' : '.$bankcash->getNomUrl(1).'<br>';
+print $langs->trans("CashDeskBankCB").' : '.$bankcb->getNomUrl(1).'<br>';
+print $langs->trans("CashDeskBankCheque").' : '.$bankcheque->getNomUrl(1).'<br>';
 if ($conf->stock->enabled && $warehouse->id)	// Disabled because warehouse->fetch disabled before
 {
 	print $langs->trans("CashDeskWarehouse").' : '.$warehouse->getNomUrl(1);
