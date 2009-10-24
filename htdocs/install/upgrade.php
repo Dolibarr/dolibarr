@@ -234,17 +234,10 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 		{
 			// Suppression vieilles contraintes sans noms et en doubles
 			// Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
-			/* $listtables=array(  'llx_product_fournisseur_price',
-								'llx_fichinter',
-								'llx_facture_fourn',
-								'llx_propal',
-								'llx_socpeople',
-								'llx_telephonie_adsl_fournisseur',
-								'llx_telephonie_client_stats',
-								'llx_telephonie_contact_facture',
-								'llx_telephonie_societe_ligne',
-								'llx_telephonie_tarif_client');
-			*/
+			$listtables=array(  'llx_adherent_options',
+								'llx_bank_class',
+								'llx_c_ecotaxe');
+
 			$listtables = $db->DDLListTables($conf->db->name,'');
 		    foreach ($listtables as $val)
 			{
