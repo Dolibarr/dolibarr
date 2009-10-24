@@ -1,72 +1,63 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - other
 CHARSET=UTF-8
-ErrorPasswordDiffers=Wachtwoorden verschilt, typt u deze opnieuw.
-ErrorForbidden=Toegang verboden. <br> Je probeert de toegang tot een pagina of functie zonder in een geauthentiseerde sessie, of dat niet is toegestaan om uw gebruikersnaam.
-ErrorForbidden2=Toestemming voor deze aanmelding kan worden gedefinieerd door de beheerder van Dolibarr menu% s-&gt;% s.
-ErrorForbidden3=Het lijkt erop dat Dolibarr niet wordt gebruikt door een geauthentiseerde sessie. Neem een kijkje op Dolibarr setup documentatie om te weten hoe het beheer van verificaties (htaccess, mod_auth of andere ...).
-ErrorNoImagickReadimage=Functie imagick_readimage is niet gevonden in dit PHP. Geen voorbeeld beschikbaar kan zijn. Beheerders kunnen uitschakelen dit tabblad uit het menu Setup - Display.
+ErrorPasswordDiffers=Wachtwoorden verschillen, typt u deze opnieuw.
+ErrorForbidden=Toegang verboden. <br> Je probeert toegang tot een pagina of functie te krijgen zonder een geauthentiseerde sessie, of zonder rechten voor uw gebruikersnaam.
+ErrorForbidden2=Toestemming voor deze aanmelding kan worden gedefinieerd door de beheerder van Dolibarr menu %s->%s.
+ErrorForbidden3=Het lijkt erop dat Dolibarr niet wordt gebruikt met een geauthentiseerde sessie. Neem een kijkje op Dolibarr setup documentatie om te weten hoe het beheer van verificaties (htaccess, mod_auth of andere ...) werkt.
+ErrorNoImagickReadimage=Functie imagick_readimage is niet gevonden in deze PHP. Geen voorbeeld kan beschikbaar zijn. Beheerders kunnen uitschakelen dit tabblad uit het menu Setup - Scherm.
 ErrorRecordAlreadyExists=Record bestaat al
-ErrorCantReadFile=Failed to read file &#39;% s&#39;
-ErrorCantReadDir=Failed to read directory &#39;% s&#39;
-ErrorFailedToFindEntity=Failed to read entiteit &#39;% s&#39;
+ErrorCantReadFile=Fout bij lezen bestand '%s'
+ErrorCantReadDir=Fout bij lezen map '%s'
+ErrorFailedToFindEntity=Fout bij lezen entiteit '%s'
 ErrorBadLoginPassword=Onjuiste waarde voor login of wachtwoord
 ErrorLoginDisabled=Uw account is uitgeschakeld
-ErrorFailedToRunExternalCommand=Failed to run externe commando. Check deze beschikbaar is en runnable door uw PHP server. Als PHP <b>Veilige modus</b> is ingeschakeld, controleert u dat commando in een directory gedefinieerd door parameter <b>safe_mode_exec_dir.</b>
-ErrorFailedToChangePassword=Mislukt wachtwoord wijzigen
-ErrorLoginDoesNotExists=Gebruikers met <b>login% s</b> kon niet worden gevonden.
+ErrorFailedToRunExternalCommand=Fout bij uitvoeren externe opdracht. Controleer of deze beschikbaar is en uitvoerbaar op uw PHP server. Als PHP <b>Safe mode</b> is ingeschakeld, controleert dat commando in een directory is gedefinieerd door parameter <b>safe_mode_exec_dir.</b>
+ErrorFailedToChangePassword=Wachtwoord wijzigen mislukt
+ErrorLoginDoesNotExists=Gebruikers met login <b>%s</b> kon niet worden gevonden.
 ErrorLoginHasNoEmail=Deze gebruiker heeft geen e-mail adres. Proces afgebroken.
-ErrorBadValueForCode=Onjuiste waarde typen code. Probeer het opnieuw met een nieuwe waarde ...
-ErrorFileIsInfectedWith=Dit bestand is geïnfecteerd met% s
+ErrorBadValueForCode=Onjuiste waarde type code. Probeer het opnieuw met een nieuwe waarde ...
+ErrorFileIsInfectedWith=Dit bestand is geïnfecteerd met %s
 SecurityCode=Beveiligingscode
 Calendar=Kalender
-AddTrip=Toevoegen reis
+AddTrip=Reis toevoegen
 Tools=Gereedschap
 Birthday=Verjaardag
-BirthdayDate=Verjaardag
-DateToBirth=Datum van geboorte
+BirthdayDate=Verjaardagsdatum
+DateToBirth=Geboortedatum
 Notify_NOTIFY_VAL_FICHINTER=Valideer interventie
 Notify_NOTIFY_VAL_FAC=Valideer factuur
-NbOfAttachedFiles=Aantal bijgevoegde bestanden / documenten
-TotalSizeOfAttachedFiles=Totale omvang van de bijgevoegde bestanden / documenten
+NbOfAttachedFiles=Aantal bijgevoegde bestanden/documenten
+TotalSizeOfAttachedFiles=Totale omvang van de bijgevoegde bestanden/documenten
 MaxSize=Maximale grootte
-AttachANewFile=Voeg een nieuw bestand / document
+AttachANewFile=Voeg een nieuw bestand/document toe
 LinkedObject=Gekoppeld object
 Miscellanous=Diversen
 NbOfActiveNotifications=Aantal aanmeldingen
-WarningInstallDirExists=Waarschuwing, install directory (% s) bestaat nog steeds. Dit is een ernstig beveiligingslek. U moet verwijderd zo spoedig mogelijk.
+WarningInstallDirExists=Waarschuwing, install map (%s) bestaat nog steeds. Dit is een ernstig beveiligingslek. U dient deze map zo spoedig mogelijk te verwijderen.
 WarningUntilDirRemoved=Deze waarschuwing zal actief blijven zolang deze map aanwezig is (alleen weergegeven voor admin-gebruikers).
-PredefinedMailContentSendInvoice=Veuillez trouver ci-joint la facture __FACREF__ \ n \ nCordialement \ n \ n
-PredefinedMailContentSendInvoiceReminder=Nous apportons votre Connaissance que la facture __FACREF__ ne semble pas avoir t rgle. La voici dus, pour rappel, en pice jointe. \ N \ nCordialement \ n \ n
-PredefinedMailContentSendProposal=Veuillez trouver ci-joint la proposition commerciale __PROPREF__ \ n \ nCordialement \ n \ n
-PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF__ \ n \ nCordialement \ n \ n
-ChooseYourDemoProfil=Kies de demo profiel die overeenkomen met uw activiteit ...
+PredefinedMailContentSendInvoice=Bijgevoegd vindt u de factuur __FACREF__ \ n \ nCordialement \ n \ n
+PredefinedMailContentSendInvoiceReminder=Wij brengen onder uw aandacht dat de factuur __FACREF__ niet lijkt te zijn voldaan. Hier dan, te herinneren als bijlage. \ N \ nCordialement \ n \ n
+PredefinedMailContentSendProposal=Hierbij de offerte __PROPREF__ \ n \ nCordialement \ n \ n
+PredefinedMailContentSendOrder=Bijgevoegd vindt u opdracht __ORDERREF__ \ n \ nCordialement \ n \ n
+DemoDesc=Dolibarr is een compacte ERP/CRM oplossing, samengesteld door verschillende functionele modules. Een demo met alle modules beschikbaar betekent niets als nooit iets gebeurt. Dus, zijn enkele demo-profielen beschikbaar.
+DemoCompanyServiceOnly=Het beheren van een zelfstandige activiteit te verkopen dienst alleen
+ChooseYourDemoProfil=Kies het demo profiel dat overeenkomt met uw activiteit ...
 DemoCompanyShopWithCashDesk=Beheren van een winkel met een kassa
-DemoCompanyProductAndStocks=Het beheren van een kleine of middelgrote onderneming verkopen van producten
+DemoCompanyProductAndStocks=Het beheren van een kleine of middelgrote onderneming met product verkopen
 DemoCompanyAll=Het beheren van een kleine of middelgrote onderneming met meerdere activiteiten (alle modules)
 GoToDemo=Ga naar de demo
-CreatedBy=Gemaakt door% s
-ModifiedBy=Gewijzigd door% s
-ValidatedBy=Gevalideerd door% s
-CanceledBy=Geannuleerd door% s
-ClosedBy=Gesloten door% s
+CreatedBy=Gemaakt door %s
+ModifiedBy=Gewijzigd door %s
+ValidatedBy=Gevalideerd door %s
+CanceledBy=Geannuleerd door %s
+ClosedBy=Gesloten door %s
 FileWasRemoved=Bestand is verwijderd
-DirWasRemoved=Directory is verwijderd
+DirWasRemoved=Map is verwijderd
 FeatureNotYetAvailableShort=Beschikbaar in een volgende versie
 FeatureNotYetAvailable=Functie nog niet beschikbaar in deze versie
 FeatureExperimental=Experimentele functie. Niet stabiel is in deze versie
-FeatureDevelopment=Ontwikkeling functie. Niet stabiel is in deze versie
-FeaturesSupported=Functies ondersteund
+FeatureDevelopment=Functie in ontwikkeling. Niet stabiel is in deze versie
+FeaturesSupported=Ondersteunde functies
 Width=Breedte
 Height=Hoogte
 Weight=Gewicht
@@ -89,93 +80,79 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 BugTracker=Bug tracker
 BackToLoginPage=Naar login pagina
-AuthenticationDoesNotAllowSendNewPassword=Authenticatiemodus <b>is% s.</b> <br> In deze modus Dolibarr niet kan weten of uw wachtwoord wijzigen. <br> Neem contact op met uw systeembeheerder als u wilt dat uw wachtwoord wijzigen.
-EnableGDLibraryDesc=Installeren of inschakelen GD bibliotheek met uw PHP voor het gebruik van deze optie.
-EnablePhpAVModuleDesc=You need to install a module compatibel is met uw anti-virus. (ClamAV: php4-clamavlib ou php5-clamavlib)
-ProfIdShortDesc=<b>Prof. id% s</b> is een informatie afhankelijk van derden land. <br> Bijvoorbeeld, voor <b>land% s,</b> is de <b>code% s.</b>
-DolibarrDemo=Dolibarr ERP / CRM demo
+AuthenticationDoesNotAllowSendNewPassword=Authenticatiemodus is <b>%s</b>. <br> In deze modus kan Dolibarr uw wachtwoord niet weten of wijzigen. <br> Neem contact op met uw systeembeheerder als u uw wachtwoord  wilt wijzigen.
+EnableGDLibraryDesc=Installeer of schakel de GD bibliotheek in binnen uw PHP voor het gebruik van deze optie.
+EnablePhpAVModuleDesc=U moet een PHP-module toevoegen die compatibel is met uw anti-virus. (ClamAV: php4-clamavlib of php5-clamavlib)
+ProfIdShortDesc=Prof. id <b>%s</b> is een informatie afhankelijk van derden land. <br> Bijvoorbeeld, voor land <b>%s</b>, is de code <b>%s</b>.
+DolibarrDemo=Dolibarr ERP/CRM demo
 StatsByNumberOfUnits=Statistieken van het aantal eenheden
 StatsByNumberOfEntities=Statistieken van het aantal entiteiten
-NumberOfProposals=Aantal voorstellen op de laatste 12 maanden
+NumberOfProposals=Aantal offertes voor de laatste 12 maanden
 NumberOfCustomerOrders=Nummer van klant orders op de laatste 12 maanden
 NumberOfCustomerInvoices=Nummer van klant facturen op de laatste 12 maanden
 NumberOfSupplierInvoices=Aantal facturen van de leverancier op de laatste 12 maanden
 NumberOfUnitsCustomerOrders=Aantal eenheden van de klant orders op de laatste 12 maanden
 NumberOfUnitsCustomerInvoices=Aantal eenheden van de klant facturen op de laatste 12 maanden
 NumberOfUnitsSupplierInvoices=Aantal eenheden op leverancier facturen op de laatste 12 maanden
-EMailTextOrderApproved=Bestel% s goedgekeurd
-EMailTextOrderApprovedBy=Bestel% is goedgekeurd door% s
-EMailTextOrderRefused=Bestel% s geweigerd
-EMailTextOrderRefusedBy=Bestel% s geweigerd door% s
-Bookmark=Bookmark
-Bookmarks=Bladwijzers
-NewBookmark=Nieuwe bladwijzer
-ShowBookmark=Toon bookmark
-BookmarkThisPage=Bookmark deze pagina
+EMailTextOrderApproved=Bestelling %s goedgekeurd
+EMailTextOrderApprovedBy=Bestelling %s is goedgekeurd door %s
+EMailTextOrderRefused=Bestelling %s geweigerd
+EMailTextOrderRefusedBy=Bestelling %s geweigerd door %s
+Bookmark=Weblink
+Bookmarks=Weblinks
+NewBookmark=Nieuwe weblink
+ShowBookmark=Toon weblink
+BookmarkThisPage=Weblink deze pagina
 OpenANewWindow=Open een nieuw venster
 ReplaceWindow=Vervang huidige venster
 BookmarkTargetNewWindowShort=Nieuw venster
 BookmarkTargetReplaceWindowShort=Huidig venster
-BookmarkTitle=Bookmark titel
+BookmarkTitle=Weblink titel
 UrlOrLink=URL
-BehaviourOnClick=Gedrag op klik op URL
-CreateBookmark=Maak bladwijzer
-SetHereATitleForLink=Stel hier een titel voor bookmark
+BehaviourOnClick=URL klikgedrag
+CreateBookmark=Maak weblink
+SetHereATitleForLink=Stel hier een titel voor de weblink
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Gebruik een externe HTTP URL of een relatieve URL Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Kies indien pagina geopend door de band moet op de huidige of een nieuw venster
-BookmarksManagement=Bookmarks beheer
-ListOfBookmarks=Lijst met bookmarks
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Open weblinks in huidige of een nieuw venster
+BookmarksManagement=Weblinks beheer
+ListOfBookmarks=Lijst met weblinks
 LoginWebcal=Login voor Webcalendar
-ErrorWebcalLoginNotDefined=De Webcalendar login verbonden met uw login <b>Dolibarr% s</b> is niet gedefinieerd.
-ErrorPhenixLoginNotDefined=De Phenix login verbonden met uw login <b>Dolibarr% s</b> is niet gedefinieerd.
-AddCalendarEntry=Voeg vermelding in de agenda% s
-NewCompanyToDolibarr=Bedrijf% s toegevoegd in Dolibarr
-ContractValidatedInDolibarr=Contract% is gevalideerd in Dolibarr
-ContractCanceledInDolibarr=Contract% is geannuleerd in Dolibarr
-ContractClosedInDolibarr=Contract% s gesloten in Dolibarr
-PropalClosedSignedInDolibarr=Voorstel% is ondertekend in Dolibarr
-PropalClosedRefusedInDolibarr=Voorstel% s geweigerd Dolibarr
-PropalValidatedInDolibarr=Voorstel% is gevalideerd in Dolibarr
-InvoiceValidatedInDolibarr=Factuur% is gevalideerd in Dolibarr
-InvoicePaidInDolibarr=Factuur% s veranderd in betaald in Dolibarr
-InvoiceCanceledInDolibarr=Factuur% is geannuleerd in Dolibarr
-PaymentDoneInDolibarr=Betaling% s in Dolibarr
-CustomerPaymentDoneInDolibarr=Klant betaling% is gedaan in Dolibarr
-SupplierPaymentDoneInDolibarr=Leverancier betaling% is gedaan in Dolibarr
-MemberValidatedInDolibarr=Lid% is gevalideerd in Dolibarr
-MemberResiliatedInDolibarr=Lid% s resiliated in Dolibarr
-MemberDeletedInDolibarr=Lid% s verwijderd van Dolibarr
-MemberSubscriptionAddedInDolibarr=Abonnement voor member% s toegevoegd Dolibarr
+ErrorWebcalLoginNotDefined=De Webcalendar login verbonden met uw login Dolibarr <b>%s</b> is niet gedefinieerd.
+ErrorPhenixLoginNotDefined=De Phenix login verbonden met uw login Dolibarr <b>%s</b> is niet gedefinieerd.
+AddCalendarEntry=Voeg vermelding in de agenda %s
+NewCompanyToDolibarr=Bedrijf %s toegevoegd in Dolibarr
+ContractValidatedInDolibarr=Contract %s is gevalideerd in Dolibarr
+ContractCanceledInDolibarr=Contract %s is geannuleerd in Dolibarr
+ContractClosedInDolibarr=Contract %s gesloten in Dolibarr
+PropalClosedSignedInDolibarr=Offerte %s is ondertekend in Dolibarr
+PropalClosedRefusedInDolibarr=Offerte %s is geweigerd Dolibarr
+PropalValidatedInDolibarr=Offerte %s is gevalideerd in Dolibarr
+InvoiceValidatedInDolibarr=Factuur %s is gevalideerd in Dolibarr
+InvoicePaidInDolibarr=Factuur %s veranderd in betaald in Dolibarr
+InvoiceCanceledInDolibarr=Factuur %s is geannuleerd in Dolibarr
+PaymentDoneInDolibarr=Betaling %s in Dolibarr
+CustomerPaymentDoneInDolibarr=Klant betaling %s is verwerkt in Dolibarr
+SupplierPaymentDoneInDolibarr=Leverancier betaling %s is verwerkt in Dolibarr
+MemberValidatedInDolibarr=Lid %s is gevalideerd in Dolibarr
+MemberResiliatedInDolibarr=Lid %s s resiliated in Dolibarr
+MemberDeletedInDolibarr=Lid %s verwijderd van Dolibarr
+MemberSubscriptionAddedInDolibarr=Abonnement voor leden %s toegevoegd Dolibarr
 ExportsArea=Uitvoer gebied
 AvailableFormats=Beschikbare formaten
-LibraryUsed=Librairy gebruikt
-LibraryVersion=Versie
-ExportableDatas=Exportable data
+LibraryUsed=Gebruikte bibliotheek
+LibraryVersion=Bibliotheek versie
+ExportableDatas=Exporteerbare gegevens
 NoExportableData=Nr. exporteerbare gegevens (geen modules met exporteerbare gegevens geladen, of ontbrekende machtigingen)
 ToExport=Export
 NewExport=Nieuwe exportmogelijkheden
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-BirthdayAlertOn=verjaardag alert actief
-BirthdayAlertOff=verjaardag alert inactief
+BirthdayAlertOn=Verjaardags waarschuwing actief
+BirthdayAlertOff=verjaardags waarschuwing inactief
 Notify_NOTIFY_APP_ORDER_SUPPLIER=Leverancier bestelling goedgekeurd
 Notify_NOTIFY_REF_ORDER_SUPPLIER=Leverancier bestelling geweigerd
-DemoDesc=Dolibarr is een compacte ERP / CRM, samengesteld door verschillende functionele modules. Een demo waarin alle modules niet betekent iets als dit nooit gebeurt. Dus, enkele demo-profielen beschikbaar zijn.
-DemoCompanyServiceOnly=Het beheren van een zelfstandige activiteit te verkopen dienst alleen
-SendNewPasswordDesc=Dit formulier kunt u een nieuw wachtwoord aanvragen. Het zal versturen naar uw e-mailadres. <br> Verandering is alleen na het klikken op bevestiging link in deze e-mail. <br> Check uw e-reader software.
-EMailTextInterventionValidated=Interventie% s gevalideerd
-EMailTextInvoiceValidated=Factuur% is gevalideerd
+SendNewPasswordDesc=Met dit formulier kunt u een nieuw wachtwoord aanvragen. Het zal verstuurt worden naar uw e-mailadres. <br> Verandering is alleen actief na het klikken op bevestiging link in deze e-mail. <br> Controleer uw e-mail.
+EMailTextInterventionValidated=Interventie %s gevalideerd
+EMailTextInvoiceValidated=Factuur %s is gevalideerd
 ImportedWithSet=Invoer van gegevens
 DolibarrNotification=Automatische melding
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
 DemoFundation=Leden beheren van een stichting
 DemoFundation2=Beheer van de leden en de bankrekening van een stichting
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
