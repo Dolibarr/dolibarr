@@ -69,7 +69,7 @@ class Interfaces
 
 		while (($file = readdir($handle))!==false)
 		{
-			if (is_readable($this->dir."/".$file) && eregi('^interface_([^_]+)_(.+)\.class\.php$',$file,$reg))
+			if (is_readable($this->dir."/".$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
 			{
 				$nbfile++;
 

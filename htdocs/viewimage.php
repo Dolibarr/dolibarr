@@ -205,7 +205,7 @@ if ($modulepart)
 	}
 
 	// Wrapping pour les images des stats produits
-	elseif (eregi('^productstats_',$modulepart))
+	elseif (preg_match('/^productstats_/i',$modulepart))
 	{
 		$user->getrights('produit');
 		if ($user->rights->produit->lire || $user->rights->service->lire)
@@ -342,7 +342,7 @@ if (! $accessallowed)
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
-if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
+if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 {
 	$langs->load("main");
 	dol_syslog("Refused to deliver file ".$original_file);

@@ -191,22 +191,22 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
 	// Name
-	if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"]))       $conf->browser->name='firefox';
-	elseif (eregi('iceweasel',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->name='iceweasel';
-	elseif (eregi('safari',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='safari';
-	elseif (eregi('chrome',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='chrome';
-	elseif (eregi('opera',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
-	elseif (eregi('msie',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
+	if (preg_match('/firefox/i',$_SERVER["HTTP_USER_AGENT"]))       $conf->browser->name='firefox';
+	elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->name='iceweasel';
+	elseif (preg_match('/safari/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='safari';
+	elseif (preg_match('/chrome/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='chrome';
+	elseif (preg_match('/opera/i',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
+	elseif (preg_match('/msie/i',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
 	else $conf->browser->name='unknown';
 	// If phone/smartphone, we set osname.
-	if (eregi('android',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
-	elseif (eregi('blackberry',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
-	elseif (eregi('iphone',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='iphone';
-	elseif (eregi('palm',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
-	elseif (eregi('symbian',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
-	elseif (eregi('webos',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
-	elseif (eregi('iemobile',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='windowsmobile';
-	elseif (eregi('windows ce',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='windowsmobile';
+	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
+	elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
+	elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='iphone';
+	elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
+	elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
+	elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
+	elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='windowsmobile';
+	elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='windowsmobile';
 	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 }

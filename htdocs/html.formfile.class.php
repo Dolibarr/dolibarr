@@ -72,8 +72,8 @@ class FormFile
 
 		$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
 		$maxphp=@ini_get('upload_max_filesize');	// En inconnu
-		if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
-		if (eregi('k$',$maxphp)) $maxphp=$maxphp;
+		if (preg_match('/m$/i',$maxphp)) $maxphp=$maxphp*1024;
+		if (preg_match('/k$/i',$maxphp)) $maxphp=$maxphp;
 		// Now $max and $maxphp are in Kb
 		if ($maxphp > 0) $max=min($max,$maxphp);
 
@@ -446,7 +446,7 @@ class FormFile
 			&& $file['name'] != '.'
 			&& $file['name'] != '..'
 			&& $file['name'] != 'CVS'
-			&& ! eregi('\.meta$',$file['name']))
+			&& ! preg_math('/\.meta$/i',$file['name']))
 			{
 				// Define relative path used to store the file
 				if (! $relativepath)

@@ -67,12 +67,12 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 function test_sql_and_script_inject($val)
 {
 	$sql_inj = 0;
-	$sql_inj += eregi('delete[[:space:]]+from', $val);
-	$sql_inj += eregi('create[[:space:]]+table', $val);
-	$sql_inj += eregi('update.+set.+=', $val);
-	$sql_inj += eregi('insert[[:space:]]+into', $val);
-	$sql_inj += eregi('select.+from', $val);
-	$sql_inj += eregi('<script', $val);
+	$sql_inj += preg_match('/delete[\s]+from/i', $val);
+	$sql_inj += preg_match('/create[\s]+table/i', $val);
+	$sql_inj += preg_match('/update(.)+set(.)+=/i', $val);
+	$sql_inj += preg_match('/insert[\s]+into/i', $val);
+	$sql_inj += preg_match('/select(.)+from/i', $val);
+	$sql_inj += preg_match('/<script/i', $val);
 	return $sql_inj;
 }
 function analyse_sql_and_script(&$var)
@@ -112,7 +112,7 @@ analyse_sql_and_script($_POST);
 
 // Security: CSRF protection
 // The test to do is to check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST']).
-if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! eregi($_SERVER['HTTP_HOST'], $_SERVER['HTTP_REFERER']))
+if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
 {
 	//print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 	print 'Access refused by CSRF protection in main.inc.php.';
@@ -1091,7 +1091,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
  */
 function getHelpParamFor($helppagename,$langs)
 {
-	if (eregi('^http',$helppagename))
+	if (preg_match('/^http/i',$helppagename))
 	{
 		// If complete URL
 		$helpbaseurl='%s';
@@ -1101,20 +1101,20 @@ function getHelpParamFor($helppagename,$langs)
 	else
 	{
 		// If WIKI URL
-		if (eregi('^es',$langs->defaultlang))
+		if (preg_match('/^es/i',$langs->defaultlang))
 		{
 			$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-			if (eregi('ES:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
+			if (preg_match('/ES:([^|]+)/i',$helppagename,$reg)) $helppage=$reg[1];
 		}
-		if (eregi('^fr',$langs->defaultlang))
+		if (preg_match('/^fr/i',$langs->defaultlang))
 		{
 			$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-			if (eregi('FR:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
+			if (preg_match('/FR:([^|]+)/i',$helppagename,$reg)) $helppage=$reg[1];
 		}
 		if (empty($helppage))	// If help page not already found
 		{
 			$helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-			if (eregi('EN:([^|]+)',$helppagename,$reg)) $helppage=$reg[1];
+			if (preg_match('/EN:([^|]+)/i',$helppagename,$reg)) $helppage=$reg[1];
 		}
 		$mode='wiki';
 	}

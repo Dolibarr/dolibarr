@@ -75,33 +75,33 @@ else $type=dol_mimetype($original_file);
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
 // Text files
-if (eregi('\.txt$',$original_file))  	{ $attachment = false; }
-if (eregi('\.csv$',$original_file))  	{ $attachment = true; }
-if (eregi('\.tsv$',$original_file))  	{ $attachment = true; }
+if (preg_match('/\.txt$/i',$original_file))  	{ $attachment = false; }
+if (preg_match('/\.csv$/i',$original_file))  	{ $attachment = true; }
+if (preg_match('/\.tsv$/i',$original_file))  	{ $attachment = true; }
 // Documents MS office
-if (eregi('\.doc$',$original_file))     { $attachment = true; }
-if (eregi('\.dot$',$original_file))     { $attachment = true; }
-if (eregi('\.mdb$',$original_file))     { $attachment = true; }
-if (eregi('\.ppt$',$original_file))     { $attachment = true; }
-if (eregi('\.xls$',$original_file))     { $attachment = true; }
+if (preg_match('/\.doc(x)?$/i',$original_file)) { $attachment = true; }
+if (preg_match('/\.dot(x)?$/i',$original_file)) { $attachment = true; }
+if (preg_match('/\.mdb$/i',$original_file))     { $attachment = true; }
+if (preg_match('/\.ppt(x)?$/i',$original_file)) { $attachment = true; }
+if (preg_match('/\.xls(x)?$/i',$original_file)) { $attachment = true; }
 // Documents Open office
-if (eregi('\.odp$',$original_file))     { $attachment = true; }
-if (eregi('\.ods$',$original_file))     { $attachment = true; }
-if (eregi('\.odt$',$original_file))     { $attachment = true; }
+if (preg_match('/\.odp$/i',$original_file))     { $attachment = true; }
+if (preg_match('/\.ods$/i',$original_file))     { $attachment = true; }
+if (preg_match('/\.odt$/i',$original_file))     { $attachment = true; }
 // Misc
-if (eregi('\.(html|htm)$',$original_file)) 	{ $attachment = false; }
-if (eregi('\.pdf$',$original_file))  	{ $attachment = true; }
-if (eregi('\.sql$',$original_file))     { $attachment = true; }
+if (preg_match('/\.(html|htm)$/i',$original_file)) 	{ $attachment = false; }
+if (preg_match('/\.pdf$/i',$original_file))  	{ $attachment = true; }
+if (preg_match('/\.sql$/i',$original_file))     { $attachment = true; }
 // Images
-if (eregi('\.jpg$',$original_file)) 	{ $attachment = true; }
-if (eregi('\.jpeg$',$original_file)) 	{ $attachment = true; }
-if (eregi('\.png$',$original_file)) 	{ $attachment = true; }
-if (eregi('\.gif$',$original_file)) 	{ $attachment = true; }
-if (eregi('\.bmp$',$original_file)) 	{ $attachment = true; }
-if (eregi('\.tiff$',$original_file)) 	{ $attachment = true; }
+if (preg_match('/\.jpg$/i',$original_file)) 	{ $attachment = true; }
+if (preg_match('/\.jpeg$/i',$original_file)) 	{ $attachment = true; }
+if (preg_match('/\.png$/i',$original_file)) 	{ $attachment = true; }
+if (preg_match('/\.gif$/i',$original_file)) 	{ $attachment = true; }
+if (preg_match('/\.bmp$/i',$original_file)) 	{ $attachment = true; }
+if (preg_match('/\.tiff$/i',$original_file)) 	{ $attachment = true; }
 // Calendar
-if (eregi('\.vcs$',$original_file))  	{ $attachment = true; }
-if (eregi('\.ics$',$original_file))  	{ $attachment = true; }
+if (preg_match('/\.vcs$/i',$original_file))  	{ $attachment = true; }
+if (preg_match('/\.ics$/i',$original_file))  	{ $attachment = true; }
 if ($_REQUEST["attachment"])            { $attachment = true; }
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 //print "XX".$attachment;exit;
@@ -122,7 +122,7 @@ if ($modulepart)
 	if ($modulepart == 'facture')
 	{
 		$user->getrights('facture');
-		if ($user->rights->facture->lire || eregi('^specimen',$original_file))
+		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -133,7 +133,7 @@ if ($modulepart)
 	if ($modulepart == 'unpaid')
 	{
 		$user->getrights('facture');
-		if ($user->rights->facture->lire || eregi('^specimen',$original_file))
+		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -144,7 +144,7 @@ if ($modulepart)
 	if ($modulepart == 'ficheinter')
 	{
 		$user->getrights('ficheinter');
-		if ($user->rights->ficheinter->lire || eregi('^specimen',$original_file))
+		if ($user->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -156,7 +156,7 @@ if ($modulepart)
 	if ($modulepart == 'prelevement')
 	{
 		$user->getrights('prelevement');
-		if ($user->rights->prelevement->bons->lire || eregi('^specimen',$original_file))
+		if ($user->rights->prelevement->bons->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -168,7 +168,7 @@ if ($modulepart)
 	if ($modulepart == 'propal')
 	{
 		$user->getrights('propale');
-		if ($user->rights->propale->lire || eregi('^specimen',$original_file))
+		if ($user->rights->propale->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -180,7 +180,7 @@ if ($modulepart)
 	if ($modulepart == 'commande')
 	{
 		$user->getrights('commande');
-		if ($user->rights->commande->lire || eregi('^specimen',$original_file))
+		if ($user->rights->commande->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -192,7 +192,7 @@ if ($modulepart)
 	if ($modulepart == 'commande_fournisseur')
 	{
 		$user->getrights('fournisseur');
-		if ($user->rights->fournisseur->commande->lire || eregi('^specimen',$original_file))
+		if ($user->rights->fournisseur->commande->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -204,7 +204,7 @@ if ($modulepart)
 	if ($modulepart == 'facture_fournisseur')
 	{
 		$user->getrights('fournisseur');
-		if ($user->rights->fournisseur->facture->lire || eregi('^specimen',$original_file))
+		if ($user->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -216,7 +216,7 @@ if ($modulepart)
 	if ($modulepart == 'facture_paiement')
 	{
 		$user->getrights('facture');
-		if ($user->rights->facture->lire || eregi('^specimen',$original_file))
+		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -229,7 +229,7 @@ if ($modulepart)
 	if ($modulepart == 'export_compta')
 	{
 		$user->getrights('compta');
-		if ($user->rights->compta->ventilation->creer || eregi('^specimen',$original_file))
+		if ($user->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -240,7 +240,7 @@ if ($modulepart)
 	if ($modulepart == 'societe')
 	{
 		$user->getrights('societe');
-		if ($user->rights->societe->lire || eregi('^specimen',$original_file))
+		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -252,7 +252,7 @@ if ($modulepart)
 	if ($modulepart == 'expedition')
 	{
 		$user->getrights('expedition');
-		if ($user->rights->expedition->lire || eregi('^specimen',$original_file))
+		if ($user->rights->expedition->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -264,7 +264,7 @@ if ($modulepart)
 	if ($modulepart == 'livraison')
 	{
 		$user->getrights('expedition');
-		if ($user->rights->expedition->livraison->lire || eregi('^specimen',$original_file))
+		if ($user->rights->expedition->livraison->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -276,7 +276,7 @@ if ($modulepart)
 	if ($modulepart == 'telephonie')
 	{
 		$user->getrights('telephonie');
-		if ($user->rights->telephonie->lire || eregi('^specimen',$original_file))
+		if ($user->rights->telephonie->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -288,7 +288,7 @@ if ($modulepart)
 	if ($modulepart == 'actions')
 	{
 		$user->getrights('agenda');
-		if ($user->rights->agenda->myactions->read || eregi('^specimen',$original_file))
+		if ($user->rights->agenda->myactions->read || preg_match('/^specimen/i',$original_file))
 		{
 		$accessallowed=1;
 		}
@@ -300,7 +300,7 @@ if ($modulepart)
 	if ($modulepart == 'actionsreport')
 	{
 		$user->getrights('agenda');
-		if ($user->rights->agenda->allactions->read || eregi('^specimen',$original_file))
+		if ($user->rights->agenda->allactions->read || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -313,7 +313,7 @@ if ($modulepart)
 	{
 		$user->getrights('produit');
 		$user->getrights('service');
-		if (($user->rights->produit->lire || $user->rights->service->lire) || eregi('^specimen',$original_file))
+		if (($user->rights->produit->lire || $user->rights->service->lire) || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -325,7 +325,7 @@ if ($modulepart)
 	if ($modulepart == 'contract')
 	{
 		$user->getrights('contrat');
-		if ($user->rights->contrat->lire || eregi('^specimen',$original_file))
+		if ($user->rights->contrat->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -359,7 +359,7 @@ if ($modulepart)
 	if ($modulepart == 'donation')
 	{
 		$user->getrights('don');
-		if ($user->rights->don->lire || eregi('^specimen',$original_file))
+		if ($user->rights->don->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -371,7 +371,7 @@ if ($modulepart)
 	if ($modulepart == 'remisecheque')
 	{
 		$user->getrights('banque');
-		if ($user->rights->banque->lire || eregi('^specimen',$original_file))
+		if ($user->rights->banque->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
@@ -458,7 +458,7 @@ if (! $accessallowed)
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
-if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
+if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 {
 	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message

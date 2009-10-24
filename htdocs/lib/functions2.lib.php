@@ -927,7 +927,7 @@ function version_os()
 	phpinfo();
 	$chaine = ob_get_contents();
 	ob_end_clean();
-	preg_match('/System </td><td class="v">([^<]*)</td>/i',$chaine,$reg);
+	preg_match('/System <\/td><td class="v">([^<]*)<\/td>/i',$chaine,$reg);
 	$osversion=$reg[1];
 	return $osversion;
 }

@@ -246,7 +246,7 @@ class CommandeFournisseur extends Commande
 			$soc->fetch($this->fourn_id);
 
 			// Check if object has a temporary ref
-			if (preg_match('/^\(PROV/i', $this->ref))
+			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				$num = $this->getNextNumRef($soc);
 			}

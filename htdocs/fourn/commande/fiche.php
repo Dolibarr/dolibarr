@@ -532,7 +532,7 @@ if ($id > 0 || ! empty($ref))
 			$commande->date_commande=gmmktime();
 
 			// We check if number is temporary number
-			if (preg_match('/^\(PROV/i',$commande->ref)) $newref = $commande->getNextNumRef($soc);
+			if (preg_match('/^[\(]?PROV/i',$commande->ref)) $newref = $commande->getNextNumRef($soc);
 			else $newref = $commande->ref;
 
 			$text=$langs->trans('ConfirmValidateOrder',$newref);

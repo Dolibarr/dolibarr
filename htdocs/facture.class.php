@@ -1323,7 +1323,7 @@ class Facture extends CommonObject
 		{
 			$num = $force_number;
 		}
-		else if (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref))
+		else if (preg_match('/^[\(]?PROV/i', $this->ref))
 		{
 			if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
 			{
@@ -1358,10 +1358,10 @@ class Facture extends CommonObject
 			$error++;
 		}
 
-		// On v�rifie si la facture �tait une provisoire
-		if (! $error && (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref)))
+		// On verifie si la facture etait une provisoire
+		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
 		{
-			// La v�rif qu'une remise n'est pas utilis�e 2 fois est faite au moment de l'insertion de ligne
+			// La verif qu'une remise n'est pas utilisee 2 fois est faite au moment de l'insertion de ligne
 		}
 
 		if (! $error)
@@ -1369,7 +1369,7 @@ class Facture extends CommonObject
 			// Define third party as a customer
 			$result=$this->client->set_as_client();
 
-			// Si activ� on d�cr�mente le produit principal et ses composants � la validation de facture
+			// Si active on decremente le produit principal et ses composants a la validation de facture
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
@@ -1381,7 +1381,7 @@ class Facture extends CommonObject
 					{
 						$mouvP = new MouvementStock($this->db);
 						// We decrease stock for product
-						$entrepot_id = "1"; // TODO ajouter possibilit� de choisir l'entrepot
+						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
 						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 						if ($result < 0) { $error++; }
 					}
@@ -1392,10 +1392,10 @@ class Facture extends CommonObject
 		if (! $error)
 		{
 			// Rename directory if dir was a temporary ref
-			if (eregi('^\(PROV', $this->ref) || eregi('^PROV', $this->ref))
+			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
-				// afin de ne pas perdre les fichiers attach�s
+				// afin de ne pas perdre les fichiers attaches
 				$facref = dol_sanitizeFileName($this->ref);
 				$snumfa = dol_sanitizeFileName($num);
 				$dirsource = $conf->facture->dir_output.'/'.$facref;

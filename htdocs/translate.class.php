@@ -209,7 +209,7 @@ class Translate {
 		{
 			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang
 			// instead of global lang file htdocs/langs/code_CODE/xxx.lang
-			if (eregi('@',$domain))	$searchdir=$searchdir ."/".$newdomain."/langs";
+			if (preg_match('/@/',$domain))	$searchdir=$searchdir ."/".$newdomain."/langs";
 			else $searchdir=$searchdir."/langs";
 
 			// Directory of translation files
@@ -303,8 +303,8 @@ class Translate {
 			// This function MUST NOT contains call to syslog
 			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
 			$langofdir='en_US';
-			if (eregi('^fr',$langarray[0])) $langofdir='fr_FR';
-			if (eregi('^es',$langarray[0])) $langofdir='es_ES';
+			if (preg_match('/^fr/i',$langarray[0])) $langofdir='fr_FR';
+			if (preg_match('/^es/i',$langarray[0])) $langofdir='es_ES';
 			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
@@ -368,18 +368,18 @@ class Translate {
 	{
 		global $db;
 		$newstr=$key;
-		if (eregi('CurrencyShort([A-Z]+)$',$key,$reg))
+		if (preg_match('/CurrencyShort([A-Z]+)$/i',$key,$reg))
 		{
 			global $db;
 			//$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelshort');
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
 		}
-		else if (eregi('Currency([A-Z]+)$',$key,$reg))
+		else if (preg_match('/Currency([A-Z]+)$/i',$key,$reg))
 		{
 			global $db;
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 		}
-		else if (eregi('SendingMethod([0-9A-Z]+)$',$key,$reg))
+		else if (preg_match('/SendingMethod([0-9A-Z]+)$/i',$key,$reg))
 		{
 			global $db;
 			$newstr=$this->getLabelFromKey($db,$reg[1],'expedition_methode','code','libelle');
@@ -539,7 +539,7 @@ class Translate {
 		$langs_available=array();
 		while ($file = trim(readdir($handle)))
 		{
-			if (eregi('^[a-z]+_[A-Z]+',$file))
+			if (preg_match('/^[a-z]+_[A-Z]+/i',$file))
 			{
 				array_push($langs_available,$file);
 			}

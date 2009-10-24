@@ -1412,7 +1412,7 @@ class Form
 			if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
 			if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
 			// Si selected est text, on compare avec code, sinon avec id
-			if (eregi('[a-z]', $selected) && $selected == $arraytypes['code']) print ' selected="true"';
+			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected="true"';
 			elseif ($selected == $id) print ' selected="true"';
 			print '>';
 			if ($format == 0) $value=$arraytypes['label'];
@@ -2256,8 +2256,8 @@ class Form
 
 		if (! $set_time && $empty == 0) $set_time = time();
 
-		// Analyse de la date de pr�-selection
-		if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg))
+		// Analyse de la date de pre-selection
+		if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))
 		{
 			// Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 			$syear = $reg[1];
