@@ -69,9 +69,9 @@ function test_sql_and_script_inject($val)
 	$sql_inj = 0;
 	$sql_inj += preg_match('/delete[\s]+from/i', $val);
 	$sql_inj += preg_match('/create[\s]+table/i', $val);
-	$sql_inj += preg_match('/update(.)+set(.)+=/i', $val);
+	$sql_inj += preg_match('/update.+set.+=/i', $val);
 	$sql_inj += preg_match('/insert[\s]+into/i', $val);
-	$sql_inj += preg_match('/select(.)+from/i', $val);
+	$sql_inj += preg_match('/select.+from/i', $val);
 	$sql_inj += preg_match('/<script/i', $val);
 	return $sql_inj;
 }
