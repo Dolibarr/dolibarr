@@ -458,6 +458,8 @@ alter table llx_societe modify special_code integer NULL;
 
 ALTER TABLE llx_adherent_options ADD INDEX uk_adherent_options (adhid);
 ALTER TABLE llx_bank_class ADD UNIQUE INDEX idx_bank_class_lineid (lineid);
-ALTER TABLE llx_c_ecotaxe ADD INDEX uk_c_ecotaxe (code);
+ALTER TABLE llx_c_ecotaxe ADD UNIQUE INDEX uk_c_ecotaxe (code);
+ALTER TABLE llx_c_methode_commande_fournisseur ADD UNIQUE INDEX uk_c_methode_commande_fournisseur (code);
 
+ALTER TABLE llx_menu change user usertype      integer NOT NULL default '0';
 

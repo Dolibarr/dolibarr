@@ -22,7 +22,7 @@ CREATE TABLE llx_surveys_answers (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_question       integer NOT NULL,
   ip_adresse        varchar(15) NOT NULL default '',
-  datec             date NOT NULL default '0000-00-00',
+  datec             date NOT NULL,
   rep1              decimal(6,0) default NULL,
   rep2              decimal(6,0) default NULL,
   rep3              decimal(6,0) default NULL,

@@ -18,14 +18,12 @@
 -- $Id$
 -- ========================================================================
 
-
-CREATE TABLE `llx_droitpret_rapport` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `date_envoie` datetime NOT NULL,
-  `format` varchar(10) NOT NULL,
-  `date_debut` datetime NOT NULL,
-  `date_fin` datetime NOT NULL,
-  `fichier` varchar(255) NOT NULL,
-  `nbfact` int(11) NOT NULL,
-  PRIMARY KEY  (`rowid`)
+CREATE TABLE llx_droitpret_rapport (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  date_envoie datetime NOT NULL,
+  format varchar(10) NOT NULL,
+  date_debut datetime NOT NULL,
+  date_fin datetime NOT NULL,
+  fichier varchar(255) NOT NULL,
+  nbfact integer NOT NULL
 ) type=innodb;

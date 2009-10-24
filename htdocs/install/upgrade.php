@@ -236,7 +236,8 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 			// Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
 			$listtables=array(  'llx_adherent_options',
 								'llx_bank_class',
-								'llx_c_ecotaxe');
+								'llx_c_ecotaxe',
+								'llx_c_methode_commande_fournisseur');
 
 			$listtables = $db->DDLListTables($conf->db->name,'');
 		    foreach ($listtables as $val)

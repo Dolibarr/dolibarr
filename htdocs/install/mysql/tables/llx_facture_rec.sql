@@ -35,16 +35,14 @@ create table llx_facture_rec
   total_ttc          real     DEFAULT 0,
 
   fk_user_author     integer,             -- createur
-  fk_projet          integer,             -- projet auquel est associé la facture
+  fk_projet          integer,             -- projet auquel est associï¿½ la facture
   fk_cond_reglement  integer DEFAULT 0,   -- condition de reglement
-  fk_mode_reglement   integer DEFAULT 0,  -- mode de reglement (Virement, Prélèvement)
+  fk_mode_reglement   integer DEFAULT 0,  -- mode de reglement (Virement, Prï¿½lï¿½vement)
   date_lim_reglement  date,               -- date limite de reglement
 
   note               text,
   note_public         text,
 
   frequency          char(2) DEFAULT NULL,
-  last_gen           varchar(7) DEFAULT NULL,
-
-  INDEX idx_facture_rec_fksoc (fk_soc)
+  last_gen           varchar(7) DEFAULT NULL
 )type=innodb;

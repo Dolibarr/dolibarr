@@ -29,7 +29,7 @@ CREATE TABLE llx_menu
 	module        varchar(64),                      -- Module name if record is added by a module
 	type          varchar(4) NOT NULL,              -- Menu top or left
 	mainmenu      varchar(100) NOT NULL,            -- Name family/module (home, companies, ...)
-	fk_menu       int(11) NOT NULL,                 -- 0 or Id of mother menu line
+	fk_menu       integer NOT NULL,                 -- 0 or Id of mother menu line
 	position      integer NOT NULL,                 -- Sort order of entry
 	url           varchar(255) NOT NULL,            -- Relative (or absolute) url to go
 	target        varchar(100) NULL,                -- Target of Url link
@@ -39,7 +39,7 @@ CREATE TABLE llx_menu
 	leftmenu      varchar(1) NULL default '1',      -- Say if left menu defined in pre.inc.php and used by top menu must be overwritten by dynamic databse menu (1=yes by default)
 	perms         varchar(255),                     -- Condition to show enabled or disabled
 	enabled       varchar(255) NULL default '1',    -- Condition to show or hide
-	user          integer NOT NULL default '0',     -- 0 if menu for all users, 1 for external only, 2 for internal only
+	usertype      integer NOT NULL default '0',     -- 0 if menu for all users, 1 for external only, 2 for internal only
 	tms           timestamp
 ) type=innodb;
 

@@ -27,6 +27,6 @@ create table llx_cotisation
   dateadh         datetime,
   datef           date,
   cotisation      real,
-  fk_bank         int(11) DEFAULT NULL,
+  fk_bank         integer DEFAULT NULL,
   note            text
 )type=innodb;

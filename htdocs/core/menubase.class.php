@@ -116,7 +116,7 @@ class Menubase
 		$sql.= "leftmenu,";
 		$sql.= "perms,";
 		$sql.= "enabled,";
-		$sql.= "user";
+		$sql.= "usertype";
 		$sql.= ") VALUES (";
 		$sql.= " '".$this->menu_handler."',";
 		$sql.= " '".$conf->entity."',";
@@ -199,7 +199,7 @@ class Menubase
 		$sql.= " leftmenu='".addslashes($this->leftmenu)."',";
 		$sql.= " perms='".addslashes($this->perms)."',";
 		$sql.= " enabled='".addslashes($this->enabled)."',";
-		$sql.= " user='".$this->user."'";
+		$sql.= " usertype='".$this->user."'";
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
@@ -242,7 +242,7 @@ class Menubase
 		$sql.= " t.leftmenu,";
 		$sql.= " t.perms,";
 		$sql.= " t.enabled,";
-		$sql.= " t.user,";
+		$sql.= " t.usertype as user,";
 		$sql.= " ".$this->db->pdate('t.tms')."";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
 		$sql.= " WHERE t.rowid = ".$id;
@@ -365,8 +365,8 @@ class Menubase
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql.= " WHERE m.menu_handler in('".$menu_handler."','all')";
 		$sql.= " AND m.entity = ".$conf->entity;
-		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
-		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
+		if ($type_user == 0) $sql.= " AND m.usertype in (0,2)";
+		if ($type_user == 1) $sql.= " AND m.usertype in (1,2)";
 		// If type_user == 2, no test required
 		$sql.= " ORDER BY m.position, m.rowid";
 
@@ -593,8 +593,8 @@ class Menubase
 		$sql.= " WHERE m.type = 'top'";
 		$sql.= " AND m.entity = ".$conf->entity;
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
-		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
-		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
+		if ($type_user == 0) $sql.= " AND m.usertype in (0,2)";
+		if ($type_user == 1) $sql.= " AND m.usertype in (1,2)";
 		// If type_user == 2, no test requires
 		$sql.= " ORDER BY m.position";
 

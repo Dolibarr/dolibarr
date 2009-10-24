@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Marc Barilley / Océbo <marc@ocebo.com>
+-- Copyright (C) 2005 Marc Barilley / Ocï¿½bo <marc@ocebo.com>
 -- Copyright (C) 2005 Laurent Destailleur   <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 create table llx_paiementfourn_facturefourn
 (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  fk_paiementfourn INT(11) DEFAULT NULL,
-  fk_facturefourn  INT(11) DEFAULT NULL,
+  fk_paiementfourn INTEGER DEFAULT NULL,
+  fk_facturefourn  INTEGER DEFAULT NULL,
   amount DOUBLE DEFAULT '0'
 ) TYPE=innodb;
