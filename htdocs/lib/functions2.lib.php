@@ -463,12 +463,13 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$table;
 	//		$sql.= " WHERE ".$field." not like '(%'";
-	$sql.= " WHERE ".$field." like '".$maskLike."'";
+	$sql.= " WHERE ".$field." LIKE '".$maskLike."'";
+	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
 	$sql.= " AND entity = ".$conf->entity;
 	if ($where) $sql.=$where;
 	if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
-	//print $sql;
+	//print $sql.'<br>';
 	dol_syslog("functions2::get_next_value sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -507,7 +508,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 		$maskrefclient_sql.= " FROM ".MAIN_DB_PREFIX.$table;
 		//$sql.= " WHERE ".$field." not like '(%'";
-		$maskrefclient_sql.= " WHERE ".$field." like '".$maskrefclient_maskLike."'";
+		$maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
+		$maskrefclient_sql.= " AND entity = ".$conf->entity;
 		if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
 		if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
 		$maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";

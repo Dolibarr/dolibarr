@@ -26,7 +26,7 @@
 
 /**     \class      Address
 	    \brief      Classe permettant la gestion des adresses postales
-	    \todo       Classe non utilisée. L'implémenter dans les objets qui gèrent des adresses
+	    \todo       Classe non utilisee. L'implementer dans les objets qui gerent des adresses
 */
 
 class Address {

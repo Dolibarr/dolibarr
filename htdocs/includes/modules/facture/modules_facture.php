@@ -260,28 +260,27 @@ function facture_meta_create($db, $facid, $message="")
 			$nblignes = sizeof($fac->lignes);
 			$client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
 			$meta = "REFERENCE=\"" . $fac->ref . "\"
-DATE=\"" . dol_print_date($fac->date,'') . "\"
-NB_ITEMS=\"" . $nblignes . "\"
-CLIENT=\"" . $client . "\"
-TOTAL_HT=\"" . $fac->total_ht . "\"
-TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
+			DATE=\"" . dol_print_date($fac->date,'') . "\"
+			NB_ITEMS=\"" . $nblignes . "\"
+			CLIENT=\"" . $client . "\"
+			TOTAL_HT=\"" . $fac->total_ht . "\"
+			TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
 
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
-	  	//Pour les articles
-	  	$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
-ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lignes[$i]->price . "\"
-ITEM_" . $i . "_TVA=\"" .$fac->lignes[$i]->tva_tx . "\"
-ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->desc)) . "\"
-";
-	  }
+				//Pour les articles
+				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
+				ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lignes[$i]->price . "\"
+				ITEM_" . $i . "_TVA=\"" .$fac->lignes[$i]->tva_tx . "\"
+				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->desc)) . "\"
+				";
+			}
 		}
 		$fp = fopen ($file,"w");
 		fputs($fp,$meta);
 		fclose($fp);
 		if (! empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
-
 	}
 }
 
