@@ -256,12 +256,12 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
 	// PATH
 	if ($path) $urlregex .= "(\/([a-z0-9+\$_-]\.?)+)*\/";
 	// GET Query
-	if ($query) $urlregex .= "(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)";
+	if ($query) $urlregex .= "(\?[a-z+&\$_.-][a-z0-9;:@\/&%=+\$_.-]*)";
 	// ANCHOR
-	if ($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)$/i";
+	if ($anchor) $urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)$";
 
 	// check
-	if (preg_match('!'.$urlregex.'!', $url))
+	if (preg_match('/'.$urlregex.'/i', $url))
 	{
 		$ValidUrl = 1;
 	}
