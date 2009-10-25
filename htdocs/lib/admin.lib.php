@@ -470,10 +470,10 @@ function listOfSessions()
 			if(! @is_dir($fullpath))
 			{
 				$sessValues = file_get_contents($fullpath);	// get raw session data
-				
+
 				if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
-					preg_match('/dol_entity\|s:([0-9]+):"(/i'.$conf->entity.')"',$sessValues) && // limit to current entity
-					preg_match('/dol_company\|s:([0-9]+):"(/i'.$conf->global->MAIN_INFO_SOCIETE_NOM.')"',$sessValues)) // limit to company name
+					preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i',$sessValues) && // limit to current entity
+					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name
 				{
 					$tmp=explode('_', $file);
 					$idsess=$tmp[1];
