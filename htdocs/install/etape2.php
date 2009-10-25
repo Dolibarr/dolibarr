@@ -349,13 +349,16 @@ if ($_POST["action"] == "set")
 
         // Creation donnees
         $file = "functions.sql";
-        if (file_exists($dir.$file)) {
-            $fp = fopen($dir.$file,"r");
-            if ($fp)
+        if (file_exists($dir.$file))
+        {
+        	$fp = fopen($dir.$file,"r");
+        	dolibarr_install_syslog("Open function file ".$dir.$file." handle=".$fp,LOG_DEBUG);
+        	if ($fp)
             {
+            	$buffer='';
                 while (!feof ($fp))
                 {
-                    $buffer = fgets($fp, 4096);
+                    $buf = fgets($fp, 4096);
                     if (substr($buf, 0, 2) <> '--')
                     {
                         $buffer .= $buf;
@@ -365,11 +368,15 @@ if ($_POST["action"] == "set")
             }
 
             // Si plusieurs requetes, on boucle sur chaque
-            $listesql=explode('§',preg_replace(";';",";'§",$buffer)); // TODO vérifier expression
-            foreach ($listesql as $buffer) {
-                if (trim($buffer)) {
-
-                    if ($db->query(trim($buffer)))
+            $buffer=preg_replace('/;\';/',";'§",$buffer);
+            $listesql=explode('§',$buffer);
+            foreach ($listesql as $buffer)
+            {
+                $buffer=trim($buffer);
+            	if ($buffer)
+                {
+					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+                	if ($db->query($buffer))
                     {
                         $ok = 1;
                     }
@@ -382,7 +389,7 @@ if ($_POST["action"] == "set")
                         else
                         {
                             $ok = 0;
-                            print $langs->trans("ErrorSQL")." : ".$db->errno()." - '$buffer' - ".$db->error()."<br>";
+                            print $langs->trans("ErrorSQL")." : ".$db->errno()." - '$buffer' - ".$db->lastqueryerror()."<br>";
                         }
                     }
                 }
@@ -413,9 +420,9 @@ if ($_POST["action"] == "set")
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
         $dir = "mysql/data/";
 
-        // Creation donnees
+        // Insert data
         $handle=opendir($dir);
-        dolibarr_install_syslog("Ouverture repertoire data ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("Open directory data ".$dir." handle=".$handle,LOG_DEBUG);
         while (($file = readdir($handle))!==false)
         {
             if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier		<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -22,9 +22,9 @@
  */
 
 /**
- \file       htdocs/lib/databases/pgsql.lib.php
- \brief      Fichier de la classe permettant de gerer une base pgsql
- \version	$Id$
+ *	\file       htdocs/lib/databases/pgsql.lib.php
+ *	\brief      Fichier de la classe permettant de gerer une base pgsql
+ *	\version	$Id$
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
@@ -32,8 +32,8 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 
 /**
- \class      DoliDb
- \brief      Classe permettant de gerer la database de dolibarr
+ *	\class      DoliDb
+ *	\brief      Classe permettant de gerer la database de dolibarr
  */
 class DoliDb
 {
@@ -201,17 +201,14 @@ class DoliDb
 			$line=preg_replace('/datetime not null/i','datetime',$line);
 			$line=preg_replace('/datetime/i','timestamp',$line);
 
-			# nuke size of timestamp
-    		$line=preg_replace('/timestamp\([^)]*\)/i','timestamp',$line);
-
 			# double -> numeric
-    		$line=preg_replace('/^double/i','numeric',$line);
-    		$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
+			$line=preg_replace('/^double/i','numeric',$line);
+			$line=preg_replace('/(\s*)double/i','\\1numeric',$line);
 			# float -> numeric
-    		$line=preg_replace('/^float/i','numeric',$line);
-    		$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
+			$line=preg_replace('/^float/i','numeric',$line);
+			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
-    		# unique index(field1,field2)
+			# unique index(field1,field2)
 			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
 			{
 				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
@@ -422,9 +419,9 @@ class DoliDb
 
 
 	/**
-	 * \brief      Effectue une requete et renvoi le resultset de reponse de la base
-	 * \param		query		Contenu de la query
-	 * \return	    resource    Resultset de la reponse
+	 * \brief      	Convert request to PostgreSQL syntax, execute it and return the resultset
+	 * \param		query		query string
+	 * \return	    resource    Resultset of answer
 	 */
 	function query($query)
 	{
@@ -432,7 +429,7 @@ class DoliDb
 
 		// Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query);
-
+		//print "FF\n".$query."<br>\n";
 		$ret = @pg_query($this->db, $query);
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
@@ -695,11 +692,10 @@ class DoliDb
 			1046 => 'DB_ERROR_NODBSELECTED',
 			1048 => 'DB_ERROR_CONSTRAINT',
 			'42P07' => 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',
-			1051 => 'DB_ERROR_NOSUCHTABLE',
-			1054 => 'DB_ERROR_NOSUCHFIELD',
+			'42703' => 'DB_ERROR_NOSUCHFIELD',
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
-			1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
 			'42704' => 'DB_ERROR_SYNTAX',
 			'42601' => 'DB_ERROR_SYNTAX',
 			'42P16' => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
@@ -707,8 +703,8 @@ class DoliDb
 			1091 => 'DB_ERROR_NOSUCHFIELD',
 			1100 => 'DB_ERROR_NOT_LOCKED',
 			1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
-			1146 => 'DB_ERROR_NOSUCHTABLE',
-			1216 => 'DB_ERROR_NO_PARENT',
+			'42P01' => 'DB_ERROR_NOSUCHTABLE',
+			'23503' => 'DB_ERROR_NO_PARENT',
 			1217 => 'DB_ERROR_CHILD_EXISTS',
 			1451 => 'DB_ERROR_CHILD_EXISTS'
 			);
@@ -726,14 +722,14 @@ class DoliDb
 			$errno=$errorcode?$errorcode:$errorlabel;
 			return ($errno?'DB_ERROR_'.$errno:'0');
 		}
-//                '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => 'DB_ERROR_NOSUCHTABLE',
-//                '/table [\"\'].*[\"\'] does not exist/' => 'DB_ERROR_NOSUCHTABLE',
-//                '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-//                '/divide by zero$/'                     => 'DB_ERROR_DIVZERO',
-//                '/pg_atoi: error in .*: can\'t parse /' => 'DB_ERROR_INVALID_NUMBER',
-//                '/ttribute [\"\'].*[\"\'] not found$|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => 'DB_ERROR_NOSUCHFIELD',
-//                '/parser: parse error at or near \"/'   => 'DB_ERROR_SYNTAX',
-//                '/referential integrity violation/'     => 'DB_ERROR_CONSTRAINT'
+		//                '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => 'DB_ERROR_NOSUCHTABLE',
+		//                '/table [\"\'].*[\"\'] does not exist/' => 'DB_ERROR_NOSUCHTABLE',
+		//                '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+		//                '/divide by zero$/'                     => 'DB_ERROR_DIVZERO',
+		//                '/pg_atoi: error in .*: can\'t parse /' => 'DB_ERROR_INVALID_NUMBER',
+		//                '/ttribute [\"\'].*[\"\'] not found$|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => 'DB_ERROR_NOSUCHFIELD',
+		//                '/parser: parse error at or near \"/'   => 'DB_ERROR_SYNTAX',
+		//                '/referential integrity violation/'     => 'DB_ERROR_CONSTRAINT'
 	}
 
 	/**
@@ -961,7 +957,6 @@ class DoliDb
 			}
 			$this->free($resql);
 		} else {
-			// version Mysql < 4.1.1
 			return null;
 		}
 		return $liste;
@@ -996,7 +991,6 @@ class DoliDb
 			}
 			$this->free($resql);
 		} else {
-			// version Mysql < 4.1.1
 			return null;
 		}
 		return $liste;
