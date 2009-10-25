@@ -208,7 +208,7 @@ $dolibarr_main_db_host = "localhost";
 <td class="label">
 <?php
 
-$defaultype=! empty($dolibarr_main_db_type)?$dolibarr_main_db_type:($force_install_type?$force_install_type:'mysql');
+$defaultype=! empty($dolibarr_main_db_type)?$dolibarr_main_db_type:($force_install_type?$force_install_type:'mysqli');
 
 // Scan les drivers
 $dir=DOL_DOCUMENT_ROOT.'/lib/databases';

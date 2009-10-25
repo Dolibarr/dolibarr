@@ -73,7 +73,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 	$result=include_once($conffile);	// Load conf file
 	if ($result)
 	{
-		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+		//if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 
 		// Remove last / or \ on directories or url value
 		if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);

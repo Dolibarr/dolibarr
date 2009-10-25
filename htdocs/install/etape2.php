@@ -88,7 +88,7 @@ if ($_POST["action"] == "set")
         if($db->database_selected == 1)
         {
 
-            dolibarr_install_syslog("etape2: Connexion reussie e la base : $dolibarr_main_db_name");
+            dolibarr_install_syslog("etape2: Connexion reussie a la base : $dolibarr_main_db_name");
         }
         else
         {
@@ -222,7 +222,7 @@ if ($_POST["action"] == "set")
 
         $okkeys = 0;
         $handle=opendir($dir);
-        dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("Ouverture repertoire tables ".$dir." handle=".$handle,LOG_DEBUG);
         while (($file = readdir($handle))!==false)
         {
             if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && preg_match('/\.key\.sql$/i',$file))
@@ -399,52 +399,60 @@ if ($_POST["action"] == "set")
         $dir = "mysql/data/";
 
         // Creation donnees
-        $file = "data.sql";
-        $fp = fopen($dir.$file,"r");
-        if ($fp)
+        $handle=opendir($dir);
+        dolibarr_install_syslog("Ouverture repertoire data ".$dir." handle=".$handle,LOG_DEBUG);
+        while (($file = readdir($handle))!==false)
         {
-            while (!feof ($fp))
+            if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
             {
-                $buffer = fgets($fp, 4096);
-				//print "<tr><td>Insertion ligne : $buffer</td><td>";
-                if (strlen(trim(str_replace("--","",$buffer))))
+            	$name = substr($file, 0, strlen($file) - 4);
+                $buffer = '';
+                $fp = fopen($dir.$file,"r");
+                if ($fp)
                 {
-                    if ($db->query($buffer))
-                    {
-                        $ok = 1;
-                    }
-                    else
-                    {
-                        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-                        {
-                            //print "<tr><td>Insertion ligne : $buffer</td><td>";
-                        }
-                        else
-                        {
-                            $ok = 0;
-                            print $langs->trans("ErrorSQL")." : ".$db->errno()." - '$buffer' - ".$db->error()."<br>";
-                        }
-                    }
+                	while (!feof ($fp))
+                	{
+                		$buffer = fgets($fp, 4096);
+                		//print "<tr><td>Insertion ligne : $buffer</td><td>";
+                		if (strlen(trim(str_replace("--","",$buffer))))
+                		{
+                			if ($db->query($buffer))
+                			{
+                				$ok = 1;
+                			}
+                			else
+                			{
+                				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                				{
+                					//print "<tr><td>Insertion ligne : $buffer</td><td>";
+                				}
+                				else
+                				{
+                					$ok = 0;
+                					print $langs->trans("ErrorSQL")." : ".$db->errno()." - '$buffer' - ".$db->error()."<br>";
+                				}
+                			}
+                		}
+                	}
+                	fclose($fp);
                 }
-            }
-            fclose($fp);
+             }
         }
-
+        closedir($handle);
+        
         print "<tr><td>".$langs->trans("ReferenceDataLoading")."</td>";
         if ($ok)
         {
-            print "<td>".$langs->trans("OK")."</td></tr>";
+        	print "<td>".$langs->trans("OK")."</td></tr>";
         }
         else
         {
-            print "<td>".$langs->trans("Error")."</td></tr>";
+        	print "<td>".$langs->trans("Error")."</td></tr>";
             $ok = 1 ;
         }
     }
-
-
     print '</table>';
-
+             
     $db->close();
 }
 

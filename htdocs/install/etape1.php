@@ -49,7 +49,7 @@ pHeader($langs->trans("ConfigurationFile"),"etape2");
 
 $error = 0;
 
-// R�pertoire des pages dolibarr
+// Repertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
 // On supprime /  de fin dans main_dir
@@ -165,7 +165,7 @@ if ($_POST["action"] == "set")
 			$dir[7] = "$main_data_dir/rss";
 			$dir[8] = "$main_data_dir/logo";
 
-			// Boucle sur chaque r�pertoire de dir[] pour les cr�er s'ils nexistent pas
+			// Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
 			for ($i = 0 ; $i < sizeof($dir) ; $i++)
 			{
 				if (is_dir($dir[$i]))
@@ -219,7 +219,7 @@ if ($_POST["action"] == "set")
 
 
 		/**
-		* 	Si creation utilisateur admin demand�e, on le cr�e
+		* 	Si creation utilisateur admin demandee, on le cree
 		*/
 		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 		{
@@ -389,7 +389,7 @@ if ($_POST["action"] == "set")
 
 			if ($db->connected == 1)
 			{
-				// si acc�s serveur ok et acc�s base ok, tout est ok, on ne va pas plus loin, on a m�me pas utilis� le compte root.
+				// si acces serveur ok et acces base ok, tout est ok, on ne va pas plus loin, on a meme pas utilise le compte root.
 				if ($db->database_selected == 1)
 				{
 					dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
@@ -429,8 +429,8 @@ if ($_POST["action"] == "set")
 					print "</td></tr>";
 
 					// Affiche aide diagnostique
-					print '<tr><td colspan="2"><br>V�rifier que le nom de base "<b>'.$dolibarr_main_db_name.'</b>" est correct.<br>';
-					print 'Si ce nom est correct et que cette base n\'existe pas d�j�, vous devez cocher l\'option "Cr�er la base de donn�e".<br>';
+					print '<tr><td colspan="2"><br>Vérifier que le nom de base "<b>'.$dolibarr_main_db_name.'</b>" est correct.<br>';
+					print 'Si ce nom est correct et que cette base n\'existe pas déjà, vous devez cocher l\'option "Créer la base de donnée".<br>';
 					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 					print '</td></tr>';
 
