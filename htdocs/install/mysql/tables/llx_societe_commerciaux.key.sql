@@ -1,5 +1,4 @@
--- ========================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- ===================================================================
 -- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -17,12 +16,6 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- ========================================================================
+-- ===================================================================
 
-create table llx_societe_commerciaux
-(
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  fk_soc        integer,
-  fk_user       integer
-)type=innodb;
-
+ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux (fk_soc, fk_user);

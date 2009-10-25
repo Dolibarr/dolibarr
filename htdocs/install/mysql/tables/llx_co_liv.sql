@@ -23,8 +23,5 @@ create table llx_co_liv
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande   integer NOT NULL,
-  fk_livraison  integer NOT NULL,
-
-  key(fk_commande),
-  key(fk_livraison)
+  fk_livraison  integer NOT NULL
 )type=innodb;

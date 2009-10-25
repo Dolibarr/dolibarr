@@ -23,8 +23,5 @@ create table llx_pr_exp
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
   fk_propal     integer NOT NULL,
-  fk_expedition integer NOT NULL,
-
-  key(fk_propal),
-  key(fk_expedition)
+  fk_expedition integer NOT NULL
 )type=innodb;

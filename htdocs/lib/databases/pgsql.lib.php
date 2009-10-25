@@ -161,7 +161,8 @@ class DoliDb
 			return $line;
 		}
 		if ($line != "")
-		{ 		# we are inside create table statement so lets process datatypes
+		{
+			# we are inside create table statement so lets process datatypes
 			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
 				$line=preg_replace('/\)[\s\t]*type=(MyISAM|innodb);/i',');',$line);
 				$line=preg_replace('/\)[\s\t]*engine=(MyISAM|innodb);/i',');',$line);
@@ -172,20 +173,7 @@ class DoliDb
 				$line=preg_replace('/[\s\t]*([a-zA-Z_0-9]*)[\s\t]*.*int.*auto_increment[^,]*/i','\\1 SERIAL PRIMARY KEY',$line);
 			}
 
-			# int type conversion
-			/*    		} elsif (/(\w*)int\(\d+\)/i) {
-			$size=$1;
-			$size =~ tr [A-Z] [a-z];
-			if ($size eq "tiny" || $size eq "small") {
-			$out = "int2";
-			} elsif ($size eq "big") {
-			$out = "int8";
-			} else {
-			$out = "int4";
-			}
-			s/\w*int\(\d+\)/$out/g;
-			}
-			*/
+			# tinyint type conversion
 			$line=str_replace('tinyint','smallint',$line);
 
 			# nuke unsigned
@@ -223,78 +211,22 @@ class DoliDb
     		$line=preg_replace('/^float/i','numeric',$line);
     		$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
-			# unique key(field1,field2)
-			/*    		if (/unique key\s*\((\w+\s*,\s*\w+)\)/i) {
-			s/unique key\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
-			$create_sql.=$_;
-			next;
-			}
-			*/
-			# unique index(field1,field2)
+    		# unique index(field1,field2)
 			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
 			{
 				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
 			}
-			# unique key [name] (field)
-			/*            if (/unique key\s*(\w*)\s*\((\w+)\)/i) {
-			s/unique key\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
-			my $idxname=($1?"$1":"idx_${table}_$2");
-			$create_sql.=$_;
-			$create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
-			next;
+
+			# alter table create [unique] index (field1, field2 ...)
+			# ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
+			if (preg_match('/ALTER\s*TABLE\s*(.*)\s*ADD\s*(UNIQUE)?\s*(INDEX)?\s*(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
+			{
+				$fieldlist=$reg[5];
+				$idxname=$reg[4];
+				$tablename=$reg[1];
+				$line = "-- ".$line." replaced by --\n";
+				$line.= "CREATE ".($reg[2]?$reg[2].' ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
 			}
-			*/
-			# unique index [name] (field)
-			/*            if (/unique index\s*(\w*)\s*\((\w+)\)/i) {
-			s/unique index\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
-			my $idxname=($1?"$1":"idx_${table}_$2");
-			$create_sql.=$_;
-			$create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
-			next;
-			}
-			*/
-			# unique (field) et unique (field1, field2 ...)
-			/*            if (/unique\s*\(([\w,\s]+)\)/i) {
-			s/unique\s*\(([\w,\s]+)\)/UNIQUE\($1\)/i;
-			my $fieldlist="$1";
-			my $idxname="idx_${table}_${fieldlist}";
-			$idxname =~ s/\W/_/g; $idxname =~ tr/_/_/s;
-			$create_sql.=$_;
-			$create_index .= "CREATE INDEX $idxname ON $table ($fieldlist);\n";
-			next;
-			}
-			*/
-			# index(field)
-			/*            if (/index\s*(\w*)\s*\((\w+)\)/i) {
-			my $idxname=($1?"$1":"idx_${table}_$2");
-			$create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
-			next;
-			}
-			*/
-			# primary key
-			/*    		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
-			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
-			}
-			*/
-			# key(xxx)
-			/*            if (/key\s*\((\w+)\)/i) {
-			my $idxname="idx_${table}_$1";
-			$create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
-			next;
-			}
-			*/
-			# Quote column names
-			/*    		s/(^\s*)([^\s\-\(]+)(\s*)/$1"$2"$3/gi if (!/\bkey\b/i);
-			*/
-			# Remap colums with names of existing system attribute
-			/*    		if (/"oid"/i) {
-			s/"oid"/"_oid"/g;
-			print STDERR "WARNING: table $table uses column \"oid\" which is renamed to \"_oid\"\nYou should fix application manually! Press return to continue.";
-			my $wait=<STDIN>;
-			}
-			s/oid/_oid/i if (/key/i && /oid/i); # fix oid in key
-			$create_sql.=$_;
-			*/
 		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
 		else {	# not inside create table
 			#---- fix data in inserted data: (from MS world)
@@ -503,7 +435,7 @@ class DoliDb
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
 				//print "\n>> ".$query."<br>\n";
-				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->laqtqueryerror."<br>\n";
+				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;
@@ -758,7 +690,7 @@ class DoliDb
 			1051 => 'DB_ERROR_NOSUCHTABLE',
 			1054 => 'DB_ERROR_NOSUCHFIELD',
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
-			1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
 			'42704' => 'DB_ERROR_SYNTAX',
 			'42601' => 'DB_ERROR_SYNTAX',
@@ -786,30 +718,14 @@ class DoliDb
 			$errno=$errorcode?$errorcode:$errorlabel;
 			return ($errno?'DB_ERROR_'.$errno:'0');
 		}
-
-		// TODO Virer cela
-		if (empty($error_regexps))
-		{
-			$error_regexps = array(
-                '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => 'DB_ERROR_NOSUCHTABLE',
-                '/table [\"\'].*[\"\'] does not exist/' => 'DB_ERROR_NOSUCHTABLE',
-                '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-                '/divide by zero$/'                     => 'DB_ERROR_DIVZERO',
-                '/pg_atoi: error in .*: can\'t parse /' => 'DB_ERROR_INVALID_NUMBER',
-                '/ttribute [\"\'].*[\"\'] not found$|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => 'DB_ERROR_NOSUCHFIELD',
-                '/parser: parse error at or near \"/'   => 'DB_ERROR_SYNTAX',
-                '/referential integrity violation/'     => 'DB_ERROR_CONSTRAINT'
-                );
-		}
-		print 'WW'.pg_last_error($this->db).'WW';
-		$valerror=pg_last_error($this->db);
-		foreach ($error_regexps as $regexp => $code) {
-			if (preg_match($regexp,$valerror)) {
-				return $code;
-			}
-		}
-		$errno=$valerror;
-		return ($errno?'DB_ERROR':'0');
+//                '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => 'DB_ERROR_NOSUCHTABLE',
+//                '/table [\"\'].*[\"\'] does not exist/' => 'DB_ERROR_NOSUCHTABLE',
+//                '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+//                '/divide by zero$/'                     => 'DB_ERROR_DIVZERO',
+//                '/pg_atoi: error in .*: can\'t parse /' => 'DB_ERROR_INVALID_NUMBER',
+//                '/ttribute [\"\'].*[\"\'] not found$|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => 'DB_ERROR_NOSUCHFIELD',
+//                '/parser: parse error at or near \"/'   => 'DB_ERROR_SYNTAX',
+//                '/referential integrity violation/'     => 'DB_ERROR_CONSTRAINT'
 	}
 
 	/**

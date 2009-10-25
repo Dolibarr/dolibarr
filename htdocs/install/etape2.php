@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/install/etape2.php
-		\ingroup	install
-        \brief      Cree les tables, cles primaires, cles etrangeres, index et fonctions en base puis charge les donnees de reference
-        \version    $Id$
-*/
+ *      \file       htdocs/install/etape2.php
+ *		\ingroup	install
+ *      \brief      Cree les tables, cles primaires, cles etrangeres, index et fonctions en base puis charge les donnees de reference
+ *      \version    $Id$
+ */
 
 include("./inc.php");
 require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
@@ -289,8 +289,8 @@ if ($_POST["action"] == "set")
 	                            else
 	                            {
 	                                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
-	                                print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
-	                                print "</td>";
+	                                print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$db->lastqueryerror();
+	                                print "\n</td>";
 	                                print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
 	                                $error++;
 	                            }
@@ -400,7 +400,7 @@ if ($_POST["action"] == "set")
 
         // Creation donnees
         $handle=opendir($dir);
-        dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("Ouverture repertoire data ".$dir." handle=".$handle,LOG_DEBUG);
         while (($file = readdir($handle))!==false)
         {
             if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
@@ -439,7 +439,7 @@ if ($_POST["action"] == "set")
              }
         }
         closedir($handle);
-        
+
         print "<tr><td>".$langs->trans("ReferenceDataLoading")."</td>";
         if ($ok)
         {
@@ -452,7 +452,7 @@ if ($_POST["action"] == "set")
         }
     }
     print '</table>';
-             
+
     $db->close();
 }
 
