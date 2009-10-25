@@ -29,16 +29,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /**
         \file       htdocs/includes/vcard/vcard.class.php
-		\brief      Classe permettant de créer un fichier vcard.
+		\brief      Classe permettant de creer un fichier vcard.
 		\author     Kai Blankenhorn.
 		\version    2.0
 
-		Ensemble des fonctions permettant de créer un fichier vcard.
+		Ensemble des fonctions permettant de creer un fichier vcard.
 */
 
 
 function encode($string) {
-	return escape(quoted_printable_encode($string));
+	return escape(dol_quoted_printable_encode($string));
 }
 
 function escape($string) {
@@ -46,9 +46,9 @@ function escape($string) {
 }
 
 // taken from php documentation comments
-function quoted_printable_encode($input, $line_max = 76) {
+function dol_quoted_printable_encode($input, $line_max = 76) {
 	$hex = array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
-	$lines = preg_split("/(?:\r\n|\r|\n)/", $input);
+	$lines = preg_split("/(\?:\r\n|\r|\n)/", $input);
 	$eol = "\r\n";
 	$linebreak = "=0D=0A";
 	$escape = "=";
@@ -80,9 +80,9 @@ function quoted_printable_encode($input, $line_max = 76) {
 }
 
 /** \class vCard
-		\brief Classe permettant de créer un fichier vcard
+		\brief Classe permettant de crï¿½er un fichier vcard
 
-		Ensemble des fonctions permettant de créer un fichier vcard
+		Ensemble des fonctions permettant de crï¿½er un fichier vcard
 */
 
 class vCard {
@@ -90,8 +90,8 @@ class vCard {
 	var $filename;
 
 /**
-		\brief mise en forme du numéro de télephone
-		\param	number		numéro de téléphone
+		\brief mise en forme du numï¿½ro de tï¿½lephone
+		\param	number		numï¿½ro de tï¿½lï¿½phone
 		\param	type
 */
 
@@ -100,7 +100,7 @@ class vCard {
 		$key = "TEL";
 		if ($type!="") $key .= ";".$type;
 		$key.= ";ENCODING=QUOTED-PRINTABLE";
-		$this->properties[$key] = quoted_printable_encode($number);
+		$this->properties[$key] = dol_quoted_printable_encode($number);
 	}
 
 /**
@@ -116,12 +116,12 @@ class vCard {
 	}
 
 /**
-		\brief mise en forme du nom formaté
+		\brief mise en forme du nom formate
 		\param	name
 */
 
 	function setFormattedName($name) {
-		$this->properties["FN"] = quoted_printable_encode($name);
+		$this->properties["FN"] = dol_quoted_printable_encode($name);
 	}
 
 /**
@@ -194,7 +194,7 @@ class vCard {
 		if ($region!="") $label.= "$region\r\n";
 		if ($country!="") $country.= "$country\r\n";
 
-		$this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($label);
+		$this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($label);
 	}
 
 	/**
@@ -212,7 +212,7 @@ class vCard {
 */
 
 	function setNote($note) {
-		$this->properties["NOTE;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($note);
+		$this->properties["NOTE;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($note);
 	}
 
 	/**
@@ -220,7 +220,7 @@ class vCard {
 		\param	title
 	*/
 	function setTitle($title) {
-		$this->properties["TITLE;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($title);
+		$this->properties["TITLE;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($title);
 	}
 	
 
@@ -229,7 +229,7 @@ class vCard {
 		\param	org
 	*/
 	function setOrg($org) {
-		$this->properties["ORG;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($org);
+		$this->properties["ORG;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($org);
 	}
 
 
@@ -238,7 +238,7 @@ class vCard {
 		\param	prodid
 	*/
 	function setProdId($prodid) {
-		$this->properties["PRODID;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($prodid);
+		$this->properties["PRODID;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($prodid);
 	}
 
 
@@ -247,7 +247,7 @@ class vCard {
 		\param	uid
 	*/
 	function setUID($uid) {
-		$this->properties["UID;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($uid);
+		$this->properties["UID;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($uid);
 	}
 	
 	
