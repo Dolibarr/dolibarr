@@ -446,7 +446,7 @@ class FormFile
 			&& $file['name'] != '.'
 			&& $file['name'] != '..'
 			&& $file['name'] != 'CVS'
-			&& ! preg_math('/\.meta$/i',$file['name']))
+			&& ! preg_match('/\.meta$/i',$file['name']))
 			{
 				// Define relative path used to store the file
 				if (! $relativepath)
