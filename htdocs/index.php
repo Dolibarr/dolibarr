@@ -570,7 +570,7 @@ $boxarray=$infobox->listboxes("0",$user);       // 0=value for home page
 if (sizeof($boxarray))
 {
 	print '<br>';
-	print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','');
+	print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<tr><td class="notopnoleftnoright">'."\n";
 
