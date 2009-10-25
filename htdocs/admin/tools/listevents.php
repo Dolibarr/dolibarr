@@ -168,12 +168,12 @@ if ($result)
 		print '<td>'.$obj->type.'</td>';
 
 		// IP
-		print '<td>';
+		print '<td nowrap="nowrap">';
 		print dol_print_ip($obj->ip);
 		print '</td>';
 
 		// Login
-		print '<td>';
+		print '<td nowrap="nowrap">';
 		if ($obj->fk_user)
 		{
 			$userstatic->id=$obj->fk_user;
@@ -196,7 +196,7 @@ if ($result)
 
 		// More informations
 		print '<td align="right">';
-		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.$obj->user_agent;
+		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent?$obj->user_agent:$langs->trans("Unknown"));
 		print $form->textwithpicto('',$htmltext);
 		print '</td>';
 
