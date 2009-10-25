@@ -400,7 +400,7 @@ if ($_POST["action"] == "set")
 
         // Creation donnees
         $handle=opendir($dir);
-        dolibarr_install_syslog("Ouverture repertoire data ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
         while (($file = readdir($handle))!==false)
         {
             if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
