@@ -59,96 +59,134 @@ if ($_REQUEST["menu_handler"])    $menu_handler=$_REQUEST["menu_handler"];
 
 if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 {
-	$sql = "SELECT m.rowid, m.position";
+	$current=array();
+	$previous=array();
+
+	// Redefine order
+	/*$sql = "SELECT m.rowid, m.position";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.menu_handler='".$menu_handler."'";
+	$sql.= " AND m.entity = ".$conf->entity;
+	$sql.= " ORDER BY m.position, m.rowid";
+	dol_syslog("admin/menus/index.php ".$sql);
+	$resql = $db->query($sql);
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$sqlupdate ="UPDATE ".MAIN_DB_PREFIX."menu as m SET position=".($i+1);
+		$sqlupdate.=" WHERE m.menu_handler='".$menu_handler."'";
+		$sqlupdate.=" AND m.entity = ".$conf->entity;
+		$sqlupdate.=" AND rowid=".$obj->rowid;
+		$resql2 = $db->query($sqlupdate);
+		$i++;
+	}*/
+
+	// Get current position
+	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
+	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
-
 	$num = $db->num_rows($result);
 	$i = 0;
-
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		$precedent['rowid'] = $obj->rowid;
-		$precedent['order'] = $obj->position;
+		$current['rowid'] = $obj->rowid;
+		$current['order'] = $obj->position;
+		$current['type'] = $obj->type;
+		$current['fk_menu'] = $obj->fk_menu;
 		$i++;
 	}
 
-	// Menu top
+	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.position = ".($precedent['order'] - 1);
-	$sql.= " AND m.type = 'top'";
-	$sql.= " AND m.menu_handler='".$menu_handler_top."'";
+	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".$_GET["menuId"]."))";
+	$sql.= " AND m.menu_handler='".$menu_handler."'";
 	$sql.= " AND m.entity = ".$conf->entity;
+	$sql.= " AND m.type = '".$current['type']."'";
+	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+	$sql.= " ORDER BY m.position, m.rowid";
+	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
-
 	$num = $db->num_rows($result);
 	$i = 0;
-
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		$suivant['rowid'] = $obj->rowid;
-		$suivant['order'] = $obj->position;
+		$previous['rowid'] = $obj->rowid;
+		$previous['order'] = $obj->position;
 		$i++;
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.position = ".$suivant['order'];
-	$sql.= " WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
+	$sql.= " SET m.position = ".$previous['order'];
+	$sql.= " WHERE m.rowid = ".$current['rowid']; // Up the selected entry
+	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.position = ".$precedent['order'];
-	$sql.= " WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
+	$sql.= " SET m.position = ".($current['order']!=$previous['order']?$current['order']:$current['order']+1);
+	$sql.= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
+	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 }
 
 if (isset($_GET["action"]) && $_GET["action"] == 'down')
 {
+	$current=array();
+	$next=array();
 
-	$sql = "SELECT m.rowid, m.position";
+	// Get current position
+	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
+	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
-
 	$num = $db->num_rows($result);
 	$i = 0;
-
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		$precedent['rowid'] = $obj->rowid;
-		$precedent['order'] = $obj->position;
+		$current['rowid'] = $obj->rowid;
+		$current['order'] = $obj->position;
+		$current['type'] = $obj->type;
+		$current['fk_menu'] = $obj->fk_menu;
 		$i++;
 	}
 
+	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.position = ".($precedent['order'] + 1);
-	$sql.= " AND m.type='top'";
+	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".$_GET["menuId"]."))";
+	$sql.= " AND m.menu_handler='".$menu_handler."'";
 	$sql.= " AND m.entity = ".$conf->entity;
+	$sql.= " AND m.type = '".$current['type']."'";
+	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+	$sql.= " ORDER BY m.position, m.rowid";
+	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
-
 	$num = $db->num_rows($result);
 	$i = 0;
-
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		$suivant['rowid'] = $obj->rowid;
-		$suivant['order'] = $obj->position;
+		$next['rowid'] = $obj->rowid;
+		$next['order'] = $obj->position;
 		$i++;
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.position = ".$suivant['order'];
-	$sql.= " WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
+	$sql.= " SET m.position = ".($current['order']!=$next['order']?$next['order']:$current['order']+1); // Down the selected entry
+	$sql.= " WHERE m.rowid = ".$current['rowid'];
+	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.position = ".$precedent['order'];
-	$sql.= " WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
+	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";	// Up the next entry
+	$sql.= " SET m.position = ".$current['order'];
+	$sql.= " WHERE m.rowid = ".$next['rowid'];
+	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 }
 
@@ -249,27 +287,27 @@ if ($conf->use_javascript_ajax)
 	tree_addjs();
 
 	/*-------------------- MAIN -----------------------
-	tableau des �l�ments de l'arbre:
-	c'est un tableau � 2 dimensions.
-	Une ligne repr�sente un �l�ment : data[$x]
-	chaque ligne est d�compos�e en 3 donn�es:
+	tableau des elements de l'arbre:
+	c'est un tableau a 2 dimensions.
+	Une ligne represente un element : data[$x]
+	chaque ligne est decomposee en 3 donnees:
 	  - l'index de l'�l�ment
 	  - l'index de l'�l�ment parent
-	  - la cha�ne � afficher
+	  - la chaine a afficher
 	ie: data[]= array (index, index parent, chaine )
 	*/
-	//il faut d'abord d�clarer un �l�ment racine de l'arbre
+	//il faut d'abord declarer un element racine de l'arbre
 
 	$data[] = array(0,-1,"racine");
 
-	//puis tous les �l�ments enfants
+	//puis tous les elements enfants
 
 
 	$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE menu_handler = '".$menu_handler."'";
 	$sql.= " AND entity = ".$conf->entity;
-	$sql.= " ORDER BY m.position, m.rowid";
+	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
 	$res  = $db->query($sql);
 
 	if ($res)
@@ -286,7 +324,7 @@ if ($conf->use_javascript_ajax)
 		}
 	}
 
-	// Appelle de la fonction r�cursive (ammorce)
+	// Appelle de la fonction recursive (ammorce)
 	// avec recherche depuis la racine.
 	// array($menu['rowid'],$menu['fk_menu'],$titre);
 	tree_recur($data,0,0);
@@ -319,5 +357,3 @@ $db->close();
 print '<br>';
 
 llxFooter('$Date$ - $Revision$');
-?>
-

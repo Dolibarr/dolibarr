@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ $dirleft = "../includes/menus/barre_left";
 * Actions
 */
 
-if (isset($_POST["action"]) && $_POST["action"] == 'update')
+if (isset($_POST["action"]) && $_POST["action"] == 'update' && empty($_POST["cancel"]))
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
@@ -158,7 +158,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '</table>';
 
 	print '<br><center>';
-    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; &nbsp; ';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</center>';
 
     print '</form>';
