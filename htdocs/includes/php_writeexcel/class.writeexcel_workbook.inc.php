@@ -167,7 +167,7 @@ function &addworksheet($name="") {
         }
     }
 
-    $worksheet =& new writeexcel_worksheet($name, $index, $this->_activesheet,
+    $worksheet = new writeexcel_worksheet($name, $index, $this->_activesheet,
                                           $this->_firstsheet,
                                           $this->_url_format, $this->_parser,
                                           $this->_tempdir);
@@ -187,9 +187,9 @@ function &addworksheet($name="") {
 #
 function &addformat($para=false) {
     if($para===false) {
-        $format =& new writeexcel_format($this->_xf_index);
+        $format = new writeexcel_format($this->_xf_index);
     } else {
-        $format =& new writeexcel_format($this->_xf_index, $para);
+        $format = new writeexcel_format($this->_xf_index, $para);
     }
 
     $this->_xf_index += 1;

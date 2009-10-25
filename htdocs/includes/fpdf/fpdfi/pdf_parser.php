@@ -100,7 +100,7 @@ class pdf_parser {
 
         $this->getPDFVersion();
 
-        $this->c =& new pdf_context($this->f);
+        $this->c = new pdf_context($this->f);
         // Read xref-Data
         $this->pdf_read_xref($this->xref, $this->pdf_find_xref());
 
@@ -426,7 +426,7 @@ class pdf_parser {
 		        	$e++;
 		        
 		        if ($this->actual_obj[1][1]['/Length'][0] == PDF_TYPE_OBJREF) {
-		        	$tmp_c =& new pdf_context($this->f);
+		        	$tmp_c = new pdf_context($this->f);
 		        	$tmp_length = $this->pdf_resolve_object($tmp_c,$this->actual_obj[1][1]['/Length']);
 		        	$length = $tmp_length[1][1];
 		        } else {

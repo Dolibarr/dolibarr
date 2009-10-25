@@ -382,7 +382,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				// Add external file
-				//$pdfConcat =& new concat_pdf();
+				//$pdfConcat = new concat_pdf();
 				//$pdfConcat->setFiles(array($file, DOL_DOCUMENT_ROOT."/includes/modules/propale/morefile.pdf"));
 				//$pdfConcat->concat();
 				//$pdf->AliasNbPages();
