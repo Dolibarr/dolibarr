@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2009      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@ create table llx_c_chargesociales
   libelle      varchar(80),
   deductible   smallint DEFAULT 0 NOT NULL,
   active       tinyint DEFAULT 1  NOT NULL,
-  actioncompta varchar(12) NOT NULL
+  code         varchar(12) NOT NULL,
+  fk_pays      integer DEFAULT 1 NOT NULL
 )type=innodb;
 
 

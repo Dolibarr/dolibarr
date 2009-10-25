@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/compta/sociales/charges.php
-		\ingroup    tax
-		\brief      Fiche d'une charge sociale
-		\version    $Id$
-*/
+ *      \file       htdocs/compta/sociales/charges.php
+ *		\ingroup    tax
+ *		\brief      Social contribution car page
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
@@ -92,6 +92,11 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 	elseif (! $dateperiod)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
+		$_GET["action"] = 'create';
+	}
+	elseif (! $_POST["actioncode"] > 0)
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")).'</div>';
 		$_GET["action"] = 'create';
 	}
 	elseif (! $_POST["amount"])
@@ -302,7 +307,7 @@ if ($chid > 0)
 		}
 
 		// Type
-		print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>".$langs->trans("Payments")."</td></tr>";
+		print "<tr><td>".$langs->trans("Type")."</td><td>".$cha->type_libelle."</td><td>".$langs->trans("Payments")."</td></tr>";
 
 		// Period en date
 		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
@@ -338,7 +343,7 @@ if ($chid > 0)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
-			echo '<table class="noborder" width="100%">';
+			echo '<table class="nobordernopadding" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Type").'</td>';
 			print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';

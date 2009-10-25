@@ -65,6 +65,9 @@ delete from llx_const where name = 'FACTURE_ENABLE_RECUR';
 
 alter table llx_facturedet_rec add column  product_type		  integer    DEFAULT 0 after fk_product;
 
+alter table llx_c_chargesociales change actioncompta code varchar(12) NOT NULL;
+alter table llx_c_chargesociales add column  fk_pays  integer    DEFAULT 1 NOT NULL;
+
 -- Usage of llx_menu_const and llx_menu_constraint is too complicated
 -- so we made first change to remove it
 alter table llx_menu_const drop foreign key fk_menu_const_fk_menu;

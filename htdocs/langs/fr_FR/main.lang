@@ -42,6 +42,7 @@ ErrorSomeErrorWereFoundRollbackIsDone=Des erreurs ont été trouvés. On rollbac
 ErrorConfigParameterNotDefined=Le parametre <b>%s</b> n'est pas défini dans le fichier de configuration Dolibarr <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase=Impossible de trouver l'utilisateur <b>%s</b> dans la base Dolibarr.
 ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux tva défini pour le pays '%s'.
+ErrorNoSocialContributionForSellerCountry=Erreur, aucun type de charges défini pour le pays '%s'.
 ErrorFailedToSaveFile=Erreur, l'enregistrement du fichier a échoué.
 ErrorOnlyPngJpgSupported=Erreur, seuls les formats images .jpg et .png sont supportés.
 ErrorImageFormatNotSupported=Votre PHP ne supporte pas les fonctions de conversion de ce format d'image.

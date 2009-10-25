@@ -2033,13 +2033,14 @@ function print_titre($titre)
 }
 
 /**
- *	\brief  Affichage d'un titre d'une fiche, aligne a gauche
- *	\param	titre				Le titre a afficher
- *	\param	mesg				Message suplementaire a afficher a droite
+ *	\brief  Show a title with picto
+ *	\param	titre				Title to show
+ *	\param	mesg				Added message to show on right
  *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
  *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	\param	id					To force an id on html objects
  */
-function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0)
+function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
 	global $conf;
 
@@ -2047,7 +2048,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
 	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
 
 	print "\n";
-	print '<table summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	print '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
 	if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding" valign="middle">';
 	print '<div class="titre">'.$titre.'</div>';
