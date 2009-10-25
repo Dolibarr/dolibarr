@@ -122,7 +122,7 @@ if ($_POST["action"] == "set")
 
         $ok = 0;
         $handle=opendir($dir);
-        dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("Open tables directory ".$dir." handle=".$handle,LOG_DEBUG);
         $tablefound = 0;
         while (($file = readdir($handle))!==false)
         {
@@ -166,15 +166,16 @@ if ($_POST["action"] == "set")
 	                }
 	                else
 	                {
-	                    if ($db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
+	                    if ($db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS' ||
+	                        $db->errno() == 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS')
 	                    {
 	                        //print "<td>Deja existante</td></tr>";
 	                    }
 	                    else
 	                    {
 	                        print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
-	                        print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
-	                        print "</td>";
+	                        print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+	                        print "\n</td>";
 	                        print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
 	                        $error++;
 	                    }
@@ -222,7 +223,7 @@ if ($_POST["action"] == "set")
 
         $okkeys = 0;
         $handle=opendir($dir);
-        dolibarr_install_syslog("Ouverture repertoire tables ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("Open keys directory ".$dir." handle=".$handle,LOG_DEBUG);
         while (($file = readdir($handle))!==false)
         {
             if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file) && preg_match('/\.key\.sql$/i',$file))
@@ -238,7 +239,7 @@ if ($_POST["action"] == "set")
                         $buf = fgets($fp, 4096);
 
                         // Cas special de lignes autorisees pour certaines versions uniquement
-                        if (preg_match('/^--\sV([0-9\.]+)/i',$buf,$reg))
+                        if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i',$buf,$reg))
                         {
                             $versioncommande=explode('.',$reg[1]);
 							//print var_dump($versioncommande);
@@ -247,7 +248,20 @@ if ($_POST["action"] == "set")
                             	&& versioncompare($versioncommande,$versionarray) <= 0)
                             {
                             	// Version qualified, delete SQL comments
-                                $buf=preg_replace('/^-- V([0-9\.]+)/i','',$buf);
+                                $buf=preg_replace('/^--\sV([0-9\.]+)/i','',$buf);
+                                //print "Ligne $i qualifiee par version: ".$buf.'<br>';
+                            }
+                        }
+                        if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i',$buf,$reg))
+                        {
+                            $versioncommande=explode('.',$reg[1]);
+							//print var_dump($versioncommande);
+							//print var_dump($versionarray);
+                            if (sizeof($versioncommande) && sizeof($versionarray)
+                            	&& versioncompare($versioncommande,$versionarray) <= 0)
+                            {
+                            	// Version qualified, delete SQL comments
+                                $buf=preg_replace('/^--\sPOSTGRESQL\sV([0-9\.]+)/i','',$buf);
                                 //print "Ligne $i qualifiee par version: ".$buf.'<br>';
                             }
                         }
@@ -281,6 +295,7 @@ if ($_POST["action"] == "set")
 	                            if ($db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS' ||
 	                                $db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
 	                                $db->errno() == 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS' ||
+	                                $db->errno() == 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS' ||
 	                                preg_match('/duplicate key name/i',$db->error()))
 	                            {
 	                                //print "<td>Deja existante</td></tr>";

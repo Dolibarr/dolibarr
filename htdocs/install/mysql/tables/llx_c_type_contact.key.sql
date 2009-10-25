@@ -18,16 +18,7 @@
 --
 -- $Id$
 -- ========================================================================
--- Defini les types de contact d'un element sert de reference pour
--- la table llx_element_contact
---
--- element est le nom de la table utilisant le type de contact.
--- i.e. contact, facture, projet, societe (sans le llx_ devant).
--- Libelle est un texte décrivant le type de contact.
--- active précide si cette valeur est active ou 'archivé'.
 
 
-
-ALTER TABLE llx_c_type_contact 
-	ADD UNIQUE INDEX idx_c_type_contact_uk (element, source, code);
+ALTER TABLE llx_c_type_contact ADD UNIQUE INDEX idx_c_type_contact_uk (element, source, code);
 

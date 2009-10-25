@@ -217,15 +217,23 @@ class DoliDb
 				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
 			}
 
-			# alter table create [unique] index (field1, field2 ...)
-			# ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
-			if (preg_match('/ALTER\s*TABLE\s*(.*)\s*ADD\s*(UNIQUE)?\s*(INDEX)?\s*(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
+			# alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
+			# ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
+			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
 			{
-				$fieldlist=$reg[5];
-				$idxname=$reg[4];
+				$line = "-- ".$line." replaced by --\n";
+				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
+			}
+
+			# alter table add [unique] [index] (field1, field2 ...)
+			# ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
+			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
+			{
+				$fieldlist=$reg[4];
+				$idxname=$reg[3];
 				$tablename=$reg[1];
 				$line = "-- ".$line." replaced by --\n";
-				$line.= "CREATE ".($reg[2]?$reg[2].' ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
+				$line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
 			}
 		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
 		else {	# not inside create table
@@ -686,7 +694,7 @@ class DoliDb
 			1044 => 'DB_ERROR_ACCESSDENIED',
 			1046 => 'DB_ERROR_NODBSELECTED',
 			1048 => 'DB_ERROR_CONSTRAINT',
-			'42P07' => 'DB_ERROR_TABLE_ALREADY_EXISTS',
+			'42P07' => 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',
 			1051 => 'DB_ERROR_NOSUCHTABLE',
 			1054 => 'DB_ERROR_NOSUCHFIELD',
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
@@ -694,7 +702,7 @@ class DoliDb
 			1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
 			'42704' => 'DB_ERROR_SYNTAX',
 			'42601' => 'DB_ERROR_SYNTAX',
-			1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
+			'42P16' => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
 			1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
 			1091 => 'DB_ERROR_NOSUCHFIELD',
 			1100 => 'DB_ERROR_NOT_LOCKED',

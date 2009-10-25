@@ -21,8 +21,8 @@
 --
 -- element est le nom de la table utilisant le type de contact.
 -- i.e. contact, facture, projet, societe (sans le llx_ devant).
--- Libelle est un texte décrivant le type de contact.
--- active précide si cette valeur est active ou 'archivé'.
+-- Libelle est un texte decrivant le type de contact.
+-- active precise si cette valeur est 'active' ou 'archive'.
 --
 -- $Id$
 -- ========================================================================

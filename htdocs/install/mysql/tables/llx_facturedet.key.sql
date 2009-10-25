@@ -19,7 +19,7 @@
 -- ===================================================================
 
 
--- Supprimme orhpelins pour permettre mont�e de la cl�
+-- Supprimme orhpelins pour permettre montee de la cle
 -- V4 DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_facture (fk_facture);

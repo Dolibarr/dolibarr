@@ -2,6 +2,9 @@
 This file describe changes made on external library after beeing included
 in Dolibarr root.
 
+ALL:
+----
+Replace "& new" by "new"
 
 
 FPDF:
