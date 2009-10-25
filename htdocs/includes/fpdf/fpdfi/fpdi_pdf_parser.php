@@ -242,7 +242,7 @@ class fpdi_pdf_parser extends pdf_parser {
                     if (preg_match("/^\/[a-z85]*$/i", $_filter[1], $filterName) && @include_once('decoders'.$_filter[1].'.php')) {
                         $filterName = substr($_filter[1],1);
                         if (class_exists($filterName)) {
-    	                	$decoder =& new $filterName($this->fpdi);
+    	                	$decoder = new $filterName($this->fpdi);
     	                    $stream = $decoder->decode(trim($stream));
                         } else {
                         	$this->fpdi->error(sprintf("Unsupported Filter: %s",$_filter[1]));

@@ -281,7 +281,7 @@ class pdf_parser {
         
         fseek($this->f, $o_pos+$trailerPos+7);
         
-        $c =&  new pdf_context($this->f);
+        $c = new pdf_context($this->f);
 	    $trailer = $this->pdf_read_value($c);
 	    
 	    $c = null;
