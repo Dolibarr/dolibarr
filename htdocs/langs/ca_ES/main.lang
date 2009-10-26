@@ -42,6 +42,7 @@ ErrorSomeErrorWereFoundRollbackIsDone = S'han trobat alguns errors. Modificacion
 ErrorConfigParameterNotDefined = El paràmetre <b>%s</b> no està definit en el fitxer de configuració Dolibarr <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase = Impossible trobar l'usuari <b>%s</b> a la base de dades Dolibarr.
 ErrorNoVATRateDefinedForSellerCountry = Error, cap tipus d'IVA definit per al país '%s'.
+ErrorNoSocialContributionForSellerCountry = Error, cap tipus de càrrega social definida per al país '%s'.
 ErrorFailedToSaveFile = Error, el registre del fitxer ha fallat.
 ErrorOnlyPngJpgSupported = Error, només estan suportats els formats d'imatge jpg i png.
 ErrorImageFormatNotSupported = El seu PHP no suporta les funcions de conversió d'aquest format d'imatge.
