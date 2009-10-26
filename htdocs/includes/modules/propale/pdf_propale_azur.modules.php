@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -747,7 +747,7 @@ class pdf_propale_azur extends ModelePDFPropales
 	 *      \param      showadress      0=non, 1=oui
 	 *      \param      outputlang		Objet lang cible
 	 */
-	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $conf,$langs;
 
@@ -840,7 +840,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
 
-		if ($showadress)
+		if ($showaddress)
 		{
 			// Emetteur
 			$posy=42;
