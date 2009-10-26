@@ -458,6 +458,7 @@ alter table llx_commandedet modify special_code integer UNSIGNED DEFAULT 0;
 alter table llx_facturedet modify special_code integer UNSIGNED DEFAULT 0;
 alter table llx_propaldet modify special_code integer UNSIGNED DEFAULT 0;
 alter table llx_societe modify special_code integer NULL;
+alter table llx_c_forme_juridique code integer UNIQUE NOT NULL;
 
 ALTER TABLE llx_adherent_options ADD INDEX uk_adherent_options (adhid);
 ALTER TABLE llx_bank_class ADD UNIQUE INDEX idx_bank_class_lineid (lineid);
