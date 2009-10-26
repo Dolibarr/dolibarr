@@ -775,6 +775,13 @@ border: 1px solid #9CACBB;
 border-collapse: collapse;
 }
 
+td.border {
+border-top: 1px solid #000000;
+border-right: 1px solid #000000;
+border-bottom: 1px solid #000000;
+border-left: 1px solid #000000;
+}
+
 
 table.noborder {
 border-collapse: collapse;
@@ -886,12 +893,6 @@ border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 }
 
-td.border {
-border-top: 1px solid #000000;
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-border-left: 1px solid #000000;
-}
 
 .pair	{
 background: #e6ebed;
