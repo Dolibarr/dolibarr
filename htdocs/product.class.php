@@ -2389,10 +2389,10 @@ class Product extends CommonObject
 		if (file_exists($dir))
 		{
 			$handle=opendir($dir);
-
 			while (($file = readdir($handle)) != false)
 			{
-				if (is_file($dir.$file)) return true;
+				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
+				if (dol_is_file($dir.$file)) return true;
 			}
 		}
 		return false;
@@ -2418,12 +2418,12 @@ class Product extends CommonObject
 		if (file_exists($dir))
 		{
 			$handle=opendir($dir);
-
 			while (($file = readdir($handle)) != false)
 			{
 				$photo='';
 
-				if (is_file($dir.$file))
+				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
+				if (dol_is_file($dir.$file))
 				{
 					$nbphoto++;
 					$photo = $file;
@@ -2504,7 +2504,6 @@ class Product extends CommonObject
 			while (($file = readdir($handle)) != false)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
-
 				if (dol_is_file($dir.$file))
 				{
 					$nbphoto++;
