@@ -1,7 +1,7 @@
-English Dolibarr changelog
+English Dolibarr ChangeLog
 
 
-***** Changelog for 2.7 compared to 2.6 *****
+***** ChangeLog for 2.7 compared to 2.6 *****
 
 For users:
 - New: Add a print icon to show a page to print without menus.
@@ -49,6 +49,7 @@ For users:
 - New: Add module FTP client.
 - New: Can set first day of week.
 - New: Installer now create a .htaccess to protect documents directory.
+- New: Experimental support for Postgresql.
 - Fix: "Now" link works when date popup is not used.
 - Fix: Debug seriously the email notification module.
 - Fix: Error Call to a member function trans when refusing a supplier order.
@@ -98,7 +99,7 @@ For developers:
 - All install files are now in same directory /install.
 
 
-***** Changelog for 2.6 compared to 2.5 *****
+***** ChangeLog for 2.6 compared to 2.5 *****
 
 For users:
 - New: Add filter on status in emailing selector for Dolibarr users.
@@ -181,7 +182,7 @@ For developers:
 - First change for future geoip module.
 
 
-***** Changelog for 2.5 compared to 2.4 *****
+***** ChangeLog for 2.5 compared to 2.4 *****
 
 For users:
 - Sessions timeout can be configured to overwrite PHP setup.
@@ -245,7 +246,7 @@ For developers:
 
    
 
-***** Changelog for 2.4 compared to 2.2 *****
+***** ChangeLog for 2.4 compared to 2.2 *****
 
 For users:
 - Add a calendar module (module agenda) with ical/vcal/rss export.
@@ -300,7 +301,7 @@ For developers:
   Windows with Apache and Mysql included.
 
 
-***** Changelog for 2.2 compared to 2.1 *****
+***** ChangeLog for 2.2 compared to 2.1 *****
 
 - Add more statistics on main page.
 - Add option to add message on login page.
@@ -334,7 +335,7 @@ For developers:
 - Can drag and drop boxes on main page.
 
 
-***** Changelog for 2.1 compared to 2.0.1 *****
+***** ChangeLog for 2.1 compared to 2.0.1 *****
 
 - Added a better installer.
 - Support user and groups permissions.
@@ -399,13 +400,13 @@ For developers:
 
 
 
-***** Changelog for 2.0.1 compared to 2.0 *****
+***** ChangeLog for 2.0.1 compared to 2.0 *****
 
 Minor bug fixes
 
 
 
-***** Changelog for 2.0 compared to 1.0 *****
+***** ChangeLog for 2.0 compared to 1.0 *****
 
-Changelog file size is so important, that it is not included inside Dolibarr
+ChangeLog file size is so important, that it is not included inside Dolibarr
 package. You can find it at www.dolibarr.org
