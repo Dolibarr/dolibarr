@@ -37,8 +37,9 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
  */
 class DoliDb
 {
-	var $db;                      // Handler de base
-	var $type='pgsql';            // Nom du gestionnaire
+	var $db;                      // Database handler
+	var $type='pgsql';            // Name of manager
+	var $label='PostgreSQL';      // Label of manager
 	//! Charset
 	var $forcecharset='latin1';
 	var $versionmin=array(8,1,0);	// Version min database

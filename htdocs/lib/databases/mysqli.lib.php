@@ -41,6 +41,8 @@ class DoliDb
 	var $db;
 	//! Database type
 	var $type='mysqli';
+	//! Database label
+	var $label='MySQL';
 	//! Charset used to force charset when creating database
 	var $forcecharset='utf8';	// latin1, utf8
 	//! Collate used to force collate when creating database

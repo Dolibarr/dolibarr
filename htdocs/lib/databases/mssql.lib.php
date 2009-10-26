@@ -37,10 +37,12 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
  */
 class DoliDb
 {
-	//! Handler de base
+	//! Database handler
 	var $db;
-	//! Nom du gestionnaire
+	//! Database type
 	var $type='mssql';
+	//! Database label
+	var $label='MSSQL';
 	//! Charset used to force charset when creating database
 	var $forcecharset='latin1';
 	//! Collate used to force collate when creating database
