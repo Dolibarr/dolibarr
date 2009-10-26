@@ -52,7 +52,7 @@ create table llx_societe
   ape                      varchar(16),                         -- IDProf3: code ape pour france
   idprof4                  varchar(16),                         -- IDProf4: nu pour france
   tva_intra                varchar(20),                         -- tva
-  capital                  real,                                -- capital de la soci�t�
+  capital                  real,                                -- capital de la societe
   description              text,                                --
   fk_stcomm                smallint       DEFAULT 0,            -- commercial statut
   note                     text,                                --
@@ -63,14 +63,14 @@ create table llx_societe
   supplier_account         varchar(32),                         -- compte client chez un fournisseur
   fk_prospectlevel         varchar(12),                         -- prospect level (in llx_c_prospectlevel)
   customer_bad             tinyint        DEFAULT 0,            -- mauvais payeur 0/1
-  customer_rate            real           DEFAULT 0,            -- taux fiabili� client (0 � 1)
-  supplier_rate            real           DEFAULT 0,            -- taux fiabili� fournisseur (0 � 1)
-  fk_user_creat            integer NULL,                        -- utilisateur qui a cr�� l'info
-  fk_user_modif            integer,                             -- utilisateur qui a modifi� l'info
-  remise_client            real           DEFAULT 0,            -- remise syst�matique pour le client
-  mode_reglement           tinyint,                             -- mode de r�glement
-  cond_reglement           tinyint,                             -- condition de r�glement
-  tva_assuj                tinyint        DEFAULT 1,	        -- assujeti ou non � la TVA
+  customer_rate            real           DEFAULT 0,            -- taux fiabilite client (0 a 1)
+  supplier_rate            real           DEFAULT 0,            -- taux fiabilite fournisseur (0 a 1)
+  fk_user_creat            integer NULL,                        -- utilisateur qui a cree l'info
+  fk_user_modif            integer,                             -- utilisateur qui a modifie l'info
+  remise_client            real           DEFAULT 0,            -- remise systematique pour le client
+  mode_reglement           tinyint,                             -- mode de reglement
+  cond_reglement           tinyint,                             -- condition de reglement
+  tva_assuj                tinyint        DEFAULT 1,	        -- assujeti ou non a la TVA
   gencod                   varchar(255),                        -- barcode
   price_level              integer NULL,                        -- level of price for multiprices
   import_key               varchar(14)                          -- import key
