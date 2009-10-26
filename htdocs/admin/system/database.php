@@ -48,7 +48,7 @@ print_fiche_titre($langs->trans("DatabaseConfiguration"),'','setup');
 // Database
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db->getVersion() . "</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db->getLabel()." ".$db->getVersion() . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("DatabasePort")."</td><td>" . $conf->db->port . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";

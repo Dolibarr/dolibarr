@@ -605,6 +605,7 @@ PhpWebLink = Lien Web-Php
 Pear = Pear
 PearPackages = Packages Pear
 Database = Base de données
+DatabaseServer=Host de la base de données
 DatabaseName = Nom de la base de données
 DatabasePort = Port de la base de données
 DatabaseConfiguration = Configuration de la base de données

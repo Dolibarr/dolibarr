@@ -20,9 +20,9 @@
  */
 
 /**
- \file       htdocs/admin/system/database-tables.php
- \brief      Page d'infos des tables de la base
- \version    $Id$
+ *	\file       htdocs/admin/system/database-tables.php
+ *	\brief      Page d'infos des tables de la base
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -134,15 +134,14 @@ else
 
 	if ($base == 2)
 	{
-		print '<br>';
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
-		print '<td>Nombre de tuples lu</td>';
+		print '<td>Nb of tuples</td>';
 		print '<td>Nb index fetcher.</td>';
-		print '<td>Nbre de tuples inserer</td>';
-		print '<td>Nbre de tuple modifier</td>';
-		print '<td>Nbre de tuple supprimer</td>';
+		print '<td>Nb tuples insert</td>';
+		print '<td>Nb tuples modify</td>';
+		print '<td>Nb tuples delete</td>';
 		print "</tr>\n";
 		$sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del from pg_stat_user_tables;";
 
@@ -157,7 +156,7 @@ else
 				$row = $db->fetch_row($resql);
 				$var=!$var;
 				print "<tr $bc[$var]>";
-				print '<td align="right">'.$row[0].'</td>';
+				print '<td>'.$row[0].'</td>';
 				print '<td align="right">'.$row[1].'</td>';
 				print '<td align="right">'.$row[2].'</td>';
 				print '<td align="right">'.$row[3].'</td>';

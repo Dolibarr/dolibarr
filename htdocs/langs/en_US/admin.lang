@@ -605,6 +605,7 @@ PhpWebLink=Web-Php link
 Pear=Pear
 PearPackages=Pear Packages
 Database=Database
+DatabaseServer=Database host
 DatabaseName=Database name
 DatabasePort=Database port
 DatabaseConfiguration=Database setup
