@@ -73,10 +73,7 @@ if ($_GET["msg"])
 //<![CDATA[
 function hide_them_all() {
     document.getElementById("mysql_options").style.display = 'none';
-//    document.getElementById("csv_options").style.display = 'none';
-//    document.getElementById("latex_options").style.display = 'none';
-//    document.getElementById("pdf_options").style.display = 'none';
-//    document.getElementById("none_options").style.display = 'none';
+    document.getElementById("postgresql_options").style.display = 'none';
 }
 
 function show_checked_option() {
@@ -85,19 +82,9 @@ function show_checked_option() {
     if (document.getElementById('radio_dump_mysql')) {
         document.getElementById('mysql_options').style.display = 'block';
     }
-//    if (document.getElementById('radio_dump_latex').checked) {
-//        document.getElementById('latex_options').style.display = 'block';
-//    }
-//    if (document.getElementById('radio_dump_pdf').checked) {
-//        document.getElementById('pdf_options').style.display = 'block';
-//    }
-//    if (document.getElementById('radio_dump_xml').checked) {
-//        document.getElementById('none_options').style.display = 'block';
-//    }
-//    if (document.getElementById('radio_dump_csv')) {
-//        document.getElementById('csv_options').style.display = 'block';
-//    }
-
+    if (document.getElementById('radio_dump_postgresql')) {
+        document.getElementById('postgresql_options').style.display = 'block';
+    }
 }
 
 //]]>
@@ -117,7 +104,10 @@ print '<br>';
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
 <legend><?php echo $langs->trans("ExportMethod"); ?></legend>
-
+<?php
+if ($db->label == 'MySQL')
+{
+?>
     <div class="formelementrow">
         <input type="radio" name="what" value="mysql" id="radio_dump_mysql"
             onclick="
@@ -126,56 +116,30 @@ print '<br>';
                     document.getElementById('mysql_options').style.display = 'block';
                 }; return true"
              />
-            <label for="radio_dump_mysql">MySQLDump</label>
+            <label for="radio_dump_mysql">MySQL Dump (mysqldump)</label>
     </div>
-
-<!--
+<?php
+}
+else if ($db->label == 'PostgreSQL')
+{
+?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="latex" id="radio_dump_latex"
+        <input type="radio" name="what" value="postgresql" id="radio_dump_postgresql"
             onclick="
                 if (this.checked) {
                     hide_them_all();
-                    document.getElementById('latex_options').style.display = 'block';
+                    document.getElementById('postgresql_options').style.display = 'block';
                 }; return true"
              />
-        <label for="radio_dump_latex">LaTeX</label>
-
+            <label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>
     </div>
-
-    <div class="formelementrow">
-        <input type="radio" name="what" value="pdf" id="radio_dump_pdf"
-            onclick="
-                if (this.checked) {
-                    hide_them_all();
-                    document.getElementById('pdf_options').style.display = 'block';
-                }; return true"
-             />
-        <label for="radio_dump_pdf">PDF</label>
-    </div>
-
-    <div class="formelementrow">
-        <input type="radio" name="what" value="csv" id="radio_dump_csv"
-            onclick="if
-                (this.checked) {
-                    hide_them_all();
-                    document.getElementById('csv_options').style.display = 'block';
-                 }; return true"
-              />
-        <label for="radio_dump_csv">CSV</label>
-    </div>
-
-    <div class="formelementrow">
-        <input type="radio" name="what" value="xml" id="radio_dump_xml"
-            onclick="
-                if (this.checked) {
-                    hide_them_all();
-                    document.getElementById('none_options').style.display = 'block';
-                }; return true"
-             />
-        <label for="radio_dump_xml">XML</label>
-
-    </div>
--->
+<?php
+}
+else
+{
+	print 'No method available with database '.$db->label;
+}
+?>
 
 </fieldset>
 </div>
@@ -186,6 +150,7 @@ print '<br>';
 <div id="div_container_sub_exportoptions">
 
 
+<!--  Fieldset mysqldump -->
 <fieldset id="mysql_options">
     <legend><?php echo $langs->trans("MySqlExportParameters"); ?></legend>
 
@@ -214,41 +179,46 @@ print '<br>';
             value="<?php echo $fullpathofmysqldump; ?>" />
     </div>
 
-    <div class="formelementrow">
-        <input type="checkbox" name="use_transaction" value="yes"
-            id="checkbox_use_transaction"
-             />
-        <label for="checkbox_use_transaction">
-            <?php echo $langs->trans("UseTransactionnalMode"); ?></label>
-
-    </div>
-
-    <div class="formelementrow">
-        <input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked="true" />
-        <label for="checkbox_disable_fk">
-            <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?></label>
-    </div>
-    <label for="select_sql_compat">
-        <?php echo $langs->trans("ExportCompatibility"); ?></label>
-
-    <select name="sql_compat" id="select_sql_compat">
-        <option value="NONE" selected="selected">NONE</option>
-<option value="ANSI">ANSI</option>
-<option value="DB2">DB2</option>
-<option value="MAXDB">MAXDB</option>
-<option value="MYSQL323">MYSQL323</option>
-<option value="MYSQL40">MYSQL40</option>
-<option value="MSSQL">MSSQL</option>
-<option value="ORACLE">ORACLE</option>
-<option value="POSTGRESQL">POSTGRESQL</option>
-    </select>
+	<br>
     <fieldset>
         <legend><?php echo $langs->trans("ExportOptions"); ?></legend>
+	    <div class="formelementrow">
+	        <input type="checkbox" name="use_transaction" value="yes"
+	            id="checkbox_use_transaction"
+	             />
+	        <label for="checkbox_use_transaction">
+	            <?php echo $langs->trans("UseTransactionnalMode"); ?></label>
+
+	    </div>
+
+	    <div class="formelementrow">
+	        <input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked="true" />
+	        <label for="checkbox_disable_fk">
+	            <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?></label>
+	    </div>
+	    <label for="select_sql_compat">
+	        <?php echo $langs->trans("ExportCompatibility"); ?></label>
+
+	    <select name="sql_compat" id="select_sql_compat">
+	        <option value="NONE" selected="selected">NONE</option>
+	<option value="ANSI">ANSI</option>
+	<option value="DB2">DB2</option>
+	<option value="MAXDB">MAXDB</option>
+	<option value="MYSQL323">MYSQL323</option>
+	<option value="MYSQL40">MYSQL40</option>
+	<option value="MSSQL">MSSQL</option>
+	<option value="ORACLE">ORACLE</option>
+	<option value="POSTGRESQL">POSTGRESQL</option>
+	    </select>
+
+		<br>
         <input type="checkbox" name="drop_database" value="yes"
             id="checkbox_drop_database"
              />
         <label for="checkbox_drop_database"><?php echo $langs->trans("AddDropDatabase"); ?></label>
     </fieldset>
+
+    <br>
     <fieldset>
         <legend>
             <input type="checkbox" name="sql_structure" value="structure"
@@ -264,8 +234,9 @@ print '<br>';
         <input type="checkbox" name="drop" value="1" id="checkbox_dump_drop"
              />
         <label for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br />
-
     </fieldset>
+
+	<br>
     <fieldset>
         <legend>
 
@@ -310,6 +281,89 @@ print '<br>';
 
     </fieldset>
 </fieldset>
+
+
+<!--  Fieldset pg_dump -->
+<fieldset id="postgresql_options">
+    <legend><?php echo $langs->trans("PostgreSqlExportParameters"); ?></legend>
+
+    <div class="formelementrow">
+        <?php echo $langs->trans("FullPathToPostgreSQLdumpCommand");
+            if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP))
+            {
+				$resql=$db->query('SHOW data_directory');
+				if ($resql)
+				{
+					$liste=$db->fetch_array($resql);
+					$basedir=$liste['data_directory'];
+					$fullpathofpgdump=preg_replace('/data$/','bin',$basedir).'/pg_dump';
+				}
+				else
+				{
+					$fullpathofpgdump='/pathtopgdump/pg_dump';
+				}
+            }
+            else
+            {
+	            $fullpathofpgdump=$conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
+            }
+        ?><br />
+        <input type="text" name="postgresqldump" size="80"
+            value="<?php echo $fullpathofpgdump; ?>" />
+    </div>
+
+
+    <br>
+    <fieldset>
+        <legend><?php echo $langs->trans("ExportOptions"); ?></legend>
+	    <label for="select_sql_compat">
+	        <?php echo $langs->trans("ExportCompatibility"); ?></label>
+	    <select name="sql_compat" id="select_sql_compat">
+			<option value="POSTGRESQL" selected="selected">POSTGRESQL</option>
+			<option value="ANSI">ANSI</option>
+	    </select><br>
+        <input type="checkbox" name="drop_database" value="yes"
+            id="checkbox_drop_database"
+             />
+        <label for="checkbox_drop_database"><?php echo $langs->trans("AddDropDatabase"); ?></label>
+    </fieldset>
+
+    <br>
+    <fieldset>
+        <legend>
+            <input type="checkbox" name="sql_structure" value="structure"
+                id="checkbox_sql_structure"
+                 checked="checked"                onclick="
+                    if (!this.checked &amp;&amp; !document.getElementById('checkbox_sql_data').checked)
+                        return false;
+                    else return true;" />
+            <label for="checkbox_sql_structure">
+                Structure</label>
+        </legend>
+    </fieldset>
+
+    <br>
+    <fieldset>
+        <legend>
+
+            <input type="checkbox" name="sql_data" value="data"
+                id="checkbox_sql_data"  checked="checked"                onclick="
+                    if (!this.checked &amp;&amp; (!document.getElementById('checkbox_sql_structure') || !document.getElementById('checkbox_sql_structure').checked))
+                        return false;
+                    else return true;" />
+            <label for="checkbox_sql_data">
+                <?php echo $langs->trans("Datas"); ?></label>
+        </legend>
+        <input type="checkbox" name="showcolumns" value="yes"
+            id="checkbox_dump_showcolumns"
+             />
+        <label for="checkbox_dump_showcolumns">
+            <?php echo $langs->trans("NameColumn"); ?></label><br />
+
+    </fieldset>
+</fieldset>
+
+
 
 <!--
 <fieldset id="latex_options">
@@ -516,7 +570,10 @@ print '<br>';
         <?php echo $langs->trans("FileNameToGenerate"); ?></label> :
     <input type="text" name="filename_template" size="60" id="filename_template"
      value="<?php
-$file='mysqldump_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.sql';
+$prefix='dump';
+if ($db->label == 'MySQL') $prefix='mysqldump';
+if ($db->label == 'PostgreSQL') $prefix='pg_dump';
+$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.sql';
 echo $file;
 ?>" />
 
@@ -524,17 +581,23 @@ echo $file;
 
 <?php
 
-print '<div class="formelementrow">';
-print "\n";
-
-print $langs->trans("Compression").': &nbsp; ';
-
+// Define compressions array
 $compression=array(
 	'none' => array('function' => '',         'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
 //	'zip'  => array('function' => 'zip_open', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip")),		Not open source
 	'gz'   => array('function' => 'gzopen',  'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
-	'bz'   => array('function' => 'bzopen',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"))
 );
+if ($db->label == 'MySQL')
+{
+	$compression['bz']=array('function' => 'bzopen',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"));
+}
+
+
+// Show compression choices
+print '<div class="formelementrow">';
+print "\n";
+
+print $langs->trans("Compression").': &nbsp; ';
 
 foreach($compression as $key => $val)
 {

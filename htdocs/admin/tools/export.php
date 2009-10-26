@@ -77,25 +77,32 @@ $dump_buffer_len = 0;
 $time_start = time();
 
 
+// MYSQL
 if ($what == 'mysql')
 {
-	$mysqldump=$_POST["mysqldump"];
-	if ($mysqldump)
+	$cmddump=$_POST["mysqldump"];
+	if ($cmddump)
 	{
-		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $mysqldump,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
 	}
 
+	$outputdir  = $conf->admin->dir_temp;
+	$outputfile = $outputdir.'/'.$file;
+	// for compression format, we add extension
+	$compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
+	if ($compression == 'gz') $outputfile.='.gz';
+	if ($compression == 'bz') $outputfile.='.bz2';
+	$outputerror = $outputfile.'.err';
 	create_exdir($conf->admin->dir_temp);
 
 	// Parameteres execution
-	$command=$mysqldump;
+	$command=$cmddump;
 	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
 	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 	$param.=" -u ".$dolibarr_main_db_user;
 	if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
-	$compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
 	if (! $_POST["use_transaction"]) $param.=" -l --single-transaction";
 	if ($_POST["disable_fk"])        $param.=" -K";
 	if ($_POST["sql_compat"] && $_POST["sql_compat"] != 'NONE') $param.=" --compatible=".$_POST["sql_compat"];
@@ -129,18 +136,13 @@ if ($what == 'mysql')
 		$paramclear.=" -p".$dolibarr_main_db_pass;
 	}
 
-	$outputdir  = $conf->admin->dir_temp;
-	$outputfile = $outputdir.'/'.$file;
-	// for compression format, we add extension
-	if ($compression == 'gz') $outputfile.='.gz';
-	if ($compression == 'bz') $outputfile.='.bz2';
-	$outputerror = $outputfile.'.err';
-
 	print $langs->trans("RunCommandSummary").':<br>'."\n";
-	print '<textarea rows="1" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
+	print '<textarea rows="'.ROWS_2.'" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
 
 	print '<br>';
 
+
+	// Now run command and show result
 	print $langs->trans("BackupResult").': ';
 
 	$errormsg='';
@@ -175,7 +177,7 @@ if ($what == 'mysql')
 	else
 	{
 		$langs->load("errors");
-		dol_syslog("Failed to open file $outputfile",LOG_ERR);
+		dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 	}
 	// Get errorstring
@@ -200,8 +202,77 @@ if ($what == 'mysql')
 		}
 	}
 	// Fin execution commande
-
 }
+
+// POSTGRESQL
+if ($what == 'postgresql')
+{
+	$cmddump=$_POST["postgresqldump"];
+	if ($cmddump)
+	{
+		dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
+	}
+
+	$outputdir  = $conf->admin->dir_temp;
+	$outputfile = $outputdir.'/'.$file;
+	// for compression format, we add extension
+	$compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
+	if ($compression == 'gz') $outputfile.='.gz';
+	if ($compression == 'bz') $outputfile.='.bz2';
+	$outputerror = $outputfile.'.err';
+	create_exdir($conf->admin->dir_temp);
+
+	// Parameteres execution
+	$command=$cmddump;
+	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+
+	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
+	$param=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
+	$param.=" -U ".$dolibarr_main_db_user;
+	if (! empty($dolibarr_main_db_port)) $param.=" -p ".$dolibarr_main_db_port;
+	if ($_POST["sql_compat"] && $_POST["sql_compat"] == 'ANSI') $param.="  --disable-dollar-quoting";
+	if ($_POST["drop_database"])     $param.=" -c -C";
+	if ($_POST["sql_structure"])
+	{
+		if ($_POST["drop"])			 $param.=" --add-drop-table";
+		if (empty($_POST["sql_data"])) $param.=" -s";
+	}
+	if ($_POST["sql_data"])
+	{
+		if (empty($_POST["sql_structure"]))	 	$param.=" -a";
+		if ($_POST["showcolumns"])	$param.=" -c";
+	}
+	$param.=' -f "'.$outputfile.'"';
+	//if ($compression == 'none')
+	if ($compression == 'gz')   $param.=' -Z 9';
+	//if ($compression == 'bz')
+	$paramcrypted=$param;
+	$paramclear=$param;
+	if (! empty($dolibarr_main_db_pass))
+	{
+		//$paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
+		//$paramclear.=" -W".$dolibarr_main_db_pass;
+	}
+	$paramcrypted.=" -w ".$dolibarr_main_db_name;
+	$paramclear.=" -w ".$dolibarr_main_db_name;
+
+	print $langs->trans("RunCommandSummary").':<br>'."\n";
+	print '<textarea rows="'.ROWS_3.'" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
+
+	print '<br>';
+
+
+	// Now show to ask to run command
+	print $langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user);
+
+	print '<br>';
+	print '<br>';
+
+	$what='';
+}
+
+
+
 
 // Si on a demande une generation
 if ($what)
