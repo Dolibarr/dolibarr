@@ -55,7 +55,16 @@ print "</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionProgram")."</td><td>".DOL_VERSION;
 // If current version differs from last upgrade
-if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
+if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
+{
+	// Compare version with last install database version (upgrades never occured)
+	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_INSTALL));
+}
+else
+{
+	// Compare version with last upgrade database version
+	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE));
+}
 print "</td></tr>\n";
 print '</table>';
 print '<br>';
