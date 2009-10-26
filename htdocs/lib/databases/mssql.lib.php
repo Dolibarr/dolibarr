@@ -199,8 +199,17 @@ class DoliDb
 	}
 
 	/**
-	 \brief          Renvoie la version du serveur
-	 \return	        string      Chaine version
+	 * \brief          	Return label of manager
+	 * \return			string      Label
+	 */
+	function getLabel()
+	{
+		return $this->label;
+	}
+
+	/**
+	 *	\brief          Renvoie la version du serveur
+	 *	\return	        string      Chaine version
 	 */
 	function getVersion()
 	{
@@ -211,8 +220,8 @@ class DoliDb
 
 
 	/**
-	 \brief          Renvoie la version du serveur dans un tableau
-	 \return	        array  		Tableau de chaque niveau de version
+	 *	\brief          Renvoie la version du serveur dans un tableau
+	 *	\return	        array  		Tableau de chaque niveau de version
 	 */
 	function getVersionArray()
 	{

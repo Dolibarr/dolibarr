@@ -233,6 +233,15 @@ class DoliDb
 	}
 
 	/**
+	 * \brief          	Return label of manager
+	 * \return			string      Label
+	 */
+	function getLabel()
+	{
+		return $this->label;
+	}
+
+	/**
 	 *	\brief          Renvoie la version du serveur
 	 *	\return	        string      Chaine version
 	 */

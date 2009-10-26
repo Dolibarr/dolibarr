@@ -228,17 +228,26 @@ class DoliDb
 	}
 
 	/**
-		\brief          Renvoie la version du serveur
-		\return	        string      Chaine version
-		*/
+	 * \brief          	Return label of manager
+	 * \return			string      Label
+	 */
+	function getLabel()
+	{
+		return $this->label;
+	}
+
+	/**
+	 *	\brief          Renvoie la version du serveur
+	 *	\return	        string      Chaine version
+	 */
 	function getVersion()
 	{
 		return mysql_get_server_info($this->db);
 	}
 
 	/**
-	 \brief          Renvoie la version du serveur sous forme de nombre
-	 \return	        string      Chaine version
+	 *	\brief          Renvoie la version du serveur sous forme de nombre
+	 *	\return	        string      Chaine version
 	 */
 	function getIntVersion()
 	{

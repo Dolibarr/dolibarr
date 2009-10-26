@@ -84,7 +84,7 @@ print "<br>\n";
 // Database
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
-$dblabel=$db->label;
+$dblabel=$db->getLabel();
 $dbversion=$db->getVersion();
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" .$dblabel." ".$dbversion."</td></tr>\n";
 print '</table>';
