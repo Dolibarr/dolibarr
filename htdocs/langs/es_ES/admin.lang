@@ -604,6 +604,7 @@ PhpWebLink = Vínculo Web-PHP
 Pear = Pear
 PearPackages = Paquetes Pear
 Database = Base de datos
+DatabaseServer = Host de la base de datos
 DatabaseName = Nombre de la base de datos
 DatabasePort = puerto de la base de datos
 DatabaseConfiguration = Configuración de la base de datos
@@ -721,6 +722,8 @@ RestoreDesc3 = * Recargar el archivo de volcado guardado en la base de datos de 
 ForcedToByAModule = Esta regla está forzada a <b>%s</b> por uno de los módulos activados
 PreviousDumpFiles = Archivos de copia de seguridad de la base de datos disponibles
 WeekStartOnDay = Primer día de la semana
+RunningUpdateProcessMayBeRequired = Parece necesario realizar el proceso de actualización (la versión del programa %s difiere de la versión de la base de datos %s)
+YouMustRunCommandFromCommandLineAfterLoginToUser = Debe ejecutar el comando desde un shell después de haber iniciado sesión con la cuenta <b>%s</b>.
 ##### Module password generation = undefined = 
 PasswordGenerationStandard = Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone = No ofrece contraseñas. La contraseña se introduce manualmente.

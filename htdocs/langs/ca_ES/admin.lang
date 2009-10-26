@@ -604,6 +604,7 @@ PhpWebLink = Enllaç Web-PHP
 Pear = Pear
 PearPackages = Paquets Pear
 Database = Base de dades
+DatabaseServer = Host de la base de dades
 DatabaseName = Nom de la base de dades
 DatabasePort = Port de la base de dades
 DatabaseConfiguration = Configuració de la base de dades
@@ -721,6 +722,8 @@ RestoreDesc3 = * Recarregar el fitxer de bolcat guardat a la base de dades d'una
 ForcedToByAModule = Aquesta regla està forçada a <b>%s</b> per un dels mòduls activats
 PreviousDumpFiles = Arxius de còpia de seguretat de la base de dades disponibles
 WeekStartOnDay = Primer dia de la setmana
+RunningUpdateProcessMayBeRequired = Sembla necessari realitzar el procés d'actualizació (la versió del programa %s difereix de la versió de la base de dades %s)
+YouMustRunCommandFromCommandLineAfterLoginToUser = Ha d'executar la comanda des d'un shell després d'haver iniciat sessió amb el compte <b>%s</b>.
 ##### Module password generation = undefined =  = 
 PasswordGenerationStandard = Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone = No ofereix contrasenyes. La contrasenya s'introdueix manualment.
