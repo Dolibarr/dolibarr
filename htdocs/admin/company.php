@@ -221,19 +221,19 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
-	print '<input name="nom" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>'."\n";
+	print '<input name="nom" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM:$_POST["nom"]) . '"></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
-	print '<textarea name="address" cols="80" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>'."\n";
+	print '<textarea name="address" cols="80" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADRESSE?$conf->global->MAIN_INFO_SOCIETE_ADRESSE:$_POST["address"]) . '</textarea></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyZip").'</td><td>';
-	print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '" size="10"></td></tr>'."\n";
+	print '<input name="cp" value="'. ($conf->global->MAIN_INFO_SOCIETE_CP?$conf->global->MAIN_INFO_SOCIETE_CP:$_POST["cp"]) . '" size="10"></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
-	print '<input name="ville" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>'."\n";
+	print '<input name="ville" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_VILLE?$conf->global->MAIN_INFO_SOCIETE_VILLE:$_POST["ville"]) . '"></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
