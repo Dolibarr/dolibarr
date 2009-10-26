@@ -179,7 +179,7 @@ if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
 				else
 				{
 					dolibarr_install_syslog('install/etape5.php FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
-					print '<br>'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'<br><br>';
+					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'</div><br><br>';
 				}
 			}
 

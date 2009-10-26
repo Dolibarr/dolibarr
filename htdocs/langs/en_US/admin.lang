@@ -722,7 +722,7 @@ RestoreDesc3=* Restore the data, from a backup dump file, into the database of t
 ForcedToByAModule = This rule is forced to <b>%s</b> by an activated module
 PreviousDumpFiles=Available database backup dump files
 WeekStartOnDay=First day of week 
-
+RunningUpdateProcessMayBeRequired=Le lancement du processus de mise a jour semble requis (La version des programme %s differe de la version de la base %s)
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.

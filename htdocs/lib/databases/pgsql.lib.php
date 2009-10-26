@@ -603,7 +603,7 @@ class DoliDb
 	 */
 	function idate($param)
 	{
-		return adodb_strftime("%Y%m%d%H%M%S",$param);
+		return "'".adodb_strftime("%Y-%m-%d %H:%M:%S",$param)."'";
 	}
 
 	/**
@@ -968,7 +968,7 @@ class DoliDb
 	 */
 	function getDefaultCollationDatabase()
 	{
-		$resql=$this->query('SHOW SERVER_ENCODING');
+		$resql=$this->query('SHOW LC_COLLATE');
 		$liste=$this->fetch_array($resql);
 		return $liste['lc_collate'];
 	}
