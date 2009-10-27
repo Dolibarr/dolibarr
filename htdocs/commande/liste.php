@@ -87,7 +87,7 @@ if ($sall)
 {
 	$sql.= " AND (c.ref LIKE '%".addslashes($sall)."%' OR c.note LIKE '%".addslashes($sall)."%')";
 }
-if (!empty($viewstatut))
+if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -2)
 	{
