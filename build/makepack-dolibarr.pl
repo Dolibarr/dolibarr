@@ -238,10 +238,9 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
-	}    
+	}
     
     # Build package for each target
     #------------------------------
@@ -323,10 +322,7 @@ if ($nboftargetok) {
             $ret=`$cmd`;
 
     		$BUILDFIC="$FILENAME.spec";
-    		print "Copy $SOURCE/build/rpm/${BUILDFIC} to $BUILDROOT\n";
-#    		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
-
- 			print "Edit version in file $BUILDROOT/$BUILDFIC\n";
+ 			print "Generate file $BUILDROOT/$BUILDFIC\n";
             open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFIC}") || die "Error";
             open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
             while (<SPECFROM>) {
@@ -346,6 +342,9 @@ if ($nboftargetok) {
     	}
     	
     	if ($target eq 'DEB') {
+			
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
+
     		print "Move $BUILDROOT/$PROJECT $BUILDROOT/$PROJECT.tmp\n";
     		$cmd="mv \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
             $ret=`$cmd`;
@@ -362,10 +361,9 @@ if ($nboftargetok) {
     		print "Copy $SOURCE/build/deb/* to $BUILDROOT/$PROJECT/DEBIAN\n";
     		$ret=`cp -r "$SOURCE/build/deb/." "$BUILDROOT/$PROJECT/DEBIAN"`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/DEBIAN/CVS`;
-		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
  
- 			print "Remove config file\n";
-		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
+ 			print "Reset config file\n";
+		    $ret=`> $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
 
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
@@ -381,8 +379,11 @@ if ($nboftargetok) {
             close SPECFROM;
             close SPECTO;
 
-    		print "Create directory $BUILDROOT/$PROJECT/etc/dolibarr\n";
-    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/dolibarr"`;
+    		print "Create directory $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/$PROJECT/documents"`;
+
+    		print "Create directory $BUILDROOT/$PROJECT/etc/$PROJECT\n";
+    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
 
     		#print "Copy changelog file into $BUILDROOT/$PROJECT/DEBIAN\n";
     		#$ret=`cp "$SOURCE/ChangeLog" "$BUILDROOT/$PROJECT/DEBIAN/changelog"`;
@@ -393,8 +394,17 @@ if ($nboftargetok) {
     		print "Copy copyright file into $BUILDROOT/$PROJECT/DEBIAN\n";
     		$ret=`cp "$SOURCE/COPYRIGHT" "$BUILDROOT/$PROJECT/DEBIAN/copyright"`;
 
-    		print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/dolibarr\n";
-    		$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/dolibarr"`;
+    		print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/$PROJECT\n";
+    		$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
+
+			print "Set permissions/owners on files/dir\n";
+		    $ret=`chown -R root.root $BUILDROOT/$PROJECT`;
+		    $ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
+			$ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
+		    $ret=`chmod -R 555 $BUILDROOT/$PROJECT`;
+		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
+		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
+		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
 
      		print "Go to directory $BUILDROOT\n";
      		chdir("$BUILDROOT");

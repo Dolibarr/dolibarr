@@ -51,7 +51,7 @@ case "$1" in
 		#db_reset "dolibarr/webserver"
 
 		# Get the web server type.
-		db_get "dolibarr/webserver"		# Ask/read value for webserver.
+		db_get "dolibarr/webserver"		# Read value for webserver.
 #		webserver="$RET"
 		webserver="Both"
 		case $webserver in
@@ -78,7 +78,6 @@ case "$1" in
 			#
 			chown -R $webuser.$webgroup /usr/share/dolibarr
 
-			# TODO This add alias into http.conf but it should go into apache2.conf
 			includefile="/etc/dolibarr/apache.conf"
 			#echo "$includefile $server" 
 			. /usr/share/wwwconfig-common/apache-include_all.sh

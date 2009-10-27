@@ -1,6 +1,10 @@
 #!/usr/bin/make -f
 # Sample debian/rules that uses debhelper.
 # GNU copyright 1997 to 1999 by Joey Hess.
+#
+# This script is not used. The script used to build the root
+# for making Debian pakcage is build/makepack-dolibarr.pl
+#
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1

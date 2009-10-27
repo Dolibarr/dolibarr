@@ -1,6 +1,7 @@
 #!/bin/sh
 # Debian install package run: config, preinst, prerm, postinst, postrm
 #
+# dpkg -l list all packages
 # dpkg -b is to build package
 # dpkg -c package.deb list content of package
 # dpkg -I package.deb give informations on package
