@@ -81,13 +81,13 @@ if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
-	$sql.= " AND c.ref like '%".addslashes($sref)."%'";
+	$sql.= " AND c.ref LIKE '%".addslashes($sref)."%'";
 }
 if ($sall)
 {
-	$sql.= " AND (c.ref like '%".addslashes($sall)."%' OR c.note like '%".addslashes($sall)."%')";
+	$sql.= " AND (c.ref LIKE '%".addslashes($sall)."%' OR c.note LIKE '%".addslashes($sall)."%')";
 }
-if ($viewstatut <> '')
+if (!empty($viewstatut))
 {
 	if ($viewstatut < 4 && $viewstatut > -2)
 	{
@@ -103,7 +103,7 @@ if ($viewstatut <> '')
 	}
 	if ($viewstatut == -2)	// To process
 	{
-		$sql .= ' AND c.fk_statut > 0 and c.fk_statut <= 3 and c.facture = 0';
+		$sql .= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 	}
 }
 if ($_GET['month'] > 0)
@@ -116,11 +116,11 @@ if ($_GET['year'] > 0)
 }
 if (!empty($snom))
 {
-	$sql.= ' AND s.nom like \'%'.addslashes($snom).'%\'';
+	$sql.= ' AND s.nom LIKE \'%'.addslashes($snom).'%\'';
 }
 if (!empty($sref_client))
 {
-	$sql.= ' AND c.ref_client like \'%'.addslashes($sref_client).'%\'';
+	$sql.= ' AND c.ref_client LIKE \'%'.addslashes($sref_client).'%\'';
 }
 
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
