@@ -96,7 +96,7 @@ print "</table>\n";
 
 
 /*
- * Tableau de bord d'�tats Dolibarr (statistiques)
+ * Tableau de bord d'etats Dolibarr (statistiques)
  * Hidden for external users
  */
 $langs->load("commercial");
@@ -112,7 +112,7 @@ if ($user->societe_id == 0)
 
 	$var=true;
 
-	// Condition � v�rifier pour affichage de chaque ligne du tableau de bord
+	// Condition a verifier pour affichage de chaque ligne du tableau de bord
 	$conditions=array(
 	! empty($conf->societe->enabled) && $user->rights->societe->lire,
 	! empty($conf->societe->enabled) && $user->rights->societe->lire,
@@ -149,7 +149,7 @@ if ($user->societe_id == 0)
 				   'Facture',
                    'LigneTel',
                    'Contrat');
-	// Cl� de tableau retourn� par la methode load_state_board pour chaque ligne
+	// Cle de tableau retourne par la methode load_state_board pour chaque ligne
 	$keys=array('customers',
                 'prospects',
                 'suppliers',
@@ -218,7 +218,7 @@ if ($user->societe_id == 0)
 		if ($conditions[$key])
 		{
 			$classe=$classes[$key];
-			// Cherche dans cache si le load_state_board deja r�alis�
+			// Cherche dans cache si le load_state_board deja realise
 			if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
 			{
 				include_once($includes[$key]);
@@ -341,7 +341,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print '</tr>';
 }
 
-// Nbre propales fermees signees (� facturer)
+// Nbre propales fermees signees (a facturer)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
@@ -419,7 +419,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	print "\n";
 }
 
-// Nbre factures fournisseurs (� payer)
+// Nbre factures fournisseurs (a payer)
 if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
 {
 	$langs->load("bills");
@@ -445,7 +445,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
 	print "\n";
 }
 
-// Nbre factures clients (� payer)
+// Nbre factures clients (a payer)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	$langs->load("bills");

@@ -1921,7 +1921,7 @@ class Commande extends CommonObject
 			$clause = " AND";
 		}
 		$sql.= $clause." c.entity = ".$conf->entity;
-		$sql.= " AND (c.fk_statut BETWEEN 1 AND 2 or (c.fk_statut = 3 AND c.facture = 0))";
+		$sql.= " AND ((c.fk_statut BETWEEN 1 AND 2) OR (c.fk_statut = 3 AND c.facture = 0))";
 		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
 		$resql=$this->db->query($sql);
