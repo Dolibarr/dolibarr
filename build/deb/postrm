@@ -49,14 +49,21 @@ case "$1" in
 
 		fi
 
-		rm -rf /etc/dolibarr
 		for server in $webservers ; do
+			error=""		
 			conffile="/etc/$server/httpd.conf"
+			# We disable set -e because script apache-uninclude.sh return error if not
+			set +e
 			. /usr/share/wwwconfig-common/apache-uninclude.sh
+			set -e
+#            if [ "x$error" != "x" ] ;
+#                then echo $error
+#            fi
 			if [ "$status" = "purge" ] ;
 				then restart="$restart $server"
 			fi
 		done
+		rm -rf /etc/dolibarr
 
 		servers="apache2-ssl apache2 mysql"
 		. /usr/share/wwwconfig-common/restart.sh

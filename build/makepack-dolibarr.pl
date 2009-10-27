@@ -387,8 +387,8 @@ if ($nboftargetok) {
     		print "Create directory $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents\n";
     		$ret=`mkdir -p "$BUILDROOT/$PROJECT/usr/share/$PROJECT/documents"`;
 
-    		print "Create directory $BUILDROOT/$PROJECT/etc/$PROJECT\n";
-    		$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
+    		#print "Create directory $BUILDROOT/$PROJECT/etc/$PROJECT\n";
+    		#$ret=`mkdir -p "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
 
     		#print "Copy changelog file into $BUILDROOT/$PROJECT/DEBIAN\n";
     		#$ret=`cp "$SOURCE/ChangeLog" "$BUILDROOT/$PROJECT/DEBIAN/changelog"`;
@@ -399,8 +399,8 @@ if ($nboftargetok) {
     		print "Copy copyright file into $BUILDROOT/$PROJECT/DEBIAN\n";
     		$ret=`cp "$SOURCE/COPYRIGHT" "$BUILDROOT/$PROJECT/DEBIAN/copyright"`;
 
-    		print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/$PROJECT\n";
-    		$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
+    		#print "Copy apache conf file into $BUILDROOT/$PROJECT/etc/$PROJECT\n";
+    		#$ret=`cp "$SOURCE/build/deb/apache.conf" "$BUILDROOT/$PROJECT/etc/$PROJECT"`;
 
 			print "Set permissions/owners on files/dir\n";
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT`;
