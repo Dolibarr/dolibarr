@@ -213,8 +213,9 @@ if ($nboftargetok) {
     #-----------------------
     if ($nboftargetneedcvs)
 	{
+    	print "Go to directory $SOURCE\n";
    		chdir("$SOURCE");
-    	print "Run cvs update\n";
+    	print "Run cvs update -P -d\n";
     	$ret=`cvs update -P -d 2>&1`;
 	}
 	
@@ -253,7 +254,7 @@ if ($nboftargetok) {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
     		unlink $FILENAMESNAPSHOT.tgz;
-    		
+
     		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
    		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
    		    $cmd="tar --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
@@ -266,6 +267,7 @@ if ($nboftargetok) {
             }
             else
             {
+        		print "Move $FILENAMESNAPSHOT.tgz to $DESTI/$FILENAMESNAPSHOT.tgz\n";
         		$ret=`mv "$FILENAMESNAPSHOT.tgz" "$DESTI/$FILENAMESNAPSHOT.tgz"`;
             }
     		next;
@@ -311,6 +313,9 @@ if ($nboftargetok) {
     	}
     
     	if ($target eq 'RPM') {                 # Linux only
+			print "RPM build is not yet available\n";
+			return;
+			
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     		unlink $FILENAMETGZ.tgz;
