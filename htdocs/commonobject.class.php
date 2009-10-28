@@ -838,7 +838,7 @@ class CommonObject
 		$sql = 'SELECT sourceid, sourcetype, targetid, targettype';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
 		$sql.= " WHERE (sourceid = '".$this->id."' AND sourcetype = 'invoice')";
-		$sql.= " OR    (targetid = '".$this->id."' AND targetid = 'invoice')";
+		$sql.= " OR    (targetid = '".$this->id."' AND targettype = 'invoice')";
 		dol_syslog("CommonObject::load_object_linked sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
