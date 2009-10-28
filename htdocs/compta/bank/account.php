@@ -202,7 +202,7 @@ if ($account || $_GET["ref"])
 	}
 	if ($_REQUEST["thirdparty"])
 	{
-		$sql_rech.=" AND (IFNULL(s.nom,'') LIKE '%".addslashes($_REQUEST["thirdparty"])."%')";
+		$sql_rech.=" AND (COALESCE(s.nom,'') LIKE '%".addslashes($_REQUEST["thirdparty"])."%')";
 		$param.='&amp;thirdparty='.urlencode($_REQUEST["thirdparty"]);
 		$mode_search = 1;
 	}

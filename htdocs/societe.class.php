@@ -537,6 +537,7 @@ class Societe extends CommonObject
 		$sql .= ' WHERE s.rowid = '.$socid;
 
 		$resql=$this->db->query($sql);
+		dol_syslog("Societe::fetch ".$sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))

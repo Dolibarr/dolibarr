@@ -92,7 +92,7 @@ class box_services_vendus extends ModeleBoxes {
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
-				$sql.= ' AND IFNULL(ca.visible,1)=1';
+				$sql.= ' AND COALESCE(ca.visible,1)=1';
 			}
 			$sql.= " ORDER BY c.tms DESC ";
 			$sql.= $db->plimit($max, 0);

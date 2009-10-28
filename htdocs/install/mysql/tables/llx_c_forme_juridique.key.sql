@@ -19,13 +19,4 @@
 -- $Id$
 -- ========================================================================
 
-create table llx_c_forme_juridique
-(
-  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
-  code       	integer NOT NULL,
-  fk_pays    	integer NOT NULL,
-  libelle    	varchar(255),
-  isvatexempted	tinyint DEFAULT 0  NOT NULL,
-  active     	tinyint DEFAULT 1  NOT NULL
-)type=innodb;
-
+ALTER TABLE llx_c_forme_juridique ADD UNIQUE INDEX uk_c_forme_juridique (code);

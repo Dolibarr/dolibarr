@@ -48,7 +48,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 }
 $sql.= " WHERE p.fk_product_type <> 1";
 $sql.= " AND p.entity = ".$conf->entity;
-if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND IFNULL(c.visible,1)=1';
+if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
 if ($db->query($sql))
 {
@@ -68,7 +68,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 $sql.= " WHERE p.envente = 0";
 $sql.= " AND p.fk_product_type <> '1'";
 $sql.= " AND p.entity = ".$conf->entity;
-if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND IFNULL(c.visible,1)=1';
+if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
 if ($db->query($sql))
 {
@@ -113,7 +113,7 @@ if ($conf->service->enabled)
   }
   $sql.= " WHERE p.fk_product_type = '1'";
   $sql.= " AND p.entity = ".$conf->entity;
-  if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND IFNULL(c.visible,1)=1';
+  if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
   if ($db->query($sql))
   {
@@ -132,7 +132,7 @@ if ($conf->service->enabled)
   $sql.= " WHERE p.envente = 0";
   $sql.= " AND p.fk_product_type = '1'";
   $sql.= " AND p.entity = ".$conf->entity;
-  if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND IFNULL(c.visible,1)=1';
+  if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
   if ($db->query($sql))
   {

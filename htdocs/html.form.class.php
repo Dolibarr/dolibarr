@@ -859,7 +859,7 @@ class Form
 
 		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
 		{
-			$sql.= ' AND IFNULL(c.visible,1)=1';
+			$sql.= ' AND COALESCE(c.visible,1)=1';
 		}
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";

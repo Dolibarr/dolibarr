@@ -79,7 +79,7 @@ class box_produits extends ModeleBoxes {
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-				$sql.= $clause." IFNULL(c.visible,1)=1";
+				$sql.= $clause." COALESCE(c.visible,1)=1";
 				$clause = " AND";
 			}
 			$sql.= $clause." p.entity = ".$conf->entity;

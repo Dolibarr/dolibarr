@@ -35,7 +35,7 @@ $langs->load("stocks");
 if (!$user->rights->stock->lire)
   accessforbidden();
 
-  
+
 /*
  * View
  */
@@ -124,7 +124,7 @@ $sql.= " AND m.fk_entrepot = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-	$sql.= " AND IFNULL(c.visible,1)=1";
+	$sql.= " AND COALESCE(c.visible,1)=1";
 }
 $sql.= " ORDER BY datem DESC";
 $sql.= $db->plimit($max,0);
@@ -165,7 +165,7 @@ if ($resql)
 	}
 	$db->free($resql);
 
-	print "</table>";	
+	print "</table>";
 }
 
 print '</td></tr></table>';

@@ -75,7 +75,7 @@ if ($_GET["id"])
 $sql.= " AND s.rowid ='".$_GET["id"]."'";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-	$sql.= " AND IFNULL(c.visible,1)=1";
+	$sql.= " AND COALESCE(c.visible,1)=1";
 }
 if ($month > 0)
 {

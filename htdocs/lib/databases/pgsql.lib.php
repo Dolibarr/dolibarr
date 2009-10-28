@@ -440,6 +440,19 @@ class DoliDb
 		// Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query);
 		//print "FF\n".$query."<br>\n";
+
+		// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
+		$loop=true;
+		while ($loop)
+		{
+			if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])([^\'])/',$query))
+			{
+				$query=preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])([^\'])/','\\1\'\\2\'\\3',$query);
+				dol_syslog("Warning: Bad formed request converted into ".$query,LOG_WARNING);
+			}
+			else $loop=false;
+		}
+
 		$ret = @pg_query($this->db, $query);
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
@@ -613,7 +626,7 @@ class DoliDb
 	 */
 	function idate($param)
 	{
-		return "'".adodb_strftime("%Y-%m-%d %H:%M:%S",$param)."'";
+		return adodb_strftime("%Y-%m-%d %H:%M:%S",$param);
 	}
 
 	/**
@@ -752,13 +765,13 @@ class DoliDb
 	}
 
 	/**
-	 * \brief      Recupere l'id genere par le dernier INSERT.
-	 * \param     	tab     Nom de la table concernee par l'insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
-	 * \return     int     id
+	 * \brief		Get last ID after an insert INSERT.
+	 * \param     	tab     Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * \return     	int     id
 	 */
-	function last_insert_id($tab)
+	function last_insert_id($tab,$fieldid='rowid')
 	{
-		$result = pg_query($this->db,"SELECT MAX(rowid) FROM ".$tab." ;");
+		$result = pg_query($this->db,"SELECT MAX(".$fieldid.") FROM ".$tab." ;");
 		$nbre = pg_num_rows($result);
 		$row = pg_fetch_result($result,0,0);
 		return $row;

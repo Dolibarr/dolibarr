@@ -332,7 +332,7 @@ class DolibarrModules
 		$sql.= $this->numero;
 		$sql.= ", ".$conf->entity;
 		$sql.= ", 1";
-		$sql.= ", ".$this->db->idate(gmmktime());
+		$sql.= ", '".$this->db->idate(gmmktime())."'";
 		$sql.= ", '".$this->version."'";
 		$sql.= ")";
 

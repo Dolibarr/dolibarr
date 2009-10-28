@@ -26,7 +26,6 @@
  *	\brief      Fichier de la classe des produits predefinis
  *	\version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 
@@ -2594,7 +2593,7 @@ class Product extends CommonObject
 		$sql.= " AND p.entity = ".$conf->entity;
 		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 		{
-			$sql.= " AND IFNULL(c.visible,1)=1";
+			$sql.= " AND COALESCE(c.visible,1)=1";
 		}
 		$resql=$this->db->query($sql);
 		if ($resql)

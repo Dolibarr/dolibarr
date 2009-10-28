@@ -164,7 +164,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
 $sql.= " AND p.entity = ".$conf->entity;
-if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND IFNULL(c.visible,1)=1 ";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND COALESCE(c.visible,1)=1 ";
 if (isset($_GET["type"])) $sql.= " AND p.fk_product_type = ".$_GET["type"];
 $sql.= " ORDER BY p.tms DESC ";
 $sql.= $db->plimit($max,0);

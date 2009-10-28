@@ -309,7 +309,7 @@ class Entrepot extends CommonObject
 		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
 		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 		{
-			$sql.= ' AND IFNULL(c.visible,1)=1';
+			$sql.= ' AND COALESCE(c.visible,1)=1';
 		}
 
 		//print $sql;

@@ -89,7 +89,7 @@ $sql.= " WHERE p.rowid = pd.fk_product";
 $sql.= " AND p.entity = ".$conf->entity;
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql.= ' AND IFNULL(c.visible,1)=1';
+  $sql.= ' AND COALESCE(c.visible,1)=1';
 }
 $sql.= " group by (p.rowid)";
 $sql.= " ORDER BY $sortfield $sortorder ";

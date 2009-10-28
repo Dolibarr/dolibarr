@@ -1688,7 +1688,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " WHERE dbt.rowid = ".$objectid;
 					$sql.= " AND dbt.fk_soc = s.rowid";
 					$sql.= " AND s.entity = ".$conf->entity;
-					$sql.= " AND IFNULL(sc.fk_user, ".$user->id.") = ".$user->id;
+					$sql.= " AND COALESCE(sc.fk_user, ".$user->id.") = ".$user->id;
 				}
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				else if ($conf->global->MAIN_MODULE_MULTICOMPANY)

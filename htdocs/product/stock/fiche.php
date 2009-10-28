@@ -330,7 +330,7 @@ else
 			$sql .= " AND ps.fk_entrepot = ".$entrepot->id;
 			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 			{
-				$sql.= ' AND IFNULL(c.visible,1)=1';
+				$sql.= ' AND COALESCE(c.visible,1)=1';
 			}
 			$sql.= " ORDER BY " . $sortfield . " " . $sortorder;
 			//$sql .= $db->plimit($limit + 1 ,$offset);

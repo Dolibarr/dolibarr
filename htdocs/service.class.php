@@ -73,7 +73,7 @@ class Service
 		$sql.= " AND p.entity = ".$conf->entity;
 		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 		{
-			$sql.= " AND IFNULL(c.visible,1)=1";
+			$sql.= " AND COALESCE(c.visible,1)=1";
 		}
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -90,7 +90,6 @@ class Service
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 }
