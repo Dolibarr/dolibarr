@@ -1412,7 +1412,7 @@ class Form
 		if ($empty) print '<option value="">&nbsp;</option>';
 		foreach($this->cache_types_paiements as $id => $arraytypes)
 		{
-			// On passe si on a demand� de filtrer sur des modes de paiments particuliers
+			// On passe si on a demande de filtrer sur des modes de paiments particuliers
 			if (sizeof($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
 
 			if ($format == 0) print '<option value="'.$id.'"';

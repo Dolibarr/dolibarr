@@ -34,6 +34,8 @@ class Multicompany
 	var $error;
 	//! Numero de l'erreur
 	var $errno = 0;
+	
+	var $entities = array();
 
 	/**
 	 *    \brief      Constructeur de la classe
@@ -78,31 +80,75 @@ class Multicompany
 	{
 		
 	}
+	
 	/**
 	 *    \brief      Supression
 	 */
-	function DeleteCanvas($id)
-	{
-
-	}
-	/**
-	 *    \brief      Lecture des donnees dans la base
-	 */
-	function FetchCanvas($id='', $action='')
+	function Delete($id)
 	{
 
 	}
 	
+	/**
+	 *    \brief      List of entities
+	 */
+	function getEntities()
+	{
+		global $conf;
+		
+		$sql = "SELECT ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql.= ", entity";
+		$sql.= ", visible";
+		$sql.= " FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = 'MAIN_INFO_SOCIETE_NOM'";
+		$sql.= " ORDER BY entity ASC";
+		
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				
+				$active = 1;
+				if ($obj->entity < 0) $active = 0;
+				
+				$this->entities[$i]['label']  = $obj->value;
+				$this->entities[$i]['id']     = $obj->entity;
+				$this->entities[$i]['active'] = $active;
+				
+				$i++;
+			}
+		}
+		
+	}
 	
 	/**
-	 *    \brief      Mise a jour des donnees dans la base
-	 *    \param      datas        Tableau de donnees
+	 *    \brief      Return combo list of entities.
+	 *    \param      entities    Entities array
+	 *    \param      selected    Preselected entity
 	 */
-	function UpdateCanvas($datas)
+	function select_entities($entities,$selected='',$option='')
 	{
-		 
+		print '<select class="flat" name="entity" '.$option.'>';
+				
+		if (is_array($entities))
+		{	
+			foreach ($entities as $entity)
+			{
+				print '<option value="'.$entity['id'].'" ';
+				if ($selected == $entity['id'])	print 'selected="true"';
+				if ($entity['active'] == 0) print 'disabled="disabled"';
+				print '>';
+				print $entity['label'];
+				print '</option>';
+			}
+		}
+		print '</select>';
 	}
-
 
 	/**
 	 *    \brief      Assigne les valeurs pour les templates Smarty

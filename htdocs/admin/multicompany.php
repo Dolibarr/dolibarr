@@ -52,11 +52,12 @@ print_fiche_titre($langs->trans("MultiCompanySetup"),$linkback,'setup');
 print '<br>';
 print_titre($langs->trans("MultiCompanyModule"));
 
-$entity = new Multicompany($db);
+$mc = new Multicompany($db);
+$mc->getEntities();
 
 $smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/templates/';
 
-$entity->assign_smarty_values($smarty,$_GET["action"]);
+$mc->assign_smarty_values($smarty,$_GET["action"]);
 
 $smarty->display('admin-entity.tpl');
 

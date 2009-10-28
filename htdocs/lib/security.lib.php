@@ -202,16 +202,18 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Entity field
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		$html = new Form($db);
-
-		//TODO: creer class
-		$entity = array('1'=>'company1','2'=>'company2');
+		require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
+		
+		global $db;
+		
+		$mc = new Multicompany($db);
+		$mc->getEntities();
 
 		if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
 
 		print '<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Entity").'</b> &nbsp; </td>'."\n";
 		print '<td valign="top" nowrap="nowrap">';
-		print $html->selectarray('entity',$entity,$lastentity,0,0,0,1,'tabindex="3"');
+		print $mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
 		print '</td></tr>'."\n";
 	}
 
