@@ -1,79 +1,96 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:57:49
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - exports
 CHARSET=UTF-8
-ExportsArea=Uitvoer gebied
-ImportArea=Import gebied
-NewExport=Nieuwe exportmogelijkheden
-NewImport=Nieuwe invoer
-ExportableDatas=Exportable dataset
-ImportableDatas=Invoerbeperking dataset
-SelectExportDataSet=Kies dataset die u wilt exporteren ...
-SelectExportFields=Kies velden die u wilt exporteren, of selecteer een vooraf gedefinieerde uitvoer Profiel
-SaveExportModel=Bewaar deze uitvoer profiel als u van plan bent om hergebruik het later ...
+ExportsArea=Export deel
+ImportArea=Import deel
+NewExport=Nieuwe export
+NewImport=Nieuwe import
+ExportableDatas=Exporteerbare dataset
+ImportableDatas=Importeerbare dataset
+SelectExportDataSet=Kies dataset welke u wilt exporteren...
+SelectImportDataSet=Kies dataset welke u wilt importeren...
+SelectExportFields=Kies velden die u wilt exporteren, of selecteer een voorgedefinieerde uitvoer profiel
+SelectImportFields=Kies bronbestand velden die u wilt importeren en hun doel velden in database door hen op en neer te verplaatsen met anker %s, of selecteer een voorgedefinieerde import profiel:
+NotImportedFields=Niet geimporteerde velden van bron bestand
+SaveExportModel=Bewaar dit export profiel als u van plan bent om het later te hergebruiken ...
+SaveImportModel=Bewaar dit import profiel als u van plan bent om het later te hergebruiken ...
 ExportModelName=Export profiel naam
-ExportModelSaved=Export profiel opgeslagen onder de <b>naam% s.</b>
-ExportableFields=Exportable velden
-ExportedFields=Geëxporteerde velden
-DatasetToExport=Dataset te exporteren
-Dataset=Dataset
-ChooseFieldsOrdersAndTitle=Kies velden Om ...
-FieldsOrder=Velden bestelling
-FieldsTitle=Velden titel
-ChooseExportFormat=Kies uitvoer formaat
-NowClickToGenerateToBuildExportFile=Nu, klik op &quot;Generate&quot; te bouwen exportbestand ...
-AvailableFormats=Formaten disponibles
-LibraryUsed=Librairie
-LibraryVersion=Versie
-Step=Stap
-FormatedImport=Import-assistent
-FormatedImportDesc1=Dit gebied maakt het mogelijk te importeren persoonlijke gegevens, met een assistent om u te helpen in het proces, zonder technische kennis.
-FormatedImportDesc2=Eerste stap is het kiezen van een koning van de gegevens die u wilt laden, dan bestand te laden en vervolgens te kiezen welke velden u wilt laden.
-FormatedExport=Export assistent
-FormatedExportDesc1=Dit gebied maakt het mogelijk om te exporteren persoonlijke gegevens, met een assistent om u te helpen in het proces, zonder technische kennis.
-FormatedExportDesc2=Eerste stap is het kiezen van een vooraf gedefinieerde dataset, dan te kiezen welke velden u in uw resultaat bestanden, en welke volgorde.
-FormatedExportDesc3=Wanneer de gegevens te exporteren zijn geselecteerd, kunt u de output bestand dat u wilt exporteren van uw gegevens aan.
-Sheet=Blad
-NoImportableData=Geen invoerbeperking gegevens (geen module met definities, zodat gegevens invoer)
-FileSuccessfullyBuilt=Export bestand
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-SelectImportDataSet=Kies een gegevensbestand dat u wilt importeren ...
-SelectImportFields=Kies velden die u wilt importeren of selecteer een vooraf gedefinieerde invoer Profiel
-SaveImportModel=Bewaar dit profiel importeren als u van plan bent om hergebruik het later ...
+ExportModelSaved=Export profiel opgeslagen onder de naam <b>%s</b>.
+ExportableFields=Exporteerbare velden
+ExportedFields=Geexporteerde velden
 ImportModelName=Import profiel naam
-ImportModelSaved=Import profiel opgeslagen onder de <b>naam% s.</b>
-ImportableFields=Invoerbeperking velden
-ImportedFields=Geïmporteerde velden
-DatasetToImport=Dataset te importeren
+ImportModelSaved=Import profiel opgeslagen onder de naam<b>%s</b>.
+ImportableFields=Importeerbare velden
+ImportedFields=Geimporteerde velden
+DatasetToExport=Dataset to export
+DatasetToImport=Importeer bestand naar dataset
+NoDiscardedFields=Geen velden in bron-bestand worden verwijderd
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Kies veld order...
+FieldsOrder=Veld order
+FieldsTitle=Veld titel
+ChooseExportFormat=Kies export formaat
+NowClickToGenerateToBuildExportFile=Nu, selecteer bestand formaat in combo box en klik "Genereer" om een export bestand te maken...
+AvailableFormats=Beschikbare formaten
 LibraryShort=Bibliotheek
-SQLUsedForExport=SQL Verzoek gebruikt te bouwen exportbestand
-LineId=Id van de lijn
-LineDescription=Beschrijving van de lijn
+LibraryUsed=Gebruikte bibliotheek
+LibraryVersion=Versie
+Step=Step
+FormatedImport=Import assistant
+FormatedImportDesc1=Dit deel laat het importeren van gepersonaliseerde data toe, gebruik makend van een assistant om u te helepen in het process zonder technische kennis.
+FormatedImportDesc2=De eerste stap is om de gegevens die u wilt importeren te kiezen, vervolgens het bestand, dan de velden die u wilt importeren te selecteren.
+FormatedExport=Export assistant
+FormatedExportDesc1=Dit deel maakt voor de uitvoer van persoonlijke gegevens gebruik van een wizard die de behoefte aan technische kennis voor Dolibarr wegneemt.
+FormatedExportDesc2=Eerste stap is het kiezen van een vooraf gedefinieerde dataset, dan welke velden u in uw resultaat bestanden wilt en in welke volgorde.
+FormatedExportDesc3=Zodra de gegevens geselecteerd zijn, is het mogelijk om het formaat van de uitvoer bestand te kiezen.
+Sheet=Werkblad
+NoImportableData=Geen importeerbare gegevens (geen module met definities om gegevens import toe te staan)
+FileSuccessfullyBuilt=Export bestand gegenereerd
+SQLUsedForExport=SQL Request gebruikt om een export bestand te maken
+LineId=LijnID
+LineDescription=LijnOmschrijving
 LineUnitPrice=Prijs per eenheid van de lijn
 LineVATRate=BTW-tarief van de lijn
 LineQty=Hoeveelheid voor lijn
 LineTotalHT=Bedrag na aftrek van belastingen voor de lijn
 LineTotalTTC=Bedrag met de belasting voor de lijn
-LineTotalVAT=Bedrag van de BTW voor de lijn
-TypeOfLineServiceOrProduct=Type lijn (0 = product, 1 = dienst)
-FileWithDataToImport=Bestand met de gegevens te importeren
-FileToImport=Bron bestand te importeren
-FileMustHaveOneOfFollowingFormat=Bestand te importeren moet een van de volgende indeling
-ChooseFileToImport=Kies een bestand te importeren, klik dan op picto% s ...
-FieldsInSourceFile=Velden in bronbestand
-FieldsInTargetDatabase=Target velden in Dolibarr database
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+LineTotalVAT=BTW Bedrag voor de lijn
+TypeOfLineServiceOrProduct=Type van de lijn (0=product, 1=dienst)
+FileWithDataToImport=Bestand met import gegevens
+FileToImport=Bron import bestand
+FileMustHaveOneOfFollowingFormat=Import bestand moet een van de volgende formaten hebben
+DownloadEmptyExample=Download voorbeeld van een leeg bron bestand
+ChooseFormatOfFileToImport=Kies betandsformaat om als import bestand te gebruiken door te klikken op de picto %s om het te selecteren...
+ChooseFileToImport=Upload bestand en klik op de picto %s om het bestand te selecteren als bron import bestand...
+SourceFileFormat=Vron bestandsformaat
+FieldsInSourceFile=Velden in bron bestand
+FieldsInTargetDatabase=Dole velden in Dolibarr database (*=verplicht)
+Field=veld
+NoFields=geen velden
+MoveField=Verplaats vel kolom nummerr %s
+ExampleOfImportFile=Voorbeeld_van_import_bestand
+SaveImportProfile=Sla dit import profiel op
+ErrorImportDuplicateProfil=Dit import profiel is niet opgeslagen. Een bestaand profiel met dezelfde naam bestaat reeds.
+ImportSummary=Import setup samenvatting
+TablesTarget=Bedoelde tabellen
+FieldsTarget=Bedoelde velden
+DoNotImportFirstLine=Eerste regel van het bron bestand niet importeren
+NbOfSourceLines=Aantal regels in het bronbestand
+NowClickToTestTheImport=Controleer de import parameters die u hebt gedefineerd. Als deze correct zijn, klik op de knop "<b>%s</b>" om een simulatie van het import process te starten(er veranderen geen gegevens in uw database, het is enkel een simulatie voor dit moment)...
+RunSimulateImportFile=Start de import simulatie
+FieldNeedSource=Dit veld van de database vereist een gegevensbron
+SomeMandatoryFieldHaveNoSource=Sommige verplichte velden hebben geen bron veld uit het gegevensbestand
+InformationOnSourceFile=Informatie over bronbestand
+InformationOnTargetTables=Informatie over doel velden
+SelectAtLeastOneField=Wissel tenminste een bron veld in de kolom velden om te exporteren
+SelectFormat=Kies het import bestandsformaat
+RunImportFile=Start importeren bestand
+NowClickToRunTheImport=Controleer het resultaat van de import simulatie. Als alle correct is, start de definitieve import.
+DataLoadedWithId=Alle gegevens zullen worden geladen met de volgende import id: <b>%s<b>
+ErrorMissingMandatoryValue=Verplichte gegevens niet aanwezig in bron bestand voor veld <b>%s</b>.
+TooMuchErrors=Er zijn nogsteeds <b>%s</b> andere bron regels met fouten, maar de uitvoer is gelimiteerd.
+TooMuchWarnings=Er zijn nogsteeds <b>%s</b> andere bron regels met waarschuwingen, maar de uitvoer is gelimiteerd.
+EmptyLine=Lege regel (wordt genegeerd)
+CorrectErrorBeforeRunningImport=U dient eerst alle fouten te corrigeren voordat de definitieve import kan worden uitgevoerd.
+YouCanUseImportIdToFindRecord=U kunt alle geimporteerde records in uw database vinden door te filteren op het veld <b>import_key='%s'</b>.
+NbOfLinesOK=Aanal regels zonder fouten of waarschuwingen: <b>%s</b>.
+NbOfLinesImported=Aantal regels succesvol geimporteerd: <b>%s</b>.
