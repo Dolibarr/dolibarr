@@ -851,8 +851,8 @@ if ($step == 4 && $datatoimport)
 			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= sizeof($fieldssource)));
 			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
 		}
-		$htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
-		$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
+		$htmltext =$langs->trans("Label").": <b>".$langs->trans($newlabel)."</b><br>";
+		$htmltext.=$langs->trans("Table")." -> ".$langs->trans("Field").": <b>".$tablename."</b> -> <b>".preg_replace('/^.*\./','',$code)."</b><br>";
 		$htmltext.=$langs->trans("Required").': <b>'.yn(preg_match('/\*$/',$label)).'</b>';
 		$note=$objimport->array_import_examplevalues[0][$code];
 		if ($note) $htmltext.='<br>'.$langs->trans("Note").'/'.$langs->trans("Example").': '.$note;
