@@ -116,6 +116,7 @@ class Multicompany
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$smarty->assign('title_picto', img_picto('',$picto));
 		$smarty->assign('title_text', $langs->trans('Setup'));
+		$smarty->assign('langs', $langs);
 
 	}
 

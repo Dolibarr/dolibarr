@@ -25,6 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
 
 $langs->load("admin");
 
@@ -49,7 +50,15 @@ print_fiche_titre($langs->trans("MultiCompanySetup"),$linkback,'setup');
  */
 
 print '<br>';
-//print_titre($langs->trans("MultiCompanyModule"));
+print_titre($langs->trans("MultiCompanyModule"));
+
+$entity = new Multicompany($db);
+
+$smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/templates/';
+
+$entity->assign_smarty_values($smarty,$_GET["action"]);
+
+$smarty->display('admin-entity.tpl');
 
 
 llxFooter('$Date$ - $Revision$');
