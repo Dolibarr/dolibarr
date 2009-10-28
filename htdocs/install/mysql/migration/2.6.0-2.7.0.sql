@@ -467,3 +467,6 @@ ALTER TABLE llx_c_methode_commande_fournisseur ADD UNIQUE INDEX uk_c_methode_com
 
 ALTER TABLE llx_menu change user usertype      integer NOT NULL default '0';
 
+-- Rename index
+ALTER TABLE llx_adherent_options DROP INDEX uk_adherent_options;
+ALTER TABLE llx_adherent_options ADD INDEX idx_adherent_options (adhid);

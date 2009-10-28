@@ -19,4 +19,4 @@
 -- $Id$
 -- ===================================================================
 
-ALTER TABLE llx_adherent_options ADD INDEX uk_adherent_options (adhid);
+ALTER TABLE llx_adherent_options ADD INDEX idx_adherent_options (adhid);
