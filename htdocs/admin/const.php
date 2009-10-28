@@ -72,7 +72,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-print '<td>'.$langs->trans("Note").'</td>';
+print '<td>'.$langs->trans("Comment").'</td>';
 if ($conf->multicompany->enabled) print '<td>'.$langs->trans("Entity").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
