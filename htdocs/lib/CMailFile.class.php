@@ -869,6 +869,7 @@ class CMailFile
 
 		if (function_exists('fsockopen'))
 		{
+			dol_syslog("Try socket connection to host=".$host." port=".$port);
 			//See if we can connect to the SMTP server
 			if ( $socket = @fsockopen($host,       // Host to 'hit', IP or domain
 			$port,       // which Port number to use
@@ -877,8 +878,9 @@ class CMailFile
 			5) )  // timeout for reading/writing data over the socket
 			{
 				// Windows still does not have support for this timeout function
-				if (function_exists('socket_set_timeout'))
-				socket_set_timeout($socket, 5, 0);
+				if (function_exists('socket_set_timeout')) socket_set_timeout($socket, 5, 0);
+
+				dol_syslog("Now we wait for answer 220");
 
 				// Check response from Server
 				if ( $_retVal = $this->server_parse($socket, "220") )
