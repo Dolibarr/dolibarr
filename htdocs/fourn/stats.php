@@ -56,8 +56,7 @@ $fourns=array();
 
 
 /*
- * Affichage liste
- *
+ * View
  */
 
 llxHeader();
@@ -85,8 +84,7 @@ if ($search_ville)
 {
   $sql .= " AND s.ville LIKE '%".$search_ville."%'";
 }
-$sql .= " AND ca.year > (date_format(".$db->idate(mktime()).",'%Y') - 5)";
-
+// TODO Add date ranges
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 dol_syslog("fourn/stats.php sql=".$sql);
@@ -95,10 +93,10 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  
+
   while ($i < min($num,$conf->liste_limit))
   {
-  	$obj = $db->fetch_object($resql);	
+  	$obj = $db->fetch_object($resql);
     $var=!$var;
     $i++;
 
@@ -109,7 +107,7 @@ if ($resql)
   }
 
 }
-else 
+else
 {
   dol_print_error($db);
 }
@@ -150,13 +148,13 @@ $var=True;
 foreach($fourns as $fid => $fnom)
 {
   $var=!$var;
-  
+
   print "<tr $bc[$var]>";
   print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
   print "&nbsp;<a href=\"fiche.php?socid=".$fid."\">".$fnom."</a></td>\n";
   print "<td>".$obj->ville."</td>\n";
   print '<td>'.$code_fourns[$fid].'&nbsp;</td>';
-  
+
   foreach($years as $year)
   {
   	print '<td align="right">'.price($ca[$fid][$year]).'&nbsp;</td>';

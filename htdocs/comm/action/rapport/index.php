@@ -68,16 +68,17 @@ if ($_GET["action"] == 'builddoc')
 
 llxHeader();
 
-$sql = "SELECT count(*) as cc, date_format(a.datep, '%m/%Y') as df";
-$sql.= ", date_format(a.datep, '%m') as month";
-$sql.= ", date_format(a.datep, '%Y') as year";
-$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql.= ", ".MAIN_DB_PREFIX."user as u";
+$sql = "SELECT count(*) as cc,";
+$sql.= " date_format(a.datep, '%m/%Y') as df,";
+$sql.= " date_format(a.datep, '%m') as month,";
+$sql.= " date_format(a.datep, '%Y') as year";
+$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
+$sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE a.fk_user_author = u.rowid";
 $sql.= " AND u.entity = ".$conf->entity;
 $sql.= " AND percent = 100";
-$sql.= " GROUP BY date_format(a.datep, '%m/%Y') ";
-$sql.= " ORDER BY a.datep DESC";
+$sql.= " GROUP BY year, month, df";
+$sql.= " ORDER BY year DESC, month DESC, df DESC";
 $sql.= $db->plimit($limit+1,$offset);
 
 //print $sql;
