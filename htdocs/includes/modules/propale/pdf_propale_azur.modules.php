@@ -744,7 +744,7 @@ class pdf_propale_azur extends ModelePDFPropales
 	 *   	\brief      Affiche en-tete propale
 	 *   	\param      pdf     		Objet PDF
 	 *   	\param      object			Objet propale
-	 *      \param      showadress      0=non, 1=oui
+	 *      \param      showaddress     0=no, 1=yes
 	 *      \param      outputlang		Objet lang cible
 	 */
 	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
@@ -842,27 +842,6 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		if ($showaddress)
 		{
-			// Emetteur
-			$posy=42;
-			$hautcadre=40;
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
-
-
-			$pdf->SetXY($this->marge_gauche,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-			$pdf->SetXY($this->marge_gauche+2,$posy+3);
-
-			// Sender name
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
-
 			// Sender properties
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
@@ -884,21 +863,32 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Web
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
-			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80, 4, $carac_emetteur);
-
-			// Client destinataire
+			// Show sender
+			$posx=$this->marge_gauche;
 			$posy=42;
+			$hautcadre=40;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
+
+			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":");
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(230,230,230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
-			// Cadre client destinataire
-			$pdf->rect(100, $posy, 100, $hautcadre);
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->SetFont('Arial','B',11);
+			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-			$pdf->SetTextColor(0,0,0);
+			// Show sender information
+			$pdf->SetFont('Arial','',9);
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->MultiCell(80, 4, $carac_emetteur);
+
 
 			// If CUSTOMER contact defined, we use it
 			$usecontact=false;
@@ -951,14 +941,28 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Numero TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
 
-			// Show customer/recipient
-			$pdf->SetXY(102,$posy+3);
+			// Show recipient
+			$posy=42;
+			$posx=100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+
+			// Show recipient frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('Arial','',8);
+			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":");
+			$pdf->rect($posx, $posy, 100, $hautcadre);
+			$pdf->SetTextColor(0,0,0);
+
+			// Show recipient name
+			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
+			// Show recipient information
 			$pdf->SetFont('Arial','',9);
 			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
-			$pdf->SetXY(102,$posy+6);
+			$pdf->SetXY($posx,$posy+6);
 			$pdf->MultiCell(86,4, $carac_client);
 		}
 	}

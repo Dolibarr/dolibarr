@@ -871,10 +871,10 @@ class pdf_crabe extends ModelePDFFactures
 	 *   	\brief      Show header of page
 	 *      \param      pdf             Object PDF
 	 *      \param      object          Object invoice
-	 *      \param      showadress      0=no, 1=yes
+	 *      \param      showaddress     0=no, 1=yes
 	 *      \param      outputlangs		Object lang for output
 	 */
-	function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress=1, $outputlangs)
 	{
 		global $conf,$langs;
 
@@ -1051,29 +1051,8 @@ class pdf_crabe extends ModelePDFFactures
 			}
 		}
 
-		if ($showadress)
+		if ($showaddress)
 		{
-			// Emetteur
-			$posy=42;
-			$hautcadre=40;
-			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
-
-
-			$pdf->SetXY($this->marge_gauche,$posy);
-			$pdf->SetFillColor(230,230,230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-			$pdf->SetXY($this->marge_gauche+2,$posy+3);
-
-			// Sender name
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
-
 			// Sender properties
 			$carac_emetteur = '';
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
@@ -1088,19 +1067,32 @@ class pdf_crabe extends ModelePDFFactures
 			// Web
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
-			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80, 4, $carac_emetteur);
-
-			// Client destinataire
+			// Show sender
 			$posy=42;
+			$posx=$this->marge_gauche;
+			$hautcadre=40;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
+
+			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(230,230,230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->SetTextColor(0,0,60);
 
-			// Cadre client destinataire
-			$pdf->rect(100, $posy, 100, $hautcadre);
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('Arial','B',11);
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+
+			// Show sender information
+			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetFont('Arial','',9);
+			$pdf->MultiCell(80, 4, $carac_emetteur);
+
 
 
 			// If BILLING contact defined on invoice, we use it
@@ -1121,10 +1113,10 @@ class pdf_crabe extends ModelePDFFactures
 				else $socname = $object->client->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 
-				// Customer name
+				// Recipient name
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
-				// Customer properties
+				// Recipient properties
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
 				if ($object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
@@ -1146,22 +1138,35 @@ class pdf_crabe extends ModelePDFFactures
 					}
 				}
 
-				// Caracteristiques client
+				// Recipient
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
 				if ($object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 			}
-			// Numero TVA intracom
+			// Intra VAT
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
 
-			// Show customer/recipient
-			$pdf->SetXY(102,$posy+3);
+			// Show recipient
+			$posy=42;
+			$posx=100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+
+			// Show recipient frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('Arial','',8);
+			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			$pdf->rect($posx, $posy, 100, $hautcadre);
+
+			// Show recipient name
+			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
+			// Show recipient information
 			$pdf->SetFont('Arial','',9);
 			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
-			$pdf->SetXY(102,$posy+6);
+			$pdf->SetXY($posx+2,$posy+6);
 			$pdf->MultiCell(86,4, $carac_client);
 		}
 	}
