@@ -168,6 +168,8 @@ class ImportCsv extends ModeleImports
 
         dol_syslog("ImportCsv::open_file file=".$file);
 
+        ini_set('auto_detect_line_endings',1);	// For MAC compatibility
+
 		$newfile=utf8_check($file)?utf8_decode($file):$file;	// fopen need ISO file name
 		$this->handle = fopen($newfile, "r");
         if (! $this->handle)
