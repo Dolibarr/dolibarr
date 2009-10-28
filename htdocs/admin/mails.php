@@ -52,8 +52,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       $_POST["MAIN_MAIL_SENDMODE"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      $_POST["MAIN_MAIL_SMTP_PORT"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    $_POST["MAIN_MAIL_SMTP_SERVER"],'chaine',0,'',0);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_SMTPS_ID"])) dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_SMTPS_PW"])) dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
 
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -340,6 +340,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '</td></tr>';
 	}
 
+	// TLS
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+	//print '<input class="flat" name="MAIN_MAIL_EMAIL_TLS" size="32" value="'.$conf->global->MAIN_MAIL_EMAIL_TLS.'">';
+	print $langs->trans("NotSupported");
+	print '</td></tr>';
+
 	// From
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . $conf->global->MAIN_MAIL_EMAIL_FROM . '"></td></tr>';
@@ -408,6 +415,13 @@ else
 	{
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_PW.'</td></tr>';
 	}
+
+	// TLS
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+	//print '<input class="flat" name="MAIN_MAIL_EMAIL_TLS" size="32" value="'.$conf->global->MAIN_MAIL_EMAIL_TLS.'">';
+	print $langs->trans("NotSupported");
+	print '</td></tr>';
 
 	// From
 	$var=!$var;
