@@ -1,17 +1,8 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - main
 CHARSET=UTF-8
+DIRECTION=ltr
 SeparatorDecimal=,
-SeparatorThousand=
+SeparatorThousand=.
 FormatDateShort=%d-%m-%Y
 FormatDateShortJava=dd-MM-yyyy
 FormatHourShort=%H:%M
@@ -22,37 +13,41 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Database connectie
 Error=Fout
-ErrorFieldRequired=Veld &#39;% s&#39; is vereist
-ErrorFieldFormat=Veld &#39;% s&#39; heeft een slechte waarde
-ErrorFileDoesNotExists=Bestand% s niet bestaat
-ErrorFailedToOpenFile=Failed to open file% s
-ErrorCanNotCreateDir=Kan niet maken richt% s
-ErrorCanNotReadDir=Kan niet lezen richt% s
-ErrorConstantNotDefined=Parameter% s is niet gedefinieerd
-ErrorUnknown=UNKOWN fout
-ErrorSQL=SQL Error
-ErrorLogoFileNotFound=Logo bestand &#39;% s&#39; is niet gevonden
-ErrorGoToModuleSetup=Ga naar Module setup Om dit op te lossen
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Failed to send mail (afzender =% s, ontvanger =% s)
-ErrorAttachedFilesDisabled=Verbonden bestanden functie is uitgeschakeld op deze serveur
-ErrorFileNotUploaded=Bestand is niet geüpload. Controleer of de omvang van niet meer dan maximaal toegestaan, dat de vrije ruimte beschikbaar is op de schijf en dat er niet reeds een bestand met dezelfde naam in deze directory.
+ErrorFieldRequired=Veld '%s' is vereist
+ErrorFieldFormat=Veld '%s' heeft een incorrecte waarde
+ErrorFileDoesNotExists=Bestand %s bestaat niet
+ErrorFailedToOpenFile=Kan bestand %s niet openen
+ErrorCanNotCreateDir=Kan map %s niet maken
+ErrorCanNotReadDir=Kan map 5s niet lezen
+ErrorConstantNotDefined=Parameter %s is niet gedefinieerd
+ErrorUnknown=ONBEKENDE fout
+ErrorSQL=SQL fout
+ErrorLogoFileNotFound=Logo bestand '%s' is niet gevonden
+ErrorGoToGlobalSetup=Ga naar 'Bedrijf/Stichting' setupscherm om te corrigeren
+ErrorGoToModuleSetup=Ga naar Module setup om te corrigeren
+ErrorFailedToSendMail=Mail versturen mislukt (afzender=%s, ontvanger=%s)
+ErrorAttachedFilesDisabled=Het beheer van de bijbehorende bestanden is uitgeschakeld op deze server
+ErrorFileNotUploaded=Bestand is niet geüpload. Controleer of de omvang niet meer is dan maximaal toegestaan, of er vrije ruimte beschikbaar is op de schijf en of er niet aleen bestand met dezelfde naam in deze map bestaat.
 ErrorInternalErrorDetected=Fout ontdekt
-ErrorNoRequestRan=Geen verzoek liep
-ErrorWrongHostParameter=Verkeerde ontvangst parameter
-ErrorYourCountryIsNotDefined=Uw land wordt niet gedefinieerd. Ga naar de Home-Setup-Bewerk en post opnieuw het formulier.
-ErrorRecordIsUsedByChild=Mislukt dit record te verwijderen. Dit record wordt gebruikt door ten minste op kind records.
+ErrorNoRequestRan=Geen query uitgevoerd
+ErrorWrongHostParameter=Verkeerde server parameter
+ErrorYourCountryIsNotDefined=Uw land is niet gedefinieerd. Corrigeer in Instellingen-Algemeen-Bewerk
+ErrorRecordIsUsedByChild=Record verwijderen mislukt. Dit record wordt gebruikt door ten minste een onderliggend record.
 ErrorWrongValue=Verkeerde waarde
-ErrorWrongValueForParameterX=Verkeerde waarde voor de parameter% s
-ErrorNoRequestInError=Geen verzoek in de fout
+ErrorWrongValueForParameterX=Verkeerde waarde voor de parameter %s
+ErrorNoRequestInError=Geen verzoek mislukt
 ErrorServiceUnavailableTryLater=Service niet beschikbaar voor het moment. Probeer het later opnieuw.
-ErrorDuplicateField=Dubbele waarde in een uniek gebied
+ErrorDuplicateField=Dubbele waarde in een enkel veld
 ErrorSomeErrorWereFoundRollbackIsDone=Sommige fouten zijn gevonden. Wij terugdraaiing veranderingen.
 ErrorConfigParameterNotDefined=<b>Parameter% s</b> is niet gedefinieerd binnen Dolibarr configuratiebestand <b>conf.php.</b>
 ErrorCantLoadUserFromDolibarrDatabase=Niet vinden <b>gebruiker% s</b> in Dolibarr database.
 ErrorNoVATRateDefinedForSellerCountry=Error, geen BTW-tarieven voor land &#39;% s&#39;.
+ErrorNoSocialContributionForSellerCountry=Erreur, aucun type de charges défini pour le pays '%s'.
 ErrorFailedToSaveFile=Fout, niet op te slaan bestand.
 ErrorOnlyPngJpgSupported=Fout, alleen. Png en. Jpg-beeld formaat bestand worden ondersteund.
 ErrorImageFormatNotSupported=Uw PHP ondersteunt geen functies om foto&#39;s van dit formaat.
+GoToWikiHelpPage=Consulter l'aide (nécessite un accès internet)
+GoToHelpPage=Consulter l'aide
 RecordSaved=Record opgeslagen
 LevelOfFeature=Niveau van de functies
 NotDefined=Niet gedefinieerd
@@ -565,10 +560,3 @@ Day4=Donderdag
 Day5=Vrijdag
 Day6=Zaterdag
 Day0=Zondag
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-ErrorGoToGlobalSetup=Ga naar &#39;Bedrijf / Stichting &quot;instelscherm in op dit oplossen
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
