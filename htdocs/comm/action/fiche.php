@@ -501,7 +501,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		print $html->select_societes('','socid',1,1);
+		print $html->select_societes('','socid','',1,1);
 	}
 	print '</td></tr>';
 
