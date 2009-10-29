@@ -174,11 +174,17 @@ class Multicompany
 				$obj = $this->db->fetch_object($result);
 				
 				$active = 1;
-				if ($obj->entity < 0) $active = 0;
+				$entity = $obj->entity;
+				
+				if ($obj->entity < 0)
+				{
+					$entity = str_replace('-','',$obj->entity);
+					$active = 0;
+				}
 				
 				$this->entities[$i]['label']   = $obj->value;
 				$this->entities[$i]['id']      = $obj->entity;
-				$this->entities[$i]['details'] = $this->fetch($obj->entity);
+				$this->entities[$i]['details'] = $this->fetch($entity);
 				$this->entities[$i]['active']  = $active;
 				
 				$i++;
