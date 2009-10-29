@@ -9,10 +9,34 @@ Architecture: all
 Essential: no
 Depends: wwwconfig-common, apache2, httpd, libapache2-mod-php5, php5, php5-cgi, php5-curl, php5-gd, php5-imagick, php5-ldap, php5-mcrypt, php5-mysql, mysql-server, perl
 Recommends: mozilla | netscape
-Installed-Size: 30000000
+Installed-Size: 31200000
 Homepage: http://www.dolibarr.org
-Description: Company or foundation management software.
- Dolibarr is a small and simple Web interface with ERP and CRM
- capabilities. It is designed for small companies freelancers, or
- foundations and can be used to deal with invoices and documentation
- required for activity management.
+Description: Dolibarr ERP/CRM
+ Dolibarr ERP/CRM is an open source/free software for
+ small and medium companies, foundations or freelances. It includes
+ different features for Enterprise Resource Planning (ERP) and Customer
+ Relationship Management (CRM) but also other features for different
+ activities.
+ .
+ Dolibarr features are activated by modules. Most common modules are 
+ * Products and services catalog
+ * Stock management
+ * Bank accounts management
+ * Customers, Suppliers or Prospects directory
+ * Contacts directory
+ * Commercial actions management
+ * Orders management
+ * Commercial proposals management with PDF export
+ * Contracts management
+ * Invoices management with PDF export
+ * Payments management
+ * Standing orders management
+ * Shipping management
+ * Foundations members management
+ * Donations management
+ * Bookmarks management
+ * Emailings
+ * Reports
+ * Data export and import tools
+ * LDAP connectivity
+ 
