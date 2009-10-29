@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-	    \file       htdocs/product/stats/propal.php
-        \ingroup    product, service, propal
-		\brief      Page des stats des propals pour un produit
-		\version    $Id$
-*/
+ *	    \file       htdocs/product/stats/propal.php
+ *      \ingroup    product, service, propal
+ *		\brief      Page des stats des propals pour un produit
+ *		\version    $Id$
+ */
 
 
 require("./pre.inc.php");
@@ -53,53 +53,50 @@ $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.datec";
+if (! $sortfield) $sortfield="p.datep";
 
 
 /*
- * Affiche fiche
- *
+ * View
  */
 $html = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
 {
-    $product = new Product($db);
-    if ($_GET["ref"])
-    {
-    	$result = $product->fetch('',$_GET["ref"]);
-    	$_GET["id"]=$product->id;
-    }
-    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+	$product = new Product($db);
+	if ($_GET["ref"])
+	{
+		$result = $product->fetch('',$_GET["ref"]);
+		$_GET["id"]=$product->id;
+	}
+	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-    llxHeader("","",$langs->trans("CardProduct".$product->type));
+	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-    if ( $result > 0)
-    {
-        /*
-         *  En mode visu
-         */
+	if ( $result > 0)
+	{
+
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'referers', $titre,0,$picto);
 
 
-        print '<table class="border" width="100%">';
+		print '<table class="border" width="100%">';
 
-        // Reference
-        print '<tr>';
-        print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		// Reference
+		print '<tr>';
+		print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $html->showrefnav($product,'ref','',1,'ref');
-        print '</td>';
-        print '</tr>';
+		print '</td>';
+		print '</tr>';
 
 		// Libelle
-        print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
-        print '</tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
+		print '</tr>';
 
-        // Prix
-        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
+		// Prix
+		print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
 		if ($product->price_base_type == 'TTC')
 		{
 			print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
@@ -110,87 +107,87 @@ if ($_GET["id"] || $_GET["ref"])
 		}
 		print '</td></tr>';
 
-        // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 		print $product->getLibStatut(2);
-        print '</td></tr>';
+		print '</td></tr>';
 
 		show_stats_for_company($product,$socid);
 
-        print "</table>";
+		print "</table>";
 
-        print '</div>';
+		print '</div>';
 
 
-        $sql = "SELECT distinct(s.nom), s.rowid as socid, p.rowid as propalid, p.ref, p.total as amount,";
-				$sql.= $db->pdate("p.datec")." as date, p.fk_statut as statut";
-				if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= ",".MAIN_DB_PREFIX."propal as p";
-        $sql.= ", ".MAIN_DB_PREFIX."propaldet as d";
-        if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-				$sql.= " WHERE p.fk_soc = s.rowid";
-				$sql.= " AND s.entity = ".$conf->entity;
-        $sql.= " AND d.fk_propal = p.rowid";
-        $sql.= " AND d.fk_product =".$product->id;
-        if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        if ($socid) $sql.= " AND p.fk_soc = ".$socid;
-        $sql.= " ORDER BY $sortfield $sortorder ";
-        $sql.= $db->plimit($conf->liste_limit +1, $offset);
+		$sql = "SELECT distinct s.nom, s.rowid as socid, p.rowid as propalid, p.ref, p.total as amount,";
+		$sql.= "p.datep, p.fk_statut as statut";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql.= ",".MAIN_DB_PREFIX."propal as p";
+		$sql.= ", ".MAIN_DB_PREFIX."propaldet as d";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE p.fk_soc = s.rowid";
+		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND d.fk_propal = p.rowid";
+		$sql.= " AND d.fk_product =".$product->id;
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid) $sql.= " AND p.fk_soc = ".$socid;
+		$sql.= " ORDER BY $sortfield $sortorder ";
+		$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-        $result = $db->query($sql);
-        if ($result)
-        {
-            $num = $db->num_rows($result);
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows($result);
 
-            print_barre_liste($langs->trans("Proposals"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
+			print_barre_liste($langs->trans("Proposals"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 
-            $i = 0;
-            print "<table class=\"noborder\" width=\"100%\">";
-            print '<tr class="liste_titre">';
-            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"p.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-            print "</tr>\n";
+			$i = 0;
+			print "<table class=\"noborder\" width=\"100%\">";
+			print '<tr class="liste_titre">';
+			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DatePropal"),$_SERVER["PHP_SELF"],"p.datep","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+			print "</tr>\n";
 
-            $propalstatic=new Propal($db);
+			$propalstatic=new Propal($db);
 
-            if ($num > 0)
-            {
-                $var=True;
-                while ($i < $num && $i < $conf->liste_limit)
-                {
-                    $objp = $db->fetch_object($result);
-                    $var=!$var;
+			if ($num > 0)
+			{
+				$var=True;
+				while ($i < $num && $i < $conf->liste_limit)
+				{
+					$objp = $db->fetch_object($result);
+					$var=!$var;
 
-                    print "<tr $bc[$var]>";
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
-                    print $objp->ref;
-                    print "</a></td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
-                    print "<td align=\"center\">";
-                    print dol_print_date($objp->date)."</td>";
-                    print "<td align=\"right\">".price($objp->amount)."</td>\n";
-                    print '<td align="right">'.$propalstatic->LibStatut($objp->statut,5).'</td>';
-                    print "</tr>\n";
-                    $i++;
-                }
-            }
-        }
-        else
-        {
-            dol_print_error($db);
-        }
-        print "</table>";
-        print '<br>';
-        $db->free($result);
-    }
+					print "<tr $bc[$var]>";
+					print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
+					print $objp->ref;
+					print "</a></td>\n";
+					print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+					print "<td align=\"center\">";
+					print dol_print_date($db->jdate($objp->datep))."</td>";
+					print "<td align=\"right\">".price($objp->amount)."</td>\n";
+					print '<td align="right">'.$propalstatic->LibStatut($objp->statut,5).'</td>';
+					print "</tr>\n";
+					$i++;
+				}
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		print "</table>";
+		print '<br>';
+		$db->free($result);
+	}
 }
 else
 {
-    dol_print_error();
+	dol_print_error();
 }
 
 $db->close();

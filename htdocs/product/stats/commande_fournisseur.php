@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,12 +19,11 @@
  */
 
 /**
- \file       htdocs/product/stats/commande_fournisseur.php
- \ingroup    product, service, commande
- \brief      Page des stats des commandes fournisseurs pour un produit
- \version    $Id$
+ *	\file       htdocs/product/stats/commande_fournisseur.php
+ *	\ingroup    product, service, commande
+ *	\brief      Page des stats des commandes fournisseurs pour un produit
+ *	\version    $Id$
  */
-
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -54,13 +53,13 @@ $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="c.date_creation";
+if (! $sortfield) $sortfield="c.date_commande";
 
 
 /*
- * Affiche fiche
- *
+ * View
  */
+
 $html = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
@@ -77,9 +76,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 	if ($result > 0)
 	{
-		/*
-		 *  En mode visu
-		 */
+
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
@@ -118,8 +115,9 @@ if ($_GET["id"] || $_GET["ref"])
 		print "</table>";
 		print '</div>';
 
-		$sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, c.rowid, c.total_ht as total_ht, c.ref,";
-		$sql.= " ".$db->pdate("c.date_creation")." as date, c.fk_statut as statut, c.rowid as commandeid";
+		$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
+		$sql.= " c.rowid, c.total_ht as total_ht, c.ref,";
+		$sql.= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid";
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -148,7 +146,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"c.date_creation","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"c.date_commande","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.total_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
@@ -170,7 +168,7 @@ if ($_GET["id"] || $_GET["ref"])
 					print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
-					print dol_print_date($objp->date)."</td>";
+					print dol_print_date($db->jdate($objp->date_commande))."</td>";
 					print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					print '<td align="right">'.$commandestatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
 					print "</tr>\n";

@@ -2381,6 +2381,8 @@ class Product extends CommonObject
 	 */
 	function is_photo_available($sdir)
 	{
+		include_once(DOL_DOCUMENT_ROOT ."/lib/files.lib.php");
+
 		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
 		$dir = $sdir . '/'. $pdir;
 
@@ -2408,6 +2410,8 @@ class Product extends CommonObject
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5)
 	{
+		include_once(DOL_DOCUMENT_ROOT ."/lib/files.lib.php");
+
 		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
 		$dir = $sdir . '/'. $pdir;
 		$dirthumb = $dir.'thumbs/';
