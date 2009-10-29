@@ -158,11 +158,15 @@ class Multicompany
 	{
 		global $conf,$langs;
 		
+		$smarty->assign('langs', $langs);
+		
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$smarty->assign('title_picto', img_picto('',$picto));
-		$smarty->assign('title_text', $langs->trans('Setup'));
-		$smarty->assign('langs', $langs);
+		
+		$smarty->assign('entities',$this->entities);
+		$smarty->assign('img_on',img_picto($langs->trans("Activated"),'on'));
+		$smarty->assign('img_off',img_picto($langs->trans("Disabled"),'on'));
 
 	}
 

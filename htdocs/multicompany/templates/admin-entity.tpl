@@ -20,12 +20,29 @@
 <!-- BEGIN SMARTY TEMPLATE -->
 
 <table class="noborder" width="100%">
-<tr class="liste_titre">
+ <tr class="liste_titre">
 
-<td>{$langs->trans('Name')}</td>
-<td>{$langs->trans('Description')}</td>
-<td align="center">{$langs->trans('Activated')}</td>
-<td align="center" width="20">&nbsp;</td>
+   <td>{$langs->trans('Name')}</td>
+   <td align="left">{$langs->trans('Description')}</td>
+   <td align="center">{$langs->trans('Status')}</td>
+
+{section name=mc loop=$entities}
+{strip}
+   <tr class="{cycle values="impair,pair"}">
+      <td>{$entities[mc].label}</td>
+      <td align="left">&nbsp;</td>
+      <td align="center">
+      
+      {if $entities[mc].active}
+      {$img_on}
+      {else}
+      {$img_off}
+      {/if}
+      
+      </td>
+   </tr>
+{/strip}
+{/section}
 
 </tr></table>
 
