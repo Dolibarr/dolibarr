@@ -344,7 +344,7 @@ while (($file = readdir($handle))!==false)
 		print $module->description;
 		print '</td>';
 
-		// Activ�
+		// Activate
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
@@ -367,7 +367,7 @@ while (($file = readdir($handle))!==false)
 			print "</td>";
 		}
 
-		// Defaut
+		// Default
 		print "<td align=\"center\">";
 		if ($conf->global->PROPALE_ADDON_PDF == "$name")
 		{
@@ -411,7 +411,7 @@ print '<br>';
 
 
 /*
- * Autres options
+ * Other options
  *
  */
 print_titre($langs->trans("OtherOptions"));
@@ -495,7 +495,7 @@ print '</table>';
 
 
 /*
- *  Repertoire
+ *  Directory
  */
 print '<br>';
 print_titre($langs->trans("PathToDocuments"));

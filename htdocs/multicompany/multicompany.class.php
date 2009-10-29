@@ -89,6 +89,32 @@ class Multicompany
 
 	}
 	
+    /**
+	 *    \brief      Enable/disable entity
+	 */
+	function setEntity($id,$action)
+	{
+		global $conf;
+
+		if ($action == 'enable') 
+		{
+			$newid = str_replace('-','',$id);
+		}
+		else if ($action == 'disable')
+		{
+			$newid = '-'.$id;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."const";
+		$sql.= " SET entity = ".$newid;
+		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = 'MAIN_INFO_SOCIETE_NOM'";
+		$sql.= " AND entity = ".$id;
+		
+		dol_syslog("Multicompany::setEntity sql=".$sql, LOG_DEBUG);
+		
+		$result = $this->db->query($sql);
+	}
+	
 	/**
 	 *    \brief      List of entities
 	 */
@@ -96,12 +122,13 @@ class Multicompany
 	{
 		global $conf;
 		
-		$sql = "SELECT ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql = "SELECT ";
+		$sql.= $this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
 		$sql.= ", entity";
 		$sql.= ", visible";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = 'MAIN_INFO_SOCIETE_NOM'";
-		$sql.= " ORDER BY entity ASC";
+		$sql.= " ORDER BY value ASC";
 		
 		$result = $this->db->query($sql);
 		if ($result)
@@ -139,12 +166,14 @@ class Multicompany
 		{	
 			foreach ($entities as $entity)
 			{
-				print '<option value="'.$entity['id'].'" ';
-				if ($selected == $entity['id'])	print 'selected="true"';
-				if ($entity['active'] == 0) print 'disabled="disabled"';
-				print '>';
-				print $entity['label'];
-				print '</option>';
+				if ($entity['active'] == 1)
+				{
+					print '<option value="'.$entity['id'].'" ';
+					if ($selected == $entity['id'])	print 'selected="true"';
+					print '>';
+					print $entity['label'];
+					print '</option>';
+				}
 			}
 		}
 		print '</select>';
@@ -166,7 +195,7 @@ class Multicompany
 		
 		$smarty->assign('entities',$this->entities);
 		$smarty->assign('img_on',img_picto($langs->trans("Activated"),'on'));
-		$smarty->assign('img_off',img_picto($langs->trans("Disabled"),'on'));
+		$smarty->assign('img_off',img_picto($langs->trans("Disabled"),'off'));
 
 	}
 

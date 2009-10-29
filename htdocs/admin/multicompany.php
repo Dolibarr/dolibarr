@@ -38,6 +38,12 @@ accessforbidden();
  * Actions
  */
 
+if ($_GET["action"] == 'enable' || $_GET["action"] == 'disable')
+{
+	$mc = new Multicompany($db);
+	$mc->setEntity($_GET['id'],$_GET["action"]);
+}
+
 
 llxHeader('',$langs->trans("MultiCompanySetup"));
 
@@ -46,7 +52,7 @@ print_fiche_titre($langs->trans("MultiCompanySetup"),$linkback,'setup');
 
 
 /*
- * 
+ * View
  */
 
 print '<br>';

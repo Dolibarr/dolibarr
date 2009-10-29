@@ -759,11 +759,14 @@ class DolibarrModules
 			$val    = $this->const[$key][2];
 			$note   = $this->const[$key][3];
 			$visible= $this->const[$key][4];
+			$entity = $this->const[$key][5];
+			
+			$entity = ((!empty($entity) || $entity == 0)?$entity:$conf->entity);
 
 			$sql = "SELECT count(*)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."const";
 			$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$name."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -782,7 +785,7 @@ class DolibarrModules
 						$sql.= ",".$this->db->encrypt($val,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$note."'";
 						$sql.= ",'".$visible."'";
-						$sql.= ",".$conf->entity;
+						$sql.= ",".$entity;
 						$sql.= ")";
 					}
 					elseif (strlen($val))
@@ -793,7 +796,7 @@ class DolibarrModules
 						$sql.= ",'".$type."'";
 						$sql.= ",".$this->db->encrypt($val,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$visible."'";
-						$sql.= ",".$conf->entity;
+						$sql.= ",".$entity;
 						$sql.= ")";
 					}
 					else
@@ -803,7 +806,7 @@ class DolibarrModules
 						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$type."'";
 						$sql.= ",'".$visible."'";
-						$sql.= ",".$conf->entity;
+						$sql.= ",".$entity;
 						$sql.= ")";
 					}
 
@@ -816,7 +819,7 @@ class DolibarrModules
 				}
 				else
 				{
-					dol_syslog("DolibarrModules::insert_const constant '".$name."' alreday exists");
+					dol_syslog("DolibarrModules::insert_const constant '".$name."' already exists");
 				}
 			}
 			else

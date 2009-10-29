@@ -70,7 +70,7 @@ class modMultiCompany extends DolibarrModules
 		$this->picto='globe';
 
 		// Data directories to create when module is enabled.
-		$this->dirs = array();
+		$this->dirs = array('/smarty/cache/temp','/smarty/templates/temp');
 
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';
@@ -86,10 +86,12 @@ class modMultiCompany extends DolibarrModules
 		$this->langfiles = array("multicompany");
 
 		// Constants
-		$this->const = array();			// List of particular constants to add when module is enabled
+		// List of particular constants to add when module is enabled
 		//Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
 		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
+		$this->const=array(1=>array('MAIN_MODULE_MULTICOMPANY_NEEDSMARTY',"chaine",1,'Need smarty',0,0));
+		
 		// Array to add new pages in new tabs
 		//$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
 		// where entity can be
