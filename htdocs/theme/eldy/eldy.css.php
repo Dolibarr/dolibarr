@@ -540,35 +540,6 @@ div.tabsAction {
 }
 
 
-/* TODO onglet_inf ne sert qu'a telephonie. A virer */
-div.onglet_inf
-{
-    position: relative;
-    display: block;
-    white-space: nowrap;
-    padding: 0px 0px 0px 0px;
-    margin: -12px 0px 0px 10px;
-    font-weight:bold;
-    height: 19px;
-    color: #000000;
-    text-decoration: none;
-}
-a.onglet_inf {
-    background: white;
-    color: #436976;
-    padding: 0px 06px;
-    margin: 0em 0.2em;
-    text-decoration: none;
-    white-space: nowrap;
-    -moz-border-radius-bottomleft:6px;
-    -moz-border-radius-bottomright:6px;
-
-    border-right: 1px solid #555555;
-    border-left: 1px solid #D8D8D8;
-    border-bottom: 1px solid #555555;
-}
-
-
 a.tabTitle {
     background: #436976;
     color: white;
