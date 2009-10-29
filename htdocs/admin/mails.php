@@ -226,7 +226,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	$listofmethods=array();
 	$listofmethods['mail']='PHP mail function';
 	$listofmethods['simplemail']='Simplemail class';
-	$listofmethods['smtps']='SMTP/SMTPS socket library';
+	$listofmethods['smtps']='SMTP/SMTP-AUTH socket library';
 	// SuperAdministrator access only
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 	{
