@@ -233,6 +233,10 @@ class DoliDb
 				$line = "-- ".$line." replaced by --\n";
 				$line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
 			}
+
+			// Remove () in the tables in FROM
+			//$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*,\s*([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
+			//print $line;
 		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
 		else {	# not inside create table
 			#---- fix data in inserted data: (from MS world)
@@ -445,9 +449,9 @@ class DoliDb
 		$loop=true;
 		while ($loop)
 		{
-			if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])([^\'])/',$query))
+			if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/',$query))
 			{
-				$query=preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])([^\'])/','\\1\'\\2\'\\3',$query);
+				$query=preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/','\\1\'\\2\'',$query);
 				dol_syslog("Warning: Bad formed request converted into ".$query,LOG_WARNING);
 			}
 			else $loop=false;
