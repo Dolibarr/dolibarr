@@ -1,44 +1,34 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:04:30
- */
-
-
-// Date 2009-01-19 00:04:30
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - orders
 CHARSET=UTF-8
-OrdersArea=Klanten bestellingen gebied
-SuppliersOrdersArea=Leveranciers bestellingen gebied
-OrderCard=Bestel kaart
-Order=Bestellen
+OrdersArea=Klanten bestellingen zone
+SuppliersOrdersArea=Leveranciers bestellingen zone
+OrderCard=Bestel details
+Order=Bestelling
 Orders=Bestellingen
-OrderFollow=Follow-up
-OrderContact=Bestellen contact
-OrderDate=Bestel datum
-NewOrder=Nieuwe orde
-ToOrder=Zorg bestelling
-MakeOrder=Zorg bestelling
+OrderLine=Bestel online
+OrderFollow=Opvolging
+OrderContact=Bestel contacten
+OrderDate=Besteldatum
+NewOrder=Nieuwe bestelling
+ToOrder=Te bestellen
+MakeOrder=Plaats bestelling
 SupplierOrder=Leverancier bestelling
-SuppliersOrders=Leveranciers orders
-SuppliersOrdersRunning=Huidige leveranciers orders
+SuppliersOrders=Leveranciers bestellingen
+SuppliersOrdersRunning=Huidige leveranciers bestellingen
 CustomerOrder=Klant bestelling
-CustomersOrders=Klanten orders
-CustomersOrdersRunning=Huidige klanten orders
-CustomersOrdersAndOrdersLines=Klant orders en orders&#39; lijnen
-OrdersToValid=Orders op geldige
-OrdersToBill=Verwijst naar factuur
+CustomersOrders=Klanten bestellingen
+CustomersOrdersRunning=Lopende klantbestellingen
+CustomersOrdersAndOrdersLines=Klant bestellingen en orderregels
+OrdersToValid=Bestellingen valideren
+OrdersToBill=Bestellingen factureren
 OrdersInProcess=Bestellingen in uitvoering
-OrdersToProcess=Orders te verwerken
+OrdersToProcess=Bestellingen te verwerken
 StatusOrderCanceledShort=Geannuleerd
 StatusOrderDraftShort=Ontwerp
 StatusOrderValidatedShort=Gevalideerd
 StatusOrderOnProcessShort=Op proces
 StatusOrderProcessedShort=Verwerkte
-StatusOrderToBillShort=Voor Bill
+StatusOrderToBillShort=Voor factuur
 StatusOrderApprovedShort=Goedgekeurd
 StatusOrderRefusedShort=Geweigerd
 StatusOrderToProcessShort=Te verwerken
@@ -48,91 +38,90 @@ StatusOrderCanceled=Geannuleerd
 StatusOrderDraft=Ontwerp (moet worden gevalideerd)
 StatusOrderValidated=Gevalideerd
 StatusOrderOnProcess=Op proces
-StatusOrderProcessed=Verwerkte
-StatusOrderToBill=Voor Bill
+StatusOrderProcessed=Verwerkt
+StatusOrderToBill=Voor facturatie
 StatusOrderApproved=Goedgekeurd
 StatusOrderRefused=Geweigerd
 StatusOrderReceivedPartially=Gedeeltelijk ontvangen
 StatusOrderReceivedAll=Alles ontvangen
-DraftOrWaitingApproved=Ontwerp-of goedgekeurde nog niet besteld
+DraftOrWaitingApproved=Ontwerp of goedgekeurde nog niet besteld
 DraftOrWaitingShipped=Ontwerp of gevalideerd nog niet verzonden
-MenuOrdersToBill=Verwijst naar factuur
 SearchOrder=Zoekopdracht
-Sending=Thuisinstelling
+MenuOrdersToBill=Verwijst naar factuur
+Sending=Zending
 Sendings=Verzendingen
-ShipProduct=Schip product
+ShipProduct=Verstuur product
 Discount=Korting
-CreateOrder=Orde scheppen
-RefuseOrder=Weigeren order
-ApproveOrder=Aanvaarden teneinde
+CreateOrder=Creëer bestelling
+RefuseOrder=Bestelling wijgeren
+ApproveOrder=Accepteer bestelling
 ValidateOrder=Valideer bestelling
-DeleteOrder=Verwijderen Om
-CancelOrder=Annuleren bestelling
-AddOrder=Toevoegen bestelling
+DeleteOrder=Verwijderen bestelling
+CancelOrder=Bestelling annuleren
+AddOrder=Bestelling toevoegen
 AddToMyOrders=Voeg toe aan mijn bestellingen
 AddToOtherOrders=Toevoegen aan andere bestellingen
 ShowOrder=Toon bestelling
-NoOpenedOrders=Nr. geopend bestellingen
+NoOpenedOrders=Geen lopende bestellingen
 NoOtherOpenedOrders=Geen enkele andere bestellingen geopend
 OtherOrders=Andere bestellingen
-LastOrders=Last% s bestellingen
-LastModifiedOrders=Last% s bewerkt bestellingen
-LastClosedOrders=Last% s gesloten bestellingen
+LastOrders=Laatste %s bestellingen
+LastModifiedOrders=Laatste %s aangepaste bestellingen
+LastClosedOrders=Laatste %s gesloten bestellingen
 AllOrders=Alle bestellingen
 NbOfOrders=Aantal bestellingen
-OrdersStatistics=Orders&#39; statistieken
-OrdersStatisticsSuppliers=Leverancier bestellingen &quot;statistieken
+OrdersStatistics=Bestelstatistieken
+OrdersStatisticsSuppliers=Leveranciersstatistieken
 NumberOfOrdersByMonth=Aantal bestellingen per maand
-AmountOfOrdersByMonthHT=bedrag van de bestellingen per maand (exclusief BTW)
-ListOfOrders=Lijst van orders
-CloseOrder=Sluiten bestelling
-ConfirmCloseOrder=Weet u zeker dat u wilt sluiten deze bestelling? Nadat een order is gesloten, kan zij alleen worden aangerekend.
-ConfirmCloseOrderIfSending=Weet u zeker dat u wilt sluiten deze bestelling? U moet sluiten een bestelling alleen wanneer alle scheepvaart worden gedaan.
-ConfirmDeleteOrder=Weet u zeker dat u wilt verwijderen deze bestelling?
-ConfirmValidateOrder=Weet u zeker dat u wilt valideren deze bestelling onder de <b>naam% s?</b>
-ConfirmCancelOrder=Weet u zeker dat u wilt annuleren deze bestelling?
-ConfirmMakeOrder=Weet u zeker dat u wenst te bevestigen dat u deze bestelling <b>op% s?</b>
+AmountOfOrdersByMonthHT=Bedrag van de bestellingen per maand (exclusief BTW)
+ListOfOrders=Bestellingenlijst
+CloseOrder=Bestelling sluiten
+ConfirmCloseOrder=Weet u zeker dat u deze bestelling wilt sluiten? Nadat een bestelling is gesloten, kan zij alleen worden gefactureerd.
+ConfirmCloseOrderIfSending=Weet u zeker dat u deze bestelling wilt sluiten? U moet een bestelling sluiten zodra de producten zijn verzonden.
+ConfirmDeleteOrder=Weet u zeker dat u deze bestelling wilt verwijderen?
+ConfirmValidateOrder=Weet u zeker dat u deze bestelling wilt valideren onder de naam <b>%s</b>?
+ConfirmCancelOrder=Weet u zeker dat u deze bestelling wilt annuleren?
+ConfirmMakeOrder=Weet u zeker dat u deze bestelling wenst te bevestigen op <b>%s</b>?
 GenerateBill=Genereer factuur
-ClassifyBilled=Classify &quot;gefactureerde&quot;
-ComptaCard=Accountancy kaart
-DraftOrders=Ontwerp-orders
+ClassifyBilled=Classifiseer "gefactureerd"
+ComptaCard=Boekhoudingszone
+DraftOrders=Ontwerp-bestelling
 RelatedOrders=Betrokken bestellingen
 OnProcessOrders=Op verwerken van bestellingen
-RefOrder=Ref. bestellen
-RefCustomerOrder=Ref. bestelling van de klant
+RefOrder=Referentie bestelling
+RefCustomerOrder=Referentie bestelling van de klant
 CustomerOrder=Klant bestelling
-RefCustomerOrderShort=Ref. Cust. bestellen
+RefCustomerOrderShort=Ref. klant bestelling
 SendOrderByMail=Verstuur bestelling per mail
 ActionsOnOrder=Acties op bestelling
-NoArticleOfTypeProduct=Geen enkel artikel van het type &#39;product&#39; dus geen shippable artikel voor deze bestelling
+NoArticleOfTypeProduct=Geen enkel artikel van het type "product", dus geen verstuurbaar artikel voor deze bestelling
 OrderMode=Bestel methode
-AuthorRequest=Verzoek auteur
-UseCustomerContactAsOrderRecipientIfExist=Gebruik het contact met klanten adres als gedefinieerd in plaats van derden adres Om ontvangstadres
-RunningOrders=Orders op proces
-UserWithApproveOrderGrant=Useres verleend met &quot;goed te keuren bestellingen&quot; toestemming.
-Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON niet gedefinieerd
-Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON niet gedefinieerd
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module bestand &#39;% s&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module bestand &#39;% s&#39;
-OrderSource0=Commerciële voorstel
+AuthorRequest=Auteur/Aanvrager
+UseCustomerContactAsOrderRecipientIfExist=Gebruik het contact met klantadres als gedefinieerd in plaats van derden adres als ontvangstadres
+RunningOrders=Orders in uitvoering
+UserWithApproveOrderGrant=Gebruikers gerechtigd bestellingen goed te keuren.
+PaymentOrderRef=Betaling van bestelling %s
+CloneOrder=Kloon bestelling
+ConfirmCloneOrder=Weet u zeker dat u deze bestelling <b>%s</b> wilt klonen?
+
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON niet gedefinieerd
+Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON niet gedefinieerd
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Laden module bestand '%s' mislukt
+Error_FailedToLoad_COMMANDE_ADDON_File=Laden module bestand '%s' mislukt
+
+# Sources
+OrderSource0=zakelijk voorstel
 OrderSource1=Internet
-OrderSource2=Mail campagne
-OrderSource3=Telefoon compain
+OrderSource2=Mailing campagne
+OrderSource3=Telefoon compagne
 OrderSource4=Fax campagne
 OrderSource5=Commercieel
-OrderSource6=Bewaren
+OrderSource6=Shop
 QtyOrdered=Aantal besteld
-AddDeliveryCostLine=Voeg een regel die aangeeft dat de levering kosten van het gewicht van de bestelling
-PDFEinsteinDescription=Een complete order model (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou jj est l&#39;annee, mm le mois et nnnn un compteur sequentiel sans breuk et sans remise e 0
-// Date 2009-01-19 00:04:30
-// STOP - Lines generated via parser
+AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhangen van het gewicht van de bestelling
 
+# Document models
+PDFEinsteinDescription=Een complete zakelijk voorstel model (logo. ..)
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
-OrderLine=Bestel online
-PaymentOrderRef=Betaling van de bestelling% s
-CloneOrder=Klonen Om
-ConfirmCloneOrder=Weet u zeker dat u wilt kloon deze <b>bestelling% s?</b>
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
+# NumRef Modules
+MarbreNumRefDesc=Geeft het nummer als %syymm-nnnn waar yy het jaar, mm de maand en nnnn een opeenvolging is zonder breuk of vervanging van 0
