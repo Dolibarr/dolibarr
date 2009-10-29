@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,23 @@ function contract_prepare_head($contrat)
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-
+	
+    // Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['contract']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['contract'] as $value)
+		{
+			$values=explode(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = preg_replace('/__ID__/i',$contrat->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
 
 	return $head;
 }
