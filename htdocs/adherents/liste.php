@@ -121,8 +121,9 @@ if ($filter == 'outofdate')
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
+    $resql = $db->query($sql);
+    if ($resql) $nbtotalofrecords = $db->num_rows($result);
+    else dol_print_error($db);
 }
 // Add order and limit
 $sql.= " ".$db->order($sortfield,$sortorder);
