@@ -136,6 +136,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$demopassword=$tab[1];
 	}
 
+	// Entity cookie
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		$lastuser = '';

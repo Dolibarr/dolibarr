@@ -970,7 +970,7 @@ class FichinterLigne
 		{
 			$obj=$this->db->fetch_object($resql);
 			$total_duration=0;
-			if ($obj) $total_duration = $obj->total_duration;
+			if (!empty($obj->total_duration)) $total_duration = $obj->total_duration;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET duree = ".$total_duration;
