@@ -49,7 +49,7 @@ function ConvertSecondToTime($iSecond,$format='all')
 
 	if ($format == 'all')
 	{
-		if ($iSecond > 86400)
+		if ($iSecond >= 86400)
 		{
 			$sDay=date("d",$iSecond)-1;
 			$dayTranslate = $langs->trans("Day");
@@ -57,11 +57,19 @@ function ConvertSecondToTime($iSecond,$format='all')
 		}
 		$sTime='';
 		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
-		$sTime.=date("H",$iSecond)-1;
-		$sTime.='h'.date("i",$iSecond);
-	}else if ($format == 'hour'){
+		$sHour = date("H",$iSecond)-1;
+		$sMin  = date("i",$iSecond);
+		if (!empty($sHour) && !empty($sMin))
+		{
+			$sTime.= $sHour.'h'.$sMin;
+		}
+	}
+	else if ($format == 'hour')
+	{
 		$sTime=date("H",$iSecond)-1;
-	}else if ($format == 'min'){
+	}
+	else if ($format == 'min')
+	{
 		$sTime=date("i",$iSecond);
 	}
 	return $sTime;
