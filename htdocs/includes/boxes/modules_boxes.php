@@ -101,9 +101,9 @@ class ModeleBoxes
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
 		$bcx[0] = 'class="box_pair"';
 		$bcx[1] = 'class="box_impair"';
-		$var = true;
+		$var = false;
 
-		dol_syslog("modules_box::showBox ".get_Class($this));
+		dol_syslog("ModeleBoxes::showBox ".get_Class($this));
 
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;

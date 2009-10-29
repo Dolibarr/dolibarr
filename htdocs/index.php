@@ -585,7 +585,7 @@ if (sizeof($boxarray))
 	$ii=0;
 	foreach ($boxarray as $key => $box)
 	{
-		if (preg_match('/^A/i',$box->box_order)) // colonne A
+		if (preg_match('/^A/i',$box->box_order)) // column A
 		{
 			$ii++;
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';

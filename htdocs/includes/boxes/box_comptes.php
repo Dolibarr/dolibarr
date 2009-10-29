@@ -21,10 +21,9 @@
 /**
  *      \file       htdocs/includes/boxes/box_comptes.php
  *      \ingroup    banque
- *      \brief      Module de generation de l'affichage de la box comptes
+ *      \brief      Module to generate box for bank accounts
  *		\version	$Id$
  */
-
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
@@ -121,9 +120,9 @@ class box_comptes extends ModeleBoxes {
 				}
 
 				// Total
-				if (sizeof($listofcurrencies) < 1)
+				if (sizeof($listofcurrencies) <= 1)
 				{
-					$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" colspan="3" class="liste_total"',
+					$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" class="liste_total"',
 					'text' => $langs->trans('Total')
 					);
 					$totalamount=price($solde_total).' '.$langs->trans("Currency".$conf->monnaie);

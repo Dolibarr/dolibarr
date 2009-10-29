@@ -29,10 +29,9 @@
 
 
 /**
- \class      InfoBox
- \brief      Classe permettant la gestion des boxes sur une page
+ *	\class      InfoBox
+ *	\brief      Classe permettant la gestion des boxes sur une page
  */
-
 class InfoBox
 {
 	var $db;
@@ -136,6 +135,11 @@ class InfoBox
 					$box->box_id=$obj->box_id;
 					$box->position=$obj->position;
 					$box->box_order=$obj->box_order;
+					if (is_numeric($box->box_order))
+					{
+						if ($box->box_order % 2 == 1) $box->box_order='A'.$box->box_order;
+						elseif ($box->box_order % 2 == 0) $box->box_order='B'.$box->box_order;
+					}
 					$box->fk_user=$obj->fk_user;
 					$enabled=true;
 					if ($box->depends && sizeof($box->depends) > 0)
@@ -171,7 +175,7 @@ class InfoBox
 	function saveboxorder($zone,$boxorder,$userid=0)
 	{
 		global $conf;
-		
+
 		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 		dol_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
@@ -192,8 +196,8 @@ class InfoBox
 			return -3;
 		}
 
-		$sql = "DELETE ".MAIN_DB_PREFIX."boxes";
-		$sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
+		$sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
 		$sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
 		$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
 		$sql.= " AND ".MAIN_DB_PREFIX."boxes.fk_user = ".$userid;
@@ -253,8 +257,9 @@ class InfoBox
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			$this->db->rollback();
+			dol_syslog("InfoBox::saveboxorder ".$this->error);
 			return -1;
 		}
 	}

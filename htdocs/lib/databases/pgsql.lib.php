@@ -234,9 +234,20 @@ class DoliDb
 				$line.= "CREATE ".(preg_match('/UNIQUE/',$reg[2])?'UNIQUE ':'')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
 			}
 
+			// Delete using criteria on other table must not declare twice the deleted table
+			// DELETE FROM tabletodelete USING tabletodelete, othertable -> DELETE FROM tabletodelete USING othertable
+			if (preg_match('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i',$line,$reg))
+			{
+				if ($reg[1] == $reg[2])	// If same table, we remove second one
+				{
+					$line=preg_replace('/DELETE FROM ([a-z_]+) USING ([a-z_]+), ([a-z_]+)/i','DELETE FROM \\1 USING \\3', $line);
+				}
+			}
+
 			// Remove () in the tables in FROM
 			//$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*,\s*([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
 			//print $line;
+
 		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
 		else {	# not inside create table
 			#---- fix data in inserted data: (from MS world)
