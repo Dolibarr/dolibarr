@@ -244,7 +244,11 @@ class DoliDb
 				}
 			}
 
-			// Remove () in the tables in FROM
+			// Remove () in the tables in FROM if one table
+			$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
+			//print $line;
+
+			// Remove () in the tables in FROM if two table
 			//$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*,\s*([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
 			//print $line;
 

@@ -40,7 +40,7 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 
 /*
- * Affichage page
+ * View
  */
 
 $commandestatic=new CommandeFournisseur($db);
@@ -54,10 +54,7 @@ print_fiche_titre($langs->trans("SuppliersArea"));
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
-
-/*
- *
- */
+// Orders
 $commande = new CommandeFournisseur($db);
 $sql = "SELECT count(cf.rowid), fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
@@ -71,7 +68,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
 	$var=True;
@@ -246,7 +243,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers",min($max,$num))."</td>\n";
 	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";

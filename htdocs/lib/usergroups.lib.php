@@ -156,7 +156,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     $var=!$var;
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
 
-    print '<table class="notopnoleftnoright" width="100%">';
+    print '<table class="nobordernopadding" width="100%">';
     $handle=opendir($dirtheme);
     $i=0;
     while (($subdir = readdir($handle))!==false)

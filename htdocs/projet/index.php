@@ -66,7 +66,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-$sql.= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.title, p.rowid";
 
 $var=true;
 $resql = $db->query($sql);
@@ -111,7 +111,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= " GROUP BY s.nom";
+$sql.= " GROUP BY s.nom, s.rowid";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $var=true;
