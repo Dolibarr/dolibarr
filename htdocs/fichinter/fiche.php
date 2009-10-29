@@ -262,6 +262,8 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
 		fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+		exit;
 	}
 }
 
@@ -311,6 +313,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 	unset($_POST['np_desc']);
 	unset($_POST['durationhour']);
 	unset($_POST['durationmin']);
+	
+	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
+	exit;
 }
 
 /*
@@ -429,18 +434,18 @@ if ($_GET["action"] == 'create')
 
 	if ($_GET["socid"] > 0)
 	{
-		print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
+		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
-		print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
+		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
 
-		print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+		print '<input type="hidden" name="action" value="add">';
 
-		print "<tr><td>".$langs->trans("Ref")."</td>";
-		print "<td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
+		print '<tr><td>'.$langs->trans("Ref").'</td>';
+		print '<td><input name="ref" value="$numpr"></td></tr>'."\n";
 
 		if ($conf->projet->enabled)
 		{
@@ -467,7 +472,7 @@ if ($_GET["action"] == 'create')
 
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
-		print "<td>";
+		print '<td>';
 		print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
 		print '</td></tr>';
 
@@ -480,13 +485,13 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		print "<form name='fichinter' action=\"fiche.php\" method=\"get\">";
+		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 		print '<table class="border" width="100%">';
-		print "<tr><td>".$langs->trans("Company")."</td><td>";
+		print '<tr><td>'.$langs->trans("Company").'</td><td>';
 		$html->select_societes('','socid','s.client = 1',1);
-		print "</td></tr>";
+		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
-		print "<input type=\"hidden\" name=\"action\" value=\"create\">";
+		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '</td></tr>';
 		print '</table>';

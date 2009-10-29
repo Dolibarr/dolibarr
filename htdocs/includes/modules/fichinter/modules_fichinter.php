@@ -22,8 +22,8 @@
 /**
  \file       htdocs/includes/modules/fichinter/modules_fichinter.php
  \ingroup    ficheinter
- \brief      Fichier contenant la classe m�re de generation des fiches interventions en PDF
- et la classe m�re de num�rotation des fiches interventions
+ \brief      Fichier contenant la classe mere de generation des fiches interventions en PDF
+ et la classe mere de numerotation des fiches interventions
  \version    $Id$
  */
 
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 /**
  \class      ModelePDFFicheinter
- \brief      Classe m�re des mod�les de fiche intervention
+ \brief      Classe mere des modeles de fiche intervention
  */
 class ModelePDFFicheinter extends FPDF
 {
@@ -48,7 +48,7 @@ class ModelePDFFicheinter extends FPDF
 	}
 
 	/**
-	 \brief      Renvoi le dernier message d'erreur de cr�ation de fiche intervention
+	 \brief      Renvoi le dernier message d'erreur de creation de fiche intervention
 	 */
 	function pdferror()
 	{
@@ -56,7 +56,7 @@ class ModelePDFFicheinter extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des mod�les actifs
+	 *      \brief      Renvoi la liste des modeles actifs
 	 */
 	function liste_modeles($db)
 	{
@@ -93,7 +93,7 @@ class ModelePDFFicheinter extends FPDF
 
 /**
  \class      ModeleNumRefFicheinter
- \brief      Classe m�re des mod�les de num�rotation des r�f�rences de fiches d'intervention
+ \brief      Classe mere des modeles de numerotation des references de fiches d'intervention
  */
 
 class ModeleNumRefFicheinter
@@ -108,7 +108,7 @@ class ModeleNumRefFicheinter
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de num�rotation
+	/**     \brief      Renvoi la description par defaut du modele de numerotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -118,7 +118,7 @@ class ModeleNumRefFicheinter
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de num�rotation
+	/**     \brief      Renvoi un exemple de numerotation
 	 *      \return     string      Example
 	 */
 	function getExample()
@@ -128,8 +128,8 @@ class ModeleNumRefFicheinter
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette num�rotation de fonctionner.
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -137,7 +137,7 @@ class ModeleNumRefFicheinter
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribu�e
+	/**     \brief      Renvoi prochaine valeur attribuee
 	 *      \return     string      Valeur
 	 */
 	function getNextValue()
@@ -163,10 +163,10 @@ class ModeleNumRefFicheinter
 
 
 /**
- \brief      Cr�e une fiche intervention sur disque en fonction du mod�le de FICHEINTER_ADDON_PDF
- \param	    db  			objet base de donn�e
+ \brief      Cree une fiche intervention sur disque en fonction du modele de FICHEINTER_ADDON_PDF
+ \param	    db  			objet base de donnee
  \param	    object			Object fichinter
- \param	    modele			force le modele � utiliser ('' par defaut)
+ \param	    modele			force le modele a utiliser ('' par defaut)
  \param		outputlangs		objet lang a utiliser pour traduction
  \return     int         	0 si KO, 1 si OK
  */
@@ -177,7 +177,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
 
-	// Positionne modele sur le nom du modele de facture � utiliser
+	// Positionne modele sur le nom du modele de facture a utiliser
 	if (! strlen($modele))
 	{
 		if ($conf->global->FICHEINTER_ADDON_PDF)
@@ -226,10 +226,10 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 }
 
 /**
- \brief     Supprime l'image de pr�visualitation, pour le cas de r�g�n�ration de propal
- \param	    db  		objet base de donn�e
- \param	    propalid	id de la propal � effacer
- \param     propalref r�f�rence de la propal si besoin
+ * \brief     Deletes the image preview, in case of regeneration
+ * \param	  db			database object
+ * \param	  fichinterid	id to delete
+ * \param     fichinterref	reference if needed
  */
 function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 {
