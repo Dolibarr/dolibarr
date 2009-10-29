@@ -90,6 +90,40 @@ class Multicompany
 	}
 	
     /**
+	 *    \brief      Fetch entity
+	 */
+	function fetch($id)
+	{
+		global $conf;
+		
+		$sql = "SELECT ";
+		$sql.= $this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
+		$sql.= ", ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql.= " FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." LIKE 'MAIN_%'";
+		$sql.= " AND entity = ".$id;
+		
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$entityDetails = array();
+			$i = 0;
+			
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+
+				$entityDetails[$obj->name]  = $obj->value;
+				
+				$i++;
+			}
+			return $entityDetails;
+		}
+		
+	}
+	
+    /**
 	 *    \brief      Enable/disable entity
 	 */
 	function setEntity($id,$action)
@@ -125,7 +159,6 @@ class Multicompany
 		$sql = "SELECT ";
 		$sql.= $this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
 		$sql.= ", entity";
-		$sql.= ", visible";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = 'MAIN_INFO_SOCIETE_NOM'";
 		$sql.= " ORDER BY value ASC";
@@ -143,9 +176,10 @@ class Multicompany
 				$active = 1;
 				if ($obj->entity < 0) $active = 0;
 				
-				$this->entities[$i]['label']  = $obj->value;
-				$this->entities[$i]['id']     = $obj->entity;
-				$this->entities[$i]['active'] = $active;
+				$this->entities[$i]['label']   = $obj->value;
+				$this->entities[$i]['id']      = $obj->entity;
+				$this->entities[$i]['details'] = $this->fetch($obj->entity);
+				$this->entities[$i]['active']  = $active;
 				
 				$i++;
 			}

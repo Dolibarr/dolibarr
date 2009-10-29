@@ -23,14 +23,18 @@
  <tr class="liste_titre">
 
    <td>{$langs->trans('Name')}</td>
-   <td align="left">{$langs->trans('Description')}</td>
+   <td align="left">{$langs->trans('Town')}</td>
+   <td align="left">{$langs->trans('Country')}</td>
+   <td align="left">{$langs->trans('Currency')}</td>
    <td align="center">{$langs->trans('Status')}</td>
 
 {section name=mc loop=$entities}
 {strip}
    <tr class="{cycle values="impair,pair"}">
       <td>{$entities[mc].label}</td>
-      <td align="left">&nbsp;</td>
+      <td align="left">{$entities[mc].details.MAIN_INFO_SOCIETE_VILLE}</td>
+      <td align="left">{$entities[mc].details.MAIN_INFO_SOCIETE_PAYS}</td>
+      <td align="left">{$entities[mc].details.MAIN_MONNAIE}</td>
       <td align="center">
       
       {if $entities[mc].active}
@@ -45,5 +49,9 @@
 {/section}
 
 </tr></table>
+
+<div class="tabsAction">
+<a class="butAction" href="{$smarty.server.SCRIPT_NAME}?action=create">{$langs->trans('AddEntity')}</a>
+</div>
 
 <!-- END SMARTY TEMPLATE -->

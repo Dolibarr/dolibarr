@@ -60,6 +60,7 @@ print_titre($langs->trans("MultiCompanyModule"));
 
 $mc = new Multicompany($db);
 $mc->getEntities();
+//var_dump($mc->entities);
 
 $smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/templates/';
 
