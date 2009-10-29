@@ -121,7 +121,7 @@ if ($result)
     }
 }
 else {
-    dol_print_error($db);   
+    dol_print_error($db);
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
@@ -155,7 +155,7 @@ if ($modecompta != 'CREANCES-DETTES')
         }
     }
     else {
-        dol_print_error($db);   
+        dol_print_error($db);
     }
 }
 
@@ -173,7 +173,7 @@ $var=true;
 if (sizeof($amount))
 {
     $arrayforsort=$name;
-    
+
     // We define arrayforsort
     if ($sortfield == 'name' && $sortorder == 'asc') {
         asort($name);
@@ -207,10 +207,10 @@ if (sizeof($amount))
         print "<td>".$linkname."</td>\n";
         print '<td align="right">'.price($amount[$key]).'</td>';
         print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
-        if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2) 
+        if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2)
         {
         	if($key>0){
-           		print '<td align="center"><a href="comm.php?id='.$key.'">'.img_picto($langs->trans("Show"),"vcard").'</a></td>';
+           		print '<td align="center"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?id='.$key.'">'.img_picto($langs->trans("Show"),"vcard").'</a></td>';
         	} else {
         		print '<td> &nbsp; </td>' ;
         	}

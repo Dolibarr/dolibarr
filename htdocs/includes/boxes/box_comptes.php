@@ -125,8 +125,14 @@ class box_comptes extends ModeleBoxes {
 					$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" class="liste_total"',
 					'text' => $langs->trans('Total')
 					);
-					$totalamount=price($solde_total).' '.$langs->trans("Currency".$conf->monnaie);
 					$this->info_box_contents[$i][1] = array('td' => 'align="right" class="liste_total"',
+					'text' => '&nbsp;'
+					);
+					$this->info_box_contents[$i][2] = array('td' => 'align="right" class="liste_total"',
+					'text' => '&nbsp;'
+					);
+					$totalamount=price($solde_total).' '.$langs->trans("Currency".$conf->monnaie);
+					$this->info_box_contents[$i][3] = array('td' => 'align="right" class="liste_total"',
 					'text' => $totalamount
 					);
 				}

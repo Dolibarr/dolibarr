@@ -555,7 +555,7 @@ if ($nboflate > 0)
 {
 	print '<br>';
 	//print '<table width="100%" class="border"><tr><td>';
-	print '<font class="warning">'.img_picto($langs->trans("Alert"),'warning').' '.$langs->trans("WarningYouHaveAtLeastOneTaskLate").'</font>';
+	print '<div class="warning">'.img_picto($langs->trans("Alert"),'warning').' '.$langs->trans("WarningYouHaveAtLeastOneTaskLate").'</div>';
 	//print '</td></tr></table>';
 }
 

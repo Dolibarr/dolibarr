@@ -828,8 +828,10 @@ border: 0px;
 /*
  *  Boxes
  */
-table.box {
-margin: 2px;
+
+.box {
+padding-right: 2px;
+padding-bottom: 2px;
 }
 
 tr.box_titre {

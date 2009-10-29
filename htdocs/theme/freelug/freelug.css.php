@@ -684,6 +684,10 @@ div.ok {
 
 div.warning {
   color: #777711;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  border: 1px solid #ebebd4;
+  -moz-border-radius:6px;
+  background: #efefd4;
 }
 
 div.error {
@@ -801,23 +805,29 @@ th {
 /*
  *  Boxes
  */
+
+.box {
+	padding-right: 4px;
+	padding-bottom: 4px;
+}
+
 tr.box_titre {
-               color: #FFFFFF;
-               background: #777799;
-               font-family: Helvetica, Verdana;
+    color: #FFFFFF;
+    background: #777799;
+    font-family: Helvetica, Verdana;
 }
 
 tr.box_pair {
-              background: #dcdcd0;
+    background: #dcdcd0;
 }
 
 tr.box_impair {
-                background: #eeeedd;
-                font-family: Helvetica, Verdana;
+    background: #eeeedd;
+    font-family: Helvetica, Verdana;
 }
 
 tr.fiche {
-           font-family: Helvetica, Verdana;
+    font-family: Helvetica, Verdana;
 }
 
 

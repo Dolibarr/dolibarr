@@ -111,7 +111,7 @@ class ModeleBoxes
 		$nblines=sizeof($contents);
 
 		print "\n\n<!-- Box start -->\n";
-		print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$this->box_id.'">'."\n";
+		print '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
 
 		if (! empty($head['text']) || ! empty($head['sublink']) || $nblines)
 		{

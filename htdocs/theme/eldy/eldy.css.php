@@ -516,7 +516,6 @@ div.tabs {
 
 div.tabBar {
     color: #234046;
-    background: #dee7ec;
     padding-top: 12px;
     padding-left: 12px;
     padding-right: 12px;
@@ -530,7 +529,8 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-/*    background: #F0F0F0 url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>) repeat-x; */
+    background: #dee7ec;
+    background: #dee7ec url(/theme/eldy/img/tab_background.png) repeat-x;
 }
 
 div.tabsAction {
@@ -555,7 +555,7 @@ a.tabTitle {
 }
 
 a.tab:link {
-    background: white;
+    background: #dee7ec;
     color: #436976;
 	font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 6px;
@@ -570,7 +570,7 @@ a.tab:link {
     border-top: 1px solid #D8D8D8;
 }
 a.tab:visited {
-    background: white;
+    background: #dee7ec;
     color: #436976;
 	font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 6px;
@@ -585,7 +585,7 @@ a.tab:visited {
     border-top: 1px solid #D8D8D8;
 }
 a.tab#active {
-    background: #dee7ec;
+    background: white;
     border-bottom: #dee7ec 1px solid;
 	font-family: helvetica, verdana, arial, sans-serif;
     color: #436976;
@@ -598,9 +598,10 @@ a.tab#active {
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
+    border-bottom: 1px solid white;
 }
 a.tab:hover {
-    background: #dee7ec;
+    background: white;
     color: #436976;
 	font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 6px;
@@ -753,6 +754,7 @@ border-bottom: 1px solid #000000;
 border-left: 1px solid #000000;
 }
 
+/* Main boxes */
 
 table.noborder {
 border-collapse: collapse;
@@ -765,23 +767,17 @@ border-right-style: solid;
 border-bottom-width: 1px;
 border-bottom-color: #BBBBBB;
 border-bottom-style: solid;
+
+margin-bottom: 2px;
+margin-top: 0px;
 }
 
 table.noborder tr {
 border-top-color: #FEFEFE;
 
-border-right-width: 1px;
-border-right-color: #BBBBBB;
-border-right-style: solid;
-
 border-left-width: 1px;
-border-left-color: #BBBBBB;
+border-left-color: #FEFEFE;
 border-left-style: solid;
-/*
-border-bottom-width: 1px;
-border-bottom-color: #BBBBBB;
-border-bottom-style: solid;
-*/
 }
 
 table.noborder td {
@@ -802,9 +798,26 @@ border: 0px;
 padding: 0px 0px;
 }
 
+/* For lists */
+
 table.liste {
-border-collapse: collapse;
 width: 100%;
+border-collapse: collapse;
+border-top-color: #FEFEFE;
+
+border-right-width: 1px;
+border-right-color: #BBBBBB;
+border-right-style: solid;
+
+border-bottom-width: 1px;
+border-bottom-color: #BBBBBB;
+border-bottom-style: solid;
+
+margin-bottom: 2px;
+margin-top: 0px;
+}
+table.liste td {
+padding-right: 2px;
 }
 
 tr.liste_titre {
@@ -846,9 +859,12 @@ border: 0px;
 }
 
 tr.liste_total td {
-border-top: 1px solid #888888;
-background: #F4F4F4;
-font-weight: bold;
+border-top: 1px solid #DDDDDD;
+background: #F0F0F0;
+/* background-image: url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>); */
+background-repeat: repeat-x;
+color: #332266;
+font-weight: normal;
 white-space: nowrap;
 }
 
@@ -880,7 +896,7 @@ border: 0px;
 
 .pair	{
 /* background: #e6ebed; */
-background: #fafafa;
+background: #f4f4f4;
 font-family: helvetica, verdana, arial, sans-serif;
 border: 0px;
 }
@@ -895,8 +911,10 @@ border: 0px;
 /*
  *  Boxes
  */
-table.box {
-margin: 2px;
+
+.box {
+padding-right: 4px;
+padding-bottom: 4px;
 }
 
 tr.box_titre {
@@ -908,8 +926,8 @@ font-family: arial, helvetica, verdana, sans-serif;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
--moz-border-radius-topleft:4px;
--moz-border-radius-topright:4px;
+  -moz-border-radius-topleft:6px;
+  -moz-border-radius-topright:6px;
 }
 
 tr.box_impair {
@@ -920,7 +938,7 @@ font-family: arial, helvetica, verdana, sans-serif;
 
 tr.box_pair {
 /* background: #d0d4d7; */
-background: #fafafa;
+background: #f4f4f4;
 font-family: arial, helvetica, verdana, sans-serif;
 }
 
@@ -948,6 +966,11 @@ div.ok {
 
 div.warning {
   color: #997711;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  margin: 0.5em 0em 0.5em 0em;
+  border: 1px solid #e0e0d0;
+  -moz-border-radius:6px;
+  background: #efefd4;
 }
 
 div.error {
@@ -955,13 +978,17 @@ div.error {
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #8C9CAB;
+  -moz-border-radius:6px;
 }
 
-div.info {	/* Info admin */
+/* Info admin */
+div.info {
   color: #888888;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #ACACAB;
+  border: 1px solid #e0e0d0;
+  -moz-border-radius:6px;
+  background: #efefd4;
 }
 
 

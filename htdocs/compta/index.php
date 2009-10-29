@@ -653,7 +653,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 }
 
 /*
- * Commandes clients a facturer
+ * Customers orders to be billed
  */
 if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->commande->lire)
 {
@@ -734,7 +734,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				$var=!$var;
 			}
 
-			print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
+			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
 			if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($tot_ht).'</td>';
 			print '<td align="right">'.price($tot_ttc).'</td>';
 			print '<td align="right">'.price($tot_tobill).'</td>';
@@ -827,7 +827,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$i++;
 			}
 
-			print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
+			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
 			if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($total).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';
 			print '<td align="right">'.price($totalam).'</td>';
@@ -907,7 +907,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 				$var = !$var;
 			}
 
-			print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
+			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
 			if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($total).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';
 			print '<td align="right">'.price($totalam).'</td>';

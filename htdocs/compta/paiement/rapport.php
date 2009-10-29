@@ -26,6 +26,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/rapport/pdf_paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 // Security check
 if (! $user->rights->facture->lire)

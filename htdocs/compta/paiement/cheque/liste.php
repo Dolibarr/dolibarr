@@ -79,7 +79,7 @@ if ($resql)
 	print_barre_liste($langs->trans("ChequesReceipts"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
 
 	print '<form method="get" action="liste.php">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),"liste.php","bc.number","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);

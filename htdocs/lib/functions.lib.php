@@ -2090,6 +2090,8 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		$nextpage = 0;
 	}
 
+	print "\n";
+	print "<!-- Begin title '".$titre."' -->\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
 
 	$pagelist = '';
@@ -2163,7 +2165,8 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
 	print '</td>';
 
-	print '</tr></table>';
+	print '</tr></table>'."\n";
+	print "<!-- End title -->\n\n";
 }
 
 /**

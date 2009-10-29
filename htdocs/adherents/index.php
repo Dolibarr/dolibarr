@@ -173,11 +173,11 @@ foreach ($AdherentType as $key => $adhtype)
 	$SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
 }
 print '<tr class="liste_total">';
-print '<td> <b>'.$langs->trans("Total").'</b> </td>';
-print '<td align="right"><b>'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</b></td>';
-print '<td align="right"><b>'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</b></td>';
-print '<td align="right"><b>'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</b></td>';
-print '<td align="right"><b>'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</b></td>';
+print '<td class="liste_total">'.$langs->trans("Total").'</td>';
+print '<td class="liste_total" align="right">'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 print '</tr>';
 
 print "</table>\n";

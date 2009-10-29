@@ -61,7 +61,7 @@ if ( $societe->fetch($socid) )
 	 */
 	$head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"),0,'company');
 
 
 	print '<table width="100%" class="notopnoleftnoright">';
@@ -122,7 +122,7 @@ if ( $societe->fetch($socid) )
 	// Lien recap
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
+	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
@@ -163,7 +163,7 @@ if ( $societe->fetch($socid) )
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">';
-			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?$num:$MAXLIST)).'</td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?$num:$MAXLIST)).'</td>';
 			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table>';
 			print '</td></tr>';
 			while ($i < $num && $i <= $MAXLIST)
@@ -218,7 +218,7 @@ if ( $societe->fetch($socid) )
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="4">';
-			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td></tr></table>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills',($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="facture/index.php?socid='.$societe->id.'">'.$langs->trans('AllBills').' ('.$num.')</td></tr></table>';
 			print '</td></tr>';
 			while ($i < min($num,$MAXLIST))
 			{

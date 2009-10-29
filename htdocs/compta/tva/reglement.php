@@ -19,11 +19,11 @@
  */
 
 /**
-	    \file       htdocs/compta/tva/reglement.php
-        \ingroup    tax
-		\brief      Liste des règlements de TVA effectués
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/tva/reglement.php
+ *      \ingroup    tax
+ *		\brief      Liste des rï¿½glements de TVA effectuï¿½s
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
@@ -86,7 +86,7 @@ if ($result)
 
         $i++;
     }
-    print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td>';
     print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
 
     print "</table>";

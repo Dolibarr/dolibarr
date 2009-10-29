@@ -62,7 +62,7 @@ if ( $societe->fetch($socid) )
 	 */
 	$head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'supplierstat', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'supplierstat', $langs->trans("ThirdParty"),0,'company');
 
 
 	print '<table class="border" width="100%">';
@@ -89,7 +89,7 @@ if ( $societe->fetch($socid) )
 	}
 	else
 	{
-		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');	
+		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');
 	}
 
 	print '</td><td valign="top" width="50%">';
@@ -102,9 +102,9 @@ if ( $societe->fetch($socid) )
 	}
 	else
 	{
-		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');	
+		print $langs->trans("NoneOrBatchFileNeverRan",'batch_fournisseur_updateturnover.php, batch_fournisseur_buildgraph.php');
 	}
-	
+
 	print '</td></tr>';
 	print '</table>' . "\n";
 	print '</div>';

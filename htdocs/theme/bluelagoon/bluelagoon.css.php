@@ -544,6 +544,12 @@ a.impayee { font-weight: bold }
 /*
  *  Boxes
  */
+
+.box {
+	padding-right: 6px;
+	padding-bottom: 8px;
+}
+
 tr.box_titre {
     background: #b3cccc;
     font-family: Helvetica, Verdana;
@@ -580,6 +586,10 @@ div.ok {
 
 div.warning {
   color: #997711;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  border: 1px solid #ebebd4;
+  -moz-border-radius:6px;
+  background: #efefd4;
 }
 
 div.error {

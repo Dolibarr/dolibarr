@@ -3701,7 +3701,6 @@ else
 		{
 			$sql .= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
 		}
-
 		$sql .= ' GROUP BY f.rowid';
 
 		$sql .= ' ORDER BY ';
