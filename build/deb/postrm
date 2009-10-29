@@ -32,6 +32,7 @@ includefile=/etc/dolibarr/apache.conf
 
 case "$1" in
 	purge)
+
 		db_get "dolibarr/postrm"
 		if [ "$RET" = "true" ] ; then
 			# Get database configuration
@@ -46,9 +47,9 @@ case "$1" in
 
 			. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
 			. /usr/share/wwwconfig-common/${dbtype}-dropdb.sh
-
 		fi
 
+		# Remove include files
 		for server in $webservers ; do
 			error=""		
 			conffile="/etc/$server/httpd.conf"
@@ -65,16 +66,19 @@ case "$1" in
 		done
 		rm -rf /etc/dolibarr
 
+		# Restart
 		servers="apache2-ssl apache2 mysql"
 		. /usr/share/wwwconfig-common/restart.sh
 
+		# Remove file and conf file
 		for dir in /usr/share/dolibarr ; do
 			if [ -d ${dir} ] ; then rm -rf ${dir} ; fi
 		done
-
+		
 		db_purge
 	;;
 	remove)
+		rm -fr /usr/share/dolibarr/htdocs/install
 	;;
 	upgrade)
 	;;

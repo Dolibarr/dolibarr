@@ -57,7 +57,6 @@ class DolEditor
 
 
 		$content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
-		//print "\n".$conf->global->MAIN_MOTD."\n".$content;exit;
 
     	$this->editor = new FCKeditor($htmlname);
     	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;

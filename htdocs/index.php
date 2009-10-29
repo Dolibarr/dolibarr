@@ -52,7 +52,7 @@ print_fiche_titre($langs->trans("HomeArea"));
 
 if (! empty($conf->global->MAIN_MOTD))
 {
-	$conf->global->MAIN_MOTD=preg_replace('/<br([\s/]*)>$/i','',$conf->global->MAIN_MOTD);
+	$conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD);
 	if (! empty($conf->global->MAIN_MOTD))
 	{
 		print "\n<!-- Start of welcome text -->\n";

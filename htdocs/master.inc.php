@@ -78,8 +78,8 @@ if (! $result && $_SERVER["GATEWAY_INTERFACE"])	// If install not done and we ar
 }
 if (empty($dolibarr_main_db_host))
 {
-	print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
-	print 'Please, run <a href="install/index.php">Dolibarr install process</a> until the end...'."\n";
+	print 'Dolibarr setup was run but was not completed.<br>'."\n";
+	print 'Please, click <a href="install/index.php">here to finish Dolibarr install process</a> ...'."\n";
 	exit;
 }
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'

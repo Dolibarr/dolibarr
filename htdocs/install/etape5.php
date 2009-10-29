@@ -23,7 +23,7 @@
 /**
  *       \file      htdocs/install/etape5.php
  *	 	 \ingroup	install
- *       \brief     Page de fin d'installation ou de migration
+ *       \brief     Last page of upgrade or install process
  *       \version   $Id$
  */
 
@@ -285,9 +285,14 @@ if ($_POST["action"] == "set")
 		else
 		{
 			// Install is finished, we create the lock file
-			$fp = fopen("../../install.lock", "w");
-			fwrite($fp, "This is a lock file to prevent use of install pages");
-			fclose($fp);
+			$lockfile="../../install.lock";
+			$fp = @fopen($lockfile, "w");
+			if ($fp)
+			{
+				fwrite($fp, "This is a lock file to prevent use of install pages");
+				fclose($fp);
+				@chmod($lockfile, octdec(444));
+			}
 		}
 
 		print "<br>";

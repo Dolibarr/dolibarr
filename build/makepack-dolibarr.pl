@@ -367,8 +367,8 @@ if ($nboftargetok) {
     		$ret=`cp -r "$SOURCE/build/deb/." "$BUILDROOT/$PROJECT/DEBIAN"`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/DEBIAN/CVS`;
  
- 			print "Reset config file\n";
-		    $ret=`> $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
+ 			print "Remove config file\n";
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
 
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
@@ -405,10 +405,8 @@ if ($nboftargetok) {
 			print "Set permissions/owners on files/dir\n";
 		    $ret=`chown -R root.root $BUILDROOT/$PROJECT`;
 		    $ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
-			$ret=`chown -R www-data.www-data $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
 		    $ret=`chmod -R 555 $BUILDROOT/$PROJECT`;
 		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/usr/share/$PROJECT/documents`;
-		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
 		    $ret=`chmod -R 755 $BUILDROOT/$PROJECT/DEBIAN`;
 
      		print "Go to directory $BUILDROOT\n";

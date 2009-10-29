@@ -310,14 +310,27 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
-
+		
+		$foundrecommandedchoice=0;
+		
+		
 		// Array of install choices
 		print '<table width="100%" border="1" cellpadding="2">';
 
 		# Sho first install line
-		print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b></td>';
+		print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
+		print '</td>';
 		print '<td>';
-		print $langs->trans("FreshInstallDesc").'</td>';
+		print $langs->trans("FreshInstallDesc");
+		if (empty($dolibarr_main_db_host))	// This means install process was not run
+		{
+			print '<br>';
+			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
+			print '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
+			// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
+			$foundrecommandedchoice=1;	// To show only once
+		}
+		print '</td>';
 		print '<td align="center">';
 		if ($allowinstall)
 		{
@@ -333,6 +346,10 @@ else
 
 		# Show upgrade lines
 		$allowupgrade=true;
+		if (empty($dolibarr_main_db_host))	// This means install process was not run
+		{
+			$allowupgrade=false;
+		}
 		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
 		$migrationscript=array( //array('from'=>'2.0.0', 'to'=>'2.1.0'),
 								//array('from'=>'2.1.0', 'to'=>'2.2.0'),
@@ -342,7 +359,6 @@ else
 								array('from'=>'2.6.0', 'to'=>'2.7.0')
 								);
 
-		$foundrecommandedchoice=0;
 		$count=0;
 		foreach ($migrationscript as $migarray)
 		{

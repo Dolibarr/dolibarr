@@ -46,10 +46,25 @@ echo Run the postinst script
 
 case "$1" in
 	configure)
-		configorig="/usr/share/dolibarr/build/deb/apache.conf"
+
+		# Copy include for apache.conf
+		fileorig="/usr/share/dolibarr/build/deb/apache.conf"
 		config="/etc/dolibarr/apache.conf"
 		mkdir -p /etc/dolibarr
-		cp -pr $configorig $config
+		cp -p $fileorig $config
+
+		# Copy install.forced.php
+		fileorig="/usr/share/dolibarr/build/deb/install.forced.php"
+		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
+		cp -p $fileorig $config
+
+		# Create conf.php
+		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
+		then 
+			touch /usr/share/dolibarr/htdocs/conf/conf.php
+			chown -R www-data.www-data /usr/share/dolibarr/htdocs/conf/conf.php;
+	    	chmod -R 750 /usr/share/dolibarr/htdocs/conf/conf.php;
+		fi
 
 		#db_reset "dolibarr/webserver"
 

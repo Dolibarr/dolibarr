@@ -56,9 +56,9 @@ dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"etape0");
 
-if (! empty($force_install_message_doliwamp))
+if (! empty($force_install_message))
 {
-	print '<b>'.$langs->trans("KeepDefaultValues").'</b><br>';
+	print '<b>'.$langs->trans($force_install_message).'</b><br>';
 }
 
 ?>

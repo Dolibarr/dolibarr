@@ -48,7 +48,7 @@ create table llx_adherent
   photo            varchar(255),     -- url vers photo
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
-  datefin          datetime,  -- date de fin de validité de la cotisation
+  datefin          datetime,  -- date de fin de validite de la cotisation
   note             text,
   datevalid        datetime,  -- date de validation
   datec            datetime,  -- date de creation
