@@ -139,7 +139,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		$lastuser = '';
-		$lastentity = '';
+		$lastentity = $_POST['entity'];
 
 		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
 		{
