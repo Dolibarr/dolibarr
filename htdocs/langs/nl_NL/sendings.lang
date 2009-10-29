@@ -1,6 +1,6 @@
 # Dolibarr language file - nl_NL - sendings
 CHARSET=UTF-8
-RefSending=Ref. verzenden
+RefSending=Referentie verzending
 Sending=Zending
 Sendings=Verzendingen
 Receivings=Ontvangsten

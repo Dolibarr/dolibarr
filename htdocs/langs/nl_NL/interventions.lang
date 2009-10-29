@@ -2,7 +2,7 @@
 CHARSET=UTF-8
 Intervention=Interventie
 Interventions=Interventies
-InterventionCard=Interventie-kaart
+InterventionCard=Interventie-details
 NewIntervention=Nieuwe interventie
 AddIntervention=Toevoegen interventie
 ListOfInterventions=Lijst van interventies

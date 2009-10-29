@@ -1,9 +1,9 @@
 # Dolibarr language file - nl_NL - members
 CHARSET=UTF-8
-MembersArea=Leden gebied
-PublicMembersArea=Openbare leden gebied
+MembersArea=Leden zone
+PublicMembersArea=Openbare leden zone
 MemberCard=Lidmaatschapskaart
-SubscriptionCard=Inschrijvings-kaart
+SubscriptionCard=Inschrijvingskaart
 Member=Lid
 Members=Leden
 MemberAccount=Lid logon

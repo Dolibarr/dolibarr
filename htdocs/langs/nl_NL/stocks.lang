@@ -1,6 +1,6 @@
 # Dolibarr language file - nl_NL - stocks
 CHARSET=UTF-8
-WarehouseCard=Magazijn kaart
+WarehouseCard=Magazijn details
 Warehouse=Magazijn
 NewWarehouse=Nieuw magazijn / Materieel gebied
 MenuNewWarehouse=Nieuw magazijn
@@ -20,7 +20,7 @@ ErrorWarehouseLabelRequired=Magazijn etiket is vereist
 CorrectStock=Juiste materieel
 ListOfWarehouses=Opslagplaatsenlijst
 ListOfStockMovements=Voorradenlijst
-StocksArea=Materielen gebied
+StocksArea=Materielen zone
 Location=Lokatie
 LocationSummary=Korte naam locatie
 NumberOfProducts=Totaal aantal producten

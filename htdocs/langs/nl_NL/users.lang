@@ -1,9 +1,9 @@
 # Dolibarr language file - nl_NL - users
 CHARSET=UTF-8
-UserCard=Gebruikerskaart
-ContactCard=Contactkaart
-GroupCard=Groepskaart
-NoContactCard=Geen contactkaart
+UserCard=Gebruikersdetails
+ContactCard=Contactdetails
+GroupCard=Groepsdetails
+NoContactCard=Geen contactdetails
 Permission=Toestemming
 Permissions=Toestemmingen
 EditPassword=Wijzig wachtwoord
@@ -69,8 +69,8 @@ ListOfGroupsForUser=Lijst van groepen voor deze gebruiker
 UsersToAdd=Gebruikers toe te voegen aan deze groep
 GroupsToAdd=Groepen toe te voegen aan deze gebruiker
 NoLogin=Geen login
-CreateDolibarrLogin=Maak Dolibarr login
-CreateDolibarrThirdParty=Maak Derden
+CreateDolibarrLogin=Creëer Dolibarr login
+CreateDolibarrThirdParty=Creëer Derden
 LoginAccountDisable=Dit account is uitgeschakeld, zet een nieuwe login om te activeren.
 LoginAccountDisableInDolibarr=Account uitgeschakeld in Dolibarr.
 LoginAccountDisableInLdap=Account uitgeschakeld in het domein.

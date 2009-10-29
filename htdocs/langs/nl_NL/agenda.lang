@@ -1,7 +1,7 @@
 # Dolibarr language file - nl_NL - agenda 
 CHARSET=UTF-8
 Actions=Acties
-ActionsArea=Actiegebied (Evenementen en taken)
+ActionsArea=Actiezone (Evenementen en taken)
 Agenda=Agenda
 Agendas=Agenda's
 Calendar=Kalender
