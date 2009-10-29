@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
 $langs->load("products");
 $langs->load("bills");
@@ -136,6 +137,7 @@ if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 llxHeader("","",$langs->trans("Translation"));
 
 $html = new Form($db);
+$formadmin=new FormAdmin($db);
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
@@ -243,7 +245,8 @@ if ($_GET["action"] == 'add' || ($user->rights->produit->creer || $user->rights-
 	$langs_available = $langs->get_available_languages();
 	$current_lang = $langs->getDefaultLang();
 
-	// on construit la liste des traduction qui n'existe pas deja
+
+    // on construit la liste des traduction qui n'existe pas deja
 	$select = '<select class="flat" name="lang">';
 	foreach ($langs_available as $value)
 	if ( !array_key_exists($value, $product->multilangs) ) // si la traduction n'existe pas
@@ -256,7 +259,9 @@ if ($_GET["action"] == 'add' || ($user->rights->produit->creer || $user->rights-
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 	print '<table class="border" width="100%">';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Translation').'</td><td>'.$select.'</td></tr>';
+	print '<tr><td valign="top" width="15%">'.$langs->trans('Translation').'</td><td>';
+    $formadmin->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'lang',0);
+	print '</td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80"></textarea></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80"></textarea></td></tr>';

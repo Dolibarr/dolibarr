@@ -883,9 +883,9 @@ if ($_GET["id"] || $_GET["ref"])
 					$soc = new Societe($db);
 					$soc->id = $socid;
 					$soc->fetch($socid);
-					
+
 					print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
-						
+
 					if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
 					{
 						print '<td>'.price($product->multiprices_ttc["$soc->price_level"]);
@@ -894,7 +894,7 @@ if ($_GET["id"] || $_GET["ref"])
 					{
 						print '<td>'.price($product->multiprices["$soc->price_level"]);
 					}
-						
+
 					if ($product->multiprices_base_type["$soc->price_level"])
 					{
 						print ' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
@@ -904,7 +904,7 @@ if ($_GET["id"] || $_GET["ref"])
 						print ' '.$langs->trans($product->price_base_type);
 					}
 					print '</td></tr>';
-						
+
 					// Prix mini
 					print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
 					if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
@@ -922,7 +922,7 @@ if ($_GET["id"] || $_GET["ref"])
 					for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
 						print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
-						
+
 						if ($product->multiprices_base_type["$i"] == 'TTC')
 						{
 							print '<td>'.price($product->multiprices_ttc["$i"]);
@@ -931,7 +931,7 @@ if ($_GET["id"] || $_GET["ref"])
 						{
 							print '<td>'.price($product->multiprices["$i"]);
 						}
-						
+
 						if ($product->multiprices_base_type["$i"])
 						{
 							print ' '.$langs->trans($product->multiprices_base_type["$i"]);
@@ -941,7 +941,7 @@ if ($_GET["id"] || $_GET["ref"])
 							print ' '.$langs->trans($product->price_base_type);
 						}
 						print '</td></tr>';
-						
+
 						// Prix mini
 						print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
 						if ($product->multiprices_base_type["$i"] == 'TTC')
@@ -1273,6 +1273,10 @@ if ($_GET["action"] == '')
 print "\n</div><br>\n";
 
 
+/*
+ * All the "Add to" areas
+ */
+
 if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 {
 	$propal = New Propal($db);
@@ -1315,7 +1319,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		{
 			$var=true;
 			$num = $db->num_rows($result);
-			print '<table class="noborder" width="100%">';
+			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" width="100%">';
 			if ($num)
 			{
 				$i = 0;
@@ -1323,8 +1329,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				{
 					$objp = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print "<tr $bc[$var]>";
 					print "<td nowrap>";
 					print '<input type="hidden" name="action" value="addinpropal">';
@@ -1339,7 +1343,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 					print '</td>';
 					print '</tr>';
-					print '</form>';
 					$i++;
 				}
 			}
@@ -1349,6 +1352,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print "</td></tr>";
 			}
 			print "</table>";
+			print '</form>';
 			$db->free($result);
 		}
 
@@ -1361,13 +1365,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 			$var=true;
 			$otherprop = $propal->liste_array(1, ' <> '.$user->id);
-			print '<table class="noborder" width="100%">';
-
+			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" width="100%">';
 			if (is_array($otherprop) && sizeof($otherprop))
 			{
 				$var=!$var;
-				print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<tr '.$bc[$var].'><td colspan="3">';
 				print '<input type="hidden" name="action" value="addinpropal">';
 				print $langs->trans("OtherPropals").'</td><td>';
@@ -1379,7 +1382,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print '</td><td align="right">';
 				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 				print '</td></tr>';
-				print '</form>';
 			}
 			else
 			{
@@ -1388,6 +1390,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print '</td></tr>';
 			}
 			print '</table>';
+			print '</form>';
 
 			print '</td>';
 		}
@@ -1434,7 +1437,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		{
 			$num = $db->num_rows($result);
 			$var=true;
-			print '<table class="noborder" width="100%">';
+			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" width="100%">';
 			if ($num)
 			{
 				$i = 0;
@@ -1442,8 +1447,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				{
 					$objc = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print "<tr $bc[$var]>";
 					print "<td nowrap>";
 					print '<input type="hidden" name="action" value="addincommande">';
@@ -1458,7 +1461,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 					print '</td>';
 					print '</tr>';
-					print '</form>';
 					$i++;
 				}
 			}
@@ -1469,6 +1471,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print '</td></tr>';
 			}
 			print "</table>";
+			print '</form>';
 			$db->free($result);
 		}
 
@@ -1481,12 +1484,12 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 			$var=true;
 			$othercom = $commande->liste_array(1, ' <> '.$user->id);
-			print '<table class="noborder" width="100%">';
+			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" width="100%">';
 			if (is_array($othercom) && sizeof($othercom))
 			{
 				$var=!$var;
-				print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<tr '.$bc[$var].'><td colspan="3">';
 				print '<input type="hidden" name="action" value="addincommande">';
 				print $langs->trans("OtherOrders").'</td><td>';
@@ -1498,7 +1501,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print '</td><td align="right">';
 				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 				print '</td></tr>';
-				print '</form>';
 			}
 			else
 			{
@@ -1507,6 +1509,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 				print '</td></tr>';
 			}
 			print '</table>';
+			print '</form>';
 		}
 		print '</td>';
 
@@ -1516,8 +1519,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	// Factures
 	if($conf->facture->enabled && $user->rights->facture->creer)
 	{
-
-
 		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
 		print $langs->trans("AddToMyBills").'</td>';
 
@@ -1547,109 +1548,109 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		$result=$db->query($sql);
 		if ($result)
 		{
-	  $num = $db->num_rows($result);
-	  $var=true;
-	  print '<table class="noborder" width="100%">';
-	  if ($num)
-	  {
-	  	$i = 0;
-	  	while ($i < $num)
-	  	{
-	  		$objp = $db->fetch_object($result);
-	  		$var=!$var;
-	  		print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-	  		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	  		print "<tr $bc[$var]>";
-	  		print "<td nowrap>";
-	  		print '<input type="hidden" name="action" value="addinfacture">';
-	  		print "<a href=\"../compta/facture.php?facid=".$objp->factureid."\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
-	  		print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
-	  		print "<td nowrap=\"nowrap\">".dol_print_date($objp->df,"%d %b")."</td>\n";
-	  		print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-	  		print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
-	  		print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-	  		print '</td><td align="right">';
-	  		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	  		print '</td>';
-	  		print '</tr>';
-	  		print '</form>';
-	  		$i++;
-	  	}
-	  }
-	  else {
-	  	print "<tr ".$bc[!$var]."><td>";
-	  	print $langs->trans("NoDraftBills");
-	  	print '</td></tr>';
-	  }
-	  print "</table>";
-	  $db->free($result);
+			$num = $db->num_rows($result);
+			$var=true;
+			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" width="100%">';
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($result);
+					$var=!$var;
+					print "<tr $bc[$var]>";
+					print "<td nowrap>";
+					print '<input type="hidden" name="action" value="addinfacture">';
+					print "<a href=\"../compta/facture.php?facid=".$objp->factureid."\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
+					print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
+					print "<td nowrap=\"nowrap\">".dol_print_date($objp->df,"%d %b")."</td>\n";
+					print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
+					print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
+					print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+					print '</td><td align="right">';
+					print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+					print '</td>';
+					print '</tr>';
+					$i++;
+				}
+			}
+			else {
+				print "<tr ".$bc[!$var]."><td>";
+				print $langs->trans("NoDraftBills");
+				print '</td></tr>';
+			}
+			print "</table>";
+			print '</form>';
+			$db->free($result);
 		}
 		else
 		{
-	  dol_print_error($db);
+			dol_print_error($db);
 		}
 
 		print '</td>';
 
 		if ($user->rights->societe->client->voir)
 		{
-	  print '<td width="50%" valign="top">';
+			print '<td width="50%" valign="top">';
 
-	  // Liste de Autres factures
-	  $var=true;
+			// Liste de Autres factures
+			$var=true;
 
-	  $sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
-	  $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-	  $sql.= " WHERE f.fk_soc = s.rowid";
-	  $sql.= " AND f.entity = ".$conf->entity;
-	  $sql.= " AND f.fk_statut = 0";
-	  $sql.= " AND f.fk_user_author <> ".$user->id;
-	  $sql.= " ORDER BY f.datec DESC, f.rowid DESC";
+			$sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
+			$sql.= " WHERE f.fk_soc = s.rowid";
+			$sql.= " AND f.entity = ".$conf->entity;
+			$sql.= " AND f.fk_statut = 0";
+			$sql.= " AND f.fk_user_author <> ".$user->id;
+			$sql.= " ORDER BY f.datec DESC, f.rowid DESC";
 
-	  $result=$db->query($sql);
-	  if ($result)
-	  {
-	  	$num = $db->num_rows($result);
-	  	$var=true;
-	  	print '<table class="noborder" width="100%">';
-	  	if ($num) {
-	  		$i = 0;
-	  		while ($i < $num)
-	  		{
-		    $objp = $db->fetch_object($result);
+			$result=$db->query($sql);
+			if ($result)
+			{
+				$num = $db->num_rows($result);
+				$var=true;
+				print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<table class="nobordernopadding" width="100%">';
+				if ($num) {
+					$i = 0;
+					while ($i < $num)
+					{
+						$objp = $db->fetch_object($result);
 
-		    $var=!$var;
-		    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
-		    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		    print "<tr $bc[$var]>";
-		    print "<td><a href=\"../compta/facture.php?facid=".$objp->factureid."\">$objp->facnumber</a></td>\n";
-		    print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,24)."</a></td>\n";
-		    print "<td colspan=\"2\">".$langs->trans("Qty");
-		    print '<input type="hidden" name="action" value="addinfacture">';
-		    print "</td>";
-		    print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-		    print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
-		    print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-		    print '</td><td align="right">';
-		    print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-		    print '</td>';
-		    print '</tr>';
-		    print '</form>';
-		    $i++;
-	  		}
-	  	}
-	  	else {
-	  		print "<tr ".$bc[!$var]."><td>";
-	  		print $langs->trans("NoOtherDraftBills");
-	  		print '</td></tr>';
-	  	}
-	  	print "</table>";
-	  	$db->free($result);
-	  }
-	  else
-	  {
-	  	dol_print_error($db);
-	  }
+						$var=!$var;
+						print "<tr $bc[$var]>";
+						print "<td><a href=\"../compta/facture.php?facid=".$objp->factureid."\">$objp->facnumber</a></td>\n";
+						print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,24)."</a></td>\n";
+						print "<td colspan=\"2\">".$langs->trans("Qty");
+						print '<input type="hidden" name="action" value="addinfacture">';
+						print "</td>";
+						print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
+						print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
+						print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
+						print '</td><td align="right">';
+						print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+						print '</td>';
+						print '</tr>';
+						$i++;
+					}
+				}
+				else {
+					print "<tr ".$bc[!$var]."><td>";
+					print $langs->trans("NoOtherDraftBills");
+					print '</td></tr>';
+				}
+				print "</table>";
+				print '</form>';
+				$db->free($result);
+			}
+			else
+			{
+				dol_print_error($db);
+			}
 		}
 
 		print '</td></tr>';
@@ -1659,6 +1660,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 	print '<br>';
 }
+
 
 
 $db->close();
