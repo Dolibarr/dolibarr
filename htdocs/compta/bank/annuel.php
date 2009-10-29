@@ -181,7 +181,7 @@ print '</table>';
 print '<br>';
 
 // Affiche tableau
-print '<table class="noborder" width="100%">';
+print '<table class="notopnoleftnoright" width="100%">';
 print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$lien.'</td></tr>';
 print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
