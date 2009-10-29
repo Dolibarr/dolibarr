@@ -541,6 +541,7 @@ FieldsWithAreMandatory = Los campos marcados por un <b>%s</b> son obligatorios
 FieldsWithIsForPublic = Los campos marcados por <b>%s</b> se mostrán en la lista pública de miembros. Si no desea verlos, desactive la casilla "público".
 AccordingToGeoIPDatabase = (Obtenido por conversión GeoIP)
 Line = Línea
+NotSupported = No soportado
 # Week day = 
 Day1 = Lunes
 Day2 = Martes

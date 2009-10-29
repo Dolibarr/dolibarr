@@ -541,6 +541,7 @@ FieldsWithAreMandatory = Els camps marcats per un <b>%s</b> són obligatoris
 FieldsWithIsForPublic = Els camps marcats per <b>%s</b> es mostren en la llista pública de membres. Si no voleu veure'ls, desactiveu la casella "públic".
 AccordingToGeoIPDatabase = (Obtingut per conversió GeoIP)
 Line = Línia
+NotSupported = No suportat
 # Week day =  = 
 Day1 = Dillus
 Day2 = Dimarts
