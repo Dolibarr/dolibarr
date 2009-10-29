@@ -584,7 +584,7 @@ elseif ($fichinterid)
 	}
 
 	// Duration
-	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.ConvertSecondToTime($fichinter->duree).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.ConvertSecondToTime($fichinter->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY).'</td></tr>';
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td>';

@@ -39,21 +39,28 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 
 
 /**	  \brief      Return, in clear text, value of a number of seconds in days, hours and minutes
- *    \param      iSecond     Number of seconds
- *    \param      format      Output format (all:affichage complet, hour: n'affiche que les heures, min: n'affiche que les minutes)
- *    \return     sTime       Formated text of duration
+ *    \param      iSecond		Number of seconds
+ *    \param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
+ *    \param      lengthOfDay	Length of day (default 86400 seconds)
+ *    \return     sTime			Formated text of duration
  */
-function ConvertSecondToTime($iSecond,$format='all')
+function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 {
 	global $langs;
+	
+	if (empty($lengthOfDay)) $lengthOfDay = 86400;
 
 	if ($format == 'all')
 	{
-		if ($iSecond >= 86400)
+		if ($iSecond >= $lengthOfDay)
 		{
-			$sDay=date("d",$iSecond)-1;
+			$sDay=0;
+			for( $i = $iSecond; $i > $lengthOfDay; $i -= $lengthOfDay )
+			{
+				$sDay++;
+			}
 			$dayTranslate = $langs->trans("Day");
-			if ($iSecond >= 172800) $dayTranslate = $langs->trans("Days");
+			if ($iSecond >= ($lengthOfDay*2)) $dayTranslate = $langs->trans("Days");
 		}
 		$sTime='';
 		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
