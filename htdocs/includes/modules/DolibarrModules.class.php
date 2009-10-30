@@ -761,7 +761,7 @@ class DolibarrModules
 			$visible= $this->const[$key][4];
 			$entity = $this->const[$key][5];
 			
-			$entity = ((!empty($entity) || $entity == 0)?$entity:$conf->entity);
+			$entity = ((!empty($entity) || $entity == '0')?$entity:$conf->entity);
 
 			$sql = "SELECT count(*)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."const";
