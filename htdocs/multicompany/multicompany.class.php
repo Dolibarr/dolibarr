@@ -163,7 +163,7 @@ class Multicompany
 	/**
 	 *    \brief      List of entities
 	 */
-	function getEntities()
+	function getEntities($details=0)
 	{
 		global $conf;
 		
@@ -195,7 +195,7 @@ class Multicompany
 				
 				$this->entities[$i]['label']   = $obj->value;
 				$this->entities[$i]['id']      = $obj->entity;
-				$this->entities[$i]['details'] = $this->fetch($entity);
+				if ($details) $this->entities[$i]['details'] = $this->fetch($entity);
 				$this->entities[$i]['active']  = $active;
 				
 				$i++;

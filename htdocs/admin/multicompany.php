@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
 
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin || $user->entity)
 accessforbidden();
 
 $mc = new Multicompany($db);
@@ -88,7 +88,7 @@ else
 {
 	print_titre($langs->trans("ListOfEntity"));
 	
-	$mc->getEntities();
+	$mc->getEntities(1);
 	//var_dump($mc->entities);
 	
 	$mc->assign_smarty_values($smarty,$_GET["action"]);
