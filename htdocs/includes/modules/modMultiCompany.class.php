@@ -202,11 +202,11 @@ class modMultiCompany extends DolibarrModules
 	 *      \return     int             1 if OK, 0 if KO
      */
 	function init()
-  {
-  	$sql = array();
-
-    return $this->_init($sql);
-  }
+	{
+		$sql = array();
+		
+		return $this->_init($sql);
+	}
 
 	/**
 	 *		\brief		Function called when module is disabled.
@@ -224,7 +224,7 @@ class modMultiCompany extends DolibarrModules
 	}
 
 
-	/**
+   /**
 	*   \brief   Destroy a cookie
 	*/
 	function destroy_cookie()
