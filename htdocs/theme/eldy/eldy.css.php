@@ -529,8 +529,7 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-    background: #dee7ec;
-    background: #dee7ec url(/theme/eldy/img/tab_background.png) repeat-x;
+    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tab_background.png' ?>) repeat-x;
 }
 
 div.tabsAction {
