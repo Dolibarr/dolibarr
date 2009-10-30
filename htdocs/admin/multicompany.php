@@ -33,7 +33,7 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
-
+$mc = new Multicompany($db);
 
 /*
  * Actions
@@ -41,7 +41,6 @@ accessforbidden();
 
 if ($_GET["action"] == 'enable' || $_GET["action"] == 'disable')
 {
-	$mc = new Multicompany($db);
 	$mc->setEntity($_GET['id'],$_GET["action"]);
 }
 
@@ -51,23 +50,52 @@ llxHeader('',$langs->trans("MultiCompanySetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("MultiCompanySetup"),$linkback,'setup');
 
+print '<br>';
+
+$smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/templates/';
+
+/*
+ * Create
+ */
+
+if ($_GET["action"] == 'create')
+{
+	print_titre($langs->trans("AddNewEntity"));
+	
+	$mc->assign_smarty_values($smarty,$_GET["action"]);
+	
+	$smarty->display('add-entity.tpl');
+}
+
+/*
+ * Edit
+ */
+
+else if ($_GET["action"] == 'edit')
+{
+	print_titre($langs->trans("EditEntity"));	
+	
+	$mc->assign_smarty_values($smarty,$_GET["action"]);
+	
+	$smarty->display('edit-entity.tpl');
+}
 
 /*
  * View
  */
 
-print '<br>';
-print_titre($langs->trans("MultiCompanyModule"));
-
-$mc = new Multicompany($db);
-$mc->getEntities();
-//var_dump($mc->entities);
-
-$smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/templates/';
-
-$mc->assign_smarty_values($smarty,$_GET["action"]);
-
-$smarty->display('admin-entity.tpl');
+else
+{
+	print_titre($langs->trans("ListOfEntity"));
+	
+	$mc->getEntities();
+	//var_dump($mc->entities);
+	
+	$mc->assign_smarty_values($smarty,$_GET["action"]);
+	
+	$smarty->display('admin-entity.tpl');
+	
+}
 
 
 llxFooter('$Date$ - $Revision$');
