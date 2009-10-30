@@ -449,11 +449,20 @@ foreach ($orders as $key => $value)
         print "<td align=\"center\" valign=\"top\">";
         if (! empty($conf->global->$const_name))
         {
-            // Module actif
-            if (! empty($objMod->always_enabled) || (($conf->global->MAIN_MODULE_MULTICOMPANY && $objMod->core_enabled) && ($user->entity || $conf->entity!=1))) print $langs->trans("Required");
-            else print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Disable") . "</a></td>\n";
+            $disableSetup = 0;
+            
+        	// Module actif
+            if (! empty($objMod->always_enabled) || (($conf->global->MAIN_MODULE_MULTICOMPANY && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+            {
+            	print $langs->trans("Required");
+            	if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) $disableSetup++;
+            }
+            else
+            {
+            	print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Disable") . "</a></td>\n";
+            }
 
-            if (! empty($objMod->config_page_url))
+            if (! empty($objMod->config_page_url) && !$disableSetup)
             {
                 if (is_array($objMod->config_page_url))
                 {
