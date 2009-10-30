@@ -344,8 +344,8 @@ function barcode_encode_genbarcode($code,$encoding){
     /* delete EAN-13 checksum */
     if (preg_match("/^ean$/i", $encoding) && strlen($code)==13) $code=substr($code,0,12);
     if (!$encoding) $encoding="ANY";
-    $encoding=preg_replace("/[|\\]/", "_", $encoding);
-    $code=preg_replace("/[|\\]/", "_", $code);
+    $encoding=preg_replace("/[\\\|]/", "_", $encoding);
+    $code=preg_replace("/[\\\|]/", "_", $code);
     $cmd=$genbarcode_loc." \""
 	.str_replace("\"", "\\\"",$code)."\" \""
 	.str_replace("\"", "\\\"",strtoupper($encoding))."\"";
