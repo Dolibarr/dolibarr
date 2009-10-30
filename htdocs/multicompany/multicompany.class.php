@@ -114,7 +114,18 @@ class Multicompany
 			{
 				$obj = $this->db->fetch_object($result);
 
-				$entityDetails[$obj->name]  = $obj->value;
+				if (preg_match('/^MAIN_INFO_SOCIETE_PAYS$/i',$obj->name))
+				{
+					$entityDetails[$obj->name] = getCountryLabel($obj->value);
+				}
+				else if (preg_match('/^MAIN_MONNAIE$/i',$obj->name))
+				{
+					$entityDetails[$obj->name] = currency_name($obj->value);
+				}
+				else
+				{
+					$entityDetails[$obj->name] = $obj->value;
+				}
 				
 				$i++;
 			}

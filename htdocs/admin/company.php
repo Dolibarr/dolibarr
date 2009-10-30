@@ -763,47 +763,4 @@ $db->close();
 
 llxFooter('$Date$ - $Revision$');
 
-
-
-/**
- *    \brief      Retourne le nom traduit ou code+nom d'une devise
- *    \param      code_iso       Code iso de la devise
- *    \param      withcode       1=affiche code + nom
- *    \return     string         Nom traduit de la devise
- *    TODO deplacer dans une classe
- */
-function currency_name($code_iso,$withcode=0)
-{
-	global $langs,$db;
-
-	// Si il existe une traduction, on peut renvoyer de suite le libelle
-	if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
-	{
-		return $langs->trans("Currency".$code_iso);
-	}
-
-	// Si pas de traduction, on consulte le libelle par defaut en table
-	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
-	$sql.= " WHERE code_iso='".$code_iso."'";
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-
-		if ($num)
-		{
-			$obj = $db->fetch_object($resql);
-			$label=($obj->label!='-'?$obj->label:'');
-			if ($withcode) return ($label==$code_iso)?"$code_iso":"$code_iso - $label";
-			else return $label;
-		}
-		else
-		{
-			return $code_iso;
-		}
-
-	}
-}
-
 ?>
