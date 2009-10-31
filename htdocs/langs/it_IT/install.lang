@@ -119,7 +119,8 @@ YouAskLoginCreationSoDolibarrNeedToConnect			     =Si chiede di creare database 
 BecauseConnectionFailedParametersMayBeWrong			     =Come connessione fallito, di accoglienza o di super utente parametri devono essere sbagliato. 
 OrphelinsPaymentsDetectedByMethod				     =Orfani di pagamento rilevati con il metodo %s 
 RemoveItManuallyAndPressF5ToContinue				     =Rimuovere manualmente e premere F5 per continuare. 
-KeepDefaultValues						     =È possibile utilizzare la procedura guidata di impostazione Doliwamp, così valori proposti qui sono già ottimizzati. Cambia solo se sapete quello che fate. 
+KeepDefaultValuesWamp=È possibile utilizzare la procedura guidata di impostazione DoliWamp, così valori proposti qui sono già ottimizzati. Cambia solo se sapete quello che fate.
+KeepDefaultValuesMamp=È possibile utilizzare la procedura guidata di impostazione DoliMamp, così valori proposti qui sono già ottimizzati. Cambia solo se sapete quello che fate.
 FieldRenamed							     =Campo rinominato 
 
 #########

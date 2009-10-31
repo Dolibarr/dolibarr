@@ -53,3 +53,6 @@ To build a PAD file descriptor to promote/describe Dolibarr releases.
 
 * patch:
 Script file to generate a patch file to distribute a Dolibarr mod.
+
+* dmg:
+To build dmg DoliMamp package for Mac OS X

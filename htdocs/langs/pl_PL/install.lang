@@ -121,7 +121,8 @@ YouAskLoginCreationSoDolibarrNeedToConnect=Wybrano by utworzyć użytkownika <b>
 BecauseConnectionFailedParametersMayBeWrong=Połączenie nie powiodło się, więc adres serwera lub parametry superużytkownika musiały być nieprawidłowe.
 OrphelinsPaymentsDetectedByMethod=Osierocona płatność wykryta przez metodę %s
 RemoveItManuallyAndPressF5ToContinue=Usuń go ręcznie i odśwież stronę by kontynuować.
-KeepDefaultValues=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
+KeepDefaultValuesWamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
+KeepDefaultValuesMamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 FieldRenamed=Nazwa pola zmieniona
 
 #########

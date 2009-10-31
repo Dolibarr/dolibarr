@@ -70,3 +70,6 @@ Fichier descriptif DOAP pour promouvoir/decrire la version de Dolibarr.
 
 * pad:
 Fichier descriptif PAD pour promouvoir/decrire la version de Dolibarr.
+
+* dmg:
+Fichier de config pour construire un package dmg DoliMamp pour Mac OS X
