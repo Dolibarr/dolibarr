@@ -977,14 +977,13 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print "<tr><td>".$langs->trans("DeliveryDate")."</td><td>";
 			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
 			{
-				$tmpdte = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-				$html->select_date($tmpdte,'liv_','','',1,"crea_commande");
+				$datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 			}
 			else
 			{
-				$dateorder=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-				$html->select_date($dateorder,'liv_','','',1,"crea_commande");
+				$datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 			}
+			$html->select_date($datedelivery,'liv_','','','',"crea_commande");
 			print "</td></tr>";
 
 			// Delivery address
