@@ -91,7 +91,7 @@ function versiondolibarrarray()
  *	\param		sqlfile		Full path to sql file
  *	\return		int			<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile,$silent=1)
+function run_sql($sqlfile,$silent=1,$entity='')
 {
 	global $db, $conf, $langs, $user;
 
@@ -228,7 +228,7 @@ function run_sql($sqlfile,$silent=1)
 			while (preg_match('/(__ENTITY__)/i',$newsql,$reg))
 			{
 				$from   = $reg[1];
-				$to     = $conf->entity;
+				$to     = (!empty($entity)?$entity:$conf->entity);
 				$newsql = str_replace($from,$to,$newsql);
 				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 			}
