@@ -62,9 +62,7 @@ if ($_GET["action"] == 'create')
 {
 	print_titre($langs->trans("AddNewEntity"));
 	
-	$mc->assign_smarty_values($smarty,$_GET["action"]);
-	
-	$smarty->display('add-entity.tpl');
+	$template = 'add-entity.tpl';
 }
 
 /*
@@ -75,9 +73,7 @@ else if ($_GET["action"] == 'edit')
 {
 	print_titre($langs->trans("EditEntity"));	
 	
-	$mc->assign_smarty_values($smarty,$_GET["action"]);
-	
-	$smarty->display('edit-entity.tpl');
+	$template = 'edit-entity.tpl';
 }
 
 /*
@@ -91,11 +87,12 @@ else
 	$mc->getEntities(1);
 	//var_dump($mc->entities);
 	
-	$mc->assign_smarty_values($smarty,$_GET["action"]);
-	
-	$smarty->display('admin-entity.tpl');
+	$template = 'admin-entity.tpl';
 	
 }
+
+$mc->assign_smarty_values($smarty,$_GET["action"]);
+$smarty->display($template);
 
 
 llxFooter('$Date$ - $Revision$');
