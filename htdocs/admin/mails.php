@@ -52,8 +52,9 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       $_POST["MAIN_MAIL_SENDMODE"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      $_POST["MAIN_MAIL_SMTP_PORT"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    $_POST["MAIN_MAIL_SMTP_SERVER"],'chaine',0,'',0);
-	if (isset($_POST["MAIN_MAIL_SMTPS_ID"])) dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
-	if (isset($_POST["MAIN_MAIL_SMTPS_PW"])) dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_SMTPS_ID"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",  $_POST["MAIN_MAIL_SMTPS_ID"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))  dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",  $_POST["MAIN_MAIL_SMTPS_PW"],'chaine',0,'',0);
+	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"])) dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", $_POST["MAIN_MAIL_EMAIL_TLS"],'chaine',0,'',0);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"],'chaine',0,'',$conf->entity);
 
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -190,7 +191,8 @@ if (! $server) $server='127.0.0.1';
  * View
  */
 
-llxHeader();
+$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+llxHeader($langs->trans("Setup"),'',$wikihelp);
 
 print_fiche_titre($langs->trans("EMailsSetup"),'','setup');
 
@@ -198,6 +200,12 @@ print $langs->trans("EMailsDesc")."<br>\n";
 print "<br>\n";
 
 if ($message) print $message.'<br>';
+
+// List of sending methods
+$listofmethods=array();
+$listofmethods['mail']='PHP mail function';
+$listofmethods['simplemail']='Simplemail class';
+$listofmethods['smtps']='SMTP/SMTPS socket library';
 
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
@@ -223,10 +231,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// Method
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
-	$listofmethods=array();
-	$listofmethods['mail']='PHP mail function';
-	$listofmethods['simplemail']='Simplemail class';
-	$listofmethods['smtps']='SMTP/SMTP-AUTH socket library';
+
 	// SuperAdministrator access only
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 	{
@@ -234,10 +239,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	}
 	else
 	{
-		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') $text = 'PHP mail function';
-		elseif ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail') $text = 'Simplemail class';
-		elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps') $text = 'SMTPS library';
-		else { $text = $langs->trans("Undefined"); }
+		$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
+		if (empty($text)) $text = $langs->trans("Undefined");
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
 		print $html->textwithpicto($text,$htmltext,1,'superadmin');
 		print '<input type="hidden" name="MAIN_MAIL_SENDMODE" value="'.$conf->global->MAIN_MAIL_SENDMODE.'">';
@@ -343,8 +346,15 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// TLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	//print '<input class="flat" name="MAIN_MAIL_EMAIL_TLS" size="32" value="'.$conf->global->MAIN_MAIL_EMAIL_TLS.'">';
-	print $langs->trans("NotSupported");
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	{
+		if (function_exists('openssl_open'))
+		{
+			print $html->selectyesno('MAIN_MAIL_EMAIL_TLS',$conf->global->MAIN_MAIL_EMAIL_TLS,1);
+		}
+		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	}
+	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
 	// From
@@ -374,10 +384,9 @@ else
 	// Method
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail') print 'PHP mail function';
-	elseif ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail') print 'Simplemail class';
-	elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps') print 'SMTPS library';
-	else { print $langs->trans("Undefined"); }
+	$text=$listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
+	if (empty($text)) $text=$langs->trans("Undefined");
+	print $text;
 	print '</td></tr>';
 
 	// Server
@@ -419,8 +428,15 @@ else
 	// TLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	//print '<input class="flat" name="MAIN_MAIL_EMAIL_TLS" size="32" value="'.$conf->global->MAIN_MAIL_EMAIL_TLS.'">';
-	print $langs->trans("NotSupported");
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	{
+		if (function_exists('openssl_open'))
+		{
+			print yn($conf->global->MAIN_MAIL_EMAIL_TLS);
+		}
+		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	}
+	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
 	// From
@@ -458,13 +474,15 @@ else
 	print '</div>';
 
 
-	// Affichage formulaire de TEST
+	// Run the test to connect
 	if ($_GET["action"] == 'testconnect')
 	{
 		print '<br>';
 		print_titre($langs->trans("DoTestServerAvailability"));
 
-		// Cree l'objet formulaire mail
+		// If we use SSL/TLS
+		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS)) $server='ssl://'.$server;
+
 		include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mail = new CMailFile('','','','');
 		$result=$mail->check_server_port($server,$port);

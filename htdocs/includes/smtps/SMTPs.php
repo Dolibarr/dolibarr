@@ -624,9 +624,12 @@ class SMTPs
         // We have to make sure the HOST given is valid
         // This is done here because '@fsockopen' will not give me this
         // information if it failes to connect because it can't find the HOST
-        if ( (gethostbyname ( $this->getHost() )) == $this->getHost() )
+        $host=$this->getHost();
+        $host=preg_replace('@tcp://@i','',$host);	// Remove prefix
+        $host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+        if ( (gethostbyname ( $host )) == $host )
         {
-            $this->_setErr ( 99, $this->getHost() . ' is either offline or is an invalid host name.' );
+            $this->_setErr ( 99, $host . ' is either offline or is an invalid host name.' );
             $_retVal = false;
         }
         else
@@ -642,8 +645,7 @@ class SMTPs
                 // Sometimes the SMTP server takes a little longer to respond
                 // so we will give it a longer timeout for the first read
                 // Windows still does not have support for this timeout function
-                if( function_exists('socket_set_timeout') )
-                    socket_set_timeout($this->socket, $this->_smtpTimeout, 0);
+                if (function_exists('stream_set_timeout')) stream_set_timeout($this->socket, $this->_smtpTimeout, 0);
 
                 // Check response from Server
                 if ( $_retVal = $this->server_parse($this->socket, "220") )
@@ -684,7 +686,10 @@ class SMTPs
         // Send the RFC2554 specified EHLO.
         // This improvment as provided by 'SirSir' to
         // accomodate both SMTP AND ESMTP capable servers
-        if ( $_retVal = $this->socket_send_str('EHLO ' . $this->getHost(), '250') )
+        $host=$this->getHost();
+        $host=preg_replace('@tcp://@i','',$host);	// Remove prefix
+        $host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+    	if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
         {
             // Send Authentication to Server
             // Check for errors along the way
@@ -700,7 +705,7 @@ class SMTPs
         }
         else
         {
-            $this->_setErr ( 126, '"' . $this->getHost() . '" does not support secure connections.' );
+            $this->_setErr ( 126, '"' . $host . '" does not support authenticated connections.' );
         }
 
         return $_retVal;
@@ -753,7 +758,10 @@ class SMTPs
             else
             {
                 // Send the RFC821 specified HELO.
-                $_retVal = $this->socket_send_str('HELO ' . $this->getHost(), '250');
+		        $host=$this->getHost();
+		        $host=preg_replace('@tcp://@i','',$host);	// Remove prefix
+		        $host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+            	$_retVal = $this->socket_send_str('HELO ' . $host, '250');
             }
 
             // Well, did we get to the server?
@@ -1854,10 +1862,14 @@ class SMTPs
         if ( $this->getBCC() )
             $_header .= 'Bcc: ' . $this->getBCC()  . "\r\n";
 
+        $host=$this->getHost();
+        $host=preg_replace('@tcp://@i','',$host);	// Remove prefix
+        $host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+
         //NOTE: Message-ID should probably contain the username of the user who sent the msg
         $_header .= 'Subject: '    . $this->getSubject()     . "\r\n"
                  .  'Date: '       . date("r")               . "\r\n"
-                 .  'Message-ID: <' . time() . '.SMTPs@' . $this->getHost() . ">\r\n";
+                 .  'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
 //                 . 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
 //                 . 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
 
@@ -1963,7 +1975,7 @@ class SMTPs
             $content = 'Content-Type: ' . $_msgData['mimeType'] . '; charset="' . $this->getCharSet() . '"' . "\r\n"
                      . 'Content-Transfer-Encoding: ' . $this->getTransEncodeType() . "\r\n"
                      . 'Content-Disposition: inline'  . "\r\n"
-                     . 'Content-Description: ' . $this->_msgContent[0] . ' message' . "\r\n";
+                     . 'Content-Description: message' . "\r\n";
 
             if ( $this->getMD5flag() )
                 $content .= 'Content-MD5: ' . $_msgData['md5'] . "\r\n";
@@ -2499,6 +2511,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.10  2009/11/01 14:16:30  eldy
+  * Fix: Sending mail with SMTPS was not working.
+  *
   * Revision 1.9  2009/10/20 13:14:47  hregis
   * Fix: function "split" is deprecated since php 5.3.0
   *

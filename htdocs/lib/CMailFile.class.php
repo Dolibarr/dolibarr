@@ -421,12 +421,12 @@ class CMailFile
 				$dest=$this->getValidAddress($this->addr_to,2);
 				if (! $dest)
 				{
-					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
+					$this->error="Failed to send mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
 				}
 				else
 				{
-					dol_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
 
 					$bounce = '';
 					if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
@@ -445,7 +445,7 @@ class CMailFile
 
 					if (! $res)
 					{
-						$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+						$this->error="Failed to send mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERROR);
 					}
 					else
@@ -482,7 +482,7 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
 				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
 
-				dol_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
+				dol_syslog("CMailFile::sendfile: mail start HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port'), LOG_DEBUG);
 
 				$this->message=stripslashes($this->message);
 
@@ -492,7 +492,7 @@ class CMailFile
 
 				if (! $res)
 				{
-					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+					$this->error="Failed to send mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
 					dol_syslog("CMailFile::sendfile: mail end error ".$this->error, LOG_ERR);
 					dol_syslog("CMailFile::sendfile: ".$this->simplemail->error_log, LOG_ERR);
 				}
@@ -522,8 +522,12 @@ class CMailFile
 				if (empty($conf->global->MAIN_MAIL_SMTP_SERVER)) $conf->global->MAIN_MAIL_SMTP_SERVER=ini_get('SMTP');
 				if (empty($conf->global->MAIN_MAIL_SMTP_PORT))   $conf->global->MAIN_MAIL_SMTP_PORT=ini_get('smtp_port');
 
-				$this->smtps->setHost($conf->global->MAIN_MAIL_SMTP_SERVER);
-				$this->smtps->setPort($conf->global->MAIN_MAIL_SMTP_PORT); //587 or 25;
+				// If we use SSL/TLS
+				$server=$conf->global->MAIN_MAIL_SMTP_SERVER;
+				if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS)) $server='ssl://'.$server;
+
+				$this->smtps->setHost($server);
+				$this->smtps->setPort($conf->global->MAIN_MAIL_SMTP_PORT); // 25, 465...;
 
 				if (! empty($conf->global->MAIN_MAIL_SMTPS_ID)) $this->smtps->setID($conf->global->MAIN_MAIL_SMTPS_ID);
 				if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) $this->smtps->setPW($conf->global->MAIN_MAIL_SMTPS_PW);
@@ -532,7 +536,7 @@ class CMailFile
 				$dest=$this->smtps->getFrom('org');
 				if (! $dest)
 				{
-					$this->error="Failed to send mail to SMTP=".$conf->global->MAIN_MAIL_SMTP_SERVER.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
+					$this->error="Failed to send mail to HOST=".$server.", PORT=".$conf->global->MAIN_MAIL_SMTP_PORT."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 				}
 				else
@@ -727,11 +731,11 @@ class CMailFile
 		}
 
 		// Make RFC821 Compliant, replace bare linefeeds
-    $strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
+		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent );
 
-    $strContent = rtrim(wordwrap($strContent));
+		$strContent = rtrim(wordwrap($strContent));
 
-    $out.=$strContent.$this->eol;
+		$out.=$strContent.$this->eol;
 
 		return $out;
 	}
@@ -787,7 +791,7 @@ class CMailFile
 			$out.= '</style>';
 		}
 
-	  return $out;
+		return $out;
 	}
 
 	/**
@@ -863,28 +867,35 @@ class CMailFile
 	}
 
 
+	/**
+	 * Try to create a socket connection
+	 *
+	 * @param 		unknown_type $host. Add ssl:// for SSL/TLS.
+	 * @param 		unknown_type $port. Example: 25, 465
+	 * @return 		Socket id if ok, 0 if KO
+	 */
 	function check_server_port($host,$port)
 	{
 		$_retVal=0;
+		$timeout=5;	// Timeout in seconds
 
 		if (function_exists('fsockopen'))
 		{
 			dol_syslog("Try socket connection to host=".$host." port=".$port);
 			//See if we can connect to the SMTP server
-			if ( $socket = @fsockopen($host,       // Host to 'hit', IP or domain
+			if ( $socket = @fsockopen($host,       // Host to test, IP or domain. Add ssl:// for SSL/TLS.
 			$port,       // which Port number to use
-			$errno,           // actual system level error
-			$errstr,          // and any text that goes with the error
-			5) )  // timeout for reading/writing data over the socket
+			$errno,      // actual system level error
+			$errstr,     // and any text that goes with the error
+			$timeout) )  // timeout for reading/writing data over the socket
 			{
 				// Windows still does not have support for this timeout function
-				if (function_exists('socket_set_timeout')) socket_set_timeout($socket, 5, 0);
+				if (function_exists('stream_set_timeout')) stream_set_timeout($socket, $timeout, 0);
 
 				dol_syslog("Now we wait for answer 220");
 
 				// Check response from Server
-				if ( $_retVal = $this->server_parse($socket, "220") )
-				$_retVal = $socket;
+				if ( $_retVal = $this->server_parse($socket, "220") ) $_retVal = $socket;
 			}
 			else
 			{
@@ -896,7 +907,7 @@ class CMailFile
 
 	// This function has been modified as provided
 	// by SirSir to allow multiline responses when
-	// using SMTP Extensions
+	// using SMTP Extensions.
 	//
 	function server_parse($socket, $response)
 	{
@@ -932,9 +943,9 @@ class CMailFile
 	}
 
 	/**
-	 \brief 		Recherche la presence d'images dans le message html
-	 \param 		images_dir		Emplacement des images
-	 \return		int         	>0 if OK, <0 if KO
+	 *	\brief 		Recherche la presence d'images dans le message html
+	 *	\param 		images_dir		Emplacement des images
+	 *	\return		int         	>0 if OK, <0 if KO
 	 */
 	function findHtmlImages($images_dir)
 	{
