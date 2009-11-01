@@ -93,7 +93,7 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'prospect', $langs->trans("ThirdParty"));
+	dol_fiche_head($head, 'prospect', $langs->trans("ThirdParty"),0,'company');
 
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<tr><td valign="top" width="50%" class="notopnoleft">';
@@ -168,14 +168,14 @@ if ($socid > 0)
 	print "</td>\n";
 	print '<td valign="top" width="50%" class="notopnoleft">';
 
-	// Nbre max d'éléments des petites listes
+	// Nbre max d'ï¿½lï¿½ments des petites listes
 	$MAXLIST=5;
 	$tableaushown=0;
 
 	// Lien recap
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
+	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/prospect/recap-prospect.php?socid='.$societe->id.'">'.$langs->trans("ShowProspectPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
