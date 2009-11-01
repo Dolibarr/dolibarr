@@ -384,7 +384,7 @@ class FormMail
 		// Topic
 		if ($this->withtopic)
 		{
-			$this->withtopic=make_substitutions($this->withtopic,$this->substit);
+			$this->withtopic=make_substitutions($this->withtopic,$this->substit,$langs);
 
 			print "<tr>";
 			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
@@ -442,7 +442,7 @@ class FormMail
 			if ($this->param["models"]=='propal_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
 			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
 
-			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
+			$defaultmessage=make_substitutions($defaultmessage,$this->substit,$langs);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
 
 			print "<tr>";

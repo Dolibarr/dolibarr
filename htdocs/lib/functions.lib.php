@@ -2892,7 +2892,7 @@ function dol_textishtml($msg,$option=0)
  * 		\param		object					If we want to add more substitution, we provide a source object
  *    	\return     string      			Output string after subsitutions
  */
-function make_substitutions($chaine,$substitutionarray,$outputlangs='',$object='')
+function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
 {
 	global $conf,$user;
 

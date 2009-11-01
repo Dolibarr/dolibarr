@@ -184,8 +184,8 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 					);
 
 					$substitutionisok=true;
-					$newsubject=make_substitutions($subject,$substitutionarray);
-					$newmessage=make_substitutions($message,$substitutionarray);
+					$newsubject=make_substitutions($subject,$substitutionarray,$langs);
+					$newmessage=make_substitutions($message,$substitutionarray,$langs);
 
 					// Fabrication du mail
 					$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
@@ -300,8 +300,8 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		// Pratique les substitutions sur le sujet et message
-		$mil->sujet=make_substitutions($mil->sujet,$substitutionarrayfortest);
-		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest);
+		$mil->sujet=make_substitutions($mil->sujet,$substitutionarrayfortest,$langs);
+		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest,$langs);
 
 		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
 		$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$mil->email_errorsto,$arr_css);

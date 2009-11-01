@@ -146,8 +146,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
 		if ($_POST['action'] == 'sendhtml') $msgishtml=1;	// Force message to HTML
 
 		// Pratique les substitutions sur le sujet et message
-		$subject=make_substitutions($subject,$substitutionarrayfortest);
-		$body=make_substitutions($body,$substitutionarrayfortest);
+		$subject=make_substitutions($subject,$substitutionarrayfortest,$langs);
+		$body=make_substitutions($body,$substitutionarrayfortest,$langs);
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
