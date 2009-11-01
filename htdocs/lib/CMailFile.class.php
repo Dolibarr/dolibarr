@@ -524,7 +524,7 @@ class CMailFile
 
 				// If we use SSL/TLS
 				$server=$conf->global->MAIN_MAIL_SMTP_SERVER;
-				if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS)) $server='ssl://'.$server;
+				if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
 				$this->smtps->setHost($server);
 				$this->smtps->setPort($conf->global->MAIN_MAIL_SMTP_PORT); // 25, 465...;

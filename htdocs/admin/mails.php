@@ -191,7 +191,7 @@ if (! $server) $server='127.0.0.1';
  * View
  */
 
-$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+$wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
 llxHeader($langs->trans("Setup"),'',$wikihelp);
 
 print_fiche_titre($langs->trans("EMailsSetup"),'','setup');
@@ -481,7 +481,7 @@ else
 		print_titre($langs->trans("DoTestServerAvailability"));
 
 		// If we use SSL/TLS
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS)) $server='ssl://'.$server;
+		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
 		include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mail = new CMailFile('','','','');
