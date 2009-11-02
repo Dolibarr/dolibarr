@@ -38,7 +38,7 @@ function llxHeader($head = '', $title='', $help_url='')
     $menu->add(DOL_URL_ROOT."/admin/tools/index.php", $langs->trans("SystemTools"));
     $menu->add(DOL_URL_ROOT."/admin/tools/dolibarr_export.php", $langs->trans("Backup"),1);
     $menu->add(DOL_URL_ROOT."/admin/tools/dolibarr_import.php", $langs->trans("Restore"),1);
-	$menu->add(DOL_URL_ROOT."/admin/tools/update.php", $langs->trans("Upgrade"),1);
+	$menu->add(DOL_URL_ROOT."/admin/tools/update.php", $langs->trans("MenuUpgrade"),1);
 	if (function_exists('eaccelerator_info')) $menu->add(DOL_URL_ROOT."/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"),1);
 	$menu->add(DOL_URL_ROOT."/admin/tools/listevents.php", $langs->trans("Audit"),1);
 	$menu->add(DOL_URL_ROOT."/admin/tools/listsessions.php", $langs->trans("Sessions"),1);

@@ -589,6 +589,7 @@ Offset = Décalage
 AlwaysActive = Toujours actif
 UpdateRequired = Votre système nécessite une mise à jour. Pour cela cliquez sur <a href="%s">Mettre à jour</a>.
 Upgrade = Mise à jour
+MenuUpgrade=Mise à jour / extension
 AddExtensionThemeModuleOrOther = Ajout extension (theme, module, ...)
 WebServer = Serveur Web
 DocumentRootServer = Répertoire racine des pages web

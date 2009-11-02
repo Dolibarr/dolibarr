@@ -161,7 +161,7 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/admin/tools/index.php?leftmenu=admintools", $langs->trans("SystemTools"));
 					if ($leftmenu=="admintools") $newmenu->add(DOL_URL_ROOT."/admin/tools/dolibarr_export.php", $langs->trans("Backup"),1);
 					if ($leftmenu=="admintools") $newmenu->add(DOL_URL_ROOT."/admin/tools/dolibarr_import.php", $langs->trans("Restore"),1);
-					if ($leftmenu=="admintools") $newmenu->add(DOL_URL_ROOT."/admin/tools/update.php", $langs->trans("Upgrade"),1);
+					if ($leftmenu=="admintools") $newmenu->add(DOL_URL_ROOT."/admin/tools/update.php", $langs->trans("MenuUpgrade"),1);
 					if ($leftmenu=="admintools" && function_exists('eaccelerator_info')) $newmenu->add(DOL_URL_ROOT."/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"),1);
 					if ($leftmenu=="admintools") $newmenu->add(DOL_URL_ROOT."/admin/tools/listevents.php", $langs->trans("Audit"),1);
 					if ($leftmenu=="admintools") $newmenu->add(DOL_URL_ROOT."/admin/tools/listsessions.php", $langs->trans("Sessions"),1);

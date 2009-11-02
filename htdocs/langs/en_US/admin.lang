@@ -589,6 +589,7 @@ Offset=Offset
 AlwaysActive=Always active
 UpdateRequired=Your system needs to be updated. To do this, click on <a href="%s">Update now</a>.
 Upgrade=Upgrade
+MenuUpgrade=Upgrade / Extend
 AddExtensionThemeModuleOrOther=Add extension (theme, module, ...)
 WebServer=Web server
 DocumentRootServer=Web server's root directory
