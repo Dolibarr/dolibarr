@@ -34,6 +34,7 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 $projetid='';
 $ref='';
 if (isset($_GET["id"]))  { $projetid=$_GET["id"]; }
+else $_GET["id"]=$_POST["id"];
 if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
 
 //var_dump($_REQUEST);exit;
@@ -60,64 +61,82 @@ $result = restrictedArea($user, 'projet', $projetid);
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
-	//print $_POST["socid"];
-	$project = new Project($db);
-	$project->ref             = $_POST["ref"];
-	$project->title           = $_POST["title"];
-	$project->socid           = $_POST["socid"];
-	$project->user_resp_id    = $_POST["officer_project"];
-	$project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
-	$project->datec=dol_now('tzserver');
-
-	$result = $project->create($user);
-	if ($result > 0)
+	$error=0;
+	if (empty($_POST["ref"]))
 	{
-		Header("Location:fiche.php?id=".$project->id);
-		exit;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+		$error++;
+	}
+	if (empty($_POST["title"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		$error++;
+	}
+
+	if (! $error)
+	{
+		//print $_POST["socid"];
+		$project = new Project($db);
+		$project->ref             = $_POST["ref"];
+		$project->title           = $_POST["title"];
+		$project->socid           = $_POST["socid"];
+		$project->user_resp_id    = $_POST["officer_project"];
+		$project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+		$project->datec=dol_now('tzserver');
+
+		$result = $project->create($user);
+		if ($result > 0)
+		{
+			Header("Location:fiche.php?id=".$project->id);
+			exit;
+		}
+		else
+		{
+			$langs->load("errors");
+			$mesg='<div class="error">'.$langs->trans($project->error).'</div>';
+			$_GET["action"] = 'create';
+		}
 	}
 	else
 	{
-		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($project->error).'</div>';
 		$_GET["action"] = 'create';
 	}
 }
 
-if ($_POST["action"] == 'update' && $user->rights->projet->creer)
+if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
-	if (! $_POST["cancel"])
+	$error=0;
+
+	if (empty($_POST["ref"]))
 	{
-		$error=0;
-		if (empty($_POST["ref"]))
-		{
-			$error++;
-			$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
-		}
-		if (empty($_POST["title"]))
-		{
-			$error++;
-			$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
-		}
-		if (! $error)
-		{
-			$projet = new Project($db);
-			$projet->id           = $_POST["id"];
-			$projet->ref          = $_POST["ref"];
-			$projet->title        = $_POST["title"];
-			$projet->socid        = $_POST["socid"];
-			$projet->user_resp_id = $_POST["officer_project"];
-			$projet->dateo           = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+		$error++;
+		//$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+	}
+	if (empty($_POST["title"]))
+	{
+		$error++;
+		//$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+	}
+	if (! $error)
+	{
+		$projet = new Project($db);
+		$projet->id           = $_POST["id"];
+		$projet->ref          = $_POST["ref"];
+		$projet->title        = $_POST["title"];
+		$projet->socid        = $_POST["socid"];
+		$projet->user_resp_id = $_POST["officer_project"];
+		$projet->dateo           = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
 
-			$projet->update($user);
+		$result=$projet->update($user);
 
-			$_GET["id"]=$projet->id;  // On retourne sur la fiche projet
-		}
+		$_GET["id"]=$projet->id;  // On retourne sur la fiche projet
 	}
 	else
 	{
-		$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+		$_GET["id"]=$_POST["id"];
+		$_GET['action']='edit';
 	}
 }
 
@@ -163,10 +182,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '<input type="hidden" name="action" value="add">';
 
 	// Ref
-	print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" type="text" name="ref" value="'.$_POST["ref"].'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'*</td><td><input size="8" type="text" name="ref" value="'.$_POST["ref"].'"></td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'*</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
 
 	// Client
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';
