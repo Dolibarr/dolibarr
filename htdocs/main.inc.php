@@ -1041,7 +1041,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 		{
 			print '<div class="help">';
 			print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
-			if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.strtr($helppage,'_',' ').'&quot;';
+			if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
 			print '" href="';
 			print sprintf($helpbaseurl,$helppage);
 			print '">';

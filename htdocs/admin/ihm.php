@@ -64,7 +64,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
-	
+
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"],'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
@@ -90,7 +90,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
  * View
  */
 
-$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+$wikihelp='EN:First_setup|FR:Premiers_param&eacute;trages|ES:Primeras_configuraciones';
 llxHeader($langs->trans("Setup"),'',$wikihelp);
 
 $html=new Form($db);
@@ -111,7 +111,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     clearstatcache();
     $var=true;
 
-    print '<table class="noborder" width="100%">';
+    print '<table summary="edit" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -190,7 +190,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-	
+
 	print '</table><br>';
 
 
@@ -200,7 +200,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 
 
     // Liste des zone de recherche permanantes supportees
-    print '<table class="noborder" width="100%">';
+    print '<table summary="search" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td colspan="2">'.$langs->trans("Activated").'</td></tr>';
     $var=True;
     foreach ($searchform as $key => $value)
@@ -214,7 +214,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     print '<br>';
 
     $var=true;
-    print '<table class="noborder" width="100%">';
+    print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
 
     // Hide help link on login page
@@ -365,7 +365,7 @@ else	// Show
     foreach ($searchform as $key => $value)
     {
         $var=!$var;
-        print '<tr '.$bc[$var].'"><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
+        print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>'.yn($searchformconst[$key]).'</td>';
 		print '<td align="left">'.$langs->trans("IfModuleEnabled",$langs->transnoentitiesnoconv($searchformmodule[$key]));
         print '</td></tr>';
     }

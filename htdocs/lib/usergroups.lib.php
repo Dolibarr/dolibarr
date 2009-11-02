@@ -125,25 +125,34 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     $thumbsbyrow=6;
     print '<table class="noborder" width="100%">';
+
+    // Title
     if ($foruserprofile)
     {
     	print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td>';
     	print '<td colspan="2">&nbsp;</td>';
+	    print '</tr>';
     }
     else
     {
-    	print '<tr class="liste_titre"><td colspan="'.$thumbsbyrow.'">'.$langs->trans("DefaultSkin").'</td></tr>';
+    	print '<tr class="liste_titre"><td>'.$langs->trans("DefaultSkin").'</td>';
+    	print '<td align="right">';
+    	print '<a href="http://www.dolibarr.org/downloads/cat_view/65-modulesaddon/70-skins" target="_blank">';
+    	print $langs->trans('DownloadMoreSkins');
+    	print '</a>';
+    	print '</td></tr>';
     }
-    print '</tr>';
 
     $var=false;
 
     if ($foruserprofile)
     {
-	    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultSkin").'</td>';
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("DefaultSkin").'</td>';
 	    print '<td>'.$conf->global->MAIN_THEME.'</td>';
 	    print '<td '.$bc[$var].' align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-	    print '<td '.$bc[$var].'>&nbsp;</td></tr>';
+	    print '<td '.$bc[$var].'>&nbsp;</td>';
+	    print '</tr>';
     }
 
     if ($edit) print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
