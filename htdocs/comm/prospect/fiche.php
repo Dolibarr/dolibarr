@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/comm/prospect/fiche.php
- \ingroup    prospect
- \brief      Page de la fiche prospect
- \version    $Id$
+ *	\file       htdocs/comm/prospect/fiche.php
+ *	\ingroup    prospect
+ *	\brief      Page de la fiche prospect
+ *	\version    $Id$
  */
 
 require_once("./pre.inc.php");
@@ -183,8 +183,7 @@ if ($socid > 0)
 
 
 	/*
-	 * Dernieres propales
-	 *
+	 * Last proposals
 	 */
 	if ($conf->propal->enabled)
 	{
@@ -213,7 +212,7 @@ if ($socid > 0)
 			{
 				$tableaushown=1;
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
 				print '</tr>';
 			}
 
