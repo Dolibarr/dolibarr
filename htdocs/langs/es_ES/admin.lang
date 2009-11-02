@@ -725,6 +725,7 @@ PreviousDumpFiles = Archivos de copia de seguridad de la base de datos disponibl
 WeekStartOnDay = Primer día de la semana
 RunningUpdateProcessMayBeRequired = Parece necesario realizar el proceso de actualización (la versión del programa %s difiere de la versión de la base de datos %s)
 YouMustRunCommandFromCommandLineAfterLoginToUser = Debe ejecutar el comando desde un shell después de haber iniciado sesión con la cuenta <b>%s</b>.
+YourPHPDoesNotHaveSSLSupport = Funciones SSL no disponibles en su PHP
 ##### Module password generation = undefined = 
 PasswordGenerationStandard = Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone = No ofrece contraseñas. La contraseña se introduce manualmente.
