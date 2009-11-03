@@ -593,11 +593,8 @@ class CMailFile
 
 		if (is_readable($newsourcefile))
 		{
-			//$fd = fopen($newsourcefile, "rb");
-			//$contents = fread($fd, filesize($newsourcefile));
 			$contents = file_get_contents($newsourcefile);	// Need PHP 4.3
 			$encoded = chunk_split(base64_encode($contents), 68, $this->eol);
-			fclose($fd);
 			return $encoded;
 		}
 		else
