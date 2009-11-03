@@ -11,9 +11,9 @@
 /* Begin DOLCHANGE Added by Regis */
 // height of cell repect font height
 define("K_CELL_HEIGHT_RATIO", 1.25);
-// R�pertoire des documents de fckeditor
+// Repertoire des documents de fckeditor
 if (! empty($conf->fckeditor->dir_output)) define ("K_PATH_CACHE", $conf->fckeditor->dir_output);
-// url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera int�gr�e au pdf
+// url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera integree au pdf
 if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document.php?modulepart=editor&amp;file=");
 /* End DOLCHANGE Added by Regis */
 
@@ -85,7 +85,7 @@ var $PDFVersion;         //PDF version number
 var $prevFontFamily;     //store previous font family
 var $prevFontStyle;      //store previous style family
 
-var $DisplayPreferences=''; //pr�f�rences d'affichage
+var $DisplayPreferences=''; //preferences d'affichage
 
 		// variables pour HTML PARSER
 
