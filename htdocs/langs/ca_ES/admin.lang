@@ -588,6 +588,7 @@ Offset = Decàleg
 AlwaysActive = Sempre actiu
 UpdateRequired = El seu sistema necessita una actualització. Per actualitzar faci un clic a <a href="%s">Actualitzar</a>.
 Upgrade = Actualització
+MenuUpgrade = Actualització / Extensió
 AddExtensionThemeModuleOrOther = Ajustar extensió (tema, mòdul, etc.)
 WebServer = Servidor web
 DocumentRootServer = Carpeta arrel de les pàgines web
@@ -726,6 +727,7 @@ WeekStartOnDay = Primer dia de la setmana
 RunningUpdateProcessMayBeRequired = Sembla necessari realitzar el procés d'actualizació (la versió del programa %s difereix de la versió de la base de dades %s)
 YouMustRunCommandFromCommandLineAfterLoginToUser = Ha d'executar la comanda des d'un shell després d'haver iniciat sessió amb el compte <b>%s</b>.
 YourPHPDoesNotHaveSSLSupport = Funcions SSL no disponibles al vostre PHP
+DownloadMoreSkins = Més temes per descarregar
 ##### Module password generation = undefined =  = 
 PasswordGenerationStandard = Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone = No ofereix contrasenyes. La contrasenya s'introdueix manualment.

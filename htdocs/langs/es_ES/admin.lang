@@ -588,6 +588,7 @@ Offset = Decálogo
 AlwaysActive = Siempre activo
 UpdateRequired = Su sistema necesita una actualización. Para actualizar haga click en <a href="%s">Actualizar</a>.
 Upgrade = Actualización
+MenuUpgrade = Actualización / Extensión
 AddExtensionThemeModuleOrOther = Ajustar extensión (tema, módulo, etc.)
 WebServer = Servidor web
 DocumentRootServer = Carpeta raiz de las páginas web
@@ -726,6 +727,7 @@ WeekStartOnDay = Primer día de la semana
 RunningUpdateProcessMayBeRequired = Parece necesario realizar el proceso de actualización (la versión del programa %s difiere de la versión de la base de datos %s)
 YouMustRunCommandFromCommandLineAfterLoginToUser = Debe ejecutar el comando desde un shell después de haber iniciado sesión con la cuenta <b>%s</b>.
 YourPHPDoesNotHaveSSLSupport = Funciones SSL no disponibles en su PHP
+DownloadMoreSkins = Más temas para descargar
 ##### Module password generation = undefined = 
 PasswordGenerationStandard = Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone = No ofrece contraseñas. La contraseña se introduce manualmente.
