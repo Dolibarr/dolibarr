@@ -848,8 +848,9 @@ class Account extends CommonObject
 	{
 		$country_code=$this->getCountryCode();
 
-		if ($country_code == 'FR') return true;
-		if ($country_code == 'ES') return true;
+		if ($country_code == 'FR') return true; // France
+		if ($country_code == 'ES') return true; // Spain
+		if ($country_code == 'GA') return true; // Gabon
 
 		return false;
 	}
