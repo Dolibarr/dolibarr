@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/exports/index.php
- *       \ingroup    core
+ *       \ingroup    export
  *       \brief      Page accueil de la zone export
  *       \version    $Id$
  */

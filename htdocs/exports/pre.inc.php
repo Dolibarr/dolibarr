@@ -18,11 +18,10 @@
 
 /**
  *       \file       htdocs/exports/pre.inc.php
- *       \ingroup    core
+ *       \ingroup    export
  *       \brief      Fichier de gestion du menu gauche de l'espace exports
  *       \version    $Id$
  */
-
 require("../main.inc.php");
 
 

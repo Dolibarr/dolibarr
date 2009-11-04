@@ -17,12 +17,11 @@
  */
 
 /**
- *       \file       htdocs/exports/pre.inc.php
- *       \ingroup    core
+ *       \file       htdocs/imports/pre.inc.php
+ *       \ingroup    import
  *       \brief      Fichier de gestion du menu gauche de l'espace exports
  *       \version    $Id$
  */
-
 require("../main.inc.php");
 
 
@@ -34,8 +33,8 @@ function llxHeader($head = '', $title='', $help_url='')
 
     $menu = new Menu();
 
-    $menu->add(DOL_URL_ROOT."/exports/index.php", $langs->trans("Exports"));
-    $menu->add_submenu(DOL_URL_ROOT."/exports/export.php", $langs->trans("NewExport"));
+    $menu->add(DOL_URL_ROOT."/imports/index.php", $langs->trans("Imports"));
+    $menu->add_submenu(DOL_URL_ROOT."/imports/import.php", $langs->trans("NewImport"));
 
     left_menu($menu->liste, $help_url);
 }
