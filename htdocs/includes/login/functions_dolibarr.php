@@ -18,34 +18,34 @@
  */
 
 /**
-        \file       htdocs/includes/login/functions_dolibarr.php
-        \ingroup    core
-        \brief      Authentication functions for Dolibarr mode
-		\version	$Id$
-*/
+ *      \file       htdocs/includes/login/functions_dolibarr.php
+ *      \ingroup    core
+ *      \brief      Authentication functions for Dolibarr mode
+ *		\version	$Id$
+ */
 
 
 /**
-        \brief		Check user and password
-        \param		usertotest		Login
-        \param		passwordtotest	Password
-        \return		string			Login if ok, '' if ko.
-*/
+ *      \brief		Check user and password
+ *      \param		usertotest		Login
+ *      \param		passwordtotest	Password
+ *      \return		string			Login if ok, '' if ko.
+ */
 function check_user_password_dolibarr($usertotest,$passwordtotest)
 {
 	global $_POST,$db,$conf,$langs;
-	
+
 	dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest);
 
 	$login='';
-	
-	if (! empty($_POST["username"])) 
+
+	if (! empty($_POST["username"]))
 	{
 		// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
 		$usernamecol = 'login';
 		$entitycol = 'entity';
-		
+
 		$sql ='SELECT pass, pass_crypted';
 		$sql.=' FROM '.$table;
 		$sql.=' WHERE '.$usernamecol." = '".addslashes($_POST["username"])."'";
@@ -63,16 +63,16 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 				$passtyped=$_POST["password"];
 
 				$passok=false;
-				
+
 				// Check crypted password
 				$cryptType='';
 				if (! empty($conf->global->DATABASE_PWD_ENCRYPTED)) $cryptType=$conf->global->DATABASE_PWD_ENCRYPTED;
 				// By default, we used MD5
-				if (! in_array($cryptType,array('md5'))) $cryptType='md5'; 
-				// Check crypted password according to crypt algorithm 
-				if ($cryptType == 'md5') 
+				if (! in_array($cryptType,array('md5'))) $cryptType='md5';
+				// Check crypted password according to crypt algorithm
+				if ($cryptType == 'md5')
 				{
-					if (md5($passtyped) == $passcrypted) 
+					if (md5($passtyped) == $passcrypted)
 					{
 						$passok=true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - ".$cryptType." of pass is ok");
@@ -82,14 +82,14 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 				// For compatibility with old versions
 				if (! $passok)
 				{
-					if ((! $passcrypted || $passtyped) 
-						&& ($passtyped == $passclear)) 
+					if ((! $passcrypted || $passtyped)
+						&& ($passtyped == $passclear))
 					{
 						$passok=true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");
 					}
 				}
-				
+
 				// Password ok ?
 				if ($passok)
 				{
