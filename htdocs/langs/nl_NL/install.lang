@@ -82,11 +82,16 @@ SystemIsInstalled=Deze installatie is voltooid.
 SystemIsUpgraded=Dolibarr is met succes opgewaardeerd.
 YouNeedToPersonalizeSetup=U moet Dolibarr configureren om voor uw behoeften (uiterlijk, de functies, ...). Om dit te doen, volgt u de onderstaande link:
 AdminLoginCreatedSuccessfuly=Dolibarr beheerder login <b>'%s'</b> is succesvol gemaakt.
+GoToDolibarr=Ga naar Dolibarr
 GoToSetupArea=Ga naar Dolibarr (setup)
+MigrationNotFinished=De versie van uw database is niet helemaal up-to-date, dus u zult het upgrade-proces opnieuw moeten uitvoeren.
+GoToUpgradePage=Ga opnieuw naar de upgrade pagina
 Examples=Voorbeelden
 WithNoSlashAtTheEnd=Zonder de schuine streep '/' aan het eind
+DirectoryRecommendation=Het is aanbevolen dat deze map buiten de webpagina's map zich bevind.
 LoginAlreadyExists=Bestaat al
 DolibarrAdminLogin=Dolibarr admin login
+FailedToCreateAdminLogin=Creëren van het Dolibarr administrator account is mislukt.
 AdminLoginAlreadyExists=Dolibarr administrator account <b>'%s'</b> bestaat reeds.
 WarningRemoveInstallDir=Waarschuwing, om veiligheidsredenen, nadat de installatie of upgrade is voltooid, moet u de <b>install map</b> verwijderen of hernoemen naar install.lock om misbruik te voorkomen.
 ThisPHPDoesNotSupportTypeBase=Dit PHP-systeem biedt geen ondersteuning voor enig interface om toegang te krijgen tot database type %s
@@ -130,10 +135,10 @@ IfLoginDoesNotExistsCheckCreateUser=Als de login nog niet bestaat, moet u de opt
 ErrorConnection=Server <b>'%s'</b>, database naam <b>'%s'</b>, login <b>'%s'</b> of database wachtwoord kan verkeerd zijn of PHP client versie kan te oud zijn in vergelijking met de database versie.
 InstallChoiceRecommanded=Aanbevolen keuze te installeren versie <b>%s</b> van uw huidige versie <b>%s</b>
 InstallChoiceSuggested=<b>Installeer voorgestelde keuze.</b>
-GoToDolibarr=Ga naar Dolibarr
-MigrationNotFinished=De versie van uw database is niet helemaal up-to-date, dus u zult het upgrade-proces opnieuw moeten uitvoeren.
-GoToUpgradePage=Ga opnieuw naar de upgrade pagina
 
+#########
+# upgrade
+#########
 MigrationFixData=Fix voor gedenormaliseerd gegeven
 MigrationOrder=Data migratie voor klant orders
 MigrationSupplierOrder=Data migratie voor leverancier orders
@@ -141,37 +146,60 @@ MigrationProposal=Data migratie voor offertes
 MigrationInvoice=Data migratie voor klant facturen
 MigrationContract=Data migratie voor contracten
 MigrationSuccessfullUpdate=Upgrade succesvol
+MigrationUpdateFailed=De update is mislukt
+
+# Payments Update
 MigrationPaymentsUpdate=Betalingsgegevens correctie
 MigrationPaymentsNumberToUpdate=%s Betalingsgegeven(s) actualiseren
 MigrationProcessPaymentUpdate=Update betaling(s) %s
 MigrationPaymentsNothingToUpdate=Niets meer te doen
 MigrationPaymentsNothingUpdatable=Geen betalingen meer, die kunnen worden gecorrigeerd
+
+# Contracts Update
 MigrationContractsUpdate=Contract gegevens correctie
 MigrationContractsNumberToUpdate=%s overeenkomst(en) actualiseren
 MigrationContractsLineCreation=Maak contract voor contract ref% s
 MigrationContractsNothingToUpdate=Niets meer te doen
 MigrationContractsFieldDontExist=Veld fk_facture bestaat niet meer. Niets te doen.
+
+# Contracts Empty Dates Update
 MigrationContractsEmptyDatesUpdate=Contract lege datum correctie
 MigrationContractsEmptyDatesUpdateSuccess=Contract lege datum correctie succesvol gedaan
 MigrationContractsEmptyDatesNothingToUpdate=Geen contract lege datum te corrigeren
+MigrationContractsEmptyCreationDatesUpdateSuccess=Ok tijd voor het creëren
 MigrationContractsEmptyCreationDatesNothingToUpdate=Geen contract aanmaakdatum te corrigeren
+
+# Contracts Invalid Dates Update
 MigrationContractsInvalidDatesUpdate=Onjuiste datum waarde contract correctie
 MigrationContractsInvalidDateFix=Correctie contract %s (Contract datum=%s, Start dienst datum min=%s)
 MigrationContractsInvalidDatesNumber=%s gemodificeerde contracten
 MigrationContractsInvalidDatesNothingToUpdate=Geen datum met onjuiste waarde te corrigeren
+
+# Contracts Incoherent Dates Update
 MigrationContractsIncoherentCreationDateUpdate=Onjuiste waarde contract aanmaakdatum correctie
 MigrationContractsIncoherentCreationDateUpdateSuccess=Onjuiste waarde contract aanmaakdatum correctie gedaan succes
 MigrationContractsIncoherentCreationDateNothingToUpdate=Geen onjuiste waarde voor de totstandkoming van contracten datum te corrigeren
+
+# Reopening Contracts
 MigrationReopeningContracts=Open contract gesloten door fout
 MigrationReopenThisContract=Heropenen opdracht %s
 MigrationReopenedContractsNumber=%s gemodificeerde contracten
 MigrationReopeningContractsNothingToUpdate=Geen gesloten contract te openen
+
+# Migration transfert
 MigrationBankTransfertsUpdate=Update gegevens tussen bank transactie en een bank transfer
 MigrationBankTransfertsNothingToUpdate=Alle links zijn up-to-date
+
+# Migration delivery
 MigrationShipmentOrderMatching=Verzendbewijs update
 MigrationDeliveryOrderMatching=Ontvangstbewijs update
 MigrationDeliveryDetail=Bezorgings update
+
+# Migration stock
 MigrationStockDetail=Update producten voorraad
+
+# Migration menus
 MigrationMenusDetail=Update dynamische menu's tabellen
+
+# Migration delivery address
 MigrationDeliveryAddress=Update afleveradres bij levering
-MigrationUpdateFailed=Mislukt upgradeprocedure
