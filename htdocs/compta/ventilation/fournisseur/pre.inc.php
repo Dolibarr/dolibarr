@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005 Simon Tosser  <simon@kornog-computing.com>
  *
@@ -43,8 +43,8 @@ function llxHeader($head = "", $title="", $help_url='')
 
     $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation")." ".$langs->trans("Customers"));
     $menu->add(DOL_URL_ROOT."/compta/ventilation/fournisseur/",$langs->trans("Ventilation")." ".$langs->trans("Suppliers"));
-    $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/fournisseur/liste.php",$langs->trans("A ventiler"));
-    $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/fournisseur/lignes.php",$langs->trans("Ventilées"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/fournisseur/liste.php",$langs->trans("ToDispatch"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/fournisseur/lignes.php",$langs->trans("Dispatched"));
 
     $menu->add(DOL_URL_ROOT."/compta/export/",$langs->trans("Export"));
 
