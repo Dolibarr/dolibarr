@@ -187,7 +187,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     // First day for weeks
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
-    print $html->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:''),'MAIN_START_WEEK',0);
+    print $html->select_dayofweek((isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'),'MAIN_START_WEEK',0);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -346,7 +346,7 @@ else	// Show
 	// First day for weeks
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
-    print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'0'));
+    print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';

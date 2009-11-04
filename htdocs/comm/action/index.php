@@ -443,7 +443,7 @@ if ($_GET["action"] != 'show_day')		// View by month
 	$i=0;
 	while ($i < 7)
 	{
-		echo '  <td align="center">'.$langs->trans("Day".(($i+$conf->global->MAIN_START_WEEK) % 7))."</td>\n";
+		echo '  <td align="center">'.$langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7))."</td>\n";
 		$i++;
 	}
 	echo " </tr>\n";
