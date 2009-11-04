@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,10 +218,18 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>';
 
-    // Hide help link on login page
+    // Hide helpcenter link on login page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
     print $html->selectyesno('MAIN_HELPCENTER_DISABLELINK',isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0,1);
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
+	// Hide wiki link on login page
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td>';
+    print $html->selectyesno('MAIN_HELP_DISABLELINK',isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -256,14 +265,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')	// Edit
 		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_MOTD).'</textarea>';
 	}
 	print '</td></tr>';
-
-    // Hide help link on login page
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td>';
-    print $html->selectyesno('MAIN_HELP_DISABLELINK',isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
-    print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
 
 	/*
 	// Show bugtrack link
@@ -381,6 +382,12 @@ else	// Show
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
     print yn($conf->global->MAIN_HELPCENTER_DISABLELINK,1);
     print '</td></tr>';
+    
+    // Link to wiki help
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td>';
+    print yn($conf->global->MAIN_HELP_DISABLELINK,1);
+    print '</td></tr>';
 
     // Message login
     $var=!$var;
@@ -392,12 +399,6 @@ else	// Show
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
     print nl2br($conf->global->MAIN_MOTD);
-    print '</td></tr>';
-
-    // Link to wiki help
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1)).'</td><td>';
-    print yn($conf->global->MAIN_HELP_DISABLELINK,1);
     print '</td></tr>';
 
     /*
