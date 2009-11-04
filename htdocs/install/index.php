@@ -63,7 +63,7 @@ print '</td>';
 print '</tr></table></center>';
 
 
-// Si pas d'erreur, on affiche le bouton pour passer � l'�tape suivante
+// Si pas d'erreur, on affiche le bouton pour passer a l'etape suivante
 if ($err == 0) pFooter(0);
 
 ?>
