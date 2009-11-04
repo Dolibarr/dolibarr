@@ -26,7 +26,6 @@
  *	\author	    Laurent Destailleur
  *	\version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -37,7 +36,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
  *	\class      pdf_propale_azur
  *	\brief      Classe permettant de generer les propales au modele Azur
  */
-
 class pdf_propale_azur extends ModelePDFPropales
 {
 	var $emetteur;	// Objet societe qui emet
@@ -949,7 +947,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
-			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->SetXY($posx,$posy-5);
 			$pdf->MultiCell(80, 4, $outputlangs->transnoentities("BillTo").":");
 			$pdf->rect($posx, $posy, 100, $hautcadre);
 			$pdf->SetTextColor(0,0,0);
@@ -962,7 +960,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Show recipient information
 			$pdf->SetFont('Arial','',9);
 			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
-			$pdf->SetXY($posx,$posy+6);
+			$pdf->SetXY($posx+2,$posy+6);
 			$pdf->MultiCell(86,4, $carac_client);
 		}
 	}
