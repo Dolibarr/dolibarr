@@ -18,5 +18,6 @@ export olddir=original_dir
 export newdir=modified_dir
 
 echo ----- Building patch file mypatch.patch -----
+echo Build patch between \"$olddir\" and \"$newdir\" 
 diff -Naur --exclude=CVS --exclude="*.patch" --exclude=".#*" --exclude="*~" --exclude="*.rej" --exclude="*.orig" --exclude="*.bak" --exclude=conf.php --exclude=documents  $olddir  $newdir  > mypatch.patch
 
