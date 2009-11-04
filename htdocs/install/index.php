@@ -44,7 +44,7 @@ if (file_exists($conffile) && isset($dolibarr_main_url_root))
  * View
  */
 
-$formadmin=new FormAdmin($db);
+$formadmin=new FormAdmin('');	// Note: $db does not exist yet but we don't need it, so we put ''.
 
 pHeader("", "check");   // Etape suivante = index2
 
