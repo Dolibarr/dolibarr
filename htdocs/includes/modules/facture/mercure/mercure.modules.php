@@ -21,19 +21,18 @@
  */
 
 /**
-	\file       htdocs/includes/modules/facture/mercure/mercure.modules.php
-	\ingroup    facture
-	\brief      Class filte of Mercure numbering module for invoice
-	\version    $Id$
-*/
-
+ *	\file       htdocs/includes/modules/facture/mercure/mercure.modules.php
+ *	\ingroup    facture
+ *	\brief      Class filte of Mercure numbering module for invoice
+ *	\version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 
 /**
-	\class      mod_facture_mercure
-	\brief      Classe du modele de numerotation de reference de facture Mercure
-*/
+ *	\class      mod_facture_mercure
+ *	\brief      Classe du modele de numerotation de reference de facture Mercure
+ */
 class mod_facture_mercure extends ModeleNumRefFactures
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'

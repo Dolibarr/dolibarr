@@ -19,18 +19,16 @@
  */
 
 /**
- \file       htdocs/includes/modules/facture/terre/terre.modules.php
- \ingroup    facture
- \brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de facture Terre
- \version    $Id$
+ *	\file       htdocs/includes/modules/facture/terre/terre.modules.php
+ *	\ingroup    facture
+ *	\brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de facture Terre
+ *	\version    $Id$
  */
-
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 /**	    \class      mod_facture_terre
- \brief      Classe du mod�le de num�rotation de r�f�rence de facture Terre
+ *		\brief      Classe du modele de numerotation de reference de facture Terre
  */
-
 class mod_facture_terre extends ModeleNumRefFactures
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
@@ -38,7 +36,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	var $prefixcreditnote='AV';
 	var $error='';
 
-	/**     \brief      Renvoi la description du modele de num�rotation
+	/**     \brief      Renvoi la description du modele de numerotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
