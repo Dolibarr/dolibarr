@@ -172,6 +172,7 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 		$newremotefileiso=utf8_decode($remotefile);
 
 		//print "x".$newremotefileiso;
+		dol_syslog("ftp/index.php ftp_delete ".$newremotefileiso);
 		$result=ftp_delete($conn_id, $newremotefileiso);
 		if ($result)
 		{
@@ -179,6 +180,7 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 		}
 		else
 		{
+			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
 			$mesg = '<div class="error">'.$langs->trans("FTPFailedToRemoveFile",$file).'</div>';
 		}
 
@@ -473,7 +475,9 @@ else
 				}
 				else if ($is_link)
 				{
-					print '&nbsp;';
+					$newfile=$file;
+					$newfile=preg_replace('/ ->.*/','',$newfile);
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($newfile).'">'.img_delete().'</a>';
 				}
 				else
 				{
