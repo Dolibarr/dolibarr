@@ -969,12 +969,11 @@ class Categorie
 		$result='';
 
 		$lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'">';
-		$label=$this->label;
+		$label=$langs->trans("ShowCategory").': '.$this->label;
 		$lienfin='</a>';
 
 		$picto='category';
 
-		$label=$langs->trans("ShowCategory").': '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

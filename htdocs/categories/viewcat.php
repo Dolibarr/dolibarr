@@ -28,24 +28,29 @@
 
 require("./pre.inc.php");
 
-if ($_REQUEST['id'] == "")
-{
-	dol_print_error('','Missing parameter id');
-	exit();
-}
-
-$mesg = '';
-$type=$_REQUEST['type'];
-
 // Security check
 if (! $user->rights->categorie->lire)
 {
 	accessforbidden();
 }
 
-$c = new Categorie($db);
-$c->fetch($_REQUEST['id']);
+$mesg = '';
 
+if ($_REQUEST['id'] == "")
+{
+	dol_print_error('','Missing parameter id');
+	exit();
+}
+
+$c = new Categorie($db);
+$result=$c->fetch($_REQUEST['id']);
+if ($result <= 0)
+{
+	dol_print_error($db,$c->error);
+	exit;
+}
+
+$type=$c->type;
 
 
 /*
@@ -96,7 +101,7 @@ if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 
-dol_fiche_head($head, 'card', $title);
+dol_fiche_head($head, 'card', $title, 0, 'category');
 
 
 /*

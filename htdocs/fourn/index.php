@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/categories/categorie.class.php');
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -96,9 +97,7 @@ else
 }
 
 
-/*
- * Commandes brouillons
- */
+// Draft orders
 if ($conf->fournisseur->enabled)
 {
 	$langs->load("orders");
@@ -153,9 +152,7 @@ if ($conf->fournisseur->enabled)
 	}
 }
 
-/**
- * Factures brouillons
- */
+// Draft invoices
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {
 	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
@@ -221,8 +218,7 @@ print "</td>\n";
 print '<td valign="top" width="70%" class="notopnoleft">';
 
 /*
- * Liste des 10 derniers saisis
- *
+ * List last modified supliers
  */
 $max=10;
 $sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea, s.tms, st.libelle as stcomm, s.prefix_comm";
@@ -273,9 +269,10 @@ else
 
 
 /*
- * List of categories
+ * List of suppliers categories
  */
 $companystatic->LoadSupplierCateg();
+$categstatic=new Categorie($db);
 
 if (sizeof($companystatic->SupplierCategories))
 {
@@ -291,7 +288,11 @@ if (sizeof($companystatic->SupplierCategories))
 	{
 		$var=!$var;
 		print "<tr $bc[$var]>\n";
-		print '<td><a href="liste.php?cat='.$rowid.'">'.stripslashes($label).'</a>';
+		print '<td>';
+		$categstatic->id=$rowid;
+		$categstatic->ref=$label;
+		$categstatic->label=$label;
+		print $categstatic->getNomUrl(1);
 		print '</td><td align="right">';
 		print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
 		print "</tr>\n";

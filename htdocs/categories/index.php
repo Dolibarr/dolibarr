@@ -244,8 +244,8 @@ foreach($fulltree as $key => $val)
     	$newref=str_replace('_',' ',$ref);
     	$lienfin='</a>';
     	print $lien.$newref.$lienfin;
-		if (! in_array($val['id'],$expandedsectionarray)) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
-		else print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder-expanded.gif','',1);
+		if (! in_array($val['id'],$expandedsectionarray)) print img_picto('','object_category');
+		else print img_picto('','object_category-expanded');
 		print '</td>';
 		// Show link
 		print '<td valign="middle">';
@@ -256,7 +256,7 @@ foreach($fulltree as $key => $val)
 		$categstatic->type=$type;
 		print $categstatic->getNomUrl(0,'',28);
 		*/
-		print dol_trunc($val['label'],28);
+		print ' &nbsp;'.dol_trunc($val['label'],28);
 		//if ($section == $val['id']) print '</u>';
 		print '</td>';
 		print '</tr></table>';

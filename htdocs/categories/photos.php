@@ -114,7 +114,7 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 		if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 
-		dol_fiche_head($head, 'photos', $title);
+		dol_fiche_head($head, 'photos', $title, 0, 'category');
 
 		/*
 		 * Confirmation de la suppression de photo
