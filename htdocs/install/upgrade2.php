@@ -226,6 +226,10 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 		migrate_restore_missing_links($db,$langs,$conf);
 
+
+		migrate_directories($db,$langs,$conf);
+
+
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
 		$db->commit();
@@ -2338,6 +2342,22 @@ function migrate_restore_missing_links($db,$langs,$conf)
 	}
 
 	print '</td></tr>';
+}
+
+
+/*
+ * Migration directory compta/bordereau into banque/bordereau
+ */
+function migrate_directories($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_directories");
+
+	if (is_dir(DOL_DATA_ROOT.'/compta/bordereau') && ! file_exists(DOL_DATA_ROOT.'/banque/bordereau'))
+	{
+		dolibarr_install_syslog("upgrade2::migrate_directories move ".DOL_DATA_ROOT.'/compta/bordereau into '.DOL_DATA_ROOT.'/banque/bordereau');
+		create_exdir(DOL_DATA_ROOT.'/banque');
+		@rename(DOL_DATA_ROOT.'/compta/bordereau',DOL_DATA_ROOT.'/banque/bordereau');
+	}
 }
 
 
