@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/install/index.php
  *       \ingroup    install
- *       \brief      Affichage page selectin langue si premiere install.
+ *       \brief      Affichage page selection langue si premiere install.
  *					 Si reinstall, passe directement a la page check.php
  *       \version    $Id$
  */

@@ -18,16 +18,16 @@
  */
 
 /**
-        \file       htdocs/html.formadmin.class.php
-        \brief      File of class for html functions for admin pages
-		\version	$Id$
-*/
+ *      \file       htdocs/html.formadmin.class.php
+ *      \brief      File of class for html functions for admin pages
+ *		\version	$Id$
+ */
 
 
 /**
-        \class      FormAdmin
-        \brief      Class to generate html code for admin pages
-*/
+ *       \class      FormAdmin
+ *       \brief      Class to generate html code for admin pages
+ */
 class FormAdmin
 {
 	var $db;
@@ -35,9 +35,9 @@ class FormAdmin
 
 
 	/**
-		\brief     Constructeur
-		\param     DB      handler d'acces base de donnee
-	*/
+	 *	\brief     Constructor
+	 *	\param     DB      handler d'acces base de donnee
+	 */
 	function FormAdmin($DB)
 	{
 		$this->db = $DB;

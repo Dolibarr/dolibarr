@@ -106,7 +106,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 			}
 			else
 			{
-				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko user not found pour '".$_POST["username"]."'");
+				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko user not found for '".$_POST["username"]."'");
 				sleep(1);
 				$langs->load('main');
 				$langs->load('other');
@@ -115,7 +115,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 		}
 		else
 		{
-			dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko db error pour '".$_POST["username"]."' error=".$db->lasterror());
+			dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko db error for '".$_POST["username"]."' error=".$db->lasterror());
 			sleep(1);
 			$_SESSION["dol_loginmesg"]=$db->lasterror();
 		}

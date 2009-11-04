@@ -20,9 +20,10 @@
  */
 
 /**	    \file       htdocs/install/inc.php
-		\brief      File that define environment for install pages
-		\version    $Id$
-*/
+ * 		\ingroup	core
+ *		\brief      File that define environment for install pages
+ *		\version    $Id$
+ */
 
 define('DOL_VERSION','2.7.0-beta');	// Also defined in htdocs/master.inc.php
 
