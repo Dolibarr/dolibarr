@@ -444,6 +444,7 @@ class FormMail
 
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit,$langs);
 			if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
+			$defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
 			print "<tr>";
 			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";

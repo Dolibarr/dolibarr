@@ -517,7 +517,7 @@ else
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;
-		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("Test"));
+		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("PredefinedMailTest"));
 		$formmail->withbodyreadonly=0;
 		$formmail->withcancel=1;
 		$formmail->withdeliveryreceipt=1;
@@ -562,7 +562,7 @@ else
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;
-		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("Test"));
+		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("PredefinedMailTestHtml"));
 		$formmail->withbodyreadonly=0;
 		$formmail->withcancel=1;
 		$formmail->withdeliveryreceipt=1;

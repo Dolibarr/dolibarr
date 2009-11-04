@@ -1916,6 +1916,7 @@ if ($id > 0 || ! empty($ref))
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
+
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$propal->ref;
 		// Tableau des parametres complementaires
