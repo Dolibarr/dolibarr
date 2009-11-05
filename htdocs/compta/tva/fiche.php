@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/compta/tva/fiche.php
  *      \ingroup    tax
- *		\brief      Page des règlements de TVA
+ *		\brief      Page des rï¿½glements de TVA
  *		\version    $Id$
  */
 
@@ -91,7 +91,7 @@ if ($_GET["action"] == 'delete')
 			if ($tva->fk_bank)
 			{
 				$accountline=new AccountLine($db);
-				$result=$accountline->fetch($vatpayment->fk_bank);
+				$result=$accountline->fetch($tva->fk_bank);
 				$result=$accountline->delete($user);
 			}
 			
