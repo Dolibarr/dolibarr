@@ -543,11 +543,15 @@ class CommandeFournisseur extends Commande
 
 					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 					{
-						$mouvP = new MouvementStock($this->db);
-						// We decrement stock of product (and sub-products)
-						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
-						if ($result < 0) { $error++; }
+						// Product with reference
+						if (!empty($this->lignes[$i]->fk_product))
+						{
+							$mouvP = new MouvementStock($this->db);
+							// We decrement stock of product (and sub-products)
+							$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+							$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+							if ($result < 0) { $error++; }
+						}
 					}
 				}
 
