@@ -39,6 +39,8 @@ Miscellanous = Diversos
 NbOfActiveNotifications = Número notificacions
 WarningInstallDirExists = Atenció: La carpeta install (<b>htdocs/install</b>) encara existeix. Una vegada finalitzada la instal·lació la seva presència no és necessària, i representa un error seriós de seguretat. Hauríeu eliminar-la el més aviat possible.
 WarningUntilDirRemoved = Aquesta alerta seguirà activa mentre la carpeta existeixi (alerta visible per als usuaris admin solament).
+PredefinedMailTest = Això és un correu de prova.\nLes 2 línies estan separades per un retorn de carro a la línia.
+PredefinedMailTestHtml = Això és un e-mail de <b>prova</b> (la paraula prova ha d'estar en negreta).<br>Les 2 línies estan separades per un retorn de carro en la línia
 PredefinedMailContentSendInvoice = Us adjuntem la factura __FACREF__\n\nCordialment\n\n
 PredefinedMailContentSendInvoiceReminder = Posem en el seu coneixement que la factura __FACREF__ sembla no estar pagada. Se l'adjuntem doncs, perquè pugui revisar-la.\n nCordialment\n\n
 PredefinedMailContentSendProposal = Us adjuntem el pressupost __PROPREF__ \n\nCordialment\n\n
@@ -155,6 +157,7 @@ MemberDeletedInDolibarr = Membre %s eliminat de Dolibarr
 MemberSubscriptionAddedInDolibarr = Subscripció del membre %s afegida a Dolibar
 ##### Export ##### =  = 
 ExportsArea = Àrea d'exportacions
+AvailableFormats = Formats disponibles
 LibraryUsed = Llibreria utilitzada
 LibraryVersion = Versió
 ExportableDatas = Dades exportables
