@@ -35,8 +35,8 @@ $WS_METHOD  = 'getVersions';
 $parameters = array("param1"=>"value1");
 
 // Set the WebService URL
-dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
-$soapclient = new soapclient_nusoap($WS_DOL_URL);
+dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL);
+$soapclient = new nusoap_client($WS_DOL_URL);
 if ($soapclient)
 {
 	$soapclient->soap_defencoding='UTF-8';

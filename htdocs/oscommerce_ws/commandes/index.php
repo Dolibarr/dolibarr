@@ -44,7 +44,7 @@ require_once("../includes/configure.php");
 $parameters = array("orderid"=>"0");
 
 // Set the WebService URL
-$client = new soapclient_nusoap(OSCWS_DIR."ws_orders.php");
+$client = new nusoap_client(OSCWS_DIR."ws_orders.php");
 
 $result = $client->call("get_Order",$parameters );
 
@@ -98,7 +98,7 @@ elseif (!($err = $client->getError()) )
 		print "</table></p>";
 	}
 	else {
-  		dol_print_error('',"Aucune commande trouvée");
+  		dol_print_error('',"Aucune commande trouvï¿½e");
 	}
 }
 else {

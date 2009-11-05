@@ -56,7 +56,7 @@ require_once("./includes/configure.php");
 $parameters = array();
 
 // Set the WebService URL
-$client = new soapclient_nusoap(OSCWS_DIR."ws_orders.php");
+$client = new nusoap_client(OSCWS_DIR."ws_orders.php");
 
 /* 
 /* Chiffre d'affaire 
@@ -109,7 +109,7 @@ print '</td><td valign="top" width="60%" class="notopnoleftnoright">';
 print_titre($langs->trans("Orders"));
 
 /*
- * 5 dernières commandes reçues
+ * 5 derniï¿½res commandes reï¿½ues
  */
 
 print '<table class="noborder" width="100%">';
@@ -147,7 +147,7 @@ else {
 print "</table><br>";
 
 /*
- * 5 dernières commandes en attente
+ * 5 derniï¿½res commandes en attente
 */
 
 print '<table class="noborder" width="100%">';
@@ -184,7 +184,7 @@ else {
 
 print "</table><br>";
 /*
- * Commandes à traiter
+ * Commandes ï¿½ traiter
  */
 
 print '<table class="noborder" width="100%">';
@@ -223,7 +223,7 @@ print "</table><br>";
 print '</td></tr><tr>';
 
 /*
-* Derniers clients qui ont commandé
+* Derniers clients qui ont commandï¿½
 */
 
 print '<table class="noborder" width="100%">';

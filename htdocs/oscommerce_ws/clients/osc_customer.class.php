@@ -63,14 +63,14 @@ class Osc_customer
      
         $this->osc_custid = $id ;
 
-        /* les initialisations nécessaires */
+        /* les initialisations nï¿½cessaires */
 		$this->db = $DB;
 
 	}
 
 
 /**
-*      \brief      Charge le client OsC en mémoire
+*      \brief      Charge le client OsC en mï¿½moire
 *      \param      id      Id du client dans OsC 
 *      \return     int     <0 si ko, >0 si ok
 */
@@ -98,7 +98,7 @@ class Osc_customer
 		$parameters = array("custid"=>$id);
 
 		// Set the WebService URL
-		$client = new soapclient_nusoap(OSCWS_DIR."/ws_customers.php");
+		$client = new nusoap_client(OSCWS_DIR."/ws_customers.php");
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_Client",$parameters );
@@ -131,9 +131,9 @@ class Osc_customer
 	}
 
 /**
-*      \brief      Mise à jour de la table de transition
+*      \brief      Mise ï¿½ jour de la table de transition
 *      \param      oscid      Id du client dans OsC 
-*	   \param	   socid	  champ société.rowid 	
+*	   \param	   socid	  champ sociï¿½tï¿½.rowid 	
 *      \return     int     <0 si ko, >0 si ok
 */
 	function transcode($oscid, $socid)

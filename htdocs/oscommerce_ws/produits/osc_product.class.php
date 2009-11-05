@@ -60,14 +60,14 @@ class Osc_product
       
         $this->osc_id = $id ;
 
-        /* les initialisations nécessaires */
+        /* les initialisations nï¿½cessaires */
         $this->db = $DB;
 	}
 
 /**
-     *      \brief      Charge le produit OsC en mémoire
+     *      \brief      Charge le produit OsC en mï¿½moire
      *      \param      id      Id du produit dans OsC 
-     *      \param      ref     Ref du produit dans OsC (doit être unique dans OsC)
+     *      \param      ref     Ref du produit dans OsC (doit ï¿½tre unique dans OsC)
      *      \return     int     <0 si ko, >0 si ok
      */
    	function fetch($id='',$ref='')
@@ -94,7 +94,7 @@ class Osc_product
 		$parameters = array("id"=>$id,"ref"=>$ref);
 
 		// Set the WebService URL
-		$client = new soapclient_nusoap(OSCWS_DIR."/ws_articles.php");
+		$client = new nusoap_client(OSCWS_DIR."/ws_articles.php");
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_article",$parameters );
@@ -150,9 +150,9 @@ class Osc_product
 
 	}
 /**
-*      \brief      Mise à jour de la table de transition
+*      \brief      Mise ï¿½ jour de la table de transition
 *      \param      oscid      Id du produit dans OsC 
-*	   \param	   prodid	  champ référence 	
+*	   \param	   prodid	  champ rï¿½fï¿½rence 	
 *      \return     int     <0 si ko, >0 si ok
 */
 	function transcode($oscid, $prodid)
@@ -225,12 +225,12 @@ class Osc_product
 	
        
 	  /**
-     *    \brief      création d'un article dans base OSC
+     *    \brief      crï¿½ation d'un article dans base OSC
      *    \param      $user utilisateur
      */	
 	function create($user)
     {
-    /* non implémentée */
+    /* non implï¿½mentï¿½e */
     }	
 
 	  /**
@@ -239,7 +239,7 @@ class Osc_product
      */	
 	function update($id, $user)
     {
-    /* non implémentée */
+    /* non implï¿½mentï¿½e */
     }
 
     /**
@@ -248,7 +248,7 @@ class Osc_product
      */
    function delete($id)
     {
-    /* non implémentée */
+    /* non implï¿½mentï¿½e */
     }
 }
 ?>

@@ -43,7 +43,7 @@ require_once("../includes/configure.php");
 $parameters = array("custid"=>"0");
 
 // Set the WebService URL
-$client = new soapclient_nusoap(OSCWS_DIR."ws_customers.php");
+$client = new nusoap_client(OSCWS_DIR."ws_customers.php");
 
 $result = $client->call("get_Client",$parameters );
 
@@ -97,7 +97,7 @@ elseif (!($err = $client->getError()) )
 		print "</table></p>";
 	}
 	else {
-  		dol_print_error('',"Aucun client trouvé");
+  		dol_print_error('',"Aucun client trouvï¿½");
 	}
 }
 else {

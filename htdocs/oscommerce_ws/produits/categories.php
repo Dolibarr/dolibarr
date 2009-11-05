@@ -240,7 +240,7 @@ else
 	$sql .= "LEFT OUTER JOIN ".MAIN_DB_PREFIX."osc_categories as oc ON oc.dolicatid = c.rowid ";
 	$sql .= "WHERE c.visible = 1 AND c.type = 0";
 
-	print_barre_liste("Correspondance des catégories", $page, "categories.php");
+	print_barre_liste("Correspondance des catï¿½gories", $page, "categories.php");
 
 	dol_syslog("Osc_Categorie.class::get_Osccat sql=".$sql);
    $resql=$db->query($sql);
@@ -291,12 +291,12 @@ else $catid= 0;
 $parameters = array("catid"=>$catid);
 
 // Set the WebService URL
-$client = new soapclient_nusoap(OSCWS_DIR."ws_articles.php");
+$client = new nusoap_client(OSCWS_DIR."ws_articles.php");
 
 $result = $client->call("get_categorylist",$parameters );
 
 if ($client->fault) {
-	if ($client->faultcode == 'Server') print '<p>Il n\'y a pas de catégorie fille pour la catégorie '.$catid.'</p>';
+	if ($client->faultcode == 'Server') print '<p>Il n\'y a pas de catï¿½gorie fille pour la catï¿½gorie '.$catid.'</p>';
 	else dol_print_error('',"erreur de connexion ".$client->getError());
   		
 }

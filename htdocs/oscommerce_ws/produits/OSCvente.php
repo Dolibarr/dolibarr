@@ -27,7 +27,7 @@ $html = new Form($db);
 
 if ($_GET["action"] == 'liste' )
 {
-	// affichage des produits en vente à partir de la tavle de transco
+	// affichage des produits en vente a partir de la tavle de transco
 	$sql = "SELECT o.doli_prodidp as idp, o.osc_prodid as oscid, o.osc_lastmodif as date ";
 	$sql .= "FROM ".MAIN_DB_PREFIX."osc_product as o"; 
 
@@ -69,9 +69,9 @@ if ($_GET["action"] == 'vendre' )
 		$prod['desc'] = $product->description;
 		$prod['quant'] = $_POST["qty"];
 		$prod['prix'] = convert_backprice($product->price);
-		// à gèrer $product->tx_tva 
+		// a gerer $product->tx_tva 
 		$prod['poids'] = $product->weight;
-		// gèrer $product->weight_units
+		// gerer $product->weight_units
 		$prod['dispo'] = '';
 		$prod['status'] = '1';
 		$prod['fourn'] = '';
@@ -98,12 +98,12 @@ if ($_GET["action"] == 'vendre' )
 		//WebService Client.
 		require_once(NUSOAP_PATH."/nusoap.php");
 			
-		// Création
+		// Creation
 		// Set the parameters to send to the WebService
 		$parameters = array("prod"=>$prod);
 
 		// Set the WebService URL
-		$client = new soapclient_nusoap(OSCWS_DIR."ws_articles.php");
+		$client = new nusoap_client(OSCWS_DIR."ws_articles.php");
 	
 		// Call the WebService and store its result in $result.
 		$result = $client->call("create_article",$parameters );	
@@ -116,7 +116,7 @@ if ($_GET["action"] == 'vendre' )
 		{
 			if ($result > 0)
 			{
-			// création de l'enregistrement dans osc_products
+			// creation de l'enregistrement dans osc_products
 				$oscprod->transcode($result,$_POST["idprod"]);
 				print "<p>le produit ".$product->ref." ".$product->libelle.' est en vente en ligne <a href="'.OSC_URL.'product_info.php?products_id='.$result.'">consulter</a></p>';
 				print "\n";
@@ -127,7 +127,7 @@ if ($_GET["action"] == 'vendre' )
 	}
 	else
 	{
-		print "<p>Le produit ".$_POST["idprod"].' est déjà en vente en ligne : <a href="'.OSC_URL.'product_info.php?products_id='.$oscid.'">consulter</a></p>';
+		print "<p>Le produit ".$_POST["idprod"].' est deja en vente en ligne : <a href="'.OSC_URL.'product_info.php?products_id='.$oscid.'">consulter</a></p>';
 		print "\n";
 	}
 }

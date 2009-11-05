@@ -42,7 +42,7 @@ require_once("../includes/configure.php");
 $parameters = array();
 
 // Set the WebService URL
-$client = new soapclient_nusoap(OSCWS_DIR."ws_articles.php");
+$client = new nusoap_client(OSCWS_DIR."ws_articles.php");
 
 $result = $client->call("get_listearticles",$parameters );
 if ($client->fault) {

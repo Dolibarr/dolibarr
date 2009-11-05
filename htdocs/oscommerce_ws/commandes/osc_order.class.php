@@ -64,12 +64,12 @@ class Osc_order
       
         $this->osc_orderid = $id ;
 		$this->db = $DB;
-        /* les initialisations nécessaires */
+        /* les initialisations nï¿½cessaires */
 	}
 
 
 /**
-*      \brief      Charge la commande OsC en mémoire
+*      \brief      Charge la commande OsC en mï¿½moire
 *      \param      id      Id de la commande dans OsC 
 *      \return     int     <0 si ko, >0 si ok
 */
@@ -97,7 +97,7 @@ class Osc_order
 		$parameters = array("orderid"=>$id);
 
 		// Set the WebService URL
-		$client = new soapclient_nusoap(OSCWS_DIR."/ws_orders.php");
+		$client = new nusoap_client(OSCWS_DIR."/ws_orders.php");
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_Order",$parameters );
@@ -157,8 +157,8 @@ class Osc_order
 			$commande->date = $this->osc_orderdate;
 			$commande->date_commande = $this->osc_orderdate;
 			/* on force */
-			$commande->statut = 0; //à voir
-			$commande->source = 0; // à vérifier
+			$commande->statut = 0; //ï¿½ voir
+			$commande->source = 0; // ï¿½ vï¿½rifier
  
 			//les lignes
 
@@ -170,7 +170,7 @@ class Osc_order
 				$commande->lines[$i]->qty = $this->osc_lines[$i][quantity];
 				$commande->lines[$i]->tva_tx = $this->osc_lines[$i][products_tax];
 				$commande->lines[$i]->fk_product = $oscproduct->get_productid($this->osc_lines[$i][products_id]);
-				$commande->lines[$i]->remise_percent = 0; // à calculer avec le finalprice
+				$commande->lines[$i]->remise_percent = 0; // ï¿½ calculer avec le finalprice
 			}
 			// les frais de port
 			$fp = sizeof($this->osc_lines);
@@ -190,9 +190,9 @@ class Osc_order
 
 
 /**
-*      \brief      Mise à jour de la table de transition
+*      \brief      Mise ï¿½ jour de la table de transition
 *      \param      oscid      Id du produit dans OsC 
-*	   \param	   prodid	  champ référence 	
+*	   \param	   prodid	  champ rï¿½fï¿½rence 	
 *      \return     int     <0 si ko, >0 si ok
 */
 	function transcode($osc_orderid, $doli_orderid)
