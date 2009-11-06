@@ -1,21 +1,24 @@
 <?php
 /*---------------------------------------------
 / Webservices OSC pour dolibarr
-/ configuration et paramètres 
+/ configuration et paramï¿½tres
 /
 / Jean Heimburger			juin 2006
 ----------------------------------------------*/
 
-/* paramètres de connexion à OSC */
-define("DB_SERVER","localhost");
+/* parametres de connexion a OSC */
+define("DB_SERVER",          "localhost");
 define("DB_SERVER_USERNAME", "root");
 define("DB_SERVER_PASSWORD", "");
-define("DB_DATABASE", "tahitirimai");
-// chemin vers sources OSC admin 
+define("DB_DATABASE",        "tahitirimai");
+
+// Full path on filesystem to OSC admin
 define('OSCADMIN', '/home/jean/projets/osc_tiaris/admin/');
 
 /* constantes utiles */
 define("OSC_LANGUAGE_ID",1);
 
-define(OSC_URL, 'http://osc-tiaris/'); // url du site OSC
+// URL of OSC web site
+define(OSC_URL, 'http://myoscwebsite/');
+
 ?>
