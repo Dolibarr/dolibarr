@@ -302,7 +302,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$facstatic=new Facture($db);
 
 	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.paye, f.tms,";
-	$sql.= $db->pdate("f.date_lim_reglement")." as datelimite,";
+	$sql.= " f.date_lim_reglement as datelimite,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -348,7 +348,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-				if (! $obj->paye && $obj->datelimite < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if (! $obj->paye && $db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
@@ -758,7 +758,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$facstatic=new Facture($db);
 
 	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.total_ttc, f.paye, f.tms,";
-	$sql.= $db->pdate("f.date_lim_reglement")." as datelimite,";
+	$sql.= " f.date_lim_reglement as datelimite,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -803,7 +803,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-				if ($obj->datelimite < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
