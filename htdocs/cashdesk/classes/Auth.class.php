@@ -19,25 +19,18 @@
 
 	class Auth {
 
+		protected $db;
+		
 		protected $login;
 		protected $passwd;
 
-		protected $host;
-		protected $user;
-		protected $name;
-		protected $base;
-
 		protected $reponse;
 
-		protected $sql;
+		protected $sqlQuery;
 
-		public function __construct ($aHost, $aUser, $aPass, $aBase) {
+		public function __construct ($DB) {
 
-			$this->host = $aHost;
-			$this->user = $aUser;
-			$this->pass = $aPass;
-			$this->base = $aBase;
-
+			$this->db = $DB;
 			$this->reponse (null);
 
 		}
@@ -55,34 +48,6 @@
 
 		}
 
-		public function host ($aHost) {
-
-			$this->host = $aHost;
-
-
-		}
-
-		public function user ($aUser) {
-
-			$this->user = $aUser;
-
-
-		}
-
-		public function pass ($aPass) {
-
-			$this->pass = $aPass;
-
-
-		}
-
-		public function base ($aBase) {
-
-			$this->base = $aBase;
-
-
-		}
-
 		public function reponse ($aReponse) {
 
 			$this->reponse = $aReponse;
@@ -91,27 +56,23 @@
 
 			/**
 			* Authentification d'un demandeur
-			* @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte d�sactiv�; -10 = aucune entr�e trouv�e dans la base
+			* @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte desactive; -10 = aucune entree trouvee dans la base
 			*/
 			protected function verif_utilisateurs () {
 
-				global $conf, $db;
-
-				//var_dump($conf->db);
-				//$sql = new Sql ($conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name);
-				$sql = $db;
+				global $conf;
 
 				// Verification des informations dans la base
-				$resql = $sql->query ($this->sql);
+				$resql = $this->db->query ($this->sqlQuery);
 				if ($resql)
 				{
-					$num = $sql->num_rows ($resql);
+					$num = $this->db->num_rows ($resql);
 
 					if ( $num ) {
 
 						// fetchFirst
 						$ret=array();
-						$tab = $sql->fetch_array($resql);
+						$tab = $this->db->fetch_array($resql);
 						foreach ( $tab as $cle => $valeur )
 						{
 							$ret[$cle] = $valeur;
@@ -156,10 +117,10 @@
 			$this->login ($aLogin);
 			$this->passwd ($aPasswd);
 
-			$this->sql = "SELECT rowid, pass_crypted, statut
-					FROM ".MAIN_DB_PREFIX."user
-					WHERE login = '".$this->login."' and entity IN (0,".$conf->entity.")";
-
+			$this->sqlQuery = "SELECT rowid, pass_crypted, statut";
+			$this->sqlQuery.= " FROM ".MAIN_DB_PREFIX."user";
+			$this->sqlQuery.= " WHERE login = '".$this->login."'";
+			$this->sqlQuery.= " AND entity IN (0,".$conf->entity.")";
 
 			$this->verif_utilisateurs();
 

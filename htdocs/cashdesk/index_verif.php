@@ -24,14 +24,11 @@ require ('classes/Auth.class.php');
 $username = $_POST['txtUsername'];
 $password = $_POST['pwdPassword'];
 
-$auth = new Auth ($conf_db_host,$conf_db_user, $conf_db_pass, $conf_db_base );
+$auth = new Auth($db);
 
 $retour = $auth->verif ($username, $password);
 
 if ( $retour >= 0 ) {
-
-	//		$db = mysql_connect ($conf_db_host,$conf_db_user, $conf_db_pass);
-	//		mysql_select_db ($conf_db_base, $db);
 
 	$res=$sql->query (
 	"SELECT rowid, name, firstname
