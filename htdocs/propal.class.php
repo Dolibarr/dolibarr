@@ -1905,6 +1905,7 @@ class Propal extends CommonObject
 		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
+		$this->ref_client='NEMICEPS';
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
