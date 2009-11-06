@@ -368,20 +368,16 @@ class Translate {
 	{
 		global $db;
 		$newstr=$key;
-		if (preg_match('/CurrencyShort([A-Z]+)$/i',$key,$reg))
+		if (preg_match('/CurrencySing([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
-			global $db;
-			//$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelshort');
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelsing');
 		}
-		else if (preg_match('/Currency([A-Z]+)$/i',$key,$reg))
+		else if (preg_match('/Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
-			global $db;
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 		}
 		else if (preg_match('/SendingMethod([0-9A-Z]+)$/i',$key,$reg))
 		{
-			global $db;
 			$newstr=$this->getLabelFromKey($db,$reg[1],'expedition_methode','code','libelle');
 		}
 		return $newstr;

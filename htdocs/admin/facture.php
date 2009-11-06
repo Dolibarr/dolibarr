@@ -393,87 +393,97 @@ print "</tr>\n";
 
 clearstatcache();
 
-$handle=opendir($dir);
 
-$var=True;
-while (($file = readdir($handle))!==false)
+$var=true;
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
+	$dir = $dirroot . "/includes/modules/facture/";
+
+	if (is_dir($dir))
 	{
-		$var = !$var;
-		$name = substr($file, 4, strlen($file) -16);
-		$classname = substr($file, 0, strlen($file) -12);
-
-		print '<tr '.$bc[$var].'><td width="100">';
-		echo "$name";
-		print "</td><td>\n";
-
-		require_once($dir.$file);
-		$module = new $classname($db);
-		print $module->description;
-		print '</td>';
-
-		// Active
-		if (in_array($name, $def))
+		$handle=opendir($dir);
+		if ($handle)
 		{
-			print "<td align=\"center\">\n";
-			if ($conf->global->FACTURE_ADDON_PDF != "$name")
+			while (($file = readdir($handle))!==false)
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-				print img_tick($langs->trans("Disable"));
-				print '</a>';
+				if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
+				{
+					$var = !$var;
+					$name = substr($file, 4, strlen($file) -16);
+					$classname = substr($file, 0, strlen($file) -12);
+
+					print '<tr '.$bc[$var].'><td width="100">';
+					echo "$name";
+					print "</td><td>\n";
+
+					require_once($dir.$file);
+					$module = new $classname($db);
+					print $module->description;
+					print '</td>';
+
+					// Active
+					if (in_array($name, $def))
+					{
+						print "<td align=\"center\">\n";
+						if ($conf->global->FACTURE_ADDON_PDF != "$name")
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+							print img_tick($langs->trans("Disable"));
+							print '</a>';
+						}
+						else
+						{
+							print img_tick($langs->trans("Enabled"));
+						}
+						print "</td>";
+					}
+					else
+					{
+						print "<td align=\"center\">\n";
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+						print "</td>";
+					}
+
+					// Defaut
+					print "<td align=\"center\">";
+					if ($conf->global->FACTURE_ADDON_PDF == "$name")
+					{
+						print img_tick($langs->trans("Default"));
+					}
+					else
+					{
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+					}
+					print '</td>';
+
+					// Info
+					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+					$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+					$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+					$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+					$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
+					$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+					$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark,1,1);
+
+
+					print '<td align="center">';
+					print $html->textwithpicto('',$htmltooltip,1,0);
+					print '</td>';
+					print '<td align="center">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+					print '</td>';
+
+					print "</tr>\n";
+				}
 			}
-			else
-			{
-				print img_tick($langs->trans("Enabled"));
-			}
-			print "</td>";
+			closedir($handle);
 		}
-		else
-		{
-			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-			print "</td>";
-		}
-
-		// Defaut
-		print "<td align=\"center\">";
-		if ($conf->global->FACTURE_ADDON_PDF == "$name")
-		{
-			print img_tick($langs->trans("Default"));
-		}
-		else
-		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-		}
-		print '</td>';
-
-		// Info
-		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-		$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-		$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
-		$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark,1,1);
-
-
-		print '<td align="center">';
-		print $html->textwithpicto('',$htmltooltip,1,0);
-		print '</td>';
-		print '<td align="center">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
-		print '</td>';
-
-		print "</tr>\n";
 	}
 }
-closedir($handle);
-
 print '</table>';
 
 
