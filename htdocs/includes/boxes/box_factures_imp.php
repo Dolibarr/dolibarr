@@ -21,7 +21,7 @@
 /**
     \file       htdocs/includes/boxes/box_factures_imp.php
     \ingroup    factures
-    \brief      Module de g�n�ration de l'affichage de la box factures impayees
+    \brief      Module de generation de l'affichage de la box factures impayees
 	\version	$Id$
 */
 

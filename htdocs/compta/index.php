@@ -33,10 +33,10 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 if ($conf->tax->enabled) require_once(DOL_DOCUMENT_ROOT.'/chargesociales.class.php');
 
-// L'espace compta/tr�so doit toujours etre actif car c'est un espace partag�
-// par de nombreux modules (banque, facture, commande � facturer, etc...) ind�pendemment
+// L'espace compta/treso doit toujours etre actif car c'est un espace partage
+// par de nombreux modules (banque, facture, commande a facturer, etc...) independemment
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
-// est prot�g� par le droit qui va bien du module concern�.
+// est protege par le droit qui va bien du module concerne.
 //if (!$user->rights->compta->general->lire)
 //  accessforbidden();
 
@@ -302,7 +302,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$facstatic=new Facture($db);
 
 	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.paye, f.tms,";
-	$sql.= " f.date_lim_reglement as datelimite,";
+	$sql.= $db->pdate("f.date_lim_reglement")." as datelimite,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -751,7 +751,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 }
 
 /*
- * Factures clients impay�es
+ * Unpaid customers bills
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
