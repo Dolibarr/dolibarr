@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,23 @@
  */
 
 /**
-        \defgroup   category       Module categories
-        \brief      Module pour g�rer les cat�gories
-		\version	$Id$
-*/
+ *      \defgroup   category       Module categories
+ *      \brief      Module pour g�rer les cat�gories
+ *		\version	$Id$
+ */
 
 /**
-        \file       htdocs/includes/modules/modCategorie.class.php
-        \ingroup    category
-        \brief      Fichier de description et activation du module Categorie
-*/
+ *       \file       htdocs/includes/modules/modCategorie.class.php
+ *       \ingroup    category
+ *       \brief      Fichier de description et activation du module Categorie
+ */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modCategorie
-        \brief      Classe de description et activation du module Categorie
-*/
+ *       \class      modCategorie
+ *       \brief      Classe de description et activation du module Categorie
+ */
 class modCategorie extends DolibarrModules
 {
 	/**
@@ -56,7 +56,7 @@ class modCategorie extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
-		$this->picto = 'generic';
+		$this->picto = 'category';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
