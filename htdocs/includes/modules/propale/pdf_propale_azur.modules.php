@@ -820,6 +820,14 @@ class pdf_propale_azur extends ModelePDFPropales
 		$posy+=1;
 		$pdf->SetFont('Arial','',10);
 
+		if ($object->ref_client)
+		{
+			$posy+=5;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+		}
+
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);

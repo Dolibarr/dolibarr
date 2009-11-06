@@ -422,7 +422,22 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetXY(110,90);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true));
 
-		$posy=20;
+		$posy=15;
+		$pdf->SetFont('Arial','',10);
+
+		$posy+=5;
+		$pdf->SetXY(100,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
+
+		if ($object->ref_client)
+		{
+			$posy+=5;
+			$pdf->SetXY(100,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+		}
+
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
