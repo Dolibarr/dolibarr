@@ -467,7 +467,7 @@ function listOfSessions()
 		if (preg_match('/^sess_/i',$file) && $file != "." && $file != "..")
 		{
 			$fullpath = $sessPath.$file;
-			if(! @is_dir($fullpath))
+			if(! @is_dir($fullpath) && is_readable($fullpath))
 			{
 				$sessValues = file_get_contents($fullpath);	// get raw session data
 
