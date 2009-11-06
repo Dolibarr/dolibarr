@@ -37,7 +37,7 @@ $langs->load("bills");
 $langs->load("other");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
 $dir = DOL_DOCUMENT_ROOT."/includes/modules/facture/";
@@ -94,108 +94,108 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='invoice';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
-    if ($db->query($sql))
-    {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	if ($db->query($sql))
+	{
 
-    }
+	}
 }
 
 if ($_GET["action"] == 'del')
 {
-    $type='invoice';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE nom = '".$_GET["value"];
-    $sql.= " AND type = '".$type."'";
-    $sql.= " AND entity = ".$conf->entity;
+	$type='invoice';
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql.= " WHERE nom = '".$_GET["value"];
+	$sql.= " AND type = '".$type."'";
+	$sql.= " AND entity = ".$conf->entity;
 
-    if ($db->query($sql))
-    {
+	if ($db->query($sql))
+	{
 
-    }
+	}
 }
 
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
 
-    if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
-    {
-        $conf->global->FACTURE_ADDON_PDF = $_GET["value"];
-    }
+	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	{
+		$conf->global->FACTURE_ADDON_PDF = $_GET["value"];
+	}
 
-    // On active le modele
-    $type='invoice';
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$_GET["value"];
-    $sql_del.= " AND type = '".$type."'";
-    $sql_del.= " AND entity = ".$conf->entity;
-    $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
-    $result2=$db->query($sql);
-    if ($result1 && $result2)
-    {
+	// On active le modele
+	$type='invoice';
+	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " AND type = '".$type."'";
+	$sql_del.= " AND entity = ".$conf->entity;
+	$result1=$db->query($sql_del);
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	$result2=$db->query($sql);
+	if ($result1 && $result2)
+	{
 		$db->commit();
-    }
-    else
-    {
-    	$db->rollback();
-    }
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 if ($_GET["action"] == 'setmod')
 {
-    // TODO Verifier si module numerotation choisi peut etre active
-    // par appel methode canBeActivated
+	// TODO Verifier si module numerotation choisi peut etre active
+	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setribchq')
 {
-    dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_FACTURE_DRAFT_WATERMARK')
 {
-    dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($_POST["FACTURE_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($_POST["FACTURE_DRAFT_WATERMARK"]),'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_FACTURE_FREE_TEXT')
 {
-    dolibarr_set_const($db, "FACTURE_FREE_TEXT",$_POST["FACTURE_FREE_TEXT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_FREE_TEXT",$_POST["FACTURE_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'setforcedate')
 {
-    dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_enable_editdelete')
 {
-    dolibarr_set_const($db, "FACTURE_ENABLE_EDITDELETE",$_POST["enable_editdelete"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_ENABLE_EDITDELETE",$_POST["enable_editdelete"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_use_bill_contact_as_recipient')
 {
-    dolibarr_set_const($db, "FACTURE_USE_BILL_CONTACT_AS_RECIPIENT",$_POST["use_bill_contact_as_recipient"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_USE_BILL_CONTACT_AS_RECIPIENT",$_POST["use_bill_contact_as_recipient"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity));
 	{
-	   dol_print_error($db);
+		dol_print_error($db);
 	}
 }
 
 if ($_GET["action"] == 'delete')
 {
-  if (! dolibarr_del_const($db, $_GET["rowid"],$conf->entity));
-  {
-    dol_print_error($db);
-  }
+	if (! dolibarr_del_const($db, $_GET["rowid"],$conf->entity));
+	{
+		dol_print_error($db);
+	}
 }
 
 // defini les constantes du modele pluton
@@ -248,96 +248,107 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$handle=opendir($dir);
-
 $var=true;
-while (($file = readdir($handle))!==false)
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-    if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-    {
-        $filebis = $file."/".$file.".modules.php";
-		if (is_readable($dir.$filebis))
+	$dir = $dirroot . "/includes/modules/facture/";
+
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if ($handle)
 		{
-	        // Chargement de la classe de num�rotation
-	        require_once($dir.$filebis);
-	        $classname = "mod_facture_".$file;
-	        $module = new $classname($db);
-
-			// Show modules according to features level
-		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-		    if ($module->isEnabled())
-		    {
-		        $var = !$var;
-		        print '<tr '.$bc[$var].'><td width="100">';
-		        echo "$file";
-		        print "</td><td>\n";
-
-		        print $module->info();
-
-		        print '</td>';
-
-		        // Affiche example
-		        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-
-		        print '<td align="center">';
-		        if ($conf->global->FACTURE_ADDON == "$file")
-		        {
-		            print img_tick($langs->trans("Activated"));
-		        }
-		        else
-		        {
-		            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-		        }
-		        print '</td>';
-
-				$facture=new Facture($db);
-				$facture->initAsSpecimen();
-
-				// Example for standard invoice
-				$htmltooltip='';
-				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-				$facture->type=0;
-		        $nextval=$module->getNextValue($mysoc,$facture);
-				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+			while (($file = readdir($handle))!==false)
+			{
+				if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 				{
-					$htmltooltip.=$langs->trans("NextValueForInvoices").': ';
-			        if ($nextval)
+					$filebis = $file."/".$file.".modules.php";
+
+					if (is_readable($dir.$filebis))
 					{
-						$htmltooltip.=$nextval.'<br>';
-					}
-					else
-					{
-						$htmltooltip.=$langs->trans($module->error).'<br>';
+						// Chargement de la classe de num�rotation
+						require_once($dir.$filebis);
+						$classname = "mod_facture_".$file;
+						$module = new $classname($db);
+
+						// Show modules according to features level
+						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+						if ($module->isEnabled())
+						{
+							$var = !$var;
+							print '<tr '.$bc[$var].'><td width="100">';
+							echo "$file";
+							print "</td><td>\n";
+
+							print $module->info();
+
+							print '</td>';
+
+							// Affiche example
+							print '<td nowrap="nowrap">'.$module->getExample().'</td>';
+
+							print '<td align="center">';
+							if ($conf->global->FACTURE_ADDON == "$file")
+							{
+								print img_tick($langs->trans("Activated"));
+							}
+							else
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+							}
+							print '</td>';
+
+							$facture=new Facture($db);
+							$facture->initAsSpecimen();
+
+							// Example for standard invoice
+							$htmltooltip='';
+							$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+							$facture->type=0;
+							$nextval=$module->getNextValue($mysoc,$facture);
+							if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+							{
+								$htmltooltip.=$langs->trans("NextValueForInvoices").': ';
+								if ($nextval)
+								{
+									$htmltooltip.=$nextval.'<br>';
+								}
+								else
+								{
+									$htmltooltip.=$langs->trans($module->error).'<br>';
+								}
+							}
+							// Example for credit invoice
+							$facture->type=2;
+							$nextval=$module->getNextValue($mysoc,$facture);
+							if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+							{
+								$htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
+								if ($nextval)
+								{
+									$htmltooltip.=$nextval;
+								}
+								else
+								{
+									$htmltooltip.=$langs->trans($module->error);
+								}
+							}
+
+							print '<td align="center">';
+							print $html->textwithpicto('',$htmltooltip,1,0);
+							print '</td>';
+
+							print "</tr>\n";
+						}
 					}
 				}
-				// Example for credit invoice
-				$facture->type=2;
-		        $nextval=$module->getNextValue($mysoc,$facture);
-				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-				{
-					$htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
-					if ($nextval)
-					{
-						$htmltooltip.=$nextval;
-					}
-					else
-					{
-						$htmltooltip.=$langs->trans($module->error);
-					}
-				}
-
-		    	print '<td align="center">';
-		    	print $html->textwithpicto('',$htmltooltip,1,0);
-		    	print '</td>';
-
-		        print "</tr>\n";
-		    }
+			}
+			closedir($handle);
 		}
-    }
+	}
 }
-closedir($handle);
 
 print '</table>';
 
@@ -387,20 +398,20 @@ $handle=opendir($dir);
 $var=True;
 while (($file = readdir($handle))!==false)
 {
-    if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
-    {
-        $var = !$var;
-        $name = substr($file, 4, strlen($file) -16);
-        $classname = substr($file, 0, strlen($file) -12);
+	if (preg_match('/\.modules\.php$/i',$file) && substr($file,0,4) == 'pdf_')
+	{
+		$var = !$var;
+		$name = substr($file, 4, strlen($file) -16);
+		$classname = substr($file, 0, strlen($file) -12);
 
-        print '<tr '.$bc[$var].'><td width="100">';
-        echo "$name";
-        print "</td><td>\n";
+		print '<tr '.$bc[$var].'><td width="100">';
+		echo "$name";
+		print "</td><td>\n";
 
-        require_once($dir.$file);
-        $module = new $classname($db);
-        print $module->description;
-        print '</td>';
+		require_once($dir.$file);
+		$module = new $classname($db);
+		print $module->description;
+		print '</td>';
 
 		// Active
 		if (in_array($name, $def))
@@ -438,28 +449,28 @@ while (($file = readdir($handle))!==false)
 		print '</td>';
 
 		// Info
-    	$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-    	$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-    	$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-    	$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-    	$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+		$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+		$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+		$htmltooltip.='<br>'.$langs->trans("Escompte").': '.yn($module->option_escompte,1,1);
+		$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark,1,1);
 
 
-    	print '<td align="center">';
-    	print $html->textwithpicto('',$htmltooltip,1,0);
-    	print '</td>';
-    	print '<td align="center">';
-    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
-    	print '</td>';
+		print '<td align="center">';
+		print $html->textwithpicto('',$htmltooltip,1,0);
+		print '</td>';
+		print '<td align="center">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+		print '</td>';
 
-        print "</tr>\n";
-    }
+		print "</tr>\n";
+	}
 }
 closedir($handle);
 
@@ -490,39 +501,39 @@ print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
 if ($conf->banque->enabled)
 {
-    $sql = "SELECT rowid, label";
-    $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-    $sql.= " WHERE clos = 0";
-    $sql.= " AND courant = 1";
-    $sql.= " AND entity = ".$conf->entity;
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-      $num = $db->num_rows($resql);
-      $i = 0;
-      if ($num > 0) {
-        print "<select name=\"rib\">";
-        print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-        while ($i < $num)
-          {
-    	$var=!$var;
-    	$row = $db->fetch_row($resql);
+	$sql = "SELECT rowid, label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+	$sql.= " WHERE clos = 0";
+	$sql.= " AND courant = 1";
+	$sql.= " AND entity = ".$conf->entity;
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num > 0) {
+			print "<select name=\"rib\">";
+			print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+			while ($i < $num)
+			{
+				$var=!$var;
+				$row = $db->fetch_row($resql);
 
-        print '<option value="'.$row[0].'"';
-        print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected="true"':'';
-        print '>'.$row[1].'</option>';
+				print '<option value="'.$row[0].'"';
+				print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected="true"':'';
+				print '>'.$row[1].'</option>';
 
-        $i++;
-          }
-        print "</select>";
-        } else {
-            print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
-        }
-    }
+				$i++;
+			}
+			print "</select>";
+		} else {
+			print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+		}
+	}
 }
 else
 {
-    print $langs->trans("BankModuleNotActive");
+	print $langs->trans("BankModuleNotActive");
 }
 print "</td></tr>";
 $var=!$var;
@@ -542,18 +553,18 @@ $var=True;
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-      while ($i < $num)
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num)
 	{
-	  $var=!$var;
-	  $row = $db->fetch_row($resql);
+		$var=!$var;
+		$row = $db->fetch_row($resql);
 
-    print '<option value="'.$row[0].'"';
-    print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected="true"':'';
-    print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';
+		print '<option value="'.$row[0].'"';
+		print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected="true"':'';
+		print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';
 
-	  $i++;
+		$i++;
 	}
 }
 print "</select>";
@@ -602,19 +613,19 @@ print "</td></tr>\n";
 print '</form>';
 
 /*
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_use_bill_contact_as_recipient">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("UsBillingContactAsIncoiveRecipientIfExist");
-print '</td><td width="60" align="center">';
-print $html->selectyesno("use_bill_contact_as_recipient",$conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
-*/
+ $var=! $var;
+ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+ print '<input type="hidden" name="action" value="set_use_bill_contact_as_recipient">';
+ print '<tr '.$bc[$var].'><td>';
+ print $langs->trans("UsBillingContactAsIncoiveRecipientIfExist");
+ print '</td><td width="60" align="center">';
+ print $html->selectyesno("use_bill_contact_as_recipient",$conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT,1);
+ print '</td><td align="right">';
+ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+ print "</td></tr>\n";
+ print '</form>';
+ */
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

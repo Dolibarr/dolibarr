@@ -2166,18 +2166,23 @@ class Facture extends CommonObject
 	 */
 	function getNextNumRef($soc)
 	{
-		global $db, $langs;
+		global $conf, $db, $langs;
 		$langs->load("bills");
-
-		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
 		if (defined("FACTURE_ADDON") && FACTURE_ADDON)
 		{
 			$file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
-
-			// Chargement de la classe de numerotation
 			$classname = "mod_facture_".FACTURE_ADDON;
-			require_once($dir.$file);
+
+			// Include file with class
+			$mybool=false;
+			foreach ($conf->file->dol_document_root as $dirroot)
+			{
+				$dir = $dirroot."/includes/modules/facture/";
+				// Load file with numbering class (if found)
+				$mybool|=@include_once($dir.$file);
+			}
+			if (! $mybool) dol_print_error('',"Failed to include file ".$file);
 
 			$obj = new $classname();
 
@@ -2185,14 +2190,14 @@ class Facture extends CommonObject
 			$numref = $obj->getNumRef($soc,$this);
 
 			if ( $numref != "")
-	  {
-	  	return $numref;
-	  }
-	  else
-	  {
-	  	dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
-	  	return "";
-	  }
+			{
+				return $numref;
+			}
+			else
+			{
+				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
+				return "";
+			}
 		}
 		else
 		{

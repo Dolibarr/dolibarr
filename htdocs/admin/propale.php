@@ -186,7 +186,6 @@ if ($_GET["action"] == 'setmod')
 
 llxHeader('',$langs->trans("PropalSetup"));
 
-$dir = "../includes/modules/propale/";
 $html=new Form($db);
 
 
@@ -210,75 +209,83 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$handle = opendir($dir);
-if ($handle)
+$var=true;
+foreach ($conf->file->dol_document_root as $dirroot)
 {
-	$var=true;
-	while (($file = readdir($handle))!==false)
+	$dir = $dirroot . "/includes/modules/propale/";
+
+	if (is_dir($dir))
 	{
-		if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
+		$handle = opendir($dir);
+		if ($handle)
 		{
-			$file = substr($file, 0, strlen($file)-4);
-
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$file.".php");
-
-			$module = new $file;
-
-			// Show modules according to features level
-			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-			if ($module->isEnabled())
+			while (($file = readdir($handle))!==false)
 			{
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-				print $module->info();
-				print '</td>';
-
-				// Examples
-				print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
-
-				print '<td align="center">';
-				if ($conf->global->PROPALE_ADDON == "$file")
+				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
 				{
-					print img_tick($langs->trans("Activated"));
-				}
-				else
-				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
-				}
-				print '</td>';
+					$file = substr($file, 0, strlen($file)-4);
 
-				$propale=new Propal($db);
-				$propale->initAsSpecimen();
+					require_once($dir.$file.".php");
 
-				// Info
-				$htmltooltip='';
-				$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-				$facture->type=0;
-				$nextval=$module->getNextValue($mysoc,$propale);
-				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-				{
-					$htmltooltip.=''.$langs->trans("NextValue").': ';
-					if ($nextval)
+					$module = new $file;
+
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+					if ($module->isEnabled())
 					{
-						$htmltooltip.=$nextval.'<br>';
-					}
-					else
-					{
-						$htmltooltip.=$langs->trans($module->error).'<br>';
+						$var=!$var;
+						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						print $module->info();
+						print '</td>';
+
+						// Examples
+						print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+
+						print '<td align="center">';
+						if ($conf->global->PROPALE_ADDON == "$file")
+						{
+							print img_tick($langs->trans("Activated"));
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+						}
+						print '</td>';
+
+						$propale=new Propal($db);
+						$propale->initAsSpecimen();
+
+						// Info
+						$htmltooltip='';
+						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$facture->type=0;
+						$nextval=$module->getNextValue($mysoc,$propale);
+						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+						{
+							$htmltooltip.=''.$langs->trans("NextValue").': ';
+							if ($nextval)
+							{
+								$htmltooltip.=$nextval.'<br>';
+							}
+							else
+							{
+								$htmltooltip.=$langs->trans($module->error).'<br>';
+							}
+						}
+
+						print '<td align="center">';
+						print $html->textwithpicto('',$htmltooltip,1,0);
+						print '</td>';
+
+						print "</tr>\n";
 					}
 				}
-
-				print '<td align="center">';
-				print $html->textwithpicto('',$htmltooltip,1,0);
-				print '</td>';
-
-				print "</tr>\n";
 			}
+			closedir($handle);
 		}
 	}
-	closedir($handle);
 }
 print "</table><br>\n";
 
