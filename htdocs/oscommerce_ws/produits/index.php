@@ -43,6 +43,10 @@ $parameters = array();
 
 // Set the WebService URL
 $client = new nusoap_client(OSCWS_DIR."ws_articles.php");
+if ($client)
+{
+	$client->soap_defencoding='UTF-8';
+}
 
 $result = $client->call("get_listearticles",$parameters );
 if ($client->fault) {
@@ -96,7 +100,7 @@ elseif (!($err = $client->getError()) )
 	}
 }
 else {
-	dol_print_error('',"Erreur service web ".$client->faultstring);
+	print $client->getHTTPBody($client->response);
 }
 
 print "</TABLE>";

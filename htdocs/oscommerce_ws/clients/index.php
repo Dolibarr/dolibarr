@@ -44,6 +44,10 @@ $parameters = array("custid"=>"0");
 
 // Set the WebService URL
 $client = new nusoap_client(OSCWS_DIR."ws_customers.php");
+if ($client)
+{
+	$client->soap_defencoding='UTF-8';
+}
 
 $result = $client->call("get_Client",$parameters );
 
@@ -61,7 +65,7 @@ elseif (!($err = $client->getError()) )
 
 // un client osc
 	$OscClient = new Osc_Customer($db);
-	
+
   	if ($num > 0) {
 		print "<TABLE width=\"100%\" class=\"noborder\">";
 		print '<TR class="liste_titre">';
@@ -74,7 +78,7 @@ elseif (!($err = $client->getError()) )
 		print '<td align="center">'.$langs->trans("Phone").'</td>';
 		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
-	   
+
 		while ($i < $num) {
       		$var=!$var;
       		$custid = $OscClient->get_clientid($result[$i][customers_id]);
@@ -89,7 +93,7 @@ elseif (!($err = $client->getError()) )
     		print '<TD align="center">'.$result[$i][customers_telephone]."</TD>\n";
     		if ($custid) $lib = "modifier";
     		else $lib = "<u>importer</u>";
-    		 
+
     		print '<TD align="center"><a href="fiche.php?action=import&custid='.$result[$i][customers_id].'"'.">".$lib."</a></TD>\n";
     		print "</TR>\n";
     		$i++;
@@ -101,7 +105,7 @@ elseif (!($err = $client->getError()) )
 	}
 }
 else {
-	dol_print_error('',"Erreur service web ".$err); 
+	print $client->getHTTPBody($client->response);
 }
 
 print "</TABLE>";

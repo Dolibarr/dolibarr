@@ -29,7 +29,7 @@ if ($_GET["action"] == 'liste' )
 {
 	// affichage des produits en vente a partir de la tavle de transco
 	$sql = "SELECT o.doli_prodidp as idp, o.osc_prodid as oscid, o.osc_lastmodif as date ";
-	$sql .= "FROM ".MAIN_DB_PREFIX."osc_product as o"; 
+	$sql .= "FROM ".MAIN_DB_PREFIX."osc_product as o";
 
 	if ( $db->query($sql) )
 	{
@@ -46,7 +46,7 @@ if ($_GET["action"] == 'liste' )
 	        {
 	            $var=!$var;
 	            $obj = $db->fetch_object();
-	
+
 	            print '<tr $bc[$var]><td nowrap><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowProduct"),"Product").' '.$obj->idp.'</a></td>';
 	            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("OscProd"),"Product").' '.$obj->oscid.'</a></td></tr>';
 	            $i++;
@@ -69,50 +69,54 @@ if ($_GET["action"] == 'vendre' )
 		$prod['desc'] = $product->description;
 		$prod['quant'] = $_POST["qty"];
 		$prod['prix'] = convert_backprice($product->price);
-		// a gerer $product->tx_tva 
+		// a gerer $product->tx_tva
 		$prod['poids'] = $product->weight;
 		// gerer $product->weight_units
 		$prod['dispo'] = '';
 		$prod['status'] = '1';
 		$prod['fourn'] = '';
 		$prod['url'] = '';
-	
+
 		//recherche de l'image
 		$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
 		$dir = $conf->produit->dir_output . '/'. $pdir;
 		$img = $product->liste_photos($dir);
-	
+
 		if (sizeof($img) ==0) $prod['image'] = '';
-		else 
+		else
 		{
 			if ($img[0]['photo_vignette']) $filename=$img[0]['photo_vignette'];
-		   else $filename=$img[0]['photo']; 
+		   else $filename=$img[0]['photo'];
 		   $prod['image'] = dol_trunc($filename,16);
 		}
 
 //		print_r($prod);
 //		print '<br/>';
-		
+
 		set_magic_quotes_runtime(0);
 
 		//WebService Client.
 		require_once(NUSOAP_PATH."/nusoap.php");
-			
+
 		// Creation
 		// Set the parameters to send to the WebService
 		$parameters = array("prod"=>$prod);
 
 		// Set the WebService URL
 		$client = new nusoap_client(OSCWS_DIR."ws_articles.php");
-	
+		if ($client)
+		{
+			$client->soap_defencoding='UTF-8';
+		}
+
 		// Call the WebService and store its result in $result.
-		$result = $client->call("create_article",$parameters );	
-		if ($client->fault) 
+		$result = $client->call("create_article",$parameters );
+		if ($client->fault)
 		{
 			$this->error="Fault detected";
 			return -1;
 		}
-		elseif (!($err=$client->getError()) ) 
+		elseif (!($err=$client->getError()) )
 		{
 			if ($result > 0)
 			{
@@ -151,15 +155,15 @@ if ($_GET["action"] == 'vendre' )
 
 
 	/* ************************************************************************** */
-	/*                                                                            */ 
-	/* Barre d'action                                                             */ 
-	/*                                                                            */ 
+	/*                                                                            */
+	/* Barre d'action                                                             */
+	/*                                                                            */
 	/* ************************************************************************** */
 	print "\n<div class=\"tabsAction\">\n";
 
  		print '<a class="tabAction" href="../index.php">'.$langs->trans("Retour").'</a>';
  		print '<a class="tabAction" href="OSCvente.php?action=liste">'.$langs->trans("Liste").'</a>';
 	print "\n</div>\n";
-	
+
 llxFooter('$Date$ - $Revision$');
 ?>

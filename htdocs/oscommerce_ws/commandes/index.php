@@ -45,6 +45,10 @@ $parameters = array("orderid"=>"0");
 
 // Set the WebService URL
 $client = new nusoap_client(OSCWS_DIR."ws_orders.php");
+if ($client)
+{
+	$client->soap_defencoding='UTF-8';
+}
 
 $result = $client->call("get_Order",$parameters );
 
@@ -62,7 +66,7 @@ elseif (!($err = $client->getError()) )
 
 // une commande osc
 	$OscOrder = new Osc_Order($db);
-	
+
   	if ($num > 0) {
 		print "<TABLE width=\"100%\" class=\"noborder\">";
 		print '<TR class="liste_titre">';
@@ -75,7 +79,7 @@ elseif (!($err = $client->getError()) )
 		print '<td align="center">Statut</td>';
 		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
-	   
+
 		while ($i < $num) {
       		$var=!$var;
 
@@ -102,7 +106,7 @@ elseif (!($err = $client->getError()) )
 	}
 }
 else {
-	dol_print_error('',"Erreur service web ".$err); 
+	print $client->getHTTPBody($client->response);
 }
 
 print "</TABLE>";

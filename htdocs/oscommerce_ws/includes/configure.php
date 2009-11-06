@@ -28,7 +28,8 @@
  */
 
 // URL To reach web services
-define(OSCWS_DIR,'http://myoscserver/ws_server/');
+//define(OSCWS_DIR,'http://myoscserver/ws_server/');
+define(OSCWS_DIR,'http://127.0.0.1/oscommerce_ws/ws_server/');
 
 // URL To reach OSCommerce
 define(OSC_URL, 'http://myoscserver/'); // url du site OSC

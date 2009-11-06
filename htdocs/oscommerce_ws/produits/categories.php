@@ -59,18 +59,18 @@ if ($_REQUEST["action"] == 'maj')
 {
 	if ($_POST["dolicat"]) $dolicatid = $_POST["dolicat"];
 	if ($_POST["catMere"]) $dolicatid = $_POST["catMere"];
-		
-	
+
+
 	$myobject=new Osc_categorie($db);
 	if ($myobject->fetch_dolicat($dolicatid) <0)
 	{
 		$mesg = "erreur dans fetch_dolicat";
 	}
-	elseif ($myobject->id > 0) 
+	elseif ($myobject->id > 0)
 	{
 		$myobject->dolicatid=$dolicatid;
 		$myobject->osccatid=$_POST["osccat"];
-	
+
 		$result=$myobject->update($user);
 		if ($result > 0)
 		{
@@ -88,7 +88,7 @@ if ($_REQUEST["action"] == 'maj')
 	{
 		$myobject->dolicatid=$dolicatid;
 		$myobject->osccatid=$_POST["osccat"];
-	
+
 		$result=$myobject->create($user);
 		if ($result > 0)
 		{
@@ -119,20 +119,20 @@ else if ($_REQUEST["action"] == 'create')
 		if ($res = 1)
 		{
 			 $categorie->id_mere = $mere->dolicatid;
-			 if (! $categorie->id_mere) 
+			 if (! $categorie->id_mere)
 			 {
 			 	$categorie->error = $langs->trans("ErrorNoParentCategory",$langs->transnoentities("Catmere"));
 			 	$_GET["action"] = 'create';
 				$mesg = "* catmerem ".$categorie->id_mere."* ".$_POST["nom"]. " * ".$_POST["description"]." * ".$_POST["visible"]." * ".$_POST["type"]." * ".$_POST['catMere'];
 			 }
 		}
-		else 
+		else
 		{
 			$categorie->error = $langs->trans("ErrorParent",$langs->transnoentities("Catmere"));
 		 	$_GET["action"] = 'create';
 			$mesg = "* catmerem ".$categorie->id_mere."* ".$_POST["nom"]. " * ".$_POST["description"]." * ".$_POST["visible"]." * ".$_POST["type"]." * ".$_POST['catMere'];
 		}
-	
+
 	}
 	else $categorie->id_mere = -1;
 
@@ -148,7 +148,7 @@ else if ($_REQUEST["action"] == 'create')
 		$_GET["action"] = 'create';
 		$mesg = "* ".$_POST["nom"]. " * ".$_POST["description"]." * ".$_POST["visible"]." * ".$_POST["type"]." * ".$_POST['catMere'];
 	}
-	
+
 	if ($categorie->error =="")
 	{
 		if ($cat_id = $categorie->create() > 0)
@@ -159,7 +159,7 @@ else if ($_REQUEST["action"] == 'create')
 			$myobject->dolicatid=$categorie->id;
 			$mesg="cat_id recu ".$cat_id." categorie ".$categorie->id." ";
 			$myobject->osccatid=$_POST["osccat"];
-	
+
 			$result=$myobject->create($user);
 			if ($result > 0)
 			{
@@ -174,12 +174,12 @@ else if ($_REQUEST["action"] == 'create')
 		}
 	}
 	$mesg .= ' sortie<br/>'.$categorie->error;
-}	
-	
+}
+
 if ($_REQUEST["action"] == 'import')
 {
 	$osccat = $_GET['catid'];
-	
+
 }
 
 
@@ -191,7 +191,7 @@ if ($_REQUEST["action"] == 'import')
 
 llxHeader();
 $html=new Form($db);
-	
+
 if ($_REQUEST["action"] == 'import')
 {
 		//titre
@@ -200,16 +200,16 @@ if ($_REQUEST["action"] == 'import')
 		print '<td>Id</td><td>Label</td><td>Osc_id</td><td>Action</td>';
 		print '</tr>'."\n";
 		print '<tr>';
-		print '<form method="post" action="categories.php">'; 
+		print '<form method="post" action="categories.php">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<td><input name="osccat" value="'.$_POST["catid"].'"></td><td>'; 
+		print '<td><input name="osccat" value="'.$_POST["catid"].'"></td><td>';
 		print '<input type="hidden" name="action" value="maj"/>';
 //   	print '<input type="hidden" name="dolicat" value="'.$obj->dolicatid.'"/>';
 	   print $langs->trans("ChooseCategory").' ';
 	   print $html->select_all_categories(0,$categorie->id_mere).' <input type="submit" name="doit" class="button" value="'.$langs->trans("Classify").'"></td>';
 		print "</form>\n";
 		print '<form method="post" action="categories.php">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';		
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="create"/>';
 		print '<input type="hidden" name="nom" value="'.$_POST["description"].'"/>';
 		print '<input type="hidden" name="description" value="'.$_POST["description"].'"/>';
@@ -220,7 +220,7 @@ if ($_REQUEST["action"] == 'import')
 		print '<input type="hidden" name="type" value="0"/>';
 		print '<input type="hidden" name="osccat" value="'.$_POST["catid"].'"/>';
 		print '<td><input type="submit" name="create" value="'.$langs->trans("create").'"></td>';
-		print '</form>';		
+		print '</form>';
 		print '</tr>';
 		print "</table>\n";
 }
@@ -280,25 +280,29 @@ else
 	{
   		dol_print_error();
 	}
-}	
+}
 	//WebService Client.
 	require_once(NUSOAP_PATH."/nusoap.php");
 	require_once("../includes/configure.php");
 
 // Set the parameters to send to the WebService
 if ($_GET["catid"]) $catid = $_GET["catid"];
-else $catid= 0; 
+else $catid= 0;
 $parameters = array("catid"=>$catid);
 
 // Set the WebService URL
 $client = new nusoap_client(OSCWS_DIR."ws_articles.php");
+if ($client)
+{
+	$client->soap_defencoding='UTF-8';
+}
 
 $result = $client->call("get_categorylist",$parameters );
 
 if ($client->fault) {
 	if ($client->faultcode == 'Server') print '<p>Il n\'y a pas de cat�gorie fille pour la cat�gorie '.$catid.'</p>';
 	else dol_print_error('',"erreur de connexion ".$client->getError());
-  		
+
 }
 elseif ( !($err = $client->getError()) )
 	{
@@ -318,9 +322,9 @@ elseif ( !($err = $client->getError()) )
 			print "<td>id dolibarr</td>";
 			print "<td>Importer</td>";
 			print "</tr>";
-		
+
 			$dolicat = new Osc_Categorie($db);
-		
+
 			while ($i < $num) {
      			$var=!$var;
      			print "<tr $bc[$var]>";
@@ -330,7 +334,7 @@ elseif ( !($err = $client->getError()) )
 				$dolicatid = $dolicat->fetch_osccat($result[$i]['categories_id']);
 				if ($dolicat->dolicatid) print '<td><a href="../../categories/viewcat.php?id='.$dolicat->dolicatid.'">'.$dolicat->dolicatid.'</a></td>';
 				else print '<td></td>';
-			    		
+
      		//print '<td><a href="categories.php?action=import&catid='.$result[$i]['categories_id'].'">Importer</a></td>';
 				print '<form method="POST" action="categories.php">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -340,7 +344,7 @@ elseif ( !($err = $client->getError()) )
 				print '<input type="hidden" name="action" value="import"/>';
 				print '<input type="hidden" name="catMere" value="'.$result[$i]['parent_id'].'"/>';
 				print '<input type="hidden" name="catid" value="'.$result[$i]['categories_id'].'"/>';
-				print '<td align="center"><input type="submit" class="button" value="'.$langs->trans('Import').'"></td>';			
+				print '<td align="center"><input type="submit" class="button" value="'.$langs->trans('Import').'"></td>';
 				print '</form> ';
      			print "</tr>";
      			$i++;

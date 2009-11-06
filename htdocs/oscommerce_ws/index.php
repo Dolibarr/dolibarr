@@ -16,13 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
-        \file       htdocs/oscommerce_ws/index.php
-        \ingroup    oscommerce2
-		\brief      Page accueil zone boutique
-		\version    $Id$
-*/
+ \file       htdocs/oscommerce_ws/index.php
+ \ingroup    oscommerce2
+ \brief      Page accueil zone boutique
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -37,7 +37,7 @@ print_fiche_titre($langs->trans("OSCommerceShop"));
 if (! @ini_get('allow_url_fopen'))
 {
 	$langs->load("errors");
-	print '<div class="warning">'.$langs->trans("WarningAllowUrlFopenMustBeOn").'</div><br>';	
+	print '<div class="warning">'.$langs->trans("WarningAllowUrlFopenMustBeOn").'</div><br>';
 }
 
 
@@ -56,11 +56,17 @@ require_once("./includes/configure.php");
 $parameters = array();
 
 // Set the WebService URL
+//print OSCWS_DIR."ws_orders.php"; exit;
 $client = new nusoap_client(OSCWS_DIR."ws_orders.php");
+if ($client)
+{
+	$client->soap_defencoding='UTF-8';
+}
 
-/* 
-/* Chiffre d'affaire 
-*/
+
+/*
+ /* Chiffre d'affaire
+ */
 
 print_titre($langs->trans('SalesTurnover'));
 
@@ -69,36 +75,39 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Year").'</td>';
 print '<td>'.$langs->trans("Month").'</td>';
 print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 
+
+//$client->setDebugLevel(9);
+
 // Call the WebService and store its result in $result.
 $result = $client->call("get_CAmensuel",$parameters );
 if ($client->fault) {
-  dol_print_error('',"Erreur de connexion ");
-  print_r($client->faultstring);
+	dol_print_error('',"Erreur de connexion ");
+	print_r($client->faultstring);
 }
 elseif (!($err = $client->getError()) )
 {
 	$num=0;
-  	if ($result) $num = sizeof($result);
+	if ($result) $num = sizeof($result);
 	$var=True;
-  	$i=0;
+	$i=0;
 
 	if ($num > 0) {
-	   while ($i < $num)
+		while ($i < $num)
 		{
-      	$var=!$var;
-      	print "<tr $bc[$var]>";
-      	print '<td align="left">'.$result[$i][an].'</td>';
-		print '<td align="left">'.$result[$i][mois].'</td>';
-      	print '<td align="right">'.convert_price($result[$i][value]).'</td>';
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td align="left">'.$result[$i][an].'</td>';
+			print '<td align="left">'.$result[$i][mois].'</td>';
+			print '<td align="right">'.convert_price($result[$i][value]).'</td>';
 
-      	print "</tr>\n";
-      	$i++;
-    	}
+			print "</tr>\n";
+			$i++;
+		}
 	}
 }
 else
 {
-  dol_print_error('',"Erreur du service web ".$err);
+	print $client->getHTTPBody($client->response);
 }
 
 
@@ -115,40 +124,40 @@ print_titre($langs->trans("Orders"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LastOrders").'</td></tr>';
-	
+
 // Call the WebService and store its result in $result.
 $parameters = array("limit"=>OSC_MAXNBCOM);
 $result = $client->call("get_orders",$parameters );
 
 if ($client->fault) {
-  dol_print_error('',"Erreur de connexion ");
+	dol_print_error('',"Erreur de connexion ");
 }
 elseif (!($err = $client->getError()) ) {
 	$num=0;
-  	if ($result) $num = sizeof($result);
+	if ($result) $num = sizeof($result);
 	$var=True;
-  	$i=0;
+	$i=0;
 
-    if ($num > 0) {
-	
- 	  $num = min($num,OSC_MAXNBCOM);
-      while ($i < $num) {
-      	$var=!$var;
-      	print "<tr $bc[$var]>";
- 	    print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
-	  	$i++;
-	  }
-    }
+	if ($num > 0) {
+
+		$num = min($num,OSC_MAXNBCOM);
+		while ($i < $num) {
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
+			$i++;
+		}
+	}
 }
 else {
-  dol_print_error('',"Erreur du service web ".$err);
+	print $client->getHTTPBody($client->response);
 }
 
 print "</table><br>";
 
 /*
  * 5 derni�res commandes en attente
-*/
+ */
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -158,28 +167,28 @@ $parameters = array("limit"=>OSC_MAXNBCOM, "status"=>OSC_ORDWAIT);
 $result = $client->call("get_orders",$parameters );
 
 if ($client->fault) {
-  dol_print_error('',"Erreur webservice ".$client->faultstring);
+	dol_print_error('',"Erreur webservice ".$client->faultstring);
 }
 elseif (!($err = $client->getError()) ) {
-  $var=True;
-  $i=0;
-  $num=0;
-  if ($result) $num = sizeof($result);
-  $langs->load("orders");
+	$var=True;
+	$i=0;
+	$num=0;
+	if ($result) $num = sizeof($result);
+	$langs->load("orders");
 
-  if ($num > 0) {
- 	  $num = min($num,OSC_MAXNBCOM);
+	if ($num > 0) {
+		$num = min($num,OSC_MAXNBCOM);
 
-      while ($i < $num) {
-		  $var=!$var;
-		  print "<tr $bc[$var]>";
-		  print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
-		  $i++;
+		while ($i < $num) {
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
+			$i++;
 		}
-  }
+	}
 }
 else {
-  dol_print_error('',"Erreur du service web ".$err);
+	print $client->getHTTPBody($client->response);
 }
 
 print "</table><br>";
@@ -190,41 +199,41 @@ print "</table><br>";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("TreatmentInProgress").'</td></tr>';
-		
+
 $parameters = array("limit"=>OSC_MAXNBCOM, "status"=>OSC_ORDPROCESS);
 $result = $client->call("get_orders",$parameters );
 
 if ($client->fault) {
-  dol_print_error('',"Erreur webservice ".$client->faultstring);
+	dol_print_error('',"Erreur webservice ".$client->faultstring);
 }
 elseif (!($err = $client->getError()) ) {
-  $var=True;
-  $i=0;
-  $num=0;
-  if ($result) $num = sizeof($result);
-  $langs->load("orders");
+	$var=True;
+	$i=0;
+	$num=0;
+	if ($result) $num = sizeof($result);
+	$langs->load("orders");
 
-  if ($num > 0)	{
- 	  $num = min($num,OSC_MAXNBCOM);
+	if ($num > 0)	{
+		$num = min($num,OSC_MAXNBCOM);
 
-      while ($i < $num)	{
-		print "<tr $bc[$var]>";
-		print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
-	  	$i++;
-		$var=!$var;
+		while ($i < $num)	{
+			print "<tr $bc[$var]>";
+			print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
+			$i++;
+			$var=!$var;
 		}
-    }
+	}
 }
 else {
-  dol_print_error('',"Erreur du service web ".$err);
+	print $client->getHTTPBody($client->response);
 }
 
 print "</table><br>";
 print '</td></tr><tr>';
 
 /*
-* Derniers clients qui ont command�
-*/
+ * Derniers clients qui ont command�
+ */
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -234,29 +243,29 @@ $parameters = array("limit"=>OSC_MAXNBCOM);
 $result = $client->call("get_lastOrderClients",$parameters );
 
 if ($client->fault) {
-  dol_print_error('',"Erreur webservice ".$client->faultstring);
+	dol_print_error('',"Erreur webservice ".$client->faultstring);
 }
 elseif (!($err = $client->getError()) ) {
-  $var=True;
-  $i=0;
-  $num=0;
-  if ($result) $num = sizeof($result);
-  $langs->load("orders");
+	$var=True;
+	$i=0;
+	$num=0;
+	if ($result) $num = sizeof($result);
+	$langs->load("orders");
 
-  if ($num > 0)	{
- 	  $num = min($num,OSC_MAXNBCOM);
+	if ($num > 0)	{
+		$num = min($num,OSC_MAXNBCOM);
 
-      while ($i < $num)	{
-		print "<tr $bc[$var]>";
-	  	print "<td>".$result[$i][date_purchased]."</td><td>".$result[$i][customers_name]."</td><td>".$result[$i][delivery_country]."</td><td>".convert_price($result[$i][value])."</td><td>".$result[$i][payment_method]."</td><td>".$result[$i][orders_id]."</td><td>".$result[$i][statut]."</td></tr>";
-	  	$i++;
-		$var=!$var;
+		while ($i < $num)	{
+			print "<tr $bc[$var]>";
+			print "<td>".$result[$i][date_purchased]."</td><td>".$result[$i][customers_name]."</td><td>".$result[$i][delivery_country]."</td><td>".convert_price($result[$i][value])."</td><td>".$result[$i][payment_method]."</td><td>".$result[$i][orders_id]."</td><td>".$result[$i][statut]."</td></tr>";
+			$i++;
+			$var=!$var;
 		}
-	  print "</table><br>";
-    }
+		print "</table><br>";
+	}
 }
 else {
-  dol_print_error('',"Erreur du service web ".$err);
+	print $client->getHTTPBody($client->response);
 }
 
 

@@ -57,11 +57,11 @@ class Osc_order
     /**
      *    \brief      Constructeur de la classe
      *    \param      id          Id client (0 par defaut)
-     */	
+     */
 	function Osc_order($DB, $id=0) {
 
         global $langs;
-      
+
         $this->osc_orderid = $id ;
 		$this->db = $DB;
         /* les initialisations n�cessaires */
@@ -70,14 +70,14 @@ class Osc_order
 
 /**
 *      \brief      Charge la commande OsC en m�moire
-*      \param      id      Id de la commande dans OsC 
+*      \param      id      Id de la commande dans OsC
 *      \return     int     <0 si ko, >0 si ok
 */
    function fetch($id='')
     {
         global $langs;
 		global $conf;
-	
+
 		$this->error = '';
 		dol_syslog("Osc_order::fetch $id=$id ");
       // Verification parametres
@@ -98,6 +98,10 @@ class Osc_order
 
 		// Set the WebService URL
 		$client = new nusoap_client(OSCWS_DIR."/ws_orders.php");
+	    if ($client)
+		{
+			$client->soap_defencoding='UTF-8';
+		}
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_Order",$parameters );
@@ -130,7 +134,7 @@ class Osc_order
 		    $this->error = 'Erreur '.$err ;
 			return -1;
 		}
-//		print_r($this); 
+//		print_r($this);
 		return 0;
 	}
 
@@ -149,7 +153,7 @@ class Osc_order
 	    	/* initialisation */
 			$oscclient = new Osc_Customer($this->db);
 			$clientid = $oscclient->get_clientid($this->osc_custid);
-			
+
 			$oscproduct = new Osc_product($this->db);
 
 			$commande->socid = $clientid;
@@ -159,7 +163,7 @@ class Osc_order
 			/* on force */
 			$commande->statut = 0; //� voir
 			$commande->source = 0; // � v�rifier
- 
+
 			//les lignes
 
 			for ($i = 0; $i < sizeof($this->osc_lines);$i++) {
@@ -184,15 +188,15 @@ class Osc_order
 			$commande->lines[$fp]->remise_percent = 0;
 
 		return $commande;
-		} 
+		}
 
 	}
 
 
 /**
 *      \brief      Mise � jour de la table de transition
-*      \param      oscid      Id du produit dans OsC 
-*	   \param	   prodid	  champ r�f�rence 	
+*      \param      oscid      Id du produit dans OsC
+*	   \param	   prodid	  champ r�f�rence
 *      \return     int     <0 si ko, >0 si ok
 */
 	function transcode($osc_orderid, $doli_orderid)
@@ -226,7 +230,7 @@ class Osc_order
 //            $this->db->rollback();
 //            return -1;
 		}
-	return 0;	
+	return 0;
      }
 // converti le client osc en client dolibarr
 
@@ -238,7 +242,7 @@ class Osc_order
 		$resql=$this->db->query($sql);
 		$obj = $this->db->fetch_object($resql);
 // test d'erreurs
-		if ($obj) return $obj->fk_commande;	
+		if ($obj) return $obj->fk_commande;
 		else return '';
 	}
 

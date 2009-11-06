@@ -55,12 +55,12 @@ class Osc_customer
     /**
      *    \brief      Constructeur de la classe
      *    \param      id          Id client (0 par defaut)
-     */	
+     */
 	function Osc_customer($DB, $id=0) {
 
         global $langs;
  		global $conf;
-     
+
         $this->osc_custid = $id ;
 
         /* les initialisations n�cessaires */
@@ -71,14 +71,14 @@ class Osc_customer
 
 /**
 *      \brief      Charge le client OsC en m�moire
-*      \param      id      Id du client dans OsC 
+*      \param      id      Id du client dans OsC
 *      \return     int     <0 si ko, >0 si ok
 */
    function fetch($id='')
     {
         global $langs;
 		global $conf;
-	
+
 		$this->error = '';
 		dol_syslog("Osc_customer::fetch $id=$id ref=$ref");
       // Verification parametres
@@ -99,6 +99,10 @@ class Osc_customer
 
 		// Set the WebService URL
 		$client = new nusoap_client(OSCWS_DIR."/ws_customers.php");
+	    if ($client)
+		{
+			$client->soap_defencoding='UTF-8';
+		}
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_Client",$parameters );
@@ -126,14 +130,14 @@ class Osc_customer
   		else {
 		    $this->error = 'Erreur '.$err ;
 			return -1;
-		} 
+		}
 		return 0;
 	}
 
 /**
 *      \brief      Mise � jour de la table de transition
-*      \param      oscid      Id du client dans OsC 
-*	   \param	   socid	  champ soci�t�.rowid 	
+*      \param      oscid      Id du client dans OsC
+*	   \param	   socid	  champ soci�t�.rowid
 *      \return     int     <0 si ko, >0 si ok
 */
 	function transcode($oscid, $socid)
@@ -167,7 +171,7 @@ class Osc_customer
 //            $this->db->rollback();
 //            return -1;
 		}
-	return 0;	
+	return 0;
      }
 // converti le client osc en client dolibarr
 
@@ -179,10 +183,10 @@ class Osc_customer
 		$resql=$this->db->query($sql);
 		$obj = $this->db->fetch_object($resql);
 // test d'erreurs
-		if ($obj) return $obj->fk_soc[0];	
+		if ($obj) return $obj->fk_soc[0];
 		else return '';
 	}
 
 	}
-	
+
 ?>

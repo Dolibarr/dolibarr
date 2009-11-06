@@ -28,32 +28,31 @@ require_once('./includes/configure.php');
 
 // Create the soap Object
 $s = new soap_server;
-/* $ns='oscommerce';
-$s->configureWSDL('WebServicesOSCommerceForDolibarr',$ns);
+$ns='oscommerce';
+$s->configureWSDL('WebServicesOSCommerceForDolibarrCustomers',$ns);
 $s->wsdl->schemaTargetNamespace=$ns;
-*/
 
 // Register the methods available for clients
 $s->register('get_Client');
 
-// méthodes
+// mï¿½thodes
 function get_Client($custid='') {
 
-//on se connecte
+	//on se connecte
 	if (!($connexion = mysql_connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD)))   return new soap_fault("Server", "MySQL 1", "connexion impossible");
 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
 
-//la requête
+	//la requï¿½te
 	$sql = "SELECT c.customers_id, a.entry_company, a.entry_firstname, a.entry_lastname, a.entry_street_address, a.entry_postcode, a.entry_city, c.customers_telephone, c.customers_fax, c.customers_email_address, a.entry_country_id, b.countries_iso_code_2, b.countries_name ";
 	$sql .= " from customers c JOIN address_book a ON a.customers_id = c.customers_id JOIN countries b ON b.countries_id = a.entry_country_id JOIN orders o ON o.customers_id = c.customers_id ";
-if ($custid > 0)	$sql .= "WHERE c.customers_id = ".$custid;
+	if ($custid > 0)	$sql .= "WHERE c.customers_id = ".$custid;
 	$sql .= " GROUP BY c.customers_id ORDER BY c.customers_id";
 
 	if (!($resquer = mysql_query($sql,$connexion)))  return new soap_fault("Server", "MySQL 3 ".$sql, mysql_error());
-	
-//	$result[$i] = $numrows." lignes trouvées ".$sql;
-		switch ($numrows = mysql_numrows($resquer)) {
-		case 0 : 
+
+	//	$result[$i] = $numrows." lignes trouvï¿½es ".$sql;
+	switch ($numrows = mysql_numrows($resquer)) {
+		case 0 :
 			return new soap_fault("Server", "MySQL 4", "client inexistant ".$sql);
 			break;
 		default :
@@ -63,10 +62,10 @@ if ($custid > 0)	$sql .= "WHERE c.customers_id = ".$custid;
 				$i++;
 			}
 			break;
-		}		
+	}
 	mysql_close($connexion);
- /* Sends the results to the client */
-return $result;
+	/* Sends the results to the client */
+	return $result;
 }
 
 // Return the results.

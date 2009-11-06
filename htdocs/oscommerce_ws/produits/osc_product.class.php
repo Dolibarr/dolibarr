@@ -34,7 +34,7 @@
 class Osc_product
 {
 	var $db;
-	
+
 	var $osc_id;
 	var $osc_ref;
 	var $osc_name;
@@ -46,18 +46,18 @@ class Osc_product
 	var $osc_four;
 	var $osc_image;
 	var $osc_catid;
-	
+
 	var $error;
-	
+
 
     /**
      *    \brief      Constructeur de la classe
      *    \param      id          Id produit (0 par defaut)
-     */	
+     */
 	function Osc_product($DB, $id=0) {
 
         global $langs;
-      
+
         $this->osc_id = $id ;
 
         /* les initialisations n�cessaires */
@@ -66,7 +66,7 @@ class Osc_product
 
 /**
      *      \brief      Charge le produit OsC en m�moire
-     *      \param      id      Id du produit dans OsC 
+     *      \param      id      Id du produit dans OsC
      *      \param      ref     Ref du produit dans OsC (doit �tre unique dans OsC)
      *      \return     int     <0 si ko, >0 si ok
      */
@@ -74,7 +74,7 @@ class Osc_product
     {
         global $langs;
 		global $conf;
-	
+
 		$this->error = '';
 		dol_syslog("Osc_product::fetch $id=$id ref=$ref");
       	// Verification parametres
@@ -95,6 +95,10 @@ class Osc_product
 
 		// Set the WebService URL
 		$client = new nusoap_client(OSCWS_DIR."/ws_articles.php");
+	    if ($client)
+		{
+			$client->soap_defencoding='UTF-8';
+		}
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_article",$parameters );
@@ -116,7 +120,7 @@ class Osc_product
   		else {
 		    $this->error = 'Erreur '.$client->getError();
 			return -1;
-		} 
+		}
 		return 0;
 	}
 
@@ -145,14 +149,14 @@ class Osc_product
 	/* on force */
 				$product->status = 1; /* en vente */
 
-		 return $product; 		  
+		 return $product;
 	  }
 
 	}
 /**
 *      \brief      Mise � jour de la table de transition
-*      \param      oscid      Id du produit dans OsC 
-*	   \param	   prodid	  champ r�f�rence 	
+*      \param      oscid      Id du produit dans OsC
+*	   \param	   prodid	  champ r�f�rence
 *      \return     int     <0 si ko, >0 si ok
 */
 	function transcode($oscid, $prodid)
@@ -182,7 +186,7 @@ class Osc_product
 //            $this->db->rollback();
 //            return -1;
 		}
-	return 0;	
+	return 0;
      }
 
 // converti le produit osc en produit dolibarr
@@ -195,22 +199,22 @@ class Osc_product
 		$resql=$this->db->query($sql);
 		$obj = $this->db->fetch_object($resql);
 // test d'erreurs
-		if ($obj) return $obj->fk_product;	
-		else return '';	
+		if ($obj) return $obj->fk_product;
+		else return '';
 	}
-	
+
 	function get_catid($osccatid)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/oscommerce_ws/produits/osc_categories.class.php");
-		$mycat=new Osc_categorie($this->db);		
+		$mycat=new Osc_categorie($this->db);
 
-		if ($mycat->fetch_osccat($osccatid) > 0) 
+		if ($mycat->fetch_osccat($osccatid) > 0)
 		{
 			return $mycat->dolicatid;
 		}
 		else return 0;
 	}
-	
+
 	function get_osc_productid($productidp)
 	{
 		$sql = "SELECT rowid";
@@ -219,24 +223,24 @@ class Osc_product
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($result);
 // test d'erreurs
-		if ($row) return $row[0];	
-		else return -1;	
+		if ($row) return $row[0];
+		else return -1;
 	}
-	
-       
+
+
 	  /**
      *    \brief      cr�ation d'un article dans base OSC
      *    \param      $user utilisateur
-     */	
+     */
 	function create($user)
     {
     /* non impl�ment�e */
-    }	
+    }
 
 	  /**
      *    \brief      modification d'un article dans base OSC
      *    \param      $user utilisateur
-     */	
+     */
 	function update($id, $user)
     {
     /* non impl�ment�e */
