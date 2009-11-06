@@ -352,13 +352,16 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param unknown_type 	$table			Table containing field with counter
  * @param unknown_type 	$field			Field containing already used values of counter
  * @param unknown_type 	$where			To add a filter on selection (for exemple to filter on invoice types)
- * @param unknown_type 	$valueforccc
- * @param unknown_type 	$date
+ * @param unknown_type 	$objsoc			The company that own the object we need a counter for
+ * @param unknown_type 	$date			Date to use for the {y},{m},{d} tags.
  * @return 	string		New value
  */
-function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date='')
+function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='')
 {
 	global $conf;
+
+	if (! is_object($objsoc)) $valueforccc=$objsoc;
+	else $valueforccc=$objsoc->code_client;
 
 	// Clean parameters
 	if ($date == '') $date=mktime();	// We use local year and month of PHP server to search numbers
@@ -535,7 +538,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	$numFinal = str_replace('{y}' ,substr(date("y",$date),2,1),$numFinal);
 	$numFinal = str_replace('{mm}',date("m",$date),$numFinal);
 	$numFinal = str_replace('{dd}',date("d",$date),$numFinal);
-	if ($maskclientcode) $numFinal = str_replace(('{'.$maskclientcode.'}'),$clientcode,$numFinal);
 
 	// Now we replace the counter
 	$maskbefore='{'.$masktri.'}';
