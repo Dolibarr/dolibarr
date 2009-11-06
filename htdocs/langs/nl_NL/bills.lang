@@ -1,25 +1,22 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: nl_NL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-18 23:55:46
- */
-
-
-// Date 2009-01-18 23:57:49
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - nl_NL - bills
 CHARSET=UTF-8
 Bill=Factuur
 Bills=Facturen
 BillsCustomers=Klanten facturen
 BillsSuppliers=Leveranciers facturen
+BillsCustomersUnpaid=Klanten onbetaalde facturen
+BillsCustomersUnpaidForCompany=Onbetaalde klanten facturen voor %s
+BillsSuppliersUnpaid=Leveranciers onbetaalde facturen
+BillsUnpaid=Onbetaalde
+BillsLate=Retards de paiement
 BillsStatistics=Klanten facturen statistieken
 BillsStatisticsSuppliers=Leveranciers facturen statistieken
 InvoiceStandard=Standaard factuur
 InvoiceStandardAsk=Standaard factuur
 InvoiceStandardDesc=Dit soort factuur is de gemeenschappelijke factuur.
+InvoiceProFormat=Proformat factuur
+InvoiceProFormatAsk=Proformat factuur
+InvoiceProFormatDesc=<b>Proformat factuur</b> is een afbeelding van een echte factuur, maar heeft geen boekhoudkundige waarde.
 InvoiceReplacement=Vervanging factuur. Moet vervangen factuur met referentie
 InvoiceReplacementAsk=Vervanging factuur voor factuur
 InvoiceReplacementDesc=<b>Vervanging factuur</b> wordt gebruikt om te annuleren en te vervangen volledig een factuur zonder betaling reeds ontvangen. <br><br> Opmerking: Alleen factuur zonder betaling op deze kan worden vervangen. Als het niet gesloten is, wordt deze automatisch gesloten te &#39;verlaten&#39;.
@@ -31,8 +28,10 @@ ReplacementInvoice=Vervanging factuur
 ReplacedByInvoice=Vervangen door factuur% s
 ReplacementByInvoice=Vervangen door factuur
 CorrectInvoice=Correcte factuur% s
-CorrectInvoice=Correcte factuur% s
 CorrectionInvoice=Correctie factuur
+UsedByInvoice=Gebruikt voor de betaling van de factuur% s
+ConsumedBy=Verbruikt door
+NotConsumed=Niet verbruikte
 NoReplacableInvoice=Geen verwisselbare facturen
 NoInvoiceToCorrect=Geen factuur te corrigeren
 InvoiceHasAvoir=Gecorrigeerd door een of meerdere facturen
@@ -64,12 +63,13 @@ ReceivedCustomersPaymentsToValid=Klanten ontvangen betalingen te valideren
 PaymentsReportsForYear=Betalingen verslagen voor% s
 PaymentsReports=Betalingen verslagen
 PaymentsAlreadyDone=Betalingen gedaan
-PaymentRule=Betaling regel
 PaymentMode=Betalingstype
 PaymentConditions=Betalingstermijn
 PaymentConditionsShort=Betalingstermijn
 PaymentAmount=Betalingsbedrag
+ValidatePayment=Valider ce réglement
 PaymentHigherThanReminderToPay=Betaling van meer dan herinnering te betalen
+HelpPaymentHigherThanReminderToPay =  Attention, le montant de paiement pour une ou plusieurs facture est superieur au reste a payer.<br>Corriger votre saisie, sinon, confirmer et penser a creer un avoir du trop percu lors de la fermeture de chacune des factures surpayees.
 ClassifyPaid=Classify &quot;betaald&quot;
 ClassifyPaidPartially=Classify &#39;betaald gedeeltelijk &quot;
 ClassifyCanceled=Classify &#39;verlaten&#39;
@@ -94,10 +94,12 @@ BillStatus=Factuur status
 BillStatusDraft=Ontwerp (moet worden gevalideerd)
 BillStatusPaid=Paid
 BillStatusPaidBackOrConverted=Betaald of omgezet in een korting
+BillStatusConverted=Converti en réduction
 BillStatusCanceled=Verlaten
 BillStatusValidated=Gevalideerd (moet worden betaald)
 BillStatusStarted=Gestart
 BillStatusNotPaid=Niet betaald
+BillStatusClosedUnpaid=Fermée (impayée)
 BillStatusClosedPaidPartially=Betaald (gedeeltelijk)
 BillShortStatusDraft=Ontwerp
 BillShortStatusPaid=Paid
@@ -107,6 +109,8 @@ BillShortStatusValidated=Gevalideerd
 BillShortStatusStarted=Gestart
 BillShortStatusNotPaid=Niet betaald
 BillShortStatusClosedPaidPartially=Betaald (gedeeltelijk)
+BillShortStatusClosedUnpaid=Gesloten
+BillShortStatusClosedPaidPartially=Payée
 PaymentStatusToValidShort=Te valideren
 ErrorVATIntraNotConfigured=Intracommunautary BTW-nummer nog niet vastgesteld
 ErrorNoPaiementModeConfigured=Geen standaard modus betaling gedefinieerd. Ga naar factuur module setup Om dit op te lossen.
@@ -121,8 +125,8 @@ BillFrom=Van
 BillTo=Bill tot
 ActionsOnBill=Acties op factuur
 NewBill=Nieuwe factuur
-Pr�l�vements=Doorlopende opdracht
-Pr�l�vements=Permanente opdrachten
+Prélèvement=Doorlopende opdracht
+Prélèvements=Doorlopende opdrachten
 LastBills=Last% s facturen
 LastCustomersBills=Last% s klanten facturen
 LastSuppliersBills=Last% s leveranciers facturen
@@ -131,10 +135,12 @@ OtherBills=Andere facturen
 DraftBills=Ontwerp van facturen
 CustomersDraftInvoices=Klanten ontwerp facturen
 SuppliersDraftInvoices=Leveranciers ontwerp facturen
+Unpaid=Impayées
 ConfirmDeleteBill=Weet u zeker dat u wilt verwijderen deze factuur?
 ConfirmValidateBill=Weet u zeker dat u wilt valideren deze factuur met vermelding <b>van% s?</b>
 ConfirmClassifyPaidBill=Weet u zeker dat u wilt wijzigen <b>factuur% s</b> naar status betaald?
 ConfirmCancelBill=Weet u zeker dat u wilt annuleren <b>factuur% s?</b>
+ConfirmCancelBillQuestion=Pour quelle raison voulez-vous classer la facture abandonnée ?
 ConfirmClassifyPaidPartially=Weet u zeker dat u wilt wijzigen <b>factuur% s</b> naar status betaald?
 ConfirmClassifyPaidPartiallyQuestion=Deze factuur is nog niet volledig betaald. Wat zijn redenen om je af te sluiten deze factuur?
 ConfirmClassifyPaidPartiallyReasonAvoir=Restant te betalen <b>(% s% s)</b> wordt een korting toegekend omdat de betaling werd verricht voordat termijn. Ik regulariseren de BTW met een credit nota.
@@ -143,6 +149,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVat=Restant te betalen <b>(% s% s)</b>
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Bad klant
 ConfirmClassifyPaidPartiallyReasonProductReturned=Producten gedeeltelijk teruggegeven
 ConfirmClassifyPaidPartiallyReasonOther=Bedrag verlaten om andere reden
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Ce choix est possible si votre facture était munie de la mention adéquate. (Exemple: «escompte net de taxe»)
 ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=In sommige landen is deze keuze zou kunnen zijn alleen mogelijk als je factuur bevat de juiste noot.
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Met deze keuze als alle andere niet geschikt
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=Een <b>slechte klant</b> is een klant die weigeren te betalen van zijn schulden.
@@ -163,8 +170,11 @@ ShowInvoice=Toon factuur
 ShowInvoiceReplace=Toon vervangen factuur
 ShowInvoiceAvoir=Toon creditnota
 ShowPayment=Toon betaling
+ShowInvoiceDeposit=Afficher facture d'acompte
 File=Bestand
 AlreadyPaid=Reeds betaald
+AlreadyPaidNoCreditNotesNoDeposits=Déjà réglé (hors avoirs et acomptes)
+Abandoned=Abandonné
 RemainderToPay=Overige te betalen
 RemainderToTake=Resterende deel te nemen
 AmountExpected=Bedrag
@@ -189,12 +199,14 @@ DateEcheance=Vervaldag beperken
 DateInvoice=Factuurdatum
 NoInvoice=Geen factuur
 ClassifyBill=Classify factuur
+NoSupplierBillsUnpaid=Aucune facture fournisseur impayée
 SupplierBillsToPay=Leveranciers facturen te betalen
-DispenseMontantLettres=Les factures rdiges par procdsmcanographiques sont geeft de l&#39;arrt en lettres
+CustomerBillsUnpaid=Factures clients impayées
 DispenseMontantLettres=De schriftelijke facturen via mecanographic procedures worden verstrekt door de volgorde van letters
 NonPercuRecuperable=Niet-terugvorderbare
 SetConditions=Stel betalingsvoorwaarden
 SetMode=Stel betaling modus
+SetDate = Définir date
 Billed=Gefactureerd
 RepeatableInvoice=Vooraf gedefinieerde factuur
 RepeatableInvoices=Vooraf gedefinieerde facturen
@@ -219,8 +231,14 @@ RelativeDiscount=Relatieve korting
 GlobalDiscount=Globale korting
 CreditNote=Creditnota
 CreditNotes=Creditnota&#39;s
+Deposit=Borgsom
+Deposits=Deposito&#39;s
 DiscountFromCreditNote=Korting van creditnota% s
+DiscountFromDeposit=Betalingen van nederlegging factuur% s
+AbsoluteDiscountUse=Dit soort krediet kan gebruikt worden op de factuur voor de validatie
+CreditNoteDepositUse=Factuur moet worden gevalideerd voor het gebruik van deze koning van de kredieten
 NewGlobalDiscount=Nieuwe korting
+NewRelativeDiscount=Nieuwe relatieve korting
 NoteReason=Opmerking / Reden
 ReasonDiscount=Reden
 AddGlobalDiscount=Toevoegen korting
@@ -231,6 +249,8 @@ BillAddress=Bill adres
 HelpEscompte=Deze korting wordt een korting toegekend aan de klant omdat haar Betalingswijze werd gemaakt voordat termijn.
 HelpAbandonBadCustomer=Dit bedrag is losgelaten (de klant gezegd dat het een slechte klant) en wordt beschouwd als een uitzonderlijke los.
 HelpAbandonOther=Dit bedrag is losgelaten, omdat het een fout was (verkeerde klant of factuur vervangen door een andere bijvoorbeeld)
+IdSocialContribution=Sociale bijdrage id
+PaymentId=Betaling id
 InvoiceId=Factuur id
 InvoiceRef=Factuur ref.
 InvoiceDateCreation=Factuur aanmaakdatum
@@ -240,10 +260,19 @@ InvoicePaid=Factuur betaald
 PaymentNumber=Betaling aantal
 RemoveDiscount=Verwijder korting
 WatermarkOnDraftBill=Watermerk over het ontwerp van facturen (niets als leeg)
+InvoiceNotChecked=Aucune facture n'a été sélectionnée
 CloneInvoice=Clone factuur
-CloneMainAttributes=Clone object met de belangrijkste kenmerken
 ConfirmCloneInvoice=Weet u zeker dat u wilt kloon deze <b>factuur% s?</b>
 DisabledBecauseReplacedInvoice=Actie uitgeschakeld omdat factuur is vervangen
+DescTaxAndDividendsArea=Dit gebied geeft een overzicht van alle betalingen voor de belasting of sociale premies. Alleen records die met de betaling gedurende de vastgestelde jaar worden hier opgenomen.
+NbOfPayments=Nb van betalingen
+SplitDiscount=Split korting op twee
+ConfirmSplitDiscount=Weet u zeker dat u wilt splitsen deze korting <b>van% s% s</b> in 2 lagere kortingen?
+TypeAmountOfEachNewDiscount=Input bedrag voor elk van de twee delen:
+TotalOfTwoDiscountMustEqualsOriginal=Totaal van de twee nieuwe korting moet gelijk zijn aan originele korting bedrag.
+ConfirmRemoveDiscount=Weet u zeker dat u wilt verwijderen van deze korting?
+
+# PaymentConditions
 PaymentConditionShortRECEP=Onmiddellijke
 PaymentConditionRECEP=Onmiddellijke
 PaymentConditionShort30D=30 dagen
@@ -254,6 +283,7 @@ PaymentConditionShort60D=60 dagen
 PaymentCondition60D=60 dagen
 PaymentConditionShort60DENDMONTH=60 dagen na einde van de maand
 PaymentCondition60DENDMONTH=60 dagen na einde van de maand
+# PaymentType
 PaymentTypeVIR=Bankdeposito
 PaymentTypeShortVIR=Bankdeposito
 PaymentTypePRE=Bank bestelling
@@ -278,8 +308,8 @@ BankAccountNumberKey=Sleutel
 Residence=Domiciliering
 IBANNumber=IBAN-nummer
 IBAN=IBAN
-BIC=BIC / SWIFT
-BICNumber=BIC / SWIFT-nummer
+BIC=BIC/SWIFT
+BICNumber=BIC/SWIFT-nummer
 ExtraInfos=Extra info
 RegulatedOn=Geregeld op
 ChequeNumber=Cheque N
@@ -303,6 +333,7 @@ LawApplicationPart3=de verkoper tot de volledige inning van
 LawApplicationPart4=hun prijs.
 LimitedLiabilityCompanyCapital=SARL met een kapitaal van
 UseDiscount=Gebruik korting
+UseCredit=Kredietbeoordelingen
 UseCreditNoteInInvoicePayment=Verminderen van de betaling met deze credit nota
 MenuChequeDeposits=Cheques deposito&#39;s
 MenuCheques=Cheques
@@ -314,79 +345,47 @@ ChequeDeposits=Cheques deposito&#39;s
 Cheques=Cheques
 CreditNoteConvertedIntoDiscount=Dit krediet nota is omgezet naar% s
 UsBillingContactAsIncoiveRecipientIfExist=Gebruik klant facturatiecontact adres in plaats van derde adres als ontvanger voor de facturen
-Of=du
-PDFBerniqueDescription=Factuur model Bernique
-PDFBigorneauDescription=Factuur model Bigorneau
-PDFBulotDescription=Factuur model Bulot
-PDFCrabeDescription=Factuur model Crabe. Een volledige factuur model (optie Ondersteuning BTW, kortingen, betalingen voorwaarden, logo, etc. ..)
-PDFHuitreDescription=Factuur model Huitre
-PDFOursinDescription=Factuur model oursin
-PDFTourteauDescription=Factuur model Tourteau
-TerreNumRefModelDesc1=Terugkeren numero met format% syymm-nnnn voor standaard facturen en% syymm-nnnn voor creditnota&#39;s waar jj jaar is, MM de maand en het is nnnn een sequentie zonder pauze en geen terugkeer naar 0
-TerreNumRefModelError=Een factuur die beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of de naam van het activeren van deze module.
-OrionNumRefModelDesc1=Terugkeer van het aantal in het kader van het formaat waar FAYYNNNNN YY is het jaar en de toename van het aantal NNNNN beginnend bij 1.
-OrionNumRefModelDesc2=Het jaar wordt verhoogd met 1 ZONDER een initialisatie tot nul aan het begin van het boekjaar.
-OrionNumRefModelDesc3=Definieer de variabele SOCIETE_FISCAL_MONTH_START met de maand aan het begin van het boekjaar, bijvoorbeeld: 9 voor september.
-OrionNumRefModelDesc4=In dit voorbeeld hebben we op 1 september 2006 een factuur naam FA700354.
-TitanNumRefModelDesc1=Terugkeer van het aantal met formaat FAYYNNNNN waar YY is het jaar en NNNNN is de toename van het aantal met ingang van 1.
-TitanNumRefModelDesc2=Het jaar wordt verhoogd met 1 en de toename van het aantal wordt geïnitialiseerd op nul aan het begin van het boekjaar.
-TitanNumRefModelDesc3=Definieer de variabele SOCIETE_FISCAL_MONTH_START met de maand aan het begin van het boekjaar, bijvoorbeeld: 9 voor september.
-TitanNumRefModelDesc4=In dit voorbeeld hebben we op 1 september 2006 een factuur naam FA0700001
-PlutonNumRefModelDesc1=Terugkeer een aanpasbare factuurnummer volgens een omschreven masker.
-// Date 2009-01-18 23:57:49
-// STOP - Lines generated via parser
+ShowUnpaidAll=Afficher tous les impayés
+ShowUnpaidLateOnly=Toon laat unpaid factuur alleen
+PaymentInvoiceRef=Betaling factuur% s
+ValidateInvoice=Valider facture
+Cash=Liquide
+Reported=Différé
 
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
-// Reference language: en_US
 InvoiceDeposit=Borgsom factuur
 InvoiceDepositAsk=Borgsom factuur
 InvoiceDepositDesc=Dit soort factuur wordt gedaan wanneer een aanbetaling heeft ontvangen.
-InvoiceProFormat=Proformat factuur
-InvoiceProFormatAsk=Proformat factuur
-InvoiceProFormatDesc=<b>Proformat factuur</b> is een afbeelding van een echte factuur, maar heeft geen boekhoudkundige waarde.
-UsedByInvoice=Gebruikt voor de betaling van de factuur% s
-ConsumedBy=Verbruikt door
-NotConsumed=Niet verbruikte
-HelpPaymentHigherThanReminderToPay=Opgelet, het bedrag van de betaling van een of meer rekeningen is hoger dan de rest te betalen. <br> Bewerk uw binnenkomst, anders bevestigen en na te denken over het maken van een credit nota van het teveel ontvangen voor elke overpaid facturen.
-BillStatusConverted=Omgezet in een korting
-BillShortStatusConverted=Verwerkte
-Prélèvements=Doorlopende opdracht
-Prélèvements=Permanente opdrachten
-ShowInvoiceDeposit=Toon nederlegging factuur
-SetDate=Ingestelde datum
-Deposit=Borgsom
-Deposits=Deposito&#39;s
-DiscountFromDeposit=Betalingen van nederlegging factuur% s
-AbsoluteDiscountUse=Dit soort krediet kan gebruikt worden op de factuur voor de validatie
-CreditNoteDepositUse=Factuur moet worden gevalideerd voor het gebruik van deze koning van de kredieten
-NewRelativeDiscount=Nieuwe relatieve korting
-IdSocialContribution=Sociale bijdrage id
-PaymentId=Betaling id
-DescTaxAndDividendsArea=Dit gebied geeft een overzicht van alle betalingen voor de belasting of sociale premies. Alleen records die met de betaling gedurende de vastgestelde jaar worden hier opgenomen.
-NbOfPayments=Nb van betalingen
-SplitDiscount=Split korting op twee
-ConfirmSplitDiscount=Weet u zeker dat u wilt splitsen deze korting <b>van% s% s</b> in 2 lagere kortingen?
-TypeAmountOfEachNewDiscount=Input bedrag voor elk van de twee delen:
-TotalOfTwoDiscountMustEqualsOriginal=Totaal van de twee nieuwe korting moet gelijk zijn aan originele korting bedrag.
-ConfirmRemoveDiscount=Weet u zeker dat u wilt verwijderen van deze korting?
-UseCredit=Kredietbeoordelingen
-ShowUnpaidLateOnly=Toon laat unpaid factuur alleen
-PaymentInvoiceRef=Betaling factuur% s
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:00:22).
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
-// Reference language: en_US
-BillsCustomersUnpaid=Klanten onbetaalde facturen
-BillsCustomersUnpaidForCompany=Onbetaalde klanten facturen voor% s
-BillsSuppliersUnpaid=Leveranciers onbetaalde facturen
-BillsUnpaid=Onbetaalde
-BillStatusClosedUnpaid=Gesloten (onbetaalde)
-BillShortStatusClosedUnpaid=Gesloten
-Unpaid=Onbetaalde
-ConfirmCancelBillQuestion=Waarom wilt u classificeren deze factuur &#39;verlaten&#39;?
-Abandoned=Abandoned
-NoSupplierBillsUnpaid=Geen leveranciers facturen onbetaald
-CustomerBillsUnpaid=Klanten onbetaalde facturen
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:28:32).
+
+# oursin PDF model
+Of=du
+
+# bernique PDF model
+PDFBerniqueDescription=Modèle pour les factures avec plusieurs taux de tva, inclus aussi le numéro de TVA Intracommunautaire
+
+# bigorneau PDF Model
+PDFBigorneauDescription=Modèle de facture sans boîte info règlement
+
+# bulot PDF Model
+PDFBulotDescription=Modèle de facture avec remise et infos règlement
+
+# crabe PDF Model
+PDFCrabeDescription=Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)
+
+# huitre PDF Model
+PDFHuitreDescription=Modèle de facture avec remise et infos règlement
+
+# oursin PDF Model
+PDFOursinDescription=Modèle de facture complet (basé sur crabe, gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, les remises, le nom du projet, la reference propal, logo...)
+
+# tourteau PDF Model
+PDFTourteauDescription=Modèle de facture sans remise
+
+
+
+
+# NumRef Modules
+
+TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
+TerreNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
