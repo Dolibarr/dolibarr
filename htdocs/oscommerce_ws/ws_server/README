@@ -3,7 +3,7 @@ OSCommerce interface and Dolibarr
 
 TODO ON THE OSCOMMERCE WEBSITE INSTALLATION :
 
-Copy the contents of the ws_server directory on the OSCommerce web server.
+Copy the directory ws_server and its content on the OSCommerce web server.
 This includes the lib directory which contains the nusoap library, the 
 includes directory which contains the configure.php file and the ws_* files.
 

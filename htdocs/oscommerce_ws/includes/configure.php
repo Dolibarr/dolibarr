@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Jean Heimburger      <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,55 +19,55 @@
  *
  * $Id$
  */
- 
+
 /**
-        \file       htdocs/oscommmerce_ws/includes/configure.php
-        \ingroup    oscommerce_ws
-		\brief      Configuration client Webservice
-		\version    $Revision$
-*/
+ *	\file       htdocs/oscommmerce_ws/includes/configure.php
+ *	\ingroup    oscommerce_ws
+ *	\brief      Configuration client Webservice
+ *	\version    $Revision$
+ */
 
-//base url des webservices
+// URL To reach web services
+define(OSCWS_DIR,'http://myoscserver/ws_server/');
+
+// URL To reach OSCommerce
+define(OSC_URL, 'http://myoscserver/'); // url du site OSC
 
 
-define(OSCWS_DIR,'http://www.tiaris.info/catalog/ws_OSC/');
-
-define(OSC_URL, 'http://www.tiaris.info/catalog/'); // url du site OSC
 
 //affichages dans la page d'accueil
 define(OSC_MAXNBCOM, 5);
 define(OSC_ORDWAIT,'4'); // code du statut de commande en attente
 define(OSC_ORDPROCESS,'1'); // code du statut de commande en traitement
-//
 
-define(OSC_ENTREPOT, 1); //l'entrepot lié au stock du site web
+define(OSC_ENTREPOT, 1); //l'entrepot lie au stock du site web
 define(TX_CURRENCY, 1); // le taux de conversion monnaie site osc - monnaie dolibarr (1 euro = 119.33 XPF)
 define(NB_DECIMALS, 2);
-define(NB_DECIMALSITE, 2); // nb de décimales sur le site
-define(FK_PORT, 2); // l'id du service frais de port défini. 
+define(NB_DECIMALSITE, 2); // nb de decimales sur le site
+define(FK_PORT, 2); // l'id du service frais de port defini.
 
 // fonctions
 
 /**
-*      \brief      assure la conversion en monnaie de dolibarr
-*      \param      oscid      Id du produit dans OsC 
-*	   \param	   prodid	  champ référence 	
-*      \return     int     <0 si ko, >0 si ok
-*/
-	function convert_price($price)
-	{
-		return round($price * TX_CURRENCY, NB_DECIMALS);
-	}
-	
-	/**
-*      \brief      assure la conversion en monnaie de dolibarr
-*      \param      oscid      Id du produit dans OsC 
-*	   \param	   prodid	  champ référence 	
-*      \return     int     <0 si ko, >0 si ok
-*/
-	function convert_backprice($price)
-	{
-		return round($price / TX_CURRENCY, NB_DECIMALSITE);
-	}
+ *      \brief      assure la conversion en monnaie de dolibarr
+ *      \param      oscid      Id du produit dans OsC
+ *	   \param	   prodid	  champ rï¿½fï¿½rence
+ *      \return     int     <0 si ko, >0 si ok
+ */
+function convert_price($price)
+{
+	return round($price * TX_CURRENCY, NB_DECIMALS);
+}
+
+/**
+ *      \brief      assure la conversion en monnaie de dolibarr
+ *      \param      oscid      Id du produit dans OsC
+ *	   \param	   prodid	  champ rï¿½fï¿½rence
+ *      \return     int     <0 si ko, >0 si ok
+ */
+function convert_backprice($price)
+{
+	return round($price / TX_CURRENCY, NB_DECIMALSITE);
+}
 
 ?>
