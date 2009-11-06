@@ -14,9 +14,6 @@ BillsStatisticsSuppliers=Statistiques factures fournisseurs
 InvoiceStandard=Facture standard
 InvoiceStandardAsk=Facture standard
 InvoiceStandardDesc=Ce type de facture est la facture traditionnelle. On l'appelle aussi <b>facture de doit</b> (du verbe devoir).
-InvoiceDeposit=Facture d'acompte
-InvoiceDepositAsk=Facture d'acompte
-InvoiceDepositDesc=La <b>facture d'acompte</b> est le type de facture qui fait suite à réception d'un acompte, s'il n'est pas encore possible de saisir le paiement sur une facture définitive.
 InvoiceProFormat=Facture proformat
 InvoiceProFormatAsk=Facture proformat
 InvoiceProFormatDesc=La <b>facture proformat</b> est une image de facture définitive mais qui n'a aucune valeure comptable.
@@ -128,7 +125,7 @@ BillFrom=Émetteur
 BillTo=Adressé à
 ActionsOnBill=Actions sur la facture
 NewBill=Nouvelle facture
-Prélèvements=Prélèvement
+Prélèvement=Prélèvement
 Prélèvements=Prélèvements
 LastBills=Les %s dernières factures
 LastCustomersBills=Les %s dernières factures clients
@@ -355,6 +352,12 @@ PaymentInvoiceRef=Paiement facture %s
 ValidateInvoice=Valider facture
 Cash=Liquide
 Reported=Différé
+
+InvoiceDeposit=Facture d'acompte
+InvoiceDepositAsk=Facture d'acompte
+InvoiceDepositDesc=La <b>facture d'acompte</b> est le type de facture qui fait suite à réception d'un acompte, s'il n'est pas encore possible de saisir le paiement sur une facture définitive.
+
+
 
 # oursin PDF model
 Of=du
