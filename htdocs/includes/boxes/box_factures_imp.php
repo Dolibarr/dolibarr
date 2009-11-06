@@ -102,7 +102,7 @@ class box_factures_imp extends ModeleBoxes {
 					$datelimite=$db->jdate($objp->datelimite);
 
 					$late='';
-					if ($datelimite < ($now - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+					if ($datelimite < ($now - $conf->facture->client->warning_delay)) $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
