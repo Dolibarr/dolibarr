@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,16 +43,16 @@ class AdherentType extends CommonObject
 	var $id;
 	var $libelle;
 	var $statut;
-	var $cotisation;  /**< Soumis � la cotisation */
-	var $vote;		/**< droit de vote ? */
-	var $note; 		/**< commentaire */
-	var $mail_valid;	/**< mail envoye lors de la validation */
+	var $cotisation;  // Soumis a la cotisation
+	var $vote;		  // droit de vote
+	var $note; 		  // commentaire
+	var $mail_valid;  //mail envoye lors de la validation
 
 
 
 	/**
-	 \brief AdherentType
-	 \param DB				handler acc�s base de donn�es
+	 *  \brief AdherentType
+	 *  \param DB				handler acces base de donnees
 	 */
 	function AdherentType($DB)
 	{
@@ -61,9 +62,8 @@ class AdherentType extends CommonObject
 
 
 	/**
-		\brief print_error_list
-		*/
-
+	 *  \brief print_error_list
+	 */
 	function print_error_list()
 	{
 		$num = sizeof($this->error);
@@ -75,16 +75,23 @@ class AdherentType extends CommonObject
 
 
 	/**
-	 \brief      Fonction qui permet de cr�er le status de l'adh�rent
-	 \param      userid			userid de l'adh�rent
-	 \return     > 0 si ok, < 0 si ko
+	 *  \brief      Fonction qui permet de creer le status de l'adherent
+	 *  \param      userid			userid de l'adherent
+	 *  \return     > 0 si ok, < 0 si ko
 	 */
 	function create($userid)
 	{
+		global $conf;
+		
 		$this->statut=trim($this->statut);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (libelle)";
-		$sql.= " VALUES ('".addslashes($this->libelle)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
+		$sql.= "libelle";
+		$sql.= ", entity";
+		$sql.= ") VALUES (";
+		$sql.= "'".addslashes($this->libelle)."'";
+		$sql.= ", ".$conf->entity;
+		$sql.= ")";
 
 		dol_syslog("Adherent_type::create sql=".$sql);
 		$result = $this->db->query($sql);
@@ -102,21 +109,21 @@ class AdherentType extends CommonObject
 
 
 	/**
-		\brief      Met a jour en base donn�es du type
-		\return     > 0 si ok, < 0 si ko
-		*/
+	 *  \brief      Met a jour en base donnees du type
+	 *  \return     > 0 si ok, < 0 si ko
+	 */
 	function update()
 	{
 		$this->libelle=trim($this->libelle);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
 		$sql.= "SET ";
-		$sql.= "statut=".$this->statut.",";
+		$sql.= "statut = ".$this->statut.",";
 		$sql.= "libelle = '".addslashes($this->libelle) ."',";
-		$sql.= "cotisation='".$this->cotisation."',";
-		$sql.= "note='".addslashes($this->note)."',";
-		$sql.= "vote='".$this->vote."',";
-		$sql.= "mail_valid='".addslashes($this->mail_valid)."'";
+		$sql.= "cotisation = '".$this->cotisation."',";
+		$sql.= "note = '".addslashes($this->note)."',";
+		$sql.= "vote = '".$this->vote."',";
+		$sql.= "mail_valid = '".addslashes($this->mail_valid)."'";
 
 		$sql .= " WHERE rowid = $this->id";
 
@@ -124,17 +131,17 @@ class AdherentType extends CommonObject
 
 		if ($result)
 		{
-	  return 1;
+			return 1;
 		}
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-	  return -1;
+			return -1;
 		}
 	}
 
 	/**
-	 *	\brief      Fonction qui permet de supprimer le status de l'adh�rent
+	 *	\brief      Fonction qui permet de supprimer le status de l'adherent
 	 *	\param      rowid
 	 */
 	function delete($rowid)
@@ -145,13 +152,13 @@ class AdherentType extends CommonObject
 		if ( $this->db->query( $sql) )
 		{
 			if ( $this->db->affected_rows() )
-	  {
-	  	return 1;
-	  }
-	  else
-	  {
-	  	return 0;
-	  }
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
@@ -161,15 +168,16 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-		\brief 		Fonction qui permet de r�cup�rer le status de l'adh�rent
-		\param 		rowid
-		\return		int			<0 si KO, >0 si OK
-		*/
+	 *  \brief 		Fonction qui permet de recuperer le status de l'adherent
+	 *  \param 		rowid
+	 *  \return		int			<0 si KO, >0 si OK
+	 */
 	function fetch($rowid)
 	{
 		$sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".$rowid;
+		
 		dol_syslog("Adherent_type::fetch sql=".$sql);
 
 		$resql=$this->db->query($sql);
@@ -198,15 +206,18 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 * Return list of members' type
-	 *
-	 * @return 	array	List of types
+	 *  \brief      Return list of members' type
+	 *  \return 	array	List of types
 	 */
 	function liste_array()
 	{
+		global $conf;
+		
 		$projets = array();
 
-		$sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql = "SELECT rowid, libelle";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql.= "WHERE entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

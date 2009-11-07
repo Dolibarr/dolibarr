@@ -94,10 +94,10 @@ class Cotisation extends CommonObject
 
 
 	/**
-		\brief 		Fonction qui permet de r�cup�rer une cotisation
-		\param 		rowid		Id cotisation
-		\return		int			<0 si KO, =0 si OK mais non trouve, >0 si OK
-	*/
+	 *  \brief 		Fonction qui permet de recuperer une cotisation
+	 *  \param 		rowid		Id cotisation
+	 *  \return		int			<0 si KO, =0 si OK mais non trouve, >0 si OK
+	 */
 	function fetch($rowid)
 	{
         $sql ="SELECT rowid, fk_adherent, ".$this->db->pdate("datec")." as datec,";

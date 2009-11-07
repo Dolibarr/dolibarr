@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,13 +274,14 @@ class Adherent extends CommonObject
 
 		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type)";
+		$sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity)";
 		$sql.= " VALUES (";
-		$sql.= " '".$this->db->idate($this->datec)."',";
-		$sql.= " '".$this->login."',";
-		$sql.= " ".($user->id>0?$user->id:"null").",";	// Can be null because member can be create by a guest or a script
-		$sql.= " null,null,'".$this->morphy."',";
-		$sql.= " '".$this->typeid."'";
+		$sql.= " '".$this->db->idate($this->datec)."'";
+		$sql.= ", '".$this->login."'";
+		$sql.= ", ".($user->id>0?$user->id:"null");	// Can be null because member can be create by a guest or a script
+		$sql.= ", null, null, '".$this->morphy."'";
+		$sql.= ", '".$this->typeid."'";
+		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
 		dol_syslog("Adherent::create sql=".$sql);
@@ -474,14 +476,14 @@ class Adherent extends CommonObject
 
 			// Remove link to user
 			dol_syslog("Adherent::update UPDATE LINK TO USER");
-			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
 			dol_syslog("Adherent::update sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 			// If there is a user linked to this member
 			if ($this->user_id > 0)
 			{
-				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." where rowid = ".$this->user_id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
 				dol_syslog("Adherent::update sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
@@ -570,7 +572,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 \brief 		Fonction qui met a jour le chp denormalise date fin adh�sion
+	 \brief 		Fonction qui met a jour le chp denormalise date fin adhesion
 	 \param		user			Utilisateur qui realise la mise a jour
 	 \return		int				<0 si KO, >0 si OK
 	 */
@@ -815,7 +817,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		// If user is linked to this member, remove old link to this member
-		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
 		dol_syslog("Adherent::setUserId sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -1; }
@@ -850,7 +852,9 @@ class Adherent extends CommonObject
 		// Update link to third party
 		if ($thirdpartyid > 0)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null where fk_soc = '".$thirdpartyid."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
+			$sql.= " WHERE fk_soc = '".$thirdpartyid."'";
+			$sql.= " AND entity = ".$conf->entity;
 			dol_syslog("Adherent::setThirdPartyId sql=".$sql);
 			$resql = $this->db->query($sql);
 		}
@@ -882,7 +886,11 @@ class Adherent extends CommonObject
 	 */
 	function fetch_login($login)
 	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login'";
+		global $conf;
+		
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+		$sql.= " WHERE login='".$login."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$this->db->query( $sql);
 
@@ -910,7 +918,7 @@ class Adherent extends CommonObject
 	 */
 	function fetch($rowid,$ref='',$fk_soc='')
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.fk_soc, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
 		$sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
@@ -928,6 +936,7 @@ class Adherent extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid";
+		$sql.= " AND d.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND d.rowid='".$ref."'";
 		elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
 		else $sql.= " AND d.rowid=".$rowid;
@@ -1061,7 +1070,7 @@ class Adherent extends CommonObject
 			return -1;
 		}
 	}
-
+	
 
 	/**
 	 *	\brief      Fonction qui recupere les donnees optionelles de l'adherent
@@ -1069,8 +1078,18 @@ class Adherent extends CommonObject
 	 */
 	function fetch_optionals($rowid)
 	{
+		$options = new AdherentOptions($this->db);
+		$optionsArray = $options->fetch_name_optionals_label();
+		
 		$tab=array();
-		$sql = "SELECT *";		// \TODO Should not use this syntax
+		
+		$sql = "SELECT optid";
+		
+		foreach ($optionsArray as $name => $label)
+		{
+			$sql.= ", ".$name;
+		}
+		
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_options";
 		$sql.= " WHERE adhid=".$rowid;
 
@@ -1246,8 +1265,9 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql.= " statut=1, datevalid = ".$this->db->idate(mktime()).",";
-		$sql.= " fk_user_valid=".$user->id;
+		$sql.= " statut = 1";
+		$sql.= ", datevalid = ".$this->db->idate(mktime());
+		$sql.= ", fk_user_valid=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Adherent::validate sql=".$sql);
@@ -1295,8 +1315,8 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql.= " statut=0,";
-		$sql.= " fk_user_valid=".$user->id;
+		$sql.= " statut = 0";
+		$sql.= ", fk_user_valid=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
@@ -1811,6 +1831,8 @@ class Adherent extends CommonObject
 		$sql = "SELECT count(a.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= " WHERE a.statut > 0";
+		$sql.= " AND a.entity = ".$conf->entity;
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1846,7 +1868,8 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT a.rowid, a.datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
-		$sql.= " WHERE a.statut=1";
+		$sql.= " WHERE a.statut = 1";
+		$sql.= " AND a.entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
