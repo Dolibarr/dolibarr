@@ -3,6 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
+ * Copyright (C) 2009      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,9 +37,11 @@ class AdherentOptions
 	var $id;
 	var $db;
 	// Tableau contenant le nom des champs en clef et la definition de ces champs
-	var $attribute_name;
+	var $attribute_type;
 	// Tableau contenant le nom des champs en clef et le label de ces champs en value
 	var $attribute_label;
+	// Tableau contenant le nom des champs en clef et la taille de ces champs en value
+	var $attribute_size;
 
 	var $error;
 	/*
@@ -56,8 +59,9 @@ class AdherentOptions
 		$this->db = $DB ;
 		$this->id = $id;
 		$this->error = array();
-		$this->attribute_name = array();
+		$this->attribute_type = array();
 		$this->attribute_label = array();
+		$this->attribute_size = array();
 	}
 
 	/**
@@ -73,47 +77,11 @@ class AdherentOptions
 	}
 
 	/**
-	 *  \brief fonction qui verifie les donnees entrees
-	 *  \param	minimum
-	 */
-	function check($minimum=0)
-	{
-		$err = 0;
-
-		if (strlen(trim($this->societe)) == 0)
-		{
-			if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
-			{
-				$error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
-				$err++;
-			}
-		}
-
-		if (strlen(trim($this->adresse)) == 0)
-		{
-			$error_string[$err] = "L'adresse saisie est invalide";
-			$err++;
-		}
-		
-		// Return errors
-		if ($err)
-		{
-			$this->error = $error_string;
-			return 0;
-		}
-		else
-		{
-			return 1;
-		}
-
-	}
-
-	/**
-	 *  \brief  fonction qui cree un attribut optionnel
-	 *  \param	attrname			nom de l'atribut
-	 *  \param	type				type de l'attribut
-	 *  \param	length				longuer de l'attribut
-	 *  \remarks	Ceci correspond a une modification de la table et pas a un rajout d'enregistrement
+	 *  \brief  	Add a new attribute
+	 *  \param		attrname			nom de l'atribut
+	 *  \param		type				type de l'attribut
+	 *  \param		length				longuer de l'attribut
+	 *  \remarks	Ceci correspond a un alter de la table et pas a un insert
 	 */
 	function create($attrname,$type='varchar',$length=255) {
 
@@ -158,20 +126,20 @@ class AdherentOptions
 	function create_label($attrname,$label='',$type='',$pos=0,$size=0)
 	{
 		global $conf;
-		
+
 		// Clean parameters
 		if (empty($pos)) $pos=0;
 
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
-			$sql.= " name = '".$attrname."'";
-			$sql.= ", label = '".addslashes($label)."'";
-			$sql.= ", type = '".$type."'";
-			$sql.= ", pos = '".$pos."'";
-			$sql.= ", size = '".$size."'";
-			$sql.= ", entity = ".$conf->entity;
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET";
+			$sql.= " name = '".$attrname."',";
+			$sql.= " label = '".addslashes($label)."',";
+			$sql.= " type = '".$type."',";
+			$sql.= " pos = '".$pos."',";
+			$sql.= " size = '".$size."',";
+			$sql.= " entity = ".$conf->entity;
 
 			dol_syslog("AdherentOptions::create_label sql=".$sql);
 			if ($this->db->query($sql))
@@ -220,13 +188,14 @@ class AdherentOptions
 	function delete_label($attrname)
 	{
 		global $conf;
-		
+
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label";
 			$sql.= " WHERE name = '$attrname'";
 			$sql.= " AND entity = ".$conf->entity;
 
+			dol_syslog("AdherentOptions::delete_label sql=".$sql);
 			if ( $this->db->query( $sql) )
 			{
 				return 1;
@@ -245,17 +214,18 @@ class AdherentOptions
 	}
 
 	/**
-	 * 	\brief fonction qui modifie un attribut optionnel
-	 *  \param	attrname			nom de l'atribut
-	 *  \param	type				type de l'attribut
-	 *  \param	length				longuer de l'attribut
+	 * 	\brief 		Fonction qui modifie le type d'un attribut optionnel
+	 *  \param		attrname			nom de l'atribut
+	 *  \param		type				type de l'attribut
+	 *  \param		length				longuer de l'attribut
+	 * 	\return		int					>0 if OK, <=0 if error
 	 *  \TODO pouvoir gerer les entités
 	 */
 	function update($attrname,$type='varchar',$length=255)
 	{
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
+			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options";
 			switch ($type){
 				case 'varchar' :
 				case 'interger' :
@@ -272,7 +242,8 @@ class AdherentOptions
 			}
 			//$sql .= "MODIFY COLUMN $attrname $type($length)";
 
-			if ( $this->db->query( $sql) )
+			dol_syslog("AdherentOptions::update sql=".$sql);
+			if ( $this->db->query($sql) )
 			{
 				return 1;
 			}
@@ -281,7 +252,8 @@ class AdherentOptions
 				print dol_print_error($this->db);
 				return 0;
 			}
-		}else
+		}
+		else
 		{
 			return 0;
 		}
@@ -289,39 +261,52 @@ class AdherentOptions
 	}
 
 	/**
-	 *  \brief fonction qui modifie un label
+	 *  \brief 	Modify an optionnal attribute
 	 *  \param	attrname			nom de l'atribut
 	 *  \param	label				nom du label
+	 *  \param	type				type
+	 *  \param	size				size
 	 */
-	function update_label($attrname,$label='')
+	function update_label($attrname,$label,$type,$size)
 	{
 		global $conf;
-		
+		dol_syslog("AdherentOptions::update_label $attrname,$label,$type,$size");
+
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
+			$this->db->begin();
+
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label";
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
-			
-			$this->db->query($sql_del);
-			
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label (";
-			$sql.= "name";
-			$sql.= ", label";
-			$sql.= ", entity";
+			dol_syslog("AdherentOptions::update_label sql=".$sql_del);
+			$resql1=$this->db->query($sql_del);
+
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label(";
+			$sql.= " name,";
+			$sql.= " entity,";
+			$sql.= " label,";
+			$sql.= " type,";
+			$sql.= " size";
 			$sql.= ") VALUES (";
-			$sql.= "'".$attrname."'";
-			$sql.= ", '".addslashes($escaped_label)."'";
-			$sql.= ", ".$conf->entity;
+			$sql.= "'".$attrname."',";
+			$sql.= " ".$conf->entity.",";
+			$sql.= " '".addslashes($label)."',";
+			$sql.= " '".$type."',";
+			$sql.= " '".$size."'";
 			$sql.= ")";
 			//$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
+			dol_syslog("AdherentOptions::update_label sql=".$sql);
+			$resql2=$this->db->query($sql);
 
-			if ( $this->db->query( $sql) )
+			if ($resql1 && $resql2)
 			{
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->db->rollback();
 				print dol_print_error($this->db);
 				return 0;
 			}
@@ -349,15 +334,15 @@ class AdherentOptions
 	function fetch_name_optionals_label()
 	{
 		global $conf;
-		
+
 		$array_name_label=array();
-		
-		$sql = "SELECT name,label,type";
+
+		$sql = "SELECT name,label,type,size";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_options_label";
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " ORDER BY pos";
 
-		dol_syslog("Adherent_options::fetch_name_optionals_label");
+		dol_syslog("Adherent_options::fetch_name_optionals_label sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -367,8 +352,9 @@ class AdherentOptions
 				{
 					// we can add this attribute to adherent object
 					$array_name_label[$tab->name]=$tab->label;
-					$this->attribute_name[$tab->name]=$tab->type;
+					$this->attribute_type[$tab->name]=$tab->type;
 					$this->attribute_label[$tab->name]=$tab->label;
+					$this->attribute_size[$tab->name]=$tab->size;
 				}
 			}
 			return $array_name_label;
@@ -378,6 +364,6 @@ class AdherentOptions
 			print dol_print_error($this->db);
 		}
 	}
-	
+
 }
 ?>

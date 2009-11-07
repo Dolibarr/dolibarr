@@ -61,6 +61,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->configurer)
 	}
 }
 
+// Rename field
 if ($_POST["action"] == 'update' && $user->rights->adherent->configurer)
 {
 	if ($_POST["button"] != $langs->trans("Cancel"))
@@ -70,7 +71,7 @@ if ($_POST["action"] == 'update' && $user->rights->adherent->configurer)
 			$adho->update($_POST['attrname'],$_POST['type'],$_POST['size']);
 			if (isset($_POST['label']))
 			{
-				$adho->update_label($_POST['attrname'],$_POST['label']);
+				$adho->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['size']);
 			}
 			Header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
@@ -108,31 +109,33 @@ if ($_GET["action"] == 'delete' && $user->rights->adherent->configurer)
 llxHeader('',$langs->trans("OptionalFieldsSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
-print_titre($langs->trans("OptionalFieldsSetup"));
-print '<br>';
+print_fiche_titre($langs->trans("OptionalFieldsSetup"));
 
 if ($mesg) print '<div class="error">'.$mesg.'</div><br>';
 
 // Load attribute_label
 $adho->fetch_name_optionals_label();
 
-print "<table class=\"noborder\" width=\"100%\">";
+print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
-print '<td>'.$langs->trans("Type").'</td><td width="80">&nbsp;</td>';
+print '<td>'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("Type").'</td>';
+print '<td align="right">'.$langs->trans("Size").'</td>';
+print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
 $var=True;
-foreach($adho->attribute_name as $key => $value)
+foreach($adho->attribute_type as $key => $value)
 {
 	$var=!$var;
 	print "<tr $bc[$var]>";
-	print "<td>".$adho->attribute_label[$key]."&nbsp;</td>\n";
-	print "<td>$key</td>\n";
-	print "<td>$value</td>\n";
-	print "<td align=\"right\"><a href=\"options.php?action=edit&attrname=$key\">".img_edit()."</a>";
+	print "<td>".$key."</td>\n";
+	print "<td>".$adho->attribute_label[$key]."</td>\n";
+	print "<td>".$adho->attribute_type[$key]."</td>\n";
+	print '<td align="right">'.$adho->attribute_size[$key]."</td>\n";
+	print '<td align="right"><a href="options.php?action=edit&attrname='.$key.'">'.img_edit().'</a>';
 	print "&nbsp; <a href=\"options.php?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
 	print "</tr>";
 	//      $i++;
@@ -144,7 +147,7 @@ print "</table>";
  * Barre d'actions
  *
  */
-if ($_GET["action"] != 'create')
+if ($_GET["action"] != 'create' && $_GET["action"] != 'edit')
 {
 	print '<div class="tabsAction">';
 	print "<a class=\"butAction\" href=\"options.php?action=create\">".$langs->trans("NewAttribute")."</a>";
@@ -161,12 +164,11 @@ if ($_GET["action"] != 'create')
 if ($_GET["action"] == 'create')
 {
 	print "<br>";
-
 	print_titre($langs->trans('NewAttribute'));
 
 	print '<form action="options.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="border" width="100%">';
+	print '<table summary="listofattributes" class="border" width="100%">';
 
 	print '<input type="hidden" name="action" value="add">';
 
@@ -194,7 +196,7 @@ if ($_GET["action"] == 'create')
 /* ************************************************************************** */
 if ($_GET["attrname"] && $_GET["action"] == 'edit')
 {
-
+	print "<br>";
 	print_titre($langs->trans("FieldEdition",$_GET["attrname"]));
 
 	/*
@@ -204,17 +206,29 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="attrname" value="'.$_GET["attrname"].'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<table class="border" width="100%">';
+	print '<table summary="listofattributes" class="border" width="100%">';
 
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40" value="'.$adho->attribute_label[$_GET["attrname"]].'"></td></tr>';
-	print '<tr><td>'.$langs->trans("AttributeName").'</td><td class="valeur">'.$_GET["attrname"].'&nbsp;</td></tr>';
-	list($type,$size)=preg_split('/\(|\)/',$adho->attribute_name[$_GET["attrname"]]);
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
-	$form->select_array('type',array('varchar'=>$langs->trans('String'),
+	// Code
+	print '<tr>';
+	print '<td>'.$langs->trans("AttributeCode").'</td>';
+	print '<td class="valeur">'.$_GET["attrname"].'&nbsp;</td>';
+	print '</tr>';
+	// Label
+	print '<tr>';
+	print '<td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40" value="'.$adho->attribute_label[$_GET["attrname"]].'"></td>';
+	print '</tr>';
+	$type=$adho->attribute_type[$_GET["attrname"]];
+	$size=$adho->attribute_size[$_GET["attrname"]];
+	print '<tr><td>'.$langs->trans("Type").'</td>';
+	print '<td class="valeur">';
+	$type2label=array('varchar'=>$langs->trans('String'),
 	'text'=>$langs->trans('Text'),
 	'int'=>$langs->trans('Int'),
 	'date'=>$langs->trans('Date'),
-	'datetime'=>$langs->trans('DateAndTime')),$type);
+	'datetime'=>$langs->trans('DateAndTime'));
+	//$form->select_array('type',$type2label,$type);
+	print $type2label[$type];
+	print '<input type="hidden" name="type" value="'.$type.'">';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Size").'</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';
