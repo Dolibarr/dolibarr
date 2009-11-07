@@ -964,7 +964,7 @@ div.ok {
 }
 
 div.warning {
-  color: #997711;
+  color: #442200;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0e0d0;
