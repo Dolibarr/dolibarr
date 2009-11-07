@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -17,28 +17,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   oscommerce2     Module oscommercews
- \brief      Module pour gerer une boutique et interface avec OSCommerce via Web Services
+ *		\brief      Module pour gerer une boutique et interface avec OSCommerce via Web Services
  */
 
 /**
- \file       htdocs/includes/modules/modOSCommerce2.class.php
- \ingroup    oscommerce2
- \brief      Fichier de description et activation du module OSCommerce2
+ *	\file       htdocs/includes/modules/modOSCommerce2.class.php
+ *	\ingroup    oscommerce2
+ *	\brief      Fichier de description et activation du module OSCommerce2
+ * 	\version	$Id$
  */
-
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- \class 		modOSCommerce2
- \brief      Classe de description et activation du module OSCommerce2
+ *	\class 		modOSCommerce2
+ *	\brief      Classe de description et activation du module OSCommerce2
  */
-
 class modOSCommerceWS extends DolibarrModules
 {
 
