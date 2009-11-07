@@ -133,9 +133,16 @@ ALTER TABLE llx_bank_categ ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER la
 ALTER TABLE llx_bordereau_cheque ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER number;
 ALTER TABLE llx_prelevement_bons ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_projet ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+ALTER TABLE llx_adherent ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_adherent_type ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_adherent_options_label ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER name;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_dolibarr_modules DROP PRIMARY KEY;
+
+ALTER TABLE llx_adherent_options_label DROP PRIMARY KEY;
+ALTER TABLE llx_adherent_options_label MODIFY COLUMN name varchar(64) NOT NULL;
+ALTER TABLE llx_adherent_options_label ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY FIRST;
 
 ALTER TABLE llx_user_param DROP INDEX fk_user;
 ALTER TABLE llx_societe DROP INDEX uk_societe_prefix_comm;
@@ -160,6 +167,8 @@ ALTER TABLE llx_fichinter DROP INDEX ref;
 ALTER TABLE llx_prelevement_bons DROP INDEX ref;
 ALTER TABLE llx_projet DROP INDEX ref;
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
+ALTER TABLE llx_adherent DROP INDEX uk_adherent_login;
+ALTER TABLE llx_adherent_type DROP INDEX uk_adherent_type_libelle;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY pk_rights_def (id, entity);
 ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
@@ -189,6 +198,9 @@ ALTER TABLE llx_bordereau_cheque ADD UNIQUE INDEX uk_bordereau_cheque (number, e
 ALTER TABLE llx_prelevement_bons ADD UNIQUE INDEX uk_prelevement_bons_ref (ref, entity);
 ALTER TABLE llx_projet ADD UNIQUE INDEX uk_projet_ref (ref, entity);
 ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity);
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login, entity);
+ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle, entity);
+ALTER TABLE llx_adherent_options_label ADD UNIQUE INDEX uk_adherent_options_label_name (name, entity);
 
 ALTER TABLE llx_projet ADD INDEX idx_projet_fk_soc (fk_soc);
 ALTER TABLE llx_projet ADD CONSTRAINT fk_projet_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

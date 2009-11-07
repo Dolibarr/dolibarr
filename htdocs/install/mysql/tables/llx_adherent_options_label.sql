@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+-- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+-- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,9 +22,11 @@
 
 create table llx_adherent_options_label
 (
-	name            varchar(64) PRIMARY KEY, -- nom de l'attribut
+	rowid           integer AUTO_INCREMENT PRIMARY KEY,
+	name            varchar(64) NOT NULL,       -- nom de l'attribut
+	entity          integer DEFAULT 1 NOT NULL,	-- multi company id
 	tms             timestamp,
-	label           varchar(255) NOT NULL, -- label correspondant a l'attribut
+	label           varchar(255) NOT NULL,      -- label correspondant a l'attribut
 	type            varchar(8),
 	size            integer DEFAULT 0,
 	pos             integer DEFAULT 0

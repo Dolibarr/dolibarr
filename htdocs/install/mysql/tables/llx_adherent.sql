@@ -2,6 +2,7 @@
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@
 create table llx_adherent
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  entity           integer DEFAULT 1 NOT NULL,	-- multi company id
   nom              varchar(50),
   prenom           varchar(50),
   login            varchar(50) NOT NULL, -- login

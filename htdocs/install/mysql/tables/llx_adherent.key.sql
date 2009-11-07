@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2009 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2009 Regis Houssin       <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login);
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login, entity);
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_fk_soc (fk_soc);
 
 ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_soc (fk_soc);

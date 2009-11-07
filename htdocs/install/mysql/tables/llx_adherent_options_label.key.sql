@@ -1,6 +1,4 @@
 -- ===================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -19,20 +17,6 @@
 --
 -- $Id$
 -- ===================================================================
---
--- statut
--- 0 : actif
--- 1 : inactif
 
-create table llx_adherent_type
-(
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  entity           integer DEFAULT 1 NOT NULL,	-- multi company id
-  tms              timestamp,
-  statut           smallint NOT NULL DEFAULT 0,
-  libelle          varchar(50) NOT NULL,
-  cotisation       varchar(3) NOT NULL DEFAULT 'yes',
-  vote             varchar(3) NOT NULL DEFAULT 'yes',
-  note             text,
-  mail_valid       text -- mail envoye a la validation
-)type=innodb;
+
+ALTER TABLE llx_adherent_options_label ADD UNIQUE INDEX uk_adherent_options_label_name (name, entity);
