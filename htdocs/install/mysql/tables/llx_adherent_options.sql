@@ -22,7 +22,7 @@
 
 create table llx_adherent_options
 (
-  optid            integer AUTO_INCREMENT PRIMARY KEY,
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
-  adhid            integer NOT NULL -- id de l'adherent auquel correspond ces attributs optionnel 
+  fk_member        integer NOT NULL     -- member id 
 )type=innodb;

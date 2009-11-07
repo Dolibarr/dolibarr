@@ -268,11 +268,10 @@ DROP TABLE IF EXISTS `llx_adherent_options`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `llx_adherent_options` (
-  `optid` int(11) NOT NULL auto_increment,
+  `rowid` int(11) NOT NULL auto_increment,
   `tms` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  `adhid` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`optid`),
-  UNIQUE KEY `adhid` (`adhid`)
+  `fk_member` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`rowid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 

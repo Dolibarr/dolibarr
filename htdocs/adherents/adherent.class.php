@@ -422,11 +422,11 @@ class Adherent extends CommonObject
 
 			if (sizeof($this->array_options) > 0)
 			{
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
+				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE fk_member = ".$this->id;
 				dol_syslog("Adherent::update sql=".$sql_del);
 				$this->db->query($sql_del);
 
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (fk_member";
 				foreach($this->array_options as $key => $value)
 				{
 					// Add field of attribut
@@ -637,7 +637,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		// Suppression options
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE fk_member = ".$rowid;
 
 		dol_syslog("Adherent::delete sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -1083,7 +1083,7 @@ class Adherent extends CommonObject
 		
 		$tab=array();
 		
-		$sql = "SELECT optid";
+		$sql = "SELECT rowid";
 		
 		foreach ($optionsArray as $name => $label)
 		{
@@ -1091,7 +1091,7 @@ class Adherent extends CommonObject
 		}
 		
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_options";
-		$sql.= " WHERE adhid=".$rowid;
+		$sql.= " WHERE fk_member=".$rowid;
 
 		dol_syslog("Adherent::fetch_optionals sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query( $sql);
@@ -1103,7 +1103,7 @@ class Adherent extends CommonObject
 
 				foreach ($tab as $key => $value)
 				{
-					if ($key != 'optid' && $key != 'tms' && $key != 'adhid')
+					if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member')
 					{
 						// we can add this attribute to adherent object
 						$this->array_options["options_$key"]=$value;

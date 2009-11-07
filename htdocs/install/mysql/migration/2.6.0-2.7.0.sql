@@ -479,8 +479,13 @@ ALTER TABLE llx_c_methode_commande_fournisseur ADD UNIQUE INDEX uk_c_methode_com
 ALTER TABLE llx_menu change user usertype      integer NOT NULL default '0';
 
 -- Rename index
+ALTER TABLE llx_adherent_options MODIFY COLUMN optid integer;
+ALTER TABLE llx_adherent_options DROP PRIMARY KEY;
 ALTER TABLE llx_adherent_options DROP INDEX uk_adherent_options;
+ALTER TABLE llx_adherent_options DROP INDEX idx_adherent_options;
 ALTER TABLE llx_adherent_options DROP INDEX adhid;
-ALTER TABLE llx_adherent_options ADD INDEX idx_adherent_options (adhid);
+ALTER TABLE llx_adherent_options CHANGE optid rowid integer AUTO_INCREMENT PRIMARY KEY;
+ALTER TABLE llx_adherent_options CHANGE adhid fk_member integer NOT NULL;
+ALTER TABLE llx_adherent_options ADD INDEX idx_adherent_options (fk_member);
 
 ALTER TABLE llx_adherent DROP INDEX idx_adherent_fk_soc;
