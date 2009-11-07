@@ -964,7 +964,7 @@ div.ok {
 }
 
 div.warning {
-  color: #442200;
+  color: #997711;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0e0d0;
@@ -982,7 +982,7 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #888888;
+  color: #707070;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0e0d0;
