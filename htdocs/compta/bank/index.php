@@ -126,7 +126,7 @@ foreach ($accounts as $key=>$type)
 }
 
 // Total
-print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';
+print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
 
 print '<tr><td colspan="5">&nbsp;</td></tr>';
@@ -170,7 +170,7 @@ foreach ($accounts as $key=>$type)
 }
 
 // Total
-print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';
+print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
 
 
@@ -225,7 +225,7 @@ foreach ($accounts as $key=>$type)
 }
 
 // Total
-print '<tr class="liste_total"><td colspan="4">&nbsp;</td><td align="center"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td></tr>';
+print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
 
 

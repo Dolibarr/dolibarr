@@ -67,7 +67,7 @@ $result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0;
+	$i = 0; $total = 0; $totalnb = 0;
 
 	$var=true;
 	while ($i < $num)
@@ -81,12 +81,14 @@ if ($result)
 		print '<td align="right">'.price(abs(price2num($objp->somme / $objp->nombre,'MT')))."</td>";
 		print "</tr>";
 		$i++;
-		$total = $total + abs($objp->somme);
+		$total += abs($objp->somme);
+		$totalnb += $objp->nombre;
 	}
 	$db->free($result);
 
-	print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-	print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
+	print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
+	print '<td align="right" class="liste_total">'.price($total).'</td>';
+	print '<td align="right" colspan="2" class="liste_total">'.price(price2num($total / $totalnb, 'MT')).'</td></tr>';
 }
 else
 {
