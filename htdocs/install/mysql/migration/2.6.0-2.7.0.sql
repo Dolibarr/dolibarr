@@ -480,4 +480,7 @@ ALTER TABLE llx_menu change user usertype      integer NOT NULL default '0';
 
 -- Rename index
 ALTER TABLE llx_adherent_options DROP INDEX uk_adherent_options;
+ALTER TABLE llx_adherent_options DROP INDEX adhid;
 ALTER TABLE llx_adherent_options ADD INDEX idx_adherent_options (adhid);
+
+ALTER TABLE llx_adherent DROP INDEX idx_adherent_fk_soc;
