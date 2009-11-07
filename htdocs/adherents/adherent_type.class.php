@@ -217,7 +217,7 @@ class AdherentType extends CommonObject
 
 		$sql = "SELECT rowid, libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
-		$sql.= "WHERE entity = ".$conf->entity;
+		$sql.= " WHERE entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

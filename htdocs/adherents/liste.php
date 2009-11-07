@@ -77,6 +77,7 @@ $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.fk_adherent_type = t.rowid ";
+$sql.= " AND d.entity = ".$conf->entity;
 if ($sall)
 {
     $sql.=" AND (d.prenom like '%".$sall."%' OR d.nom like '%".$sall."%' OR d.societe like '%".$sall."%'";
@@ -89,7 +90,7 @@ if ($_REQUEST["type"] > 0)
 }
 if (isset($_GET["statut"]))
 {
-    $sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre s�par�s par virgules
+    $sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre separes par virgules
 }
 if ( $_POST["action"] == 'search')
 {
@@ -121,7 +122,7 @@ if ($filter == 'outofdate')
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $resql = $db->query($sql);
+	$resql = $db->query($sql);
     if ($resql) $nbtotalofrecords = $db->num_rows($result);
     else dol_print_error($db);
 }
