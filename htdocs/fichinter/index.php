@@ -140,8 +140,8 @@ if ($result)
 		$total += $objp->duree;
 		$i++;
 	}
-	print '<tr class="liste_total"><td colspan="4"></td><td align="center">'.$langs->trans("Total").'</td>';
-	print '<td align="right" nowrap>'.ConvertSecondToTime($total).'</td><td></td>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
+	print '<td align="right" nowrap="nowrap" class="liste_total">'.ConvertSecondToTime($total).'</td><td>&nbsp;</td>';
 	print '</tr>';
 
 	print '</table>';
