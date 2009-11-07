@@ -449,11 +449,7 @@ class FormFile
 			&& ! preg_match('/\.meta$/i',$file['name']))
 			{
 				// Define relative path used to store the file
-				if (! $relativepath)
-				{
-					$relativepath=dol_sanitizeFileName($object->ref).'/';
-					if ($modulepart == 'facture_fournisseur')	$relativepath=get_exdir($object->id,2).$relativepath;
-				}
+				if (! $relativepath) $relativepath=dol_sanitizeFileName($object->ref).'/';
 
 				$var=!$var;
 				print "<tr $bc[$var]><td>";
