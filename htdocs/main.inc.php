@@ -1043,7 +1043,7 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 			print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 			if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
 			print '" href="';
-			print sprintf($helpbaseurl,$helppage);
+			print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 			print '">';
 			print img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).' ';
 			print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
