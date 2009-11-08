@@ -361,6 +361,14 @@ class ImportCsv extends ModeleImports
 				{
 					if ($listfields)
 					{
+						// If some values need to be found somewhere than in source file: Might be a rowid found from a fetch on a reference.
+						// This is used when insert must be done when a parent row already exists
+						// TODO
+
+						// If some values need to be found somewhere than in source file: Might be lastinsert id from previous insert
+						// This is used when insert must be done in several tables
+						// TODO
+
 						// Build SQL request
 						$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
 						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];

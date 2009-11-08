@@ -39,6 +39,7 @@ class Import
 	var $array_import_entities;
 	var $array_import_regex;
 	var $array_import_examplevalues;
+	var $array_import_convertvalue;
 
 
 	/**
@@ -147,8 +148,10 @@ class Import
 									$this->array_import_entities[$i]=$module->import_entities_array[$r];
 									// Tableau des alias a exporter (cle=champ, valeur=alias)
 									$this->array_import_regex[$i]=$module->import_regex_array[$r];
-									// Tableau des alias a exporter (cle=champ, valeur=alias)
+									// Tableau des alias a exporter (cle=champ, valeur=exemple)
 									$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
+									// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
+									$this->array_import_convertvalue[$i]=$module->import_convertvalue_array[$r];
 
 									dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".sizeof($module->import_fields_code[$r]));
 									$i++;

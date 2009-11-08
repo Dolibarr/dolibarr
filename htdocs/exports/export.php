@@ -46,7 +46,7 @@ $entitytoicon=array(
 	'account'=>'account',
 	'payment'=>'payment',
 	'product'=>'product','stock'=>'generic','warehouse'=>'stock',
-	'category'=>'generic',
+	'category'=>'category',
 	'other'=>'generic',
 	);
 $entitytolang=array(		// Translation code
@@ -410,22 +410,22 @@ if ($step == 2 && $datatoexport)
 
         $i++;
 
-        $entity=$objexport->array_export_entities[0][$code];
+        $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
         print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+        $text=$langs->trans($label);
+        $tablename=getablenamefromfield($code,$sqlmaxforexport);
+        $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
+        $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
         if ((isset($array_selected[$code]) && $array_selected[$code]) || $modelchoice == 1)
         {
             // Selected fields
             print '<td>&nbsp;</td>';
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>';
-            $text=$langs->trans($label);
-            $tablename=getablenamefromfield($code,$sqlmaxforexport);
-            $htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
-			$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
-			print $html->textwithpicto($text,$htmltext);
+            print $html->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
             $bit=1;
@@ -434,10 +434,6 @@ if ($step == 2 && $datatoexport)
         {
         	// Fields not selected
             print '<td>';
-            $text=$langs->trans($label);
-           	$tablename=getablenamefromfield($code,$sqlmaxforexport);
-            $htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
-			$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
 			print $html->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
@@ -550,7 +546,7 @@ if ($step == 3 && $datatoexport)
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        $entity=$objexport->array_export_entities[0][$code];
+        $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
@@ -559,9 +555,9 @@ if ($step == 3 && $datatoexport)
         print '<td>';
         $text=$langs->trans($objexport->array_export_fields[0][$code]);
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
-        $htmltext =$langs->trans("Table").": <b>".$tablename."</b><br>";
-		$htmltext.=$langs->trans("Field").': <b>'.$code."</b><br>";
-		print $html->textwithpicto($text,$htmltext);
+        $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
+        $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+        print $html->textwithpicto($text,$htmltext);
 		//print ' ('.$code.')';
         print '</td>';
 
@@ -799,10 +795,11 @@ function getablenamefromfield($code,$sqlmaxforexport)
 {
 	$newsql=$sqlmaxforexport;
 	$newsql=preg_replace('/^(.*) FROM /i','',$newsql);
-	$newsql=preg_replace('/ WHERE (.*)$/i','',$newsql);
+	$newsql=preg_replace('/WHERE (.*)$/i','',$newsql);	// We must keep the ' ' before WHERE
 	$alias=preg_replace('/\.(.*)$/i','',$code);
 	//print $newsql.' '.$alias;
-	if (preg_match('/([a-zA-Z_]+) as /i'.$alias.'[, \)]',$newsql,$reg))
+	$regexstring='/([a-zA-Z_]+) as '.$alias.'[, \)]/i';
+	if (preg_match($regexstring,$newsql,$reg))
 	{
 		return $reg[1];
 	}

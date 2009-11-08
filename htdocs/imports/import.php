@@ -76,7 +76,7 @@ $importmodelid=isset($_POST["importmodelid"])? $_POST["importmodelid"] : '';
 $excludefirstline=isset($_GET["excludefirstline"])? $_GET["excludefirstline"] : (isset($_POST["excludefirstline"])?$_POST["excludefirstline"]:0);
 
 $objimport=new Import($db);
-$objimport->load_arrays($user,$datatoimport);
+$objimport->load_arrays($user,($step==1?'':$datatoimport));
 
 $objmodelimport=new ModeleImports();
 
@@ -833,7 +833,7 @@ if ($step == 4 && $datatoimport)
 
 		$i++;
 
-		$entity=$objimport->array_import_entities[0][$code];
+		$entity=(! empty($objimport->array_import_entities[0][$code])?$objimport->array_import_entities[0][$code]:$objimport->array_import_icon[0]);
 		$tablealias=preg_replace('/(\..*)$/i','',$code);
 		$tablename=$objimport->array_import_tables[0][$tablealias];
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
@@ -851,11 +851,11 @@ if ($step == 4 && $datatoimport)
 			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= sizeof($fieldssource)));
 			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
 		}
-		$htmltext =$langs->trans("Label").": <b>".$langs->trans($newlabel)."</b><br>";
-		$htmltext.=$langs->trans("Table")." -> ".$langs->trans("Field").": <b>".$tablename."</b> -> <b>".preg_replace('/^.*\./','',$code)."</b><br>";
-		$htmltext.=$langs->trans("Required").': <b>'.yn(preg_match('/\*$/',$label)).'</b>';
+		$htmltext ='<b>'.$langs->trans("Label").":</b> ".$langs->trans($newlabel)."<br>";
+		$htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."</b><br>";
+		$htmltext.='<b>'.$langs->trans("Required").':</b> '.yn(preg_match('/\*$/',$label));
 		$note=$objimport->array_import_examplevalues[0][$code];
-		if ($note) $htmltext.='<br>'.$langs->trans("Note").'/'.$langs->trans("Example").': '.$note;
+		if ($note) $htmltext.='<br><b>'.$langs->trans("Note").'/'.$langs->trans("Example").':</b> '.$note;
 		$text.=$more;
 		print $html->textwithpicto($text,$htmltext);
 		print '</td>';

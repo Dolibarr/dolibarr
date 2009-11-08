@@ -194,7 +194,7 @@ class modSociete extends DolibarrModules
 		$this->export_icon[$r]='company';
 		$this->export_permission[$r]=array(array("societe","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'t.libelle'=>"ThirdPartyType",'ce.code'=>"Effectif","cfj.libelle"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','fk_stcomm'=>'ProspectStatus');
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>"company",'s.prefix_comm'=>"company",'s.client'=>"company",'s.fournisseur'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.libelle'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company",'t.libelle'=>"company",'ce.code'=>"company","cfj.libelle"=>"company",'s.fk_prospectlevel'=>'company','fk_stcomm'=>'company');
+		$this->export_entities_array[$r]=array();	// We define here only fields that use another picto
 		$this->export_alias_array[$r]=array('s.rowid'=>"socid",'s.nom'=>"name",'s.prefix_comm'=>"prefix",'s.client'=>"iscustomer",'s.fournisseur'=>"issupplier",'s.datec'=>"datecreation",'s.tms'=>"datelastmodification",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode",'s.address'=>"address",'s.cp'=>"zip",'s.ville'=>"town",'p.libelle'=>"country",'p.code'=>"countrycode",'s.tel'=>"phone",'s.fax'=>"fax",'s.url'=>"url",'s.email'=>"email",'s.siret'=>"idprof1",'s.siren'=>"idprof2",'s.ape'=>"idprof3",'s.idprof4'=>"idprof4",'s.tva_intra'=>"vatintra",'s.capital'=>"capital",'s.note'=>"note",'t.libelle'=>"thirdpartytype",'ce.code'=>"effectif","cfj.libelle"=>"juridicalstatus",'s.fk_prospectlevel'=>'prospectlevel','fk_stcomm'=>'prospectstatus');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -212,7 +212,7 @@ class modSociete extends DolibarrModules
 		$this->export_icon[$r]='contact';
 		$this->export_permission[$r]=array(array("societe","contact","export"));
 		$this->export_fields_array[$r]=array('c.rowid'=>"IdContact",'c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.priv'=>"ContactPrivate",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode");
-		$this->export_entities_array[$r]=array('c.rowid'=>"contact",'c.civilite'=>"contact",'c.name'=>'contact','c.firstname'=>'contact','c.datec'=>"contact",'c.tms'=>"contact",'c.priv'=>"contact",'c.address'=>"contact",'c.cp'=>"contact",'c.ville'=>"contact",'c.phone'=>"contact",'c.fax'=>"contact",'c.email'=>"contact",'p.libelle'=>"contact",'p.code'=>"contact",'s.rowid'=>"company",'s.nom'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company");
+		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company");	// We define here only fields that use another picto
 		$this->export_alias_array[$r]=array('c.rowid'=>"contactid",'c.civilite'=>"civilitycode",'c.name'=>'lastname','c.firstname'=>'firstname','c.datec'=>"datecreation",'c.tms'=>"datelastmodification",'c.priv'=>"private",'c.address'=>"address",'c.cp'=>"zip",'c.ville'=>"town",'c.phone'=>"phone",'c.fax'=>"fax",'c.email'=>"email",'p.libelle'=>"country",'p.code'=>"countrycode",'s.rowid'=>"socid",'s.nom'=>"companyname",'s.code_client'=>"customercode",'s.code_fournisseur'=>"suppliercode");
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -232,14 +232,24 @@ class modSociete extends DolibarrModules
 		$this->import_label[$r]='ImportDataset_company_1';
 		$this->import_icon[$r]='company';
 		//$this->import_permission[$r]=array(array("societe","export"));
-		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'societe');
+		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'societe');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('s.nom'=>"Name*",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer*",'s.fournisseur'=>"Supplier*",'s.datec'=>"DateCreation",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'s.fk_typent'=>"ThirdPartyType",'s.fk_effectif'=>"Effectif","s.fk_forme_juridique"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus');
-		$this->import_entities_array[$r]=array('s.nom'=>"company",'s.prefix_comm'=>"company",'s.client'=>"company",'s.fournisseur'=>"company",'s.datec'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company",'s.fk_typent'=>"company",'s.fk_effectif'=>"company","s.fk_forme_juridique"=>"company",'s.fk_prospectlevel'=>'company','s.fk_stcomm'=>'company');
+		$this->import_entities_array[$r]=array();	// We define here only fields that use another picto
 		$this->import_examplevalues_array[$r]=array('s.nom'=>"A company",'s.prefix_comm'=>"comp",'s.client'=>'0 or 1','s.fournisseur'=>'0 or 1','s.datec'=>dol_print_date(mktime(),'YYYY-MM-DD'),'s.code_client'=>"CU01-0001",'s.code_fournisseur'=>"SU01-0001",'s.address'=>"61 jump street",'s.cp'=>"123456",'s.ville'=>"Big town",'s.tel'=>"0101010101",'s.fax'=>"0101010102",'s.url'=>"http://mycompany.com",'s.email'=>"test@mycompany.com",'s.siret'=>"",'s.siren'=>"",'s.ape'=>"",'s.idprof4'=>"",'s.tva_intra'=>"FR0123456789",'s.capital'=>"10000",'s.note'=>"This is an example of note for record",'s.fk_typent'=>"2",'s.fk_effectif'=>"3","s.fk_forme_juridique"=>"1",'s.fk_prospectlevel'=>'AAA','s.fk_stcomm'=>'BBB');
 
-		//$this->import_sql_start[$r]='INSERT INTO '.MAIN_DB_PREFIX.'societe as s';
-		//$this->import_sql_end[$r]  ='';
-
+		// Import list of contact and attributes
+/*		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]='ImportDataset_company_2';
+		$this->import_icon[$r]='contact';
+		//$this->import_permission[$r]=array(array("societe","export"));
+		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'socpeople');	// List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r]=array('s.fk_soc'=>'ThirdPartyName*','s.nom'=>"Name*",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer*",'s.fournisseur'=>"Supplier*",'s.datec'=>"DateCreation",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note",'s.fk_typent'=>"ThirdPartyType",'s.fk_effectif'=>"Effectif","s.fk_forme_juridique"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus');
+		$this->import_entities_array[$r]=array('s.fk_soc'=>'company');	// We define here only fields that use another picto
+		$this->import_examplevalues_array[$r]=array('t.nom'=>'A third party ref','s.nom'=>"A company",'s.prefix_comm'=>"comp",'s.client'=>'0 or 1','s.fournisseur'=>'0 or 1','s.datec'=>dol_print_date(mktime(),'YYYY-MM-DD'),'s.code_client'=>"CU01-0001",'s.code_fournisseur'=>"SU01-0001",'s.address'=>"61 jump street",'s.cp'=>"123456",'s.ville'=>"Big town",'s.tel'=>"0101010101",'s.fax'=>"0101010102",'s.url'=>"http://mycompany.com",'s.email'=>"test@mycompany.com",'s.siret'=>"",'s.siren'=>"",'s.ape'=>"",'s.idprof4'=>"",'s.tva_intra'=>"FR0123456789",'s.capital'=>"10000",'s.note'=>"This is an example of note for record",'s.fk_typent'=>"2",'s.fk_effectif'=>"3","s.fk_forme_juridique"=>"1",'s.fk_prospectlevel'=>'AAA','s.fk_stcomm'=>'BBB');
+		// If value for some fields need to be found differently than directly in file, we declare rules to find it (might be class and function to find id or might be a lastinsert id).
+		$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('class'=>'Societe','method'=>'fetch'));
+*/
 	}
 
 
