@@ -260,7 +260,7 @@ function dol_syslog($message, $level=LOG_INFO)
 
 			if ($file)
 			{
-				$ip=$_SERVER['COMPUTERNAME'];
+				$ip=$_SERVER['SERVER_ADDR'];
 				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];
 
 				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
