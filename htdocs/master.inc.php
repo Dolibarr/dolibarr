@@ -190,14 +190,6 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
-	// Name
-	if (preg_match('/firefox/i',$_SERVER["HTTP_USER_AGENT"]))       $conf->browser->name='firefox';
-	elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->name='iceweasel';
-	elseif (preg_match('/safari/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='safari';
-	elseif (preg_match('/chrome/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='chrome';
-	elseif (preg_match('/opera/i',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
-	elseif (preg_match('/msie/i',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
-	else $conf->browser->name='unknown';
 	// If phone/smartphone, we set osname.
 	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
 	elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
@@ -205,8 +197,18 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
 	elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
 	elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
+	// MS products at end
 	elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='windowsmobile';
 	elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='windowsmobile';
+	// Name
+	if (preg_match('/firefox/i',$_SERVER["HTTP_USER_AGENT"]))       $conf->browser->name='firefox';
+	elseif (preg_match('/chrome/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='chrome';
+	elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->name='iceweasel';
+	elseif ((empty($conf->browser->phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='safari';	// Safari is often present in string but its not.
+	elseif (preg_match('/opera/i',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
+	// MS products at end
+	elseif (preg_match('/msie/i',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
+	else $conf->browser->name='unknown';
 	// Other
 	if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
 }
