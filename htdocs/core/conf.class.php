@@ -44,12 +44,15 @@ class Conf
 
 	var $dol_document_root;
 
-	var $monnaie;		// Used to store current currency
-	var $css;			// Used to store current css (from theme)
+	//! Used to store current currency
+	var $monnaie;
+	//! Used to store current css (from theme)
+	var $css;
 	var $top_menu;
 	var $left_menu;
 
-	var $entity=1;		// By default
+	//! Used to store entity for multi-company (default 1)
+	var $entity=1;
 
 	var $css_modules=array();
 	var $tabs_modules=array();
