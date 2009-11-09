@@ -98,13 +98,13 @@ class Account extends CommonObject
 
 
 	/**
-	 *      Add a link between bank line record and its source
-	 *      @param      line_id     Id ecriture bancaire
-	 *      @param      url_id      Id parametre url
-	 *      @param      url         Url
-	 *      @param      label       Link label
-	 *      @param      type        Type of link ('payment', 'company', 'member', ...)
-	 *      @return     int         <0 if KO, id line if OK
+	 *      \brief      Add a link between bank line record and its source
+	 *      \param      line_id     Id ecriture bancaire
+	 *      \param      url_id      Id parametre url
+	 *      \param      url         Url
+	 *      \param      label       Link label
+	 *      \param      type        Type of link ('payment', 'company', 'member', ...)
+	 *      \return     int         <0 if KO, id line if OK
 	 */
 	function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
@@ -137,8 +137,8 @@ class Account extends CommonObject
 
 	/**
 	 *      \brief      Renvoi tableau des liens
-	 *      \param      line_id         Id ligne �criture
-	 *      \retuen     array           Tableau des liens
+	 *      \param      line_id         Id ligne ecriture
+	 *      \return     array           Tableau des liens
 	 */
 	function get_url($line_id)
 	{
@@ -174,18 +174,18 @@ class Account extends CommonObject
 	}
 
 	/**
-		\brief     	Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-		\param		$date			Date operation
-		\param		$oper			1,2,3,4... or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
-		\param		$label			Descripton
-		\param		$amount			Montant
-		\param		$num_chq		Numero cheque ou virement
-		\param		$categorie		Categorie optionnelle
-		\param		$user			User that create
-		\param		$emetteur		Nom emetteur
-		\param		$banque			Banque emettrice
-		\return		int				Rowid of added entry, <0 si erreur
-		*/
+	 *  \brief     	Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
+	 *  \param		$date			Date operation
+	 *  \param		$oper			1,2,3,4... or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
+	 *  \param		$label			Descripton
+	 *  \param		$amount			Montant
+	 *  \param		$num_chq		Numero cheque ou virement
+	 *  \param		$categorie		Categorie optionnelle
+	 *  \param		$user			User that create
+	 *  \param		$emetteur		Nom emetteur
+	 *  \param		$banque			Banque emettrice
+	 *  \return		int				Rowid of added entry, <0 si erreur
+	 */
 	function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user, $emetteur='',$banque='')
 	{
 		// Clean parameters
@@ -448,7 +448,7 @@ class Account extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *    	\brief      Update BBAN (RIB) account fields
 	 *    	\param      user        Object user making update
 	 *		\return		int			<0 if KO, >0 if OK
@@ -499,7 +499,7 @@ class Account extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *      \brief      Charge un compte en memoire depuis la base
 	 *      \param      id      Id du compte a recuperer
 	 *      \param      ref     Ref du compte a recuperer
@@ -571,7 +571,7 @@ class Account extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *    \brief      Efface le compte
 	 */
 	function delete()
@@ -648,7 +648,7 @@ class Account extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
 	 *    \return     boolean     vrai si peut etre supprime, faux sinon
 	 */
@@ -672,8 +672,8 @@ class Account extends CommonObject
 	}
 
 
-	/*
-	 *
+	/**
+	 *   \brief    return error
 	 */
 	function error()
 	{
@@ -705,8 +705,8 @@ class Account extends CommonObject
 		}
 	}
 
-	/*
-	 *
+	/**
+	 *  \brief   
 	 */
 	function datev_next($rowid)
 	{
@@ -730,8 +730,8 @@ class Account extends CommonObject
 		}
 	}
 
-	/*
-	 *
+	/**
+	 *  \brief   
 	 */
 	function datev_previous($rowid)
 	{

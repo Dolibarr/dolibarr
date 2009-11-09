@@ -21,11 +21,11 @@
  */
 
 /**
-    	\file       htdocs/admin/ldap.php
-		\ingroup    ldap
-		\brief      Page d'administration/configuration du module Ldap
-		\version    $Id$
-*/
+ *      \file       htdocs/admin/ldap.php
+ *      \ingroup    ldap
+ *      \brief      Page d'administration/configuration du module Ldap
+ *      \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -255,7 +255,7 @@ if (function_exists("ldap_connect"))
 
 	if ($_GET["action"] == 'test')
 	{
-		$ldap = new Ldap();	// Les parametres sont pass�s et r�cup�r�s via $conf
+		$ldap = new Ldap();	// Les parametres sont passes et recuperes via $conf
 
 		$result = $ldap->connect_bind();
 		if ($result)

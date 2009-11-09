@@ -47,9 +47,10 @@ if ($_GET["action"] == 'reset' && $user->admin)
 }
 
 
-/**     \brief      Active un module
-        \param      value   Nom du module a activer
-*/
+/**
+ *  \brief      Active un module
+ *  \param      value   Nom du module a activer
+ */
 function Activate($value)
 {
     global $db, $modules;
@@ -65,7 +66,7 @@ function Activate($value)
         $objMod->init();
     }
 
-    // Activation des modules dont le module d�pend
+    // Activation des modules dont le module depend
     for ($i = 0; $i < sizeof($objMod->depends); $i++)
     {
         Activate($objMod->depends[$i]);
@@ -74,9 +75,10 @@ function Activate($value)
 }
 
 
-/**     \brief      D�sactive un module
-        \param      value   Nom du module a d�sactiver
-*/
+/**
+ *  \brief      Desactive un module
+ *  \param      value   Nom du module a desactiver
+ */
 function UnActivate($value)
 {
     global $db, $modules;
