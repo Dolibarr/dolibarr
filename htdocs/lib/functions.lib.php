@@ -260,8 +260,10 @@ function dol_syslog($message, $level=LOG_INFO)
 
 			if ($file)
 			{
-				$ip=$_SERVER['SERVER_ADDR'];
-				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];
+				$ip='???';
+				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];			// In most cases.
+				else if (! empty($_SERVER['SERVER_ADDR'])) $ip=$_SERVER['SERVER_ADDR'];		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
+				else if (! empty($_SERVER['COMPUTERNAME'])) $ip=$_SERVER['COMPUTERNAME'];	// This is when PHP session is ran outside a web server, like from command line (Not always defined, but usefull on OS define it).
 
 				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
 				$liblevel=$liblevelarray[$level];
@@ -1867,7 +1869,7 @@ function dol_print_error($db='',$error='')
 
 	global $dolibarr_main_prod;
 	if (empty($dolibarr_main_prod)) print $out;
-	else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported on browsers. Please read the log file for error message.';
+	else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
 
