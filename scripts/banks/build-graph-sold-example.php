@@ -19,13 +19,17 @@
  */
 
 /**
- *		\file       	scripts/banque/graph-solde.php
+ *		\file       	scripts/banque/build-graph-sold-example.php
  *		\ingroup    	banque
- *		\brief      	Script de g�n�ration des images des soldes des comptes
+ *		\brief      	Script to build graph of sold for each bank account
  *		\deprecated		Ce script n'est plus utilise car les graphiques sont generes dynamiquement maintenant.
  *		\version		$Id$
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=preg_replace('@[\\\/]+$@','',$path).'/';
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -34,11 +38,15 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit;
 }
 
-// Recupere root dolibarr
-$path=str_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
-
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+
+
+if (! isset($argv[1]) || ! $argv[1]) {
+	print "Usage: ".$script_file." now\n";
+	exit;
+}
+$id=$argv[1];
 
 
 $error = 0;
@@ -56,7 +64,7 @@ else
 }
 
 
-// Cr�e r�pertoire accueil
+// Create output directory
 create_exdir($conf->banque->dir_temp);
 
 
@@ -496,5 +504,7 @@ foreach ($accounts as $account)
 }
 
 $db->close();
+
+print 'Graph files generated into directory '.$conf->banque->dir_temp."\n";
 
 ?>
