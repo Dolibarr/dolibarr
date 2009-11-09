@@ -246,27 +246,44 @@ CountryJE = Jersey
 CountryME = Monténégro
 CountryBL = Saint-Barthélemy
 CountryMF = Saint-Martin
-##### Civilities ##### = undefined = 
+##### Civilities ##### =  = 
 CivilityMME = Senyora
 CivilityMR = Senyor
 CivilityMLE = Senyoreta
 CivilityMTRE = En
-##### Currencies ##### = undefined = 
+##### Currencies ##### =  = 
 Currencyeuros = Euros
 CurrencyAUD = Dòlars Aus.
+CurrencySingAUD = Dòlar Aus.
 CurrencyCAD = Dòlars Can.
+CurrencySingCAD = Dòlar Can.
 CurrencyCHF = Francs suïssos
+CurrencySingCHF = Franc suís
 CurrencyEUR = Euros
+CurrencySingEUR = Euro
 CurrencyFRF = Francs francesos
+CurrencySingFRF = Franc francès
 CurrencyGBP = Lliura esterlina
+CurrencySingGBP = Lliura esterlina
 CurrencyMAD = Dhiram
+CurrencySingMAD = Dírham
 CurrencyMGA = Ariary
+CurrencySingMGA = Ariary
 CurrencyMUR = Rupies mauritanes
+CurrencySingMUR = Rupia mauritana
 CurrencyNOK = Corones noruegues
+CurrencySingNOK = Corona noruega
 CurrencySUR = Rubles
+CurrencySingSUR = Ruble
 CurrencyTND = TND
+CurrencySingTND = Dinar tunisià
 CurrencyTRL = Lliures turques
+CurrencySingTRL = Lliura turca
 CurrencyUSD = Dòlars USA
+CurrencySingUSD = Dòlar USA
 CurrencyXAF = Francs CFA BEAC
+CurrencySingXAF = Franc CFA BEAC
 CurrencyXOF = Francs CFA BCEAO
+CurrencySingXOF = Franc CFA BCEAO
 CurrencyXPF = Francs CFP
+CurrencySingXPF = Franc CFP
