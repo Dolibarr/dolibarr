@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- *
- * Export simple des contacts
  */
+
+/**
+ *      \file       scripts/company/export-contacts-xls-example.php
+ *      \ingroup    company
+ *      \brief      Export third parties' contacts with emails
+ *		\version	$Id$
+ */
+
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=preg_replace('@[\\\/]+$@','',$path).'/';
+
+// Test if batch mode
+if (substr($sapi_type, 0, 3) == 'cgi') {
+	echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
+}
+
+if (! isset($argv[1]) || ! $argv[1]) {
+	print "Usage: $script_file now\n";
+	exit;
+}
+$now=$argv[1];
+
+// Recupere env dolibarr
+$version='$Revision$';
 
 require_once("../../htdocs/master.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
@@ -27,7 +51,7 @@ require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 $error = 0;
 
 
-$fname = '/tmp/export-client.xls';
+$fname = DOL_DATA_ROOT.'/export-contacts.xls';
 
 $workbook = &new writeexcel_workbook($fname);
 
@@ -39,32 +63,31 @@ $sql = "SELECT distinct(c.email),c.name, c.firstname, s.nom ";
 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE s.rowid = c.fk_soc";
-$sql .= " AND s.client = 1";
 $sql .= " AND c.email IS NOT NULL";
 $sql .= " ORDER BY c.email ASC";
 
 if ($db->query($sql))
 {
-  $num = $db->num_rows();
+	$num = $db->num_rows();
 
-  print "Lignes trait�es $num\n";
+	print "Lines ".$num."\n";
 
-  $i = 0;
-  $j = 1;
+	$i = 0;
+	$j = 1;
 
-  $page->write_string(0, 0,  "Soci�t�");
-  $page->write_string(0, 1,  "Pr�nom");
-  $page->write_string(0, 2,  "Nom");
-  $page->write_string(0, 3,  "Email");
+	$page->write_string(0, 0,  $langs->trans("ThirdParty"));
+	$page->write_string(0, 1,  $langs->trans("Firstname"));
+	$page->write_string(0, 2,  $langs->trans("Lastname"));
+	$page->write_string(0, 3,  $langs->trans("Email"));
 
-  $oldemail = "";
+	$oldemail = "";
 
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object();
-
-      if ($obj->email <> $oldemail)
+	while ($i < $num)
 	{
+		$obj = $db->fetch_object();
+
+		if ($obj->email <> $oldemail)
+		{
 
 	  $page->write_string($j, 0,  $obj->nom);
 	  $page->write_string($j, 1,  $obj->firstname);
@@ -73,11 +96,13 @@ if ($db->query($sql))
 	  $j++;
 
 	  $oldemail = $obj->email;
+		}
+
+		$i++;
+
 	}
 
-      $i++;
-
-    }
+	print 'File '.$fname.' was generated.'."\n";
 }
 
 $workbook->close();
