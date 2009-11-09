@@ -34,10 +34,9 @@
 
 
 /**
-        \class      Osc_Categorie.class
-        \brief      Class description
-*/
-
+ *        \class      Osc_Categorie
+ *        \brief      Class description
+ */
 class Osc_Categorie
 {
     var $db;

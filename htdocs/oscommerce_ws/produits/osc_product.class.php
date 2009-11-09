@@ -27,10 +27,9 @@
 
 
 /**
-        \class      Osc_product
-        \brief      Classe permettant la gestion des produits issus d'une base OSC
-*/
-
+ *       \class      Osc_product
+ *       \brief      Classe permettant la gestion des produits issus d'une base OSC
+ */
 class Osc_product
 {
 	var $db;
