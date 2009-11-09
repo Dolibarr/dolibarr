@@ -363,10 +363,12 @@ class ImportCsv extends ModeleImports
 					{
 						// If some values need to be found somewhere than in source file: Might be a rowid found from a fetch on a reference.
 						// This is used when insert must be done when a parent row already exists
+						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'fetchfromref',file='/societe.class.php','class'=>'Societe','method'=>'fetch'));
 						// TODO
 
 						// If some values need to be found somewhere than in source file: Might be lastinsert id from previous insert
 						// This is used when insert must be done in several tables
+						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 						// TODO
 
 						// Build SQL request
