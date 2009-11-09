@@ -98,7 +98,7 @@ class Account extends CommonObject
 
 
 	/**
-	 *      \brief      Add a link between bank line record and its source
+	 *      \briref     Add a link between bank line record and its source
 	 *      \param      line_id     Id ecriture bancaire
 	 *      \param      url_id      Id parametre url
 	 *      \param      url         Url
