@@ -86,7 +86,9 @@ if ($resql)
 	}
 	else
 	{
-		dol_syslog("Error emailing with id ".$id." not found",LOG_ERR);
+		$mesg="Emailing with id ".$id." not found";
+		print $mesg."\n";
+		dol_syslog($mesg,LOG_ERR);
 	}
 }
 
