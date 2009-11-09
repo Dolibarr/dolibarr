@@ -25,6 +25,11 @@
  *		\version	$Id$
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
+$path=preg_replace('@[\\\/]+$@','',$path).'/';
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -32,8 +37,10 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-// Recupere root dolibarr
-$path=str_replace('email_unpaid_invoices_to_representatives.php','',$_SERVER["PHP_SELF"]);
+if (! isset($argv[1]) || ! $argv[1]) {
+	print "Usage: $script_file now\n";
+	exit;
+}
 
 
 require($path."../../htdocs/master.inc.php");
