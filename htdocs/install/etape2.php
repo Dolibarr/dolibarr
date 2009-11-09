@@ -36,7 +36,8 @@ $ok = 0;
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
-error_reporting(0);
+error_reporting(0);		// Disable all errors
+//error_reporting(E_ALL);
 @set_time_limit(180);
 error_reporting($err);
 
