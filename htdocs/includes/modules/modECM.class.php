@@ -132,7 +132,7 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'target'=>'',
-							  'user'=>0);
+							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		// Left menu linked to top menu
@@ -146,7 +146,7 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'target'=>'',
-							  'user'=>0);
+							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		$this->menu[$r]=array('fk_menu'=>'r=1',
@@ -159,7 +159,7 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->setup',
 							  'enabled'=>'$user->rights->ecm->setup',
 							  'target'=>'',
-							  'user'=>0);
+							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		$this->menu[$r]=array('fk_menu'=>'r=1',
@@ -172,7 +172,7 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'enabled'=>'$user->rights->ecm->download || $user->rights->ecm->upload',
 							  'target'=>'',
-							  'user'=>0);
+							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		$this->menu[$r]=array('fk_menu'=>'r=1',
@@ -185,7 +185,7 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->download',
 							  'enabled'=>'$user->rights->ecm->download',
 							  'target'=>'',
-							  'user'=>0);
+							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 	}
