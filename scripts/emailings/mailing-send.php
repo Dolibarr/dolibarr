@@ -34,12 +34,12 @@ $path=preg_replace('@[\\\/]+$@','',$path).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage:  mailing-send.php ID_MAILING\n";
+	print "Usage: ".$script_file." ID_MAILING\n";
 	exit;
 }
 $id=$argv[1];
@@ -69,7 +69,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		dol_syslog("mailing-send: mailing ".$id);
+		dol_syslog("mailing ".$id);
 
 		$id       = $obj->rowid;
 		$subject  = $obj->sujet;
@@ -83,6 +83,10 @@ if ($resql)
 		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		$i++;
+	}
+	else
+	{
+		dol_syslog("Error emailing with id ".$id." not found",LOG_ERR);
 	}
 }
 
@@ -102,7 +106,7 @@ if ($resql)
 
 	if ($num)
 	{
-		dol_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
+		dol_syslog("nb of targets = ".$num, LOG_DEBUG);
 
 		// Positionne date debut envoi
 		$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
@@ -172,7 +176,7 @@ if ($resql)
 				// Mail successful
 				$nbok++;
 
-				dol_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+				dol_syslog("ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
@@ -187,7 +191,7 @@ if ($resql)
 				// Mail failed
 				$nbko++;
 
-				dol_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+				dol_syslog("error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
@@ -207,7 +211,7 @@ if ($resql)
 	if (! $nbko) $statut=3;
 
 	$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-	dol_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
+	dol_syslog("update global status sql=".$sql, LOG_DEBUG);
 	$resql2=$db->query($sql);
 	if (! $resql2)
 	{
@@ -216,7 +220,6 @@ if ($resql)
 }
 else
 {
-	dol_syslog($db->error());
 	dol_print_error($db);
 }
 
