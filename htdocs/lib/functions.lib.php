@@ -246,7 +246,7 @@ function dol_syslog($message, $level=LOG_INFO)
 		$message=$script.$message;
 
 		// Add user to log message
-		$login=isset($_SERVER['USERNAME'])?$_SERVER['USERNAME']:'nologin';
+		$login='nologin';
 		if (is_object($user) && $user->id) $login=$user->login;
 		$message=sprintf("%-8s",$login)." ".$message;
 
@@ -260,10 +260,11 @@ function dol_syslog($message, $level=LOG_INFO)
 
 			if ($file)
 			{
-				$ip='???';
+				$ip='???';	// $ip contains information to identify computer that run the code
 				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];			// In most cases.
 				else if (! empty($_SERVER['SERVER_ADDR'])) $ip=$_SERVER['SERVER_ADDR'];		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-				else if (! empty($_SERVER['COMPUTERNAME'])) $ip=$_SERVER['COMPUTERNAME'];	// This is when PHP session is ran outside a web server, like from command line (Not always defined, but usefull on OS define it).
+				else if (! empty($_SERVER['COMPUTERNAME'])) $ip=$_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but usefull if OS defined it).
+				else if (! empty($_SERVER['LOGNAME'])) $ip='localhost@'.$_SERVER['LOGNAME'];	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 
 				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
 				$liblevel=$liblevelarray[$level];
