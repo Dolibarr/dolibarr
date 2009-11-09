@@ -59,7 +59,7 @@ $page = &$workbook->addworksheet('Export Dolibarr');
 
 $page->set_column(0,4,18); // A
 
-$sql = "SELECT distinct(c.email),c.name, c.firstname, s.nom ";
+$sql = "SELECT distinct c.email, c.name, c.firstname, s.nom ";
 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE s.rowid = c.fk_soc";
