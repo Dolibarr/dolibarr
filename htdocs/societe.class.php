@@ -479,11 +479,11 @@ class Societe extends CommonObject
 
 	/**
 	 *    \brief      Load a third party from database into memory
-	 *    \param      socid       Id third party to load
-	 *    \param      user        User object
-	 *    \return     int         >0 if OK, <0 if KO
+	 *    \param      socid			Id third party to load
+	 *    \param      ref			Name of third party (Warning, this can return several records)
+	 *    \return     int			>0 if OK, <0 if KO or if two records found for same ref.
 	 */
-	function fetch($socid, $user=0)
+	function fetch($socid, $ref='')
 	{
 		global $langs;
 		global $conf;
@@ -534,13 +534,21 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
-		$sql .= ' WHERE s.rowid = '.$socid;
+		if ($socid) $sql .= ' WHERE s.rowid = '.$socid;
+		if ($ref)   $sql .= " WHERE s.nom = '".addslashes($ref)."' AND s.entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		dol_syslog("Societe::fetch ".$sql);
 		if ($resql)
 		{
-			if ($this->db->num_rows($resql))
+			$num=$this->db->num_rows($resql);
+			if ($num > 1)
+			{
+				$this->error='Societe::Fetch several records found for ref='.$ref;
+				dol_syslog($this->error, LOG_ERR);
+				$result = -1;
+			}
+			if ($num)
 			{
 				$obj = $this->db->fetch_object($resql);
 
@@ -624,8 +632,8 @@ class Societe extends CommonObject
 			}
 			else
 			{
-				dol_syslog('Erreur Societe::Fetch aucune societe avec id='.$this->id.' - '.$sql);
-				$this->error='Erreur Societe::Fetch aucune societe avec id='.$this->id.' - '.$sql;
+				$this->error='Societe::Fetch no third party found for id='.$this->id;
+				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
 			}
 

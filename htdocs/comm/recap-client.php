@@ -18,11 +18,11 @@
  */
 
 /**
-    	\file       htdocs/comm/recap-client.php
-		\ingroup    societe
-		\brief      Page de fiche recap client
-		\version    $Id$
-*/
+ *   	\file       htdocs/comm/recap-client.php
+ *		\ingroup    societe
+ *		\brief      Page de fiche recap client
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
 
-// Sécurité accés client
+// Security check
 $socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
@@ -42,9 +42,7 @@ if ($user->societe_id > 0)
 
 
 /*
- *
- * Mode fiche
- *
+ *	View
  */
 
 llxHeader();
@@ -52,18 +50,18 @@ llxHeader();
 if ($socid > 0)
 {
     $societe = new Societe($db);
-    $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.rowid > $socid ORDER BY idp ASC LIMIT 1";
+    $societe->fetch($socid);
 
     /*
      * Affichage onglets
      */
 	$head = societe_prepare_head($societe);
-	
+
     dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
 
 
     print "<table width=\"100%\">\n";
-    print '<tr><td valign="top" width="50%">'; 
+    print '<tr><td valign="top" width="50%">';
 
     print '<table class="border" width="100%">';
 
@@ -74,7 +72,7 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
     print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
     print '</td></tr>';
-	
+
     print "</table>";
 
     print "</td></tr></table>\n";

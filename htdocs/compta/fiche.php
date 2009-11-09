@@ -83,7 +83,7 @@ $form = new Form($db);
 if ($socid > 0)
 {
 	$societe = new Societe($db);
-	$societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.rowid > $socid ORDER BY idp ASC LIMIT 1";
+	$societe->fetch($socid);
 	if ($societe->id <= 0)
 	{
 		dol_print_error($db,$societe->error);

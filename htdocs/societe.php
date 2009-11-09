@@ -60,7 +60,6 @@ $pagenext = $page + 1;
 
 /*
  * Actions
- *
  */
 
 // Recherche

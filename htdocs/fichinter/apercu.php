@@ -86,15 +86,15 @@ if ($_GET["id"] > 0) {
 
 				print '<table class="border" width="100%">';
 
-		    // Ref
-		    print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
-		    print '<td colspan="2">'.$fichinter->ref.'</td>';
+			    // Ref
+			    print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
+			    print '<td colspan="2">'.$fichinter->ref.'</td>';
 
-		    $nbrow=4;
+			    $nbrow=4;
 				print '<td rowspan="'.$nbrow.'" valign="top" width="50%">';
 
 				/*
-  			 * Documents
+  			 	 * Documents
  				 */
 				$fichinterref = dol_sanitizeFileName($fichinter->ref);
 				$dir_output = $conf->ficheinter->dir_output . "/";
@@ -104,7 +104,7 @@ if ($_GET["id"] > 0) {
 				$relativepath = "${fichinterref}/${fichinterref}.pdf";
 				$relativepathdetail = "${fichinterref}/${fichinterref}-detail.pdf";
 
-        // Chemin vers png aper�us
+        		// Chemin vers png apercus
 				$relativepathimage = "${fichinterref}/${fichinterref}.pdf.png";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page

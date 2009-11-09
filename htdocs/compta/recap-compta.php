@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
 
-// Sécurité accés client
+// Security check
 $socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
@@ -39,10 +39,9 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+
 /*
- *
- * Mode fiche
- *
+ *	View
  */
 
 llxHeader();
@@ -50,7 +49,7 @@ llxHeader();
 if ($socid > 0)
 {
     $societe = new Societe($db);
-    $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.rowid > $socid ORDER BY idp ASC LIMIT 1";
+    $societe->fetch($socid);
 
     /*
      * Affichage onglets
@@ -171,7 +170,7 @@ if ($socid > 0)
                         print "<tr $bc[$var]>";
                         print '<td align="center">'.dol_print_date($objp->dp)."</td>\n";
                         print '<td>';
-                        print '&nbsp; &nbsp; &nbsp; '; // Décalage
+                        print '&nbsp; &nbsp; &nbsp; '; // Dï¿½calage
                         print '<a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
                         print "<td>&nbsp;</td>\n";
                         print "<td>&nbsp;</td>\n";
