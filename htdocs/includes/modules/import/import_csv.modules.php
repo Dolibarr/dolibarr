@@ -286,8 +286,10 @@ class ImportCsv extends ModeleImports
 
 		//var_dump($array_match_file_to_database);
 		//var_dump($arrayrecord);
+    	$array_match_database_to_file=array_flip($array_match_file_to_database);
     	$sort_array_match_file_to_database=$array_match_file_to_database;
     	ksort($sort_array_match_file_to_database);
+
 		//var_dump($sort_array_match_file_to_database);
 
 		if (sizeof($arrayrecord) == 0 ||
@@ -309,7 +311,7 @@ class ImportCsv extends ModeleImports
 				$listvalues='';
 				$i=0;
 				$errorforthistable=0;
-				// Loop on each fields in the match array
+				// Loop on each fields in the match array ($key = 1..n, $val=alias of field)
 				foreach($sort_array_match_file_to_database as $key => $val)
 				{
 					if ($key <= $maxfields)
@@ -357,16 +359,21 @@ class ImportCsv extends ModeleImports
 					}
 					$i++;
 				}
+
 				if (! $errorforthistable)
 				{
 					if ($listfields)
 					{
-						// If some values need to be found somewhere than in source file: Might be a rowid found from a fetch on a reference.
+						// If some values need to be found somewhere else than in source file: Case we need a rowid found from a fetch on a reference.
 						// This is used when insert must be done when a parent row already exists
 						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'fetchfromref',file='/societe.class.php','class'=>'Societe','method'=>'fetch'));
-						// TODO
+						foreach($objimport->array_import_convertvalue as $alias => $rulearray)
+						{
+							if (empty($rulearray['rule']) || $rulearray['rule']!='fetchfromref') continue;
+							dol_syslog("We need to get rowid from ref=".$alias." using value found in column ".$array_match_database_to_file." in source file, so ".$arrayrecord[$array_match_database_to_file]['val']);
+						}
 
-						// If some values need to be found somewhere than in source file: Might be lastinsert id from previous insert
+						// If some values need to be found somewhere else than in source file: Case we need lastinsert id from previous insert
 						// This is used when insert must be done in several tables
 						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 						// TODO

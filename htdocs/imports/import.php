@@ -639,7 +639,7 @@ if ($step == 4 && $datatoimport)
 
 	//var_dump($array_match_file_to_database);
 
-	// Is it a first time in page
+	// Is it a first time in page (if yes, we must initialize array_match_file_to_database)
 	if (sizeof($array_match_file_to_database) == 0)
 	{
 		// This is first input in screen, we need to define
@@ -671,6 +671,8 @@ if ($step == 4 && $datatoimport)
 		// Save the match array in session. We now will use the array in session.
 		$_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;
 	}
+	$array_match_database_to_file=array_flip($array_match_file_to_database);
+
 	//print $serialized_array_match_file_to_database;
 	//print $_SESSION["dol_array_match_file_to_database"];
 	//var_dump($array_match_file_to_database);exit;
@@ -791,7 +793,7 @@ if ($step == 4 && $datatoimport)
 	foreach ($array_match_file_to_database as $key => $val)
 	{
 		$var=!$var;
-		show_elem($fieldssource,$lefti,$key,$val,$var);		// key is field number is source file
+		show_elem($fieldssource,$lefti,$key,$val,$var);		// key is field number in source file
 		//print '> '.$lefti.'-'.$key.'-'.$val;
 		$listofkeys[$key]=1;
 		$fieldsplaced[$key]=1;
@@ -851,13 +853,40 @@ if ($step == 4 && $datatoimport)
 			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= sizeof($fieldssource)));
 			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
 		}
-		$htmltext ='<b>'.$langs->trans("Label").":</b> ".$langs->trans($newlabel)."<br>";
-		$htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."</b><br>";
-		$htmltext.='<b>'.$langs->trans("Required").':</b> '.yn(preg_match('/\*$/',$label));
-		$note=$objimport->array_import_examplevalues[0][$code];
-		if ($note) $htmltext.='<br><b>'.$langs->trans("Note").'/'.$langs->trans("Example").':</b> '.$note;
-		$text.=$more;
-		print $html->textwithpicto($text,$htmltext);
+		print $text;
+		print '</td>';
+		// Info field
+		print '<td style="font-weight: normal" align="right">';
+		$filecolumn=$array_match_database_to_file[$code];
+		$htmltext ='<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
+		if ($filecolumn > sizeof($fieldssource)) $htmltext.=$langs->trans("DataComeFromNoWhere").'<br>';
+		else
+		{
+			if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
+			{
+				$htmltext.=$langs->trans("DataComeFromFileFieldNb",$filecolumn).'<br>';
+			}
+			else
+			{
+				if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchfromref') $htmltext.=$langs->trans("DataComeFromIdFoundFromRef",$filecolumn,$langs->transnoentitiesnoconv($entitylang)).'<br>';
+			}
+		}
+		$htmltext.=$langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/',$label)).'</b>';
+		$example=$objimport->array_import_examplevalues[0][$code];
+		if ($example) $htmltext.='<br>'.$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
+		$htmltext.='<br>';
+		$htmltext.='<b><u>'.$langs->trans("FieldTarget").'</u></b><br>';
+		if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
+		{
+			$htmltext.=$langs->trans("DataIsInsertedInto").'<br>';
+		}
+		else
+		{
+			if ($objimport->array_import_convertvalue[0][$code]['rule']=='fetchfromref') $htmltext.=$langs->trans("DataIDSourceIsInsertedInto").'<br>';
+		}
+		$htmltext.=$langs->trans("FieldTitle").": <b>".$langs->trans($newlabel)."</b><br>";
+		$htmltext.=$langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./','',$code)."</b><br>";
+		print $html->textwithpicto($more,$htmltext);
 		print '</td>';
 
 		print '</tr>';
