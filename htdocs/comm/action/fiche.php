@@ -886,8 +886,7 @@ if ($_GET["id"])
 	if ($_GET["action"] != 'edit')
 	{
 		if ($user->rights->agenda->allactions->modify || 
-		   (($act->author->id == $user->id && $user->rights->agenda->myactions->modify) ||
-		   ($act->usertodo->id == $user->id && $user->rights->agenda->myactions->modify)))
+		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->modify))
 		{
 			print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
 		}
@@ -896,9 +895,8 @@ if ($_GET["id"])
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
 		}
 
-		if ($user->rights->agenda->allactions->create || 
-		   (($act->author->id == $user->id && $user->rights->agenda->myactions->create) ||
-		   ($act->usertodo->id == $user->id && $user->rights->agenda->myactions->create)))
+		if ($user->rights->agenda->allactions->modify || 
+		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->modify))
 		{
 			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
 		}
