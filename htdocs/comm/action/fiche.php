@@ -294,8 +294,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 	$actioncomm = new ActionComm($db);
 	$actioncomm->fetch($_GET["id"]);
 
-	if ($user->rights->agenda->myactions->delete
-		|| $user->rights->agenda->allactions->delete)
+	if ($user->rights->agenda->myactions->create
+		|| $user->rights->agenda->allactions->create)
 	{
 		$result=$actioncomm->delete();
 
