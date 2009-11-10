@@ -294,8 +294,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 	$actioncomm = new ActionComm($db);
 	$actioncomm->fetch($_GET["id"]);
 
-	if ($user->rights->agenda->myactions->create
-		|| $user->rights->agenda->allactions->create)
+	if ($user->rights->agenda->myactions->delete
+		|| $user->rights->agenda->allactions->delete)
 	{
 		$result=$actioncomm->delete();
 
@@ -313,7 +313,6 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 
 /*
  * Action mise a jour de l'action
- *
  */
 if ($_POST["action"] == 'update')
 {
@@ -441,11 +440,9 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $html = new Form($db);
 $htmlactions = new FormActions($db);
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Affichage fiche en mode creation                                           */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ * Affichage fiche en mode creation
+ */
 
 if ($_GET["action"] == 'create')
 {
@@ -861,7 +858,7 @@ if ($_GET["id"])
 		print $act->priority;
 		print '</td></tr>';
 
-		// Objet lie
+		// Linked object
 		if ($act->objet_url)
 		{
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -879,7 +876,7 @@ if ($_GET["id"])
 	print "</div>\n";
 
 
-	/**
+	/*
 	 * Barre d'actions
 	 *
 	 */
@@ -888,7 +885,9 @@ if ($_GET["id"])
 
 	if ($_GET["action"] != 'edit')
 	{
-		if ($user->rights->agenda->allactions->create)
+		if ($user->rights->agenda->allactions->modify || 
+		   (($act->author->id == $user->id && $user->rights->agenda->myactions->modify) ||
+		   ($act->usertodo->id == $user->id && $user->rights->agenda->myactions->modify)))
 		{
 			print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
 		}
@@ -897,7 +896,9 @@ if ($_GET["id"])
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
 		}
 
-		if ($user->rights->agenda->allactions->create)
+		if ($user->rights->agenda->allactions->delete || 
+		   (($act->author->id == $user->id && $user->rights->agenda->myactions->delete) ||
+		   ($act->usertodo->id == $user->id && $user->rights->agenda->myactions->delete)))
 		{
 			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
 		}
@@ -916,8 +917,8 @@ llxFooter('$Date$ - $Revision$');
 
 
 /**
- \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
- \return     int     Retourne le nombre de lignes ajoutees
+ *  \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
+ *  \return     int     Retourne le nombre de lignes ajoutees
  */
 function add_row_for_calendar_link()
 {
