@@ -896,9 +896,9 @@ if ($_GET["id"])
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
 		}
 
-		if ($user->rights->agenda->allactions->delete || 
-		   (($act->author->id == $user->id && $user->rights->agenda->myactions->delete) ||
-		   ($act->usertodo->id == $user->id && $user->rights->agenda->myactions->delete)))
+		if ($user->rights->agenda->allactions->create || 
+		   (($act->author->id == $user->id && $user->rights->agenda->myactions->create) ||
+		   ($act->usertodo->id == $user->id && $user->rights->agenda->myactions->create)))
 		{
 			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
 		}
