@@ -22,16 +22,31 @@ include_once(DOL_DOCUMENT_ROOT.'/societe.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/product/stock/entrepot.class.php');
 
-$company=new Societe($db);
-$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
-$bankcash=new Account($db);
-$bankcash->fetch($conf->global->CASHDESK_ID_BANKACCOUNT);
-$bankcb=new Account($db);
-$bankcb->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CB);
-$bankcheque=new Account($db);
-$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
-$warehouse=new Entrepot($db);
-//$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
+if (!empty($conf->global->CASHDESK_ID_THIRDPARTY))
+{
+	$company=new Societe($db);
+	$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+}
+if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT))
+{
+	$bankcash=new Account($db);
+	$bankcash->fetch($conf->global->CASHDESK_ID_BANKACCOUNT);
+}
+if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB))
+{
+	$bankcb=new Account($db);
+	$bankcb->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CB);
+}
+if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
+{
+	$bankcheque=new Account($db);
+	$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
+}
+if (!empty($conf->global->CASHDESK_ID_WAREHOUSE))
+{
+	$warehouse=new Entrepot($db);
+	$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
+}
 
 $langs->load("@cashdesk");
 $langs->load("main");
