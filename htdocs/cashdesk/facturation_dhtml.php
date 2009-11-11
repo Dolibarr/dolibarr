@@ -39,14 +39,14 @@ if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
 				OR p.label LIKE '%".$_GET['code']."%')
 			ORDER BY label";
 	dol_syslog($request);
-	$res = $sql->query ($request);
+	$res = $db->query ($request);
 
-	if ( $nbr = $sql->num_rows($res) ) {
+	if ( $nbr = $db->num_rows($res) ) {
 
 		$resultat = '<ul class="dhtml_bloc">';
 
 		$ret=array(); $i=0;
-		while ( $tab = $sql->fetch_array($res) )
+		while ( $tab = $db->fetch_array($res) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{

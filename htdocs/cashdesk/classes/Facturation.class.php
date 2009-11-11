@@ -86,12 +86,12 @@ class Facturation {
 //		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
 //		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
-		global $sql;
+		global $db;
 		$req='SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva();
 		dol_syslog("ajoutArticle sql=".$req);
-		$resql=$sql->query($req);
+		$resql=$db->query($req);
 
-		$obj = $sql->fetch_object($resql);
+		$obj = $db->fetch_object($resql);
 		$vat_rate=$obj->taux;
 		//var_dump($vat_rate);exit;
 
@@ -130,7 +130,7 @@ class Facturation {
 					'.price2num($total_ht,'MT').',
 					'.price2num($total_ttc,'MT').')';
 		dol_syslog("ajoutArticle sql=".$req);
-		$sql->query($req);
+		$db->query($req);
 
 		$this->raz();
 
@@ -143,8 +143,8 @@ class Facturation {
 //		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
 //		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
-		global $sql;
-		$sql->query('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse WHERE id = '.$aArticle.' LIMIT 1');
+		global $db;
+		$db->query('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse WHERE id = '.$aArticle.' LIMIT 1');
 
 	}
 
@@ -155,18 +155,18 @@ class Facturation {
 //		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
 //		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
-		global $sql;
-		$res = $sql->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
+		global $db;
+		$res = $db->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
 				ORDER BY id');
 
 		$total_ht=0;
 		$total_ttc=0;
 
-		if ( $sql->num_rows($res) ) {
+		if ( $db->num_rows($res) ) {
 
 			$ret=array(); $i=0;
-			while ( $tab = $sql->fetch_array($res) )
+			while ( $tab = $db->fetch_array($res) )
 			{
 				foreach ( $tab as $cle => $valeur )
 				{

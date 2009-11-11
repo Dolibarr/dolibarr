@@ -33,7 +33,7 @@ switch ( $_GET['action'] ) {
 			// Recuperation des donnees en fonction de la source (liste d�roulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' ) {
 
-				$res = $sql->query('SELECT fk_product, ref, price, reel, tva_tx
+				$res = $db->query('SELECT fk_product, ref, price, reel, tva_tx
 								FROM '.MAIN_DB_PREFIX.'product
 								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 								WHERE fk_product = '.$_POST['selProduit'].'
@@ -41,7 +41,7 @@ switch ( $_GET['action'] ) {
 
 			} else if ( $_POST['hdnSource'] == 'REF' ) {
 
-				$res = $sql->query('SELECT fk_product, ref, price, reel, tva_tx
+				$res = $db->query('SELECT fk_product, ref, price, reel, tva_tx
 								FROM '.MAIN_DB_PREFIX.'product
 								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 								WHERE ref = \''.$_POST['txtRef'].'\'
@@ -52,10 +52,10 @@ switch ( $_GET['action'] ) {
 
 
 			// ... et enregistrement dans l'objet
-			if ( $sql->num_rows ($res) ) {
+			if ( $db->num_rows ($res) ) {
 
 				$ret=array();
-				$tab = $sql->fetch_array($res);
+				$tab = $db->fetch_array($res);
 				foreach ( $tab as $cle => $valeur )
 				{
 					$ret[$cle] = $valeur;

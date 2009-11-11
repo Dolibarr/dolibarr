@@ -113,15 +113,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<?php
 
 		// Variables
-		$res = $sql->query (
+		$res = $db->query (
 		'SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc, tva_tx FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
 			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
 			ORDER BY id');
 
-		if ( $sql->num_rows($res) ) {
+		if ( $db->num_rows($res) ) {
 
 			$ret=array(); $i=0;
-			while ( $tab = $sql->fetch_array($res) )
+			while ( $tab = $db->fetch_array($res) )
 			{
 				foreach ( $tab as $cle => $valeur )
 				{

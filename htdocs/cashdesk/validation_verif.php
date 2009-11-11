@@ -128,7 +128,7 @@ switch ( $_GET['action'] )
 		$now=dol_now('tzserver');
 
 
-		$sql->begin();
+		$db->begin();
 
 		$user->id=$_SESSION['uid'];
 		$user->fetch();
@@ -138,12 +138,12 @@ switch ( $_GET['action'] )
 
 
 		// Recuperation de la liste des articles du panier
-		$res=$sql->query ('
+		$res=$db->query ('
 				SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc
 				FROM '.MAIN_DB_PREFIX.'tmp_caisse
 				WHERE 1');
 		$ret=array(); $i=0;
-		while ( $tab = $sql->fetch_array($res) )
+		while ( $tab = $db->fetch_array($res) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
@@ -156,24 +156,24 @@ switch ( $_GET['action'] )
 		for ($i = 0; $i < count ($tab_liste); $i++)
 		{
 			// Recuperation de l'article
-			$res = $sql->query (
+			$res = $db->query (
 			'SELECT label, tva_tx, price
 					FROM '.MAIN_DB_PREFIX.'product
 					WHERE rowid = '.$tab_liste[$i]['fk_article']);
 			$ret=array();
-			$tab = $sql->fetch_array($res);
+			$tab = $db->fetch_array($res);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
 			}
 			$tab_article = $ret;
 
-			$res = $sql->query (
+			$res = $db->query (
 			'SELECT taux
 					FROM '.MAIN_DB_PREFIX.'c_tva
 					WHERE rowid = '.$tab_liste[$i]['fk_tva']);
 			$ret=array();
-			$tab = $sql->fetch_array($res);
+			$tab = $db->fetch_array($res);
 			foreach ( $tab as $cle => $valeur )
 			{
 				$ret[$cle] = $valeur;
@@ -305,12 +305,12 @@ switch ( $_GET['action'] )
 
 		if (! $error)
 		{
-			$sql->commit();
+			$db->commit();
 			$redirection = 'affIndex.php?menu=validation_ok&facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}
 		else
 		{
-			$sql->rollback();
+			$db->rollback();
 			$redirection = 'affIndex.php?facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}
 		break;

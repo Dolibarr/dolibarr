@@ -30,11 +30,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
 			ORDER BY id';
 	dol_syslog($request);
-	$res = $sql->query ($request);
-	if ( $sql->num_rows($res) ) {
+	$res = $db->query ($request);
+	if ( $db->num_rows($res) ) {
 
 		$ret=array(); $i=0;
-		while ( $tab = $sql->fetch_array($res) )
+		while ( $tab = $db->fetch_array($res) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
