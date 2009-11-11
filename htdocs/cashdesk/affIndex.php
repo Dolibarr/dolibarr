@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-include('../master.inc.php');
-require ('include/environnement.php');
+include_once('../master.inc.php');
+require_once('include/environnement.php');
 if ( $_SESSION['uid'] <= 0 ) {
 	header ('Location: index.php');
 	exit;
@@ -59,14 +59,14 @@ print '<div class="conteneur_img_droite">'."\n";
 print '<h1 class="entete"><span>CAISSE</span></h1>'."\n";
 
 print '<div class="menu_principal">'."\n";
-include('templates/menu.tpl.php');
+include_once('templates/menu.tpl.php');
 print '</div>'."\n";
 
 print '<div class="contenu">'."\n";
-include('affContenu.php');
+include_once('affContenu.php');
 print '</div>'."\n";
 
-include('affPied.php');
+include_once('affPied.php');
 
 print '</div></div></div>'."\n";
 print '</body></html>'."\n";
