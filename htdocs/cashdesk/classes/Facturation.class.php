@@ -79,17 +79,19 @@ class Facturation {
 
 	// Methodes de traitement des donnees
 
-	/**
-		* Ajout d'un article au panier
-		*/
-	public function ajoutArticle () {
-//		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
-//		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
-
+   /**
+	*  \brief    Ajout d'un article au panier
+	*/
+	public function ajoutArticle()
+	{
 		global $db;
-		$req='SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva();
-		dol_syslog("ajoutArticle sql=".$req);
-		$resql=$db->query($req);
+		
+		$sql = "SELECT taux";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva";
+		$sql.= " WHERE rowid = ".$this->tva();
+		
+		dol_syslog("ajoutArticle sql=".$sql);
+		$resql = $db->query($sql);
 
 		$obj = $db->fetch_object($resql);
 		$vat_rate=$obj->taux;
@@ -98,11 +100,11 @@ class Facturation {
 		// Define part of HT, VAT, TTC
 		$resultarray=calcul_price_total($this->qte,$this->prix(),$this->remise_percent(),$vat_rate,0,'HT',0);
 
-
 		// Calcul du total ht sans remise
 		$total_ht = $resultarray[0];
 		$total_vat = $resultarray[1];
 		$total_ttc = $resultarray[2];
+		
 		// Calcul du montant de la remise
 		if ($this->remise_percent())
 		{
@@ -113,49 +115,53 @@ class Facturation {
 		$montant_remise_ht = ($resultarray[6] - $resultarray[0]);
 		$this->montant_remise ($montant_remise_ht);
 
-		$req='INSERT INTO '.MAIN_DB_PREFIX.'tmp_caisse (
-					fk_article,
-					qte,
-					fk_tva,
-					remise_percent,
-					remise,
-					total_ht,
-					total_ttc
-				) VALUES (
-					'.$this->id().',
-					'.$this->qte().',
-					'.$this->tva().',
-					'.$remise_percent.',
-					'.price2num($montant_remise_ht).',
-					'.price2num($total_ht,'MT').',
-					'.price2num($total_ttc,'MT').')';
-		dol_syslog("ajoutArticle sql=".$req);
-		$db->query($req);
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tmp_caisse (";
+		$sql.= "fk_article";
+		$sql.= ", qte";
+		$sql.= ", fk_tva";
+		$sql.= ", remise_percent";
+		$sql.= ", remise";
+		$sql.= ", total_ht";
+		$sql.= ", total_ttc";
+		$sql.= ") VALUES (";
+		$sql.= ", ".$this->id();
+		$sql.= ", ".$this->qte();
+		$sql.= ", ".$this->tva();
+		$sql.= ", ".$remise_percent;
+		$sql.= ", ".price2num($montant_remise_ht);
+		$sql.= ", ".price2num($total_ht,'MT');
+		$sql.= ", ".price2num($total_ttc,'MT');
+		$sql.= ")";
+		
+		dol_syslog("ajoutArticle sql=".$sql);
+		$db->query($sql);
 
 		$this->raz();
 
 	}
 
-	/**
-		* Suppression du panier d'un article identifi� par son id dans la table llx_tmp_caisse
-		*/
-	public function supprArticle ($aArticle) {
-//		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
-//		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
-
+   /**
+	*  \brief    Suppression du panier d'un article identifie par son id dans la table llx_tmp_caisse
+	*/
+	public function supprArticle($aArticle)
+	{
 		global $db;
-		$db->query('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse WHERE id = '.$aArticle.' LIMIT 1');
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tmp_caisse";
+		$sql.= " WHERE id = ".$aArticle;
+		$sql.= " LIMIT 1";
+		
+		$db->query($sql);
 
 	}
 
-	/**
-		* Calcul du total HT, total TTC et montants TVA
-		*/
-	public function calculTotaux () {
-//		global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
-//		$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
-
+   /**
+	*  \brief    Calcul du total HT, total TTC et montants TVA
+	*/
+	public function calculTotaux()
+	{
 		global $db;
+		
 		$res = $db->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
 				ORDER BY id');
