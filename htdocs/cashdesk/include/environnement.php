@@ -66,10 +66,4 @@ if ($conf->stock->enabled && empty($conf_fkentrepot))
 $conf_taille_listes = 200;	// Nombre max de lignes a afficher dans les listes
 $conf_nbr_car_listes = 60;	// Nombre max de caracteres par ligne dans les listes
 
-//$new_conf_db_type=$conf_db_type;
-//if (preg_match('/mysql/i',$new_conf_db_type)) $new_conf_db_type='Mysql';
-//require ('classes/'.$new_conf_db_type.'.class.php');
-//$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
-
-$sql=$db;
 ?>

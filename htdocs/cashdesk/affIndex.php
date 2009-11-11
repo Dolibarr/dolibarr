@@ -52,6 +52,8 @@ print '</head>'."\n";
 
 print '<body>'."\n";
 
+if (!empty($error)) print $error;
+
 print '<div class="conteneur">'."\n";
 print '<div class="conteneur_img_gauche">'."\n";
 print '<div class="conteneur_img_droite">'."\n";
