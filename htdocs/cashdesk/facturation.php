@@ -53,7 +53,8 @@ if ( $_GET['filtre'] ) {
 } else {
 
 	// Sans filtre
-	$ret=array(); $i=0;
+	$ret=array();
+	$i=0;
 	
 	$sql = "SELECT p.rowid, ref, label, tva_tx";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -65,13 +66,20 @@ if ( $_GET['filtre'] ) {
 	
 	dol_syslog($sql);
 	$resql=$db->query ($sql);
-	while ( $tab = $db->fetch_array($resql) )
+	if ($resql)
 	{
-		foreach ( $tab as $cle => $valeur )
+		while ( $tab = $db->fetch_array($resql) )
 		{
-			$ret[$i][$cle] = $valeur;
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$i][$cle] = $valeur;
+			}
+			$i++;
 		}
-		$i++;
+	}
+	else
+	{
+		dol_print_error($db);
 	}
 	$tab_designations=$ret;
 }
@@ -104,6 +112,9 @@ if ( $nbr_enreg > 1 ) {
 // Recuperation des taux de tva
 global $mysoc;
 
+$ret=array();
+$i=0;
+
 $sql = "SELECT t.rowid, t.taux";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p";
 $sql.= " WHERE t.fk_pays = p.rowid";
@@ -111,15 +122,21 @@ $sql.= " AND t.active = 1";
 $sql.= " AND p.code = '".$mysoc->pays_code."'";
 //print $request;
 
-$ret=array(); $i=0;
 $res=$db->query ($sql);
-while ( $tab = $db->fetch_array($res) )
+if ($res)
 {
-	foreach ( $tab as $cle => $valeur )
+	while ( $tab = $db->fetch_array($res) )
 	{
-		$ret[$i][$cle] = $valeur;
+		foreach ( $tab as $cle => $valeur )
+		{
+			$ret[$i][$cle] = $valeur;
+		}
+		$i++;
 	}
-	$i++;
+}
+else
+{
+	dol_print_error($db);
 }
 $tab_tva = $ret;
 
