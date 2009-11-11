@@ -26,26 +26,31 @@ if (!empty($conf->global->CASHDESK_ID_THIRDPARTY))
 {
 	$company=new Societe($db);
 	$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
+	$companyLink = $company->getNomUrl(1);
 }
 if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT))
 {
 	$bankcash=new Account($db);
 	$bankcash->fetch($conf->global->CASHDESK_ID_BANKACCOUNT);
+	$bankcashLink = $bankcash->getNomUrl(1);
 }
 if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB))
 {
 	$bankcb=new Account($db);
 	$bankcb->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CB);
+	$bankcbLink = $bankcb->getNomUrl(1);
 }
 if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
 {
 	$bankcheque=new Account($db);
 	$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
+	$bankchequeLink = $bankcheque->getNomUrl(1);
 }
 if (!empty($conf->global->CASHDESK_ID_WAREHOUSE))
 {
 	$warehouse=new Entrepot($db);
 	$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
+	$warehouseLink = $warehouse->getNomUrl(1);
 }
 
 $langs->load("@cashdesk");
@@ -60,13 +65,13 @@ print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><
 print '<li class="menu_choix2"><a href=".."><span>'.$langs->trans("BackOffice").'</span></a></li>';
 
 print '<li class="menu_choix0">'.$langs->trans("User").' : '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
-print $langs->trans("CashDeskThirdParty").' : '.$company->getNomUrl(1).'<br>';
-print $langs->trans("CashDeskBankCash").' : '.$bankcash->getNomUrl(1).'<br>';
-print $langs->trans("CashDeskBankCB").' : '.$bankcb->getNomUrl(1).'<br>';
-print $langs->trans("CashDeskBankCheque").' : '.$bankcheque->getNomUrl(1).'<br>';
+print $langs->trans("CashDeskThirdParty").' : '.$companyLink.'<br>';
+print $langs->trans("CashDeskBankCash").' : '.$bankcashLink.'<br>';
+print $langs->trans("CashDeskBankCB").' : '.$bankcbLink.'<br>';
+print $langs->trans("CashDeskBankCheque").' : '.$bankchequeLink.'<br>';
 if ($conf->stock->enabled && $warehouse->id)	// Disabled because warehouse->fetch disabled before
 {
-	print $langs->trans("CashDeskWarehouse").' : '.$warehouse->getNomUrl(1);
+	print $langs->trans("CashDeskWarehouse").' : '.$warehouseLink;
 }
 print '</li></ul>';
 print '</div>';
