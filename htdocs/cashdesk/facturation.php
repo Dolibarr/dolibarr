@@ -23,17 +23,17 @@ if ( $_GET['filtre'] ) {
 	// Avec filtre
 	$ret=array(); $i=0;
 
-	$request="SELECT p.rowid, p.ref, p.label, p.tva_tx
-			FROM ".MAIN_DB_PREFIX."product as p
-			LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product
-			WHERE p.envente = 1
-				AND p.fk_product_type = 0";
-	if ($conf->stock->enabled) $request.="	AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$request.="	AND (p.ref LIKE '%".$_GET['filtre']."%'
-				OR p.label LIKE '%".$_GET['filtre']."%')
-			ORDER BY label";
-	dol_syslog($request);
-	$resql=$sql->query ($request);
+	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	$sql.= " WHERE p.envente = 1";
+	$sql.= " AND p.fk_product_type = 0";
+	if ($conf->stock->enabled) $sql.=" AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%')";
+	$sql.= " ORDER BY label";
+	
+	dol_syslog($sql);
+	$resql=$sql->query ($sql);
 	if ($resql)
 	{
 		while ( $tab = $sql->fetch_array($resql) )
@@ -54,15 +54,17 @@ if ( $_GET['filtre'] ) {
 
 	// Sans filtre
 	$ret=array(); $i=0;
-	$request='SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
-			FROM '.MAIN_DB_PREFIX.'product
-			LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
-			WHERE envente = 1
-				AND fk_product_type = 0
-				AND fk_entrepot = '.$conf_fkentrepot.'
-			ORDER BY label';
-	dol_syslog($request);
-	$resql=$sql->query ($request);
+	
+	$sql = "SELECT p.rowid, ref, label, tva_tx";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	$sql.= " WHERE envente = 1";
+	$sql.= " AND fk_product_type = 0";
+	$sql.= " AND fk_entrepot = ".$conf_fkentrepot;
+	$sql.= " ORDER BY label";
+	
+	dol_syslog($sql);
+	$resql=$sql->query ($sql);
 	while ( $tab = $sql->fetch_array($resql) )
 	{
 		foreach ( $tab as $cle => $valeur )
@@ -101,13 +103,16 @@ if ( $nbr_enreg > 1 ) {
 
 // Recuperation des taux de tva
 global $mysoc;
-$request="SELECT t.rowid, t.taux
-		FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p
-		WHERE t.fk_pays = p.rowid AND t.active = 1 AND p.code = '".$mysoc->pays_code."'";
+
+$sql = "SELECT t.rowid, t.taux";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p";
+$sql.= " WHERE t.fk_pays = p.rowid";
+$sql.= " AND t.active = 1";
+$sql.= " AND p.code = '".$mysoc->pays_code."'";
 //print $request;
 
 $ret=array(); $i=0;
-$res=$sql->query ($request);
+$res=$sql->query ($sql);
 while ( $tab = $sql->fetch_array($res) )
 {
 	foreach ( $tab as $cle => $valeur )
