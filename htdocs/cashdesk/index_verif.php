@@ -41,7 +41,7 @@ if ( $retour >= 0 )
 
 	if ($result)
 	{
-		$tab = $sql->fetch_array($res);
+		$tab = $db->fetch_array($res);
 		
 		foreach ( $tab as $key => $value )
 		{
