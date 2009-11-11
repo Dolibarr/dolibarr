@@ -28,10 +28,10 @@ if (!empty($conf->global->CASHDESK_ID_THIRDPARTY))
 	$company->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
 	$companyLink = $company->getNomUrl(1);
 }
-if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT))
+if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
 {
 	$bankcash=new Account($db);
-	$bankcash->fetch($conf->global->CASHDESK_ID_BANKACCOUNT);
+	$bankcash->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
 	$bankcashLink = $bankcash->getNomUrl(1);
 }
 if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB))
