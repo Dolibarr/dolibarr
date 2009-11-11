@@ -25,10 +25,10 @@ if ( $_GET['filtre'] ) {
 
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
 	$sql.= " WHERE p.envente = 1";
 	$sql.= " AND p.fk_product_type = 0";
-	if ($conf->stock->enabled) $sql.=" AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.=" AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%')";
 	$sql.= " ORDER BY label";
 	
@@ -58,11 +58,11 @@ if ( $_GET['filtre'] ) {
 	
 	$sql = "SELECT p.rowid, ref, label, tva_tx";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
-	$sql.= " WHERE envente = 1";
-	$sql.= " AND fk_product_type = 0";
-	$sql.= " AND fk_entrepot = ".$conf_fkentrepot;
-	$sql.= " ORDER BY label";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	$sql.= " WHERE p.envente = 1";
+	$sql.= " AND p.fk_product_type = 0";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " AND ps.fk_entrepot = ".$conf_fkentrepot;
+	$sql.= " ORDER BY p.label";
 	
 	dol_syslog($sql);
 	$resql=$db->query ($sql);
@@ -116,7 +116,8 @@ $ret=array();
 $i=0;
 
 $sql = "SELECT t.rowid, t.taux";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
+$sql.= ", ".MAIN_DB_PREFIX."c_pays as p";
 $sql.= " WHERE t.fk_pays = p.rowid";
 $sql.= " AND t.active = 1";
 $sql.= " AND p.code = '".$mysoc->pays_code."'";
