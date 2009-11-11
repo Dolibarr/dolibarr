@@ -60,11 +60,14 @@ print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2")."<br><br>";
 
 print "<br>";
+print "<br>";
 //print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription3")."<br>";
 print '<br>';
+print "<br>";
 //print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
+print "<br>";
 print '<br>';
 //print '<hr style="color: #DDDDDD;">';
 print img_picto('','puce').' '.$langs->trans("SetupDescription5")."<br>";
