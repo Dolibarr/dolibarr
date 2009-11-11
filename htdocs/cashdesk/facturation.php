@@ -33,10 +33,10 @@ if ( $_GET['filtre'] ) {
 	$sql.= " ORDER BY label";
 	
 	dol_syslog($sql);
-	$resql=$sql->query ($sql);
+	$resql=$db->query ($sql);
 	if ($resql)
 	{
-		while ( $tab = $sql->fetch_array($resql) )
+		while ( $tab = $db->fetch_array($resql) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
@@ -64,8 +64,8 @@ if ( $_GET['filtre'] ) {
 	$sql.= " ORDER BY label";
 	
 	dol_syslog($sql);
-	$resql=$sql->query ($sql);
-	while ( $tab = $sql->fetch_array($resql) )
+	$resql=$db->query ($sql);
+	while ( $tab = $db->fetch_array($resql) )
 	{
 		foreach ( $tab as $cle => $valeur )
 		{
@@ -112,8 +112,8 @@ $sql.= " AND p.code = '".$mysoc->pays_code."'";
 //print $request;
 
 $ret=array(); $i=0;
-$res=$sql->query ($sql);
-while ( $tab = $sql->fetch_array($res) )
+$res=$db->query ($sql);
+while ( $tab = $db->fetch_array($res) )
 {
 	foreach ( $tab as $cle => $valeur )
 	{
