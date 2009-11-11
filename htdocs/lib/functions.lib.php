@@ -1773,11 +1773,10 @@ function dolibarr_print_error($db='',$error='')
  *				On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
  *				Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
  *				renvoyer leur erreur par l'intermediaire de leur propriete "error".
- *	\param      db               Database handler
- *	\param      error	         Chaine erreur ou tableau de chaines erreur complementaires a afficher
- *  \param      limitToMessage   Just view the error message
+ *	\param      db      Database handler
+ *	\param      error	Chaine erreur ou tableau de chaines erreur complementaires a afficher
  */
-function dol_print_error($db='',$error='',$limitToMessage='')
+function dol_print_error($db='',$error='')
 {
 	global $conf,$langs,$argv;
 	$out = '';
@@ -1870,8 +1869,7 @@ function dol_print_error($db='',$error='',$limitToMessage='')
 	}
 
 	global $dolibarr_main_prod;
-	if ($limitToMessage) print $error;
-	else if (empty($dolibarr_main_prod)) print $out;
+	if (empty($dolibarr_main_prod)) print $out;
 	else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }

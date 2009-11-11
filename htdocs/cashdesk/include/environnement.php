@@ -48,9 +48,18 @@ $conf_fkaccount_cb = $conf->global->CASHDESK_ID_BANKACCOUNT_CB > 0?$conf->global
 $conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHDESK_ID_WAREHOUSE:$_SESSION["CASHDESK_ID_WAREHOUSE"];
 
 // Check if setup ok
-if (empty($conf_fksoc))      dol_print_error('',"Setup of CashDesk module not complete. Third party not defined.",1);
-if ($conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))  dol_print_error('',"Setup of CashDesk module not complete. Bank account not defined.",1);
-if ($conf->stock->enabled && empty($conf_fkentrepot)) dol_print_error('',"Setup of CashDesk module not complete. Warehouse not defined.",1);
+if (empty($conf_fksoc))
+{
+	print '<div class="error">Setup of CashDesk module not complete. Third party not defined</div>';
+}
+if ($conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))
+{
+	print '<div class="error">Setup of CashDesk module not complete. Bank account not defined</div>';
+}
+if ($conf->stock->enabled && empty($conf_fkentrepot))
+{
+	print '<div class="error">Setup of CashDesk module not complete. Warehouse not defined</div>';
+}
 
 // Parametres d'affichage
 $conf_taille_listes = 200;	// Nombre max de lignes a afficher dans les listes
