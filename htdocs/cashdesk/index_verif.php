@@ -18,8 +18,8 @@
  */
 
 include('../master.inc.php');
-require ('include/environnement.php');
-require ('classes/Auth.class.php');
+require('include/environnement.php');
+require('classes/Auth.class.php');
 
 $username = $_POST['txtUsername'];
 $password = $_POST['pwdPassword'];
@@ -28,33 +28,42 @@ $auth = new Auth($db);
 
 $retour = $auth->verif ($username, $password);
 
-if ( $retour >= 0 ) {
+if ( $retour >= 0 )
+{
+	$return=array();
+	
+	$sql = "SELECT rowid, name, firstname";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user";
+	$sql.= " WHERE login = '".$username."'";
+	$sql.= " AND entity IN (0,".$conf->entity.")";
 
-	$res=$sql->query (
-	"SELECT rowid, name, firstname
-			FROM ".MAIN_DB_PREFIX."user
-			WHERE login = '".$username."' and entity IN (0,".$conf->entity.")");
+	$result = $db->query($sql);
 
-	$ret=array();
-	$tab = $sql->fetch_array($res);
-	foreach ( $tab as $cle => $valeur )
+	if ($result)
 	{
-		$ret[$cle] = $valeur;
+		$tab = $sql->fetch_array($res);
+		
+		foreach ( $tab as $key => $value )
+		{
+			$return[$key] = $value;
+		}
+		
+		$_SESSION['uid'] = $tab['rowid'];
+		$_SESSION['uname'] = $username;
+		$_SESSION['nom'] = $tab['name'];
+		$_SESSION['prenom'] = $tab['firstname'];
+		
+		header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&id=NOUV');
+	}
+	else
+	{
+		dol_print_error($db);
 	}
 
-	$tab = $ret;
-
-	$_SESSION['uid'] = $tab['rowid'];
-	$_SESSION['uname'] = $username;
-	$_SESSION['nom'] = $tab['name'];
-	$_SESSION['prenom'] = $tab['firstname'];
-
-	header ('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&id=NOUV');
-
-} else {
-
+}
+else
+{
 	header ('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.$retour.'&user='.$username);
-
 }
 
 ?>
