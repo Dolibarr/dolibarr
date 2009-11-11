@@ -49,8 +49,8 @@ $conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHD
 
 // Check if setup ok
 if (empty($conf_fksoc))      dol_print_error("Setup of CashDesk module not complete. Third party not defined.");
-if ($conf->bank->enabled && empty($conf_fkaccount))  dol_print_error("Setup of CashDesk module not complete. Bank account not defined.");
-if ($conf->stock->enabled && empty($conf_fkentrepot)) dol_print_error("Setup of CashDesk module not complete. Warehous not defined.");
+if ($conf->bank->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))  dol_print_error("Setup of CashDesk module not complete. Bank account not defined.");
+if ($conf->stock->enabled && empty($conf_fkentrepot)) dol_print_error("Setup of CashDesk module not complete. Warehouse not defined.");
 
 // Parametres d'affichage
 $conf_taille_listes = 200;	// Nombre max de lignes a afficher dans les listes
