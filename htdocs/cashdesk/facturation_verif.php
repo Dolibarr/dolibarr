@@ -25,88 +25,86 @@ $obj_facturation = unserialize ($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);
 
 
-switch ( $_GET['action'] ) {
-
+switch ( $_GET['action'] )
+{
 	default:
-		if ( $_POST['hdnSource'] != 'NULL' ) {
-
-			// Recuperation des donnees en fonction de la source (liste d�roulante ou champ texte) ...
-			if ( $_POST['hdnSource'] == 'LISTE' ) {
-
-				$res = $db->query('SELECT fk_product, ref, price, reel, tva_tx
-								FROM '.MAIN_DB_PREFIX.'product
-								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
-								WHERE fk_product = '.$_POST['selProduit'].'
-								;');
-
-			} else if ( $_POST['hdnSource'] == 'REF' ) {
-
-				$res = $db->query('SELECT fk_product, ref, price, reel, tva_tx
-								FROM '.MAIN_DB_PREFIX.'product
-								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
-								WHERE ref = \''.$_POST['txtRef'].'\'
-								;');
-
+		if ( $_POST['hdnSource'] != 'NULL' )
+		{
+			$sql = "SELECT p.rowid, p.ref, p.price, p.tva_tx";
+			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+			
+			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
+			if ( $_POST['hdnSource'] == 'LISTE' )
+			{
+				$sql.= " WHERE p.rowid = ".$_POST['selProduit'];
 			}
-
-
-
-			// ... et enregistrement dans l'objet
-			if ( $db->num_rows ($res) ) {
-
-				$ret=array();
-				$tab = $db->fetch_array($res);
-				foreach ( $tab as $cle => $valeur )
+			else if ( $_POST['hdnSource'] == 'REF' )
+			{
+				$sql.= " WHERE p.ref = '".$_POST['txtRef']."'";
+			}
+			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " AND ps.fk_entrepot = ".$conf_fkentrepot;
+			
+			$result = $db->query($sql);
+			
+			if ($result)
+			{
+				// ... et enregistrement dans l'objet
+				if ( $db->num_rows ($result) )
 				{
-					$ret[$cle] = $valeur;
+					$ret=array();
+					$tab = $db->fetch_array($result);
+					foreach ( $tab as $key => $value )
+					{
+						$ret[$key] = $value;
+					}
+					
+					$obj_facturation->id( $ret['rowid'] );
+					$obj_facturation->ref( $ret['ref'] );
+					$obj_facturation->stock( $ret['reel'] );
+					$obj_facturation->prix( $ret['price'] );
+					$obj_facturation->tva( $ret['tva_tx'] );
+					
+					// Definition du filtre pour n'afficher que le produit concerne
+					if ( $_POST['hdnSource'] == 'LISTE' )
+					{
+						$filtre = $ret['ref'];
+					}
+					else if ( $_POST['hdnSource'] == 'REF' )
+					{
+						$filtre = $_POST['txtRef'];
+					}
+					
+					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$filtre;
 				}
-				$tab = $ret;
-
-				$obj_facturation->id( $tab['fk_product'] );
-				$obj_facturation->ref( $tab['ref'] );
-				$obj_facturation->stock( $tab['reel']);
-				$obj_facturation->prix( $tab['price'] );
-				$obj_facturation->tva( $tab['tva_tx'] );
-
-				// Definition du filtre pour n'afficher que le produit concerne
-				if ( $_POST['hdnSource'] == 'LISTE' ) {
-
-					$filtre = $tab['ref'];
-
-				} else if ( $_POST['hdnSource'] == 'REF' ) {
-
-					$filtre = $_POST['txtRef'];;
-
+				else
+				{
+					$obj_facturation->raz();
+					
+					if ( $_POST['hdnSource'] == 'REF' )
+					{
+						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$_POST['txtRef'];
+					}
+					else
+					{
+						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+					}
 				}
-
-
-				$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$filtre;
-
-			} else {
-
-				$obj_facturation->raz();
-
-				if ( $_POST['hdnSource'] == 'REF' ) {
-
-					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$_POST['txtRef'];
-
-				} else {
-
-					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
-
-				}
-
 			}
-
-		} else {
-
+			else
+			{
+				dol_print_error($db);
+			}
+		}
+		else
+		{
 			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
-
 		}
 
-		break;
+	break;
 
-	case 'ajout_article';
+	case 'ajout_article':
 	$obj_facturation->qte($_POST['txtQte']);
 	$obj_facturation->tva($_POST['selTva']);
 	$obj_facturation->remise_percent($_POST['txtRemise']);
@@ -116,10 +114,10 @@ switch ( $_GET['action'] ) {
 	break;
 
 	case 'suppr_article':
-		$obj_facturation->supprArticle($_GET['suppr_id']);
+	$obj_facturation->supprArticle($_GET['suppr_id']);
 
-		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
-		break;
+	$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+	break;
 
 }
 

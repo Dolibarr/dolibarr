@@ -29,55 +29,55 @@ $langs->load("@cashdesk");
 // Verification
 if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
 {
-	$request="SELECT p.rowid, p.ref, p.label, p.tva_tx
-			FROM ".MAIN_DB_PREFIX."product as p
-			LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product
-			WHERE p.envente = 1
-				AND p.fk_product_type = 0";
-	if ($conf->stock->enabled) $request.="	AND ps.fk_entrepot = '".$conf_fkentrepot."'";
-	$request.="	AND (p.ref LIKE '%".$_GET['code']."%'
-				OR p.label LIKE '%".$_GET['code']."%')
-			ORDER BY label";
-	dol_syslog($request);
-	$res = $db->query ($request);
+	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	$sql.= " WHERE p.envente = 1";
+	$sql.= " AND p.fk_product_type = 0";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.=" AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	$sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
+	$sql.= " ORDER BY label";
+	
+	dol_syslog($sql);
+	$result = $db->query($sql);
 
-	if ( $nbr = $db->num_rows($res) ) {
-
-		$resultat = '<ul class="dhtml_bloc">';
-
-		$ret=array(); $i=0;
-		while ( $tab = $db->fetch_array($res) )
+	if ($result)
+	{
+		if ( $nbr = $db->num_rows($result) )
 		{
-			foreach ( $tab as $cle => $valeur )
+			$resultat = '<ul class="dhtml_bloc">';
+			
+			$ret=array(); $i=0;
+			while ( $tab = $db->fetch_array($result) )
 			{
-				$ret[$i][$cle] = $valeur;
+				foreach ( $tab as $cle => $valeur )
+				{
+					$ret[$i][$cle] = $valeur;
+				}
+				$i++;
 			}
-			$i++;
-		}
-		$tab=$ret;
-
-		for ( $i = 0; $i < count ($tab); $i++ ) {
-
-			$resultat .= '
+			$tab=$ret;
+			
+			for ( $i = 0; $i < count ($tab); $i++ )
+			{
+				$resultat .= '
 					<li class="dhtml_defaut" title="'.$tab[$i]['ref'].'"
 						onMouseOver="javascript: this.className = \'dhtml_selection\';"
 						onMouseOut="javascript: this.className = \'dhtml_defaut\';"
 					">'.htmlentities($tab[$i]['ref'].' - '.$tab[$i]['label']).'</li>
 				';
-
+			}
+			
+			$resultat .= '</ul>';
+			
+			print $resultat;
 		}
-
-		$resultat .= '</ul>';
-
-		echo $resultat;
-
-	} else {
-		echo ('
-				<ul class="dhtml_bloc">
-					<li class="dhtml_defaut">'.$langs->trans("NoResults").'</li>
-				</ul>
-			');
-
+		else
+		{
+			print '<ul class="dhtml_bloc">';
+			print '<li class="dhtml_defaut">'.$langs->trans("NoResults").'</li>';
+			print '</ul>';
+		}
 	}
 
 }
