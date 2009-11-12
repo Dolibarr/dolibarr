@@ -93,9 +93,17 @@ class Facturation {
 		dol_syslog("ajoutArticle sql=".$sql);
 		$resql = $db->query($sql);
 
-		$obj = $db->fetch_object($resql);
-		$vat_rate=$obj->taux;
-		//var_dump($vat_rate);exit;
+	    if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			$vat_rate=$obj->taux;
+			//var_dump($vat_rate);exit;
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+		
 
 		// Define part of HT, VAT, TTC
 		$resultarray=calcul_price_total($this->qte,$this->prix(),$this->remise_percent(),$vat_rate,0,'HT',0);
@@ -124,7 +132,7 @@ class Facturation {
 		$sql.= ", total_ht";
 		$sql.= ", total_ttc";
 		$sql.= ") VALUES (";
-		$sql.= ", ".$this->id();
+		$sql.= $this->id();
 		$sql.= ", ".$this->qte();
 		$sql.= ", ".$this->tva();
 		$sql.= ", ".$remise_percent;
@@ -134,7 +142,12 @@ class Facturation {
 		$sql.= ")";
 		
 		dol_syslog("ajoutArticle sql=".$sql);
-		$db->query($sql);
+		$result = $db->query($sql);
+		
+		if (!$result)
+		{
+			dol_print_error($db);
+		}
 
 		$this->raz();
 

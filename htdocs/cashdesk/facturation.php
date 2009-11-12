@@ -123,7 +123,7 @@ $sql.= " AND t.active = 1";
 $sql.= " AND p.code = '".$mysoc->pays_code."'";
 //print $request;
 
-$res=$db->query ($sql);
+$res = $db->query($sql);
 if ($res)
 {
 	while ( $tab = $db->fetch_array($res) )
