@@ -46,12 +46,15 @@ if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
 	$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 	$bankchequeLink = $bankcheque->getNomUrl(1);
 }
+// TODO: ajouter gestion entrepot
+/*
 if (!empty($conf->global->CASHDESK_ID_WAREHOUSE))
 {
 	$warehouse=new Entrepot($db);
 	$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
 	$warehouseLink = $warehouse->getNomUrl(1);
 }
+*/
 
 $langs->load("@cashdesk");
 $langs->load("main");

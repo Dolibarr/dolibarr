@@ -45,7 +45,7 @@ $conf_fkaccount_cheque = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE > 0?$conf
 // Identifiant unique correspondant au compte cb
 $conf_fkaccount_cb = $conf->global->CASHDESK_ID_BANKACCOUNT_CB > 0?$conf->global->CASHDESK_ID_BANKACCOUNT_CB:$_SESSION["CASHDESK_ID_BANKACCOUNT_CB"];
 // Identifiant unique correspondant a l'entrepot associe a la caisse
-$conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHDESK_ID_WAREHOUSE:$_SESSION["CASHDESK_ID_WAREHOUSE"];
+//$conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHDESK_ID_WAREHOUSE:$_SESSION["CASHDESK_ID_WAREHOUSE"];
 
 // Check if setup ok
 $error = '';
@@ -57,11 +57,13 @@ if ($conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkacco
 {
 	$error.= '<div class="error">Setup of CashDesk module not complete. Bank account not defined</div>';
 }
+// TODO: ajouter gestion entrepot
+/*
 if ($conf->stock->enabled && empty($conf_fkentrepot))
 {
 	$error.= '<div class="error">Setup of CashDesk module not complete. Warehouse not defined</div>';
 }
-
+*/
 // Parametres d'affichage
 $conf_taille_listes = 200;	// Nombre max de lignes a afficher dans les listes
 $conf_nbr_car_listes = 60;	// Nombre max de caracteres par ligne dans les listes
