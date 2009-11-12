@@ -32,9 +32,9 @@ create table llx_commandedet
   fk_remise_except   integer      NULL,               -- Lien vers table des remises fixes
   price              real,                            -- prix final
   subprice           double(24,8) DEFAULT 0,          -- prix unitaire
-  total_ht           double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantit� et incluant remise ligne et globale
-  total_tva          double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantit� et incluant remise ligne et globale
-  total_ttc          double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantit� et incluant remise ligne et globale
+  total_ht           double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantite et incluant remise ligne et globale
+  total_tva          double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
+  total_ttc          double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type		 integer      DEFAULT 0,
   date_start         datetime     DEFAULT NULL,       -- date debut si service
   date_end           datetime     DEFAULT NULL,       -- date fin si service
