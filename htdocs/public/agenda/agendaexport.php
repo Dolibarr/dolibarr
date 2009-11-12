@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	    \file       htdocs/comm/action/agendaexport.php
-        \ingroup    agenda
-		\brief      Page export agenda
-					http://127.0.0.1/dolibarr/comm/action/agendaexport.php?format=rss&exportkey=cle&filter=mine
-		\version    $Id$
-*/
+/**	    \file       htdocs/public/agenda/agendaexport.php
+ *      \ingroup    agenda
+ *		\brief      Page to export agenda
+ *					http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=rss&exportkey=cle&filter=mine
+ *		\version    $Id$
+ */
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');

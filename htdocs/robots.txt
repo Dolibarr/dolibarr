@@ -1,5 +1,5 @@
 User-agent: *
-Allow: /comm/action/agendaexport.php
+Allow: /public/agenda/agendaexport.php
 Allow: /public/demo/
 Allow: /index.php
 Disallow: /

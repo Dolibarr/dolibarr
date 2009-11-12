@@ -261,7 +261,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 
 		$url=$dolibarr_main_url_root;
 		if (! preg_match('/\/$/',$url)) $url.='/';
-		$url.='comm/action/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
+		$url.='public/agenda/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
 		$html.='<link><![CDATA['.$url.']]></link>'."\n";
 //		'<managingEditor>editor@example.com</managingEditor>'."\n"
 //    	'<webMaster>webmaster@example.com</webMaster>'."\n"
