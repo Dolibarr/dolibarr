@@ -64,21 +64,21 @@ class ComptaExportTableur extends ComptaExport
       //$fname = $dir . "/tmp/toto.xls"; DEBUG DEBUG
       $fname = "/tmp/toto.xls";
 
-        $workbook = &new writeexcel_workbook($fname);
+        $workbook = new writeexcel_workbook($fname);
 
         $worksheet = &$workbook->addworksheet();
 
         // Pour les factures
 
-        // Date Opération 040604 pour 4 juin 2004
+        // Date Operation 040604 pour 4 juin 2004
         // VE -> ventilation
-        // code Compte général
+        // code Compte general
         // code client
         // Intitul
-        // Numéro de pièce
+        // Numero de piece
         // Montant
-        // Type opération D pour Débit ou C pour Crédit
-        // Date d'échéance, = à la date d'opération si pas d'échéance
+        // Type operation D pour Debit ou C pour Credit
+        // Date d'echeance, = a la date d'operation si pas d'echeance
         // EUR pour Monnaie en Euros
 
         // Pour les paiements

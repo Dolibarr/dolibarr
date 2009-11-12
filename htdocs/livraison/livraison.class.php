@@ -627,7 +627,7 @@ class Livraison extends CommonObject
 	{
 		$object = $this->origin;
 		$class = ucfirst($this->origin);
-		$this->$object = & new $class($this->db);
+		$this->$object = new $class($this->db);
 		$this->$object->fetch($this->origin_id);
 	}
 

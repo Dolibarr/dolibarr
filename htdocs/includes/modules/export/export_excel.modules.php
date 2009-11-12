@@ -127,7 +127,7 @@ class ExportExcel extends ModeleExports
 		$ret=1;
 
 		$outputlangs->load("exports");
-		$this->workbook = &new writeexcel_workbookbig($file);
+		$this->workbook = new writeexcel_workbookbig($file);
 		$this->workbook->set_tempdir($conf->export->dir_temp);			// Set temporary directory
 		$this->workbook->set_sheetname($outputlangs->trans("Sheet"));
 		$this->worksheet = &$this->workbook->addworksheet();

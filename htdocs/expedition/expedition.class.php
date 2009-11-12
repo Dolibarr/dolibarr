@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/expedition/expedition.class.php
- \ingroup    expedition
- \brief      Fichier de la classe de gestion des expeditions
- \version    $Id$
+ *  \file       htdocs/expedition/expedition.class.php
+ *  \ingroup    expedition
+ *  \brief      Fichier de la classe de gestion des expeditions
+ *  \version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -71,9 +71,9 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *    \brief      Créé expédition en base
-	 *    \param      user        Objet du user qui cré
-	 *    \return     int         <0 si erreur, id expédition créée si ok
+	 *    \brief      Cree expedition en base
+	 *    \param      user        Objet du user qui cree
+	 *    \return     int         <0 si erreur, id expedition creee si ok
 	 */
 	function create($user)
 	{
@@ -421,7 +421,7 @@ class Expedition extends CommonObject
 						{
 							$mouvS = new MouvementStock($this->db);
 							// We decrement stock of product (and sub-products)
-							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
+							$entrepot_id = "1"; // TODO ajouter possibilitï¿½ de choisir l'entrepot
 							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
 							if ($result < 0) { $error++; }
 						}
@@ -441,7 +441,7 @@ class Expedition extends CommonObject
 
 		if (! $error)
 		{
-			// On efface le répertoire de pdf provisoire
+			// On efface le repertoire de pdf provisoire
 			$expeditionref = dol_sanitizeFileName($this->ref);
 			if ($conf->expedition->dir_output)
 			{
@@ -495,7 +495,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 *      \brief      Crée un bon de livraison à partir de l'expédition
+	 *      \brief      Cree un bon de livraison a partir de l'expedition
 	 *      \param      user        Utilisateur
 	 *      \return     int         <0 si ko, >=0 si ok
 	 */
@@ -507,7 +507,7 @@ class Expedition extends CommonObject
 		{
 			if ($this->statut == 1)
 			{
-				// Expédition validée
+				// Expedition validee
 				include_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 				$livraison = new Livraison($this->db);
 				$result=$livraison->create_from_sending($user, $this->id);
@@ -584,7 +584,7 @@ class Expedition extends CommonObject
 				{
 					$this->db->commit();
 
-					// On efface le répertoire de pdf provisoire
+					// On efface le rï¿½pertoire de pdf provisoire
 					$expref = dol_sanitizeFileName($this->ref);
 					if ($conf->expedition->dir_output)
 					{
@@ -630,22 +630,25 @@ class Expedition extends CommonObject
 	}
 
 
-	/*
-	 * Lit le document associé
+	/**
+	 * Lit le document associe
 	 *
 	 */
 	function fetch_object()
 	{
 		$object = $this->origin;
 		$class = ucfirst($object);
-		$this->$object = & new $class($this->db);
+		$this->$object = new $class($this->db);
 		$this->$object->fetch($this->origin_id);
 	}
 
-
+	/**
+	 *
+	 *
+	 */
 	function fetch_lines()
 	{
-		//Todo: récupérer les champs du document associé a part
+		// TODO: recuperer les champs du document associe a part
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
@@ -696,8 +699,8 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'une expedition
-	 *    \return     string      Libellé
+	 *    \brief      Retourne le libelle du statut d'une expedition
+	 *    \return     string      Libelle
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -705,10 +708,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libellé d'un statut donné
+	 *		\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Pict
-	 *    	\return     string		Libellé
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -737,8 +740,8 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *		\brief		Initialise la facture avec valeurs fictives aléatoire
-	 *					Sert à générer une facture pour l'aperu des modèles ou dem
+	 *		\brief		Initialise la facture avec valeurs fictives aleatoire
+	 *					Sert a generer une facture pour l'aperu des modeles ou dem
 	 */
 	function initAsSpecimen()
 	{
@@ -746,7 +749,7 @@ class Expedition extends CommonObject
 
 		dol_syslog("Expedition::initAsSpecimen");
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de societe socids
 		$socids = array();
 
 		$sql = "SELECT rowid";
@@ -793,7 +796,7 @@ class Expedition extends CommonObject
 		$order=new Commande($this->db);
 		$order->initAsSpecimen();
 
-		// Initialise paramètres
+		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -895,8 +898,8 @@ class Expedition extends CommonObject
 
 
 /**
- \class      ExpeditionLigne
- \brief      Classe de gestion des lignes de bons d'expedition
+ *  \class      ExpeditionLigne
+ *  \brief      Classe de gestion des lignes de bons d'expedition
  */
 class ExpeditionLigne
 {

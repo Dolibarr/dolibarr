@@ -35,7 +35,7 @@ $year = strftime('%Y', time());
 
 $fname = "/tmp/droits-nouveautes-".$year.".xls";
 
-$workbook = &new writeexcel_workbook($fname);
+$workbook = new writeexcel_workbook($fname);
 
 $page = &$workbook->addworksheet("Droits nouveautes ".$year);
 

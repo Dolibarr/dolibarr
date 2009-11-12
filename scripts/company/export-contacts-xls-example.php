@@ -53,7 +53,7 @@ $error = 0;
 
 $fname = DOL_DATA_ROOT.'/export-contacts.xls';
 
-$workbook = &new writeexcel_workbook($fname);
+$workbook = new writeexcel_workbook($fname);
 
 $page = &$workbook->addworksheet('Export Dolibarr');
 
