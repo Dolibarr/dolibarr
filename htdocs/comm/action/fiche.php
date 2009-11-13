@@ -294,8 +294,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 	$actioncomm = new ActionComm($db);
 	$actioncomm->fetch($_GET["id"]);
 
-	if ($user->rights->agenda->myactions->create
-		|| $user->rights->agenda->allactions->create)
+	if ($user->rights->agenda->myactions->delete
+		|| $user->rights->agenda->allactions->delete)
 	{
 		$result=$actioncomm->delete();
 
@@ -885,7 +885,7 @@ if ($_GET["id"])
 
 	if ($_GET["action"] != 'edit')
 	{
-		if ($user->rights->agenda->allactions->modify || 
+		if ($user->rights->agenda->allactions->modify ||
 		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->modify))
 		{
 			print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
@@ -895,8 +895,8 @@ if ($_GET["id"])
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
 		}
 
-		if ($user->rights->agenda->allactions->create || 
-		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->create))
+		if ($user->rights->agenda->allactions->delete ||
+		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->delete))
 		{
 			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
 		}

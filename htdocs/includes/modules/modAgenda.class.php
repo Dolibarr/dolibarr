@@ -109,19 +109,19 @@ class modAgenda extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 2402;
-		$this->rights[$r][1] = 'Create/delete actions/tasks linked to his account';
+		$this->rights[$r][1] = 'Create/modify actions/tasks linked to his account';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'create';
 		$r++;
-		
+
 		$this->rights[$r][0] = 2403;
-		$this->rights[$r][1] = 'Modify actions/tasks linked to his account';
+		$this->rights[$r][1] = 'Delete actions/tasks linked to his account';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
-		$this->rights[$r][5] = 'modify';
+		$this->rights[$r][5] = 'delete';
 		$r++;
 
 		$this->rights[$r][0] = 2411;
@@ -133,19 +133,19 @@ class modAgenda extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 2412;
-		$this->rights[$r][1] = 'Create/delete actions/tasks of others';
+		$this->rights[$r][1] = 'Create/modify actions/tasks of others';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'allactions';
 		$this->rights[$r][5] = 'create';
 		$r++;
-		
+
 		$this->rights[$r][0] = 2413;
-		$this->rights[$r][1] = 'Modify actions/tasks of others';
+		$this->rights[$r][1] = 'Delete actions/tasks of others';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'allactions';
-		$this->rights[$r][5] = 'modify';
+		$this->rights[$r][5] = 'delete';
 		$r++;
 
 		// Main menu entries
