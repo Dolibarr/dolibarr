@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
 $projetid='';
