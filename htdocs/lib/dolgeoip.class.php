@@ -26,7 +26,7 @@
 
 
 /**
- * 		\class      DolGeoIp
+ * 		\class      DolGeoIP
  *      \brief      Classe to manage GeoIP
  *      \remarks    Usage:
  *		\remarks	$geoip=new GeoIP('country',$datfile);
@@ -87,7 +87,7 @@ class DolGeoIP
 
 	/**
 	 * Return in lower case the country code from a host name
-	 * 
+	 *
 	 * @param	$name	FQN of host (example: myserver.xyz.com)
 	 * @return	string	Country code (two letters)
 	 */
