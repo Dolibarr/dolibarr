@@ -3150,7 +3150,7 @@ function addHelpMessage($inputId,$message)
 	
 	if ($conf->use_javascript_ajax)
 	{
-		$tempMessage.= ' style="color: grey;"';
+		$tempMessage.= 'style="color: grey;" ';
 		$tempMessage.= 'onFocus="hideMessage(\''.$inputId.'\',\''.$message.'\');" ';
 		$tempMessage.= 'onBlur="displayMessage(\''.$inputId.'\',\''.$message.'\');"';
 	}
