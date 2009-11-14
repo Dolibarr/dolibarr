@@ -542,6 +542,7 @@ FieldsWithIsForPublic = Els camps marcats per <b>%s</b> es mostren en la llista 
 AccordingToGeoIPDatabase = (Obtingut per conversió GeoIP)
 Line = Línia
 NotSupported = No suportat
+RequiredField = Camp obligatori
 # Week day =  = 
 Day1 = Dillus
 Day2 = Dimarts

@@ -542,6 +542,7 @@ FieldsWithIsForPublic = Los campos marcados por <b>%s</b> se mostrán en la list
 AccordingToGeoIPDatabase = (Obtenido por conversión GeoIP)
 Line = Línea
 NotSupported = No soportado
+RequiredField = Campo obligatorio
 # Week day = 
 Day1 = Lunes
 Day2 = Martes
