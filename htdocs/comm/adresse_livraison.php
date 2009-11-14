@@ -35,7 +35,7 @@ $langs->load("commercial");
 $id = isset($_GET["id"])?$_GET["id"]:'';
 $origin = isset($_GET["origin"])?$_GET["origin"]:'';
 $originid = isset($_GET["originid"])?$_GET["originid"]:'';
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 if (! $socid && ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && $_REQUEST["action"] != 'update')) accessforbidden();
 
 // Security check
@@ -83,13 +83,13 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         	}
         	else
         	{
-            Header("Location: adresse_livraison.php?socid=".$socid);
-            exit;
-          }
+        		Header("Location: adresse_livraison.php?socid=".$socid);
+        		exit;
+        	}
         }
         else
         {
-            $mesg=$livraison->error;
+            $mesg = $livraison->error;
             $_GET["action"]='create';
         }
     }
@@ -136,18 +136,18 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
 {
-  $livraison = new AdresseLivraison($db);
-  $result = $livraison->delete($_GET["id"], $socid);
-
-  if ($result == 0)
+	$livraison = new AdresseLivraison($db);
+	$result = $livraison->delete($_GET["id"], $socid);
+	
+	if ($result == 0)
     {
-      Header("Location: adresse_livraison.php?socid=".$socid);
-      exit ;
+    	Header("Location: adresse_livraison.php?socid=".$socid);
+    	exit ;
     }
-  else
+    else
     {
-      $reload = 0;
-      $_GET["action"]='';
+    	$reload = 0;
+    	$_GET["action"]='';
     }
 }
 
@@ -161,6 +161,7 @@ llxHeader();
 $form = new Form($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+if (!empty($mesg)) print '<div class="error">'.$mesg.'</div>';
 
 if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
@@ -173,7 +174,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$livraison = new AdresseLivraison($db);
 
 		$societe=new Societe($db);
-		$societe->fetch($_GET["socid"]);
+		$societe->fetch($socid);
 		$head = societe_prepare_head($societe);
 
 		dol_fiche_head($head, 'customer', $societe->nom);
