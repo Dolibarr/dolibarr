@@ -542,6 +542,7 @@ FieldsWithIsForPublic=Les champs marqués par <b>%s</b> seront affiches sur la l
 AccordingToGeoIPDatabase=(obtenu par conversion GeoIP)
 Line=Ligne
 NotSupported=Non supporté
+RequiredField=Champ obligatoire
 
 # Week day
 Day1=Lundi

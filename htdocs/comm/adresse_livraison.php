@@ -227,8 +227,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
         print '<table class="border" width="100%">';
 
-        print '<tr><td>'.$langs->trans('DeliveryAddressLabel').'</td><td><input type="text" size="30" name="label" value="'.$livraison->label.'"></td></tr>';
-        print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$livraison->nom.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('DeliveryAddressLabel').'</td><td><input type="text" size="30" name="label" id="label" value="'.($livraison->label?$livraison->label:$langs->trans('RequiredField')).'" '.addHelpMessage("label",$langs->trans('RequiredField')).'></td></tr>';
+        print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" id="nom" value="'.($livraison->nom?$livraison->nom:$langs->trans('RequiredField')).'" '.addHelpMessage("nom",$langs->trans('RequiredField')).'></td></tr>';
 
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $livraison->adresse;

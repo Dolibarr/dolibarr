@@ -543,6 +543,7 @@ FieldsWithIsForPublic=Fields with <b>%s</b> are shown on public list of members.
 AccordingToGeoIPDatabase=(according to GeoIP convertion)
 Line=Line
 NotSupported=Not supported
+RequiredField=Required field
 
 # Week day
 Day1=Monday

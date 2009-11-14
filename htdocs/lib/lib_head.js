@@ -1,5 +1,5 @@
 // Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
-// Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+// Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 //
 // Script javascript added in header of pages (in HEAD section)
 //
@@ -65,7 +65,7 @@ function company_save_refresh()
 	Purpose:  Pour la saisie des dates par calendrier
 	Input:    base			   "/theme/eldy"
 					  dateFieldID  "dateo"			  Nom du champ
-				    format			 "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat à utiliser pour retour
+				    format			 "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat ï¿½ utiliser pour retour
 ==================================================================*/
 
 function showDP(base,dateFieldID,format)
@@ -673,4 +673,32 @@ var win = new Window({className: "dialog",
 /*win.getContent().innerHTML = message;*/
 win.getContent().update(message);
 win.showCenter();
+}
+
+/*=================================================================
+Purpose:  Hide a temporary message in input text fields
+Input:    fiedId
+Input:    message
+Author:   Regis Houssin
+Licence:  GPL
+==================================================================*/
+function hideMessage(fieldId,message) {
+	var textbox = document.getElementById(fieldId);
+	textbox.style.color = 'black';
+	if (textbox.value == message) textbox.value = '';
+}
+
+/*=================================================================
+Purpose:  Display a temporary message in input text fields
+Input:    fieldId
+Input:    message
+Author:   Regis Houssin
+Licence:  GPL
+==================================================================*/
+function displayMessage(fieldId,message) {
+	var textbox = document.getElementById(fieldId);
+	if (textbox.value == '') {
+		textbox.style.color = 'grey';
+		textbox.value = message;
+	}
 }
