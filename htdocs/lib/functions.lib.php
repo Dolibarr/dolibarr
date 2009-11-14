@@ -3146,16 +3146,16 @@ function addHelpMessage($inputId,$message)
 {
 	global $conf;
 	
-	$tempMessage = '';
+	$helpMessage = '';
 	
 	if ($conf->use_javascript_ajax)
 	{
-		$tempMessage.= 'style="color: grey;" ';
-		$tempMessage.= 'onFocus="hideMessage(\''.$inputId.'\',\''.$message.'\');" ';
-		$tempMessage.= 'onBlur="displayMessage(\''.$inputId.'\',\''.$message.'\');"';
+		$helpMessage.= 'style="color: grey;" ';
+		$helpMessage.= 'onFocus="hideMessage(\''.$inputId.'\',\''.$message.'\');" ';
+		$helpMessage.= 'onBlur="displayMessage(\''.$inputId.'\',\''.$message.'\');"';
 	}
 	
-	return $tempMessage;
+	return $helpMessage;
 }
 
 ?>

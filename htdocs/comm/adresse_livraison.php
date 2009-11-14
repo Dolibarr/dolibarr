@@ -50,9 +50,10 @@ $result = restrictedArea($user, 'societe', $socid);
 if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
 {
 	$livraison = new AdresseLivraison($db);
+	
     $livraison->socid                 = $_POST["socid"];
-    $livraison->label                 = $_POST["label"];
-    $livraison->nom                   = $_POST["nom"];
+    $livraison->label                 = ($_POST["label"]!=$langs->trans('RequiredField')?$_POST["label"]:'');
+    $livraison->nom                   = ($_POST["nom"]!=$langs->trans('RequiredField')?$_POST["nom"]:'');
     $livraison->adresse               = $_POST["adresse"];
     $livraison->cp                    = $_POST["cp"];
     $livraison->ville                 = $_POST["ville"];
