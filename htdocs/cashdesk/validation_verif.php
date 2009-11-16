@@ -97,11 +97,11 @@ switch ( $_GET['action'] )
 		{
 			case 'DIF':
 				$mode_reglement_id = 0;
-				//$cond_reglement_id = dol_getIdFromCode($sql,'RECEP','cond_reglement','code','rowid')
+				//$cond_reglement_id = dol_getIdFromCode($db,'RECEP','cond_reglement','code','rowid')
 				$cond_reglement_id = 0;
 				break;
 			case 'ESP':
-				$mode_reglement_id = dol_getIdFromCode($sql,'LIQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
 				$note .= $langs->trans("Received").' : '.$obj_facturation->montant_encaisse()." ".$conf->monnaie."\n";
@@ -110,11 +110,11 @@ switch ( $_GET['action'] )
 				$note .= '--------------------------------------'."\n\n";
 				break;
 			case 'CB':
-				$mode_reglement_id = dol_getIdFromCode($sql,'CB','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement');
 				$cond_reglement_id = 0;
 				break;
 			case 'CHQ':
-				$mode_reglement_id = dol_getIdFromCode($sql,'CHQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement');
 				$cond_reglement_id = 0;
 				break;
 		}
@@ -134,7 +134,7 @@ switch ( $_GET['action'] )
 		$user->fetch();
 		$user->getrights();
 
-		$invoice=new Facture($sql,$conf_fksoc);
+		$invoice=new Facture($db,$conf_fksoc);
 
 
 		// Recuperation de la liste des articles du panier
