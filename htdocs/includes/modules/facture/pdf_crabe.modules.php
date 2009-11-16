@@ -217,7 +217,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('Arial','', 9);
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fac->note_public), 0, 'J');
 					$nexY = $pdf->GetY();

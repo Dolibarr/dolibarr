@@ -783,8 +783,8 @@ class Fichinter extends CommonObject
 }
 
 /**
- \class      FichinterLigne
- \brief      Classe permettant la gestion des lignes d'intervention
+ *	\class      FichinterLigne
+ *	\brief      Classe permettant la gestion des lignes d'intervention
  */
 class FichinterLigne
 {

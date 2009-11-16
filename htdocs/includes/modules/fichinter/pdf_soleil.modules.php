@@ -68,9 +68,12 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
-		// Recupere code pays de l'emmetteur
+		// Recupere emmetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // By default, if not defined
+
+		// Defini position des colonnes
+		$this->posxdesc=$this->marge_gauche+1;
 	}
 
 	/**
@@ -150,6 +153,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('Arial','', 9);
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
 
+				// Pagehead
+								
 				//Affiche le filigrane brouillon - Print Draft Watermark
 				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
 				{
@@ -203,7 +208,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetXY($this->marge_gauche+2,$posy+3);
 
-				// Sende name
+				// Sender name
 				$pdf->SetTextColor(0,0,60);
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
@@ -247,8 +252,35 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('Arial','',10);
 
-				$tab_top = 100;
 
+				$tab_top = 100;
+				$tab_top_newpage = 50;
+				$tab_height = 110;
+				$tab_height_newpage = 150;
+				
+				// Affiche notes
+				if (! empty($fichinter->note_public))
+				{
+					$tab_top = 98;
+
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetXY ($this->posxdesc-1, $tab_top);
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fichinter->note_public), 0, 'J');
+					$nexY = $pdf->GetY();
+					$height_note=$nexY-$tab_top;
+
+					// Rect prend une longueur en 3eme param
+					$pdf->SetDrawColor(192,192,192);
+					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+
+					$tab_height = $tab_height - $height_note;
+					$tab_top = $nexY+6;
+				}
+				else
+				{
+					$height_note=0;
+				}
+	
 				$pdf->SetXY (10, $tab_top);
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
@@ -262,44 +294,41 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->writeHTMLCell(180, 3, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
 				$nexY = $pdf->GetY();
 
-				$tab_height = 0;
-				$tab_top=$nexY+3;
 				$pdf->line(10, $nexY, 200, $nexY);
 
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3. Then writeMultiCell must use 3 also.
 
 				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
-				$num = sizeof($fichinter->lignes);
-				$i=0;$j=0;
-				$height=9;
-				if ($num)
+				$nblignes = sizeof($fichinter->lignes);
+				
+				$curY = $pdf->GetY();
+				$nexY = $pdf->GetY();
+				
+				// Loop on each lines
+				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-					while ($i < $num)
+					$fichinterligne = $fichinter->lignes[$i];
+					
+					$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
+					if ($valide>0)
 					{
-						$fichinterligne = $fichinter->lignes[$i];
-
-						$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
-						if ($valide>0)
-						{
-							$pdf->SetXY (10, $tab_top + $j * $height);
-							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + $j * $height,
-							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
-							$tab_height+=4;
-							
-							$pdf->SetXY (10, $tab_top + 4 + $j * $height);
-							$desc = dol_htmlentitiesbr($fichinterligne->desc,1);
-							$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $tab_top + 4 + $j * $height, $desc, 0, 1, 0);
-							$tab_height+=dol_nboflines_bis($fichinterligne->desc,52,$outputlangs->charset_output)*4;
-
-							$j++;
-						}
-						$i++;
+						$curY = $nexY+3;
+					
+						$pdf->SetXY (10, $curY);
+						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY,
+						dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
+						$nexY = $pdf->GetY();
+						
+						$pdf->SetXY (10, $curY + 3);
+						$desc = dol_htmlentitiesbr($fichinterligne->desc,1);
+						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY + 3, $desc, 0, 1, 0);
+						$nexY+=dol_nboflines_bis($fichinterligne->desc,52,$outputlangs->charset_output)*3;
 					}
 				}
-				$pdf->line(10, $tab_top+$tab_height+3, 200, $tab_top+$tab_height+3);
+				//$pdf->line(10, $tab_top+$tab_height+3, 200, $tab_top+$tab_height+3);
 
 				// Rectangle for title and all lines
-				$pdf->Rect(10, 100, 190, $tab_top+$tab_height+3-100);
+				$pdf->Rect(10, $tab_top, 190, $tab_height+3);
 				$pdf->SetXY (10, $pdf->GetY() + 20);
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
