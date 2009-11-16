@@ -445,7 +445,7 @@ if ($_GET["action"] == 'create')
 		print '<input type="hidden" name="action" value="add">';
 
 		print '<tr><td>'.$langs->trans("Ref").'</td>';
-		print '<td><input name="ref" value="$numpr"></td></tr>'."\n";
+		print '<td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
 
 		if ($conf->projet->enabled)
 		{
@@ -488,7 +488,7 @@ if ($_GET["action"] == 'create')
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 		print '<table class="border" width="100%">';
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		$html->select_societes('','socid','s.client = 1',1);
+		$html->select_societes('','socid','',1);
 		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
 		print '<input type="hidden" name="action" value="create">';
@@ -550,7 +550,7 @@ elseif ($fichinterid)
 	print $html->showrefnav($fichinter,'ref','',1,'ref','ref');
 	print '</td></tr>';
 
-	// Societe
+	// Third party
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$fichinter->client->getNomUrl(1)."</td></tr>";
 
 	// Project
@@ -584,7 +584,11 @@ elseif ($fichinterid)
 	}
 
 	// Duration
-	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.ConvertSecondToTime($fichinter->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
+	//print $fichinter->duree.'-'.$conf->global->MAIN_DURATION_OF_WORKDAY;
+	print '<td>'.ConvertSecondToTime($fichinter->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+	//print '<td>'.ConvertSecondToTime(90000,'all',$conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+	print '</tr>';
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td>';

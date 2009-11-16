@@ -38,11 +38,13 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 }
 
 
-/**	  \brief      Return, in clear text, value of a number of seconds in days, hours and minutes
- *    \param      iSecond		Number of seconds
- *    \param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
- *    \param      lengthOfDay	Length of day (default 86400 seconds)
- *    \return     sTime			Formated text of duration
+/**	  	\brief      Return, in clear text, value of a number of seconds in days, hours and minutes
+ *    	\param      iSecond		Number of seconds
+ *    	\param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
+ *    	\param      lengthOfDay	Length of day (default 86400 seconds)
+ *    	\return     sTime			Formated text of duration
+ * 		\example	3600 return 1h00, 86400 return 1d, 90000 return 1day 1hour
+ * 					
  */
 function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 {
@@ -55,25 +57,27 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 		if ($iSecond >= $lengthOfDay)
 		{
 			$sDay=0;
-			for( $i = $iSecond; $i > $lengthOfDay; $i -= $lengthOfDay )
+			for( $i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay )
 			{
 				$sDay++;
+				$iSecond-=$lengthOfDay;
 			}
 			$dayTranslate = $langs->trans("Day");
 			if ($iSecond >= ($lengthOfDay*2)) $dayTranslate = $langs->trans("Days");
 		}
 		$sTime='';
 		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
-		$sHour = date("H",$iSecond)-1;
+		$sHour = date("H",$iSecond);
 		$sMin  = date("i",$iSecond);
-		if (!empty($sHour) && !empty($sMin))
+		//print 'x'.$sHour.'-'.$sMin;
+		if (intval($sHour) || intval($sMin))
 		{
-			$sTime.= $sHour.'h'.$sMin;
+			$sTime.= $sHour.$langs->trans('h').$sMin;
 		}
 	}
 	else if ($format == 'hour')
 	{
-		$sTime=date("H",$iSecond)-1;
+		$sTime=date("H",$iSecond);
 	}
 	else if ($format == 'min')
 	{
