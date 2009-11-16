@@ -86,7 +86,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && ($user->rights->
 		$newvat=str_replace('*','',$_POST["tva_tx"]);
 	}
 
-	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat,$newprice_min, $level) > 0)
+	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level) > 0)
 	{
 		$_GET["action"] = '';
 		$mesg = '<div class="ok">'.$langs->trans("RecordSaved").'</div>';
@@ -146,9 +146,9 @@ if($conf->global->PRODUIT_MULTIPRICES)
 		$soc = new Societe($db);
 		$soc->id = $socid;
 		$soc->fetch($socid);
-					
+
 		print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
-						
+
 		if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
 		{
 			print '<td>'.price($product->multiprices_ttc["$soc->price_level"]);
@@ -157,7 +157,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 		{
 			print '<td>'.price($product->multiprices["$soc->price_level"]);
 		}
-						
+
 		if ($product->multiprices_base_type["$soc->price_level"])
 		{
 			print ' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
@@ -167,7 +167,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 			print ' '.$langs->trans($product->price_base_type);
 		}
 		print '</td></tr>';
-						
+
 		// Prix mini
 		print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
 		if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
@@ -185,7 +185,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 		for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 		{
 			print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
-						
+
 			if ($product->multiprices_base_type["$i"] == 'TTC')
 			{
 				print '<td>'.price($product->multiprices_ttc["$i"]);
@@ -194,7 +194,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 			{
 				print '<td>'.price($product->multiprices["$i"]);
 			}
-			
+
 			if ($product->multiprices_base_type["$i"])
 			{
 				print ' '.$langs->trans($product->multiprices_base_type["$i"]);
@@ -204,7 +204,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 				print ' '.$langs->trans($product->price_base_type);
 			}
 			print '</td></tr>';
-						
+
 			// Prix mini
 			print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
 			if ($product->multiprices_base_type["$i"] == 'TTC')

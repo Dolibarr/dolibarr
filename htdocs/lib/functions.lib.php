@@ -2313,14 +2313,15 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
  *		\param	    html			Type de formatage, html ou pas (par defaut)
  *		\param	    outlangs		Objet langs pour formatage text
  *		\param		trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
- *		\param		rounding		Nbre decimals minimum.
+ *		\param		rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		\return		string			Chaine avec montant formate
  *		\seealso	price2num		Revert function of price
  */
-function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
+function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1)
 {
 	global $langs,$conf;
 
+	if ($rounding < 0) $rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	$nbdecimal=$rounding;
 
 	// Output separators by default (french)
@@ -2396,13 +2397,16 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
 	{
-		//print 'ZZ'.$nbofdec.'=>'.$amount.'<br>';
+		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.'<br>';
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
 		if (is_numeric($amount))
 		{
-			$nbofdec=max(0,strlen($amount-intval($amount))-2);
+			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
+			$temps=sprintf("%0.10F",$amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps=preg_replace('/([\.1-9])0+$/','\\1',$temps); // temps=0. or 0.00002 or 9999.1
+			$nbofdec=max(0,strlen($temps)-2);	// -2 to remove "0."
 			$amount=number_format($amount,$nbofdec,$dec,$thousand);
 		}
 		//print "QQ".$amount.'<br>';
@@ -2422,18 +2426,22 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 		elseif ($rounding == 'MT') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_TOT;
 		elseif ($rounding == 'MS') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
 		elseif ($rounding == '2')  $nbofdectoround=2; 	// For admin info page
+		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
-		//print 'ZZ'.$nbofdec.'-'.$nbofdectoround.'=>'.$amount.'<br>';
+		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
 		if (is_numeric($amount))
 		{
-			$nbofdec=max(0,strlen($amount-intval($amount))-2);
+			// We put in temps value of decimal ("0.00001"). Works with 0 and 2.0E-5 and 9999.10
+			$temps=sprintf("%0.10F",$amount-intval($amount));	// temps=0.0000000000 or 0.0000200000 or 9999.1000000000
+			$temps=preg_replace('/([\.1-9])0+$/','\\1',$temps); // temps=0. or 0.00002 or 9999.1
+			$nbofdec=max(0,strlen($temps)-2);	// -2 to remove "0."
 			$amount=number_format($amount,min($nbofdec,$nbofdectoround),$dec,$thousand);		// Convert amount to format with dolibarr dec and thousand
 		}
-		//print "RR".$amount.'<br>';
+		//print "TT".$amount.'<br>';
 
 		// Always make replace because each math function (like round) replace
 		// with local values and we want a number that has a SQL string format x.y
@@ -3145,16 +3153,16 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 function addHelpMessage($inputId,$message)
 {
 	global $conf;
-	
+
 	$helpMessage = '';
-	
+
 	if ($conf->use_javascript_ajax)
 	{
 		$helpMessage.= 'style="color: grey;" ';
 		$helpMessage.= 'onFocus="hideMessage(\''.$inputId.'\',\''.$message.'\');" ';
 		$helpMessage.= 'onBlur="displayMessage(\''.$inputId.'\',\''.$message.'\');"';
 	}
-	
+
 	return $helpMessage;
 }
 

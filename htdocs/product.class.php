@@ -824,7 +824,7 @@ class Product extends CommonObject
 	{
 		global $conf,$langs;
 
-		dol_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level, LOG_DEBUG);
+		dol_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level);
 
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx=0;
@@ -863,6 +863,7 @@ class Product extends CommonObject
 					$price_min = price2num($newminprice,'MU');
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc,'MU');
+					//print 'X'.$newminprice.'-'.$price_min;
 				}
 				else
 				{
@@ -883,7 +884,7 @@ class Product extends CommonObject
 			$sql.= " tva_tx='".price2num($newvat)."'";
 			$sql.= " WHERE rowid = " . $id;
 
-			dol_syslog("Product::update_price sql=".$sql);
+			dol_syslog("Product::update_price sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
