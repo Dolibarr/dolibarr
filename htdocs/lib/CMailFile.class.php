@@ -962,7 +962,7 @@ class CMailFile
 				if (file_exists($images_dir.'/'.$img))
 				{
 					// Image path in src
-					$src = preg_quote($full);
+					$src = preg_quote($full,'/');
 
 					// Image full path
 					$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
