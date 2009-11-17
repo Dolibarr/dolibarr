@@ -759,8 +759,7 @@ class DolibarrModules
 			$val    = $this->const[$key][2];
 			$note   = $this->const[$key][3];
 			$visible= $this->const[$key][4];
-			$entity = $this->const[$key][5];
-			
+			$entity = isset($this->const[$key][5])?$this->const[$key][5]:0;
 			$entity = ((!empty($entity) || $entity == '0')?$entity:$conf->entity);
 
 			$sql = "SELECT count(*)";
