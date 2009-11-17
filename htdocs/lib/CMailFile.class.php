@@ -384,8 +384,9 @@ class CMailFile
 
 
 	/**
-	 *	\brief     Send mail that was prepared by constructor
-	 *	\return    boolean     True if mail sent, false otherwise
+	 * Send mail that was prepared by constructor
+	 * 
+	 * @return    boolean     True if mail sent, false otherwise
 	 */
 	function sendfile()
 	{
@@ -583,9 +584,10 @@ class CMailFile
 	}
 
 	/**
-	 *	\brief      Read a file on disk and return encoded content for emails
-	 *	\param      sourcefile
-	 *	\return     <0 if KO, encoded string if OK
+	 * Read a file on disk and return encoded content for emails
+	 * 
+	 * @param      sourcefile
+	 * @return     <0 if KO, encoded string if OK
 	 */
 	function _encode_file($sourcefile)
 	{
@@ -607,7 +609,7 @@ class CMailFile
 
 
 	/**
-	 *    \brief  Ecrit le mail dans un fichier. Utilisation pour le debuggage.
+	 *  Ecrit le mail dans un fichier. Utilisation pour le debuggage.
 	 */
 	function dump_mail()
 	{
@@ -635,7 +637,9 @@ class CMailFile
 	}
 
 	/**
-	 *	\brief		Create SMTP headers
+	 * Create SMTP headers
+	 * 
+	 * @return	smtp headers
 	 */
 	function write_smtpheaders()
 	{
@@ -670,9 +674,11 @@ class CMailFile
 
 
 	/**
-	 *	\brief 		Creation header MIME
-	 *	\param 		filename_list
-	 *	\param 		mimefilename_list
+	 * Creation header MIME
+	 * 
+	 * @param 		filename_list
+	 * @param 		mimefilename_list
+	 * @return		mime headers
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
@@ -696,8 +702,9 @@ class CMailFile
 	}
 
 	/**
-	 *	\brief 		Permet d'ecrire le corps du message (mode = 'mail')
-	 *	\param 		msgtext
+	 * Permet d'ecrire le corps du message (mode = 'mail')
+	 * 
+	 * @param 		msgtext
 	 */
 	function write_body($msgtext)
 	{
@@ -781,7 +788,7 @@ class CMailFile
 			}
 			if ($this->css['bgimage'])
 			{
-				// Todo: r�cup�rer cid
+				// TODO recuperer cid
 				$out.= '  background-image: url("cid:'.$this->css['bgimage_cid'].'");';
 			}
 			$out.= '}';
@@ -792,11 +799,12 @@ class CMailFile
 	}
 
 	/**
-	 \brief 		Permet d'attacher un fichier
-	 \param 		filename_list		Tableau
-	 \param 		mimetype_list		Tableau
-	 \param 		mimefilename_list	Tableau
-	 \return		out					Chaine fichiers encodes
+	 * Permet d'attacher un fichier
+	 * 
+	 * @param 		filename_list		Tableau
+	 * @param 		mimetype_list		Tableau
+	 * @param 		mimefilename_list	Tableau
+	 * @return		out					Chaine fichiers encodes
 	 */
 	function write_files($filename_list,$mimetype_list,$mimefilename_list)
 	{
@@ -835,9 +843,10 @@ class CMailFile
 
 
 	/**
-	 \brief 		Permet d'attacher une image
-	 \param 		images_list		Tableau
-	 \return		out					Chaine images encodees
+	 * Permet d'attacher une image
+	 * 
+	 * @param 		images_list		Tableau
+	 * @return		out					Chaine images encodees
 	 */
 	function write_images($images_list)
 	{
@@ -940,9 +949,10 @@ class CMailFile
 	}
 
 	/**
-	 *	\brief 		Recherche la presence d'images dans le message html
-	 *	\param 		images_dir		Emplacement des images
-	 *	\return		int         	>0 if OK, <0 if KO
+	 * Recherche la presence d'images dans le message html
+	 * 
+	 * @param 		images_dir		Emplacement des images
+	 * @return		int         	>0 if OK, <0 if KO
 	 */
 	function findHtmlImages($images_dir)
 	{
@@ -1027,11 +1037,12 @@ class CMailFile
 	}
 
 	/**
-	 *	\brief      Return an address for SMTP protocol
-	 *	\param      adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
-	 *	\param		format			0=Auto, 1=emails with <>, 2=emails without <>
-	 * 	\param		encode			1=Encode name to RFC2822
-	 *	\return	    string			If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'
+	 * Return an address for SMTP protocol
+	 * 
+	 * @param      adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 * @param		format			0=Auto, 1=emails with <>, 2=emails without <>
+	 * @param		encode			1=Encode name to RFC2822
+	 * @return	    string			If format 1: '<john@doe.com>' or 'John Doe <john@doe.com>'
 	 *								If format 2: 'john@doe.com'
 	 */
 	function getValidAddress($adresses,$format,$encode='')
