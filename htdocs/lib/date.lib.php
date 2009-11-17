@@ -42,22 +42,22 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    	\param      iSecond		Number of seconds
  *    	\param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
  *    	\param      lengthOfDay	Length of day (default 86400 seconds)
- *    	\return     sTime			Formated text of duration
- * 		\example	3600 return 1h00, 86400 return 1d, 90000 return 1day 1hour
- * 					
+ *    	\return     sTime		Formated text of duration
+ * 		\example	0 return 0h00, 3600 return 1h00, 86400 return 1d, 90000 return 1day 1hour
+ *
  */
 function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 {
 	global $langs;
-	
+
 	if (empty($lengthOfDay)) $lengthOfDay = 86400;
 
 	if ($format == 'all')
 	{
+		$sDay=0;
 		if ($iSecond >= $lengthOfDay)
 		{
-			$sDay=0;
-			for( $i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay )
+			for($i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay )
 			{
 				$sDay++;
 				$iSecond-=$lengthOfDay;
@@ -67,21 +67,18 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 		}
 		$sTime='';
 		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
-		$sHour = date("H",$iSecond);
-		$sMin  = date("i",$iSecond);
-		//print 'x'.$sHour.'-'.$sMin;
-		if (intval($sHour) || intval($sMin))
+		if ($iSecond)
 		{
-			$sTime.= $sHour.$langs->trans('h').$sMin;
+			$sTime.= dol_print_date($iSecond,'hour',true);
 		}
 	}
 	else if ($format == 'hour')
 	{
-		$sTime=date("H",$iSecond);
+		$sTime=dol_print_date($iSecond,'%H',true);
 	}
 	else if ($format == 'min')
 	{
-		$sTime=date("i",$iSecond);
+		$sTime=dol_print_date($iSecond,'%M',true);
 	}
 	return $sTime;
 }
