@@ -121,8 +121,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled="disabled" />
 				</td>
 				<!-- Affichage du prix unitaire -->
-				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo number_format( $obj_facturation->prix(), 2, '.', '') ?>" disabled="disabled" /></td>
-				<td>&#8364;</td>
+				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num( $obj_facturation->prix(), 'MU'); ?>" disabled="disabled" /></td>
+				<td><?php echo $conf->monnaie; ?></td>
 				<!-- Choix du taux de TVA -->
 				<td class="select_tva">
 				<select name="selTva" onchange="javascript: modif();" >
