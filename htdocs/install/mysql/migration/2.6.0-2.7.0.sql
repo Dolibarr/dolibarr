@@ -203,6 +203,7 @@ ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle
 ALTER TABLE llx_adherent_options_label ADD UNIQUE INDEX uk_adherent_options_label_name (name, entity);
 
 ALTER TABLE llx_projet ADD INDEX idx_projet_fk_soc (fk_soc);
+-- V4.1 update llx_projet set fk_soc=null where fk_soc is not null and fk_soc not in (select rowid from llx_societe);
 ALTER TABLE llx_projet ADD CONSTRAINT fk_projet_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 
 
