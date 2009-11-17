@@ -74,11 +74,11 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 	}
 	else if ($format == 'hour')
 	{
-		$sTime=dol_print_date($iSecond,'%H',true);
+		$sTime=date("H",$iSecond);
 	}
 	else if ($format == 'min')
 	{
-		$sTime=dol_print_date($iSecond,'%M',true);
+		$sTime=date("i",$iSecond);
 	}
 	return $sTime;
 }
