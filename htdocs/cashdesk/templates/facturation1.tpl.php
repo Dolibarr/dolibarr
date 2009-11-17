@@ -146,7 +146,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 			<!-- Choix de la remise -->
 			<td><input class="texte1" type="text" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/></td>
 			<!-- Affichage du total HT -->
-			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td>&#8364;</td>
+			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->monnaie; ?></td>
 			</tr>
 		</table>
 
