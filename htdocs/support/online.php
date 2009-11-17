@@ -57,13 +57,13 @@ $arrayofwidgets=array(
 // Widget for Laurent Destailleur
 array('name'=>'Laurent Destailleur',	# id user 4702
 		'sort'=>1,
-		'logo'=>'&logoUrl='.urlencode('http://www.nltechno.com/images/logo_nltechno_long.jpg'), // Put your own logo
+		'logo'=>'logoUrl='.urlencode('http://www.nltechno.com/images/logo_nltechno_long.jpg'), // Put your own logo
 		'id'=>'4256,4255',	// Put of list of sparkangels widget id (for each language)
 		'lang'=>'fr,en'),	// Put list of language code of widgets (always english at end)
 // Widget for Regis Houssin
 array('name'=>'R&eacute;gis Houssin',
 		'sort'=>2,
-		'logo'=>'&logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
+		'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
 		'id'=>'5391',
 		'lang'=>'fr')
 );
@@ -100,7 +100,7 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 			// Widget V1
 			// print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 			// Widget V2
-			print '<iframe src="http://www.spark-angels.com/static/widget/widgetpro2-iframe.html?widgetId='.$widgetid.$arraywidget['logo'].'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			print '<iframe src="http://www.spark-angels.com/static/widget/widgetpro2-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.$arraywidget['logo'].'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 
 			print '</td>';
 			$found++;
