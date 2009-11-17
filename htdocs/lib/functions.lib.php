@@ -215,7 +215,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
  *	\param      level           	Log level
  *	\remarks	This function works only if syslog module is enabled.
  * 	\remarks	This must must not use any call to other function calling dol_syslog (avoid infinite loop).
- *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
+ *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si syslog, 7 si dolibarr
  *				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  */
 function dol_syslog($message, $level=LOG_INFO)
@@ -2321,7 +2321,10 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1)
 {
 	global $langs,$conf;
 
+	// Clean parameters
+	if (empty($amount)) $amount=0;	// To have a numeric value if amount not defined or = ''
 	if ($rounding < 0) $rounding=min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+
 	$nbdecimal=$rounding;
 
 	// Output separators by default (french)
