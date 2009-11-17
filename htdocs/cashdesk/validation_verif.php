@@ -81,10 +81,12 @@ switch ( $_GET['action'] )
 
 
 	case 'valide_facture':
-
+		
+		$now=dol_now('tzserver');
+		
 		// Recuperation de la date et de l'heure
-		$date = date ('Y-m-d');
-		$heure = date ('H:i:s');
+		$date = dol_print_date($now,'day');
+		$heure = dol_print_date($now,'hour');
 
 		$note = '';
 		if (! is_object($obj_facturation))
@@ -125,7 +127,6 @@ switch ( $_GET['action'] )
 
 
 		$error=0;
-		$now=dol_now('tzserver');
 
 
 		$db->begin();
@@ -183,7 +184,8 @@ switch ( $_GET['action'] )
 			$invoiceline=new FactureLigne($db);
 			$invoiceline->fk_product=$tab_liste[$i]['fk_article'];
 			$invoiceline->desc=$tab_article['label'];
-			$invoiceline->tva_tx=$tab_tva['taux'];
+			$invoiceline->tva_tx=empty($tab_tva['taux'])?0:$tab_tva['taux'];	// works even if vat_rate is ''
+			//$invoiceline->tva_tx=$tab_tva['taux'];
 			$invoiceline->qty=$tab_liste[$i]['qte'];
 			$invoiceline->remise_percent=$tab_liste[$i]['remise_percent'];
 			$invoiceline->price=$tab_article['price'];
@@ -209,92 +211,106 @@ switch ( $_GET['action'] )
 		// Si paiement differe ...
 		if ( $obj_facturation->mode_reglement() == 'DIF' )
 		{
-			$result=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiement_le()));
-			$result=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
-
+			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiement_le()));
+			if ($resultcreate > 0)
+			{
+				$resultvalid=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
+			}
+			else 
+			{
+				$error++;
+			}
+			
 			$id = $invoice->id;
 		}
 		else
 		{
-			$result=$invoice->create($user,0,0);
-			$result=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
-
-			$id = $invoice->id;
-
-			// Add the payment
-			$payment=new Paiement($db);
-			$payment->datepaye=$now;
-			$payment->bank_account=$conf_fkaccount;
-			$payment->amounts[$invoice->id]=$obj_facturation->prix_total_ttc();
-			$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->num_facture();
-			$payment->paiementid=$invoice->mode_reglement_id;
-			$payment->num_paiement='';
-
-			$paiement_id = $payment->create($user);
-			if ($paiement_id > 0)
+			$resultcreate=$invoice->create($user,0,0);
+			if ($resultcreate > 0)
 			{
-				// Ajout d'une ecriture sur le compte bancaire
-				if ($conf->banque->enabled)
+				$resultvalid=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
+
+				$id = $invoice->id;
+	
+				// Add the payment
+				$payment=new Paiement($db);
+				$payment->datepaye=$now;
+				$payment->bank_account=$conf_fkaccount;
+				$payment->amounts[$invoice->id]=$obj_facturation->prix_total_ttc();
+				$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->num_facture();
+				$payment->paiementid=$invoice->mode_reglement_id;
+				$payment->num_paiement='';
+	
+				$paiement_id = $payment->create($user);
+				if ($paiement_id > 0)
 				{
-					$bankaccountid=0;
-					if ( $obj_facturation->mode_reglement() == 'ESP' )
+					// Ajout d'une ecriture sur le compte bancaire
+					if ($conf->banque->enabled)
 					{
-						$bankaccountid=$conf_fkaccount_cash;
-					}
-					if ( $obj_facturation->mode_reglement() == 'CHQ' )
-					{
-						$bankaccountid=$conf_fkaccount_cheque;
-					}
-					if ( $obj_facturation->mode_reglement() == 'CB' )
-					{
-						$bankaccountid=$conf_fkaccount_cb;
-					}
-
-					if ($bankaccountid > 0)
-					{
-						// Insertion dans llx_bank
-						$label = "(CustomerInvoicePayment)";
-						$acc = new Account($db, $bankaccountid);
-
-						$bank_line_id = $acc->addline($payment->datepaye,
-						$payment->paiementid,	// Payment mode id or code ("CHQ or VIR for example")
-						$label,
-						$obj_facturation->prix_total_ttc(),
-						$payment->num_paiement,
-			      		'',
-						$user,
-						'',
-						'');
-
-						// Mise a jour fk_bank dans llx_paiement.
-						// On connait ainsi le paiement qui a genere l'ecriture bancaire
-						if ($bank_line_id > 0)
+						$bankaccountid=0;
+						if ( $obj_facturation->mode_reglement() == 'ESP' )
 						{
-							$payment->update_fk_bank($bank_line_id);
-							// Mise a jour liens (pour chaque facture concernees par le paiement)
-							foreach ($payment->amounts as $key => $value)
+							$bankaccountid=$conf_fkaccount_cash;
+						}
+						if ( $obj_facturation->mode_reglement() == 'CHQ' )
+						{
+							$bankaccountid=$conf_fkaccount_cheque;
+						}
+						if ( $obj_facturation->mode_reglement() == 'CB' )
+						{
+							$bankaccountid=$conf_fkaccount_cb;
+						}
+	
+						if ($bankaccountid > 0)
+						{
+							// Insertion dans llx_bank
+							$label = "(CustomerInvoicePayment)";
+							$acc = new Account($db, $bankaccountid);
+	
+							$bank_line_id = $acc->addline($payment->datepaye,
+							$payment->paiementid,	// Payment mode id or code ("CHQ or VIR for example")
+							$label,
+							$obj_facturation->prix_total_ttc(),
+							$payment->num_paiement,
+				      		'',
+							$user,
+							'',
+							'');
+	
+							// Mise a jour fk_bank dans llx_paiement.
+							// On connait ainsi le paiement qui a genere l'ecriture bancaire
+							if ($bank_line_id > 0)
 							{
-								$facid = $key;
-								$fac = new Facture($db);
-								$fac->fetch($facid);
-								$fac->fetch_client();
-								$acc->add_url_line($bank_line_id,
-								$paiement_id,
-								DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-				        									 '(paiement)',
-				        									 'payment');
-								$acc->add_url_line($bank_line_id,
-								$fac->client->id,
-								DOL_URL_ROOT.'/compta/fiche.php?socid=',
-								$fac->client->nom,
-				       										'company');
+								$payment->update_fk_bank($bank_line_id);
+								// Mise a jour liens (pour chaque facture concernees par le paiement)
+								foreach ($payment->amounts as $key => $value)
+								{
+									$facid = $key;
+									$fac = new Facture($db);
+									$fac->fetch($facid);
+									$fac->fetch_client();
+									$acc->add_url_line($bank_line_id,
+									$paiement_id,
+									DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
+					        									 '(paiement)',
+					        									 'payment');
+									$acc->add_url_line($bank_line_id,
+									$fac->client->id,
+									DOL_URL_ROOT.'/compta/fiche.php?socid=',
+									$fac->client->nom,
+					       										'company');
+								}
+							}
+							else
+							{
+								$error++;
 							}
 						}
-						else
-						{
-							$error++;
-						}
 					}
+				}
+				else 
+				{
+					$error++;
 				}
 			}
 			else
@@ -311,7 +327,7 @@ switch ( $_GET['action'] )
 		else
 		{
 			$db->rollback();
-			$redirection = 'affIndex.php?facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
+			$redirection = 'affIndex.php?facid='.$id.'&mesg=ErrorFailedToCreateInvoice';	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}
 		break;
 

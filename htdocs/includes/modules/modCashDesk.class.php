@@ -20,7 +20,7 @@
  *      \defgroup   pos       Module points of sale
  *      \brief      Module to manage points of sale
  *		\version	$Id$
-*/
+ */
 
 /**
  *      \file       htdocs/includes/modules/modCashDesk.class.php
@@ -72,7 +72,7 @@ class modCashDesk extends DolibarrModules
 		$this->config_page_url = array("cashdesk.php");
 
 		// Dependencies
-		$this->depends = array("modBanque","modFacture","modProduit","modStock");	// List of modules id that must be enabled if this module is enabled
+		$this->depends = array("modBanque","modFacture","modProduit");	// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();			// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module

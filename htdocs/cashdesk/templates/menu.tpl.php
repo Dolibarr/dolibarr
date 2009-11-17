@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
- * Copyright (C) 2008      Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,15 +46,13 @@ if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
 	$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 	$bankchequeLink = $bankcheque->getNomUrl(1);
 }
-// TODO: ajouter gestion entrepot
-/*
-if (!empty($conf->global->CASHDESK_ID_WAREHOUSE))
+if (!empty($conf->global->CASHDESK_ID_WAREHOUSE) && $conf->stock->enabled)
 {
 	$warehouse=new Entrepot($db);
 	$warehouse->fetch($conf->global->CASHDESK_ID_WAREHOUSE);
 	$warehouseLink = $warehouse->getNomUrl(1);
 }
-*/
+
 
 $langs->load("@cashdesk");
 $langs->load("main");
@@ -67,14 +65,14 @@ print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><
 
 print '<li class="menu_choix2"><a href=".."><span>'.$langs->trans("BackOffice").'</span></a></li>';
 
-print '<li class="menu_choix0">'.$langs->trans("User").' : '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
-print $langs->trans("CashDeskThirdParty").' : '.$companyLink.'<br>';
-print $langs->trans("CashDeskBankCash").' : '.$bankcashLink.'<br>';
-print $langs->trans("CashDeskBankCB").' : '.$bankcbLink.'<br>';
-print $langs->trans("CashDeskBankCheque").' : '.$bankchequeLink.'<br>';
-if ($conf->stock->enabled && $warehouse->id)	// Disabled because warehouse->fetch disabled before
+print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['prenom'].' '.$_SESSION['nom'].' <a href="deconnexion.php">'.$logout.'</a><br>';
+print $langs->trans("CashDeskThirdParty").': '.$companyLink.'<br>';
+print $langs->trans("CashDeskBankCash").': '.$bankcashLink.'<br>';
+print $langs->trans("CashDeskBankCB").': '.$bankcbLink.'<br>';
+print $langs->trans("CashDeskBankCheque").': '.$bankchequeLink.'<br>';
+if (!empty($conf->global->CASHDESK_ID_WAREHOUSE) && $conf->stock->enabled)
 {
-	print $langs->trans("CashDeskWarehouse").' : '.$warehouseLink;
+	print $langs->trans("CashDeskWarehouse").': '.$warehouseLink;
 }
 print '</li></ul>';
 print '</div>';

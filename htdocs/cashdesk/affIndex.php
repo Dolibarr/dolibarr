@@ -58,7 +58,7 @@ print '<div class="conteneur">'."\n";
 print '<div class="conteneur_img_gauche">'."\n";
 print '<div class="conteneur_img_droite">'."\n";
 
-print '<h1 class="entete"><span>CAISSE</span></h1>'."\n";
+print '<h1 class="entete"><span>POINT OF SALE</span></h1>'."\n";
 
 print '<div class="menu_principal">'."\n";
 include_once('templates/menu.tpl.php');
