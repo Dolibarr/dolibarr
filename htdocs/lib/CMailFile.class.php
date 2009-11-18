@@ -975,30 +975,31 @@ class CMailFile
 			$i=0;
 			foreach ($matches[1] as $full)
 			{
-				preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i',$full,$regs);
-				$img = $regs[1];
-
-				if (file_exists($images_dir.'/'.$img))
+				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i',$full,$regs))
 				{
-					// Image path in src
-					$src = preg_quote($full,'/');
-
-					// Image full path
-					$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
-
-					// Image name
-					$this->html_images[$i]["name"] = $img;
-
-					// Content type
-					$ext = preg_replace('/^.*\.(\w{3,4})$/e', 'strtolower("$1")', $img);
-					$this->html_images[$i]["content_type"] = $this->image_types[$ext];
-
-					// cid
-					$this->html_images[$i]["cid"] = md5(uniqid(time()));
-
-					$this->html = preg_replace("/src=\"$src\"|src='$src'/i", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
+					$img = $regs[1];
+					
+					if (file_exists($images_dir.'/'.$img))
+					{
+						// Image path in src
+						$src = preg_quote($full,'/');
+						
+						// Image full path
+						$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
+						
+						// Image name
+						$this->html_images[$i]["name"] = $img;
+						
+						// Content type
+						$ext = preg_replace('/^.*\.(\w{3,4})$/e', 'strtolower("$1")', $img);
+						$this->html_images[$i]["content_type"] = $this->image_types[$ext];
+						
+						// cid
+						$this->html_images[$i]["cid"] = md5(uniqid(time()));
+						$this->html = preg_replace("/src=\"$src\"|src='$src'/i", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
+					}
+					$i++;
 				}
-				$i++;
 			}
 
 			if (!empty($this->html_images))
