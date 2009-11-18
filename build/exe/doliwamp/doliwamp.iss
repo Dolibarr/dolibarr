@@ -442,7 +442,7 @@ begin
 		
 		
 	    //----------------------------------------------
-	    // rundoliwamp.bat, rundolihelp.bat and rundoliadmin.bat
+	    // Create rundoliwamp.bat, rundolihelp.bat and rundoliadmin.bat (if not exists)
 	    //----------------------------------------------
 	
 	    destFile := pathWithSlashes+'/rundoliwamp.bat';
@@ -496,13 +496,13 @@ begin
 
 		
 		    //----------------------------------------------
-		    // Fichier alias phpmyadmin
+		    // Create file alias phpmyadmin (always)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/alias/phpmyadmin.conf';
 		    srcFile := pathWithSlashes+'/alias/phpmyadmin.conf.install';
 		
-		    if not FileExists (destFile) and FileExists(srcFile) then
+		    if FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -517,7 +517,7 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier alias dolibarr
+		    // Create file alias dolibarr (if not exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/alias/dolibarr.conf';
@@ -538,40 +538,30 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier de configuration de phpmyadmin
+		    // Create file configuration for phpmyadmin (if not exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
 		    srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
 		
-		    if not FileExists (destFile) then
+		    if not FileExists (destFile) and FileExist(srcFile) then
 		    begin
-		      // si un fichier existe pour une version precedente de phpmyadmin, on le recupere
-		      if FileExists (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php') then
-		      begin
-		        LoadStringFromFile (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php', srcContents);
-		        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
-		        SaveStringToFile(destFile,srcContents, False);
-		      end
-		      else
-		      begin
-		        // sinon on prends le fichier par defaut
-		        LoadStringFromFile (srcFile, srcContents);
-		        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
-		        SaveStringToFile(destFile,srcContents, False);
-		      end
+	        // sinon on prends le fichier par defaut
+	        LoadStringFromFile (srcFile, srcContents);
+	        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+	        SaveStringToFile(destFile,srcContents, False);
 		    end
 		
 		
 		
 		    //----------------------------------------------
-		    // Fichier httpd.conf
+		    // Create file httpd.conf (if not exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf';
 		    srcFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf.install';
 		
-		    if not FileExists (destFile) then
+		    if not FilesExists (destFile) and FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -588,7 +578,7 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier my.ini
+		    // Create file my.ini (if not exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/bin/mysql/mysql'+mysqlVersion+'/my.ini';
@@ -609,7 +599,7 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier index.php
+		    // Create file index.php (always but archive if exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/www/index.php';
@@ -642,13 +632,13 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier dolibarr parametres predefins install web
+		    // Create file dolibarr parametres predefinis install web (if not exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php';
 		    srcFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php.install';
 		
-		    if not FileExists (destFile) then
+		    if not FileExists (destFile) and FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -662,13 +652,13 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier install_services.bat
+		    // Create file install_services.bat (always)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/install_services.bat';
 		    srcFile := pathWithSlashes+'/install_services.bat.install';
 		
-		    if not FileExists (destFile) then
+		    if FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -682,13 +672,13 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier install_services_auto.bat
+		    // Create file install_services_auto.bat (always)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/install_services_auto.bat';
 		    srcFile := pathWithSlashes+'/install_services_auto.bat.install';
 		
-		    if not FileExists (destFile) and FileExists (srcFile) then
+		    if FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -703,13 +693,13 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier uninstall_services.bat
+		    // Create file uninstall_services.bat (always)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/uninstall_services.bat';
 		    srcFile := pathWithSlashes+'/uninstall_services.bat.install';
 		
-		    if not FileExists (destFile) then
+		    if FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -723,13 +713,13 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier mysqlinitpassword.bat
+		    // Create file mysqlinitpassword.bat (always)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/mysqlinitpassword.bat';
 		    srcFile := pathWithSlashes+'/mysqlinitpassword.bat.install';
 		
-		    if not FileExists (destFile) and FileExists (srcFile) then
+		    if FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -743,13 +733,13 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier mysqltestinstall.bat
+		    // Create file mysqltestinstall.bat (always)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/mysqltestinstall.bat';
 		    srcFile := pathWithSlashes+'/mysqltestinstall.bat.install';
 		
-		    if not FileExists (destFile) and FileExists (srcFile) then
+		    if FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -764,13 +754,13 @@ begin
 		
 		
 		    //----------------------------------------------
-		    // Fichier startdoliwamp_manual_donotuse.bat
+		    // Create file startdoliwamp_manual_donotuse.bat (always)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/startdoliwamp_manual_donotuse.bat';
 		    srcFile := pathWithSlashes+'/startdoliwamp_manual_donotuse.bat.install';
 		
-		    if not FileExists (destFile) and FileExists (srcFile) then
+		    if FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
@@ -784,15 +774,33 @@ begin
 		    end
 		    
 		
+		    //----------------------------------------------
+		    // Create file builddemosslfiles.bat (always)
+		    //----------------------------------------------
+		
+		    destFile := pathWithSlashes+'/builddemosslfiles.bat';
+		    srcFile := pathWithSlashes+'/builddemosslfiles.bat.install';
+		
+		    if FileExists (srcFile) then
+		    begin
+		      LoadStringFromFile (srcFile, srcContents);
+		
+		      //version de apache et mysql
+		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+		      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+		
+		      SaveStringToFile(destFile,srcContents, False);
+		    end
+
 		
 		    //----------------------------------------------
-		    // fichier php.ini dans php
+		    // Create file php.ini in php (if not exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/php.ini';
 		    srcFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/php.ini.install';
 		
-		    if not FileExists (destFile) then
+		    if not FileExists (destFile) and FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
@@ -801,19 +809,20 @@ begin
 		    end
 		
 		    //----------------------------------------------
-		    // fichier php.ini dans apache
+		    // Create file php.ini in apache (if not exists)
 		    //----------------------------------------------
 		
 		    destFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/php.ini';
 		    srcFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/php.ini.install';
 		
-		    if not FileExists (destFile) then
+		    if not FileExists (destFile) and FileExists(srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
 		      StringChange (srcContents, 'WAMPSMTP', mysmtp);
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
+		
 		
 		
 	   		// Uninstall and Install services
@@ -827,7 +836,7 @@ begin
         Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
         //MsgBox(myResult,mbInformation,MB_OK);
 			
-        // Change mysql password
+        // Change mysql password (works only if not yet defined)
         batFile := path+'\mysqlinitpassword.bat';
         Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 			
@@ -933,5 +942,4 @@ Type: filesandordirs; Name: "{app}\www\dolibarr"
 
 [UninstallRun]
 Filename: "{app}\uninstall_services.bat"; Flags: runhidden
-
 
