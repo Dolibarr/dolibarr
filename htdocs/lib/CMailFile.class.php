@@ -186,7 +186,16 @@ class CMailFile
 			// Define mime_headers
 			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 
-			if (! empty($this->html)) $msg = $this->html;
+			if (! empty($this->html))
+			{
+				if (!empty($css))
+				{
+					$this->css = $css;
+					$this->styleCSS = $this->buildCSS();
+				}
+				
+				$msg = $this->html;
+			}
 
 			// Define body in text_body
 			$text_body = $this->write_body($msg);
