@@ -492,4 +492,5 @@ ALTER TABLE llx_adherent_options ADD INDEX idx_adherent_options (fk_member);
 ALTER TABLE llx_adherent DROP INDEX idx_adherent_fk_soc;
 
 ALTER TABLE llx_propaldet ADD INDEX idx_propaldet_fk_propal (fk_propal);
+-- V4.1 delete from llx_propaldet where fk_propal not in (select rowid from llx_propal);
 ALTER TABLE llx_propaldet ADD CONSTRAINT fk_propaldet_fk_propal FOREIGN KEY (fk_propal) REFERENCES llx_propal (rowid);
