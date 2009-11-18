@@ -279,7 +279,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// Port
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>';
-	if ($linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
+	if ($linuxlike && ($conf->global->MAIN_MAIL_SENDMODE == 'mail' || $conf->global->MAIN_MAIL_SENDMODE == 'simplemail'))
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
