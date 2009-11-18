@@ -33,7 +33,7 @@ switch ( $_GET['action'] )
 			$sql = "SELECT p.rowid, p.ref, p.price, p.tva_tx";
 			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
 			
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
@@ -44,7 +44,6 @@ switch ( $_GET['action'] )
 			{
 				$sql.= " WHERE p.ref = '".$_POST['txtRef']."'";
 			}
-			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " AND ps.fk_entrepot = ".$conf_fkentrepot;
 			
 			$result = $db->query($sql);
 			

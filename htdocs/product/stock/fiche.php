@@ -335,6 +335,7 @@ else
 			$sql.= " ORDER BY " . $sortfield . " " . $sortorder;
 			//$sql .= $db->plimit($limit + 1 ,$offset);
 
+			dol_syslog('List products sql='.$sql);
 			$resql = $db->query($sql) ;
 			if ($resql)
 			{

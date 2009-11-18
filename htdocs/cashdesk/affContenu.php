@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
- * Copyright (C) 2008      Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/**
+ *	\file       htdocs/cashdesk/affContenu.php
+ *	\ingroup    cashdesk
+ *	\brief      Include to show main page for cashdesk module
+ *	\version    $Id$
+ */
 require ('classes/Facturation.class.php');
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)

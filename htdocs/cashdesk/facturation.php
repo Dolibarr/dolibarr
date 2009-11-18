@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,22 +17,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// Get list of articles (in warehouse '$conf_fkentrepot' if stock module enabled)
+/**
+ *	\file       htdocs/cashdesk/facturation.php
+ *	\ingroup    cashdesk
+ *	\brief      Include to show main page for cashdesk module
+ *	\version    $Id$
+ */
+
+// Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
 if ( $_GET['filtre'] ) {
 
 	// Avec filtre
 	$ret=array(); $i=0;
 
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " WHERE p.envente = 1";
 	$sql.= " AND p.fk_product_type = 0";
-	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.=" AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%')";
 	$sql.= " ORDER BY label";
 	
-	dol_syslog($sql);
+	dol_syslog("facturation.php sql=".$sql);
 	$resql=$db->query ($sql);
 	if ($resql)
 	{
@@ -57,11 +64,11 @@ if ( $_GET['filtre'] ) {
 	$i=0;
 	
 	$sql = "SELECT p.rowid, ref, label, tva_tx";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
 	$sql.= " WHERE p.envente = 1";
 	$sql.= " AND p.fk_product_type = 0";
-	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " AND ps.fk_entrepot = ".$conf_fkentrepot;
 	$sql.= " ORDER BY p.label";
 	
 	dol_syslog($sql);

@@ -18,6 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/**
+ *	\file       htdocs/cashdesk/affIndex.php
+ *	\ingroup    cashdesk
+ *	\brief      First page of point of sale module
+ *	\version    $Id$
+ */
 include_once('../master.inc.php');
 require_once('include/environnement.php');
 if ( $_SESSION['uid'] <= 0 ) {
@@ -52,7 +58,12 @@ print '</head>'."\n";
 
 print '<body>'."\n";
 
-if (!empty($error)) print $error;
+if (!empty($error)) 
+{
+	print $error;
+	print '</body></html>';
+	exit;
+}
 
 print '<div class="conteneur">'."\n";
 print '<div class="conteneur_img_gauche">'."\n";

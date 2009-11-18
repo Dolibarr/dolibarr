@@ -3,7 +3,8 @@ $langs->load("main");
 $langs->load("bills");
 $langs->load("@cashdesk");
 ?>
-<!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+<!-- 
+Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+$Id$
 -->
 <script type="text/javascript" src="javascript/facturation1.js"></script>
 <script type="text/javascript" src="javascript/dhtml.js"></script>
@@ -68,7 +71,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 								}
 
-								echo ('<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.$label.'</option>'."\n				");
+								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.$label;
+								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("Warehouse").': '.$tab_designations[$i]['reel'].')';
+								print '</option>'."\n				";
 
 							}
 
@@ -94,7 +99,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 								}
 
-								echo ('<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.$label.'</option>'."\n				");
+								print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.$tab_designations[$i]['ref'].' - '.$label;
+								if ($conf->stock->enabled && !empty($conf_fkentrepot)) print ' ('.$langs->trans("Warehouse").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
+								print '</option>'."\n				";
 
 							}
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- *
+ * Copyright (C) 2009      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -44,8 +45,8 @@ $conf_fkaccount_cash = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH > 0?$conf->gl
 $conf_fkaccount_cheque = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE > 0?$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE:$_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"];
 // Identifiant unique correspondant au compte cb
 $conf_fkaccount_cb = $conf->global->CASHDESK_ID_BANKACCOUNT_CB > 0?$conf->global->CASHDESK_ID_BANKACCOUNT_CB:$_SESSION["CASHDESK_ID_BANKACCOUNT_CB"];
-// Identifiant unique correspondant a l'entrepot associe a la caisse
-//$conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHDESK_ID_WAREHOUSE:$_SESSION["CASHDESK_ID_WAREHOUSE"];
+// Identifiant unique correspondant a l'entrepot a utiliser
+$conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHDESK_ID_WAREHOUSE:$_SESSION["CASHDESK_ID_WAREHOUSE"];
 
 // Check if setup ok
 $error = '';
@@ -60,7 +61,7 @@ if ($conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkacco
 // If we setup stock module to ask movement on invoices, with must not work if required setup not finished.
 if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL && empty($conf_fkentrepot))
 {
-	$error.= '<div class="error">Setup of CashDesk module not complete. Warehouse (for stock decrease on invoice) is not defined</div>';
+	$error.= '<div class="error">Setup of CashDesk module not complete. You ask to decrease stock on invoice creation but warehouse for this is not defined (Change stock module setup, or complete point of sale module setup).</div>';
 }
 
 // Parametres d'affichage

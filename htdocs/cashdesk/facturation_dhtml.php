@@ -30,15 +30,15 @@ $langs->load("@cashdesk");
 if ( strlen ($_GET["code"]) >= 0 )	// If at least one key
 {
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product";
+	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " WHERE p.envente = 1";
 	$sql.= " AND p.fk_product_type = 0";
-	if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.=" AND ps.fk_entrepot = '".$conf_fkentrepot."'";
 	$sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
 	$sql.= " ORDER BY label";
 	
-	dol_syslog($sql);
+	dol_syslog("facturation_dhtml.php sql=".$sql);
 	$result = $db->query($sql);
 
 	if ($result)
