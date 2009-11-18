@@ -62,7 +62,10 @@ class CMailFile
 
 	//CSS
 	var $css;
+	//! Defined css style for body background
 	var $styleCSS;
+	//! Defined bacckground directly in body tag
+	var $bodyCSS;
 
 	// Image
 	var $html;
@@ -191,7 +194,7 @@ class CMailFile
 				if (!empty($css))
 				{
 					$this->css = $css;
-					$this->styleCSS = $this->buildCSS();
+					$this->buildCSS();
 				}
 				
 				$msg = $this->html;
@@ -765,7 +768,9 @@ class CMailFile
 		{
 			$out = "<html><head><title></title>";
 			if (!empty($this->styleCSS)) $out.= $this->styleCSS;
-			$out.= "</head><body>";
+			$out.= "</head><body";
+			if (!empty($this->bodyCSS)) $out.= $this->bodyCSS;
+			$out.= ">";
 			$out.= $msg;
 			$out.= "</body></html>";
 		}
@@ -784,27 +789,25 @@ class CMailFile
 	 */
 	function buildCSS()
 	{
-		$out = '';
-
-		if (!empty($this->css))
+		if (! empty($this->css))
 		{
-			$out.= '<style type="text/css">';
-			$out.= 'body {';
+			// Style CSS
+			$this->styleCSS = '<style type="text/css">';
+			$this->styleCSS.= 'body {';
 
 			if ($this->css['bgcolor'])
 			{
-				$out.= '  background-color: '.$this->css['bgcolor'].';';
+				$this->styleCSS.= '  background-color: '.$this->css['bgcolor'].';';
+				$this->bodyCSS.= ' BGCOLOR="'.$this->css['bgcolor'].'"';
 			}
 			if ($this->css['bgimage'])
 			{
 				// TODO recuperer cid
-				$out.= '  background-image: url("cid:'.$this->css['bgimage_cid'].'");';
+				$this->styleCSS.= ' background-image: url("cid:'.$this->css['bgimage_cid'].'");';
 			}
-			$out.= '}';
-			$out.= '</style>';
+			$this->styleCSS.= '}';
+			$this->styleCSS.= '</style>';
 		}
-
-		return $out;
 	}
 
 	/**
