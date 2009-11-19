@@ -99,6 +99,7 @@ function Activate($value,$withdeps=1)
 		// Test if Dolibarr version ok
 		$verdol=versiondolibarrarray();
 		$vermin=$objMod->need_dolibarr_version;
+		//print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
 		if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
 		{
 			return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
@@ -390,13 +391,11 @@ foreach ($orders as $key => $value)
 
         print "<tr $bc[$var]>\n";
 
-        print "  <td class=\"body\" valign=\"top\">";
+        print "  <td valign=\"top\">";
         if ($family!=$oldfamily)
         {
             $familytext=empty($familylib[$family])?$family:$familylib[$family];
-        	print "<div class=\"titre\">";
             print $familytext;
-            print "</div>";
             $oldfamily=$family;
         }
         else
