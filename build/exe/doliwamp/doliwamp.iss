@@ -23,7 +23,7 @@ AppVerName=DoliWamp-2.7.0-beta
 OutputBaseFilename=DoliWamp-2.7.0-beta
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-SourceDir=E:\Mes Developpements\dolibarr
+SourceDir=C:\Work\Data\Workspace\dolibarr
 ; ----- End of change
 AppId=doliwamp
 AppPublisher=NLTechno
@@ -72,7 +72,7 @@ Source: "build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; 
 Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\mysqltestinstall.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\builddemosslfiles.bat"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications

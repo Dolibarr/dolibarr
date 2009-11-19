@@ -1084,7 +1084,7 @@ session.gc_divisor     = 1000
 
 ; After this number of seconds, stored data will be seen as 'garbage' and
 ; cleaned up by the garbage collection process.
-session.gc_maxlifetime = 1440
+session.gc_maxlifetime = 1800
 
 ; NOTE: If you are using the subdirectory option for storing session files
 ;       (see session.save_path above), then garbage collection does *not*
