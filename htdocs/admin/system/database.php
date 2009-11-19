@@ -21,7 +21,7 @@
 
 /**
  *   \file       htdocs/admin/system/database.php
- *   \brief      Page des infos syst�me de la base de donn�e
+ *   \brief      Page des infos systeme de la base de donnee
  *   \version    $Id$
  */
 
@@ -50,7 +50,7 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db->getLabel()." ".$db->getVersion() . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DatabasePort")."</td><td>" . $conf->db->port . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DatabasePort")."</td><td>" . (empty($conf->db->port)?$langs->trans("Default"):$conf->db->port) . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "</td></tr>\n";
