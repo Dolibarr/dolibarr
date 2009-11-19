@@ -48,7 +48,7 @@ $active = 1;
 // Mettre ici tous les caracteristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,18,0,15);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,18,0,15);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -69,6 +69,7 @@ $tabname[15]= MAIN_DB_PREFIX."c_paper_format";
 $tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
 $tabname[17]= MAIN_DB_PREFIX."c_type_fees";
 $tabname[18]= MAIN_DB_PREFIX."expedition_methode";
+$tabname[19]= MAIN_DB_PREFIX."c_effectif";
 
 // Dictionary labels
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -89,6 +90,7 @@ $tablib[15]= $langs->trans("DictionnaryPaperFormat");
 $tablib[16]= $langs->trans("DictionnaryProspectLevel");
 $tablib[17]= $langs->trans("DictionnaryFees");
 $tablib[18]= $langs->trans("DictionnarySendingMethods");
+$tablib[19]= $langs->trans("DictionnaryStaff");
 
 // Requete pour extraction des donnees des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.code as pays_code, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -109,6 +111,7 @@ $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, un
 $tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."expedition_methode";
+$tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays ASC, code ASC";
@@ -129,6 +132,7 @@ $tabsqlsort[15]="rowid ASC";
 $tabsqlsort[16]="sortorder ASC";
 $tabsqlsort[17]="code ASC";
 $tabsqlsort[18]="code ASC, libelle ASC";
+$tabsqlsort[19]="id ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -149,6 +153,7 @@ $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle";
 $tabfield[17]= "code,libelle";
 $tabfield[18]= "code,libelle";
+$tabfield[19]= "code,libelle";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -169,6 +174,7 @@ $tabfieldvalue[15]= "code,libelle,width,height,unit";
 $tabfieldvalue[16]= "code,libelle";
 $tabfieldvalue[17]= "code,libelle";
 $tabfieldvalue[18]= "code,libelle";
+$tabfieldvalue[19]= "code,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -189,6 +195,7 @@ $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label";
 $tabfieldinsert[17]= "code,libelle";
 $tabfieldinsert[18]= "code,libelle";
+$tabfieldinsert[19]= "code,libelle";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 $tabrowid[1] = "";
@@ -209,6 +216,7 @@ $tabrowid[15]= "";
 $tabrowid[16]= "code";
 $tabrowid[17]= "id";
 $tabrowid[18]= "rowid";
+$tabrowid[19]= "id";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = true;
@@ -229,6 +237,7 @@ $tabcond[15]= true;
 $tabcond[16]= $conf->societe->enabled;
 $tabcond[17]= $conf->deplacement->enabled;
 $tabcond[18]= $conf->expedition->enabled;
+$tabcond[19]= $conf->societe->enabled;
 
 $msg='';
 

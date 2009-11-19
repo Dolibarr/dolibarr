@@ -574,6 +574,7 @@ DictionnaryEcotaxe = Barèmes Eco-participation (DEEE)
 DictionnaryPaperFormat = Format papiers
 DictionnaryFees = Types de déplacement et notes de frais
 DictionnarySendingMethods = Méthodes d'expéditions
+DictionnaryStaff = Effectifs
 SetupSaved = Configuration sauvegardée
 BackToModuleList = Retour liste des modules
 BackToDictionnaryList = Retour liste des dictionnaires
