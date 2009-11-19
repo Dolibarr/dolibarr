@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/compta/facture/fiche-rec.php
  *	\ingroup    facture
- *	\brief      Page d'affichage d'une facture r�current
+ *	\brief      Page d'affichage d'une facture recurrente
  *	\version    $Id$
  */
 
@@ -30,14 +30,14 @@ require_once("./facture-rec.class.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
-if (!$user->rights->facture->lire)
-accessforbidden();
 
 // Security check
 $facid=isset($_GET["facid"])?$_GET["facid"]:$_POST["facid"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'facture', $facid,'facture_rec');
+$objecttype = 'facture_rec';
+if ($action == "create" || $action == "add") $objecttype = '';
+$result = restrictedArea($user, 'facture', $facid, $objecttype);
 
 if ($page == -1)
 {
@@ -95,11 +95,9 @@ llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-
 
 $html = new Form($db);
 
-/*********************************************************************
- *
- * Mode creation
- *
- ************************************************************************/
+/*
+ * Create mode
+ */
 if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("CreateRepeatableInvoice"));
@@ -167,7 +165,7 @@ if ($_GET["action"] == 'create')
 		}
 
 		/*
-		 * Lines de factures
+		 * Invoice lines
 		 */
 		print '<table class="noborder" width="100%">';
 		print '<tr><td colspan="3">';
@@ -327,12 +325,10 @@ if ($_GET["action"] == 'create')
 	}
 }
 else
-/* *************************************************************************** */
-/*                                                                             */
-/*                                                                             */
-/*                                                                             */
-/* *************************************************************************** */
 {
+	/*
+	 * View mode
+	 */
 
 	if ($facid > 0)
 	{
@@ -485,13 +481,12 @@ else
 		{
 			print $langs->trans("ErrorRecordNotFound");
 		}
-	} else {
-		/***************************************************************************
-			*                                                                         *
-			*                      Mode Liste                                         *
-			*                                                                         *
-			*                                                                         *
-			***************************************************************************/
+	}
+	else
+	{
+		/*
+		 *  List mode
+		 */
 
 		if ($user->rights->facture->lire)
 		{

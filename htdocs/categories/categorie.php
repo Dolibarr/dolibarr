@@ -21,11 +21,11 @@
  */
 
 /**
-		\file       htdocs/categories/categorie.php
-		\ingroup    category
-		\brief      Page de l'onglet categories
-		\version    $Id$
-*/
+ *  \file       htdocs/categories/categorie.php
+ *  \ingroup    category
+ *  \brief      Page de l'onglet categories
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
@@ -57,8 +57,8 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,$objecttype,$objectid,$dbtablename,'','',$fieldid);
 
 /*
-*	Actions
-*/
+ *	Actions
+ */
 
 //Suppression d'un objet d'une categorie
 if ($_REQUEST["removecat"])
@@ -113,8 +113,8 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 $html = new Form($db);
 
@@ -136,7 +136,7 @@ if ($_GET["socid"])
 	 llxHeader("","",$langs->trans("Category"));
 
 
-	/*
+   /*
 	* Affichage onglets
 	*/
 	$head = societe_prepare_head($soc);
@@ -203,7 +203,7 @@ if ($_GET["socid"])
 }
 else if ($_GET["id"] || $_GET["ref"])
 {
-	/*
+   /*
 	* Fiche categorie de produit
 	*/
 	require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -262,9 +262,9 @@ else if ($_GET["id"] || $_GET["ref"])
 }
 
 
-/*
-* Fonction Barre d'actions
-*/
+/**
+ * Fonction Barre d'actions
+ */
 function formCategory($db,$object,$type,$typeid)
 {
 	global $user,$langs,$html,$bc;

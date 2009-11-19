@@ -2988,7 +2988,6 @@ CREATE TABLE `llx_facture_rec` (
   `last_gen` varchar(7) default NULL,
   PRIMARY KEY  (`rowid`),
   UNIQUE KEY `idx_facture_rec_uk_titre` (`titre`),
-  KEY `idx_facture_rec_fksoc` (`fk_soc`),
   KEY `idx_facture_rec_fk_soc` (`fk_soc`),
   KEY `idx_facture_rec_fk_user_author` (`fk_user_author`),
   KEY `idx_facture_rec_fk_projet` (`fk_projet`),

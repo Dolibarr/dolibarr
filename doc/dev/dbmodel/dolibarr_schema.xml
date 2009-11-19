@@ -4961,7 +4961,7 @@
 <INDEXCOLUMN idColumn="1916" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
-<INDEX ID="1933" IndexName="idx_facture_rec_fksoc" IndexKind="1" FKRefDef_Obj_id="-1">
+<INDEX ID="1933" IndexName="idx_facture_rec_fk_soc" IndexKind="1" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="1918" LengthParam="0" />
 </INDEXCOLUMNS>

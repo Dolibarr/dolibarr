@@ -1,6 +1,7 @@
 -- ===========================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@ create table llx_facture_rec
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   titre              varchar(50) NOT NULL,
+  entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
   fk_soc             integer NOT NULL,
   datec              datetime,  -- date de creation
 
@@ -35,9 +37,9 @@ create table llx_facture_rec
   total_ttc          real     DEFAULT 0,
 
   fk_user_author     integer,             -- createur
-  fk_projet          integer,             -- projet auquel est associ� la facture
+  fk_projet          integer,             -- projet auquel est associe la facture
   fk_cond_reglement  integer DEFAULT 0,   -- condition de reglement
-  fk_mode_reglement   integer DEFAULT 0,  -- mode de reglement (Virement, Pr�l�vement)
+  fk_mode_reglement   integer DEFAULT 0,  -- mode de reglement (Virement, Prelevement)
   date_lim_reglement  date,               -- date limite de reglement
 
   note               text,

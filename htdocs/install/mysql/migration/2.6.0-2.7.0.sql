@@ -136,6 +136,7 @@ ALTER TABLE llx_projet ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
 ALTER TABLE llx_adherent ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_adherent_type ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_adherent_options_label ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER name;
+ALTER TABLE llx_facture_rec ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER fk_soc;
 
 ALTER TABLE llx_rights_def DROP PRIMARY KEY;
 ALTER TABLE llx_dolibarr_modules DROP PRIMARY KEY;
@@ -169,6 +170,7 @@ ALTER TABLE llx_projet DROP INDEX ref;
 ALTER TABLE llx_boxes_def DROP INDEX uk_boxes_def;
 ALTER TABLE llx_adherent DROP INDEX uk_adherent_login;
 ALTER TABLE llx_adherent_type DROP INDEX uk_adherent_type_libelle;
+ALTER TABLE llx_facture_rec DROP INDEX idx_facture_rec_uk_titre;
 
 ALTER TABLE llx_rights_def ADD PRIMARY KEY pk_rights_def (id, entity);
 ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
@@ -201,10 +203,13 @@ ALTER TABLE llx_boxes_def ADD UNIQUE INDEX uk_boxes_def (file, entity);
 ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_login (login, entity);
 ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle, entity);
 ALTER TABLE llx_adherent_options_label ADD UNIQUE INDEX uk_adherent_options_label_name (name, entity);
+ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre, entity);
 
 ALTER TABLE llx_projet ADD INDEX idx_projet_fk_soc (fk_soc);
 -- V4.1 update llx_projet set fk_soc=null where fk_soc is not null and fk_soc not in (select rowid from llx_societe);
 ALTER TABLE llx_projet ADD CONSTRAINT fk_projet_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+
+ALTER TABLE llx_facture_rec ADD CONSTRAINT fk_facture_rec_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 
 
 UPDATE llx_const SET entity=0 WHERE name='MAIN_MODULE_USER' AND entity=1;

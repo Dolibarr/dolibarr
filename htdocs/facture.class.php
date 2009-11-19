@@ -1981,10 +1981,10 @@ class Facture extends CommonObject
 		$sql.= ' AND type < 2';
 		if ($option == 'validated') $sql.= ' AND fk_statut = 1';
 		// PROTECTION BAD DATA
-		// Au cas ou base corrompue et qu'il y a une facture de remplacement valid�e
-		// et une autre non, on donne priorit� � la valid�e.
-		// Ne devrait pas arriver (sauf si acc�s concurrentiel et que 2 personnes
-		// ont cr�� en meme temps une facture de remplacement pour la meme facture)
+		// Au cas ou base corrompue et qu'il y a une facture de remplacement validee
+		// et une autre non, on donne priorite a la validee.
+		// Ne devrait pas arriver (sauf si acces concurrentiel et que 2 personnes
+		// ont cree en meme temps une facture de remplacement pour la meme facture)
 		$sql.= ' ORDER BY fk_statut DESC';
 
 		$resql=$this->db->query($sql);
@@ -2009,7 +2009,7 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le libell� du type de facture
+	 *    \brief      Retourne le libelle du type de facture
 	 *    \return     string        Libelle
 	 */
 	function getLibType()
@@ -2024,8 +2024,8 @@ class Facture extends CommonObject
 
 
 	/**
-	 *	\brief      Retourne le libell� du statut d'une facture (brouillon, valid�e, abandonn�e, pay�e)
-	 *	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� lon
+	 *	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle lon
 	 *	\param		alreadypaid	0=Not payment already done, 1=Some payments already done
 	 *	\return     string        	Libelle
 	 */
@@ -2035,13 +2035,13 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      paye          	Etat paye
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Pict
-	 *		\param		alreadypaid	Montant deja pay�
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Pict
+	 *		\param		alreadypaid	Montant deja paye
 	 *		\param		type			Type facture
-	 *    	\return     string        	Libell� du statut
+	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($paye,$statut,$mode=0,$alreadypaid=-1,$type=0)
 	{

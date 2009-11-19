@@ -19,7 +19,7 @@
 /**
 	    \file       htdocs/compta/paiement_charge.php
 		\ingroup    compta
-		\brief      Page de création d'un paiement d'une charge
+		\brief      Page de creation d'un paiement d'une charge
 		\version    $Id$
 */
 
@@ -31,7 +31,7 @@ $langs->load("bills");
 
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
-// Sécurité accés client
+// Securite acces client
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -110,12 +110,12 @@ if ($_POST["action"] == 'add_paiement')
             $acc = new Account($db, $_POST["accountid"]);
             $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
 
-            // Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a généré l'écriture bancaire
+            // Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a gï¿½nï¿½rï¿½ l'ï¿½criture bancaire
             if ($bank_line_id > 0)
             {
                 $paiement->update_fk_bank($bank_line_id);
 
-                // Mise a jour liens (pour chaque charge concernée par le paiement)
+                // Mise a jour liens (pour chaque charge concernï¿½e par le paiement)
                 foreach ($paiement->amounts as $key => $value)
                 {
                     $acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/sociales/charges.php?id=', '(socialcontribution)','sc');
@@ -129,13 +129,13 @@ if ($_POST["action"] == 'add_paiement')
             }
             else {
                 $db->rollback();
-                $mesg = "Echec de la création entrée compte: ".$db->error();
+                $mesg = "Echec de la crï¿½ation entrï¿½e compte: ".$db->error();
             }
         }
         else
         {
             $db->rollback();
-            $mesg = "Echec de la création du paiement: paiement_id=$paiement_id ".$db->error();
+            $mesg = "Echec de la crï¿½ation du paiement: paiement_id=$paiement_id ".$db->error();
         }
     }
 
@@ -229,7 +229,7 @@ if ($_GET["action"] == 'create')
 		print "<td><input name=\"num_paiement\" type=\"text\"></td></tr>\n";
 
 		/*
-		* Autres charges impayées
+		* Autres charges impayï¿½es
 		*/
 		  $num = 1;
 		  $i = 0;
