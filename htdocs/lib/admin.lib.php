@@ -58,7 +58,7 @@ function versioncompare($versionarray1,$versionarray2)
 		if (preg_match('/beta|alpha/i',$operande1)) $operande1=-1;
 		if (preg_match('/beta|alpha/i',$operande2)) $operande2=-1;
 		$level++;
-		//print 'level '.$level.' '.$operande1.'-'.$operande2;
+		//print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
 		if ($operande1 < $operande2) { $ret = -$level; break; }
 		if ($operande1 > $operande2) { $ret = $level; break; }
 	}
@@ -68,8 +68,8 @@ function versioncompare($versionarray1,$versionarray2)
 
 
 /**
- \brief      Return version PHP
- \return     array               Tableau de version (vermajeur,vermineur,autre)
+ *	\brief      Return version PHP
+ *	\return     array               Tableau de version (vermajeur,vermineur,autre)
  */
 function versionphparray()
 {
@@ -77,8 +77,8 @@ function versionphparray()
 }
 
 /**
- \brief      Return version Dolibarr
- \return     array               Tableau de version (vermajeur,vermineur,autre)
+ *	\brief      Return version Dolibarr
+ *	\return     array               Tableau de version (vermajeur,vermineur,autre)
  */
 function versiondolibarrarray()
 {
@@ -327,12 +327,12 @@ function dolibarr_del_const($db, $name, $entity=1)
 }
 
 /**
- \brief      Recupere une constante depuis la base de donnees.
- \sa			dolibarr_del_const, dolibarr_set_const
- \param	    db          Handler d'acces base
- \param	    name				Nom de la constante
- \param	    entity			Multi company id
- \return     string      Valeur de la constante
+ *	\brief      Recupere une constante depuis la base de donnees.
+ *	\sa			dolibarr_del_const, dolibarr_set_const
+ *	\param	    db          Handler d'acces base
+ *	\param	    name				Nom de la constante
+ *	\param	    entity			Multi company id
+ *	\return     string      Valeur de la constante
  */
 function dolibarr_get_const($db, $name, $entity=1)
 {
