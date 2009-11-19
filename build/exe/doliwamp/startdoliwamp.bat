@@ -13,4 +13,6 @@ NET START doliwampmysqld >> doliwamp.log 2>>&1
 echo Please wait...
 echo ---- End script >> doliwamp.log 2>>&1
 
-sleep 1
+REM sleep is not a Windows commande
+REM sleep 1
+ping 1.1.1.1 -n 1 -w 1000 > nul
