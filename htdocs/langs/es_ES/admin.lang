@@ -573,6 +573,7 @@ DictionnaryEcotaxe = Baremos CEcoParticipación (DEEE)
 DictionnaryPaperFormat = Formatos papel
 DictionnaryFees = Tipo de desplazamientos y honorarios
 DictionnarySendingMethods = Métodos de expedición
+DictionnaryStaff = Empleados
 SetupSaved = Configuración guardada
 BackToModuleList = Volver a la lista de módulos
 BackToDictionnaryList = Volver a la lista de diccionarios

@@ -573,6 +573,7 @@ DictionnaryEcotaxe = Barems CEcoParticipación (DEEE)
 DictionnaryPaperFormat = Formats paper
 DictionnaryFees = Tipus de desplaçaments i honoraris
 DictionnarySendingMethods = Mètodes d'expedició
+DictionnaryStaff = Empleats
 SetupSaved = Configuració desada
 BackToModuleList = Retornar llista de mòduls
 BackToDictionnaryList = Tornar a la llista de diccionaris
