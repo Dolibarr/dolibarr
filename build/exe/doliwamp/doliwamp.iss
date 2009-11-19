@@ -3,7 +3,7 @@
 ; Works with InnoSetup 5.3.4 (a)
 ; Idea from WampServer 2 (http://www.wampserver.com)
 ;----------------------------------------------------------------------------------------
-; You must edit some path in this file to build an exe.
+; You must edit some path in this file to build an exe (like SourceDir).
 ; WARNING: Be sure that user files for Mysql data used to build
 ; package contains only user root with no password.
 ; For this, you can edit mysql.user table for a database to keep
@@ -76,7 +76,7 @@ Source: "build\exe\doliwamp\builddemosslfiles.bat"; DestDir: "{app}\"; Flags: ig
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
-Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
+Source: "C:\Program Files\Wamp\apps\phpmyadmin3.2.0.1\*.*"; DestDir: "{app}\apps\phpmyadmin3.2.0.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log"
@@ -91,7 +91,7 @@ Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".
 ; Config files
 Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin3.2.0.1"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.2.6\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion;
@@ -125,6 +125,8 @@ Name: "{userdesktop}\Dolibarr Help center"; Filename: "{app}\rundolihelp.bat"; W
 var phpVersion: String;
 var apacheVersion: String;
 var path: String;
+var pfPath: String;
+var winPath: String;
 var pathWithSlashes: String;
 var Page: TInputQueryWizardPage;
 
@@ -141,12 +143,8 @@ var srcFileA: String;
 var destFileA: String;
 var srcContents: String;
 var browser: String;
-var winPath: String;
 var mysqlVersion: String;
-var wampserverVersion: String;
 var phpmyadminVersion: String;
-var sqlitemanagerVersion: String;
-var tmp: String;
 var phpDllCopy: String;
 var batFile: String;
 
@@ -164,7 +162,7 @@ var value: String;
 //procedures lancees au debut de l'installation
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install or upgrade Dolibarr ERP-CRM and required third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you have technical knowledge and plan to share your Apache, Mysql and PHP with other projects than Dolibarr, you should not use this assistant and make a manual installation of Dolibarr on an existing Apache, Mysql and PHP installation. If you don't need a sophisticated manual setup, you're on the good way...' #13#13 'Do you want to start installation/upgrade process ?', mbConfirmation, MB_YESNO) = idYes;
+  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install or upgrade Dolibarr ERP-CRM and required third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you have technical knowledge and plan to share your Apache, Mysql and PHP with other projects than Dolibarr, you should not use this assistant and make a manual installation of Dolibarr on an existing Apache, Mysql and PHP installation. If you don''t need a sophisticated manual setup, you''re on the good way...' #13#13 'Do you want to start installation/upgrade process ?', mbConfirmation, MB_YESNO) = IDYES;
 end;
 
 procedure InitializeWizard();
@@ -173,9 +171,7 @@ begin
   apacheVersion := '2.2.6';
   phpVersion := '5.2.5' ;
   mysqlVersion := '5.0.45';
-  wampserverVersion := '2.0';
-  phpmyadminVersion := '2.10.1';
-  sqlitemanagerVersion := '1.2.0';
+  phpmyadminVersion := '3.2.0.1';
 
   smtpServer := 'localhost';
   apachePort := '80';
@@ -268,6 +264,7 @@ procedure close();
 var myResult: Integer;
 begin
 path := ExpandConstant('{app}');
+pfPath := ExpandConstant('{pf}');
 winPath := ExpandConstant('{win}');
 pathWithSlashes := path;
 StringChange (pathWithSlashes, '\','/');
@@ -459,11 +456,11 @@ begin
 	    begin
 	      //navigateur
 	      browser := 'explorer.exe';
-	      if FileExists ('C:/Program Files/Mozilla Firefox/firefox.exe')  then
+	      if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
 	      begin
 	        if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser with Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
 	        begin
-	          browser := 'C:/Program Files/Mozilla Firefox/firefox.exe';
+	          browser := pfPath+'/Mozilla Firefox/firefox.exe';
 	        end;
 	      end;
 	      if browser = 'explorer.exe' then
@@ -544,7 +541,7 @@ begin
 		    destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
 		    srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
 		
-		    if not FileExists (destFile) and FileExist(srcFile) then
+		    if not FileExists (destFile) and FileExists (srcFile) then
 		    begin
 	        // sinon on prends le fichier par defaut
 	        LoadStringFromFile (srcFile, srcContents);
@@ -561,7 +558,7 @@ begin
 		    destFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf';
 		    srcFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf.install';
 		
-		    if not FilesExists (destFile) and FileExists (srcFile) then
+		    if not FileExists (destFile) and FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
