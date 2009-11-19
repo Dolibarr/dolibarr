@@ -1,4 +1,4 @@
-# Dolibarr language file - nl_BE - donations
+# Dolibarr language file - nl_NL - donations
 CHARSET=UTF-8
 Donation=Donatie
 Donationss=Donaties
@@ -21,5 +21,5 @@ DonationStatusPromiseNotValidatedShort=Voorlopig
 DonationStatusPromiseValidatedShort=Gevalideerd
 DonationStatusPayedShort=Ontvangen
 ValidPromise=Valideer toezegging
-BuildDonationReceipt=Creëer donatie ontvangst
+BuildDonationReceipt=Creëer donatie ontvangstbewijs
 DonationsModels=Documenten modellen voor donatie ontvangsten

@@ -1,7 +1,7 @@
 # Dolibarr language file - nl_NL - orders
 CHARSET=UTF-8
-OrdersArea=Klanten bestellingen zone
-SuppliersOrdersArea=Leveranciers bestellingen zone
+OrdersArea=Klanten bestellingen gedeelte
+SuppliersOrdersArea=Leveranciers bestellingen gedeelte
 OrderCard=Bestel details
 Order=Bestelling
 Orders=Bestellingen
@@ -110,13 +110,13 @@ Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Laden module bestand '%s' misluk
 Error_FailedToLoad_COMMANDE_ADDON_File=Laden module bestand '%s' mislukt
 
 # Sources
-OrderSource0=zakelijk voorstel
+OrderSource0=Offerte
 OrderSource1=Internet
 OrderSource2=Mailing campagne
 OrderSource3=Telefoon compagne
 OrderSource4=Fax campagne
 OrderSource5=Commercieel
-OrderSource6=Shop
+OrderSource6=Magazijn
 QtyOrdered=Aantal besteld
 AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhangen van het gewicht van de bestelling
 
@@ -124,4 +124,4 @@ AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhan
 PDFEinsteinDescription=Een complete zakelijk voorstel model (logo. ..)
 
 # NumRef Modules
-MarbreNumRefDesc=Geeft het nummer als %syymm-nnnn waar yy het jaar, mm de maand en nnnn een opeenvolging is zonder breuk of vervanging van 0
+MarbreNumRefDesc=Geeft het nummer als %syymm-nnnn waar yy het jaar, mm de maand en nnnn een opeenvolging is zonder onderbreking of vervanging van 0

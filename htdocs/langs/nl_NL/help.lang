@@ -2,7 +2,7 @@
 CHARSET=UTF-8
 CommunitySupport=Forum/Wiki ondersteuning
 EMailSupport=E-mail ondersteuning
-RemoteControlSupport=Online real-time / remote support
+RemoteControlSupport=Online real-time/remote support
 OtherSupport=Andere ondersteuning
 ToSeeListOfAvailableRessources=Contact opnemen/zie beschikbare middelen:
 ClickHere=Klik hier
@@ -11,7 +11,7 @@ DolibarrHelpCenter=Dolibarr Help and Support Center
 ToGoBackToDolibarr=Zoniet, klik dan <a href="%s">hier om Dolibarr te gebruiken</a>
 TypeOfSupport=Ondersteuningsbron
 TypeSupportCommunauty=Community (gratis)
-TypeSupportCommercial=Commercieel
+TypeSupportCommercial=Commercieel (betaalde)
 TypeOfHelp=Type
 NeedHelpCenter=Hulp of ondersteuning nodig?
 Efficiency=Efficiëntie
@@ -20,8 +20,8 @@ TypeHelpDev=Help+Ontwikkeling
 TypeHelpDevForm=Help+Ontwikkeling+Oprichtingskosten
 ToGetHelpGoOnSparkAngels1=Sommige bedrijven kunnen een snel (soms onmiddellijke) en efficiëntere online support bieden door middel van overname van uw computer. Dergelijke ondersteuners kunnen gevonden worden op <b>%s</b> web-site:
 ToGetHelpGoOnSparkAngels3=U kunt ook naar de lijst gaan van alle beschikbare coachers voor Dolibarr, klik voor dit op de knop
-ToGetHelpGoOnSparkAngels2=Soms is er geen bedrijf te vinden op het moment dat u uw zoekopdracht, dus denk om het filter te veranderen om te zoeken naar &quot;alle beschikbaarheid&quot;. Je zal kunnen sturen meer verzoeken.
-BackToHelpCenter=Zoniet, klik hier om <a href="%s"> terug te gaan naar de Helpcentrum home page.</a>
+ToGetHelpGoOnSparkAngels2=Soms is er geen bedrijf te vinden op het moment van uw zoekopdracht, denk dan eraan om het filter te veranderen om te zoeken naar &quot;alle beschikbaarheid&quot;. U kunt dan meer verzoeken versturen.
+BackToHelpCenter=Zoniet, klik hier om <a href="%s"> terug te gaan naar de Help home page.</a>
 LinkToGoldMember=U kunt naar een van de, vooraf door Dolibarr geselecteerde, coacher voor uw taal bellen (%s) door te klikken op zijn Widget (status en de maximale prijs worden automatisch bijgewerkt):
 PossibleLanguages=Ondersteunde talen
-MakeADonation=Help het Dolibarr project, maak een donatie
+MakeADonation=Help het Dolibarr project, doe een donatie

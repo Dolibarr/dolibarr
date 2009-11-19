@@ -1,7 +1,7 @@
 # Dolibarr language file - nl_NL - commercial
 CHARSET=UTF-8
 Commercial=Zakelijk
-CommercialArea=Zakelijke zone
+CommercialArea=Zakelijke gedeelte
 CommercialCard=Zakelijke details
 CustomerArea=Klanten zone
 Customer=Klant

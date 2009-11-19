@@ -1,20 +1,18 @@
 # Dolibarr language file - nl_NL - members
 CHARSET=UTF-8
-MembersArea=Leden zone
-PublicMembersArea=Openbare leden zone
+MembersArea=Leden gedeelte
+PublicMembersArea=Openbare leden gedeelte
 MemberCard=Lidmaatschapskaart
 SubscriptionCard=Inschrijvingskaart
 Member=Lid
 Members=Leden
-MemberAccount=Lid logon
+MemberAccount=Lid account
 ShowMember=Toon lidmaatschapskaart
 UserNotLinkedToMember=Gebruiker niet gekoppeld aan een lid
 MembersTickets=Leden Tickets
 FundationMembers=Stichting leden/donateurs
 Attributs=Attributen
-
 Person=Persoon
-
 ErrorMemberTypeNotDefined=Lid type niet gedefinieerd
 ListOfPublicMembers=Lijst van de openbare leden
 ListOfValidatedPublicMembers=Lijst van gevalideerde openbare leden
@@ -147,6 +145,6 @@ DescADHERENT_CARD_TEXT=Tekst op de Lidmaatschaps-kaarten
 DescADHERENT_CARD_FOOTER_TEXT=Voettekst van de Lidmaatschaps-kaarten
 ShowTypeCard=Toon type "%s"
 HTPasswordExport=htpassword bestand generatie
-NoThirdPartyAssociatedToMember=Geen derde partij betrokken bij dit lid
+NoThirdPartyAssociatedToMember=Geen derden betrokken bij dit lid
 ThirdPartyDolibarr=Dolibarr derden
 MembersAndSubscriptions=Leden en Openingsformulier
