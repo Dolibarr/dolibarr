@@ -19,15 +19,10 @@
 /**
  *      \file       task.class.php
  *      \ingroup    project
- *      \brief      This file is a CRUD class file for Taks (Create/Read/Update/Delete)
+ *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
  *		\version    $Id$
  *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
-
-// Put here all includes required by your class file
-//require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
 /**
@@ -130,15 +125,12 @@ class Task extends CommonObject
 
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+	            // Call triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('TASK_CREATE',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
 			}
         }
 
@@ -268,15 +260,12 @@ class Task extends CommonObject
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+	            // Call triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('TASK_MODIFY',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
 	    	}
 		}
 
@@ -331,15 +320,12 @@ class Task extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
-		        //// Call triggers
-		        //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+		        // Call triggers
+		        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		        $interface=new Interfaces($this->db);
+		        $result=$interface->run_triggers('TASK_DELETE',$this,$user,$langs,$conf);
+		        if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		        // End call triggers
 			}
 		}
 

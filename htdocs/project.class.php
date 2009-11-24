@@ -50,7 +50,7 @@ class Project extends CommonObject
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler acc�s base de donn�es
+	 *    \param  DB          handler acces base de donnees
 	 */
 	function Project($DB)
 	{
@@ -304,6 +304,7 @@ class Project extends CommonObject
 	 *  \param     	parent   	Id task parent
 	 *	\param		id_resp		Id of responsible user
 	 * 	\return		int			Task id if succes, <0 if KO
+	 *  @obsolete   now use task.class.php
 	 */
 	function CreateTask($user, $title, $parent=0, $id_resp=0)
 	{
