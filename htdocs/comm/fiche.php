@@ -298,7 +298,7 @@ if ($socid > 0)
 	}
 
 	// Adresse de livraison
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+	if ($conf->expedition->enabled)
 	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
