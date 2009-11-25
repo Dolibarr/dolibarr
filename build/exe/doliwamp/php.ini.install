@@ -654,10 +654,10 @@ default_socket_timeout = 60
 ; Be sure to appropriately set the extension_dir directive.
 
 extension=php_bz2.dll
-;extension=php_curl.dll
+extension=php_curl.dll
 ;extension=php_dba.dll
 ;extension=php_dbase.dll
-;extension=php_exif.dll
+extension=php_exif.dll
 ;extension=php_fdf.dll
 extension=php_gd2.dll
 ;extension=php_gettext.dll
@@ -676,7 +676,7 @@ extension=php_mbstring.dll
 extension=php_mysql.dll
 extension=php_mysqli.dll
 ;extension=php_oci8.dll
-;extension=php_openssl.dll
+extension=php_openssl.dll
 extension=php_pdo.dll
 ;extension=php_pdo_firebird.dll
 ;extension=php_pdo_mssql.dll
