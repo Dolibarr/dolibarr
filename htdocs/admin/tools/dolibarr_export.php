@@ -72,8 +72,22 @@ if ($_GET["msg"])
 <script type="text/javascript" language="javascript">
 //<![CDATA[
 function hide_them_all() {
+<?php
+if ($db->label == 'MySQL')
+{
+?>
     document.getElementById("mysql_options").style.display = 'none';
-    document.getElementById("postgresql_options").style.display = 'none';
+<?php 
+}
+?>
+<?php
+if ($db->label == 'PostgreSQL')
+{
+?>
+	document.getElementById("postgresql_options").style.display = 'none';
+	<?php 
+}
+?>
 }
 
 function show_checked_option() {
@@ -149,7 +163,10 @@ else
 
 <div id="div_container_sub_exportoptions">
 
-
+<?php
+if ($db->label == 'MySQL')
+{
+?>
 <!--  Fieldset mysqldump -->
 <fieldset id="mysql_options">
     <legend><?php echo $langs->trans("MySqlExportParameters"); ?></legend>
@@ -281,8 +298,12 @@ else
 
     </fieldset>
 </fieldset>
+<?php 
+}
 
-
+if ($db->label == 'PostgreSQL')
+{
+?>
 <!--  Fieldset pg_dump -->
 <fieldset id="postgresql_options">
     <legend><?php echo $langs->trans("PostgreSqlExportParameters"); ?></legend>
@@ -362,7 +383,9 @@ else
 
     </fieldset>
 </fieldset>
-
+<?php 
+}
+?>
 
 
 <!--
@@ -661,7 +684,7 @@ if (window.parent.frames[1]) {
 <?php
 
 
-$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'','',0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
+$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'','',0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
 //if ($result) print '<br><br>';
 
 

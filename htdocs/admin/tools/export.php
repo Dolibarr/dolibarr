@@ -86,14 +86,14 @@ if ($what == 'mysql')
 		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
 	}
 
-	$outputdir  = $conf->admin->dir_temp;
+	$outputdir  = $conf->admin->dir_output.'/backup';
 	$outputfile = $outputdir.'/'.$file;
 	// for compression format, we add extension
 	$compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
 	if ($compression == 'gz') $outputfile.='.gz';
 	if ($compression == 'bz') $outputfile.='.bz2';
 	$outputerror = $outputfile.'.err';
-	create_exdir($conf->admin->dir_temp);
+	create_exdir($conf->admin->dir_output.'/backup');
 
 	// Parameteres execution
 	$command=$cmddump;
@@ -195,7 +195,7 @@ if ($what == 'mysql')
 		{
 			// Renommer fichier sortie en fichier erreur
 			//print "$outputfile -> $outputerror";
-			dol_delete_file($outputerror,1);
+			@dol_delete_file($outputerror,1);
 			@rename($outputfile,$outputerror);
 			// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
 			if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
@@ -213,14 +213,14 @@ if ($what == 'postgresql')
 		dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
 	}
 
-	$outputdir  = $conf->admin->dir_temp;
+	$outputdir  = $conf->admin->dir_output.'/backup';
 	$outputfile = $outputdir.'/'.$file;
 	// for compression format, we add extension
 	$compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
 	if ($compression == 'gz') $outputfile.='.gz';
 	if ($compression == 'bz') $outputfile.='.bz2';
 	$outputerror = $outputfile.'.err';
-	create_exdir($conf->admin->dir_temp);
+	create_exdir($conf->admin->dir_output.'/backup');
 
 	// Parameteres execution
 	$command=$cmddump;
