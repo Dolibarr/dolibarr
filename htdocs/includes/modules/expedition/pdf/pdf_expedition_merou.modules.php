@@ -553,7 +553,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				// On verifie si c'est une societe ou un particulier
 				if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 				{
-					$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+					$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 				}
 			}
 

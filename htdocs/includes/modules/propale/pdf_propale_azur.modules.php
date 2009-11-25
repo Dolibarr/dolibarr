@@ -915,7 +915,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 
 				// Nom client
-				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
+				$carac_client = "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 
 				// Caracteristiques client
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
@@ -935,7 +935,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					// On verifie si c'est une societe ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
-						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 					}
 				}
 
@@ -963,6 +963,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('Arial','B',11);
+//print $carac_client;exit;
 			$pdf->MultiCell(96,4, $carac_client_name, 0, 'L');
 
 			// Show recipient information

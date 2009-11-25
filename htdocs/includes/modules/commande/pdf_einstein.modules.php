@@ -845,7 +845,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 
 				// Customer name
-				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
+				$carac_client = "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 
 				// Customer properties
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
@@ -865,7 +865,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// On verifie si c'est une societe ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
-						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 					}
 				}
 

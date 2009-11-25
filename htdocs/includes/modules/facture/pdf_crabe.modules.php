@@ -1114,7 +1114,7 @@ class pdf_crabe extends ModelePDFFactures
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 
 				// Recipient name
-				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
+				$carac_client = "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 
 				// Recipient properties
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
@@ -1134,7 +1134,7 @@ class pdf_crabe extends ModelePDFFactures
 					// On verifie si c'est une societe ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
-						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 					}
 				}
 
