@@ -2198,11 +2198,12 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 /**
  *	\brief  	Remove a file or several files with a mask
  *	\param		file			File to delete or mask of file to delete
- * 	\param		disableglob		Disable usage of globa like *
+ * 	\param		disableglob		Disable usage of glob like *
  *	\param		boolean			True if file deleted, False if error
  */
 function dol_delete_file($file,$disableglob=0)
 {
+	//print "x".$file." ".$disableglob; 
 	$ok=true;
 	$newfile=utf8_check($file)?utf8_decode($file):$file;	// glob function accepts only ISO string
 	if (empty($disableglob))
