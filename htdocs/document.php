@@ -417,7 +417,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->admin->dir_temp.'/'.$original_file;
+		$original_file=$conf->admin->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
 	}
 

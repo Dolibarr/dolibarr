@@ -1466,6 +1466,9 @@ function img_mime($file,$alt='')
 	if (preg_match('/\.(mp3|ogg|au|wav|wma)$/i',$file))				$mime='audio';
 	if (preg_match('/\.(avi|divx|xvid|wmv|mpg|mpeg)$/i',$file))		$mime='video';
 	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z)$/i',$file))	$mime='archive';
+
+	if (preg_match('/\.err$/i',$file))								$mime='error';
+	
 	if (empty($alt)) $alt='Mime type: '.$mime;
 
 	$mime.='.png';
