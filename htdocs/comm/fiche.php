@@ -297,8 +297,9 @@ if ($socid > 0)
 		print '</tr>';
 	}
 
-	// Adresse de livraison
-	if ($conf->expedition->enabled)
+	// Old way to define delivery address (deprecated).
+	// Now all addresses types (like delivery addresses, invoices addresses,...) are saved as contacts.
+	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)	// Hidden deprecated feature.
 	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
