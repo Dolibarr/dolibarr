@@ -94,7 +94,7 @@ class modAdherent extends DolibarrModules
         $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprime sur le bas de la carte adherent");
         $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre ne %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprime sur la carte adherent");
         $this->const[28] = array("ADHERENT_MAILMAN_ADMINPW","chaine","","Mot de passe Admin des liste mailman");
-        $this->const[29] = array("ADHERENT_MAILMAN_SERVER","chaine","","Serveur hebergeant les interfaces d'Admin des listes mailman");
+        $this->const[29] = array("ADHERENT_MAILMAN_SERVER","chaine","","Serveur hebergeant les interfaces d\'Admin des listes mailman");
         $this->const[30] = array("ADHERENT_MAILMAN_LISTS_COTISANT","chaine","","Liste(s) auxquelles les nouveaux cotisants sont inscris automatiquement");
         $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisation dans le compte banquaire");
         $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
