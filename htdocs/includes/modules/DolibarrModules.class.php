@@ -782,7 +782,7 @@ class DolibarrModules
 						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
 						$sql.= ",'".$type."'";
 						$sql.= ",".$this->db->encrypt($val,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
-						$sql.= ",'".$note."'";
+						$sql.= ",'".addslashes($note)."'";
 						$sql.= ",'".$visible."'";
 						$sql.= ",".$entity;
 						$sql.= ")";
