@@ -133,6 +133,8 @@ IfLoginDoesNotExistsCheckCreateUser=If login does not exists yet, you must check
 ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or PHP client version may be too old compared to database version.
 InstallChoiceRecommanded=Recommended choice to install version <b>%s</b> from your current version <b>%s</b>
 InstallChoiceSuggested=<b>Install choice suggested by installer</b>.
+CheckThatDatabasenameIsCorrect=Check that database name "<b>%s</b>" is correct.
+IfAlreadyExistsCheckOption=If this name is correct and that database does not exist yet, you must check option "Create database".
 
 #########
 # upgrade

@@ -429,8 +429,9 @@ if ($_POST["action"] == "set")
 					print "</td></tr>";
 
 					// Affiche aide diagnostique
-					print '<tr><td colspan="2"><br>Vérifier que le nom de base "<b>'.$dolibarr_main_db_name.'</b>" est correct.<br>';
-					print 'Si ce nom est correct et que cette base n\'existe pas déjà, vous devez cocher l\'option "Créer la base de donnée".<br>';
+					print '<tr><td colspan="2"><br>';
+					print $langs->trans('CheckThatDatabasenameIsCorrect',$dolibarr_main_db_name).'<br>';
+					print $langs->trans('IfAlreadyExistsCheckOption').'<br>';
 					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 					print '</td></tr>';
 
