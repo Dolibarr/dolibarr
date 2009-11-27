@@ -271,9 +271,6 @@ class Conf
 		 * Set some default values
 		 */
 
-		// System tools
-		if (empty($this->global->SYSTEMTOOLS_MYSQLDUMP)) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
-
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))      $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON)) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
