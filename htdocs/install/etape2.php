@@ -89,7 +89,7 @@ if ($_POST["action"] == "set")
 		if($db->database_selected == 1)
 		{
 
-			dolibarr_install_syslog("etape2: Connexion reussie a la base : $dolibarr_main_db_name");
+			dolibarr_install_syslog("etape2: Connexion successful to database : $dolibarr_main_db_name");
 		}
 		else
 		{

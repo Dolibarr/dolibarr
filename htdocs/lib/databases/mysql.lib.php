@@ -74,14 +74,14 @@ class DoliDb
 
 
 	/**
-	 \brief     Ouverture d'une connexion vers le serveur et eventuellement une database.
-	 \param     type		Type de base de donnees (mysql ou pgsql)
-	 \param	    host		Addresse de la base de donnees
-	 \param	    user		Nom de l'utilisateur autorise
-	 \param	    pass		Mot de passe
-	 \param	    name		Nom de la database
-	 \param	    port		Port of database server
-	 \return	int			1 en cas de succes, 0 sinon
+	 *	\brief     Ouverture d'une connexion vers le serveur et eventuellement une database.
+	 *	\param     type		Type de base de donnees (mysql ou pgsql)
+	 *	\param	    host		Addresse de la base de donnees
+	 *	\param	    user		Nom de l'utilisateur autorise
+	 *	\param	    pass		Mot de passe
+	 *	\param	    name		Nom de la database
+	 *	\param	    port		Port of database server
+	 *	\return	int			1 en cas de succes, 0 sinon
 	 */
 	function DoliDb($type='mysql', $host, $user, $pass, $name='', $port=0)
 	{
@@ -264,8 +264,8 @@ class DoliDb
 
 
 	/**
-	 \brief          Renvoie la version du serveur dans un tableau
-	 \return	        array  		Tableau de chaque niveau de version
+	 *	\brief          Renvoie la version du serveur dans un tableau
+	 *	\return	        array  		Tableau de chaque niveau de version
 	 */
 	function getVersionArray()
 	{
@@ -274,9 +274,9 @@ class DoliDb
 
 
 	/**
-	 \brief      Fermeture d'une connexion vers une database.
-	 \return	    resource
-	 \seealso	connect
+	 *	\brief      Fermeture d'une connexion vers une database.
+	 *	\return	    resource
+	 *	\seealso	connect
 	 */
 	function close()
 	{
@@ -286,8 +286,8 @@ class DoliDb
 
 
 	/**
-	 \brief      Debut d'une transaction.
-	 \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
+	 *	\brief      Debut d'une transaction.
+	 *	\return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
 	 */
 	function begin()
 	{
@@ -354,10 +354,10 @@ class DoliDb
 	}
 
 	/**
-		\brief      Effectue une requete et renvoi le resultset de reponse de la base
-		\param	    query	    Contenu de la query
-		\return	    resource    Resultset de la reponse
-		*/
+	 *	\brief      Effectue une requete et renvoi le resultset de reponse de la base
+	 *	\param	    query	    Contenu de la query
+	 *	\return	    resource    Resultset de la reponse
+	 */
 	function query($query)
 	{
 		$query = trim($query);
@@ -389,9 +389,9 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    resource
+	 *	\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return	    resource
 	 */
 	function fetch_object($resultset=0)
 	{
@@ -401,9 +401,9 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie les donnees dans un tableau.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    array
+	 *	\brief      Renvoie les donnees dans un tableau.
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return	    array
 	 */
 	function fetch_array($resultset=0)
 	{
@@ -414,9 +414,9 @@ class DoliDb
 
 
 	/**
-	 \brief      Renvoie les donnees comme un tableau.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    array
+	 *	\brief      Renvoie les donnees comme un tableau.
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return	    array
 	 */
 	function fetch_row($resultset=0)
 	{
@@ -426,10 +426,10 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
-	 \see    	affected_rows
-	 \param      resultset   Curseur de la requete voulue
-	 \return     int		    Nombre de lignes
+	 *	\brief      Renvoie le nombre de lignes dans le resultat d'une requete SELECT
+	 *	\see    	affected_rows
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return     int		    Nombre de lignes
 	 */
 	function num_rows($resultset=0)
 	{
@@ -439,10 +439,10 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
-	 \see    	num_rows
-	 \param      resultset   Curseur de la requete voulue
-	 \return     int		    Nombre de lignes
+	 *	\brief      Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 *	\see    	num_rows
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return     int		    Nombre de lignes
 	 */
 	function affected_rows($resultset=0)
 	{
@@ -455,8 +455,8 @@ class DoliDb
 
 
 	/**
-	 \brief      Libere le dernier resultset utilise sur cette connexion.
-	 \param      resultset   Curseur de la requete voulue
+	 *	\brief      Libere le dernier resultset utilise sur cette connexion.
+	 *	\param      resultset   Curseur de la requete voulue
 	 */
 	function free($resultset=0)
 	{
@@ -985,9 +985,9 @@ class DoliDb
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
 		$sql = "INSERT INTO user ";
-		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
-		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog("mysql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
@@ -997,9 +997,9 @@ class DoliDb
 		}
 
 		$sql = "INSERT INTO db ";
-		$sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+		$sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
-		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog("mysql.lib::DDLCreateUser sql=".$sql,LOG_DEBUG);
 		$resql=$this->query($sql);

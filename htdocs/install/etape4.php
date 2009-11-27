@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/install/etape4.php
- \ingroup	install
- \brief      Demande le login et mot de passe de l'administrateur Dolibarr
- \version    $Id$
+ *	\file       htdocs/install/etape4.php
+ *	\ingroup	install
+ *	\brief      Ask login and password of Dolibarr admin user
+ *	\version    $Id$
  */
 
 

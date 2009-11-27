@@ -75,14 +75,14 @@ class DoliDb
 
 
 	/**
-	 \brief     Ouverture d'une connexion vers le serveur et eventuellement une database.
-	 \param     type		Type de base de donnees (mysql ou pgsql)
-	 \param	    host		Addresse de la base de donnees
-	 \param	    user		Nom de l'utilisateur autorise
-	 \param	    pass		Mot de passe
-	 \param	    name		Nom de la database
-	 \param	    port		Port of database server
-	 \return    int			1 en cas de succes, 0 sinon
+	 *	\brief     Ouverture d'une connexion vers le serveur et eventuellement une database.
+	 *	\param     type		Type de base de donnees (mysql ou pgsql)
+	 *	\param	    host		Addresse de la base de donnees
+	 *	\param	    user		Nom de l'utilisateur autorise
+	 *	\param	    pass		Mot de passe
+	 *	\param	    name		Nom de la database
+	 *	\param	    port		Port of database server
+	 *	\return    int			1 en cas de succes, 0 sinon
 	 */
 	function DoliDb($type='mysqli', $host, $user, $pass, $name='', $port=0)
 	{
@@ -998,9 +998,9 @@ class DoliDb
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
 		$sql = "INSERT INTO user ";
-		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
-		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog("mysqli.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
@@ -1010,9 +1010,9 @@ class DoliDb
 		}
 
 		$sql = "INSERT INTO db ";
-		$sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+		$sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
-		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql);
 		$resql=$this->query($sql);
