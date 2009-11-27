@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  *
@@ -20,11 +20,11 @@
  */
 
 /**
-		\file       htdocs/install/etape1.php
-		\ingroup	install
-		\brief      Build conf file
-		\version    $Id$
-*/
+ *		\file       htdocs/install/etape1.php
+ *		\ingroup	install
+ *		\brief      Build conf file on disk
+ *		\version    $Id$
+ */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
 
@@ -420,7 +420,7 @@ if ($_POST["action"] == "set")
 					print $langs->trans("OK");
 					print "</td></tr>";
 
-					dolibarr_install_syslog("etape1: connexion to database ".$conf->db->name.", bu user : ".$conf->db->user." has failed", LOG_ERR);
+					dolibarr_install_syslog("etape1: connexion to database ".$conf->db->name.", by user : ".$conf->db->user." has failed", LOG_ERR);
 					print "<tr><td>";
 					print $langs->trans("DatabaseConnection")." : ";
 					print $dolibarr_main_db_name;

@@ -255,6 +255,7 @@ function dol_syslog($message, $level=LOG_INFO)
 		{
 			$filelog=SYSLOG_FILE;
 			$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
+			//print $filelog;
 			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
 			else $file=fopen($filelog,"a+");
 
