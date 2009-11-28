@@ -1689,10 +1689,11 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 				else if (! $user->rights->societe->client->voir)
 				{
 					$sql = "SELECT sc.fk_soc";
-					$sql.= " FROM (".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql.= ", ".MAIN_DB_PREFIX."societe as s)";
-					$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield;
+					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+					$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 					$sql.= " WHERE dbt.rowid = ".$objectid;
+					$sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
 					$sql.= " AND dbt.fk_soc = s.rowid";
 					$sql.= " AND s.entity = ".$conf->entity;
 					$sql.= " AND COALESCE(sc.fk_user, ".$user->id.") = ".$user->id;

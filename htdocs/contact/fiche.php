@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 /**
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
- *       \brief      Onglet g�n�ral d'un contact
+ *       \brief      Onglet general d'un contact
  *       \version    $Id$
  */
 
@@ -55,8 +55,8 @@ $result = restrictedArea($user, 'contact', $contactid, 'socpeople');
 
 
 /*
-*	Actions
-*/
+ *	Actions
+ */
 
 // Creation utilisateur depuis contact
 if ($_POST["action"] == 'confirm_create_user' && $_POST["confirm"] == 'yes' && $user->rights->user->user->creer)
@@ -195,8 +195,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->societe
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader('',$langs->trans("Contacts"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
@@ -211,8 +211,8 @@ if ($socid)
 
 
 /*
-* Onglets
-*/
+ * Onglets
+ */
 if ($_GET["id"] > 0)
 {
 	// Si edition contact deja existant
@@ -234,8 +234,8 @@ if ($_GET["id"] > 0)
 
 
 /*
-* Confirmation de la suppression du contact
-*/
+ * Confirmation de la suppression du contact
+ */
 if ($user->rights->societe->contact->supprimer)
 {
 	if ($_GET["action"] == 'delete')
@@ -343,9 +343,9 @@ if ($user->rights->societe->contact->creer)
 	elseif ($_GET["action"] == 'edit' && $_GET["id"])
 	{
 		/*
-		* Fiche en mode edition
-		*
-		*/
+		 * Fiche en mode edition
+		 *
+		 */
 
 		// Affiche les erreurs
 		if (sizeof($error))
@@ -490,9 +490,9 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	$objsoc = new Societe($db);
 
 	/*
-	* Fiche en mode visualisation
-	*
-	*/
+	 * Fiche en mode visualisation
+	 *
+	 */
 	if ($msg)
 	{
 		$langs->load("errors");
