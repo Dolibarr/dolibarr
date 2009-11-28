@@ -421,13 +421,16 @@ class CommonObject
 
  		// this->ismultientitymanaged contains
 		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+		$alias = 's';
+		if ($this->element == 'societe') $alias = 'te';
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
-		if ($this->ismultientitymanaged == 2 || (!$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." < '".addslashes($this->ref)."'";
-		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND s.rowid = te.fk_soc AND sc.fk_user = " .$user->id;
+		if ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND s.rowid = te.fk_soc";
+		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (isset($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if ($this->ismultientitymanaged > 0) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
@@ -445,10 +448,11 @@ class CommonObject
 
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
-		if ($this->ismultientitymanaged == 2 || (!$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+		if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." > '".addslashes($this->ref)."'";
-		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND s.rowid = te.fk_soc AND sc.fk_user = " .$user->id;
+		if ($this->element != 'societe' && !$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND s.rowid = te.fk_soc";
+		if (!$this->isnolinkedbythird && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
 		if (isset($filter)) $sql.=" AND ".$filter;
 		if ($this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if ($this->ismultientitymanaged > 0) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
