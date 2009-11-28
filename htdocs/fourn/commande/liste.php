@@ -75,13 +75,12 @@ $offset = $conf->liste_limit * $page ;
 $sql = "SELECT s.rowid as socid, s.nom, ".$db->pdate("cf.date_commande")." as dc";
 $sql.= ", cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author";
 $sql.= ", u.login";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= "  LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
-$sql.= " WHERE cf.fk_soc = s.rowid ";
-$sql.= " AND s.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = cf.fk_soc";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+$sql.= " WHERE s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
 if ($sref)
 {
 	$sql.= " AND cf.ref LIKE '%".addslashes($sref)."%'";
