@@ -58,20 +58,20 @@ class FactureStats extends Stats
 		if ($mode == 'customer')
 		{
 			$object=new Facture($this->db);
-			$this->from = MAIN_DB_PREFIX.$object->table_element." as p, ".MAIN_DB_PREFIX."societe as s";
+			$this->from = MAIN_DB_PREFIX.$object->table_element;
 			$this->field='total';
 		}
 		if ($mode == 'supplier')
 		{
 			$object=new FactureFournisseur($this->db);
-			$this->from = MAIN_DB_PREFIX.$object->table_element." as p, ".MAIN_DB_PREFIX."societe as s";
+			$this->from = MAIN_DB_PREFIX.$object->table_element;
 			$this->field='total_ht';
 		}
 		
 		$this->socid = $socid;
 		$this->where =" fk_statut > 0";
-		$this->where.= " AND p.fk_soc = s.rowid AND s.entity = ".$conf->entity;
-		if ($mode == 'customer') $this->where.=" AND (fk_statut != 3 OR close_code != 'replaced')";	// Exclude replaced invoices
+		$this->where.= " AND entity = ".$conf->entity;
+		if ($mode == 'customer') $this->where.=" AND fk_statut != 3";	// Exclude replaced invoices
 		if ($this->socid)
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
@@ -81,7 +81,7 @@ class FactureStats extends Stats
 
 
 	/**
-	 * 	\brief		Renvoie le nombre de facture par année
+	 * 	\brief		Renvoie le nombre de facture par annee
 	 *	\return		array	Array of values
 	 */
 	function getNbByYear()
@@ -96,7 +96,7 @@ class FactureStats extends Stats
 
 	
 	/**
-	 * 	\brief	Renvoie le nombre de facture par mois pour une année donnée
+	 * 	\brief	Renvoie le nombre de facture par mois pour une annee donnee
 	 *	\param	year	Year to scan
 	 *	\return	array	Array of values
 	 */
@@ -115,7 +115,7 @@ class FactureStats extends Stats
 
 
 	/**
-	 * 	\brief	Renvoie le montant de facture par mois pour une année donnée
+	 * 	\brief	Renvoie le montant de facture par mois pour une annee donnee
 	 *	\param	year	Year to scan
 	 *	\return	array	Array of values
 	 */

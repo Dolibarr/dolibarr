@@ -397,7 +397,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		if ($soc->particulier)
 		{
 			print '<tr><td>'.$langs->trans('LastName').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
-			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 			print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
 			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -407,7 +407,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		else
 		{
 			print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
-			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 		}
 
 		// Client / Prospect
@@ -735,7 +735,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		else
 		{
-			print '<input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+			print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
 		}
 		print '</td>';
 
