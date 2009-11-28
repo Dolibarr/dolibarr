@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - install
+# Dolibarr language file - es_ES - install  = 
 CHARSET = UTF-8
 InstallEasy = Hem procurat que la instal lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
 MiscellanousChecks = Comprovació dels Prerequisits
@@ -128,12 +128,15 @@ BecauseConnectionFailedParametersMayBeWrong = La connexió falla, els paràmetre
 OrphelinsPaymentsDetectedByMethod = Pagaments orfes detectats pel mètode %s
 RemoveItManuallyAndPressF5ToContinue = Esborreu manualment i premeu F5 per continuar.
 KeepDefaultValuesWamp = Està utilitzant l'assistent d'instal·lació DoliWamp, els valors proposats aquí estan optimitzats. Canviels només si està segur d'això.
+KeepDefaultValuesDeb = Està utilitzant l'assistent d'instal·lació Dolibarr d'un paquet d'Ubuntu o Debian, els valors proposats per als paràmetres ja estan optimitzats. Només seran necessàries la contrasenya del propietari de la base de dades a crear i la contrasenya de l'superadministrador del servidor de la base de dades. Canvie l'altra informació només si està segur d'això.
 KeepDefaultValuesMamp = Està utilitzant l'assistent d'instal·lació DoliMamp, els valors proposats aquí estan optimitzats. Canviels només si està segur d'això.
 FieldRenamed = Camp renombrat
 IfLoginDoesNotExistsCheckCreateUser = Si l'login encara no existeix, ha de seleccionar l'opció "Creació de l'usuari"
 ErrorConnection = El servidor "<b>%s </b>", base de dades "<b>%s</b>", login "<b>%s</b>", o la contrasenya de la base de dades poden ser incorrectes o la versió de PHP molt vella en comparació amb la versió de la base de dades.
 InstallChoiceRecommanded = Opció recomanada per a instal·lar la versió <b>%s</b> sobre la seva actual versió <b>%s</b>
 InstallChoiceSuggested = <b>Opció suggerida per l'instal·lador</b>.
+CheckThatDatabasenameIsCorrect = Comproveu que el nom de la base de dades "<b>%s</b>" és correcte.
+IfAlreadyExistsCheckOption = Si el nom és correcte i la base de dades no existeix, heu de seleccionar l'opció "Crear la base de dades"
 ######### =  = 
 # upgrade =  = 
 MigrationFixData = Correcció de dades desnormalitzades
