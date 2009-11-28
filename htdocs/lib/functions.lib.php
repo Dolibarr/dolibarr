@@ -1631,17 +1631,20 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 	}
 
 	// If we have a particular object to check permissions on
-	if ($objectid > 0)
+	if (!empty($objectid))
 	{
 		foreach ($features as $feature)
 		{
 			$sql='';
+			
+			$check = array('user','usergroup','produit','service','produit|service');
+			$nocheck = array('categorie','barcode','stock','fournisseur');
 
 			// If dbtable not defined, we use same name for table than module name
 			if (empty($dbtablename)) $dbtablename = $feature;
 
 			// Check permission for object with entity
-			if ($feature == 'user' || $feature == 'usergroup' || $feature == 'produit' || $feature == 'service' || $feature == 'produit|service')
+			if (in_array($feature,$check))
 			{
 				$sql = "SELECT dbt.".$dbt_select;
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1675,7 +1678,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " AND s.entity = ".$conf->entity;
 				}
 			}
-			else
+			else if (!in_array($feature,$nocheck))
 			{
 				// If external user: Check permission for external users
 				if ($user->societe_id > 0)
@@ -1692,7 +1695,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 					$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-					$sql.= " WHERE dbt.rowid = ".$objectid;
+					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 					$sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
 					$sql.= " AND dbt.fk_soc = s.rowid";
 					$sql.= " AND s.entity = ".$conf->entity;

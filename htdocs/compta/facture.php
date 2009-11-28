@@ -53,11 +53,12 @@ $projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
 
 // Security check
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
-$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+$facid = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+$fieldid = isset($_GET["ref"])?'facnumber':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'facture', $facid,'');
+$result = restrictedArea($user, 'facture', $facid,'','','fk_soc',$fieldid);
 
-// Nombre de ligne pour choix de produit/service pr�d�finis
+// Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;

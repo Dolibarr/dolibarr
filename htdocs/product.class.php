@@ -37,10 +37,11 @@ class Product extends CommonObject
 {
 	var $db;
 	var $error;
-	//! Numero de l'erreur
+	//! Error number
 	var $errno = 0;
 	var $element='product';
 	var $table_element='product';
+	var $isnolinkedbythird = 1;     // No field fk_soc
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	//! Identifiant unique
