@@ -435,7 +435,7 @@ class CommonObject
 		if ($this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if ($this->ismultientitymanaged > 0) $sql.= ' AND te.entity IN (0,'.$conf->entity.')';
 
-		print $sql."<br>";
+		//print $sql."<br>";
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{
