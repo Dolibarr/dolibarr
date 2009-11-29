@@ -1640,8 +1640,11 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		{
 			$sql='';
 
-			$check = array('user','usergroup','produit','service','produit|service');
-			$nocheck = array('categorie','barcode','stock','fournisseur');
+			$check = array('user','usergroup','produit','service','produit|service'); // Test on entity only (Objects with no link to company)
+			$checksoc = array('societe');	// Test for societe object
+			$checkother = array('contact','projet');	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts, projects...).
+			// Others: Test on entity and link to societe. Not allowed if link is empty (Ex: invoice, orders...).
+			$nocheck = array('categorie','barcode','stock','fournisseur');	// No test
 
 			// If dbtable not defined, we use same name for table than module name
 			if (empty($dbtablename)) $dbtablename = $feature;
@@ -1654,7 +1657,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 				$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 				$sql.= " AND dbt.entity IN (0,".$conf->entity.")";
 			}
-			else if ($feature == 'societe')
+			else if (in_array($feature,$checksoc))
 			{
 				// If external user: Check permission for external users
 				if ($user->societe_id > 0)
@@ -1681,33 +1684,33 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " AND s.entity = ".$conf->entity;
 				}
 			}
-			else if ($feature == 'contact')
+			else if (in_array($feature,$checkother))
 			{
 				// If external user: Check permission for external users
 				if ($user->societe_id > 0)
 				{
-					$sql = "SELECT sp.rowid";
-					$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-					$sql.= " WHERE sp.rowid = ".$objectid;
-					$sql.= " AND sp.fk_soc = ".$user->societe_id;
+					$sql = "SELECT dbt.rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql.= " WHERE dbt.rowid = ".$objectid;
+					$sql.= " AND dbt.fk_soc = ".$user->societe_id;
 				}
 				// If internal user: Check permission for internal users that are restricted on their objects
 				else if (! $user->rights->societe->client->voir)
 				{
-					$sql = "SELECT sp.rowid";
-					$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-					$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sp.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
-					$sql.= " WHERE sp.rowid = ".$objectid;
-					$sql.= " AND (sp.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
-					$sql.= " AND sp.entity = ".$conf->entity;
+					$sql = "SELECT dbt.rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
+					$sql.= " WHERE dbt.rowid = ".$objectid;
+					$sql.= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
+					$sql.= " AND dbt.entity = ".$conf->entity;
 				}
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
 				{
-					$sql = "SELECT sp.rowid";
-					$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-					$sql.= " WHERE sp.rowid = ".$objectid;
-					$sql.= " AND sp.entity = ".$conf->entity;
+					$sql = "SELECT dbt.rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql.= " WHERE dbt.rowid = ".$objectid;
+					$sql.= " AND dbt.entity = ".$conf->entity;
 				}
 			}
 			else if (!in_array($feature,$nocheck))
