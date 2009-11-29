@@ -80,3 +80,4 @@ cvschangelogbuilder_dolibarr*
 */bulot/*
 */huitre/*
 */pdf_huitre.modules.php
+doxygen_warnings.log
