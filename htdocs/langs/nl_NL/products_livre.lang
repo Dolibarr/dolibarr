@@ -1,0 +1,6 @@
+# Dolibarr language file - nl_NL - products
+CHARSET=UTF-8
+NewBook=Nieuw boek
+ListBook=Boeken
+ListCover=Dekkingen
+ListContract=Contracten
