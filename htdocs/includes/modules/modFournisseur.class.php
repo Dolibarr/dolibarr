@@ -85,7 +85,7 @@ class modFournisseur extends DolibarrModules
 
 		$this->const[1][0] = "COMMANDE_SUPPLIER_ADDON";
 		$this->const[1][1] = "chaine";
-		$this->const[1][2] = "emeraude";
+		$this->const[1][2] = "mod_commande_fournisseur_muguet";
 
 		// Boxes
 		$this->boxes = array();
