@@ -1634,7 +1634,7 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 
 	// If we have a particular object to check permissions on, we check this object
 	// is linked to a company allowed to $user.
-	if (!empty($objectid))
+	if (!empty($objectid) && $objectid > 0)
 	{
 		foreach ($features as $feature)
 		{
