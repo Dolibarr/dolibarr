@@ -317,7 +317,7 @@ if ($_POST["action"] == 'addinpropal')
 	}
 
 	$soc = new Societe($db);
-	$result=$soc->fetch($propal->socid,$user);
+	$result=$soc->fetch($propal->socid);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$soc->error);
@@ -398,7 +398,7 @@ if ($_POST["action"] == 'addincommande')
 	}
 
 	$soc = new Societe($db);
-	$result=$soc->fetch($commande->socid,$user);
+	$result=$soc->fetch($commande->socid);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$soc->error);
