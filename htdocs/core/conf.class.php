@@ -95,6 +95,7 @@ class Conf
 		$sql.= ",".$db->decrypt('value',$this->db->dolibarr_main_db_encryption,$this->db->dolibarr_main_db_cryptkey)." as value, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE entity IN (0,".$this->entity.")";
+		$sql.= " ORDER BY entity";	// This is to have entity 0 first, then entity 1 that overwrite.
 
 		$result = $db->query($sql);
 		if ($result)
@@ -111,6 +112,7 @@ class Conf
 				{
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
 					$this->global->$key=$value;
+
 					// If this is constant for a css file activated by a module
 					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key) && $value)
 					{
