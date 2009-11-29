@@ -473,9 +473,9 @@ class CommandeFournisseur extends Commande
 		$modelisok=0;
 		$liste=array();
 
-		if (defined('COMMANDE_SUPPLIER_ADDON') && COMMANDE_SUPPLIER_ADDON)
+		if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON))
 		{
-			$file = COMMANDE_SUPPLIER_ADDON.'.php';
+			$file = $conf->global->COMMANDE_SUPPLIER_ADDON.'.php';
 
 			if (is_readable($dir.'/'.$file))
 			{
