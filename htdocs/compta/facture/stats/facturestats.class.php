@@ -35,13 +35,13 @@ include_once DOL_DOCUMENT_ROOT . "/fourn/fournisseur.facture.class.php";
 class FactureStats extends Stats
 {
 	var $db ;
-	
+
 	var $socid;
 	var $where;
-	
+
 	var $table_element;
 	var $field;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -53,7 +53,7 @@ class FactureStats extends Stats
 	function FactureStats($DB, $socid=0, $mode)
 	{
 		global $conf;
-		
+
 		$this->db = $DB;
 		if ($mode == 'customer')
 		{
@@ -67,16 +67,16 @@ class FactureStats extends Stats
 			$this->from = MAIN_DB_PREFIX.$object->table_element;
 			$this->field='total_ht';
 		}
-		
+
 		$this->socid = $socid;
-		$this->where =" fk_statut > 0";
+		$this->where = " fk_statut > 0";
 		$this->where.= " AND entity = ".$conf->entity;
-		if ($mode == 'customer') $this->where.=" AND fk_statut != 3";	// Exclude replaced invoices
+		if ($mode == 'customer') $this->where.=" AND (fk_statut != 3 OR close_code != 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		if ($this->socid)
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-		
+
 	}
 
 
@@ -90,11 +90,11 @@ class FactureStats extends Stats
 		$sql.= " FROM ".$this->from;
 		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;
-		
+
 		return $this->_getNbByYear($sql);
 	}
 
-	
+
 	/**
 	 * 	\brief	Renvoie le nombre de facture par mois pour une annee donnee
 	 *	\param	year	Year to scan
@@ -133,7 +133,7 @@ class FactureStats extends Stats
 	}
 
 	/**
-	 *	\brief	Return average amount	
+	 *	\brief	Return average amount
 	 *	\param	year	Year to scan
 	 *	\return	array	Array of values
 	 */
@@ -147,9 +147,9 @@ class FactureStats extends Stats
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
-	
+
 	/**
-	 *	\brief	Return nb, total and average	
+	 *	\brief	Return nb, total and average
 	 *	\return	array	Array of values
 	 */
 	function getAllByYear()
@@ -160,7 +160,7 @@ class FactureStats extends Stats
 		$sql.= " GROUP BY year DESC";
 
 		return $this->_getAllByYear($sql);
-	}	
+	}
 }
 
 ?>
