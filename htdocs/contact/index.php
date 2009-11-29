@@ -116,7 +116,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN
 $sql.= " WHERE p.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
-	$sql .= " AND sc.fk_user = " .$user->id;
+	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
 }
 if ($_GET["userid"])    // propre au commercial
 {

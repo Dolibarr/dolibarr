@@ -1469,7 +1469,7 @@ function img_mime($file,$alt='')
 	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z)$/i',$file))	$mime='archive';
 
 	if (preg_match('/\.err$/i',$file))								$mime='error';
-	
+
 	if (empty($alt)) $alt='Mime type: '.$mime;
 
 	$mime.='.png';
@@ -1504,14 +1504,16 @@ function info_admin($texte,$infoonimgalt=0)
 
 
 /**
- *	\brief      Check permissions of a user to show a page and an object.
+ *	\brief      Check permissions of a user to show a page and an object. Check read permission
+ * 				If $_REQUEST['action'] defined, we also check write permission.
  *	\param      user      	  	User to check
  *	\param      features	    Features to check (in most cases, it's module name)
  *	\param      objectid      	Object ID if we want to check permission on on object (optionnal)
  *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnal)
- *	\param      feature2		    Feature to check (second level of permission)
+ *	\param      feature2		Feature to check (second level of permission)
  *  \param      dbt_keyfield    Field name for socid foreign key if not fk_soc. (optionnal)
  *  \param      dbt_select      Field name for select if not rowid. (optionnal)
+ * 	\return		int				1
  */
 function restrictedArea($user, $features='societe', $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 {
@@ -1630,13 +1632,14 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		//print "Write access is ok";
 	}
 
-	// If we have a particular object to check permissions on
+	// If we have a particular object to check permissions on, we check this object
+	// is linked to a company allowed to $user.
 	if (!empty($objectid))
 	{
 		foreach ($features as $feature)
 		{
 			$sql='';
-			
+
 			$check = array('user','usergroup','produit','service','produit|service');
 			$nocheck = array('categorie','barcode','stock','fournisseur');
 
@@ -1678,15 +1681,44 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= " AND s.entity = ".$conf->entity;
 				}
 			}
+			else if ($feature == 'contact')
+			{
+				// If external user: Check permission for external users
+				if ($user->societe_id > 0)
+				{
+					$sql = "SELECT sp.rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+					$sql.= " WHERE sp.rowid = ".$objectid;
+					$sql.= " AND sp.fk_soc = ".$user->societe_id;
+				}
+				// If internal user: Check permission for internal users that are restricted on their objects
+				else if (! $user->rights->societe->client->voir)
+				{
+					$sql = "SELECT sp.rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+					$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sp.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
+					$sql.= " WHERE sp.rowid = ".$objectid;
+					$sql.= " AND (sp.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
+					$sql.= " AND sp.entity = ".$conf->entity;
+				}
+				// If multicompany and internal users with all permissions, check user is in correct entity
+				else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
+				{
+					$sql = "SELECT sp.rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+					$sql.= " WHERE sp.rowid = ".$objectid;
+					$sql.= " AND sp.entity = ".$conf->entity;
+				}
+			}
 			else if (!in_array($feature,$nocheck))
 			{
 				// If external user: Check permission for external users
 				if ($user->societe_id > 0)
 				{
-					$sql = "SELECT dbt.fk_soc";
+					$sql = "SELECT dbt.".$dbt_keyfield;
 					$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					$sql.= " WHERE dbt.rowid = ".$objectid;
-					$sql.= " AND dbt.fk_soc = ".$user->societe_id;
+					$sql.= " AND dbt.".$dbt_keyfield." = ".$user->societe_id;
 				}
 				// If internal user: Check permission for internal users that are restricted on their objects
 				else if (! $user->rights->societe->client->voir)
@@ -1697,9 +1729,9 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 					$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 					$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
 					$sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql.= " AND dbt.fk_soc = s.rowid";
+					$sql.= " AND dbt.".$dbt_keyfield." = s.rowid";
 					$sql.= " AND s.entity = ".$conf->entity;
-					$sql.= " AND COALESCE(sc.fk_user, ".$user->id.") = ".$user->id;
+					$sql.= " AND sc.fk_user = ".$user->id;
 				}
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				else if ($conf->global->MAIN_MODULE_MULTICOMPANY)
@@ -2211,7 +2243,7 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
  */
 function dol_delete_file($file,$disableglob=0)
 {
-	//print "x".$file." ".$disableglob; 
+	//print "x".$file." ".$disableglob;
 	$ok=true;
 	$newfile=utf8_check($file)?utf8_decode($file):$file;	// glob function accepts only ISO string
 	if (empty($disableglob))

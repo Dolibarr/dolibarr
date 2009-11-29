@@ -51,7 +51,8 @@ if (! empty($_REQUEST['socid_id']))
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid, 'socpeople');
+
+$result = restrictedArea($user, 'contact', $contactid, 'socpeople');	// If we create a contact with no company (shared contacts), no check on write permission
 
 
 /*
@@ -250,9 +251,8 @@ if ($user->rights->societe->contact->creer)
 	if ($_GET["action"] == 'create')
 	{
 		/*
-		* Fiche en mode creation
-		*
-		*/
+		 * Fiche en mode creation
+		 */
 		print_fiche_titre($langs->trans("AddContact"));
 
 		// Affiche les erreurs
