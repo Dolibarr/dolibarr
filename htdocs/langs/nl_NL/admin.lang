@@ -576,8 +576,8 @@ DictionnaryFees=Aard van de vergoedingen
 DictionnarySendingMethods=Verzend methode
 DictionnaryStaff=Personeel
 SetupSaved=Setup opgeslagen
-BackToModuleList=Terug naar modules lijst
-BackToDictionnaryList=Terug naar de lijst woordenboeken
+BackToModuleList=Terug naar modules overzicht
+BackToDictionnaryList=Terug naar de woordenboeken overzicht
 VATReceivedOnly=Speciaal tarief niet ten laste
 VATManagement=BTW Management
 VATIsUsedDesc=Het standaard BTW-tarief bij het aanmaken van prospects, facturen, orders etc volgt de actieve standaard regel:<br>Als verkoper niet onderworpen is aan BTW, BTW-standaard = 0. Einde van de regel. <br> Als het 'land van de verkoper' = 'het land van de koper' dan is de BTW = BTW-standaard van het verkochte product. Einde van de regel. <br> Als verkoper en koper in de Europese Gemeenschap en het betreft een nieuw vervoermiddel (auto, boot, vliegtuig), BTW = 0 (De BTW moet worden betaald door koper in zijn land en niet de verkoper). Einde van de regel. <br> Als verkoper en koper in de Europese Gemeenschap en de koper is een persoon of bedrijf zonder BTW Registratie nummer = BTW-standaard van het verkochte product. Einde van de regel. <br> Als verkoper en koper in de Europese Gemeenschap en koper bedrijf met BTW nummer = intra BTW dan BTW standaard = 0. Einde van de regel. <br> Anders zal de BTW standaard = 0. Einde van de regel. <br>
@@ -742,7 +742,7 @@ GeneratePassword=Maak een wachtwoord
 RuleForGeneratedPasswords=Regel voor te genereren wachtwoorden
 DoNotSuggest=Stel geen wachtwoord voor.
 EncryptedPasswordInDatabase=Versleuteld wachtwoord in de database
-DisableForgetPasswordLinkOnLogonPage=Verberg link "Wachtwoord vergeten" op login pagina
+DisableForgetPasswordLinkOnLogonPage=Verberg link "Wachtwoord vergeten?" op login pagina
 ##### Company setup #####
 CompanySetup=Bedrijven module setup
 CompanyCodeChecker=Module voor derden code generatie en toetsing (klant of leverancier)
