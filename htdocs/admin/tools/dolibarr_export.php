@@ -77,7 +77,7 @@ if ($db->label == 'MySQL')
 {
 ?>
     document.getElementById("mysql_options").style.display = 'none';
-<?php 
+<?php
 }
 ?>
 <?php
@@ -85,7 +85,7 @@ if ($db->label == 'PostgreSQL')
 {
 ?>
 	document.getElementById("postgresql_options").style.display = 'none';
-	<?php 
+	<?php
 }
 ?>
 }
@@ -175,17 +175,7 @@ if ($db->label == 'MySQL')
         <?php echo $langs->trans("FullPathToMysqldumpCommand");
             if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP))
             {
-				$resql=$db->query('SHOW VARIABLES LIKE \'basedir\'');
-				if ($resql)
-				{
-					$liste=$db->fetch_array($resql);
-					$basedir=$liste['Value'];
-					$fullpathofmysqldump=$basedir.'bin/mysqldump';
-				}
-				else
-				{
-					$fullpathofmysqldump='/pathtomysqldump/mysqldump';
-				}
+				$fullpathofmysqldump=$db->getPathOfDump();
             }
             else
             {
@@ -298,7 +288,7 @@ if ($db->label == 'MySQL')
 
     </fieldset>
 </fieldset>
-<?php 
+<?php
 }
 
 if ($db->label == 'PostgreSQL')
@@ -312,17 +302,7 @@ if ($db->label == 'PostgreSQL')
         <?php echo $langs->trans("FullPathToPostgreSQLdumpCommand");
             if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP))
             {
-				$resql=$db->query('SHOW data_directory');
-				if ($resql)
-				{
-					$liste=$db->fetch_array($resql);
-					$basedir=$liste['data_directory'];
-					$fullpathofpgdump=preg_replace('/data$/','bin',$basedir).'/pg_dump';
-				}
-				else
-				{
-					$fullpathofpgdump='/pathtopgdump/pg_dump';
-				}
+				$fullpathofpgdump=$db->getPathOfDump();
             }
             else
             {
@@ -383,7 +363,7 @@ if ($db->label == 'PostgreSQL')
 
     </fieldset>
 </fieldset>
-<?php 
+<?php
 }
 ?>
 

@@ -1109,6 +1109,43 @@ class DoliDb
 		}
 		return $liste;
 	}
+
+	/**
+	 *	\brief		Return full path of dump program
+	 *	\return		string		Full path of dump program
+	 */
+	function getPathOfDump()
+	{
+		$fullpathofdump='/pathtomysqldump/mysqldump';
+
+		$resql=$this->query('SHOW VARIABLES LIKE \'basedir\'');
+		if ($resql)
+		{
+			$liste=$this->fetch_array($resql);
+			$basedir=$liste['Value'];
+			$fullpathofdump=$basedir.'bin/mysqldump';
+		}
+		return $fullpathofdump;
+	}
+
+	/**
+	 *	\brief		Return full path of restore program
+	 *	\return		string		Full path of restore program
+	 */
+	function getPathOfRestore()
+	{
+		$fullpathofimport='/pathtomysql/mysql';
+
+		$resql=$this->query('SHOW VARIABLES LIKE \'basedir\'');
+		if ($resql)
+		{
+			$liste=$this->fetch_array($resql);
+			$basedir=$liste['Value'];
+			$fullpathofimport=$basedir.'bin/mysql';
+		}
+		return $fullpathofimport;
+	}
+
 }
 
 ?>

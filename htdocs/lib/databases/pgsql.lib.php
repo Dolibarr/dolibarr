@@ -1038,5 +1038,42 @@ class DoliDb
 		return $liste;
 	}
 
+	/**
+	 *	\brief		Return full path of dump program
+	 *	\return		string		Full path of dump program
+	 */
+	function getPathOfDump()
+	{
+		$fullpathofdump='/pathtopgdump/pg_dump';
+
+		$resql=$db->query('SHOW data_directory');
+		if ($resql)
+		{
+			$liste=$db->fetch_array($resql);
+			$basedir=$liste['data_directory'];
+			$fullpathofdump=preg_replace('/data$/','bin',$basedir).'/pg_dump';
+		}
+
+		return $fullpathofdump;
+	}
+
+	/**
+	 *	\brief		Return full path of restore program
+	 *	\return		string		Full path of restore program
+	 */
+	function getPathOfRestore()
+	{
+		$fullpathofmysqldump='/pathtomysql/mysql';
+
+		$resql=$this->query('SHOW VARIABLES LIKE \'basedir\'');
+		if ($resql)
+		{
+			$liste=$this->fetch_array($resql);
+			$basedir=$liste['Value'];
+			$fullpathofmysqldump=$basedir.'bin/mysql';
+		}
+		return $fullpathofmysqldump;
+	}
+
 }
 ?>

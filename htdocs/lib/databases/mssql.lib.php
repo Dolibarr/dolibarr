@@ -961,7 +961,8 @@ class DoliDb
 		return ''; // attente d�buggage
 	}
 
-	function getDefaultCollationDatabase(){
+	function getDefaultCollationDatabase()
+	{
 		$resql=$this->query("SELECT SERVERPROPERTY('collation')");
 		if (!$resql)
 		{
@@ -971,7 +972,8 @@ class DoliDb
 		return $liste['computed'];
 	}
 
-	function getListOfCollation(){
+	function getListOfCollation()
+	{
 		/*
 		 $resql=$this->query('SHOW COLLATION');
 		 $liste = array();
@@ -992,6 +994,15 @@ class DoliDb
 		return ''; // attente debugage
 	}
 
+	function getPathOfDump()
+	{
+
+	}
+
+	function getPathOfRestore()
+	{
+
+	}
 }
 
 ?>

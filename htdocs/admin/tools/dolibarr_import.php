@@ -94,12 +94,16 @@ print '<br>';
 
 
 <div id="div_container_sub_exportoptions">
+<?php
+if ($db->label == 'MySQL')
+{
+?>
 	<fieldset id="mysql_options">
     <legend>Import MySql</legend>
 	<div class="formelementrow">
 	<?php
 	// Parameteres execution
-	$command='mysql';
+	$command=$db->getPathOfRestore();
 	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
 	$param=$dolibarr_main_db_name;
@@ -122,6 +126,9 @@ print '<br>';
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	?>
 	</div>
+<?php
+}
+?>
 
 	<script type="text/javascript" language="javascript">
 //<![CDATA[
