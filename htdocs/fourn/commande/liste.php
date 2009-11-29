@@ -19,11 +19,11 @@
  */
 
 /**
-    \file       htdocs/fourn/commande/liste.php
-    \ingroup    fournisseur
-    \brief      Liste des commandes fournisseurs
-    \version    $Id$
-*/
+ *   \file       htdocs/fourn/commande/liste.php
+ *   \ingroup    fournisseur
+ *   \brief      Liste des commandes fournisseurs
+ *   \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -72,15 +72,17 @@ $offset = $conf->liste_limit * $page ;
  * Mode Liste
  */
 
-$sql = "SELECT s.rowid as socid, s.nom, ".$db->pdate("cf.date_commande")." as dc";
-$sql.= ", cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author";
-$sql.= ", u.login";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+$sql = "SELECT s.rowid as socid, s.nom, ".$db->pdate("cf.date_commande")." as dc,";
+$sql.= " cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
+$sql.= " u.login";
+$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = cf.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= " WHERE s.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+$sql.= " WHERE cf.fk_soc = s.rowid ";
+$sql.= " AND s.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
 	$sql.= " AND cf.ref LIKE '%".addslashes($sref)."%'";
@@ -95,7 +97,7 @@ if ($suser)
 }
 if ($sttc)
 {
-    $sql .= " AND ROUND(total_ttc) = ROUND(".price2num($sttc).")";
+    $sql .= " AND total_ttc = ".price2num($sttc);
 }
 if ($sall)
 {
@@ -142,7 +144,7 @@ if ($resql)
     print '</tr>';
 
     $var=true;
-    
+
     $userstatic = new User($db);
 
     while ($i < min($num,$conf->liste_limit))
@@ -158,7 +160,7 @@ if ($resql)
         // Company
         print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
         print $obj->nom.'</a></td>'."\n";
-        
+
         // Author
         $userstatic->id=$obj->fk_user_author;
         $userstatic->login=$obj->login;
@@ -166,7 +168,7 @@ if ($resql)
         if ($userstatic->id) print $userstatic->getLoginUrl(1);
         else print "&nbsp;";
         print "</td>";
-        
+
         // Amount
         print '<td align="right" width="100">'.price($obj->total_ttc)."</td>";
 
