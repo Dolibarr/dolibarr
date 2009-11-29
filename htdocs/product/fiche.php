@@ -478,7 +478,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 	}
 
 	$soc = new Societe($db);
-	$soc->fetch($facture->socid,$user);
+	$soc->fetch($facture->socid);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$soc->error);
