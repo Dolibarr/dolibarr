@@ -225,7 +225,7 @@ if ($_GET["action"] == 'create')
 	if ($conf->projet->enabled) $nbrows++;
 
 	print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
-	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
+	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">".$_POST["comment"]."</textarea></td></tr>";
 
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	$html->select_types_paiements('', 'modepaiement', 'CRDT', 0);
@@ -235,23 +235,23 @@ if ($_GET["action"] == 'create')
 	{
 		// Si module projet actif
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
-		select_projects('','','',"projetid");
+		select_projects('',$_POST["projetid"],"projetid");
 		print "</td></tr>\n";
 	}
 
 	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
-	print $html->selectyesno("public",1,1);
+	print $html->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
 
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.$_POST["societe"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" value="'.$_POST["prenom"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" value="'.$_POST["nom"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$_POST["adresse"].'</textarea></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" value="'.$_POST["cp"].'" size="8"> <input type="text" name="ville" value="'.$_POST["ville"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" value="'.$_POST["pays"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.$_POST["email"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.$_POST["amount"].'" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	print "<tr>".'<td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 	print "</table>\n";
 	print "</form>\n";
@@ -357,11 +357,11 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
 	$h=0;
 	$head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
-	$head[$h][1] = $langs->trans("Donation");
+	$head[$h][1] = $langs->trans("Card");
 	$hselected=$h;
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"));
 
 	print "<form action=\"fiche.php\" method=\"post\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -391,7 +391,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	}
 
 	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
-	print $yn[$don->public];
+	print yn($don->public);
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td>'.$don->societe.'</td></tr>';
@@ -455,7 +455,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	print '<table width="100%"><tr><td width="50%" valign="top">';
 
 	/*
-	 * Documents g�n�r�s
+	 * Documents generes
 	 */
 	$filename=dol_sanitizeFileName($don->id);
 	$filedir=$conf->don->dir_output . '/' . get_exdir($filename,2);

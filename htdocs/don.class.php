@@ -308,8 +308,8 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    \brief      Mise � jour du don
-	 *    \param      user        Objet utilisateur qui met � jour le don
+	 *    \brief      Mise a jour du don
+	 *    \param      user        Objet utilisateur qui met a jour le don
 	 *    \return     int         >0 si ok, <0 si ko
 	 */
 	function update($user)
@@ -329,7 +329,7 @@ class Don extends CommonObject
 		$sql .= ",pays='".$this->pays."'";
 		$sql .= ",public=".$this->public;
 		$sql .= ",fk_don_projet=".($this->projetid>0?$this->projetid:'null');
-		$sql .= ",note='".$this->note."'";
+		$sql .= ",note='".addslashes($this->note)."'";
 		$sql .= ",datedon='".$this->date."'";
 		$sql .= ",email='".$this->email."'";
 		$sql .= ",fk_statut=".$this->statut;
@@ -386,40 +386,41 @@ class Don extends CommonObject
 		$sql = "SELECT d.rowid, ".$this->db->pdate("d.datec")." as datec,";
 		$sql.= " ".$this->db->pdate("d.datedon")." as datedon,";
 		$sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet,";
-		$sql.= " p.title as projet"; 
+		$sql.= " p.title as projet";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."don as d";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " ON p.rowid = d.fk_don_projet";
 		$sql.= " WHERE cp.id = d.fk_paiement AND d.rowid = ".$rowid;
 
 		dol_syslog("Don::fetch sql=".$sql);
-		if ( $this->db->query( $sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			if ($this->db->num_rows())
+			if ($this->db->num_rows($resql))
 			{
-
-				$obj = $this->db->fetch_object();
+				$obj = $this->db->fetch_object($resql);
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 				$this->datec          = $obj->datec;
 				$this->date           = $obj->datedon;
-				$this->prenom         = stripslashes($obj->prenom);
-				$this->nom            = stripslashes($obj->nom);
-				$this->societe        = stripslashes($obj->societe);
+				$this->prenom         = $obj->prenom;
+				$this->nom            = $obj->nom;
+				$this->societe        = $obj->societe;
 				$this->statut         = $obj->fk_statut;
-				$this->adresse        = stripslashes($obj->adresse);
-				$this->cp             = stripslashes($obj->cp);
-				$this->ville          = stripslashes($obj->ville);
-				$this->email          = stripslashes($obj->email);
-				$this->pays           = stripslashes($obj->pays);
+				$this->adresse        = $obj->adresse;
+				$this->cp             = $obj->cp;
+				$this->ville          = $obj->ville;
+				$this->email          = $obj->email;
+				$this->pays           = $obj->pays;
 				$this->projet         = $obj->projet;
 				$this->projetid       = $obj->fk_don_projet;
 				$this->public         = $obj->public;
 				$this->modepaiementid = $obj->fk_paiement;
 				$this->modepaiement   = $obj->libelle;
 				$this->amount         = $obj->amount;
-				$this->commentaire    = stripslashes($obj->note);
+				$this->note			  = $obj->note;
+				$this->commentaire    = $obj->note;	// deprecated
 			}
 			return 1;
 		}
@@ -544,7 +545,7 @@ class Don extends CommonObject
 		return $result;
 	}
 
-	
+
 	/**
 	 *	\brief      Return clicable name (with picto eventually)
 	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
@@ -567,6 +568,6 @@ class Don extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
-	}	
+	}
 }
 ?>
