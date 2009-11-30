@@ -722,36 +722,27 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		print '<table class="border" width="100%">';
 		if($conf->global->PRODUIT_MULTIPRICES)
 		{
-			print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
-			print '<td><input name="price" size="10" value="'.$product->price.'">';
-			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
-			print '</td></tr>';
-			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-			{
-				print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
-				print '<td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'">';
-				print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
-				print '</td></tr>';
-			}
+			// We do no show price array on create when multiprices enabled.
+			// We must set them on prices tab.
 		}
-		// PRIX
 		else
 		{
+			// PRIX
 			print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
 			print '<td><input name="price" size="10" value="'.$product->price.'">';
 			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
 			print '</td></tr>';
+
+			// MIN PRICE
+			print '<tr><td>'.$langs->trans("MinPrice").'</td>';
+			print '<td><input name="price_min" size="10" value="'.$product->price_min.'">';
+			print '</td></tr>';
+
+			// VAT
+			print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
+			print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+			print '</td></tr>';
 		}
-
-		// MIN PRICE
-		print '<tr><td>'.$langs->trans("MinPrice").'</td>';
-		print '<td><input name="price_min" size="10" value="'.$product->price_min.'">';
-		print '</td></tr>';
-
-		// VAT
-		print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
-		print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-		print '</td></tr>';
 
 		print '</table>';
 
@@ -916,6 +907,9 @@ if ($_GET["id"] || $_GET["ref"])
 						print price($product->multiprices_min["$soc->price_level"]).' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
 					}
 					print '</td></tr>';
+
+					// TVA
+					print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->multiprices_tva_tx["$soc->price_level"],true).'</td></tr>';
 				}
 				else
 				{
@@ -953,6 +947,9 @@ if ($_GET["id"] || $_GET["ref"])
 							print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
 						}
 						print '</td></tr>';
+
+						// TVA
+						print '<tr><td>'.$langs->trans("VATRate").' '.$i.'</td><td>'.vatrate($product->multiprices_tva_tx["$i"],true).'</td></tr>';
 					}
 				}
 			}
@@ -981,10 +978,10 @@ if ($_GET["id"] || $_GET["ref"])
 					print price($product->price_min).' '.$langs->trans($product->price_base_type);
 				}
 				print '</td></tr>';
-			}
 
-			// TVA
-			print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
+				// TVA
+				print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
+			}
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';

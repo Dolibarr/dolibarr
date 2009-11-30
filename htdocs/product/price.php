@@ -179,6 +179,9 @@ if($conf->global->PRODUIT_MULTIPRICES)
 			print price($product->multiprices_min["$soc->price_level"]).' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
 		}
 		print '</td></tr>';
+
+		// TVA
+		print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->multiprices_tva_tx["$soc->price_level"],true).'</td></tr>';
 	}
 	else
 	{
@@ -216,6 +219,9 @@ if($conf->global->PRODUIT_MULTIPRICES)
 				print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
 			}
 			print '</td></tr>';
+
+			// TVA
+			print '<tr><td>'.$langs->trans("VATRate").' '.$i.'</td><td>'.vatrate($product->multiprices_tva_tx["$i"],true).'</td></tr>';
 		}
 	}
 }
@@ -244,10 +250,11 @@ else
 		print price($product->price_min).' '.$langs->trans($product->price_base_type);
 	}
 	print '</td></tr>';
-}
 
-// TVA
-print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">'.vatrate($product->tva_tx,true).'</td></tr>';
+	// TVA
+	print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">'.vatrate($product->tva_tx,true).'</td></tr>';
+
+}
 
 // Statut
 print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';

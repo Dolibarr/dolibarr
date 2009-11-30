@@ -61,6 +61,7 @@ class Product extends CommonObject
 	var $multiprices=array();
 	var $multiprices_ttc=array();
 	var $multiprices_base_type=array();
+	var $multiprices_tva_tx=array();
 	//! Taux de TVA
 	var $tva_tx;
 	//! Type 0 for regular product, 1 for service, 2 for assembly kit, 3 for stock kit
@@ -342,7 +343,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 \brief      Retourne le texte de l'erreur
+	 *	\brief      Retourne le texte de l'erreur
 	 */
 	function error()
 	{
@@ -354,11 +355,11 @@ class Product extends CommonObject
 
 
 	/**
-		\brief      Mise a jour du produit en base
-		\param      id          id du produit
-		\param      user        utilisateur qui effectue l'insertion
-		\return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
-		*/
+	 *	\brief      Mise a jour du produit en base
+	 *	\param      id          id du produit
+	 *	\param      user        utilisateur qui effectue l'insertion
+	 *	\return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
+	 */
 	function update($id, $user)
 	{
 		global $langs, $conf;
@@ -630,7 +631,7 @@ class Product extends CommonObject
 
 
 	/**
-	 *		\ brief Charge toutes les traductions du produit
+	 *		\brief Charge toutes les traductions du produit
 	 */
 	function getMultiLangs($langue='')
 	{
@@ -1032,6 +1033,7 @@ class Product extends CommonObject
 						$this->multiprices_min[$i]=$result["price_min"];
 						$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
 						$this->multiprices_base_type[$i]=$result["price_base_type"];
+						$this->multiprices_tva_tx[$i]=$result["tva_tx"];
 					}
 					else
 					{
