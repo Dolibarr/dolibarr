@@ -488,7 +488,7 @@ begin
 	    end
 
 
-      if MsgBox('DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation. Start to install the web server and database server ?',mbConfirmation,MB_YESNO) = IDYES then
+      if MsgBox('DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation. Start to install or upgrade the web server and database server ?',mbConfirmation,MB_YESNO) = IDYES then
       begin
 
 		
