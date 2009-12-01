@@ -62,9 +62,9 @@ print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
 
 
 // Check PHP version
-if (versioncompare(versionphparray(),array(4,1)) < 0)
+if (versioncompare(versionphparray(),array(4,3,10)) < 0)
 {
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.1');
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.3.10');
 	$checksok=0;
 }
 else
