@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ class Don extends CommonObject
 
 	/**
 	 *    \brief  Constructeur
-	 *    \param  DB          	Handler d'acc�s base
+	 *    \param  DB          	Handler d'acces base
 	 */
 	function Don($DB)
 	{
@@ -80,8 +81,8 @@ class Don extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libell� du statut d'un don (brouillon, valid�e, abandonn�e, pay�e)
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long
+	 *    \brief      Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -90,10 +91,10 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libell� d'un statut donn�
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string        	Libell� du statut
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -137,16 +138,22 @@ class Don extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le don avec valeurs fictives al�atoire
-	 *					Sert � g�n�rer une recu de don pour l'aperu des mod�les ou demo
+	 *		\brief		Initialise le don avec valeurs fictives alaatoire
+	 *					Sert a generer un recu de don pour l'aperu des modeles ou demo
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $conf, $user,$langs;
 
-		// Charge tableau des id de soci�t� socids
+		// Charge tableau des id de societe socids
 		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql.= " WHERE client = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -161,7 +168,7 @@ class Don extends CommonObject
 			}
 		}
 
-		// Initialise param�tres
+		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -206,7 +213,7 @@ class Don extends CommonObject
 		{
 			if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
 			{
-				$error_string[$err] = "Vous devez saisir vos nom et pr�nom ou le nom de votre soci�t�.";
+				$error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
 				$err++;
 			}
 		}
@@ -242,7 +249,7 @@ class Don extends CommonObject
 		{
 			if (!isset($map[substr($this->amount, $i, 1)] ))
 			{
-				$error_string[$err] = "Le montant du don contient un/des caract�re(s) invalide(s)";
+				$error_string[$err] = "Le montant du don contient un/des caractere(s) invalide(s)";
 				$err++;
 				$amount_invalid = 1;
 				break;
@@ -279,20 +286,56 @@ class Don extends CommonObject
 	}
 
 	/**
-	 *    \brief      Cr�ation du don en base
-	 *    \param      user          Objet utilisateur qui cr�e le don
-	 *    \return     int           Id don cr�e si ok, <0 si ko
+	 *    \brief      Creation du don en base
+	 *    \param      user          Objet utilisateur qui cree le don
+	 *    \return     int           Id don cree si ok, <0 si ko
+	 *    \TODO    add numbering module for Ref
 	 */
 	function create($user)
 	{
+		global $conf;
+		
 		$this->date = $this->db->idate($this->date);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public,";
-		$sql .= " fk_don_projet,";
-		$sql .= " note, fk_user_author, fk_user_valid, datedon, email)";
-		$sql .= " VALUES (".$this->db->idate(mktime()).",".price2num($this->amount).", $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
-		$sql .= " ".($this->projetid > 0?$this->projetid:"null").",";
-		$sql .= " '".addslashes($this->note)."', ".$user->id.", null, '$this->date','$this->email')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."don (";
+		$sql.= "datec";
+		$sql.= ", entity";
+		$sql.= ", amount";
+		$sql.= ", fk_paiement";
+		$sql.= ", prenom";
+		$sql.= ", nom";
+		$sql.= ", societe";
+		$sql.= ", adresse";
+		$sql.= ", cp";
+		$sql.= ", ville";
+		$sql.= ", pays";
+		$sql.= ", public";
+		$sql.= ", fk_don_projet";
+		$sql.= ", note";
+		$sql.= ", fk_user_author";
+		$sql.= ", fk_user_valid";
+		$sql.= ", datedon";
+		$sql.= ", email";
+		$sql.= ") VALUES (";
+		$sql.= $this->db->idate(mktime());
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".price2num($this->amount);
+		$sql.= ", ".$this->modepaiementid;
+		$sql.= ", '".addslashes($this->prenom)."'";
+		$sql.= ", '".addslashes($this->nom)."'";
+		$sql.= ", '".addslashes($this->societe)."'";
+		$sql.= ", '".addslashes($this->adresse)."'";
+		$sql.= ", '".$this->cp."'";
+		$sql.= ", '".addslashes($this->ville)."'";
+		$sql.= ", '".addslashes($this->pays)."'"; // TODO use fk_pays
+		$sql.= ", ".$this->public;
+		$sql.= ", ".($this->projetid > 0?$this->projetid:"null");
+		$sql.= ", '".addslashes($this->note)."'";
+		$sql.= ", ".$user->id;
+		$sql.= ", null";
+		$sql.= ", '".$this->date."'";
+		$sql.= ", '".$this->email."'";
+		$sql.= ")";
 
 		dol_syslog("Don::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -351,7 +394,7 @@ class Don extends CommonObject
 
 	/*
 	 *    \brief  Suppression du don de la base
-	 *    \param  rowid   id du don � supprimer
+	 *    \param  rowid   id du don a supprimer
 	 */
 	function delete($rowid)
 	{
@@ -377,8 +420,8 @@ class Don extends CommonObject
 	}
 
 	/*
-	 *      \brief      Charge l'objet don en m�moire depuis la base de donn�e
-	 *      \param      rowid       Id du don � charger
+	 *      \brief      Charge l'objet don en memoire depuis la base de donnee
+	 *      \param      rowid       Id du don a charger
 	 *      \return     int         <0 si ko, >0 si ok
 	 */
 	function fetch($rowid)
@@ -434,7 +477,7 @@ class Don extends CommonObject
 
 	/*
 	 *    \brief  Valide une promesse de don
-	 *    \param  rowid   id du don � modifier
+	 *    \param  rowid   id du don a modifier
 	 *    \param  userid  utilisateur qui valide la promesse
 	 *
 	 */
@@ -462,8 +505,8 @@ class Don extends CommonObject
 	}
 
 	/*
-	 *    \brief  Classe le don comme pay�, le don a �t� recu
-	 *    \param  rowid           id du don � modifier
+	 *    \brief  Classe le don comme paye, le don a ete recu
+	 *    \param  rowid           id du don a modifier
 	 *    \param  modepaiementd   mode de paiement
 	 */
 	function set_paye($rowid, $modepaiement='')
@@ -496,8 +539,8 @@ class Don extends CommonObject
 
 
 	/*
-	 *    \brief  Classe le don comme encaiss�
-	 *    \param  rowid   id du don � modifier
+	 *    \brief  Classe le don comme encaisse
+	 *    \param  rowid   id du don a modifier
 	 *
 	 */
 	function set_encaisse($rowid)
@@ -525,15 +568,18 @@ class Don extends CommonObject
 
 	/**
 	 *    	\brief		Somme des dons
-	 *		\param		param	1=promesses de dons valid�es , 2=xxx, 3=encaiss�s
+	 *		\param		param	1=promesses de dons validees , 2=xxx, 3=encaisses
 	 */
 	function sum_donations($param)
 	{
+		global $conf;
+		
 		$result=0;
 
 		$sql = "SELECT sum(amount) as total";
 		$sql.= " FROM ".MAIN_DB_PREFIX."don";
 		$sql.= " WHERE fk_statut = ".$param;
+		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

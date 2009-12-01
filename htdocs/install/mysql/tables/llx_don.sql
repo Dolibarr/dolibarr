@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,10 +23,12 @@
 create table llx_don
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  ref             varchar(30) DEFAULT NULL,     -- Ref donation (TODO change to NOT NULL)
+  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   tms             timestamp,
-  fk_statut       smallint NOT NULL DEFAULT 0,-- etat du don promesse/valid
-  datec           datetime,         -- date de création de l'enregistrement
-  datedon         datetime,         -- date du don/promesse
+  fk_statut       smallint NOT NULL DEFAULT 0,  -- etat du don promesse/valid
+  datec           datetime,                     -- date de creation de l'enregistrement
+  datedon         datetime,                     -- date du don/promesse
   amount          real DEFAULT 0,
   fk_paiement     integer,
   prenom          varchar(50),
@@ -36,8 +39,8 @@ create table llx_don
   ville           varchar(50),
   pays            varchar(50),
   email           varchar(255),
-  public          smallint DEFAULT 1 NOT NULL, -- le don est-il public (0,1)
-  fk_don_projet   integer NULL, -- projet auquel est fait le don
+  public          smallint DEFAULT 1 NOT NULL,   -- le don est-il public (0,1)
+  fk_don_projet   integer NULL,                  -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NULL,
   note            text,
