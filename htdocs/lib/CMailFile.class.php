@@ -676,7 +676,8 @@ class CMailFile
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol;
 		$out.= "MIME-Version: 1.0".$this->eol;
 
-		$out.= "Content-Type: multipart/related; boundary=\"".$this->mime_boundary."\"".$this->eol;
+		//$out.= "Content-Type: multipart/related; boundary=\"".$this->mime_boundary."\"".$this->eol;
+		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 
 		$out.=$this->eol;
