@@ -363,13 +363,13 @@ class Don extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
 		$sql .= "amount = " . $this->amount;
 		$sql .= ",fk_paiement = ".$this->modepaiementid;
-		$sql .= ",prenom = '".$this->prenom ."'";
-		$sql .= ",nom='".$this->nom."'";
-		$sql .= ",societe='".$this->societe."'";
-		$sql .= ",adresse='".$this->adresse."'";
+		$sql .= ",prenom = '".addslashes($this->prenom)."'";
+		$sql .= ",nom='".addslashes($this->nom)."'";
+		$sql .= ",societe='".addslashes($this->societe)."'";
+		$sql .= ",adresse='".addslashes($this->adresse)."'";
 		$sql .= ",cp='".$this->cp."'";
-		$sql .= ",ville='".$this->ville."'";
-		$sql .= ",pays='".$this->pays."'";
+		$sql .= ",ville='".addslashes($this->ville)."'";
+		$sql .= ",pays='".addslashes($this->pays)."'"; // TODO use fk_pays
 		$sql .= ",public=".$this->public;
 		$sql .= ",fk_don_projet=".($this->projetid>0?$this->projetid:'null');
 		$sql .= ",note='".addslashes($this->note)."'";
