@@ -76,7 +76,7 @@ class Cotisation extends CommonObject
         $sql.= " VALUES (".$this->fk_adherent.", ".$this->db->idate(mktime()).",";
 		$sql.= " ".$this->db->idate($this->dateh).",";
 		$sql.= " ".$this->db->idate($this->datef).",";
-		$sql.= " ".$this->amount.",'".$this->note."')";
+		$sql.= " ".$this->amount.",'".addslashes($this->note)."')";
 
 		dol_syslog("Cotisation::create sql=".$sql);
 		$resql = $this->db->query($sql);
