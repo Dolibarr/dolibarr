@@ -253,7 +253,7 @@ if ($nboftargetok) {
     	if ($target eq 'SNAPSHOT') {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMESNAPSHOT\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMESNAPSHOT");
-    		unlink $FILENAMESNAPSHOT.tgz;
+    		unlink("$FILENAMESNAPSHOT.tgz");
 
     		print "Compress $BUILDROOT into $FILENAMESNAPSHOT.tgz...\n";
    		    #$cmd="tar --exclude \"$BUILDROOT/tgz/tar_exclude.txt\" --exclude .cache --exclude .settings --exclude conf.php --directory \"$BUILDROOT\" -czvf \"$FILENAMESNAPSHOT.tgz\" $FILENAMESNAPSHOT";
@@ -276,7 +276,7 @@ if ($nboftargetok) {
     	if ($target eq 'TGZ') {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-    		unlink $FILENAMETGZ.tgz;
+    		unlink("$FILENAMETGZ.tgz");
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
    		    $cmd="tar --exclude-vcs --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
    		    $ret=`$cmd`;
@@ -295,7 +295,7 @@ if ($nboftargetok) {
     	if ($target eq 'ZIP') {
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-    		unlink $FILENAMEZIP.zip;
+    		unlink("$FILENAMEZIP.zip");
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
  
      		print "Go to directory $BUILDROOT\n";
@@ -318,7 +318,7 @@ if ($nboftargetok) {
 			
     		print "Rename $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMETGZ\n";
 			rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-    		unlink $FILENAMETGZ.tgz;
+    		unlink("$FILENAMETGZ.tgz");
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
 
