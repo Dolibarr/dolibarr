@@ -297,9 +297,9 @@ else
 		}
 
 		# Show title
-		if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
+		if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ! empty($conf->global->MAIN_VERSION_LAST_INSTALL))
 		{
-			print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
+			print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE).'</font></b><br>';
 			print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
