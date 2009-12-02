@@ -161,9 +161,9 @@ class ModeleNumRefDeliveryOrder
 
 /**
  *		\brief      Create object on disk
- *		\param	    db  			objet base de donn�e
+ *		\param	    db  			objet base de donnee
  *		\param	    deliveryid		id object
- *		\param	    modele			force le modele � utiliser ('' to not force)
+ *		\param	    modele			force le modele a utiliser ('' to not force)
  *		\param		outputlangs		objet lang a utiliser pour traduction
  *      \return     int         	0 si KO, 1 si OK
  */

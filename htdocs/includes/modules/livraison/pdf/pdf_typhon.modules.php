@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
 
@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/includes/modules/livraison/pdf/pdf_typhon.modules.php
  *	\ingroup    livraison
- *	\brief      Fichier de la classe permettant de generer les bons de livraison au mod�le Typho
+ *	\brief      Fichier de la classe permettant de generer les bons de livraison au modele Typhon
  *	\author	    Laurent Destailleur
  *	\version    $Id$
  */
@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  *	\class      pdf_typhon
- *	\brief      Classe permettant de g�n�rer les bons de livraison au mod�le Typho
+ *	\brief      Classe permettant de generer les bons de livraison au modele Typho
  */
 
 class pdf_typhon extends ModelePDFDeliveryOrder
