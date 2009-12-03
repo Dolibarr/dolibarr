@@ -52,7 +52,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_S
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_PRODUITSERVICE' ,'1','yesno','Show form for quick product search',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_ADHERENT','1','yesno','Show form for quick member search',0,0);
 
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_CONFIRM_AJAX','0','chaine','Use Ajax popup to make confirmations',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_CONFIRM_AJAX','1','chaine','Use Ajax popup to make confirmations',0,0);
 
 -- Hidden but specific to one entity 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0,1);
