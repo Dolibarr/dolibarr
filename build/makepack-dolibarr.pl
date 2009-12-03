@@ -62,15 +62,16 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
 
+
 # Detect OS type
 # --------------
 if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='linux'; $CR=''; }
 elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
 elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
-    print "makepack-dolbarr.pl was not able to detect your OS.\n";
+    print "$PROG.$Extension was not able to detect your OS.\n";
 	print "Can't continue.\n";
-	print "makepack-dolibarr.pl aborted.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
 	exit 1;
 }
@@ -90,7 +91,7 @@ if ($OS =~ /windows/) {
 if (! $TEMP || ! -d $TEMP) {
     print "Error: A temporary directory can not be find.\n";
     print "Check that TEMP or TMP environment variable is set correctly.\n";
-	print "makepack-dolibarr.pl aborted.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
     exit 2;
 } 

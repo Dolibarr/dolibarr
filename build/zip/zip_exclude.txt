@@ -81,3 +81,4 @@ cvschangelogbuilder_dolibarr*
 */huitre/*
 */pdf_huitre.modules.php
 doxygen_warnings.log
+dolibarr_install.log
