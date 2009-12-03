@@ -483,7 +483,7 @@ class Propal extends CommonObject
 
 	/**
 	 *      \brief      Supprime une ligne de detail
-	 *      \param      idligne     Id de la ligne detail � supprimer
+	 *      \param      idligne     Id de la ligne detail a supprimer
 	 *      \return     int         >0 si ok, <0 si ko
 	 */
 	function delete_product($idligne)

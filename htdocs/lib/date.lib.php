@@ -78,7 +78,7 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 	}
 	else if ($format == 'min')
 	{
-		$sTime=dol_print_date($iSecond,'%m',true);
+		$sTime=dol_print_date($iSecond,'%M',true);
 	}
 	return $sTime;
 }
@@ -122,6 +122,42 @@ function dol_get_next_month ($month, $year)
 		$next_year  = $year;
 	}
 	return array('year' => $next_year, 'month' => $next_month);
+}
+
+
+/**	\brief		Return GMT time with international string format for first day of a month or year
+ *	\param		year		Year
+ * 	\param		month		Month
+ *	\return		Timestamp	Date for first day with format YYYY-MM-DD
+ */
+function dol_get_first_day($year,$month=1)
+{
+	return dol_date('Y-m-d',dol_mktime(12,0,0,$month,1,$year,1),1);
+}
+
+
+/**	\brief		Return GMT time with international string format for last day of a month or year
+ *	\param		year		Year
+ * 	\param		month		Month
+ *	\return		Timestamp	Date for first day with format YYYY-MM-DD
+ */
+function dol_get_last_day($year,$month=12)
+{
+	if ($month == 12)
+	{
+		$month = 1;
+		$year += 1;
+	}
+	else
+	{
+		$month += 1;
+	}
+	
+	// On se deplace au debut du mois suivant, et on retire un jour
+	$datelim=dol_mktime(12,0,0,$month,1,$year,1);
+	$datelim -= (3600 * 24);
+	
+	return dol_date('Y-m-d',$datelim,1);
 }
 
 

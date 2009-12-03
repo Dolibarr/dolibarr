@@ -30,23 +30,37 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/stock.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load("products");
 $langs->load("stocks");
 
 if (!$user->rights->produit->lire) accessforbidden();
 
-$page = $_GET["page"];
-$sortfield = $_GET["sortfield"];
-$sortorder = $_GET["sortorder"];
 $idproduct = isset($_GET["idproduct"])?$_GET["idproduct"]:$_PRODUCT["idproduct"];
 $year = isset($_GET["year"])?$_GET["year"]:$_POST["year"];
 $month = isset($_GET["month"])?$_GET["month"]:$_POST["month"];
+$search_product = isset($_REQUEST["search_product"])?$_REQUEST["search_product"]:'';
+$search_warehouse = isset($_REQUEST["search_warehouse"])?$_REQUEST["search_warehouse"]:'';
+$search_user = isset($_REQUEST["search_user"])?$_REQUEST["search_user"]:'';
+$page = $_GET["page"];
+$sortfield = $_GET["sortfield"];
+$sortorder = $_GET["sortorder"];
 if ($page < 0) $page = 0;
 $offset = $conf->liste_limit * $page;
 
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
+
+if ($_REQUEST["button_removefilter"])
+{
+    $year='';
+    $month='';
+    $search_product="";
+    $search_warehouse="";
+    $search_user="";
+    $sall="";
+}
 
 
 /*
@@ -55,14 +69,17 @@ if (! $sortorder) $sortorder="DESC";
 
 $productstatic=new Product($db);
 $warehousestatic=new Entrepot($db);
+$userstatic=new User($db);
 $form=new Form($db);
 
 $sql = "SELECT p.rowid, p.label as produit, p.fk_product_type as type,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
-$sql.= " m.rowid as mid, m.value, m.datem";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s";
-$sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
-$sql.= ", ".MAIN_DB_PREFIX."product as p";
+$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author,";
+$sql.= " u.login";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s,";
+$sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m,";
+$sql.= " ".MAIN_DB_PREFIX."product as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
@@ -72,7 +89,9 @@ $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
 if ($_GET["id"])
-$sql.= " AND s.rowid ='".$_GET["id"]."'";
+{
+	$sql.= " AND s.rowid ='".$_GET["id"]."'";
+}
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " AND COALESCE(c.visible,1)=1";
@@ -80,14 +99,25 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 if ($month > 0)
 {
 	if ($year > 0)
-	$sql.= " AND date_format(m.datem, '%Y-%m') = '$year-$month'";
+	$sql.= " AND m.datem between '".dol_get_first_day($year,$month)."' AND '".dol_get_last_day($year,$month)."'";
 	else
 	$sql.= " AND date_format(m.datem, '%m') = '$month'";
 }
-if ($year > 0)         $sql .= " AND date_format(m.datem, '%Y') = $year";
-if (! empty($_GET['search_product']))
+else if ($year > 0) 
 {
-	$sql.= " AND p.label LIKE '%".addslashes($_GET['search_product'])."%'";
+	$sql.= " AND m.datem between '".dol_get_first_day($year)."' AND '".dol_get_last_day($year)."'";
+}
+if (! empty($search_product))
+{
+	$sql.= " AND p.label LIKE '%".addslashes($search_product)."%'";
+}
+if (! empty($search_warehouse))
+{
+	$sql.= " AND s.label LIKE '%".addslashes($search_warehouse)."%'";
+}
+if (! empty($search_user))
+{
+	$sql.= " AND u.login LIKE '%".addslashes($search_user)."%'";
 }
 if (! empty($_GET['idproduct']))
 {
@@ -96,6 +126,7 @@ if (! empty($_GET['idproduct']))
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
 
+//print $sql;
 $resql = $db->query($sql) ;
 if ($resql)
 {
@@ -125,7 +156,7 @@ if ($resql)
 
 
 	/*
-	 * Show tab only if we ask a particular warehous
+	 * Show tab only if we ask a particular warehouse
 	 */
 	if ($_GET["id"])
 	{
@@ -209,11 +240,12 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	//print_liste_field_titre($langs->trans("Id"),"mouvement.php", "m.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Product"),"mouvement.php", "p.ref","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Units"),"mouvement.php", "m.value","",$param,'align="right"',$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Product"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "s.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -230,10 +262,14 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="20" name="search_product" value="'.($idproduct?$product->libelle:$_GET['search_product']).'">';
 	print '</td>';
-	print '<td class="liste_titre" align="right">';
-	print '&nbsp;';
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
+	print '</td>';
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
 	print '</td>';
 	print "</tr>\n";
 	print '</form>';
@@ -260,6 +296,12 @@ if ($resql)
 		$warehousestatic->id=$objp->entrepot_id;
 		$warehousestatic->libelle=$objp->stock;
 		print $warehousestatic->getNomUrl(1);
+		print "</td>\n";
+		// Author
+		print '<td>';
+		$userstatic->id=$objp->fk_user_author;
+		$userstatic->nom=$objp->login;
+		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 		// Value
 		print '<td align="right">';

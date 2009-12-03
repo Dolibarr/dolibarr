@@ -106,10 +106,10 @@ class Facture extends CommonObject
 	var $errno = 0;
 
 	/**
-	 \brief  Constructeur de la classe
-	 \param  DB         handler acc�s base de donn�es
-	 \param  socid		id societe ('' par defaut)
-	 \param  facid      id facture ('' par defaut)
+	 *	\brief  Constructeur de la classe
+	 *	\param  DB         	handler acces base de donnees
+	 *	\param  socid		id societe ('' par defaut)
+	 *	\param  facid      	id facture ('' par defaut)
 	 */
 	function Facture($DB, $socid='', $facid='')
 	{
