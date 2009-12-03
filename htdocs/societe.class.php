@@ -1985,21 +1985,22 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *      \brief      Cree en base un utilisateur depuis l'objet adherent
-	 *      \param      member	Objet adherent source
-	 * 		\param		login	Login to force
-	 *      \return     int		Si erreur <0, si ok renvoie id compte cree
+	 *      \brief      Cree en base un tiers depuis l'objet adherent
+	 *      \param      member		Objet adherent source
+	 * 		\param		socname		Name of third to force
+	 *      \return     int			Si erreur <0, si ok renvoie id compte cree
 	 */
-	function create_from_member($member,$login='')
+	function create_from_member($member,$socname='')
 	{
 		global $conf,$user,$langs;
 
-		$name=$member->societe;
+		$name = !empty($socname)?$socname:$member->societe;
 		if (empty($name)) $name=strtolower($member->nom.' '.$member->prenom);
 
 		// Positionne parametres
 		$this->email = $member->email;
 		$this->nom = $name;
+		$this->client = 1;						// A member is a customer by default
 		$this->code_client = -1;
 		$this->code_fournisseur = -1;
 		$this->adresse=$member->adresse;
