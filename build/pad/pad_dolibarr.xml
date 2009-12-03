@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" ?>
 <XML_DIZ_INFO>
 	<MASTER_PAD_VERSION_INFO>
-		<MASTER_PAD_VERSION>3.01</MASTER_PAD_VERSION>
-		<MASTER_PAD_EDITOR>PADGen 3.0.1.38 http://www.padgen.org</MASTER_PAD_EDITOR>
+		<MASTER_PAD_VERSION>3.10</MASTER_PAD_VERSION>
+		<MASTER_PAD_EDITOR>PADGen 3.1.0.41 http://www.padgen.org</MASTER_PAD_EDITOR>
 		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
 	</MASTER_PAD_VERSION_INFO>
 	<Company_Info>
@@ -34,9 +34,9 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>2.6.1</Program_Version>
-		<Program_Release_Month>06</Program_Release_Month>
-		<Program_Release_Day>17</Program_Release_Day>
+		<Program_Version>2.7.0</Program_Version>
+		<Program_Release_Month>12</Program_Release_Month>
+		<Program_Release_Day>01</Program_Release_Day>
 		<Program_Release_Year>2009</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
@@ -44,16 +44,16 @@
 		<Program_Type>Freeware</Program_Type>
 		<Program_Release_Status>Major Update</Program_Release_Status>
 		<Program_Install_Support>No Install Support</Program_Install_Support>
-		<Program_OS_Support>Win95,Win98,WinME,WinNT 4.x,Windows2000,WinXP,Windows2003,Windows Vista Starter,Windows Vista Home Basic,Windows Vista Home Premium,Windows Vista Business,Windows Vista Enterprise,Windows Vista Ultimate,Windows Vista Home Basic x64,Windows Vista Home Premium x64,Windows Vista Business x64,Windows Vista Enterprise x64,Windows Vista Ultimate x64,Unix,Linux,OS/2,OS/2 Warp,OS/2 Warp 4,MAC 68k,Mac PPC,Mac OS X,Mac OS X 10.1,Mac OS X 10.2,Mac OS X 10.3,Mac OS X 10.4,Mac OS X 10.5,Mac Other,BEOS</Program_OS_Support>
-		<Program_Language>English,Catalan,French,German,Italian,Spanish</Program_Language>
+		<Program_OS_Support>Linux,Mac OS X,Mac Other,Unix,Win2000,Win7 x32,Win7 x64,Win98,WinOther,WinServer,WinVista,WinVista x64,WinXP,Other</Program_OS_Support>
+		<Program_Language>English,Catalan,Dutch,French,German,Italian,Norwegian,Portuguese,Spanish</Program_Language>
 		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
 		<Program_Specific_Category>Business</Program_Specific_Category>
 		<Program_Category_Class>Business::Accounting &amp; Finance</Program_Category_Class>
 		<Program_System_Requirements>None</Program_System_Requirements>
 		<File_Info>
-			<File_Size_Bytes>1016660</File_Size_Bytes>
-			<File_Size_K>992</File_Size_K>
-			<File_Size_MB>0.97</File_Size_MB>
+			<File_Size_Bytes>9359175</File_Size_Bytes>
+			<File_Size_K>9139</File_Size_K>
+			<File_Size_MB>8.93</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>
@@ -82,24 +82,6 @@ It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, P
 
 Note that Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. This version is called DoliWamp.</Char_Desc_2000>
 		</English>
-		<French>
-			<Keywords>dolibarr, erp, crm, gestion, entreprise, auto-entrepreneurs, comptabilité, trésorerie, facture</Keywords>
-			<Char_Desc_45>Dolibarr ERP/CRM</Char_Desc_45>
-			<Char_Desc_80>Dolibarr ERP/CRM, la gestion facile de votre activité professionnelle</Char_Desc_80>
-			<Char_Desc_250>Dolibarr ERP/CRM, le logiciel open source de gestion facile de votre activité (pour les PME, autoindépendants ou associations).</Char_Desc_250>
-			<Char_Desc_450>Dolibarr ERP/CRM, le logiciel open source de gestion facile de votre activité (pour les PME, autoindépendants ou associations). Dolibarr est également disponible en version avec autoinstalleur pour Windows pour les personnes ne disposant pas de connaissances techniques pour installer un site Web. Cette version s'appelle DoliWamp.</Char_Desc_450>
-			<Char_Desc_2000>Dolibarr ERP/CRM, le logiciel open source de gestion facile de votre activité (pour les PME, autoindépendants ou associations). 
-
-Dolibarr est également disponible en version avec autoinstalleur pour Windows pour les personnes ne disposant pas de connaissances techniques pour installer un site Web. Cette version s'appelle DoliWamp.</Char_Desc_2000>
-		</French>
-		<Spanish>
-			<Keywords>dolibarr, erp, crm</Keywords>
-			<Char_Desc_45>Dolibarr ERP/CRM</Char_Desc_45>
-			<Char_Desc_80>Dolibarr ERP/CRM</Char_Desc_80>
-			<Char_Desc_250 />
-			<Char_Desc_450 />
-			<Char_Desc_2000 />
-		</Spanish>
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
@@ -120,11 +102,6 @@ Dolibarr est également disponible en version avec autoinstalleur pour Windows p
 		<Distribution_Permissions>GNU GPL</Distribution_Permissions>
 		<EULA>GNU GPL</EULA>
 	</Permissions>
-	<ASP>
-		<ASP_FORM>Y</ASP_FORM>
-		<ASP_Member>N</ASP_Member>
-		<ASP_Member_Number />
-	</ASP>
 	<Affiliates>
 		<Affiliates_FORM>Y</Affiliates_FORM>
 		<Affiliates_VERSION>1.4</Affiliates_VERSION>
@@ -231,4 +208,9 @@ Dolibarr est également disponible en version avec autoinstalleur pour Windows p
 		<Affiliates_Yaskifo_Product_ID />
 		<Affiliates_Yaskifo_Maximum_Commission_Rate />
 	</Affiliates>
+	<ASP>
+		<ASP_FORM>Y</ASP_FORM>
+		<ASP_Member>N</ASP_Member>
+		<ASP_Member_Number />
+	</ASP>
 </XML_DIZ_INFO>
