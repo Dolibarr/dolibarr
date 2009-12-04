@@ -375,7 +375,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 		else
 		{
-			$this->error=$langs->trans("ErrorConstantNotDefined","PROP_OUTPUTDIR");
+			$this->error=$langs->trans("ErrorConstantNotDefined","SUPPLIER_OUTPUTDIR");
 			return 0;
 		}
 		$this->error=$langs->trans("ErrorUnknown");
