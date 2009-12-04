@@ -1,6 +1,14 @@
 English Dolibarr ChangeLog
 
 
+***** ChangeLog for 2.8 compared to 2.7 *****
+
+For users:
+- New: Can filter on user on stock movement list
+- New: When creating a third party from a member, it is set as a new
+  customer.
+
+
 ***** ChangeLog for 2.7 compared to 2.6 *****
 
 For users:
