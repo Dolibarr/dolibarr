@@ -290,7 +290,15 @@ else
 
 			if ($_GET["action"] == '')
 			{
+				if ($user->rights->stock->creer)
 				print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$entrepot->id."\">".$langs->trans("Modify")."</a>";
+				else
+				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</a>";
+
+				if ($user->rights->stock->supprimer)
+				print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&id=".$entrepot->id."\">".$langs->trans("Delete")."</a>";
+				else
+				print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
 			}
 
 			print "</div>";

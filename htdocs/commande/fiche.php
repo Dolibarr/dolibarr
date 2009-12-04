@@ -254,6 +254,20 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 	}
 }
 
+if ($_POST['action'] == 'setdate' && $user->rights->commande->creer)
+{
+	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	$date=dol_mktime(0, 0, 0, $_POST['order_month'], $_POST['order_day'], $_POST['order_year']);
+
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$result=$commande->set_date($user,$date);
+	if ($result < 0)
+	{
+		$mesg='<div class="error">'.$commande->error.'</div>';
+	}
+}
+
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
@@ -1352,8 +1366,29 @@ else
 			print '</td></tr>';
 
 			// Date
-			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('Date');
+			print '</td>';
+
+			if ($_GET['action'] != 'editdate' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'editdate')
+			{
+				print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="setdate">';
+				$html->select_date($commande->date,'order_','','','',"setdate");
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $commande->date ? dol_print_date($commande->date,'daytext') : '&nbsp;';
+			}
+			print '</td>';
+
 			print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
 			if ($commande->source == 0 && $conf->propal->enabled && $commande->propale_id)
 			{

@@ -1469,6 +1469,40 @@ class Commande extends CommonObject
 
 
 	/**
+	 *      \brief      Set the order date
+	 *      \param      user        		Objet utilisateur qui modifie
+	 *      \param      date_livraison      Date de livraison
+	 *      \return     int         		<0 si ko, >0 si ok
+	 */
+	function set_date($user, $date)
+	{
+		if ($user->rights->commande->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+			$sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+			dol_syslog("Commande::set_date sql=$sql",LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->date = $date;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Commande::set_date ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
+	}
+
+	/**
 	 *      \brief      Definit une date de livraison
 	 *      \param      user        		Objet utilisateur qui modifie
 	 *      \param      date_livraison      Date de livraison
