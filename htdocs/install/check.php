@@ -310,10 +310,10 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
-		
+
 		$foundrecommandedchoice=0;
-		
-		
+
+
 		// Array of install choices
 		print '<table width="100%" border="1" cellpadding="2">';
 
@@ -356,7 +356,8 @@ else
 								array('from'=>'2.2.0', 'to'=>'2.4.0'),
 								array('from'=>'2.4.0', 'to'=>'2.5.0'),
 								array('from'=>'2.5.0', 'to'=>'2.6.0'),
-								array('from'=>'2.6.0', 'to'=>'2.7.0')
+								array('from'=>'2.6.0', 'to'=>'2.7.0'),
+								array('from'=>'2.7.0', 'to'=>'2.8.0')
 								);
 
 		$count=0;
