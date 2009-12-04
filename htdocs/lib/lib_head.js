@@ -212,10 +212,7 @@ function dpClickDay(year,month,day,format)
 	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
 	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
 
-	var dt = new Date();
-	dt.setMonth(month-1);
-	dt.setYear(year);
-	dt.setDate(day);
+	var dt = new Date(year, month-1, day); 
 
 	thefield.value=formatDate(dt,format);
 	if(thefield.onchange) thefield.onchange.call(thefield);
