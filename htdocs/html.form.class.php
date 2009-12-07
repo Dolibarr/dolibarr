@@ -926,7 +926,17 @@ class Form
 				}
 				$opt = '<option value="'.$objp->rowid.'"';
 				$opt.= ($objp->rowid == $selected)?' selected="true"':'';
-				$opt.= ($conf->stock->enabled && isset($objp->stock) && $objp->fk_product_type == 0 && $objp->stock <= 0) ? ' style="background-color:#FF0000; color:#FFFFFF"':'';
+				if ($conf->stock->enabled && $objp->fk_product_type == 0 && isset($objp->stock))
+				{
+					if ($objp->stock > 0)
+					{
+						$opt.= ' style="background-color:#32CD32; color:#F5F5F5;"';
+					}
+					else if ($objp->stock <= 0)
+					{
+						$opt.= ' style="background-color:#FF0000; color:#F5F5F5;"';
+					}
+				}
 				$opt.= '>'.$objp->ref.' - ';
 				$opt.= dol_trunc($objp->label,32).' - ';
 
