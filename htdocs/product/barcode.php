@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/product/barcode.php
-        \ingroup    product
-        \brief      Page du code barre
-        \version    $Id$
-*/
+ *       \file       htdocs/product/barcode.php
+ *       \ingroup    product
+ *       \brief      Page with bar code informations of product
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -49,23 +49,23 @@ $result=restrictedArea($user,'produit|service&barcode',$id,'product','','',$fiel
 // Modification du type de code barre
 if ($_POST['action'] ==	'setbarcodetype'	&& $user->rights->barcode->creer)
 {
-  $product =	new	Product($db);
-  $product->fetch($_GET["id"]);
-  $product->barcode_type = $_POST['barcodetype_id'];
-  $result = $product->update_barcode_type($user);
-  Header("Location: barcode.php?id=".$_GET["id"]);
-  exit;
+	$product =	new	Product($db);
+	$product->fetch($_GET["id"]);
+	$product->barcode_type = $_POST['barcodetype_id'];
+	$result = $product->update_barcode_type($user);
+	Header("Location: barcode.php?id=".$_GET["id"]);
+	exit;
 }
 
 // Modification du code barre
 if ($_POST['action'] ==	'setbarcode'	&& $user->rights->barcode->creer)
 {
-  $product =	new	Product($db);
-  $product->fetch($_GET["id"]);
-  $product->barcode = $_POST['barcode']; //Todo: ajout v�rification de la validit� du code barre en fonction du type
-  $result = $product->update_barcode($user);
-  Header("Location: barcode.php?id=".$_GET["id"]);
-  exit;
+	$product =	new	Product($db);
+	$product->fetch($_GET["id"]);
+	$product->barcode = $_POST['barcode']; //Todo: ajout v�rification de la validit� du code barre en fonction du type
+	$result = $product->update_barcode($user);
+	Header("Location: barcode.php?id=".$_GET["id"]);
+	exit;
 }
 
 
@@ -90,40 +90,43 @@ $titre=$langs->trans("CardProduct".$product->type);
 dol_fiche_head($head, 'barcode', $titre);
 
 
-print '<table class="border" width="100%">';
+print '<table class="border" width="100%">'."\n";
 
 // Reference
 print '<tr>';
 print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
 print $html->showrefnav($product,'ref','',1,'ref');
 print '</td>';
-print '</tr>';
+print '</tr>'."\n";
 
 // Libelle
 print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 
 // Barcode image
 $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($product->barcode_type_coder).'&code='.urlencode($product->barcode).'&encoding='.urlencode($product->barcode_type_code);
-print '<td width="300" align="center" rowspan="5"><img src="'.$url.'"></td>';
+print '<td width="300" align="center" rowspan="5">';
+print '<!-- url barcode = '.$url.' -->';
+print '<img src="'.$url.'">';
+print '</td>';
 
-print '</tr>';
+print '</tr>'."\n";
 
- // Prix
-    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
-	if ($product->price_base_type == 'TTC')
-	{
-	  print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-	}
-	else
-	{
-	  print price($product->price).' '.$langs->trans($product->price_base_type);
-	}
-	print '</td></tr>';
+// Prix
+print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
+if ($product->price_base_type == 'TTC')
+{
+	print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
+}
+else
+{
+	print price($product->price).' '.$langs->trans($product->price_base_type);
+}
+print '</td></tr>'."\n";
 
 // Statut
 print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 print $product->getLibStatut(2);
-print '</td></tr>';
+print '</td></tr>'."\n";
 
 // Barcode type
 print '<tr><td nowrap>';
@@ -141,7 +144,7 @@ else
 {
 	print $product->barcode_type_label?$product->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>';
 }
-print '</td></tr>';
+print '</td></tr>'."\n";
 
 // Barcode value
 print '<tr><td nowrap>';
@@ -155,7 +158,7 @@ if ($_GET['action'] == 'editbarcode')
 {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-  print '<input type="hidden" name="action" value="setbarcode">';
+	print '<input type="hidden" name="action" value="setbarcode">';
 	print '<input size="40" type="text" name="barcode" value="'.$product->barcode.'">';
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 }
@@ -163,7 +166,7 @@ else
 {
 	print $product->barcode;
 }
-print '</td></tr>';
+print '</td></tr>'."\n";
 
 print "</table>\n";
 print "</div>\n";
