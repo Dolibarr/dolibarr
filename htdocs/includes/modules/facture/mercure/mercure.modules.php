@@ -91,9 +91,12 @@ class mod_facture_mercure extends ModeleNumRefFactures
     	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
+    	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
+    	$mysoc->typent_code='TTTTTTTTTT';
     	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
+		$mysoc->typent_code=$old_code_type;
 
 		if (! $numExample)
 		{
@@ -127,7 +130,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		if ($facture->type == 2) $where.= " AND type = 2";
 		else $where.=" AND type != 2";
 
-		$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc->code_client,$facture->date);
+		$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc,$facture->date);
 
 		return  $numFinal;
 	}

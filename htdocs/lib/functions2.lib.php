@@ -382,17 +382,27 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='')
 		$maskrefclient_maskclientcode=$regClientRef[1];
 		$maskrefclient_maskcounter=$regClientRef[2];
 		$maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
-		$maskrefclient_clientcode=substr($valueforccc,0,strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
+		$maskrefclient_clientcode=substr($valueforccc,0,strlen($maskrefclient_maskclientcode));//get n first characters of client code where n is length in mask
 		$maskrefclient_clientcode=str_pad($maskrefclient_clientcode,strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
 		$maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
 		if (strlen($maskrefclient_maskcounter) > 0 && strlen($maskrefclient_maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
 	}
 	else $maskrefclient='';
 
+	// Extract value for third party type
+	if (preg_match('/\{(t+)\}/i',$mask,$regType))
+	{
+		$masktype=$regType[1];
+		$masktype_value=substr(preg_replace('/^TE_/','',$objsoc->typent_code),0,strlen($regType[1]));//get n first characters of client code where n is length in mask
+		$masktype_value=str_pad($masktype_value,strlen($regType[1]),"#",STR_PAD_RIGHT);
+	}
+	else $masktype='';
+
 	$maskwithonlyymcode=$mask;
 	$maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$maskcounter,$maskwithonlyymcode);
 	$maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
 	$maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
+	$maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
 	$maskwithnocode=$maskwithonlyymcode;
 	$maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
 	$maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);
@@ -460,6 +470,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='')
 	$maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
 	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",strlen($maskcounter),"_"),$maskLike);
 	if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
+	//if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),str_pad("",strlen($masktype),"_"),$maskLike);
+	if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
 
 	// Get counter in database
 	$counter=0;
@@ -552,6 +564,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='')
 		$maskrefclient_maskbefore='{'.$maskrefclient.'}';
 		$maskrefclient_maskafter=$maskrefclient_clientcode.str_pad($maskrefclient_counter,strlen($maskrefclient_maskcounter),"0",STR_PAD_LEFT);
 		$numFinal = str_replace($maskrefclient_maskbefore,$maskrefclient_maskafter,$numFinal);
+	}
+
+	// Now we replace the type
+	if ($masktype)
+	{
+		$masktype_maskbefore='{'.$masktype.'}';
+		$masktype_maskafter=$masktype_value;
+		$numFinal = str_replace($masktype_maskbefore,$masktype_maskafter,$numFinal);
 	}
 
 	dol_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
