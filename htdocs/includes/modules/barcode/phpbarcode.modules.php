@@ -21,14 +21,14 @@
 /**
  *	\file       htdocs/includes/modules/barcode/phpbarcode.modules.php
  *	\ingroup    facture
- *	\brief      Fichier contenant la classe du modèle de generation code barre phpbarcode
+ *	\brief      Fichier contenant la classe du modele de generation code barre phpbarcode
  *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/barcode/modules_barcode.php");
 
 /**		\class      modPhpbarcode
- *		\brief      Classe du modèle de numérotation de generation code barre phpbarcode
+ *		\brief      Classe du modele de numerotation de generation code barre phpbarcode
  */
 class modPhpbarcode extends ModeleBarCode
 {
@@ -45,7 +45,7 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 
-	/**     \brief      Renvoi la description du modele de numérotation
+	/**     \brief      Renvoi la description du modele de numï¿½rotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -55,8 +55,8 @@ class modPhpbarcode extends ModeleBarCode
 		return 'Php-barcode';
 	}
 
-	/**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numérotation de fonctionner.
+	/**     \brief      Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numï¿½rotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
