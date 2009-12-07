@@ -17,8 +17,8 @@
  */
 
 /**
- *       \file      htdocs/install/phpinfo.php
- *       \ingroup   install
+ *       \file      htdocs/support/index.php
+ *       \ingroup   support
  *       \brief     Provide an Online Help support
  *       \version   $Id$
  */
@@ -154,6 +154,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
+$urlwiki='http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 /*print '<tr><td align="center" valign="top">';
