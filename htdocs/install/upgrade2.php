@@ -227,7 +227,9 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 		migrate_restore_missing_links($db,$langs,$conf);
 
 
-		migrate_directories($db,$langs,$conf);
+		migrate_directories($db,$langs,$conf,'/compta','/banque');
+		
+		migrate_directories($db,$langs,$conf,'/societe','/mycompany');
 
 
 		// On commit dans tous les cas.
@@ -2346,17 +2348,16 @@ function migrate_restore_missing_links($db,$langs,$conf)
 
 
 /*
- * Migration directory compta/bordereau into banque/bordereau
+ * Migration directory
  */
-function migrate_directories($db,$langs,$conf)
+function migrate_directories($db,$langs,$conf,$oldname,$newname)
 {
 	dolibarr_install_syslog("upgrade2::migrate_directories");
 
-	if (is_dir(DOL_DATA_ROOT.'/compta/bordereau') && ! file_exists(DOL_DATA_ROOT.'/banque/bordereau'))
+	if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
 	{
-		dolibarr_install_syslog("upgrade2::migrate_directories move ".DOL_DATA_ROOT.'/compta/bordereau into '.DOL_DATA_ROOT.'/banque/bordereau');
-		create_exdir(DOL_DATA_ROOT.'/banque');
-		@rename(DOL_DATA_ROOT.'/compta/bordereau',DOL_DATA_ROOT.'/banque/bordereau');
+		dolibarr_install_syslog("upgrade2::migrate_directories move ".DOL_DATA_ROOT.$oldname.' into '.DOL_DATA_ROOT.$newname);
+		@rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
 	}
 }
 
