@@ -104,9 +104,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->gencod                = $_POST["gencod"];
 
 	$soc->tva_assuj             = $_POST["assujtva_value"];
-	$soc->tva_intra_code        = $_POST["tva_intra_code"];
-	$soc->tva_intra_num         = $_POST["tva_intra_num"];
-	$soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
+	$soc->tva_intra             = $_POST["tva_intra"];
 
 	$soc->forme_juridique_code  = $_POST["forme_juridique_code"];
 	$soc->effectif_id           = $_POST["effectif_id"];
@@ -341,9 +339,8 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$soc->effectif_id=($_POST["effectif_id"]&&!$_POST["cleartype"])?$_POST["effectif_id_id"]:($_REQUEST["private"]?'EF1-5':'');
 
 		$soc->tva_assuj = $_POST["assujtva_value"];
-		$soc->tva_intra_code=$_POST["tva_intra_code"];
-		$soc->tva_intra_num=$_POST["tva_intra_num"];
-
+		$soc->tva_intra=$_POST["tva_intra"];
+		
 		$soc->commercial_id=$_POST["commercial_id"];
 
 		// On positionne pays_id, pays_code et libelle du pays choisi
@@ -577,20 +574,19 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		{
 			print "\n";
 			print '<script language="JavaScript" type="text/javascript">';
-			print "function CheckVAT(a,b) {\n";
-			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+			print "function CheckVAT(a) {\n";
+			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
 			print "}\n";
 			print '</script>';
 			print "\n";
 		}
 		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
-		$s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
-		$s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
+		$s.='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
 		$s.=' ';
 		if ($conf->use_javascript_ajax)
 		{
-			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);">'.$langs->trans("VATIntraCheck").'</a>';
+			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
@@ -693,9 +689,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			$soc->forme_juridique_code=$_POST["forme_juridique_code"];
 
 			$soc->tva_assuj = $_POST["assujtva_value"];
-			$soc->tva_intra_code=$_POST["tva_intra_code"];
-			$soc->tva_intra_num=$_POST["tva_intra_num"];
-
+			$soc->tva_intra=$_POST["tva_intra"];
+			
 			// On positionne pays_id, pays_code et libelle du pays choisi
 			if ($soc->pays_id)
 			{
@@ -897,20 +892,19 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		{
 			print "\n";
 			print '<script language="JavaScript" type="text/javascript">';
-			print "function CheckVAT(a,b) {\n";
-			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
+			print "function CheckVAT(a) {\n";
+			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
 			print "}\n";
 			print '</script>';
 			print "\n";
 		}
 		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
-		$s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
-		$s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
+		$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
 		$s.=' ';
 		if ($conf->use_javascript_ajax)
 		{
-			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);">'.$langs->trans("VATIntraCheck").'</a>';
+			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
@@ -1110,8 +1104,8 @@ else
 	{
 		print "\n";
 		print '<script language="JavaScript" type="text/javascript">';
-		print "function CheckVAT(a,b) {\n";
-		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
+		print "function CheckVAT(a) {\n";
+		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
 		print "}\n";
 		print '</script>';
 		print "\n";
@@ -1120,15 +1114,12 @@ else
 	if ($soc->tva_intra)
 	{
 		$s='';
-		$code=substr($soc->tva_intra,0,2);
-		$num=substr($soc->tva_intra,2);
 		$s.=$soc->tva_intra;
-		$s.='<input type="hidden" name="tva_intra_code" size="1" maxlength="2" value="'.$code.'">';
-		$s.='<input type="hidden" name="tva_intra_num" size="12" maxlength="18" value="'.$num.'">';
+		$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
 		$s.=' &nbsp; ';
 		if ($conf->use_javascript_ajax)
 		{
-			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);">'.$langs->trans("VATIntraCheck").'</a>';
+			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else

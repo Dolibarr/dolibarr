@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
  */
 
 /**
-*		\file       htdocs/societe/checkvat/checkVatPopup.php
-*		\ingroup    societe
-*		\brief      Popup screen to validate VAT
-*		\version    $Id$
-*/
+ *		\file       htdocs/societe/checkvat/checkVatPopup.php
+ *		\ingroup    societe
+ *		\brief      Popup screen to validate VAT
+ *		\version    $Id$
+ */
 
 require ("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/nusoap/lib/nusoap.php");
 $langs->load("companies");
 
 $WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/api/checkVatPort';
-$WS_METHOD  = 'checkVat';
+$WS_METHOD ='checkVat';
 
 
 top_htmlhead("", $langs->trans("VATIntraCheckableOnEUSite"));
@@ -41,25 +41,22 @@ print '<div>';
 print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','setup');
 
 
-if (! $_REQUEST["countryCode"])
-{
-	print '<br>';
-	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("Country")).'</font><br>';
-}
-elseif (! $_REQUEST["vatNumber"])
+if (! $_REQUEST["vatNumber"])
 {
 	print '<br>';
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("VATIntraShort")).'</font><br>';
 }
 else
 {
-	print '<b>'.$langs->trans("Country").'</b>: '.$_REQUEST["countryCode"].'<br>';
-	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$_REQUEST["vatNumber"].'<br>';
+	$countryCode=substr($_REQUEST["vatNumber"],0,2);
+	$vatNumber=substr($_REQUEST["vatNumber"],2);
+	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
+	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
 	print '<br>';
 
 	// Set the parameters to send to the WebService
-	$parameters = array("countryCode" => $_REQUEST["countryCode"],
-						"vatNumber" => $_REQUEST["vatNumber"]);
+	$parameters = array("countryCode" => $countryCode,
+						"vatNumber" => $vatNumber);
 
 	// Set the WebService URL
 	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL);
@@ -69,10 +66,10 @@ else
 	dol_syslog("Call method ".$WS_METHOD);
 	$result = $soapclient->call($WS_METHOD,$parameters);
 
-//	print "x".is_array($result)."i";
-//	print_r($result);
-//	print $soapclient->request.'<br>';
-//	print $soapclient->response.'<br>';
+	//	print "x".is_array($result)."i";
+	//	print_r($result);
+	//	print $soapclient->request.'<br>';
+	//	print $soapclient->response.'<br>';
 
 	$messagetoshow='';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
@@ -95,7 +92,7 @@ else
 	}
 	// Syntaxe ko
 	elseif (preg_match('/INVALID_INPUT/i',$result['faultstring'])
-			|| ($result['requestDate'] && ! $result['valid']))
+	|| ($result['requestDate'] && ! $result['valid']))
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
@@ -110,7 +107,7 @@ else
 		print $langs->trans("VATIntraValueIsValid").': ';
 		if (preg_match('/MS_UNAVAILABLE/i',$result['faultstring']))
 		{
-			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$_REQUEST["countryCode"]).'</font><br>';
+			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE",$countryCode).'</font><br>';
 		}
 		else
 		{

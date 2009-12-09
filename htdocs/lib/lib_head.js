@@ -1,12 +1,14 @@
-// Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 // Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 //
 // Script javascript added in header of pages (in HEAD section)
 //
+
+//
 // \file       htdocs/lib/lib_head.js
 // \brief      File that include javascript functions (included if option use_javascript activated)
-// \version    $Revision$
-
+// \version    $Id$
+//
 
 function dolibarr_type_reload(param)
 {

@@ -601,8 +601,6 @@ class Societe extends CommonObject
 
 				$this->tva_assuj      = $obj->tva_assuj;
 				$this->tva_intra      = $obj->tva_intra;
-				$this->tva_intra_code = substr($obj->tva_intra,0,2);
-				$this->tva_intra_num  = substr($obj->tva_intra,2);
 
 				$this->typent_id      = $obj->typent_id;
 				$this->typent_code    = $obj->typent_code;

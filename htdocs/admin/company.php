@@ -664,8 +664,8 @@ else
 	{
 		print "\n";
 		print '<script language="JavaScript" type="text/javascript">';
-		print "function CheckVAT(a,b) {\n";
-		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
+		print "function CheckVAT(a) {\n";
+		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,260);\n";
 		print "}\n";
 		print '</script>';
 		print "\n";
@@ -676,15 +676,12 @@ else
 	if ($conf->global->MAIN_INFO_TVAINTRA)
 	{
 		$s='';
-		$code=substr($conf->global->MAIN_INFO_TVAINTRA,0,2);
-		$num=substr($conf->global->MAIN_INFO_TVAINTRA,2);
 		$s.=$conf->global->MAIN_INFO_TVAINTRA;
-		$s.='<input type="hidden" name="tva_intra_code" size="1" maxlength="2" value="'.$code.'">';
-		$s.='<input type="hidden" name="tva_intra_num" size="12" maxlength="18" value="'.$num.'">';
+		$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$conf->global->MAIN_INFO_TVAINTRA.'">';
 		$s.=' &nbsp; ';
 		if ($conf->use_javascript_ajax)
 		{
-			$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);">'.$langs->trans("VATIntraCheck").'</a>';
+			$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
