@@ -261,14 +261,15 @@ class ProductFournisseur extends Product
 		$this->db->begin();
 
 		// Supprime prix courant du fournisseur pour cette quantite
-		$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
+		$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
 		if ($this->product_fourn_price_id)
 		{
-			$sql .= " WHERE rowid = ".$this->product_fourn_price_id;
+			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 		}
 		else
 		{
-			$sql .= " WHERE fk_product_fournisseur = ".$this->product_fourn_id." AND quantity = ".$qty;
+			$sql.= " WHERE fk_product_fournisseur = ".$this->product_fourn_id;
+			$sql.= " AND quantity = ".$qty;
 		}
 
 		if ($this->db->query($sql))

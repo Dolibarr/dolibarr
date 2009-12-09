@@ -17,6 +17,7 @@ ChangeSupplierPrice=Modifier prix fournisseur
 ErrorQtyTooLowForThisSupplier=Quantité insuffisante pour ce fournisseur ou aucun tarif défini sur ce produit pour ce fournisseur
 ErrorSupplierCountryIsNotDefined=Le pays de ce fournisseur n'est pas défini. Corriger sur sa fiche.
 ProductHasAlreadyReferenceInThisSupplier=Ce produit a déjà une référence chez ce fournisseur
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Cette référence fournisseur est déjà associée à un produit
 NoRecordedSuppliers=Pas de fournisseurs enregistrés
 SupplierPayment=Paiement fournisseur
 SuppliersArea=Espace fournisseurs

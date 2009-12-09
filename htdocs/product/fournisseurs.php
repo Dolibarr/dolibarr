@@ -124,14 +124,21 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 					$result=$supplier->fetch($_POST["id_fourn"]);
 
 					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier);
-					if ($ret < 0)
+					if (!$error)
 					{
-						$error++;
-						$mesg=$ret.'<div class="error">'.$product->error.'</div>';
-						if ($ret == -2)
+						if ($ret < 0)
 						{
-							$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
+							$error++;
+							$mesg='<div class="error">'.$product->error.'</div>';
+							if ($ret == -2)
+							{
+								$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
+							}
 						}
+					}
+					else
+					{
+						$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct").'</div>';
 					}
 				}
 				else
