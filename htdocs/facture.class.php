@@ -2169,10 +2169,10 @@ class Facture extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("bills");
 
-		if (defined("FACTURE_ADDON") && FACTURE_ADDON)
+		if (! empty($conf->global->FACTURE_ADDON))
 		{
-			$file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
-			$classname = "mod_facture_".FACTURE_ADDON;
+			$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
+			$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
 
 			// Include file with class
 			$mybool=false;
