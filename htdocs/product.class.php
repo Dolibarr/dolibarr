@@ -1677,9 +1677,14 @@ class Product extends CommonObject
 	 */
 	function add_fournisseur($user, $id_fourn, $ref_fourn)
 	{
+		global $conf;
+		
 		$sql = "SELECT count(*) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-		$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn." AND ref_fourn = '".$ref_fourn."'";
+		$sql.= " WHERE fk_product = ".$this->id;
+		$sql.= " AND fk_soc = ".$id_fourn;
+		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("Product::add_fournisseur sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -1688,9 +1693,21 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj->nb == 0)
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
-				$sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
-				$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_fourn.", '".$ref_fourn."', ".$user->id.")";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur (";
+				$sql.= "datec";
+				$sql.= ", entity";
+				$sql.= ", fk_product";
+				$sql.= ", fk_soc";
+				$sql.= ", ref_fourn";
+				$sql.= ", fk_user_author";
+				$sql.= ") VALUES (";
+				$sql.= $this->db->idate(mktime());
+				$sql.= ", ".$conf->entity;
+				$sql.= ", ".$this->id;
+				$sql.= ", ".$id_fourn;
+				$sql.= ", '".$ref_fourn."'";
+				$sql.= ", ".$user->id;
+				$sql.= ")";
 
 				dol_syslog("Product::add_fournisseur sql=".$sql);
 				if ($this->db->query($sql))
@@ -1709,7 +1726,10 @@ class Product extends CommonObject
 			{
 				$sql = "SELECT rowid";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-				$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn." AND ref_fourn = '".$ref_fourn."'";
+				$sql.= " WHERE fk_product = ".$this->id;
+				$sql.= " AND fk_soc = ".$id_fourn;
+				$sql.= " AND ref_fourn = '".$ref_fourn."'";
+				$sql.= " AND entity = ".$conf->entity;
 
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -1734,11 +1754,14 @@ class Product extends CommonObject
 	 */
 	function list_suppliers()
 	{
+		global $conf;
+		
 		$list = array();
 
 		$sql = "SELECT fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as p";
 		$sql.= " WHERE p.fk_product = ".$this->id;
+		$sql.= " AND p.entity = ".$conf->entity;
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1746,11 +1769,11 @@ class Product extends CommonObject
 			$num = $this->db->num_rows($result);
 			$i=0;
 			while ($i < $num)
-	  {
-	  	$obj = $this->db->fetch_object($result);
-	  	$list[$i] = $obj->fk_soc;
-	  	$i++;
-	  }
+			{
+				$obj = $this->db->fetch_object($result);
+				$list[$i] = $obj->fk_soc;
+				$i++;
+			}
 		}
 
 		return $list;
@@ -1775,30 +1798,6 @@ class Product extends CommonObject
 			$fournisseur->ProductCommande($user, $this->id);
 		}
 		return 1;
-	}
-
-
-	/**
-	 *    \brief  Supprime un tarif fournisseur
-	 *    \param  user        utilisateur qui d�fait le lien
-	 *    \param  id_fourn    id du fournisseur
-	 *    \param  qty         quantit
-	 *    \return int         < 0 si erreur, > 0 si ok
-	 */
-	function remove_price($user, $id_fourn, $qty)
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-		$sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn and quantity = '".$qty."';";
-
-		if ($this->db->query($sql) )
-		{
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
 	}
 
 	/**

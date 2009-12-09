@@ -127,7 +127,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 					if ($ret < 0)
 					{
 						$error++;
-						$mesg='<div class="error">'.$product->error.'</div>';
+						$mesg=$ret.'<div class="error">'.$product->error.'</div>';
 						if ($ret == -2)
 						{
 							$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
