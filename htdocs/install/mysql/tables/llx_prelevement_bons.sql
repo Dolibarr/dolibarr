@@ -20,9 +20,9 @@
 -- ===================================================================
 
 --
--- Bons de prélèvement
+-- Bons de prelevement
 --
--- statut 1 : transmis à la banque
+-- statut 1 : transmis a la banque
 -- statut 2 : credite
 --
 create table llx_prelevement_bons
@@ -31,14 +31,14 @@ create table llx_prelevement_bons
   ref            varchar(12),        -- reference
   entity         integer DEFAULT 1 NOT NULL, -- multi company id
   datec          datetime,           -- date de creation
-  amount         real DEFAULT 0,     -- montant total du prélèvement
+  amount         real DEFAULT 0,     -- montant total du prelevement
   statut         smallint DEFAULT 0, -- statut
-  credite        smallint DEFAULT 0, -- indique si le prelevement a été credité
+  credite        smallint DEFAULT 0, -- indique si le prelevement a ete credite
   note           text,
-  date_trans     datetime,           -- date de transmission à la banque
-  method_trans   smallint,           -- méthode de transmission
-  fk_user_trans  integer,            -- user qui a effectué la transmission
-  date_credit    datetime,           -- date de crédit sur le compte
-  fk_user_credit integer             -- user qui a remonté l'info de crédit
+  date_trans     datetime,           -- date de transmission a la banque
+  method_trans   smallint,           -- methode de transmission
+  fk_user_trans  integer,            -- user qui a effectue la transmission
+  date_credit    datetime,           -- date de credit sur le compte
+  fk_user_credit integer             -- user qui a remonte l'info de credit
 
 )type=innodb;

@@ -918,82 +918,103 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	print '<br>';
 	print '<b>'.$langs->trans('SuppliersInvoices')."</b><br>\n";
 	print '</td></tr>';
-
-	$error = 0;
-	$nb=0;
-	$select_sql  = 'SELECT rowid, fk_facture_fourn, amount ';
-	$select_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn ';
-	$select_sql .= ' WHERE fk_facture_fourn IS NOT NULL';
-
-	dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$select_sql);
-	$select_resql = $db->query($select_sql);
-	if ($select_resql)
+	
+	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiementfourn","fk_facture_fourn");
+	$obj = $db->fetch_object($result);
+	if ($obj)
 	{
-		$select_num = $db->num_rows($select_resql);
-		$i=0;
-		$var = true;
-
-		// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
-		while (($i < $select_num) && (! $error))
+		$db->begin();
+		
+		$error=0;
+		$nb=0;
+		
+		$select_sql = 'SELECT rowid, fk_facture_fourn, amount';
+		$select_sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn';
+		$select_sql.= ' WHERE fk_facture_fourn IS NOT NULL';
+		
+		dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$select_sql);
+		$select_resql = $db->query($select_sql);
+		if ($select_resql)
 		{
-			$var = !$var;
-			$select_obj = $db->fetch_object($select_resql);
-
-			// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas ins�rer de doublons.
-			$check_sql  = 'SELECT fk_paiementfourn, fk_facturefourn';
-			$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-			$check_sql .= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.$select_obj->fk_facture_fourn.';';
-			$check_resql = $db->query($check_sql);
-			if ($check_resql)
+			$select_num = $db->num_rows($select_resql);
+			$i=0;
+			$var = true;
+			
+			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
+			while (($i < $select_num) && (! $error))
 			{
-				$check_num = $db->num_rows($check_resql);
-				if ($check_num == 0)
+				$var = !$var;
+				$select_obj = $db->fetch_object($select_resql);
+				
+				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
+				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
+				$check_sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
+				$check_sql.= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.$select_obj->fk_facture_fourn.';';
+				$check_resql = $db->query($check_sql);
+				if ($check_resql)
 				{
-					if ($nb == 0)
+					$check_num = $db->num_rows($check_resql);
+					if ($check_num == 0)
 					{
-						print '<tr><td colspan="4" nowrap="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td></tr>';
-						print '<tr><td>fk_paiementfourn</td><td>fk_facturefourn</td><td>'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
+						if ($nb == 0)
+						{
+							print '<tr><td colspan="4" nowrap="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td></tr>';
+							print '<tr><td>fk_paiementfourn</td><td>fk_facturefourn</td><td>'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
+						}
+						
+						print '<tr '.$bc[$var].'>';
+						print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
+						
+						$insert_sql  = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
+						$insert_sql .= ' fk_paiementfourn = \''.$select_obj->rowid.'\',';
+						$insert_sql .= ' fk_facturefourn  = \''.$select_obj->fk_facture_fourn.'\',';
+						$insert_sql .= ' amount           = \''.$select_obj->amount.'\';';
+						$insert_resql = $db->query($insert_sql);
+						
+						if ($insert_resql)
+						{
+							$nb++;
+							print '<td><span style="color:green">'.$langs->trans("OK").'</span></td>';
+						}
+						else
+						{
+							print '<td><span style="color:red">Error on insert</span></td>';
+							$error++;
+						}
+						print '</tr>';
 					}
-
-					print '<tr '.$bc[$var].'>';
-					print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
-
-					$insert_sql  = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
-					$insert_sql .= ' fk_paiementfourn = \''.$select_obj->rowid.'\',';
-					$insert_sql .= ' fk_facturefourn  = \''.$select_obj->fk_facture_fourn.'\',';
-					$insert_sql .= ' amount           = \''.$select_obj->amount.'\';';
-					$insert_resql = $db->query($insert_sql);
-					if ($insert_resql)
-					{
-						$nb++;
-						print '<td><span style="color:green">'.$langs->trans("OK").'</span></td>';
-					}
-					else
-					{
-						print '<td><span style="color:red">Error on insert</span></td>';
-						$error++;
-					}
-					print '</tr>';
 				}
+				else
+				{
+					$error++;
+				}
+				$i++;
 			}
-			else
+		}
+		else
+		{
+			$error++;
+		}
+		
+		if (!$error)
+		{
+			if (!$nb)
 			{
-				$error++;
+				print '<tr><td>'.$langs->trans("AlreadyDone").'</td></tr>';
 			}
-			$i++;
+			$db->commit();
+			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."paiementfourn DROP COLUMN fk_facture_fourn";
+			$db->query($sql);
+		}
+		else
+		{
+			print '<tr><td>'.$langs->trans("Error").'</td></tr>';
+			$db->rollback();
 		}
 	}
 	else
 	{
-		$error++;
-	}
-	if (! $nb && ! $error)
-	{
 		print '<tr><td>'.$langs->trans("AlreadyDone").'</td></tr>';
-	}
-	if ($error)
-	{
-		print '<tr><td>'.$langs->trans("Error").'</td></tr>';
 	}
 }
 

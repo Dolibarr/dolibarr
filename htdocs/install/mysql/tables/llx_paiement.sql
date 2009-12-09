@@ -21,12 +21,11 @@
 
 
 -- Satut, 0 ou 1, 1 n'est plus supprimable
--- fk_export_compta 0 pas exporté
+-- fk_export_compta 0 pas exporte
 
 create table llx_paiement
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  fk_facture       integer,
   datec            datetime,           -- date de creation
   tms              timestamp,
   datep            datetime,           -- payment date
@@ -35,8 +34,8 @@ create table llx_paiement
   num_paiement     varchar(50),
   note             text,
   fk_bank          integer NOT NULL DEFAULT 0,
-  fk_user_creat    integer,            -- utilisateur qui a créé l'info
-  fk_user_modif    integer,            -- utilisateur qui a modifié l'info
+  fk_user_creat    integer,            -- utilisateur qui a cree l'info
+  fk_user_modif    integer,            -- utilisateur qui a modifie l'info
   statut           smallint DEFAULT 0 NOT NULL,
   fk_export_compta integer DEFAULT 0 NOT NULL
 
