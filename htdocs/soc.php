@@ -582,7 +582,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		}
 		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
-		$s.='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
+		$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
 		$s.=' ';
 		if ($conf->use_javascript_ajax)
 		{
