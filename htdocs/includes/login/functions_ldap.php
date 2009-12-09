@@ -70,33 +70,6 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		
 		if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
 
-		// Debut code pour compatibilite (prend info depuis config en base)
-		// Ne plus utiliser.
-		// La config LDAP de connexion doit etre dans le fichier conf.php
-		/*
-		if (! $ldapuserattr && $conf->ldap->enabled)
-		{
-			if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
-			  {
-				$ldapuserattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
-			  }
-			  else
-			  {
-				$ldapuserattr = $conf->global->LDAP_FIELD_LOGIN;
-			  }
-		}
-		if (! $ldaphost)       $ldaphost=$conf->global->LDAP_SERVER_HOST;
-		if (! $ldapport)       $ldapport=$conf->global->LDAP_SERVER_PORT;
-		if (! $ldapservertype) $ldapservertype=$conf->global->LDAP_SERVER_TYPE;
-		if (! $ldapversion)    $ldapversion=$conf->global->LDAP_SERVER_PROTOCOLVERSION;
-		if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
-		if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
-		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
-		*/
-		// Fin code pour compatiblite
-
-		dol_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest." admin_login=".$ldapadminlogin);
-		
 		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 		$ldap=new Ldap();
 		$ldap->server=array($ldaphost);
@@ -106,7 +79,14 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		$ldap->searchUser=$ldapadminlogin;
 		$ldap->searchPassword=$ldapadminpass;
 		
-		if ($ldapdebug) dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
+		dol_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest);
+		if ($ldapdebug) 
+		{
+			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
+			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ladpdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
+			print "DEBUG: Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."\n";
+			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ladpdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."\n";
+		}
 		
 		$resultCheckUserDN=false;
 

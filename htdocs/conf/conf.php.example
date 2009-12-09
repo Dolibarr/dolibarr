@@ -154,9 +154,7 @@ $dolibarr_main_force_https="0";
 # $dolibarr_main_auth_ldap_host="127.0.0.1";
 # $dolibarr_main_auth_ldap_port="389";
 # $dolibarr_main_auth_ldap_version="3";
-# $dolibarr_main_auth_ldap_servertype="openldap";					# openldap, activedirectory or egroupware
-#
-# Following parameters should not be used in LDAP connection (deprecated ?):
+# $dolibarr_main_auth_ldap_servertype="openldap";			# openldap, activedirectory or egroupware
 # $dolibarr_main_auth_ldap_login_attribute="loginfield";	# uid or samaccountname for active directory
 # $dolibarr_main_auth_ldap_dn="";							# Ex: ou=users,dc=my-domain,dc=com
 # $dolibarr_main_auth_ldap_admin_login="";					# Required only if anonymous bind disabled
