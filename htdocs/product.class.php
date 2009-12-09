@@ -1673,7 +1673,7 @@ class Product extends CommonObject
 	 *    \param      user        Utilisateur qui fait le lien
 	 *    \param      id_fourn    Id du fournisseur
 	 *    \param      ref_fourn   Reference chez le fournisseur
-	 *    \return     int         < 0 si erreur, > 0 si ok
+	 *    \return     int         < 0 if KO, 0 if link already exists, > 0 if OK
 	 */
 	function add_fournisseur($user, $id_fourn, $ref_fourn)
 	{
@@ -1737,8 +1737,9 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$this->product_fourn_id = $obj->rowid;
 				}
+			
+				return 0;
 			}
-			$this->db->free($resql);
 		}
 		else
 		{
