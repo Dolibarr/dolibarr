@@ -19,20 +19,20 @@
  */
 
 /**
-		\file       htdocs/fourn/fournisseur.product.class.php
-		\ingroup    produit
-		\brief      Fichier de la classe des produits pr�d�finis
-		\version    $Id$
-*/
+ * 	\file       htdocs/fourn/fournisseur.product.class.php
+ * 	\ingroup    produit
+ * 	\brief      Fichier de la classe des produits predefinis
+ * 	\version    $Id$
+ */
 
 require_once DOL_DOCUMENT_ROOT."/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
 
 
 /**
-		\class      Product
-		\brief      Classe permettant la gestion des produits pr�d�finis
-*/
+ * 	\class      Product
+ * 	\brief      Classe permettant la gestion des produits predefinis
+ */
 class ProductFournisseur extends Product
 {
 	var $db ;
@@ -52,7 +52,7 @@ class ProductFournisseur extends Product
 
 
 
-	/**
+   /**
 	*    \brief    Remove all prices for this couple supplier-product
 	*    \param    id_fourn    id du fournisseur
 	*    \return   int         < 0 si erreur, > 0 si ok
@@ -121,6 +121,11 @@ class ProductFournisseur extends Product
 	}
 
 
+   /**
+	*    \brief    Remove supplier product
+	*    \param    rowid     Product id
+	*    \return   int       < 0 si erreur, > 0 si ok
+	*/
 	function remove_product_fournisseur($rowid)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
@@ -215,7 +220,7 @@ class ProductFournisseur extends Product
 	}
 
 
-	/*
+   /**
 	*
 	*
 	*/
@@ -223,11 +228,11 @@ class ProductFournisseur extends Product
 	{
 		$this->fourn_ref = $ref;
 
-		/* Mise � jour du prix */
+		/* Mise a jour du prix */
 
 		$this->update_buyprice($qty, $buyprice, $user);
 
-		/* Mise � jour de la r�f�rence */
+		/* Mise a jour de la reference */
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur ";
 		$sql .= " SET ref_fourn = '" . $this->fourn_ref ."'";
@@ -238,10 +243,10 @@ class ProductFournisseur extends Product
 	}
 
 
-	/**
+   /**
 	*    \brief  Modifie le prix d'achat pour un fournisseur
 	*    \param  qty             	Quantite min pour lequel le prix est valide
-	*    \param  buyprice        	Prix d'achat pour la quantit� min
+	*    \param  buyprice        	Prix d'achat pour la quantite min
 	*    \param  user            	Objet user de l'utilisateur qui modifie
 	*    \param  price_base_type	HT or TTC
 	*    \param  fourn				Supplier
@@ -255,7 +260,7 @@ class ProductFournisseur extends Product
 		$error=0;
 		$this->db->begin();
 
-		// Supprime prix courant du fournisseur pour cette quantit�
+		// Supprime prix courant du fournisseur pour cette quantite
 		$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
 		if ($this->product_fourn_price_id)
 		{
@@ -275,7 +280,7 @@ class ProductFournisseur extends Product
 			}
 			$unitBuyPrice = price2num($buyprice/$qty,'MU');
 
-			// Ajoute prix courant du fournisseur pour cette quantit�
+			// Ajoute prix courant du fournisseur pour cette quantite
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql.= " SET datec = ".$this->db->idate(mktime());
 			$sql.= " ,fk_product_fournisseur = ".$this->product_fourn_id;
@@ -328,14 +333,14 @@ class ProductFournisseur extends Product
 
 
 	/**
-		\brief  Modifie le prix d'achat pour un fournisseur par la r�f�recne du produit chez le fournisseur
-		\param  id_fourn        		Id du fournisseur
-		\param  product_fourn_ref 		Ref du produit chez le fournisseur
-		\param  qty             		Quantite pour lequel le prix est valide
-		\param  buyprice        		Prix d'achat pour la quantit�
-		\param  user            		Objet user de l'utilisateur qui modifie
-		\return	int						<0 si KO, >0 si OK
-	*/
+	 * 	\brief  Modifie le prix d'achat pour un fournisseur par la referecne du produit chez le fournisseur
+	 * 	\param  id_fourn        		Id du fournisseur
+	 * 	\param  product_fourn_ref 		Ref du produit chez le fournisseur
+	 * 	\param  qty             		Quantite pour lequel le prix est valide
+	 * 	\param  buyprice        		Prix d'achat pour la quantite
+	 * 	\param  user            		Objet user de l'utilisateur qui modifie
+	 * 	\return	int						<0 si KO, >0 si OK
+	 */
 	function UpdateBuyPriceByFournRef($id_fourn, $product_fourn_ref, $qty, $buyprice, $user, $price_base_type='HT')
 	{
 		global $conf;
@@ -353,7 +358,7 @@ class ProductFournisseur extends Product
 		{
 			if ($obj = $this->db->fetch_object($resql))
 			{
-				// Met a jour prix pour la qt�
+				// Met a jour prix pour la qte
 				$this->id = $obj->fk_product;
 				$result = $this->update_buyprice($id_fourn, $qty, $buyprice, $user, $price_base_type);
 			}
@@ -363,7 +368,7 @@ class ProductFournisseur extends Product
 	}
 
 
-	/**
+   /**
 	*    \brief      Charge les informations relatives a un fournisseur
 	*    \param      fournid         id du fournisseur
 	*    \return     int             < 0 si erreur, > 0 si ok
@@ -398,8 +403,8 @@ class ProductFournisseur extends Product
 		}
 	}
 
-		/**
-	*    \brief      Charge les informations relatives � un prix de fournisseur
+   /**
+	*    \brief      Charge les informations relatives a un prix de fournisseur
 	*    \param      rowid	         id ligne
 	*    \return     int             < 0 if KO, 0 if OK but not found, > 0 if OK
 	*/

@@ -180,18 +180,18 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
+
 if ($modecompta == 'CREANCES-DETTES') { 
     $sql  = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    $sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-    $sql.= " WHERE f.fk_soc = s.rowid";
-    $sql.= " AND f.fk_statut in (1,2)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+    $sql.= " WHERE f.fk_statut IN (1,2)";
 } else {
 	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";
-	$sql.= " ON f.rowid = p.fk_facture_fourn";
-	$sql.= " WHERE 1=1";
+	$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql.= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
+	$sql.= " WHERE f.rowid = pf.fk_facturefourn";
+	$sql.= " AND p.rowid = pf.fk_paiementfourn";
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -243,7 +243,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     // TVA a payer
     $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-    $sql.= " WHERE f.fk_statut in (1,2)";
+    $sql.= " WHERE f.fk_statut IN (1,2)";
     $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";
     
@@ -268,7 +268,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     // TVA a recuperer
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-    $sql.= " WHERE f.fk_statut in (1,2)";
+    $sql.= " WHERE f.fk_statut IN (1,2)";
     $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
     
