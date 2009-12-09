@@ -726,10 +726,13 @@ class Propal extends CommonObject
 		$object->id=0;
 		$object->statut=0;
 
-		if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
+		if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 		{
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
+			$this->error='ErrorSetupNotComplete';
+			return -1;
 		}
+		
+		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
 		$modPropale = new $obj;
 		$numpr = $modPropale->getNextValue($soc,$object);
@@ -2009,17 +2012,17 @@ class Propal extends CommonObject
 	 */
 	function getNextNumRef($soc)
 	{
-		global $db, $langs;
+		global $conf, $db, $langs;
 		$langs->load("propal");
 
 		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/propale/";
 
-		if (defined("PROPALE_ADDON") && PROPALE_ADDON)
+		if (! empty($conf->global->PROPALE_ADDON))
 		{
-			$file = PROPALE_ADDON.".php";
+			$file = $conf->global->PROPALE_ADDON.".php";
 
 			// Chargement de la classe de numerotation
-			$classname = PROPALE_ADDON;
+			$classname = $conf->global->PROPALE_ADDON;
 			require_once($dir.$file);
 
 			$obj = new $classname();

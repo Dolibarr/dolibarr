@@ -36,9 +36,9 @@ if ($conf->projet->enabled)
 	require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 }
-if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php"))
+if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php");
+	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php");
 }
 
 $langs->load("companies");

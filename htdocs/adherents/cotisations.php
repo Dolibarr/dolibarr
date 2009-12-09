@@ -66,7 +66,7 @@ if (! $user->rights->adherent->cotisation->lire)
 // Insertion de la cotisation dans le compte banquaire
 if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !='')
 {
-    if (defined("ADHERENT_BANK_USE") && $conf->global->ADHERENT_BANK_USE)
+    if ($conf->global->ADHERENT_BANK_USE)
     {
 		if (! $_POST["accountid"])
 		{
