@@ -67,3 +67,5 @@ AverageUnitPricePMPShort=Prix moyen pondéré (PMP)
 AverageUnitPricePMP=Prix moyen pondéré (PMP) d'aquisition
 EstimatedStockValueShort=Valorisation (PMP)
 EstimatedStockValue=Valorisation aquisition stock (PMP)
+DeleteAWarehouse=Supprimer un entrepôt
+ConfirmDeleteWarehouse=Etes-vous sur de vouloir supprimer l'entrepôt <b>%s</b> ?

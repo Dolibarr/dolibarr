@@ -67,3 +67,5 @@ AverageUnitPricePMPShort=Average input price
 AverageUnitPricePMP=Average input price
 EstimatedStockValueShort=Estimated value of stock
 EstimatedStockValue=Estimated value of stock
+DeleteAWarehouse=Delete a warehouse
+ConfirmDeleteWarehouse=Are you sure you want to delete the warehouse <b>%s</b> ?

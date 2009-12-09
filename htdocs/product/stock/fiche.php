@@ -49,7 +49,7 @@ $mesg = '';
  */
 
 // Ajout entrepot
-if ($_POST["action"] == 'add')
+if ($_POST["action"] == 'add' && $user->rights->stock->creer)
 {
 	$entrepot = new Entrepot($db);
 
@@ -65,8 +65,10 @@ if ($_POST["action"] == 'add')
 
 	if ($entrepot->libelle) {
 		$id = $entrepot->create($user);
-		if ($id > 0) {
-			Header("Location: fiche.php?id=$id");
+		if ($id > 0) 
+		{
+			header("Location: fiche.php?id=".$id);
+			exit;
 		}
 
 		$_GET["action"] = 'create';
@@ -75,6 +77,24 @@ if ($_POST["action"] == 'add')
 	else {
 		$mesg="<div class='error'>".$langs->trans("ErrorWarehouseRefRequired")."</div>";
 		$_GET["action"]="create";   // Force retour sur page cr�ation
+	}
+}
+
+// Delete warehouse
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->stock->supprimer)
+{
+	$entrepot = new Entrepot($db);
+	$entrepot->fetch($_REQUEST["id"]);
+	$result=$entrepot->delete($user);
+	if ($result > 0)
+	{
+		header("Location: ".DOL_URL_ROOT.'/product/stock/liste.php');
+		exit;	
+	}
+	else
+	{
+		$mesg='<div class="error">'.$entrepot->error.'</div>';
+		$_REQUEST['action']='';
 	}
 }
 
@@ -214,7 +234,14 @@ else
 
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
-
+			// Confirm delete third party
+			if ($_GET["action"] == 'delete')
+			{
+				$html = new Form($db);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$entrepot->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$entrepot->libelle),"confirm_delete",'',0,2);
+				if ($ret == 'html') print '<br>';
+			}
+			
 			print '<table class="border" width="100%">';
 
 			// Ref

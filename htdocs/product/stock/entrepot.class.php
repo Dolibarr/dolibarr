@@ -120,9 +120,9 @@ class Entrepot extends CommonObject
 
 	}
 
-	/*
-	 *    \brief      Mise a jour des information d'un entrepot
-	 *    \param      id      id de l'entrepot � modifier
+	/**
+	 *    \brief      Update properties of a warehouse
+	 *    \param      id      id of warehouse to modify
 	 *    \param      user
 	 */
 	function update($id, $user)
@@ -147,68 +147,125 @@ class Entrepot extends CommonObject
 		$sql .= ",fk_pays = " . $this->pays_id;
 		$sql .= " WHERE rowid = " . $id;
 
-		if ( $this->db->query($sql) )
+		$this->db->begin();
+
+		dol_syslog("Entrepot::update sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-	  return 1;
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
-	  $this->error=$this->db->error()." sql=$sql";;
-	  dol_syslog("Entrepot::Update return -1");
-	  dol_syslog("Entrepot::Update ".$this->error, LOG_ERR);
-	  return -1;
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Entrepot::update ".$this->error, LOG_ERR);
+			return -1;
 		}
 	}
 
 
 	/**
-	 *    \brief      Recup�eration de la base d'un entrepot
-	 *    \param      id      id de l'entrepot a r�cup�rer
+	 *    	\brief      Delete a warehouse
+	 *    	\param      user
+	 * 		\return		int		<0 if KO, >0 if OK
 	 */
-	function fetch ($id)
+	function delete($user)
 	{
-		$sql  = "SELECT rowid, label, description, statut, lieu, address, cp, ville, fk_pays";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
-		$sql .= " WHERE rowid = $id";
 
-		$result = $this->db->query($sql);
-		if ($result)
+		$this->db->begin();
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement";
+		$sql.= " WHERE fk_entrepot = " . $this->id;
+		dol_syslog("Entrepot::delete sql=".$sql);
+		$resql1=$this->db->query($sql);
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
+		$sql.= " WHERE fk_entrepot = " . $this->id;
+		dol_syslog("Entrepot::delete sql=".$sql);
+		$resql2=$this->db->query($sql);
+		
+		if ($resql1 && $resql2)
 		{
-	  $obj=$this->db->fetch_object($result);
-
-	  $this->id             = $obj->rowid;
-	  $this->ref            = $obj->rowid;
-	  $this->libelle        = $obj->label;
-	  $this->description    = $obj->description;
-	  $this->statut         = $obj->statut;
-	  $this->lieu           = $obj->lieu;
-	  $this->address        = $obj->address;
-	  $this->cp             = $obj->cp;
-	  $this->ville          = $obj->ville;
-	  $this->pays_id        = $obj->fk_pays;
-
-	  if ($this->pays_id)
-	  {
-	  	$sqlp = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
-	  	$resql=$this->db->query($sqlp);
-	  	if ($resql)
-	  	{
-	  		$objp = $this->db->fetch_object($resql);
-	  	}
-	  	else
-	  	{
-	  		dol_print_error($db);
-	  	}
-	  	$this->pays=$objp->libelle;
-	  }
-
-	  $this->db->free($result);
-	  return 1;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
+			$sql.= " WHERE rowid = " . $this->id;
+		
+			dol_syslog("Entrepot::delete sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dol_syslog("Entrepot::delete ".$this->error, LOG_ERR);
+				return -1;
+			}
 		}
 		else
 		{
-	  $this->error=$this->db->error();
-	  return -1;
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Entrepot::delete ".$this->error, LOG_ERR);
+			return -1;
+		}
+		
+	}
+
+
+	/**
+	 *    \brief      Recuperation de la base d'un entrepot
+	 *    \param      id      id de l'entrepot a recuperer
+	 */
+	function fetch($id)
+	{
+		$sql  = "SELECT rowid, label, description, statut, lieu, address, cp, ville, fk_pays";
+		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
+		$sql .= " WHERE rowid = ".$id;
+
+		dol_syslog("Entrepot::fetch sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$obj=$this->db->fetch_object($result);
+
+			$this->id             = $obj->rowid;
+			$this->ref            = $obj->rowid;
+			$this->libelle        = $obj->label;
+			$this->description    = $obj->description;
+			$this->statut         = $obj->statut;
+			$this->lieu           = $obj->lieu;
+			$this->address        = $obj->address;
+			$this->cp             = $obj->cp;
+			$this->ville          = $obj->ville;
+			$this->pays_id        = $obj->fk_pays;
+
+			if ($this->pays_id)
+			{
+				$sqlp = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
+				$resql=$this->db->query($sqlp);
+				if ($resql)
+				{
+					$objp = $this->db->fetch_object($resql);
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+				$this->pays=$objp->libelle;
+			}
+
+			$this->db->free($result);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
 		}
 	}
 
