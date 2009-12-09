@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/admin/fichinter.php
  *	\ingroup    fichinter
- *	\brief      Page d'administration/configuration du module FicheInter
+ *	\brief      Setup page of module Interventions
  *	\version    $Id$
  */
 
@@ -49,6 +49,11 @@ if ($_POST["action"] == 'updateMask')
 	$maskconst=$_POST['maskconst'];
 	$maskvalue=$_POST['maskvalue'];
 	if ($maskconst) dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+}
+
+if ($_POST["action"] == 'set_FICHINTER_FREE_TEXT')
+{
+	dolibarr_set_const($db, "FICHINTER_FREE_TEXT",$_POST["FICHINTER_FREE_TEXT"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'set_FICHINTER_DRAFT_WATERMARK')
@@ -386,6 +391,18 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnInterventions").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<textarea name="FICHINTER_FREE_TEXT" class="flat" cols="120">'.$conf->global->FICHINTER_FREE_TEXT.'</textarea>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 //Use draft Watermark
 $var=!$var;

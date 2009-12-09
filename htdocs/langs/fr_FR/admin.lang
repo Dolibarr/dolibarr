@@ -828,6 +828,7 @@ ClickToDialUrlDesc = Url appelée lors dun clic sur le picto téléphone. Dans l
 Bookmark4uSetup = Configuration du module Bookmark4u
 ##### Interventions ##### = undefined
 InterventionsSetup = Configuration du module Interventions
+FreeLegalTextOnInterventions = Mention complémentaire sur les fiches d'intervention
 ##### Members ##### = undefined
 MembersSetup = Configuration du module Adhérents
 MemberMainOptions = Options principales

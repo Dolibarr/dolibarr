@@ -23,10 +23,10 @@
  */
 
 /**
- \file       htdocs/admin/commande.php
- \ingroup    commande
- \brief      Page d'administration-configuration du module Commande
- \version    $Id$
+ *	\file       htdocs/admin/commande.php
+ *	\ingroup    commande
+ *	\brief      Setup page of module Order
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");

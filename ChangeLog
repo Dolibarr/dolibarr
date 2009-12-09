@@ -11,7 +11,8 @@ For users:
   with third party type.
 - New: VAT number is stored in one field. This is more "international".
 - New: task #9782 : Add possibility to delete a warehouse.
-- New: Add label for stock movements.
+- New: task #9640 : Add label for stock movements.
+- New: task #9916 : Add FREE text for interventions card
 - Fix: bug #28055 : Unable to modify the date of a cloned command.
 - Fix: bug #27891.
 - Fix: Change of numbering module was not effective.
