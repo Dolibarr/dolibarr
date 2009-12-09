@@ -370,7 +370,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetXY($this->marge_gauche,$posy);
 
-		if (defined("MAIN_INFO_SOCIETE_NOM"))
+		if ($conf->global->MAIN_INFO_SOCIETE_NOM)
 		{
 			$pdf->SetTextColor(0,0,200);
 			$pdf->SetFont('Arial','B',12);

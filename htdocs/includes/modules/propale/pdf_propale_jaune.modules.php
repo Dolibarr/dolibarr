@@ -349,7 +349,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		pdf_pagehead($pdf,$outputlangs,$pdf->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		if($object->statut==0 && defined("PROPALE_DRAFT_WATERMARK") )
+		if($object->statut==0 && ! empty($conf->global->PROPALE_DRAFT_WATERMARK))
 		{
 			$watermark_angle=deg2rad(55);
 			$watermark_x=5;

@@ -169,7 +169,7 @@ class ModeleNumRefDeliveryOrder
  */
 function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs='')
 {
-	global $langs;
+	global $conf,$langs;
 	$langs->load("deliveries");
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/pdf/";
@@ -177,9 +177,9 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 	// Positionne modele sur le nom du modele de bon de livraison a utiliser
 	if (! strlen($modele))
 	{
-		if (defined("LIVRAISON_ADDON_PDF") && LIVRAISON_ADDON_PDF)
+		if ($conf->global->LIVRAISON_ADDON_PDF)
 		{
-			$modele = LIVRAISON_ADDON_PDF;
+			$modele = $conf->global->LIVRAISON_ADDON_PDF;
 		}
 		else
 		{
