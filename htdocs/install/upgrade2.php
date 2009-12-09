@@ -1000,7 +1000,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
 				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
 				$check_sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-				$check_sql.= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.$select_obj->fk_facture_fourn.';';
+				$check_sql.= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.$select_obj->fk_facture_fourn;
 				$check_resql = $db->query($check_sql);
 				if ($check_resql)
 				{
@@ -1021,7 +1021,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 						$insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
 						$insert_sql.= ' fk_paiementfourn = \''.$select_obj->rowid.'\',';
 						$insert_sql.= ' fk_facturefourn  = \''.$select_obj->fk_facture_fourn.'\',';
-						$insert_sql.= ' amount           = \''.$select_obj->amount.'\';';
+						$insert_sql.= ' amount           = \''.$select_obj->amount.'\'';
 						$insert_resql = $db->query($insert_sql);
 						
 						if ($insert_resql)
@@ -1056,6 +1056,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 				print '<tr><td>'.$langs->trans("AlreadyDone").'</td></tr>';
 			}
 			$db->commit();
+			
 			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."paiementfourn DROP COLUMN fk_facture_fourn";
 			$db->query($sql);
 		}
