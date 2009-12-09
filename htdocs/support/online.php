@@ -97,10 +97,9 @@ foreach ($arrayofwidgets as $arraywidget)	// Loop on each user
 
 			// Only first language found is used for widget
 			$widgetid=$listofwidgets[$pos-1];
-			// Widget V1
-			// print '<iframe src="http://dnld0.sparkom.com/static/widget/widgetpro-iframe.html?accountId='.$widgetid.'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
-			// Widget V2
-			print '<iframe src="http://www.spark-angels.com/static/widget/widgetpro2-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.$arraywidget['logo'].'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
+			
+			// Widget V3
+			print '<iframe src="http://www.spark-angels.com/static/widget/template-pro3/widgetpro3-iframe.html?widgetId='.$widgetid.'&lgCode='.$langcode.'&'.$arraywidget['logo'].'" width="172" height="123" frameborder="0" scrolling="no" marginheight="0" > </iframe>';
 
 			print '</td>';
 			$found++;
