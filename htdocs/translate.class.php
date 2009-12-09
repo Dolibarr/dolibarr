@@ -329,6 +329,9 @@ class Translate {
 			if (empty($this->tab_loaded[$newdomain])) $this->tab_loaded[$newdomain]=2;           // Marque ce fichier comme non trouve
 		}
 
+		// Clear SeparatorDecimal, SeparatorThousand 
+		if ($this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]=''; 
+		
 		return 1;
 	}
 
