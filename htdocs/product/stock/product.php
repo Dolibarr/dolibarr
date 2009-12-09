@@ -58,6 +58,7 @@ if ($_POST["action"] == "create_stock" && ! $_POST["cancel"])
 	$product->create_stock($user, $_POST["id_entrepot"], $_POST["nbpiece"]);
 }
 
+// Transfer stock
 if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 {
 	if (is_numeric($_POST["nbpiece"]))
@@ -67,10 +68,12 @@ if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 		$product->correct_stock($user,
 		$_POST["id_entrepot"],
 		$_POST["nbpiece"],
-		$_POST["mouvement"]);
+		$_POST["mouvement"],
+		$_POST["label"]);
 	}
 }
 
+// Correct stock
 if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 {
 	if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
@@ -85,12 +88,14 @@ if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 			$result1=$product->correct_stock($user,
 			$_POST["id_entrepot_source"],
 			$_POST["nbpiece"],
-			1);
+			1,
+			$_POST["label"]);
 
 			$result2=$product->correct_stock($user,
 			$_POST["id_entrepot_destination"],
 			$_POST["nbpiece"],
-			0);
+			0,
+			$_POST["label"]);
 
 			if ($result1 >= 0 && $result2 >= 0)
 			{
@@ -268,10 +273,11 @@ if ($_GET["id"] || $_GET["ref"])
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
-		print '<table class="border" width="100%"><tr>';
-		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
+		print '<table class="border" width="100%">';
 
-		// Entrepot
+		// Warehouse
+		print '<tr>';
+		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
 		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
 		print '</td>';
@@ -281,8 +287,16 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<option value="1">'.$langs->trans("Delete").'</option>';
 		print '</select></td>';
 		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
-
 		print '</tr>';
+
+		// Label
+		print '<tr>';
+		print '<td width="20%">'.$langs->trans("Label").'</td>';
+		print '<td colspan="4">';
+		print '<input type="text" name="label" size="40" value="">';
+		print '</td>';
+		print '</tr>';
+
 		print '<tr><td colspan="5" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
@@ -291,7 +305,7 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	/*
-	 * Transfert of units
+	 * Transfer of units
 	 */
 	if ($_GET["action"] == "transfert")
 	{
@@ -299,16 +313,26 @@ if ($_GET["id"] || $_GET["ref"])
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
-		print '<table class="border" width="100%"><tr>';
+		print '<table class="border" width="100%">';
+		
+		print '<tr>';
 		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
 		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
 		print '</td>';
-
 		print '<td width="20%">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
 		$formproduct->selectWarehouses('','id_entrepot_destination','',1);
 		print '</td>';
+		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
+		print '</tr>';
+		
+		// Label
+		print '<tr>';
+		print '<td width="20%">'.$langs->trans("Label").'</td>';
+		print '<td colspan="5">';
+		print '<input type="text" name="label" size="40" value="">';
+		print '</td>';
+		print '</tr>';
 
-		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
 		print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';

@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/product/stock/mouvement.php
  *	\ingroup    stock
- *	\brief      Page liste des mouvements de stocks
+ *	\brief      Page to list stock movements
  *	\version    $Id$
  */
 
@@ -40,6 +40,7 @@ if (!$user->rights->produit->lire) accessforbidden();
 $idproduct = isset($_GET["idproduct"])?$_GET["idproduct"]:$_PRODUCT["idproduct"];
 $year = isset($_GET["year"])?$_GET["year"]:$_POST["year"];
 $month = isset($_GET["month"])?$_GET["month"]:$_POST["month"];
+$search_movment = isset($_REQUEST["search_movment"])?$_REQUEST["search_movment"]:'';
 $search_product = isset($_REQUEST["search_product"])?$_REQUEST["search_product"]:'';
 $search_warehouse = isset($_REQUEST["search_warehouse"])?$_REQUEST["search_warehouse"]:'';
 $search_user = isset($_REQUEST["search_user"])?$_REQUEST["search_user"]:'';
@@ -56,6 +57,7 @@ if ($_REQUEST["button_removefilter"])
 {
     $year='';
     $month='';
+    $search_movment="";
     $search_product="";
     $search_warehouse="";
     $search_user="";
@@ -74,7 +76,7 @@ $form=new Form($db);
 
 $sql = "SELECT p.rowid, p.label as produit, p.fk_product_type as type,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
-$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author,";
+$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s,";
 $sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m,";
@@ -106,6 +108,10 @@ if ($month > 0)
 else if ($year > 0) 
 {
 	$sql.= " AND m.datem between '".dol_get_first_day($year)."' AND '".dol_get_last_day($year)."'";
+}
+if (! empty($search_movment))
+{
+	$sql.= " AND m.label LIKE '%".addslashes($search_movment)."%'";
 }
 if (! empty($search_product))
 {
@@ -232,9 +238,13 @@ if ($resql)
 
 	$param='';
 	if ($_GET["id"]) $param.='&id='.$_GET["id"];
+	if ($search_movment)   $param.='&search_movment='.urlencode($search_movment);
+	if ($search_product)   $param.='&search_product='.urlencode($search_product);
+	if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
 	if ($sref) $param.='&sref='.urlencode($sref);
 	if ($snom) $param.='&snom='.urlencode($snom);
-	if ($idproduct > 0) $param.='&idproduct='.$idproduct;
+	if ($search_user)    $param.='&search_user='.urlencode($search_user);
+	if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
 	if ($_GET["id"]) print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num,0,'');
 	else print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num);
 
@@ -242,6 +252,7 @@ if ($resql)
 	print "<tr class=\"liste_titre\">";
 	//print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Product"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "s.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
@@ -259,8 +270,13 @@ if ($resql)
 	$syear = $year;
 	$form->select_year($syear,'year',1, '', $max_year);
 	print '</td>';
+	// Label of movment
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="20" name="search_product" value="'.($idproduct?$product->libelle:$_GET['search_product']).'">';
+	print '<input class="flat" type="text" size="12" name="search_movment" value="'.$search_movment.'">';
+	print '</td>';
+	// Product
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" size="12" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
@@ -284,6 +300,8 @@ if ($resql)
 		//print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
 		// Date
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
+		// Lbale of movment
+		print '<td>'.$objp->label.'</td>';
 		// Product
 		print '<td>';
 		$productstatic->id=$objp->rowid;

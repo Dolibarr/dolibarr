@@ -9,3 +9,5 @@
 
 ALTER TABLE llx_don ADD COLUMN ref varchar(30) DEFAULT NULL AFTER rowid;
 ALTER TABLE llx_don ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+
+ALTER TABLE llx_stock_mouvement ADD COLUMN label varchar(128);

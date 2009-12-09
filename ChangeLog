@@ -10,10 +10,11 @@ For users:
 - New: Can use {tttt} in numbering mask setup. It will be replaced
   with third party type.
 - New: VAT number is stored in one field. This is more "international".
-- New: task #9782 : Add possibility to delete a warehouse
-- Fix: bug #28055 : Unable to modify the date of a cloned command
-- Fix: bug #27891
-- Fix: Change of numbering module was not effective
+- New: task #9782 : Add possibility to delete a warehouse.
+- New: Add label for stock movements.
+- Fix: bug #28055 : Unable to modify the date of a cloned command.
+- Fix: bug #27891.
+- Fix: Change of numbering module was not effective.
 
 
 ***** ChangeLog for 2.7 compared to 2.6 *****

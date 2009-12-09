@@ -2161,12 +2161,13 @@ class Product extends CommonObject
 	/**
 	 *  \brief  	Ajuste le stock d'un entrepot pour le produit d'un delta donne
 	 *  \param  	user            utilisateur qui demande l'ajustement
-	 *  \param  	id_entrepot     id de l'entrepot
-	 *  \param  	nbpiece         nombre de pieces
-	 *  \param  	mouvement       0 = ajout, 1 = suppression
+	 *  \param  	id_entrepot     id of warehouse
+	 *  \param  	nbpiece         nb of units
+	 *  \param  	mouvement       0 = add, 1 = remove
+	 * 	\param		label			Label of stock movment
 	 * 	\return     int     		<0 if KO, >0 if OK
 	 */
-	function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
+	function correct_stock($user, $id_entrepot, $nbpiece, $mouvement, $label='')
 	{
 		if ($id_entrepot)
 		{
@@ -2183,12 +2184,12 @@ class Product extends CommonObject
 				if ($row->nb > 0)
 				{
 					// Record already exists, we make an update
-					$result=$this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement);
+					$result=$this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement, $label);
 				}
 				else
 				{
 					// Record not yet available, we make an insert
-					$result=$this->create_stock($user, $id_entrepot, $nbpiece, $mouvement);
+					$result=$this->create_stock($user, $id_entrepot, $nbpiece, $mouvement, $label);
 				}
 			}
 
@@ -2208,14 +2209,15 @@ class Product extends CommonObject
 
 	/**
 	 *  \brief  	Augmente ou reduit la valeur de stock pour le produit
-	 *  \param  	user            utilisateur qui demande l'ajustement
-	 *  \param  	id_entrepot     id de l'entrepot
-	 *  \param  	nbpiece         nombre de pieces
-	 *  \param  	movement        0 = ajout, 1 = suppression
+	 *  \param  	user            user that make change
+	 *  \param  	id_entrepot     id of warehouse
+	 *  \param  	nbpiece         nb of units
+	 *  \param  	movement        0 = add, 1 = remove
+	 * 	\param		label			Label of stock movment
 	 *  \return     int     		<0 if KO, >0 if OK
 	 * 	\remarks	Called by correct_stock
 	 */
-	function ajust_stock($user, $id_entrepot, $nbpiece, $movement)
+	function ajust_stock($user, $id_entrepot, $nbpiece, $movement, $label='')
 	{
 		require_once(DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php");
 
@@ -2223,21 +2225,22 @@ class Product extends CommonObject
 		$op[1] = "-".trim($nbpiece);
 
 		$movementstock=new MouvementStock($this->db);
-		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0);
+		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0,$label);
 
 		return $result;
 	}
 
 	/**
 	 *  \brief  	Entre un nombre de piece du produit en stock dans un entrepot
-	 * 	\param  	user            utilisateur qui demande l'ajustement
-	 * 	\param  	id_entrepot     id de l'entrepot
-	 *  \param  	nbpiece         nombre de pieces
-	 *  \param  	movement        0 = ajout, 1 = suppression
+	 *  \param  	user            user that make change
+	 *  \param  	id_entrepot     id of warehouse
+	 *  \param  	nbpiece         nb of units
+	 *  \param  	movement        0 = add, 1 = remove
+	 * 	\param		label			Label of stock movment
 	 *  \return     int     		<0 if KO, >0 if OK
 	 * 	\remarks	Called by correct_stock
 	 */
-	function create_stock($user, $id_entrepot, $nbpiece, $movement=0)
+	function create_stock($user, $id_entrepot, $nbpiece, $movement=0, $label='')
 	{
 		require_once(DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php");
 
@@ -2245,7 +2248,7 @@ class Product extends CommonObject
 		$op[1] = "-".trim($nbpiece);
 
 		$movementstock=new MouvementStock($this->db);
-		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0);
+		$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],0,0,$label);
 
 		return $result;
 	}

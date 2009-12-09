@@ -45,14 +45,15 @@ class MouvementStock
 	 * 		\param		qty			Qty of movement (can be <0 or >0)
 	 * 		\param		type		Direction of movement: 2=output (stock decrease), 3=input (stock increase)
 	 * 		\param		type		Unit price HT of product
+	 * 		\pamam		label		Label of stock movment
 	 *      \return     int     	<0 if KO, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='')
 	{
 		global $conf;
 
 		$error = 0;
-		dol_syslog("MouvementStock::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price");
+		dol_syslog("MouvementStock::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
 
 		$this->db->begin();
 
@@ -67,9 +68,11 @@ class MouvementStock
 		if (1 == 1)	// Always change stock for current product, change for subproduct is done after
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
-			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
-			$sql.= " VALUES (".$this->db->idate(gmmktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.", ".$user->id;
-			$sql.= ",'".price2num($price)."')";
+			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";
+			$sql.= " VALUES (".$this->db->idate(gmmktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
+			$sql.= " ".$user->id.",";
+			$sql.= " '".addslashes($label)."',";
+			$sql.= " '".price2num($price)."')";
 
 			dol_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
 			if ($resql = $this->db->query($sql))

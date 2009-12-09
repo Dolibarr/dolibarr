@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceofrge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,6 +29,6 @@ create table llx_stock_mouvement
   value           integer,
   price           float(13,4) DEFAULT 0,
   type_mouvement  smallint,
-  fk_user_author  integer
+  fk_user_author  integer,
+  label           varchar(128)
 )type=innodb;
-
