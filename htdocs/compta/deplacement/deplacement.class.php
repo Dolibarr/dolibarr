@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +19,18 @@
  */
 
 /**
-        \file       htdocs/compta/deplacement/deplacement.class.php
-        \ingroup    deplacement
-        \brief      Fichier de la classe des deplacements
-        \version    $Id$
-*/
+ *      \file       htdocs/compta/deplacement/deplacement.class.php
+ *      \ingroup    deplacement
+ *      \brief      Fichier de la classe des deplacements
+ *      \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 /**
-        \class      Deplacement
-        \brief      Class to manage trips and working credit notes
-*/
+ *      \class      Deplacement
+ *      \brief      Class to manage trips and working credit notes
+ */
 class Deplacement extends CommonObject
 {
 	var $db;
@@ -43,8 +44,9 @@ class Deplacement extends CommonObject
 	var $socid;
 	
 	
-	/*
-	* Constructor
+   /**
+	*  \brief  Constructeur de la classe
+	*  \param  DB          handler acces base de donnees
 	*/
 	function Deplacement($DB)
 	{
@@ -59,9 +61,12 @@ class Deplacement extends CommonObject
 	 * @param unknown_type $user	User that creat
 	 * @param unknown_type $type	Type of record: 0=trip, 1=credit note
 	 * @return unknown
+	 * @TODO Add ref number
 	 */
 	function create($user)
 	{
+		global $conf;
+		
 		// Check parameters
 		if (empty($this->type) || $this->type < 0)
 		{
@@ -76,9 +81,19 @@ class Deplacement extends CommonObject
 		
 		$this->db->begin();
 		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement";
-		$sql.= " (datec, fk_user_author, fk_user, type)";
-		$sql.= " VALUES (".$this->db->idate(mktime()).", ".$user->id.", ".$this->fk_user.", '".$this->type."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (";
+		$sql.= "datec";
+		$sql.= ", entity";
+		$sql.= ", fk_user_author";
+		$sql.= ", fk_user";
+		$sql.= ", type";
+		$sql.= ") VALUES (";
+		$sql.= $this->db->idate(mktime());
+		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$user->id;
+		$sql.= ", ".$this->fk_user;
+		$sql.= ", '".$this->type."'";
+		$sql.= ")";
 
 		dol_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -108,7 +123,6 @@ class Deplacement extends CommonObject
 
 	/**
 	 * 
-	 *
 	 */
 	function update($user)
 	{
@@ -151,7 +165,7 @@ class Deplacement extends CommonObject
 		}
 	}
 
-	/**
+   /**
 	*
 	*/
 	function fetch($id)
@@ -183,7 +197,7 @@ class Deplacement extends CommonObject
 		}
 	}
 
-	/*
+   /**
 	*
 	*/
 	function delete($id)

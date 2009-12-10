@@ -21,7 +21,7 @@
 
 /**
 	    \file       htdocs/compta/deplacement/index.php
-		\brief      Page liste des déplacements
+		\brief      Page liste des deplacements
 		\version	$Id$
 */
 
@@ -56,16 +56,16 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$sql = "SELECT s.nom, s.rowid as socid,";                       // Ou
-$sql.= " d.rowid, d.type, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
-$sql.= " u.name, u.firstname";                                  // Qui
+$sql = "SELECT s.nom, s.rowid as socid,";								// Ou
+$sql.= " d.rowid, d.type, ".$db->pdate("d.dated")." as dd, d.km, ";		// Comment
+$sql.= " u.name, u.firstname";											// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on d.fk_soc = s.rowid"; 
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE d.fk_user = u.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " AND d.entity = ".$conf->entity;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 

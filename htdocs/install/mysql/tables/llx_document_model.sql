@@ -24,12 +24,12 @@
 
 create table llx_document_model
 (
-  	rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  	nom         	varchar(50),
-  	entity        integer DEFAULT 1 NOT NULL,	-- multi company id
-  	type			    varchar(20) NOT NULL,
-  	libelle		    varchar(255),
-  	description 	text
+  	rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  	nom				varchar(50),
+  	entity			integer DEFAULT 1 NOT NULL,	-- multi company id
+  	type			varchar(20) NOT NULL,
+  	libelle			varchar(255),
+  	description		text
 )type=innodb;
 
 -- 

@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,14 +21,16 @@
 
 create table llx_deplacement
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime NOT NULL,
-  tms             timestamp,
-  dated           datetime,
-  fk_user	        integer NOT NULL,
-  fk_user_author  integer,
-  type            varchar(12) NOT NULL,
-  km              real,
-  fk_soc          integer,
-  note            text
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  ref				varchar(30) DEFAULT NULL,     -- Ref donation (TODO change to NOT NULL)
+  entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
+  datec				datetime NOT NULL,
+  tms				timestamp,
+  dated				datetime,
+  fk_user			integer NOT NULL,
+  fk_user_author	integer,
+  type				varchar(12) NOT NULL,
+  km				real,
+  fk_soc			integer,
+  note				text
 )type=innodb;

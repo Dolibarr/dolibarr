@@ -25,7 +25,7 @@
 
 
 /*! \class ComptaCompte
-    \brief Classe permettant la gestion des comptes généraux de compta
+    \brief Classe permettant la gestion des comptes generaux de compta
 */
 
 class ComptaCompte
@@ -38,7 +38,7 @@ class ComptaCompte
 
   /**
    *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
+   *    \param  DB          handler acces base de donnees
    *    \param  id          id compte (0 par defaut)
    */
 	 
@@ -49,7 +49,7 @@ class ComptaCompte
     }  
 
   /**
-   *    \brief  Insère le produit en base
+   *    \brief  Insere le produit en base
    *    \param  user utilisateur qui effectue l'insertion
    */
 	 
