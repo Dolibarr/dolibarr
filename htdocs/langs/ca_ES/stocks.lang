@@ -67,3 +67,5 @@ AverageUnitPricePMPShort = Preu mitjà ponderat (PMP)
 AverageUnitPricePMP = Preu mitjà ponderat (PMP)
 EstimatedStockValueShort = Valor (PMP)
 EstimatedStockValue = Valor estimat d'estoc
+DeleteAWarehouse = Eliminar un magatzem
+ConfirmDeleteWarehouse = Esteu segur que voleu eliminar el magatzem <b>%s</b> ?
