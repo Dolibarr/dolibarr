@@ -545,11 +545,11 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='')
 	$numFinal = $mask;
 
 	// We replace special codes except refclient
-	$numFinal = str_replace('{yyyy}',date("Y",$date),$numFinal);
-	$numFinal = str_replace('{yy}',date("y",$date),$numFinal);
-	$numFinal = str_replace('{y}' ,substr(date("y",$date),2,1),$numFinal);
-	$numFinal = str_replace('{mm}',date("m",$date),$numFinal);
-	$numFinal = str_replace('{dd}',date("d",$date),$numFinal);
+	$numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date),$numFinal);
+	$numFinal = preg_replace('/\{yy\}/i',date("y",$date),$numFinal);
+	$numFinal = preg_replace('/\{y\}/i' ,substr(date("y",$date),2,1),$numFinal);
+	$numFinal = preg_replace('/\{mm\}/i',date("m",$date),$numFinal);
+	$numFinal = preg_replace('/\{dd\}/i',date("d",$date),$numFinal);
 
 	// Now we replace the counter
 	$maskbefore='{'.$masktri.'}';
