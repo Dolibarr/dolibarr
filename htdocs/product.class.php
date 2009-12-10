@@ -111,6 +111,9 @@ class Product extends CommonObject
 
 	//! Id du fournisseur
 	var $product_fourn_id;
+	
+	//! Product ID already linked to a reference supplier
+	var $product_id_already_linked;
 
 	/**
 	 *    \brief      Constructeur de la classe
@@ -1679,10 +1682,9 @@ class Product extends CommonObject
 	{
 		global $conf;
 		
-		$sql = "SELECT count(*) as nb";
+		$sql = "SELECT rowid, fk_product";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-		$sql.= " WHERE fk_product = ".$this->id;
-		$sql.= " AND fk_soc = ".$id_fourn;
+		$sql.= " WHERE fk_soc = ".$id_fourn;
 		$sql.= " AND ref_fourn = '".$ref_fourn."'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -1691,7 +1693,10 @@ class Product extends CommonObject
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			if ($obj->nb == 0)
+			$nb = count($obj);
+			
+			// The reference supplier does not exist, it creates for this product.
+			if (!$nb)
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur (";
 				$sql.= "datec";
@@ -1722,23 +1727,19 @@ class Product extends CommonObject
 					return -1;
 				}
 			}
-			else
+			// If the reference supplier is already linked to this product
+			else if ($obj->fk_product == $this->id)
 			{
-				$sql = "SELECT rowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-				$sql.= " WHERE fk_product = ".$this->id;
-				$sql.= " AND fk_soc = ".$id_fourn;
-				$sql.= " AND ref_fourn = '".$ref_fourn."'";
-				$sql.= " AND entity = ".$conf->entity;
-
-				$resql=$this->db->query($sql);
-				if ($resql)
-				{
-					$obj = $this->db->fetch_object($resql);
-					$this->product_fourn_id = $obj->rowid;
-				}
+				$this->product_fourn_id = $obj->rowid;
 			
 				return 0;
+			}
+			// If the reference provider is not linked to this product
+			else
+			{
+				$this->product_id_already_linked = $obj->fk_product;
+				
+				return 2;
 			}
 		}
 		else

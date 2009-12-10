@@ -115,10 +115,14 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 				$error++;
 				$mesg='<div class="error">'.$product->error.'</div>';
 			}
-			if ($ret == 0)
+			if ($ret == 2)
 			{
 				$error++;
-				$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct").'</div>';
+				
+				$product->fetch($product->product_id_already_linked);
+				$productLink = $product->getNomUrl(1,'supplier');
+				
+				$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink).'</div>';
 			}
 		}
 		
@@ -136,10 +140,6 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 					{
 						$error++;
 						$mesg='<div class="error">'.$product->error.'</div>';
-						if ($ret == -2)
-						{
-							$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
-						}
 					}
 				}
 				else
