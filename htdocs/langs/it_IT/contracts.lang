@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - contracts      
+CHARSET=UTF-8
 ContractsArea					  =Sezione contratti per servizi
 ListOfContracts					  =Elenco dei contratti
 LastContracts					  =Ultimi %s contratti modificati

@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - compta        
+CHARSET=UTF-8
 Accountancy					 =Contabilità
 AccountancyCard					 =Scheda contabilità 
 Treasury					 =Tesoreria

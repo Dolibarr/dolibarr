@@ -1,8 +1,4 @@
 # Dolibarr language file - it_IT - domains
+CHARSET=UTF-8
 DomainNames=Nomi di dominio
 NewDomain=Nuovo dominio
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

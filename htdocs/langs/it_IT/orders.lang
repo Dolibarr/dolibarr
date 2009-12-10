@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - orders               
+CHARSET=UTF-8
 OrdersArea						=Sezione ordini clienti
 SuppliersOrdersArea					=Sezione ordini fornitori 
 OrderCard						=Scheda ordine 

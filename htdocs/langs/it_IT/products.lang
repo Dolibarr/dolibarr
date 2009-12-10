@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - products         
+CHARSET=UTF-8
 ProductServiceCard				    =Scheda Prodotti / Servizi
 Products					    =Prodotti 
 Services					    =Servizi 

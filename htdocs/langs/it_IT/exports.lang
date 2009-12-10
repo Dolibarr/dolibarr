@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - exports         
+CHARSET=UTF-8
 ExportsArea					   =Sezione esportazioni
 ImportArea					   =Sezione importazioni
 NewExport					   =Nuova esportazione 

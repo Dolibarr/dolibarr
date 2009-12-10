@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - categories   	
+CHARSET=UTF-8
 Category					=Categoria
 Categories                  =Categorie
 Rubrique=Categoria

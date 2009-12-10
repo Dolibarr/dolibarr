@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - commercial     
+CHARSET=UTF-8
 Commercial					  =Commerciale
 CommercialArea					  =Sezione commerciale
 CommercialCard					  =Scheda commerciale

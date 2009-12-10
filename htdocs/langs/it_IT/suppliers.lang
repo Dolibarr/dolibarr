@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - suppliers     
+CHARSET=UTF-8
 Suppliers					 =Fornitori 
 Supplier					 =Fornitore 
 AddSupplier					 =Aggiungi fornitore 

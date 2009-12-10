@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - errors          
+CHARSET=UTF-8
 ErrorLoginAlreadyExists			    =Login %s esiste già. 
 ErrorGroupAlreadyExists			    =Gruppo %s esiste già. 
 ErrorDuplicateTrigger				   =Un trigger file con class name '<b> %s </b>' è presente più volte. Rimuovi file trigger duplicati dalla directory '<b> %s </b>'.

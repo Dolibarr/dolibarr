@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - propal              
+CHARSET=UTF-8
 Proposals					       =Preventivi/Proposte commerciali
 Proposal					       =Preventivo/Proposta commerciale  
 ProposalsDraft					       =Bozza di proposte commerciali 

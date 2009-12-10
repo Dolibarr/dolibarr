@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - shop
+CHARSET=UTF-8
 Shop				       =Negozio 
 ShopWeb				       =Web Shop 
 LastOrders			       =Ultimi ordini 
@@ -8,9 +9,3 @@ LastCustomers			       =Ultimo clienti
 OSCommerceShop			       =OsCommerce negozio 
 OSCommerce			       =OsCommerce 
 AddProd				       =Vendere online
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

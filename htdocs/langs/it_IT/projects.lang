@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - projects 
+CHARSET=UTF-8
 Project					    =Progetto 
 Projects				    =Progetti 
 Myprojects				    =I miei progetti 

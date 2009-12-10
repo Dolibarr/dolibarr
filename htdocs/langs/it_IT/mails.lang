@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - mails                     
+CHARSET=UTF-8
 Mailing							     =E-mail 
 EMailing						     =E-mail 
 Mailings						     =EMailings 

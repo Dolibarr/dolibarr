@@ -1,5 +1,5 @@
 # Dolibarr language file - it_IT - install                           
-CHARSET                                                       	     =ISO-8859-1 
+CHARSET=UTF-8
 InstallEasy							     =Abbiamo cercato di rendere l' installazione di Dolibarr più semplice possibile. Basta seguire le istruzioni passo per passo. 
 MiscellanousChecks						     =Verificare prerequisiti  
 DolibarrWelcome							     =Benvenuti in Dolibarr 

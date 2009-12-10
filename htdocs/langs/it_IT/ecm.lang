@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - ecm         	
+CHARSET=UTF-8
 MenuECM					       =Documenti
 DocsMine				       =I miei documenti
 DocsGenerated				       =Generata documenti
