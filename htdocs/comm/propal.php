@@ -1449,8 +1449,8 @@ if ($id > 0 || ! empty($ref))
 				else print '&nbsp;';
 				print '</td>';
 
-				// Remise %
-				if ($objp->remise_percent > 0 && $objp->special_code != 3)
+				// Remise percent (negative or positive)
+				if (!empty($objp->remise_percent) && $objp->special_code != 3)
 				{
 					print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs)."</td>\n";
 				}

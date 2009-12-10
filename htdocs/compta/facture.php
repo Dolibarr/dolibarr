@@ -2869,6 +2869,8 @@ else
 						{
 							print '<td>&nbsp;</td>';
 						}
+						
+						// Montant total HT
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
 						// Icone d'edition et suppression

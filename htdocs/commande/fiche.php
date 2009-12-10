@@ -1657,7 +1657,9 @@ else
 						}
 						else print '&nbsp;';
 						print '</td>';
-						if ($objp->remise_percent > 0)
+						
+						//Remise percent (negative or positive)
+						if (!empty($objp->remise_percent))
 						{
 							print '<td align="right">'.dol_print_reduction($objp->remise_percent,$langs).'</td>';
 						}
@@ -1665,6 +1667,8 @@ else
 						{
 							print '<td>&nbsp;</td>';
 						}
+						
+						// Montant total HT
 						print '<td align="right" nowrap="nowrap">'.price($objp->total_ht).'</td>';
 
 						// Icone d'edition et suppression
