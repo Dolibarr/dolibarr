@@ -1,4 +1,5 @@
 # Dolibarr language file - it_IT - admin                                                              
+CHARSET=UTF-8
 Version                                                                    =Versione
 VersionExperimental							   =Sperimentale
 VersionDevelopment							   =Sviluppo
@@ -514,12 +515,12 @@ SummarySystem								   =Informazioni sul sistema di sintesi
 SummaryConst								   =Elenco di tutti i parametri di impostazione Dolibarr
 SystemUpdate								   =Aggiornamento del sistema
 SystemSuccessfulyUpdate							   =Il sistema � stato aggiornato con successo
-MenuCompanySetup							   =Societ� / Fondazione
+MenuCompanySetup							   =Società / Fondazione
 MenuNewUser								   =Nuovo utente
-MenuTopManager								   =Gestione men� principale 
-MenuLeftManager								   =Gestione men� a sinistra
-DefaultMenuTopManager							   =Gestione men� principale
-DefaultMenuLeftManager							   =Gestione men� a sinistra
+MenuTopManager								   =Gestione menà principale 
+MenuLeftManager								   =Gestione menà a sinistra
+DefaultMenuTopManager							   =Gestione menà principale
+DefaultMenuLeftManager							   =Gestione menà a sinistra
 Skin									   =tema Skin 
 DefaultSkin								   =Tema di default dello Skin
 MaxSizeList								   =Max lunghezza per lista
@@ -529,13 +530,13 @@ MessageLogin								   =Messaggio pagina di accesso
 PermanentLeftSearchForm							   =Modulo di ricerca permanente nel menu di sinistra
 DefaultLanguage								   =La lingua di default da usare (codice lingua)
 EnableMultilangInterface						   =Attiva l'interfaccia multilingue
-SystemSuccessfulyUpdated						   =Il sistema � stato aggiornato con successo
-CompanyInfo								   =Informazioni societ� / fondazione 
-CompanyIds								   =Identit� societ� / fondazione
+SystemSuccessfulyUpdated						   =Il sistema à stato aggiornato con successo
+CompanyInfo								   =Informazioni società / fondazione 
+CompanyIds								   =Identità società / fondazione
 CompanyName								   =Nome
 CompanyAddress								   =Indirizzo
 CompanyZip								   =Cap
-CompanyTown								   =Citt�
+CompanyTown								   =Città
 CompanyCountry								   =Paese
 CompanyCurrency								   =Principali valute
 DoNotShow								   =Non mostrare
@@ -562,39 +563,39 @@ DelaysOfToleranceCustomerBillsUnpaid					   =Tolleranza di ritardo (in giorni) p
 DelaysOfToleranceTransactionsToConciliate				   =Tolleranza di ritardo (in giorni) prima di allertare sui movimenti di banca in attesa di riconciliazione
 DelaysOfToleranceChequesToDeposit					   =Tolleranza di ritardo (in giorni), prima segnalazione per il deposito di assegni a che fare
 SetupDescription1							   =Tutti i parametri disponibili nella sezione impostazioni consentono il setup Dolibarr prima di iniziare l'uso.
-SetupDescription2							   =I 2 pi� importanti passi dell'installazione avvengono seguendo le prime 2 voci a sinistra nel menu impostazioni, ovvero la pagina di configurazione Azienda / Fondazione  e la pagina di configurazione moduli:
-SetupDescription3							   =L'impostazione <b> Azienda / Fondazione </b>  � necessaria perch� le informazioni inserite saranno usate da Dolibarr per le visualizzazioni ed il comportamento (per esempio per le funzioni correlate al tuo paese).
-SetupDescription4							   =Le impostazioni per i <b> moduli </b> sono necessarie perch� Dolibarr non � un semplice ERP / CRM, ma una somma di diversi moduli, tutti pi� o meno indipendenti. E 'solo dopo aver attivato i moduli che potrai usufruire delle caratteristiche che vedrete apparse nel Dolibarr menu.
+SetupDescription2							   =I 2 pià importanti passi dell'installazione avvengono seguendo le prime 2 voci a sinistra nel menu impostazioni, ovvero la pagina di configurazione Azienda / Fondazione  e la pagina di configurazione moduli:
+SetupDescription3							   =L'impostazione <b> Azienda / Fondazione </b>  à necessaria perchà le informazioni inserite saranno usate da Dolibarr per le visualizzazioni ed il comportamento (per esempio per le funzioni correlate al tuo paese).
+SetupDescription4							   =Le impostazioni per i <b> moduli </b> sono necessarie perchà Dolibarr non à un semplice ERP / CRM, ma una somma di diversi moduli, tutti pià o meno indipendenti. E 'solo dopo aver attivato i moduli che potrai usufruire delle caratteristiche che vedrete apparse nel Dolibarr menu.
 EventsSetup								   =Impostazioni di log di eventi
 LogEvents								   =Eventi di audit di sicurezza
 Audit									   =Audit
 ListEvents								   =Audit eventi
 ListOfSecurityEvents							   =Elenco degli eventi di sicurezza Dolibarr
-LogEventDesc								   =� possibile attivare il registro di eventi di sicurezza Dolibarr qui. Gli amministratori possono quindi vedere il suo contenuto attraverso <b> dal menu Strumenti di sistema - Audit </b>. Attenzione, questa funzione pu� consumare una grande quantit� di dati nel database.
+LogEventDesc								   =à possibile attivare il registro di eventi di sicurezza Dolibarr qui. Gli amministratori possono quindi vedere il suo contenuto attraverso <b> dal menu Strumenti di sistema - Audit </b>. Attenzione, questa funzione puà consumare una grande quantità di dati nel database.
 AreaForAdminOnly							   =Tali funzioni possono essere utilizzate solo da utenti di tipo <b> amministratore </b>. Le funzioni per l'amministratore sono facilmente individuabili in Dolibarr grazie alla seguente icona:
-SystemInfoDesc								   =Le informazioni di sistema sono varie informazioni tecniche visibili in modalit� di sola lettura e solo agli amministratori.
-SystemAreaForAdminOnly							   =Questa sezione � disponibile solo agli utenti ti tipo amministratore. Nessuna delle autorizzazioni Dolibarr pu� ridurre questo limite.
-CompanyFundationDesc							   =Modifica in questa pagina tutte le informazioni note della societ� o della fondazione che intendi gestire
-DisplayDesc								   =Qui � possibile scegliere i parametri relativi al Dolibarr look and feel 
+SystemInfoDesc								   =Le informazioni di sistema sono varie informazioni tecniche visibili in modalità di sola lettura e solo agli amministratori.
+SystemAreaForAdminOnly							   =Questa sezione à disponibile solo agli utenti ti tipo amministratore. Nessuna delle autorizzazioni Dolibarr puà ridurre questo limite.
+CompanyFundationDesc							   =Modifica in questa pagina tutte le informazioni note della società o della fondazione che intendi gestire
+DisplayDesc								   =Qui à possibile scegliere i parametri relativi al Dolibarr look and feel 
 TriggersAvailable							   =Trigger disponibili
 TriggersDesc								   =Trigger sono file che modificare il comportamento del flusso di lavoro Dolibarr una volta copiato nella directory <b> htdocs / include / trigger </b>. Hanno realizzato nuove azioni, attivato su Dolibarr eventi (creazione di nuova impresa, fattura di convalida, ...).
 TriggerDisabledByName							   =Trigger in questo file sono disattivati da <b>-NoRun </b> suffisso in loro nome.
-TriggerDisabledAsModuleDisabled						   =Trigger in questo file sono disabili come modulo <b> %s </b> � disattivato.
+TriggerDisabledAsModuleDisabled						   =Trigger in questo file sono disabili come modulo <b> %s </b> à disattivato.
 TriggerAlwaysActive							   =Trigger in questo file sono attivi, qualunque siano i moduli attivati Dolibarr.
-TriggerActiveAsModuleActive						   =Trigger in questo file sono attivi come modulo <b> %s </b> � abilitato.
+TriggerActiveAsModuleActive						   =Trigger in questo file sono attivi come modulo <b> %s </b> à abilitato.
 GeneratedPasswordDesc							   =Definire qui regola che si desidera utilizzare per generare una nuova password se chiedere che la password generata in automatico
-DictionnaryDesc								   =Definire qui tutti i dati di riferimento. � possibile completare il valore predefinito con la tua.
+DictionnaryDesc								   =Definire qui tutti i dati di riferimento. à possibile completare il valore predefinito con la tua.
 ConstDesc								   =Questa pagina ti permette di modificare tutti gli altri parametri non sono disponibili nelle pagine precedenti. Essi sono riservati parametri per gli sviluppatori avanzati o per troubleshouting.
 OnceSetupFinishedCreateUsers						   =Attenzione, sei un utente amministratore Dolibarr. Gli utenti amministratore sono utilizzati per impostare Dolibarr. Per un uso abituale di Dolibarr, si raccomanda di non utilizzare un utente amministratore ma crearne uno nuovo dal menu utenti e gruppi .
 MiscellanousDesc							   =Definire qui tutti gli altri parametri relativi alla sicurezza.
 LimitsSetup								   =Limiti / impostazioni di precisione
-LimitsDesc								   =� possibile definire i limiti e la precisione utilizzato da qui Dolibarr
+LimitsDesc								   =à possibile definire i limiti e la precisione utilizzato da qui Dolibarr
 MAIN_MAX_DECIMALS_UNIT							   =Max decimali per i prezzi unitari
 MAIN_MAX_DECIMALS_TOT							   =Max decimali per il totale dei prezzi
 MAIN_MAX_DECIMALS_SHOWN							   =Max decimali per i prezzi indicati sullo schermo (Aggiungi <b>...</b> dopo questo numero se si desidera visualizzare <b>...</b> quando il numero viene troncato quando mostrato sullo schermo)
 ParameterActiveForNextInputOnly						   =Parametro efficace solo per il prossimo inserimento 
-NoEventOrNoAuditSetup							   =Nessun evento di sicurezza � stato ancora registrato. Questo pu� essere un normale controllo se non � stato attivato sulla pagina "Impostazioni - sicurezza - controllo".
-NoEventFoundWithCriteria						   =Nessun evento di sicurezza � stato trovato per la ricerca di tali criteri.
+NoEventOrNoAuditSetup							   =Nessun evento di sicurezza à stato ancora registrato. Questo puà essere un normale controllo se non à stato attivato sulla pagina "Impostazioni - sicurezza - controllo".
+NoEventFoundWithCriteria						   =Nessun evento di sicurezza à stato trovato per la ricerca di tali criteri.
 									   
 ##### Users setup #####							   
 UserGroupSetup								   =Impostazioni utenti e gruppi
@@ -606,17 +607,17 @@ DisableForgetPasswordLinkOnLogonPage					   =Non mostrare il link "Hai dimentica
 ##### Company setup #####						   
 CompanySetup								   =Impostazioni modulo aziende
 CompanyCodeChecker							   =Modulo per la generazione e verifica dei codici di terzi  (cliente o fornitore)
-AccountCodeManager							   =Modulo per la generazione di codice di contabilit� (cliente o fornitore)
+AccountCodeManager							   =Modulo per la generazione di codice di contabilità (cliente o fornitore)
 ModuleCompanyCodeAquarium						   =Restituisce di un codice contabile costruito da "401" seguito dal  codice del fornitore terzo per un codice contabile fornitori, e "411" seguito dal  codice del cliente terzo per un codice contabile cliente.
 ModuleCompanyCodePanicum						   =Restituisce un codice contabile vuoto.
-ModuleCompanyCodeDigitaria						   =Contabilit� codice dipende dal codice di terze parti. Il codice � composto di carattere "C" nella prima posizione seguita da i primi 5 caratteri del codice di terze parti.
+ModuleCompanyCodeDigitaria						   =Contabilità codice dipende dal codice di terze parti. Il codice à composto di carattere "C" nella prima posizione seguita da i primi 5 caratteri del codice di terze parti.
 UseNotifications							   =Utilizzare le notifiche
 NotificationsDesc							   =Notifiche funzione consente di inviare in silenzio automatico della posta, per alcuni Dolibarr eventi, alle imprese che sono configurati per
 ##### Webcal setup #####						   
 WebCalSetup								   =Impostazioni collegamento Webcalendar
 WebCalSyncro								   =Aggiungi Dolibarr eventi di WebCalendar
 WebCalAllways								   =Tutti i giorni, non chiedendo
-WebCalYesByDefault							   =Su richiesta (s� per impostazione predefinita)
+WebCalYesByDefault							   =Su richiesta (sà per impostazione predefinita)
 WebCalNoByDefault							   =Su richiesta (non di default)
 WebCalNever								   =Mai
 WebCalURL								   =URL di accesso per il calendario
@@ -627,15 +628,15 @@ WebCalSetupSaved							   =Webcalendar setup salvato con successo.
 WebCalTestOk								   =Connessione al server ' %s' sulla base di dati' %s' con l'utente ' %s' successo.
 WebCalTestKo1								   =Connessione al server ' %s' successo, ma il database' %s' non poteva essere raggiunto.
 WebCalTestKo2								   =Connessione al server ' %s' con l'utente' %s' fallito.
-WebCalErrorConnectOkButWrongDatabase					   =Connessione dati � riuscito, ma non cercare di essere un Webcalendar database.
+WebCalErrorConnectOkButWrongDatabase					   =Connessione dati à riuscito, ma non cercare di essere un Webcalendar database.
 WebCalAddEventOnCreateActions						   =Aggiungi evento in calendario creare azioni
 WebCalAddEventOnCreateCompany						   =Aggiungi evento di calendario per le imprese creare
 WebCalAddEventOnStatusPropal						   =Aggiungi evento in calendario commerciale proposte stato cambiamento
 WebCalAddEventOnStatusContract						   =Aggiungi il calendario evento sui contratti cambiamento di stato
 WebCalAddEventOnStatusBill						   =Aggiungi evento in calendario fatture cambiamento di stato
 WebCalAddEventOnStatusMember						   =Aggiungi evento in calendario membri cambiamento di stato
-WebCalUrlForVCalExport							   =Un link per l'esportazione <b> %s </b> � disponibile al seguente link: %s
-WebCalCheckWebcalSetup							   =Forse il webcal modulo di impostazione non � corretta.
+WebCalUrlForVCalExport							   =Un link per l'esportazione <b> %s </b> à disponibile al seguente link: %s
+WebCalCheckWebcalSetup							   =Forse il webcal modulo di impostazione non à corretta.
 ##### Invoices #####							   
 BillsSetup								   =Impostazioni modulo fatture
 BillsDate								   =Data fatture 
@@ -647,8 +648,8 @@ CreditNote								   =Nota di credito
 CreditNotes								   =Note di credito
 ForceInvoiceDate							   =Forza alla data della fattura la data di convalida
 DisableRepeatable							   =Disattiva fattura ripetibile
-SuggestedPaymentModesIfNotDefinedInInvoice				   =Suggerire le modalit� predefinite di pagamento delle fatture, se non gi� definite per la fattura
-EnableEditDeleteValidInvoice						   =Attiva la possibilit� di modificare / cancellare una fattura valida senza pagamento
+SuggestedPaymentModesIfNotDefinedInInvoice				   =Suggerire le modalità predefinite di pagamento delle fatture, se non già definite per la fattura
+EnableEditDeleteValidInvoice						   =Attiva la possibilità di modificare / cancellare una fattura valida senza pagamento
 SuggestPaymentByRIBOnAccount						   =Suggerire il pagamento su conto bancario utilizzando le coordinate bancarie del conto
 SuggestPaymentByChequeToAddress						   =Suggerire il pagamento mediante assegno a
 FreeLegalTextOnInvoices							   =Testo libero su fatture
@@ -664,9 +665,9 @@ ProposalsPDFModules							   =Modelli di documenti per la proposta commerciale
 ClassifiedInvoiced							   =Classificati fatturati
 ClassifiedInvoicedWithOrder						   =Classifica proposta fatturata nello stesso momento dell'ordine
 HideTreadedPropal							   =Nascondi  proposte commerciali trattate nella lista
-AddShippingDateAbility							   =Aggiungi la possibilit� di inserire la data di spedizione
-AddDeliveryAddressAbility						   =Aggiungi la possibilit� di inserire la data di consegna
-UseOptionLineIfNoQuantity						   =Una linea di prodotto / servizio con un importo pari a zero � considerato come una opzione
+AddShippingDateAbility							   =Aggiungi la possibilità di inserire la data di spedizione
+AddDeliveryAddressAbility						   =Aggiungi la possibilità di inserire la data di consegna
+UseOptionLineIfNoQuantity						   =Una linea di prodotto / servizio con un importo pari a zero à considerato come una opzione
 FreeLegalTextOnProposal							   =Testo libero su proposte commerciali
 WatermarkOnDraftProposal						   =Filigrana sulle bozze di proposte commerciali (nessuna se vuota)
 ##### Orders #####							   
@@ -683,7 +684,7 @@ TemplatePDFInterventions						   =Intervento modelli di carta di documenti
 WatermarkOnDraftInterventionCards					   =Filigrana su carta di documenti d'intervento (se qualsiasi vuoto)
 ##### Clicktodial #####							   
 ClickToDialSetup							   =Impostazioni modulo ClickToDial (clic per telefonare)
-ClickToDialUrlDesc							   =Url chiamata quando un clic sul telefono picto � fatto. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplac� par le t�l�phone de l'appel�<br><b>%%2$s</b> qui sera remplac� par le t�l�phone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplac� par votre login clicktodial (d�fini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplac� par votre mot de passe clicktodial (d�fini sur votre fiche utilisateur).
+ClickToDialUrlDesc							   =Url chiamata quando un clic sul telefono picto à fatto. Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacà par le tàlàphone de l'appelà<br><b>%%2$s</b> qui sera remplacà par le tàlàphone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacà par votre login clicktodial (dàfini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacà par votre mot de passe clicktodial (dàfini sur votre fiche utilisateur).
 ##### Bookmark4u #####							   
 Bookmark4uSetup								   =Impostazioni modulo Bookmark4u
 ##### Interventions #####						   
@@ -763,8 +764,8 @@ LDAPBindOK								   =Collegare / Authentificate al server LDAP di successo (Ser
 LDAPBindKO								   =Collegare / Authentificate al server LDAP non riuscita (Server
 LDAPUnbindSuccessfull							   =Scollegare successo
 LDAPUnbindFailed							   =Scollegare non
-LDAPConnectToDNSuccessfull						   =Connessione al DN ( %s) ri �� ussie
-LDAPConnectToDNFailed							   =Connessione al DN ( %s) �� � �� chou� e
+LDAPConnectToDNSuccessfull						   =Connessione al DN ( %s) ri àà ussie
+LDAPConnectToDNFailed							   =Connessione al DN ( %s) àà à àà chouà e
 LDAPSetupForVersion3							   =Server LDAP configurato per la versione 3
 LDAPSetupForVersion2							   =Server LDAP configurato per la versione 2
 LDAPDolibarrMapping							   =Mappatura Dolibarr
@@ -779,7 +780,7 @@ LDAPFieldFullname							   =Cognome Nome
 LDAPFieldFullnameExample						   =Esempio: cn
 LDAPFieldPassword							   =Password
 LDAPFieldPasswordNotCrypted						   =Password non Cripatzione
-LDAPFieldPasswordCrypted�Password crypted				   
+LDAPFieldPasswordCryptedàPassword crypted				   
 LDAPFieldPasswordExample						   =Esempio: userpassword
 LDAPFieldCommonName							   =Nome comune
 LDAPFieldCommonNameExample						   =Esempio: cn
@@ -801,7 +802,7 @@ LDAPFieldAddress							   =Street
 LDAPFieldAddressExample							   =Esempio: strada
 LDAPFieldZip								   =Zip
 LDAPFieldZipExample							   =Esempio: postalcode
-LDAPFieldTown								   =Citt�
+LDAPFieldTown								   =Città
 LDAPFieldTownExample							   =Esempio: l
 LDAPFieldCountry							   =Paese
 LDAPFieldCountryExample							   =Esempio: c
@@ -809,14 +810,14 @@ LDAPFieldDescription							   =Descrizione
 LDAPFieldDescriptionExample						   =Esempio: descrizione
 LDAPFieldBirthdate							   =Data di nascita
 LDAPFieldBirthdateExample						   =Esempio:
-LDAPFieldCompany							   =Societ�
+LDAPFieldCompany							   =Società
 LDAPFieldCompanyExample							   =Esempio: o
 LDAPFieldSid								   =SID
 LDAPFieldSidExample							   =Esempio: objectSid
 LDAPFieldEndLastSubscription						   =Data di fine abbonamento
 LDAPParametersAreStillHardCoded						   =LDAP parametri sono ancora hardcoded (a contatto classe)
 LDAPSetupNotComplete							   =Impostazione LDAP non completo (vai su altre schede)
-LDAPNoUserOrPasswordProvidedAccessIsReadOnly				   =Nessun amministratore o la password forniti. LDAP accesso saranno anonime e in modalit� di sola lettura.
+LDAPNoUserOrPasswordProvidedAccessIsReadOnly				   =Nessun amministratore o la password forniti. LDAP accesso saranno anonime e in modalità di sola lettura.
 LDAPDescContact								   =Questa pagina consente di definire gli attributi LDAP LDAP nel nome di albero per ogni dati disponibili sul Dolibarr contatti.
 LDAPDescUsers								   =Questa pagina consente di definire gli attributi LDAP LDAP nel nome di albero per ogni dati disponibili sul Dolibarr utenti.
 LDAPDescGroups								   =Questa pagina consente di definire gli attributi LDAP LDAP nel nome di albero per ogni dati disponibili sul Dolibarr gruppi.
@@ -840,7 +841,7 @@ SyslogFacility								   =Facility
 SyslogLevel								   =Livello
 SyslogSimpleFile							   =File
 SyslogFilename								   =Nome file e percorso
-ErrorUnknownSyslogConstant						   =Costante %s non � un noto syslog costante
+ErrorUnknownSyslogConstant						   =Costante %s non à un noto syslog costante
 ##### Donations #####							   
 DonationsSetup								   =Impostazioni modulo Donazione
 ##### Barcode #####							   
@@ -872,7 +873,7 @@ NotificationEMailFrom							   =Mittente e-mail (Da) per le email inviate per le
 SendingsSetup								   =Impostazione del modulo di consegna
 SendingsReceiptModel							   =Modello di ricevuta consegna (D.D.T. ex bolla?) 
 SendingsAbility								   =Supporto per fogli di consegna per le spedizioni ai clienti
-NoNeedForDeliveryReceipts						   =Nella maggior parte dei casi, le spedizioni entrate sono utilizzate sia come fogli di consegne per il cliente (elenco dei prodotti per l'invio) e fogli che � recevied e firmata dal cliente. Quindi, le consegne ricevute prodotto � un duplicato caratteristica e raramente � attivato.
+NoNeedForDeliveryReceipts						   =Nella maggior parte dei casi, le spedizioni entrate sono utilizzate sia come fogli di consegne per il cliente (elenco dei prodotti per l'invio) e fogli che à recevied e firmata dal cliente. Quindi, le consegne ricevute prodotto à un duplicato caratteristica e raramente à attivato.
 ##### Deliveries #####							   
 DeliveryOrderNumberingModules						   =Prodotti consegne ricevimento del modulo di numerazione
 DeliveryOrderModel							   =Prodotti consegne ricevimento modello
@@ -880,14 +881,14 @@ DeliveriesOrderAbility							   =Supporto prodotti consegne ricevute
 ##### FCKeditor #####							   
 ActivateFCKeditor							   =Attiva FCKeditor per:
 FCKeditorForUsers							   =WYSIWIG creazione / edizione di utenti 'alla designazione e alla nota
-FCKeditorForCompany							   =WYSIWIG creazione / edizione di societ� 'alla designazione e alla nota
+FCKeditorForCompany							   =WYSIWIG creazione / edizione di società 'alla designazione e alla nota
 FCKeditorForProduct							   =WYSIWIG creazione / edizione di prodotti / servizi 'alla designazione e alla nota
 FCKeditorForMembers							   =WYSIWIG creazione / edizione dei membri 'descrizione e nota
 FCKeditorForProductDetails						   =WYSIWIG creazione / edizione di prodotti di dettagli le linee per tutti i soggetti (proposte, ordini, fatture, ecc ..)
 FCKeditorForProductDetailsPerso						   =WYSIWIG creazione / edizione di prodotti di dettagli personalizzati linee per tutti i soggetti (proposte, ordini, fatture, ecc ..)
 FCKeditorForMailing							   =WYSIWIG creazione / edizione di invii
 ##### OSCommerce 1 #####						   
-OSCommerceErrorConnectOkButWrongDatabase				   =Connessione dati � riuscito, ma non cercare di essere un database di osCommerce.
+OSCommerceErrorConnectOkButWrongDatabase				   =Connessione dati à riuscito, ma non cercare di essere un database di osCommerce.
 OSCommerceTestOk							   =Connessione al server ' %s' sulla base di dati' %s' con l'utente ' %s' successo.
 OSCommerceTestKo1							   =Connessione al server ' %s' successo, ma il database' %s' non poteva essere raggiunto.
 OSCommerceTestKo2							   =Connessione al server ' %s' con l'utente' %s' fallito.
@@ -901,7 +902,7 @@ MantisSetupSaved							   =Mantis setup salvato con successo.
 MantisTestOk								   =Connessione al server ' %s' sulla base di dati' %s' con l'utente ' %s' successo.
 MantisTestKo1								   =Connessione al server ' %s' successo, ma il database' %s' non poteva essere raggiunto.
 MantisTestKo2								   =Connessione al server ' %s' con l'utente' %s' fallito.
-MantisErrorConnectOkButWrongDatabase					   =Connessione dati � riuscito, ma non cercare di essere un database di Mantis.
+MantisErrorConnectOkButWrongDatabase					   =Connessione dati à riuscito, ma non cercare di essere un database di Mantis.
 ##### Stock #####							   
 StockSetup								   =Configurazione del modulo di magazzino
 UserWarehouse								   =Usa utente stock personali
@@ -934,11 +935,11 @@ DeleteLine								   =Elimina riga
 ConfirmDeleteLine							   =Sei sicuro di voler eliminare questa riga ?
 ##### Tax #####								   
 TaxSetup								   =Taxes, social contributions and dividends module setup
-OptionVatMode								   =Option d'exigibilit� de TVA
+OptionVatMode								   =Option d'exigibilità de TVA
 OptionVATDefault							   =Standard
 OptionVATDebitOption							   =Option services sur debit
-OptionVatDefaultDesc							   =L'exigibilit� de la TVA est:<br>- sur livraison pour les biens<br>- sur paiement pour les services
-OptionVatDebitOptionDesc						   =L'exigibilit� de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (d�bit) pour les services
+OptionVatDefaultDesc							   =L'exigibilità de la TVA est:<br>- sur livraison pour les biens<br>- sur paiement pour les services
+OptionVatDebitOptionDesc						   =L'exigibilità de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (dàbit) pour les services
 ##### Agenda #####							   
 AgendaSetup								   =Actions and agenda module setup
 PasswordTogetVCalExport							   =Key to authorize export link
@@ -950,7 +951,7 @@ ClickToDialDesc								   =This module allows to add an icon after the phone num
 // START - Lines generated via parser
 // Reference language: en_US
 VersionProgram=Versione programma
-VersionLastInstall=Versione l&#39;installazione iniziale
+VersionLastInstall=Versione installazione iniziale
 VersionLastUpgrade=Versione ultimo aggiornamento
 CurrentTimeZone=Corrente TimeZone
 Space=Spazio
@@ -968,29 +969,29 @@ UMask=Parametro umask per i nuovi file su Unix / Linux / BSD file di sistema.
 UMaskExplanation=Questo parametro consente di definire i permessi impostati di default per i file creati da Dolibarr sul server (per esempio durante il caricamento). <br> Esso deve essere il valore ottale (per esempio, 0.666 mezzi di lettura e scrittura per tutti). <br> Ce ne paramtre insert pas sous un server Windows.
 Module50100Name=Cassa
 Module50100Desc=Cassa modulo
-VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=L&#39;aliquota IVA per impostazione predefinita durante la creazione di prospettive, fatture, ordini, ecc seguire la regola standard attivi: <br> Se il venditore � soggetto ad IVA, quindi l&#39;IVA di default = 0. Fine della regola. <br> Se la (vendita paese = paese di acquisto), quindi l&#39;IVA di default = IVA del prodotto nel paese di vendita. Fine della regola. <br> Se il venditore e l&#39;acquirente nella Comunit� europea e le merci sono vendute avere nuovi mezzi di trasporto (auto, nave, aereo), il default IVA = 0 (L&#39;IVA deve essere pagato dal compratore al customoffice del suo paese e non a carico del venditore ). Fine della regola. <br> Se il venditore e l&#39;acquirente nella Comunit� europea e dei beni venduti da altri mezzi, piuttosto che i nuovi mezzi di trasporto, quindi l&#39;IVA di default = IVA del prodotto venduto. Fine della regola. <br> Altre proposte di default IVA = 1. Fine della regola.
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=L&#39;aliquota IVA per impostazione predefinita durante la creazione di prospettive, fatture, ordini, ecc seguire la regola standard attivi: <br> Se il venditore à soggetto ad IVA, quindi l&#39;IVA di default = 0. Fine della regola. <br> Se la (vendita paese = paese di acquisto), quindi l&#39;IVA di default = IVA del prodotto nel paese di vendita. Fine della regola. <br> Se il venditore e l&#39;acquirente nella Comunità europea e le merci sono vendute avere nuovi mezzi di trasporto (auto, nave, aereo), il default IVA = 0 (L&#39;IVA deve essere pagato dal compratore al customoffice del suo paese e non a carico del venditore ). Fine della regola. <br> Se il venditore e l&#39;acquirente nella Comunità europea e dei beni venduti da altri mezzi, piuttosto che i nuovi mezzi di trasporto, quindi l&#39;IVA di default = IVA del prodotto venduto. Fine della regola. <br> Altre proposte di default IVA = 1. Fine della regola.
 UpdateRequired=Your system needs to be updated. To do this, click on <a href=Il sistema deve essere aggiornato. Per effettuare questa operazione, fare clic su <a href="%s">Aggiorna ora.</a>
 AvailableModules=Moduli disponibili
 ToActivateModule=Per attivare i moduli, andare su Setup.
 SessionTimeOut=Tempo per sessione
-SessionExplanation=Questo numero di garanzia che non sar� mai sessione scade prima di questo ritardo. Ma PHP sessoin di gestione non � sempre garanzia che sessione scade dopo questo ritardo: Questo si verifica se un sistema per la pulizia della cache di sessione � in esecuzione. <br> Nota: con particolare sistema interno PHP processo pulito ogni sessione <b>su% s /% s</b> di accesso, ma solo durante l&#39;accesso da altre sessioni.
+SessionExplanation=Questo numero di garanzia che non sarà mai sessione scade prima di questo ritardo. Ma PHP sessoin di gestione non à sempre garanzia che sessione scade dopo questo ritardo: Questo si verifica se un sistema per la pulizia della cache di sessione à in esecuzione. <br> Nota: con particolare sistema interno PHP processo pulito ogni sessione <b>su% s /% s</b> di accesso, ma solo durante l&#39;accesso da altre sessioni.
 MAIN_DISABLE_PDF_COMPRESSION=PDF Usa la compressione per i file PDF generati.
 SeeLocalSendMailSetup=Consultare il locale di installazione di sendmail
 PasswordGenerationStandard=Torna una password generata in base al Dolibarr algoritmo interno: 8 caratteri contenenti condivisa numeri e caratteri in minuscolo.
 PasswordGenerationNone=Non suggerire eventuali password generata. La password deve essere di tipo manuale.
-ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url chiamata quando un clic sul telefono cellulare picto � fatto. <br> URL completo sar�: URL?login=...&password=...&caller=...&called=phonecalled
-MemberSendInformationByMailByDefault=Checkbox per inviare una mail di conferma per i membri � attivata per impostazione predefinita
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=DN completo (ad esempio: cn = adminldap, dc = societ�, dc = it)
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=DN completo (es: ou = utenti, dc = societ�, dc = it)
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=DN completo (es: ou = gruppo, dc = societ�, dc = it)
+ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=Url chiamata quando un clic sul telefono cellulare picto à fatto. <br> URL completo sarà: URL?login=...&password=...&caller=...&called=phonecalled
+MemberSendInformationByMailByDefault=Checkbox per inviare una mail di conferma per i membri à attivata per impostazione predefinita
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=DN completo (ad esempio: cn = adminldap, dc = società, dc = it)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=DN completo (es: ou = utenti, dc = società, dc = it)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=DN completo (es: ou = gruppo, dc = società, dc = it)
 LDAPServerDnExample=Complete DN (ex: dc=company,dc=DN completo (ad esempio: dc = azienda, dc = it)
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=DN completo (es: ou = contatti, dc = societ�, dc = it)
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=DN completo (es: ou = membri, dc = societ�, dc = it)
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=DN completo (es: ou = type_members, dc = societ�, dc = it)
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP connettersi a server LDAP di successo (= Server% s, Port =% s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP connettersi a server LDAP fallito (% s = Server, Port =% s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP successo (= Server% s, Port =% s,% s = Admin, password =% s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP fallito (% s = Server, Port =% s,% s = Admin, password =% s)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=DN completo (es: ou = contatti, dc = società, dc = it)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=DN completo (es: ou = membri, dc = società, dc = it)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=DN completo (es: ou = type_members, dc = società, dc = it)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP connettersi a server LDAP di successo (Server = %s, Port = %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP connettersi a server LDAP fallito (Server = %s, Port = %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP successo (Server = %s, Port = %s, Admin = %s, password = %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Collegare / Authentificate al server LDAP fallito (Server = %s, Port = %s, Admin = %s, password = %s)
 LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max numero di prodotti in combo selezionare liste (0 = nessun limite)
 SetDefaultBarcodeTypeProducts=Predefinita di codici a barre tipo da utilizzare per i prodotti
@@ -1006,19 +1007,18 @@ CashDeskIdWareHouse=Datawarehous per utente per vende
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
 // Reference language: en_US
-CHARSET=UTF-8
 SessionSavePath=Storage sessione di localizzazione
-IfModuleEnabled=Nota: si è efficace solo se il <b>modulo% s</b> è consentito
+IfModuleEnabled=Nota: si è efficace solo se il <b>modulo %s</b> è consentito
 RemoveLock=Rimuovere il <b>file% s</b> se esiste per consentire l&#39;aggiornamento strumento.
 RestoreLock=Sostituire il <b>file% s</b> con il permesso di leggere solo sui file per disabilitare l&#39;uso di qualsiasi strumento di aggiornamento.
 ClientHour=Ore client (utente)
 CompanyTZ=Fuso orario società (principali società)
 CompanyHour=Ore società (principali società)
-PurgeDeleteLogFile=Elimina file di <b>registro% s</b> definito per SySlog modulo (nessun rischio di perdere dati)
+PurgeDeleteLogFile=Elimina file di <b>registro %s</b> definito per SySlog modulo (nessun rischio di perdere dati)
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr demo online
 ForDocumentationSeeWiki=Per utente o sviluppatore di documentazione (Doc, ...), FAQ <br> dare un&#39;occhiata alle Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>% s</b></a>
-ForAnswersSeeForum=Per qualsiasi altra domanda / aiuto, si può utilizzare il forum Dolibarr: <br> <a href="%s" target="_blank"><b>% s</b></a>
+ForAnswersSeeForum=Per qualsiasi altra domanda / aiuto, si può utilizzare il forum Dolibarr: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=Questa area può aiutare a ottenere un servizio di supporto su Guida Dolibarr.
 HelpCenterDesc2=Una parte di questo servizio sono disponibili <b>solo</b> in <b>inglese.</b>
 MAIN_MAIL_SENDMODE=Il metodo da utilizzare per inviare le email
