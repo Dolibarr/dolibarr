@@ -826,6 +826,7 @@ ClickToDialUrlDesc = Url de llamada haciendo click en el icono teléfono. <br>La
 Bookmark4uSetup = Configuración del módulo Bookmark4u
 ##### Interventions ##### = undefined = 
 InterventionsSetup = Configuración del módulo intervenciones
+FreeLegalTextOnInterventions = Texto adicional en las fichas de intervención
 ##### Members ##### = undefined = 
 MembersSetup = Configuración del módulo Asociaciones
 MemberMainOptions = Opciones principales

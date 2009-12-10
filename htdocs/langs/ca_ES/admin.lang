@@ -826,6 +826,7 @@ ClickToDialUrlDesc = Url de trucada fent clic en la icona telèfon. Dans l'url, 
 Bookmark4uSetup = Configuració del mòdul Bookmark4u
 ##### Interventions ##### = undefined =  = 
 InterventionsSetup = Configuració del mòdul intervencions
+FreeLegalTextOnInterventions = Text addicional en les fitxes d'intervenció
 ##### Members ##### = undefined =  = 
 MembersSetup = Configuració del mòdulo Associacions
 MemberMainOptions = Opcions principals
