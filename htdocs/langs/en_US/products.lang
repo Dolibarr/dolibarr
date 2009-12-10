@@ -152,3 +152,4 @@ ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b> 
 CloneContentProduct=Clone all main informations of product/service
 ClonePricesProduct=Clone main informations and prices
 ProductIsUsed=This product is used
+NewRefForClone=Ref. of new product/service

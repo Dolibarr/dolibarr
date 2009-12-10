@@ -233,7 +233,7 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes' && ($user-
 		$originalId = $_GET["id"];
 		if ($product->fetch($_GET["id"]) > 0)
 		{
-			$product->ref = $langs->trans("CopyOf").' '.$product->ref;
+			$product->ref = $_REQUEST["clone_ref"];
 			$product->status = 0;
 			$product->finished = 1;
 			$product->id = null;
@@ -1206,7 +1206,8 @@ if ($_GET["action"] == 'clone')
 	// Create an array for form
 	$formquestion=array(
 		'text' => $langs->trans("ConfirmClone"),
-	array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneContentProduct"),   'value' => 1),
+	array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => $langs->trans("CopyOf").' '.$product->ref, 'size'=>24),
+	array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
 	array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 	);
 	// Paiement incomplet. On demande si motif = escompte ou autre

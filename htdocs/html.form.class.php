@@ -1639,34 +1639,35 @@ class Form
 		$more='';
 		if ($formquestion)
 		{
-			$more.='<tr class="valid"><td class="valid" colspan="3">';
-			$more.='<table class="nobordernopadding" width="100%">';
-			$more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>';
+			$more.='<tr class="valid"><td class="valid" colspan="3">'."\n";
+			$more.='<table class="nobordernopadding" width="100%">'."\n";
+			$more.='<tr><td colspan="3" valign="top">'.$formquestion['text'].'</td></tr>'."\n";
 			foreach ($formquestion as $key => $input)
 			{
 				if ($input['type'] == 'text')
 				{
-					$more.='<tr><td valign="top">'.$input['label'].'</td><td colspan="2"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>';
+					$more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" name="'.$input['name'].'" size="'.$input['size'].'" value="'.$input['value'].'"></td></tr>'."\n";
 				}
 				if ($input['type'] == 'select')
 				{
 					$more.='<tr><td valign="top">';
 					$more.=$this->selectarray($input['name'],$input['values'],'',1);
-					$more.='</td></tr>';
+					$more.='</td></tr>'."\n";
 				}
 				if ($input['type'] == 'checkbox')
 				{
 					$more.='<tr>';
-					$more.='<td valign="top">'.$input['label'].' &nbsp;';
+					//$more.='<td valign="top">'.$input['label'].' &nbsp;';
+					$more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
 					$more.='<input type="checkbox" class="flat" name="'.$input['name'].'"';
-					//print 'xx'.$input['value'].'-'.!empty($input['value']).'-'.($input['value'] != 'false');
 					if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="true"';
 					if (is_bool($input['value']) && $input['value']) $more.=' checked="true"';
 					if ($input['disabled']) $more.=' disabled="true"';
-					$more.='></td>';
+					$more.='>';
+					$more.='</td>';
+					//$more.='<td valign="top" align="left">&nbsp;</td>';
 					$more.='<td valign="top" align="left">&nbsp;</td>';
-					$more.='<td valign="top" align="left">&nbsp;</td>';
-					$more.='</tr>';
+					$more.='</tr>'."\n";
 				}
 				if ($input['type'] == 'radio')
 				{
@@ -1681,13 +1682,13 @@ class Form
 						$more.='></td>';
 						$more.='<td valign="top" align="left">';
 						$more.=$selval;
-						$more.='</td></tr>';
+						$more.='</td></tr>'."\n";
 						$i++;
 					}
 				}
 			}
-			$more.='</table>';
-			$more.='</td></tr>';
+			$more.='</table>'."\n";
+			$more.='</td></tr>'."\n";
 		}
 
 		print "\n<!-- begin form_confirm -->\n";
@@ -1705,14 +1706,14 @@ class Form
 		}
 		else
 		{
-			print '<form method="post" action="'.$page.'" class="notoptoleftroright">';
+			print '<form method="post" action="'.$page.'" class="notoptoleftroright">'."\n";
 			print '<input type="hidden" name="action" value="'.$action.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
-			print '<table width="100%" class="valid">';
+			print '<table width="100%" class="valid">'."\n";
 
 			// Ligne titre
-			print '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>';
+			print '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>'."\n";
 
 			// Ligne formulaire
 			print $more;
@@ -1725,9 +1726,9 @@ class Form
 			print $this->selectyesno("confirm",$newselectedchoice);
 			print '</td>';
 			print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
-			print '</tr>';
+			print '</tr>'."\n";
 
-			print '</table>';
+			print '</table>'."\n";
 
 			if (is_array($formquestion))
 			{
