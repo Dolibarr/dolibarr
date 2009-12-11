@@ -60,8 +60,8 @@ $sql = "SELECT e.rowid, e.ref";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
 {
@@ -194,8 +194,8 @@ $sql = "SELECT e.rowid, e.ref";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
 {

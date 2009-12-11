@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/expedition/liste.php
  *      \ingroup    expedition
- *      \brief      Page de la liste des exp�ditions/livraisons
+ *      \brief      Page de la liste des expeditions/livraisons
  *		\version	$Id$
  */
 
@@ -53,17 +53,18 @@ llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
-$sql.= ", ori.ref as oriref, ori.rowid as oriid";
+$sql.= ", ori.ref as origin_ref, ori.rowid as origin_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
 if ($conf->commande->enabled)
 {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as ori ON ce.fk_commande = ori.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as ori ON el.fk_source = ori.rowid";
+	$sql.= " AND el.sourcetype = 'commande'";
 }
 else
 {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."pr_exp as pe ON e.rowid = pe.fk_expedition";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as ori ON pe.fk_commande = ori.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as ori ON el.fk_source = ori.rowid";
+	$sql.= " AND el.sourcetype = 'propal'";
 }
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql.= " WHERE s.entity = ".$conf->entity;
@@ -123,11 +124,11 @@ if ($resql)
     print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.$objp->socname.'</a></td>';
     if ($conf->commande->enabled)
     {
-    	print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$objp->oriid.'">'.$objp->oriref.'</a></td>';
+    	print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$objp->origin_id.'">'.$objp->origin_ref.'</a></td>';
     }
     else
     {
-    	print '<td><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$objp->oriid.'">'.$objp->oriref.'</a></td>';
+    	print '<td><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$objp->origin_id.'">'.$objp->origin_ref.'</a></td>';
     }
 
     $now = time();

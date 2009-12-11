@@ -38,7 +38,7 @@ class Expedition extends CommonObject
 {
 	var $db;
 	var $error;
-	var $element="expedition";
+	var $element="shipping";
 	var $fk_element="fk_expedition";
 	var $table_element="expedition";
 
@@ -147,14 +147,14 @@ class Expedition extends CommonObject
 
 	  	if (! $error && $this->id && $this->origin_id)
 	  	{
+	  		$ret = $this->add_object_linked();
+	  		if (!$ret)
+	  		{
+	  			$error++;
+	  		}
+	  		
 	  		if ($conf->commande->enabled)
 	  		{
-	  			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_exp (fk_expedition, fk_commande) VALUES ('.$this->id.','.$this->origin_id.')';
-	  			if (!$this->db->query($sql))
-	  			{
-	  				$error++;
-	  			}
-
 	  			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
 	  			if (! $this->db->query($sql))
 	  			{
@@ -163,12 +163,6 @@ class Expedition extends CommonObject
 	  		}
 	  		else
 	  		{
-	  			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
-	  			if (!$this->db->query($sql))
-	  			{
-	  				$error++;
-	  			}
-
 	  			// TODO definir un statut
 	  			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
 	  			if (! $this->db->query($sql))
@@ -240,27 +234,20 @@ class Expedition extends CommonObject
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf, e.fk_adresse_livraison";
 		$sql.= ", e.fk_expedition_methode, e.tracking_number";
-		if ($conf->commande->enabled)
-		{
-			$sql.= ", ce.fk_commande as origin_id";
-			$sql.= ", c.ref_client";
-		}
-		else
-		{
-			$sql.= ", pe.fk_propal as origin_id";
-			$sql.= ", p.ref_client"; 
-		}
+		$sql.= ", el.fk_source as origin_id";
+		$sql.= ", ori.ref_client";
 		if ($conf->livraison_bon->enabled) $sql.=", l.rowid as livraison_id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
 		if ($conf->commande->enabled)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as ori ON el.fk_source = ori.rowid";
+			$sql.= " AND el.sourcetype = 'commande'";
 		}
 		else
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."pr_exp as pe ON e.rowid = pe.fk_expedition";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as p ON pe.fk_propal = p.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as ori ON el.fk_source = ori.rowid";
+			$sql.= " AND el.sourcetype = 'propal'";
 		}
 		if ($conf->livraison_bon->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
 		$sql.= " WHERE e.rowid = ".$id;
@@ -573,18 +560,25 @@ class Expedition extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+		$sql.= " WHERE fk_expedition = ".$this->id;
+		
 		if ( $this->db->query($sql) )
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."co_exp WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+			$sql.= " WHERE fk_target = ".$this->id;
+			$sql.= " AND targettype = '".$this->element."'";
+
 			if ( $this->db->query($sql) )
 			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = ".$this->id;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
+				$sql.= " WHERE rowid = ".$this->id;
+				
 				if ( $this->db->query($sql) )
 				{
 					$this->db->commit();
 
-					// On efface le r�pertoire de pdf provisoire
+					// On efface le repertoire de pdf provisoire
 					$expref = dol_sanitizeFileName($this->ref);
 					if ($conf->expedition->dir_output)
 					{
@@ -612,18 +606,21 @@ class Expedition extends CommonObject
 				}
 				else
 				{
+					$this->error=$this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -3;
 				}
 			}
 			else
 			{
+				$this->error=$this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
+			$this->error=$this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
 		}

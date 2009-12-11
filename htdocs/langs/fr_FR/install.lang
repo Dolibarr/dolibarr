@@ -149,6 +149,7 @@ MigrationInvoice=Migration de données sur les factures clients
 MigrationContract=Migration de données sur les contrats
 MigrationSuccessfullUpdate=Mise à jour réussie
 MigrationUpdateFailed=La mise à jour à échouée
+MigrationRelationshipTables=Migration des tables de liaison (%s)
 
 # Payments Update
 MigrationPaymentsUpdate=Mise a jour des paiments (lien n-n paiements-factures)

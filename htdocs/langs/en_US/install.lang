@@ -147,6 +147,7 @@ MigrationInvoice=Data migration for customers' invoices
 MigrationContract=Data migration for contracts
 MigrationSuccessfullUpdate=Upgrade successful
 MigrationUpdateFailed=Failed upgrade process
+MigrationRelationshipTables=Data migration for relationship tables (%s)
 
 # Payments Update
 MigrationPaymentsUpdate=Payment data correction

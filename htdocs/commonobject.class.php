@@ -836,14 +836,33 @@ class CommonObject
 	/**
 	 * 	Add objects linked in llx_element_element.
 	 */
-	function add_object_linked($sourceid,$sourcetype,$targetid,$targettype)
+	function add_object_linked()
 	{
+		$this->db->begin();
+		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
 		$sql.= "fk_source";
 		$sql.= ", sourcetype";
 		$sql.= ", fk_target";
 		$sql.= ", targettype";
 		$sql.= ") VALUES (";
+		$sql.= $this->origin_id;
+		$sql.= ", '".$this->origin."'";
+		$sql.= ", ".$this->id;
+		$sql.= ", '".$this->element."'";
+		$sql.= ")";
+		
+		if ($this->db->query($sql))
+	  	{
+	  		$this->db->commit();
+	  		return 1;
+	  	}
+	  	else
+	  	{
+	  		$this->error=$this->db->lasterror()." - sql=$sql";
+	  		$this->db->rollback();
+	  		return 0;
+	  	}
 	}
 
 	/**
@@ -856,8 +875,8 @@ class CommonObject
 		// Links beetween objects are stored in this table
 		$sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
-		$sql.= " WHERE (fk_source = '".$this->id."' AND sourcetype = 'invoice')";
-		$sql.= " OR    (fk_target = '".$this->id."' AND targettype = 'invoice')";
+		$sql.= " WHERE (fk_source = '".$this->id."' AND sourcetype = '".$this->origin."')";
+		$sql.= " OR    (fk_target = '".$this->id."' AND targettype = '".$this->element."')";
 		
 		dol_syslog("CommonObject::load_object_linked sql=".$sql);
 		$resql = $this->db->query($sql);

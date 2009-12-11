@@ -226,10 +226,15 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 		migrate_restore_missing_links($db,$langs,$conf);
 
-
 		migrate_directories($db,$langs,$conf,'/compta','/banque');
 		
 		migrate_directories($db,$langs,$conf,'/societe','/mycompany');
+		
+		
+		// Script pour V2.7 -> V2.8
+		migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
+		
+		migrate_relationship_tables($db,$langs,$conf,'pr_exp','fk_propal','propal','fk_expedition','shipping');
 
 
 		// On commit dans tous les cas.
@@ -2210,60 +2215,66 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationDeliveryAddress')."</b><br>\n";
 
 	$error = 0;
-
-	$db->begin();
-
-	$sql = "SELECT c.fk_adresse_livraison, ce.fk_expedition";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql.= ", ".MAIN_DB_PREFIX."co_exp as ce";
-	$sql.= " WHERE c.rowid = ce.fk_commande";
-	$sql.= " AND c.fk_adresse_livraison IS NOT NULL AND c.fk_adresse_livraison != 0";
-
-	$resql = $db->query($sql);
-	if ($resql)
+	
+	if ($db->DDLInfoTable(MAIN_DB_PREFIX."co_exp"))
 	{
-		$i = 0;
-		$num = $db->num_rows($resql);
-
-		if ($num)
+		$db->begin();
+		
+		$sql = "SELECT c.fk_adresse_livraison, ce.fk_expedition";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
+		$sql.= ", ".MAIN_DB_PREFIX."co_exp as ce";
+		$sql.= " WHERE c.rowid = ce.fk_commande";
+		$sql.= " AND c.fk_adresse_livraison IS NOT NULL AND c.fk_adresse_livraison != 0";
+		
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			while ($i < $num)
+			$i = 0;
+			$num = $db->num_rows($resql);
+			
+			if ($num)
 			{
-				$obj = $db->fetch_object($resql);
-
-				$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-				$sql.= " fk_adresse_livraison = '".$obj->fk_adresse_livraison."'";
-				$sql.= " WHERE rowid=".$obj->fk_expedition;
-
-				$resql2=$db->query($sql);
-				if ($resql2)
+				while ($i < $num)
 				{
-
+					$obj = $db->fetch_object($resql);
+					
+					$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
+					$sql.= " fk_adresse_livraison = '".$obj->fk_adresse_livraison."'";
+					$sql.= " WHERE rowid=".$obj->fk_expedition;
+					
+					$resql2=$db->query($sql);
+					if (!$resql2)
+					{
+						$error++;
+						dol_print_error($db);
+					}
+					print ". ";
+					$i++;
 				}
-				else
-				{
-					$error++;
-					dol_print_error($db);
-				}
-				print ". ";
-				$i++;
 			}
-
-		}
-
-		if ($error == 0)
-		{
-			$db->commit();
+			else
+			{
+				print $langs->trans('AlreadyDone')."<br>\n";
+			}
+			
+			if ($error == 0)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
 		}
 		else
 		{
+			dol_print_error($db);
 			$db->rollback();
 		}
 	}
 	else
 	{
-		dol_print_error($db);
-		$db->rollback();
+		print $langs->trans('AlreadyDone')."<br>\n";
 	}
 
 	print '</td></tr>';
@@ -2401,7 +2412,10 @@ function migrate_restore_missing_links($db,$langs,$conf)
 			}
 
 		}
-		else print $langs->trans('AlreadyDone')."<br>\n";
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
 
 		if ($error == 0)
 		{
@@ -2416,6 +2430,97 @@ function migrate_restore_missing_links($db,$langs,$conf)
 	{
 		dol_print_error($db);
 		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+/*
+ * Migration des tables de relation
+ */
+function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcetype,$fk_target,$targettype)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationRelationshipTables',MAIN_DB_PREFIX.$table)."</b><br>\n";
+
+	$error = 0;
+	
+	if ($db->DDLInfoTable(MAIN_DB_PREFIX.$table))
+	{
+		dolibarr_install_syslog("upgrade2::migrate_relationship_tables table = ".MAIN_DB_PREFIX.$table);
+		
+		$db->begin();
+		
+		$sqlSelect = "SELECT ".$fk_source.", ".$fk_target;
+		$sqlSelect.= " FROM ".MAIN_DB_PREFIX.$table;
+
+		$resql = $db->query($sqlSelect);
+		if ($resql)
+		{
+			$i = 0;
+			$num = $db->num_rows($resql);
+			
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					
+					$sqlInsert = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
+					$sqlInsert.= "fk_source";
+					$sqlInsert.= ", sourcetype";
+					$sqlInsert.= ", fk_target";
+					$sqlInsert.= ", targettype";
+					$sqlInsert.= ") VALUES (";
+					$sqlInsert.= $obj->$fk_source;
+					$sqlInsert.= ", '".$sourcetype."'";
+					$sqlInsert.= ", ".$obj->$fk_target;
+					$sqlInsert.= ", '".$targettype."'";
+					$sqlInsert.= ")";
+					
+					$result=$db->query($sqlInsert);
+					if (! $result)
+					{
+						$error++;
+						dol_print_error($db);
+					}
+					print ". ";
+					$i++;
+				}
+			}
+			else
+			{
+				print $langs->trans('AlreadyDone')."<br>\n";
+			}
+			
+			if ($error == 0)
+			{
+				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$table;
+				if ($db->query($sqlDrop))
+				{
+					$db->commit();
+				}
+				else
+				{
+					$db->rollback();
+				}
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+			$db->rollback();
+		}
+	}
+	else
+	{
+		print $langs->trans('AlreadyDone')."<br>\n";
 	}
 
 	print '</td></tr>';

@@ -154,9 +154,16 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 	{
 		$expedition = new Expedition($db);
 		$expedition->fetch($_GET["id"]);
-		$expedition->delete();
-		Header("Location: liste.php");
-		exit;
+		$result = $expedition->delete();
+		if ($result > 0)
+		{
+			Header("Location: liste.php");
+			exit;
+		}
+		else
+		{
+			$mesg = $expedition->error;
+		}
 	}
 }
 
@@ -535,6 +542,11 @@ else
 
 		if ($expedition->id > 0)
 		{
+			if ($mesg)
+			{
+				print '<div class="error">'.$mesg.'</div>';
+			}
+			
 			$typeobject = $expedition->origin;
 			$origin = $expedition->origin;
 			$expedition->fetch_object();
