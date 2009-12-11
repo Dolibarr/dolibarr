@@ -84,7 +84,7 @@ class Facture extends CommonObject
 	//! id of source invoice if replacement invoice or credit note
 	var $fk_facture_source;
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
-	//! Fermeture alors que aucun paiement: replaced (si remplac�), abandon
+	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
 	var $close_code;
 	//! Commentaire si mis a paye sans paiement complet
 	var $close_note;
@@ -102,7 +102,7 @@ class Facture extends CommonObject
 	var $nbtodo;
 	var $nbtodolate;
 	var $specimen;
-	//! Numero d'erreur de 512 � 1023
+	//! Numero d'erreur de 512 a 1023
 	var $errno = 0;
 
 	/**
@@ -872,7 +872,7 @@ class Facture extends CommonObject
 			$facligne->desc=$remise->description;   	// Description ligne
 			$facligne->tva_tx=$remise->tva_tx;
 			$facligne->subprice=-$remise->amount_ht;
-			$facligne->fk_product=0;					// Id produit pr�d�fini
+			$facligne->fk_product=0;					// Id produit predefini
 			$facligne->qty=1;
 			$facligne->remise_percent=0;
 			$facligne->rang=-1;
@@ -948,7 +948,7 @@ class Facture extends CommonObject
 
 	/**
 	 *	\brief     	Delete invoice
-	 *	\param     	rowid      	Id de la facture � supprimer
+	 *	\param     	rowid      	Id de la facture a supprimer
 	 *	\return		int			<0 si ko, >0 si ok
 	 */
 	function delete($rowid=0)
@@ -1050,8 +1050,8 @@ class Facture extends CommonObject
 	/**
 		\brief      Renvoi une date limite de reglement de facture en fonction des
 		conditions de reglements de la facture et date de facturation
-		\param      cond_reglement_id   Condition de reglement � utiliser, 0=Condition actuelle de la facture
-		\return     date                Date limite de r�glement si ok, <0 si ko
+		\param      cond_reglement_id   Condition de reglement a utiliser, 0=Condition actuelle de la facture
+		\return     date                Date limite de reglement si ok, <0 si ko
 		*/
 	function calculate_date_lim_reglement($cond_reglement_id=0)
 	{
@@ -1112,7 +1112,7 @@ class Facture extends CommonObject
 	 *      \brief      Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
 	 *      \param      user      	Objet utilisateur qui modifie
 	 *	   \param      close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas ecompte par exemple)
-	 *	   \param      close_note	Commentaire renseign� si on classe � pay�e alors que paiement incomplet (cas ecompte par exemple)
+	 *	   \param      close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas ecompte par exemple)
 	 *      \return     int         	<0 si ok, >0 si ok
 	 */
 	function set_paid($user,$close_code='',$close_note='')
@@ -1152,9 +1152,9 @@ class Facture extends CommonObject
 
 
 	/**
-	 *      \brief      Tag la facture comme non pay�e compl�tement + appel trigger BILL_UNPAYED
-	 *				   	Fonction utilis�e quand un paiement pr�levement est refus�,
-	 * 					ou quand une facture annul�e et r�ouverte.
+	 *      \brief      Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+	 *				   	Fonction utilisee quand un paiement prelevement est refuse,
+	 * 					ou quand une facture annulee et reouverte.
 	 *      \param      user        Object user that change status
 	 *      \return     int         <0 si ok, >0 si ok
 	 */
@@ -1186,7 +1186,7 @@ class Facture extends CommonObject
 
 
 	/**
-		\brief      Tag la facture comme abandonn�e, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
+		\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
 		\param      user        Objet utilisateur qui modifie
 		\param		close_code	Code de fermeture
 		\param		close_note	Commentaire de fermeture
@@ -1209,8 +1209,8 @@ class Facture extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// On d�saffecte de la facture les remises li�es
-			// car elles n'ont pas �t� utilis�es vu que la facture est abandonn�e.
+			// On desaffecte de la facture les remises liees
+			// car elles n'ont pas ete utilisees vu que la facture est abandonnee.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql.= ' SET fk_facture = NULL';
 			$sql.= ' WHERE fk_facture = '.$this->id;
@@ -1246,10 +1246,10 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *      \brief     	Tag la facture comme valid�e + appel trigger BILL_VALIDATE
+	 *      \brief     	Tag la facture comme validee + appel trigger BILL_VALIDATE
 	 *      \param     	user            Utilisateur qui valide la facture
 	 *      \param     	soc             Ne sert plus. \\TODO A virer
-	 *      \param     	force_number	R�f�rence � forcer de la facture
+	 *      \param     	force_number	Reference a forcer de la facture
 	 *	    \return		int				<0 si ko, >0 si ok
 	 */
 	function set_valid($user, $soc='', $force_number='')
@@ -1465,7 +1465,7 @@ class Facture extends CommonObject
 			dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Si activ� on d�cr�mente le produit principal et ses composants � la validation de facture
+				// Si active on decremente le produit principal et ses composants a la validation de facture
 				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
@@ -1476,7 +1476,7 @@ class Facture extends CommonObject
 						{
 							$mouvP = new MouvementStock($this->db);
 							// We decrease stock for product
-							$entrepot_id = "1"; // TODO ajouter possibilit� de choisir l'entrepot
+							$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
 							$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 						}
 					}
@@ -1502,12 +1502,12 @@ class Facture extends CommonObject
 	 * 		\param    	facid           	Id de la facture
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire HT
-	 * 		\param    	qty             	Quantit�
-	 * 		\param    	txtva           	Taux de tva forc�, sinon -1
-	 *		\param    	fk_product      	Id du produit/service pred�fini
+	 * 		\param    	qty             	Quantite
+	 * 		\param    	txtva           	Taux de tva force, sinon -1
+	 *		\param    	fk_product      	Id du produit/service predefini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
-	 * 		\param    	date_start      	Date de debut de validit� du service
-	 * 		\param    	date_end        	Date de fin de validit� du service
+	 * 		\param    	date_start      	Date de debut de validite du service
+	 * 		\param    	date_end        	Date de fin de validite du service
 	 * 		\param    	ventil          	Code de ventilation comptable
 	 * 		\param    	info_bits			Bits de type de lignes
 	 *		\param    	fk_remise_except	Id remise
@@ -1515,8 +1515,8 @@ class Facture extends CommonObject
 	 * 		\param    	pu_ttc             	Prix unitaire TTC
 	 * 		\param		type				Type of line (0=product, 1=service)
 	 *    	\return    	int             	>0 if OK, <0 if KO
-	 * 		\remarks	Les parametres sont deja cens� etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete d�fini
+	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
@@ -1637,8 +1637,8 @@ class Facture extends CommonObject
 	 *      \param     	pu              Prix unitaire (HT ou TTC selon price_base_type)
 	 *      \param     	qty             Quantity
 	 *      \param     	remise_percent  Pourcentage de remise de la ligne
-	 *      \param     	date_start      Date de debut de validit� du service
-	 *      \param     	date_end        Date de fin de validit� du service
+	 *      \param     	date_start      Date de debut de validite du service
+	 *      \param     	date_end        Date de fin de validite du service
 	 *      \param     	tva_tx          VAT Rate
 	 * 	   	\param     	price_base_type HT or TTC
 	 * 	   	\param     	info_bits       Miscellanous informations
@@ -2249,8 +2249,8 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *  \brief      Change les conditions de r�glement de la facture
-	 *  \param      cond_reglement_id      	Id de la nouvelle condition de r�glement
+	 *  \brief      Change les conditions de reglement de la facture
+	 *  \param      cond_reglement_id      	Id de la nouvelle condition de reglement
 	 * 	\param		date					Date to force payment term
 	 *  \return     int                    	>0 si ok, <0 si ko
 	 */
@@ -2298,7 +2298,7 @@ class Facture extends CommonObject
 
 
 	/**
-	 *   \brief      Change le mode de r�glement
+	 *   \brief      Change le mode de reglement
 	 *   \param      mode        Id du nouveau mode
 	 *   \return     int         >0 si ok, <0 si ko
 	 */
@@ -2332,13 +2332,13 @@ class Facture extends CommonObject
 
 
 	/**
-	 *   \brief      Renvoi si les lignes de facture sont ventil�es et/ou export�es en compta
-	 *   \param      user        Utilisateur cr�ant la demande
+	 *   \brief      Renvoi si les lignes de facture sont ventilees et/ou exportees en compta
+	 *   \param      user        Utilisateur creant la demande
 	 *   \return     int         <0 si ko, 0=non, 1=oui
 	 */
 	function getVentilExportCompta()
 	{
-		// On v�rifie si les lignes de factures ont �t� export�es en compta et/ou ventil�es
+		// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 		$ventilExportCompta = 0 ;
 		for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 		{
@@ -2360,9 +2360,9 @@ class Facture extends CommonObject
 
 
 	/**
-	 *   \brief     Renvoi si une facture peut etre supprim�e compl�tement.
-	 *				La r�gle est la suivante:
-	 *				Si facture derni�re, non provisoire, sans paiement et non export� en compta -> oui fin de r�gle
+	 *   \brief     Renvoi si une facture peut etre supprimee completement.
+	 *				La regle est la suivante:
+	 *				Si facture derniere, non provisoire, sans paiement et non exporte en compta -> oui fin de regle
 	 *       		Si facture brouillon et provisoire -> oui
 	 *   \return    int         <0 si ko, 0=non, 1=oui
 	 */
@@ -2370,14 +2370,14 @@ class Facture extends CommonObject
 	{
 		global $conf;
 
-		// on v�rifie si la facture est en num�rotation provisoire
+		// on verifie si la facture est en numerotation provisoire
 		$facref = substr($this->ref, 1, 4);
 
 		// Si facture non brouillon et non provisoire
 		if ($facref != 'PROV' && $conf->global->FACTURE_ENABLE_EDITDELETE)
 		{
-			// On ne peut supprimer que la derni�re facture valid�e
-			// pour ne pas avoir de trou dans la num�rotation
+			// On ne peut supprimer que la derniere facture validee
+			// pour ne pas avoir de trou dans la numerotation
 			$sql = "SELECT MAX(facnumber)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 			$sql.= " WHERE entity = ".$conf->entity;
@@ -2390,7 +2390,7 @@ class Facture extends CommonObject
 
 			$ventilExportCompta = $this->getVentilExportCompta();
 
-			// Si derniere facture et si non ventil�e, on peut supprimer
+			// Si derniere facture et si non ventilee, on peut supprimer
 			if ($maxfacnumber[0] == $this->ref && $ventilExportCompta == 0)
 			{
 				return 1;
@@ -2407,7 +2407,7 @@ class Facture extends CommonObject
 
 	/**
 	 *	\brief     	Renvoi liste des factures remplacables
-	 *				Statut valid�e ou abandonn�e pour raison autre + non pay�e + aucun paiement + pas deja remplac�e
+	 *				Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
 	 *	\param		socid		Id societe
 	 *	\return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
@@ -2424,7 +2424,7 @@ class Facture extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
 		$sql.= " WHERE (f.fk_statut = 1 OR (f.fk_statut = 3 AND f.close_code = 'abandon'))";
 		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= " AND f.paye = 0";					// Pas class�e pay�e compl�tement
+		$sql.= " AND f.paye = 0";					// Pas classee payee completement
 		$sql.= " AND pf.fk_paiement IS NULL";		// Aucun paiement deja fait
 		$sql.= " AND ff.fk_statut IS NULL";			// Renvoi vrai si pas facture de remplacement
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
@@ -2455,7 +2455,7 @@ class Facture extends CommonObject
 	/**
 	 *  	\brief     	Renvoi liste des factures qualifiables pour correction par avoir
 	 *					Les factures qui respectent les regles suivantes sont retournees:
-	 * 					(valid�e + paiement en cours) ou class�e (pay�e completement ou pay�e partiellement) + pas deja remplac�e + pas deja avoi
+	 * 					(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
 	 *		\param		socid		Id societe
 	 *   	\return    	array		Tableau des factures ($id => $ref)
 	 */
@@ -2472,8 +2472,8 @@ class Facture extends CommonObject
 		$sql.= " WHERE f.entity = ".$conf->entity;
 		$sql.= " AND f.fk_statut in (1,2)";
 		//  $sql.= " WHERE f.fk_statut >= 1";
-		//	$sql.= " AND (f.paye = 1";				// Class�e pay�e compl�tement
-		//	$sql.= " OR f.close_code IS NOT NULL)";	// Class�e pay�e partiellement
+		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
+		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
 		$sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
 		$sql.= " AND f.type != 2";				// Type non 2 si facture non avoir
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
@@ -2508,8 +2508,8 @@ class Facture extends CommonObject
 
 
 	/**
-	 *   \brief      Cr�� une demande de pr�l�vement
-	 *   \param      user        Utilisateur cr�ant la demande
+	 *   \brief      Cree une demande de prelevement
+	 *   \param      user        Utilisateur creant la demande
 	 *   \return     int         <0 si ko, >0 si ok
 	 */
 	function demande_prelevement($user)
@@ -2554,8 +2554,8 @@ class Facture extends CommonObject
 				}
 				else
 				{
-					$this->error="Une demande existe d�j�";
-					dol_syslog('Facture::DemandePrelevement Impossible de cr�er une demande, demande d�ja en cours');
+					$this->error="Une demande existe deja";
+					dol_syslog('Facture::DemandePrelevement Impossible de creer une demande, demande deja en cours');
 				}
 			}
 			else
@@ -2574,8 +2574,8 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 * \brief     Supprime une demande de pr�l�vement
-	 * \param     user         utilisateur cr�ant la demande
+	 * \brief     Supprime une demande de prelevement
+	 * \param     user         utilisateur creant la demande
 	 * \param     did          id de la demande a supprimer
 	 */
 	function demande_prelevement_delete($user, $did)
@@ -2838,7 +2838,7 @@ class FactureLigne
 
 	// Ne plus utiliser
 	var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
-	var $remise;			// Montant calcul� de la remise % sur PU HT (exemple 20)
+	var $remise;			// Montant calcule de la remise % sur PU HT (exemple 20)
 
 	// From llx_product
 	var $ref;				// Reference produit
@@ -2847,8 +2847,8 @@ class FactureLigne
 
 
 	/**
-	 \brief     Constructeur d'objets ligne de facture
-	 \param     DB      handler d'acc�s base de donn�e
+	 *  \brief     Constructeur d'objets ligne de facture
+	 *  \param     DB      handler d'acces base de donnee
 	 */
 	function FactureLigne($DB)
 	{
@@ -2936,7 +2936,7 @@ class FactureLigne
 		$rangtouse=$this->rang;
 		if ($rangtouse == -1)
 		{
-			// R�cup�re rang max de la facture dans $rangmax
+			// Recupere rang max de la facture dans $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'facturedet';
 			$sql.= ' WHERE fk_facture ='.$this->fk_facture;
 			$resql = $this->db->query($sql);
@@ -2992,8 +2992,8 @@ class FactureLigne
 		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
 
-			// Si fk_remise_except d�fini, on lie la remise � la facture
-			// ce qui la flague comme "consomm�e".
+			// Si fk_remise_except defini, on lie la remise a la facture
+			// ce qui la flague comme "consommee".
 			if ($this->fk_remise_except)
 			{
 				$discount=new DiscountAbsolute($this->db);
