@@ -152,3 +152,4 @@ ConfirmCloneProduct = Esteu segur de voler clonar el producte o servei <b>%s</b>
 CloneContentProduct = Clonar només la informació general del producte/servei
 ClonePricesProduct = Clonar la informació general i els preus
 ProductIsUsed = Aquest producte és utilitzat
+NewRefForClone = Ref. del nou producte/servei
