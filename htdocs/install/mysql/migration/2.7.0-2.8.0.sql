@@ -14,3 +14,10 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN label varchar(128);
 
 ALTER TABLE llx_deplacement ADD COLUMN ref varchar(30) DEFAULT NULL AFTER rowid;
 ALTER TABLE llx_deplacement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
+
+ALTER TABLE llx_element_element DROP INDEX idx_element_element_idx1;
+ALTER TABLE llx_element_element DROP INDEX idx_element_element_targetid;
+ALTER TABLE llx_element_element CHANGE sourceid fk_source integer NOT NULL;
+ALTER TABLE llx_element_element CHANGE targetid fk_target integer NOT NULL;
+ALTER TABLE llx_element_element ADD UNIQUE INDEX idx_element_element_idx1 (fk_source, sourcetype, fk_target, targettype);
+ALTER TABLE llx_element_element ADD INDEX idx_element_element_fk_target (fk_target);

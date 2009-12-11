@@ -388,7 +388,7 @@ class Livraison extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
-						// Si module stock g�r� et que expedition faite depuis un entrepot
+						// Si module stock gere et que expedition faite depuis un entrepot
 						if (!$conf->expedition->enabled && $conf->stock->enabled && $this->entrepot_id && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
 						{
 

@@ -2412,13 +2412,13 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `llx_element_element` (
   `rowid` int(11) NOT NULL auto_increment,
-  `sourceid` int(11) NOT NULL default '0',
+  `fk_source` int(11) NOT NULL default '0',
   `sourcetype` varchar(16) NOT NULL default '',
-  `targetid` int(11) NOT NULL default '0',
+  `fk_target` int(11) NOT NULL default '0',
   `targettype` varchar(16) NOT NULL default '',
   PRIMARY KEY  (`rowid`),
-  UNIQUE KEY `idx_element_element_idx1` (`sourceid`,`sourcetype`,`targetid`,`targettype`),
-  KEY `idx_element_element_targetid` (`targetid`)
+  UNIQUE KEY `idx_element_element_idx1` (`fk_source`,`sourcetype`,`fk_target`,`targettype`),
+  KEY `idx_element_element_fk_target` (`fk_target`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 SET character_set_client = @saved_cs_client;
 
