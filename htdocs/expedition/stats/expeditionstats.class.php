@@ -28,7 +28,7 @@ class ExpeditionStats
     $this->db = $DB;
   }
   /**
-   * Renvoie le nombre de expedition par ann�e
+   * Renvoie le nombre de expedition par annee
    *
    */
   function getNbExpeditionByYear()
@@ -36,12 +36,10 @@ class ExpeditionStats
   	global $conf;
 
     $result = array();
-    $sql = "SELECT count(*), date_format(e.date_expedition,'%Y') as dm";
-    $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-    $sql.= ", ".MAIN_DB_PREFIX."societe as s ";
-    $sql.= " WHERE e.fk_statut > 0";
-    $sql.= " AND e.fk_soc = s.rowid";
-    $sql.= " s.entity = ".$conf->entity;
+    $sql = "SELECT count(*), date_format(date_expedition,'%Y') as dm";
+    $sql.= " FROM ".MAIN_DB_PREFIX."expedition";
+    $sql.= " WHERE fk_statut > 0";
+    $sql.= " AND entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
@@ -60,7 +58,7 @@ class ExpeditionStats
     return $result;
   }
   /**
-   * Renvoie le nombre de expedition par mois pour une ann�e donn�e
+   * Renvoie le nombre de expedition par mois pour une annee donnee
    *
    */
   function getNbExpeditionByMonth($year)
@@ -68,13 +66,11 @@ class ExpeditionStats
   	global $conf;
 
     $result = array();
-    $sql = "SELECT count(*), date_format(e.date_expedition,'%m') as dm";
-    $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-    $sql.= ", ".MAIN_DB_PREFIX."societe as s ";
-    $sql.= " WHERE date_format(e.date_expedition,'%Y') = ".$year;
+    $sql = "SELECT count(*), date_format(date_expedition,'%m') as dm";
+    $sql.= " FROM ".MAIN_DB_PREFIX."expedition";
+    $sql.= " WHERE date_format(date_expedition,'%Y') = ".$year;
     $sql.= " AND fk_statut > 0";
-    $sql.= " AND e.fk_soc = s.rowid";
-    $sql.= " s.entity = ".$conf->entity;
+    $sql.= " AND entity = ".$conf->entity;
     $sql.= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))

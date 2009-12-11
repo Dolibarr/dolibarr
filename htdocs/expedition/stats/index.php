@@ -39,12 +39,10 @@ print '<table class="border" width="100%">';
 print '<tr><td align="center">'.$langs->trans("Year").'</td>';
 print '<td width="40%" align="center">'.$langs->trans("NbOfSendings").'</td></tr>';
 
-$sql = "SELECT count(*), date_format(e.date_expedition,'%Y') as dm";
-$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= ", ".MAIN_DB_PREFIX."societe as s ";
-$sql.= " WHERE e.fk_statut > 0";
-$sql.= " AND e.fk_soc = s.rowid";
-$sql.= " s.entity = ".$conf->entity;
+$sql = "SELECT count(*), date_format(date_expedition,'%Y') as dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."expedition";
+$sql.= " WHERE fk_statut > 0";
+$sql.= " AND entity = ".$conf->entity;
 $sql.= " GROUP BY dm DESC ";
 
 if ($db->query($sql))

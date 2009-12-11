@@ -67,7 +67,7 @@ else
 	$sql.= " AND el.sourcetype = 'propal'";
 }
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-$sql.= " WHERE s.entity = ".$conf->entity;
+$sql.= " WHERE e.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";

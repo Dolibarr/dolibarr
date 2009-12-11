@@ -70,8 +70,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 0";
-$sql.= " AND (e.entity = ".$conf->entity;
-$sql.= " AND s.entity = ".$conf->entity.")";
+$sql.= " AND e.entity = ".$conf->entity;
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 
 $resql=$db->query($sql);
@@ -107,7 +106,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND c.entity = ".$conf->entity;
 $sql.= " AND c.fk_statut = 1";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -154,7 +153,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND c.entity = ".$conf->entity;
 $sql.= " AND c.fk_statut = 2";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -190,6 +189,7 @@ if ( $resql )
  * Last shipments
  */
 $clause = " WHERE ";
+
 $sql = "SELECT e.rowid, e.ref";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
@@ -204,7 +204,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$clause = " AND ";
 }
 $sql.= $clause." e.fk_statut = 1";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= " AND e.entity = ".$conf->entity;
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 $sql.= " ORDER BY e.date_expedition DESC";
 $sql.= $db->plimit(5, 0);
