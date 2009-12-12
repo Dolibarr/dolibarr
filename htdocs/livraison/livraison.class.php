@@ -156,21 +156,39 @@ class Livraison extends CommonObject
 					}
 				}
 
-				if (! $conf->expedition->enabled)
+				if (! $error && $this->id && $this->origin_id)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-					$sql.= " SET fk_statut = 2";
-					$sql.= " WHERE rowid = ".$this->commande_id;
-
-					dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
-					$resql=$this->db->query($sql);
-					if (! $resql)
+					$ret = $this->add_object_linked();
+					if (!$ret)
 					{
 						$error++;
 					}
+					
+					if (! $conf->expedition->enabled)
+					{
+						if ($conf->commande->enabled)
+						{
+							$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
+							dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+							if (! $this->db->query($sql))
+							{
+								$error++;
+							}
+						}
+						else
+						{
+							// TODO definir un statut
+							$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
+							dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+							if (! $this->db->query($sql))
+							{
+								$error++;
+							}
+						}
+					}
 				}
 
-				if ($error==0)
+				if (! $error)
 				{
 					$this->db->commit();
 					return $this->id;
@@ -232,7 +250,7 @@ class Livraison extends CommonObject
 		}
 	}
 
-	/**
+   /**
 	* 	\brief			Read a delivery receipt
 	*/
 	function fetch($id)
@@ -242,23 +260,9 @@ class Livraison extends CommonObject
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_client, l.fk_user_author,";
 		$sql.=" l.total_ht, l.fk_statut, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
 		$sql.= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
-		if ($conf->commande->enabled)
-		{
-			$sql.= ", cl.fk_commande as origin_id";
-		}
-		else
-		{
-			$sql.= ", pl.fk_propal as origin_id";
-		}
+		$sql.= ", el.fk_source as origin_id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-		if ($conf->commande->enabled)
-		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_liv as cl ON cl.fk_livraison = l.rowid";
-		}
-		else
-		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."pr_liv as pl ON pl.fk_livraison = l.rowid";
-		}
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON l.rowid = el.fk_target";
 		$sql.= " WHERE l.rowid = ".$id;
 
 		dol_syslog("Livraison::fetch sql=".$sql, LOG_DEBUG);
