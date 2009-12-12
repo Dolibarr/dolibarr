@@ -134,64 +134,68 @@ class Expedition extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql.= " SET ref = '(PROV".$this->id.")'";
 			$sql.= " WHERE rowid = ".$this->id;
+			
+			dol_syslog("Expedition::create sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
-	  {
-	  	// Insertion des lignes
-	  	for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-	  	{
-	  		if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty) > 0)
-	  		{
-	  			$error++;
-	  		}
-	  	}
-
-	  	if (! $error && $this->id && $this->origin_id)
-	  	{
-	  		$ret = $this->add_object_linked();
-	  		if (!$ret)
-	  		{
-	  			$error++;
-	  		}
-	  		
-	  		if ($conf->commande->enabled)
-	  		{
-	  			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
-	  			if (! $this->db->query($sql))
-	  			{
-	  				$error++;
-	  			}
-	  		}
-	  		else
-	  		{
-	  			// TODO definir un statut
-	  			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
-	  			if (! $this->db->query($sql))
-	  			{
-	  				$error++;
-	  			}
-	  		}
-	  	}
-
-	  	if (! $error)
-	  	{
-	  		$this->db->commit();
-	  		return $this->id;
-	  	}
-	  	else
-	  	{
-	  		$error++;
-	  		$this->error=$this->db->lasterror()." - sql=$sql";
-	  		$this->db->rollback();
-	  		return -3;
-	  	}
-	  }
-	  else
-	  {
-	  	$error++;
-	  	$this->error=$this->db->lasterror()." - sql=$sql";
-	  	$this->db->rollback();
-	  	return -2;
-	  }
+			{
+				// Insertion des lignes
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				{
+					if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty) > 0)
+					{
+						$error++;
+					}
+				}
+				
+				if (! $error && $this->id && $this->origin_id)
+				{
+					$ret = $this->add_object_linked();
+					if (!$ret)
+					{
+						$error++;
+					}
+					
+					if ($conf->commande->enabled)
+					{
+						$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
+						dol_syslog("Expedition::create sql=".$sql, LOG_DEBUG);
+						if (! $this->db->query($sql))
+						{
+							$error++;
+						}
+					}
+					else
+					{
+						// TODO definir un statut
+						$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
+						dol_syslog("Expedition::create sql=".$sql, LOG_DEBUG);
+						if (! $this->db->query($sql))
+						{
+							$error++;
+						}
+					}
+				}
+				
+				if (! $error)
+				{
+					$this->db->commit();
+					return $this->id;
+				}
+				else
+				{
+					$error++;
+					$this->error=$this->db->lasterror()." - sql=$sql";
+					$this->db->rollback();
+					return -3;
+				}
+			}
+			else
+			{
+				$error++;
+				$this->error=$this->db->lasterror()." - sql=$sql";
+				$this->db->rollback();
+				return -2;
+			}
 		}
 		else
 		{

@@ -236,9 +236,9 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 		
 		migrate_relationship_tables($db,$langs,$conf,'pr_exp','fk_propal','propal','fk_expedition','shipping');
 		
-		//migrate_relationship_tables($db,$langs,$conf,'pr_liv','fk_propal','propal','fk_livraison','delivery');
+		migrate_relationship_tables($db,$langs,$conf,'pr_liv','fk_propal','propal','fk_livraison','delivery');
 		
-		//migrate_relationship_tables($db,$langs,$conf,'co_liv','fk_commande','commande','fk_livraison','delivery');
+		migrate_relationship_tables($db,$langs,$conf,'co_liv','fk_commande','commande','fk_livraison','delivery');
 		
 		//migrate_relationship_tables($db,$langs,$conf,'co_pr','fk_propale','propal','fk_commande','commande');
 		

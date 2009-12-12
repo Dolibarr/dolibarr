@@ -164,7 +164,7 @@ class Livraison extends CommonObject
 						$error++;
 					}
 					
-					if (! $conf->expedition->enabled)
+					if (! $conf->expedition_bon->enabled)
 					{
 						if ($conf->commande->enabled)
 						{

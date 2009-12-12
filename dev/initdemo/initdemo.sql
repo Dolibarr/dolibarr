@@ -1400,32 +1400,6 @@ INSERT INTO `llx_chargesociales` VALUES (1,'2002-05-15 00:00:00','Acompte 1er Tr
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_co_exp`
---
-
-DROP TABLE IF EXISTS `llx_co_exp`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `llx_co_exp` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_commande` int(11) NOT NULL default '0',
-  `fk_expedition` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  KEY `fk_commande` (`fk_commande`),
-  KEY `fk_expedition` (`fk_expedition`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `llx_co_exp`
---
-
-LOCK TABLES `llx_co_exp` WRITE;
-/*!40000 ALTER TABLE `llx_co_exp` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_co_exp` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `llx_co_fa`
 --
 
@@ -1449,32 +1423,6 @@ SET character_set_client = @saved_cs_client;
 LOCK TABLES `llx_co_fa` WRITE;
 /*!40000 ALTER TABLE `llx_co_fa` DISABLE KEYS */;
 /*!40000 ALTER TABLE `llx_co_fa` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_co_liv`
---
-
-DROP TABLE IF EXISTS `llx_co_liv`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `llx_co_liv` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_commande` int(11) NOT NULL default '0',
-  `fk_livraison` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  KEY `fk_commande` (`fk_commande`),
-  KEY `fk_livraison` (`fk_livraison`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `llx_co_liv`
---
-
-LOCK TABLES `llx_co_liv` WRITE;
-/*!40000 ALTER TABLE `llx_co_liv` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_co_liv` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -3844,58 +3792,6 @@ SET character_set_client = @saved_cs_client;
 LOCK TABLES `llx_paiementfourn_facturefourn` WRITE;
 /*!40000 ALTER TABLE `llx_paiementfourn_facturefourn` DISABLE KEYS */;
 /*!40000 ALTER TABLE `llx_paiementfourn_facturefourn` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_pr_exp`
---
-
-DROP TABLE IF EXISTS `llx_pr_exp`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `llx_pr_exp` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_propal` int(11) NOT NULL default '0',
-  `fk_expedition` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  KEY `fk_propal` (`fk_propal`),
-  KEY `fk_expedition` (`fk_expedition`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `llx_pr_exp`
---
-
-LOCK TABLES `llx_pr_exp` WRITE;
-/*!40000 ALTER TABLE `llx_pr_exp` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_pr_exp` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_pr_liv`
---
-
-DROP TABLE IF EXISTS `llx_pr_liv`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `llx_pr_liv` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_propal` int(11) NOT NULL default '0',
-  `fk_livraison` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  KEY `fk_propal` (`fk_propal`),
-  KEY `fk_livraison` (`fk_livraison`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `llx_pr_liv`
---
-
-LOCK TABLES `llx_pr_liv` WRITE;
-/*!40000 ALTER TABLE `llx_pr_liv` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_pr_liv` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
