@@ -541,62 +541,12 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Factures associees
 	 */
-	// Cas des factures lies directement
-	$sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql.= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-	//$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE fp.fk_facture = f.rowid";
-	$sql.= " AND fp.fk_propal = ".$propal->id;
-	//$sql.= " AND f.fk_soc = s.rowid";
-	//$sql.= " AND s.entity = ".$conf->entity;
-	//$sql.= " UNION ";
-	// Cas des factures lier via la commande
-	$sql2= "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
-	$sql2.= " FROM ".MAIN_DB_PREFIX."facture as f";
-	//$sql2.= ", ".MAIN_DB_PREFIX."societe as s";
-	$sql2.= ", ".MAIN_DB_PREFIX."co_pr as cp";
-	$sql2.= ", ".MAIN_DB_PREFIX."co_fa as cf";
-	$sql2.= " WHERE cp.fk_propale = ".$propal->id;
-	$sql2.= " AND cf.fk_commande = cp.fk_commande";
-	$sql2.= " AND cf.fk_facture = f.rowid";
-	//$sql2.= " AND f.fk_soc = s.rowid";
-	//$sql2.= " AND s.entity = ".$conf->entity;
+	$linkedInvoices = $propal->getInvoiceArrayList();
 
-	dol_syslog("propal.php::liste factures sql=".$sql);
-	$resql=$db->query($sql);
-	$resql2=null;
-	if ($resql)
+	if (is_array($linkedInvoices))
 	{
-		dol_syslog("propal.php::liste factures sql2=".$sql2);
-		$resql2=$db->query($sql2);
-	}
-	if ($resql2)
-	{
-		$tab_sqlobj=array();
+		$num_fac_asso = sizeOf($linkedInvoices);
 
-		$num_fac_asso = $db->num_rows($resql);
-		for ($i = 0;$i < $num_fac_asso;$i++)
-		{
-			$sqlobj = $db->fetch_object($resql);
-			$tab_sqlobj[] = $sqlobj;
-			//$tab_sqlobjOrder[]= $sqlobj->dc;
-		}
-		$db->free($resql);
-
-		$num_fac_asso = $db->num_rows($resql2);
-		for ($i = 0;$i < $num_fac_asso;$i++)
-		{
-			$sqlobj = $db->fetch_object($resql2);
-			$tab_sqlobj[] = $sqlobj;
-			//$tab_sqlobjOrder[]= $sqlobj->dc;
-		}
-		$db->free($resql2);
-
-		//array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
-
-		$num_fac_asso = sizeOf($tab_sqlobj);
-		//$num_fac_asso = $db->num_rows($resql);
 		$i = 0; $total = 0;
 		if ($somethingshown) { print '<br>'; $somethingshown=1; }
 		if ($num_fac_asso > 1) print_titre($langs->trans("RelatedBills"));
@@ -613,25 +563,22 @@ if ($id > 0 || ! empty($ref))
 		$staticfacture=new Facture($db);
 
 		$var=True;
-		while ($i < $num_fac_asso)
+		foreach($linkedInvoices as $key => $invoice)
 		{
-			//$objp = $db->fetch_object($resql);
-			$objp = array_shift($tab_sqlobj);
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			print '<td><a href="../compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
-			print '<td align="center">'.dol_print_date($objp->df,'day').'</td>';
-			print '<td align="right">'.price($objp->total).'</td>';
-			print '<td align="right">'.$staticfacture->LibStatut($objp->paye,$objp->fk_statut,3).'</td>';
+			print '<td><a href="../compta/facture.php?facid='.$invoice->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$invoice->facnumber.'</a></td>';
+			print '<td align="center">'.dol_print_date($invoice->df,'day').'</td>';
+			print '<td align="right">'.price($invoice->total).'</td>';
+			print '<td align="right">'.$staticfacture->LibStatut($invoice->paye,$invoice->fk_statut,3).'</td>';
 			print "</tr>";
-			$total = $total + $objp->total;
+			$total = $total + $invoice->total;
 			$i++;
 		}
 		print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"2\">".$langs->trans("TotalHT")."</td>";
 		print "<td align=\"right\">".price($total)."</td>";
 		print "<td>&nbsp;</td></tr>\n";
 		print "</table>";
-		//$db->free();
 	}
 
 
@@ -673,7 +620,7 @@ else
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " AND p.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
 	if ($viewstatut <> '') $sql.= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons separe par virgules

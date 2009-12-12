@@ -255,17 +255,27 @@ class Facture extends CommonObject
 			// Mise a jour lien avec propal ou commande
 			if (! $error && $this->id && $this->propalid)
 			{
-				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fa_pr (fk_facture, fk_propal) VALUES ('.$this->id.','.$this->propalid.')';
-				dol_syslog("Facture::Create sql=".$sql);
-				$resql=$this->db->query($sql);
-				if (! $resql) $error++;
+				// TODO normaliser ?
+				$this->origin_id = $this->propalid;
+				$this->origin = "propal";
+				$ret = $this->add_object_linked();
+				if (! $ret)
+				{
+					dol_print_error($this->db);
+					$error++;
+				}
 			}
 			if (! $error && $this->id && $this->commandeid)
 			{
-				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_fa (fk_facture, fk_commande) VALUES ('.$this->id.','.$this->commandeid.')';
-				dol_syslog("Facture::Create sql=".$sql);
-				$resql=$this->db->query($sql);
-				if (! $resql) $error++;
+				// TODO normaliser ?
+				$this->origin_id = $this->commandeid;
+				$this->origin = "commande";
+				$ret = $this->add_object_linked();
+				if (! $ret)
+				{
+					dol_print_error($this->db);
+					$error++;
+				}
 			}
 
 			/*
@@ -545,11 +555,11 @@ class Facture extends CommonObject
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
-		$sql.= ', cf.fk_commande';
+		$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_fa as cf ON cf.fk_facture = f.rowid';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = '".$this->element."'";
 		$sql.= ' WHERE f.entity = '.$conf->entity;
 		if ($ref) $sql.= " AND f.facnumber='".$ref."'";
 		else $sql.= " AND f.rowid=".$rowid;
@@ -964,69 +974,61 @@ class Facture extends CommonObject
 		$error=0;
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'fa_pr WHERE fk_facture = '.$rowid;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_element';
+		$sql.= ' WHERE fk_target = '.$rowid;
+		$sql.= ' AND targettype = '.$this->element;
+		
 		if ($this->db->query($sql))
 		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'co_fa WHERE fk_facture = '.$rowid;
+			// On met a jour le lien des remises
+			$list_rowid_det=array();
+			$sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
+			$resql=$this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$list_rowid_det[]=$obj->rowid;
+			}
+
+			// On desaffecte de la facture les remises liees
+			if (sizeof($list_rowid_det))
+			{
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+				$sql.= ' SET fk_facture = NULL';
+				$sql.= ' WHERE fk_facture in ('.join(',',$list_rowid_det).')';
+
+				dol_syslog("Facture.class::delete sql=".$sql);
+				if (! $this->db->query($sql))
+				{
+					$this->error=$this->db->error()." sql=".$sql;
+					dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
+					$this->db->rollback();
+					return -5;
+				}
+			}
+
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
 			if ($this->db->query($sql))
 			{
-				// On met a jour le lien des remises
-				$list_rowid_det=array();
-				$sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 				$resql=$this->db->query($sql);
-				while ($obj = $this->db->fetch_object($resql))
+				if ($resql)
 				{
-					$list_rowid_det[]=$obj->rowid;
-				}
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
 
-				// On d�saffecte de la facture les remises li�es
-				if (sizeof($list_rowid_det))
-				{
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-					$sql.= ' SET fk_facture = NULL';
-					$sql.= ' WHERE fk_facture in ('.join(',',$list_rowid_det).')';
-
-					dol_syslog("Facture.class::delete sql=".$sql);
-					if (! $this->db->query($sql))
-					{
-						$this->error=$this->db->error()." sql=".$sql;
-						dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
-						$this->db->rollback();
-						return -5;
-					}
-				}
-
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
-				if ($this->db->query($sql))
-				{
-					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
-					$resql=$this->db->query($sql);
-					if ($resql)
-					{
-						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-						$interface=new Interfaces($this->db);
-						$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
-						if ($result < 0) { $error++; $this->errors=$interface->errors; }
-						// Fin appel triggers
-
-						$this->db->commit();
-						return 1;
-					}
-					else
-					{
-						$this->error=$this->db->error()." sql=".$sql;
-						dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
-						$this->db->rollback();
-						return -6;
-					}
+					$this->db->commit();
+					return 1;
 				}
 				else
 				{
 					$this->error=$this->db->error()." sql=".$sql;
 					dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return -4;
+					return -6;
 				}
 			}
 			else
@@ -1034,7 +1036,7 @@ class Facture extends CommonObject
 				$this->error=$this->db->error()." sql=".$sql;
 				dol_syslog("Facture.class::delete ".$this->error, LOG_ERR);
 				$this->db->rollback();
-				return -3;
+				return -4;
 			}
 		}
 		else

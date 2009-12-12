@@ -3371,9 +3371,11 @@ else
 				 *   Propales rattachees
 				 */
 				$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.ref_client, p.rowid as propalid';
-				$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
-				$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-				$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'propal as p';
+				$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
+				$sql.= " WHERE el.fk_source = p.rowid";
+				$sql.= " AND el.fk_target = ".$fac->id;
+				$sql.= " AND el.targettype = '".$fac->element."'";
 
 				dol_syslog("facture.php: sql=".$sql);
 				$resql = $db->query($sql);
@@ -3427,7 +3429,12 @@ else
 				if($conf->commande->enabled)
 				{
 					$sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
-					$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'co_fa as co_fa WHERE co_fa.fk_commande = c.rowid AND co_fa.fk_facture = '.$fac->id;
+					$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+					$sql.= ', '.MAIN_DB_PREFIX.'element_element as el';
+					$sql.= ' WHERE el.fk_source = c.rowid';
+					$sql.= " AND el.fk_target = ".$fac->id;
+					$sql.= " AND el.targettype = '".$fac->element."'";
+					
 					$resql = $db->query($sql);
 					if ($resql)
 					{

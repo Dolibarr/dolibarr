@@ -234,7 +234,7 @@ else
 
 		$allowinstall=0;
 	}
-	// Si fichier pr�sent et peut etre modifi�
+	// Si fichier present et peut etre modifie
 	else
 	{
 		if ($confexists)
@@ -292,7 +292,7 @@ else
 			$conf->setValues($db);
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
-			$dolibarrlastupgradeversionarray=preg_split('/[.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
+			$dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
 			$dolibarrversiontoinstallarray=versiondolibarrarray();
 		}
 
@@ -375,8 +375,8 @@ else
 			{
 				if (sizeof($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
 				{
-					$dolibarrversionfromarray=preg_split('/[.-]/',$versionfrom);
-					$dolibarrversiontoarray=preg_split('/[.-]/',$versionto);
+					$dolibarrversionfromarray=preg_split('/[\.-]/',$versionfrom);
+					$dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
 					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
 					{

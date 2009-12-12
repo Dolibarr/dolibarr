@@ -604,8 +604,15 @@ class Commande extends CommonObject
 				{
 					if ($this->id && $this->propale_id)
 					{
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
-						$this->db->query($sql);
+						// Add proposal link
+						// TODO normaliser ?
+						$this->origin_id = $this->propale_id;
+						$this->origin = "propal";
+						$ret = $this->add_object_linked();
+						if (! $ret)
+						{
+							dol_print_error($this->db);
+						}
 
 						// On recupere les differents contact interne et externe
 						$prop = New Propal($this->db, $this->socid, $this->propale_id);
@@ -932,11 +939,11 @@ class Commande extends CommonObject
 		$sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_facture';
-		$sql.= ', cp.fk_propale';
+		$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON (c.fk_cond_reglement = cr.rowid)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_pr as cp ON (cp.fk_commande = c.rowid)';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = c.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		if ($ref) $sql.= " AND c.ref='".$ref."'";
 		else $sql.= " AND c.rowid=".$id;
@@ -978,7 +985,7 @@ class Commande extends CommonObject
 				$this->date_livraison         = $obj->date_livraison;
 				$this->adresse_livraison_id   = $obj->fk_adresse_livraison; // TODO obsolete
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
-				$this->propale_id             = $obj->fk_propale;
+				$this->propale_id             = $obj->fk_source;
 				$this->lignes                 = array();
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -1878,7 +1885,9 @@ class Commande extends CommonObject
 			$err++;
 		}
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."co_pr WHERE fk_commande = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_target = ".$this->id;
+		$sql.= " AND targettype = ".$this->element;
 		if (! $this->db->query($sql) )
 		{
 			$err++;

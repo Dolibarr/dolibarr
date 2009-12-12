@@ -55,8 +55,8 @@ function versioncompare($versionarray1,$versionarray2)
 	{
 		$operande1=isset($versionarray1[$level])?$versionarray1[$level]:0;
 		$operande2=isset($versionarray2[$level])?$versionarray2[$level]:0;
-		if (preg_match('/beta|alpha/i',$operande1)) $operande1=-1;
-		if (preg_match('/beta|alpha/i',$operande2)) $operande2=-1;
+		if (preg_match('/beta|alpha|dev/i',$operande1)) $operande1=-1;
+		if (preg_match('/beta|alpha|dev/i',$operande2)) $operande2=-1;
 		$level++;
 		//print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
 		if ($operande1 < $operande2) { $ret = -$level; break; }

@@ -1037,7 +1037,7 @@ class pdf_oursin extends ModelePDFFactures
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($val['type'] == 'order')
+				if ($val['type'] == 'commande')
 				{
 					$newobject=new Propal($this->db);
 					$result=$newobject->fetch($val['linkid']);

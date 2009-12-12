@@ -2286,86 +2286,6 @@
 </INDEX>
 </INDICES>
 </TABLE>
-<TABLE ID="1043" Tablename="llx_co_fa" PrevTableName="" XPos="2288" YPos="1890" TableType="1" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="45" >
-<COLUMNS>
-<COLUMN ID="1481" ColName="fk_commande" PrevColName="" Pos="2" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="3457" ColName="fk_facture" PrevColName="" Pos="2" idDatatype="5" DatatypeParams="(11)" Width="-1" Prec="-1" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-</COLUMNS>
-<RELATIONS_END>
-<RELATION_END ID="3432" />
-<RELATION_END ID="3435" />
-</RELATIONS_END>
-<INDICES>
-<INDEX ID="1484" IndexName="fk_commande" IndexKind="1" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1481" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="3468" IndexName="llx_co_fa_FKIndex1" IndexKind="1" FKRefDef_Obj_id="3432">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1481" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="3469" IndexName="llx_co_fa_FKIndex2" IndexKind="1" FKRefDef_Obj_id="3435">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="3457" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-</INDICES>
-</TABLE>
-<TABLE ID="1044" Tablename="llx_co_pr" PrevTableName="" XPos="2552" YPos="1098" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="1" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="46" >
-<COLUMNS>
-<COLUMN ID="1486" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="3431" ColName="fk_commande" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="1488" ColName="fk_propale" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-</COLUMNS>
-<RELATIONS_END>
-<RELATION_END ID="3427" />
-<RELATION_END ID="3429" />
-</RELATIONS_END>
-<INDICES>
-<INDEX ID="1489" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1486" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="3470" IndexName="llx_co_pr_FKIndex1" IndexKind="1" FKRefDef_Obj_id="3427">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1488" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="3471" IndexName="llx_co_pr_FKIndex2" IndexKind="1" FKRefDef_Obj_id="3429">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="3431" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-</INDICES>
-</TABLE>
 <TABLE ID="1045" Tablename="llx_commande" PrevTableName="" XPos="2912" YPos="1080" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="\n" TableOptions="DelayKeyTblUpdates=0\nPackKeys=0\nRowChecksum=0\nRowFormat=0\nUseRaid=0\nRaidType=0\n" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="47" >
 <COLUMNS>
 <COLUMN ID="1490" ColName="rowidc" PrevColName="rowid" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="0" DefaultValue="" Comments="">
@@ -4445,43 +4365,6 @@
 <INDEX ID="1844" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
 <INDEXCOLUMNS>
 <INDEXCOLUMN idColumn="1839" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-</INDICES>
-</TABLE>
-<TABLE ID="1078" Tablename="llx_fa_pr" PrevTableName="" XPos="1960" YPos="1516" TableType="0" TablePrefix="0" nmTable="0" Temporary="0" UseStandardInserts="0" StandardInserts="" TableOptions="" Comments="" Collapsed="0" IsLinkedObject="0" IDLinkedModel="-1" Obj_id_Linked="-1" OrderPos="80" >
-<COLUMNS>
-<COLUMN ID="1845" ColName="rowid" PrevColName="" Pos="1" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="1" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-<COLUMN ID="1847" ColName="fk_propal" PrevColName="" Pos="3" idDatatype="5" DatatypeParams="(11)" Width="0" Prec="0" PrimaryKey="0" NotNull="1" AutoInc="0" IsForeignKey="1" DefaultValue="" Comments="">
-<OPTIONSELECTED>
-<OPTIONSELECT Value="0" />
-<OPTIONSELECT Value="0" />
-</OPTIONSELECTED>
-</COLUMN>
-</COLUMNS>
-<RELATIONS_END>
-<RELATION_END ID="3437" />
-<RELATION_END ID="3439" />
-</RELATIONS_END>
-<INDICES>
-<INDEX ID="1848" IndexName="PRIMARY" IndexKind="0" FKRefDef_Obj_id="-1">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1845" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="3480" IndexName="llx_fa_pr_FKIndex1" IndexKind="1" FKRefDef_Obj_id="3437">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1845" LengthParam="0" />
-</INDEXCOLUMNS>
-</INDEX>
-<INDEX ID="3481" IndexName="llx_fa_pr_FKIndex2" IndexKind="1" FKRefDef_Obj_id="3439">
-<INDEXCOLUMNS>
-<INDEXCOLUMN idColumn="1847" LengthParam="0" />
 </INDEXCOLUMNS>
 </INDEX>
 </INDICES>

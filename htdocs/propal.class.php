@@ -1388,16 +1388,20 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    \brief        Renvoie un tableau contenant les num�ros de commandes associ�es
+	 *    \brief        Renvoie un tableau contenant les numeros de commandes associees
 	 *    \remarks      Fonction plus light que associated_orders
 	 *    \sa           loadOrders
+	 *    \TODO doublon avec loadOrders() ?
 	 */
 	function getOrderArrayList()
 	{
 		$ga = array();
 
-		$sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";
-		$sql .= " WHERE fk_propale = " . $this->id;
+		$sql = "SELECT fk_target FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_source = ".$this->id;
+		$sql.= " AND sourcetype = '".$this->element."'";
+		$sql.= " AND targettype = 'commande'";
+		
 		if ($this->db->query($sql) )
 		{
 			$nump = $this->db->num_rows();
@@ -1409,7 +1413,7 @@ class Propal extends CommonObject
 				{
 					$obj = $this->db->fetch_object();
 
-					$ga[$i] = $obj->fk_commande;
+					$ga[$i] = $obj->fk_target;
 					$i++;
 				}
 			}
@@ -1422,18 +1426,23 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *		\brief      Charge tableau contenant les commandes associ�es
+	 *		\brief      Charge tableau contenant les commandes associees
 	 *  	\remarks    Fonction plus lourde que getOrderArrayList
 	 *		\return		int 				<0 si ko, >0 si ok
 	 *		\sa         getOrdersArrayList
+	 *      \TODO doublon avec getOrderArrayList() ?
 	 */
 	function loadOrders()
 	{
 		$this->commandes = array();
 
 		$ga = array();
-		$sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";
-		$sql.= " WHERE fk_propale = " . $this->id;
+		
+		$sql = "SELECT fk_target FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_source = " . $this->id;
+		$sql.= " AND sourcetype = '".$this->element."'";
+		$sql.= " AND targettype = 'commande'";
+
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -1447,9 +1456,9 @@ class Propal extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$order=new Commande($this->db);
 
-					if ($obj->fk_commande)
+					if ($obj->fk_target)
 					{
-						$order->fetch($obj->fk_commande);
+						$order->fetch($obj->fk_target);
 						$ga[$i] = $order;
 					}
 					$i++;
@@ -1482,29 +1491,35 @@ class Propal extends CommonObject
 	function InvoiceArrayList($id)
 	{
 		$ga = array();
+		$linkedInvoices = array();
+		
+		$this->load_object_linked($id,$this->element);
+		foreach($this->linked_object as $key => $object)
+		{
+			// Cas des factures liees directement
+			if ($object['type'] == 'facture')
+			{
+				$linkedInvoices[] = $object['linkid'];
+			}
+			// Cas des factures liees via la commande
+			else
+			{
+				$this->load_object_linked($object['linkid'],$object['type']);
+				foreach($this->linked_object as $key => $object)
+				{
+					$linkedInvoices[] = $object['linkid'];
+				}
+			}
+		}
+		
+		$sql= "SELECT rowid as facid, facnumber, total,".$this->db->pdate("datef")." as df, fk_user_author, fk_statut, paye";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
-		$sql = "SELECT f.rowid, f.facnumber";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql.= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-		$sql.= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$id;
-		//$sql.= " UNION ";
-		// Cas des factures liees via la commande
-		$sql2= "SELECT f.rowid, f.facnumber";
-		$sql2.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql2.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-		$sql2.= " WHERE cp.fk_propale = ".$id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
-
-		//$sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
-		//$sql .= " WHERE fk_propal = " . $id;
 		dol_syslog("Propal::InvoiceArrayList sql=".$sql);
 		$resql=$this->db->query($sql);
-		$resql2=null;
+
 		if ($resql)
-		{
-			dol_syslog("Propal::InvoiceArrayList sql2=".$sql2);
-			$resql2=$this->db->query($sql2);
-		}
-		if ($resql2)
 		{
 			$tab_sqlobj=array();
 			$nump = $this->db->num_rows($resql);
@@ -1512,21 +1527,9 @@ class Propal extends CommonObject
 			{
 				$sqlobj = $this->db->fetch_object($resql);
 				$tab_sqlobj[] = $sqlobj;
-				//$tab_sqlobjOrder[]= $sqlobj->dc;
 			}
 			$this->db->free($resql);
-			$nump = $this->db->num_rows($resql2);
 
-			for ($i = 0;$i < $nump;$i++)
-			{
-				$sqlobj = $this->db->fetch_object($resql2);
-				$tab_sqlobj[] = $sqlobj;
-				//$tab_sqlobjOrder[]= $sqlobj->dc;
-			}
-			$this->db->free($resql2);
-			//array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
-
-			//$nump = $this->db->num_rows($resql);
 			$nump = sizeOf($tab_sqlobj);
 
 			if ($nump)
@@ -1534,10 +1537,10 @@ class Propal extends CommonObject
 				$i = 0;
 				while ($i < $nump)
 				{
-					//$obj = $this->db->fetch_object($resql);
 					$obj = array_shift($tab_sqlobj);
 
-					$ga[$obj->rowid] = $obj->facnumber;
+					$ga[$i] = $obj;
+					
 					$i++;
 				}
 			}

@@ -159,6 +159,9 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 	 ***************************************************************************************/
 	if (! $error)
 	{
+		// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
+		// Version to install is DOL_VERSION
+		$dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
 
 		$db->begin();
 
@@ -230,22 +233,26 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 		
 		migrate_directories($db,$langs,$conf,'/societe','/mycompany');
 		
-		
-		// Script pour V2.7 -> V2.8
-		migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
-		
-		migrate_relationship_tables($db,$langs,$conf,'pr_exp','fk_propal','propal','fk_expedition','shipping');
-		
-		migrate_relationship_tables($db,$langs,$conf,'pr_liv','fk_propal','propal','fk_livraison','delivery');
-		
-		migrate_relationship_tables($db,$langs,$conf,'co_liv','fk_commande','commande','fk_livraison','delivery');
-		
-		//migrate_relationship_tables($db,$langs,$conf,'co_pr','fk_propale','propal','fk_commande','commande');
-		
-		//migrate_relationship_tables($db,$langs,$conf,'fa_pr','fk_propal','propal','fk_facture','facture');
-		
-		//migrate_relationship_tables($db,$langs,$conf,'co_fa','fk_commande','commande','fk_facture','facture');
 
+		// Script pour V2.7 -> V2.8
+		$toversionarray=array('2.8.0');
+		//$dolibarrlastupgradeversionarray=array('2.7.0');
+		if (versioncompare($toversionarray,$dolibarrlastupgradeversionarray) > 0)
+		{
+			migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
+			
+			migrate_relationship_tables($db,$langs,$conf,'pr_exp','fk_propal','propal','fk_expedition','shipping');
+
+			migrate_relationship_tables($db,$langs,$conf,'pr_liv','fk_propal','propal','fk_livraison','delivery');
+			
+			migrate_relationship_tables($db,$langs,$conf,'co_liv','fk_commande','commande','fk_livraison','delivery');
+			
+			migrate_relationship_tables($db,$langs,$conf,'co_pr','fk_propale','propal','fk_commande','commande');
+			
+			migrate_relationship_tables($db,$langs,$conf,'fa_pr','fk_propal','propal','fk_facture','facture');
+
+			migrate_relationship_tables($db,$langs,$conf,'co_fa','fk_commande','commande','fk_facture','facture');
+		}
 
 		// On commit dans tous les cas.
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.

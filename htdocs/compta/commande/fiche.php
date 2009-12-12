@@ -283,7 +283,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 		}
 
-		// Conditions et modes de règlement
+		// Conditions et modes de rï¿½glement
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
@@ -537,7 +537,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		/*
-		 * Documents générés
+		 * Documents generes
 		 *
 		 */
 		$comref = dol_sanitizeFileName($commande->ref);
@@ -554,8 +554,11 @@ if ($id > 0 || ! empty($ref))
 		 * Liste des factures
 		 */
 		$sql = "SELECT f.rowid,f.facnumber, f.total_ttc, ".$db->pdate("f.datef")." as df";
-		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as cf";
-		$sql .= " WHERE f.rowid = cf.fk_facture AND cf.fk_commande = ". $commande->id;
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
+		$sql.= " WHERE f.rowid = el.fk_target";
+		$sql.= " AND el.fk_source = ". $commande->id;
+		$sql.= " AND el.sourcetype = '".$commande->element."'";
 
 		$result = $db->query($sql);
 		if ($result)
@@ -605,7 +608,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		// Commande non trouvée
+		// Commande non trouvee
 		print "Commande inexistante";
 	}
 }

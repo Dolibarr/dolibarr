@@ -2081,9 +2081,12 @@ else
 				/*
 				 * Liste des factures
 				 */
-				$sql = 'SELECT f.rowid,f.facnumber, f.total_ttc, '.$db->pdate('f.datef').' as df';
-				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'co_fa as cf';
-				$sql .= ' WHERE f.rowid = cf.fk_facture AND cf.fk_commande = '. $commande->id;
+				$sql = "SELECT f.rowid,f.facnumber, f.total_ttc, ".$db->pdate('f.datef')." as df";
+				$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+				$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
+				$sql.= " WHERE f.rowid = el.fk_target";
+				$sql.= " AND el.fk_source = ".$commande->id;
+				$sql.= " AND el.sourcetype = '".$commande->element."'";
 
 				$result = $db->query($sql);
 				if ($result)

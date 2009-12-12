@@ -481,7 +481,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($val['type'] == 'order')
+				if ($val['type'] == 'commande')
 				{
 					$newobject=new Commande($this->db);
 					$result=$newobject->fetch($val['linkid']);

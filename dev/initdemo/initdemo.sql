@@ -1399,60 +1399,6 @@ INSERT INTO `llx_chargesociales` VALUES (1,'2002-05-15 00:00:00','Acompte 1er Tr
 /*!40000 ALTER TABLE `llx_chargesociales` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `llx_co_fa`
---
-
-DROP TABLE IF EXISTS `llx_co_fa`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `llx_co_fa` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_commande` int(11) NOT NULL default '0',
-  `fk_facture` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  KEY `fk_commande` (`fk_commande`),
-  KEY `fk_facture` (`fk_facture`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `llx_co_fa`
---
-
-LOCK TABLES `llx_co_fa` WRITE;
-/*!40000 ALTER TABLE `llx_co_fa` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_co_fa` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_co_pr`
---
-
-DROP TABLE IF EXISTS `llx_co_pr`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `llx_co_pr` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_commande` int(11) default NULL,
-  `fk_propale` int(11) default NULL,
-  PRIMARY KEY  (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `llx_co_pr`
---
-
-LOCK TABLES `llx_co_pr` WRITE;
-/*!40000 ALTER TABLE `llx_co_pr` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_co_pr` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_commande`
---
-
 DROP TABLE IF EXISTS `llx_commande`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -2728,30 +2674,6 @@ SET character_set_client = @saved_cs_client;
 LOCK TABLES `llx_export_model` WRITE;
 /*!40000 ALTER TABLE `llx_export_model` DISABLE KEYS */;
 /*!40000 ALTER TABLE `llx_export_model` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `llx_fa_pr`
---
-
-DROP TABLE IF EXISTS `llx_fa_pr`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE `llx_fa_pr` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_facture` int(11) default NULL,
-  `fk_propal` int(11) default NULL,
-  PRIMARY KEY  (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
-
---
--- Dumping data for table `llx_fa_pr`
---
-
-LOCK TABLES `llx_fa_pr` WRITE;
-/*!40000 ALTER TABLE `llx_fa_pr` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_fa_pr` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
