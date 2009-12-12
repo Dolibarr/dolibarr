@@ -1,6 +1,6 @@
-# Dolibarr language file - es_ES - install  = 
+# Dolibarr language file - ca_ES - install 
 CHARSET = UTF-8
-InstallEasy = Hem procurat que la instal lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
+InstallEasy = Hem procurat que la instal·lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
 MiscellanousChecks = Comprovació dels Prerequisits
 DolibarrWelcome = Benvingut a Dolibarr
 ConfFileExists = L'arxiu de configuració <b>%s</b> existeix.
@@ -147,6 +147,7 @@ MigrationInvoice = Migració de dades de les factures a clients
 MigrationContract = Migració de dades dels contractes
 MigrationSuccessfullUpdate = Actualització finalitzada
 MigrationUpdateFailed = L'actualització ha fallat
+MigrationRelationshipTables = Migració de les taules de relació (%s)
 # Payments Update =  = 
 MigrationPaymentsUpdate = Actualització dels pagaments (vincle nn pagaments-factures)
 MigrationPaymentsNumberToUpdate = %s pagament(s) a actualitzar
