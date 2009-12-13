@@ -111,7 +111,7 @@ class Product extends CommonObject
 
 	//! Id du fournisseur
 	var $product_fourn_id;
-	
+
 	//! Product ID already linked to a reference supplier
 	var $product_id_already_linked;
 
@@ -1672,16 +1672,16 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      Lie un fournisseur au produit/service
-	 *    \param      user        Utilisateur qui fait le lien
-	 *    \param      id_fourn    Id du fournisseur
-	 *    \param      ref_fourn   Reference chez le fournisseur
-	 *    \return     int         < 0 if KO, 0 if link already exists, > 0 if OK
+	 *    \brief      Add a supplier reference for the product
+	 *    \param      user        User that make link
+	 *    \param      id_fourn    Supplier id
+	 *    \param      ref_fourn   Supplier ref
+	 *    \return     int         < 0 if KO, 0 if link already exists for this product, > 0 if OK
 	 */
 	function add_fournisseur($user, $id_fourn, $ref_fourn)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT rowid, fk_product";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
@@ -1693,10 +1693,9 @@ class Product extends CommonObject
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			$nb = count($obj);
-			
-			// The reference supplier does not exist, it creates for this product.
-			if (!$nb)
+
+			// The reference supplier does not exist, we create it for this product.
+			if (! $obj)
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur (";
 				$sql.= "datec";
@@ -1727,19 +1726,19 @@ class Product extends CommonObject
 					return -1;
 				}
 			}
-			// If the reference supplier is already linked to this product
+			// If the supplier ref already exists for this product
 			else if ($obj->fk_product == $this->id)
 			{
 				$this->product_fourn_id = $obj->rowid;
-			
+
 				return 0;
 			}
-			// If the reference provider is not linked to this product
+			// If the supplier ref already exists but for another product
 			else
 			{
 				$this->product_id_already_linked = $obj->fk_product;
-				
-				return 2;
+
+				return -3;
 			}
 		}
 		else
@@ -1757,7 +1756,7 @@ class Product extends CommonObject
 	function list_suppliers()
 	{
 		global $conf;
-		
+
 		$list = array();
 
 		$sql = "SELECT fk_soc";

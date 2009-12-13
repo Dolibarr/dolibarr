@@ -110,22 +110,22 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 		if (! $error)
 		{
 			$ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
-			if ($ret < 0)
+			if ($ret == -3)
+			{
+				$error++;
+
+				$product->fetch($product->product_id_already_linked);
+				$productLink = $product->getNomUrl(1,'supplier');
+
+				$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink).'</div>';
+			}
+			else if ($ret < 0)
 			{
 				$error++;
 				$mesg='<div class="error">'.$product->error.'</div>';
 			}
-			if ($ret == 2)
-			{
-				$error++;
-				
-				$product->fetch($product->product_id_already_linked);
-				$productLink = $product->getNomUrl(1,'supplier');
-				
-				$mesg='<div class="error">'.$langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink).'</div>';
-			}
 		}
-		
+
 		if (! $error)
 		{
 			if ($_POST["qty"])

@@ -17,7 +17,8 @@ For users:
 - Fix: bug #28055 : Unable to modify the date of a cloned command.
 - Fix: bug #27891.
 - Fix: Change of numbering module was not effective.
-
+- Fix: Change error management when adding already used supplier ref
+       for a product.
 
 ***** ChangeLog for 2.7 compared to 2.6 *****
 
