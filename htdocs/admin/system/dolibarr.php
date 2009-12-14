@@ -164,6 +164,18 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ClientTZ")."</td><td
 $var=!$var;
 #print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".dol_print_date(dol_now('tzuser'),'dayhour')."</td></tr>\n";
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("ClientHour")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
+
+$var=!$var;
+$filesystemencoding=ini_get("unicode.filesystem_encoding");	// Disponible avec PHP 6.0
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("File encoding")." (php.ini unicode.filesystem_encoding)</td><td>".$filesystemencoding."</td></tr>\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+
+$var=!$var;
+$tmp=ini_get("unicode.filesystem_encoding");						// Disponible avec PHP 6.0
+if (empty($tmp) && ! empty($_SERVER["WINDIR"])) $tmp='iso-8859-1';	// By default for windows
+if (empty($tmp)) $tmp='utf-8';										// By default for other
+if (! empty($conf->global->MAIN_FILESYSTEM_ENCODING)) $tmp=$conf->global->MAIN_FILESYSTEM_ENCODING;
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("File encoding")."</td><td>".$tmp."</td></tr>\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+
 print '</table>';
 print '<br>';
 
