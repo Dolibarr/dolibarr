@@ -1,7 +1,7 @@
 <?php
 // This source file must be UTF-8 encoded
 
-$filename='filewithé';
+$filename='filewithÃ©';
 
 print 'Test to create a file on disk'."\n";
 print 'ENV[LANG]='.$_ENV["LANG"]."\n";
