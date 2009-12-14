@@ -455,7 +455,7 @@ begin
 	     and (FileExists(srcFile) and FileExists(srcFileH) and FileExists(srcFileA)) then
 	    begin
 	      //navigateur
-	      browser := 'explorer.exe';
+	      browser := 'iexplore.exe';
 	      if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
 	      begin
 	        if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser with Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
@@ -463,7 +463,7 @@ begin
 	          browser := pfPath+'/Mozilla Firefox/firefox.exe';
 	        end;
 	      end;
-	      if browser = 'explorer.exe' then
+	      if browser = 'iexplore.exe' then
 	      begin
 	        GetOpenFileName('Please choose your default browser. If you are not sure, just click Open :', browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
 	      end;
