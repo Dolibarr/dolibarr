@@ -219,7 +219,7 @@ function dol_mimetype($file)
  */
 function dol_dir_is_emtpy($folder)
 {
-	$newfolder=utf8_check($folder)?utf8_decode($folder):$folder;	// The is_dir and opendir need ISO strings
+	$newfolder=utf8_check($folder)?dol_osencode($folder):$folder;	// The is_dir and opendir need ISO strings
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
@@ -247,7 +247,7 @@ function dol_count_nb_of_line($file)
 {
 	$nb=0;
 
-	$newfile=utf8_check($file)?utf8_decode($file):$file;	// The fopen need ISO strings
+	$newfile=utf8_check($file)?dol_osencode($file):$file;	// The fopen need ISO strings
 	//print 'x'.$file;
 	$fp=fopen($newfile,'r');
 	if ($fp)
@@ -276,7 +276,7 @@ function dol_count_nb_of_line($file)
  */
 function dol_filesize($pathoffile)
 {
-	$newpathoffile=utf8_check($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	$newpathoffile=utf8_check($pathoffile)?dol_osencode($pathoffile):$pathoffile;
 	return filesize($newpathoffile);
 }
 
@@ -288,7 +288,7 @@ function dol_filesize($pathoffile)
  */
 function dol_filemtime($pathoffile)
 {
-	$newpathoffile=utf8_check($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	$newpathoffile=utf8_check($pathoffile)?dol_osencode($pathoffile):$pathoffile;
 	return filemtime($newpathoffile);
 }
 
@@ -300,7 +300,7 @@ function dol_filemtime($pathoffile)
  */
 function dol_is_file($pathoffile)
 {
-	$newpathoffile=utf8_check($pathoffile)?utf8_decode($pathoffile):$pathoffile;
+	$newpathoffile=utf8_check($pathoffile)?dol_osencode($pathoffile):$pathoffile;
 	return is_file($newpathoffile);
 }
 
