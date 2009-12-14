@@ -218,7 +218,7 @@ if ($id > 0 || ! empty($ref))
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
-					// On n'affiche pas les produits personnalis�s
+					// On n'affiche pas les produits personnalises
 					if ($objp->fk_product)
 					{
 						$var=!$var;
@@ -277,7 +277,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " WHERE cfd.fk_commande = ".$commande->id;
 		$sql.= " AND cfd.fk_product = p.rowid";
 		$sql.= " AND cfd.fk_entrepot = e.rowid";
-		$sql.= " ORDER BY cfd.rowid ASC;";
+		$sql.= " ORDER BY cfd.rowid ASC";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -376,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		// Commande	non	trouv�e
+		// Commande	non	trouvee
 		dol_print_error($db);
 	}
 }
