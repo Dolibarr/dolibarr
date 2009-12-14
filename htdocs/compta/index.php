@@ -668,13 +668,13 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 	$sql.= ", ".MAIN_DB_PREFIX."commande as c";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_source = c.rowid AND el.sourcetype = 'commande'";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON el.fk_target = f.rowid AND el.targettype = 'facture'";
-	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " WHERE c.fk_soc = s.rowid";
+	$sql.= " AND c.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-	$sql.= " AND p.fk_statut = 3";
-	$sql.= " AND p.facture = 0";
-	$sql.= " GROUP BY s.nom, s.rowid, p.rowid, p.ref, p.facture, p.fk_statut, p.total_ht, p.total_ttc";
+	if ($socid)	$sql.= " AND c.fk_soc = ".$socid;
+	$sql.= " AND c.fk_statut = 3";
+	$sql.= " AND c.facture = 0";
+	$sql.= " GROUP BY s.nom, s.rowid, c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.total_ttc";
 
 	$resql = $db->query($sql);
 	if ( $resql )
