@@ -466,7 +466,7 @@ function dol_encode($chain)
 		$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
 	}
 
-	$string_coded = base64_encode(implode ("",$output_tab));
+	$string_coded = base64_encode(implode("",$output_tab));
 	return $string_coded;
 }
 
@@ -484,7 +484,7 @@ function dol_decode($chain)
 		$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
 	}
 
-	$string_decoded = implode ("",$output_tab);
+	$string_decoded = implode("",$output_tab);
 	return $string_decoded;
 }
 
@@ -508,7 +508,7 @@ function dol_avscan_file($file)
 		$maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
 
 		cl_setlimits($maxreclevel, $maxfiles, $maxratio, $archivememlim, $maxfilesize);
-		$malware = cl_scanfile($file);
+		$malware = cl_scanfile(dol_osencode($file));
 	}
 
 	return $malware;

@@ -1978,14 +1978,14 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 		return -1;
 	}
 
-	// The file functions are ISO and data are stored in UTF8 in memory.
-	$src_file_iso=utf8_decode($src_file);
-	$file_name_iso=utf8_decode($file_name);
+	// The file functions must be in OS filesystem encoding.
+	$src_file_osencoded=dol_osencode($src_file);
+	$file_name_osencoded=dol_osencode($file_name);
 
 	// Check if destination file already exists
 	if (! $allowoverwrite)
 	{
-		if (file_exists($file_name_iso))
+		if (file_exists($file_name_osencoded))
 		{
 			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
 			return -2;
@@ -1993,10 +1993,10 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	}
 
 	// Move file
-	$return=move_uploaded_file($src_file_iso, $file_name_iso);
+	$return=move_uploaded_file($src_file_osencoded, $file_name_osencoded);
 	if ($return)
 	{
-		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name, octdec($conf->global->MAIN_UMASK));
+		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 		return 1;
 	}
@@ -3146,6 +3146,24 @@ function utf8_check($Str)
 		}
 	}
 	return true;
+}
+
+
+/**
+ *      \brief      Return an UTF8 string encoded into OS filesystem encoding. This function is used to define
+ * 	                value to pass to filesystem PHP functions.
+ *      \param      $str        String to encode (UTF8)
+ * 		\return		string		Encoded string (UTF8, ISO-8859-1)
+ */
+function dol_osencode($str)
+{
+	$tmp=ini_get("unicode.filesystem_encoding");						// Disponible avec PHP 6.0
+	if (empty($tmp) && ! empty($_SERVER["WINDIR"])) $tmp='iso-8859-1';	// By default for windows
+	if (empty($tmp)) $tmp='utf-8';										// By default for other
+	if (! empty($conf->global->MAIN_FILESYSTEM_ENCODING)) $tmp=$conf->global->MAIN_FILESYSTEM_ENCODING;
+
+	if ($tmp == 'iso-8859-1') return utf8_decode($str);
+	return $str;
 }
 
 
