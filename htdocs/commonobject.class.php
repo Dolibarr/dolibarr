@@ -401,6 +401,17 @@ class CommonObject
 		$this->adresse = $adresse;
 		return $result;
 	}
+	
+    /**
+	 *		\brief		Read linked document
+	 */
+	function fetch_object()
+	{
+		$object = $this->origin;
+		$class = ucfirst($object);
+		$this->$object = new $class($this->db);
+		$this->$object->fetch($this->origin_id);
+	}
 
 
 	/**

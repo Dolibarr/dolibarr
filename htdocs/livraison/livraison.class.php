@@ -617,19 +617,7 @@ class Livraison extends CommonObject
 		}
 	}
 
-
-	/**
-	* 	\brief	Read linked document
-	*/
-	function fetch_object()
-	{
-		$object = $this->origin;
-		$class = ucfirst($this->origin);
-		$this->$object = new $class($this->db);
-		$this->$object->fetch($this->origin_id);
-	}
-
-	/**
+   /**
 	*
 	*
 	*/
