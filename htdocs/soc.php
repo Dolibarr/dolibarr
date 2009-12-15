@@ -308,9 +308,10 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		/*
 		 * Fiche societe en mode creation
 		 */
-		if ($_GET["type"]=='f') { $soc->fournisseur=1; }
-		if ($_GET["type"]=='c') { $soc->client=1; }
-		if ($_GET["type"]=='p') { $soc->client=2; }
+		if ($_GET["type"]=='f')  { $soc->fournisseur=1; }
+		if ($_GET["type"]=='c')  { $soc->client=1; }
+		if ($_GET["type"]=='p')  { $soc->client=2; }
+		if ($_GET["type"]=='cp') { $soc->client=3; }
 		if ($_REQUEST["private"]==1) { $soc->particulier=1;	}
 
 		$soc->nom=$_POST["nom"];
@@ -407,9 +408,10 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 		}
 
-		// Client / Prospect
+		// Prospect/Customer
 		print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
 		print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
+		if ($conf->global->SOCIETE_PROSPECTANDCUSTOMER) print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectAndCustomer').'</option>';
 		print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
 		print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
 		print '</select></td>';
@@ -719,8 +721,10 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		print '<table class="border" width="100%">';
 
+		// Name
 		print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
+		// Prefix
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
 		// On ne permet pas la modification du prefix en mode de numerotation auto utilisant le prefix
 		if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
@@ -734,9 +738,10 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		print '</td>';
 
-		// Client / Prospect
+		// Prospect/Customer
 		print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
 		print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
+		if ($conf->global->SOCIETE_PROSPECTANDCUSTOMER) print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectAndCustomer').'</option>';
 		print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
 		print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
 		print '</select></td>';

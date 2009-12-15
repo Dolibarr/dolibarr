@@ -43,14 +43,14 @@ function societe_prepare_head($objsoc)
 	$head[$h][2] = 'company';
 	$h++;
 
-	if ($objsoc->client==1)
+	if ($objsoc->client==1 || $objsoc->client==3)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
 		$head[$h][1] = $langs->trans("Customer");;
 		$head[$h][2] = 'customer';
 		$h++;
 	}
-	if ($objsoc->client==2)
+	if ($objsoc->client==2 || $objsoc->client==3)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objsoc->id;
 		$head[$h][1] = $langs->trans("Prospect");

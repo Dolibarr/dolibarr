@@ -345,10 +345,7 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 		$limittitle=30;
 		print '<a class="tabTitle">';
 		if ($picto) print img_object('',$picto).' ';
-		print
-		((!defined('MAIN_USE_SHORT_TITLE')) || (defined('MAIN_USE_SHORT_TITLE') &&  MAIN_USE_SHORT_TITLE))
-		? dol_trunc($title,$limittitle)
-		: $title;
+		print dol_trunc($title,$limittitle);
 		print '</a>';
 	}
 
@@ -990,14 +987,14 @@ function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *	\param		trunc				Where to trunc: right, left, middle
  * 	\param		stringencoding		Tell what is source string encoding
  *	\return     string				Truncated string
- *	\remarks	USE_SHORT_TITLE=0 can disable all truncings
+ *	\remarks	MAIN_DISABLE_TRUNC=1 can disable all truncings
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 {
 	global $conf;
 
 	if ($size==0) return $string;
-	if (! defined('USE_SHORT_TITLE') || USE_SHORT_TITLE)
+	if (empty($conf->global->MAIN_DISABLE_TRUNC))
 	{
 		// We go always here
 		if ($trunc == 'right')
