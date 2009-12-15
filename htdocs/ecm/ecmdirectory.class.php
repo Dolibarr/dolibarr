@@ -18,18 +18,18 @@
  */
 
 /**
- \file       htdocs/ecm/ecm_directories.class.php
- \ingroup    ecm
- \brief      This file is an example for a class file
- \version    $Id$
- \author		Laurent Destailleur
- \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
+ *  \file       htdocs/ecm/ecm_directories.class.php
+ *  \ingroup    ecm
+ *  \brief      This file is an example for a class file
+ *  \version    $Id$
+ *  \author		Laurent Destailleur
+ *  \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
  */
 
 /**
- \class      EcmDirectory
- \brief      Class to manage ECM directories
- \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
+ *  \class      EcmDirectory
+ *  \brief      Class to manage ECM directories
+ *  \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
  */
 class EcmDirectory // extends CommonObject
 {
@@ -388,10 +388,10 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 \brief      	Return directory name you can click (and picto)
-	 \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 \param			option			Sur quoi pointe le lien
-	 \return		string			Chaine avec URL
+	 *  \brief      	Return directory name you can click (and picto)
+	 *  \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *  \param			option			Sur quoi pointe le lien
+	 *  \return			string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$max=0)
 	{
@@ -501,11 +501,11 @@ class EcmDirectory // extends CommonObject
 	 *				cachenbofdoc = nb of documents
 	 *				date_c = date creation
 	 * 				fk_user_c = user creation
-	 *  				login_c = login creation
+	 *  			login_c = login creation
 	 * 				fullpath	Full path (Added by build_path_from_id_categ call)
 	 * 				fulllabel	Full label (Added by build_path_from_id_categ call)
 	 * 				level		Level of line (Added by build_path_from_id_categ call)
-	 *  	\param		force		Force reload of full arbo even if already loaded
+	 *  \param		force		Force reload of full arbo even if already loaded
 	 *	\return		array		Tableau de array
 	 */
 	function get_full_arbo($force=0)
@@ -576,7 +576,7 @@ class EcmDirectory // extends CommonObject
 			return -1;
 		}
 
-		// On ajoute la propriete fullpath a tous les �l�ments
+		// On ajoute la propriete fullpath a tous les elements
 		foreach($this->cats as $key => $val)
 		{
 			if (isset($motherof[$key])) continue;
@@ -630,7 +630,7 @@ class EcmDirectory // extends CommonObject
 	/**
 	 *	\brief		Refresh value for cachenboffile
 	 * 	\param		directory		Directory to scan
-	 *   \param    all         0=refresh this id , 1=refresh this entity
+	 *  \param		all         	0=refresh this id , 1=refresh this entity
 	 * 	\return		int				<0 if KO, Nb of files in directory if OK
 	 */
 	function refreshcachenboffile($all=0)
