@@ -42,5 +42,5 @@ create table llx_ecm_document
   private         	smallint DEFAULT 0,
   crc 				varchar(32) NOT NULL DEFAULT '',  		-- checksum
   key				varchar(50) NOT NULL DEFAULT '',  		-- crypt key
-  cipher 			varchar(50) NOT NULL DEFAULT 'twofish', -- crypt cipher
+  cipher 			varchar(50) NOT NULL DEFAULT 'twofish'  -- crypt cipher
 ) type=innodb;

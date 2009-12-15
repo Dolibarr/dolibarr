@@ -34,11 +34,3 @@ create table llx_ecm_directories
   fk_user_c		  integer,
   fk_user_m		  integer
 ) type=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company ecm directories
--- 2 : second company ecm directories
--- 3 : etc...
---
