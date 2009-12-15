@@ -75,9 +75,9 @@ ShowOrder=Vis for
 NoOpenedOrders=Nr. åbnet ordrer
 NoOtherOpenedOrders=Ingen andre åbnet ordrer
 OtherOrders=Andre kendelser
-LastOrders=Seneste% s ordrer
-LastModifiedOrders=Seneste% s modificerede ordrer
-LastClosedOrders=Seneste% s lukkede ordrer
+LastOrders=Seneste %s ordrer
+LastModifiedOrders=Seneste %s modificerede ordrer
+LastClosedOrders=Seneste %s lukkede ordrer
 AllOrders=Alle ordrer
 NbOfOrders=Antal ordrer
 OrdersStatistics=Orders »statistik
@@ -89,9 +89,9 @@ CloseOrder=Luk for
 ConfirmCloseOrder=Er du sikker på du ønsker at lukke denne ordre? Når en ordre er afsluttet, kan den kun blive faktureret.
 ConfirmCloseOrderIfSending=Er du sikker på du ønsker at lukke denne ordre? Du skal lukke en ordre kun, når alle shipping er færdig.
 ConfirmDeleteOrder=Er du sikker på du vil slette denne ordre?
-ConfirmValidateOrder=Er du sikker på at du ønsker at validere denne ordre under <b>navnet% s?</b>
+ConfirmValidateOrder=Er du sikker på at du ønsker at validere denne ordre under <b>navnet %s?</b>
 ConfirmCancelOrder=Er du sikker på du vil annullere denne ordre?
-ConfirmMakeOrder=Er du sikker på du vil bekræfte, du har foretaget denne ordre <b>på% s?</b>
+ConfirmMakeOrder=Er du sikker på du vil bekræfte, du har foretaget denne ordre <b>på %s?</b>
 GenerateBill=Generer faktura
 ClassifyBilled=Klassificere &quot;Billed&quot;
 ComptaCard=Regnskabsmæssig kortet
@@ -112,8 +112,8 @@ RunningOrders=Ordrer på processen
 UserWithApproveOrderGrant=Useres ydes med &quot;godkende ordrer&quot; tilladelse.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstant COMMANDE_SUPPLIER_ADDON ikke defineret
 Error_COMMANDE_ADDON_NotDefined=Konstant COMMANDE_ADDON ikke defineret
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Det lykkedes ikke at indlæse modulet fil &#39;% s&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Det lykkedes ikke at indlæse modulet fil &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Det lykkedes ikke at indlæse modulet fil &#39; %s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Det lykkedes ikke at indlæse modulet fil &#39; %s&#39;
 OrderSource0=Kommerciel forslag
 OrderSource1=Internet
 OrderSource2=Mail-kampagne
@@ -124,7 +124,7 @@ OrderSource6=Opbevare
 QtyOrdered=Qty bestilt
 AddDeliveryCostLine=Tilføj en leveringsrapport omkostninger linje angiver vægten af den rækkefølge
 PDFEinsteinDescription=En fuldstændig orden model (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou yy est l&#39;année, mm le mois et nnnn un compteur sequentiel sans ruptur et sans bedre e 0
+MarbreNumRefDesc=Renvoie le numro sous la forme %syymm-nnnn ou yy est l&#39;année, mm le mois et nnnn un compteur sequentiel sans ruptur et sans bedre e 0
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
 
@@ -132,7 +132,7 @@ MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn ou yy est l&#39;ann�
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 // Reference language: en_US
 OrderLine=Bestil online
-PaymentOrderRef=Betaling af for% s
+PaymentOrderRef=Betaling af for %s
 CloneOrder=Klon orden
-ConfirmCloneOrder=Er du sikker på at du vil klone denne <b>ordre% s?</b>
+ConfirmCloneOrder=Er du sikker på at du vil klone denne <b>ordre %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

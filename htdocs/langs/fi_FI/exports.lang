@@ -19,7 +19,7 @@ SelectExportDataSet=Valitse tiedot, jonka haluat viedä ...
 SelectExportFields=Valitse kentät, jonka haluat viedä tai valita ennalta vienti profil
 SaveExportModel=Tallenna tämä vienti profiili, jos aiot käyttää uudelleen myöhemmin ...
 ExportModelName=Vienti profiilin nimi
-ExportModelSaved=Vienti profiili tallennetaan <b>nimi% s.</b>
+ExportModelSaved=Vienti profiili tallennetaan <b>nimi %s.</b>
 ExportableFields=Exportable kentät
 ExportedFields=Viedyt kentät
 DatasetToExport=Tietokokonaisuus viedä
@@ -53,7 +53,7 @@ SelectImportDataSet=Valitse tiedot haluat tuoda ...
 SelectImportFields=Valitse kentät haluat tuoda, tai valitse ennalta tuonti profil
 SaveImportModel=Tallenna tämä tuonti profiili, jos aiot käyttää uudelleen myöhemmin ...
 ImportModelName=Tuo profiilin nimi
-ImportModelSaved=Tuo profiili tallennetaan <b>nimi% s.</b>
+ImportModelSaved=Tuo profiili tallennetaan <b>nimi %s.</b>
 ImportableFields=Tuoda maahan kentät
 ImportedFields=Maahantuodut kentät
 DatasetToImport=Tietokokonaisuus tuoda
@@ -71,7 +71,7 @@ TypeOfLineServiceOrProduct=Type of line (0 = tuotteen, 1 = palvelu)
 FileWithDataToImport=Tiedoston tiedot tuoda
 FileToImport=Lähdetiedostoa tuoda
 FileMustHaveOneOfFollowingFormat=Tiedoston tuonti on oltava yksi seuraavassa muodossa
-ChooseFileToImport=Valitse tiedosto tuoda sitten picto% s ...
+ChooseFileToImport=Valitse tiedosto tuoda sitten picto %s ...
 FieldsInSourceFile=Toimialoja lähdetiedostoa
 FieldsInTargetDatabase=Kohdekieli kentät Dolibarr tietokanta
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

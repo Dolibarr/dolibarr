@@ -362,7 +362,7 @@ PlutonNumRefModelDesc1=Return a customizable invoice number according to a defin
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US
-UsedByInvoice=Usado para pagar factura% s
+UsedByInvoice=Usado para pagar factura %s
 ConsumedBy=Consumida por
 NotConsumed=Não consumiu
 HelpPaymentHigherThanReminderToPay=Atenção, o montante do pagamento de uma ou mais letras é maior do que o resto a pagar. <br> Edite sua entrada, caso contrário, confirmar e pensar sobre como criar uma nota de crédito do excesso recebido para cada overpaid facturas.
@@ -378,7 +378,7 @@ PaymentId=Pagamento id
 DescTaxAndDividendsArea=Esta área apresenta um resumo de todos os pagamentos de impostos ou contribuições sociais. Somente registros com pagamento fixo durante o ano são incluídas aqui.
 NbOfPayments=Nb de pagamentos
 SplitDiscount=Dividido em duas desconto
-ConfirmSplitDiscount=Tem certeza de que quer dividir este desconto <b>de% s% s</b> em 2 menores descontos?
+ConfirmSplitDiscount=Tem certeza de que quer dividir este desconto <b>de %s %s</b> em 2 menores descontos?
 TypeAmountOfEachNewDiscount=Entrada montante para cada uma das duas partes:
 TotalOfTwoDiscountMustEqualsOriginal=Total de dois novos desconto deve ser igual ao montante original de desconto.
 ConfirmRemoveDiscount=Tem certeza de que deseja remover este desconto?

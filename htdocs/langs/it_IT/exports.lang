@@ -10,7 +10,7 @@ SelectExportDataSet				   =Scegli di dati che si desidera esportare ...
 SelectExportFields				   =Scegli i campi che si desidera esportare, o selezionare un profilo predefinito di esportazione 
 SaveExportModel					   =Salva l'esportazione profilo, se si ha intenzione di riutilizzare in un secondo momento ... 
 ExportModelName					   =Nome del profilo esportazione 
-ExportModelSaved				   =Profilo esportazione salvato con il nome <b>% s </b>. 
+ExportModelSaved				   =Profilo esportazione salvato con il nome <b> %s </b>. 
 ExportableFields				   = Campi esportabili 
 ExportedFields					   =Campi esportati  
 DatasetToExport					   = Dati da esportare
@@ -42,7 +42,7 @@ SelectImportDataSet=Scegli di dati che si desidera importare ...
 SelectImportFields=Scegli i campi che si desidera importare o selezionare un profilo predefinito di importazione
 SaveImportModel=Salva l&#39;importazione del profilo, se si prevede di riutilizzare in un secondo momento ...
 ImportModelName=Importa nome del profilo
-ImportModelSaved=Importa profilo salvato con il <b>nome% s.</b>
+ImportModelSaved=Importa profilo salvato con il <b>nome %s.</b>
 ImportableFields=Importazione campi
 ImportedFields=Le importazioni di campi
 DatasetToImport=Dataset per importare
@@ -60,7 +60,7 @@ TypeOfLineServiceOrProduct=Tipo di linea (0 = prodotto, servizio = 1)
 FileWithDataToImport=File con i dati per l&#39;importazione
 FileToImport=Fonte file da importare
 FileMustHaveOneOfFollowingFormat=File da importare deve avere uno dei seguenti formati
-ChooseFileToImport=Scegli il file da importare e poi cliccate sul picto% s ...
+ChooseFileToImport=Scegli il file da importare e poi cliccate sul picto %s ...
 FieldsInSourceFile=I campi in file sorgente
 FieldsInTargetDatabase=Target Dolibarr campi del database
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

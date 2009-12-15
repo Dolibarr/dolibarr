@@ -136,7 +136,7 @@ Rapprocher					=Concilia
 // Reference language: en_US
 RIBControlError=Inetgrity controlli non di valori. Ciò significa che per questo numero di conto non sono complete o sbagliato (controlla paese, i numeri e IBAN).
 BankTransactionByCategories=Banca operazioni per categorie
-BankTransactionForCategory=Transazioni bancarie per la <b>categoria% s</b>
+BankTransactionForCategory=Transazioni bancarie per la <b>categoria %s</b>
 ListBankTransactions=Elenco delle operazioni bancarie
 ListTransactions=Elenco transazioni
 ListTransactionsByCategory=Elenco operazione / categoria

@@ -30,8 +30,8 @@ ValidateProp=Valider kommercielle forslag
 AddProp=Tilføj forslag
 ConfirmDeleteProp=Er du sikker på du vil slette denne kommercielle forslag?
 ConfirmValidateProp=Er du sikker på at du ønsker at validere denne kommercielle forslag?
-LastPropals=Seneste% s forslag
-LastClosedProposals=Seneste% s lukket forslag
+LastPropals=Seneste %s forslag
+LastClosedProposals=Seneste %s lukket forslag
 AllPropals=Alle forslag
 LastProposals=Seneste forslag
 SearchAProposal=Søg forslag
@@ -77,7 +77,7 @@ ClassifyBilled=Klassificere faktureret
 BuildBill=Build faktura
 RelatedBill=Relaterede faktura
 RelatedBills=Relaterede fakturaer
-ErrorPropalNotFound=Propal% s blev ikke fundet
+ErrorPropalNotFound=Propal %s blev ikke fundet
 Estimate=Skøn:
 EstimateShort=Skøn
 OtherPropals=Andre forslag
@@ -86,7 +86,7 @@ CreateEmptyPropal=Opret tom kommercielle forslag vierge eller fra listen over de
 DefaultProposalDurationValidity=Default kommercielle forslag gyldighedens løbetid (i dage)
 UseCustomerContactAsPropalRecipientIfExist=Brug kunde kontakt adresse, hvis defineret i stedet for tredjepart adresse som forslag modtagerens adresse
 ClonePropal=Klon kommercielle forslag
-ConfirmClonePropal=Er du sikker på at du vil klone denne kommercielle <b>forslag% s?</b>
+ConfirmClonePropal=Er du sikker på at du vil klone denne kommercielle <b>forslag %s?</b>
 DocModelAzurDescription=En komplet forslag model (logo. ..)
 DocModelJauneDescription=Jaune forslag model
 // Date 2009-01-19 21:26:39
@@ -96,9 +96,9 @@ DocModelJauneDescription=Jaune forslag model
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 // Reference language: en_US
 ProposalShort=Forslag
-LastModifiedProposals=Seneste% s ændrede forslag
+LastModifiedProposals=Seneste %s ændrede forslag
 DatePropal=Dato for forslag
 ProposalsAndProposalsLines=Kommercielle forslag og linjer
 ProposalLine=Forslag linje
-MarbreNumRefModelDesc=Retur numero med format% syymm-nnnn for forslag, hvor yy er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
+MarbreNumRefModelDesc=Retur numero med format %syymm-nnnn for forslag, hvor yy er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

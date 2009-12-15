@@ -21,7 +21,7 @@ SelectExportDataSet=Wybierz dane, które chcesz wyeksportować ...
 SelectExportFields=Wybierz pola, które chcesz wyeksportować, lub wybrać predefiniowany profil eksportu
 SaveExportModel=Zapisz ten wywóz profil jeśli masz zamiar ponownego użycia go później ...
 ExportModelName=Eksport nazwę profilu
-ExportModelSaved=Eksport profil zapisany pod <b>nazwą% s.</b>
+ExportModelSaved=Eksport profil zapisany pod <b>nazwą %s.</b>
 ExportableFields=Wywóz pola
 ExportedFields=Eksportowane pola
 DatasetToExport=Dataset do wywozu
@@ -55,7 +55,7 @@ SelectImportDataSet=Wybierz dane, które chcesz zaimportować ...
 SelectImportFields=Wybierz pola, które chcesz zaimportować, lub wybrać predefiniowany profil importu
 SaveImportModel=Zapisz ten przywóz profil jeśli masz zamiar ponownego użycia go później ...
 ImportModelName=Importuj nazwę profilu
-ImportModelSaved=Import profilu zapisany pod <b>nazwą% s.</b>
+ImportModelSaved=Import profilu zapisany pod <b>nazwą %s.</b>
 ImportableFields=Przywozowe pola
 ImportedFields=Przywożone pola
 DatasetToImport=Dataset importować
@@ -73,7 +73,7 @@ TypeOfLineServiceOrProduct=Rodzaj linii (0 = produkt, usługa 1 =)
 FileWithDataToImport=Plik z danymi do importu
 FileToImport=Źródło plik do zaimportowania
 FileMustHaveOneOfFollowingFormat=Plik do importu musi mieć jeden z następującego formatu
-ChooseFileToImport=Wybierz plik do zaimportowania, a następnie kliknij przycisk picto% s ...
+ChooseFileToImport=Wybierz plik do zaimportowania, a następnie kliknij przycisk picto %s ...
 FieldsInSourceFile=Obszary w pliku źródłowym
 FieldsInTargetDatabase=Docelowe Dolibarr pól w bazie danych
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

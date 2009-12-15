@@ -10,11 +10,11 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DomainPassword=Parola pentru domeniu
-YouMustChangePassNextLogon=Parola pentru <b>utilizatorul% s pe% s</b> de domeniu trebuie să fie schimbat.
-UserMustChangePassNextLogon=Utilizatorul trebuie să schimbaţi parola de pe domeniul% s
+YouMustChangePassNextLogon=Parola pentru <b>utilizatorul %s pe %s</b> de domeniu trebuie să fie schimbat.
+UserMustChangePassNextLogon=Utilizatorul trebuie să schimbaţi parola de pe domeniul %s
 LdapUacf_NORMAL_ACCOUNT=Contul de utilizator
 LdapUacf_DONT_EXPIRE_PASSWORD=Parola nu expira
-LdapUacf_ACCOUNTDISABLE=Contul este dezactivată în domeniul% s
+LdapUacf_ACCOUNTDISABLE=Contul este dezactivată în domeniul %s
 LDAPInformationsForThisContact=Informaţii în LDAP pentru această bază de date de contact
 LDAPInformationsForThisUser=Informaţiile din baza de date LDAP pentru acest utilizator
 LDAPInformationsForThisGroup=Informaţiile din baza de date LDAP pentru acest grup

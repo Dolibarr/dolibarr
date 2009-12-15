@@ -42,7 +42,7 @@ SelectImportDataSet=Kies een gegevensbestand dat u wilt importeren ...
 SelectImportFields=Kies velden die u wilt importeren of selecteer een vooraf gedefinieerde invoer Profiel
 SaveImportModel=Bewaar dit profiel importeren als u van plan bent om hergebruik het later ...
 ImportModelName=Import profiel naam
-ImportModelSaved=Import profiel opgeslagen onder de <b>naam% s.</b>
+ImportModelSaved=Import profiel opgeslagen onder de <b>naam %s.</b>
 ImportableFields=Invoerbeperking velden
 ImportedFields=Geïmporteerde velden
 DatasetToImport=Dataset te importeren
@@ -60,7 +60,7 @@ TypeOfLineServiceOrProduct=Type lijn (0 = product, 1 = dienst)
 FileWithDataToImport=Bestand met de gegevens te importeren
 FileToImport=Bron bestand te importeren
 FileMustHaveOneOfFollowingFormat=Bestand te importeren moet een van de volgende indeling
-ChooseFileToImport=Kies een bestand te importeren, klik dan op picto% s ...
+ChooseFileToImport=Kies een bestand te importeren, klik dan op picto %s ...
 FieldsInSourceFile=Velden in bronbestand
 FieldsInTargetDatabase=Target velden in Dolibarr database
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

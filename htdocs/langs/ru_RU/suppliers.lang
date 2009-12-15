@@ -41,7 +41,7 @@ AddCustomerOrder=Создать клиента порядка
 AddCustomerInvoice=Создать счет-фактуру заказчику
 AddSupplierOrder=Создать поставщиком порядка
 AddSupplierInvoice=Создать поставщику счет-фактуру
-ListOfSupplierProductForSupplier=Перечень продукции и цен для <b>поставщиков% S</b>
+ListOfSupplierProductForSupplier=Перечень продукции и цен для <b>поставщиков %s</b>
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
 

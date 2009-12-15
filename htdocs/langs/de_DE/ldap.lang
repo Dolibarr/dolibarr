@@ -10,11 +10,11 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DomainPassword=Passwort für die Domain
-YouMustChangePassNextLogon=Passwort für <b>Benutzer% s</b> auf der <b>Domain% s</b> geändert werden muss.
-UserMustChangePassNextLogon=User muss sich ändern Kennwort für die Domäne% s
+YouMustChangePassNextLogon=Passwort für <b>Benutzer %s</b> auf der <b>Domain %s</b> geändert werden muss.
+UserMustChangePassNextLogon=User muss sich ändern Kennwort für die Domäne %s
 LdapUacf_NORMAL_ACCOUNT=Benutzerkonto
 LdapUacf_DONT_EXPIRE_PASSWORD=Kennwort läuft nie ab
-LdapUacf_ACCOUNTDISABLE=Konto ist in der Domäne% s
+LdapUacf_ACCOUNTDISABLE=Konto ist in der Domäne %s
 LDAPInformationsForThisContact=Informationen im LDAP-Datenbank für diesen Kontakt
 LDAPInformationsForThisUser=Informationen im LDAP-Datenbank für diesen Benutzer
 LDAPInformationsForThisGroup=Informationen im LDAP-Datenbank für diese Gruppe

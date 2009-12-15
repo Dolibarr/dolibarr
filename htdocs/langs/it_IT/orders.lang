@@ -132,7 +132,7 @@ MarbreNumRefDesc=Renvoie le numro sous la forme syymm% aa-nnnn ou est l&#39;ann√
 // Reference language: en_US
 CHARSET=UTF-8
 OrderLine=Ordine linea
-PaymentOrderRef=Il pagamento della fine% s
+PaymentOrderRef=Il pagamento della fine %s
 CloneOrder=Clone fine
-ConfirmCloneOrder=Sei sicuro di voler clonare questo <b>modo% s?</b>
+ConfirmCloneOrder=Sei sicuro di voler clonare questo <b>modo %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

@@ -48,10 +48,10 @@ DateActionDoneEnd=Реальная дата окончания
 DateActionStart=Начальная дата
 DateActionEnd=Конечная дата
 AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
-AgendaUrlOptions2=<b>login=<b>логин =% S</b> ограничить выход на действия, созданный, пострадавших или сделали <b>пользователем% S.</b>
-AgendaUrlOptions3=<b>logina=<b>logina =% S</b> ограничить выход на действия, созданные <b>пользователем% S.</b>
-AgendaUrlOptions4=<b>logint=<b>logint =% S</b> ограничить выход на действия пользователя, <b>пострадавших% S.</b>
-AgendaUrlOptions5=<b>logind=<b>logind =% S</b> ограничить выход на действия пользователя, <b>проделанной% S.</b>
+AgendaUrlOptions2=<b>login=<b>логин = %s</b> ограничить выход на действия, созданный, пострадавших или сделали <b>пользователем %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina = %s</b> ограничить выход на действия, созданные <b>пользователем %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint = %s</b> ограничить выход на действия пользователя, <b>пострадавших %s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind = %s</b> ограничить выход на действия пользователя, <b>проделанной %s.</b>
 AgendaShowBirthdayEvents=Показать рождения контакты
 AgendaHideBirthdayEvents=Скрыть рождения контакты
 // Date 2009-01-19 21:30:52

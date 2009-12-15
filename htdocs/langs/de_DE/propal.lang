@@ -28,8 +28,8 @@ ValidateProp=Bestätigen kommerzieller Vorschlag
 AddProp=Add Vorschlag
 ConfirmDeleteProp=Sind Sie sicher, dass Sie löschen möchten, dass dieses kommerzielle Vorschlag?
 ConfirmValidateProp=Sind Sie sicher, dass Sie für die Validierung dieser kommerziellen Vorschlag?
-LastPropals=Letzte% s Vorschläge
-LastClosedProposals=Letzte% s geschlossen Vorschläge
+LastPropals=Letzte %s Vorschläge
+LastClosedProposals=Letzte %s geschlossen Vorschläge
 AllPropals=Alle Vorschläge
 LastProposals=Letzte Vorschläge
 SearchAProposal=Suche einen Vorschlag
@@ -75,7 +75,7 @@ ClassifyBilled=Einordnen in Rechnung
 BuildBill=Build Rechnung
 RelatedBill=Verwandte Rechnung
 RelatedBills=Verwandte Rechnungen
-ErrorPropalNotFound=Propal% s nicht gefunden
+ErrorPropalNotFound=Propal %s nicht gefunden
 Estimate=Schätzwert:
 EstimateShort=Schätzung
 OtherPropals=Weitere Vorschläge
@@ -84,7 +84,7 @@ CreateEmptyPropal=Erstellen leer kommerzielle Vorschläge vierge oder aus der Li
 DefaultProposalDurationValidity=Standard-kommerziellen Vorschlag Gültigkeitsdauer (Tage)
 UseCustomerContactAsPropalRecipientIfExist=Verwenden Sie Kundenkontakt-Adresse definiert, wenn anstelle von Dritten Adresse als Vorschlag Empfänger-Adresse
 ClonePropal=Clone kommerziellen Vorschlag
-ConfirmClonePropal=Sind Sie sicher, dass Sie zu klonen dieser kommerziellen <b>Vorschlag% s?</b>
+ConfirmClonePropal=Sind Sie sicher, dass Sie zu klonen dieser kommerziellen <b>Vorschlag %s?</b>
 DocModelAzurDescription=Eine vollständige Vorschlag Modell (logo. ..)
 DocModelJauneDescription=Jaune Vorschlag Modell
 // Date 2009-01-20 00:09:12
@@ -94,9 +94,9 @@ DocModelJauneDescription=Jaune Vorschlag Modell
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
 // Reference language: en_US
 ProposalShort=Vorschlag
-LastModifiedProposals=Letzte% s geändert Vorschläge
+LastModifiedProposals=Letzte %s geändert Vorschläge
 DatePropal=Datum des Vorschlags
 ProposalsAndProposalsLines=Kommerzielle Vorschlag und Linien
 ProposalLine=Vorschlag Linie
-MarbreNumRefModelDesc=Zurück NUMERO mit Format% syymm-nnnn für Vorschläge, wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine Rückkehr auf 0
+MarbreNumRefModelDesc=Zurück NUMERO mit Format %syymm-nnnn für Vorschläge, wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine Rückkehr auf 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

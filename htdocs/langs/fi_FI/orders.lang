@@ -73,9 +73,9 @@ ShowOrder=Näytä jotta
 NoOpenedOrders=N: o avataan tilaukset
 NoOtherOpenedOrders=Mikään muu avataan tilaukset
 OtherOrders=Muut tilaukset
-LastOrders=Viimeisin% s tilaukset
-LastModifiedOrders=Viimeisin% s muunnettu tilaukset
-LastClosedOrders=Viimeisin% s suljettu tilaukset
+LastOrders=Viimeisin %s tilaukset
+LastModifiedOrders=Viimeisin %s muunnettu tilaukset
+LastClosedOrders=Viimeisin %s suljettu tilaukset
 AllOrders=Kaikki tilaukset
 NbOfOrders=Määrä tilauksia
 OrdersStatistics=Tilaukset tilastot
@@ -87,9 +87,9 @@ CloseOrder=Sulje jotta
 ConfirmCloseOrder=Oletko varma, että haluat sulkea tämän tilauksen? Kun tilaus on päättynyt, se voidaan laskuttaa.
 ConfirmCloseOrderIfSending=Oletko varma, että haluat sulkea tämän tilauksen? Sinun on lähellä tilauksen vasta, kun kaikki merenkulku on valmis.
 ConfirmDeleteOrder=Oletko varma, että haluat poistaa tämän tilauksen?
-ConfirmValidateOrder=Oletko varma, että haluamme vahvistaa tämän määräyksen nojalla <b>nimi% s?</b>
+ConfirmValidateOrder=Oletko varma, että haluamme vahvistaa tämän määräyksen nojalla <b>nimi %s?</b>
 ConfirmCancelOrder=Oletko varma, että haluat peruuttaa tämän tilauksen?
-ConfirmMakeOrder=Oletko varma, että haluat vahvistaa olet tehnyt tämän <b>tilauksen% s?</b>
+ConfirmMakeOrder=Oletko varma, että haluat vahvistaa olet tehnyt tämän <b>tilauksen %s?</b>
 GenerateBill=Luo lasku
 ClassifyBilled=Luokittele &quot;Laskutetun&quot;
 ComptaCard=Kirjanpito-kortti
@@ -110,8 +110,8 @@ RunningOrders=Toimitussuhteet prosessi
 UserWithApproveOrderGrant=Useres myönnetään &quot;hyväksyä tilauksia&quot; lupaa.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON ole määritelty
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON ole määritelty
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file &#39;% s&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file &#39;% s&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file &#39; %s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file &#39; %s&#39;
 OrderSource0=Kaupalliset ehdotus
 OrderSource1=Internet
 OrderSource2=Mail kampanja
@@ -122,7 +122,7 @@ OrderSource6=Varastoida
 QtyOrdered=Kpl velvoitti
 AddDeliveryCostLine=Lisää toimitus kustannukset linja ilmoitetaan paino, jotta
 PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn tai vv est l&#39;année, mm le mois et nnnn un compteur sequentiel sans murtumasta et sans remise e 0
+MarbreNumRefDesc=Renvoie le numro sous la forme %syymm-nnnn tai vv est l&#39;année, mm le mois et nnnn un compteur sequentiel sans murtumasta et sans remise e 0
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
 
@@ -130,7 +130,7 @@ MarbreNumRefDesc=Renvoie le numro sous la forme% syymm-nnnn tai vv est l&#39;ann
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
 // Reference language: en_US
 OrderLine=Tilaa linja
-PaymentOrderRef=Maksutoimisto jotta% s
+PaymentOrderRef=Maksutoimisto jotta %s
 CloneOrder=Klooni jotta
-ConfirmCloneOrder=Oletko varma, että haluat klooni tässä <b>järjestyksessä% s?</b>
+ConfirmCloneOrder=Oletko varma, että haluat klooni tässä <b>järjestyksessä %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

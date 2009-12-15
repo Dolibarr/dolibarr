@@ -16,7 +16,7 @@ NewIntervention=New intervenţie
 AddIntervention=Adauga intervenţie
 ListOfInterventions=Lista de intervenţii
 EditIntervention=Editer intervenţie
-LastInterventions=Ultima% s intervenţii
+LastInterventions=Ultima %s intervenţii
 AllInterventions=Toate intervenţiile
 CreateDraftIntervention=Creaţi proiect
 CustomerDoesNotHavePrefix=Clientul nu are un prefix
@@ -37,7 +37,7 @@ TypeContact_fichinter_external_BILLING=Factură client de contact
 TypeContact_fichinter_external_CUSTOMER=După-up client de contact
 ArcticNumRefModelDesc1=Generic numărul model
 ArcticNumRefModelError=Nu a reuşit să activeze
-PacificNumRefModelDesc1=Întoarceţi-vă cu NUMERO format% syymm-NNNN în cazul în care este aa ani, mm este luna şi NNNN este o secvenţă fără nici o pauză şi a reveni la 0
+PacificNumRefModelDesc1=Întoarceţi-vă cu NUMERO format %syymm-NNNN în cazul în care este aa ani, mm este luna şi NNNN este o secvenţă fără nici o pauză şi a reveni la 0
 PacificNumRefModelError=O carte de intervenţie începând cu $ syymm există deja şi nu este compatibilă cu acest model de succesiune. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser

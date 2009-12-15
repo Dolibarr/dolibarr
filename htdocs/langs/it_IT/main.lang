@@ -467,7 +467,7 @@ RIB							   =Coordinate bancarie
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
 // Reference language: en_US
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Impossibile inviare una mail (mittente =% s, ricevitore =% s)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Impossibile inviare una mail (mittente = %s, ricevitore = %s)
 RecordSaved=Il record salvato
 Under=sotto
 ToClone=Clone
@@ -478,7 +478,7 @@ ConfirmClone=Scegli i dati che si desidera clonare:
 ConfirmCloneEMailing=Sei sicuro di voler clonare questa email?
 NoCloneOptionsSpecified=Non sono disponibili dati per clonare definito.
 CopyOf=Copia del
-WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Ci sono% s, e si à connessi come utente%</font> s
+WelcomeString=<font class="body">We are </font>%s<font class=<font class="body">Ci sono %s, e si à connessi come utente%</font> s
 Now=Adesso
 ActionsRunningshort=Started
 ActionRunningNotStarted=Non avviato

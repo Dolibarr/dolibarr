@@ -160,7 +160,7 @@ MigrationPaymentsNothingUpdatable=Geen betalingen meer, die kunnen worden gecorr
 # Contracts Update
 MigrationContractsUpdate=Contract gegevens correctie
 MigrationContractsNumberToUpdate=%s overeenkomst(en) actualiseren
-MigrationContractsLineCreation=Maak contract voor contract ref% s
+MigrationContractsLineCreation=Maak contract voor contract ref %s
 MigrationContractsNothingToUpdate=Niets meer te doen
 MigrationContractsFieldDontExist=Veld fk_facture bestaat niet meer. Niets te doen.
 

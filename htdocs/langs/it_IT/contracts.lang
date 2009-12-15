@@ -100,6 +100,6 @@ ListOfExpiredServices=Elenco dei servizi attivi scaduta
 ListOfClosedServices=Elenco dei servizi chiusi
 DeleteContractLine=Eliminazione di un contratto di linea
 ConfirmDeleteContractLine=Sei sicuro di voler cancellare questa linea di contratto?
-PaymentRenewContractId=Rinnovo contratto di linea (numero% s)
+PaymentRenewContractId=Rinnovo contratto di linea (numero %s)
 ExpiredSince=Data di scadenza
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

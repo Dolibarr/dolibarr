@@ -49,10 +49,10 @@ DateActionDoneEnd=Real Enddatum
 DateActionStart=Beginn
 DateActionEnd=Enddatum
 AgendaUrlOptions1=Außerdem können Sie folgende Parameter zum Filtern der Ausgabe:
-AgendaUrlOptions2=<b>login=<b>login =% s</b> zu beschränken, Ausgabe an, die durch Maßnahmen, die zu oder von <b>Benutzer% s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina =% s,</b> um sich auf Maßnahmen beschränken, Ausgabe von <b>Benutzer% s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint =% s</b> zu beschränken, sich auf Maßnahmen, die Ausgabe auf <b>Benutzer% s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind =% s,</b> um sich auf Maßnahmen beschränken, Ausgabe von <b>Benutzer% s.</b>
+AgendaUrlOptions2=<b>login=<b>login = %s</b> zu beschränken, Ausgabe an, die durch Maßnahmen, die zu oder von <b>Benutzer %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina = %s,</b> um sich auf Maßnahmen beschränken, Ausgabe von <b>Benutzer %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint = %s</b> zu beschränken, sich auf Maßnahmen, die Ausgabe auf <b>Benutzer %s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind = %s,</b> um sich auf Maßnahmen beschränken, Ausgabe von <b>Benutzer %s.</b>
 AgendaShowBirthdayEvents=Show Geburtstag Kontakte
 AgendaHideBirthdayEvents=Ausblenden Geburtstag Kontakte
 // Date 2009-01-20 00:09:12

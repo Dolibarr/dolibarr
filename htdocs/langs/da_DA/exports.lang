@@ -21,7 +21,7 @@ SelectExportDataSet=Vælg datasæt, du vil eksportere ...
 SelectExportFields=Vælg felter, du ønsker at eksportere, eller vælg en foruddefineret eksport profil
 SaveExportModel=Gem denne eksport profil hvis du planlægger at genbruge det senere ...
 ExportModelName=Eksporter Profilnavn
-ExportModelSaved=Eksporter profil gemt under <b>navnet% s.</b>
+ExportModelSaved=Eksporter profil gemt under <b>navnet %s.</b>
 ExportableFields=Exportable felter
 ExportedFields=Eksporteres felter
 DatasetToExport=Datasæt til eksport
@@ -55,7 +55,7 @@ SelectImportDataSet=Vælg datasæt, du vil importere ...
 SelectImportFields=Vælg felter, du vil importere, eller vælg en foruddefineret import profil
 SaveImportModel=Gem denne import profil hvis du planlægger at genbruge det senere ...
 ImportModelName=Import Profilnavn
-ImportModelSaved=Import profil gemt under <b>navnet% s.</b>
+ImportModelSaved=Import profil gemt under <b>navnet %s.</b>
 ImportableFields=Indføres felter
 ImportedFields=Importerede felter
 DatasetToImport=Datasæt til at importere
@@ -73,7 +73,7 @@ TypeOfLineServiceOrProduct=Strækningstype (0 = produkt, 1 = tjeneste)
 FileWithDataToImport=Fil med data til at importere
 FileToImport=Kildefilen til at importere
 FileMustHaveOneOfFollowingFormat=Fil til at importere, skal have en af følgende format
-ChooseFileToImport=Vælg fil for at importere og klik derefter på picto% s ...
+ChooseFileToImport=Vælg fil for at importere og klik derefter på picto %s ...
 FieldsInSourceFile=Områder i kildefilen
 FieldsInTargetDatabase=Målret felter i Dolibarr database
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).

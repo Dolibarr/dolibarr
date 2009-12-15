@@ -10,11 +10,11 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DomainPassword=Salasana verkkotunnuksen
-YouMustChangePassNextLogon=Salasana <b>käyttäjän% s verkkotunnuksen% s</b> on muuttunut.
-UserMustChangePassNextLogon=Käyttäjän on muutettava salasana verkkotunnuksen% s
+YouMustChangePassNextLogon=Salasana <b>käyttäjän %s verkkotunnuksen %s</b> on muuttunut.
+UserMustChangePassNextLogon=Käyttäjän on muutettava salasana verkkotunnuksen %s
 LdapUacf_NORMAL_ACCOUNT=User account
 LdapUacf_DONT_EXPIRE_PASSWORD=Salasana ei vanhene
-LdapUacf_ACCOUNTDISABLE=Tili on poistettu käytöstä verkkotunnuksen% s
+LdapUacf_ACCOUNTDISABLE=Tili on poistettu käytöstä verkkotunnuksen %s
 LDAPInformationsForThisContact=Tiedot LDAP-tietokannan tämä yhteystieto
 LDAPInformationsForThisUser=Tiedot LDAP-tietokannan tämän käyttäjän
 LDAPInformationsForThisGroup=Tiedot LDAP-tietokannan tähän ryhmään

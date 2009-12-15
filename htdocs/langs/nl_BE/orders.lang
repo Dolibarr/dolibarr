@@ -120,7 +120,7 @@ MarbreNumRefDesc=Renvoie le numéro sous la forme %syymm-nnnn ou yy est l'annee,
 // START - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).
 // Reference language: en_US
 OrderLine=Bestel online
-PaymentOrderRef=Betaling van de bestelling% s
+PaymentOrderRef=Betaling van de bestelling %s
 CloneOrder=Klonen Om
-ConfirmCloneOrder=Weet u zeker dat u wilt kloon deze <b>bestelling% s?</b>
+ConfirmCloneOrder=Weet u zeker dat u wilt kloon deze <b>bestelling %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

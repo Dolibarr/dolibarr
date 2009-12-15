@@ -28,8 +28,8 @@ ValidateProp=Validate comerciale propunerea
 AddProp=Adauga propunere
 ConfirmDeleteProp=Sunteţi sigur că doriţi să ştergeţi acest comerciale propunerea?
 ConfirmValidateProp=Sunteţi sigur că doriţi să valideze această propunere comerciale?
-LastPropals=Ultima% s propuneri
-LastClosedProposals=Ultima% s închis propuneri
+LastPropals=Ultima %s propuneri
+LastClosedProposals=Ultima %s închis propuneri
 AllPropals=Toate propunerile
 LastProposals=Ultimele propuneri
 SearchAProposal=Cautati o propunere
@@ -75,7 +75,7 @@ ClassifyBilled=Clasifica facturat
 BuildBill=Build factură
 RelatedBill=Legate de factură
 RelatedBills=Legate de facturi
-ErrorPropalNotFound=Propal% s nu a fost găsit
+ErrorPropalNotFound=Propal %s nu a fost găsit
 Estimate=Estimare:
 EstimateShort=Estimaţi
 OtherPropals=Alte propuneri
@@ -84,7 +84,7 @@ CreateEmptyPropal=Creaţi gol propuneri vierge comerciale sau de la lista de pro
 DefaultProposalDurationValidity=Implicit comerciale propunerea valabilitate durata (în zile)
 UseCustomerContactAsPropalRecipientIfExist=Utilizaţi client adresa de contact, dacă este definită în loc de o terţă parte adresa ca propunerea adresa destinatarului
 ClonePropal=Clone comerciale propunerea
-ConfirmClonePropal=Sunteţi sigur că doriţi să clona această propunere <b>comerciale% s?</b>
+ConfirmClonePropal=Sunteţi sigur că doriţi să clona această propunere <b>comerciale %s?</b>
 DocModelAzurDescription=Un model de propunere (logo. ..)
 DocModelJauneDescription=Jaune propunerea model
 // Date 2009-01-19 21:32:52
@@ -94,9 +94,9 @@ DocModelJauneDescription=Jaune propunerea model
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
 // Reference language: en_US
 ProposalShort=Propunere
-LastModifiedProposals=Ultima% s propuneri modificate
+LastModifiedProposals=Ultima %s propuneri modificate
 DatePropal=Data de propunerea
 ProposalsAndProposalsLines=Comerciale propunerea si a liniilor
 ProposalLine=Propunere linie
-MarbreNumRefModelDesc=Întoarceţi-vă NUMERO cu formatul% syymm-NNNN de propuneri în cazul în care este aa ani, mm este luna şi NNNN este o succesiune fără pauză şi fără întoarcere la 0
+MarbreNumRefModelDesc=Întoarceţi-vă NUMERO cu formatul %syymm-NNNN de propuneri în cazul în care este aa ani, mm este luna şi NNNN este o succesiune fără pauză şi fără întoarcere la 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

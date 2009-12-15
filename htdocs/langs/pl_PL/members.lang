@@ -116,8 +116,8 @@ PublicMemberList=Publicznego liście członków
 BlankSubscriptionForm=Formularz subskrypcji
 MemberPublicLinks=Publicznego linki / pages
 ExportDataset_member_1=Członkowie i abonamentów
-LastMembers=Ostatnia% s użytkowników
-LastMembersModified=Ostatnia% s zmodyfikowane użytkowników
+LastMembers=Ostatnia %s użytkowników
+LastMembersModified=Ostatnia %s zmodyfikowane użytkowników
 AttributeName=Nazwa atrybutu
 FieldEdition=% Dziedzinie wydanie
 AlphaNumOnlyCharsAndNoSpace=tylko alphanumericals znaków bez spacji
@@ -143,7 +143,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etykiety formacie
 DescADHERENT_CARD_HEADER_TEXT=Tekst wydrukowany na górę członka karty
 DescADHERENT_CARD_TEXT=Tekst wydrukowany na członka karty
 DescADHERENT_CARD_FOOTER_TEXT=Tekst wydrukowany na dole karty członka
-ShowTypeCard=Pokaż typu &#39;% s&#39;
+ShowTypeCard=Pokaż typu &#39; %s&#39;
 HTPasswordExport=htpassword pliku generacji
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
@@ -151,7 +151,7 @@ HTPasswordExport=htpassword pliku generacji
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
 // Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Inny członek <b>(nazwa:% s,</b> zaloguj <b>się:% s)</b> jest już związany z osobą <b>trzecią% s.</b> Usunięcie tego linku pierwsze, ponieważ jedna trzecia strona nie może być powiązana tylko z członkiem (i odwrotnie).
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Inny członek <b>(nazwa: %s,</b> zaloguj <b>się: %s)</b> jest już związany z osobą <b>trzecią %s.</b> Usunięcie tego linku pierwsze, ponieważ jedna trzecia strona nie może być powiązana tylko z członkiem (i odwrotnie).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Ze względów bezpieczeństwa, musisz być przyznane uprawnienia do edycji wszystkich użytkowników, aby można było powiązać członka do użytkownika, który nie jest twoje.
 ThisIsContentOfYourCard=To szczegóły karty
 CardContent=Treść Twojej karty członka

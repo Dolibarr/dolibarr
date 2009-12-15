@@ -161,8 +161,8 @@ BirthdayAlertOn=Alerta de aniversário activas
 BirthdayAlertOff=aniversário alerta inativo
 Notify_NOTIFY_APP_ORDER_SUPPLIER=Fornecedor fim aprovado
 Notify_NOTIFY_REF_ORDER_SUPPLIER=Fornecedor fim recusada
-EMailTextInterventionValidated=Intervenção% s validados
-EMailTextInvoiceValidated=Factura% s validados
+EMailTextInterventionValidated=Intervenção %s validados
+EMailTextInvoiceValidated=Factura %s validados
 ImportedWithSet=Importação conjunto de dados
 DolibarrNotification=Notificação automática
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

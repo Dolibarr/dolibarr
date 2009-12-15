@@ -42,7 +42,7 @@ SelectImportDataSet=Escolha de dados que pretende importar ...
 SelectImportFields=Escolha campos que deseja importar, ou escolha um perfil predefinido importação
 SaveImportModel=Guarde este perfil de importação, se pretender reutilizá-la mais tarde ...
 ImportModelName=Importar nome do perfil
-ImportModelSaved=Importar perfil guardado em <b>nome% s.</b>
+ImportModelSaved=Importar perfil guardado em <b>nome %s.</b>
 ImportableFields=Importável campos
 ImportedFields=Campos importados
 DatasetToImport=Dataset para importar
@@ -60,7 +60,7 @@ TypeOfLineServiceOrProduct=Tipo de linha (0 = produto, serviço de 1 =)
 FileWithDataToImport=Arquivo com os dados de importação
 FileToImport=Fonte ficheiro a importar
 FileMustHaveOneOfFollowingFormat=Arquivo a ser importado deve ter um dos seguintes formatos
-ChooseFileToImport=Escolha ficheiro a importar, em seguida, clique em picto% s ...
+ChooseFileToImport=Escolha ficheiro a importar, em seguida, clique em picto %s ...
 FieldsInSourceFile=Os campos em arquivo fonte
 FieldsInTargetDatabase=Alvo Dolibarr em campos de dados
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

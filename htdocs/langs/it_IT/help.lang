@@ -26,11 +26,11 @@ Efficiency=Efficienza
 TypeHelpOnly=Aiuto solo
 TypeHelpDev=Guida + per lo sviluppo
 TypeHelpDevForm=Aiuto + + Sviluppo Formazione
-ToGetHelpGoOnSparkAngels1=Alcune aziende possono fornire un veloce (a volte immediata) e una più efficiente supporto online prendendo il controllo del computer. Tali aiuti possono essere trovate sul sito <b>web% s:</b>
+ToGetHelpGoOnSparkAngels1=Alcune aziende possono fornire un veloce (a volte immediata) e una più efficiente supporto online prendendo il controllo del computer. Tali aiuti possono essere trovate sul sito <b>web %s:</b>
 ToGetHelpGoOnSparkAngels3=È inoltre possibile accedere alla lista di tutti i pullman a disposizione per Dolibarr, per questo, fate clic sul pulsante
 ToGetHelpGoOnSparkAngels2=A volte, non vi è alcuna azienda e disponibile per il momento di effettuare la ricerca, quindi pensa di cambiare il filtro a guardare per &quot;tutte le disponibilità&quot;. Lei sarà in grado di inviare più richieste.
 BackToHelpCenter=In caso contrario, fare clic qui per andare <a href="%s">indietro alla home page Centro assistenza.</a>
-LinkToGoldMember=È possibile chiamare uno dei pullman preselezionati da Dolibarr per la propria lingua (% s) cliccando il suo Widget (stato e prezzo massimo vengono aggiornate automaticamente):
+LinkToGoldMember=È possibile chiamare uno dei pullman preselezionati da Dolibarr per la propria lingua ( %s) cliccando il suo Widget (stato e prezzo massimo vengono aggiornate automaticamente):
 PossibleLanguages=Lingue supportate
 MakeADonation=Aiuto Dolibarr progetto, effettuare una donazione
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

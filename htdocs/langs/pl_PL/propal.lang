@@ -30,8 +30,8 @@ ValidateProp=Validate handlowych wniosku
 AddProp=Dodaj projekt
 ConfirmDeleteProp=Czy na pewno chcesz usunąć tę propozycję handlową?
 ConfirmValidateProp=Czy na pewno chcesz, aby potwierdzić tę propozycję handlową?
-LastPropals=Ostatnia% s propozycje
-LastClosedProposals=Ostatnia% s zamknięte propozycje
+LastPropals=Ostatnia %s propozycje
+LastClosedProposals=Ostatnia %s zamknięte propozycje
 AllPropals=Wszystkie propozycje
 LastProposals=Ostatnie propozycje
 SearchAProposal=Szukaj projektu
@@ -77,7 +77,7 @@ ClassifyBilled=Klasyfikacja billed
 BuildBill=Zbuduj faktury
 RelatedBill=Podobne faktury
 RelatedBills=Podobne faktur
-ErrorPropalNotFound=Propal% s nie znaleziono
+ErrorPropalNotFound=Propal %s nie znaleziono
 Estimate=Prognoza:
 EstimateShort=Prognoza
 OtherPropals=Inne propozycje
@@ -86,7 +86,7 @@ CreateEmptyPropal=Utwórz pusty propozycji Vierge lub z wykazu produktów / usł
 DefaultProposalDurationValidity=Domyślny czas ważności wniosku handlowych (w dniach)
 UseCustomerContactAsPropalRecipientIfExist=Użyj klienta adres, jeśli określone zamiast trzeciej adres wniosku adres odbiorcy
 ClonePropal=Clone handlowych wniosku
-ConfirmClonePropal=Czy na pewno chcesz klon tej propozycji <b>komercyjnych% s?</b>
+ConfirmClonePropal=Czy na pewno chcesz klon tej propozycji <b>komercyjnych %s?</b>
 DocModelAzurDescription=Kompletny wniosek modelu (logo. ..)
 DocModelJauneDescription=Jaune propozycję modelu
 // Date 2009-01-19 00:44:06
@@ -96,9 +96,9 @@ DocModelJauneDescription=Jaune propozycję modelu
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
 // Reference language: en_US
 ProposalShort=Wniosek
-LastModifiedProposals=Ostatnia% s zmodyfikowane propozycje
+LastModifiedProposals=Ostatnia %s zmodyfikowane propozycje
 DatePropal=Data wniosku
 ProposalsAndProposalsLines=Commercial wniosku i linie
 ProposalLine=Wniosek linii
-MarbreNumRefModelDesc=Wróć NUMERO z formatu% syymm-nnnn do składania wniosków, jeżeli rr jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
+MarbreNumRefModelDesc=Wróć NUMERO z formatu %syymm-nnnn do składania wniosków, jeżeli rr jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

@@ -43,12 +43,12 @@ AddCustomerOrder=Tworzenie zamówieniem
 AddCustomerInvoice=Tworzenie klienta faktury
 AddSupplierOrder=Tworzenie dostawcy celu
 AddSupplierInvoice=Tworzenie faktury dostawcy
-ListOfSupplierProductForSupplier=Wykaz produktów i cen <b>dostawcy% s</b>
+ListOfSupplierProductForSupplier=Wykaz produktów i cen <b>dostawcy %s</b>
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
 // Reference language: en_US
-NoneOrBatchFileNeverRan=Brak lub <b>partii% s</b> nie prowadził niedawno
+NoneOrBatchFileNeverRan=Brak lub <b>partii %s</b> nie prowadził niedawno
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

@@ -19,7 +19,7 @@ SelectExportDataSet=Alegeţi de date pe care doriţi să le export ...
 SelectExportFields=Alegeţi câmpurile pe care doriţi să le de export, sau selectaţi un profil predefinit de export
 SaveExportModel=Salvaţi acest profil de export dacă aveţi de gând să-l refolosire mai târziu ...
 ExportModelName=Export profil nume
-ExportModelSaved=Export profil salvat sub <b>numele% s.</b>
+ExportModelSaved=Export profil salvat sub <b>numele %s.</b>
 ExportableFields=Exportabil domenii
 ExportedFields=Exportate domenii
 DatasetToExport=De date la export
@@ -53,7 +53,7 @@ SelectImportDataSet=Alegeţi de date pe care doriţi să o import ...
 SelectImportFields=Alegeţi câmpurile pe care doriţi să le import, sau a selecta un profil predefinit de import
 SaveImportModel=Salvaţi acest profil de import dacă aveţi de gând să-l refolosire mai târziu ...
 ImportModelName=Import profil nume
-ImportModelSaved=Import profil salvat sub <b>numele% s.</b>
+ImportModelSaved=Import profil salvat sub <b>numele %s.</b>
 ImportableFields=Importable domenii
 ImportedFields=Importate domenii
 DatasetToImport=De date pentru a importa
@@ -71,7 +71,7 @@ TypeOfLineServiceOrProduct=Tip de linie (0 = produs, 1 = serviciu)
 FileWithDataToImport=Fişiere cu date de import
 FileToImport=Fişierul sursă de import
 FileMustHaveOneOfFollowingFormat=Fişier pentru import trebuie să aibă una dintre următoarele format
-ChooseFileToImport=Alegeţi fişier pentru a importa apoi faceţi clic pe picto% s ...
+ChooseFileToImport=Alegeţi fişier pentru a importa apoi faceţi clic pe picto %s ...
 FieldsInSourceFile=Domenii in fişierul sursă
 FieldsInTargetDatabase=Target Dolibarr domeniile în baza de date
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

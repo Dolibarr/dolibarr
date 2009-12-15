@@ -123,5 +123,5 @@ MarbreNumRefDesc=Devolve o número baixo o formato %syymm-nnnn onde yy é o ano,
 // Reference language: en_US
 OrderLine=Ordem linha
 CloneOrder=Clone fim
-ConfirmCloneOrder=Tem certeza de que deseja clonar este <b>fim% s?</b>
+ConfirmCloneOrder=Tem certeza de que deseja clonar este <b>fim %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

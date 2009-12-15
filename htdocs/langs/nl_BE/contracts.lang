@@ -92,6 +92,6 @@ ListOfExpiredServices=Lijst van verstreken actieve services
 ListOfClosedServices=Lijst van diensten gesloten
 DeleteContractLine=Verwijderen van een contract lijn
 ConfirmDeleteContractLine=Weet u zeker dat u wilt verwijderen van dit contract lijn?
-PaymentRenewContractId=Hernieuwen contract lijn (aantal% s)
+PaymentRenewContractId=Hernieuwen contract lijn (aantal %s)
 ExpiredSince=Vervaldatum
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

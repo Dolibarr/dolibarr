@@ -99,7 +99,7 @@ ListOfActiveNotifications=Lista das pedidos de Notificações activas
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US
 ResetMailing=Reenviar e-mail
-ConfirmResetMailing=Atenção, por reinitializing <b>emailing% s,</b> que permitem fazer uma massa enviando este e-mail de outro tempo. Tem certeza de que isto é o que você quer fazer?
+ConfirmResetMailing=Atenção, por reinitializing <b>emailing %s,</b> que permitem fazer uma massa enviando este e-mail de outro tempo. Tem certeza de que isto é o que você quer fazer?
 BadEMail=Valor inválido para o email
 CloneEMailing=Clone Emailing
 ConfirmCloneEMailing=Tem certeza de que deseja clonar este email?

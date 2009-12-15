@@ -273,6 +273,6 @@ ProfId3DE=Prof. Id 3 (Handelsregister-Nr.)
 ProfId4DE=--
 PriceLevel=Prijsniveau
 YouMustCreateContactFirst=U moet e-mails contacten voor derden eerste te kunnen e-mails toevoegen aanmeldingen.
-MonkeyNumRefModelDesc=Terugkeren numero met format% syymm-nnnn voor klantcode en% syymm-nnnn voor leverancier code waar jj jaar is, MM de maand en het is nnnn een sequentie zonder pauze en geen terugkeer naar 0.
+MonkeyNumRefModelDesc=Terugkeren numero met format %syymm-nnnn voor klantcode en %syymm-nnnn voor leverancier code waar jj jaar is, MM de maand en het is nnnn een sequentie zonder pauze en geen terugkeer naar 0.
 LeopardNumRefModelDesc=Klant / leverancier-code is gratis. Deze code kan te allen tijde worden gewijzigd.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

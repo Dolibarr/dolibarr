@@ -25,11 +25,11 @@ Efficiency=Tehokkuus
 TypeHelpOnly=Ohje vain
 TypeHelpDev=Ohje + kehittämisen
 TypeHelpDevForm=Ohje + Development + Formation
-ToGetHelpGoOnSparkAngels1=Jotkin yritykset voivat tarjota nopea (joskus välittömästi) ja tehokkaampaa online tukea ottamalla tietokoneen. Tällainen avustushenkilöstö <b>löytyy% s</b> www-sivusto:
+ToGetHelpGoOnSparkAngels1=Jotkin yritykset voivat tarjota nopea (joskus välittömästi) ja tehokkaampaa online tukea ottamalla tietokoneen. Tällainen avustushenkilöstö <b>löytyy %s</b> www-sivusto:
 ToGetHelpGoOnSparkAngels3=Voit myös mennä luettelo kaikista käytettävissä valmentajia varten Dolibarr, tästä klikkaamalla painiketta
 ToGetHelpGoOnSparkAngels2=Joskus ei ole yhtiön käytettävissä tällä hetkellä teet haun, niin mielestäni muuttaa suodattimen etsiä &quot;kaikkien saatavilla&quot;. Voit lähettää lisää pyyntöjä.
 BackToHelpCenter=Muussa tapauksessa, klikkaa tästä ja mennä <a href="%s">takaisin ohjekeskukseen kotisivu.</a>
-LinkToGoldMember=Voit soittaa yksi valmentaja valittua on Dolibarr for your language (% s) napsauttamalla hänen Widget (status ja enimmäishinta päivittyvät automaattisesti):
+LinkToGoldMember=Voit soittaa yksi valmentaja valittua on Dolibarr for your language ( %s) napsauttamalla hänen Widget (status ja enimmäishinta päivittyvät automaattisesti):
 PossibleLanguages=Tuetut kielet
 MakeADonation=Ohje Dolibarr hanke, tee lahjoitus
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

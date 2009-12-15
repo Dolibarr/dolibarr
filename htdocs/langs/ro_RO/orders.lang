@@ -73,9 +73,9 @@ ShowOrder=Arata pentru
 NoOpenedOrders=Nu a deschis comenzile
 NoOtherOpenedOrders=Nici o altă ordine de deschis
 OtherOrders=Alte comenzi
-LastOrders=Ultima% s ordinele
-LastModifiedOrders=Ultima modificare% s ordinele
-LastClosedOrders=Ultima% s ordinele închise
+LastOrders=Ultima %s ordinele
+LastModifiedOrders=Ultima modificare %s ordinele
+LastClosedOrders=Ultima %s ordinele închise
 AllOrders=Toate comenzile
 NbOfOrders=Numar de comenzi
 OrdersStatistics=Comenzi &#39;statistici
@@ -87,9 +87,9 @@ CloseOrder=Inchide pentru
 ConfirmCloseOrder=Sunteţi sigur că vreţi să închideţi acest ordin? Odată ce un ordin este închis, nu poate fi taxat doar.
 ConfirmCloseOrderIfSending=Sunteţi sigur că vreţi să închideţi acest ordin? Trebuie să închideţi un ordin doar atunci când toate expediere sunt de facut.
 ConfirmDeleteOrder=Sunteţi sigur că doriţi să ştergeţi acest ordin?
-ConfirmValidateOrder=Sunteţi sigur că doriţi să valideze această ordine sub <b>numele% s?</b>
+ConfirmValidateOrder=Sunteţi sigur că doriţi să valideze această ordine sub <b>numele %s?</b>
 ConfirmCancelOrder=Sunteţi sigur că doriţi să anulaţi acest ordin?
-ConfirmMakeOrder=Sunteţi sigur că doriţi să confirme acest lucru, pentru ai face <b>pe% s?</b>
+ConfirmMakeOrder=Sunteţi sigur că doriţi să confirme acest lucru, pentru ai face <b>pe %s?</b>
 GenerateBill=Generare factură
 ClassifyBilled=Clasifica &quot;facturat&quot;
 ComptaCard=Contabilitate carte
@@ -110,8 +110,8 @@ RunningOrders=COMANDA ON proces
 UserWithApproveOrderGrant=Useres acordate cu &quot;aproba ordinele&quot; permisiune.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nu sunt definite
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nu sunt definite
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul &quot;% s&quot;
-Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul &quot;% s&quot;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul &quot; %s&quot;
+Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul &quot; %s&quot;
 OrderSource0=Comerciale propunerea
 OrderSource1=Internet
 OrderSource2=Mail campanie
@@ -122,7 +122,7 @@ OrderSource6=Magazin
 QtyOrdered=Cantitate ordonat
 AddDeliveryCostLine=
 PDFEinsteinDescription=Un model complet pentru (logo. ..)
-MarbreNumRefDesc=Renvoie le numro sous la Forme% syymm-NNNN ou aa est l&#39;année, le mois et mm NNNN un compteur sequentiel sans ruptură et sans remiză e 0
+MarbreNumRefDesc=Renvoie le numro sous la Forme %syymm-NNNN ou aa est l&#39;année, le mois et mm NNNN un compteur sequentiel sans ruptură et sans remiză e 0
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
 
@@ -130,7 +130,7 @@ MarbreNumRefDesc=Renvoie le numro sous la Forme% syymm-NNNN ou aa est l&#39;ann�
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
 // Reference language: en_US
 OrderLine=Ordinul linie
-PaymentOrderRef=Plata pentru% s
+PaymentOrderRef=Plata pentru %s
 CloneOrder=Clone pentru
-ConfirmCloneOrder=Sunteţi sigur că doriţi să clona pentru <b>acest% s?</b>
+ConfirmCloneOrder=Sunteţi sigur că doriţi să clona pentru <b>acest %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).

@@ -19,7 +19,7 @@ SelectExportDataSet=Wählen Sie Datensatz exportieren wollen ...
 SelectExportFields=Wählen Sie Felder, die Sie exportieren wollen, oder wählen Sie einen vordefinierten Export profil
 SaveExportModel=Speichern Sie diese Export-Profil, wenn Sie planen, um sie später wieder verwenden ...
 ExportModelName=Export Profilnamen
-ExportModelSaved=Export-Profil gespeichert unter dem <b>Namen% s.</b>
+ExportModelSaved=Export-Profil gespeichert unter dem <b>Namen %s.</b>
 ExportableFields=Exportable Felder
 ExportedFields=Exportierte Felder
 DatasetToExport=Datensatz exportieren
@@ -53,7 +53,7 @@ SelectImportDataSet=Wählen Sie Datensatz Sie importieren möchten ...
 SelectImportFields=Wählen Sie Felder, die Sie importieren möchten, oder wählen Sie eine vordefinierte Profil Import
 SaveImportModel=Speichern Sie diese Import-Profil, wenn Sie planen, um sie später wieder verwenden ...
 ImportModelName=Import Profilnamen
-ImportModelSaved=Import-Profil gespeichert unter dem <b>Namen% s.</b>
+ImportModelSaved=Import-Profil gespeichert unter dem <b>Namen %s.</b>
 ImportableFields=Einfuhrbeschränkung Felder
 ImportedFields=Importierte Felder
 DatasetToImport=Datensatz zu importieren
@@ -71,7 +71,7 @@ TypeOfLineServiceOrProduct=Art der Linie (0 = Produkt-, 1 = Service)
 FileWithDataToImport=Datei mit Daten zu importieren
 FileToImport=Source-Datei zu importieren
 FileMustHaveOneOfFollowingFormat=Zu importierende Datei muss eine der folgenden Format
-ChooseFileToImport=Wählen Sie Datei zu importieren und klicken Sie dann auf picto% s ...
+ChooseFileToImport=Wählen Sie Datei zu importieren und klicken Sie dann auf picto %s ...
 FieldsInSourceFile=Felder in der Quelldatei
 FieldsInTargetDatabase=Ziel Felder in Dolibarr Datenbank
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).

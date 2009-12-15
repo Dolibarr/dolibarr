@@ -13,7 +13,7 @@ PayBoxDesc=Tämä moduuli tarjota sivuja, jotta maksua <a href="http://www.paybo
 FollowingUrlAreAvailableToMakePayments=Seuraavat URL-osoitteet ovat käytettävissä tarjota sivu asiakas tehdä maksua Dolibarr esineitä
 PaymentForm=Maksu-muodossa
 WelcomeOnPaymentPage=Tervetuloa online maksupalveluntarjoajan
-ThisScreenAllowsYouToPay=Tässä näytössä voit tehdä online-maksu% s.
+ThisScreenAllowsYouToPay=Tässä näytössä voit tehdä online-maksu %s.
 ThisIsInformationOnPayment=Tämä on informations maksua tehdä
 ToComplete=Saattamaan
 YourEMail=Sähköposti maksupyyntö vahvistus
@@ -23,10 +23,10 @@ PayBoxDoPayment=Mene maksu
 YouWillBeRedirectedOnPayBox=Sinut ohjataan on turvattu Paybox sivu tuloliittimeen voit luottokortin tiedot
 PleaseBePatient=Please, kärsivällinen
 Continue=Seuraava
-ToOfferALinkForOnlinePaymentOnOrder=URL tarjota% s online maksu käyttöliittymän tilauksen
-ToOfferALinkForOnlinePaymentOnInvoice=URL tarjota% s online maksu käyttöliittymän lasku
-ToOfferALinkForOnlinePaymentOnContractLine=URL tarjota% s online maksu käyttöliittymän sopimuksen linjan
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL tarjota% s online maksu käyttöliittymän vapaa määrä
+ToOfferALinkForOnlinePaymentOnOrder=URL tarjota %s online maksu käyttöliittymän tilauksen
+ToOfferALinkForOnlinePaymentOnInvoice=URL tarjota %s online maksu käyttöliittymän lasku
+ToOfferALinkForOnlinePaymentOnContractLine=URL tarjota %s online maksu käyttöliittymän sopimuksen linjan
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL tarjota %s online maksu käyttöliittymän vapaa määrä
 YouCanAddTagOnUrl=Voit myös lisätä URL-parametrin <b>&amp; tag = <i>arvo</i></b> mille tahansa niistä URL (vaaditaan ainoastaan ilmaiseksi maksu) lisätään oma maksu kommentoida tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Määritä oman PayBox kanssa <b>url% s</b> on maksu luodaan automaattisesti, kun validoinut paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Määritä oman PayBox kanssa <b>url %s</b> on maksu luodaan automaattisesti, kun validoinut paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

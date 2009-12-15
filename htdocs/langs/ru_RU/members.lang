@@ -141,7 +141,7 @@ DescADHERENT_ETIQUETTE_TYPE=Этикетки формате
 DescADHERENT_CARD_HEADER_TEXT=Текст печатается на верхней части членов карты
 DescADHERENT_CARD_TEXT=Текст печатается на члена карты
 DescADHERENT_CARD_FOOTER_TEXT=Текст печатается на нижней части члена карты
-ShowTypeCard=Показать типу &#39;% S&#39;
+ShowTypeCard=Показать типу &#39; %s&#39;
 HTPasswordExport=htpassword файл поколения
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
@@ -149,7 +149,7 @@ HTPasswordExport=htpassword файл поколения
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 // Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Еще один член (имя и <b>фамилия:% S, логин:% S)</b> уже связан с третьей <b>стороной% S.</b> Удалить эту ссылку первых, потому третья сторона не может быть связан только один член (и наоборот).
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Еще один член (имя и <b>фамилия: %s, логин: %s)</b> уже связан с третьей <b>стороной %s.</b> Удалить эту ссылку первых, потому третья сторона не может быть связан только один член (и наоборот).
 ErrorUserPermissionAllowsToLinksToItselfOnly=По соображениям безопасности, вы должны получить разрешение, чтобы изменить все пользователи должны иметь доступ к ссылке члена к пользователю, что это не твое.
 ThisIsContentOfYourCard=Это детали Вашей карты
 CardContent=Содержание Вашего члена карту

@@ -73,7 +73,7 @@ ShowOrder=Показать порядок
 NoOpenedOrders=Нет открыл заказов
 NoOtherOpenedOrders=Никакие другие открыли заказов
 OtherOrders=Другие заказы
-LastOrders=Последнее% S заказов
+LastOrders=Последнее %s заказов
 LastModifiedOrders=Последнее% с измененными заказов
 LastClosedOrders=Последнее% с закрытых заказов
 AllOrders=Все заказы
@@ -87,9 +87,9 @@ CloseOrder=Закрыть тему
 ConfirmCloseOrder=Вы уверены, что хотите, чтобы закрыть эту тему? После того, как заказ является закрытым, он может быть выставлен счет.
 ConfirmCloseOrderIfSending=Вы уверены, что хотите, чтобы закрыть эту тему? Вы должны закрыть тему только тогда, когда все судоходство осуществляется.
 ConfirmDeleteOrder=Вы уверены, что хотите удалить эту тему?
-ConfirmValidateOrder=Вы уверены, что хотите проверить эту тему под <b>названием% S?</b>
+ConfirmValidateOrder=Вы уверены, что хотите проверить эту тему под <b>названием %s?</b>
 ConfirmCancelOrder=Вы уверены, что хотите отменить этот заказ?
-ConfirmMakeOrder=Вы уверены, что хотите, чтобы подтвердить вы сделали этот заказ <b>на% S?</b>
+ConfirmMakeOrder=Вы уверены, что хотите, чтобы подтвердить вы сделали этот заказ <b>на %s?</b>
 GenerateBill=Создать счет-фактуру
 ClassifyBilled=Классифицировать &quot;Billed&quot;
 ComptaCard=Бухгалтерия карту
@@ -110,8 +110,8 @@ RunningOrders=Приказы о процессе
 UserWithApproveOrderGrant=Useres предоставляется с &quot;утвердить приказы&quot; разрешения.
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Постоянная COMMANDE_SUPPLIER_ADDON не определена
 Error_COMMANDE_ADDON_NotDefined=Постоянная COMMANDE_ADDON не определена
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Не удалось загрузить модуль файл &#39;% S&#39;
-Error_FailedToLoad_COMMANDE_ADDON_File=Не удалось загрузить модуль файл &#39;% S&#39;
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Не удалось загрузить модуль файл &#39; %s&#39;
+Error_FailedToLoad_COMMANDE_ADDON_File=Не удалось загрузить модуль файл &#39; %s&#39;
 OrderSource0=Коммерческое предложение
 OrderSource1=Интернет
 OrderSource2=Mail кампании
@@ -122,7 +122,7 @@ OrderSource6=Склад
 QtyOrdered=Количество заказанных
 AddDeliveryCostLine=Добавить доставки Стоимость линии с указанием веса заказа
 PDFEinsteinDescription=Для полной модели (logo. ..)
-MarbreNumRefDesc=Renvoie LE numro SOUS LA форме% syymm-NNNN или YY EST L&#39;année, мм LE Mois и NNNN ООН compteur sequentiel без разрывов и без REMISE E 0
+MarbreNumRefDesc=Renvoie LE numro SOUS LA форме %syymm-NNNN или YY EST L&#39;année, мм LE Mois и NNNN ООН compteur sequentiel без разрывов и без REMISE E 0
 // Date 2009-01-19 21:30:52
 // STOP - Lines generated via parser
 
@@ -130,7 +130,7 @@ MarbreNumRefDesc=Renvoie LE numro SOUS LA форме% syymm-NNNN или YY EST L
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 // Reference language: en_US
 OrderLine=Заказ линии
-PaymentOrderRef=Оплата заказа% S
+PaymentOrderRef=Оплата заказа %s
 CloneOrder=Клон порядка
-ConfirmCloneOrder=Вы уверены, что хотите клон этого <b>приказа% S?</b>
+ConfirmCloneOrder=Вы уверены, что хотите клон этого <b>приказа %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).

@@ -974,7 +974,7 @@ UpdateRequired=Your system needs to be updated. To do this, click on <a href=Il 
 AvailableModules=Moduli disponibili
 ToActivateModule=Per attivare i moduli, andare su Setup.
 SessionTimeOut=Tempo per sessione
-SessionExplanation=Questo numero di garanzia che non sarà mai sessione scade prima di questo ritardo. Ma PHP sessoin di gestione non à sempre garanzia che sessione scade dopo questo ritardo: Questo si verifica se un sistema per la pulizia della cache di sessione à in esecuzione. <br> Nota: con particolare sistema interno PHP processo pulito ogni sessione <b>su% s /% s</b> di accesso, ma solo durante l&#39;accesso da altre sessioni.
+SessionExplanation=Questo numero di garanzia che non sarà mai sessione scade prima di questo ritardo. Ma PHP sessoin di gestione non à sempre garanzia che sessione scade dopo questo ritardo: Questo si verifica se un sistema per la pulizia della cache di sessione à in esecuzione. <br> Nota: con particolare sistema interno PHP processo pulito ogni sessione <b>su %s / %s</b> di accesso, ma solo durante l&#39;accesso da altre sessioni.
 MAIN_DISABLE_PDF_COMPRESSION=PDF Usa la compressione per i file PDF generati.
 SeeLocalSendMailSetup=Consultare il locale di installazione di sendmail
 PasswordGenerationStandard=Torna una password generata in base al Dolibarr algoritmo interno: 8 caratteri contenenti condivisa numeri e caratteri in minuscolo.
@@ -1017,7 +1017,7 @@ CompanyHour=Ore società (principali società)
 PurgeDeleteLogFile=Elimina file di <b>registro %s</b> definito per SySlog modulo (nessun rischio di perdere dati)
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr demo online
-ForDocumentationSeeWiki=Per utente o sviluppatore di documentazione (Doc, ...), FAQ <br> dare un&#39;occhiata alle Dolibarr Wiki: <br> <a href="%s" target="_blank"><b>% s</b></a>
+ForDocumentationSeeWiki=Per utente o sviluppatore di documentazione (Doc, ...), FAQ <br> dare un&#39;occhiata alle Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Per qualsiasi altra domanda / aiuto, si può utilizzare il forum Dolibarr: <br> <a href="%s" target="_blank"><b>%s</b></a>
 HelpCenterDesc1=Questa area può aiutare a ottenere un servizio di supporto su Guida Dolibarr.
 HelpCenterDesc2=Una parte di questo servizio sono disponibili <b>solo</b> in <b>inglese.</b>
@@ -1028,7 +1028,7 @@ GenericMaskCodes4b=<u>Esempio sul terzo creata il 2007/03/01:</u> <br>
 SeeWikiForAllTeam=Date un&#39;occhiata alla pagina wiki per la lista completa di tutti gli attori e la loro organizzazione
 UseACacheDelay=Ritardo per il caching di esportazione risposta in pochi secondi (0 o vuoto per non cache)
 DisableLinkToHelpCenter=Nascondi link <b>&quot;Hai bisogno di aiuto o sostegno&quot;</b> sulla pagina di accesso
-DisableLinkToHelp=Nascondi link <b>&quot;% s guida online&quot;</b> sul menu di sinistra
+DisableLinkToHelp=Nascondi link <b>&quot; %s guida online&quot;</b> sul menu di sinistra
 AddCRIfTooLong=Non c&#39;è il confezionamento automatico, quindi se è fuori linea di documenti sulla pagina perché troppo lungo, è necessario aggiungere te ritorni a capo il testo.
 ModuleDisabled=Modulo per disabili
 ModuleDisabledSoNoEvent=Modulo disabili evento mai realizzato in modo
@@ -1075,14 +1075,14 @@ Permission1421=Esporta gli ordini dei clienti e gli attributi
 DictionnarySendingMethods=Invii metodi
 SetupDescription5=Altre voci di menu gestire parametri opzionali.
 BackupDesc=Per effettuare un backup completo del Dolibarr, è necessario:
-BackupDesc2=* Salva il contenuto di documenti directory <b>(% s)</b> che contiene tutti i file generati e caricato (è possibile effettuare una zip, per esempio).
+BackupDesc2=* Salva il contenuto di documenti directory <b>( %s)</b> che contiene tutti i file generati e caricato (è possibile effettuare una zip, per esempio).
 BackupDesc3=* Salva il contenuto della vostra banca dati con una discarica. per questo, è possibile utilizzare in seguito assistente.
 BackupDescX=Archived directory deve essere conservato in un luogo sicuro.
 BackupDescY=Il file generato deve essere conservato in un luogo sicuro.
 RestoreDesc=Per ripristinare un backup Dolibarr, è necessario:
-RestoreDesc2=* Ripristino file di archivio (zip file, per esempio) di documenti di albero di directory per l&#39;estrazione dei file contenuti nella directory di documenti di una nuova installazione o Dolibarr in questa directory corrente documenti <b>(% s).</b>
+RestoreDesc2=* Ripristino file di archivio (zip file, per esempio) di documenti di albero di directory per l&#39;estrazione dei file contenuti nella directory di documenti di una nuova installazione o Dolibarr in questa directory corrente documenti <b>( %s).</b>
 RestoreDesc3=* Ripristinare i dati da un file di backup, nella banca dati del nuovo Dolibarr installazione o nella banca dati di questa corrente di installazione. Attenzione, una volta che è finito il ripristino, è necessario utilizzare una password di accesso, che esistevano quando il backup è stato fatto, per la connessione di nuovo. Per ripristinare un backup di database in questa installazione, è possibile seguire questo assistente.
-ForcedToByAModule=Questa regola è costretto <b>a% s</b> attivata da un modulo
+ForcedToByAModule=Questa regola è costretto <b>a %s</b> attivata da un modulo
 LDAPFieldPasswordCrypted=Password crypted
 YouCanUseDOL_DATA_ROOT=È possibile utilizzare DOL_DATA_ROOT / dolibarr.log per un file di log in Dolibarr &quot;documenti&quot; directory. È possibile impostare un percorso diverso per archiviare questo file.
 Menus=Menu

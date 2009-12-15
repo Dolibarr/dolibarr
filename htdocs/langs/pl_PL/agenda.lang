@@ -50,10 +50,10 @@ DateActionDoneEnd=Real data zakończenia
 DateActionStart=Data rozpoczęcia
 DateActionEnd=Data zakończenia
 AgendaUrlOptions1=Możesz także dodać następujące parametry do filtr wyjściowy:
-AgendaUrlOptions2=<b>login=<b>login =% s,</b> aby ograniczyć wyjścia do działań stworzonych przez wpływ, lub wykonane przez <b>użytkownika% s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina =% s,</b> aby ograniczyć wyjścia do działań stworzonych przez <b>użytkownika% s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint =% s,</b> aby ograniczyć wyjścia do działań dotknięte do <b>użytkownika% s.</b>
-AgendaUrlOptions5=<b>logind=<b>logowanie =% s,</b> aby ograniczyć wyjścia do działań wykonanych przez <b>użytkownika% s.</b>
+AgendaUrlOptions2=<b>login=<b>login = %s,</b> aby ograniczyć wyjścia do działań stworzonych przez wpływ, lub wykonane przez <b>użytkownika %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina = %s,</b> aby ograniczyć wyjścia do działań stworzonych przez <b>użytkownika %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint = %s,</b> aby ograniczyć wyjścia do działań dotknięte do <b>użytkownika %s.</b>
+AgendaUrlOptions5=<b>logind=<b>logowanie = %s,</b> aby ograniczyć wyjścia do działań wykonanych przez <b>użytkownika %s.</b>
 AgendaShowBirthdayEvents=Pokaż urodziny kontaktów
 AgendaHideBirthdayEvents=Ukryj urodzin kontaktów
 // Date 2009-01-19 00:44:06

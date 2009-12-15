@@ -13,7 +13,7 @@ PayBoxDesc=Moduł ten oferują strony, aby umożliwić płatności na <a href="h
 FollowingUrlAreAvailableToMakePayments=Po adresy są dostępne na stronie ofertę do klienta, aby dokonać płatności na Dolibarr obiektów
 PaymentForm=Forma płatności
 WelcomeOnPaymentPage=Witamy na naszej usługi płatności online
-ThisScreenAllowsYouToPay=Ten ekran pozwala na dokonanie płatności on-line do% s.
+ThisScreenAllowsYouToPay=Ten ekran pozwala na dokonanie płatności on-line do %s.
 ThisIsInformationOnPayment=To jest informacja o płatności do
 ToComplete=Aby zakończyć
 YourEMail=E-mail z potwierdzeniem zapłaty
@@ -23,10 +23,10 @@ PayBoxDoPayment=Przejdź na płatności
 YouWillBeRedirectedOnPayBox=Zostaniesz przekierowany na zabezpieczone Paybox stronę wejścia ci karty kredytowej informacje
 PleaseBePatient=Proszę, bądź cierpliwy
 Continue=Następny
-ToOfferALinkForOnlinePaymentOnOrder=URL zaoferowania% s płatności online interfejsu użytkownika na zamówienie
-ToOfferALinkForOnlinePaymentOnInvoice=URL zaoferowania% s płatności online interfejsu użytkownika na fakturze
-ToOfferALinkForOnlinePaymentOnContractLine=URL zaoferować płatności online% s interfejs użytkownika do umowy linii
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL zaoferować płatności online% s interfejs użytkownika w celu utworzenia bezpłatnego kwotę
+ToOfferALinkForOnlinePaymentOnOrder=URL zaoferowania %s płatności online interfejsu użytkownika na zamówienie
+ToOfferALinkForOnlinePaymentOnInvoice=URL zaoferowania %s płatności online interfejsu użytkownika na fakturze
+ToOfferALinkForOnlinePaymentOnContractLine=URL zaoferować płatności online %s interfejs użytkownika do umowy linii
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL zaoferować płatności online %s interfejs użytkownika w celu utworzenia bezpłatnego kwotę
 YouCanAddTagOnUrl=Możesz również dodać parametr <b>&amp;</b> url <b>= <i>wartość</i> tagu</b> do żadnej z tych adresów URL (wymagany tylko za darmo płatności), aby dodać swój komentarz płatności tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Skonfiguruj PayBox url <b>z% s</b> do zapłaty tworzone automatycznie, gdy zatwierdzone przez paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Skonfiguruj PayBox url <b>z %s</b> do zapłaty tworzone automatycznie, gdy zatwierdzone przez paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).

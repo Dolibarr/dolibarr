@@ -2,7 +2,7 @@
 CHARSET = UTF-8
 ErrorPasswordDiffers = Les contrasenyes no són identiques, torni a introduir-les
 ErrorForbidden = Accés no autoritzat.<br>Intenta accedir a una pàgina, zona o funció sense estar en una sessió autentificada o que no s'autoritza per al seu compte d'usuari.
-ErrorForbidden2 = Els permisos per a aquest usuari poden ser assignats per l'administrador Dolibarr mitjançant el menú % s-> %s.
+ErrorForbidden2 = Els permisos per a aquest usuari poden ser assignats per l'administrador Dolibarr mitjançant el menú  %s-> %s.
 ErrorForbidden3 = Dolibarr no sembla funcionar en una sessió autentificada. Consulteu la documentació d'instal lació de Dolibarr per saber com administrar les autenticacions (htacces, mod_auth o altre ...).
 ErrorNoImagickReadimage = La funció imagick_readimage no està present en aquesta instal lació de PHP. La ressenya no està doncs disponible. Els administradors poden desactivar aquesta pestanya en el menú Configuració->Visualització.
 ErrorRecordAlreadyExists = Registre ja existent

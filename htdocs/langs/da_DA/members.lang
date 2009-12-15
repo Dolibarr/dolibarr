@@ -115,8 +115,8 @@ PublicMemberList=Offentlige medlem liste
 BlankSubscriptionForm=Subscription form
 MemberPublicLinks=Offentlige links / sider
 ExportDataset_member_1=Medlemmer og abonnementer
-LastMembers=Seneste% s medlemmer
-LastMembersModified=Seneste% s modificerede medlemmer
+LastMembers=Seneste %s medlemmer
+LastMembersModified=Seneste %s modificerede medlemmer
 AttributeName=Attribut navn
 FieldEdition=% Område udgave
 AlphaNumOnlyCharsAndNoSpace=kun alphanumericals tegn uden mellemrum
@@ -142,7 +142,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etiketter format
 DescADHERENT_CARD_HEADER_TEXT=Tekst trykt på toppen af medlem-kort
 DescADHERENT_CARD_TEXT=Tekst påtrykt medlem kort
 DescADHERENT_CARD_FOOTER_TEXT=Tekst trykt på bunden af medlem-kort
-ShowTypeCard=Vis type &#39;% s&#39;
+ShowTypeCard=Vis type &#39; %s&#39;
 HTPasswordExport=htpassword fil generation
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
@@ -150,7 +150,7 @@ HTPasswordExport=htpassword fil generation
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 // Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Et andet medlem <b>(navn:% s, login:% s)</b> er allerede knyttet til en <b>tredjepart% s.</b> Fjern dette link første fordi en tredjepart ikke kan forbindes med kun et medlem (og omvendt).
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Et andet medlem <b>(navn: %s, login: %s)</b> er allerede knyttet til en <b>tredjepart %s.</b> Fjern dette link første fordi en tredjepart ikke kan forbindes med kun et medlem (og omvendt).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Af sikkerhedsmæssige grunde skal du være tildelt tilladelser til at redigere alle brugere til at kunne knytte et medlem til en bruger, der ikke er dit.
 ThisIsContentOfYourCard=Dette er nærmere oplysninger om dit kort
 CardContent=Indholdet af din medlem kortet

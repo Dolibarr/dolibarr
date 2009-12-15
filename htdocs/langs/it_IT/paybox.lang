@@ -13,7 +13,7 @@ PayBoxDesc=Questo modulo offre pagine per consentire il pagamento di <a href="ht
 FollowingUrlAreAvailableToMakePayments=In seguito sono disponibili gli URL di una pagina di offrire a un cliente per effettuare un pagamento sul Dolibarr oggetti
 PaymentForm=Forma di pagamento
 WelcomeOnPaymentPage=Benvenuti sul nostro servizio di pagamento online
-ThisScreenAllowsYouToPay=Questa schermata consente di effettuare un pagamento online su% s.
+ThisScreenAllowsYouToPay=Questa schermata consente di effettuare un pagamento online su %s.
 ThisIsInformationOnPayment=Si tratta di informazioni a pagamento per fare
 ToComplete=Per completare
 YourEMail=E-mail per la conferma del pagamento
@@ -23,10 +23,10 @@ PayBoxDoPayment=Vai a pagamento
 YouWillBeRedirectedOnPayBox=Verrai reindirizzato su garantiti Paybox pagina per inserire le informazioni della carta di credito si
 PleaseBePatient=Vi preghiamo di essere paziente
 Continue=Successivo
-ToOfferALinkForOnlinePaymentOnOrder=URL di offrire un pagamento on-line% s interfaccia utente per un ordine
-ToOfferALinkForOnlinePaymentOnInvoice=URL di offrire un pagamento on-line% s interfaccia utente per una fattura
-ToOfferALinkForOnlinePaymentOnContractLine=URL di offrire un pagamento on-line% s interfaccia utente per un contratto di linea
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL di offrire un pagamento on-line% s interfaccia utente per un importo
+ToOfferALinkForOnlinePaymentOnOrder=URL di offrire un pagamento on-line %s interfaccia utente per un ordine
+ToOfferALinkForOnlinePaymentOnInvoice=URL di offrire un pagamento on-line %s interfaccia utente per una fattura
+ToOfferALinkForOnlinePaymentOnContractLine=URL di offrire un pagamento on-line %s interfaccia utente per un contratto di linea
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL di offrire un pagamento on-line %s interfaccia utente per un importo
 YouCanAddTagOnUrl=È inoltre possibile aggiungere <b>tag di</b> parametro <b>&amp;</b> url <b>= <i>valore</i></b> di uno qualsiasi di questi URL (richiesto solo per il pagamento gratuito) per aggiungere il tuo commento pagamento tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Imposta il tuo Paybox con <b>url% s</b> per il pagamento sono creati automaticamente quando convalidati dal Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Imposta il tuo Paybox con <b>url %s</b> per il pagamento sono creati automaticamente quando convalidati dal Paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

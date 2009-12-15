@@ -118,7 +118,7 @@ SystemToolsAreaDesc=Dit gedeelte biedt administratie functies. Gebruik het menu 
 PurgeAreaDesc=Deze pagina kunt u alle bestanden gebouwd of opgeslagen door Dolibarr (tijdelijke bestanden of alle bestanden in de map<b> %s</b>). Met behulp van deze functie is niet nodig. Het is bedoeld voor gebruikers van wie Dolibarr wordt gehost door een provider die geen machtigingen voor bestanden verwijderen gebouwd door de web server.
 PurgeDeleteLogFile = Effacer le fichier log <b>%s</b> défini pour le module Syslog (pas de risque de perte de données)
 PurgeDeleteTemporaryFiles=Verwijder alle tijdelijke bestanden (geen risico voor losse gegevens)
-PurgeDeleteAllFilesInDocumentsDir=Verwijder alle bestanden in de <b>map% s.</b> Tijdelijke bestanden, maar ook bestanden aan elementen (derden, facturen, ...) en geüpload naar de ECM-module wordt verwijderd.
+PurgeDeleteAllFilesInDocumentsDir=Verwijder alle bestanden in de <b>map %s.</b> Tijdelijke bestanden, maar ook bestanden aan elementen (derden, facturen, ...) en geüpload naar de ECM-module wordt verwijderd.
 PurgeRunNow=Purge nu
 PurgeNothingToDelete=Geen map te verwijderen.
 PurgeNDirectoriesDeleted=<b>%s</b> bestanden of directories verwijderd.
@@ -701,7 +701,7 @@ TriggersDesc=Triggers zijn bestanden die zullen veranderen door het gedrag van D
 TriggerDisabledByName=Triggers in dit bestand zijn uitgeschakeld door het <b>NoRun</b> achtervoegsel in hun naam.
 TriggerDisabledAsModuleDisabled=Triggers in dit bestand zijn uitgeschakeld als <b>module %s</b> is uitgeschakeld.
 TriggerAlwaysActive=Triggers in dit bestand zijn altijd actief, ongeacht zijn de geactiveerde Dolibarr modules.
-TriggerActiveAsModuleActive=Triggers in dit bestand zijn actief als <b>module% s</b> is ingeschakeld.
+TriggerActiveAsModuleActive=Triggers in dit bestand zijn actief als <b>module %s</b> is ingeschakeld.
 GeneratedPasswordDesc=Definieer hier de regel die u wilt gebruiken voor het genereren van een nieuwe wachtwoord als u vraagt om een automatisch gegenereerd wachtwoord
 DictionnaryDesc=Definieer hier alle referentie data. U kunt vooraf gedefinieerde waarde aanpassen nar de uwe.
 ConstDesc=Op deze pagina vint u alle andere parameters die niet beschikbaar zijn in de voorgaande pagina's. Ze zijn voorbehouden parameters voor geavanceerde ontwikkelaars of voor 'troubleshouting'.
@@ -898,10 +898,10 @@ LDAPTestSynchroMember=Test lid synchronisatie
 LDAPSynchroOK=Synchronisatie test succesvol
 LDAPSynchroKO=Mislukt synchronisatie test
 LDAPSynchroKOMayBePermissions=Mislukt synchronisatie test. Controleer of de verbinding met de server correct is geconfigureerd en kunt LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP-verbinding te maken met LDAP-server succesvolle (Server =% s, Port =% s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP-verbinding te maken met LDAP-server mislukt (Server =% s, Port =% s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Sluit/Authentificate LDAP-server succesvolle (Server =% s, Port =% s, Admin =% s, Password =% s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Sluit/Authentificate LDAP-server mislukt (Server =% s, Port =% s, Admin =% s, Password =% s)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP-verbinding te maken met LDAP-server succesvolle (Server = %s, Port = %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP-verbinding te maken met LDAP-server mislukt (Server = %s, Port = %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Sluit/Authentificate LDAP-server succesvolle (Server = %s, Port = %s, Admin = %s, Password = %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Sluit/Authentificate LDAP-server mislukt (Server = %s, Port = %s, Admin = %s, Password = %s)
 LDAPUnbindSuccessfull=Koppel succesvol
 LDAPUnbindFailed=Koppel mislukt
 LDAPConnectToDNSuccessfull=Connectie met DN (%s) gelukt

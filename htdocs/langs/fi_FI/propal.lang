@@ -28,8 +28,8 @@ ValidateProp=Validate kaupallinen ehdotus
 AddProp=Lisää ehdotus
 ConfirmDeleteProp=Oletko varma, että haluat poistaa tämän kaupallisen ehdotusta?
 ConfirmValidateProp=Oletko varma, että haluat vahvistaa kaupallista ehdotusta?
-LastPropals=Viimeisin% s ehdotuksia
-LastClosedProposals=Viimeisin% s suljettu ehdotuksia
+LastPropals=Viimeisin %s ehdotuksia
+LastClosedProposals=Viimeisin %s suljettu ehdotuksia
 AllPropals=Kaikki ehdotukset
 LastProposals=Viimeisin ehdotuksia
 SearchAProposal=Haku ehdotuksen
@@ -75,7 +75,7 @@ ClassifyBilled=Luokittele laskutetaan
 BuildBill=Rakenna lasku
 RelatedBill=Liittyvät lasku
 RelatedBills=Liittyvät laskut
-ErrorPropalNotFound=Propal% s ei löydy
+ErrorPropalNotFound=Propal %s ei löydy
 Estimate=Arvio:
 EstimateShort=Arvio
 OtherPropals=Muut ehdotukset
@@ -84,7 +84,7 @@ CreateEmptyPropal=Luo tyhjä kaupallinen ehdotuksia vierge tai luettelo tuotteet
 DefaultProposalDurationValidity=Oletus kaupallinen ehdotus voim. kesto (päivinä)
 UseCustomerContactAsPropalRecipientIfExist=Käytä asiakkaan yhteystiedot, jos se on määritetty sijaan kolmannen osapuolen osoite ehdotus vastaanottajan osoite
 ClonePropal=Klooni kaupallinen ehdotus
-ConfirmClonePropal=Oletko varma, että haluat klooni kaupallista <b>ehdotus% s?</b>
+ConfirmClonePropal=Oletko varma, että haluat klooni kaupallista <b>ehdotus %s?</b>
 DocModelAzurDescription=Täydellinen ehdotus malli (logo. ..)
 DocModelJauneDescription=Jaune ehdotus malli
 // Date 2009-01-19 22:07:11
@@ -94,9 +94,9 @@ DocModelJauneDescription=Jaune ehdotus malli
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
 // Reference language: en_US
 ProposalShort=Ehdotus
-LastModifiedProposals=Viimeisin% s muutetut ehdotukset
+LastModifiedProposals=Viimeisin %s muutetut ehdotukset
 DatePropal=Päiväys Ehdotuksen
 ProposalsAndProposalsLines=Kaupalliset ehdotusta ja linjat
 ProposalLine=Ehdotus linja
-MarbreNumRefModelDesc=Paluu numero on muodossa% syymm-nnnn ehdotuksia jossa VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0
+MarbreNumRefModelDesc=Paluu numero on muodossa %syymm-nnnn ehdotuksia jossa VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).

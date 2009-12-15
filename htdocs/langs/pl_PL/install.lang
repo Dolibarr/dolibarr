@@ -191,8 +191,8 @@ PHPSupportUTF8=To wsparcie PHP UTF8 funkcji.
 ErrorPHPDoesNotSupportGD=Twoja instalacji PHP nie obsługuje funkcji graficznych GD. Nr wykresie będą dostępne.
 ErrorPHPDoesNotSupportUTF8=Twoja instalacji PHP nie obsługuje UTF8 funkcji. Dolibarr może nie działać poprawnie. Rozwiązać ten problem przed instalacją Dolibarr.
 IfLoginDoesNotExistsCheckCreateUser=Jeśli logowania jeszcze nie istnieje, należy sprawdzić opcję &quot;Utwórz użytkownika&quot;
-ErrorConnection=Serwer <b>&quot;% s&quot;,</b> nazwa bazy danych <b>&quot;% s&quot;</b> login <b>&quot;% s&quot;</b> lub hasło bazy danych mogą być złe lub PHP wersji klienckiej może być zbyt stare porównaniu do wersji bazy danych.
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Poprawna umowa% s (Kontrakt data =% s, daty rozpoczęcia usługi min =% s)
+ErrorConnection=Serwer <b>&quot; %s&quot;,</b> nazwa bazy danych <b>&quot; %s&quot;</b> login <b>&quot; %s&quot;</b> lub hasło bazy danych mogą być złe lub PHP wersji klienckiej może być zbyt stare porównaniu do wersji bazy danych.
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Poprawna umowa %s (Kontrakt data = %s, daty rozpoczęcia usługi min = %s)
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 
@@ -202,7 +202,7 @@ MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting
 GoToDolibarr=Idź do Dolibarr
 MigrationNotFinished=Wersja Twojej dtabase nie jest w pełni aktualne, więc musisz uruchomić ponownie proces aktualizacji.
 GoToUpgradePage=Wejdź na stronę aktualizacji ponownie
-InstallChoiceRecommanded=Zaleciły wybór zainstalować <b>wersję% s</b> od aktualnej <b>wersji% s</b>
+InstallChoiceRecommanded=Zaleciły wybór zainstalować <b>wersję %s</b> od aktualnej <b>wersji %s</b>
 InstallChoiceSuggested=<b>Zainstaluj wyboru sugerowane przez instalatora.</b>
 MigrationStockDetail=Aktualizacja wartości zapasów produktów
 MigrationMenusDetail=Aktualizacja dynamiczne menu tabele

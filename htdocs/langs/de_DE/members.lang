@@ -114,8 +114,8 @@ PublicMemberList=Öffentliche Mitglied Liste
 BlankSubscriptionForm=Abo-Formular
 MemberPublicLinks=Öffentliche Links / Seiten
 ExportDataset_member_1=Mitglieder und Abonnements
-LastMembers=Letzte% s Mitglieder
-LastMembersModified=Letzte% s geändert Mitglieder
+LastMembers=Letzte %s Mitglieder
+LastMembersModified=Letzte %s geändert Mitglieder
 AttributeName=Attributname
 FieldEdition=% Bereich Auflage
 AlphaNumOnlyCharsAndNoSpace=nur alphanumericals Zeichen ohne Leerzeichen
@@ -141,7 +141,7 @@ DescADHERENT_ETIQUETTE_TYPE=Etiketten-Format
 DescADHERENT_CARD_HEADER_TEXT=Text oben auf der Mitglied-Karten
 DescADHERENT_CARD_TEXT=Text auf Karten Mitglied
 DescADHERENT_CARD_FOOTER_TEXT=Text unten auf der Mitglied-Karten
-ShowTypeCard=Show Typ &#39;% s&#39;
+ShowTypeCard=Show Typ &#39; %s&#39;
 HTPasswordExport=htpassword Datei Generation
 // Date 2009-01-20 00:09:12
 // STOP - Lines generated via parser
@@ -149,7 +149,7 @@ HTPasswordExport=htpassword Datei Generation
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:42:36).
 // Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Ein weiteres Mitglied <b>(Name:% s, login:% s)</b> ist bereits im Zusammenhang mit einer dritten <b>Partei% s.</b> Entfernen Sie diesen Link, erstens, weil ein Dritter können nicht mit nur einem Mitglied (und umgekehrt).
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Ein weiteres Mitglied <b>(Name: %s, login: %s)</b> ist bereits im Zusammenhang mit einer dritten <b>Partei %s.</b> Entfernen Sie diesen Link, erstens, weil ein Dritter können nicht mit nur einem Mitglied (und umgekehrt).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Aus Sicherheitsgründen müssen Sie die Berechtigungen für alle Benutzer bearbeiten zu können, um ein Mitglied zu einem Benutzer, der ist nicht bei Ihnen.
 ThisIsContentOfYourCard=Dies ist Details Ihrer Karte
 CardContent=Inhalt der Mitglied-Karte

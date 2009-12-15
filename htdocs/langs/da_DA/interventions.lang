@@ -18,7 +18,7 @@ NewIntervention=Ny intervention
 AddIntervention=Tilføj intervention
 ListOfInterventions=Liste over interventioner
 EditIntervention=Editer intervention
-LastInterventions=Seneste% s interventioner
+LastInterventions=Seneste %s interventioner
 AllInterventions=Alle interventioner
 CreateDraftIntervention=Opret udkast
 CustomerDoesNotHavePrefix=Kunden er ikke et præfiks
@@ -39,7 +39,7 @@ TypeContact_fichinter_external_BILLING=Faktureringsindstillinger kunde kontakt
 TypeContact_fichinter_external_CUSTOMER=Opfølgning kunde kontakt
 ArcticNumRefModelDesc1=Generic antal model
 ArcticNumRefModelError=Det lykkedes ikke at aktivere
-PacificNumRefModelDesc1=Retur numero med format% syymm-nnnn hvor ÅÅ er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
+PacificNumRefModelDesc1=Retur numero med format %syymm-nnnn hvor ÅÅ er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
 PacificNumRefModelError=En intervention kortet begynder med $ syymm allerede eksisterer og er ikke kompatible med denne model af sekvensinformation. Fjern den eller omdøbe den til at aktivere dette modul.
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser

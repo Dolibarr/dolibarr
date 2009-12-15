@@ -48,10 +48,10 @@ DateActionDoneEnd=Real data de sfârşit
 DateActionStart=Data începerii
 DateActionEnd=Data de final
 AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri la filtru de iesire:
-AgendaUrlOptions2=<b>login=<b>login =% s</b> pentru a limita producţia de acţiuni create de, afectate pentru a face sau de către <b>utilizator% s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina =% s</b> pentru a limita producţia de acţiuni create de <b>utilizator% s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint =% s</b> pentru a limita producţia de acţiunile afectate de <b>utilizator% s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind =% s</b> pentru a limita producţia de acţiuni efectuată de către <b>utilizatorul% s.</b>
+AgendaUrlOptions2=<b>login=<b>login = %s</b> pentru a limita producţia de acţiuni create de, afectate pentru a face sau de către <b>utilizator %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina = %s</b> pentru a limita producţia de acţiuni create de <b>utilizator %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint = %s</b> pentru a limita producţia de acţiunile afectate de <b>utilizator %s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind = %s</b> pentru a limita producţia de acţiuni efectuată de către <b>utilizatorul %s.</b>
 AgendaShowBirthdayEvents=Arata de ziua lui de contact
 AgendaHideBirthdayEvents=Ascunde ziua lui de contact
 // Date 2009-01-19 21:32:52

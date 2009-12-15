@@ -95,7 +95,7 @@ ListOfActiveNotifications=Lijst van alle actieve berichtgevingen
 // Reference language: en_US
 AllEMailings=Alle eMailings
 ResetMailing=Opnieuw emailen
-ConfirmResetMailing=Let op, e-mailen <b>initialiseren% s,</b> die u in staat om een massale verzending van deze e-mail een andere tijd. Weet u zeker dat u dit is wat u wilt doen?
+ConfirmResetMailing=Let op, e-mailen <b>initialiseren %s,</b> die u in staat om een massale verzending van deze e-mail een andere tijd. Weet u zeker dat u dit is wat u wilt doen?
 BadEMail=Onjuiste waarde voor e-mail
 CloneEMailing=Clone mailen
 ConfirmCloneEMailing=Weet u zeker dat u wilt kloon deze e-mail te sturen?

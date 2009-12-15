@@ -9,13 +9,13 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorLoginAlreadyExists=Kirjaudu% s on jo olemassa.
-ErrorGroupAlreadyExists=Ryhmän% s on jo olemassa.
-ErrorFailToDeleteFile=Epäonnistui poistaa tiedoston <b>&#39;% s&#39;.</b>
-ErrorFailToCreateFile=Luominen epäonnistui file <b>&#39;% s&#39;.</b>
-ErrorFailToRenameDir=Epäonnistui nimetä directory <b>&#39;% s&#39; osaksi&#39;% s&#39;.</b>
-ErrorFailToCreateDir=Luominen epäonnistui directory <b>&#39;% s&#39;.</b>
-ErrorFailToDeleteDir=Poistaminen ei onnistunut directory <b>&#39;% s&#39;.</b>
+ErrorLoginAlreadyExists=Kirjaudu %s on jo olemassa.
+ErrorGroupAlreadyExists=Ryhmän %s on jo olemassa.
+ErrorFailToDeleteFile=Epäonnistui poistaa tiedoston <b>&#39; %s&#39;.</b>
+ErrorFailToCreateFile=Luominen epäonnistui file <b>&#39; %s&#39;.</b>
+ErrorFailToRenameDir=Epäonnistui nimetä directory <b>&#39; %s&#39; osaksi&#39; %s&#39;.</b>
+ErrorFailToCreateDir=Luominen epäonnistui directory <b>&#39; %s&#39;.</b>
+ErrorFailToDeleteDir=Poistaminen ei onnistunut directory <b>&#39; %s&#39;.</b>
 ErrorFailedToDeleteJoinedFiles=Ei voi poistaa yksikkö, koska siellä on noin liittyi tiedostoja. Poista liittyä tiedostot ensin.
 ErrorThisContactIsAlreadyDefinedAsThisType=Tämä yhteys on jo määritelty yhteyttä tämän tyypin osalta.
 ErrorCashAccountAcceptsOnlyCashMoney=Tämä pankkitili on käteistä huomioon, joten se hyväksyy maksujen tyypin käteisellä vain.
@@ -29,8 +29,8 @@ ErrorBadSupplierCodeSyntax=Bad syntaksi toimittajan koodi
 ErrorSupplierCodeRequired=Toimittaja-koodi tarvitaan
 ErrorSupplierCodeAlreadyUsed=Toimittaja koodi jo käytössä
 ErrorBadParameters=Bad parametrit
-ErrorFailedToWriteInDir=Epäonnistui kirjoittaa hakemistoon% s
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Löytyi virheellinen sähköposti syntaksi% s rivit tiedoston (esimerkiksi rivi% s email =% s)
+ErrorFailedToWriteInDir=Epäonnistui kirjoittaa hakemistoon %s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Löytyi virheellinen sähköposti syntaksi %s rivit tiedoston (esimerkiksi rivi %s email = %s)
 ErrorUserCannotBeDelete=Käyttäjä ei voi poistaa. Voi olla se liittyy annetun Dolibarr yhteisöjä.
 ErrorFieldsRequired=Jotkin vaaditut kentät eivät ole täytetty.
 ErrorFailedToCreateDir=Luominen epäonnistui hakemiston. Tarkista, että Web-palvelin käyttäjällä on oikeudet kirjoittaa Dolibarr asiakirjat hakemistoon. Jos parametri <b>safe_mode</b> on käytössä tämän PHP, tarkista, että Dolibarr php tiedostot omistaa web-palvelimen käyttäjä (tai ryhmä).
@@ -39,17 +39,17 @@ ErrorFeatureNeedJavascript=Tätä ominaisuutta tarvitaan JavaScript on aktivoitu
 ErrorTopMenuMustHaveAParentWithId0=A-valikosta tyyppi &quot;Alkuun&quot; ei voi olla emo-valikosta. Laita 0 vanhemman valikosta tai valita valikosta tyyppi &quot;vasemmisto&quot;.
 ErrorLeftMenuMustHaveAParentId=A-valikosta tyyppi &quot;vasemmisto&quot; on oltava vanhemman id.
 ErrorFileNotFound=Tiedostoa ei löydy (Bad polku väärä oikeudet tai pääsy evätty openbasedir parametri)
-ErrorFunctionNotAvailableInPHP=<b>Tehtävä% s</b> tarvitaan tätä ominaisuutta, mutta ei ole käytettävissä tässä versiossa / setup PHP.
+ErrorFunctionNotAvailableInPHP=<b>Tehtävä %s</b> tarvitaan tätä ominaisuutta, mutta ei ole käytettävissä tässä versiossa / setup PHP.
 ErrorDirAlreadyExists=A-hakemisto on jo olemassa.
-ErrorFieldCanNotContainSpecialCharacters=<b>Kenttä% s</b> ei saa sisältää erikoismerkkejä.
+ErrorFieldCanNotContainSpecialCharacters=<b>Kenttä %s</b> ei saa sisältää erikoismerkkejä.
 WarningAllowUrlFopenMustBeOn=Parametri <b>allow_url_fopen</b> on <b>käytössä</b> vuonna Filer <b>php.ini</b> siitä tässä moduulissa työskentelee täysin. Sinun täytyy muuttaa tämän tiedoston manuaalisesti.
-WarningBuildScriptNotRunned=<b>Script% s</b> ei ole vielä juoksi rakentaa grafiikkaa, tai ei ole tietoja, jotka osoittavat.
+WarningBuildScriptNotRunned=<b>Script %s</b> ei ole vielä juoksi rakentaa grafiikkaa, tai ei ole tietoja, jotka osoittavat.
 WarningBookmarkAlreadyExists=Kirjanmerkki tämän otsikon tai tämän tavoitteen (URL) on jo olemassa.
 WarningPassIsEmpty=Varoitus, tietokannan salasana on tyhjä. Tämä on turvallisuus reikään. Sinun tulisi lisätä salasanan tietokantaan ja muuttaa conf.php tiedosto vastaavasti.
 ErrorNoAccountancyModuleLoaded=O kirjanpito moduuli aktivoitu
 ErrorExportDuplicateProfil=Tämä profiilin nimi on jo olemassa tämän vienti asetettu.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP yhteensovitus ei ole täydellinen.
-ErrorLDAPMakeManualTest=A. LDIF tiedosto on luotu hakemistoon% s. Yritä ladata se manuaalisesti komentoriviltä on enemmän tietoa virheitä.
+ErrorLDAPMakeManualTest=A. LDIF tiedosto on luotu hakemistoon %s. Yritä ladata se manuaalisesti komentoriviltä on enemmän tietoa virheitä.
 ErrorCantSaveADoneUserWithZeroPercentage=Ei voi tallentaa toimia &quot;statut ole käynnistetty&quot;, jos alalla &quot;tehtävä&quot; on myös täytettävä.
 ErrorBillRefAlreadyExists=Ref käytetään luomista jo olemassa.
 ErrorPleaseTypeBankTransactionReportName=Kirjoita pankki vastaanottamisesta nimi, jos liiketoimi on raportoitu (Format VVVVKK tai VVVVKKPP)

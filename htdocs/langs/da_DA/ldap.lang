@@ -12,11 +12,11 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DomainPassword=Password for domæne
-YouMustChangePassNextLogon=Adgangskode for <b>bruger% s</b> på det <b>domæne% s</b> skal ændres.
-UserMustChangePassNextLogon=Brugeren skal skifte adgangskode på domænet% s
+YouMustChangePassNextLogon=Adgangskode for <b>bruger %s</b> på det <b>domæne %s</b> skal ændres.
+UserMustChangePassNextLogon=Brugeren skal skifte adgangskode på domænet %s
 LdapUacf_NORMAL_ACCOUNT=Brugerkonto
 LdapUacf_DONT_EXPIRE_PASSWORD=Password aldrig udløber
-LdapUacf_ACCOUNTDISABLE=Kontoen er deaktiveret i domænet% s
+LdapUacf_ACCOUNTDISABLE=Kontoen er deaktiveret i domænet %s
 LDAPInformationsForThisContact=Oplysninger i LDAP database for denne kontakt
 LDAPInformationsForThisUser=Oplysninger i LDAP database for denne bruger
 LDAPInformationsForThisGroup=Oplysninger i LDAP database for denne gruppe
