@@ -401,7 +401,7 @@ class CommonObject
 		$this->adresse = $adresse;
 		return $result;
 	}
-	
+
     /**
 	 *		\brief		Read linked document
 	 */
@@ -843,14 +843,14 @@ class CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * 	Add objects linked in llx_element_element.
 	 */
 	function add_object_linked()
 	{
 		$this->db->begin();
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
 		$sql.= "fk_source";
 		$sql.= ", sourcetype";
@@ -862,7 +862,7 @@ class CommonObject
 		$sql.= ", ".$this->id;
 		$sql.= ", '".$this->element."'";
 		$sql.= ")";
-		
+
 		if ($this->db->query($sql))
 	  	{
 	  		$this->db->commit();
@@ -882,7 +882,7 @@ class CommonObject
 	function load_object_linked($sourceid='',$sourcetype='',$targetid='',$targettype='')
 	{
 		$this->linked_object=array();
-		
+
 		$sourceid = (!empty($sourceid)?$sourceid:$this->id);
 		$targetid = (!empty($targetid)?$targetid:$this->id);
 		$sourcetype = (!empty($sourcetype)?$sourcetype:$this->origin);
@@ -893,7 +893,7 @@ class CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
 		$sql.= " WHERE (fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
 		$sql.= " OR    (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
-	
+
 		dol_syslog("CommonObject::load_object_linked sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -919,30 +919,32 @@ class CommonObject
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
-	 *      \brief      Set statut of an element
+	 *      \brief      Set statut of an object
 	 *      \param		statut			Statut to set
-	 *      \param		elementid		Id of element to force
-	 *      \param		elementtype		Type of element to force
+	 *      \param		elementid		Id of element to force (use this->id by default)
+	 *      \param		elementtype		Type of element to force (use ->this->element by default)
 	 *      \return     int				<0 if ko, >0 if ok
 	 */
 	function setStatut($statut,$elementId='',$elementType='')
 	{
 		$elementId = (!empty($elementId)?$elementId:$this->id);
-		$elementType = (!empty($elementType)?$elementType:$this->element);
-		
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementType;
+		$elementTable = (!empty($elementType)?$elementType:$this->element);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql.= " SET fk_statut = ".$statut;
 		$sql.= " WHERE rowid=".$elementId;
-		
+
 		dol_syslog("CommonObject::setStatut sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql)
 		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("CommonObject::setStatut ".$this->error, LOG_ERR);
 			return -1;
 		}
-		
+
 		return 1;
 	}
 
