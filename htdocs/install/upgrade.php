@@ -47,8 +47,8 @@ error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
-$versionfrom=isset($_GET["versionfrom"])?$_GET["versionfrom"]:'';
-$versionto=isset($_GET["versionto"])?$_GET["versionto"]:'';
+$versionfrom=isset($_POST["versionfrom"])?$_POST["versionfrom"]:(isset($_GET["versionfrom"])?$_GET["versionfrom"]:'');
+$versionto=isset($_POST["versionto"])?$_POST["versionto"]:(isset($_GET["versionto"])?$_GET["versionto"]:'');
 
 $langs->load("admin");
 $langs->load("install");
