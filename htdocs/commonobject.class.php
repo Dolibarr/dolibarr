@@ -491,7 +491,7 @@ class CommonObject
 
 
 	/**
-	 *	\brief     	Link ekement with a project
+	 *	\brief     	Link element with a project
 	 *	\param     	projid		Project id to link element to
 	 *	\return		int			<0 if KO, >0 if OK
 	 */
@@ -907,6 +907,32 @@ class CommonObject
 		{
 			dol_print_error($this->db);
 		}
+	}
+	
+	/**
+	 *      \brief      Set statut of an element
+	 *      \param		statut			Statut to set
+	 *      \param		elementid		Id of element to force
+	 *      \param		elementtype		Type of element to force
+	 *      \return     int				<0 if ko, >0 if ok
+	 */
+	function setStatut($statut,$elementId='',$elementType='')
+	{
+		$elementId = (!empty($elementId)?$elementId:$this->id);
+		$elementType = (!empty($elementType)?$elementType:$this->element);
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementType;
+		$sql.= " SET fk_statut = ".$statut;
+		$sql.= " WHERE rowid=".$elementId;
+		
+		dol_syslog("CommonObject::setStatut sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql)
+		{
+			return -1;
+		}
+		
+		return 1;
 	}
 
 }

@@ -168,22 +168,16 @@ class Livraison extends CommonObject
 					{
 						if ($conf->commande->enabled)
 						{
-							$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
-							dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
-							if (! $this->db->query($sql))
-							{
-								$error++;
-							}
+							$ret = $this->setStatut(2,$this->origin_id,$this->origin);
 						}
 						else
 						{
 							// TODO definir un statut
-							$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
-							dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
-							if (! $this->db->query($sql))
-							{
-								$error++;
-							}
+							$ret = $this->setStatut(9,$this->origin_id,$this->origin);
+						}
+						if (! $ret)
+						{
+							$error++;
 						}
 					}
 				}
