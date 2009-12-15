@@ -19,9 +19,8 @@
 -- $Id$
 -- ===================================================================
 
--- drop table llx_ecm_document;
 
-create table llx_ecm_document
+create table llx_ecm_documents
 (
   rowid           	integer AUTO_INCREMENT PRIMARY KEY,
   ref             	varchar(16)  NOT NULL,
@@ -41,6 +40,6 @@ create table llx_ecm_document
   fk_status		  	smallint DEFAULT 0,
   private         	smallint DEFAULT 0,
   crc 				varchar(32) NOT NULL DEFAULT '',  		-- checksum
-  key				varchar(50) NOT NULL DEFAULT '',  		-- crypt key
+  cryptkey			varchar(50) NOT NULL DEFAULT '',  		-- crypt key
   cipher 			varchar(50) NOT NULL DEFAULT 'twofish'  -- crypt cipher
 ) type=innodb;

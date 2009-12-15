@@ -2230,13 +2230,13 @@ LOCK TABLES `llx_ecm_directories` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_ecm_document`
+-- Table structure for table `llx_ecm_documents`
 --
 
-DROP TABLE IF EXISTS `llx_ecm_document`;
+DROP TABLE IF EXISTS `llx_ecm_documents`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `llx_ecm_document` (
+CREATE TABLE `llx_ecm_documents` (
   `rowid` int(11) NOT NULL auto_increment,
   `ref` varchar(16) NOT NULL default '',
   `filename` varchar(255) NOT NULL default '',
@@ -2258,12 +2258,12 @@ CREATE TABLE `llx_ecm_document` (
 SET character_set_client = @saved_cs_client;
 
 --
--- Dumping data for table `llx_ecm_document`
+-- Dumping data for table `llx_ecm_documents`
 --
 
-LOCK TABLES `llx_ecm_document` WRITE;
-/*!40000 ALTER TABLE `llx_ecm_document` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_ecm_document` ENABLE KEYS */;
+LOCK TABLES `llx_ecm_documents` WRITE;
+/*!40000 ALTER TABLE `llx_ecm_documents` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_ecm_documents` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

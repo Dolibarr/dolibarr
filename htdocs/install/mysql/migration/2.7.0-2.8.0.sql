@@ -22,7 +22,8 @@ ALTER TABLE llx_element_element CHANGE targetid fk_target integer NOT NULL;
 ALTER TABLE llx_element_element ADD UNIQUE INDEX idx_element_element_idx1 (fk_source, sourcetype, fk_target, targettype);
 ALTER TABLE llx_element_element ADD INDEX idx_element_element_fk_target (fk_target);
 
+ALTER TABLE llx_ecm_document RENAME TO llx_ecm_documents;
 ALTER TABLE llx_ecm_documents ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER ref;
-ALTER TABLE llx_ecm_documents ADD COLUMN crc varchar(32) NOT NULL DEFAULT '' AFTER private;
-ALTER TABLE llx_ecm_documents ADD COLUMN key varchar(50) NOT NULL DEFAULT '' AFTER crc;
-ALTER TABLE llx_ecm_documents ADD COLUMN cipher varchar(50) NOT NULL DEFAULT 'twofish' AFTER key;
+ALTER TABLE llx_ecm_documents ADD COLUMN crc varchar(32) DEFAULT '' NOT NULL AFTER private;
+ALTER TABLE llx_ecm_documents ADD COLUMN cryptkey varchar(50) DEFAULT '' NOT NULL AFTER crc;
+ALTER TABLE llx_ecm_documents ADD COLUMN cipher varchar(50) DEFAULT 'twofish' NOT NULL AFTER cryptkey;

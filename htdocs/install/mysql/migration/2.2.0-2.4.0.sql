@@ -279,7 +279,7 @@ create table llx_ecm_directories
   fk_user_m		  integer
 ) type=innodb;
 
-create table llx_ecm_document
+create table llx_ecm_documents
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(16)  NOT NULL,
