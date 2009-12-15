@@ -143,9 +143,15 @@ if ($_POST['action'] == 'confirm_deletedir' && $_POST['confirm'] == 'yes')
 {
 	// Fetch was already done
 	$result=$ecmdir->delete($user);
-	header("Location: ".DOL_URL_ROOT."/ecm/index.php");
-	exit;
-	//	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
+	if ($result > 0)
+	{
+		header("Location: ".DOL_URL_ROOT."/ecm/index.php");
+		exit;
+	}
+	else
+	{
+		$mesg = '<div class="error">'.$langs->trans($ecmdir->error).'</div>';
+	}
 }
 
 // Update description

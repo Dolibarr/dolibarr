@@ -18,19 +18,19 @@
  */
 
 /**
-        \file       htdocs/ecm/ecm_directories.class.php
-        \ingroup    ecm
-        \brief      This file is an example for a class file
-		\version    $Id$
-		\author		Laurent Destailleur
-		\remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
-*/
+ \file       htdocs/ecm/ecm_directories.class.php
+ \ingroup    ecm
+ \brief      This file is an example for a class file
+ \version    $Id$
+ \author		Laurent Destailleur
+ \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
+ */
 
 /**
-        \class      EcmDirectory
-        \brief      Class to manage ECM directories
-		\remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
-*/
+ \class      EcmDirectory
+ \brief      Class to manage ECM directories
+ \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
+ */
 class EcmDirectory // extends CommonObject
 {
 	var $db;							//!< To store db handler
@@ -39,7 +39,7 @@ class EcmDirectory // extends CommonObject
 	//var $element='ecm_directories';			//!< Id that identify managed objects
 	//var $table_element='ecm_directories';	//!< Name of table without prefix where object is stored
 
-    var $id;
+	var $id;
 
 	var $label;
 	var $fk_parent;
@@ -48,40 +48,40 @@ class EcmDirectory // extends CommonObject
 	var $date_c;
 	var $date_m;
 
-    var $cats=array();
+	var $cats=array();
 	var $motherof=array();
 
 
-    /**
-     *      \brief      Constructor
-     *      \param      DB      Database handler
-     */
-    function EcmDirectory($DB)
-    {
-        $this->db = $DB;
-        return 1;
-    }
+	/**
+	 *      \brief      Constructor
+	 *      \param      DB      Database handler
+	 */
+	function EcmDirectory($DB)
+	{
+		$this->db = $DB;
+		return 1;
+	}
 
 
-    /**
-     *      \brief      Create in database
-     *      \param      user        User that create
-     *      \return     int         <0 si ko, >0 si ok
-     */
-    function create($user)
-    {
-    	global $conf, $langs;
+	/**
+	 *      \brief      Create in database
+	 *      \param      user        User that create
+	 *      \return     int         <0 si ko, >0 si ok
+	 */
+	function create($user)
+	{
+		global $conf, $langs;
 
 		$now=time();
 
 		// Clean parameters
-    	$this->label=dol_string_nospecial(trim($this->label));
+		$this->label=dol_string_nospecial(trim($this->label));
 		$this->fk_parent=trim($this->fk_parent);
 		$this->description=trim($this->description);
 		if (! $this->cachenbofdoc) $this->cachenbofdoc=0;
 		$this->date_c=$now;
 		$this->fk_user_c=$user->id;
-        if ($this->fk_parent <= 0) $this->fk_parent=0;
+		if ($this->fk_parent <= 0) $this->fk_parent=0;
 
 		// Check if same directory does not exists with this name
 		$relativepath=$this->label;
@@ -92,10 +92,10 @@ class EcmDirectory // extends CommonObject
 			$relativepath=$parent->getRelativePath().$relativepath;
 		}
 		$relativepath=preg_replace('/([\/])+/i','/',$relativepath);	// Avoid duplicate / or \
-        //print $relativepath.'<br>';
+		//print $relativepath.'<br>';
 
 		$cat = new ECMDirectory($this->db);
-        $cate_arbo = $cat->get_full_arbo(1);
+		$cate_arbo = $cat->get_full_arbo(1);
 		$pathfound=0;
 		foreach ($cate_arbo as $key => $categ)
 		{
@@ -110,15 +110,15 @@ class EcmDirectory // extends CommonObject
 
 		if ($pathfound)
 		{
-	        $this->error="ErrorDirAlreadyExists";
-	        dol_syslog("EcmDirectories::create ".$this->error, LOG_WARNING);
+			$this->error="ErrorDirAlreadyExists";
+			dol_syslog("EcmDirectories::create ".$this->error, LOG_WARNING);
 			return -1;
 		}
 		else
 		{
-	        $this->db->begin();
+			$this->db->begin();
 
-	        // Insert request
+			// Insert request
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."ecm_directories(";
 			$sql.= "label,";
 			$sql.= "entity,";
@@ -127,7 +127,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= "cachenbofdoc,";
 			$sql.= "date_c,";
 			$sql.= "fk_user_c";
-	        $sql.= ") VALUES (";
+			$sql.= ") VALUES (";
 			$sql.= " '".addslashes($this->label)."',";
 			$sql.= " '".$conf->entity."',";
 			$sql.= " '".$this->fk_parent."',";
@@ -137,216 +137,239 @@ class EcmDirectory // extends CommonObject
 			$sql.= " '".$this->fk_user_c."'";
 			$sql.= ")";
 
-		   	dol_syslog("EcmDirectories::create sql=".$sql, LOG_DEBUG);
-	        $resql=$this->db->query($sql);
-	        if ($resql)
-	        {
-	            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ecm_directories");
+			dol_syslog("EcmDirectories::create sql=".$sql, LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ecm_directories");
 
 				$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
 				$result=create_exdir($dir);
 
-	            // Appel des triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            // Fin appel triggers
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('MYECMDIR_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 
-	            if (! $error)
-	            {
-	            	$this->db->commit();
-	            	return $this->id;
-	            }
-	            else
-	            {
-	        		$this->db->rollback();
-	            	return -1;
-	            }
-	        }
-	        else
-	        {
-	            $this->error="Error ".$this->db->lasterror();
-	            dol_syslog("EcmDirectories::create ".$this->error, LOG_ERR);
-	        	$this->db->rollback();
-	            return -1;
-	        }
+				if (! $error)
+				{
+					$this->db->commit();
+					return $this->id;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error="Error ".$this->db->lasterror();
+				dol_syslog("EcmDirectories::create ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -1;
+			}
 		}
-    }
-
-    /**
-     *      \brief      Update database
-     *      \param      user        	User that modify
-     *      \param      notrigger	    0=no, 1=yes (no update trigger)
-     *      \return     int         	<0 if KO, >0 if OK
-     */
-    function update($user=0, $notrigger=0)
-    {
-    	global $conf, $langs;
-
-    	$error=0;
-
-    	// Clean parameters
-    	$this->label=trim($this->label);
-    	$this->fk_parent=trim($this->fk_parent);
-    	$this->description=trim($this->description);
-
-    	// Check parameters
-    	// Put here code to add control on parameters values
-
-    	$this->db->begin();
-
-    	// Update request
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-    	$sql.= " label='".addslashes($this->label)."',";
-    	$sql.= " fk_parent='".$this->fk_parent."',";
-    	$sql.= " description='".addslashes($this->description)."'";
-    	$sql.= " WHERE rowid=".$this->id;
-
-    	dol_syslog("EcmDirectories::update sql=".$sql, LOG_DEBUG);
-    	$resql = $this->db->query($sql);
-    	if (! $resql)
-      {
-      	$error++;
-      	$this->error="Error ".$this->db->lasterror();
-        dol_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
-      }
-
-      if (! $error && ! $notrigger)
-      {
-      	// Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // Fin appel triggers
-    	}
-
-    	if (! $error)
-      {
-      	$this->db->commit();
-        return 1;
-      }
-      else
-      {
-      	$this->db->rollback();
-        return -1;
-      }
-    }
-
-
-    /**
-     *      \brief      Update database
-     * 		\sign		'+' or '-'
-     *      \return     int         	<0 if KO, >0 if OK
-     */
-    function changeNbOfFiles($sign)
-    {
-    	global $conf, $langs;
-
-    	// Update request
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-    	$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
-      $sql.= " WHERE rowid = ".$this->id;
-
-      dol_syslog("EcmDirectories::changeNbOfFiles sql=".$sql, LOG_DEBUG);
-      $resql = $this->db->query($sql);
-      if (! $resql)
-      {
-      	$this->error="Error ".$this->db->lasterror();
-        dol_syslog("EcmDirectories::changeNbOfFiles ".$this->error, LOG_ERR);
-        return -1;
-      }
-
-      return 1;
-    }
-
+	}
 
 	/**
-     *    \brief      Load object in memory from database
-     *    \param      id          id object
-     *    \return     int         <0 if KO, 0 if not found, >0 if OK
-     */
-    function fetch($id)
-    {
-    	$sql = "SELECT";
-    	$sql.= " t.rowid,";
-    	$sql.= " t.label,";
-    	$sql.= " t.fk_parent,";
-    	$sql.= " t.description,";
-    	$sql.= " t.cachenbofdoc,";
-    	$sql.= " t.fk_user_c,";
-    	$sql.= " t.fk_user_m,";
-    	$sql.= " ".$this->db->pdate('t.date_c')." as date_c,";
-    	$sql.= " ".$this->db->pdate('t.date_m')." as date_m";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
-    	$sql.= " WHERE t.rowid = ".$id;
-
-    	dol_syslog("EcmDirectories::fetch sql=".$sql, LOG_DEBUG);
-      $resql=$this->db->query($sql);
-      if ($resql)
-      {
-      	$obj = $this->db->fetch_object($resql);
-      	if ($obj)
-      	{
-      		$this->id    = $obj->rowid;
-          $this->ref   = $obj->rowid;
-
-          $this->label = $obj->label;
-          $this->fk_parent = $obj->fk_parent;
-          $this->description = $obj->description;
-          $this->cachenbofdoc = $obj->cachenbofdoc;
-          $this->fk_user_m = $obj->fk_user_m;
-          $this->fk_user_c = $obj->fk_user_c;
-          $this->date_c = $obj->date_c;
-          $this->date_m = $obj->date_m;
-        }
-
-        $this->db->free($resql);
-
-        return $obj?1:0;
-      }
-      else
-      {
-      	$this->error="Error ".$this->db->lasterror();
-        dol_syslog("EcmDirectories::fetch ".$this->error, LOG_ERR);
-        return -1;
-      }
-    }
-
-
- 	/**
-	*   \brief      Delete object in database
-    *	\param      user        User that delete
-	*	\return		int			<0 if KO, >0 if OK
-	*/
-	function delete($user)
+	 *      \brief      Update database
+	 *      \param      user        	User that modify
+	 *      \param      notrigger	    0=no, 1=yes (no update trigger)
+	 *      \return     int         	<0 if KO, >0 if OK
+	 */
+	function update($user=0, $notrigger=0)
 	{
 		global $conf, $langs;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
+		$error=0;
+
+		// Clean parameters
+		$this->label=trim($this->label);
+		$this->fk_parent=trim($this->fk_parent);
+		$this->description=trim($this->description);
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+		$this->db->begin();
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
+		$sql.= " label='".addslashes($this->label)."',";
+		$sql.= " fk_parent='".$this->fk_parent."',";
+		$sql.= " description='".addslashes($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-	   	dol_syslog("EcmDirectories::delete sql=".$sql);
+		dol_syslog("EcmDirectories::update sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			$error++;
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('MYECMDIR_MODIFY',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *      \brief      Update database
+	 * 		\sign		'+' or '-'
+	 *      \return     int         	<0 if KO, >0 if OK
+	 */
+	function changeNbOfFiles($sign)
+	{
+		global $conf, $langs;
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
+		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog("EcmDirectories::changeNbOfFiles sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dol_syslog("EcmDirectories::delete ".$this->error, LOG_ERR);
+			dol_syslog("EcmDirectories::changeNbOfFiles ".$this->error, LOG_ERR);
 			return -1;
 		}
 
-		$file = $conf->ecm->dir_output . "/" . $this->label;
+		return 1;
+	}
+
+
+	/**
+	 *    \brief      Load object in memory from database
+	 *    \param      id          id object
+	 *    \return     int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	function fetch($id)
+	{
+		$sql = "SELECT";
+		$sql.= " t.rowid,";
+		$sql.= " t.label,";
+		$sql.= " t.fk_parent,";
+		$sql.= " t.description,";
+		$sql.= " t.cachenbofdoc,";
+		$sql.= " t.fk_user_c,";
+		$sql.= " t.fk_user_m,";
+		$sql.= " ".$this->db->pdate('t.date_c')." as date_c,";
+		$sql.= " ".$this->db->pdate('t.date_m')." as date_m";
+		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
+		$sql.= " WHERE t.rowid = ".$id;
+
+		dol_syslog("EcmDirectories::fetch sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$this->id    = $obj->rowid;
+				$this->ref   = $obj->rowid;
+
+				$this->label = $obj->label;
+				$this->fk_parent = $obj->fk_parent;
+				$this->description = $obj->description;
+				$this->cachenbofdoc = $obj->cachenbofdoc;
+				$this->fk_user_m = $obj->fk_user_m;
+				$this->fk_user_c = $obj->fk_user_c;
+				$this->date_c = $obj->date_c;
+				$this->date_m = $obj->date_m;
+			}
+
+			$this->db->free($resql);
+
+			return $obj?1:0;
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog("EcmDirectories::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+
+	/**
+	 * 		\brief      Delete object on database and on disk
+	 *		\param      user        User that delete
+	 *		\return		int			<0 if KO, >0 if OK
+	 */
+	function delete($user)
+	{
+		global $conf, $langs;
+
+		$relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
+
+		dol_syslog("EcmDirectories::delete remove directory ".$relativepath);
+
+		$this->db->begin();
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
+		$sql.= " WHERE rowid=".$this->id;
+
+		dol_syslog("EcmDirectories::delete sql=".$sql);
+		$resql = $this->db->query($sql);
+		if (! $resql)
+		{
+			$this->db->rollback();
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog("EcmDirectories::delete ".$this->error, LOG_ERR);
+			return -2;
+		}
+
+		$file = $conf->ecm->dir_output . "/" . $relativepath;
 		$result=@dol_delete_dir($file);
 
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // Fin appel triggers
+		if ($result || ! @is_dir(dol_osencode($file)))
+		{
+			$this->db->commit();
+		}
+		else
+		{
+			$this->error='ErrorFailedToDeleteDir';
+			dol_syslog("EcmDirectories::delete ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			$error++;
+		}
 
-		return 1;
+		if (! $error)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('MYECMDIR_DELETE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+
+		if (! $error) return 1;
+		else return -1;
 	}
 
 
@@ -364,44 +387,44 @@ class EcmDirectory // extends CommonObject
 	}
 
 
-  	/**
-     \brief      	Return directory name you can click (and picto)
-     \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     \param			option			Sur quoi pointe le lien
-     \return		string			Chaine avec URL
-   	*/
-  	function getNomUrl($withpicto=0,$option='',$max=0)
-  	{
-	    global $langs;
+	/**
+	 \brief      	Return directory name you can click (and picto)
+	 \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 \param			option			Sur quoi pointe le lien
+	 \return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='',$max=0)
+	{
+		global $langs;
 
-	    $result='';
+		$result='';
 
-	    $lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'">';
-	    if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
-	    if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false">';
-	    if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
-	    $lienfin='</a>';
+		$lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'">';
+		if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
+		if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false">';
+		if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
+		$lienfin='</a>';
 
-	    //$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
+		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
 		$picto='dir';
 
 		$newref=str_replace('_',' ',$this->ref);
 		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
-	    if ($withpicto) $result.=($lien.img_object($newlabel,$picto,'',1).$lienfin);
-	    if ($withpicto && $withpicto != 2) $result.=' ';
-	    if ($withpicto != 2) $result.=$lien.($max?dol_trunc($newref,$max,'middle'):$newref).$lienfin;
-	    return $result;
-  	}
+		if ($withpicto) $result.=($lien.img_object($newlabel,$picto,'',1).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.($max?dol_trunc($newref,$max,'middle'):$newref).$lienfin;
+		return $result;
+	}
 
-  	/**
+	/**
 	 *  \brief     	Return relative path of a directory on disk
 	 * 	\param		force		Force reload of full arbo even if already loaded
-     *	\return		string		Relative physical path
-   	 */
-  	function getRelativePath($force=0)
-  	{
-	    $this->get_full_arbo($force);
+	 *	\return		string		Relative physical path
+	 */
+	function getRelativePath($force=0)
+	{
+		$this->get_full_arbo($force);
 
 		$ret='';
 		$idtosearch=$this->id;
@@ -431,12 +454,12 @@ class EcmDirectory // extends CommonObject
 		while ($cursorindex >= 0 && ! empty($idtosearch) && $i < 100);	// i avoid infinite loop
 
 		return $ret;
-  	}
+	}
 
-  	/**
-	* 	\brief		Load this->motherof that is array(id_son=>id_parent, ...)
-	*	\return		int		<0 if KO, >0 if OK
-	*/
+	/**
+	 * 	\brief		Load this->motherof that is array(id_son=>id_parent, ...)
+	 *	\return		int		<0 if KO, >0 if OK
+	 */
 	function load_motherof()
 	{
 		global $conf;
@@ -468,23 +491,23 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	* 	\brief		Reconstruit l'arborescence des categories sous la forme d'un tableau
-	*				Renvoi un tableau de tableau('id','id_mere',...) trie selon
-	*				arbre et avec:
-	*				id = id de la categorie
-	*				id_mere = id de la categorie mere
-	*				id_children = tableau des id enfant
-	*				label = nom de la categorie
-	*				cachenbofdoc = nb of documents
-	*				date_c = date creation
-	* 				fk_user_c = user creation
-	*  				login_c = login creation
-	* 				fullpath	Full path (Added by build_path_from_id_categ call)
-	* 				fulllabel	Full label (Added by build_path_from_id_categ call)
-	* 				level		Level of line (Added by build_path_from_id_categ call)
-	*  	\param		force		Force reload of full arbo even if already loaded
-	*	\return		array		Tableau de array
-	*/
+	 * 	\brief		Reconstruit l'arborescence des categories sous la forme d'un tableau
+	 *				Renvoi un tableau de tableau('id','id_mere',...) trie selon
+	 *				arbre et avec:
+	 *				id = id de la categorie
+	 *				id_mere = id de la categorie mere
+	 *				id_children = tableau des id enfant
+	 *				label = nom de la categorie
+	 *				cachenbofdoc = nb of documents
+	 *				date_c = date creation
+	 * 				fk_user_c = user creation
+	 *  				login_c = login creation
+	 * 				fullpath	Full path (Added by build_path_from_id_categ call)
+	 * 				fulllabel	Full label (Added by build_path_from_id_categ call)
+	 * 				level		Level of line (Added by build_path_from_id_categ call)
+	 *  	\param		force		Force reload of full arbo even if already loaded
+	 *	\return		array		Tableau de array
+	 */
 	function get_full_arbo($force=0)
 	{
 		global $conf;
@@ -567,11 +590,11 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	*	\brief		Calcule les proprietes fullpath et fulllabel d'une categorie
-	*				du tableau this->cats et de toutes ces enfants
-	* 	\param		id_categ		id_categ entry to update
-	* 	\param		protection		Deep counter to avoid infinite loop
-	*/
+	 *	\brief		Calcule les proprietes fullpath et fulllabel d'une categorie
+	 *				du tableau this->cats et de toutes ces enfants
+	 * 	\param		id_categ		id_categ entry to update
+	 * 	\param		protection		Deep counter to avoid infinite loop
+	 */
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
 		// Define fullpath
@@ -605,11 +628,11 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	*	\brief		Refresh value for cachenboffile
-	* 	\param		directory		Directory to scan
-	*   \param    all         0=refresh this id , 1=refresh this entity
-	* 	\return		int				<0 if KO, Nb of files in directory if OK
-	*/
+	 *	\brief		Refresh value for cachenboffile
+	 * 	\param		directory		Directory to scan
+	 *   \param    all         0=refresh this id , 1=refresh this entity
+	 * 	\return		int				<0 if KO, Nb of files in directory if OK
+	 */
 	function refreshcachenboffile($all=0)
 	{
 		global $conf;
@@ -622,30 +645,30 @@ class EcmDirectory // extends CommonObject
 
 
 		// Update request
-    $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " cachenbofdoc = '".sizeof($filelist)."'";
-    if (empty($all))
-    {
-    	$sql.= " WHERE rowid = ".$this->id;
-    }
-    else
-    {
-    	$sql.= " WHERE entity = ".$conf->entity;
-    }
+		if (empty($all))
+		{
+			$sql.= " WHERE rowid = ".$this->id;
+		}
+		else
+		{
+			$sql.= " WHERE entity = ".$conf->entity;
+		}
 
-    dol_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
-    $resql = $this->db->query($sql);
-    if ($resql)
-    {
-    	$this->cachenbofdoc=sizeof($filelist);
+		dol_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->cachenbofdoc=sizeof($filelist);
 			return $this->cachenbofdoc;
-    }
-    else
-    {
-    	$this->error="Error ".$this->db->lasterror();
-      dol_syslog("EcmDirectories::refreshcachenboffile ".$this->error, LOG_ERR);
-      return -1;
-    }
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog("EcmDirectories::refreshcachenboffile ".$this->error, LOG_ERR);
+			return -1;
+		}
 	}
 
 }
