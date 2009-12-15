@@ -20,7 +20,7 @@
 /**
  *  \file		htdocs/lib/files.lib.php
  *  \brief		Library for file managing functions
- *  \version		$Id$
+ *  \version	$Id$
  */
 
 /**
@@ -44,7 +44,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 
 	// Clean parameters
 	$path=preg_replace('/([\\/]+)$/i','',$path);
-	$newpath=(utf8_check($path)?utf8_decode($path):$path);
+	$newpath=dol_osencode($path);
 
 	if (! is_dir($newpath)) return array();
 
@@ -53,9 +53,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 		$file_list = array();
 		while (false !== ($file = readdir($dir)))
 		{
-			// readdir return value in ISO and we want UTF8 in memory
-			$newfile=$file;
-			if (! utf8_check($file)) $file=utf8_encode($file);
+			if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in utf8 in memory
 
 			$qualified=1;
 
@@ -66,7 +64,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			if ($qualified)
 			{
 				// Check whether this is a file or directory and whether we're interested in that type
-				if (is_dir($newpath."/".$newfile) && (($types=="directories") || ($types=="all")))
+				if (is_dir(dol_osencode($path."/".$file)) && (($types=="directories") || ($types=="all")))
 				{
 					// Add entry into file_list array
 					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
@@ -89,7 +87,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						$file_list = array_merge($file_list,dol_dir_list($path."/".$file."/", $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder));
 					}
 				}
-				else if (! is_dir($newpath."/".$newfile) && (($types == "files") || ($types == "all")))
+				else if (! is_dir(dol_osencode($path."/".$file)) && (($types == "files") || ($types == "all")))
 				{
 					// Add file into file_list array
 					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
@@ -127,7 +125,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 }
 
 /**
- * \brief	Compare 2 files
+ * \brief	Fast compare of 2 files identified by their properties ->name, ->date and ->size
  *
  * @param 	unknown_type $a		File 1
  * @param 	unknown_type $b		File 2
@@ -219,7 +217,7 @@ function dol_mimetype($file)
  */
 function dol_dir_is_emtpy($folder)
 {
-	$newfolder=utf8_check($folder)?dol_osencode($folder):$folder;	// The is_dir and opendir need ISO strings
+	$newfolder=dol_osencode($folder);
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
@@ -247,7 +245,7 @@ function dol_count_nb_of_line($file)
 {
 	$nb=0;
 
-	$newfile=utf8_check($file)?dol_osencode($file):$file;	// The fopen need ISO strings
+	$newfile=dol_osencode($file);
 	//print 'x'.$file;
 	$fp=fopen($newfile,'r');
 	if ($fp)
@@ -276,7 +274,7 @@ function dol_count_nb_of_line($file)
  */
 function dol_filesize($pathoffile)
 {
-	$newpathoffile=utf8_check($pathoffile)?dol_osencode($pathoffile):$pathoffile;
+	$newpathoffile=dol_osencode($pathoffile);
 	return filesize($newpathoffile);
 }
 
@@ -288,7 +286,7 @@ function dol_filesize($pathoffile)
  */
 function dol_filemtime($pathoffile)
 {
-	$newpathoffile=utf8_check($pathoffile)?dol_osencode($pathoffile):$pathoffile;
+	$newpathoffile=dol_osencode($pathoffile);
 	return filemtime($newpathoffile);
 }
 
@@ -300,7 +298,7 @@ function dol_filemtime($pathoffile)
  */
 function dol_is_file($pathoffile)
 {
-	$newpathoffile=utf8_check($pathoffile)?dol_osencode($pathoffile):$pathoffile;
+	$newpathoffile=dol_osencode($pathoffile);
 	return is_file($newpathoffile);
 }
 
