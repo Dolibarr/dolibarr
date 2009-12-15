@@ -26,7 +26,7 @@ require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 
 /**
  * \class      	FormEcm
- * \brief      	Classe permettant la g�n�ration de composants html
+ * \brief      	Classe permettant la generation de composants html
  * \remarks		Only common components must be here.
  */
 class FormEcm
@@ -44,7 +44,7 @@ class FormEcm
 
 	/**
 	 * 	\brief     Constructeur
-	 * 	\param     DB      handler d'acc�s base de donn�e
+	 * 	\param     DB      handler d'acces base de donnee
 	 */
 	function FormEcm($DB)
 	{
@@ -55,7 +55,7 @@ class FormEcm
 
 
 	/**
-	 *	\brief    Retourne la liste des cat�gories du type choisi
+	 *	\brief    Retourne la liste des categories du type choisi
 	 *  \param    selected    		Id categorie preselectionnee
 	 *  \param    select_name		Nom formulaire HTML
 	 */
