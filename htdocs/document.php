@@ -474,8 +474,8 @@ if ($action == 'remove_file')	// Remove a file
 	dol_syslog("document.php remove $original_file $urlsource", LOG_DEBUG);
 
 	// This test should be useless. We keep it to find bug more easily
-	$neworiginal_file=utf8_check($original_file)?utf8_decode($original_file):$original_file;
-	if (! file_exists($neworiginal_file))
+	$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
+	if (! file_exists($original_file_osencoded))
 	{
 		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 		exit;
@@ -497,10 +497,10 @@ else						// Open and return file
 
 	// Output file on browser
 	dol_syslog("document.php download $original_file $filename content-type=$type");
-	$neworiginal_file=utf8_check($original_file)?utf8_decode($original_file):$original_file;
+	$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
 
 	// This test if file exists should be useless. We keep it to find bug more easily
-	if (! file_exists($neworiginal_file))
+	if (! file_exists($original_file_osencoded))
 	{
 		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
 		exit;
@@ -517,7 +517,7 @@ else						// Open and return file
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
 
-	readfile($neworiginal_file);	// Need a path in ISO
+	readfile($original_file_osencoded);
 }
 
 ?>
