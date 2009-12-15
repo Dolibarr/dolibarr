@@ -2248,10 +2248,10 @@ function dol_delete_file($file,$disableglob=0)
 {
 	//print "x".$file." ".$disableglob;
 	$ok=true;
-	$newfile=utf8_check($file)?utf8_decode($file):$file;	// glob function accepts only ISO string
+	$file_osencoded=dol_osencode($file);	// New filename encoded in OS filesystem encoding charset
 	if (empty($disableglob))
 	{
-		foreach (glob($newfile) as $filename)
+		foreach (glob($file_osencoded) as $filename)
 		{
 			$ok=unlink($filename);	// The unlink encapsulated by dolibarr
 			if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
@@ -2260,9 +2260,9 @@ function dol_delete_file($file,$disableglob=0)
 	}
 	else
 	{
-		$ok=unlink($newfile);		// The unlink encapsulated by dolibarr
-		if ($ok) dol_syslog("Removed file ".$newfile,LOG_DEBUG);
-		else dol_syslog("Failed to remove file ".$newfile,LOG_ERR);
+		$ok=unlink($file_osencoded);		// The unlink encapsulated by dolibarr
+		if ($ok) dol_syslog("Removed file ".$file_osencoded,LOG_DEBUG);
+		else dol_syslog("Failed to remove file ".$file_osencoded,LOG_ERR);
 	}
 	return $ok;
 }
@@ -2275,8 +2275,8 @@ function dol_delete_file($file,$disableglob=0)
  */
 function dol_delete_dir($dir)
 {
-	$newdir=utf8_check($dir)?utf8_decode($dir):$dir;
-	return rmdir($newdir);
+	$dir_osencoded=dol_osencode($dir);
+	return rmdir($dir_osencoded);
 }
 
 /**
@@ -2287,32 +2287,30 @@ function dol_delete_dir($dir)
  */
 function dol_delete_dir_recursive($dir,$count=0)
 {
-	//dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
-	$newdir=utf8_check($dir)?utf8_decode($dir):$dir;
-	if ($handle = opendir("$newdir"))
+	dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
+	$dir_osencoded=dol_osencode($dir);
+	if ($handle = opendir("$dir_osencoded"))
 	{
 		while (false !== ($item = readdir($handle)))
 		{
-			// readdir return value in ISO and we want UTF8 in memory
-			$newitem=$item;
-			if (! utf8_check($item)) $item=utf8_encode($item);
+			if (! utf8_check($item)) $item=utf8_encode($item);	// should be useless
 
 			if ($item != "." && $item != "..")
 			{
-				if (is_dir("$newdir/$newitem"))
+				if (is_dir(dol_osencode("$dir/$item")))
 				{
 					$count=dol_delete_dir_recursive("$dir/$item",$count);
 				}
 				else
 				{
-					unlink("$newdir/$newitem");
+					dol_delete_file("$dir/$item",1);
 					$count++;
 					//echo " removing $dir/$item<br>\n";
 				}
 			}
 		}
 		closedir($handle);
-		rmdir($newdir);
+		dol_delete_dir($dir);
 		$count++;
 		//echo "removing $dir<br>\n";
 	}
