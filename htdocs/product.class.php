@@ -2311,19 +2311,17 @@ class Product extends CommonObject
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
 		$dir .= "photos/";
 
-		if (! file_exists($dir))
-		{
-			create_exdir($dir);
-		}
+		create_exdir($dir);
 
-		if (file_exists($dir))
+		$dir_osencoded=$dir;
+		if (file_exists($dir_osencoded))
 		{
 			$originImage = $dir . $file['name'];
 
 			// Cree fichier en taille origine
 			$result=dol_move_uploaded_file($file['tmp_name'], $originImage, 1);
 
-			if (file_exists($originImage))
+			if (file_exists(dol_osencode($originImage)))
 			{
 				// Cree fichier en taille vignette
 				$this->add_thumb($originImage,$maxWidth,$maxHeight);
@@ -2342,7 +2340,8 @@ class Product extends CommonObject
 	{
 		require_once(DOL_DOCUMENT_ROOT ."/lib/images.lib.php");
 
-		if (file_exists($file))
+		$file_osencoded=dol_osencode($file);
+		if (file_exists($file_osencoded))
 		{
 			vignette($file,$maxWidth,$maxHeight);
 		}
@@ -2354,27 +2353,28 @@ class Product extends CommonObject
 	 *    \param      $files      		url de l'image
 	 *	\author		Jean Heimburger		juin 2007
 	 */
-	function add_photo_web($sdir, $files)
+	function add_photo_web($sdir, $file)
 	{
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
 		$dir .= "photos/";
 
-		if (! file_exists($dir))
+		$dir_osencoded=dol_osencode($dir);
+		if (! file_exists($dir_osencoded))
 		{
-			dol_syslog("Product Create $dir");
+			dol_syslog("Product Create ".$dir);
 			create_exdir($dir);
 		}
 
-		if (file_exists($dir))
+		if (file_exists($dir_osencoded))
 		{
 			// Cree fichier en taille vignette
 			// \todo A faire
 
 			// Cree fichier en taille origine
-			$content = file_get_contents($files);
+			$content = file_get_contents($file);
 
-			$nom = basename($files);
-			$im = fopen($dir.$nom,'wb');
+			$nom = basename($file);
+			$im = fopen(dol_osencode($dir.$nom),'wb');
 			fwrite($im, $content);
 			fclose($im);
 			//		}
@@ -2394,12 +2394,14 @@ class Product extends CommonObject
 		$dir = $sdir . '/'. $pdir;
 
 		$nbphoto=0;
-		if (file_exists($dir))
+
+		$dir_osencoded=dol_osencode($dir);
+		if (file_exists($dir_osencoded))
 		{
-			$handle=opendir($dir);
+			$handle=opendir($dir_osencoded);
 			while (($file = readdir($handle)) != false)
 			{
-				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
+				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
 				if (dol_is_file($dir.$file)) return true;
 			}
 		}
@@ -2425,14 +2427,17 @@ class Product extends CommonObject
 		$pdirthumb = $pdir.'thumbs/';
 
 		$nbphoto=0;
-		if (file_exists($dir))
+
+		$dir_osencoded=dol_osencode($dir);
+		if (file_exists($dir_osencoded))
 		{
-			$handle=opendir($dir);
+			$handle=opendir($dir_osencoded);
 			while (($file = readdir($handle)) != false)
 			{
 				$photo='';
 
-				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
+				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure date is stored in UTF8 in memory
+
 				if (dol_is_file($dir.$file))
 				{
 					$nbphoto++;
@@ -2454,7 +2459,7 @@ class Product extends CommonObject
 						print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
 
 						// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-						if ($photo_vignette && is_file($dirthumb.$photo_vignette)) {
+						if ($photo_vignette && dol_is_file($dirthumb.$photo_vignette)) {
 							print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'">';
 						}
 						else {
@@ -2506,9 +2511,8 @@ class Product extends CommonObject
 		$nbphoto=0;
 		$tabobj=array();
 
-		$newdir=utf8_check($dir)?utf8_decode($dir):$dir;
-
-		$handle=@opendir($newdir);
+		$dir_osencoded=dol_osencode($dir);
+		$handle=@opendir($dir_osencoded);
 		if ($handle)
 		{
 			while (($file = readdir($handle)) != false)
@@ -2564,7 +2568,7 @@ class Product extends CommonObject
 		if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$filename,$regs))
 		{
 			$photo_vignette=preg_replace('/'.$regs[0].'/i','',$filename).'_small'.$regs[0];
-			if (file_exists($dirthumb.$photo_vignette))
+			if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
 			{
 				dol_delete_file($dirthumb.$photo_vignette);
 			}
@@ -2577,8 +2581,8 @@ class Product extends CommonObject
 	 */
 	function get_image_size($file)
 	{
-		$newfile=utf8_check($file)?utf8_decode($file):$file;
-		$infoImg = getimagesize($newfile); // Get information on image
+		$file_osencoded=dol_osencode($file);
+		$infoImg = getimagesize($file_osencoded); // Get information on image
 		$this->imgWidth = $infoImg[0]; // Largeur de l'image
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}

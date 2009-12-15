@@ -2576,21 +2576,20 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 
 
 /**
- \brief      	Fonction qui renvoie si tva doit etre tva percue recuperable
- \remarks    	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
- Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
- Sinon TVA proposee par defaut=0. Fin de regle.
- \param      	societe_vendeuse    	Objet societe vendeuse
- \param      	societe_acheteuse   	Objet societe acheteuse
- \param      	taux_produit        	Taux par defaut du produit vendu
- \return     	float               	0 or 1
+ *	\brief      	Fonction qui renvoie si tva doit etre tva percue recuperable
+ *	\remarks    	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *					Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par defaut=TVA du produit vendu. Fin de regle
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
+ *					Sinon TVA proposee par defaut=0. Fin de regle.
+ *	\param      	societe_vendeuse    	Objet societe vendeuse
+ *	\param      	societe_acheteuse   	Objet societe acheteuse
+ *	\param      	taux_produit        	Taux par defaut du produit vendu
+ *	\return     	float               	0 or 1
  */
 function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
 {
-
 	return 0;
 }
 
@@ -2644,7 +2643,7 @@ function get_exdir($num,$level=3,$alpha=0)
 /**
  *	\brief      Creation of a directory (recursive)
  *	\param      $dir        Directory to create
- *	\return     int         < 0 if KO, >= 0 if OK
+ *	\return     int         < 0 if KO, 0 = already exists, > 0 if OK
  */
 function create_exdir($dir)
 {
@@ -2652,7 +2651,8 @@ function create_exdir($dir)
 
 	dol_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
 
-	if (@is_dir($dir)) return 0;
+	$dir_osencoded=dol_osencode($dir);
+	if (@is_dir($dir_osencoded)) return 0;
 
 	$nberr=0;
 	$nbcreated=0;
@@ -2669,7 +2669,8 @@ function create_exdir($dir)
 		// (ex selon config de open_basedir)
 		if ($ccdir)
 		{
-			if (! @is_dir($ccdir))
+			$ccdir_osencoded=dol_osencode($ccdir);
+			if (! @is_dir($ccdir_osencoded))
 			{
 				dol_syslog("functions.lib::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
 
@@ -2677,7 +2678,7 @@ function create_exdir($dir)
 				$dirmaskdec=octdec('0755');
 				if (! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
 				$dirmaskdec |= octdec('0110');
-				if (! @mkdir($ccdir, $dirmaskdec))
+				if (! @mkdir($ccdir_osencoded, $dirmaskdec))
 				{
 					// Si le is_dir a renvoye une fausse info, alors on passe ici.
 					dol_syslog("functions.lib::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);

@@ -382,10 +382,10 @@ else					// Open and return file
 
 	// Output files on browser
 	dol_syslog("viewimage.php return file $original_file content-type=$type");
-	$neworiginal_file=utf8_check($original_file)?utf8_decode($original_file):$original_file;
+	$original_file_osencoded=dol_osencode($original_file);
 
 	// This test if file exists should be useless. We keep it to find bug more easily
-	if (! file_exists($neworiginal_file))
+	if (! file_exists($original_file_osencoded))
 	{
 		$langs->load("main");
 		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
@@ -402,7 +402,7 @@ else					// Open and return file
 		header('Content-type: image/png');
 	}
 
-	readfile($neworiginal_file);	// Need a path in ISO
+	readfile($original_file_osencoded);
 }
 
 ?>
