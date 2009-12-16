@@ -34,13 +34,6 @@ class FormEcm
 	var $db;
 	var $error;
 
-	// Cache arrays
-	var $cache_types_paiements=array();
-	var $cache_conditions_paiements=array();
-
-	var $tva_taux_value;
-	var $tva_taux_libelle;
-
 
 	/**
 	 * 	\brief     Constructeur
