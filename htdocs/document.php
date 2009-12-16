@@ -245,7 +245,7 @@ if ($modulepart)
 			$accessallowed=1;
 		}
 		$original_file=$conf->societe->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE idp='$refname'";
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$refname."'";
 	}
 
 	// Wrapping pour les expedition
