@@ -12,6 +12,7 @@ In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Yes              Date convertion
 ArtiChow          1.07     Public Domain               Yes              Graphics
 Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
+EFC/XFSS		  1.0.1	   LGPL 3.0					   Yes				Enhanced File Crypt/Extended File Stealth System
 FCKEditor         2.6.4    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
 FPDF              1.53     Public domain               Yes              PDF generation (original code is modified)
 FPDF_TPL          1.1.2    Apache Software License 2.0 No GPL3 only     PDF templates management
