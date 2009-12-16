@@ -58,7 +58,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql.= " WHERE m.statut >= 1";
 $sql.= " AND m.rowid= ".$id;
 $sql.= " LIMIT 1";
-print $sql;
+
 $resql=$db->query($sql);
 if ($resql)
 {
