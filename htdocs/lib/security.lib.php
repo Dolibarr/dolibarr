@@ -514,4 +514,112 @@ function dol_avscan_file($file)
 	return $malware;
 }
 
+/**
+ * Return array of ciphers mode available
+ * 
+ * @return strAv	Configuration file content
+ */
+function dol_efc_config()
+{
+	// Make sure we can use mcrypt_generic_init
+	if (!function_exists("mcrypt_generic_init"))
+	{
+		return -1;
+	}
+	
+	// Set a temporary $key and $data for encryption tests
+	$key = md5(time() . getmypid());
+	$data = mt_rand();
+	
+	// Get and sort available cipher methods
+	$ciphers = mcrypt_list_algorithms();
+	natsort($ciphers);
+	
+	// Get and sort available cipher modes
+	$modes = mcrypt_list_modes();
+	natsort($modes);
+	
+	foreach ($ciphers as $cipher)
+	{
+		foreach ($modes as $mode)
+		{
+			// Not Compatible
+			$result = 'false';
+			
+			// open encryption module
+			$td = @mcrypt_module_open($cipher, '', $mode, '');
+			
+			// if we could open the cipher
+			if ($td)
+			{
+				// try to generate the iv
+				$iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size ($td), MCRYPT_RAND);
+				
+				// if we could generate the iv
+				if ($iv)
+				{
+					// initialize encryption
+					@mcrypt_generic_init ($td, $key, $iv);
+					
+					// encrypt data
+					$encrypted_data = mcrypt_generic($td, $data);
+					
+					// cleanup
+					mcrypt_generic_deinit($td);
+					
+					// No error issued
+					$result = 'true';
+				}
+				
+				// close
+				@mcrypt_module_close($td);
+			}
+			
+			if ($result == "true") $available["$cipher"][] = $mode;
+		}
+	}
+	
+	if (count($available) > 0)
+	{
+       // Content of configuration
+       $strAv = "<?php\n";
+       $strAv.= "/* Copyright (C) 2003 HumanEasy, Lda. <humaneasy@sitaar.com>\n";
+       $strAv.= " * Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>\n";
+       $strAv.= " *\n";
+       $strAv.= " * All rights reserved.\n";
+       $strAv.= " * This file is licensed under GNU GPL version 2 or above.\n";
+       $strAv.= " * Please visit http://www.gnu.org to now more about it.\n";
+       $strAv.= " */\n\n";
+       $strAv.= "/**\n"; 
+       $strAv.= " *  Name: EasyFileCrypt Extending Crypt Class\n";
+       $strAv.= " *  Version: 1.0\n";
+       $strAv.= " *  Created: ".date("r")."\n";
+       $strAv.= " *  Ciphers Installed on this system: ".count($ciphers)."\n";
+       $strAv.= " */\n\n";
+       $strAv.= "    \$xfss = Array ( ";
+
+       foreach ($ciphers as $avCipher) {
+
+           $v = "";
+           if (count($available["$avCipher"]) > 0) {
+              foreach ($available["$avCipher"] as $avMode)
+                  $v .= " '".$avMode."', ";
+
+                  $i = strlen($v) - 2;
+                  if ($v[$i] == ",")
+                    $v = substr($v, 2, $i - 3);
+           }
+           if (!empty($v)) $v = " '".$v."' ";
+           $strAv .= "'".$avCipher."' => Array (".$v."),\n                    ";
+       }
+       $strAv = rtrim($strAv);
+       if ($strAv[strlen($strAv) - 1] == ",")
+          $strAv = substr($strAv, 0, strlen($strAv) - 1);
+       $strAv .= " );\n\n";
+       $strAv .= "?>";
+       
+       return $strAv;
+   }
+}
+
 ?>

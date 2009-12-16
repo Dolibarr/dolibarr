@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
- *      \brief      Page de configuration du module s�curit�
+ *      \brief      Page de configuration du module securite
  *		\version    $Id$
  */
 
@@ -83,7 +83,7 @@ if ($_GET["action"] == 'activate_encrypt')
 }
 else if ($_GET["action"] == 'disable_encrypt')
 {
-	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas �tre d�cod�s
+	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 	//Do not allow "disable encryption" as passwords cannot be decrypted
 	if ($allow_disable_encryption)
 	{
@@ -176,7 +176,7 @@ dol_fiche_head($head, 'passwords', $langs->trans("Security"));
 $var=false;
 
 
-// Choix du gestionnaire du g�n�rateur de mot de passe
+// Choix du gestionnaire du generateur de mot de passe
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
@@ -247,7 +247,6 @@ print '</form>';
 
 // Cryptage mot de passe
 print '<br>';
-
 $var=true;
 print "<form method=\"post\" action=\"security.php\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -281,7 +280,7 @@ if($conf->global->DATABASE_PWD_ENCRYPTED)
 	print '<td align="center" width="100">';
 	if ($allow_disable_encryption)
 	{
-		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas �tre d�cod�s
+		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 	  	//Do not allow "disable encryption" as passwords cannot be decrypted
 	  	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
 	}
