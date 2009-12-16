@@ -44,7 +44,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 $id=$argv[1];
 
-require_once ($path."../../htdocs/master.inc.php");
+require_once ("../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 
@@ -58,7 +58,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql.= " WHERE m.statut >= 1";
 $sql.= " AND m.rowid= ".$id;
 $sql.= " LIMIT 1";
-
+print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -149,8 +149,8 @@ if ($resql)
 			);
 
 			$substitutionisok=true;
-			$newsubject=make_substitutions($subject,$substitutionarray);
-			$newmessage=make_substitutions($message,$substitutionarray);
+			$newsubject=make_substitutions($subject,$substitutionarray,$langs);
+			$newmessage=make_substitutions($message,$substitutionarray,$langs);
 
 			// Fabrication du mail
 			$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
