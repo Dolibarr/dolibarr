@@ -226,15 +226,20 @@ class Translate {
 				
 				// Enable cache of lang file in memory (faster but need more memory)
 				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-				$enablelangcacheinmemory=false;
-				if ($enablelangcacheinmemory)
+				$enablelangcacheinmemory=$conf->global->MAIN_OPTIMIZE_SPEED;
+				//$enablelangcacheinmemory=true;
+				
+				if ($alt == 2 && $enablelangcacheinmemory)
 				{
 					require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
-					$tmparray=dol_getshmop('DOL_LANG_'.DOL_VERSION.'_'.$newdomain,65536);
+					$tmparray=dol_getshmop($newdomain);
 					if (is_array($tmparray) && sizeof($tmparray))
 					{
-						$this->tab_translate=$tmparray;
+						$this->tab_translate=array_merge($this->tab_translate,$tmparray);
+						//print $newdomain."\n";
+						//var_dump($this->tab_translate);
 						$this->tab_loaded[$newdomain]=3;    // Set this file as loaded from cache in session
+						$fileread=1;
 						$found=true;
 					}
 				}
@@ -287,12 +292,12 @@ class Translate {
 						$fileread=1;
 						
 						// To save lang in session
-						if ($enablelangcacheinmemory && sizeof($tabtranslatedomain))
+						if ($alt == 2 && $enablelangcacheinmemory && sizeof($tabtranslatedomain))
 						{
 							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
-							$size=dol_setshmop('DOL_LANG_'.DOL_VERSION.'_'.$newdomain,$tabtranslatedomain,65536);
+							$size=dol_setshmop($newdomain,$tabtranslatedomain);
 						}
-//exit;
+						//exit;
 						break;		// Break loop on each root dir
 					}
 				}
@@ -341,7 +346,7 @@ class Translate {
 
 		// Clear SeparatorDecimal, SeparatorThousand 
 		if ($this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]=''; 
-		
+
 		return 1;
 	}
 

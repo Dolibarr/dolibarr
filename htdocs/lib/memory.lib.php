@@ -23,21 +23,38 @@
  *  \version	$Id$
  */
 
+global $shmkeys,$shmoffset;
+
+$shmkeys=array('main'=>1,'admin'=>2,'dict'=>3,'companies'=>4,'suppliers'=>5,'products'=>6,
+				'commercial'=>7,'compta'=>8,'projects'=>9,'cashdesk'=>10,'agenda'=>11,'bills'=>12,
+				'propal'=>13,'boxes'=>14,'banks'=>15,'other'=>16,'errors'=>17,'members'=>18,'ecm'=>19,
+				'orders'=>20,'users'=>21,'help'=>22,'stocks'=>23,'interventions'=>24,
+				'donations'=>25,'contracts'=>26);
+$shmoffset=100;
+
 
 /**	\brief      Read a memory area shared by all users, all sessions on server
  *  \param      $memoryid		Memory id of shared area
  * 	\return		int				0=Nothing is done, <0 if KO, >0 if OK
  */
-function dol_getshmop($memoryid,$size)
+function dol_getshmop($memoryid)
 {
-	$shmkey = ftok($memoryid, 'D');
-	print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
-	if (! function_exists("shmop_open")) return 0;
+	global $shmkeys,$shmoffset;
+
+	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_open")) return 0;
+	$shmkey=($shmkeys[$memoryid]+$shmoffset);
+	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
 	$handle=@shmop_open($shmkey,'a',0,0);
 	if ($handle)
 	{
-		$data=unserialize(shmop_read($handle,0,$size));
+		$size=trim(shmop_read($handle,0,6));
+		if ($size) $data=unserialize(shmop_read($handle,6,$size));
+		else return -1;
 		shmop_close($handle);
+	}
+	else
+	{
+		return -2;
 	}
 	return $data;
 }
@@ -47,43 +64,33 @@ function dol_getshmop($memoryid,$size)
  * 	\param		$data			Data to save
  * 	\return		int				<0 if KO, Nb of bytes written if OK
  */
-function dol_setshmop($memoryid,$data,$size=0)
+function dol_setshmop($memoryid,$data)
 {
-	$shmkey = ftok($memoryid, 'D');
+	global $shmkeys,$shmoffset;
+	
+	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
+	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_write")) return 0;
+	$shmkey=$shmkeys[$memoryid]+$shmoffset;
 	$newdata=serialize($data);
-	if (! $size) $size=strlen($newdata);
-	print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".strlen($newdata)."bytes size=".$size."<br>\n";
-	if (! function_exists("shmop_write")) return 0;
-	$handle=shmop_open($shmkey,'c',0644,$size);
+	$size=strlen($newdata);
+	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
+	$handle=shmop_open($shmkey,'c',0644,6+$size);
 	if ($handle)
 	{
-		$shm_bytes_written=shmop_write($handle,$newdata,0);
-		if ($shm_bytes_written != strlen($newdata)) 
+		$shm_bytes_written1=shmop_write($handle,str_pad($size,6),0);
+		$shm_bytes_written2=shmop_write($handle,$newdata,6);
+		if (($shm_bytes_written1 + $shm_bytes_written2) != (6+strlen($newdata))) 
 		{
    			print "Couldn't write the entire length of data\n";
 		}
 		shmop_close($handle);
-		return $shm_bytes_written;
+		return ($shm_bytes_written1+$shm_bytes_written2);
 	}
 	else
 	{
 		print 'Error in shmop_open';
 		return -1;
 	}
-}
-
-
-/**
- * Declare function ftok
- */
-if( !function_exists('ftok') )
-{
-   function ftok($filename = "", $proj = "")
-   {
-       $filename = $filename . $proj;
-       for ($key = array(); sizeof($key) < strlen($filename); $key[] = ord(substr($filename, sizeof($key), 1)));
-       return dechex(array_sum($key));
-   }
 }
 
 ?>
