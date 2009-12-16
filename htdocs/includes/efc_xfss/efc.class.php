@@ -63,8 +63,8 @@
  */ 
 
 // Define mandatory variables
-if (!defined("__SECURE_PATH__"))
-     define("__SECURE_PATH__", "{$_SERVER['DOCUMENT_ROOT']}/crypt/", TRUE);
+if (!defined("__CONFIG_SECURE_PATH__"))
+     define("__CONFIG_SECURE_PATH__", DOL_DATA_ROOT."/admin/", TRUE);
 
 // Include Extended Class
 require_once('crypt_class.php');
@@ -83,42 +83,25 @@ require_once('crypt_class.php');
 class easyfilecrypt extends CRYPT_CLASS {
 
     // Set default variables for all new objects
-    /**
-    * easyfilecrypt::$defaultcipher
-    *
-    * { default cipher to use }
-    *
-    */
+    
+    //!default cipher to use
     var $defaultcipher;
-    /**
-    * easyfilecrypt::$defaultmode
-    *
-    * { default encryption mode to use }
-    *
-    */
+    
+    //!default encryption mode to use
     var $defaultmode;
 
     // Our vars
-    /**
-    * easyfilecrypt::$efc
-    *
-    * { This is the array that will contain all needed variables }
-    *
-    */
+    
+    //!This is the array that will contain all needed variables
     var $efc;
-    /**
-    * easyfilecrypt::$_userfile
-    *
-    * { This is the array that will contain all file upload variables }
-    *
-    */
+    
+    //!This is the array that will contain all file upload variables
     var $_userfile;
-    /**
-    * easyfilecrypt::$cfg_filename
-    *
-    * { Cipher config filename }
-    *
-    */
+    
+    //!This is the array that will contain all file path
+    var $_userfilepath;
+    
+    //!Cipher config filename
     var $cfg_filename;
 
     /**
@@ -140,7 +123,7 @@ class easyfilecrypt extends CRYPT_CLASS {
        $this->defaultcipher = $this->cipher = 'twofish';
        $this->defaultmode = $this->mode = 'cbc';
 
-       $this->cfg_filename = __SECURE_PATH__.".efc.config.php";
+       $this->cfg_filename = __CONFIG_SECURE_PATH__.".efc.config.php";
 
     }
 
@@ -234,14 +217,14 @@ print_r($xfss[$this->cipher]);
 
        // Set source and destination files name
        $src_filename = $this->_userfile['tmp_name'];
-       $dst_filename = __SECURE_PATH__.$this->efc['name'];
+       $dst_filename = $this->_userfilepath.$this->efc['name'];
 
        // make sure file exists and is readable
        $msg = "encrypt_file: cannot read ".$this->_userfile['tmp_name']." ";
        if (!is_readable($src_filename))
           trigger_error($msg, E_USER_ERROR);
 
-       // touch destion file so it will exist when we check for it
+       // touch destination file so it will exist when we check for it
        @touch($dst_filename);
 
        // can we write to it
@@ -259,7 +242,7 @@ print_r($xfss[$this->cipher]);
        $filecontents = fread($fp, filesize($src_filename));
        fclose($fp);
 
-       // open the destionation file for writing
+       // open the destination file for writing
        $dest_fp = fopen($dst_filename, w);
 
        // return false if unable to open file
@@ -292,7 +275,7 @@ print_r($xfss[$this->cipher]);
           trigger_error('Decryption: cipher, mode, and key must be set before using this.', E_USER_ERROR);
 
        // make sure file exists and is readable
-       $src_filename = __SECURE_PATH__.$this->efc['name'];
+       $src_filename = $this->_userfilepath.$this->efc['name'];
 
        if (!is_readable($src_filename))
            trigger_error('Encrypted data is corrupted: Not readable', E_USER_ERROR);
