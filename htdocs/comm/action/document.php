@@ -28,6 +28,7 @@
  */
 
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -128,23 +129,8 @@ if ($objectid > 0)
 		$contact->fetch($act->contact->id);
 		$act->contact=$contact;
 
-		$h=0;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objectid;
-		$head[$h][1] = $langs->trans("CardAction");
-		$hselected=$h;
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$objectid;
-		$head[$h][1] = $langs->trans('Documents');
-		$hselected=$h;
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$objectid;
-		$head[$h][1] = $langs->trans('Info');
-		$h++;
-
-		dol_fiche_head($head, $hselected, $langs->trans("Action"),0,'task');
+		$head=actions_prepare_head();
+		dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'task');
 
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%"';

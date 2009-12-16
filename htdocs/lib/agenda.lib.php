@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -197,10 +197,9 @@ function show_array_last_actions_done($max=5)
 
 
 /**
-   \brief      	Define head array for tabs of agenda setup pages
-   \return		Array of head
-   \version    	$Id$
-*/
+ *  \brief     	Define head array for tabs of agenda setup pages
+ *  \return		Array of head
+ */
 function agenda_prepare_head()
 {
 	global $langs, $conf, $user;
@@ -215,6 +214,35 @@ function agenda_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
 	$head[$h][1] = $langs->trans("Other");
 	$head[$h][2] = 'xcal';
+	$h++;
+
+	return $head;
+}
+
+/**
+ *  \brief     	Define head array for tabs of agenda setup pages
+ *  \return		Array of head
+ */
+function actions_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans("CardAction");
+	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans('Documents');
+	$head[$h][2] = 'documents';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans('Info');
+	$head[$h][2] = 'info';
 	$h++;
 
 	return $head;

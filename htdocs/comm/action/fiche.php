@@ -27,6 +27,7 @@
  */
 
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
@@ -637,22 +638,8 @@ if ($_GET["id"])
 	 * Affichage onglets
 	 */
 
-	$h = 0;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("CardAction");
-	$hselected=$h;
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans('Documents');
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans('Info');
-	$h++;
-
-	dol_fiche_head($head, $hselected, $langs->trans("Action"),0,'task');
+	$head=actions_prepare_head();
+	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'task');
 
 	$now=gmmktime();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;

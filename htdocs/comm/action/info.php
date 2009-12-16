@@ -25,6 +25,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
@@ -51,23 +52,8 @@ $act = new ActionComm($db);
 $act->fetch($_GET["id"]);
 $act->info($_GET["id"]);
 
-$h=0;
-
-$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans("CardAction");
-$hselected=$h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans('Documents');
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
-$head[$h][1] = $langs->trans('Info');
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("Action"),0,'task');
+$head=actions_prepare_head();
+dol_fiche_head($head, 'info', $langs->trans("Action"),0,'task');
 
 
 print '<table width="100%"><tr><td>';

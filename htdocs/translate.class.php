@@ -38,8 +38,8 @@ class Translate {
 	var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 	var $direction = 'ltr';			// Left to right or Right to left
 
-	var $tab_loaded=array();		// Tableau pour signaler les fichiers deja charges
 	var $tab_translate=array();		// Tableau des traductions
+	var $tab_loaded=array();		// Array to store result after loading each language file
 
 	var $cache_labels=array();		// Cache for labels
 
@@ -215,31 +215,37 @@ class Translate {
 			// Directory of translation files
 			$scandir = $searchdir."/".$langofdir;
 			$file_lang =  $scandir . "/".$newdomain.".lang";
-			$filelangexists=is_file($file_lang);
+			$file_lang_osencoded=dol_osencode($file_lang);
+			$filelangexists=is_file($file_lang_osencoded);
 
 			//dol_syslog('Translate::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' file_lang='.$file_lang." => ".$filelangexists);
 
 			if ($filelangexists)
 			{
-				// Enable cache of lang file in session (faster but need more memory)
+				$found=false;
+				
+				// Enable cache of lang file in memory (faster but need more memory)
 				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-				$enablelangcacheinsession=false;
-
-				if ($enablelangcacheinsession && isset($_SESSION['lang_'.$newdomain]))
+				$enablelangcacheinmemory=false;
+				if ($enablelangcacheinmemory)
 				{
-					foreach($_SESSION['lang_'.$newdomain] as $key => $value)
+					require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
+					$tmparray=dol_getshmop('DOL_LANG_'.DOL_VERSION.'_'.$newdomain,65536);
+					if (is_array($tmparray) && sizeof($tmparray))
 					{
-						$this->tab_translate[$key]=$value;
-						$this->tab_loaded[$newdomain]=3;           // Set this file as loaded from cache in session
+						$this->tab_translate=$tmparray;
+						$this->tab_loaded[$newdomain]=3;    // Set this file as loaded from cache in session
+						$found=true;
 					}
 				}
-				else
+
+				if (! $found)
 				{
 					if ($fp = @fopen($file_lang,"rt"))
 					{
-						if ($enablelangcacheinsession) $tabtranslatedomain=array();	// To save lang in session
-						$finded = 0;
-						while (($ligne = fgets($fp,4096)) && ($finded == 0))
+						if ($enablelangcacheinmemory) $tabtranslatedomain=array();	// To save lang in session
+						
+						while ($ligne = fgets($fp,4096))	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
 						{
 							if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
 							{
@@ -272,17 +278,21 @@ class Translate {
 										//print 'XX'.$key;
 										$this->tab_translate[$key]=$value;
 
-										if ($enablelangcacheinsession) $tabtranslatedomain[$key]=$value;	// To save lang in session
+										if ($enablelangcacheinmemory) $tabtranslatedomain[$key]=$value;	// To save lang in session
 									}
 								}
 							}
 						}
-						$fileread=1;
 						fclose($fp);
-
+						$fileread=1;
+						
 						// To save lang in session
-						if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$newdomain]=$tabtranslatedomain;
-
+						if ($enablelangcacheinmemory && sizeof($tabtranslatedomain))
+						{
+							require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
+							$size=dol_setshmop('DOL_LANG_'.DOL_VERSION.'_'.$newdomain,$tabtranslatedomain,65536);
+						}
+//exit;
 						break;		// Break loop on each root dir
 					}
 				}
