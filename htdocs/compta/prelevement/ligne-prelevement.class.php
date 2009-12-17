@@ -30,16 +30,18 @@
 
 
 /**
-        \class      LignePrelevement
-        \brief      Classe permettant la gestion des prelevements
-*/
+ *       \class      LignePrelevement
+ *       \brief      Classe permettant la gestion des prelevements
+ */
 
 class LignePrelevement
 {
   var $id;
   var $db;
 
-
+  var $statuts = array();
+  
+  
   /**
    *    \brief      Constructeur de la classe
    *    \param      DB          Handler acces base de donnees
@@ -50,10 +52,10 @@ class LignePrelevement
     $this->db = $DB ;
     $this->user = $user;
 
-    $this->statuts = array();
-    $this->statuts[0] = "En attente";
-    $this->statuts[2] = "Credite";
-    $this->statuts[3] = "Rejete";
+    // List of language codes for status
+    $this->statuts[0] = "Waiting";
+    $this->statuts[2] = "Credited";
+    $this->statuts[3] = "Refused";
   }
 
   /**

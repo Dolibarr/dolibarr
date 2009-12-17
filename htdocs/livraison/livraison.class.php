@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/livraison/livraison.class.php
-        \ingroup    livraison
-        \brief      Fichier de la classe de gestion des bons de livraison
-        \version    $Id$
-*/
+ \file       htdocs/livraison/livraison.class.php
+ \ingroup    livraison
+ \brief      Fichier de la classe de gestion des bons de livraison
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
@@ -34,9 +34,9 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 
 
 /**
-        \class      Livraison
-		\brief      Classe de gestion des bons de livraison
-*/
+ \class      Livraison
+ \brief      Classe de gestion des bons de livraison
+ */
 class Livraison extends CommonObject
 {
 	var $db;
@@ -60,28 +60,25 @@ class Livraison extends CommonObject
 
 
 	/**
-	* Initialisation
-	*
-	*/
+	 * Initialisation
+	 */
 	function Livraison($DB)
-    {
-    	global $langs;
-
+	{
 		$this->db = $DB;
 		$this->lignes = array();
-
-		$this->statuts[-1] = $langs->trans("Canceled");
-		$this->statuts[0]  = $langs->trans("Draft");
-		$this->statuts[1]  = $langs->trans("Validated");
-
 		$this->products = array();
-    }
+		
+		// List of short language codes for status
+		$this->statuts[-1] = 'StatusSendingCanceled';
+		$this->statuts[0]  = 'StatusSendingDraft';
+		$this->statuts[1]  = 'StatusSendingValidated';
+	}
 
 	/**
 	 *    \brief      Create delivery receipt in database
 	 *    \param      user        Objet du user qui cree
 	 *    \return     int         <0 si erreur, id livraison cree si ok
-	*/
+	 */
 	function create($user)
 	{
 		global $conf;
@@ -143,8 +140,8 @@ class Livraison extends CommonObject
 
 
 				/*
-				*  Insertion des produits dans la base
-				*/
+				 *  Insertion des produits dans la base
+				 */
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
 					$origin_id=$this->lignes[$i]->origin_line_id;
@@ -163,7 +160,7 @@ class Livraison extends CommonObject
 					{
 						$error++;
 					}
-					
+						
 					if (! $conf->expedition_bon->enabled)
 					{
 						if ($conf->commande->enabled)
@@ -216,9 +213,9 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	*
-	*
-	*/
+	 *
+	 *
+	 */
 	function create_line($transaction, $commande_ligne_id, $qty, $fk_product=0, $description)
 	{
 		$error = 0;
@@ -244,9 +241,9 @@ class Livraison extends CommonObject
 		}
 	}
 
-   /**
-	* 	\brief			Read a delivery receipt
-	*/
+	/**
+	 * 	\brief			Read a delivery receipt
+	 */
 	function fetch($id)
 	{
 		global $conf;
@@ -296,23 +293,23 @@ class Livraison extends CommonObject
 					{
 						$this->origin = "propal";
 					}
-			  }
+				}
 
-			  if ($this->statut == 0) $this->brouillon = 1;
+				if ($this->statut == 0) $this->brouillon = 1;
 
-			  $file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id,2) . "/" . $this->id.".pdf";
-			  $this->pdf_filename = $file;
+				$file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id,2) . "/" . $this->id.".pdf";
+				$this->pdf_filename = $file;
 
-			  /*
-			   * Lignes
-			   */
-			  $result=$this->fetch_lignes();
-			  if ($result < 0)
-			  {
-			  	return -3;
-			  }
+				/*
+				 * Lignes
+				 */
+				$result=$this->fetch_lignes();
+				if ($result < 0)
+				{
+					return -3;
+				}
 
-			  return 1;
+				return 1;
 			}
 			else
 			{
@@ -330,10 +327,10 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	*        \brief      Valide l'expedition, et met a jour le stock si stock gere
-	*        \param      user        Objet de l'utilisateur qui valide
-	*        \return     int
-	*/
+	 *        \brief      Valide l'expedition, et met a jour le stock si stock gere
+	 *        \param      user        Objet de l'utilisateur qui valide
+	 *        \return     int
+	 */
 	function valid($user)
 	{
 		global $conf;
@@ -368,17 +365,17 @@ class Livraison extends CommonObject
 					}
 
 					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
-          // de decrementer 2 fois le stock.
-          $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> 0";
-          $resql=$this->db->query($sql);
-          if ($resql)
-          {
-          	$num = $this->db->num_rows($resql);
-           	if ($num > 0)
-          	{
-           		return 0;
-           	}
-          }
+					// de decrementer 2 fois le stock.
+					$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> 0";
+					$resql=$this->db->query($sql);
+					if ($resql)
+					{
+						$num = $this->db->num_rows($resql);
+						if ($num > 0)
+						{
+							return 0;
+						}
+					}
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
 					$sql.= " SET ref='".addslashes($this->ref)."', fk_statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
@@ -486,7 +483,7 @@ class Livraison extends CommonObject
 	/**     \brief      Cree le bon de livraison depuis une expedition existante
 	 *		\param      user            Utilisateur qui cree
 	 *		\param      sending_id      Id de l'expedition qui sert de modele
-	*/
+	 */
 	function create_from_sending($user, $sending_id)
 	{
 		$expedition = new Expedition($this->db);
@@ -522,9 +519,9 @@ class Livraison extends CommonObject
 
 
 	/**
-	* Ajoute une ligne
-	*
-	*/
+	 * Ajoute une ligne
+	 *
+	 */
 	function addline( $id, $qty )
 	{
 		$num = sizeof($this->lignes);
@@ -537,9 +534,9 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	*
-	*
-	*/
+	 *
+	 *
+	 */
 	function delete_line($idligne)
 	{
 		if ($this->statut == 0)
@@ -561,9 +558,9 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	* Supprime la fiche
-	*
-	*/
+	 * Supprime la fiche
+	 *
+	 */
 	function delete()
 	{
 		$this->db->begin();
@@ -617,10 +614,10 @@ class Livraison extends CommonObject
 		}
 	}
 
-   /**
-	*
-	*
-	*/
+	/**
+	 *
+	 *
+	 */
 	function fetch_lignes()
 	{
 		$this->lignes = array();
@@ -669,14 +666,14 @@ class Livraison extends CommonObject
 	}
 
 
-    /**
-     *    \brief      Retourne le libelle du statut d'une expedition
-     *    \return     string      Libelle
-     */
-    function getLibStatut($mode=0)
-    {
-    	return $this->LibStatut($this->statut,$mode);
-    }
+	/**
+	 *    \brief      Retourne le libelle du statut d'une expedition
+	 *    \return     string      Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
 
 	/**
 	 *		\brief      Renvoi le libelle d'un statut donne
@@ -684,29 +681,29 @@ class Livraison extends CommonObject
 	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    	\return     string		Libelle
 	 */
-    function LibStatut($statut,$mode)
-    {
+	function LibStatut($statut,$mode)
+	{
 		global $langs;
 
-    	if ($mode==0)
-    	{
-        	if ($statut==-1) return $this->statuts[$statut];
-        	if ($statut==0) return $this->statuts[$statut];
-        	if ($statut==1) return $this->statuts[$statut];
-    	}
-    	if ($mode==1)
-    	{
-        	if ($statut==-1) return $this->statuts[$statut];
-        	if ($statut==0) return $this->statuts[$statut];
-        	if ($statut==1) return $this->statuts[$statut];
-    	}
-      if ($mode == 4)
-      {
-        	if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingDraft');
-        	if ($statut==0) return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
-        	if ($statut==1) return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
-		  }
-    }
+		if ($mode==0)
+		{
+			if ($statut==-1) return $langs->trans('StatusSendingCanceled');
+			if ($statut==0)  return $langs->trans('StatusSendingDraft');
+			if ($statut==1)  return $langs->trans('StatusSendingValidated')
+		}
+		if ($mode==1)
+		{
+			if ($statut==-1) return $langs->trans($this->statuts[$statut]);
+			if ($statut==0)  return $langs->trans($this->statuts[$statut]);
+			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 4)
+		{
+			if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingCanceled');
+			if ($statut==0)  return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
+			if ($statut==1)  return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
+		}
+	}
 
 
 	/**
@@ -787,9 +784,9 @@ class Livraison extends CommonObject
 
 
 /**
-        \class      LivraisonLigne
-		\brief      Classe de gestion des lignes de bons de livraison
-*/
+ \class      LivraisonLigne
+ \brief      Classe de gestion des lignes de bons de livraison
+ */
 class LivraisonLigne
 {
 	var $db;

@@ -54,20 +54,17 @@ class Expedition extends CommonObject
 
 	/**
 	 * Initialisation
-	 *
 	 */
 	function Expedition($DB)
 	{
-		global $langs;
-
 		$this->db = $DB;
 		$this->lignes = array();
-
-		$this->statuts[-1] = $langs->trans("Canceled");
-		$this->statuts[0]  = $langs->trans("Draft");
-		$this->statuts[1]  = $langs->trans("Validated");
-
 		$this->products = array();
+		
+		// List of long language codes for status
+		$this->statuts[-1] = 'StatusSendingCanceled';
+		$this->statuts[0]  = 'StatusSendingDraft';
+		$this->statuts[1]  = 'StatusSendingValidated';
 	}
 
 	/**
@@ -690,10 +687,10 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libelle d'un statut donne
-	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *    	\brief      Return label of a status
+	 * 		\param      statut		Id statut
+	 *    	\param      mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+	 *    	\return     string		Label of status
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -701,23 +698,23 @@ class Expedition extends CommonObject
 
 		if ($mode==0)
 		{
-			if ($statut==0) return $this->statuts[$statut];
-			if ($statut==1) return $this->statuts[$statut];
+			if ($statut==0) return $langs->trans($this->statuts[$statut]);
+			if ($statut==1) return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode==1)
 		{
-			if ($statut==0) return $this->statuts[$statut];
-			if ($statut==1) return $this->statuts[$statut];
+			if ($statut==0) return $langs->trans($this->statuts[$statut]);
+			if ($statut==1) return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
-			if ($statut==1) return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
+			if ($statut==0) return img_picto(this->statuts[$statut],'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto(this->statuts[$statut],'statut4').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans('StatusSendingDraftShort').' '.img_picto($langs->trans('StatusSendingDraft'),'statut0');
-			if ($statut==1) return $langs->trans('StatusSendingValidatedShort').' '.img_picto($langs->trans('StatusSendingValidated'),'statut4');
+			if ($statut==0) return $langs->trans('StatusSendingDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==1) return $langs->trans('StatusSendingValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
 		}
 	}
 

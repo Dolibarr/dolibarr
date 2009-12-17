@@ -56,20 +56,17 @@ class CommandeFournisseur extends Commande
 	function CommandeFournisseur($DB)
 	{
 		$this->db = $DB;
-
-		global $langs;
-		$langs->load('orders');
-
-		$this->statuts[0] = $langs->trans('StatusOrderDraft');
-		$this->statuts[1] = $langs->trans('StatusOrderValidated');
-		$this->statuts[2] = $langs->trans('StatusOrderApproved');
-		$this->statuts[3] = $langs->trans('StatusOrderOnProcess');
-		$this->statuts[4] = $langs->trans('StatusOrderReceivedPartially');
-		$this->statuts[5] = $langs->trans('StatusOrderReceivedAll');
-		$this->statuts[6] = $langs->trans('StatusOrderCanceled');
-		$this->statuts[9] = $langs->trans('StatusOrderRefused');
-
 		$this->products = array();
+		
+		// List of language codes for status
+		$this->statuts[0] = 'StatusOrderDraft';
+		$this->statuts[1] = 'StatusOrderValidated';
+		$this->statuts[2] = 'StatusOrderApproved';
+		$this->statuts[3] = 'StatusOrderOnProcess';
+		$this->statuts[4] = 'StatusOrderReceivedPartially';
+		$this->statuts[5] = 'StatusOrderReceivedAll';
+		$this->statuts[6] = 'StatusOrderCanceled';
+		$this->statuts[9] = 'StatusOrderRefused';
 	}
 
 
@@ -365,9 +362,9 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *    \brief      Retourne le libelle du statut d'une commande (brouillon, validee, abandonnee, payee
-	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *    \return     string        Libelle
+	 *    \brief      Return label of the status of object
+	 *    \param      mode          0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label
+	 *    \return     string        Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -375,10 +372,10 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
-	 *		\param      statut        	Id statut
-	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string			Libelle du statut
+	 *    	\brief      Return label of a status
+	 * 		\param      statut		Id statut
+	 *    	\param      mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+	 *    	\return     string		Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -387,58 +384,58 @@ class CommandeFournisseur extends Commande
 
 		if ($mode == 0)
 		{
-			return $this->statuts[$statut];
+			return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 1)
 		{
-			return $this->statuts[$statut];
+			return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 2)
 		{
-			return $this->statuts[$statut];
+			return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
-			if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
-			if ($statut==2) return img_picto($langs->trans('StatusOrderApproved'),'statut3');
-			if ($statut==3) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
-			if ($statut==4) return img_picto($langs->trans('StatusOrderReceivedPartially'),'statut3');
-			if ($statut==5) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
-			if ($statut==6) return img_picto($langs->trans('StatusOrderCanceled'),'statut5');
-			if ($statut==9) return img_picto($langs->trans('StatusOrderRefused'),'statut5');
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut==6) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+			if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$this->statuts[$statut];
-			if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$this->statuts[$statut];
-			if ($statut==2) return img_picto($langs->trans('StatusOrderApproved'),'statut3').' '.$this->statuts[$statut];
-			if ($statut==3) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3').' '.$this->statuts[$statut];
-			if ($statut==4) return img_picto($langs->trans('StatusOrderReceivedPartially'),'statut3').' '.$this->statuts[$statut];
-			if ($statut==5) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$this->statuts[$statut];
-			if ($statut==6) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$this->statuts[$statut];
-			if ($statut==9) return img_picto($langs->trans('StatusOrderRefused'),'statut5').' '.$this->statuts[$statut];
+			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==6) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderDraft'),'statut0');
-			if ($statut==1) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderValidated'),'statut1');
-			if ($statut==2) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderApproved'),'statut3');
-			if ($statut==3) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
-			if ($statut==4) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderReceivedPartially'),'statut3');
-			if ($statut==5) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderProcessed'),'statut6');
-			if ($statut==6) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderCanceled'),'statut5');
-			if ($statut==9) return $this->statuts[$statut].' '.img_picto($langs->trans('StatusOrderRefused'),'statut5');
+			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut==4) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut==5) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut==6) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+			if ($statut==9) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut5');
 		}
 	}
 
 
 	/**
-		\brief      Renvoie nom clicable (avec eventuellement le picto)
-		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		option			Sur quoi pointe le lien
-		\return		string			Chaine avec URL
-		*/
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\param		option			Sur quoi pointe le lien
+	 *	\return		string			Chaine avec URL
+	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;

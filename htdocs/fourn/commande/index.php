@@ -97,7 +97,7 @@ if ($resql)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td>'.$commande->statuts[$row[1]].'</td>';
+      print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
       print '<td align="right"><a href="liste.php?statut='.$row[1].'">'.$row[0].' '.$commande->LibStatut($row[1],3).'</a></td>';
 
       print "</tr>\n";

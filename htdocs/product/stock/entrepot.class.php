@@ -52,22 +52,22 @@ class Entrepot extends CommonObject
 	var $ville;
 	var $pays_id;
 
-	/*
+	/**
 	 *    \brief      Constructeur de l'objet entrepot
 	 *    \param      DB      Handler d'acc�s � la base de donn�e
 	 */
 	function Entrepot($DB)
 	{
-		global $langs;
 		$this->db = $DB;
 
-		$this->statuts[0] = $langs->trans("Closed2");
-		$this->statuts[1] = $langs->trans("Opened");
+		// List of short language codes for status
+		$this->statuts[0] = 'Closed2';
+		$this->statuts[1] = 'Opened';
 	}
 
-	/*
+	/**
 	 *    \brief      Creation d'un entrepot en base
-	 *    \param      Objet user qui cr�e l'entrepot
+	 *    \param      Objet user qui cree l'entrepot
 	 */
 	function create($user)
 	{
@@ -412,37 +412,37 @@ class Entrepot extends CommonObject
 		if ($mode == 0)
 		{
 			$prefix='';
-			if ($statut == 0) return $langs->trans('Closed2');
-			if ($statut == 1) return $langs->trans('Opened');
+			if ($statut == 0) return $langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 1)
 		{
 			$prefix='Short';
-			if ($statut == 0) return $langs->trans('Closed2');
-			if ($statut == 1) return $langs->trans('Opened');
+			if ($statut == 0) return $langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 2)
 		{
 			$prefix='Short';
-			if ($statut == 0) return img_picto($langs->trans('Closed2'),'statut5').' '.$langs->trans('Closed2');
-			if ($statut == 1) return img_picto($langs->trans('Opened'),'statut4').' '.$langs->trans('Opened');
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 3)
 		{
 			$prefix='Short';
-			if ($statut == 0) return img_picto($langs->trans('Closed2'),'statut5');
-			if ($statut == 1) return img_picto($langs->trans('Opened'),'statut4');
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
 		}
 		if ($mode == 4)
 		{
-			if ($statut == 0) return img_picto($langs->trans('Closed2'),'statut5').' '.$langs->trans('Closed2');
-			if ($statut == 1) return img_picto($langs->trans('Opened'),'statut4').' '.$langs->trans('Opened');
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
 			$prefix='Short';
-			if ($statut == 0) return $langs->trans('Closed2').' '.img_picto($langs->trans('Closed2'),'statut5');
-			if ($statut == 1) return $langs->trans('Opened').' '.img_picto($langs->trans('Opened'),'statut4');
+			if ($statut == 0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+			if ($statut == 1) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
 		}
 	}
 

@@ -167,9 +167,9 @@ if ($_GET["id"])
 
 		print '</td></tr>';
 
-		print '<tr><td width="20%">Statut</td><td>';
-		print '<img src="./statut'.$bon->statut.'.png">&nbsp;';
-		print $lipre->statuts[$lipre->statut].'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans('Status').'</td><td>';
+		print '<img src="./statut'.$bon->statut.'.png"> ';
+		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';
 
 		if($bon->date_trans <> 0)
 		{
@@ -220,7 +220,7 @@ if ($_GET["id"])
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="infocredit">';
 			print '<table class="border" width="100%">';
-			print '<tr><td width="20%">Crédité le</td><td>';
+			print '<tr><td width="20%">Crï¿½ditï¿½ le</td><td>';
 			print $html->select_date('','','','','',"infocredit");
 			print '</td></tr>';
 			print '<tr><td colspan="2" align="center">';

@@ -65,16 +65,14 @@ class Mailing extends CommonObject
 	 */
 	function Mailing($DB)
 	{
-		global $langs;
-		$langs->load("mails");
-
 		$this->db = $DB ;
 		$this->db_table = MAIN_DB_PREFIX."mailing";
 
-		$this->statuts[0]  = $langs->trans("MailingStatusDraft");
-		$this->statuts[1]  = $langs->trans("MailingStatusValidated");
-		$this->statuts[2]  = $langs->trans("MailingStatusSentPartialy");
-		$this->statuts[3]  = $langs->trans("MailingStatusSentCompletely");
+		// List of language codes for status
+		$this->statuts[0] = 'MailingStatusDraft';
+		$this->statuts[1] = 'MailingStatusValidated';
+		$this->statuts[2] = 'MailingStatusSentPartialy';
+		$this->statuts[3] = 'MailingStatusSentCompletely';
 	}
 
 	/**
@@ -402,18 +400,18 @@ class Mailing extends CommonObject
 
 		if ($mode == 0)
 		{
-			return $this->statuts[$statut];
+			return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 1)
 		{
-			return $this->statuts[$statut];
+			return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 2)
 		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$this->statuts[$statut];
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$this->statuts[$statut];
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$this->statuts[$statut];
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$this->statuts[$statut];
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 3)
 		{
@@ -424,19 +422,18 @@ class Mailing extends CommonObject
 		}
 		if ($mode == 4)
 		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$this->statuts[$statut];
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$this->statuts[$statut];
-			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$this->statuts[$statut];
-			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$this->statuts[$statut];
+			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
-			if ($statut == 0)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut == 1)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-			if ($statut == 2)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-			if ($statut == 3)  return $this->statuts[$statut].' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut == 0)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut == 1)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+			if ($statut == 2)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+			if ($statut == 3)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
-
 	}
 
 }

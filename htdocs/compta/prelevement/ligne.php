@@ -100,8 +100,8 @@ if ($_GET["id"])
 		print '<a href="fiche.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
-		print '<img src="./statut'.$lipre->statut.'.png">&nbsp;';
-		print $lipre->statuts[$lipre->statut].'</td></tr>';
+		print '<img src="./statut'.$lipre->statut.'.png"> ';
+		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';
 
 		if ($lipre->statut == 3)
 		{
@@ -151,8 +151,8 @@ if ($_GET["id"])
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
 		print '<table class="border" width="100%">';
-		print '<tr><td colspan="3">Rejet de prélèvement</td></tr>';
-		print '<tr><td class="valid">Etes-vous sûr de vouloir saisir un rejet de prélèvement pour la société '.$soc->nom.' ?</td>';
+		print '<tr><td colspan="3">Rejet de prï¿½lï¿½vement</td></tr>';
+		print '<tr><td class="valid">Etes-vous sï¿½r de vouloir saisir un rejet de prï¿½lï¿½vement pour la sociï¿½tï¿½ '.$soc->nom.' ?</td>';
 		print '<td colspan="2" class="valid">';
 		print '<select name="confirm">';
 		print '<option value="yes">oui</option>';

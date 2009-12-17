@@ -83,7 +83,7 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-		print '<td>'.$commande->statuts[$row[1]].'</td>';
+		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
 

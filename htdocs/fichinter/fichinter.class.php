@@ -66,18 +66,16 @@ class Fichinter extends CommonObject
 	 */
 	function Fichinter($DB, $socid="")
 	{
-		global $langs;
-
 		$this->db = $DB ;
 		$this->socid = $socid;
 		$this->products = array();
 		$this->projet_id = 0;
 
-		// Statut 0=brouillon, 1=valide
-		$this->statuts[0]=$langs->trans("Draft");
-		$this->statuts[1]=$langs->trans("Validated");
-		$this->statuts_short[0]=$langs->trans("Draft");
-		$this->statuts_short[1]=$langs->trans("Validated");
+		// List of language codes for status
+		$this->statuts[0]='Draft';
+		$this->statuts[1]='Validated';
+		$this->statuts_short[0]='Draft';
+		$this->statuts_short[1]='Validated';
 	}
 
 
@@ -340,31 +338,31 @@ class Fichinter extends CommonObject
 	{
 		if ($mode == 0)
 		{
-			return $this->statuts[$statut];
+			return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 1)
 		{
-			return $this->statuts_short[$statut];
+			return $langs->trans($this->statuts_short[$statut]);
 		}
 		if ($mode == 2)
 		{
-			if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts_short[$statut];
-			if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts_short[$statut];
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		if ($mode == 3)
 		{
-			if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0');
-			if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6');
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts[$statut];
-			if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts[$statut];
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut0');
-			if ($statut==1) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut6');
+			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 	}
 
