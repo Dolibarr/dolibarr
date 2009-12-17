@@ -248,9 +248,13 @@ print_r($xfss[$this->cipher]);
        // return false if unable to open file
        $msg = "encrypt_file: cannot open ".$dst_filename." ";
        if (!$dest_fp) trigger_error($msg, E_USER_ERROR);
+       
+       // adds length of content for cleanly removing the padding
+       $length = strlen($filecontents);
+       $cleanfilecontents = $length.'|'.$filecontents;
 
        // write encrypted data to file
-       fwrite($dest_fp, $this->encrypt($filecontents));
+       fwrite($dest_fp, $this->encrypt($cleanfilecontents));
 
        // close encrypted file pointer
        fclose($dest_fp);
@@ -302,6 +306,10 @@ print_r($xfss[$this->cipher]);
 
        // decrypt file contents
        $contents = $this->decrypt($contents);
+       
+       // remove the padding
+       list($length, $padded_data) = explode('|', $contents, 2);
+       $contents = substr($padded_data, 0, $length);
 
        // make sure contents where not modified
        if( $this->efc['crc'] != $this->CRC16HexDigest($contents))
