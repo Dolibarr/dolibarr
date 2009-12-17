@@ -571,15 +571,15 @@ if (! empty($_GET["theme"]))
 	$conf->theme=$_GET["theme"];
 	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
-// Si feuille de style en php existe
-if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+// Style sheet must be a php file
+$conf->css.=".php";
 
 if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
 {
 	$conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
-// Defini gestionnaire de menu a utiliser
+// Define menu manager to use
 if (! $user->societe_id)    // Si utilisateur interne
 {
 	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
@@ -843,12 +843,13 @@ function top_menu($head, $title='', $target='')
 	print "\n".'<!-- Start top horizontal menu -->'."\n";
 	print '<div class="tmenu">'."\n";
 
-	// Charge le gestionnaire des entrees de menu du haut
-	if (! file_exists(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu))
+	// Load the top menu manager
+	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
+	if (! $result)	// If failed to include, we try with standard
 	{
 		$conf->top_menu='eldy_backoffice.php';
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);		
 	}
-	require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
 	$menutop = new MenuTop($db);
 	$menutop->atarget=$target;
 
@@ -982,17 +983,18 @@ function left_menu($menu_array, $helppagename='', $moresearchform='')
 
 
 
-	// Colonne de gauche
+	// Left column
 	print '<!-- Begin left vertical menu -->'."\n";
 	print '<div class="vmenu">'."\n";
 
 
-	// Autres entrees du menu par le gestionnaire
-	if (! file_exists(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu))
+	// Load the left menu manager
+	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
+	if (! $result)
 	{
 		$conf->left_menu='eldy_backoffice.php';
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
 	}
-	require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
 	$menuleft=new MenuLeft($db,$menu_array);
 	$menuleft->showmenu();
 
@@ -1167,7 +1169,7 @@ function llxFooter($foot='')
 	if (! empty($_SERVER['DOL_TUNING']))
 	{
 		$micro_end_time=dol_microtime_float(true);
-		print "\n".'<script type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		print "\n".'<script type="text/javascript">window.status="MAIN_OPTIMIZE_SPEED '.(empty($conf->global->MAIN_OPTIMIZE_SPEED)?'off - ':'on - ').'Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Mem: '.memory_get_usage();

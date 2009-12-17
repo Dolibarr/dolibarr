@@ -65,35 +65,6 @@ class Translate {
 
 
 	/**
-	 *	\brief		Return string translated for a key
-	 *				Translation array must have been loaded before.
-	 *	\param		key			Key to translate
-	 *	\return		string		Translated string
-	 */
-	function getTransFromTab($key)
-	{
-		if (! empty($this->tab_translate[$key]))
-		{
-			return $this->tab_translate[$key];
-		}
-		else
-		{
-			return '';
-		}
-	}
-
-	/**
-	 *	\brief		Positionne la chaine traduite pour une cle donnee.
-	 *	\param		key			Key to translate
-	 *	\return		string		Translated string
-	 */
-	function setTransFromTab($key,$value)
-	{
-		$this->tab_translate[$key]=$value;
-	}
-
-
-	/**
 	 *  \brief      Set accessor for this->defaultlang
 	 *  \param      srclang     	Language to use
 	 */
@@ -417,7 +388,7 @@ class Translate {
 	 */
 	function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
 	{
-		if ($this->getTransFromTab($key))	// Translation is available
+		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
 			$str=preg_replace('/\\\"/','"',$this->tab_translate[$key]);	// To solve some translation keys containing key=abc\"def\"ghi instead of abc"def"ghi
 			$str=sprintf($str,$param1,$param2,$param3,$param4);
@@ -461,7 +432,7 @@ class Translate {
 	 */
 	function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
 	{
-		if ($this->getTransFromTab($key))
+		if (! empty($this->tab_translate[$key]))
 		{
 			// Si la traduction est disponible
 			$newstr=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
@@ -489,7 +460,7 @@ class Translate {
 	 */
 	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
 	{
-		if ($this->getTransFromTab($key))
+		if (! empty($this->tab_translate[$key]))
 		{
 			// Si la traduction est disponible
 			$newstr=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
@@ -563,24 +534,24 @@ class Translate {
 
 
 	/**
-	 *  \brief      Renvoi si le fichier $filename existe dans la version de la langue courante ou alternative
-	 *  \param      filename        nom du fichier a rechercher
-	 *  \param      searchalt       cherche aussi dans langue alternative
-	 *  \return     boolean         true si existe, false sinon
+	 *  \brief      Return if a filename $filename exists for current language (or alternate language)
+	 *  \param      filename        Language filename to search
+	 *  \param      searchalt       Search also alernate language file
+	 *  \return     boolean         true if exists and readable
 	 */
 	function file_exists($filename,$searchalt=0)
 	{
 		// Test si fichier dans repertoire de la langue
 		foreach($this->dir as $searchdir)
 		{
-			$htmlfile=$searchdir."/langs/".$this->defaultlang."/".$filename;
-			if (is_readable($htmlfile)) return true;
+			if (is_readable(dol_osencode($searchdir."/langs/".$this->defaultlang."/".$filename))) return true;
 
-			if ($searchalt) {
+			if ($searchalt) 
+			{
 				// Test si fichier dans repertoire de la langue alternative
-				if ($this->defaultlang != "en_US") $htmlfilealt = $searchdir."/langs/en_US/".$filename;
-				else $htmlfilealt = $searchdir."/langs/fr_FR/".$filename;
-				if (is_readable($htmlfilealt)) return true;
+				if ($this->defaultlang != "en_US") $filenamealt = $searchdir."/langs/en_US/".$filename;
+				else $filenamealt = $searchdir."/langs/fr_FR/".$filename;
+				if (is_readable(dol_osencode($filenamealt))) return true;
 			}
 		}
 

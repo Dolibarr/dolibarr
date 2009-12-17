@@ -54,14 +54,6 @@ else
 	define('LOG_INFO',6);
 	define('LOG_DEBUG',7);
 }
-// Definition of missing functions
-if (! function_exists("preg_replace"))
-{
-	function preg_replace($a,$b,$c)
-	{
-
-	}
-}
 
 
 // Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
