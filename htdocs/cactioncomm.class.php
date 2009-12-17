@@ -25,7 +25,8 @@
 */
 
 
-/**     \class      CActionComm
+/**    
+ *      \class      CActionComm
  *	    \brief      Class to manage different types of events
  */
 class CActionComm {
@@ -45,7 +46,7 @@ class CActionComm {
 
   /**
    *    \brief      Constructeur
-   *    \param      DB          Handler d'acc�s base de donn�e
+   *    \param      DB          Handler d'acces base de donnee
    */
   function CActionComm($DB)
     {
@@ -54,7 +55,7 @@ class CActionComm {
 
   /**
    *    \brief      Charge l'objet type d'action depuis la base
-   *    \param      id          id ou code du type d'action � r�cup�rer
+   *    \param      id          id ou code du type d'action a recuperer
    *    \return     int         1=ok, 0=aucune action, -1=erreur
    */
 	function fetch($id)

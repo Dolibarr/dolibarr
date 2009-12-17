@@ -54,21 +54,21 @@ class Categorie
 
 
 	/**
-	 * Constructeur
-	 * db : acc�s base de donn�es
-	 * id : id de la cat�gorie
+	 * 	Constructor
+	 * 	@param	DB		acces base de donnees
+	 * 	@param	id		id de la categorie
 	 */
-	function Categorie($db, $id=-1)
+	function Categorie($DB, $id=-1)
 	{
-		$this->db = $db;
+		$this->db = $DB;
 		$this->id = $id;
 
 		if ($id != -1) $this->fetch ($this->id);
 	}
 
 	/**
-	 * Charge la cat�gorie
-	 * id : id de la cat�gorie � charger
+	 * 	Charge la categorie
+	 * 	@param	id		id de la categorie a charger
 	 */
 	function fetch($id)
 	{
@@ -117,10 +117,10 @@ class Categorie
 	}
 
 	/**
-	 * Ajoute la cat�gorie dans la base de donn�es
-	 * retour : -1 : erreur SQL
-	 *          -2 : nouvel ID inconnu
-	 *          -3 : cat�gorie invalide
+	 * Ajoute la categorie dans la base de donnees
+	 * 	@return	int 	-1 : erreur SQL
+	 *          		-2 : nouvel ID inconnu
+	 *          		-3 : categorie invalide
 	 */
 	function create()
 	{
@@ -163,8 +163,15 @@ class Categorie
 						$this->error=$langs->trans("ImpossibleAssociateCategory");
 						return -1;
 					}
-
 				}
+				
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+				
 				return $id;
 			}
 			else
@@ -180,10 +187,10 @@ class Categorie
 	}
 
 	/**
-	 * Mise � jour de la cat�gorie
-	 * retour :  1 : OK
-	 *          -1 : erreur SQL
-	 *          -2 : cat�gorie invalide
+	 * 	Update category
+	 * 	@return	int		 1 : OK
+	 *          		-1 : SQL error
+	 *          		-2 : invalid category
 	 */
 	function update()
 	{
@@ -195,7 +202,7 @@ class Categorie
 
 		$this->db->begin();
 
-		$sql = 'delete from '.MAIN_DB_PREFIX.'categorie_association';
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'categorie_association';
 		$sql .= ' WHERE fk_categorie_fille = "'.$this->id.'"';
 
 		dol_syslog("Categorie::update sql=".$sql);
@@ -208,7 +215,7 @@ class Categorie
 
 		if($this->id_mere !="" && $this->id_mere!=$this->id)
 		{
-			$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
 			$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
 
 			dol_syslog("Categorie::update sql=".$sql);
@@ -237,6 +244,14 @@ class Categorie
 		if ($this->db->query($sql))
 		{
 			$this->db->commit();
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CATEGORY_UPDATE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
 			return 1;
 		}
 		else
@@ -248,15 +263,15 @@ class Categorie
 	}
 
 	/**
-	 * Supprime la cat�gorie
-	 * Les produits et sous-cat�gories deviennent orphelins
-	 * si $all = false, et sont (seront :) supprim�s sinon
+	 * 	Delete category
+	 * 	Les produits et sous-categories deviennent orphelins
+	 * 	si $all = false, et sont (seront :) supprimes sinon
 	 */
 	function remove ($all = false)
 	{
 
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product ";
-		$sql .= "WHERE fk_categorie = ".$this->id;
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
+		$sql .= " WHERE fk_categorie = ".$this->id;
 
 		if (!$this->db->query($sql))
 		{
@@ -264,9 +279,9 @@ class Categorie
 			return -1;
 		}
 
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association ";
-		$sql .= "WHERE fk_categorie_mere  = ".$this->id;
-		$sql .= "   OR fk_categorie_fille = ".$this->id;
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+		$sql .= " WHERE fk_categorie_mere  = ".$this->id;
+		$sql .= " OR fk_categorie_fille = ".$this->id;
 
 		if (!$this->db->query($sql))
 		{
@@ -274,8 +289,8 @@ class Categorie
 			return -1;
 		}
 
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie ";
-		$sql .= "WHERE rowid = ".$this->id;
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
+		$sql .= " WHERE rowid = ".$this->id;
 
 		if (!$this->db->query($sql))
 		{
@@ -284,6 +299,13 @@ class Categorie
 		}
 		else
 		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CATEGORY_DELETE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+			
 			return 1;
 		}
 
@@ -291,11 +313,11 @@ class Categorie
 
 
 	/**
-	 * Ajout d'une sous-cat�gorie
-	 * $fille : objet cat�gorie
-	 * retour :  1 : OK
-	 *          -2 : $fille est d�j� dans la famille de $this
-	 *          -3 : cat�gorie ($this ou $fille) invalide
+	 * 	Ajout d'une sous-categorie
+	 * 	@param	$fille		objet categorie
+	 * 	@return	int			 1 : OK
+	 *          			-2 : $fille est deja dans la famille de $this
+	 *          			-3 : categorie ($this ou $fille) invalide
 	 */
 	function add_fille()
 	{
@@ -315,10 +337,10 @@ class Categorie
 	}
 
 	/**
-	 * Suppression d'une sous-cat�gorie (seulement "d�sassociation")
-	 * $fille : objet cat�gorie
-	 * retour :  1 : OK
-	 *          -3 : cat�gorie ($this ou $fille) invalide
+	 * 	Suppression d'une sous-categorie (seulement "desassociation")
+	 * 	@param	$fille		objet categorie
+	 *  @return	int			1 : OK
+	 *          		   -3 : categorie ($this ou $fille) invalide
 	 */
 	function del_fille($fille)
 	{
@@ -377,7 +399,7 @@ class Categorie
 	}
 
 	/**
-	 * Suppresion d'un produit de la cat�gorie
+	 * Suppresion d'un produit de la categorie
 	 * @param $prod est un objet de type produit
 	 * retour :  1 : OK
 	 *          -1 : erreur SQL
@@ -400,7 +422,7 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief	Retourne les produits de la cat�gorie
+	 * 	\brief	Retourne les produits de la categorie
 	 * 	\param	field	Field name for select in table. Full field name will be fk_field.
 	 * 	\param	class	PHP Class of object to store entity
 	 * 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
@@ -440,7 +462,7 @@ class Categorie
 
 
 	/**
-	 * Retourne les filles de la cat�gorie
+	 * Retourne les filles de la categorie
 	 */
 	function get_filles ()
 	{
@@ -468,7 +490,7 @@ class Categorie
 
 
 	/**
-	 * retourne la description d'une cat�gorie
+	 * retourne la description d'une categorie
 	 */
 	function get_desc ($cate)
 	{
@@ -482,7 +504,7 @@ class Categorie
 	}
 
 	/**
-	 * La cat�gorie $fille est-elle une fille de cette cat�gorie ?
+	 * La categorie $fille est-elle une fille de cette categorie ?
 	 */
 	function is_fille ($fille)
 	{
@@ -498,8 +520,8 @@ class Categorie
 
 
 	/**
-	 * 	\brief		Reconstruit l'arborescence des cat�gories sous la forme d'un tableau
-	 *				Renvoi un tableau de tableau('id','id_mere',...) tri� selon
+	 * 	\brief		Reconstruit l'arborescence des categories sous la forme d'un tableau
+	 *				Renvoi un tableau de tableau('id','id_mere',...) trie selon
 	 *				arbre et avec:
 	 *				id = id de la categorie
 	 *				id_mere = id de la categorie mere
@@ -653,7 +675,7 @@ class Categorie
 
 
 	/**
-	 * 		\brief		Retourne toutes les cat�gories
+	 * 		\brief		Retourne toutes les categories
 	 *		\return		array		Tableau d'objet Categorie
 	 */
 	function get_all_categories ()
@@ -679,7 +701,7 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief		Retourne le nombre total de cat�gories
+	 * 	\brief		Retourne le nombre total de categories
 	 *	\return		int		Nombre de categories
 	 */
 	function get_nb_categories ()
@@ -724,7 +746,7 @@ class Categorie
 	}
 
 	/**
-	 * 		\brief		Retourne les cat�gories de premier niveau (qui ne sont pas filles)
+	 * 		\brief		Retourne les categories de premier niveau (qui ne sont pas filles)
 	 */
 	function get_main_categories ()
 	{
@@ -754,8 +776,8 @@ class Categorie
 	}
 
 	/**
-	 * Retourne les chemin de la cat�gorie, avec les noms des cat�gories
-	 * s�par�s par $sep (" >> " par d�faut)
+	 * Retourne les chemin de la categorie, avec les noms des categories
+	 * separes par $sep (" >> " par defaut)
 	 */
 	function print_all_ways ($sep = " &gt;&gt; ", $url='')
 	{
@@ -783,7 +805,7 @@ class Categorie
 
 
 	/**
-	 * get_primary_way() affiche le chemin le plus court pour se rendre � un produit
+	 * get_primary_way() affiche le chemin le plus court pour se rendre a un produit
 	 */
 	function get_primary_way($id, $type="")
 	{
@@ -805,7 +827,7 @@ class Categorie
 	}
 
 	/**
-	 * print_primary_way() affiche le chemin le plus court pour se rendre � un produit
+	 * print_primary_way() affiche le chemin le plus court pour se rendre a un produit
 	 */
 	function print_primary_way($id, $sep= " &gt;&gt; ", $url, $type="")
 	{
@@ -828,7 +850,7 @@ class Categorie
 	}
 
 	/**
-	 * Retourne un tableau contenant la liste des cat�gories m�res
+	 * Retourne un tableau contenant la liste des categories meres
 	 */
 	function get_meres ()
 	{
@@ -855,8 +877,8 @@ class Categorie
 	}
 
 	/**
-	 * Retourne dans un tableau tous les chemins possibles pour arriver � la cat�gorie
-	 * en partant des cat�gories principales, repr�sent�s par des tableaux de cat�gories
+	 * Retourne dans un tableau tous les chemins possibles pour arriver a la categorie
+	 * en partant des categories principales, representes par des tableaux de categories
 	 */
 	function get_all_ways ()
 	{
@@ -914,7 +936,7 @@ class Categorie
 
 
 	/**
-	 * 	\brief	Retourne les cat�gories dont l'id ou le nom correspond
+	 * 	\brief	Retourne les categories dont l'id ou le nom correspond
 	 * 			ajoute des wildcards au nom sauf si $exact = true
 	 */
 	function rechercher($id, $nom, $type, $exact = false)
@@ -1034,7 +1056,7 @@ class Categorie
 
 	/**
 	 *    \brief      Retourne tableau de toutes les photos de la categorie
-	 *    \param      dir         R?pertoire ? scanner
+	 *    \param      dir         Repertoire a scanner
 	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
 	 *    \return     array       Tableau de photos
 	 */
@@ -1071,7 +1093,7 @@ class Categorie
 
 					$tabobj[$nbphoto-1]=$obj;
 
-					// On continue ou on arrete de boucler ?
+					// On continue ou on arrete de boucler
 					if ($nbmax && $nbphoto >= $nbmax) break;
 				}
 			}
@@ -1112,7 +1134,7 @@ class Categorie
 	 */
 	function get_image_size($file)
 	{
-		$infoImg = getimagesize($file); // R?cup?ration des infos de l'image
+		$infoImg = getimagesize($file); // Recuperation des infos de l'image
 		$this->imgWidth = $infoImg[0]; // Largeur de l'image
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}
