@@ -108,7 +108,7 @@ class CommandeFournisseur extends Commande
 			$this->total_ht            = $obj->total_ht;
 			$this->total_tva           = $obj->tva;
 			$this->total_ttc           = $obj->total_ttc;
-			$this->date_commande       = $obj->date_commande; // date � laquelle la commande a �t� transmise
+			$this->date_commande       = $obj->date_commande; // date a laquelle la commande a ete transmise
 			$this->date                = $obj->date_creation;
 			$this->remise_percent      = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_methode_commande;

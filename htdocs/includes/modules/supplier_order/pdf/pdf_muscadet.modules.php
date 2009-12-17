@@ -623,8 +623,16 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,"day",false,$outputlangs,true), '', 'R');
+		if ($object->date_commande)
+		{
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_commande,"day",false,$outputlangs,true), '', 'R');
+		}
+		else
+		{
+			$pdf->SetTextColor(255,0,0);
+			$pdf->MultiCell(100, 4, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
+		}
 
 		if ($showadress)
 		{

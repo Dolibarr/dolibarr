@@ -9,6 +9,7 @@ OrderLine=Ligne de commande
 OrderFollow=Suivi
 OrderContact=Contacts commande
 OrderDate=Date commande
+OrderToProcess=Commande à traiter
 NewOrder=Nouvelle commande
 ToOrder=Passer commande
 MakeOrder=Passer commande
