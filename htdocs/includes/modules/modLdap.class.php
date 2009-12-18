@@ -68,19 +68,19 @@ class modLdap extends DolibarrModules
 
 		// Constants
 		$this->const = array(
-		0=>array('LDAP_SERVER_TYPE','chaine','openldap','',$conf->entity),
-		1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',$conf->entity),
-		2=>array('LDAP_SERVER_HOST','chaine','localhost','',$conf->entity),
-		3=>array('LDAP_USER_DN','chaine','ou=users,dc=my-domain,dc=com','',$conf->entity),
-		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=my-domain,dc=com','',$conf->entity),
-		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=user)(objectCategory=person)','',$conf->entity),
-		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',$conf->entity),
-		7=>array('LDAP_FIELD_NAME','chaine','sn','',$conf->entity),
-		8=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',$conf->entity),
-		9=>array('LDAP_FIELD_MAIL','chaine','mail','',$conf->entity),
-		10=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',$conf->entity),
-		11=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',$conf->entity),
-		12=>array('LDAP_FIELD_MOBILE','chaine','mobile','',$conf->entity),
+		0=>array('LDAP_SERVER_TYPE','chaine','openldap','',0,$conf->entity),
+		1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',0,$conf->entity),
+		2=>array('LDAP_SERVER_HOST','chaine','localhost','',0,$conf->entity),
+		3=>array('LDAP_USER_DN','chaine','ou=users,dc=my-domain,dc=com','',0,$conf->entity),
+		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=my-domain,dc=com','',0,$conf->entity),
+		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=user)(objectCategory=person)','',0,$conf->entity),
+		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0,$conf->entity),
+		7=>array('LDAP_FIELD_NAME','chaine','sn','',0,$conf->entity),
+		8=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0,$conf->entity),
+		9=>array('LDAP_FIELD_MAIL','chaine','mail','',0,$conf->entity),
+		10=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0,$conf->entity),
+		11=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0,$conf->entity),
+		12=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0,$conf->entity),
 		);
 
 		// Boites
