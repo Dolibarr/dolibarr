@@ -32,14 +32,14 @@ $langs->load("admin");
 
 if (!$user->admin)
 accessforbidden();
-
+//var_dump($_POST);
 
 $typeconst=array('yesno','texte','chaine');
 
 /*
  * Actions
  */
-if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
+if ($_POST["action"] == 'add')
 {
 	if (dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]) < 0)
 	{
@@ -47,11 +47,31 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 	}
 }
 
-if ($_GET["action"] == 'delete')
+if (($_POST["const"] && isset($_POST["update"]) && $_POST["update"] == $langs->trans("Modify")))
 {
-	if (dolibarr_del_const($db, $_GET["rowid"],$_GET["entity"]) < 0)
+	foreach($_POST["const"] as $const)
 	{
-		print $db->error();
+		if ($const["check"])
+		{
+			if (dolibarr_set_const($db, $const["name"],$const["value"],$const["type"],1,$const["note"],$const["entity"]) < 0)
+			{
+				print $db->error();
+			}
+		}
+	}
+}
+
+if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("Delete"))
+{
+	foreach($_POST["const"] as $const)
+	{
+		if ($const["check"])
+		{
+			if (dolibarr_del_const($db, $const["rowid"], -1) < 0)
+			{
+				print $db->error();
+			}
+		}
 	}
 }
 
@@ -73,7 +93,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Comment").'</td>';
-if ($conf->multicompany->enabled) print '<td>'.$langs->trans("Entity").'</td>';
+if ($conf->multicompany->enabled && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
@@ -93,7 +113,8 @@ print '<input type="text" class="flat" size="30" name="constvalue" value="">';
 print '</td><td>';
 print '<input type="text" class="flat" size="40" name="constnote" value="">';
 print '</td>';
-if ($conf->multicompany->enabled)
+// Limit to superadmin
+if ($conf->multicompany->enabled && !$user->entity)
 {
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
@@ -107,21 +128,28 @@ print '<td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button"><br>';
 print "</td>\n";
 print '</tr>';
+print '<tr '.$bc[$var].' class=value>';
+$colspan = 4;
+if ($conf->multicompany->enabled && !$user->entity) $colspan++;
+print '<td colspan="'.$colspan.'">&nbsp;</td></tr>';
 
 print '</form>';
 
+print '<form action="'.DOL_URL_ROOT.'/admin/const.php" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 # Affiche lignes des constantes
 $sql = "SELECT";
 $sql.= " rowid";
 $sql.= ", ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
 $sql.= ", ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+$sql.= ", type";
 $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
-$sql.= " WHERE entity IN (0,".$conf->entity.")";
-if (empty($all)) $sql.= " AND visible = 1";
-$sql.= " ORDER BY name ASC";
+$sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+if ($user->entity) $sql.= " AND visible = 1";
+$sql.= " ORDER BY entity, name ASC";
 
 dol_syslog("Const::listConstant sql=".$sql);
 $result = $db->query($sql);
@@ -137,41 +165,37 @@ if ($result)
 		$var=!$var;
 
 		print "\n";
-		print '<form action="'.DOL_URL_ROOT.'/admin/const.php" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="rowid" value="'.$obj->rowid.'">';
-		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
+		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
+		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
 
 		print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
 
 		// Value
 		print '<td>';
-		print '<input type="text" class="flat" size="30" name="constvalue" value="'.htmlspecialchars($obj->value).'">';
+		print '<input type="text" class="flat" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'" onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');">';
 		print '</td><td>';
 
 		// Note
-		print '<input type="text" class="flat" size="40" name="constnote" value="'.htmlspecialchars($obj->note,1).'">';
+		print '<input type="text" class="flat" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'" onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');">';
 		print '</td>';
 
-		// Entity
-		if ($conf->multicompany->enabled)
+		// Entity limit to superadmin
+		if ($conf->multicompany->enabled && !$user->entity)
 		{
 			print '<td>';
-			print '<input type="text" class="flat" size="1" name="entity" value="'.$obj->entity.'">';
+			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 			print '</td>';
 		}
 		else
 		{
-			print '<input type="hidden" name="entity" value="'.$obj->entity.'">';
+			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
 
 		print '<td align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
-		print '<a href="const.php?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete">'.img_delete().'</a>';
+		print '<input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
 		print "</td></tr>\n";
 
-		print '</form>';
 		print "\n";
 		$i++;
 	}
@@ -179,6 +203,16 @@ if ($result)
 
 
 print '</table>';
+
+print '<br>';
+print '<div id="updateconst" align="right" style="visibility:hidden;">';
+print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+print '</div>';
+print '<div id="delconst" align="right" style="visibility:hidden;">';
+print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+print '</div>';
+print "</form>\n";
+
 
 $db->close();
 

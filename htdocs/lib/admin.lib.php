@@ -321,7 +321,7 @@ function dolibarr_del_const($db, $name, $entity=1)
 	}
 	else
 	{
-		$this->error=$db->lasterror();
+		dol_print_error($db);
 		return -1;
 	}
 }
@@ -383,6 +383,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".addslashes($name)."'";
 	$sql.= " AND entity = ".$entity;
+	
 	dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 

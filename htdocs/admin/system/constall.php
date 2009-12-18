@@ -45,7 +45,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-print '<td>'.$langs->trans("Entity").'</td>';
+if (!$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT";
@@ -56,32 +56,30 @@ $sql.= ", type";
 $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
-$sql.= " WHERE entity IN (0,".$conf->entity.")";
+$sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 $sql.= " ORDER BY entity, name ASC";
 
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  $var=True;
-
-  while ($i < $num)
+	$num = $db->num_rows();
+	$i = 0;
+	$var=True;
+	
+	while ($i < $num)
     {
-      $obj = $db->fetch_object($result);
-      $var=!$var;
-
-      print '<tr '.$bc[$var].'>';
-      print '<td>'.$obj->name.'</td>'."\n";
-      print '<td>'.$obj->value.'</td>'."\n";
-      print '<td>'.$obj->entity.'</td>'."\n";
-      print "</tr>\n";
-
-      $i++;
+    	$obj = $db->fetch_object($result);
+    	$var=!$var;
+    	
+    	print '<tr '.$bc[$var].'>';
+    	print '<td>'.$obj->name.'</td>'."\n";
+    	print '<td>'.$obj->value.'</td>'."\n";
+    	if (!$user->entity) print '<td>'.$obj->entity.'</td>'."\n";
+    	print "</tr>\n";
+    	
+    	$i++;
     }
 }
-$var=!$var;
-
 
 print '</table>';
 

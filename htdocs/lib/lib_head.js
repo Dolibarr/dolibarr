@@ -701,3 +701,55 @@ function displayMessage(fieldId,message) {
 		textbox.value = message;
 	}
 }
+
+/*=================================================================
+Purpose:  To show an element
+Input:    fieldId
+Author:   Regis Houssin
+Licence:  GPL
+==================================================================*/
+function displayElement(fieldId) {
+	var elementId = document.getElementById(fieldId);
+	if (elementId.style.visibility == 'hidden') {
+		elementId.style.visibility = 'visible';
+	}
+}
+
+/*=================================================================
+Purpose:  To hide an element
+Input:    fieldId
+Author:   Regis Houssin
+Licence:  GPL
+==================================================================*/
+function hideElement(fieldId) {
+	var elementId = document.getElementById(fieldId);
+	if (elementId.style.visibility == 'visible') {
+		elementId.style.visibility = 'hidden';
+	}
+}
+
+/*=================================================================
+Purpose:  To check a checkbox
+Input:    fieldId
+Author:   Regis Houssin
+Licence:  GPL
+==================================================================*/
+function checkBox(boxId) {
+	var elementId = document.getElementById(boxId);
+	if (elementId.checked == false) {
+		elementId.checked = true;
+	}
+}
+
+/*=================================================================
+Purpose:  To uncheck a checkbox
+Input:    fieldId
+Author:   Regis Houssin
+Licence:  GPL
+==================================================================*/
+function uncheckBox(boxId) {
+	var elementId = document.getElementById(boxId);
+	if (elementId.checked == true) {
+		elementId.checked = false;
+	}
+}
