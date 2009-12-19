@@ -43,7 +43,7 @@ class UserGroup extends CommonObject
 	var $entity;		// Entity of group
 	var $nom;			// Name of group
 	var $note;			// Note on group
-	var $user;			// Users of group
+	var $member;	    // Group member
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
 
@@ -562,7 +562,7 @@ class UserGroup extends CommonObject
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_FULLNAME) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_NAME) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
 		if ($this->note && $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->user && $conf->global->LDAP_GROUP_FIELD_USERGROUP) $info[$conf->global->LDAP_GROUP_FIELD_USERGROUP] = $this->user;
+		if ($this->member && $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) $info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = $this->member;
 
 		return $info;
 	}
@@ -582,7 +582,7 @@ class UserGroup extends CommonObject
 
 		$this->nom='DOLIBARR GROUP SPECIMEN';
 		$this->note='This is a note';
-		$this->user=$conf->global->LDAP_KEY_USERS.'=DOLIBARR USER,'.$conf->global->LDAP_USER_DN;
+		$this->member=$conf->global->LDAP_KEY_USERS.'=DOLIBARR USER,'.$conf->global->LDAP_USER_DN;
 		$this->datec=time();
 		$this->datem=time();
 	}

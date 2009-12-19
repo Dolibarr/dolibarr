@@ -56,7 +56,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION',$_POST["fielddescription"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_USERGROUP',$_POST["fieldusergroup"],'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS',$_POST["fieldgroupmembers"],'chaine',0,'',$conf->entity)) $error++;
 
 	if ($error)
 	{
@@ -164,10 +164,10 @@ print '</tr>';
 
 // User group
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldUserGroup").'</td><td>';
-print '<input size="25" type="text" name="fieldusergroup" value="'.$conf->global->LDAP_GROUP_FIELD_USERGROUP.'">';
-print '</td><td>'.$langs->trans("LDAPFieldUserGroupExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_USERGROUP.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_USERGROUP?' checked="true"':'')."></td>";
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
+print '<input size="25" type="text" name="fieldgroupmembers" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'">';
+print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS?' checked="true"':'')."></td>";
 print '</tr>';
 
 
