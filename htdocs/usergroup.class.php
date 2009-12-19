@@ -40,9 +40,10 @@ class UserGroup extends CommonObject
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;			// Group id
-	var $entity;  // Entity of group
+	var $entity;		// Entity of group
 	var $nom;			// Name of group
 	var $note;			// Note on group
+	var $user;			// Users of group
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
 
@@ -561,6 +562,7 @@ class UserGroup extends CommonObject
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_FULLNAME) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_NAME) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
 		if ($this->note && $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
+		if ($this->user && $conf->global->LDAP_GROUP_FIELD_USERGROUP) $info[$conf->global->LDAP_GROUP_FIELD_USERGROUP] = $this->user;
 
 		return $info;
 	}
@@ -571,7 +573,7 @@ class UserGroup extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
+		global $conf, $user, $langs;
 
 		// Initialise parametres
 		$this->id=0;
@@ -580,6 +582,7 @@ class UserGroup extends CommonObject
 
 		$this->nom='DOLIBARR GROUP SPECIMEN';
 		$this->note='This is a note';
+		$this->user=$conf->global->LDAP_KEY_USERS.'=DOLIBARR USER,'.$conf->global->LDAP_USER_DN;
 		$this->datec=time();
 		$this->datem=time();
 	}
