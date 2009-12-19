@@ -562,7 +562,7 @@ class UserGroup extends CommonObject
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_FULLNAME) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_NAME) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
 		if ($this->note && $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->member && $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) $info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = $this->member;
+		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) $info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = $this->member;
 
 		return $info;
 	}
