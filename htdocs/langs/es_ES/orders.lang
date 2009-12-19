@@ -9,6 +9,7 @@ OrderLine = Línea de pedido
 OrderFollow = Seguimiento
 OrderContact = Contacos pedido
 OrderDate = Fecha pedido
+OrderToProcess = Pedido a procesar
 NewOrder = Nuevo pedido
 ToOrder = Realizar pedido
 MakeOrder = Realizar pedido

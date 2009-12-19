@@ -9,6 +9,7 @@ OrderLine = Línia de comanda
 OrderFollow = Seguiment
 OrderContact = Contactes comanda
 OrderDate = Data comanda
+OrderToProcess = Comanda a processar
 NewOrder = Nova comanda
 ToOrder = Realitzar comanda
 MakeOrder = Realitzar comanda
