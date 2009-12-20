@@ -45,7 +45,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-if (!$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
+if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';	// If superadmin or multicompany disabled
 print "</tr>\n";
 
 $sql = "SELECT";
@@ -56,25 +56,33 @@ $sql.= ", type";
 $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
-$sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-$sql.= " ORDER BY entity, name ASC";
-
-$result = $db->query($sql);
-if ($result)
+if (empty($conf->multicompany->enabled))
 {
-	$num = $db->num_rows();
+	// If no multicompany mode, admins can see global and their constantes
+	$sql.= " WHERE entity IN (0,".$conf->entity.")";
+}
+else
+{
+	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
+	if ($user->entity) $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+}
+$sql.= " ORDER BY entity, name ASC";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
 	$i = 0;
 	$var=True;
 	
 	while ($i < $num)
     {
-    	$obj = $db->fetch_object($result);
+    	$obj = $db->fetch_object($resql);
     	$var=!$var;
     	
     	print '<tr '.$bc[$var].'>';
     	print '<td>'.$obj->name.'</td>'."\n";
     	print '<td>'.$obj->value.'</td>'."\n";
-    	if (!$user->entity) print '<td>'.$obj->entity.'</td>'."\n";
+    	if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
     	print "</tr>\n";
     	
     	$i++;
