@@ -36,9 +36,11 @@ accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
 
+
 /*
  * Actions
  */
+
 if ($_POST["action"] == 'add')
 {
 	if (dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]) < 0)
@@ -61,6 +63,7 @@ if (($_POST["const"] && isset($_POST["update"]) && $_POST["update"] == $langs->t
 	}
 }
 
+// Delete several lines at once
 if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("Delete"))
 {
 	foreach($_POST["const"] as $const)
@@ -72,6 +75,15 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 				print $db->error();
 			}
 		}
+	}
+}
+
+// Delete line from delete picto
+if ($_GET["action"] == 'delete')
+{
+	if (dolibarr_del_const($db, $_GET["rowid"],$_GET["entity"]) < 0)
+	{
+		print $db->error();
 	}
 }
 
@@ -103,6 +115,7 @@ $form = new Form($db);
 
 # Affiche ligne d'ajout
 $var=false;
+print "\n";
 print '<form action="const.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
@@ -125,15 +138,12 @@ else
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
 print '<td align="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button"><br>';
+print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button">';
 print "</td>\n";
 print '</tr>';
-print '<tr '.$bc[$var].' class=value>';
-$colspan = 4;
-if ($conf->multicompany->enabled && !$user->entity) $colspan++;
-print '<td colspan="'.$colspan.'">&nbsp;</td></tr>';
 
 print '</form>';
+print "\n";
 
 print '<form action="'.DOL_URL_ROOT.'/admin/const.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -173,11 +183,15 @@ if ($result)
 
 		// Value
 		print '<td>';
-		print '<input type="text" class="flat" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'" onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');">';
+		print '<input type="text" class="flat" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
+		if ($conf->use_javascript_ajax) print ' onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');"';
+		print '>';
 		print '</td><td>';
 
 		// Note
-		print '<input type="text" class="flat" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'" onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');">';
+		print '<input type="text" class="flat" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
+		if ($conf->use_javascript_ajax) print ' onKeyPress="displayElement(\'updateconst\'); checkBox(\'check_'.$i.'\');"';
+		print '>';
 		print '</td>';
 
 		// Entity limit to superadmin
@@ -193,7 +207,13 @@ if ($result)
 		}
 
 		print '<td align="center">';
-		print '<input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
+		if ($conf->use_javascript_ajax) 
+		{
+			print '<input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
+			print ' &nbsp; ';
+		}
+		print '<a href="const.php?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete">'.img_delete().'</a>';
+
 		print "</td></tr>\n";
 
 		print "\n";
@@ -204,13 +224,17 @@ if ($result)
 
 print '</table>';
 
-print '<br>';
-print '<div id="updateconst" align="right" style="visibility:hidden;">';
-print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
-print '</div>';
-print '<div id="delconst" align="right" style="visibility:hidden;">';
-print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
-print '</div>';
+if ($conf->use_javascript_ajax)
+{
+	print '<br>';
+	print '<div id="updateconst" align="right" style="visibility:hidden;">';
+	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+	print '</div>';
+	print '<div id="delconst" align="right" style="visibility:hidden;">';
+	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+	print '</div>';
+}
+
 print "</form>\n";
 
 
