@@ -562,7 +562,23 @@ class UserGroup extends CommonObject
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_FULLNAME) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_NAME) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
 		if ($this->note && $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) $info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = join(',',$this->members);
+		if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) 
+		{
+			$valueofldapfield='';
+			foreach($this->members as $key=>$val)
+			{
+				$muser=new User($this->db);
+				$muser->id=$val;
+				$muser->fetch();
+				
+				$ldapuserid=$muser->login;
+				// TODO ldapuserid should depends on value $conf->global->LDAP_KEY_USERS;
+					
+				if ($valueofldapfield) $valueofldapfield.=' ';
+				$valueofldapfield.=$conf->global->LDAP_KEY_USERS.'='.$ldapuserid.','.$conf->global->LDAP_USER_DN;
+			}
+			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = $valueofldapfield;
+		}
 
 		return $info;
 	}
