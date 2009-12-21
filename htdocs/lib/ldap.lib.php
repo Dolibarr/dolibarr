@@ -120,8 +120,8 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 {
 	global $bc, $conf;
 
-	$count++;
-	if ($count > 1000) return -1;	// To avoid infinite loop
+	$count--;
+	if ($count == 0) return -1;	// To stop loop
 	if (! is_array($result)) return -1;
 
 	foreach($result as $key => $val)
