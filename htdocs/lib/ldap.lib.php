@@ -136,7 +136,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 		$lastkey[$level]=$key;
 
 		if (is_array($val))
-		{	
+		{
 			$hide=0;
 			if (! is_numeric($key))
 			{
