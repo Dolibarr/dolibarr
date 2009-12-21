@@ -45,7 +45,7 @@ class UserGroup extends CommonObject
 	var $note;			// Note on group
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
-	var $members=array(1,2);	// Array of users
+	var $members=array();	// Array of users
 
 	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
