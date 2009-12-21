@@ -576,7 +576,7 @@ class UserGroup extends CommonObject
 
 				$valueofldapfield[] = $conf->global->LDAP_KEY_USERS.'='.$ldapuserid.','.$conf->global->LDAP_USER_DN;
 			}
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = $valueofldapfield;
+			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
 		}
 
 		return $info;
