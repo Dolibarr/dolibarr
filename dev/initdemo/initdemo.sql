@@ -2807,7 +2807,7 @@ CREATE TABLE `llx_facture_fourn_det` (
   `description` text,
   `pu_ht` double(24,8) default NULL,
   `pu_ttc` double(24,8) default NULL,
-  `qty` smallint(6) default '1',
+  `qty` real,
   `tva_taux` double(24,8) default '0.00000000',
   `total_ht` double(24,8) default '0.00000000',
   `tva` double(24,8) default '0.00000000',
