@@ -67,7 +67,7 @@ class Ldap
 	 */
 	var $groups;
 	/**
-	 * Code erreur retourn� par le serveur Ldap
+	 * Code erreur retourne par le serveur Ldap
 	 */
 	var $ldapErrorCode;
 	/**
@@ -622,7 +622,159 @@ class Ldap
 		if ($result) return 1;
 		return -1;
 	}
+	
+    /**
+	 * 	\brief		Add a LDAP attribute in entry
+	 *	\param		dn			DN entry key
+	 *	\param		info		Attributes array
+	 *	\param		user		Objet user that create
+	 *	\return		int			<0 if KO, >0 if OK
+	 *	\remarks	Ldap object connect and bind must have been done
+	 */
+	function add_attribute($dn, $info, $user)
+	{
+		global $conf;
 
+		dol_syslog("Ldap::add_attribute dn=".$dn." info=".join(',',$info));
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
+
+		// Encode to LDAP page code
+		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
+		foreach($info as $key => $val)
+		{
+			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val,$this->ldapcharset);
+		}
+
+		$this->dump($dn,$info);
+
+		//print_r($info);
+		$result=@ldap_mod_add($this->connection, $dn, $info);
+
+		if ($result)
+		{
+			dol_syslog("Ldap::add_attribute successfull", LOG_DEBUG);
+			return 1;
+		}
+		else
+		{
+			$this->error=@ldap_error($this->connection);
+			dol_syslog("Ldap::add_attribute failed: ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+	
+    /**
+	 * 	\brief		Replace a LDAP attribute in entry
+	 *	\param		dn			DN entry key
+	 *	\param		info		Attributes array
+	 *	\param		user		Objet user that create
+	 *	\return		int			<0 if KO, >0 if OK
+	 *	\remarks	Ldap object connect and bind must have been done
+	 */
+	function replace_attribute($dn, $info, $user)
+	{
+		global $conf;
+
+		dol_syslog("Ldap::replace_attribute dn=".$dn." info=".join(',',$info));
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
+
+		// Encode to LDAP page code
+		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
+		foreach($info as $key => $val)
+		{
+			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val,$this->ldapcharset);
+		}
+
+		$this->dump($dn,$info);
+
+		//print_r($info);
+		$result=@ldap_mod_replace($this->connection, $dn, $info);
+
+		if ($result)
+		{
+			dol_syslog("Ldap::replace_attribute successfull", LOG_DEBUG);
+			return 1;
+		}
+		else
+		{
+			$this->error=@ldap_error($this->connection);
+			dol_syslog("Ldap::replace_attribute failed: ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+	
+    /**
+	 * 	\brief		Delete a LDAP attribute in entry
+	 *	\param		dn			DN entry key
+	 *	\param		info		Attributes array
+	 *	\param		user		Objet user that create
+	 *	\return		int			<0 if KO, >0 if OK
+	 *	\remarks	Ldap object connect and bind must have been done
+	 */
+	function delete_attribute($dn, $info, $user)
+	{
+		global $conf;
+
+		dol_syslog("Ldap::delete_attribute dn=".$dn." info=".join(',',$info));
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
+
+		// Encode to LDAP page code
+		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
+		foreach($info as $key => $val)
+		{
+			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val,$this->ldapcharset);
+		}
+
+		$this->dump($dn,$info);
+
+		//print_r($info);
+		$result=@ldap_mod_del($this->connection, $dn, $info);
+
+		if ($result)
+		{
+			dol_syslog("Ldap::delete_attribute successfull", LOG_DEBUG);
+			return 1;
+		}
+		else
+		{
+			$this->error=@ldap_error($this->connection);
+			dol_syslog("Ldap::delete_attribute failed: ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 * 	\brief		Build a LDAP message
