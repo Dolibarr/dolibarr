@@ -131,17 +131,18 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 		if ("$key" == "dn") continue;
 
 		if ("$val" == "objectclass") continue;
-		if ("$val" == $lastkey[$level]) continue;
+		//if ("$val" == $lastkey[$level]) continue;
 
 		$lastkey[$level]=$key;
 
 		if (is_array($val))
-		{
+		{	
 			$hide=0;
 			if (! is_numeric($key))
 			{
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
+				print '<tr '.$bc[$var].'>';
+				print '<td>';
 				print $key;
 				print '</td><td>';
 				if (strtolower($key) == 'userpassword') $hide=1;
@@ -153,8 +154,9 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 			$newstring=@htmlentities($val,ENT_COMPAT,'UTF-8');	// Make entity encoding
 			if ($hide) print preg_replace('/./i','*',$newstring);
 			else print $newstring;
-			print '</td></tr>';
+			if ("$val" == $lastkey[$level]) print '<br>';
 		}
+		if ("$val" != $lastkey[$level]) print '</td></tr>';
 	}
 	return 1;
 }
