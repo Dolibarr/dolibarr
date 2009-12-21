@@ -116,7 +116,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
  * @param unknown_type $hide
  * @return unknown
  */
-function show_ldap_content($result,$level,$count,$var,$hide=0)
+function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 {
 	global $bc, $conf;
 
@@ -129,9 +129,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 		if ("$key" == "objectclass") continue;
 		if ("$key" == "count") continue;
 		if ("$key" == "dn") continue;
-
 		if ("$val" == "objectclass") continue;
-		//if ("$val" == $lastkey[$level]) continue;
 
 		$lastkey[$level]=$key;
 
@@ -141,22 +139,23 @@ function show_ldap_content($result,$level,$count,$var,$hide=0)
 			if (! is_numeric($key))
 			{
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr '.$bc[$var].' valign="top">';
 				print '<td>';
 				print $key;
 				print '</td><td>';
 				if (strtolower($key) == 'userpassword') $hide=1;
 			}
-			show_ldap_content($val,$level+1,$count,$var,$hide);
+			show_ldap_content($val,$level+1,$count,$var,$hide,$val["count"]);
 		}
-		else
+		else if ($subcount)
 		{
+			$subcount--;
 			$newstring=@htmlentities($val,ENT_COMPAT,'UTF-8');	// Make entity encoding
 			if ($hide) print preg_replace('/./i','*',$newstring);
 			else print $newstring;
-			if ("$val" == $lastkey[$level]) print '<br>';
+			print '<br>';
 		}
-		if ("$val" != $lastkey[$level]) print '</td></tr>';
+		if ("$val" != $lastkey[$level] && !$subcount) print '</td></tr>';
 	}
 	return 1;
 }
