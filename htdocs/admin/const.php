@@ -212,7 +212,10 @@ if ($result)
 			print '<input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
 			print ' &nbsp; ';
 		}
-		print '<a href="const.php?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete">'.img_delete().'</a>';
+		else
+		{
+			print '<a href="const.php?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete">'.img_delete().'</a>';
+		}
 
 		print "</td></tr>\n";
 
