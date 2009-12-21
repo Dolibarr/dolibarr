@@ -29,7 +29,7 @@ if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php")
 
 /**
  *	\class      UserGroup
- *	\brief      Classe permettant la gestion des groupes d'utilisateur
+ *	\brief      Class to manage user groups
  */
 class UserGroup extends CommonObject
 {
@@ -43,9 +43,9 @@ class UserGroup extends CommonObject
 	var $entity;		// Entity of group
 	var $nom;			// Name of group
 	var $note;			// Note on group
-	var $member;	    // Group member
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
+	var $members=array();	// Array of users
 
 	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
@@ -65,7 +65,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	\brief      Charge un objet group avec toutes ces caracteristiques
+	 *	\brief      Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
 	 *	\param      id      id du groupe a charger
 	 *	\return		int		<0 si KO, >0 si OK
 	 */
@@ -111,7 +111,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 * 	\brief		Return array of groups of a user
+	 * 	\brief		Return array of groups for a particular user
 	 *	\param		usertosearch
 	 * 	\return		array of groups objects
 	 */
@@ -295,7 +295,7 @@ class UserGroup extends CommonObject
 			if ($perms=='lire')    $wherefordel.=" OR (module='$module')";
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
-			// \todo A virer quand sera gere par l'appelant
+			// TODO A virer quand sera gere par l'appelant
 			if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		}
 		else {
@@ -373,27 +373,27 @@ class UserGroup extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($this->db->query($sql))
 		{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  while ($i < $num)
-	  {
-	  	$row = $this->db->fetch_row();
+			$num = $this->db->num_rows();
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row();
 
-	  	if (strlen($row[1]) > 0)
-	  	{
+				if (strlen($row[1]) > 0)
+				{
 
-	  		if (strlen($row[2]) > 0)
-	  		{
-	  			$this->rights->$row[0]->$row[1]->$row[2] = 1;
-	  		}
-	  		else
-	  		{
-	  			$this->rights->$row[0]->$row[1] = 1;
-	  		}
+					if (strlen($row[2]) > 0)
+					{
+						$this->rights->$row[0]->$row[1]->$row[2] = 1;
+					}
+					else
+					{
+						$this->rights->$row[0]->$row[1] = 1;
+					}
 
-	  	}
-	  	$i++;
-	  }
+				}
+				$i++;
+			}
 		}
 
 		if ($module == '')
@@ -547,7 +547,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	\brief		Initialise tableau info (tableau des attributs LDAP)
+	 *	\brief		Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *	\return		array		Tableau info des attributs
 	 */
 	function _load_ldap_info()
@@ -562,7 +562,7 @@ class UserGroup extends CommonObject
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_FULLNAME) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
 		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_NAME) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
 		if ($this->note && $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) $info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = $this->member;
+		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) $info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = join(',',$this->members);
 
 		return $info;
 	}
@@ -582,9 +582,9 @@ class UserGroup extends CommonObject
 
 		$this->nom='DOLIBARR GROUP SPECIMEN';
 		$this->note='This is a note';
-		$this->member=$conf->global->LDAP_KEY_USERS.'=DOLIBARR USER,'.$conf->global->LDAP_USER_DN;
 		$this->datec=time();
 		$this->datem=time();
+		$this->members=array($user->id);	// Members of this group is just me
 	}
 }
 

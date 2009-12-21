@@ -1588,7 +1588,7 @@ class User extends CommonObject
 
 
 	/**
-	 *	\brief		Initialise tableau info (tableau des attributs LDAP)
+	 *	\brief		Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *	\return		array		Tableau info des attributs
 	 */
 	function _load_ldap_info()
