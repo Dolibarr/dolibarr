@@ -45,7 +45,7 @@ class UserGroup extends CommonObject
 	var $note;			// Note on group
 	var $datec;			// Creation date of group
 	var $datem;			// Modification date of group
-	var $members=array();	// Array of users
+	var $members=array(1,2,18);	// Array of users
 
 	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
@@ -564,7 +564,7 @@ class UserGroup extends CommonObject
 		if ($this->note && $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
 		if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS) 
 		{
-			$valueofldapfield='';
+			$valueofldapfield=array();
 			foreach($this->members as $key=>$val)
 			{
 				$muser=new User($this->db);
@@ -573,9 +573,8 @@ class UserGroup extends CommonObject
 				
 				$ldapuserid=$muser->login;
 				// TODO ldapuserid should depends on value $conf->global->LDAP_KEY_USERS;
-					
-				if ($valueofldapfield) $valueofldapfield.=' ';
-				$valueofldapfield.=$conf->global->LDAP_KEY_USERS.'='.$ldapuserid.','.$conf->global->LDAP_USER_DN;
+
+				$valueofldapfield[] = $conf->global->LDAP_KEY_USERS.'='.$ldapuserid.','.$conf->global->LDAP_USER_DN;
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = $valueofldapfield;
 		}

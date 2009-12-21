@@ -855,9 +855,7 @@ class Ldap
 	 *  Returns an array containing attributes and values for first record
 	 */
 	function getAttribute($dn,$filter)
-	{
-		print $dn.'<br>';
-		
+	{		
 		// Check parameters
 		if (! $this->connection)
 		{

@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("companies");
 $langs->load("ldap");
+$langs->load("users");
 
 // Protection quand utilisateur externe
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
@@ -173,9 +174,9 @@ if ($result > 0)
 	$info=$fgroup->_load_ldap_info();
 	$dn=$fgroup->_load_ldap_dn($info,1);
 	$search = "(".$fgroup->_load_ldap_dn($info,2).")";
-	$records=$ldap->search($dn,$search);
+	$records = $ldap->getAttribute($dn,$search);
 
-	//print_r($records);
+	//var_dump($records);
 
 	// Affichage arbre
 	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
@@ -186,7 +187,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,0,true);
+			$result=show_ldap_content($records,0,$records['count'],true);
 		}
 	}
 	else
