@@ -689,7 +689,7 @@ class Livraison extends CommonObject
 		{
 			if ($statut==-1) return $langs->trans('StatusSendingCanceled');
 			if ($statut==0)  return $langs->trans('StatusSendingDraft');
-			if ($statut==1)  return $langs->trans('StatusSendingValidated')
+			if ($statut==1)  return $langs->trans('StatusSendingValidated');
 		}
 		if ($mode==1)
 		{
