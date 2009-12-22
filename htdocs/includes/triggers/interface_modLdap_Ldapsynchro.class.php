@@ -85,10 +85,10 @@ class InterfaceLdapsynchro
     }
 
     /**
-     *      \brief      Fonction appel�e lors du d�clenchement d'un �v�nement Dolibarr.
-     *                  D'autres fonctions run_trigger peuvent etre pr�sentes dans includes/triggers
+     *      \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
+     *                  D'autres fonctions run_trigger peuvent etre presentes dans includes/triggers
      *      \param      action      Code de l'evenement
-     *      \param      object      Objet concern�
+     *      \param      object      Objet concerne
      *      \param      user        Objet user
      *      \param      lang        Objet lang
      *      \param      conf        Objet conf
@@ -96,8 +96,8 @@ class InterfaceLdapsynchro
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {
-        // Mettre ici le code � ex�cuter en r�action de l'action
-        // Les donn�es de l'action sont stock�es dans $object
+        // Mettre ici le code a executer en reaction de l'action
+        // Les donnees de l'action sont stockees dans $object
 
         if (! $conf->ldap->enabled) return 0;     // Module non actif
 
@@ -137,6 +137,15 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
+        		
+        		// Verify if entry exist
+        		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
+        		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
+        		$records=$ldap->search($container,$search);
+        		if (sizeof($records) && $records['count'] == 0)
+        		{
+        			$olddn = '';
+        		}
 
         		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
@@ -205,6 +214,15 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
+        		
+        	    // Verify if entry exist
+        		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
+        		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
+        		$records=$ldap->search($container,$search);
+        		if (sizeof($records) && $records['count'] == 0)
+        		{
+        			$olddn = '';
+        		}
 
         		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
@@ -266,6 +284,15 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
+        		
+        		// Verify if entry exist
+        		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
+        		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
+        		$records=$ldap->search($container,$search);
+        		if (sizeof($records) && $records['count'] == 0)
+        		{
+        			$olddn = '';
+        		}
 
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
@@ -380,6 +407,15 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
+        		
+        		// Verify if entry exist
+        		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
+        		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
+        		$records=$ldap->search($container,$search);
+        		if (sizeof($records) && $records['count'] == 0)
+        		{
+        			$olddn = '';
+        		}
 
         		$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
