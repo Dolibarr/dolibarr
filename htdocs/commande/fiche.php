@@ -2085,6 +2085,7 @@ else
 				$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 				$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
 				$sql.= " WHERE f.rowid = el.fk_target";
+				$sql.= " AND el.targettype = 'facture'";
 				$sql.= " AND el.fk_source = ".$commande->id;
 				$sql.= " AND el.sourcetype = '".$commande->element."'";
 

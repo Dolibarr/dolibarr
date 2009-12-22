@@ -557,6 +557,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
 		$sql.= " WHERE f.rowid = el.fk_target";
+		$sql.= " AND el.targettype = 'facture'";
 		$sql.= " AND el.fk_source = ". $commande->id;
 		$sql.= " AND el.sourcetype = '".$commande->element."'";
 
@@ -602,7 +603,6 @@ if ($id > 0 || ! empty($ref))
 		$somethingshown=$formactions->showactions($commande,'order',$socid);
 
 		print "</td></tr></table>";
-
 
 		show_list_sending_receive('commande',$commande->id);
 	}
