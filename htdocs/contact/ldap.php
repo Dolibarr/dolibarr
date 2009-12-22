@@ -175,10 +175,10 @@ if ($result > 0)
 	$search = "(".$contact->_load_ldap_dn($info,2).")";
 	$records=$ldap->getAttribute($dn,$search);
 
-	//print_r($records);
+	//var_dump($records);
 
 	// Affichage arbre
-	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
+	if (sizeof($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
