@@ -197,12 +197,12 @@ if ($result > 0)
 	$info=$fuser->_load_ldap_info();
 	$dn=$fuser->_load_ldap_dn($info,1);
 	$search = "(".$fuser->_load_ldap_dn($info,2).")";
-	$records=$ldap->search($dn,$search);
+	$records=$ldap->getAttribute($dn,$search);
 
 	//print_r($records);
 
 	// Affichage arbre
-	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
+	if (sizeof($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
@@ -210,7 +210,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,0,true);
+			$result=show_ldap_content($records,0,$records['count'],true);
 		}
 	}
 	else

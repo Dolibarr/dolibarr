@@ -53,16 +53,6 @@ if (! $result)
 	dol_print_error($db,"Failed to get adherent: ".$adh->error);
 	exit;
 }
-$adh->fetch_optionals($rowid);
-
-$adht = new AdherentType($db);
-$result=$adht->fetch($adh->typeid);
-if (! $result)
-{
-	dol_print_error($db,"Failed to get type of adherent: ".$adht->error);
-	exit;
-}
-
 
 /*
  * Actions
@@ -206,12 +196,12 @@ if ($result > 0)
 	$info=$adh->_load_ldap_info();
 	$dn=$adh->_load_ldap_dn($info,1);
 	$search = "(".$adh->_load_ldap_dn($info,2).")";
-	$records=$ldap->search($dn,$search);
+	$records=$ldap->getAttribute($dn,$search);
 
 	//print_r($records);
 
 	// Affichage arbre
-	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
+	if (sizeof($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
@@ -219,7 +209,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,0,true);
+			$result=show_ldap_content($records,0,$records['count'],true);
 		}
 	}
 	else
