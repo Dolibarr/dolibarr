@@ -395,9 +395,9 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	$langs->load("boxes");
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms,";
-	$sql.= " s.nom, s.rowid as socid,";
-	$sql.= " sum(pf.amount) as am";
+	$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye";
+	$sql.= ", s.nom, s.rowid as socid";
+	$sql.= ", SUM(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -850,7 +850,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 }
 
 /*
- * Factures fournisseurs impay�es
+ * Factures fournisseurs impayees
  */
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {
@@ -864,7 +864,8 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = ff.fk_soc";
 	$sql.= " AND s.entity = ".$conf->entity;
-	$sql.= " AND ff.paye=0 AND ff.fk_statut = 1";
+	$sql.= " AND ff.paye = 0";
+	$sql.= " AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
 	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, s.nom, s.rowid";
@@ -930,7 +931,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 
 
 
-// \todo Mettre ici recup des actions en rapport avec la compta
+// TODO Mettre ici recup des actions en rapport avec la compta
 $resql = 0;
 if ($resql)
 {
