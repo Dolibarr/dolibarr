@@ -186,7 +186,7 @@ if ($_GET['action'] == 'valid')
 	// On verifie signe facture
 	if ($facture->type == 2)
 	{
-		// Si avoir, le signe doit etre n�gatif
+		// Si avoir, le signe doit etre negatif
 		if ($facture->total_ht >= 0)
 		{
 			$mesg='<div class="error">'.$langs->trans("ErrorInvoiceAvoirMustBeNegative").'</div>';
@@ -572,6 +572,19 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->type              = 2;
 
 			$facid = $facture->create($user);
+			
+			// Add predefined lines
+			for ($i = 1; $i <= $NBLINES; $i++)
+			{
+				if ($_POST['idprod'.$i])
+				{
+					$product=new Product($db);
+					$product->fetch($_POST['idprod'.$i]);
+					$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
+					$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
+					$result=$facture->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
+				}
+			}
 		}
 	}
 
