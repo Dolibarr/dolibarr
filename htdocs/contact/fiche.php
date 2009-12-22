@@ -43,9 +43,9 @@ $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['socid_id']))
 {
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+	$socid = $_GET['socid'] = $_GET['socid_id'];
+	$socid = $_POST['socid'] = $_POST['socid_id'];
+	$socid = $_REQUEST['socid'] = $_REQUEST['socid_id'];
 }
 
 // Security check
@@ -523,18 +523,17 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 	// Company
+	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
 	if ($contact->socid > 0)
 	{
 		$objsoc->fetch($contact->socid);
-
-		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+		print $objsoc->getNomUrl(1);
 	}
 	else
 	{
-		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
 		print $langs->trans("ContactNotLinkedToCompany");
-		print '</td></tr>';
 	}
+	print '</td></tr>';
 
 	// Civility
 	print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
