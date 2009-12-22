@@ -3374,6 +3374,7 @@ else
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'propal as p';
 				$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
 				$sql.= " WHERE el.fk_source = p.rowid";
+				$sql.= " AND el.sourcetype = 'propal'";
 				$sql.= " AND el.fk_target = ".$fac->id;
 				$sql.= " AND el.targettype = '".$fac->element."'";
 
@@ -3432,6 +3433,7 @@ else
 					$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 					$sql.= ', '.MAIN_DB_PREFIX.'element_element as el';
 					$sql.= ' WHERE el.fk_source = c.rowid';
+					$sql.= " AND el.sourcetype = 'commande'";
 					$sql.= " AND el.fk_target = ".$fac->id;
 					$sql.= " AND el.targettype = '".$fac->element."'";
 					
@@ -3680,48 +3682,48 @@ else
 		}
 		if ($_GET['search_ref'])
 		{
-			$sql .= ' AND f.facnumber like \'%'.addslashes(trim($_GET['search_ref'])).'%\'';
+			$sql.= ' AND f.facnumber like \'%'.addslashes(trim($_GET['search_ref'])).'%\'';
 		}
 		if ($_GET['search_societe'])
 		{
-			$sql .= ' AND s.nom like \'%'.addslashes(trim($_GET['search_societe'])).'%\'';
+			$sql.= ' AND s.nom like \'%'.addslashes(trim($_GET['search_societe'])).'%\'';
 		}
 		if ($_GET['search_montant_ht'])
 		{
-			$sql .= ' AND f.total = \''.addslashes(trim($_GET['search_montant_ht'])).'\'';
+			$sql.= ' AND f.total = \''.addslashes(trim($_GET['search_montant_ht'])).'\'';
 		}
 		if ($_GET['search_montant_ttc'])
 		{
-			$sql .= ' AND f.total_ttc = \''.addslashes(trim($_GET['search_montant_ttc'])).'\'';
+			$sql.= ' AND f.total_ttc = \''.addslashes(trim($_GET['search_montant_ttc'])).'\'';
 		}
 		if ($month > 0)
 		{
 			if ($year > 0)
-			$sql .= " AND date_format(f.datef, '%Y-%m') = '$year-$month'";
+			$sql.= " AND date_format(f.datef, '%Y-%m') = '$year-$month'";
 			else
-			$sql .= " AND date_format(f.datef, '%m') = '$month'";
+			$sql.= " AND date_format(f.datef, '%m') = '$month'";
 		}
 		if ($year > 0)
 		{
-			$sql .= ' AND date_format(f.datef, \'%Y\') = '.$year;
+			$sql.= ' AND date_format(f.datef, \'%Y\') = '.$year;
 		}
 		if ($_POST['sf_ref'])
 		{
-			$sql .= ' AND f.facnumber like \'%'.addslashes(trim($_POST['sf_ref'])) . '%\'';
+			$sql.= ' AND f.facnumber like \'%'.addslashes(trim($_POST['sf_ref'])) . '%\'';
 		}
 		if ($sall)
 		{
-			$sql .= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
+			$sql.= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
 		}
-		$sql .= ' GROUP BY f.rowid';
+		$sql.= ' GROUP BY f.rowid';
 
-		$sql .= ' ORDER BY ';
+		$sql.= ' ORDER BY ';
 		$listfield=explode(',',$sortfield);
 		foreach ($listfield as $key => $value)
 		$sql.= $listfield[$key].' '.$sortorder.',';
-		$sql .= ' f.rowid DESC ';
+		$sql.= ' f.rowid DESC ';
 
-		$sql .= $db->plimit($limit+1,$offset);
+		$sql.= $db->plimit($limit+1,$offset);
 
 		$resql = $db->query($sql);
 		if ($resql)
