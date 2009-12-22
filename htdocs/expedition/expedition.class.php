@@ -708,8 +708,8 @@ class Expedition extends CommonObject
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto(this->statuts[$statut],'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto(this->statuts[$statut],'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==0) return img_picto($this->statuts[$statut],'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($this->statuts[$statut],'statut4').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
