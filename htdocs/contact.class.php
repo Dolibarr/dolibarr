@@ -416,7 +416,7 @@ class Contact extends CommonObject
 				$this->prenom         = $obj->firstname;
 
 				$this->address        = $obj->address?$obj->address:$obj->socaddress;
-				$this->adresse        = $obj->address; // TODO obsolete
+				$this->adresse        = $obj->address?$obj->address:$obj->socaddress; // TODO obsolete
 				$this->cp             = $obj->cp?$obj->cp:$obj->soccp;
 				$this->ville          = $obj->ville?$obj->ville:$obj->soccity;
 				$this->fk_pays        = $obj->fk_pays;
