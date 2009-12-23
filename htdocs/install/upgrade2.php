@@ -237,9 +237,11 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 
 		// Script for -> V2.8
-		$afterversionarray=array('2.7.9');
-		$beforeversionarray=array('2.8.9');
-		if (versioncompare($versionto,$afterversionarray) >= 0 && versioncompare($versionto,$beforeversionarray) <= 0)
+		$versiontoarray=explode('.',$versionto);
+		$afterversionarray=explode('.','2.7.9');
+		$beforeversionarray=explode('.','2.8.9');
+		//print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
+		if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
 		{
 			migrate_relationship_tables($db,$langs,$conf,'co_exp','fk_commande','commande','fk_expedition','shipping');
 
