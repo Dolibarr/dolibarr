@@ -392,7 +392,7 @@ class Contact extends CommonObject
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		$sql.= " c.priv, c.note,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
-		$sql.= " s.nom as socname";
+		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
@@ -415,10 +415,10 @@ class Contact extends CommonObject
 				$this->nom            = $obj->name;
 				$this->prenom         = $obj->firstname;
 
-				$this->address        = $obj->address;
-				$this->adresse        = $obj->address; // Todo: uniformiser le nom des variables
-				$this->cp             = $obj->cp;
-				$this->ville          = $obj->ville;
+				$this->address        = $obj->address?$obj->address:$obj->socaddress;
+				$this->adresse        = $obj->address; // TODO obsolete
+				$this->cp             = $obj->cp?$obj->cp:$obj->soccp;
+				$this->ville          = $obj->ville?$obj->ville:$obj->soccity;
 				$this->fk_pays        = $obj->fk_pays;
 				$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
 				$this->pays           = ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");

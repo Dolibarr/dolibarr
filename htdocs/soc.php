@@ -84,7 +84,8 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	{
 		$soc->nom                   = $_POST["nom"];
 	}
-	$soc->adresse               = $_POST["adresse"];
+	$soc->address               = $_POST["adresse"];
+	$soc->adresse               = $_POST["adresse"]; // TODO obsolete
 	$soc->cp                    = $_POST["cp"];
 	$soc->ville                 = $_POST["ville"];
 	$soc->pays_id               = $_POST["pays_id"];
@@ -165,7 +166,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 					$contact->civilite_id = $soc->civilite_id;
 					$contact->name=$soc->nom_particulier;
 					$contact->firstname=$soc->prenom;
-					$contact->address=$soc->adresse;
+					$contact->address=$soc->address;
 					$contact->cp=$soc->cp;
 					$contact->ville=$soc->ville;
 					$contact->fk_pays=$soc->fk_pays;
@@ -323,6 +324,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$soc->fournisseur=$_POST["fournisseur"]?$_POST["fournisseur"]:$soc->fournisseur;
 		$soc->code_fournisseur=$_POST["code_fournisseur"];
 		$soc->adresse=$_POST["adresse"];
+		$soc->address=$_POST["adresse"]; // TODO obsolete
 		$soc->cp=$_POST["cp"];
 		$soc->ville=$_POST["ville"];
 		$soc->departement_id=$_POST["departement_id"];
@@ -468,7 +470,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		}
 
 		print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
-		print $soc->adresse;
+		print $soc->address;
 		print '</textarea></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">';
@@ -671,7 +673,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			$soc->code_client=$_POST["code_client"];
 			$soc->fournisseur=$_POST["fournisseur"];
 			$soc->code_fournisseur=$_POST["code_fournisseur"];
-			$soc->adresse=$_POST["adresse"];
+			$soc->adresse=$_POST["adresse"]; // TODO obsolete
+			$soc->address=$_POST["adresse"];
 			$soc->cp=$_POST["cp"];
 			$soc->ville=$_POST["ville"];
 			$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
@@ -822,7 +825,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 
 		print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
-		print $soc->adresse;
+		print $soc->address;
 		print '</textarea></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">';
@@ -1012,7 +1015,7 @@ else
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
+	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 
 	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
 	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->ville."</td></tr>";

@@ -660,7 +660,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// Sender properties
 			$carac_emetteur = '';
-			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->address);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
 			$carac_emetteur .= "\n";
 			// Tel
@@ -693,7 +693,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$carac_client_name = $outputlangs->convToOutputCharset($object->client->nom);
 
-			$carac_client=$outputlangs->convToOutputCharset($object->client->adresse);
+			$carac_client=$outputlangs->convToOutputCharset($object->client->address);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
 			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 

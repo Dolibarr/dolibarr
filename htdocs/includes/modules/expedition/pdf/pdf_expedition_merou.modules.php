@@ -432,7 +432,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		// Sender properties
 		$carac_emetteur = '';
-		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 		$carac_emetteur .= "\n";
 		// Tel
@@ -483,7 +483,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$blSocY+=3;
 		//Adresse Client
 		//Gestion des Retours chariots
-		$Out=explode("\n",$outputlangs->convToOutputCharset($this->expediteur->adresse));
+		$Out=explode("\n",$outputlangs->convToOutputCharset($this->expediteur->address));
 		for ($i=0;$i<count($Out);$i++) {
 			$pdf->SetXY($blExpX,$Yoff+$blSocY);
 			$pdf->MultiCell($blW,5,$Out[$i],  0, 'L');
@@ -555,7 +555,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			}
 
 			// Caracteristiques client
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
 			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 		}

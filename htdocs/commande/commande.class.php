@@ -139,7 +139,8 @@ class Commande extends CommonObject
 		$this->cond_reglement_id    = $propal->cond_reglement_id;
 		$this->mode_reglement_id    = $propal->mode_reglement_id;
 		$this->date_livraison       = $propal->date_livraison;
-		$this->adresse_livraison_id = $propal->adresse_livraison_id;
+		$this->fk_delivery_address  = $propal->fk_delivery_address;
+		$this->adresse_livraison_id = $propal->adresse_livraison_id; // TODO obsolete
 		$this->contact_id           = $propal->contactid;
 		$this->ref_client           = $propal->ref_client;
 		$this->note                 = $propal->note;
@@ -554,7 +555,7 @@ class Commande extends CommonObject
 		$sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
 		$sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
-		$sql.= ", ".($this->adresse_livraison_id>0?$this->adresse_livraison_id:'NULL');
+		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
 		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ", '".$this->remise_percent."'";
 		$sql.= ", ".$conf->entity;
@@ -1549,16 +1550,17 @@ class Commande extends CommonObject
 	 *      \param      adresse_livraison      Adresse de livraison
 	 *      \return     int         		<0 si ko, >0 si ok
 	 */
-	function set_adresse_livraison($user, $adresse_livraison)
+	function set_adresse_livraison($user, $fk_delivery_address)
 	{
 		if ($user->rights->commande->creer)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$adresse_livraison."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$fk_delivery_address."'";
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql) )
 			{
-				$this->adresse_livraison_id = $adresse_livraison;
+				$this->adresse_livraison_id = $fk_delivery_address; // TODO obsolete
+				$this->fk_delivery_address = $fk_delivery_address;
 				return 1;
 			}
 			else

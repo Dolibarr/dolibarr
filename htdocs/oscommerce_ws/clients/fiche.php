@@ -100,7 +100,7 @@ if (($_GET["action"] == 'import' ) && ( $_GET["custid"] != '' ) && ($user->right
 
 		/* initialisation */
 		$societe->nom = $osc_cust->osc_custsoc.' '.$osc_cust->osc_custlastname;
-		$societe->adresse = $osc_cust->osc_cutstreet;
+		$societe->address = $osc_cust->osc_cutstreet;
 		$societe->cp = $osc_cust->osc_custpostcode;
 		$societe->ville = $osc_cust->osc_custcity;
 		$societe->departement_id = 0;

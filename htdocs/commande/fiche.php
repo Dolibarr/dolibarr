@@ -167,7 +167,8 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
 	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
 	$commande->date_livraison       = $datelivraison;
-	$commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
+	$commande->fk_delivery_address  = $_POST['fk_delivery_address'];
+	$commande->adresse_livraison_id = $_POST['fk_delivery_address']; // TODO obsolete
 	$commande->contactid            = $_POST['contactidp'];
 
 	$NBLINES=8;
@@ -1005,7 +1006,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			{
 				// Link to edit: $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?action=create','',$soc->id,'adresse_livraison_id','commande','');
 				print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
-				$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
+				$numaddress = $html->select_adresse_livraison($soc->fk_delivery_address, $_GET['socid'],'fk_delivery_address',1);
 				print ' &nbsp; <a href="../comm/adresse_livraison.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
 				print '</td></tr>';
 			}
@@ -1442,11 +1443,11 @@ else
 
 				if ($_GET['action'] == 'editdelivery_adress')
 				{
-					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'fk_delivery_address','commande',$commande->id);
 				}
 				else
 				{
-					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+					$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
 				}
 				print '</td></tr>';
 			}

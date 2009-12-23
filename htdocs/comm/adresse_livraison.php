@@ -55,6 +55,7 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $livraison->label                 = ($_POST["label"]!=$langs->trans('RequiredField')?$_POST["label"]:'');
     $livraison->nom                   = ($_POST["nom"]!=$langs->trans('RequiredField')?$_POST["nom"]:'');
     $livraison->adresse               = $_POST["adresse"];
+    $livraison->address               = $_POST["adresse"]; // TODO obsolete
     $livraison->cp                    = $_POST["cp"];
     $livraison->ville                 = $_POST["ville"];
     $livraison->pays_id               = $_POST["pays_id"];
@@ -184,7 +185,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $livraison->socid=$_POST["socid"];
             $livraison->label=$_POST["label"];
             $livraison->nom=$_POST["nom"];
-            $livraison->adresse=$_POST["adresse"];
+            $livraison->adresse=$_POST["adresse"]; // TODO obsolete
+            $livraison->address=$_POST["adresse"];
             $livraison->cp=$_POST["cp"];
             $livraison->ville=$_POST["ville"];
             $livraison->tel=$_POST["tel"];
@@ -233,7 +235,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" id="nom" value="'.($livraison->nom?$livraison->nom:$langs->trans('RequiredField')).'" '.addHelpMessage("nom",$langs->trans('RequiredField')).'></td></tr>';
 
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
-        print $livraison->adresse;
+        print $livraison->address;
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$livraison->cp.'">';
@@ -290,7 +292,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $livraison->socid=$_POST["socid"];
             $livraison->label=$_POST["label"];
             $livraison->nom=$_POST["nom"];
-            $livraison->adresse=$_POST["adresse"];
+            $livraison->adresse=$_POST["adresse"]; // TODO obsolete
+            $livraison->address=$_POST["adresse"];
             $livraison->zip=$_POST["zip"];
             $livraison->ville=$_POST["ville"];
             $livraison->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
@@ -337,7 +340,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$livraison->nom.'"></td></tr>';
 
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
-        print $livraison->adresse;
+        print $livraison->address;
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$livraison->cp.'">';
@@ -411,7 +414,7 @@ else
 			print '<td valign="top" colspan="2" width="50%" rowspan="6">'.$langs->trans('Note').' :<br>'.nl2br($livraison->lignes[$i]->note).'</td></tr>';
 			print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$livraison->lignes[$i]->nom.'</td></tr>';
 
-			print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($livraison->lignes[$i]->adresse)."</td></tr>";
+			print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($livraison->lignes[$i]->address)."</td></tr>";
 
 			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$livraison->lignes[$i]->cp."</td></tr>";
 			print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$livraison->lignes[$i]->ville."</td></tr>";

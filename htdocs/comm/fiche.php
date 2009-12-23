@@ -177,7 +177,7 @@ if ($socid > 0)
 		print '</td></tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."</td></tr>";
+	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($objsoc->address)."</td></tr>";
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";

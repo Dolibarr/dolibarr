@@ -85,6 +85,7 @@ class Propal extends CommonObject
 	var $note;
 	var $note_public;
 	var $adresse_livraison_id;
+	var $fk_delivery_address;
 	var $adresse;
 
 	var $products=array();
@@ -642,10 +643,10 @@ class Propal extends CommonObject
 				}
 
 				// Affectation de l'adresse de livraison
-				if ($resql && $this->adresse_livraison_id)
+				if ($resql && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-					$sql.= " SET fk_adresse_livraison = ".$this->adresse_livraison_id;
+					$sql.= " SET fk_adresse_livraison = ".$this->fk_delivery_address;
 					$sql.= " WHERE ref = '".$this->ref."'";
 					$sql.= " AND entity = ".$conf->entity;
 
@@ -844,7 +845,8 @@ class Propal extends CommonObject
 				$this->datep                = $this->db->jdate($obj->dp);
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
-				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
+				$this->adresse_livraison_id = $obj->fk_adresse_livraison; // TODO obsolete
 
 				$this->mode_reglement_id       = $obj->fk_mode_reglement;
 				$this->mode_reglement_code     = $obj->mode_reglement_code;
@@ -1074,7 +1076,7 @@ class Propal extends CommonObject
 
 			if ($this->db->query($sql) )
 			{
-				$this->adresse_livraison_id = $adresse_livraison;
+				$this->fk_delivery_address = $adresse_livraison;
 				return 1;
 			}
 			else

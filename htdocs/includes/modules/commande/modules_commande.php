@@ -22,11 +22,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/commande/modules_commande.php
- \ingroup    commande
- \brief      Fichier contenant la classe m�re de generation des commandes en PDF
- et la classe m�re de num�rotation des commandes
- \version    $Id$
+ *  \file			htdocs/includes/modules/commande/modules_commande.php
+ *  \ingroup		commande
+ *  \brief			Fichier contenant la classe mere de generation des commandes en PDF
+ *  				et la classe mere de numerotation des commandes
+ *  \version    	$Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -36,15 +36,15 @@ require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
 
 /**
- \class      ModelePDFCommandes
- \brief      Classe m�re des mod�les de commandes
+ *  \class      ModelePDFCommandes
+ *  \brief      Classe mere des modeles de commandes
  */
 class ModelePDFCommandes extends FPDF
 {
 	var $error='';
 
 	/**
-	 *	\brief 	Renvoi le dernier message d'erreur de cr�ation de PDF de commande
+	 *	\brief 	Renvoi le dernier message d'erreur de creation de PDF de commande
 	 */
 	function pdferror()
 	{
@@ -52,7 +52,7 @@ class ModelePDFCommandes extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des mod�les actifs
+	 *      \brief      Renvoi la liste des modeles actifs
 	 *      \return    array        Tableau des modeles (cle=id, valeur=libelle)
 	 */
 	function liste_modeles($db)
@@ -91,8 +91,8 @@ class ModelePDFCommandes extends FPDF
 
 
 /**
- \class      ModeleNumRefCommandes
- \brief      Classe m�re des mod�les de num�rotation des r�f�rences de commandes
+ *  \class      ModeleNumRefCommandes
+ *  \brief      Classe mere des modeles de numerotation des references de commandes
  */
 
 class ModeleNumRefCommandes
@@ -107,7 +107,7 @@ class ModeleNumRefCommandes
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de num�rotation
+	/**     \brief      Renvoi la description par defaut du modele de numerotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -117,7 +117,7 @@ class ModeleNumRefCommandes
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de num�rotation
+	/**     \brief      Renvoi un exemple de numerotation
 	 *      \return     string      Example
 	 */
 	function getExample()
@@ -127,8 +127,8 @@ class ModeleNumRefCommandes
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette num�rotation de fonctionner.
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -136,7 +136,7 @@ class ModeleNumRefCommandes
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribu�e
+	/**     \brief      Renvoi prochaine valeur attribuee
 	 *      \return     string      Valeur
 	 */
 	function getNextValue()
@@ -161,12 +161,12 @@ class ModeleNumRefCommandes
 }
 
 
-/*
- \brief      Cr�e un bon de commande sur disque en fonction d'un mod�le
- \param	    db  			objet base de donn�e
- \param	    id				id de la propale � cr�er
- \param	    modele			force le modele � utiliser ('' to not force)
- \param		outputlangs		objet lang a utiliser pour traduction
+/**
+ *  \brief      Cree un bon de commande sur disque en fonction d'un modele
+ *  \param	    db  			objet base de donnee
+ *  \param	    id				id de la propale a creer
+ *  \param	    modele			force le modele a utiliser ('' to not force)
+ *  \param		outputlangs		objet lang a utiliser pour traduction
  */
 function commande_pdf_create($db, $id, $modele, $outputlangs)
 {
@@ -177,7 +177,7 @@ function commande_pdf_create($db, $id, $modele, $outputlangs)
 	$modelisok=0;
 	$liste=array();
 
-	// Positionne modele sur le nom du modele de commande � utiliser
+	// Positionne modele sur le nom du modele de commande a utiliser
 	$file = "pdf_".$modele.".modules.php";
 	if ($modele && file_exists($dir.$file))   $modelisok=1;
 
@@ -194,7 +194,7 @@ function commande_pdf_create($db, $id, $modele, $outputlangs)
 	{
 		$model=new ModelePDFCommandes();
 		$liste=$model->liste_modeles($db);
-		$modele=key($liste);        // Renvoie premiere valeur de cl� trouv� dans le tableau
+		$modele=key($liste);        // Renvoie premiere valeur de cle trouve dans le tableau
 		$file = "pdf_".$modele.".modules.php";
 		if (file_exists($dir.$file))   $modelisok=1;
 	}
@@ -240,10 +240,10 @@ function commande_pdf_create($db, $id, $modele, $outputlangs)
 }
 
 /**
- \brief      Supprime l'image de pr�visualitation, pour le cas de r�g�n�ration de commande
- \param	    db  		objet base de donn�e
- \param	    commandeid	id de la commande � effacer
- \param     commanderef r�f�rence de la commande si besoin
+ *  \brief      Supprime l'image de previsualitation, pour le cas de regeneration de commande
+ *  \param	    db  		objet base de donnee
+ *  \param	    commandeid	id de la commande a effacer
+ *  \param      commanderef reference de la commande si besoin
  */
 function commande_delete_preview($db, $commandeid, $commanderef='')
 {

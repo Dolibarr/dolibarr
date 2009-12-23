@@ -215,7 +215,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				// Sender properties
 				$carac_emetteur = '';
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 				$carac_emetteur .= "\n";
 				// Tel
@@ -240,7 +240,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(86,5, $outputlangs->convToOutputCharset($fichinter->client->nom));
 				$pdf->SetFont('Arial','B',11);
 				$pdf->SetXY(102,$pdf->GetY());
-				$pdf->MultiCell(66,5, $outputlangs->convToOutputCharset($fichinter->client->adresse) . "\n" . $outputlangs->convToOutputCharset($fichinter->client->cp) . " " . $outputlangs->convToOutputCharset($fichinter->client->ville));
+				$pdf->MultiCell(66,5, $outputlangs->convToOutputCharset($fichinter->client->address) . "\n" . $outputlangs->convToOutputCharset($fichinter->client->cp) . " " . $outputlangs->convToOutputCharset($fichinter->client->ville));
 				$pdf->rect(100, 40, 100, 40);
 
 

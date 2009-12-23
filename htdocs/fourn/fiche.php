@@ -81,7 +81,7 @@ if ( $societe->fetch($socid) )
 		print '</td></tr>';
 	}
 
-	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
 	print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';

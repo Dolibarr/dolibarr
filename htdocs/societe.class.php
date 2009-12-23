@@ -49,7 +49,8 @@ class Societe extends CommonObject
 	var $nom_particulier;
 	var $prenom;
 	var $particulier;
-	var $adresse;
+	var $address;
+	var $adresse; // TODO obsolete
 	var $cp;
 	var $ville;
 	var $departement_id;
@@ -328,7 +329,8 @@ class Societe extends CommonObject
 		$this->id=$id;
 		$this->capital=trim($this->capital);
 		$this->nom=trim($this->nom);
-		$this->adresse=trim($this->adresse);
+		$this->adresse=trim($this->adresse); // TODO obsolete
+		$this->address=trim($this->address);
 		$this->cp=trim($this->cp);
 		$this->ville=trim($this->ville);
 		$this->departement_id=trim($this->departement_id);
@@ -374,7 +376,7 @@ class Societe extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
 			$sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
 			$sql.= ",datea = ".$this->db->idate(mktime());
-			$sql.= ",address = '" . addslashes($this->adresse) ."'";
+			$sql.= ",address = '" . addslashes($this->address) ."'";
 
 			$sql.= ",cp = ".($this->cp?"'".$this->cp."'":"null");
 			$sql.= ",ville = ".($this->ville?"'".addslashes($this->ville)."'":"null");
@@ -560,10 +562,12 @@ class Societe extends CommonObject
 				$this->date_update = $obj->date_update;
 
 				$this->nom = $obj->nom;
-				$this->adresse = $obj->address;
+				$this->address = $obj->address;
+				$this->adresse = $obj->address; // TODO obsolete
 				$this->cp = $obj->cp;
 				$this->ville = $obj->ville;
-				$this->adresse_full = $obj->address . "\n". $obj->cp . ' '. $obj->ville;
+				$this->adresse_full = $obj->address . "\n". $obj->cp . ' '. $obj->ville; // TODO obsolete
+				$this->full_address = $obj->address . "\n". $obj->cp . ' '. $obj->ville;
 
 				$this->pays_id = $obj->fk_pays;
 				$this->pays_code = $obj->fk_pays?$obj->pays_code:'';
@@ -683,7 +687,7 @@ class Societe extends CommonObject
 			$this->societe        = $obj->socname;
 			$this->nom            = $obj->nom;
 			$this->address        = $obj->address;
-			$this->adresse        = $obj->address; //Todo: uniformiser le nom des champs
+			$this->adresse        = $obj->address; // TODO obsolete
 			$this->cp             = $obj->cp;
 			$this->ville          = $obj->ville;
 			$this->pays_id        = $obj->fk_pays;
@@ -2001,7 +2005,8 @@ class Societe extends CommonObject
 		$this->client = 1;						// A member is a customer by default
 		$this->code_client = -1;
 		$this->code_fournisseur = -1;
-		$this->adresse=$member->adresse;
+		$this->adresse=$member->adresse; // TODO obsolete
+		$this->address=$member->adresse;
 		$this->cp=$member->cp;
 		$this->ville=$member->ville;
 		$this->pays_code=$member->pays_code;

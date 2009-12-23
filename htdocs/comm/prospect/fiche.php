@@ -100,7 +100,7 @@ if ($socid > 0)
 
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
+	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address)."</td></tr>";
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$societe->cp.'</td>';

@@ -45,7 +45,7 @@ if ($action == '' && !$cancel) {
       print '<tr></tr><td width="20%">Nom client</td><td width="80%">'.$osc_order->osc_custname.'</td></tr>';
       print '<tr></tr><td width="20%">Montant</td><td width="80%">'.convert_price($osc_order->osc_ordertotal).'</td></tr>';
       print '<tr></tr><td width="20%">Date commande</td><td width="80%">'.$osc_order->osc_orderdate.'</td></tr>';
-      print '<tr></tr><td width="20%">Méthode de paiement</td><td width="80%">'.$osc_order->osc_orderpaymet.'</td></tr>';
+      print '<tr></tr><td width="20%">Mï¿½thode de paiement</td><td width="80%">'.$osc_order->osc_orderpaymet.'</td></tr>';
       print "</table>";
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       // les articles 
@@ -87,7 +87,7 @@ if ($action == '' && !$cancel) {
 	  print "\n</div><br>\n";
  }
 }
-/* action Import création de l'objet commande de dolibarr 
+/* action Import crï¿½ation de l'objet commande de dolibarr 
 *
 */
  if (($_GET["action"] == 'import' ) && ( $_GET["orderid"] != '' ) && $user->rights->commande->creer)
@@ -102,10 +102,10 @@ if ($action == '' && !$cancel) {
 /* utilisation de la table de transco*/
 		if ($osc_order->get_orderid($osc_order->osc_orderid)>0)
 		{
-			print '<p>Cette commande existe déjà</p>';
+			print '<p>Cette commande existe dï¿½jï¿½</p>';
 		}
 		else {
-// vérifier que la société est renseignée, sinon importer le client d'abord
+// vï¿½rifier que la sociï¿½tï¿½ est renseignï¿½e, sinon importer le client d'abord
 			if ( ! $commande->socid) 
 			{
 				$osc_cust = new Osc_customer($db, $osc_order->osc_custid);
@@ -122,7 +122,7 @@ if ($action == '' && !$cancel) {
 		    	}
 	    	/* initialisation */
 		    	$societe->nom = $osc_cust->osc_custsoc.' '.$osc_cust->osc_custlastname;
-		    	$societe->adresse = $osc_cust->osc_cutstreet;
+		    	$societe->address = $osc_cust->osc_cutstreet;
 		    	$societe->cp = $osc_cust->osc_custpostcode;
 		    	$societe->ville = $osc_cust->osc_custcity;
 		    	$societe->departement_id = 0;
@@ -141,18 +141,18 @@ if ($action == '' && !$cancel) {
 			   if ($cl == 0)
 			    {
 					$commande->socid = $societe->id;
-		    	  	print '<p>création réussie nouveau client/prospect : '.$societe->nom;
+		    	  	print '<p>crï¿½ation rï¿½ussie nouveau client/prospect : '.$societe->nom;
 			    	$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
 					print ' : Id Dolibarr '.$societe->id.' , Id osc : '.$osc_cust->osc_custid.'</p>';
 			    }
 			    else
 			    {
-			    	print '<p>création impossible client : '. $osc_cust->osc_custid .'</p>';
+			    	print '<p>crï¿½ation impossible client : '. $osc_cust->osc_custid .'</p>';
 			    	exit;
 			    }
 				}
 			}
-// vérifier l'existence des produits commandés
+// vï¿½rifier l'existence des produits commandï¿½s
 			$osc_product = new Osc_Product($db);
 			$err = 0;
 
@@ -161,7 +161,7 @@ if ($action == '' && !$cancel) {
 //				print "<p>traitement de ".$commande->lines[$lig]->fk_product."</p>";
 				if (! $commande->lines[$lig]->fk_product) 
 				{
-					print "<p>Article non trouvé ".$commande->lines[$lig]->libelle." : ".$commande->lines[$lig]->desc."</p>";
+					print "<p>Article non trouvï¿½ ".$commande->lines[$lig]->libelle." : ".$commande->lines[$lig]->desc."</p>";
 					$err ++;
 				}
 			}			
@@ -174,7 +174,7 @@ if ($action == '' && !$cancel) {
 		    if ($id > 0)
 		    {
 				  print "\n<div class=\"tabsAction\">\n";
-		       	  print '<br>création réussie nouvelle commande '.$id;
+		       	  print '<br>crï¿½ation rï¿½ussie nouvelle commande '.$id;
    			     $res = $osc_order->transcode($osc_order->osc_orderid,$id);
 					  print 'pour la commande osc : '.$osc_order->osc_orderid.'</p>';
 					  print '<p><a class="butAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
@@ -193,7 +193,7 @@ if ($action == '' && !$cancel) {
 		        }
 				if ($id == -2)
 				{
-				/* la référence existe on fait un update */
+				/* la rï¿½fï¿½rence existe on fait un update */
 				 $societe_control = new Societe($db);
 				 if ($_error == 1)
 		    	 {

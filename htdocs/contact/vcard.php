@@ -67,9 +67,9 @@ if ($company->id)
 	$v->setURL($company->url, "WORK");
 	if (! $contact->phone_pro) $v->setPhoneNumber($company->tel, "WORK;VOICE");
 	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "WORK;FAX");
-	if (! $contact->cp)        $v->setAddress("", "", $company->adresse, $company->ville, "", $company->cp, $company->pays_code, "WORK;POSTAL");
+	if (! $contact->cp)        $v->setAddress("", "", $company->address, $company->ville, "", $company->cp, $company->pays_code, "WORK;POSTAL");
 	if ($company->email != $contact->email) $v->setEmail($company->email,'internet');
-	// Si contact lié à un tiers non de type "particulier"
+	// Si contact lie a un tiers non de type "particulier"
 	if ($contact->typent_code != 'TE_PRIVATE') $v->setOrg($company->nom);
 }
 

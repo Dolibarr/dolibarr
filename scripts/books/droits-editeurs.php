@@ -180,7 +180,7 @@ class pdf_courrier_editeur
 	  $pdf->MultiCell(106,4, $soc->nom, 0, 'L');
 
 	  // Caracteristiques client
-	  $carac_client=$soc->adresse;
+	  $carac_client=$soc->address;
 	  $carac_client.="\n".$soc->cp . " " . $soc->ville."\n";
 	  $carac_client.=$soc->pays."\n";
 

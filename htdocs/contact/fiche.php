@@ -297,7 +297,7 @@ if ($user->rights->societe->contact->creer)
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
 
 		// Address
-		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->address)) == 0) $contact->address = $objsoc->adresse;	// Predefined with third party
+		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->address)) == 0) $contact->address = $objsoc->address;	// Predefined with third party
 		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.$contact->address.'</textarea></td>';
 
 		if (($objsoc->typent_code == 'TE_PRIVATE') && strlen(trim($contact->cp)) == 0) $contact->cp = $objsoc->cp;			// Predefined with third party

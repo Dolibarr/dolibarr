@@ -84,8 +84,8 @@ class pdf_edison extends ModelePDFCommandes
 	}
 
 
-	/**	\brief      Renvoi derni�re erreur
-	 \return     string      Derni�re erreur
+	/**	\brief      Renvoi derniere erreur
+	 \return     string      Derniere erreur
 	 */
 	function pdferror()
 	{
@@ -406,7 +406,7 @@ class pdf_edison extends ModelePDFCommandes
 
 		// Sender properties
 		$carac_emetteur = '';
-		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 		$carac_emetteur .= "\n";
 		// Tel
@@ -457,7 +457,7 @@ class pdf_edison extends ModelePDFCommandes
 			// Customer name
 			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 
-			// Nom du contact suivi commande si c'est une soci�t�
+			// Nom du contact suivi commande si c'est une societe
 			$arrayidcontact = $object->getIdContact('external','CUSTOMER');
 			if (sizeof($arrayidcontact) > 0)
 			{
@@ -470,7 +470,7 @@ class pdf_edison extends ModelePDFCommandes
 			}
 
 			// Caracteristiques client
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
 			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
 			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 		}

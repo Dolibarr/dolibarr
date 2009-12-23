@@ -188,7 +188,8 @@ if ($result >= 0)
 			$member->pass=$ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
 
 			//$member->societe;
-			$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
+			$member->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
+			$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS]; // TODO obsolete
 			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
 			$member->ville=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
 			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	// Pays en libelle

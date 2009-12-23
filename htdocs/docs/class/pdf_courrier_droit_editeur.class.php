@@ -95,7 +95,7 @@ class pdf_courrier_droit_editeur
 			{
 				$pdfrights = array('print'); // Ne permet que l'impression du document
 				$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-				$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+				$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 				$pdf_all->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 			}
 
@@ -122,7 +122,7 @@ class pdf_courrier_droit_editeur
 				{
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				 
@@ -153,7 +153,7 @@ class pdf_courrier_droit_editeur
 	}
 
 	/**
-	 \brief      Fonction g�n�rant le fichier
+	 \brief      Fonction generant le fichier
 	 \param	    id	    id de la societe
 	 \return	    int     1=ok, 0=ko
   */
@@ -180,7 +180,7 @@ class pdf_courrier_droit_editeur
 			$books = array();
 			$year_data = $year - 1;
 
-			// On r�cup�re donn�es du mail
+			// On recupere donnees du mail
 			$sql = "SELECT p.rowid,p.label, pc.taux, pc.quantite";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 			$sql .= " , ".MAIN_DB_PREFIX."facturedet as fd";
@@ -240,8 +240,8 @@ class pdf_courrier_droit_editeur
 	  	$pdf->SetFont('Arial','B',11);
 	  	$pdf->MultiCell(106,4, $soc->nom, 0, 'L');
 
-	  	// Caract�ristiques client
-	  	$carac_client=$soc->adresse;
+	  	// Caracteristiques client
+	  	$carac_client=$soc->address;
 	  	$carac_client.="\n".$soc->cp . " " . $soc->ville."\n";
 	  	$carac_client.=$soc->pays."\n";
 
@@ -257,7 +257,7 @@ class pdf_courrier_droit_editeur
 	  	 
 	  	$pdf->SetXY(10,100);
 	  	 
-	  	$pdf->MultiCell(190,5,"Je vous prie de trouver ci-dessous le r�capitulatif des ventes du titre cit� pour la p�riode du 1er janvier au 31 d�cembre $year_data.");
+	  	$pdf->MultiCell(190,5,"Je vous prie de trouver ci-dessous le recapitulatif des ventes du titre cite pour la periode du 1er janvier au 31 decembre $year_data.");
 	  	 
 	  	$pdf->SetXY(10,120);
 	  	$pdf->MultiCell(25,5,"Nom du titre : ");
@@ -267,7 +267,7 @@ class pdf_courrier_droit_editeur
 
 	  	$pdf->SetFont('Arial','',10);
 	  	$pdf->SetXY(10,140);
-	  	$pdf->MultiCell(46,5,"Quantit� sign�e au contrat : ");
+	  	$pdf->MultiCell(46,5,"Quantite signee au contrat : ");
 	  	 
 	  	$pdf->SetFont('Arial','B',10);
 	  	$pdf->SetXY(56,140);
@@ -296,7 +296,7 @@ class pdf_courrier_droit_editeur
 
 	  			$pdf->SetFont('Arial','',10);
 	  			$pdf->SetXY(10,140 + ($i * 8) );
-	  			$pdf->MultiCell(44,5,"Quantit� vendue en ".$row[2]." : ",0);
+	  			$pdf->MultiCell(44,5,"Quantite vendue en ".$row[2]." : ",0);
 	  			$pdf->SetFont('Arial','B',10);
 	  			$pdf->SetXY(54,140 + ($i * 8) );
 	  			$pdf->MultiCell(16,5,$row[1],0,'R');
@@ -346,7 +346,7 @@ class pdf_courrier_droit_editeur
 	  	$i++;
 	  	$pdf->SetFont('Arial','',10);
 	  	$pdf->SetXY(10,150 + ($i * 10) );
-	  	$pdf->MultiCell(80,5,"Reste � devoir sur les droits pour l'ann�e ".($year-1)." : ",0);
+	  	$pdf->MultiCell(80,5,"Reste a devoir sur les droits pour l'annee ".($year-1)." : ",0);
 	  	$pdf->SetFont('Arial','B',10);
 	  	$pdf->SetXY(90,140 + ($i * 10) );
 	  	$pdf->MultiCell(16,5, $pu_ttc,0,'R');
@@ -354,7 +354,7 @@ class pdf_courrier_droit_editeur
 	  	$i++;
 	  	$pdf->SetFont('Arial','',10);
 	  	$pdf->SetXY(10,150 + ($i * 10) + 20);
-	  	$pdf->MultiCell(190,5,"Nous restons � votre enti�re disposition pour de plus amples renseignements dont vous pouvez avoir besoin et vous remercions de la confiance que vous nous avez accord�e.");
+	  	$pdf->MultiCell(190,5,"Nous restons a votre entiere disposition pour de plus amples renseignements dont vous pouvez avoir besoin et vous remercions de la confiance que vous nous avez accordee.");
 	  	 
 
 	  }

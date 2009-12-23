@@ -176,7 +176,7 @@ if ($_GET["action"] == 'create')
 	{
 		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
 		print '<td colspan="3">';
-		$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
+		$numaddress = $html->select_adresse_livraison($soc->fk_delivery_address, $_GET['socid'],'adresse_livraison_id',1);
 		if ($numaddress==0)
 		{
 			print ' &nbsp; <a href=../comm/adresse_livraison.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';

@@ -39,7 +39,8 @@ class AdresseLivraison
 	var $label;
 	var $socid;
 	var $nom;
-	var $adresse;
+	var $adresse; // TODO obsolete
+	var $address;
 	var $cp;
 	var $ville;
 	var $pays_id;
@@ -171,7 +172,8 @@ class AdresseLivraison
         $this->fk_societe = $socid;
         $this->label      = trim($this->label);
         $this->nom        = trim($this->nom);
-        $this->adresse    = trim($this->adresse);
+        $this->adresse    = trim($this->adresse); // TODO obsolete
+        $this->address    = trim($this->address);
         $this->cp         = trim($this->cp);
         $this->ville      = trim($this->ville);
         $this->pays_id    = trim($this->pays_id);
@@ -192,7 +194,7 @@ class AdresseLivraison
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe_adresse_livraison";
             $sql.= " SET label = '" . addslashes($this->label) ."'"; // Champ obligatoire
             $sql.= ",nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
-            $sql.= ",address = '" . addslashes($this->adresse) ."'";
+            $sql.= ",address = '" . addslashes($this->address) ."'";
 
             if ($this->cp)
             { $sql .= ",cp = '" . $this->cp ."'"; }
@@ -298,10 +300,12 @@ class AdresseLivraison
 				            $ligne->date_update     = $objp->date_update;
 				            $ligne->label           = stripslashes($objp->label);
 				            $ligne->nom             = stripslashes($objp->nom);
-				            $ligne->adresse         = stripslashes($objp->address);
+				            $ligne->address         = stripslashes($objp->address);
+				            $ligne->adresse         = stripslashes($objp->address); // TODO obsolete
 				            $ligne->cp              = $objp->cp;
 				            $ligne->ville           = stripslashes($objp->ville);
 				            $ligne->adresse_full    = stripslashes($objp->address) . "\n". $objp->cp . ' '. stripslashes($objp->ville);
+				            $ligne->full_address    = stripslashes($objp->address) . "\n". $objp->cp . ' '. stripslashes($objp->ville); // TODO obsolete
 				            $ligne->pays_id         = $objp->fk_pays;
 				            $ligne->pays_code       = $objp->fk_pays?$objp->pays_code:'';
 				            $ligne->pays            = $objp->fk_pays?($langs->trans('Country'.$objp->pays_code)!='Country'.$objp->pays_code?strtoupper($langs->trans('Country'.$objp->pays_code)):$objp->pays):'';
@@ -367,10 +371,12 @@ class AdresseLivraison
 
 				$this->label 			= stripslashes($obj->label);
 				$this->nom 				= stripslashes($obj->nom);
-				$this->adresse 			=  stripslashes($obj->address);
+				$this->adresse 			= stripslashes($obj->address); // TODO obsolete
+				$this->address 			= stripslashes($obj->address);
 				$this->cp 				= $obj->cp;
-				$this->ville 			=  stripslashes($obj->ville);
-				$this->adresse_full 	=  stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville);
+				$this->ville 			= stripslashes($obj->ville);
+				$this->adresse_full 	= stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville);
+				$this->full_address 	= stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville); //TODO obsolete
 
 				$this->pays_id 			= $obj->fk_pays;
 				$this->pays_code 		= $obj->fk_pays?$obj->pays_code:'';

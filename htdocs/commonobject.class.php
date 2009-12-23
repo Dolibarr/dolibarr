@@ -389,7 +389,7 @@ class CommonObject
 	}
 
 	/**
-	 *		\brief      Charge l'adresse de livraison d'id $this->adresse_livraison_id dans this->deliveryaddress
+	 *		\brief      Charge l'adresse de livraison d'id $this->fk_delivery_address dans this->deliveryaddress
 	 *		\param      userid 		Id du contact
 	 *		\return		int			<0 if KO, >0 if OK
 	 */
@@ -398,7 +398,8 @@ class CommonObject
 		$address = new Societe($this->db);
 		$result=$address->fetch_adresse_livraison($deliveryaddressid);
 		$this->deliveryaddress = $address;
-		$this->adresse = $adresse;
+		$this->adresse = $address; // TODO obsolete
+		$this->address = $address;
 		return $result;
 	}
 

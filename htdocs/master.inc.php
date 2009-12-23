@@ -329,7 +329,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 
 	$mysoc->id=0;
 	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
-	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE; // TODO obsolete
+	$mysoc->address=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
 	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP;
 	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE;
 	// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
@@ -370,7 +371,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
 	$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
 	$mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
-	$mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
+	$mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville; // TODO obsolete
+	$mysoc->full_address=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
 	$mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
 	$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
 	$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
@@ -414,19 +416,5 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
-
-
-/**
- * Convert a string into a regex
- *
- * @param unknown_type $s string to convert
- */
-function dol_regify($s)
-{
-	$news=str_replace('/','\/',$s);
-	$news=str_replace('.','\.',$news);
-	$news=str_replace('*','\*',$news);
-	return $news;
-}
 
 ?>

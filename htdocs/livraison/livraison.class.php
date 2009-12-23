@@ -111,7 +111,7 @@ class Livraison extends CommonObject
 		$sql.= ", '".$this->ref_client."'";
 		$sql.= ", ".$this->db->idate(mktime());
 		$sql.= ", ".$user->id;
-		$sql.= ", ".($this->adresse_livraison_id > 0 ? $this->adresse_livraison_id : "null");
+		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql.= ", ".($this->expedition_id ? $this->expedition_id : "null");
 		$sql.= ")";
 
@@ -276,7 +276,8 @@ class Livraison extends CommonObject
 				$this->expedition_id        = $obj->fk_expedition;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->user_valid_id        = $obj->fk_user_valid;
-				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+				$this->adresse_livraison_id = $obj->fk_adresse_livraison; // TODO obsolete
+				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
 				$this->note                 = $obj->note;
 				$this->note_public          = $obj->note_public;
 				$this->modelpdf             = $obj->model_pdf;
@@ -510,7 +511,8 @@ class Livraison extends CommonObject
 		$this->note                 = $expedition->note;
 		$this->projetid             = $expedition->projetidp;
 		$this->date_livraison       = $expedition->date_livraison;
-		$this->adresse_livraison_id = $expedition->adresse_livraison_id;
+		$this->adresse_livraison_id = $expedition->adresse_livraison_id; // TODO obsolete
+		$this->fk_delivery_address  = $expedition->adresse_livraison_id;
 		$this->socid                = $expedition->socid;
 		$this->ref_client			= $expedition->ref_client;
 
