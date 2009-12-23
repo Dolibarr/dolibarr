@@ -177,11 +177,6 @@ if ($_POST["action"] == 'set_enable_editdelete')
 	dolibarr_set_const($db, "FACTURE_ENABLE_EDITDELETE",$_POST["enable_editdelete"],'chaine',0,'',$conf->entity);
 }
 
-if ($_POST["action"] == 'set_use_bill_contact_as_recipient')
-{
-	dolibarr_set_const($db, "FACTURE_USE_BILL_CONTACT_AS_RECIPIENT",$_POST["use_bill_contact_as_recipient"],'chaine',0,'',$conf->entity);
-}
-
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
 	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity));
@@ -257,7 +252,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 
 					if (is_readable($dir.$filebis))
 					{
-						// Chargement de la classe de num�rotation
+						// Chargement de la classe de numerotation
 						require_once($dir.$filebis);
 						$classname = "mod_facture_".$file;
 						$module = new $classname($db);
@@ -612,21 +607,6 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
-
-/*
- $var=! $var;
- print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
- print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
- print '<input type="hidden" name="action" value="set_use_bill_contact_as_recipient">';
- print '<tr '.$bc[$var].'><td>';
- print $langs->trans("UsBillingContactAsIncoiveRecipientIfExist");
- print '</td><td width="60" align="center">';
- print $html->selectyesno("use_bill_contact_as_recipient",$conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT,1);
- print '</td><td align="right">';
- print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
- print "</td></tr>\n";
- print '</form>';
- */
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

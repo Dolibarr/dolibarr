@@ -574,20 +574,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// If SHIPPING contact defined on invoice, we use it
 			$usecontact=false;
-			//if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
-			//{
-				$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
-				if (sizeof($arrayidcontact) > 0)
-				{
-					$usecontact=true;
-					$result=$object->fetch_contact($arrayidcontact[0]);
-				}
-			//}
+			$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
+
 			if ($usecontact)
 			{
-				// On peut utiliser le nom de la societe du contact
-				//if ($conf->global->FACTURE_USE_COMPANY_NAME_OF_BILL_CONTACT) $socname = $object->contact->socname;
-				//else
 				$socname = $object->client->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 
