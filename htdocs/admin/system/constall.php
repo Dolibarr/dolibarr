@@ -50,8 +50,8 @@ print "</tr>\n";
 
 $sql = "SELECT";
 $sql.= " rowid";
-$sql.= ", ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
-$sql.= ", ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+$sql.= ", ".$db->decrypt('name')." as name";
+$sql.= ", ".$db->decrypt('value')." as value";
 $sql.= ", type";
 $sql.= ", note";
 $sql.= ", entity";

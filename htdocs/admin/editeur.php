@@ -49,7 +49,7 @@ if ($_POST["action"] == 'set')
 if ($_GET["action"] == 'unset')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+	$sql.= " WHERE ".$db->decrypt('name');
 	$sql.= " LIKE 'EDITEUR_LIVRE_FORMAT_%'";
 	$sql.= " AND rowid='".$_GET["id"]."';";
 	if ($db->query($sql))
@@ -94,9 +94,9 @@ $var=true;
 
 $sql = "SELECT";
 $sql.= " rowid";
-$sql.= ", ".$db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+$sql.= ", ".$db->decrypt('value')." as value";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
-$sql.= " WHERE ".$db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+$sql.= " WHERE ".$db->decrypt('name');
 $sql.= " LIKE 'EDITEUR_LIVRE_FORMAT_%'";
 $result = $db->query($sql);
 

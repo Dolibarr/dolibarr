@@ -97,10 +97,10 @@ class Multicompany
 		global $conf;
 		
 		$sql = "SELECT ";
-		$sql.= $this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as name";
-		$sql.= ", ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql.= $this->db->decrypt('name')." as name";
+		$sql.= ", ".$this->db->decrypt('value')." as value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." LIKE 'MAIN_%'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." LIKE 'MAIN_%'";
 		$sql.= " AND entity = ".$id;
 		
 		$result = $this->db->query($sql);
@@ -152,7 +152,7 @@ class Multicompany
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."const";
 		$sql.= " SET entity = ".$newid;
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = 'MAIN_INFO_SOCIETE_NOM'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = 'MAIN_INFO_SOCIETE_NOM'";
 		$sql.= " AND entity = ".$id;
 		
 		dol_syslog("Multicompany::setEntity sql=".$sql, LOG_DEBUG);
@@ -168,10 +168,10 @@ class Multicompany
 		global $conf;
 		
 		$sql = "SELECT ";
-		$sql.= $this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql.= $this->db->decrypt('value')." as value";
 		$sql.= ", entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = 'MAIN_INFO_SOCIETE_NOM'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = 'MAIN_INFO_SOCIETE_NOM'";
 		$sql.= " ORDER BY value ASC";
 		
 		$result = $this->db->query($sql);

@@ -379,15 +379,15 @@ class DolibarrModules
 		$entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
 		$sql.= " AND entity in (0, ".$entity.")";
 
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
 		$this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES";
-		$sql.= " (".$this->db->encrypt($this->const_name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
-		$sql.= ",".$this->db->encrypt('1',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+		$sql.= " (".$this->db->encrypt($this->const_name,1);
+		$sql.= ",".$this->db->encrypt('1',1);
 		$sql.= ",0,".$entity.")";
 
 		dol_syslog("DolibarrModules::_active sql=".$sql, LOG_DEBUG);
@@ -414,7 +414,7 @@ class DolibarrModules
 		$entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : $conf->entity);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
 		$sql.= " AND entity in (0, ".$entity.")";
 
 		dol_syslog("DolibarrModules::_unactive sql=".$sql);
@@ -611,7 +611,7 @@ class DolibarrModules
 		if ($this->style_sheet)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-			$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."_CSS'";
+			$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."_CSS'";
 			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("DolibarrModules::delete_style_sheet sql=".$sql);
@@ -637,7 +637,7 @@ class DolibarrModules
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." like '".$this->const_name."_TABS_%'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->const_name."_TABS_%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("DolibarrModules::delete_tabs sql=".$sql);
@@ -672,9 +672,9 @@ class DolibarrModules
 			$sql.= ", entity";
 			$sql.= ")";
 			$sql.= " VALUES (";
-			$sql.= $this->db->encrypt($this->const_name."_CSS",$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+			$sql.= $this->db->encrypt($this->const_name."_CSS",1);
 			$sql.= ", 'chaine'";
-			$sql.= ", ".$this->db->encrypt($this->style_sheet,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+			$sql.= ", ".$this->db->encrypt($this->style_sheet,1);
 			$sql.= ", 'Style sheet for module ".$this->name."'";
 			$sql.= ", '0'";
 			$sql.= ", ".$conf->entity;
@@ -719,9 +719,9 @@ class DolibarrModules
 					$sql.= ", entity";
 					$sql.= ")";
 					$sql.= " VALUES (";
-					$sql.= $this->db->encrypt($this->const_name."_TABS_".$i,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+					$sql.= $this->db->encrypt($this->const_name."_TABS_".$i,1);
 					$sql.= ", 'chaine'";
-					$sql.= ", ".$this->db->encrypt($value,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+					$sql.= ", ".$this->db->encrypt($value,1);
 					$sql.= ", null";
 					$sql.= ", '0'";
 					$sql.= ", ".$conf->entity;
@@ -764,7 +764,7 @@ class DolibarrModules
 
 			$sql = "SELECT count(*)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."const";
-			$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$name."'";
+			$sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
 			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
@@ -779,9 +779,9 @@ class DolibarrModules
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
 						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+						$sql.= $this->db->encrypt($name,1);
 						$sql.= ",'".$type."'";
-						$sql.= ",".$this->db->encrypt($val,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+						$sql.= ",".$this->db->encrypt($val,1);
 						$sql.= ",'".addslashes($note)."'";
 						$sql.= ",'".$visible."'";
 						$sql.= ",".$entity;
@@ -791,9 +791,9 @@ class DolibarrModules
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible,entity)";
 						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+						$sql.= $this->db->encrypt($name,1);
 						$sql.= ",'".$type."'";
-						$sql.= ",".$this->db->encrypt($val,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+						$sql.= ",".$this->db->encrypt($val,1);
 						$sql.= ",'".$visible."'";
 						$sql.= ",".$entity;
 						$sql.= ")";
@@ -802,7 +802,7 @@ class DolibarrModules
 					{
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible,entity)";
 						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1);
+						$sql.= $this->db->encrypt($name,1);
 						$sql.= ",'".$type."'";
 						$sql.= ",'".$visible."'";
 						$sql.= ",".$entity;
@@ -843,9 +843,9 @@ class DolibarrModules
 		//print $this->rights_class." ".sizeof($this->rights)."<br>";
 
 		// Test si module actif
-		$sql_del = "SELECT ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql_del = "SELECT ".$this->db->decrypt('value')." as value";
 		$sql_del.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql_del.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$this->const_name."'";
+		$sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
 		$sql_del.= " AND entity IN (0,".$conf->entity.")";
 
 		$resql=$this->db->query($sql_del);
@@ -1121,7 +1121,7 @@ class DolibarrModules
 
 		$sql = "SELECT count(*)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." = '".$name."'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("DolibarrModules::insert_dirs sql=".$sql);
@@ -1133,7 +1133,7 @@ class DolibarrModules
 			if ($row[0] == 0)
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
-				$sql.= " VALUES (".$this->db->encrypt($name,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",'chaine',".$this->db->encrypt($dir,$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey,1).",'Directory for module ".$this->name."','0',".$conf->entity.")";
+				$sql.= " VALUES (".$this->db->encrypt($name,1).",'chaine',".$this->db->encrypt($dir,1).",'Directory for module ".$this->name."','0',".$conf->entity.")";
 
 				dol_syslog("DolibarrModules::insert_dirs sql=".$sql);
 				$resql=$this->db->query($sql);
@@ -1161,7 +1161,7 @@ class DolibarrModules
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." like '".$this->const_name."_DIR_%'";
+		$sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->const_name."_DIR_%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog("DolibarrModules::delete_dirs sql=".$sql);

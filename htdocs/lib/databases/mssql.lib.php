@@ -705,27 +705,39 @@ class DoliDb
 	/**
 	 *	\brief          Encrypt sensitive data in database
 	 *	\param	        fieldorvalue	Field name or value to encrypt
-	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
-	 * 	\param			cryptKey		Encryption key
 	 * 	\param			withQuotes		Return string with quotes
 	 * 	\return	        return			XXX(field) or XXX('value') or field or 'value'
 	 */
-	function encrypt($fieldorvalue, $cryptType=0, $cryptKey='', $withQuotes=0)
+	function encrypt($fieldorvalue, $withQuotes=0)
 	{
+		global $conf;
+		
+		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+		$cryptType = ($conf->db->dolibarr_main_db_encryption?$conf->db->dolibarr_main_db_encryption:0);
+		
+		//Encryption key
+		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey)?$conf->db->dolibarr_main_db_cryptkey:'');
+		
 		$return = $fieldorvalue;
 		return ($withQuotes?"'":"").$return.($withQuotes?"'":"");
 	}
 
 	/**
 	 *	\brief          Decrypt sensitive data in database
-	 *	\param	        field			Field name to decrypt
-	 * 	\param			cryptType		Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
-	 * 	\param			cryptKey		Encryption key
-	 * 	\return	        return			Field to decrypt if used
+	 *	\param	        value			Value to decrypt
+	 * 	\return	        return			Decrypted value if used
 	 */
-	function decrypt($field, $cryptType=0, $cryptKey='')
+	function decrypt($value)
 	{
-		$return = $field;
+		global $conf;
+		
+		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
+		$cryptType = ($conf->db->dolibarr_main_db_encryption?$conf->db->dolibarr_main_db_encryption:0);
+		
+		//Encryption key
+		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey)?$conf->db->dolibarr_main_db_cryptkey:'');
+		
+		$return = $value;
 		return $return;
 	}
 

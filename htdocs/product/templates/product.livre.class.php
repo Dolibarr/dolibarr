@@ -576,9 +576,9 @@ class ProductLivre extends Product
 		
 		$sql = "SELECT";
 		$sql.= " rowid";
-		$sql.= ", ".$this->db->decrypt('value',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey)." as value";
+		$sql.= ", ".$this->db->decrypt('value')." as value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name',$conf->db->dolibarr_main_db_encryption,$conf->db->dolibarr_main_db_cryptkey);
+		$sql.= " WHERE ".$this->db->decrypt('name');
 		$sql.= " LIKE 'EDITEUR_LIVRE_FORMAT_%'";
 
 		$resql = $this->db->query($sql);
