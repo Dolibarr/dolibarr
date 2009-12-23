@@ -67,7 +67,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-pHeader('',"upgrade2",$_REQUEST['action']);
+pHeader('',"upgrade2",$_REQUEST['action'],'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 $actiondone=0;
 

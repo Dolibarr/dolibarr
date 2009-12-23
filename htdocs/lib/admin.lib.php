@@ -145,6 +145,10 @@ function run_sql($sqlfile,$silent=1,$entity='')
 		if ($buffer) $arraysql[$i]=trim($buffer);
 		fclose($fp);
 	}
+	else
+	{
+		dol_syslog("Admin.lib::run_sql failed to open file ".$sqlfile, LOG_ERR);
+	}
 
 	// Loop on each request to see if there is a __+MAX_table__ key
 	$listofmaxrowid=array();
@@ -383,7 +387,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql.= " WHERE ".$db->decrypt('name')." = '".addslashes($name)."'";
 	$sql.= " AND entity = ".$entity;
-	
+
 	dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 
@@ -457,7 +461,7 @@ function security_prepare_head()
 function listOfSessions()
 {
 	global $conf;
-	
+
 	$arrayofSessions = array();
 	$sessPath = ini_get("session.save_path").'/';
 	dol_syslog('admin.lib:listOfSessions sessPath='.$sessPath);
@@ -479,7 +483,7 @@ function listOfSessions()
 					$tmp=explode('_', $file);
 					$idsess=$tmp[1];
 					$login = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i',$sessValues,$regs);
-					$arrayofSessions[$idsess]["login"] = $regs[1]; 
+					$arrayofSessions[$idsess]["login"] = $regs[1];
 					$arrayofSessions[$idsess]["age"] = time()-filectime( $fullpath );
 					$arrayofSessions[$idsess]["creation"] = filectime( $fullpath );
 					$arrayofSessions[$idsess]["modification"] = filemtime( $fullpath );
@@ -501,7 +505,7 @@ function listOfSessions()
 function purgeSessions($mysessionid)
 {
 	global $conf;
-	
+
 	$arrayofSessions = array();
 	$sessPath = ini_get("session.save_path")."/";
 	dol_syslog('admin.lib:purgeSessions mysessionid='.$mysessionid.' sessPath='.$sessPath);
@@ -516,7 +520,7 @@ function purgeSessions($mysessionid)
 			if(! @is_dir($fullpath))
 			{
 				$sessValues = file_get_contents($fullpath);	// get raw session data
-				
+
 				if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
 					preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i',$sessValues) && // limit to current entity
 					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name

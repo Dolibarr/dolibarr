@@ -253,9 +253,9 @@ function conf($dolibarr_main_document_root)
 
 
 /*
-*	\brief		Affiche entete HTML
+*	\brief		Show header of install pages
 */
-function pHeader($soutitre,$next,$action='set')
+function pHeader($soutitre,$next,$action='set',$param='')
 {
 	global $conf;
     global $langs;
@@ -279,7 +279,7 @@ function pHeader($soutitre,$next,$action='set')
     }
 	print '</span>'."\n";
 
-    print '<form action="'.$next.'.php" method="POST">'."\n";
+    print '<form action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
