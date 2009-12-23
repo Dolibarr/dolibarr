@@ -198,15 +198,6 @@ if ($_GET["action"] == 'delete')
 	}
 }
 
-// defini les constantes du modele pluton
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FACTURE_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'updatePrefixFacture') dolibarr_set_const($db, "FACTURE_NUM_PREFIX",$_POST["prefixfacture"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'updatePrefixAvoir') dolibarr_set_const($db, "AVOIR_NUM_PREFIX",$_POST["prefixavoir"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setOffsetInvoice') dolibarr_set_const($db, "FACTURE_NUM_DELTA",$_POST["offsetinvoice"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setOffsetCreditNote') dolibarr_set_const($db, "AVOIR_NUM_DELTA",$_POST["offsetcreditnote"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FACTURE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
-if ($_POST["action"] == 'setNumWithInvoice') dolibarr_set_const($db, "AVOIR_NUM_WITH_INVOICE",$_POST["numwithinvoice"],'chaine',0,'',$conf->entity);
-
 
 /*
  * View page
