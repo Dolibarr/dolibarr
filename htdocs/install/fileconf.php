@@ -236,6 +236,9 @@ while (($file = readdir($handle))!==false)
 		if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
 		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
 		if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
+		
+		// Switch to mysql if mysqli is not present
+		if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
 
 		// Affiche ligne dans liste
 		$option.='<option value="'.$type.'"'.($defaultype == $type?' selected':'');
