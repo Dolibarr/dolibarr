@@ -168,7 +168,7 @@ if ($socid > 0)
 	print "</td>\n";
 	print '<td valign="top" width="50%" class="notopnoleft">';
 
-	// Nbre max d'�l�ments des petites listes
+	// Nbre max d'elements des petites listes
 	$MAXLIST=5;
 	$tableaushown=0;
 
