@@ -16,6 +16,10 @@
  *
  * $Id$
  *}
+{php}
+	header('Cache-Control: Public, must-revalidate');
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+{/php}
  
 <!-- BEGIN SMARTY TEMPLATE -->
 
@@ -43,7 +47,7 @@
 
 <form title="{$title}" id="login" name="login" class="panel" method="post" action="{$php_self}" selected="true">
 	<div align="center">
-		<img src="{$logo_url}">
+		<img src="{$logo}">
 	</div>
 	<fieldset>		
         <input type="hidden" name="token" value="{$smarty.session.newtoken}">
