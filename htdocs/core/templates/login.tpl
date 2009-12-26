@@ -122,6 +122,7 @@ function donnefocus(element) {
 
 	{if $forgetpasslink || $helpcenterlink}
 		<tr><td colspan="3" align="center">
+		{strip}
 		{if $forgetpasslink}
 			<a style="color: #888888; font-size: 10px" href="{$dol_url_root}/user/passwordforgotten.php">(
 			{$langs->trans('PasswordForgotten')}
@@ -137,6 +138,7 @@ function donnefocus(element) {
 			{$langs->trans('NeedHelpCenter')}
 		{/if}
 		)</a>
+		{/strip}
 		</td></tr>
 	{/if}
 
@@ -146,9 +148,9 @@ function donnefocus(element) {
 
 </form>
 
-	{if $dol_loginmesg}
+	{if $smarty.session.dol_loginmesg}
 		<center><table width="60%"><tr><td align="center"><div class="error">
-		{$dol_loginmesg}
+		{$smarty.session.dol_loginmesg}
 		</div></td></tr></table></center>
 	{/if}
 	

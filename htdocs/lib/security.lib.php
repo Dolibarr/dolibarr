@@ -361,8 +361,6 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		{
 			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/other/default/templates/";
 		}
-		// Differencier les pages dans le cache
-		$cache_id = $conf->browser->phone;
 	}
 	else
 	{
@@ -380,9 +378,6 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		// Si feuille de style en php existe
 		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php?lang=".$langs->defaultlang;
 		$smarty->assign('conf_css', DOL_URL_ROOT.'/'.$conf->css);
-		
-		// Differencier les pages dans le cache
-		$cache_id = $conf->theme;
 	}
 
 	$smarty->assign('dol_url_root', DOL_URL_ROOT);
@@ -508,13 +503,6 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		}
 	}
 
-	// Error message
-	if (! empty($_SESSION["dol_loginmesg"]))
-	{
-		$smarty->assign('dol_loginmesg', $_SESSION["dol_loginmesg"]);
-		$_SESSION["dol_loginmesg"]="";
-	}
-
 	// Home message
 	if (! empty($conf->global->MAIN_HOME))
 	{
@@ -545,14 +533,14 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	$smarty->assign('main_authentication', $conf->file->main_authentication);
 	$smarty->assign('session_name', session_name());
 	
-	// Activation du cache
-	$smarty->caching = 1;
-	
-	// Creation et mise en cache du template avec un id
-	$smarty->display('login.tpl', $cache_id);
+	// Creation du template
+	$smarty->display('login.tpl');
 	
 	// Suppression de la version compilee
 	$smarty->clear_compiled_tpl('login.tpl');
+	
+	// Reset error message
+	$_SESSION["dol_loginmesg"] = '';
 
 }
 

@@ -81,9 +81,9 @@
 
 	</fieldset>
 	
-	{if $dol_loginmesg}
+	{if $smarty.session.dol_loginmesg}
 	<div align="center">
-		{$dol_loginmesg}
+		{$smarty.session.dol_loginmesg}
 	</div>
 	{/if}
 	
