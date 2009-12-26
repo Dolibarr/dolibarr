@@ -211,7 +211,7 @@ class Multicompany
 	 */
 	function select_entities($entities,$selected='',$option='')
 	{
-		print '<select class="flat" name="entity" '.$option.'>';
+		$return = '<select class="flat" name="entity" '.$option.'>';
 				
 		if (is_array($entities))
 		{	
@@ -219,15 +219,17 @@ class Multicompany
 			{
 				if ($entity['active'] == 1)
 				{
-					print '<option value="'.$entity['id'].'" ';
-					if ($selected == $entity['id'])	print 'selected="true"';
-					print '>';
-					print $entity['label'];
-					print '</option>';
+					$return.= '<option value="'.$entity['id'].'" ';
+					if ($selected == $entity['id'])	$return.= 'selected="true"';
+					$return.= '>';
+					$return.= $entity['label'];
+					$return.= '</option>';
 				}
 			}
 		}
-		print '</select>';
+		$return.= '</select>';
+		
+		return $return;
 	}
 
 	/**

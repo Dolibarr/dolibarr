@@ -417,4 +417,27 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
+// If there is at least one module using Smarty
+if (sizeof($conf->need_smarty) > 0)
+{
+	// Usage of constats in conf.php file is no more required.
+	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
+	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
+	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
+
+	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
+	if (file_exists ($smarty_libs))
+	{
+		require_once($smarty_libs);
+		$smarty = new Smarty();
+		$smarty->compile_dir = $dolibarr_smarty_compile;
+		$smarty->cache_dir = $dolibarr_smarty_cache;
+		//$smarty->config_dir = '/web/www.domain.com/smarty/configs';
+	}
+	else
+	{
+		dol_print_error('',"Library Smarty ".$smarty_libs." not found. Check parameter dolibarr_smarty_libs_dir in conf file.");
+	}
+}
+
 ?>

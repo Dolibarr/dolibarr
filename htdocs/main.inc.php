@@ -593,7 +593,7 @@ else                        // Si utilisateur externe
 	$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 }
 
-
+/*
 // If there is at least one module using Smarty
 if (sizeof($conf->need_smarty) > 0)
 {
@@ -616,6 +616,7 @@ if (sizeof($conf->need_smarty) > 0)
 		dol_print_error('',"Library Smarty ".$smarty_libs." not found. Check parameter dolibarr_smarty_libs_dir in conf file.");
 	}
 }
+*/
 
 // Si le login n'a pu etre recupere, on est identifie avec un compte qui n'existe pas.
 // Tentative de hacking ?
