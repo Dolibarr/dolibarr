@@ -974,9 +974,9 @@ class Facture extends CommonObject
 		$error=0;
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_element';
-		$sql.= ' WHERE fk_target = '.$rowid;
-		$sql.= ' AND targettype = '.$this->element;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+		$sql.= " WHERE fk_target = ".$rowid;
+		$sql.= " AND targettype = '".$this->element."'";
 		
 		if ($this->db->query($sql))
 		{
