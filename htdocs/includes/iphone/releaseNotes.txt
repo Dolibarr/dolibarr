@@ -1,7 +1,23 @@
-REL-0.31 2009-10-05
+REL-0.40-dev2 2009-12-18
+ * Fix Issue #138 (orientation css not updating)
+ * Fix Issue #184 (hardcoded width of 320 in "orientation event fallback")
+ * Re-enable call to submitForm in onsubmit in showForm()
+    (rev d6abb099744e6ae7f1591e3208d3d54bb35c2a51)
+ * Merge all -moz-* properties back in to iui.css and theme css
+ * Fix Issue #124 (Panel height too short on webapp-capapble) and add a test for it
+ * Create placeholder for gradient version of default theme
+ * Add iui.goBack() and use it instead of history.back()
+ * Add iUI favicon.ico and  iui-favicon.png
+ * Added starting point/placeholder for QUnit Tests
+ * Numerous additions and improvements to Test pages
+ * Numerous improvements to Google App Engine website
 
-* Slide animation with CSS transitions is now on by default where enabled
-* Non-AJAX form subission when target="_self" (Issue #136)
+REL-0.40-dev1 2009-10-06
+
+ * Work in progress
+ * Add events to iui/iui.js
+ * Add iui-views extension
+ * Integrate masabi rail-tickets and iui_ext
 
 REL-0.30 2009-08-06
 

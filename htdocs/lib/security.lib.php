@@ -355,11 +355,11 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	{
 		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/default/templates/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/templates/";
 		}
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/default/templates/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/templates/";
 		}
 	}
 	else

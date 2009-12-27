@@ -29,12 +29,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>{$title}</title>
-<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="noindex,nofollow" />
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
-<link rel="apple-touch-icon" href="{$dol_url_root}/theme/phones/iphone/default/img/iui-logo-touch-icon.png" />
-<meta name="apple-touch-fullscreen" content="YES" />
-<style type="text/css" media="screen">@import "{$dol_url_root}/theme/phones/iphone/default/default.css.php";</style>
+<link rel="icon" type="image/png" href="{$dol_url_root}/includes/iphone/iui/iui-favicon.png" />
+<link rel="apple-touch-icon" href="{$dol_url_root}/includes/iphone/iui/iui-logo-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<link rel="stylesheet" href="{$dol_url_root}/includes/iphone/iui/iui.css" type="text/css" />
+<link rel="stylesheet" title="Default" href="{$dol_url_root}/theme/phones/iphone/theme/default/default.css.php"  type="text/css" />
 <script type="application/x-javascript" src="{$dol_url_root}/includes/iphone/iui/iui.js"></script>
+<script type="application/x-javascript" src="{$dol_url_root}/includes/iphone/iui/js/iui-theme-switcher.js"></script>
 
 </head>
 
@@ -42,7 +45,6 @@
 
 <div class="toolbar">
 	<h1 id="pageTitle"></h1>
-	<a id="backButton" class="button" href="#"></a>
 </div>
 
 <form title="{$title}" id="login" name="login" class="panel" method="post" action="{$php_self}" selected="true">
