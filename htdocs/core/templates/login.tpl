@@ -50,11 +50,9 @@
 </style>
 
 <script type="text/javascript">
-{literal}
-function donnefocus(element) {
-	document.getElementById(element).focus();
-	}
-{/literal}
+function donnefocus() {ldelim}
+	document.getElementById('{$focus_element}').focus();
+	{rdelim}
 </script>
 	
 	{if $main_html_header}
@@ -64,7 +62,7 @@ function donnefocus(element) {
 <!-- HTTP_USER_AGENT = {$smarty.server.HTTP_USER_AGENT} -->
 </head>
 
-<body class="body" onload="donnefocus({$focus_element});">
+<body class="body" onload="donnefocus();">
 <form id="login" name="login" method="post" action="{$php_self}">
 <input type="hidden" name="token" value="{$smarty.session.newtoken}">
 
