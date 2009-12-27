@@ -359,7 +359,7 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		}
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/other/default/templates/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/default/templates/";
 		}
 	}
 	else
