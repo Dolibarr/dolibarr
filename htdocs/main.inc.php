@@ -354,7 +354,15 @@ if (! isset($_SESSION["dol_login"]))
 	{
 		// We show login page
 		include_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
-		dol_loginfunction($langs,$conf,$mysoc);
+		// TODO activer smarty par defaut ?
+		if ($conf->global->MAIN_SMARTY)
+		{
+			dol_loginfunction2($langs,$conf,$mysoc);
+		}
+		else
+		{
+			dol_loginfunction($langs,$conf,$mysoc);
+		}
 		exit;
 	}
 

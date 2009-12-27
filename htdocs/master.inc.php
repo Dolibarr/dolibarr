@@ -418,7 +418,8 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
 // If there is at least one module using Smarty
-if (sizeof($conf->need_smarty) > 0)
+// TODO activer smarty par defaut ?
+if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 {
 	// Usage of constats in conf.php file is no more required.
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
