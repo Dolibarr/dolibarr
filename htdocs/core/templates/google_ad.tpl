@@ -17,7 +17,7 @@
  * $Id$
  *}
  
-<!-- BEGIN SMARTY TEMPLATE -->
+<!-- BEGIN GOOGLE AD TEMPLATE -->
 
 <script type="text/javascript"><!--
 	google_ad_client = "{$main_google_ad_client}";
@@ -31,4 +31,4 @@
 	src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
 
-<!-- END SMARTY TEMPLATE -->
+<!-- END GOOGLE AD TEMPLATE -->
