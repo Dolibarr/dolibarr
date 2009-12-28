@@ -66,32 +66,30 @@
 				<input type="password" id="password" name="password" value="" />
 			</span>
 		</li>
-		
-		{if $entity}
-        <li class="form">
-        	<span class="narrow">
-				<span class="name">{$langs->trans('Entity')}</span>
-				{$entity}
-			</span>
-        </li>
-        {/if}
-        
-        {if $captcha}
-        <li class="form">
-        	<span class="narrow">
-        		<span class="name">{$langs->trans('SecurityCode')}</span>
-        		<input type="text" id="securitycode" name="code" />
-        	</span>
-        </li>
-        <li class="form">
-        	<span class="narrow">
-        		<div align="center">
-        			<img src="{$dol_url_root}/lib/antispamimage.php" border="0" width="128" height="36" />
-        		</div>
-        	</span>
-        </li>
-		{/if}
+
 	</ul>
+	
+	{if $entity}
+	<span class="graytitle">{$langs->trans('Entity')}</span>
+	<ul class="pageitem">
+		<li class="form">
+			{$entity}
+			<span class="arrow" />
+        </li>
+	</ul>
+	{/if}
+	
+	{if $captcha}
+	<span class="graytitle">{$langs->trans('SecurityCode')}</span>
+	<ul class="pageitem">
+		<li class="form">
+			<span class="narrow">
+				<input type="text" id="securitycode" name="code" />
+				<img src="{$dol_url_root}/lib/antispamimage.php" border="0" width="128" height="36" />
+			</span>
+		</li>
+	</ul>
+	{/if}
 	
 	<ul class="pageitem">
 		<li class="form">
