@@ -6,9 +6,14 @@
 # \author	Laurent Destailleur
 #--------------------------------------------------------------------
 
-# Usage: dolibarr-doxygen-getversion.pl pathtofilefromdolibarrroot
+# Usage: dolibarr-doxygen-filter.pl pathtofilefromdolibarrroot
 
 $file=$ARGV[0];
+if (! $file) 
+{
+	print "Usage: dolibarr-doxygen-filter.pl pathtofilefromdolibarrroot\n";
+	exit;
+}
 
 open(FILE,$file) || die "Failed to open file $file";
 while (<FILE>)
