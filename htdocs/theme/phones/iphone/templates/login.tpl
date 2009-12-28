@@ -54,17 +54,11 @@
 	
 	<ul class="pageitem">
 		<li class="form">
-			<span class="narrow">
-				<span class="name">{$langs->trans('Login')}</span>
-				<input type="text" id="username" name="username" value="{$login}" />
-			</span>
+			<input placeholder="{$langs->trans('Login')}" type="text" id="username" name="username" value="{$login}" />
 		</li>
 		
 		<li class="form">
-			<span class="narrow">
-				<span class="name">{$langs->trans('Password')}</span>
-				<input type="password" id="password" name="password" value="{$password}" />
-			</span>
+			<input placeholder="{$langs->trans('Password')}" type="password" id="password" name="password" value="{$password}" />
 		</li>
 
 	</ul>
