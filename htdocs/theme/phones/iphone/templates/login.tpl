@@ -95,15 +95,14 @@
 		</li>
 	</ul>
 	
-	{if $dol_loginmesg}
+</form>
+</div>
+
+{if $dol_loginmesg}
 	<script type="text/javascript" language="javascript">
 		alert('{$dol_loginmesg}');
 	</script>
-	{/if}
-	
-</form>
-
-</div>
+{/if}
 
 </body>
 </html>
