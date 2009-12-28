@@ -25,11 +25,14 @@ On trouve plusieurs outils:
 > Installer WampServer dans "C:\Program Files\Wamp" (http://www.wampserver.com)
 > Installer les addon WampServer afin d'y mettre les versions:
    Apache2.2.6, Mysql5.0.45, Php5.2.5
-> Modifier dans le fichier build/exe/doliwamp2.4.iss la variable SourceDir
+> Modifier dans le fichier build/exe/doliwamp.iss la variable SourceDir
   afin d'y mettre le repository Dolibarr.
 > Modifier AppVerName et OutputBaseFilename.
-> Lancer innosetup, ouvrir le fichier build/exe/doliwamp2.4.iss et cliquer sur
+> Lancer innosetup, ouvrir le fichier build/exe/doliwamp.iss et cliquer sur
   le bouton "Compile". Le fichier .exe sera fabrique dans le repertoire build.
+
+- Pour generer la documentation developpeur, lancer le script
+> perl dolybarr-doxygen-build.pl
 
 
 Note: 

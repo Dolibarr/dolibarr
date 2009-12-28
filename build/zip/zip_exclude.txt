@@ -1,8 +1,12 @@
 */build/*
+*/dev/dbmodel/*
 */dev/fpdf/*
-*/dev/ldap/*
-*/dev/purgedemo/*
-*/dev/generate*
+*/dev/initdemo/*
+*/dev/iso-normes/*
+*/dev/licence/*
+*/dev/load/*
+*/dev/test/*
+*/dev/uml/*
 */dev/xdebug/*
 */doc/dev/dolibarr-phpdoc/*
 */doc/dev/barcode/*

@@ -1,9 +1,13 @@
 build
+dev/dbmodel
 dev/fpdf
 dev/initdemo
-dev/ldap
+dev/iso-normes
+dev/licence
 dev/load
 dev/skeletons/*socpeople*
+dev/test
+dev/uml
 dev/xdebug
 doc/dev/dolibarr-phpdoc
 doc/dev/barcode
