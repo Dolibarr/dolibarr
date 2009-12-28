@@ -201,7 +201,7 @@ if (! defined('NOTOKENRENEWAL'))
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 	$_SESSION['newtoken'] = $token;
 }
-if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only if not option enabled (this option breaks some features sometimes)
+if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only if option enabled (this option breaks some features sometimes)
 {
 	if (isset($_POST['token']) && isset($_SESSION['token']))
 	{
@@ -222,6 +222,29 @@ if (! empty($_SESSION["disablemodules"]))
 	foreach($disabled_modules as $module)
 	{
 		$conf->$module->enabled=false;
+	}
+}
+
+// Init Smarty
+// TODO activer smarty par defaut ?
+if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
+{
+	// Usage of const in conf.php file can overwrite default dir.
+	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
+	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
+	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
+
+	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
+	if (@include_once($smarty_libs))
+	{
+		$smarty = new Smarty();
+		$smarty->compile_dir = $dolibarr_smarty_compile;
+		$smarty->cache_dir = $dolibarr_smarty_cache;
+		//$smarty->config_dir = '/web/www.domain.com/smarty/configs';
+	}
+	else
+	{
+		dol_print_error('',"Library Smarty ".$smarty_libs." not found.");
 	}
 }
 
@@ -355,7 +378,7 @@ if (! isset($_SESSION["dol_login"]))
 		// We show login page
 		include_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
 		// TODO activer smarty par defaut ?
-		if ($conf->global->MAIN_SMARTY)
+		if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 		{
 			dol_loginfunction2($langs,$conf,$mysoc);
 		}
