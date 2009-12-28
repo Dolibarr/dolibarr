@@ -21,6 +21,9 @@ For users:
        for a product.
 - Fix: Running sending-email.php
 
+For developers:
+- Reorganize /dev directory.
+
 
 ***** ChangeLog for 2.7 compared to 2.6 *****
 
