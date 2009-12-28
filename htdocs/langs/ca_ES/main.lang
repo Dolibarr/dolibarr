@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main 
+# Dolibarr language file - ca_ES - main
 CHARSET = UTF-8
 DIRECTION = ltr
 SeparatorDecimal = ,
@@ -427,6 +427,7 @@ NotAllowed = No autoritzat
 ReadPermissionNotAllowed = Lectura no autoritzada
 AmountInCurrency = Imports visualitzats en %s
 Example = Exemple
+Examples = Exemples
 NoExample = Sense exemple
 FindBug = Assenyalar un bug
 NbOfThirdParties = Número de tercers

@@ -427,6 +427,7 @@ NotAllowed = No autorizado
 ReadPermissionNotAllowed = Lectura no autorizada
 AmountInCurrency = Importes visualizados en %s
 Example = Ejemplo
+Examples = Ejemplos
 NoExample = Sin ejemplo
 FindBug = Señalar un bug
 NbOfThirdParties = Número de terceros
