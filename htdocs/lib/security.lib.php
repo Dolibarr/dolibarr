@@ -361,6 +361,7 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 		{
 			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/templates/";
+			$smarty->assign('theme', 'default');
 		}
 		else
 		{

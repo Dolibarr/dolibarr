@@ -33,7 +33,7 @@
 <meta name="robots" content="noindex,nofollow" />
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="stylesheet" href="{$dol_url_root}/theme/phones/iphone/theme/default/default.css.php"  type="text/css" />
+<link rel="stylesheet" href="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/{$theme}.css.php"  type="text/css" />
 <script type="text/javascript" src="{$dol_url_root}/includes/iphone/iwebkit/Framework/javascript/function.js"></script>
 </head>
 
