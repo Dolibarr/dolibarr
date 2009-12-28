@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #--------------------------------------------------------------------
-# Script recup version d'un source
+# Script to get version of a source file
+# Does not work with cygwin cvs command on Windows.
 #
 # \version $Id$
 #--------------------------------------------------------------------
