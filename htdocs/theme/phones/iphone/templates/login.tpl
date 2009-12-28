@@ -31,10 +31,10 @@
 <head>
 <title>{$title}</title>
 <meta name="robots" content="noindex,nofollow" />
+<meta content="yes" name="apple-mobile-web-app-capable" />
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="stylesheet" href="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/{$theme}.css.php"  type="text/css" />
-<script type="text/javascript" src="{$dol_url_root}/includes/iphone/iwebkit/Framework/javascript/function.js"></script>
+<script type="text/javascript" src="{$dol_url_root}/includes/iphone/iwebkit/Framework/javascript/functions.js"></script>
 </head>
 
 <body>
@@ -56,14 +56,14 @@
 		<li class="form">
 			<span class="narrow">
 				<span class="name">{$langs->trans('Login')}</span>
-				<input type="text" id="username" name="username" value="" />
+				<input type="text" id="username" name="username" value="{$login}" />
 			</span>
 		</li>
 		
 		<li class="form">
 			<span class="narrow">
 				<span class="name">{$langs->trans('Password')}</span>
-				<input type="password" id="password" name="password" value="" />
+				<input type="password" id="password" name="password" value="{$password}" />
 			</span>
 		</li>
 

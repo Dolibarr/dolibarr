@@ -91,10 +91,10 @@ function donnefocus() {ldelim}
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="{$password}" tabindex="2">
 </td></tr>
 
-	{if $entity}
+	{if $select_entity}
 		<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>{$langs->trans('Entity')}</b> &nbsp; </td>
 		<td valign="top" nowrap="nowrap">
-		{$entity}
+		{$select_entity}
 		</td></tr>
 	{/if}
 
