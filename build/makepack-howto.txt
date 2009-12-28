@@ -4,7 +4,8 @@ complete release of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update files in root directory (README*.txt, ChangeLog...)
-- Update version number in makepack-dolibarr.pl file
+- Update version number in makepack-dolibarr.pl
+- Update version number in dolibarr-doxygen.doxyfile
 - Update version number in htdocs/build/exe/doliwamp/doliwamp.iss
 - Update version number in htdocs/master.inc.php
 - Update version number in htdocs/install/inc.php
