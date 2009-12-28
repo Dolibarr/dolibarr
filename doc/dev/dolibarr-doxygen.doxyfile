@@ -1,4 +1,4 @@
-# Doxyfile 1.5.5
+# Doxyfile 1.6.1
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -31,7 +31,7 @@ PROJECT_NAME = dolibarr
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER = 2.7.0
+PROJECT_NUMBER = 2.8.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -449,7 +449,9 @@ SHOW_NAMESPACES = NO
 # provided by doxygen. Whatever the program writes to standard output 
 # is used as the file version. See the manual for examples.
 
-FILE_VERSION_FILTER = 
+#FILE_VERSION_FILTER = dolibarr-doxygen-getversion.pl
+FILE_VERSION_FILTER =
+
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
