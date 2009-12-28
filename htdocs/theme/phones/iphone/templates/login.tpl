@@ -81,6 +81,10 @@
         	<span class="narrow">
         		<span class="name">{$langs->trans('SecurityCode')}</span>
         		<input type="text" id="securitycode" name="code" />
+        	</span>
+        </li>
+        <li class="form">
+        	<span class="narrow">
         		<div align="center">
         			<img src="{$dol_url_root}/lib/antispamimage.php" border="0" width="128" height="36" />
         		</div>
