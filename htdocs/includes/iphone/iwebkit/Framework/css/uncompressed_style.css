@@ -1,54 +1,10 @@
-<?php
-/* Copyright (C) 2009 Regis Houssin	<regis@dolibarr.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-
-/**
- *		\file       htdocs/theme/phones/iphone/theme/default/default.css.php
- *		\brief      Fichier de style CSS du theme Iphone default
- *		\version    $Id$
- */
-
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1'); // We need to use translation files to know direction
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-
-require_once("../../../../../master.inc.php");
-
-// Define css type
-header('Content-type: text/css');
-// Important: Avoid page request by browser and dynamic build at
-// each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
-else header('Cache-Control: no-cache');
-
-?>
-
-body {
+﻿body {
 	position: relative;
 	margin: 0;
 	-webkit-text-size-adjust: none;
 	min-height: 416px;
 	font-family: helvetica,sans-serif;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/background.png'; ?>),
-				url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/menutouched.png'; ?>) no-repeat;
+	background: url("../images/background.png"),url('../images/menutouched.png') no-repeat;
 	-webkit-touch-callout: none;
 }
 .center {
@@ -67,7 +23,7 @@ a:hover span.arrow {
 	top: 0;
 	height: 44px;
 	width: auto;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/header.png'; ?>) repeat;
+	background: url("../images/header.png") repeat;
 	margin-bottom: 13px;
 }
 #title {
@@ -167,7 +123,7 @@ ul.pageitem li:last-child:hover, .pageitem li:last-child a, li.form:last-child i
 	-webkit-border-bottom-right-radius: 8px 8px;
 }
 li.menu:hover {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/menutouched.png'; ?>) repeat-x #0274ee;
+	background: url("../images/menutouched.png") repeat-x #0274ee;
 }
 li.menu a:hover span.name, li.menu a:hover span.comment, li.store:hover .starcomment, li.store:hover .name, li.store:hover .comment, body.list li.withimage a:hover .comment {
 	color: #fff;
@@ -218,7 +174,7 @@ li.menu span.arrow, li.store span.arrow, body.musiclist span.arrow, body.list sp
 	right: 10px;
 	top: 15px;
 	margin: 0!important;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/arrow.png'; ?>) 0 0 no-repeat;
+	background: url("../images/arrow.png") 0 0 no-repeat;
 }
 li.store {
 	height: 90px;
@@ -230,12 +186,12 @@ li.store a {
 	width: 100%;
 	height: 90px;
 	display: block;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/storebg.png'; ?>) left top no-repeat;
+	background: url("../images/storebg.png") left top no-repeat;
 	text-decoration: none;
 	position: absolute;
 }
 li.store:hover {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/storetouched.png'; ?>) repeat-x #0274ee;
+	background: url("../images/storetouched.png") repeat-x #0274ee;
 }
 li.store .image {
 	position: absolute;
@@ -244,7 +200,7 @@ li.store .image {
 	height: 90px;
 	width: 90px;
 	display: block;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/storetouched.png'; ?>) no-repeat;
+	background: url('../images/storetouched.png') no-repeat;
 }
 li:first-child.store .image, li.store:first-child a {
 	-webkit-border-top-left-radius: 8px 8px;
@@ -313,7 +269,7 @@ body.musiclist div#content {
 	margin: -29px auto auto -40px;
 }
 body.musiclist div#content ul {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/musiclistbg.png'; ?>) repeat;
+	background: url("../images/musiclistbg.png") repeat;
 }
 body.musiclist div#content ul li {
 	list-style: none;
@@ -363,7 +319,7 @@ body.musiclist ul li span.name {
 	max-width: 62%;
 }
 body.list ul li.title {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/listheader.gif'; ?>) repeat-x;
+	background: url("../images/listheader.gif") repeat-x;
 	height: 22px!important;
 	width: 100%;
 	color: #fff;
@@ -414,7 +370,7 @@ body.list div#content li a:hover {
 	color: #fff;
 }
 body.list div#content li a:hover {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/menutouched.png'; ?>) repeat-x;
+	background: url("../images/menutouched.png") repeat-x;
 }
 body.list div#content {
 	margin-top: -13px!important;
@@ -442,17 +398,17 @@ body.list li.withimage .comment {
 }
 body.list li.withimage a, body.list li.withimage:hover a {
 	height: 81px!important;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/storebg.png'; ?>) left top no-repeat!important;
+	background: url("../images/storebg.png") left top no-repeat!important;
 }
 body.list li.withimage:hover {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/storetouched.png'; ?>);
+	background-image: url("../images/storetouched.png");
 }
 .confirm_screen {
 	position: absolute;
 	bottom: 0;
 	-webkit-transform: translate(0,100%);
 	-webkit-transition-property: -webkit-transform;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/popup-bg.png'; ?>);
+	background-image: url("../images/popup-bg.png");
 	opacity: 0;
 }
 .confirm_screenopen {
@@ -461,7 +417,7 @@ body.list li.withimage:hover {
 	overflow: hidden;
 	bottom: -100%;
 	width: 100%;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/popup-bg.png'; ?>) repeat-x #4e545f;
+	background: url("../images/popup-bg.png") repeat-x #4e545f;
 	-webkit-transition-duration: 0.8s;
 	-webkit-transition-property: -webkit-transform;
 	-webkit-transform-style: preserve-3d;
@@ -475,7 +431,7 @@ body.list li.withimage:hover {
 	overflow: hidden;
 	bottom: -100%;
 	width: 100%;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/popup-bg.png'; ?>) repeat-x #4e545f;
+	background: url("../images/popup-bg.png") repeat-x #4e545f;
 	-webkit-transition-duration: 0.8s;
 	-webkit-transition-property: -webkit-transform;
 	-webkit-transform-style: preserve-3d;
@@ -492,7 +448,7 @@ body.list li.withimage:hover {
 	overflow: hidden;
 	bottom: -100%;
 	width: 100%;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/popup-bg.png'; ?>) repeat-x #545A67;
+	background: url("../images/popup-bg.png") repeat-x #545A67;
 	text-align: center;
 	-webkit-transform: translate(0,150%);
 }
@@ -523,8 +479,7 @@ body.list li.withimage:hover {
 }
 .nocover {
 	opacity: 0;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/bluebutton.png'; ?>),
-					url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/darkredbutton.png'; ?>);
+	background-image: url('../images/bluebutton.png'),url('../images/darkredbutton.png');
 }
 #frame a {
 	text-decoration: none;
@@ -551,15 +506,15 @@ body.list li.withimage:hover {
 	font-family: Arial,Helvetica,sans-serif;
 }
 #frame span.black {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/graybutton.png'; ?>) 0 14 0 14;
+	-webkit-border-image: url("../images/graybutton.png") 0 14 0 14;
 	color: #fff;
 }
 #frame span.red {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/redbutton.png'; ?>) 0 14 0 14;
+	-webkit-border-image: url("../images/redbutton.png") 0 14 0 14;
 	color: #fff;
 }
 #frame span.gray {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/whitebutton.png'; ?>) 0 14 0 14;
+	-webkit-border-image: url("../images/whitebutton.png") 0 14 0 14;
 	color: #000;
 	text-shadow: white 0 1px 0;
 }
@@ -567,12 +522,12 @@ body.list li.withimage:hover {
 	margin-bottom: 20px!important;
 }
 #frame a:hover span.black, #frame a:hover span.gray {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/bluebutton.png'; ?>) 0 14 0 14;
+	-webkit-border-image: url("../images/bluebutton.png") 0 14 0 14;
 	color: #fff;
 	text-shadow: rgba(0,0,0,1) 0 -1px 0;
 }
 #frame a:hover span.red {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/darkredbutton.png'; ?>) 0 14 0 14;
+	-webkit-border-image: url("../images/darkredbutton.png") 0 14 0 14;
 }
 #leftnav, #leftbutton {
 	position: absolute;
@@ -597,7 +552,7 @@ body.list li.withimage:hover {
 }
 #leftnav a:first-child {
 	z-index: 2;
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navleft.png'; ?>) 0 5 0 13;
+	-webkit-border-image: url("../images/navleft.png") 0 5 0 13;
 	border-width: 0 5px 0 13px;
 	-webkit-border-top-left-radius: 16px;
 	-webkit-border-bottom-left-radius: 16px;
@@ -606,7 +561,7 @@ body.list li.withimage:hover {
 	width: auto;
 }
 #leftnav a {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navlinkleft.png'; ?>) 0 5 0 13;
+	-webkit-border-image: url("../images/navlinkleft.png") 0 5 0 13;
 	z-index: 3;
 	margin-left: -4px;
 	border-width: 0 5px 0 13px;
@@ -625,7 +580,7 @@ body.list li.withimage:hover {
 	font-weight: bold;
 }
 #rightnav a {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navlinkright.png'; ?>) 0 13 0 5;
+	-webkit-border-image: url("../images/navlinkright.png") 0 13 0 5;
 	z-index: 3;
 	margin-right: -4px;
 	border-width: 0 13px 0 5px;
@@ -640,13 +595,13 @@ body.list li.withimage:hover {
 	z-index: 2;
 	-webkit-border-top-left-radius: 6px;
 	-webkit-border-bottom-left-radius: 6px;
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navright.png'; ?>) 0 13 0 5;
+	-webkit-border-image: url("../images/navright.png") 0 13 0 5;
 	border-width: 0 13px 0 5px;
 	-webkit-border-top-right-radius: 16px;
 	-webkit-border-bottom-right-radius: 16px;
 }
 #leftbutton a, #rightbutton a {
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/navbutton.png'; ?>) 0 5 0 5;
+	-webkit-border-image: url("../images/navbutton.png") 0 5 0 5;
 	border-width: 0 5px;
 	-webkit-border-radius: 6px;
 }
@@ -687,7 +642,7 @@ li.form input[type=text], li.form input[type=password], li.form input[type=searc
 	font-weight: normal;
 	border-color: white;
 	height: 10px;
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/textfield.png'; ?>) 7 7 7 7;
+	-webkit-border-image: url("../images/textfield.png") 7 7 7 7;
 	-webkit-appearance: none;
 	line-height: 8px;
 	font-size: 18px;
@@ -716,7 +671,7 @@ li.form .narrow textarea, li.form .narrow input[type=text], li.form .narrow inpu
 	width: 40%!important;
 	border-width: 7px 7px;
 	height: 10px;
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/textfield.png'; ?>) 7 7 7 7;
+	-webkit-border-image: url("../images/textfield.png") 7 7 7 7;
 	-webkit-appearance: none;
 	line-height: 8px;
 	font-size: 18px;
@@ -762,7 +717,7 @@ li.form input[type=radio] {
 span.radio {
 	width: 16px;
 	height: 30px;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/check.png'; ?>) no-repeat;
+	background: url(../images/check.png) no-repeat;
 	display: block;
 	position: absolute;
 	right: 5px;
@@ -772,7 +727,7 @@ span.radio {
 span.checkbox {
 	width: 94px;
 	height: 27px;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/checkbox.png'; ?>) no-repeat;
+	background: url(../images/checkbox.png) no-repeat;
 	display: block;
 	position: absolute;
 	right: -14px;
@@ -806,7 +761,7 @@ span.select {
 	max-width: 87%;
 }
 .form .arrow {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/more.png'; ?>) no-repeat;
+	background: url('../images/more.png') no-repeat;
 	width: 13px;
 	height: 8px;
 	position: absolute;
@@ -837,7 +792,7 @@ button, input[type=button], input[type=reset] {
 	min-height: 50px;
 	margin: 3px auto 4px auto;
 	position: relative;
-	-webkit-border-image: url(<?php echo DOL_URL_ROOT.'/theme/phones/iphone/theme/default/img/textfield.png'; ?>') 7 7 7 7;
+	-webkit-border-image: url("../images/textfield.png") 7 7 7 7;
 	padding: 3px 0 0 0;
 	line-height: 18px;
 	left: -2px;

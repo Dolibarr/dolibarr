@@ -353,6 +353,7 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 	
 	$smarty->assign('php_self', $php_self);
+	$smarty->assign('character_set_client',$conf->file->character_set_client);
 
 	// Select templates
 	if ($conf->browser->phone)
@@ -537,15 +538,19 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	$smarty->assign('main_authentication', $conf->file->main_authentication);
 	$smarty->assign('session_name', session_name());
 	
+	// Message
+	if (! empty($_SESSION["dol_loginmesg"]))
+	{
+		$smarty->assign('dol_loginmesg', $_SESSION["dol_loginmesg"]);
+	}
+	
 	// Creation du template
 	$smarty->display('login.tpl');
 	
 	// Suppression de la version compilee
 	$smarty->clear_compiled_tpl('login.tpl');
 	
-	// Reset error message
 	$_SESSION["dol_loginmesg"] = '';
-
 }
 
 /**

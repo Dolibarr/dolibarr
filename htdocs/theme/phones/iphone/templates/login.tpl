@@ -20,78 +20,90 @@
 	header('Cache-Control: Public, must-revalidate');
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 {/php}
- 
-<!-- BEGIN SMARTY TEMPLATE -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<!-- BEGIN SMARTY TEMPLATE -->
+
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
 <title>{$title}</title>
 <meta name="robots" content="noindex,nofollow" />
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
-<link rel="icon" type="image/png" href="{$dol_url_root}/includes/iphone/iui/iui-favicon.png" />
-<link rel="apple-touch-icon" href="{$dol_url_root}/includes/iphone/iui/iui-logo-touch-icon.png" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="stylesheet" href="{$dol_url_root}/includes/iphone/iui/iui.css" type="text/css" />
-<link rel="stylesheet" title="Default" href="{$dol_url_root}/theme/phones/iphone/theme/default/default.css.php"  type="text/css" />
-<script type="application/x-javascript" src="{$dol_url_root}/includes/iphone/iui/iui.js"></script>
-<script type="application/x-javascript" src="{$dol_url_root}/includes/iphone/iui/js/iui-theme-switcher.js"></script>
-
+<link rel="stylesheet" href="{$dol_url_root}/theme/phones/iphone/theme/default/default.css.php"  type="text/css" />
+<script type="text/javascript" src="{$dol_url_root}/includes/iphone/iwebkit/Framework/javascript/function.js"></script>
 </head>
 
 <body>
 
-<div class="toolbar">
-	<h1 id="pageTitle"></h1>
+<div id="topbar">
+	<div id="title">{$title}</div>
 </div>
 
-<form title="{$title}" id="login" name="login" class="panel" method="post" action="{$php_self}" selected="true">
+<div id="content">
+	<form id="login" name="login" method="post" action="{$php_self}">
+	<input type="hidden" name="token" value="{$smarty.session.newtoken}" />
+	<input type="hidden" name="loginfunction" value="loginfunction" />
+	
 	<div align="center">
 		<img src="{$logo}">
 	</div>
-	<fieldset>		
-        <input type="hidden" name="token" value="{$smarty.session.newtoken}">
-        <input type="hidden" name="loginfunction" value="loginfunction" />    
-        <div class="row">
-        	<label>{$langs->trans('Login')}</label>
-        	<input type="text" id="username" name="username" value="" />
-        </div>
-        
-        <div class="row">
-        	<label>{$langs->trans('Password')}</label>
-        	<input type="password" id="password" name="password" value="" />
-        </div>
-        
-        {if $entity}
-        <div class="row">
-        	<label>{$langs->trans('Entity')}</label>
-        	{$entity}
-        </div>
+	
+	<ul class="pageitem">
+		<li class="form">
+			<span class="narrow">
+				<span class="name">{$langs->trans('Login')}</span>
+				<input type="text" id="username" name="username" value="" />
+			</span>
+		</li>
+		
+		<li class="form">
+			<span class="narrow">
+				<span class="name">{$langs->trans('Password')}</span>
+				<input type="password" id="password" name="password" value="" />
+			</span>
+		</li>
+		
+		{if $entity}
+        <li class="form">
+        	<span class="narrow">
+				<span class="name">{$langs->trans('Entity')}</span>
+				{$entity}
+			</span>
+        </li>
         {/if}
         
         {if $captcha}
-        <div class="row">
-        	<label>{$langs->trans('SecurityCode')}</label>
-        	<input type="text" id="securitycode" name="code">
-        	<div align="center">
-        		<img src="{$dol_url_root}/lib/antispamimage.php" border="0" width="128" height="36">
-			</div>
-		</div>
+        <li class="form">
+        	<span class="narrow">
+        		<span class="name">{$langs->trans('SecurityCode')}</span>
+        		<input type="text" id="securitycode" name="code" />
+        		<div align="center">
+        			<img src="{$dol_url_root}/lib/antispamimage.php" border="0" width="128" height="36" />
+        		</div>
+        	</span>
+        </li>
 		{/if}
-
-	</fieldset>
+	</ul>
 	
-	{if $smarty.session.dol_loginmesg}
-	<div align="center">
-		{$smarty.session.dol_loginmesg}
-	</div>
+	<ul class="pageitem">
+		<li class="form">
+			<input name="input Button" type="submit" value="{$langs->trans('Connection')}" />
+		</li>
+	</ul>
+	
+	{if $dol_loginmesg}
+	<script type="text/javascript" language="javascript">
+		alert('{$dol_loginmesg}');
+	</script>
 	{/if}
 	
-	<a class="whiteButton" type="submit">{$langs->trans('Connection')}</a>
-	
 </form>
+
+</div>
 
 </body>
 </html>
