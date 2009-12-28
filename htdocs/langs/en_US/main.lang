@@ -428,6 +428,7 @@ NotAllowed=Not allowed
 ReadPermissionNotAllowed=Read permission not allowed
 AmountInCurrency=Amount in %s currency
 Example=Example
+Examples=Examples
 NoExample=No example
 FindBug=Report a bug
 NbOfThirdParties=Number of third parties

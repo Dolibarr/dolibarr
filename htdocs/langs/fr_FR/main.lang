@@ -427,6 +427,7 @@ NotAllowed=Non autorisé
 ReadPermissionNotAllowed=Lecture non autorisée
 AmountInCurrency=Montants exprimés en %s
 Example=Exemple
+Examples=Exemples
 NoExample=Pas d'exemple
 FindBug=Signaler un bug
 NbOfThirdParties=Nombre de tiers

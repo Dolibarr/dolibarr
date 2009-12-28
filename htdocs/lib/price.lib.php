@@ -27,8 +27,7 @@
 /**
  *		\brief 	Permet de calculer les parts total HT, TVA et TTC d'une ligne de
  *				facture, propale, commande ou autre depuis:
- *				quantity, unit price, remise_percent_ligne, txtva, remise_percent_global, price_base_type, info_bits
- *		\param 	qty							Quantity
+ *				quantity, unit price, remise_percent_ligne, txtva, remise_percent_global, price_base_type, info_bits *		\param 	qty							Quantity
  *		\param 	pu							Prix unitaire (HT ou TTC selon price_base_type)
  *		\param 	remise_percent_ligne		Remise ligne
  *		\param 	txtva						Taux tva
@@ -59,7 +58,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_pe
 		$result[0] = price2num($tot_avec_remise, 'MT');
 		$result[2] = price2num($tot_avec_remise * ( 1 + ( (($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result2bis= price2num($tot_avec_remise * ( 1 + ( $txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
-		$result[1] = $result2bis - $result[0];
+		if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
+		{
+			$result[0]=round($result[0]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
+			$result[2]=round($result[2]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
+			$result2bis=round($result2bis/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
+		}
+		$result[1] = $result2bis - $result[0];	// Total VAT = TTC - HT
 
 		$result[3] = price2num($pu, 'MU');
 		$result[5] = price2num($pu * ( 1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
@@ -68,8 +73,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_pe
 	}
 	else
 	{
-		// On cacule a l'envers en partant du prix TTC
-		// Utilise pour les produits a prix TTC reglemente (livres, ...)
+		// On calcule à l'envers en partant du prix TTC
 		$tot_sans_remise = $pu * $qty;
 		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
 		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
@@ -82,7 +86,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_pe
 		$result[2] = price2num($tot_avec_remise, 'MT');
 		$result[0] = price2num($tot_avec_remise / ( 1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result0bis= price2num($tot_avec_remise / ( 1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
-		$result[1] = $result[2] - $result0bis;
+		if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
+		{
+			$result0bis=round($result0bis/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
+			$result[0]=round($result[0]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
+			$result[2]=round($result[2]/$conf->global->MAIN_ROUNDING_RULE_TOT, 0)*$conf->global->MAIN_ROUNDING_RULE_TOT;
+		}
+		$result[1] = $result[2] - $result0bis;	// Total VAT = TTC - HT
 
 		$result[5] = price2num($pu, 'MU');
 		$result[3] = price2num($pu / ( 1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non

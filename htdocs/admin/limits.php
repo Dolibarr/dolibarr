@@ -25,6 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
 
 $langs->load("companies");
 $langs->load("products");
@@ -36,25 +37,53 @@ if (!$user->admin)
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
+	$error=0;
 	$MAXDEC=8;
 	if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  > $MAXDEC
 	 || $_POST["MAIN_MAX_DECIMALS_TOT"]   > $MAXDEC
 	 || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > $MAXDEC)
 	{
+		$error++;
 		$mesg='<div class="error">'.$langs->trans("ErrorDecimalLargerThanAreForbidden",$MAXDEC).'</div>';
 	}
-	else
+
+	if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  < 0
+	 || $_POST["MAIN_MAX_DECIMALS_TOT"]   < 0
+	 || $_POST["MAIN_MAX_DECIMALS_SHOWN"] < 0)
+	{
+		$langs->load("errors");
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorNegativeValueNotAllowed").'</div>';
+	}
+	
+	if ($_POST["MAIN_ROUNDING_RULE_TOT"])
+	{
+		if ($_POST["MAIN_ROUNDING_RULE_TOT"] * pow(10,$_POST["MAIN_MAX_DECIMALS_TOT"]) < 1)	
+		{
+			$langs->load("errors");
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT").'</div>';
+		}
+	}
+	
+	if (! $error)
 	{
 		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",   $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT",    $_POST["MAIN_MAX_DECIMALS_TOT"],'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN",  $_POST["MAIN_MAX_DECIMALS_SHOWN"],'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "MAIN_DISABLE_PDF_COMPRESSION", $_POST["MAIN_DISABLE_PDF_COMPRESSION"],'chaine',0,'',$conf->entity);
+
+		dolibarr_set_const($db, "MAIN_ROUNDING_RULE_TOT",   $_POST["MAIN_ROUNDING_RULE_TOT"],'chaine',0,'',$conf->entity);
 
 		Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 		exit;
 	}
 }
 
+
+
+/*
+ * View
+ */
 
 $html=new Form($db);
 
@@ -93,12 +122,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
 
-    /*
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_PDF_COMPRESSION").'</td><td>';
-	print $html->selectyesno('MAIN_DISABLE_PDF_COMPRESSION',$conf->global->MAIN_DISABLE_PDF_COMPRESSION);
-    print '</td></tr>';
-	*/
+    print '<tr '.$bc[$var].'><td>';
+	print $html->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
+    print '</td><td><input class="flat" name="MAIN_ROUNDING_RULE_TOT" size="3" value="' . $conf->global->MAIN_ROUNDING_RULE_TOT . '"></td></tr>';
 
     print '</table>';
 
@@ -129,10 +156,10 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
 
-    /*
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_PDF_COMPRESSION").'</td><td align="right">'.yn($conf->global->MAIN_DISABLE_PDF_COMPRESSION).'</td></tr>';
-	*/
+    print '<tr '.$bc[$var].'><td>';
+    print $html->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
+    print '</td><td align="right">'.$conf->global->MAIN_ROUNDING_RULE_TOT.'</td></tr>';
 
     print '</table>';
 
@@ -141,6 +168,44 @@ else
     print '</div>';
 }
 
+
+// Show examples
+print '<b>'.$langs->trans("Examples").":</b><br>\n";
+
+$s=2/7;$qty=1;$vat=0;
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+print " x ".$langs->trans("Quantity").": ".$qty;
+print " - ".$langs->trans("VAT").": ".$vat;
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+
+$s=10/3;$qty=1;$vat=0;
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+print " x ".$langs->trans("Quantity").": ".$qty;
+print " - ".$langs->trans("VAT").": ".$vat;
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+
+$s=10/3;$qty=2;$vat=0;
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+print " x ".$langs->trans("Quantity").": ".$qty;
+print " - ".$langs->trans("VAT").": ".$vat;
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+
+$s=10/3;$qty=1;$vat=10;
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+print " x ".$langs->trans("Quantity").": ".$qty;
+print " - ".$langs->trans("VAT").": ".$vat;
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+
+$s=10/3;$qty=2;$vat=10;
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
+print " x ".$langs->trans("Quantity").": ".$qty;
+print " - ".$langs->trans("VAT").": ".$vat;
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $db->close();
 
