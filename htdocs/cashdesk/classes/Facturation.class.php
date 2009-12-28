@@ -48,12 +48,12 @@ class Facturation {
 	protected $tva;
 
 	/**
-		* Attributs persistants : utilis�s pour toute la dur�e de la vente (jusqu'� validation ou annulation)
-		* @var string $num_facture	=> Num�ro de la facture (de la forme FAYYMM-XXXX)
-		* @var string $mode_reglement	=> Mode de r�glement (ESP, CB ou CHQ)
-		* @var int $montant_encaisse	=> Montant encaiss� en cas de r�glement en esp�ces
-		* @var int $montant_rendu	=> Monnaie rendue en cas de r�glement en esp�ces
-		* @var int $paiement_le		=> Date de paiement en cas de paiement diff�r�
+		* Attributs persistants : utilises pour toute la duree de la vente (jusqu'a validation ou annulation)
+		* @var string $num_facture	=> Numero de la facture (de la forme FAYYMM-XXXX)
+		* @var string $mode_reglement	=> Mode de reglement (ESP, CB ou CHQ)
+		* @var int $montant_encaisse	=> Montant encaisse en cas de reglement en especes
+		* @var int $montant_rendu	=> Monnaie rendue en cas de reglement en especes
+		* @var int $paiement_le		=> Date de paiement en cas de paiement differe
 		*
 		* @var int $prix_total_ht	=> Prix total hors taxes
 		* @var int $montant_tva		=> Montant total de la TVA, tous taux confondus
