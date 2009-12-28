@@ -21,9 +21,8 @@
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 {/php}
 
-<!-- BEGIN SMARTY TEMPLATE -->
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- BEGIN SMARTY TEMPLATE -->
 
 <html>
 <head>
@@ -124,6 +123,10 @@ function donnefocus() {ldelim}
 		{if $forgetpasslink}
 			<a style="color: #888888; font-size: 10px" href="{$dol_url_root}/user/passwordforgotten.php">(
 			{$langs->trans('PasswordForgotten')}
+			{if ! $helpcenterlink}
+			)
+			{/if}
+			</a>
 		{/if}
 
 		{if $helpcenterlink}
@@ -133,9 +136,8 @@ function donnefocus() {ldelim}
 			{else}
 				(
 			{/if}  
-			{$langs->trans('NeedHelpCenter')}
+			{$langs->trans('NeedHelpCenter')})</a>			
 		{/if}
-		)</a>
 		{/strip}
 		</td></tr>
 	{/if}

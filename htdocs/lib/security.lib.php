@@ -248,10 +248,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
 
 		print '<tr><td colspan="3" align="center">';
+		
 		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 		{
 			print '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">(';
 			print $langs->trans("PasswordForgotten");
+			if (! empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) print ')';
+			print '</a>';
 		}
 
 		if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
@@ -261,8 +264,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) print '(';
 			else print '  -  ';
 			print $langs->trans("NeedHelpCenter");
+			print ')</a>';
 		}
-		print ')</a>';
+
 		print '</td></tr>';
 	}
 
