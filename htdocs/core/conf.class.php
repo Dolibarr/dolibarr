@@ -32,7 +32,6 @@
 /**
  *  \class      Conf
  *  \brief      Classe de stockage de la config courante
- *  \todo       Deplacer ce fichier dans htdocs/lib
  */
 class Conf
 {
