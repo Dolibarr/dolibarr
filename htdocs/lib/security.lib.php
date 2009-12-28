@@ -485,7 +485,7 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		$mc = new Multicompany($db);
 		$mc->getEntities();
 
-		$smarty->assign('entity', $mc->select_entities($mc->entities,$lastentity,'tabindex="3"'));
+		$smarty->assign('select_entity', $mc->select_entities($mc->entities,$lastentity,'tabindex="3"'));
 	}
 
 	// Security graphical code

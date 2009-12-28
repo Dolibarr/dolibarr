@@ -69,12 +69,12 @@
 
 	</ul>
 	
-	{if $entity}
+	{if $select_entity}
 	<span class="graytitle">{$langs->trans('Entity')}</span>
 	<ul class="pageitem">
 		<li class="form">
-			{$entity}
-			<span class="arrow" />
+			{$select_entity}
+			<span class="arrow"></span>
         </li>
 	</ul>
 	{/if}
