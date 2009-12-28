@@ -63,7 +63,7 @@ else if ($conf->db->type == 'pgsql')
 }
 else if ($conf->db->type == 'mssql')
 {
-	//TODO: r�cup�rer les infos du serveur
+	//TODO: recuperer les infos du serveur
 	//$sqls[0] = "";
 	//$base=3;
 }
