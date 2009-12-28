@@ -417,19 +417,20 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
+
 // If there is at least one module using Smarty
+// FIXME Smarty is an output framework so it should be required and used only in main.inc.php and not in master.inc.php
 // TODO activer smarty par defaut ?
 if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 {
-	// Usage of constats in conf.php file is no more required.
+	// Usage of const in conf.php file can overwrite default dir.
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
 
 	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
-	if (file_exists ($smarty_libs))
+	if (@include_once($smarty_libs))
 	{
-		require_once($smarty_libs);
 		$smarty = new Smarty();
 		$smarty->compile_dir = $dolibarr_smarty_compile;
 		$smarty->cache_dir = $dolibarr_smarty_cache;
@@ -437,7 +438,7 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 	}
 	else
 	{
-		dol_print_error('',"Library Smarty ".$smarty_libs." not found. Check parameter dolibarr_smarty_libs_dir in conf file.");
+		dol_print_error('',"Library Smarty ".$smarty_libs." not found.");
 	}
 }
 
