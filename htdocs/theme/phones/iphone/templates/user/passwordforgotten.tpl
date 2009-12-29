@@ -29,7 +29,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-<title>{$title}</title>
+<title>Authentification</title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="viewport"content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
@@ -40,10 +40,10 @@
 <body>
 
 <div id="topbar">
-	<div id="title">{$title}</div>
-	<div id="rightnav">
-		<a href="{$dol_url_root}/user/passwordforgotten.php">
-			<img alt="tools" src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/img/tools.png"/>
+	<div id="title">Authentification</div>
+	<div id="leftnav">
+		<a href="{$dol_url_root}/">
+			<img alt="home" src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/img/home.png"/>
 		</a>
 	</div>
 </div>
@@ -51,7 +51,7 @@
 <div id="content">
 	<form id="login" name="login" method="post" action="{$php_self}">
 	<input type="hidden" name="token" value="{$smarty.session.newtoken}" />
-	<input type="hidden" name="loginfunction" value="loginfunction" />
+	<input type="hidden" name="action" value="buildnewpassword">
 	
 	<div align="center">
 		<img src="{$logo}">
@@ -59,13 +59,8 @@
 	
 	<ul class="pageitem">
 		<li class="form">
-			<input placeholder="{$langs->trans('Login')}" type="text" id="username" name="username" value="{$login}" />
+			<input placeholder="{$langs->trans('Login')}" type="text" {$disabled} id="username" name="username" value="{$login}" />
 		</li>
-		
-		<li class="form">
-			<input placeholder="{$langs->trans('Password')}" type="password" id="password" name="password" value="{$password}" />
-		</li>
-
 	</ul>
 	
 	{if $select_entity}
@@ -92,16 +87,32 @@
 	
 	<ul class="pageitem">
 		<li class="form">
-			<input name="input Button" type="submit" value="{$langs->trans('Connection')}" />
+			<input name="input Button" {$disabled} type="submit" value="{$langs->trans('Connection')}" />
 		</li>
 	</ul>
 	
 	</form>
 </div>
 
-{if $dol_loginmesg}
+<center>
+<table width="90%"><tr><td align="center">
+
+	{if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled)}
+		<font style="font-size: 12px;">
+			{$langs->trans('SendNewPasswordDesc')}
+		</font>
+	{else}
+		<div class="warning" align="center">
+			{$langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode)}
+		</div>
+	{/if}
+	
+</td></tr>
+</table>
+
+{if $error_message}
 	<script type="text/javascript" language="javascript">
-		alert('{$dol_loginmesg}');
+		alert('{$error_message}');
 	</script>
 {/if}
 
