@@ -316,7 +316,8 @@ class Translate {
 		}
 
 		// Clear SeparatorDecimal, SeparatorThousand 
-		if ($this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]=''; 
+		if (! empty($this->tab_translate["SeparatorDecimal"]) && ! empty($this->tab_translate["SeparatorThousand"])
+		&& $this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]=''; 
 
 		return 1;
 	}

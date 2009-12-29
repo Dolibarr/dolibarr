@@ -106,7 +106,7 @@ if (! $error)
 		{
 			print '<div class="error">'.$langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$_POST["db_name"]).'</div>';
 			print '<br>';
-			if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+			if (empty($db->connected)) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
 			print $langs->trans("ErrorGoBackAndCorrectParameters");
 			$error++;
 		}
