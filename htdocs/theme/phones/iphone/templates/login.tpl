@@ -41,11 +41,6 @@
 
 <div id="topbar">
 	<div id="title">{$title}</div>
-	<div id="rightnav">
-		<a href="{$dol_url_root}/user/passwordforgotten.php">
-			<img alt="tools" src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/img/tools.png"/>
-		</a>
-	</div>
 </div>
 
 <div id="content">
@@ -57,6 +52,7 @@
 		<img src="{$logo}">
 	</div>
 	
+	<span class="graytitle">{$langs->trans('Identification')}</span>
 	<ul class="pageitem">
 		<li class="form">
 			<input placeholder="{$langs->trans('Login')}" type="text" id="username" name="username" value="{$login}" />
@@ -98,6 +94,33 @@
 	
 	</form>
 </div>
+
+{if $forgetpasslink || $helpcenterlink}
+	<span class="graytitle">{$langs->trans('Tools')}</span>
+	
+	{if $forgetpasslink}
+	<ul class="pageitem">
+		<li class="menu">
+			<a href="{$dol_url_root}/user/passwordforgotten.php">
+				<img alt="tools" src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/thumbs/tools.png" />
+				<span class="name">{$langs->trans('PasswordForgotten')}</span>
+				<span class="arrow"></span>
+			</a>
+		</li>
+	{/if}
+	
+	{if $helpcenterlink}
+		<li class="menu">
+			<a href="{$dol_url_root}/support/index.php">
+				<img alt="support" src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/thumbs/support.png" />
+				<span class="name">{$langs->trans('NeedHelpCenter')}</span>
+				<span class="arrow"></span>
+			</a>
+		</li>
+	</ul>
+	{/if}
+
+{/if}
 
 {if $dol_loginmesg}
 	<script type="text/javascript" language="javascript">
