@@ -50,8 +50,10 @@
 	<input type="hidden" name="loginfunction" value="loginfunction" />
 	
 	<div align="center">
-		<img src="{$logo}">
+		<img src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/thumbs/dolibarr.png">
 	</div>
+	
+	<br />
 	
 	<span class="graytitle">{$langs->trans('Identification')}</span>
 	<ul class="pageitem">

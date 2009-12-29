@@ -54,9 +54,12 @@
 	<input type="hidden" name="action" value="buildnewpassword">
 	
 	<div align="center">
-		<img src="{$logo}">
+		<img src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/thumbs/dolibarr.png">
 	</div>
 	
+	<br />
+	
+	<span class="graytitle">{$langs->trans('Identification')}</span>
 	<ul class="pageitem">
 		<li class="form">
 			<input placeholder="{$langs->trans('Login')}" type="text" {$disabled} id="username" name="username" value="{$login}" />
@@ -96,6 +99,7 @@
 
 <ul class="pageitem">
 	<li class="textbox">
+	<span class="header">{$langs->trans('Infos')}</span>
 		{if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled)}
 			{$langs->trans('SendNewPasswordDesc')}
 		{else}
