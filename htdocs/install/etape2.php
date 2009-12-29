@@ -38,7 +38,7 @@ $ok = 0;
 $err=error_reporting();
 error_reporting(0);		// Disable all errors
 //error_reporting(E_ALL);
-@set_time_limit(180);
+@set_time_limit(240);
 error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
