@@ -91,7 +91,7 @@
 		</li>
 	</ul>
 	
-</form>
+	</form>
 </div>
 
 {if $dol_loginmesg}

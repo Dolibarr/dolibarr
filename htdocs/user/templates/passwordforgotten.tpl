@@ -27,7 +27,7 @@
 <html>
 <head>
 <meta name="robots" content="noindex,nofollow">
-<title>{$langs->trans('Login')}</title>
+<title>Dolibarr Authentification</title>
 
 <link rel="stylesheet" type="text/css" href="{$conf_css}">
 
@@ -53,18 +53,13 @@ function donnefocus() {ldelim}
 	document.getElementById('{$focus_element}').focus();
 	{rdelim}
 </script>
-	
-	{if $main_html_header}
-		{$main_html_header}
-	{/if}
 
-<!-- HTTP_USER_AGENT = {$smarty.server.HTTP_USER_AGENT} -->
 </head>
 
 <body class="body" onload="donnefocus();">
 <form id="login" name="login" method="post" action="{$php_self}">
 <input type="hidden" name="token" value="{$smarty.session.newtoken}">
-<input type="hidden" name="loginfunction" value="loginfunction" />
+<input type="hidden" name="action" value="buildnewpassword">
 
 <table class="login" summary="{$title}" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center">{$title}</td></tr>
@@ -79,18 +74,13 @@ function donnefocus() {ldelim}
 
 <td valign="bottom"> &nbsp; <b>{$langs->trans('Login')}</b> &nbsp; </td>
 <td valign="bottom" nowrap="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="{$login}" tabindex="1" /></td>
+<input type="text" {$disabled} id="username" name="username" class="flat" size="15" maxlength="25" value="{$login}" tabindex="1" /></td>
 
 <td rowspan="{$logo_rowspan}" align="center" valign="top">
 <img alt="Logo" title="" src="{$logo}" />
 
 </td>
 </tr>
-
-<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>{$langs->trans('Password')}</b> &nbsp; </td>
-<td valign="top" nowrap="nowrap">
-<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="{$password}" tabindex="2">
-</td></tr>
 
 	{if $select_entity}
 		<tr><td valign="top" nowrap="nowrap"> &nbsp; <b>{$langs->trans('Entity')}</b> &nbsp; </td>
@@ -104,7 +94,7 @@ function donnefocus() {ldelim}
 		<td valign="top" nowrap="nowrap" align="left" class="none">
 
 		<table style="width: 100px;"><tr>
-		<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>
+		<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>
 		<td><img src="{$dol_url_root}/lib/antispamimage.php" border="0" width="128" height="36"></td>
 		<td><a href="{$php_self}">{$captcha_refresh}</a></td>
 		</tr></table>
@@ -115,64 +105,45 @@ function donnefocus() {ldelim}
 <tr><td colspan="3">&nbsp;</td></tr>
 
 <tr><td colspan="3" style="text-align:center;"><br>
-<input type="submit" class="button" value="&nbsp; {$langs->trans('Connection')} &nbsp;" tabindex="5" />
+<input id="password" type="submit" {$disabled} class="button" name="password" value="{$langs->trans('SendNewPassword')}" tabindex="4" />
 </td></tr>
-
-	{if $forgetpasslink || $helpcenterlink}
-		<tr><td colspan="3" align="center">
-		{strip}
-		{if $forgetpasslink}
-			<a style="color: #888888; font-size: 10px" href="{$dol_url_root}/user/passwordforgotten.php">(
-			{$langs->trans('PasswordForgotten')}
-			{if ! $helpcenterlink}
-			)
-			{/if}
-			</a>
-		{/if}
-
-		{if $helpcenterlink}
-			<a style="color: #888888; font-size: 10px" href="{$dol_url_root}/support/index.php" target="_blank">
-			{if $forgetpasslink}
-				&nbsp;-&nbsp;
-			{else}
-				(
-			{/if}  
-			{$langs->trans('NeedHelpCenter')})</a>			
-		{/if}
-		{/strip}
-		</td></tr>
-	{/if}
 
 </table>
 
 </form>
 
-	{if $smarty.session.dol_loginmesg}
-		<center><table width="60%"><tr><td align="center"><div class="error">
-		{$smarty.session.dol_loginmesg}
-		</div></td></tr></table></center>
-	{/if}
-	
-	{if $main_home}
-		<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
-		<tr><td align="center">
-		{$main_home}
-		</td></tr></table></center><br>
-	{/if}
+<center>
+<table width="90%"><tr><td align="center">
 
-	{if $main_google_ad_client}
-		<div align="center">
-		{include file=$google_ad_tpl}
+	{if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled)}
+		<font style="font-size: 12px;">
+			{$langs->trans('SendNewPasswordDesc')}
+		</font>
+	{else}
+		<div class="warning" align="center">
+			{$langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode)}
 		</div>
 	{/if}
+	
+</td></tr>
+</table>
 
-<!-- authentication mode = {$main_authentication} -->
-<!-- cookie name used for this session = {$session_name} -->
-<!-- urlfrom in this session = {$smarty.session.urlfrom} -->
+<br />
 
-	{if $main_html_footer}
-		{$main_html_footer}
+	{if $error_message}
+		<table width="90%"><tr><td align="center" style="font-size: 12px;>
+		{$error_message}
+		</td></tr></table><br />
 	{/if}
+
+<br />
+<a href="{$dol_url_root}/">
+	{$langs->trans('BackToLoginPage')}
+</a>
+</center>
+
+<br />
+<br />
 
 </body>
 </html>
