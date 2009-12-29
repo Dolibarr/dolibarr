@@ -186,6 +186,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
 	elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
 	elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='iphone';
+	elseif (preg_match('/ipod/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='iphone';
 	elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
 	elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
 	elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
