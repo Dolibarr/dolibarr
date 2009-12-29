@@ -22,32 +22,19 @@
  *       \version    $Id$
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
 
-// Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
-session_name($sessionname);
-session_start();
-
-require("../master.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
-$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
-$langs->setDefaultLang($langcode);
-
-$user->getrights('user');
-
-$langs->load("main");
 $langs->load("other");
 $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
 
+// Security check
 if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
 	accessforbidden();
 
@@ -57,6 +44,7 @@ if (! $mode) $mode='http';
 
 $login = isset($_POST["username"])?$_POST["username"]:'';
 $conf->entity = isset($_POST["entity"])?$_POST["entity"]:1;
+
 
 
 /**

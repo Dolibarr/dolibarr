@@ -252,323 +252,338 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 /*
  * Phase authentication / login
  */
-
-// $authmode contient la liste des differents modes d'identification a tester par ordre de preference.
-// Example: 'http'
-// Example: 'dolibarr'
-// Example: 'ldap'
-// Example: 'http,forceuser'
-
-// Authentication mode
-if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
-// Authentication mode: forceuser
-if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
-
-// Set authmode
-$authmode=explode(',',$dolibarr_main_authentication);
-
-// No authentication mode
-if (! sizeof($authmode))
-{
-	$langs->load('main');
-	dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
-	exit;
-}
-
-// Si la demande du login a deja eu lieu, on le recupere depuis la session
-// sinon appel du module qui realise sa demande.
-// A l'issu de cette phase, la variable $login sera definie.
 $login='';
-$resultFetchUser='';
-$test=true;
-if (! isset($_SESSION["dol_login"]))
+if (! defined('NOLOGIN'))
 {
-	// On est pas deja authentifie, on demande le login/mot de passe
-
-	// Verification du code securite graphique
-	if ($test && isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+	// $authmode contient la liste des differents modes d'identification a tester par ordre de preference.
+	// Example: 'http'
+	// Example: 'dolibarr'
+	// Example: 'ldap'
+	// Example: 'http,forceuser'
+	
+	// Authentication mode
+	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
+	// Authentication mode: forceuser
+	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+	
+	// Set authmode
+	$authmode=explode(',',$dolibarr_main_authentication);
+	
+	// No authentication mode
+	if (! sizeof($authmode))
 	{
-		require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
-		require_once ARTICHOW."/AntiSpam.class.php";
-
-		// On cree l'objet anti-spam
-		$object = new AntiSpam();
-
-		// Verifie code
-		if (! $object->check('dol_antispam_value',$_POST['code'],true))
-		{
-			dol_syslog('Bad value for code, connexion refused');
-			$langs->load('main');
-			$langs->load('other');
-
-			$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
-			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
-			$test=false;
-
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
-			if ($result < 0) { $error++; }
-			// Fin appel triggers
-		}
+		$langs->load('main');
+		dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
+		exit;
 	}
-
-	// Tests de validation user/mot de passe
-	// Si ok, la variable login sera initialisee
-	// Si erreur, on a placera message erreur dans session sous le nom dol_loginmesg
-	$goontestloop=false;
-	if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
-	if (isset($_POST["username"])) $goontestloop=true;
-
-	if ($test && $goontestloop)
+	
+	// Si la demande du login a deja eu lieu, on le recupere depuis la session
+	// sinon appel du module qui realise sa demande.
+	// A l'issu de cette phase, la variable $login sera definie.
+	$resultFetchUser='';
+	$test=true;
+	if (! isset($_SESSION["dol_login"]))
 	{
-		foreach($authmode as $mode)
+		// On est pas deja authentifie, on demande le login/mot de passe
+	
+		// Verification du code securite graphique
+		if ($test && isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
-			if ($test && $mode && ! $login)
+			require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
+			require_once ARTICHOW."/AntiSpam.class.php";
+	
+			// On cree l'objet anti-spam
+			$object = new AntiSpam();
+	
+			// Verifie code
+			if (! $object->check('dol_antispam_value',$_POST['code'],true))
 			{
-				$authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
-				$result=include_once($authfile);
-				if ($result)
-				{
-					// Call function to check user/password
-					$usertotest=$_POST["username"];
-					$passwordtotest=$_POST["password"];
-					$function='check_user_password_'.$mode;
-					$login=$function($usertotest,$passwordtotest);
-					if ($login)
-					{
-						$test=false;
-						$conf->authmode=$mode;	// This properties is defined only when logged
-					}
-				}
-				else
-				{
-					dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-					sleep(1);
-					$langs->load('main');
-					$langs->load('other');
-					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-				}
+				dol_syslog('Bad value for code, connexion refused');
+				$langs->load('main');
+				$langs->load('other');
+	
+				$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
+				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
+				$test=false;
+	
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+				if ($result < 0) { $error++; }
+				// Fin appel triggers
 			}
 		}
-
+	
+		// Tests de validation user/mot de passe
+		// Si ok, la variable login sera initialisee
+		// Si erreur, on a placera message erreur dans session sous le nom dol_loginmesg
+		$goontestloop=false;
+		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
+		if (isset($_POST["username"])) $goontestloop=true;
+	
+		if ($test && $goontestloop)
+		{
+			foreach($authmode as $mode)
+			{
+				if ($test && $mode && ! $login)
+				{
+					$authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
+					$result=include_once($authfile);
+					if ($result)
+					{
+						// Call function to check user/password
+						$usertotest=$_POST["username"];
+						$passwordtotest=$_POST["password"];
+						$function='check_user_password_'.$mode;
+						$login=$function($usertotest,$passwordtotest);
+						if ($login)
+						{
+							$test=false;
+							$conf->authmode=$mode;	// This properties is defined only when logged
+						}
+					}
+					else
+					{
+						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+						sleep(1);
+						$langs->load('main');
+						$langs->load('other');
+						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+					}
+				}
+			}
+	
+			if (! $login)
+			{
+				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
+				$langs->load('main');
+				$langs->load('other');
+	
+				// Bad password. No authmode has found a good password.
+				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
+				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+	
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+				if ($result < 0) { $error++; }
+				// Fin appel triggers
+			}
+		}
+	
+		// Fin des tests de login/passwords
 		if (! $login)
 		{
-			dol_syslog('Bad password, connexion refused',LOG_DEBUG);
-			$langs->load('main');
-			$langs->load('other');
-
-			// Bad password. No authmode has found a good password.
-			$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
-			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-
+			// We show login page
+			include_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
+			// TODO activer smarty par defaut ?
+			if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
+			{
+				dol_loginfunction2($langs,$conf,$mysoc);
+			}
+			else
+			{
+				dol_loginfunction($langs,$conf,$mysoc);
+			}
+			exit;
+		}
+	
+		$resultFetchUser=$user->fetch($login);
+		if ($resultFetchUser <= 0)
+		{
+			dol_syslog('User not found, connexion refused');
+			session_destroy();
+			session_name($sessionname);
+			session_start();
+	
+			if ($resultFetchUser == 0)
+			{
+				$langs->load('main');
+				$langs->load('other');
+	
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
+				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+			}
+			if ($resultFetchUser < 0)
+			{
+				$user->trigger_mesg=$user->error;
+				$_SESSION["dol_loginmesg"]=$user->error;
+			}
+	
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 			if ($result < 0) { $error++; }
 			// Fin appel triggers
+	
+			header('Location: '.DOL_URL_ROOT.'/index.php');
+			exit;
 		}
-	}
-
-	// Fin des tests de login/passwords
-	if (! $login)
-	{
-		// We show login page
-		include_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
-		// TODO activer smarty par defaut ?
-		if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
-		{
-			dol_loginfunction2($langs,$conf,$mysoc);
-		}
-		else
-		{
-			dol_loginfunction($langs,$conf,$mysoc);
-		}
-		exit;
-	}
-
-	$resultFetchUser=$user->fetch($login);
-	if ($resultFetchUser <= 0)
-	{
-		dol_syslog('User not found, connexion refused');
-		session_destroy();
-		session_name($sessionname);
-		session_start();
-
-		if ($resultFetchUser == 0)
-		{
-			$langs->load('main');
-			$langs->load('other');
-
-			$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
-			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		}
-		if ($resultFetchUser < 0)
-		{
-			$user->trigger_mesg=$user->error;
-			$_SESSION["dol_loginmesg"]=$user->error;
-		}
-
-		// Appel des triggers
-		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		$interface=new Interfaces($db);
-		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
-		if ($result < 0) { $error++; }
-		// Fin appel triggers
-
-		header('Location: '.DOL_URL_ROOT.'/index.php');
-		exit;
-	}
-}
-else
-{
-	// On est deja en session qui a sauvegarde login
-	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
-	$login=$_SESSION["dol_login"];
-	$resultFetchUser=$user->fetch($login);
-	dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
-
-	if ($resultFetchUser <= 0)
-	{
-		// Account has been removed after login
-		dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
-		session_destroy();
-		session_name($sessionname);
-		session_start();
-
-		if ($resultFetchUser == 0)
-		{
-			$langs->load('main');
-			$langs->load('other');
-
-			$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
-			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		}
-		if ($resultFetchUser < 0)
-		{
-			$user->trigger_mesg=$user->error;
-			$_SESSION["dol_loginmesg"]=$user->error;
-		}
-
-		// Appel des triggers
-		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		$interface=new Interfaces($db);
-		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
-		if ($result < 0) { $error++; }
-		// Fin appel triggers
-
-		header('Location: '.DOL_URL_ROOT.'/index.php');
-		exit;
-	}
-}
-
-// Is it a new session ?
-if (! isset($_SESSION["dol_login"]))
-{
-	$error=0;
-
-	// New session for this login
-	$_SESSION["dol_login"]=$user->login;
-	$_SESSION["dol_authmode"]=$conf->authmode;
-	$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
-	if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
-	dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
-
-	$db->begin();
-
-	$user->update_last_login_date();
-
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($db);
-	$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,$_POST["entity"]);
-	if ($result < 0) { $error++; }
-	// Fin appel triggers
-
-	if ($error)
-	{
-		$db->rollback();
-		session_destroy();
-		dol_print_error($db,'Error in some triggers on action USER_LOGIN',LOG_ERR);
-		exit;
 	}
 	else
 	{
-		$db->commit();
-	}
-
-	// Create entity cookie, just used for login page
-	if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && !empty($conf->global->MAIN_MULTICOMPANY_COOKIE) && isset($_POST["entity"]))
-	{
-		include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
-
-		$entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
-		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-		// TTL : sera defini dans la page de config multicompany
-		$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
-		// Cryptkey : sera cree aleatoirement dans la page de config multicompany
-		$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-
-		$entityCookie = new DolCookie($cryptkey);
-		$entityCookie->_setCookie($entityCookieName, $entity, $ttl);
-	}
-
-	// Module webcalendar
-	if (! empty($conf->webcal->enabled) && $user->webcal_login != "")
-	{
-		$domain='';
-
-		// Creation du cookie permettant de sauver le login
-		$cookiename='webcalendar_login';
-		if (! isset($_COOKIE[$cookiename]))
+		// On est deja en session qui a sauvegarde login
+		// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
+		$login=$_SESSION["dol_login"];
+		$resultFetchUser=$user->fetch($login);
+		dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
+	
+		if ($resultFetchUser <= 0)
 		{
-			setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
-		}
-		// Creation du cookie permettant de sauver la session
-		$cookiename='webcalendar_session';
-		if (! isset($_COOKIE[$cookiename]))
-		{
-			setcookie($cookiename, 'TODO', 0, "/", $domain, 0);
-		}
-	}
-
-	// Module Phenix
-	if (! empty($conf->phenix->enabled) && $user->phenix_login != "" && $conf->phenix->cookie)
-	{
-		// Creation du cookie permettant la connexion automatique, valide jusqu'a la fermeture du browser
-		if (!isset($_COOKIE[$conf->phenix->cookie]))
-		{
-			setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
+			// Account has been removed after login
+			dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
+			session_destroy();
+			session_name($sessionname);
+			session_start();
+	
+			if ($resultFetchUser == 0)
+			{
+				$langs->load('main');
+				$langs->load('other');
+	
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
+				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+			}
+			if ($resultFetchUser < 0)
+			{
+				$user->trigger_mesg=$user->error;
+				$_SESSION["dol_loginmesg"]=$user->error;
+			}
+	
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
+			if ($result < 0) { $error++; }
+			// Fin appel triggers
+	
+			header('Location: '.DOL_URL_ROOT.'/index.php');
+			exit;
 		}
 	}
+	
+	// Is it a new session ?
+	if (! isset($_SESSION["dol_login"]))
+	{
+		$error=0;
+	
+		// New session for this login
+		$_SESSION["dol_login"]=$user->login;
+		$_SESSION["dol_authmode"]=$conf->authmode;
+		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
+		if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
+		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
+	
+		$db->begin();
+	
+		$user->update_last_login_date();
+	
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,$_POST["entity"]);
+		if ($result < 0) { $error++; }
+		// Fin appel triggers
+	
+		if ($error)
+		{
+			$db->rollback();
+			session_destroy();
+			dol_print_error($db,'Error in some triggers on action USER_LOGIN',LOG_ERR);
+			exit;
+		}
+		else
+		{
+			$db->commit();
+		}
+	
+		// Create entity cookie, just used for login page
+		if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && !empty($conf->global->MAIN_MULTICOMPANY_COOKIE) && isset($_POST["entity"]))
+		{
+			include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
+	
+			$entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
+			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+			// TTL : sera defini dans la page de config multicompany
+			$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
+			// Cryptkey : sera cree aleatoirement dans la page de config multicompany
+			$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
+	
+			$entityCookie = new DolCookie($cryptkey);
+			$entityCookie->_setCookie($entityCookieName, $entity, $ttl);
+		}
+	
+		// Module webcalendar
+		if (! empty($conf->webcal->enabled) && $user->webcal_login != "")
+		{
+			$domain='';
+	
+			// Creation du cookie permettant de sauver le login
+			$cookiename='webcalendar_login';
+			if (! isset($_COOKIE[$cookiename]))
+			{
+				setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
+			}
+			// Creation du cookie permettant de sauver la session
+			$cookiename='webcalendar_session';
+			if (! isset($_COOKIE[$cookiename]))
+			{
+				setcookie($cookiename, 'TODO', 0, "/", $domain, 0);
+			}
+		}
+	
+		// Module Phenix
+		if (! empty($conf->phenix->enabled) && $user->phenix_login != "" && $conf->phenix->cookie)
+		{
+			// Creation du cookie permettant la connexion automatique, valide jusqu'a la fermeture du browser
+			if (!isset($_COOKIE[$conf->phenix->cookie]))
+			{
+				setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
+			}
+		}
+	}
+	
+
+	// Si user admin, on force droits sur les modules base
+	if ($user->admin)
+	{
+		$user->rights->user->user->lire=1;
+		$user->rights->user->user->creer=1;
+		$user->rights->user->user->password=1;
+		$user->rights->user->user->supprimer=1;
+		$user->rights->user->self->creer=1;
+		$user->rights->user->self->password=1;
+	}
+	
+	/*
+	 * Overwrite configs global par configs perso
+	 * ------------------------------------------
+	 */
+	// Set liste_limit
+	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
+	{
+		$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
+	}
+	if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
+	{
+		$conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
+	}
+	// Replace conf->css by personalized value
+	if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
+	{
+		$conf->theme=$user->conf->MAIN_THEME;
+		$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+	}
+	// Set javascript option
+	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
+	{
+		$conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
+	}
 }
 
-// Si user admin, on force droits sur les modules base
-if ($user->admin)
-{
-	$user->rights->user->user->lire=1;
-	$user->rights->user->user->creer=1;
-	$user->rights->user->user->password=1;
-	$user->rights->user->user->supprimer=1;
-	$user->rights->user->self->creer=1;
-	$user->rights->user->self->password=1;
-}
-
-/*
- * Overwrite configs global par configs perso
- * ------------------------------------------
- */
-// Set liste_limit
-if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
-{
-	$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
-}
-if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
-{
-	$conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
-}
 
 
 if (empty($_GET["lang"]))	// If language was not forced on URL
@@ -590,12 +605,6 @@ else	// If language was forced on URL
 }
 
 
-// Replace conf->css by personalized value
-if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
-{
-	$conf->theme=$user->conf->MAIN_THEME;
-	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-}
 // Cas de forcage du style depuis url
 if (! empty($_GET["theme"]))
 {
@@ -605,13 +614,8 @@ if (! empty($_GET["theme"]))
 // Style sheet must be a php file
 $conf->css.=".php";
 
-if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
-{
-	$conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
-}
-
 // Define menu manager to use
-if (! $user->societe_id)    // Si utilisateur interne
+if (empty($user->societe_id))    // Si utilisateur interne ou non defini
 {
 	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
 	$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
@@ -624,45 +628,26 @@ else                        // Si utilisateur externe
 	$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 }
 
-/*
-// If there is at least one module using Smarty
-if (sizeof($conf->need_smarty) > 0)
+
+if (! defined('NOLOGIN'))
 {
-	// Usage of constats in conf.php file is no more required.
-	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
-	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
-	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
-
-	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
-	if (file_exists ($smarty_libs))
+	// Si le login n'a pu etre recupere, on est identifie avec un compte qui n'existe pas.
+	// Tentative de hacking ?
+	if (! $user->login) accessforbidden();
+	
+	// Check if user is active
+	if ($user->statut < 1)
 	{
-		require_once($smarty_libs);
-		$smarty = new Smarty();
-		$smarty->compile_dir = $dolibarr_smarty_compile;
-		$smarty->cache_dir = $dolibarr_smarty_cache;
-		//$smarty->config_dir = '/web/www.domain.com/smarty/configs';
+		// Si non actif, on delogue le user
+		$langs->load("other");
+		dol_syslog ("Authentification ko as login is disabled");
+		accessforbidden($langs->trans("ErrorLoginDisabled"));
+		exit;
 	}
-	else
-	{
-		dol_print_error('',"Library Smarty ".$smarty_libs." not found. Check parameter dolibarr_smarty_libs_dir in conf file.");
-	}
+
+	// Load permissions
+	$user->getrights();
 }
-*/
-
-// Si le login n'a pu etre recupere, on est identifie avec un compte qui n'existe pas.
-// Tentative de hacking ?
-if (! $user->login) accessforbidden();
-
-// Check if user is active
-if ($user->statut < 1)
-{
-	// Si non actif, on delogue le user
-	$langs->load("other");
-	dol_syslog ("Authentification ko as login is disbaled");
-	accessforbidden($langs->trans("ErrorLoginDisabled"));
-	exit;
-}
-
 
 dol_syslog("Access to ".$_SERVER["PHP_SELF"]);
 //Another call for easy debugg
@@ -674,9 +659,6 @@ if (! defined('MAIN_INFO_SOCIETE_PAYS')) define('MAIN_INFO_SOCIETE_PAYS','1');
 // On charge les fichiers lang principaux
 $langs->load("main");
 $langs->load("dict");
-
-// Load permissions
-$user->getrights();
 
 // Define some constants used for style of arrays
 $bc[0]="class=\"impair\"";
