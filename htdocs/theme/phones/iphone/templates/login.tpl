@@ -32,6 +32,7 @@
 <title>{$title}</title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
+<link rel="apple-touch-icon" href="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/thumbs/homescreen.png" />
 <meta name="viewport"content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
 <link type="text/css" rel="stylesheet" href="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/{$theme}.css.php" />
 <script type="text/javascript" src="{$dol_url_root}/includes/iphone/iwebkit/Framework/javascript/functions.js"></script>
