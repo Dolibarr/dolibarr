@@ -197,7 +197,7 @@ class Translate {
 				
 				// Enable cache of lang file in memory (faster but need more memory)
 				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-				$enablelangcacheinmemory=$conf->global->MAIN_OPTIMIZE_SPEED;
+				$enablelangcacheinmemory=empty($conf->global->MAIN_OPTIMIZE_SPEED)?0:$conf->global->MAIN_OPTIMIZE_SPEED;
 				//$enablelangcacheinmemory=true;
 				
 				if ($alt == 2 && $enablelangcacheinmemory)
