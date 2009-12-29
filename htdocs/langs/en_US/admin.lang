@@ -1013,6 +1013,7 @@ NewRSS=New RSS Feed
 ##### Mailing #####
 MailingSetup=EMailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
+MailingEMailError=Return EMail (Errors-to) for emails with errors
 ##### Notification #####
 NotificationSetup=Notification bu email module setup
 NotificationEMailFrom=Sender EMail (From) for emails sent for notifications

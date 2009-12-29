@@ -4,7 +4,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.8 compared to 2.7 *****
 
 For users:
-- New: Can filter on user on stock movement list
+- New: Add a default errors-to email for emailing module.
+- New: Can filter on user on stock movement list.
 - New: When creating a third party from a member, it is set as a new
   customer.
 - New: Can use {tttt} in numbering mask setup. It will be replaced

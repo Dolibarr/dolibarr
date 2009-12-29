@@ -1014,6 +1014,7 @@ NewRSS = Syndication d'un nouveau flux RSS
 ##### Mailing ##### = undefined
 MailingSetup = Configuration du module EMailing
 MailingEMailFrom = Email emetteur (From) des mails envoyés par EMailing
+MailingEMailError = EMail retour (Errors-to) pour les réponses lors des envois par EMailing en erreur. 
 ##### Notification ##### = undefined
 NotificationSetup = Configuration du module Notification
 NotificationEMailFrom = Email emetteur (From) des mails envoyés lors des notifications

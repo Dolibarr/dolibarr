@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
-	    \file       htdocs/admin/mailing.php
-		\ingroup    mailing
-		\brief      Page to setup emailing module
-		\version    $Id$
-*/
+ *	    \file       htdocs/admin/mailing.php
+ *		\ingroup    mailing
+ *		\brief      Page to setup emailing module
+ *		\version    $Id$
+ */
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
@@ -38,8 +39,9 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
-	$result=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$_POST["email_from"],'chaine',0,'',$conf->entity);
-  	if ($result >= 0)
+	$result1=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$_POST["MAILING_EMAIL_FROM"],'chaine',0,'',$conf->entity);
+	$result2=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$_POST["MAILING_EMAIL_ERRORSTO"],'chaine',0,'',$conf->entity);
+	if (($result1 + $result2) == 2)
   	{
   		$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
   	}
@@ -74,10 +76,17 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
+
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("MailingEMailFrom").'</td><td>';
-print '<input size="32" type="text" name="email_from" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
+print '<input size="32" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("MailingEMailError").'</td><td>';
+print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'">';
 print '</td></tr>';
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';

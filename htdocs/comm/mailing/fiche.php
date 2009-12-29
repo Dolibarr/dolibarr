@@ -497,7 +497,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
-	print '<tr><td width="25%">'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
+	print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	$htmlother->select_color($_POST['bgcolor'],'bgcolor','new_mailing');
 	print '</td></tr>';
 	print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
@@ -761,7 +761,7 @@ else
 			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.$mil->email_from.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3"><input class="flat" type="text" size=40 name="errorsto" value="'.$mil->email_errorsto.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
-			print '<tr><td width="25%">'.$langs->trans("BackgroundColor").'</td><td colspan="3">';
+			print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 			$htmlother->select_color($mil->bgcolor,'bgcolor','edit_mailing');
 			print '</td></tr>';
 			print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
