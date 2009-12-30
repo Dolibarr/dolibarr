@@ -88,6 +88,7 @@ MigrationNotFinished=Version of your dtabase is not completely up to date, so yo
 GoToUpgradePage=Go to upgrade page again
 Examples=Examples
 WithNoSlashAtTheEnd=Without the slash "/" at the end
+DirectoryRecommendation=It is recommanded to use a directory outside of your directory of your web pages.
 LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists.
