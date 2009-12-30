@@ -348,6 +348,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $comment=$_POST["comment"];
     $morphy=$_POST["morphy"];
     $cotisation=$_POST["cotisation"];
+    $public=$_POST["public"];
 
     $userid=$_POST["userid"];
     $socid=$_POST["socid"];
@@ -372,6 +373,8 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $adh->morphy      = $morphy;
     $adh->user_id     = $userid;
     $adh->fk_soc      = $socid;
+    $adh->public      = $public;
+    
     foreach($_POST as $key => $value)
     {
         if (preg_match("/^options_/",$key))
