@@ -90,7 +90,7 @@ if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
 }
 
 // Action send emailing for everybody
-if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
+if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 {
 	if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 	{
@@ -104,7 +104,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 	else
 	{
 		$mil=new Mailing($db);
-		$result=$mil->fetch($_GET['id']);
+		$result=$mil->fetch($_REQUEST['id']);
 
 		if ($mil->statut == 0)
 		{
@@ -228,7 +228,7 @@ if ($_POST["action"] == 'sendallconfirmed' && $_POST['confirm'] == 'yes')
 						// Mail failed
 						$nbko++;
 
-						dol_syslog("comm/mailing/fiche.php: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+						dol_syslog("comm/mailing/fiche.php: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_WARNING);
 
 						$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 						$sql.=" SET statut=-1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
@@ -339,6 +339,7 @@ if ($_POST["action"] == 'add')
 
 	if (! $mil->titre) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
 	if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
+	if (! $mil->body)  $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
 
 	if (! $message)
 	{
@@ -369,11 +370,23 @@ if ($_POST["action"] == 'update' && empty($_POST["cancel"]))
 	$mil->bgcolor        = trim($_POST["bgcolor"]);
 	$mil->bgimage        = trim($_POST["bgimage"]);
 
-	if ($mil->update($user))
+	if (! $mil->titre) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
+	if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
+	if (! $mil->body)  $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
+
+	if (! $message)
 	{
-		Header("Location: fiche.php?id=".$mil->id);
-		exit;
+		if ($mil->update($user) >= 0)
+		{
+			Header("Location: fiche.php?id=".$mil->id);
+			exit;
+		}
+		$message=$mil->error;
 	}
+
+	$message='<div class="error">'.$message.'</div>';
+	$_GET["action"]="edit";
+	$_GET["id"]=$_POST["id"];
 }
 
 // Action confirmation validation
@@ -575,7 +588,7 @@ else
 				{
 					$text=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$_REQUEST['id'],$langs->trans('SendMailing'),$text,'sendallconfirmed');
+					$ret=$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$_REQUEST['id'],$langs->trans('SendMailing'),$text,'sendallconfirmed','','',2);
 					if ($ret == 'html') print '<br>';
 				}
 			}
@@ -648,7 +661,7 @@ else
 			if ($mesg) print $mesg;
 
 
-			if ($_GET["action"] == 'sendall' && empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+			if ($_GET["action"] == 'sendall')
 			{
 				// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 				// on affiche donc juste un message
@@ -749,6 +762,7 @@ else
 			/*
 			 * Mailing en mode edition
 			 */
+			if ($message) print "$message<br>";
 
 			print '<form name="edit_mailing" action="fiche.php" method="post">'."\n";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
