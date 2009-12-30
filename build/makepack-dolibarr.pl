@@ -371,6 +371,14 @@ if ($nboftargetok) {
  			print "Remove config file\n";
 		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php`;
 
+ 			print "Remove other files\n";
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/DoliWamp-*`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/DoliMamp-*`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tar`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tgz`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.zip`;
+		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.deb`;
+
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
             open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
