@@ -80,7 +80,6 @@ DeleteBill=Supprimer facture
 SearchACustomerInvoice=Rechercher une facture client
 SearchASupplierInvoice=Rechercher une facture fournisseur
 CancelBill=Annuler une facture
-SendByMail=Envoyer par mail
 SendRemindByMail=Envoyer rappel
 DoPayment=Émettre réglement
 DoPaymentBack=Émettre remboursement

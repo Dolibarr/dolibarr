@@ -83,7 +83,6 @@ DeleteBill=Delete invoice
 SearchACustomerInvoice=Search for a customer invoice
 SearchASupplierInvoice=Search for a supplier invoice
 CancelBill=Cancel an invoice
-SendByMail=Send by EMail
 SendRemindByMail=Send reminder by EMail
 DoPayment=Do payment
 DoPaymentBack=Do payment back

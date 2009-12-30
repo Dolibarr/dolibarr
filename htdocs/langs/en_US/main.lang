@@ -476,6 +476,7 @@ CloseWindow=Close window
 Question=Question
 Response=Response
 Priority=Priority
+SendByMail=Send by EMail
 MailSentBy=Email sent by
 TextUsedInTheMessageBody=Email body
 SendAcknowledgementByMail=Send Ack. by email
