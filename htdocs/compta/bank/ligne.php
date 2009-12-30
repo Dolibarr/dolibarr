@@ -162,7 +162,7 @@ if ($user->rights->banque->consolidate && $_POST["action"] == 'num_releve')
 
 
 /*
- * Affichage fiche ligne ecriture en mode edition
+ * View
  */
 
 llxHeader();

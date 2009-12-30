@@ -98,7 +98,7 @@ class Account extends CommonObject
 
 
 	/**
-	 *      \briref     Add a link between bank line record and its source
+	 *      \brief      Add a link between bank line record and its source
 	 *      \param      line_id     Id ecriture bancaire
 	 *      \param      url_id      Id parametre url
 	 *      \param      url         Url
@@ -368,7 +368,7 @@ class Account extends CommonObject
 					$sql.= ", '".$this->db->idate($this->date_solde)."'";
 					$sql.= ", '".$this->db->idate($this->date_solde)."'";
 					$sql.= ", 'SOLD'";
-					$sql.= ", 1";
+					$sql.= ", 0";		// Not conciliated by default
 					$sql.= ")";
 
 					$this->db->query($sql);
@@ -706,7 +706,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  \brief   
+	 *  \brief
 	 */
 	function datev_next($rowid)
 	{
@@ -731,7 +731,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  \brief   
+	 *  \brief
 	 */
 	function datev_previous($rowid)
 	{
