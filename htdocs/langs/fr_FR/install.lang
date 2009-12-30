@@ -137,6 +137,7 @@ InstallChoiceRecommanded=Choix recommandé pour installer la version <b>%s</b> d
 InstallChoiceSuggested=<b>Choix suggéré par l'installeur</b>.
 CheckThatDatabasenameIsCorrect=Vérifiez que le nom de base "<b>%s</b>" est correct.
 IfAlreadyExistsCheckOption=Si ce nom est correct et que cette base n'existe pas déjà, vous devez cocher l'option "Créer la base de donnée".
+OpenBaseDir=Paramètre php openbasedir
 
 #########
 # upgrade
