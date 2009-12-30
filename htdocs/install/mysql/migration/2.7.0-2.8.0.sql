@@ -29,3 +29,7 @@ ALTER TABLE llx_ecm_documents ADD COLUMN cryptkey varchar(50) DEFAULT '' NOT NUL
 ALTER TABLE llx_ecm_documents ADD COLUMN cipher varchar(50) DEFAULT 'twofish' NOT NULL AFTER cryptkey;
 
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN qty real;
+
+
+ALTER TABLE llx_projet ADD COLUMN datee DATE AFTER dateo;
+

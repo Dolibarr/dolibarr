@@ -26,6 +26,7 @@ create table llx_projet
   datec            date,         -- date creation project
   tms              timestamp,
   dateo            date,         -- date start project
+  datee            date,         -- date end project
   ref              varchar(50),
   entity           integer DEFAULT 1 NOT NULL, -- multi company id
   title            varchar(255),
