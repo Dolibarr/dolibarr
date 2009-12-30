@@ -277,6 +277,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		{
 			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
+
 				// If photo is provided
 				if (! is_dir($conf->adherent->dir_output))
 				{
@@ -696,7 +697,7 @@ if ($action == 'edit')
 
 	// Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-	print $html->showphoto('member',$adh);
+	print $html->showphoto('memberphoto',$adh);
     if ($caneditfieldmember)
     {
         print '<br><br><table class="nobordernopadding"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';

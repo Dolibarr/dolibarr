@@ -28,37 +28,22 @@
  * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
  */
 
+define('NOTOKENRENEWAL',1); // Disables token renewal
+
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 $action = isset($_GET["action"])?$_GET["action"]:'';
 $original_file = isset($_GET["file"])?$_GET["file"]:'';
 $modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
 $urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
-// Define if we need master or master+main
-$needmasteronly=false;
-if ($modulepart == 'bittorrent') $needmasteronly=true;
-//if ($modulepart == 'webcal') $needmasteronly=true;
-//if ($modulepart == 'agenda') $needmasteronly=true;
+// Pour autre que bittorrent, on charge environnement + info issus de logon comme le user
+if (($modulepart == 'bittorrent') && ! defined("NOLOGIN")) define("NOLOGIN",1);
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-// Load master or main
-if ($needmasteronly)
-{
-	// For some download we don't need login
-	require("./master.inc.php");
-}
-else
-{
-	if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-	if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-	if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
-
-	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
-	require("./main.inc.php");
-	// master.inc.php is included in main.inc.php
-}
+require("./main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 

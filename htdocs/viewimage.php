@@ -34,29 +34,14 @@ $original_file = isset($_GET["file"])?$_GET["file"]:'';
 $modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
 $urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
-// Define if we need master or master+main
-$needmasteronly=false;
-if ($modulepart == 'companylogo') $needmasteronly=true;
+// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
+if (($modulepart == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",1);
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-// Load master or main
-if ($needmasteronly)
-{
-	// Pour companylogo, on charge juste environnement sans logon qui charge le user
-	require("./master.inc.php");
-}
-else
-{
-	if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-	if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-	if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
-
-	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
-	require("./main.inc.php");
-	// master.inc.php is included in main.inc.php
-}
+require("./main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 
