@@ -86,7 +86,7 @@ if ($_socid > 0)
 	if ($objsoc->client == 1) $tabchoice='customer';
 	if ($objsoc->client == 2) $tabchoice='prospect';
 
-	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"));
+	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
 
 	print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
