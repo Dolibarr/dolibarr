@@ -24,6 +24,7 @@ For users:
 
 For developers:
 - Reorganize /dev directory.
+- Change the way items are linked together.
 
 
 ***** ChangeLog for 2.7 compared to 2.6 *****
