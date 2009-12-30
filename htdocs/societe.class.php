@@ -313,8 +313,8 @@ class Societe extends CommonObject
 	 *      \param      id              			id societe
 	 *      \param      user            			Utilisateur qui demande la mise a jour
 	 *      \param      call_trigger    			0=non, 1=oui
-	 *		\param		allowmodcodeclient			Autorise modif code client
-	 *		\param		allowmodcodefournisseur		Autorise modif code fournisseur
+	 *		\param		allowmodcodeclient			Inclut modif code client et code compta
+	 *		\param		allowmodcodefournisseur		Inclut modif code fournisseur et code compta fournisseur
 	 *      \return     int             			<0 si ko, >=0 si ok
 	 */
 	function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
@@ -323,7 +323,7 @@ class Societe extends CommonObject
 
 		global $langs,$conf;
 
-		dol_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
+		dol_syslog("Societe::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
 		// Clean parameters
 		$this->id=$id;
@@ -361,9 +361,12 @@ class Societe extends CommonObject
 		//Gencod
         $this->gencod=trim($this->gencod);
 
-		// For automatic creation (not used by Dolibarr)
+		// For automatic creation
 		if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
 		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
+
+		$this->code_compta=trim($this->code_compta);
+		$this->code_compta_fournisseur=trim($this->code_compta_fournisseur);
 
 		// Check name is required and codes are ok or unique.
 		// If error, this->errors[] is filled
@@ -419,7 +422,7 @@ class Societe extends CommonObject
 				$sql .= ", code_client = ".($this->code_client?"'".addslashes($this->code_client)."'":"null");
 
 				// Attention get_codecompta peut modifier le code suivant le module utilise
-				$this->get_codecompta('customer');
+				if (empty($this->code_compta)) $this->get_codecompta('customer');
 
 				$sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
 			}
@@ -431,7 +434,7 @@ class Societe extends CommonObject
 				$sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".addslashes($this->code_fournisseur)."'":"null");
 
 				// Attention get_codecompta peut modifier le code suivant le module utilise
-				$this->get_codecompta('supplier');
+				if (empty($this->code_compta_fournisseur)) $this->get_codecompta('supplier');
 
 				$sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".addslashes($this->code_compta_fournisseur)."'":"null");
 			}

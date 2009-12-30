@@ -71,6 +71,12 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 	$error=0;
 
+	if ($_POST["action"] == 'update')
+	{
+		// Load properties of company
+		$soc->fetch($socid);
+	}
+
 	if ($_REQUEST["private"] == 1)
 	{
 		$soc->particulier           = $_REQUEST["private"];
@@ -227,6 +233,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 			// To not set code if third party is not concerned. But if it had values, we keep them.
 			if (empty($soc->client) && empty($oldsoc->code_client))          $soc->code_client='';
 			if (empty($soc->fournisseur)&& empty($oldsoc->code_fournisseur)) $soc->code_fournisseur='';
+			//var_dump($soc);exit;
 
 			$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
 			if ($result >= 0)
@@ -343,7 +350,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		$soc->tva_assuj = $_POST["assujtva_value"];
 		$soc->tva_intra=$_POST["tva_intra"];
-		
+
 		$soc->commercial_id=$_POST["commercial_id"];
 
 		// On positionne pays_id, pays_code et libelle du pays choisi
@@ -695,7 +702,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 			$soc->tva_assuj = $_POST["assujtva_value"];
 			$soc->tva_intra=$_POST["tva_intra"];
-			
+
 			// On positionne pays_id, pays_code et libelle du pays choisi
 			if ($soc->pays_id)
 			{

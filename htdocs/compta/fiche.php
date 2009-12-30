@@ -68,6 +68,35 @@ if ($mode == 'search')
 
 }
 
+if ($_POST['action'] == 'setcustomeraccountancycode')
+{
+	$societe = new Societe($db);
+	$result=$societe->fetch($_POST['socid']);
+	$societe->code_compta=$_POST["customeraccountancycode"];
+	$result=$societe->update($societe->id,$user,1,1,0);
+	if ($result < 0)
+	{
+		$mesg=join(',',$societe->errors);
+	}
+	$POST["action"]="";
+	$socid=$_POST["socid"];
+}
+
+if ($_POST['action'] == 'setsupplieraccountancycode')
+{
+	$societe = new Societe($db);
+	$result=$societe->fetch($_POST['socid']);
+	$societe->code_compta_fournisseur=$_POST["supplieraccountancycode"];
+	$result=$societe->update($societe->id,$user,1,0,1);
+	if ($result < 0)
+	{
+		$mesg=join(',',$societe->errors);
+	}
+	$POST["action"]="";
+	$socid=$_POST["socid"];
+}
+
+
 
 
 /*
@@ -94,8 +123,9 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"),0,'company');	// Add a div
 
+	if ($mesg) print $mesg;
 
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<tr><td valign="top" width="50%" class="notopnoleft">';
@@ -107,25 +137,78 @@ if ($socid > 0)
 	// Prefix
 	print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
 	print ($societe->prefix_comm?$societe->prefix_comm:'&nbsp;');
-	print '</td>';
+	print '</td></tr>';
 
 	if ($societe->client)
 	{
 		print '<tr>';
-		print '<td nowrap>'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
+		print '<td nowrap>'.$langs->trans("CustomerCode").'</td><td colspan="3">';
+		print $societe->code_client;
+		if ($societe->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		print '</td>';
 		print '</tr>';
+
 		print '<tr>';
-		print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';
+		// TODO Use a html->editfield function
+		print '<td><table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+		print $langs->trans("CustomerAccountancyCode");
+		print '</td>';
+		if ($_GET['action'] != 'editcustomeraccountancycode' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcustomeraccountancycode&amp;socid='.$societe->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($_GET['action'] == 'editcustomeraccountancycode')
+		{
+			print "\n".'<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="action" value="setcustomeraccountancycode">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="socid" value="'.$societe->id.'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			print '<input type="text" name="customeraccountancycode" value="'.$societe->code_compta.'">';
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>'."\n";
+		}
+		else print $societe->code_compta;
+		print '</td>';
+		// End editfield
 		print '</tr>';
+
 	}
 
 	if ($societe->fournisseur)
 	{
 		print '<tr>';
-		print '<td nowrap>'.$langs->trans("SupplierCode"). '</td><td colspan="3">'. $societe->code_fournisseur . '</td>';
+		print '<td nowrap>'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
+		print $societe->code_fournisseur;
+		if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print '</td>';
 		print '</tr>';
+
 		print '<tr>';
-		print '<td nowrap>'.$langs->trans("SupplierAccountancyCode").'</td><td colspan="3">'.$societe->code_compta_fournisseur.'</td>';
+		// TODO Use a html->editfield function
+		print '<td><table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+		print $langs->trans("SupplierAccountancyCode");
+		print '</td>';
+		if ($_GET['action'] != 'editsupplieraccountancycode' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editsupplieraccountancycode&amp;socid='.$societe->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($_GET['action'] == 'editsupplieraccountancycode')
+		{
+			print "\n".'<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="action" value="setsupplieraccountancycode">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="socid" value="'.$societe->id.'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			print '<input type="text" name="supplieraccountancycode" value="'.$societe->code_compta_fournisseur.'">';
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>'."\n";
+		}
+		else print $societe->code_compta_fournisseur;
+		print '</td>';
+		// End editfield
 		print '</tr>';
 	}
 
@@ -147,7 +230,7 @@ if ($socid > 0)
 	print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($societe->fax,$societe->pays_code,0,$societe->id,'AC_FAX').'</td></tr>';
 
 	// EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
+	print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
 
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($societe->url,'_blank').'</td></tr>';
@@ -331,7 +414,9 @@ if ($socid > 0)
 	}
 
 	print "</td></tr>";
-	print "</table></div>\n";
+	print "</table>";
+
+	print "\n</div>\n";
 
 
 	/*

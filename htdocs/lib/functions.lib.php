@@ -373,7 +373,7 @@ function dol_fiche_head($links, $active='0', $title='', $notab=0, $picto='')
 
 	print "</div>\n";
 
-	if (! $notab) print '<div class="tabBar">'."\n\n";
+	if (! $notab) print "\n".'<div class="tabBar">'."\n";
 }
 
 

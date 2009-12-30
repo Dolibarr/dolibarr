@@ -77,7 +77,7 @@ if ( $societe->fetch($socid) )
 		print '<tr><td nowrap="nowrap">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print $societe->code_fournisseur;
-		if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+		if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		print '</td></tr>';
 	}
 

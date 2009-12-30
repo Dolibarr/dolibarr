@@ -173,7 +173,7 @@ if ($socid > 0)
 		print '<tr><td nowrap>';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $objsoc->code_client;
-		if ($objsoc->check_codeclient() <> 0) print '  <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		if ($objsoc->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		print '</td></tr>';
 	}
 

@@ -304,8 +304,9 @@ function show_contacts($conf,$langs,$db,$objsoc)
 		$user->fetch_clicktodial(); // lecture des infos de clicktodial
 	}
 
+	print "\n";
 	print_titre($langs->trans("ContactsForCompany"));
-	print '<table class="noborder" width="100%">';
+	print "\n".'<table class="noborder" width="100%">'."\n";
 
 	print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
 	print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
@@ -378,7 +379,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
 		//print '<td>'.$langs->trans("NoContactsYetDefined").'</td>';
 		//print "</tr>\n";
 	}
-	print "</table>\n";
+	print "\n</table>\n";
 
 	print "<br>\n";
 }
@@ -403,6 +404,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		$userstatic=new User($db);
 		$contactstatic = new Contact($db);
 
+		print "\n";
 		if (is_object($objcon) && $objcon->id) print_titre($langs->trans("TasksHistoryForThisContact"));
 		else print_titre($langs->trans("ActionsOnCompany"));
 
@@ -627,6 +629,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$orderstatic=new Commande($db);
 		$facturestatic=new Facture($db);
 
+		print "\n";
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
@@ -714,12 +717,12 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			print "</tr>\n";
 			$i++;
 		}
+		print "</table>\n";
+		print "<br>\n";
 
 		$db->free($result);
 	}
 
-	print "</table>\n";
-	print "<br>\n";
 }
 
 ?>
