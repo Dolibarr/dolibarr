@@ -18,10 +18,10 @@
  */
 
 /**
-        \file       htdocs/admin/limits.php
-        \brief      Page de configuration des limites
-        \version    $Id$
-*/
+ *       \file       htdocs/admin/limits.php
+ *       \brief      Page de configuration des limites
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -55,17 +55,17 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 		$error++;
 		$mesg='<div class="error">'.$langs->trans("ErrorNegativeValueNotAllowed").'</div>';
 	}
-	
+
 	if ($_POST["MAIN_ROUNDING_RULE_TOT"])
 	{
-		if ($_POST["MAIN_ROUNDING_RULE_TOT"] * pow(10,$_POST["MAIN_MAX_DECIMALS_TOT"]) < 1)	
+		if ($_POST["MAIN_ROUNDING_RULE_TOT"] * pow(10,$_POST["MAIN_MAX_DECIMALS_TOT"]) < 1)
 		{
 			$langs->load("errors");
 			$error++;
 			$mesg='<div class="error">'.$langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT").'</div>';
 		}
 	}
-	
+
 	if (! $error)
 	{
 		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",   $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
@@ -176,35 +176,35 @@ $s=2/7;$qty=1;$vat=0;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat;
+print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=1;$vat=0;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat;
+print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=2;$vat=0;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat;
+print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=1;$vat=10;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat;
+print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=2;$vat=10;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
-print " - ".$langs->trans("VAT").": ".$vat;
+print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $db->close();
