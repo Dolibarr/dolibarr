@@ -39,6 +39,7 @@ For users:
 - Fix: Report of balance missing supplier invoices.
 - Fix: Running sendmaing-email.php script.
 - Fix: Detection of country for IBAN management.
+- Fix: Update member photo.
 
 
 ***** ChangeLog for 2.7 compared to 2.6 *****
