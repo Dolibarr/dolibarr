@@ -28,6 +28,19 @@ For developers:
 - Change the way items are linked together.
 
 
+
+***** ChangeLog for 2.7.1 compared to 2.7 *****
+
+For users:
+- Fix: Bad decimal management for it_IT and fr_BE languages.
+- Fix: A third party created from a member is created as a 
+       customer.
+- Fix: Change of numbering module was not effective.
+- Fix: Report of balance missing supplier invoices.
+- Fix: Running sendmaing-email.php script.
+- Fix: Detection of country for IBAN management.
+
+
 ***** ChangeLog for 2.7 compared to 2.6 *****
 
 For users:
