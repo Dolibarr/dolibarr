@@ -2910,7 +2910,7 @@ class Form
 			$file=$object->id.".jpg";
 			$email=$object->email;
 		}
-		if ($modulepart=='member')
+		if ($modulepart=='memberphoto')
 		{
 			$dir=$conf->adherent->dir_output;
 			$file=$object->id.".jpg";

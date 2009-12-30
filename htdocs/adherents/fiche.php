@@ -1085,7 +1085,7 @@ if ($rowid && $action != 'edit')
     // Login
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
 	print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-	print $html->showphoto('member',$adh);
+	print $html->showphoto('memberphoto',$adh);
     print '</td>';
 	print '</tr>';
 
