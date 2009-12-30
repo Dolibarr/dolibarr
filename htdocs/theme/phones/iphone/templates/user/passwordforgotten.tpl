@@ -90,7 +90,7 @@
 	
 	<ul class="pageitem">
 		<li class="form">
-			<input name="input Button" {$disabled} type="submit" value="{$langs->trans('Connection')}" />
+			<input name="input Button" {$disabled} type="submit" value="{$langs->trans('SendNewPassword')}" />
 		</li>
 	</ul>
 	
