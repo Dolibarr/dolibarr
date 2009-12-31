@@ -26,7 +26,7 @@ return "Dolibarr ERP/CRM is a powerful Open Source software to manage a professi
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "2.7.0" );
+return ( "2.7.0", "2.7.1" );
 }
 
 sub script_dolibarr_category
