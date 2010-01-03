@@ -1012,6 +1012,7 @@ NewRSS = Sindicació de un nou flux RSS
 ##### Mailing ##### = undefined =  = 
 MailingSetup = Configuració del mòdul E-Mailing
 MailingEMailFrom = E-Mail emissor (From) dels correus enviats per E-Mailing
+MailingEMailError = E-mail de resposta (Errors-to) per a les respostes sobre enviaments per e-mailing amb error.
 ##### Notification ##### = undefined =  = 
 NotificationSetup = Configuració del mòdul notificacions
 NotificationEMailFrom = E-Mail emissor (From) dels correus enviats a través de notificacions

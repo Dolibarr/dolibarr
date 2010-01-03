@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main
+# Dolibarr language file - ca_ES - main 
 CHARSET = UTF-8
 DIRECTION = ltr
 SeparatorDecimal = ,
@@ -46,6 +46,7 @@ ErrorNoSocialContributionForSellerCountry = Error, cap tipus de càrrega social 
 ErrorFailedToSaveFile = Error, el registre del fitxer ha fallat.
 ErrorOnlyPngJpgSupported = Error, només estan suportats els formats d'imatge jpg i png.
 ErrorImageFormatNotSupported = El seu PHP no suporta les funcions de conversió d'aquest format d'imatge.
+BackgroundColorByDefault = Color de fons
 GoToWikiHelpPage = Consultar l'ajuda (pot requerir accés a Internet)
 GoToHelpPage = Consultar l'ajuda
 RecordSaved = Registre guardat
@@ -474,6 +475,7 @@ CloseWindow = Tancar finestra
 Question = Pregunta
 Response = Resposta
 Priority = Prioritat
+SendByMail = Enviar per e-mail
 MailSentBy = Mail enviat per
 TextUsedInTheMessageBody = Text utilitzat en el cos del missatge
 SendAcknowledgementByMail = Enviament rec. per e-mail

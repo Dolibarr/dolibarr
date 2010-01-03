@@ -1012,6 +1012,7 @@ NewRSS = Sindicación de un nuevo flujo RSS
 ##### Mailing ##### = undefined = 
 MailingSetup = Configuración del módulo E-Mailing
 MailingEMailFrom = E-Mail emisor (From) de los correos enviados por E-Mailing
+MailingEMailError = E-Mail de respuesta (Errors-to) para las respuestas acerca de envíos por e-mailing con error.
 ##### Notification ##### = undefined = 
 NotificationSetup = Configuración del módulo notificaciones
 NotificationEMailFrom = E-Mail emisor (From) de los correos enviados a traves de notificaciones

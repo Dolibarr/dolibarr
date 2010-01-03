@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - install 
+# Dolibarr language file - es_ES - install = 
 CHARSET = UTF-8
 InstallEasy = Hemos procurado que la instalación sea lo más simple posible, usted sólo tiene que seguir los pasos uno a uno.
 MiscellanousChecks = Comprobación de los prerequisitos
@@ -137,6 +137,7 @@ InstallChoiceRecommanded = Opción recomendada para instalar la versión <b>%s</
 InstallChoiceSuggested = <b>Opción sugerida por el instalador</b>.
 CheckThatDatabasenameIsCorrect = Compruebe que el nombre de la base de datos "<b>%s</b>" es correcto.
 IfAlreadyExistsCheckOption = Si el nombre es correcto y la base de datos no existe, debe seleccionar la opción "Crear la base de datos"
+OpenBaseDir = Parámetro php openbasedir
 ######### = 
 # upgrade = 
 MigrationFixData = Corrección de datos desnormalizados

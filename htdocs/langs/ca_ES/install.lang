@@ -137,6 +137,7 @@ InstallChoiceRecommanded = Opció recomanada per a instal·lar la versió <b>%s<
 InstallChoiceSuggested = <b>Opció suggerida per l'instal·lador</b>.
 CheckThatDatabasenameIsCorrect = Comproveu que el nom de la base de dades "<b>%s</b>" és correcte.
 IfAlreadyExistsCheckOption = Si el nom és correcte i la base de dades no existeix, heu de seleccionar l'opció "Crear la base de dades"
+OpenBaseDir = Paràmetre php openbasedir
 ######### =  = 
 # upgrade =  = 
 MigrationFixData = Correcció de dades desnormalitzades
