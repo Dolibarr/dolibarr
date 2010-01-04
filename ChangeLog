@@ -25,9 +25,9 @@ For users:
 - Fix: Running sending-email.php
 
 For developers:
-- Reorganize /dev directory.
-- Change the way items are linked together.
-
+- Qual: Reorganize /dev directory.
+- Qual: Change the way items are linked together.
+- New: Modules can add their own tab on projects cards.
 
 
 ***** ChangeLog for 2.7.1 compared to 2.7 *****

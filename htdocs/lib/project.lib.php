@@ -52,6 +52,23 @@ function project_prepare_head($objsoc)
 		$h++;
 	}
 
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['project']))
+    {
+        $i=0;
+        foreach ($conf->tabs_modules['project'] as $value)
+        {
+            $values=explode(':',$value);
+            if ($values[2]) $langs->load($values[2]);
+            $head[$h][0] = preg_replace('/__ID__/i',$objsoc->id,$values[3]);
+            $head[$h][1] = $langs->trans($values[1]);
+            $head[$h][2] = 'tab'.$values[1];
+            $h++;
+        }
+    }
+
 	return $head;
 }
 
@@ -82,6 +99,23 @@ function task_prepare_head($object)
 	$head[$h][1] = $langs->trans("Affectations");
 	$head[$h][2] = 'who';
 	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['task']))
+    {
+        $i=0;
+        foreach ($conf->tabs_modules['task'] as $value)
+        {
+            $values=explode(':',$value);
+            if ($values[2]) $langs->load($values[2]);
+            $head[$h][0] = preg_replace('/__ID__/i',$objsoc->id,$values[3]);
+            $head[$h][1] = $langs->trans($values[1]);
+            $head[$h][2] = 'tab'.$values[1];
+            $h++;
+        }
+    }
 
 	return $head;
 }
