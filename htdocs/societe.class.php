@@ -494,6 +494,8 @@ class Societe extends CommonObject
 		global $langs;
 		global $conf;
 
+		if (empty($socid) && empty($ref)) return -1;
+
 		// Init data for telephonie module
 		if ($conf->telephonie->enabled && $user && $user->id)
 		{

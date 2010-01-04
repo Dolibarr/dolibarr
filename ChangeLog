@@ -17,6 +17,7 @@ For users:
 - New: task #9640 : Add label for stock movements.
 - New: task #9916 : Add FREE text for interventions card.
 - New: Can define the new product ref when cloning.
+- New: Project module support status of project and end date.
 - Fix: bug #28055 : Unable to modify the date of a cloned command.
 - Fix: bug #27891.
 - Fix: Change of numbering module was not effective.

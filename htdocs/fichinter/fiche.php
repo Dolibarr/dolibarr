@@ -313,7 +313,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 	unset($_POST['np_desc']);
 	unset($_POST['durationhour']);
 	unset($_POST['durationmin']);
-	
+
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
 	exit;
 }
@@ -522,7 +522,7 @@ elseif ($fichinterid)
 		if ($ret == 'html') print '<br>';
 	}
 
-	// Confirmation de la validation de la fiche d'intervention
+	// Confirmation validation
 	if ($_GET['action'] == 'validate')
 	{
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$fichinter->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate','',0,1);
@@ -826,7 +826,6 @@ elseif ($fichinterid)
 
 	/**
 	 * Barre d'actions
-	 *
 	 */
 	print '<div class="tabsAction">';
 

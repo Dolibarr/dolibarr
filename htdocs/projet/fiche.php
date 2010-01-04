@@ -31,6 +31,8 @@ if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
+$langs->load("projects");
+
 $projetid='';
 $ref='';
 if (isset($_GET["id"]))  { $projetid=$_GET["id"]; }
@@ -122,12 +124,14 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	if (! $error)
 	{
 		$projet = new Project($db);
-		$projet->id           = $_POST["id"];
+		$projet->fetch($_POST["id"]);
+
 		$projet->ref          = $_POST["ref"];
 		$projet->title        = $_POST["title"];
 		$projet->socid        = $_POST["socid"];
 		$projet->user_resp_id = $_POST["officer_project"];
-		$projet->dateo           = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+		$projet->date_start   = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+		$projet->date_end     = dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
 
 		$result=$projet->update($user);
 
@@ -137,6 +141,28 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	{
 		$_GET["id"]=$_POST["id"];
 		$_GET['action']='edit';
+	}
+}
+
+if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
+{
+	$project = new Project($db);
+	$project->fetch($_GET["id"]);
+
+	$result = $project->setValid($user, $conf->projet->outputdir);
+	if ($result >= 0)
+	{
+/*		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		$result=projet_create($db, $projet, $_REQUEST['model'], $outputlangs);
+*/	}
+	else
+	{
+		$mesg='<div class="error">'.$project->error.'</div>';
 	}
 }
 
@@ -206,9 +232,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	}
 	print '</td></tr>';
 
-	// Date
+	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 	print $html->select_date('','project');
+	print '</td></tr>';
+
+	// Date end
+	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print $html->select_date(-1,'projectend');
 	print '</td></tr>';
 
 	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
@@ -233,11 +264,19 @@ else
 	$head=project_prepare_head($projet);
 	dol_fiche_head($head, 'project', $langs->trans("Project"),0,'project');
 
+	// Confirmation validation
+	if ($_GET['action'] == 'validate')
+	{
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$projet->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
+		if ($ret == 'html') print '<br>';
+	}
+	// Confirmation delete
 	if ($_GET["action"] == 'delete')
 	{
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
+
 
 	if ($_GET["action"] == 'edit')
 	{
@@ -264,9 +303,17 @@ else
 		$html->select_users($projet->user_resp_id,'officer_project',1);
 		print '</td></tr>';
 
-		// Date
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projet->getLibStatut(4).'</td></tr>';
+
+		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 		print $html->select_date($projet->date_start,'project');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+		print $html->select_date($projet->date_end?$projet->date_end:-1,'projectend');
 		print '</td></tr>';
 
 		print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -297,9 +344,17 @@ else
 		else print $langs->trans('SharedProject');
 		print '</td></tr>';
 
-		// Date
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projet->getLibStatut(4).'</td></tr>';
+
+		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 		print dol_print_date($projet->date_start,'day');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+		print dol_print_date($projet->date_end,'day');
 		print '</td></tr>';
 
 		print '</table>';
@@ -314,10 +369,26 @@ else
 
 	if ($_GET["action"] != "edit")
 	{
+		// Validate
+		if ($projet->statut == 0 && $user->rights->projet->creer)
+		{
+			print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=validate"';
+			print '>'.$langs->trans("Valid").'</a>';
+		}
+
+		// Modify
 		if ($user->rights->projet->creer)
 		{
 			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 		}
+
+		// Close
+		if ($user->rights->projet->creer)
+		{
+			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+		}
+
+		// Delete
 		if ($user->rights->projet->supprimer)
 		{
 			print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';

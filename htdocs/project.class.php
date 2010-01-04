@@ -40,13 +40,17 @@ class Project extends CommonObject
 
 	var $id;
 	var $ref;
+	var $statut;
 	var $title;
 	var $date_c;
 	var $date_m;
 	var $date_start;
+	var $date_end;
 	var $socid;
 	var $user_resp_id;
 
+	var $statuts_short;
+	var $statuts;
 
 	/**
 	 *    \brief  Constructeur de la classe
@@ -56,6 +60,9 @@ class Project extends CommonObject
 	{
 		$this->db = $DB;
 		$this->societe = new Societe($DB);
+
+		$this->statuts_short=array(0=>'Draft',1=>'Validated',2=>'Closed');
+		$this->statuts=array(0=>'Draft',1=>'Validated',2=>'Closed');
 	}
 
 	/*
@@ -73,13 +80,14 @@ class Project extends CommonObject
 			return -1;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, datec, dateo, fk_statut)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, datec, dateo, datee, fk_statut)";
 		$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
 		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".($this->user_resp_id>0?$this->user_resp_id:'null').",";
 		$sql.= " ".($this->datec!=''?$this->db->idate($this->datec):'null').",";
 		$sql.= " ".($this->dateo!=''?$this->db->idate($this->dateo):'null').",";
+		$sql.= " ".($this->datee!=''?$this->db->idate($this->datee):'null').",";
 		$sql.= " 0)";
 
 		dol_syslog("Project::create sql=".$sql,LOG_DEBUG);
@@ -100,6 +108,12 @@ class Project extends CommonObject
 	}
 
 
+	/**
+	 * Update a project
+	 *
+	 * @param unknown_type $user
+	 * @return unknown
+	 */
 	function update($user)
 	{
 		if (strlen(trim($this->ref)) > 0)
@@ -109,8 +123,10 @@ class Project extends CommonObject
 			$sql.= ", title = '".$this->title."'";
 			$sql.= ", fk_soc = ".($this->socid > 0?$this->socid:"null");
 			$sql.= ", fk_user_resp = ".$this->user_resp_id;
+			$sql.= ", fk_statut = ".$this->statut;
 			$sql.= ", datec=".($this->datec!=''?$this->db->idate($this->datec):'null');
-			$sql.= ", dateo=".($this->dateo!=''?$this->db->idate($this->dateo):'null');
+			$sql.= ", dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null');
+			$sql.= ", datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("Project::Update sql=".$sql,LOG_DEBUG);
@@ -143,7 +159,9 @@ class Project extends CommonObject
 	 */
 	function fetch($id,$ref='')
 	{
-		$sql = "SELECT rowid, ref, title, datec, tms, dateo, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
+		if (empty($id) && empty($ref)) return -1;
+
+		$sql = "SELECT rowid, ref, title, datec, tms, dateo, datee, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		if ($ref) $sql.= " WHERE ref='".$ref."'";
 		else $sql.= " WHERE rowid=".$id;
@@ -163,6 +181,7 @@ class Project extends CommonObject
 				$this->date_c         = $this->db->jdate($obj->datec);
 				$this->date_m         = $this->db->jdate($obj->tms);
 				$this->date_start     = $this->db->jdate($obj->dateo);
+				$this->date_end       = $this->db->jdate($obj->datee);
 				$this->note           = $obj->note;
 				$this->socid          = $obj->fk_soc;
 				$this->societe->id    = $obj->fk_soc;	// For backward compatibility
@@ -294,6 +313,112 @@ class Project extends CommonObject
 			$this->error=$this->db->lasterror();
 			dol_syslog("Project::delete ".$this->error, LOG_ERR);
 			return -1;
+		}
+	}
+
+	/**
+	 *		\brief		Validate a project
+	 *		\param		user		User that validate
+	 *		\return		int			<0 if KO, >0 if OK
+	 */
+	function setValid($user, $outputdir)
+	{
+		global $langs, $conf;
+
+		if ($this->statut != 1)
+		{
+			$this->db->begin();
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
+			$sql.= " SET fk_statut = 1";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
+
+			dol_syslog("Project::setValid sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PROJECT_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+
+				if (! $error)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=join(',',$this->errors);
+					dol_syslog("Project::setValid ".$this->error,LOG_ERR);
+					return -1;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dol_syslog("Project::setValid ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 *		\brief		Close a project
+	 *		\param		user		User that validate
+	 *		\return		int			<0 if KO, >0 if OK
+	 */
+	function setClose($user, $outputdir)
+	{
+		global $langs, $conf;
+
+		if ($this->statut != 1)
+		{
+			$this->db->begin();
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
+			$sql.= " SET fk_statut = 2";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 1";
+
+			dol_syslog("Project::setClose sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PROJECT_CLOSE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+
+				if (! $error)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=join(',',$this->errors);
+					dol_syslog("Project::setClose ".$this->error,LOG_ERR);
+					return -1;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dol_syslog("Project::setClose ".$this->error,LOG_ERR);
+				return -1;
+			}
 		}
 	}
 
@@ -552,6 +677,54 @@ class Project extends CommonObject
 		return $tasks;
 	}
 
+
+	/**
+	 *    \brief      Return status label of object
+	 *    \return     string      Label
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    \brief      Renvoi status label for a status
+	 *    \param      statut      id statut
+	 *    \return     string      Label
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 5)
+		{
+			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+		}
+	}
 
 	/**
 	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)

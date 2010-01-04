@@ -52,3 +52,5 @@ ChildOfTaks=Child of project/task
 NotOwnerOfProject=Not owner of this private project
 AffectedTo=Affected to
 CantRemoveProject=This project can't be removed as it is referenced by some other objects (invoice, orders or other). See referers tab.
+ValidateProject=Validate projet
+ConfirmValidateProject=Are you sure you want to validate this project ?

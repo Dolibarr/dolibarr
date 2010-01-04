@@ -93,6 +93,9 @@ if ($projet->user->id) print $projet->user->getNomUrl(1);
 else print $langs->trans('SharedProject');
 print '</td></tr>';
 
+// Statut
+print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projet->getLibStatut(4).'</td></tr>';
+
 print '</table>';
 
 print '</div>';
@@ -101,6 +104,7 @@ print '</div>';
 /*
  * Factures
  */
+
 $listofreferent=array(
 'propal'=>array(
 	'title'=>"ListProposalsAssociatedProject",

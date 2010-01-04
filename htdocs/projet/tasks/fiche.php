@@ -218,6 +218,9 @@ else
 	else print $langs->trans('SharedProject');
 	print '</td></tr>';
 
+	// Statut
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projet->getLibStatut(4).'</td></tr>';
+
 	print '</table>';
 
 	print '<input type="hidden" name="action" value="addtime">';

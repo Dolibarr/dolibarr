@@ -321,7 +321,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le libelle du statut de l'intervantion
+	 *    \brief      Retourne le libelle du statut
 	 *    \return     string      Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -336,6 +336,8 @@ class Fichinter extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+		global $langs;
+
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
