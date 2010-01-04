@@ -150,17 +150,29 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 	$project->fetch($_GET["id"]);
 
 	$result = $project->setValid($user, $conf->projet->outputdir);
-	if ($result >= 0)
+	if ($result <= 0)
 	{
-/*		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-		}
-		$result=projet_create($db, $projet, $_REQUEST['model'], $outputlangs);
-*/	}
-	else
+		$mesg='<div class="error">'.$project->error.'</div>';
+	}
+}
+
+if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes')
+{
+	$project = new Project($db);
+	$project->fetch($_GET["id"]);
+	$result = $project->setClose($user, $conf->projet->outputdir);
+	if ($result <= 0)
+	{
+		$mesg='<div class="error">'.$project->error.'</div>';
+	}
+}
+
+if ($_REQUEST['action'] == 'confirm_reopen' && $_REQUEST['confirm'] == 'yes')
+{
+	$project = new Project($db);
+	$project->fetch($_GET["id"]);
+	$result = $project->setValid($user, $conf->projet->outputdir);
+	if ($result <= 0)
 	{
 		$mesg='<div class="error">'.$project->error.'</div>';
 	}
@@ -270,6 +282,18 @@ else
 		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$projet->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
+	// Confirmation close
+	if ($_GET["action"] == 'close')
+	{
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
+		if ($ret == 'html') print '<br>';
+	}
+	// Confirmation reopen
+	if ($_GET["action"] == 'reopen')
+	{
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
+		if ($ret == 'html') print '<br>';
+	}
 	// Confirmation delete
 	if ($_GET["action"] == 'delete')
 	{
@@ -377,15 +401,21 @@ else
 		}
 
 		// Modify
-		if ($user->rights->projet->creer)
+		if ($projet->statut != 2 && $user->rights->projet->creer)
 		{
 			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 		}
 
 		// Close
-		if ($user->rights->projet->creer)
+		if ($projet->statut != 2 && $user->rights->projet->creer)
 		{
 			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+		}
+
+		// Reopen
+		if ($projet->statut == 2 && $user->rights->projet->creer)
+		{
+			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 		}
 
 		// Delete
