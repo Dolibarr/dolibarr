@@ -33,6 +33,23 @@ $shmkeys=array('main'=>1,'admin'=>2,'dict'=>3,'companies'=>4,'suppliers'=>5,'pro
 $shmoffset=100;
 
 
+
+/**	\brief      Return list of contents of all memory area shared
+ * 	\return		int				0=Nothing is done, <0 if KO, >0 if OK
+ */
+function dol_listshmop()
+{
+	global $shmkeys,$shmoffset;
+
+	$resarray=array();
+	foreach($shmkeys as $key => $val)
+	{
+		$result=dol_getshmop($key);
+		if (! is_numeric($result) || $result > 0) $resarray[$key]=$result;
+	}
+	return $resarray;
+}
+
 /**	\brief      Read a memory area shared by all users, all sessions on server
  *  \param      $memoryid		Memory id of shared area
  * 	\return		int				0=Nothing is done, <0 if KO, >0 if OK
@@ -67,7 +84,7 @@ function dol_getshmop($memoryid)
 function dol_setshmop($memoryid,$data)
 {
 	global $shmkeys,$shmoffset;
-	
+
 	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
 	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_write")) return 0;
 	$shmkey=$shmkeys[$memoryid]+$shmoffset;
@@ -79,7 +96,7 @@ function dol_setshmop($memoryid,$data)
 	{
 		$shm_bytes_written1=shmop_write($handle,str_pad($size,6),0);
 		$shm_bytes_written2=shmop_write($handle,$newdata,6);
-		if (($shm_bytes_written1 + $shm_bytes_written2) != (6+strlen($newdata))) 
+		if (($shm_bytes_written1 + $shm_bytes_written2) != (6+strlen($newdata)))
 		{
    			print "Couldn't write the entire length of data\n";
 		}
