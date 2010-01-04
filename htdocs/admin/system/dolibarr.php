@@ -18,12 +18,13 @@
  */
 
 /**
- *  \file       htdocs/admin/system/dolibarr.php
+ *  \file       htdocs/lib/memory.lib.php
  *  \brief      Fichier page info systemes Dolibarr
  *  \version    $Id$
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/memory.lib.php");
 
 $langs->load("admin");
 $langs->load("install");
@@ -72,7 +73,6 @@ print '<br>';
 // Session
 $var=true;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path()."</td></tr>\n";
 $var=!$var;
@@ -92,6 +92,26 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler").'</td><td colspan="2">'.$conf->left_menu."</td></tr>\n";
 print '</table>';
 print '<br>';
+
+
+// Shmop
+$shmoparray=dol_listshmop();
+if (sizeof($shmoparray) > 0)
+{
+	$var=true;
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td><td colspan="2">'.$langs->trans("NbOfEntries").'</td></tr>'."\n";
+
+	foreach($shmoparray as $key => $val)
+	{
+		$var=!$var;
+		print "<tr ".$bc[$var]."><td width=\"300\">".$key.'</td><td colspan="2">'.sizeof($val)."</td></tr>\n";
+	}
+
+	print '</table>';
+	print '<br>';
+}
+
 
 // Localisation
 $var=true;
