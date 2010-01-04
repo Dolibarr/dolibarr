@@ -165,11 +165,11 @@ function donnefocus() {
 	<?php if ($main_google_ad_client) { ?>
 		<div align="center">
 			<script type="text/javascript"><!--
-				google_ad_client = "{$main_google_ad_client}";
+				google_ad_client = <?php echo $main_google_ad_client ?>;
 				/* {$main_google_ad_width}x{$main_google_ad_height}, {$main_google_ad_name} */
-				google_ad_slot = "{$main_google_ad_slot}";
-				google_ad_width = {$main_google_ad_width};
-				google_ad_height = {$main_google_ad_height};
+				google_ad_slot = <?php echo $main_google_ad_slot ?>;
+				google_ad_width = <?php echo $main_google_ad_width ?>;
+				google_ad_height = <?php echo $main_google_ad_height ?>;
 				//-->
 			</script>
 			<script type="text/javascript"

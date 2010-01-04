@@ -162,7 +162,17 @@ function donnefocus() {ldelim}
 
 	{if $main_google_ad_client}
 		<div align="center">
-		{include file=$google_ad_tpl}
+			<script type="text/javascript"><!--
+				google_ad_client = "{$main_google_ad_client}";
+				/* {$main_google_ad_width}x{$main_google_ad_height}, {$main_google_ad_name} */
+				google_ad_slot = "{$main_google_ad_slot}";
+				google_ad_width = {$main_google_ad_width};
+				google_ad_height = {$main_google_ad_height};
+				//-->
+			</script>
+			<script type="text/javascript"
+				src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+			</script>
 		</div>
 	{/if}
 
