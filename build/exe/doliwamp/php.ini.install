@@ -1341,6 +1341,7 @@ xdebug.remote_port=9000
 xdebug.profiler_enable=0
 xdebug.show_local_vars=off
 xdebug.profiler_output_dir=c:/
+xdebug.profiler_append=0
 
 ; Local Variables:
 ; tab-width: 4
