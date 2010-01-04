@@ -33,6 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formactions.class.php");
+require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -115,19 +117,7 @@ if ($_POST["action"] == 'add_action')
 	$_POST["p2month"],
 	$_POST["p2day"],
 	$_POST["p2year"]);
-	/*$datea=dol_mktime($_POST["adhour"],	// deprecated
-	 $_POST["admin"],
-	 0,
-	 $_POST["admonth"],
-	 $_POST["adday"],
-	 $_POST["adyear"]);
-	 $datea2=dol_mktime($_POST["a2hour"],	// deprecated
-	 $_POST["a2min"],
-	 0,
-	 $_POST["a2month"],
-	 $_POST["a2day"],
-	 $_POST["a2year"]);
-	 */
+
 
 	if (! $datep2 && $_POST["percentage"] == 100)
 	{
@@ -169,6 +159,7 @@ if ($_POST["action"] == 'add_action')
 			else $actioncomm->label = $cactioncomm->libelle;
 		}
 	}
+	$actioncomm->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
 	$actioncomm->datep = $datep;
 	//$actioncomm->date = $datea;
 	$actioncomm->datef = $datep2;
@@ -370,7 +361,9 @@ if ($_POST["action"] == 'update')
 		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
 		$actioncomm->societe->id = $_POST["socid"];
 		$actioncomm->contact->id = $_POST["contactid"];
+		$actioncomm->fk_project  = $_POST["projectid"];
 		$actioncomm->note        = $_POST["note"];
+		$actioncomm->pnote       = $_POST["note"];
 
 		if (! $datep2 && $_POST["percentage"] == 100)
 		{
@@ -511,6 +504,21 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 	}
 
+	// Project
+	if ($conf->projet->enabled)
+	{
+		// Projet associe
+		$langs->load("project");
+
+		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+		$numprojet=select_projects($societe->id,$projetid,'projectid');
+		if ($numprojet==0)
+		{
+			print ' &nbsp; <a href="../../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+		}
+		print '</td></tr>';
+	}
+
 	print '</table>';
 	print '<br>';
 	print '<table class="border" width="100%">';
@@ -536,7 +544,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	// Date start
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td>';
+	print '<tr><td width="30%" nowrap="nowrap"><b>'.$langs->trans("DateActionStart").'*</b></td><td>';
 	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
 	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
 	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
@@ -684,6 +692,21 @@ if ($_GET["id"])
 		$html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
 		print '</td></tr>';
 
+		// Project
+		if ($conf->projet->enabled)
+		{
+			// Projet associe
+			$langs->load("project");
+
+			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+			$numprojet=select_projects($act->societe->id,$act->fk_project,'projectid');
+			if ($numprojet==0)
+			{
+				print ' &nbsp; <a href="../../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+			}
+			print '</td></tr>';
+		}
+
 		print '</table><br><table class="border" width="100%">';
 
 		// Input by
@@ -802,6 +825,19 @@ if ($_GET["id"])
 		}
 
 		print '</td></tr>';
+
+		// Project
+		if ($conf->projet->enabled)
+		{
+			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+			if ($act->fk_project)
+			{
+				$project=new Project($db);
+				$project->fetch($act->fk_project);
+				print $project->getNomUrl(1);
+			}
+			print '</td></tr>';
+		}
 
 		print '</table><br><table class="border" width="100%">';
 

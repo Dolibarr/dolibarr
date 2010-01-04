@@ -258,13 +258,14 @@ class Project extends CommonObject
 		$elements = array();
 
 		$sql='';
-		if ($type == 'propal')           $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=".$this->id;
-		if ($type == 'order')            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=".$this->id;
-		if ($type == 'invoice')          $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=".$this->id;
+		if ($type == 'propal')             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=".$this->id;
+		if ($type == 'order')              $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=".$this->id;
+		if ($type == 'invoice')            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=".$this->id;
 		if ($type == 'invoice_predefined') $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_rec WHERE fk_projet=".$this->id;
-		if ($type == 'order_supplier')   $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE fk_projet=".$this->id;
-		if ($type == 'invoice_supplier') $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE fk_projet=".$this->id;
-		if ($type == 'contract')         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."contrat WHERE fk_projet=".$this->id;
+		if ($type == 'order_supplier')     $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE fk_projet=".$this->id;
+		if ($type == 'invoice_supplier')   $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE fk_projet=".$this->id;
+		if ($type == 'contract')           $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."contrat WHERE fk_projet=".$this->id;
+		if ($type == 'agenda')             $sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project=".$this->id;
 		if (! $sql) return -1;
 
 		dol_syslog("Project::get_element_list sql=".$sql);
@@ -681,7 +682,8 @@ class Project extends CommonObject
 
 	/**
 	 *    \brief      Return status label of object
-	 *    \return     string      Label
+	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * 	  \return     string      Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -691,7 +693,8 @@ class Project extends CommonObject
 	/**
 	 *    \brief      Renvoi status label for a status
 	 *    \param      statut      id statut
-	 *    \return     string      Label
+	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * 	  \return     string      Label
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -715,12 +718,12 @@ class Project extends CommonObject
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		if ($mode == 5)

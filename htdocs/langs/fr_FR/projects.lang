@@ -45,6 +45,7 @@ ListPredefinedInvoicesAssociatedProject=Liste des factures clients prédéfinies
 ListSupplierOrdersAssociatedProject=Liste des commandes fournisseurs associées au projet
 ListSupplierInvoicesAssociatedProject=Liste des factures fournisseur associées au projet
 ListContractAssociatedProject=Liste des contrats associés au projet
+ListActionsAssociatedProject=Liste des actions associées au projet
 ActivityOnProjectThisWeek=Activité sur les projets cette semaine
 ActivityOnProjectThisMonth=Activité sur les projets ce mois
 ActivityOnProjectThisYear=Activité sur les projets cette année

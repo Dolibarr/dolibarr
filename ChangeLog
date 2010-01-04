@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.8 compared to 2.7 *****
 
 For users:
+- New: task #9802 : Can link an action to a project.
 - New: Initial sold can be conciliated.
 - New: task #9935: Can edit accountancy code.
 - New: Add a default errors-to email for emailing module.

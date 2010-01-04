@@ -33,6 +33,7 @@ if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/comma
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->agenda->enabled)      require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("projects");
@@ -133,8 +134,12 @@ $listofreferent=array(
 'contract'=>array(
 	'title'=>"ListContractAssociatedProject",
 	'class'=>'Contrat',
-	'test'=>$conf->contrat->enabled)
-
+	'test'=>$conf->contrat->enabled),
+'agenda'=>array(
+	'title'=>"ListActionsAssociatedProject",
+	'class'=>'ActionComm',
+    'disableamount'=>1,
+	'test'=>$conf->agenda->enabled)
 );
 
 foreach ($listofreferent as $key => $value)
@@ -152,7 +157,7 @@ foreach ($listofreferent as $key => $value)
 		print '<tr class="liste_titre">';
 		print '<td width="150">'.$langs->trans("Ref").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td align="right">'.$langs->trans("Amount").'</td>';
+		if (empty($value['disableamount'])) print '<td align="right">'.$langs->trans("Amount").'</td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 		$elementarray = $projet->get_element_list($key);
@@ -167,26 +172,36 @@ foreach ($listofreferent as $key => $value)
 
 				$var=!$var;
 				print "<tr $bc[$var]>";
+
+				// Ref
 				print "<td>";
 				print $element->getNomUrl(1);
 				print "</td>\n";
+
+				// Date
 				$date=$element->date;
 				if (empty($date)) $date=$element->datep;
 				if (empty($date)) $date=$element->date_contrat;
 				print '<td>'.dol_print_date($date,'day').'</td>';
-				print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
+
+				// Amount
+				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
+
+				// Status
 				print '<td align="right">'.$element->getLibStatut(5).'</td>';
+
 				print '</tr>';
 
 				$total = $total + $element->total_ht;
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Number").': '.$i.'</td>';
-			print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
+			if (empty($value['disableamount'])) print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
 		print "</table>";
+
 
 		/*
 		 * Barre d'action

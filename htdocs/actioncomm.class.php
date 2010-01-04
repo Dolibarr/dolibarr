@@ -61,6 +61,8 @@ class ActionComm
 
     var $societe;		// Company linked to action (optionnal)
     var $contact;		// Contact linked tot action (optionnal)
+    var $fk_project;	// Id of project (optionnal)
+
     var $note;
     var $percentage;
 
@@ -86,10 +88,10 @@ class ActionComm
     }
 
     /**
-     *    \brief      Ajout d'une action en base
+     *    \brief      Add an action into database
      *    \param      user      	auteur de la creation de l'action
  	 *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-     *    \return     int         	id de l'action creee, < 0 si erreur
+     *    \return     int         	id de l'action creee, < 0 if KO
      */
     function add($user,$notrigger=0)
     {
@@ -108,6 +110,7 @@ class ActionComm
 		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
 		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
 		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
+        if ($this->fk_project < 0) $this->fk_project = 0;
 
 		$now=time();
 		if (! $this->type_id && $this->type_code)
@@ -146,6 +149,7 @@ class ActionComm
         $sql.= "durationa,";
         $sql.= "fk_action,";
         $sql.= "fk_soc,";
+        $sql.= "fk_project,";
         $sql.= "note,";
 		$sql.= "fk_contact,";
 		$sql.= "fk_user_author,";
@@ -163,6 +167,7 @@ class ActionComm
         $sql.= ($this->durationa >= 0 && $this->durationa != ''?"'".$this->durationa."'":"null").",";
         $sql.= " '".$this->type_id."',";
         $sql.= ($this->societe->id>0?" '".$this->societe->id."'":"null").",";
+        $sql.= ($this->fk_project>0?" '".$this->fk_project."'":"null").",";
         $sql.= " '".addslashes($this->note)."',";
         $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
         $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
@@ -218,6 +223,7 @@ class ActionComm
 		$sql.= " a.tms as datem,";
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
 		$sql.= " a.fk_soc,";
+		$sql.= " a.fk_project,";
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
 		$sql.= " a.fk_user_action, a.fk_user_done,";
 		$sql.= " a.fk_contact, a.percent as percentage, a.fk_facture, a.fk_commande, a.propalrowid,";
@@ -267,6 +273,7 @@ class ActionComm
 
 				$this->societe->id = $obj->fk_soc;
 				$this->contact->id = $obj->fk_contact;
+				$this->fk_project = $obj->fk_project;
 
 				$this->fk_facture = $obj->fk_facture;
 				if ($this->fk_facture)
@@ -339,6 +346,7 @@ class ActionComm
 		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
 		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
 		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
+        if ($this->fk_project < 0) $this->fk_project = 0;
 
 		// Check parameters
 		if ($this->percentage == 0 && $this->userdone->id > 0)
@@ -357,6 +365,7 @@ class ActionComm
         //$sql.= ", datea2 = ".(strval($this->dateend)!='' ? "'".$this->db->idate($this->dateend)."'" : 'null');
         $sql.= ", note = ".($this->note ? "'".addslashes($this->note)."'":"null");
         $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
+        $sql.= ", fk_project =". ($this->fk_project > 0 ? "'".$this->fk_project."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", location = ".($this->location ? "'".addslashes($this->location)."'":"null");
@@ -534,7 +543,7 @@ class ActionComm
 	 *		\return		string			Chaine avec URL
 	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
-	function getNomUrl($withpicto=0,$maxlength,$class='',$option='')
+	function getNomUrl($withpicto=0,$maxlength=0,$class='',$option='')
 	{
 		global $langs;
 

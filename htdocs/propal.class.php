@@ -732,7 +732,7 @@ class Propal extends CommonObject
 			$this->error='ErrorSetupNotComplete';
 			return -1;
 		}
-		
+
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
 		$modPropale = new $obj;
@@ -1403,7 +1403,7 @@ class Propal extends CommonObject
 		$sql.= " WHERE fk_source = ".$this->id;
 		$sql.= " AND sourcetype = '".$this->element."'";
 		$sql.= " AND targettype = 'commande'";
-		
+
 		if ($this->db->query($sql) )
 		{
 			$nump = $this->db->num_rows();
@@ -1439,7 +1439,7 @@ class Propal extends CommonObject
 		$this->commandes = array();
 
 		$ga = array();
-		
+
 		$sql = "SELECT fk_target FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE fk_source = " . $this->id;
 		$sql.= " AND sourcetype = '".$this->element."'";
@@ -1494,7 +1494,7 @@ class Propal extends CommonObject
 	{
 		$ga = array();
 		$linkedInvoices = array();
-		
+
 		$this->load_object_linked($id,$this->element);
 		foreach($this->linked_object as $key => $object)
 		{
@@ -1513,7 +1513,7 @@ class Propal extends CommonObject
 				}
 			}
 		}
-		
+
 		$sql= "SELECT rowid as facid, facnumber, total,".$this->db->pdate("datef")." as df, fk_user_author, fk_statut, paye";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
@@ -1542,7 +1542,7 @@ class Propal extends CommonObject
 					$obj = array_shift($tab_sqlobj);
 
 					$ga[$i] = $obj;
-					
+
 					$i++;
 				}
 			}
@@ -1742,9 +1742,9 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libelle du statut d'une propale (brouillon, validee, ...)
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *    	\brief      Return label of status of proposal (draft, validated, ...)
+	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *    	\return     string		Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -1752,10 +1752,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donne
+	 *    	\brief      Return label of a status (draft, validated, ...)
 	 *    	\param      statut		id statut
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *    	\param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *    	\return     string		Label
 	 */
 	function LibStatut($statut,$mode=1)
 	{

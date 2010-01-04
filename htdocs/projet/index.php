@@ -42,6 +42,7 @@ if ($user->societe_id > 0)
  */
 
 $company=new Societe($db);
+$projectstatic=new Project($db);
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
@@ -56,9 +57,10 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, count(t.rowid)";
+$sql = "SELECT p.title, p.rowid, p.fk_statut, count(t.rowid) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -77,11 +79,13 @@ if ( $resql )
 
 	while ($i < $num)
 	{
-		$row = $db->fetch_row( $resql);
+		$row = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$row[1].'">'.img_object($langs->trans("ShowProject"),"project")." ".$row[0].'</a></td>';
-		print '<td align="right">'.$row[2].'</td>';
+		print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$row->rowid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$row->title.'</a></td>';
+		print '<td align="right">'.$row->nb.'</td>';
+		$projectstatic->statut=$row->fk_statut;
+		print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
 		print "</tr>\n";
 
 		$i++;

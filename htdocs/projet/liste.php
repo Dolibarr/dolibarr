@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/projet/liste.php
  *	\ingroup    projet
- *	\brief      Page liste des projets
+ *	\brief      Page to list projects
  *	\version    $Id$
  */
 
@@ -69,7 +69,7 @@ $projectstatic = new Project($db);
 $userstatic = new User($db);
 $staticsoc=new Societe($db);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do, p.fk_user_resp,";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, ".$db->pdate("p.dateo")." as do, p.fk_user_resp,";
 $sql.= " u.login,";
 $sql.= " s.nom, s.rowid as socid, s.client";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -108,11 +108,11 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("OfficerProject"),"liste.php","","","","",$sortfield,$sortorder);
-	print_liste_field_titre('','','');
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("OfficerProject"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<form method="get" action="liste.php">';
@@ -169,7 +169,10 @@ if ($resql)
 		else print $langs->trans("SharedProject");
 		print '</td>';
 
-		print '<td>&nbsp;</td>';
+		// Status
+		$projectstatic->statut=$objp->fk_statut;
+		print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
+
 		print "</tr>\n";
 
 		$i++;
