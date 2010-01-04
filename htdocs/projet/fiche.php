@@ -83,8 +83,9 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 		$project->title           = $_POST["title"];
 		$project->socid           = $_POST["socid"];
 		$project->user_resp_id    = $_POST["officer_project"];
-		$project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
 		$project->datec=dol_now('tzserver');
+		$project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+		$project->datee=dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
 
 		$result = $project->create($user);
 		if ($result > 0)

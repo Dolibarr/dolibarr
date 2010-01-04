@@ -124,7 +124,7 @@ class Project extends CommonObject
 			$sql.= ", fk_soc = ".($this->socid > 0?$this->socid:"null");
 			$sql.= ", fk_user_resp = ".$this->user_resp_id;
 			$sql.= ", fk_statut = ".$this->statut;
-			$sql.= ", datec=".($this->datec!=''?$this->db->idate($this->datec):'null');
+			$sql.= ", datec=".($this->date_c!=''?$this->db->idate($this->date_c):'null');
 			$sql.= ", dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null');
 			$sql.= ", datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null');
 			$sql.= " WHERE rowid = ".$this->id;
@@ -179,7 +179,9 @@ class Project extends CommonObject
 				$this->title          = $obj->title;
 				$this->titre          = $obj->title;
 				$this->date_c         = $this->db->jdate($obj->datec);
+				$this->datec          = $this->db->jdate($obj->datec);	// deprecated
 				$this->date_m         = $this->db->jdate($obj->tms);
+				$this->datem          = $this->db->jdate($obj->tms);		// deprecated
 				$this->date_start     = $this->db->jdate($obj->dateo);
 				$this->date_end       = $this->db->jdate($obj->datee);
 				$this->note           = $obj->note;
