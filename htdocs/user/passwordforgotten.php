@@ -142,16 +142,16 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 if ($conf->global->MAIN_SMARTY)
 {
 	$smarty->assign('langs', $langs);
-	
+
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-	
+
 	$smarty->assign('php_self', $php_self);
 	$smarty->assign('character_set_client',$conf->file->character_set_client);
 	$smarty->assign('dol_url_root', DOL_URL_ROOT);
 	$smarty->assign('mode', $mode);
 	$smarty->assign('login', $login);
-	
+
 	// Select templates
 	if ($conf->browser->phone)
 	{
@@ -167,22 +167,22 @@ if ($conf->global->MAIN_SMARTY)
 	}
 	else
 	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/user/passwordforgotten.tpl"))
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/core/templates/passwordforgotten.tpl"))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/user/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/core/";
 		}
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/user/templates/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/core/templates/";
 		}
-		
+
 		$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-		
+
 		// Si feuille de style en php existe
 		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php?lang=".$langs->defaultlang;
 		$smarty->assign('conf_css', DOL_URL_ROOT.'/'.$conf->css);
 	}
-	
+
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 	{
 		$smarty->assign('login_background', DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png');
@@ -191,26 +191,26 @@ if ($conf->global->MAIN_SMARTY)
 	{
 		$smarty->assign('login_background', DOL_URL_ROOT.'/theme/login_background.png');
 	}
-	
+
 	if (! $_REQUEST["username"]) $smarty->assign('focus_element', 'username');
 	else $smarty->assign('focus_element', 'password');
-	
+
 	// Title
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 	$smarty->assign('title', $title);
-	
+
 	// Send password button enabled ?
 	$disabled='disabled';
 	if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
 	if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';	 // To force button enabled
 	$smarty->assign('disabled', $disabled);
-	
+
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
 	$rowspan=2;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-	
+
 	if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
@@ -224,20 +224,20 @@ if ($conf->global->MAIN_SMARTY)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	
+
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
-	
+
 	$smarty->assign('logo', $urllogo);
 	$smarty->assign('logo_width', $width);
 	$smarty->assign('logo_rowspan', $rowspan);
-	
+
 	// Entity field
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)  && ! $disabled)
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
-		
+
 		global $db;
-		
+
 		$mc = new Multicompany($db);
 		$mc->getEntities();
 
@@ -250,16 +250,16 @@ if ($conf->global->MAIN_SMARTY)
 		$smarty->assign('captcha', 1);
 		$smarty->assign('captcha_refresh', img_refresh());
 	}
-	
+
 	// Message
 	if ($message)
 	{
 		$smarty->assign('error_message', $message);
 	}
-	
+
 	// Creation du template
 	$smarty->display('passwordforgotten.tpl');
-	
+
 	// Suppression de la version compilee
 	$smarty->clear_compiled_tpl('passwordforgotten.tpl');
 }
@@ -268,11 +268,11 @@ else
 	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 	// Si feuille de style en php existe
 	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
-	
+
 	header('Cache-Control: Public, must-revalidate');
-	
+
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
-	
+
 	// En tete html
 	print "<html>\n";
 	print "<head>\n";
@@ -310,15 +310,15 @@ else
 	print "}\n";
 	print '</script>'."\n";
 	print '</head>'."\n";
-	
+
 	// Body
 	print '<body class="body" onload="donnefocus();">'."\n";
-	
+
 	// Form
 	print '<form id="login" action="'.$_SERVER["PHP_SELF"].'" method="post" name="login">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
-	
+
 	// Table 1
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
@@ -334,23 +334,23 @@ else
 	}
 	print '</table>'."\n";
 	print '<br>'."\n";
-	
+
 	// Send password button enabled ?
 	$disabled='disabled';
 	if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
 	if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';				// To force button enabled
-	
+
 	// Table 2
 	print '<table class="login" cellpadding="2" align="center">'."\n";
-	
+
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
-	
+
 	print '<tr>';
 	print '<td align="left" valign="bottom"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td valign="bottom"><input id="username" type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.$login.'" tabindex="1" /></td>';
-	
+
 	$title='';
-	
+
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
@@ -376,15 +376,15 @@ else
 	}
 	print '</td>';
 	print '</tr>'."\n";
-	
+
 	if (function_exists("imagecreatefrompng") && ! $disabled)
 	{
 		if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
-		
+
 		//print "Info session: ".session_name().session_id();print_r($_SESSION);
 		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
-		
+
 		print '<table style="width: 100px;"><tr>';	// Force width to a small value
 		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2"></td>';
 		$width=128;$height=36;
@@ -392,21 +392,21 @@ else
 		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="'.$width.'" height="'.$height.'"></td>';
 		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
 		print '</tr></table>';
-		
+
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
-	
+
 	print '<tr><td colspan="3" style="text-align:center;"><br>';
 	print '<input id="password" type="submit" '.$disabled.' class="button" name="password" value="'.$langs->trans("SendNewPassword").'" tabindex="4">';
 	print '</td></tr>'."\n";
-	
+
 	print "</table>"."\n";
-	
+
 	print "</form>"."\n";
-	
+
 	print '<center>'."\n";
 	print '<table width="90%"><tr><td align="center">';
 	if (($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled))
@@ -418,20 +418,20 @@ else
 		print '<div class="warning" align="center">'.$langs->trans("AuthenticationDoesNotAllowSendNewPassword",$mode).'</div>'."\n";
 	}
 	print '</td></tr></table><br>';
-	
+
 	if ($message)
 	{
 		print '<table width="90%"><tr><td align="center" style="font-size: 12px;">';
 		print $message.'</td></tr></table><br>';
 	}
-	
+
 	print '<br>'."\n";
 	print '<a href="'.DOL_URL_ROOT.'/">'.$langs->trans("BackToLoginPage").'</a>';
 	print '</center>'."\n";
-	
+
 	print "<br>";
 	print "<br>";
-	
+
 	// Fin entete html
 	print "\n</body>\n</html>";
 }

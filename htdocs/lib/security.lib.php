@@ -34,18 +34,15 @@
  */
 function dol_loginfunction($langs,$conf,$mysoc)
 {
+	global $dolibarr_main_demo,$db;
+
 	$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
 	$langs->setDefaultLang($langcode);
 
 	$langs->load("main");
 	$langs->load("other");
 
-	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-	// Si feuille de style en php existe
-	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
-
-	header('Cache-Control: Public, must-revalidate');
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css.php";
 
 	// Set cookie for timeout management
 	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
@@ -53,6 +50,46 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
 	else unset($_SESSION["urlfrom"]);
+
+	$demologin='';
+	$demopassword='';
+	if (! empty($dolibarr_main_demo))
+	{
+		$tab=explode(',',$dolibarr_main_demo);
+		$demologin=$tab[0];
+		$demopassword=$tab[1];
+	}
+
+	// Entity cookie
+	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+	{
+		$lastuser = '';
+		$lastentity = $_POST['entity'];
+
+		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
+		{
+			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+			if (isset($_COOKIE[$entityCookieName]))
+			{
+				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
+
+				$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
+
+				$entityCookie = new DolCookie($cryptkey);
+				$cookieValue = $entityCookie->_getCookie($entityCookieName);
+				list($lastuser, $lastentity) = explode('|', $cookieValue);
+			}
+		}
+	}
+
+	$title='Dolibarr '.DOL_VERSION;
+	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
+
+
+
+	header('Cache-Control: Public, must-revalidate');
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
 
 	// Ce DTD est KO car inhibe document.body.scrollTop
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
@@ -112,8 +149,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	// Table 1
-	$title='Dolibarr '.DOL_VERSION;
-	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 	print '<table class="login" summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center">'."\n";;
 	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>'."\n";
 	print '</table>'."\n";
@@ -125,38 +160,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 	print '<tr>';
-
-	$demologin='';
-	$demopassword='';
-	global $dolibarr_main_demo;
-	if (! empty($dolibarr_main_demo))
-	{
-		$tab=explode(',',$dolibarr_main_demo);
-		$demologin=$tab[0];
-		$demopassword=$tab[1];
-	}
-
-	// Entity cookie
-	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
-	{
-		$lastuser = '';
-		$lastentity = $_POST['entity'];
-
-		if (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE))
-		{
-			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-			if (isset($_COOKIE[$entityCookieName]))
-			{
-				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
-
-				$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-
-				$entityCookie = new DolCookie($cryptkey);
-				$cookieValue = $entityCookie->_getCookie($entityCookieName);
-				list($lastuser, $lastentity) = explode('|', $cookieValue);
-			}
-		}
-	}
 
 	// Login field
 	print '<td valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b> &nbsp; </td>'."\n";
@@ -204,9 +207,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
-		
-		global $db;
-		
+
 		$mc = new Multicompany($db);
 		$mc->getEntities();
 
@@ -248,7 +249,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		if (! empty($conf->browser->phone)) print '<tr><td colspan="3">&nbsp;</td></tr>';	// More space with phones
 
 		print '<tr><td colspan="3" align="center">';
-		
+
 		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 		{
 			print '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">(';
@@ -336,6 +337,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
  */
 function dol_loginfunction2($langs,$conf,$mysoc)
 {
+	global $dolibarr_main_demo,$db;
 	global $smarty;
 
 	$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
@@ -344,14 +346,14 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	$langs->load("main");
 	$langs->load("other");
 	$langs->load("help");
-	
+
 	$smarty->assign('langs', $langs);
-	
+
 	if (! empty($conf->global->MAIN_HTML_HEADER)) $smarty->assign('main_html_header', $conf->global->MAIN_HTML_HEADER);
-	
+
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-	
+
 	$smarty->assign('php_self', $php_self);
 	$smarty->assign('character_set_client',$conf->file->character_set_client);
 
@@ -378,11 +380,9 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		{
 			$smarty->template_dir = DOL_DOCUMENT_ROOT."/core/templates/";
 		}
-		
-		$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-		
-		// Si feuille de style en php existe
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php?lang=".$langs->defaultlang;
+
+		$conf->css = "theme/".$conf->theme."/".$conf->theme.".css";
+		$conf->css.=".php?lang=".$langs->defaultlang;
 		$smarty->assign('conf_css', DOL_URL_ROOT.'/'.$conf->css);
 	}
 
@@ -394,28 +394,24 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
 	else unset($_SESSION["urlfrom"]);
-	
+
 	if (! $_REQUEST["username"]) $smarty->assign('focus_element', 'username');
 	else $smarty->assign('focus_element', 'password');
-	
+
+	$login_background=DOL_URL_ROOT.'/theme/login_background.png';
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 	{
 		$smarty->assign('login_background', DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png');
-	}
-	else
-	{
-		$smarty->assign('login_background', DOL_URL_ROOT.'/theme/login_background.png');
 	}
 
 	// Title
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
-	
+
 	$smarty->assign('title', $title);
 
 	$demologin='';
 	$demopassword='';
-	global $dolibarr_main_demo;
 	if (! empty($dolibarr_main_demo))
 	{
 		$tab=explode(',',$dolibarr_main_demo);
@@ -447,14 +443,15 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 
 	// Login
 	$login = (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
+	$password = $demopassword;
 	$smarty->assign('login', $login);
-	$smarty->assign('password', $demopassword);
+	$smarty->assign('password', $password);
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
 	$rowspan=2;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-	
+
 	if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
@@ -468,30 +465,30 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	
+
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
-	
+
 	$smarty->assign('logo', $urllogo);
 	$smarty->assign('logo_width', $width);
 	$smarty->assign('logo_rowspan', $rowspan);
-	
+
 	// Entity field
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
-		
-		global $db;
-		
+
 		$mc = new Multicompany($db);
 		$mc->getEntities();
 
-		$smarty->assign('select_entity', $mc->select_entities($mc->entities,$lastentity,'tabindex="3"'));
+		$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
+		$smarty->assign('select_entity', $select_entity);
 	}
 
 	// Security graphical code
 	if (function_exists("imagecreatefrompng") && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
-		$smarty->assign('captcha', 1);
+		$captcha=1;
+		$smarty->assign('captcha', $captcha);
 		$smarty->assign('captcha_refresh', img_refresh());
 	}
 
@@ -500,12 +497,14 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	{
 		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 		{
-			$smarty->assign('forgetpasslink', 1);
+			$forgetpasslink=1;
+			$smarty->assign('forgetpasslink', $forgetpasslink);
 		}
 
 		if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
 		{
-			$smarty->assign('helpcenterlink', 1);
+			$helpcenterlink=1;
+			$smarty->assign('helpcenterlink', $helpcenterlink);
 		}
 	}
 
@@ -529,28 +528,29 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		$smarty->assign('main_google_ad_slot', $conf->global->MAIN_GOOGLE_AD_SLOT);
 		$smarty->assign('main_google_ad_width', $conf->global->MAIN_GOOGLE_AD_WIDTH);
 		$smarty->assign('main_google_ad_height', $conf->global->MAIN_GOOGLE_AD_HEIGHT);
-		
+
 		$google_ad_template = DOL_DOCUMENT_ROOT."/core/templates/google_ad.tpl";
 		$smarty->assign('google_ad_tpl', $google_ad_template);
 	}
-	
+
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) $smarty->assign('main_html_footer', $conf->global->MAIN_HTML_FOOTER);
-	
+
 	$smarty->assign('main_authentication', $conf->file->main_authentication);
 	$smarty->assign('session_name', session_name());
-	
+
 	// Message
 	if (! empty($_SESSION["dol_loginmesg"]))
 	{
 		$smarty->assign('dol_loginmesg', $_SESSION["dol_loginmesg"]);
 	}
-	
+
 	// Creation du template
-	$smarty->display('login.tpl');
-	
+	$smarty->display('login.tpl');	// To use Smarty
+//	include(DOL_DOCUMENT_ROOT.'/core/templates/login.tpl.php');	// To use native PHP
+
 	// Suppression de la version compilee
 	$smarty->clear_compiled_tpl('login.tpl');
-	
+
 	$_SESSION["dol_loginmesg"] = '';
 }
 
@@ -746,7 +746,7 @@ function dol_avscan_file($file)
 
 /**
  * Return array of ciphers mode available
- * 
+ *
  * @return strAv	Configuration file content
  */
 function dol_efc_config()
@@ -756,59 +756,59 @@ function dol_efc_config()
 	{
 		return -1;
 	}
-	
+
 	// Set a temporary $key and $data for encryption tests
 	$key = md5(time() . getmypid());
 	$data = mt_rand();
-	
+
 	// Get and sort available cipher methods
 	$ciphers = mcrypt_list_algorithms();
 	natsort($ciphers);
-	
+
 	// Get and sort available cipher modes
 	$modes = mcrypt_list_modes();
 	natsort($modes);
-	
+
 	foreach ($ciphers as $cipher)
 	{
 		foreach ($modes as $mode)
 		{
 			// Not Compatible
 			$result = 'false';
-			
+
 			// open encryption module
 			$td = @mcrypt_module_open($cipher, '', $mode, '');
-			
+
 			// if we could open the cipher
 			if ($td)
 			{
 				// try to generate the iv
 				$iv = @mcrypt_create_iv(mcrypt_enc_get_iv_size ($td), MCRYPT_RAND);
-				
+
 				// if we could generate the iv
 				if ($iv)
 				{
 					// initialize encryption
 					@mcrypt_generic_init ($td, $key, $iv);
-					
+
 					// encrypt data
 					$encrypted_data = mcrypt_generic($td, $data);
-					
+
 					// cleanup
 					mcrypt_generic_deinit($td);
-					
+
 					// No error issued
 					$result = 'true';
 				}
-				
+
 				// close
 				@mcrypt_module_close($td);
 			}
-			
+
 			if ($result == "true") $available["$cipher"][] = $mode;
 		}
 	}
-	
+
 	if (count($available) > 0)
 	{
        // Content of configuration
@@ -820,7 +820,7 @@ function dol_efc_config()
        $strAv.= " * This file is licensed under GNU GPL version 2 or above.\n";
        $strAv.= " * Please visit http://www.gnu.org to now more about it.\n";
        $strAv.= " */\n\n";
-       $strAv.= "/**\n"; 
+       $strAv.= "/**\n";
        $strAv.= " *  Name: EasyFileCrypt Extending Crypt Class\n";
        $strAv.= " *  Version: 1.0\n";
        $strAv.= " *  Created: ".date("r")."\n";
@@ -847,7 +847,7 @@ function dol_efc_config()
           $strAv = substr($strAv, 0, strlen($strAv) - 1);
        $strAv .= " );\n\n";
        $strAv .= "?>";
-       
+
        return $strAv;
    }
 }

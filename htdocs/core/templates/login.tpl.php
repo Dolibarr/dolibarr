@@ -29,7 +29,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <meta name="robots" content="noindex,nofollow">
 <title><?php echo $langs->trans('Login'); ?></title>
 
-<link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo $conf->css; ?>">
 
 <style type="text/css">
 <!--
@@ -54,7 +54,7 @@ function donnefocus() {
 	}
 </script>
 
-<?php	
+<?php
 	if ($main_html_header)
 		echo $main_html_header;
 ?>
@@ -82,8 +82,8 @@ function donnefocus() {
 <td valign="bottom" nowrap="nowrap">
 <input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="<?php echo $login; ?>" tabindex="1" /></td>
 
-<td rowspan="<?php echo $logo_rowspan; ?>" align="center" valign="top">
-<img alt="Logo" title="" src="<?php echo $logo; ?>" />
+<td rowspan="<?php echo $rowspan; ?>" align="center" valign="top">
+<img alt="Logo" title="" src="<?php echo $urllogo; ?>" />
 
 </td>
 </tr>
@@ -137,8 +137,8 @@ function donnefocus() {
 				echo '&nbsp;-&nbsp;';
 			} else {
 				echo '(';
-			}  
-			echo $langs->trans('NeedHelpCenter').')</a>';			
+			}
+			echo $langs->trans('NeedHelpCenter').')</a>';
 		}
 		echo '</td></tr>';
 	}
@@ -153,7 +153,7 @@ function donnefocus() {
 		<?php echo $_SESSION['dol_loginmesg']; ?>
 		</div></td></tr></table></center>
 	<?php } ?>
-	
+
 	<?php if ($main_home) { ?>
 		<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
 		<tr><td align="center">
@@ -163,7 +163,7 @@ function donnefocus() {
 
 	<?php if ($main_google_ad_client) { ?>
 		<div align="center">
-		<?php include($google_ad_tpl); ?>
+		<?php include('google_ad.tpl.php'); ?>
 		</div>
 	<?php } ?>
 
