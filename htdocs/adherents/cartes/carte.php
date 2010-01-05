@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/PDF_card.class.php");
 $patterns = array (
 '/%PRENOM%/',
 '/%NOM%/',
+'/%LOGIN%/',
 '/%SERVEUR%/',
 '/%SOCIETE%/',
 '/%ADRESSE%/',
@@ -74,7 +75,7 @@ if (!isset($annee)){
 }
 
 // requete en prenant que les adherents a jour de cotisation
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.datefin,";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.login, d.societe, d.datefin,";
 $sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
 $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
@@ -96,6 +97,7 @@ if ($result)
 		$replace = array (
 		$objp->prenom,
 		$objp->nom,
+		$objp->login,
 		"http://".$_SERVER["SERVER_NAME"]."/",
 		$objp->societe,
 		$objp->adresse,
