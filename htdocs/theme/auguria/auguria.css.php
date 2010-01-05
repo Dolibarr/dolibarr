@@ -49,7 +49,7 @@ $left=($langs->direction=='rtl'?'right':'left');
 ?>
 
 /* ============================================================================== */
-/* Styles par d�faut                                                              */
+/* Styles par defaut                                                              */
 /* ============================================================================== */
 
 body {
@@ -923,6 +923,27 @@ div.titre {
 	text-decoration: none;
 }
 
+/* ============================================================================== */
+/* Formulaire confirmation (HTML)                                                 */
+/* ============================================================================== */
+
+table.valid {
+    border-top: solid 1px #E6E6E6;
+    border-<?php print $left; ?>: solid 1px #E6E6E6;
+    border-<?php print $right; ?>: solid 1px #444444;
+    border-bottom: solid 1px #555555;
+	padding-top: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	margin: 0px 0px;
+    background: #EECC55;
+}
+
+.validtitre {
+    background: #EECC55;
+	font-weight: bold;
+}
 
 /* ============================================================================== */
 /* Formulaire confirmation (AJAX)                                                 */
@@ -1286,7 +1307,7 @@ table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding
 
 
 /* ============================================================================== */
-/*  Ajax - Liste d�roulante de l'autocompletion                                   */
+/*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
 div.autocomplete {
