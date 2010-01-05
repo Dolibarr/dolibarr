@@ -573,8 +573,9 @@ class CommonObject
 	/**
 	 *      \brief      Stocke un numero de rang pour toutes les lignes de
 	 *                  detail d'une facture qui n'en ont pas.
+	 * 		\param		renum		true to renum all already ordered lines, false to renum only not already ordered lines.
 	 */
-	function line_order()
+	function line_order($renum=false)
 	{
 		if (! $this->table_element_line)
 		{
@@ -589,7 +590,7 @@ class CommonObject
 
 		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.'='.$this->id;
-		$sql.= ' AND rang = 0';
+		if (! $renum) $sql.= ' AND rang = 0';
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
