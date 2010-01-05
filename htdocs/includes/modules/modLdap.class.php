@@ -43,9 +43,7 @@ class modLdap extends DolibarrModules
 	 *   \param      DB      handler d'acces base
 	 */
 	function modLdap($DB)
-	{
-		global $conf;
-		
+	{	
 		$this->db = $DB ;
 		$this->numero = 200 ;
 
