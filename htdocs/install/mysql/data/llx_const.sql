@@ -47,6 +47,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0,0);
 
+-- TODO deja initialise dans le module ?
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Show form for quick company search',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Show form for quick contact search',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SEARCHFORM_PRODUITSERVICE' ,'1','yesno','Show form for quick product search',0,0);

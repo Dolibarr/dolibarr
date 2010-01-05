@@ -85,6 +85,7 @@ class modProduit extends DolibarrModules
 		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "Affichage formulaire de recherche des Produits et Services dans la barre de gauche";
 		$this->const[$r][4] = 0;
+		$this->const[$r][5] = 0;
 		$r++;
 
 		// Boxes

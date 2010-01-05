@@ -34,7 +34,8 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class 		modPropale
+/** 
+ *  \class 		modPropale
  *	\brief      Classe de description et activation du module Propale
  */
 class modPropale extends DolibarrModules

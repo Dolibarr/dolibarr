@@ -759,8 +759,7 @@ class DolibarrModules
 			$val    = $this->const[$key][2];
 			$note   = $this->const[$key][3];
 			$visible= $this->const[$key][4];
-			$entity = isset($this->const[$key][5])?$this->const[$key][5]:0;
-			$entity = ((!empty($entity) || $entity == '0')?$entity:$conf->entity);
+			$entity = isset($this->const[$key][5])?$this->const[$key][5]:$conf->entity;
 
 			$sql = "SELECT count(*)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."const";
