@@ -18,8 +18,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   ldap     Module ldap
- \brief      Module pour interfacer les contacts avec un annuaire Ldap
+/**     
+ *  \defgroup   ldap     Module ldap
+ *  \brief      Module pour interfacer les contacts avec un annuaire Ldap
  */
 
 /**
@@ -31,7 +32,8 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** \class 		modLdap
+/** 
+ *  \class 		modLdap
  *	\brief      Classe de description et activation du module Ldap
  */
 class modLdap extends DolibarrModules
@@ -68,19 +70,19 @@ class modLdap extends DolibarrModules
 
 		// Constants
 		$this->const = array(
-		0=>array('LDAP_SERVER_TYPE','chaine','openldap','',0,$conf->entity),
-		1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',0,$conf->entity),
-		2=>array('LDAP_SERVER_HOST','chaine','localhost','',0,$conf->entity),
-		3=>array('LDAP_USER_DN','chaine','ou=users,dc=my-domain,dc=com','',0,$conf->entity),
-		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=my-domain,dc=com','',0,$conf->entity),
-		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=user)(objectCategory=person)','',0,$conf->entity),
-		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0,$conf->entity),
-		7=>array('LDAP_FIELD_NAME','chaine','sn','',0,$conf->entity),
-		8=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0,$conf->entity),
-		9=>array('LDAP_FIELD_MAIL','chaine','mail','',0,$conf->entity),
-		10=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0,$conf->entity),
-		11=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0,$conf->entity),
-		12=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0,$conf->entity),
+		0=>array('LDAP_SERVER_TYPE','chaine','openldap','',0),
+		1=>array('LDAP_SERVER_PROTOCOLVERSION','chaine','3','',0),
+		2=>array('LDAP_SERVER_HOST','chaine','localhost','',0),
+		3=>array('LDAP_USER_DN','chaine','ou=users,dc=my-domain,dc=com','',0),
+		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=my-domain,dc=com','',0),
+		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=user)(objectCategory=person)','',0),
+		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0),
+		7=>array('LDAP_FIELD_NAME','chaine','sn','',0),
+		8=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0),
+		9=>array('LDAP_FIELD_MAIL','chaine','mail','',0),
+		10=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0),
+		11=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0),
+		12=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
 		);
 
 		// Boites
