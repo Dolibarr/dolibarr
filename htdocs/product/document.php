@@ -74,10 +74,11 @@ $modulepart='produit';
 /*
  * Action envoie fichier
  */
+
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     /*
-     * Creation r�pertoire si n'existe pas
+     * Creation repertoire si n'existe pas
      */
     if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
@@ -90,7 +91,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         }
         else
         {
-            // Echec transfert (fichier d�passant la limite ?)
+            // Echec transfert (fichier depassant la limite ?)
             $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
             // print_r($_FILES);
         }

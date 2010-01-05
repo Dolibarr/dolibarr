@@ -34,6 +34,7 @@ ExternalUsers = Utilisateurs externes
 GlobalSetup = Général
 GUISetup = Affichage
 SetupArea = Espace configuration
+FormToTestFileUploadForm=Formulaire de test d'upload de fichier (selon options choisies)
 IfModuleEnabled = Rem: oui est effectif uniquement si le module <b>%s</b> est activé
 RemoveLock = Effacer le fichier <b>%s</b> s'il existe afin d'autoriser l'outil de mise a jour.
 RestoreLock = Replacer un fichier <b>%s</b> en ne donnant des droits que de lecture sur ce fichier afin d'interdire à nouveau les mises à jour.

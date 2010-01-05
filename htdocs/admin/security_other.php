@@ -25,6 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 $langs->load("users");
 $langs->load("admin");
@@ -32,10 +33,38 @@ $langs->load("other");
 
 if (!$user->admin) accessforbidden();
 
+$upload_dir=$conf->admin->dir_temp;
+
 
 /*
  * Actions
  */
+
+if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+{
+    /*
+     * Creation repertoire si n'existe pas
+     */
+    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+    if (is_dir($upload_dir))
+    {
+    	@dol_delete_file($upload_dir . "/" . $_FILES['userfile']['name'],1);
+
+        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
+        {
+            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+            //print_r($_FILES);
+        }
+        else
+        {
+            // Echec transfert (fichier depassant la limite ?)
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+            // print_r($_FILES);
+        }
+    }
+}
+
 if ($_GET["action"] == 'set_main_upload_doc')
 {
 	if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity))
@@ -89,10 +118,19 @@ else if ($_GET["action"] == 'disable_avscan')
 	exit;
 }
 
+if ($_GET["action"] == 'MAIN_ANTIVIRUS_COMMAND')
+{
+	dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
+	Header("Location: security_other.php");
+	exit;
+}
+
 
 /*
  * Affichage onglet
  */
+
+$form = new Form($db);
 
 llxHeader('',$langs->trans("Miscellanous"));
 
@@ -101,54 +139,20 @@ print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 print $langs->trans("MiscellanousDesc")."<br>\n";
 print "<br>\n";
 
-
 $head=security_prepare_head();
 
 dol_fiche_head($head, 'misc', $langs->trans("Security"));
 
 
-$var=false;
-$form = new Form($db);
-
+// Timeout
+$var=true;
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Parameter").'</td>';
+print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
-
-
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].'>';
-print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
-$max=@ini_get('upload_max_filesize');
-if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
-else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
-print '</td>';
-print '<td nowrap="1">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.$conf->global->MAIN_UPLOAD_DOC.'"> '.$langs->trans("Kb");
-print '</td>';
-print '<td align="center">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr></form>';
-
-$var=!$var;
-print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UMASK" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UMask").'</td><td align="right">';
-print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
-print '</td>';
-print '<td nowrap="1">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.$conf->global->MAIN_UMASK.'">';
-print '</td>';
-print '<td align="center">';
-print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr></form>';
 
 $var=!$var;
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=ini_get("session.gc_maxlifetime");
@@ -161,7 +165,7 @@ print '</td>';
 print '<td nowrap="1">';
 print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.$conf->global->MAIN_SESSION_TIMEOUT.'"> '.$langs->trans("seconds");
 print '</td>';
-print '<td align="center">';
+print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr></form>';
@@ -172,7 +176,6 @@ print '<br>';
 
 
 // Other Options
-
 $var=true;
 
 print '<table class="noborder" width="100%">';
@@ -220,63 +223,76 @@ print '</table>';
 
 print '<br>';
 
-// Antivirus options
 
-$var=true;
+// Upload options
+$var=false;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("AntiVirus").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
+print '<td colspan="2">'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-// Enable AV scanner
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="3">'.$langs->trans("UseAvToScanUploadedFiles");
-if($conf->global->MAIN_USE_AVSCAN == 1)
-{
-	print ' : ';
-	// Clamav
-	if (function_exists("cl_scanfile"))
-	{
-		print cl_info();
-	}
-}
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<tr '.$bc[$var].'>';
+print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
+$max=@ini_get('upload_max_filesize');
+if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
+else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 print '</td>';
-print '<td align="center" width="60">';
-if($conf->global->MAIN_USE_AVSCAN == 1)
-{
- print img_tick();
-}
+print '<td nowrap="1">';
+print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.$conf->global->MAIN_UPLOAD_DOC.'"> '.$langs->trans("Kb");
+print '</td>';
+print '<td align="center">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr></form>';
+
+$var=!$var;
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UMASK" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("UMask").'</td><td align="right">';
+print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
+print '</td>';
+print '<td nowrap="1">';
+print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.$conf->global->MAIN_UMASK.'">';
+print '</td>';
+print '<td align="center">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr></form>';
+
+// Use anti virus
+$var=!$var;
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_ANTIVIRUS_COMMAND" method="POST">';
+print "<tr ".$bc[$var].">";
+print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
+print $langs->trans("AntiVirusCommandExample");
 print '</td>';
 print '<td align="center" width="100">';
-if (function_exists("cl_scanfile")) // Clamav
-{
-	if ($conf->global->MAIN_USE_AVSCAN == 0)
-	{
-		print '<a href="security_other.php?action=activate_avscan">'.$langs->trans("Activate").'</a>';
-	}
-	if($conf->global->MAIN_USE_AVSCAN == 1)
-	{
-		print '<a href="security_other.php?action=disable_avscan">'.$langs->trans("Disable").'</a>';
-	}
-}
-else
-{
-	$html = new Form($db);
-	$desc = $html->textwithpicto('',$langs->transnoentities("EnablePhpAVModuleDesc"),1,'warning');
-	print $desc;
-}
+print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size=80 value="'.$conf->global->MAIN_ANTIVIRUS_COMMAND.'">';
 print "</td>";
-
-print "</td>";
+print '<td align="right">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
 print '</tr>';
+print '</form>';
 
 print '</table>';
 
 print '</div>';
+
+
+// Form to test upload
+if ($mesg) print $mesg;
+
+// Affiche formulaire upload
+print '<br>';
+$formfile=new FormFile($db);
+$formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs->trans("FormToTestFileUploadForm"),0,0,1);
+
 
 $db->close();
 

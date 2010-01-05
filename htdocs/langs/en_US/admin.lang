@@ -34,6 +34,7 @@ ExternalUsers=External users
 GlobalSetup=Global setup
 GUISetup=Display
 SetupArea=Setup area
+FormToTestFileUploadForm=Form to test file upload (according to setup)
 IfModuleEnabled=Note: yes is effective only if module <b>%s</b> is enabled
 RemoveLock=Remove file <b>%s</b> if it exists to allow the update tool.
 RestoreLock=Replace a file <b>%s</b> with read permission only on file to disable any usage of update tool.
