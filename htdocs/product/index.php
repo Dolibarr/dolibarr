@@ -218,7 +218,7 @@ if ($result)
 	  print dol_print_date($objp->datem,'day');
 	  print "</td>";
 	  print '<td align="right" nowrap="nowrap">';
-	  print $staticproduct->LibStatut($objp->envente,5);
+	  print $product_static->LibStatut($objp->envente,5);
 	  print "</td>";
 	  print "</tr>\n";
 	  $i++;
