@@ -17,7 +17,7 @@
  *
  * $Id$
  */
- 
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once("../includes/configure.php");
@@ -36,7 +36,7 @@ if ($action == '' && !$cancel) {
   $result = $osc_order->fetch($_GET["orderid"]);
 
   if ( !$result)
-    { 
+    {
     $osc_prod = new Osc_Product($db);
       print '<div class="titre">Fiche commande OSC : '.$osc_order->osc_orderid.'</div><br>';
 
@@ -48,17 +48,17 @@ if ($action == '' && !$cancel) {
       print '<tr></tr><td width="20%">M�thode de paiement</td><td width="80%">'.$osc_order->osc_orderpaymet.'</td></tr>';
       print "</table>";
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-      // les articles 
+      // les articles
       for ($l=0;$l < sizeof($osc_order->osc_lines); $l++)
       {
       	print '<tr><td>'.$osc_order->osc_lines[$l]["products_id"].'</td><td>'.$osc_prod->get_productid($osc_order->osc_lines[$l]["products_id"]).'</td><td>'.$osc_order->osc_lines[$l]["products_name"].'</td><td>'.convert_price($osc_order->osc_lines[$l]["products_price"]).'</td><td>'.$osc_order->osc_lines[$l]["quantity"].'</td></tr>';
-      }	
+      }
       print "</table>";
 
 	/* ************************************************************************** */
-	/*                                                                            */ 
-	/* Barre d'action                                                             */ 
-	/*                                                                            */ 
+	/*                                                                            */
+	/* Barre d'action                                                             */
+	/*                                                                            */
 	/* ************************************************************************** */
 	print "\n<div class=\"tabsAction\">\n";
 
@@ -68,7 +68,7 @@ if ($action == '' && !$cancel) {
   	  print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	print "\n</div><br>\n";
 // seule action importer
-     
+
 	}
       else
 	{
@@ -87,7 +87,7 @@ if ($action == '' && !$cancel) {
 	  print "\n</div><br>\n";
  }
 }
-/* action Import cr�ation de l'objet commande de dolibarr 
+/* action Import cr�ation de l'objet commande de dolibarr
 *
 */
  if (($_GET["action"] == 'import' ) && ( $_GET["orderid"] != '' ) && $user->rights->commande->creer)
@@ -106,7 +106,7 @@ if ($action == '' && !$cancel) {
 		}
 		else {
 // v�rifier que la soci�t� est renseign�e, sinon importer le client d'abord
-			if ( ! $commande->socid) 
+			if ( ! $commande->socid)
 			{
 				$osc_cust = new Osc_customer($db, $osc_order->osc_custid);
   		  		$result = $osc_cust->fetch($osc_order->osc_custid);
@@ -127,44 +127,45 @@ if ($action == '' && !$cancel) {
 		    	$societe->ville = $osc_cust->osc_custcity;
 		    	$societe->departement_id = 0;
 		    	$societe->pays_code = $osc_cust->osc_custcodecountry;
-		    	$societe->tel = $osc_cust->osc_custtel; 
-		    	$societe->fax = $osc_cust->osc_custfax; 
-		    	$societe->email = $osc_cust->osc_custmail; 
-		/* on force */
+		    	$societe->tel = $osc_cust->osc_custtel;
+		    	$societe->fax = $osc_cust->osc_custfax;
+		    	$societe->email = $osc_cust->osc_custmail;
+				/* on force */
 				$societe->url = '';
 				$societe->siren = '';
 				$societe->siret = '';
 				$societe->ape = '';
-				$societe->client = 1; // mettre 0 si prospect
+				$societe->client = 1; // put 0 if prospect
 
 				$cl = $societe->create($user);
 			   if ($cl == 0)
 			    {
 					$commande->socid = $societe->id;
-		    	  	print '<p>cr�ation r�ussie nouveau client/prospect : '.$societe->nom;
+		    	  	print $langs->trans("CustomerCreated",$societe->nom);
 			    	$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
 					print ' : Id Dolibarr '.$societe->id.' , Id osc : '.$osc_cust->osc_custid.'</p>';
 			    }
 			    else
 			    {
-			    	print '<p>cr�ation impossible client : '. $osc_cust->osc_custid .'</p>';
+			    	print 'Failed to create customer : '. $osc_cust->osc_custid ;
 			    	exit;
 			    }
 				}
 			}
-// v�rifier l'existence des produits command�s
+
+			// verifier l'existence des produits commandes
 			$osc_product = new Osc_Product($db);
 			$err = 0;
 
 			for ($lig = 0; $lig < sizeof($commande->lines); $lig++)
 			{
 //				print "<p>traitement de ".$commande->lines[$lig]->fk_product."</p>";
-				if (! $commande->lines[$lig]->fk_product) 
+				if (! $commande->lines[$lig]->fk_product)
 				{
 					print "<p>Article non trouv� ".$commande->lines[$lig]->libelle." : ".$commande->lines[$lig]->desc."</p>";
 					$err ++;
 				}
-			}			
+			}
 			if ($err > 0) {
 				print ("<p> Des produits de la commande sont inexistants</p>");
 				$id =-9;
@@ -201,9 +202,9 @@ if ($action == '' && !$cancel) {
 					exit;
 		    	 }
 			     $id = $societe_control->fetch($ref = $osc_order->osc_ref);
-					
-					if ($id > 0) 
-					{ 
+
+					if ($id > 0)
+					{
 						$id = $societe->update($id, $user);
 						if ($id < 0) print '<br>Erreur update '.$id.'</br>';
 					}
@@ -212,7 +213,7 @@ if ($action == '' && !$cancel) {
 			  print '<p><a class="butAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
 		    }
 		 }
- 
+
     }
 
 llxFooter('$Date$ - $Revision$');

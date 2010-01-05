@@ -67,7 +67,7 @@ class Livraison extends CommonObject
 		$this->db = $DB;
 		$this->lignes = array();
 		$this->products = array();
-		
+
 		// List of short language codes for status
 		$this->statuts[-1] = 'StatusSendingCanceled';
 		$this->statuts[0]  = 'StatusSendingDraft';
@@ -160,7 +160,7 @@ class Livraison extends CommonObject
 					{
 						$error++;
 					}
-						
+
 					if (! $conf->expedition_bon->enabled)
 					{
 						if ($conf->commande->enabled)
@@ -720,7 +720,7 @@ class Livraison extends CommonObject
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client = 1";
+		$sql.= " WHERE client IN (1, 3)";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
 

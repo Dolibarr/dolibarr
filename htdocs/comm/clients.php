@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/comm/clients.php
- \ingroup    commercial, societe
- \brief      Liste des clients
- \version    $Id$
+ *	\file       htdocs/comm/clients.php
+ *	\ingroup    commercial, societe
+ *	\brief      List of customers
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -60,7 +60,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.client=1";
+$sql.= " AND s.client IN (1, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;

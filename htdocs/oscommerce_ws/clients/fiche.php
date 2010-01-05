@@ -113,7 +113,7 @@ if (($_GET["action"] == 'import' ) && ( $_GET["custid"] != '' ) && ($user->right
 		$societe->siren = '';
 		$societe->siret = '';
 		$societe->ape = '';
-		$societe->client = 1; // mettre 0 si prospect
+		$societe->client = 1; // put 0 if prospect
 	}
 
 	/* utilisation de la table de transco*/

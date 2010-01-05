@@ -977,7 +977,7 @@ class Facture extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE fk_target = ".$rowid;
 		$sql.= " AND targettype = '".$this->element."'";
-		
+
 		if ($this->db->query($sql))
 		{
 			// On met a jour le lien des remises
@@ -2676,7 +2676,7 @@ class Facture extends CommonObject
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client = 1";
+		$sql.= " WHERE client IN (1, 3)";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
 

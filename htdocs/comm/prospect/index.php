@@ -19,11 +19,11 @@
  */
 
 /**
-	    \file       htdocs/comm/prospect/index.php
-        \ingroup    commercial
-		\brief      Page accueil de la zone prospection
-		\version    $Id$
-*/
+ *	    \file       htdocs/comm/prospect/index.php
+ *      \ingroup    commercial
+ *		\brief      Page accueil de la zone prospection
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
@@ -39,7 +39,7 @@ if ($user->societe_id > 0)
 
 
 /*
- *	Affichage zone prospect
+ *	View
  */
 
 llxHeader();
@@ -50,7 +50,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
-if ($conf->propal->enabled) 
+if ($conf->propal->enabled)
 {
   $var=false;
   print '<table class="noborder" width="100%">';
@@ -67,14 +67,14 @@ if ($conf->propal->enabled)
 /*
  * Prospects par status
  *
- */  
+ */
 
 $sql = "SELECT count(*) as cc, st.libelle, st.id";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.client = 2";
+$sql.= " AND s.client IN (2, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY st.id";
@@ -184,7 +184,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
     if ($socid) $sql.= " AND s.rowid = ".$socid;
     $sql.= " ORDER BY p.rowid DESC";
     $sql.= $db->plimit(5, 0);
-    
+
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -194,17 +194,17 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
         if ($num > 0)
         {
             $var=true;
-    
+
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
-    
+
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]><td><a href=\"../propal.php?propalid=".$obj->propalid."\">";
                 print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
-    
+
                 print "<td><a href=\"fiche.php?id=".$obj->socid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
                 print "<td align=\"right\">";
                 print dol_print_date($obj->dp,'day')."</td>\n";
@@ -247,7 +247,7 @@ if ( $db->query($sql) )
 
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProspectToContact").'</td></tr>';
-      
+
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object();
@@ -266,7 +266,7 @@ print '</td></tr>';
 print '</table>';
 
 $db->close();
- 
+
 
 llxFooter('$Date$ - $Revision$');
 ?>

@@ -60,7 +60,7 @@ class Expedition extends CommonObject
 		$this->db = $DB;
 		$this->lignes = array();
 		$this->products = array();
-		
+
 		// List of long language codes for status
 		$this->statuts[-1] = 'StatusSendingCanceled';
 		$this->statuts[0]  = 'StatusSendingDraft';
@@ -131,7 +131,7 @@ class Expedition extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
 			$sql.= " SET ref = '(PROV".$this->id.")'";
 			$sql.= " WHERE rowid = ".$this->id;
-			
+
 			dol_syslog("Expedition::create sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
@@ -143,7 +143,7 @@ class Expedition extends CommonObject
 						$error++;
 					}
 				}
-				
+
 				if (! $error && $this->id && $this->origin_id)
 				{
 					$ret = $this->add_object_linked();
@@ -151,7 +151,7 @@ class Expedition extends CommonObject
 					{
 						$error++;
 					}
-					
+
 					if ($conf->commande->enabled)
 					{
 						$ret = $this->setStatut(2,$this->origin_id,$this->origin);
@@ -166,7 +166,7 @@ class Expedition extends CommonObject
 						$error++;
 					}
 				}
-				
+
 				if (! $error)
 				{
 					$this->db->commit();
@@ -557,7 +557,7 @@ class Expedition extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 		$sql.= " WHERE fk_expedition = ".$this->id;
-		
+
 		if ( $this->db->query($sql) )
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
@@ -568,7 +568,7 @@ class Expedition extends CommonObject
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
 				$sql.= " WHERE rowid = ".$this->id;
-				
+
 				if ( $this->db->query($sql) )
 				{
 					$this->db->commit();
@@ -733,7 +733,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client = 1";
+		$sql.= " WHERE client IN (1, 3)";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
 

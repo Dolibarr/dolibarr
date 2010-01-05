@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,26 +19,24 @@
  */
 
 /**
-    	\file       htdocs/prospect.class.php
-		\ingroup    societe
-		\brief      Fichier de la classe des prospects
-		\version    $Id$
-*/
-
-
-/** 
-        \class      Prospect
-		\brief      Classe permettant la gestion des prospects
+ *   	\file       htdocs/prospect.class.php
+ *		\ingroup    societe
+ *		\brief      Fichier de la classe des prospects
+ *		\version    $Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 
+/**
+ *      \class      Prospect
+ *		\brief      Classe permettant la gestion des prospects
+ */
 class Prospect extends Societe
 {
     var $db;
 
-    
+
     /**
      *    \brief  Constructeur de la classe
      *    \param  DB     handler acces base de donnees
@@ -47,22 +45,22 @@ class Prospect extends Societe
     function Prospect($DB, $id=0)
     {
         global $config;
-    
+
         $this->db = $DB;
         $this->id = $id;
-    
+
         return 0;
     }
 
-    
+
     /**
      *      \brief      Charge indicateurs this->nb de tableau de bord
-     *      \return     int         <0 si ko, >0 si ok
+     *      \return     int         <0 if KO, >0 if OK
      */
     function load_state_board()
     {
         global $conf, $user;
-        
+
         $this->nb=array("customers" => 0,"prospects" => 0);
         $clause = "WHERE";
 
@@ -74,20 +72,21 @@ class Prospect extends Societe
         	$sql.= " WHERE sc.fk_user = " .$user->id;
         	$clause = "AND";
         }
-        $sql.= " ".$clause." s.client in (1,2)";
+        $sql.= " ".$clause." s.client in (1,2,3)";
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " GROUP BY s.client";
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
             while ($obj=$this->db->fetch_object($resql))
             {
-                if ($obj->client == 1) $this->nb["customers"]=$obj->nb;
-                if ($obj->client == 2) $this->nb["prospects"]=$obj->nb;
+                if ($obj->client == 1 || $obj->client == 3) $this->nb["customers"]+=$obj->nb;
+                if ($obj->client == 2 || $obj->client == 3) $this->nb["prospects"]+=$obj->nb;
             }
             return 1;
         }
-        else 
+        else
         {
             dol_print_error($this->db);
             $this->error=$this->db->error();
@@ -95,7 +94,7 @@ class Prospect extends Societe
         }
     }
 
-    
+
 	/**
 	 *    \brief      Return status of prospect
 	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
@@ -153,7 +152,7 @@ class Prospect extends Societe
 	{
 		return $this->LibLevel($this->fk_prospectlevel);
 	}
-	
+
 	/**
 	 *    	\brief      Renvoi le libelle du niveau
 	 *    	\param      fk_prospectlevel   	Prospect level
@@ -165,7 +164,7 @@ class Prospect extends Societe
 
 		$lib=$langs->trans("ProspectLevel".$fk_prospectlevel);
 		// If lib not found in language file, we get label from cache/databse
-		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) 
+		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel))
 		{
 			$lib=$langs->getLabelFromKey($this->db,$fk_prospectlevel,'c_prospectlevel','code','label');
 		}

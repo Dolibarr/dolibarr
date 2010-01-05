@@ -247,7 +247,7 @@ if ($user->rights->categorie->creer)
 			else
 			{
 				print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
-				print $html->select_societes($_REQUEST['socid_id'],'socid','s.client = 1 AND s.fournisseur = 0',1);
+				print $html->select_societes($_REQUEST['socid_id'],'socid','s.client IN (1, 3) AND s.fournisseur = 0',1);
 				print '</td></tr>';
 				print '<input type="hidden" name="catMere" value="-1">';
 				print '<input type="hidden" name="visible" value="1">';

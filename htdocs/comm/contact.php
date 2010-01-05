@@ -82,8 +82,8 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND p.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($type == "c") $sql.= " AND s.client = 1";
-if ($type == "p") $sql.= " AND s.client = 2";
+if ($type == "c") $sql.= " AND s.client IN (1, 3)";
+if ($type == "p") $sql.= " AND s.client IN (2, 3)";
 if ($type == "f") $sql.= " AND s.fournisseur = 1";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 

@@ -998,12 +998,18 @@ class Societe extends CommonObject
 	{
 		if ($this->id)
 		{
+			$newclient=1;
+			if ($this->client == 2 || $this->client == 3) $newclient=3;	//If prospect, we keep prospect tag
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql.= " SET client = 1";
+			$sql.= " SET client = ".$newclient;
 			$sql.= " WHERE rowid = " . $this->id;
 
 			$resql=$this->db->query($sql);
-			if ($resql) return 1;
+			if ($resql)
+			{
+				$this->client = $newclient;
+				return 1;
+			}
 			else return -1;
 		}
 		return 0;

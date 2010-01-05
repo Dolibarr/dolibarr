@@ -147,13 +147,13 @@ class Don extends CommonObject
 
 		// Charge tableau des id de societe socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client = 1";
+		$sql.= " WHERE client IN (1, 3)";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -294,7 +294,7 @@ class Don extends CommonObject
 	function create($user)
 	{
 		global $conf;
-		
+
 		$this->date = $this->db->idate($this->date);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."don (";
@@ -573,7 +573,7 @@ class Don extends CommonObject
 	function sum_donations($param)
 	{
 		global $conf;
-		
+
 		$result=0;
 
 		$sql = "SELECT sum(amount) as total";

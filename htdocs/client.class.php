@@ -97,7 +97,7 @@ class Client extends Societe
         	$sql.= " WHERE sc.fk_user = " .$user->id;
         	$clause = "AND";
         }
-        $sql.= " ".$clause." s.client in (1,2)";
+        $sql.= " ".$clause." s.client in (1,2,3)";
         $sql.= " AND s.entity = ".$conf->entity;
         $sql.= " GROUP BY s.client";
 
@@ -106,8 +106,8 @@ class Client extends Societe
         {
             while ($obj=$this->db->fetch_object($resql))
             {
-                if ($obj->client == 1) $this->nb["customers"]=$obj->nb;
-                if ($obj->client == 2) $this->nb["prospects"]=$obj->nb;
+                if ($obj->client == 1 || $obj->client == 3) $this->nb["customers"]+=$obj->nb;
+                if ($obj->client == 2 || $obj->client == 3) $this->nb["prospects"]+=$obj->nb;
             }
             return 1;
         }

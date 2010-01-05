@@ -78,7 +78,7 @@ if ($type == "o") {
 	$titre=$langs->trans("ListOfContacts").' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche="";
 }
-if ($view == 'phone')  { $text="( Vue Telephones)"; }
+if ($view == 'phone')  { $text=" (Vue Telephones)"; }
 if ($view == 'mail')   { $text=" (Vue EMail)"; }
 if ($view == 'recent') { $text=" (Recents)"; }
 $titre = $titre." $text";
@@ -160,11 +160,11 @@ if ($type == "f")        // filtre sur type
 }
 if ($type == "c")        // filtre sur type
 {
-    $sql .= " AND client = 1";
+    $sql .= " AND client IN (1, 3)";
 }
 if ($type == "p")        // filtre sur type
 {
-    $sql .= " AND client = 2";
+    $sql .= " AND client IN (2, 3)";
 }
 if ($sall)
 {

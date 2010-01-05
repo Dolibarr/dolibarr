@@ -675,7 +675,7 @@ class Fichinter extends CommonObject
 		$socids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client = 1";
+		$sql.= " WHERE client IN (1, 3)";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
 		$resql = $this->db->query($sql);

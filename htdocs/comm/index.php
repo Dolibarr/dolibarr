@@ -350,7 +350,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 	$sql = "SELECT s.rowid,s.nom,s.client,s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.client IN (1,2)";
+	$sql.= " WHERE s.client IN (1, 2, 3)";
 	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = $socid";
@@ -366,7 +366,9 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("BoxTitleLastCustomersOrProspects",$max).'</td></tr>';
+		print '<td colspan="2">'.$langs->trans("BoxTitleLastCustomersOrProspects",$max).'</td>';
+		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+		print '</tr>';
 		if ($num)
 		{
 			$company=new Societe($db);
@@ -379,8 +381,9 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">'.$company->getNomUrl(1,'customer',48).'</td>';
 				print '<td align="right" nowrap>';
-				if ($objp->client == 1) print $langs->trans("Customer");
-				if ($objp->client == 2) print $langs->trans("Prospect");
+				if ($objp->client == 2 || $objp->client == 3) print $langs->trans("Prospect");
+				if ($objp->client == 3) print ' / ';
+				if ($objp->client == 1 || $objp->client == 3) print $langs->trans("Customer");
 				print "</td>";
 				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';

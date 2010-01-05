@@ -153,7 +153,7 @@ if ($_GET["action"] == 'cstc')
 
 
 /*
- * Affichage liste
+ * View
  */
 
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,";
@@ -172,7 +172,7 @@ if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND s.client = 2";
+$sql.= " AND s.client in (2, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
 if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
 // Join for the needed table to filter by sale
