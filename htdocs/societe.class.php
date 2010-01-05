@@ -1165,10 +1165,9 @@ class Societe extends CommonObject
 			$sql .= " VALUES (".$this->db->idate(mktime()).",".$this->id.",'".$price_level."',".$user->id.")";
 
 			if (! $this->db->query($sql) )
-	  {
-	  	dol_print_error($this->db);
-	  }
-
+			{
+				dol_print_error($this->db);
+			}
 		}
 	}
 

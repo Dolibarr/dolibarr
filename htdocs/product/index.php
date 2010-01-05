@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 if (!$user->rights->produit->lire && !$user->rights->service->lire)
 accessforbidden();
 
-$staticproduct=new Product($db);
+$product_static = new Product($db);
 
 
 
@@ -208,10 +208,10 @@ if ($result)
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print '<td nowrap="nowrap">';
-	  $staticproduct->id=$objp->rowid;
-	  $staticproduct->ref=$objp->ref;
-	  $staticproduct->type=$objp->fk_product_type;
-	  print $staticproduct->getNomUrl(1,'',16);
+	  $product_static->id=$objp->rowid;
+	  $product_static->ref=$objp->ref;
+	  $product_static->type=$objp->fk_product_type;
+	  print $product_static->getNomUrl(1,'',16);
 	  print "</td>\n";
 	  print '<td>'.dol_trunc($objp->label,32).'</td>';
 	  print "<td>";
