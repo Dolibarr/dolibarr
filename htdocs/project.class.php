@@ -265,7 +265,7 @@ class Project extends CommonObject
 		if ($type == 'order_supplier')     $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE fk_projet=".$this->id;
 		if ($type == 'invoice_supplier')   $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE fk_projet=".$this->id;
 		if ($type == 'contract')           $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."contrat WHERE fk_projet=".$this->id;
-		if ($type == 'agenda')             $sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project=".$this->id;
+		if ($type == 'agenda')             $sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_projet=".$this->id;
 		if (! $sql) return -1;
 
 		dol_syslog("Project::get_element_list sql=".$sql);

@@ -477,9 +477,9 @@ class ActionComm
 
 
 	/**
-	 *    	\brief      Retourne le libell� du statut de la commande
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string      Libell�
+	 *    	\brief      Retourne le libelle du statut de la commande
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string      Libelle
 	 */
 	function getLibStatut($mode)
 	{
@@ -487,10 +487,10 @@ class ActionComm
 	}
 
 	/**
-	 *		\brief      Renvoi le libell� d'un statut donn�
+	 *		\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      percent     Pourcentage avancement
-	 *    	\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-	 *    	\return     string		Libell�
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
 	 */
 	function LibStatut($percent,$mode)
 	{
