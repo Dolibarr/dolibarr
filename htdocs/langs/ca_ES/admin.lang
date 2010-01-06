@@ -34,6 +34,7 @@ ExternalUsers = Usuaris externs
 GlobalSetup = General
 GUISetup = Entorn
 SetupArea = Àrea configuració
+FormToTestFileUploadForm = Formulari de prova de càrrega de fitxer (segons opcions escollides)
 IfModuleEnabled = Nota: sí només és eficaç si el mòdul <b>%s</b> està activat
 RemoveLock = Esborreu el fitxer <b>%s</b>, si existeix, per permetre la utilitat d'actualització.
 RestoreLock = Substituir un arxiu <b>%</b>, donant-li només drets de lectura a aquest arxiu per tal de prohibir noves actualitzacions.
