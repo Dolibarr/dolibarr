@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - projects
+# Dolibarr language file - es_ES - projects 
 CHARSET = UTF-8
 Project = Proyecto
 Projects = Proyectos
@@ -45,6 +45,7 @@ ListPredefinedInvoicesAssociatedProject = Listado de facturas a clientes predefi
 ListSupplierOrdersAssociatedProject = Listado de pedidos a proveedores asociados al proyecto
 ListSupplierInvoicesAssociatedProject = Listado de facturas de proveedor asociados al proyecto
 ListContractAssociatedProject = Listado de contratos asociados al proyecto
+ListActionsAssociatedProject = Lista de acciones asociadas al proyecto
 ActivityOnProjectThisWeek = Actividad en el proyecto esta semana
 ActivityOnProjectThisMonth = Actividad en el proyecto este mes
 ActivityOnProjectThisYear = Actividad en el proyecto este año
@@ -52,3 +53,9 @@ ChildOfTaks = Hilo de la tarea
 NotOwnerOfProject = No es responsable de este proyecto privado
 AffectedTo = Asignado a
 CantRemoveProject = Este proyecto no puede ser eliminado porque está referenciado por muchos objetos (facturas, pedidos u otras). ver la lista en la pestaña Referencias.
+ValidateProject = Validar proyecto
+ConfirmValidateProject = ¿Está seguro de querer validar este proyecto?
+CloseAProject = Cerrar proyecto
+ConfirmCloseAProject = ¿Está seguro de querer cerrar este proyecto?
+ReOpenAProject = Reabrir proyecto
+ConfirmReOpenAProject = ¿Está seguro de querer reabrir este proyecto?
