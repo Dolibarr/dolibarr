@@ -21,9 +21,9 @@ set -e
 db_version 2.0
 
 #echo "postrm db_get dolibarr/webserver"
-set +e
 # We disable set -e to avoid premature end of script if error
-db_get "dolibarr/webserver" || true
+set +e
+#db_get "dolibarr/webserver" || true
 set -e
 export webserver="$RET"
 
@@ -32,7 +32,7 @@ case $webserver in
 	Apache)		webservers="apache2" ;;
 	Apache-SSL)	webservers="apache2-ssl" ;;
 	Both)		webservers="apache2 apache2-ssl" ;;
-	*)		webservers="apache2 apache2-ssl" ;;
+	*)		    webservers="apache2 apache2-ssl" ;;
 esac
 export includefile=/etc/dolibarr/apache.conf
 

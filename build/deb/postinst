@@ -69,15 +69,15 @@ case "$1" in
 
 		#db_reset "dolibarr/webserver"
 
-		# Get the web server type (use dbget for interactive mode).
+		# Get the web server type (use db_get for interactive mode).
 #		db_get "dolibarr/webserver"		# Read value for webserver.
 #		webserver="$RET"
-		webserver="Both"
+
 		case $webserver in
 			Apache)		webservers="apache2" ;;
 			Apache-SSL)	webservers="apache2-ssl" ;;
 			Both)		webservers="apache2 apache2-ssl" ;;
-			*)		webservers="" ;;
+			*)		    webservers="apache2 apache2-ssl" ;;
 		esac
 		# Define variable phpver and phpini
 		. /usr/share/wwwconfig-common/php.get
