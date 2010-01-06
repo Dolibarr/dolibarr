@@ -17,9 +17,15 @@ set -e
 # for details, see /usr/share/doc/packaging-manual/
 
 . /usr/share/debconf/confmodule
+
 db_version 2.0
+
+#echo "postrm db_get dolibarr/webserver"
+set +e
+# We disable set -e to avoid premature end of script if error
 db_get "dolibarr/webserver" || true
-webserver="$RET"
+set -e
+export webserver="$RET"
 
 # Allows us to loop and substitute in one pass
 case $webserver in
@@ -28,12 +34,18 @@ case $webserver in
 	Both)		webservers="apache2 apache2-ssl" ;;
 	*)		webservers="" ;;
 esac
-includefile=/etc/dolibarr/apache.conf
+export includefile=/etc/dolibarr/apache.conf
 
 case "$1" in
 	purge)
+		#echo "postrm purge webservers=$webservers includefile=$includefile"
 
+		#echo "postrm db_get dolibarr/postrm"
+		# We disable set -e to avoid premature end of script if error
+		set +e
 		db_get "dolibarr/postrm"
+		set -e
+	
 		if [ "$RET" = "true" ] ; then
 			# Get database configuration
 			dbserver="localhost"
@@ -48,27 +60,35 @@ case "$1" in
 			. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
 			. /usr/share/wwwconfig-common/${dbtype}-dropdb.sh
 		fi
-
+	
 		# Remove include files
 		for server in $webservers ; do
-			error=""		
-			conffile="/etc/$server/httpd.conf"
-			# We disable set -e because script apache-uninclude.sh return error if not
-			set +e
-			. /usr/share/wwwconfig-common/apache-uninclude.sh
-			set -e
-#            if [ "x$error" != "x" ] ;
-#                then echo $error
-#            fi
+			export error=""		
+			export conffile="/etc/$server/httpd.conf"
+			#echo "postrm conffile=$conffile" 
+			if [ -f $conffile ] ;
+			then
+				if [ ! -s $conffile ] ;
+				then
+					# We disable set -e to avoid premature end of script if error
+					set +e
+					. /usr/share/wwwconfig-common/apache-uninclude.sh
+					set -e
+				fi
+			fi
 			if [ "$status" = "purge" ] ;
 				then restart="$restart $server"
 			fi
 		done
+
 		rm -rf /etc/dolibarr
 
 		# Restart
 		servers="apache2-ssl apache2 mysql"
-		. /usr/share/wwwconfig-common/restart.sh
+		if [ -f /usr/share/wwwconfig-common/restart.sh ] ;
+		then
+			. /usr/share/wwwconfig-common/restart.sh
+		fi
 
 		# Remove file and conf file
 		for dir in /usr/share/dolibarr ; do

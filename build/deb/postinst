@@ -58,9 +58,10 @@ case "$1" in
 		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
 		cp -p $fileorig $config
 
-		# Create conf.php
+		# Create empty conf.php
 		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
 		then 
+			echo Create empty file /usr/share/dolibarr/htdocs/conf/conf.php		
 			touch /usr/share/dolibarr/htdocs/conf/conf.php
 			chown -R www-data.www-data /usr/share/dolibarr/htdocs/conf/conf.php;
 	    	chmod -R 750 /usr/share/dolibarr/htdocs/conf/conf.php;
@@ -68,8 +69,8 @@ case "$1" in
 
 		#db_reset "dolibarr/webserver"
 
-		# Get the web server type.
-		db_get "dolibarr/webserver"		# Read value for webserver.
+		# Get the web server type (use dbget for interactive mode).
+#		db_get "dolibarr/webserver"		# Read value for webserver.
 #		webserver="$RET"
 		webserver="Both"
 		case $webserver in
@@ -78,18 +79,38 @@ case "$1" in
 			Both)		webservers="apache2 apache2-ssl" ;;
 			*)		webservers="" ;;
 		esac
+		# Define variable phpver and phpini
 		. /usr/share/wwwconfig-common/php.get
 
 		# Set up web server.
 		for server in $webservers ; do
 			echo Complete config of server $server
 			env_enable
+			
+			# Add info for PHP (might be obsolete)
 			typestr='application/x-httpd-php'
 			extension='.php'
 			. /usr/share/wwwconfig-common/apache-addtype_all.sh
-		        . /usr/share/wwwconfig-common/apache-php.sh
-		        . /usr/share/wwwconfig-common/apache-run.get
-			trustuser=$webuser
+			
+			# Enable PHP module (might be obsolete)
+			#. /usr/share/wwwconfig-common/apache-php.sh
+			#echo Result of enabling PHP modules: $status
+			
+			# Detect webuser and webgroup
+			webuser=
+			webgroup=
+			. /usr/share/wwwconfig-common/apache-run.get
+			echo Web user.group found is $webuser.$webgroup
+
+			if [ -z "$webuser" ] ; then
+				webuser=www-data
+			fi
+			if [ -z "$webgroup" ] ; then
+				webgroup=www-data
+			fi
+
+			echo Web user.group used is $webuser.$webgroup
+
 			#
 			# That may lead to problems if apache & apache-ssl do
 			# not have the same user/group.
