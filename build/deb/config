@@ -37,7 +37,7 @@ db_capb backup
 
 
 # Ask for web server type.
-db_input critical "dolibarr/webserver" || true
+#db_input critical "dolibarr/webserver" || true
 
 db_title "dolibarr" || true
 if db_go ; then
