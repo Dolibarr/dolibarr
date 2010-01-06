@@ -49,7 +49,10 @@ $formadmin=new FormAdmin('');	// Note: $db does not exist yet but we don't need 
 pHeader("", "check");   // Etape suivante = index2
 
 
-print '<center><img src="../theme/dolibarr_logo.png"></center>';
+print '<center>';
+print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
+print DOL_VERSION.'<br><br>';
+print '</center>';
 
 // Propose la langue d'installation
 $langs->load("admin");
