@@ -32,13 +32,13 @@ case $webserver in
 	Apache)		webservers="apache2" ;;
 	Apache-SSL)	webservers="apache2-ssl" ;;
 	Both)		webservers="apache2 apache2-ssl" ;;
-	*)		webservers="" ;;
+	*)		webservers="apache2 apache2-ssl" ;;
 esac
 export includefile=/etc/dolibarr/apache.conf
 
 case "$1" in
 	purge)
-		#echo "postrm purge webservers=$webservers includefile=$includefile"
+		echo "postrm purge webservers=$webservers includefile=$includefile"
 
 		#echo "postrm db_get dolibarr/postrm"
 		# We disable set -e to avoid premature end of script if error
@@ -65,12 +65,13 @@ case "$1" in
 		for server in $webservers ; do
 			export error=""		
 			export conffile="/etc/$server/httpd.conf"
-			#echo "postrm conffile=$conffile" 
+			echo "postrm conffile=$conffile" 
 			if [ -f $conffile ] ;
 			then
-				if [ ! -s $conffile ] ;
+				if [ -s $conffile ] ;
 				then
 					# We disable set -e to avoid premature end of script if error
+					echo postrm remove include to /etc/dolibarr/apache.conf
 					set +e
 					. /usr/share/wwwconfig-common/apache-uninclude.sh
 					set -e
