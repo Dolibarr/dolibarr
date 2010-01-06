@@ -280,7 +280,8 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="8" type="text" name="search_idprof4" value="'.$search_idprof4.'">';
 	print '</td>';
-	print '<td class="liste_titre" colspan="2" align="right">';
+	// Type (customer/prospect/supplier)
+	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '&nbsp; ';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
@@ -304,26 +305,19 @@ if ($resql)
 		print "<td>".$obj->idprof3."</td>\n";
 		print "<td>".$obj->idprof4."</td>\n";
 		print '<td align="center">';
-		if ($obj->client==1)
+		if ($obj->client==1 || $obj->client==3)
 		{
 	  		print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
 		}
-		elseif ($obj->client==2)
+		if ($obj->client == 3) print " / ";
+		if ($obj->client==2 || $obj->client==3)
 		{
 	  		print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
 		}
-		else
-		{
-	  		print "&nbsp;";
-		}
-		print "</td><td align=\"center\">";
 		if ($obj->fournisseur)
 		{
-	  		print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
-		}
-		else
-		{
-	  		print "&nbsp;";
+			if ($obj->client) print " / ";
+			print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 		}
 
 		print '</td></tr>'."\n";
