@@ -88,7 +88,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 			}
 			else
 			{
-				// Echec transfert (fichier d�passant la limite ?)
+				// Echec transfert (fichier depassant la limite ?)
 				$message = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				// print_r($_FILES);
 			}

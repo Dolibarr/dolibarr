@@ -65,6 +65,10 @@ NoMaxSizeByPHPLimit=Note: No limit is set in your PHP configuration
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any upload)
 UseCaptchaCode=Use graphical code (CAPTCHA) on login page
 UseAvToScanUploadedFiles=Use anti-virus to scan uploaded files
+AntiVirusCommand = Full path to antivirus command
+AntiVirusCommandExample = Example for ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusParam = More parameters on command line
+AntiVirusParamExample = Example for ClamWin: --database="C:\Program Files (x86)\ClamWin\lib"
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
 MenuSetup=Menus' management setup

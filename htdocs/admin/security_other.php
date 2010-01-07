@@ -45,10 +45,8 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
     $result=create_exdir($upload_dir);	// Create dir if not exists
     if ($result >= 0)
     {
-    	@dol_delete_file($upload_dir . "/" . $_FILES['userfile']['name'],1);
-
-    	$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
-        if ($resupload > 0)
+    	$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1);
+        if (is_numeric($resupload) && $resupload > 0)
         {
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);
@@ -57,8 +55,8 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         {
             // Echec transfert (fichier depassant la limite ?)
             $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded");
-            $mesg.= 'ee';
-            $mesg.'</div>';
+            if (is_array($resupload)) $mesg.= '<br>'.dol_nl2br(join("\n",$resupload));
+            $mesg.= '</div>';
             // print_r($_FILES);
         }
     }
@@ -169,7 +167,7 @@ print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
 print '<td nowrap="1">';
-print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.$conf->global->MAIN_SESSION_TIMEOUT.'"> '.$langs->trans("seconds");
+print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.$langs->trans("seconds");
 print '</td>';
 print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
@@ -248,7 +246,7 @@ if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->tr
 else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 print '</td>';
 print '<td nowrap="1">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.$conf->global->MAIN_UPLOAD_DOC.'"> '.$langs->trans("Kb");
+print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
 print '</td>';
 print '<td align="center">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
@@ -263,7 +261,7 @@ print '<td>'.$langs->trans("UMask").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td nowrap="1">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.$conf->global->MAIN_UMASK.'">';
+print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';
 print '</td>';
 print '<td align="center">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
@@ -278,7 +276,7 @@ print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
 print '</td>';
 print '<td align="center" width="100">';
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size=80 value="'.$conf->global->MAIN_ANTIVIRUS_COMMAND.'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size=80 value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND).'">';
 print "</td>";
 print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
@@ -294,7 +292,7 @@ print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';
 print '<td align="center" width="100">';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size=80 value="'.$conf->global->MAIN_ANTIVIRUS_PARAM.'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size=80 value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM).'">';
 print "</td>";
 print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';

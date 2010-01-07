@@ -1928,11 +1928,12 @@ function dol_print_error_email()
 
 
 /**
- *	\brief  Deplacer les fichiers telecharges, apres quelques controles divers
+ *	\brief  Move an uploaded file after some controls.
+ * 			If there is errors (virus found, antivir in error, bad filename), file is not moved.
  *	\param	src_file			Source filename
  *	\param	dest_file			Target filename
  * 	\param	allowoverwrite		Overwrite if exists
- *	\return int         		>0 if OK, <0 if KO (-99 if virus found), Name of virus if virus found
+ *	\return int         		>0 if OK, <0 if KO (an array with virus or errors if virus found or errors)
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 {
@@ -1947,7 +1948,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
 		$antivir=new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
-		if ($result < 0) return -99;
+		if ($result < 0)	// If virus or error, we stop here
+		{
+			$reterrors=$antivir->errors;
+			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." KO with antivir", LOG_WARNING);
+			//return $reterrors;
+			return -99;
+		}
 	}
 
 	// Security:
@@ -1972,7 +1979,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
 	{
 		dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
-		return -1;
+		return -2;
 	}
 
 	// The file functions must be in OS filesystem encoding.
@@ -1985,7 +1992,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 		if (file_exists($file_name_osencoded))
 		{
 			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
-			return -2;
+			return -3;
 		}
 	}
 
@@ -2000,8 +2007,10 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	else
 	{
 		dol_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
-		return -3;
+		return -4;
 	}
+
+	return 1;
 }
 
 

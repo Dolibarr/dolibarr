@@ -34,6 +34,7 @@
 class AntiVir
 {
 	var $error;
+	var $errors;
 	var $output;
 	var $db;
 
@@ -51,7 +52,7 @@ class AntiVir
 	/**
 	 *	\brief  	Scan a file with antivirus
 	 *	\param	 	file			File to scan
-	 *	\return	 	malware			Name of virus found or ''
+	 *	\return	 	int				<0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
 	function dol_avscan_file($file)
 	{
@@ -71,27 +72,26 @@ class AntiVir
 		$command=$conf->global->MAIN_ANTIVIRUS_COMMAND;
 		$param=$conf->global->MAIN_ANTIVIRUS_PARAM;
 
-		if (preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM)) $param=preg_replace('/%file/',trim($file),$param);
-		else $param=trim($file);
 		$param=preg_replace('/%maxreclevel/',$maxreclevel,$param);
 		$param=preg_replace('/%maxfiles/',$maxfiles,$param);
 		$param=preg_replace('/%maxratio/',$maxratiod,$param);
 		$param=preg_replace('/%bz2archivememlim/',$bz2archivememlim,$param);
 		$param=preg_replace('/%maxfilesize/',$maxfilesize,$param);
+		$param=preg_replace('/%file/',trim($file),$param);
 
-		// Create a clean fullcommand
-		//print $command." ".$param;
+		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
+			$param=$param." ".escapeshellarg(trim($file));
+
 		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
-		if (preg_match("/\s/",$param)) $param=escapeshellarg($param);		// Use quotes on param
-		//print $command." ".$param;
 
 		$output=array();
 		$return_var=0;
+		// Create a clean fullcommand
 		$fullcommand=$command.' '.$param.' 2>&1';
-		dol_syslog("Run command=".$fullcommand);
+		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand);
 		exec($fullcommand, $output, $return_var);
 
-/*
+		/*
 		$handle = fopen($outputfile, 'w');
 		if ($handle)
 		{
@@ -120,9 +120,23 @@ class AntiVir
 		}
 		*/
 
-		dol_syslog("Result return_var=".$return_var." output=".join(',',$output));
+		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',',$output));
 
-		return $return;
+		$returncodevirus=1;
+		if ($return_var == $returncodevirus)	// Virus found
+		{
+			$this->errors=$output;
+			return -99;
+		}
+
+		if ($return_var > 0)					// If other error
+		{
+			$this->errors=$output;
+			return -98;
+		}
+
+		// If return code = 0
+		return 1;
 	}
 
 }
