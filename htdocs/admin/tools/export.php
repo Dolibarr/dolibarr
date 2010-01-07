@@ -97,7 +97,7 @@ if ($what == 'mysql')
 
 	// Parameteres execution
 	$command=$cmddump;
-	if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
+	if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
 
 	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
@@ -201,6 +201,7 @@ if ($what == 'mysql')
 			if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
 		}
 	}
+	fclose($handle);
 	// Fin execution commande
 }
 

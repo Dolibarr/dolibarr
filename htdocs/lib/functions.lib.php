@@ -1932,7 +1932,7 @@ function dol_print_error_email()
  *	\param	src_file			Source filename
  *	\param	dest_file			Target filename
  * 	\param	allowoverwrite		Overwrite if exists
- *	\return int         		>0 if OK, <0 if KO, Name of virus if virus found
+ *	\return int         		>0 if OK, <0 if KO (-99 if virus found), Name of virus if virus found
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 {
@@ -1941,25 +1941,25 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	$file_name = $dest_file;
 
 	// If we need to make a virus scan
-	if ($conf->global->MAIN_USE_AVSCAN)
+	if ($conf->global->MAIN_ANTIVIRUS_COMMAND)
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
-		$malware = dol_avscan_file($src_file);
-		if ($malware) return $malware;
+		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
+		$antivir=new AntiVir($db);
+		$result = $antivir->dol_avscan_file($src_file);
+		if ($result < 0) return -99;
 	}
 
 	// Security:
-	// On renomme les fichiers avec extention script web car si on a mis le rep
-	// documents dans un rep de la racine web (pas bien), cela permet d'executer
-	// du code a la demande.
+	// Disallow file with some extensions. We renamed them.
+	// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
 	if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$file_name))
 	{
 		$file_name.= '.noexe';
 	}
 
 	// Security:
-	// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans
-	// les noms de fichiers.
+	// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans les noms de fichiers.
 	if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
 	{
 		dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
@@ -2252,14 +2252,14 @@ function dol_delete_file($file,$disableglob=0)
 		{
 			$ok=unlink($filename);	// The unlink encapsulated by dolibarr
 			if ($ok) dol_syslog("Removed file ".$filename,LOG_DEBUG);
-			else dol_syslog("Failed to remove file ".$filename,LOG_ERR);
+			else dol_syslog("Failed to remove file ".$filename,LOG_WARNING);
 		}
 	}
 	else
 	{
 		$ok=unlink($file_osencoded);		// The unlink encapsulated by dolibarr
 		if ($ok) dol_syslog("Removed file ".$file_osencoded,LOG_DEBUG);
-		else dol_syslog("Failed to remove file ".$file_osencoded,LOG_ERR);
+		else dol_syslog("Failed to remove file ".$file_osencoded,LOG_WARNING);
 	}
 	return $ok;
 }

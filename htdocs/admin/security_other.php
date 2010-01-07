@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,16 +42,13 @@ $upload_dir=$conf->admin->dir_temp;
 
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    /*
-     * Creation repertoire si n'existe pas
-     */
-    if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-    if (is_dir($upload_dir))
+    $result=create_exdir($upload_dir);	// Create dir if not exists
+    if ($result >= 0)
     {
     	@dol_delete_file($upload_dir . "/" . $_FILES['userfile']['name'],1);
 
-        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
+    	$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+        if ($resupload > 0)
         {
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);
@@ -59,7 +56,9 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         else
         {
             // Echec transfert (fichier depassant la limite ?)
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded");
+            $mesg.= 'ee';
+            $mesg.'</div>';
             // print_r($_FILES);
         }
     }
@@ -125,9 +124,16 @@ if ($_GET["action"] == 'MAIN_ANTIVIRUS_COMMAND')
 	exit;
 }
 
+if ($_GET["action"] == 'MAIN_ANTIVIRUS_PARAM')
+{
+	dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity);
+	Header("Location: security_other.php");
+	exit;
+}
+
 
 /*
- * Affichage onglet
+ * View
  */
 
 $form = new Form($db);
@@ -192,7 +198,7 @@ print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="center" width="60">';
 if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
 {
- print img_tick();
+	print img_tick();
 }
 print '</td>';
 print '<td align="center" width="100">';
@@ -273,6 +279,22 @@ print $langs->trans("AntiVirusCommandExample");
 print '</td>';
 print '<td align="center" width="100">';
 print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size=80 value="'.$conf->global->MAIN_ANTIVIRUS_COMMAND.'">';
+print "</td>";
+print '<td align="right">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
+// Use anti virus
+$var=!$var;
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_ANTIVIRUS_PARAM" method="POST">';
+print "<tr ".$bc[$var].">";
+print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
+print $langs->trans("AntiVirusParamExample");
+print '</td>';
+print '<td align="center" width="100">';
+print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size=80 value="'.$conf->global->MAIN_ANTIVIRUS_PARAM.'">';
 print "</td>";
 print '<td align="right">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
