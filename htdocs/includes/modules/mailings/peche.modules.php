@@ -183,17 +183,18 @@ class mailing_peche extends MailingTargets
 
 				dol_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
 			}
+			else if ($result == -99)
+			{
+				// Files infected by a virus
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorFileIsInfectedWithAVirus");
+				return -1;
+			}
 			else if ($result < 0)
 			{
 				// Echec transfert (fichier depassant la limite ?)
 				$this->error = $langs->trans("ErrorFileNotUploaded");
 				// print_r($_FILES);
-				return -1;
-			}
-			else
-			{
-				// Fichier infecte par un virus
-				$this->error = $langs->trans("ErrorFileIsInfectedWith",$result);
 				return -1;
 			}
 		}

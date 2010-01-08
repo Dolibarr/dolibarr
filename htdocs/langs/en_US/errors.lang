@@ -57,3 +57,4 @@ ErrorContactEMail=A technical error occured. Please, contact administrator to fo
 ErrorWrongValueForField=Wrong value for field number <b>%s</b> (value '<b>%s</b>' does not match regex rule <b>%s</b>)
 ErrorsOnXLines=Errors on <b>%s</b> source lines
 WarningsOnXLines=Warnings on <b>%s</b> source lines
+ErrorFileIsInfectedWithAVirus=This file is infected by a virus!

@@ -53,9 +53,9 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         }
         else if (is_numeric($resupload) && $resupload == -99)
         {
-        	// Echec transfert (virus ?)
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith");
-            $mesg.= '</div>';
+        	// File infected by a virus
+		    $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
         }
         else
         {

@@ -58,3 +58,4 @@ ErrorContactEMail=Une erreur technique est apparue. Merci de contacter l'adminis
 ErrorWrongValueForField=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' ne respecte pas la règle <b>%s</b>)
 ErrorsOnXLines=Erreurs sur <b>%s</b> lignes sources
 WarningsOnXLines=Alertes sur <b>%s</b> lignes sources
+ErrorFileIsInfectedWithAVirus=Ce fichier est infecté par un virus !

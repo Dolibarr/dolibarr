@@ -70,23 +70,30 @@ $modulepart='fichinter';
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     /*
-     * Creation r�pertoire si n'existe pas
+     * Creation repertoire si n'existe pas
      */
     if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
     if (is_dir($upload_dir))
     {
-        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
+        $result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+    	if ($result > 0)
         {
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);
         }
-        else
+        else if ($result == -99)
         {
-            // Echec transfert (fichier d�passant la limite ?)
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-            // print_r($_FILES);
+        	// Files infected by a virus
+		    $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
         }
+		else if ($result < 0)
+		{
+			// Echec transfert (fichier depassant la limite ?)
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			// print_r($_FILES);
+		}
     }
 }
 

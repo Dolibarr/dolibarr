@@ -80,16 +80,23 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (is_dir($upload_dir))
 	{
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
+		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+    	if ($result > 0)
+        {
+            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+            //print_r($_FILES);
+        }
+        else if ($result == -99)
+        {
+        	// Files infected by a virus
+		    $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+        }
+		else if ($result < 0)
 		{
-	  $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-	  //print_r($_FILES);
-		}
-		else
-		{
-	  // Echec transfert (fichier dépassant la limite ?)
-	  $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-	  // print_r($_FILES);
+			// Echec transfert (fichier depassant la limite ?)
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			// print_r($_FILES);
 		}
 	}
 }

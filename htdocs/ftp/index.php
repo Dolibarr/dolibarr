@@ -109,18 +109,18 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 			//print_r($_FILES);
 			$result=$ecmdir->changeNbOfFiles('+');
 		}
+		else if ($result == -99)
+        {
+        	// File infected by a virus
+		    $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+        }
 		else if ($result < 0)
 		{
 			// Echec transfert (fichier depassant la limite ?)
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 			// print_r($_FILES);
-		}
-		else
-		{
-			// File infected by a virus
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
 		}
 	}
 	else
