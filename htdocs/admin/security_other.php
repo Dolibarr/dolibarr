@@ -108,19 +108,6 @@ if ($_GET["action"] == 'MAIN_UMASK')
 	exit;
 }
 
-if ($_GET["action"] == 'activate_avscan')
-{
-	dolibarr_set_const($db, "MAIN_USE_AVSCAN", '1','chaine',0,'',$conf->entity);
-	Header("Location: security_other.php");
-	exit;
-}
-else if ($_GET["action"] == 'disable_avscan')
-{
-	dolibarr_del_const($db, "MAIN_USE_AVSCAN",$conf->entity);
-	Header("Location: security_other.php");
-	exit;
-}
-
 if ($_GET["action"] == 'MAIN_ANTIVIRUS_COMMAND')
 {
 	dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
