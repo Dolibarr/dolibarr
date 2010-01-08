@@ -1942,7 +1942,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	$file_name = $dest_file;
 
 	// If we need to make a virus scan
-	if ($conf->global->MAIN_ANTIVIRUS_COMMAND)
+	if (file_exists($src_file) && $conf->global->MAIN_ANTIVIRUS_COMMAND)
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
