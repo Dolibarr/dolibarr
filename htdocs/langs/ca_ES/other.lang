@@ -16,7 +16,6 @@ ErrorFailedToChangePassword = Error en la modificació de la contrasenya
 ErrorLoginDoesNotExists = El compte d'usuari de <b>%s</b> no s'ha trobat.
 ErrorLoginHasNoEmail = Aquest usuari no té e-mail. Impossible continuar.
 ErrorBadValueForCode = Valor no vàlid per al codi. Torneu a intentar-ho amb un nou valor ...
-ErrorFileIsInfectedWith = Aquest arxiu està infectat per %s
 SecurityCode = Codi de seguretat
 Calendar = Calendari
 AddTrip = Crear desplaçament

@@ -16,7 +16,6 @@ ErrorFailedToChangePassword = Error en la modificación de la contraseña
 ErrorLoginDoesNotExists = La cuenta de usuario de <b>%s</b> no se ha encontrado.
 ErrorLoginHasNoEmail = Este usuario no tiene e-mail. Imposible continuar.
 ErrorBadValueForCode = Valor incorrecto para el código. Vuelva a intentar con un nuevo valor...
-ErrorFileIsInfectedWith = Este archivo está infectado por %s
 SecurityCode = Código seguridad
 Calendar = Calendario
 AddTrip = Crear desplazamiento
