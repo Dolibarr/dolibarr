@@ -65,6 +65,10 @@ NoMaxSizeByPHPLimit = Cap limitació interna en el seu servidor PHP
 MaxSizeForUploadedFiles = Tamany màxim dels documents a pujar (0 per prohibir la pujada)
 UseCaptchaCode = Utilització de codi gràfic (CAPTCHA) en el login
 UseAvToScanUploadedFiles = Utilització d'un antivirus per escanejar els fitxers pujats
+AntiVirusCommand = Ruta completa cap al comandament antivirus
+AntiVirusCommandExample = Exemple per a ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Exemple per a ClamAv: /usr/bin/clamscan
+AntiVirusParam = Paràmetres complementaris en la línia de comandes
+AntiVirusParamExample = Exemple per a ClamWin: --database=\"C:\Program Files (x86)\ClamWin\lib\"
 ComptaSetup = Configuració del mòdul Comptabilitat
 UserSetup = Configuració gestió dels usuaris
 MenuSetup = Administració dels menús per base de dades

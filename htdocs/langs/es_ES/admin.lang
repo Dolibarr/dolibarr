@@ -35,7 +35,6 @@ GlobalSetup = General
 GUISetup = Entorno
 SetupArea = Área configuración
 FormToTestFileUploadForm = Formulario de prueba de subida de archivo (según opciones elegidas)
-
 IfModuleEnabled = Nota: sí sólo es eficaz si el módulo <b>%s</b> está activado
 RemoveLock = Elimine el archivo <b>%s</b>, si existe, para permitir la utilidad de actualización.
 RestoreLock = Sustituir un archivo <b>%s</b>, dándole sólo derechos de lectura a este archivo con el fin de prohibir nuevas actualizaciones.
@@ -66,6 +65,10 @@ NoMaxSizeByPHPLimit = Ninguna limitación interna en su servidor PHP
 MaxSizeForUploadedFiles = Tamaño máximo de los documentos a subir (0 para prohibir la subida)
 UseCaptchaCode = Utilización de código gráfico (CAPTCHA) en el login
 UseAvToScanUploadedFiles = Utilización de un antivirus para escanear los ficheros subidos
+AntiVirusCommand = Ruta completa hacia el comando antivirus
+AntiVirusCommandExample = Ejemplo para ClamWin: c:\Program Files (x86)\ClamWin\bin\clamscan.exe<br>Ejemplo para ClamAv: /usr/bin/clamscan
+AntiVirusParam = Parámetros complementarios en la línea de comandos
+AntiVirusParamExample = Ejemplo para ClamWin: --database=\"C:\Program Files (x86)\ClamWin\lib\"
 ComptaSetup = Configuración del módulo Contabilidad
 UserSetup = Configuración gestión de los usuarios
 MenuSetup = Administración de los menús por base de datos
