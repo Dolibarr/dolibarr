@@ -51,6 +51,12 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);
         }
+        else if (is_numeric($resupload) && $resupload == -99)
+        {
+        	// Echec transfert (virus ?)
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith");
+            $mesg.= '</div>';
+        }
         else
         {
             // Echec transfert (fichier depassant la limite ?)
