@@ -277,6 +277,7 @@ print '</tr></form>';
 // Use anti virus
 $var=!$var;
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_ANTIVIRUS_COMMAND" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<tr ".$bc[$var].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
@@ -293,6 +294,7 @@ print '</form>';
 // Use anti virus
 $var=!$var;
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_ANTIVIRUS_PARAM" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<tr ".$bc[$var].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
