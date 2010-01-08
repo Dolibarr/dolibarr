@@ -135,18 +135,21 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		if (! empty($soc->email) && ! isValidEMail($soc->email))
 		{
 			$error = 1;
+			$langs->load("errors");
 			$soc->error = $langs->trans("ErrorBadEMail",$soc->email);
 			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
 		}
 		if (! empty($soc->url) && ! isValidUrl($soc->url))
 		{
 			$error = 1;
+			$langs->load("errors");
 			$soc->error = $langs->trans("ErrorBadUrl",$soc->url);
 			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
 		}
 		if ($soc->fournisseur && ! $conf->fournisseur->enabled)
 		{
 			$error = 1;
+			$langs->load("errors");
 			$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
 			$_GET["action"] = $_POST["action"]=='add'?'create':'edit';
 		}
@@ -183,6 +186,10 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 					$result=$contact->create($user);
 				}
+			}
+			else
+			{
+				$mesg=$soc->error;
 			}
 
 			if ($result >= 0)
@@ -504,7 +511,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 		print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans('EMail').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
+		print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
 		print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -853,7 +860,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
 		print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans('EMail').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
+		print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
 		print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
 
 		print '<tr>';

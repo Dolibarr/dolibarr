@@ -375,7 +375,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $adh->user_id     = $userid;
     $adh->fk_soc      = $socid;
     $adh->public      = $public;
-    
+
     foreach($_POST as $key => $value)
     {
         if (preg_match("/^options_/",$key))
@@ -410,14 +410,17 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     }
     if (empty($nom)) {
         $error++;
+        $langs->load("errors");
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
     }
 	if ($morphy != 'mor' && (!isset($prenom) || $prenom=='')) {
 		$error++;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
+        $langs->load("errors");
+		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
     }
     if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($email)) {
         $error++;
+        $langs->load("errors");
         $errmsg .= $langs->trans("ErrorBadEMail",$email)."<br>\n";
     }
     if (empty($pass)) {

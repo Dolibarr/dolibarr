@@ -1,8 +1,10 @@
 # Dolibarr language file - fr_FR - errors
 CHARSET=UTF-8
+MenuManager=Gestionnaire de menu
 Error=Erreur
 Errors=Erreurs
-MenuManager=Gestionnaire de menu
+ErrorBadEMail=e-mail %s invalide
+ErrorBadUrl=Url %s invalide
 ErrorLoginAlreadyExists=Le login %s existe déjà.
 ErrorGroupAlreadyExists=Le groupe %s existe déjà.
 ErrorRecordNotFound=Enregistrement non trouvé.

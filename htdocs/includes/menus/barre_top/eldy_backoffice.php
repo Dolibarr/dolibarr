@@ -256,7 +256,7 @@ class MenuTop {
 		}
 
 		// Tools
-		if ($conf->mailing->enabled || $conf->export->enabled || $conf->global->MAIN_MODULE_IMPORT || $conf->global->MAIN_MODULE_DOMAIN)
+		if ($conf->mailing->enabled || $conf->export->enabled || $conf->import->enabled || $conf->global->MAIN_MODULE_DOMAIN)
 		{
 			$langs->load("other");
 
@@ -271,7 +271,7 @@ class MenuTop {
 			}
 
 			$idsel='id="mainmenu_tools" ';
-			if ($user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire)
+			if ($user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire || $user->rights->import->run)
 			{
 				print '<td class="tmenu">';
 				print '<a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';

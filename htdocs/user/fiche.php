@@ -167,7 +167,6 @@ if ($_POST["action"] == 'add' && $canadduser)
 		$db->begin();
 
 		$id = $edituser->create($user);
-
 		if ($id > 0)
 		{
 			if (isset($_POST['password']) && trim($_POST['password']))
@@ -184,7 +183,8 @@ if ($_POST["action"] == 'add' && $canadduser)
 		{
 			$langs->load("errors");
 			$db->rollback();
-			$message='<div class="error">'.join('<br>',$edituser->errors).'</div>';
+			if (is_array($edituser->errors) && sizeof($edituser->errors)) $message='<div class="error">'.join('<br>',$langs->trans($edituser->errors)).'</div>';
+			else $message='<div class="error">'.$langs->trans($edituser->error).'</div>';
 			$action="create";       // Go back to create page
 		}
 
@@ -653,7 +653,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td></tr>';
 
 	// EMail
-	print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
+	print '<tr><td valign="top">'.$langs->trans("EMail").($conf->global->USER_MAIL_REQUIRED?'*':'').'</td>';
 	print '<td>';
 	if ($ldap_mail)
 	{
@@ -945,7 +945,7 @@ else
 			print '<td>'.dol_print_phone($fuser->office_fax,'',0,0,1).'</td>';
 
 			// EMail
-			print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
+			print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").($conf->global->USER_MAIL_REQUIRED?'*':'').'</td>';
 			print '<td>'.dol_print_email($fuser->email,0,0,1).'</td>';
 			print "</tr>\n";
 

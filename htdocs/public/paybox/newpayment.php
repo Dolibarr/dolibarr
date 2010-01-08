@@ -66,6 +66,7 @@ $langs->load("paybox");
 $langs->load("dict");
 $langs->load("bills");
 $langs->load("companies");
+$langs->load("errors");
 
 // Input are:
 // type ('invoice','order','contractline'),

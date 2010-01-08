@@ -150,6 +150,14 @@ class Societe extends CommonObject
 
 		dol_syslog("Societe::create ".$this->nom);
 
+		// Check parameters
+		if (! empty($conf->global->SOCIETE_MAIL_REQUIRED) && ! isValidEMail($this->email))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
+
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
@@ -367,6 +375,14 @@ class Societe extends CommonObject
 
 		$this->code_compta=trim($this->code_compta);
 		$this->code_compta_fournisseur=trim($this->code_compta_fournisseur);
+
+		// Check parameters
+		if (! empty($conf->global->SOCIETE_MAIL_REQUIRED) && ! isValidEMail($this->email))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
 
 		// Check name is required and codes are ok or unique.
 		// If error, this->errors[] is filled

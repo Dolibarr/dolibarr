@@ -257,9 +257,9 @@ class Adherent extends CommonObject
 		global $conf,$langs;
 
 		// Check parameters
-		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($this->email))
+		if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
-			$langs->load("companies");
+			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
@@ -377,9 +377,10 @@ class Adherent extends CommonObject
 
 		dol_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass.", email=".$this->email);
 
-		// Verification parametres
-		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($this->email))
+		// Check parameters
+		if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
+			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
@@ -887,7 +888,7 @@ class Adherent extends CommonObject
 	function fetch_login($login)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 		$sql.= " WHERE login='".$login."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -1070,7 +1071,7 @@ class Adherent extends CommonObject
 			return -1;
 		}
 	}
-	
+
 
 	/**
 	 *	\brief      Fonction qui recupere les donnees optionelles de l'adherent
@@ -1080,16 +1081,16 @@ class Adherent extends CommonObject
 	{
 		$options = new AdherentOptions($this->db);
 		$optionsArray = $options->fetch_name_optionals_label();
-		
+
 		$tab=array();
-		
+
 		$sql = "SELECT rowid";
-		
+
 		foreach ($optionsArray as $name => $label)
 		{
 			$sql.= ", ".$name;
 		}
-		
+
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_options";
 		$sql.= " WHERE fk_member=".$rowid;
 
@@ -1832,7 +1833,7 @@ class Adherent extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= " WHERE a.statut > 0";
 		$sql.= " AND a.entity = ".$conf->entity;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

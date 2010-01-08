@@ -699,6 +699,14 @@ class User extends CommonObject
 
 		dol_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''), LOG_DEBUG);
 
+		// Check parameters
+		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
+
 		$error=0;
 		$this->db->begin();
 
@@ -990,6 +998,14 @@ class User extends CommonObject
 			$this->phenix_pass  = md5(trim($this->phenix_pass));
 		}
 		$this->admin        = $this->admin?$this->admin:0;
+
+		// Check parameters
+		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
+		{
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBadEMail",$this->email);
+			return -1;
+		}
 
 		$this->db->begin();
 

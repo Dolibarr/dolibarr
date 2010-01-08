@@ -109,7 +109,7 @@ EMailTextOrderApproved=Commande %s approuvée
 EMailTextOrderApprovedBy=Commande %s approuvée par %s
 EMailTextOrderRefused=Commande %s réfusée
 EMailTextOrderRefusedBy=Commande %s réfusée par %s
-ImportedWithSet=Lot d'importation
+ImportedWithSet=Lot d'importation (Import key)
 DolibarrNotification=Notification automatique
 
 ##### Bookmark #####

@@ -774,7 +774,11 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 		$newemail.='">';
 		$newemail.=dol_trunc($email,$max);
 		$newemail.='</a>';
-		if ($showinvalid && ! isValidEmail($email)) $newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
+		if ($showinvalid && ! isValidEmail($email))
+		{
+			$langs->load("errors");
+			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
+		}
 
 		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
 		{

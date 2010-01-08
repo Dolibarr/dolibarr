@@ -858,13 +858,15 @@ if ($step == 4 && $datatoimport)
 		// Info field
 		print '<td style="font-weight: normal" align="right">';
 		$filecolumn=$array_match_database_to_file[$code];
+		// Source field info
 		$htmltext ='<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
 		if ($filecolumn > sizeof($fieldssource)) $htmltext.=$langs->trans("DataComeFromNoWhere").'<br>';
 		else
 		{
 			if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
 			{
-				$htmltext.=$langs->trans("DataComeFromFileFieldNb",$filecolumn).'<br>';
+				$filecolumntoshow=$filecolumn;
+				$htmltext.=$langs->trans("DataComeFromFileFieldNb",$filecolumntoshow).'<br>';
 			}
 			else
 			{
@@ -875,6 +877,7 @@ if ($step == 4 && $datatoimport)
 		$example=$objimport->array_import_examplevalues[0][$code];
 		if ($example) $htmltext.='<br>'.$langs->trans("SourceExample").': <b>'.$example.'</b><br>';
 		$htmltext.='<br>';
+		// Target field info
 		$htmltext.='<b><u>'.$langs->trans("FieldTarget").'</u></b><br>';
 		if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
 		{
