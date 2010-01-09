@@ -114,6 +114,36 @@ class InterfaceNotification
             $notify->send($action_notify, $object->socid, $mesg, 'facture', $object->id, $filepdf);
 		}
 
+		elseif ($action == 'ORDER_VALIDATE')
+		{
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			$action_notify = 'NOTIFY_VAL_ORDER';
+            $ref = dol_sanitizeFileName($object->ref);
+            $filepdf = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            if (! file_exists($filepdf)) $filepdf='';
+            $langs->load("other");
+			$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
+
+            $notify = new Notify($this->db);
+            $notify->send($action_notify, $object->socid, $mesg, 'order', $object->id, $filepdf);
+		}
+
+		elseif ($action == 'PROPOSAL_VALIDATE')
+		{
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			$action_notify = 'NOTIFY_VAL_PROPOSAL';
+            $ref = dol_sanitizeFileName($object->ref);
+            $filepdf = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            if (! file_exists($filepdf)) $filepdf='';
+            $langs->load("other");
+			$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
+
+            $notify = new Notify($this->db);
+            $notify->send($action_notify, $object->socid, $mesg, 'propal', $object->id, $filepdf);
+		}
+
 		elseif ($action == 'FICHEINTER_VALIDATE')
 		{
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);

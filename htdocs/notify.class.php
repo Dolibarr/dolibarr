@@ -108,12 +108,12 @@ class Notify
 
     /**
      *    	\brief      Check if notification are active for couple action/company.
-     * 					If yes, send mail and save trace.
+     * 					If yes, send mail and save trace into llx_notify.
      * 		\param		action		Code of action to check and send (list in llx_action_def)
      * 		\param		socid		Id of third party
      * 		\param		texte		Message to send
-     * 		\param		objet_type	Type of object notification deals on
-     * 		\param		objet_id	Id of object notification deals on
+     * 		\param		objet_type	Type of object the notification deals on (facture, order, propal, order_supplier...). Just for log in llx_notify.
+     * 		\param		objet_id	Id of object the notification deals on
      * 		\param		file		Attach a file
      *		\return		int			<0 if KO or number of changes if OK
      */
