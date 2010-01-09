@@ -572,7 +572,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->type              = 2;
 
 			$facid = $facture->create($user);
-			
+
 			// Add predefined lines
 			for ($i = 1; $i <= $NBLINES; $i++)
 			{
@@ -2879,7 +2879,7 @@ else
 						}
 						else print '&nbsp;';
 						print '</td>';
-						
+
 						// Remise percent (negative or positive)
 						if (!empty($objp->remise_percent))
 						{
@@ -2889,7 +2889,7 @@ else
 						{
 							print '<td>&nbsp;</td>';
 						}
-						
+
 						// Montant total HT
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
@@ -3076,7 +3076,9 @@ else
 				}
 				else
 				{
-					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'">'.$_POST["dp_desc"].'</textarea>';
+					$nbrows=ROWS_2;
+					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.$nbrows.'">'.$_POST["dp_desc"].'</textarea>';
 				}
 				print '</td>';
 				print '<td align="right">';
@@ -3152,7 +3154,9 @@ else
 					}
 					else
 					{
-						print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat">'.$_POST["np_desc"].'</textarea>';
+						$nbrows=ROWS_2;
+						if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+						print '<textarea cols="70" name="np_desc" rows="'.$nbrows.'" class="flat">'.$_POST["np_desc"].'</textarea>';
 					}
 
 					print '</td>';
@@ -3456,7 +3460,7 @@ else
 					$sql.= " AND el.sourcetype = 'commande'";
 					$sql.= " AND el.fk_target = ".$fac->id;
 					$sql.= " AND el.targettype = '".$fac->element."'";
-					
+
 					$resql = $db->query($sql);
 					if ($resql)
 					{

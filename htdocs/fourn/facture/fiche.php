@@ -1076,7 +1076,9 @@ else
 				}
 				else
 				{
-					print '<textarea class="flat" cols="60" name="label" rows="'.ROWS_2.'">'.$_POST["label"].'</textarea>';
+					$nbrows=ROWS_2;
+					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+					print '<textarea class="flat" cols="60" name="label" rows="'.$nbrows.'">'.$_POST["label"].'</textarea>';
 				}
 				print '</td>';
 				print '<td align="right">';

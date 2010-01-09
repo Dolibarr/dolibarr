@@ -1649,7 +1649,9 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'">'.$_POST["dp_desc"].'</textarea>';
+			$nbrows=ROWS_2;
+			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+			print '<textarea class="flat" cols="70" name="dp_desc" rows="'.$nbrows.'">'.$_POST["dp_desc"].'</textarea>';
 		}
 		print '</td>';
 		print '<td align="right">';
@@ -1722,7 +1724,9 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat">'.$_POST["np_desc"].'</textarea>';
+				$nbrows=ROWS_2;
+				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+				print '<textarea cols="70" name="np_desc" rows="'.$nbrows.'" class="flat">'.$_POST["np_desc"].'</textarea>';
 			}
 
 			print '</td>';
