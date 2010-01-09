@@ -113,7 +113,7 @@ EMailTextOrderApproved = Comanda %s aprovada
 EMailTextOrderApprovedBy = Comanda %s aprovada per %s
 EMailTextOrderRefused = Comanda %s rebutjada
 EMailTextOrderRefusedBy = Comanda %s rebutjada per %s
-ImportedWithSet = Lot d'importació
+ImportedWithSet = Lot d'importació (import key)
 DolibarrNotification = Notificació automàtica
 ##### Bookmark ##### =  = 
 Bookmark = Marcador

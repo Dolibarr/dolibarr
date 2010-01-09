@@ -1,8 +1,10 @@
 # Dolibarr language file - ca_ES - errors
 CHARSET = UTF-8
+MenuManager = Gestor de menú
 Error = Error
 Errors = Errors
-MenuManager = Gestor de menú
+ErrorBadEMail = e-mail %s incorrecte
+ErrorBadUrl = Url %s invàlida
 ErrorLoginAlreadyExists = El login %s ja existeix.
 ErrorGroupAlreadyExists = El grup %s ja existeix.
 ErrorRecordNotFound = Registre no trobat
