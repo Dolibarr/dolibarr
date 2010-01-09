@@ -107,6 +107,7 @@ class InterfaceNotification
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
+            $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
 			$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
 
@@ -122,6 +123,7 @@ class InterfaceNotification
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
+            $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
 			$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
 
@@ -135,8 +137,9 @@ class InterfaceNotification
 
 			$action_notify = 'NOTIFY_VAL_PROPAL';
             $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            $filepdf = $conf->propale->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
+            $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
 			$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
 
@@ -152,8 +155,9 @@ class InterfaceNotification
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
+            $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");
-			$mesg = $langs->transnoentitiesnoconv("EMailTextIntervnetionValidated",$object->ref);
+			$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
 
             $notify = new Notify($this->db);
             $notify->send($action_notify, $object->socid, $mesg, 'ficheinter', $object->id, $filepdf);

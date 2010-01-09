@@ -128,7 +128,7 @@ class Notify
 
         $langs->load("other");
 
-		dol_syslog("Notify::send $action, $socid, $texte, $objet_type, $objet_id, $file");
+		dol_syslog("Notify::send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
 
 		$sql = "SELECT s.nom, c.email, c.rowid, c.name, c.firstname,";
 		$sql.= " a.rowid as adid, a.titre, a.code, n.rowid";
@@ -154,7 +154,8 @@ class Notify
 
                 if (strlen($sendto))
                 {
-                    $subject = $langs->transnoentitiesnoconv("DolibarrNotification");
+                	$application=(defined('MAIN_APPLICATION_TITLE')?MAIN_APPLICATION_TITLE:'Dolibarr');
+                    $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
                     $message = $texte;
                     $filename = explode("/",$file);
 					$msgishtml=0;
