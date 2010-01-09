@@ -521,7 +521,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	else
 	{
-		print '<input size="30" type="text" name="nom" value="">';
+		print '<input size="30" type="text" name="nom" value="'.$_POST["nom"].'">';
 	}
 	print '</td></tr>';
 
@@ -535,7 +535,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	else
 	{
-		print '<input size="30" type="text" name="prenom" value="">';
+		print '<input size="30" type="text" name="prenom" value="'.$_POST["prenom"].'">';
 	}
 	print '</td></tr>';
 
@@ -554,7 +554,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	else
 	{
-		print '<input size="20" maxsize="24" type="text" name="login" value="">';
+		print '<input size="20" maxsize="24" type="text" name="login" value="'.$_POST["login"].'">';
 	}
 	print '</td></tr>';
 
@@ -600,7 +600,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
 		print '<td>';
-		print $form->selectyesno('admin',0,1);
+		print $form->selectyesno('admin',$_POST["admin"],1);
 		print "</td></tr>\n";
 	}
 
@@ -620,7 +620,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	else
 	{
-		print '<input size="20" type="text" name="office_phone" value="">';
+		print '<input size="20" type="text" name="office_phone" value="'.$_POST["office_phone"].'">';
 	}
 	print '</td></tr>';
 
@@ -634,7 +634,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	else
 	{
-		print '<input size="20" type="text" name="user_mobile" value="">';
+		print '<input size="20" type="text" name="user_mobile" value="'.$_POST["user_mobile"].'">';
 	}
 	print '</td></tr>';
 
@@ -648,7 +648,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	else
 	{
-		print '<input size="20" type="text" name="office_fax" value="">';
+		print '<input size="20" type="text" name="office_fax" value="'.$_POST["office_fax"].'">';
 	}
 	print '</td></tr>';
 
@@ -662,7 +662,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	else
 	{
-		print '<input size="40" type="text" name="email" value="">';
+		print '<input size="40" type="text" name="email" value="'.$_POST["email"].'">';
 	}
 	print '</td></tr>';
 
@@ -679,6 +679,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	else
 	{
 		print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
+		print $_POST["note"];
 		print '</textarea>';
 	}
 	print "</td></tr>\n";
@@ -689,16 +690,16 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	if ($conf->webcal->enabled)
 	{
 		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-		print '<td><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+		print '<td><input size="30" type="text" name="webcal_login" value="'.$_POST["webcal_login"].'"></td></tr>';
 	}
 
 	// Module Phenix
 	if ($conf->phenix->enabled)
 	{
 		print "<tr>".'<td valign="top">'.$langs->trans("LoginPenix").'</td>';
-		print '<td><input size="30" type="text" name="phenix_login" value=""></td></tr>';
+		print '<td><input size="30" type="text" name="phenix_login" value="'.$_POST["phenix_login"].'"></td></tr>';
 		print "<tr>".'<td valign="top">'.$langs->trans("PassPenix").'</td>';
-		print '<td><input size="30" type="text" name="phenix_pass" value=""></td></tr>';
+		print '<td><input size="30" type="text" name="phenix_pass" value="'.$_POST["phenix_pass"].'"></td></tr>';
 	}
 
 	print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
