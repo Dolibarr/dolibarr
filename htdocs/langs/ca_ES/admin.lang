@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin 
+# Dolibarr language file - ca_ES - admin
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -749,6 +749,8 @@ RuleForGeneratedPasswords = Norma per a la generació de les contrasenyes propos
 DoNotSuggest = No proposar
 EncryptedPasswordInDatabase = Permetre encriptació de les contrasenyes en la base de dades
 DisableForgetPasswordLinkOnLogonPage = No mostrar l'enllaç "Contrasenya oblidada" a la pàgina de login
+UsersSetup = Configuració del mòdul usuaris
+UserMailRequired = E-mail necessari per crear un usuari nou
 ##### Company setup ##### = undefined =  = 
 CompanySetup = Configuració del mòdul empreses
 CompanyCodeChecker = Mòdul de generació i control dels codis de tercers (clients/proveïdors)

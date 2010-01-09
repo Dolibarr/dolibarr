@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - other 
+# Dolibarr language file - ca_ES - other
 CHARSET = UTF-8
 ErrorPasswordDiffers = Les contrasenyes no són identiques, torni a introduir-les
 ErrorForbidden = Accés no autoritzat.<br>Intenta accedir a una pàgina, zona o funció sense estar en una sessió autentificada o que no s'autoritza per al seu compte d'usuari.
@@ -29,6 +29,8 @@ Notify_NOTIFY_VAL_FICHINTER = Validació fitxa intervenció
 Notify_NOTIFY_VAL_FAC = Validació factura
 Notify_NOTIFY_APP_ORDER_SUPPLIER = Aprovació comanda a proveïdor
 Notify_NOTIFY_REF_ORDER_SUPPLIER = Rebuig comanda a proveïdor
+Notify_NOTIFY_VAL_ORDER = Validació comanda client
+Notify_NOTIFY_VAL_PROPAL = Validació pressupost client
 NbOfAttachedFiles = Número arxius/documents adjunts
 TotalSizeOfAttachedFiles = Mida total dels arxius/documents adjunts
 MaxSize = Tamany màxim
@@ -105,6 +107,8 @@ NumberOfUnitsCustomerInvoices = Nombre d'unitats en les factures a clients en el
 NumberOfUnitsSupplierInvoices = Nombre d'unitats en les factures de proveïdors en els darrers 12 mesos
 EMailTextInterventionValidated = Fitxa intervenció %s validada
 EMailTextInvoiceValidated = Factura %s validada
+EMailTextProposalValidated = El pressupost %s que el concerneix ha estat validat.
+EMailTextOrderValidated = La comanda %s que el concerneix ha estat validada.
 EMailTextOrderApproved = Comanda %s aprovada
 EMailTextOrderApprovedBy = Comanda %s aprovada per %s
 EMailTextOrderRefused = Comanda %s rebutjada

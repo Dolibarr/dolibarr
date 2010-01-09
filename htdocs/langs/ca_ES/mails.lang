@@ -104,3 +104,4 @@ ANotificationsWillBeSent = 1 notificació serà enviada per e-mail
 SomeNotificationsWillBeSent = %s notificacions seran enviades per e-mail
 AddNewNotification = Activar una nova sol·licitud de notificació
 ListOfActiveNotifications = Llista de les sol·licituds de notificacions actives
+ListOfNotificationsDone = Llista de notificacions d'e-mails enviades
