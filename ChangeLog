@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.8 compared to 2.7 *****
 
 For users:
+- New: Add an option to make users email reuired.
 - New: Module notification can send mail on order or proposal validation.
 - New: Can use any antivirus on file upload.
 - New: A customer can also be a prospect.

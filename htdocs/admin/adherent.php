@@ -97,7 +97,7 @@ $form = new Form($db);
 
 // Mail required for members
 $var=!$var;
-print '<form action="adherent.php" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';

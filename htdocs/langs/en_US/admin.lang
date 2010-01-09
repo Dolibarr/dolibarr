@@ -751,6 +751,8 @@ RuleForGeneratedPasswords=Rule to generate suggested passwords or validate passw
 DoNotSuggest=Do not suggest any password
 EncryptedPasswordInDatabase=To allow the encryption of the passwords in the database
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
+UsersSetup=Users module setup
+UserMailRequired=EMail required to create a new user
 ##### Company setup #####
 CompanySetup=Companies module setup
 CompanyCodeChecker=Module for third parties code generation and checking (customer or supplier)
