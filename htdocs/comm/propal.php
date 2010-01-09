@@ -973,7 +973,27 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($_GET['action'] == 'validate')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate','',0,1);
+		// on verifie si l'objet est en numerotation provisoire
+		$ref = substr($propal->ref, 1, 4);
+		if ($ref == 'PROV')
+		{
+			$numref = $propal->getNextNumRef($soc);
+		}
+		else
+		{
+			$numref = $propal->ref;
+		}
+
+		$text=$langs->trans('ConfirmValidateProp',$numref);
+		if ($conf->notification->enabled)
+		{
+			require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+			$notify=new Notify($db);
+			$text.='<br>';
+			$text.=$notify->confirmMessage('NOTIFY_VAL_PROPAL',$propal->socid);
+		}
+
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 

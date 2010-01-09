@@ -1242,18 +1242,25 @@ else
 			 */
 			if ($_GET['action'] == 'validate')
 			{
-				// on verifie si la facture est en numerotation provisoire
+				// on verifie si l'objet est en numerotation provisoire
 				$ref = substr($commande->ref, 1, 4);
 				if ($ref == 'PROV')
 				{
-					$num = $commande->getNextNumRef($soc);
+					$numref = $commande->getNextNumRef($soc);
 				}
 				else
 				{
-					$num = $commande->ref;
+					$numref = $commande->ref;
 				}
 
-				$text=$langs->trans('ConfirmValidateOrder',$num);
+				$text=$langs->trans('ConfirmValidateOrder',$numref);
+				if ($conf->notification->enabled)
+				{
+					require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+					$notify=new Notify($db);
+					$text.='<br>';
+					$text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$commande->socid);
+				}
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}

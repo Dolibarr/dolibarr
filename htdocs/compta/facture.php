@@ -2060,7 +2060,7 @@ else
 			// Confirmation de la validation
 			if ($_GET['action'] == 'valid')
 			{
-				// on verifie si la facture est en numerotation provisoire
+				// on verifie si l'objet est en numerotation provisoire
 				$facref = substr($fac->ref, 1, 4);
 				if ($facref == 'PROV')
 				{
@@ -2070,21 +2070,21 @@ else
 						$fac->date=gmmktime();
 						$fac->date_lim_reglement=$fac->calculate_date_lim_reglement();
 					}
-					$numfa = $fac->getNextNumRef($soc);
+					$numref = $fac->getNextNumRef($soc);
 					//$fac->date=$savdate;
 				}
 				else
 				{
-					$numfa = $fac->ref;
+					$numref = $fac->ref;
 				}
 
-				$text=$langs->trans('ConfirmValidateBill',$numfa);
+				$text=$langs->trans('ConfirmValidateBill',$numref);
 				if ($conf->notification->enabled)
 				{
 					require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 					$notify=new Notify($db);
 					$text.='<br>';
-					$text.=$notify->confirmMessage(2,$fac->socid);
+					$text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$fac->socid);
 				}
 
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$text,'confirm_valid','',0,($conf->notification->enabled?0:2));

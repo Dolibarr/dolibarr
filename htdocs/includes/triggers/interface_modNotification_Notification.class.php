@@ -129,11 +129,11 @@ class InterfaceNotification
             $notify->send($action_notify, $object->socid, $mesg, 'order', $object->id, $filepdf);
 		}
 
-		elseif ($action == 'PROPOSAL_VALIDATE')
+		elseif ($action == 'PROPAL_VALIDATE')
 		{
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$action_notify = 'NOTIFY_VAL_PROPOSAL';
+			$action_notify = 'NOTIFY_VAL_PROPAL';
             $ref = dol_sanitizeFileName($object->ref);
             $filepdf = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';

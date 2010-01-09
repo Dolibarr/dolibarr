@@ -61,6 +61,8 @@ class Notify
     /**
      *    	\brief      Renvoie le message signalant les notifications qui auront lieu sur
      *					un evenement pour affichage dans texte de confirmation evenement.
+     * 		\param		action		Id of action in llx_action_def
+     * 		\param		socid		Id of third party
      *		\return		string		Message
      */
 	function confirmMessage($action,$socid)
@@ -76,8 +78,10 @@ class Notify
 	}
 
     /**
-     *    	\brief      Renvoie le nombre de notifications configures pour l'action et la societe donnee
-     *		\return		int		<0 si ko, sinon nombre de notifications definies
+     *    	\brief      Return number of notifications activated for action code and third party
+     * 		\param		action		Code of action in llx_action_def (new usage) or Id of action in llx_action_def (old usage)
+     * 		\param		socid		Id of third party
+     * 		\return		int			<0 si ko, sinon nombre de notifications definies
      */
 	function countDefinedNotifications($action,$socid)
 	{
@@ -87,7 +91,8 @@ class Notify
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
         $sql.= " AND n.fk_soc = s.rowid";
-        $sql.= " AND n.fk_action = ".$action;
+        if (is_numeric($action)) $sql.= " AND n.fk_action = ".$action;	// Old usage
+        else $sql.= " AND a.code = '".$action."'";	// New usage
         $sql.= " AND s.rowid = ".$socid;
 
 		dol_syslog("Notify.class::countDefinedNotifications $action, $socid");
@@ -109,7 +114,7 @@ class Notify
     /**
      *    	\brief      Check if notification are active for couple action/company.
      * 					If yes, send mail and save trace into llx_notify.
-     * 		\param		action		Code of action to check and send (list in llx_action_def)
+     * 		\param		action		Code of action in llx_action_def (new usage) or Id of action in llx_action_def (old usage)
      * 		\param		socid		Id of third party
      * 		\param		texte		Message to send
      * 		\param		objet_type	Type of object the notification deals on (facture, order, propal, order_supplier...). Just for log in llx_notify.
@@ -123,25 +128,29 @@ class Notify
 
         $langs->load("other");
 
-        $sql = "SELECT s.nom, c.email, c.rowid, c.name, c.firstname, a.titre,n.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
-        $sql .= " AND n.fk_soc = s.rowid";
-        $sql .= " AND a.code = '".$action."'";
-        $sql .= " AND s.rowid = ".$socid;
-
 		dol_syslog("Notify::send $action, $socid, $texte, $objet_type, $objet_id, $file");
 
+		$sql = "SELECT s.nom, c.email, c.rowid, c.name, c.firstname,";
+		$sql.= " a.rowid as adid, a.titre, a.code, n.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+        $sql.= " AND n.fk_soc = s.rowid";
+        if (is_numeric($action)) $sql.= " AND n.fk_action = ".$action;	// Old usage
+        else $sql.= " AND a.code = '".$action."'";	// New usage
+        $sql .= " AND s.rowid = ".$socid;
+
+		dol_syslog("Notify::send sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
             $num = $this->db->num_rows($result);
             $i = 0;
-            while ($i < $num)
+            while ($i < $num)	// For each notification couple defined (third party/actioncode)
             {
                 $obj = $this->db->fetch_object($result);
 
                 $sendto = $obj->firstname . " " . $obj->name . " <".$obj->email.">";
+				$actiondefid = $obj->adid;
 
                 if (strlen($sendto))
                 {
@@ -166,8 +175,9 @@ class Notify
                     {
                         $sendto = htmlentities($sendto);
 
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id)";
-                        $sql.= " VALUES (".$this->db->idate(mktime()).", ".$action." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.");";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
+                        $sql.= " VALUES (".$this->db->idate(mktime()).", ".$actiondefid." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.", '".addslashes($obj->email)."')";
+                        dol_syslog("Notify::send sql=".$sql);
                         if (! $this->db->query($sql) )
                         {
                             dol_print_error($this->db);
