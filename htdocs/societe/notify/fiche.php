@@ -191,7 +191,7 @@ if ( $soc->fetch($soc->id) )
 		print '<td>';
 		$html->select_array("actionid",$actions);
 		print '</td>';
-		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+		print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 	}
 	else
@@ -245,7 +245,7 @@ if ( $soc->fetch($soc->id) )
 			print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
 			print '</td>';
 			print '<td>'.$obj->titre.'</td>';
-			print'<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
+			print '<td align="right"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 			print '</tr>';
 			$i++;
 		}
@@ -257,7 +257,59 @@ if ( $soc->fetch($soc->id) )
 	}
 
 	print '</table>';
+	print '<br>';
 
+
+	// List of notifications done
+	print_fiche_titre($langs->trans("ListOfNotificationsDone"),'','');
+	$var=true;
+
+	// Ligne de titres
+	print '<table width="100%" class="noborder">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),"fiche.php","a.titre",'',"&socid=$socid",'align="right"',$sortfield,$sortorder);
+	print '</tr>';
+
+	// Liste
+	$sql = "SELECT c.rowid as id, c.name, c.firstname, c.email, a.titre, n.rowid, n.daten, n.email";
+	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify as n";
+	$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		$contactstatic=new Contact($db);
+
+		while ($i < $num)
+		{
+			$var = !$var;
+
+			$obj = $db->fetch_object($resql);
+
+			$contactstatic->id=$obj->id;
+			$contactstatic->name=$obj->name;
+			$contactstatic->firstname=$obj->firstname;
+			print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
+			print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
+			print '</td>';
+			print '<td>'.$obj->titre.'</td>';
+			print'<td align="right">'.dol_print_date($db->jdate($obj->daten)).'</td>';
+			print '</tr>';
+			$i++;
+		}
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+	print '</table>';
 }
 
 $db->close();

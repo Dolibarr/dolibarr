@@ -130,7 +130,7 @@ class Notify
 
 		dol_syslog("Notify::send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
 
-		$sql = "SELECT s.nom, c.email, c.rowid, c.name, c.firstname,";
+		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.name, c.firstname,";
 		$sql.= " a.rowid as adid, a.titre, a.code, n.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
@@ -177,7 +177,7 @@ class Notify
                         $sendto = htmlentities($sendto);
 
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-                        $sql.= " VALUES (".$this->db->idate(mktime()).", ".$actiondefid." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.", '".addslashes($obj->email)."')";
+                        $sql.= " VALUES (".$this->db->idate(mktime()).", ".$actiondefid." ,".$obj->cid." , '".$objet_type."', ".$objet_id.", '".addslashes($obj->email)."')";
                         dol_syslog("Notify::send sql=".$sql);
                         if (! $this->db->query($sql) )
                         {
