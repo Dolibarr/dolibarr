@@ -98,6 +98,8 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
 		$result=fichinter_create($db, $fichinter, $_REQUEST['model'], $outputlangs);
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$fichinter->id);
+		exit;
 	}
 	else
 	{
@@ -121,6 +123,8 @@ if ($_REQUEST['action'] == 'confirm_modify' && $_REQUEST['confirm'] == 'yes')
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
 		$result=fichinter_create($db, $fichinter, (empty($_REQUEST['model'])?$fichinter->model:$_REQUEST['model']), $outputlangs);
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$fichinter->id);
+		exit;
 	}
 	else
 	{
@@ -488,7 +492,7 @@ if ($_GET["action"] == 'create')
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 		print '<table class="border" width="100%">';
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		$html->select_societes('','socid','',1);
+		$html->select_societes('','socid','s.fournisseur=0',1);
 		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
 		print '<input type="hidden" name="action" value="create">';
@@ -824,7 +828,7 @@ elseif ($fichinterid)
 	print "\n";
 
 
-	/**
+	/*
 	 * Barre d'actions
 	 */
 	print '<div class="tabsAction">';
