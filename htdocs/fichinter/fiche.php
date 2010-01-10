@@ -492,7 +492,7 @@ if ($_GET["action"] == 'create')
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 		print '<table class="border" width="100%">';
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		$html->select_societes('','socid','s.fournisseur=0',1);
+		$html->select_societes('','socid','',1,1);
 		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
 		print '<input type="hidden" name="action" value="create">';

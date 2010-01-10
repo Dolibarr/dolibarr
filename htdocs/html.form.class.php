@@ -553,8 +553,8 @@ class Form
 						if ($showtype)
 						{
 							if ($obj->client || $obj->fournisseur) $label.=' (';
-							if ($obj->client == 1) $label.=$langs->trans("Customer");
-							if ($obj->client == 2) $label.=$langs->trans("Prospect");
+							if ($obj->client == 1 || $obj->client == 3) $label.=$langs->trans("Customer");
+							if ($obj->client == 2 || $obj->client == 3) $label.=($obj->client==3?', ':'').$langs->trans("Prospect");
 							if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
 							if ($obj->client || $obj->fournisseur) $label.=')';
 						}
