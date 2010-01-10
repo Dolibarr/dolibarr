@@ -23,6 +23,9 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Ce DTD est KO car inhibe document.body.scrollTop ->
+<!-- print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'; -->
+
 <!-- BEGIN TEMPLATE -->
 
 <html>
@@ -55,10 +58,7 @@ function donnefocus() {
 	}
 </script>
 
-<?php
-	if ($main_html_header)
-		echo $main_html_header;
-?>
+<?php echo $conf->global->MAIN_HTML_HEADER ?>
 
 <!-- HTTP_USER_AGENT = <?php echo $_SERVER['HTTP_USER_AGENT']; ?> -->
 </head>
@@ -107,7 +107,7 @@ function donnefocus() {
 
 		<table style="width: 100px;"><tr>
 		<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4"></td>
-		<td><img src="<?php echo $dol_url_root; ?>/lib/antispamimage.php" border="0" width="128" height="36"></td>
+		<td><img src="<?php echo DOL_URL_ROOT ?>/lib/antispamimage.php" border="0" width="128" height="36"></td>
 		<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 		</tr></table>
 
@@ -124,7 +124,7 @@ function donnefocus() {
 	if ($forgetpasslink || $helpcenterlink) {
 		echo '<tr><td colspan="3" align="center">';
 		if ($forgetpasslink) {
-			echo '<a style="color: #888888; font-size: 10px" href="'.$dol_url_root.'/user/passwordforgotten.php">(';
+			echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">(';
 			echo $langs->trans('PasswordForgotten');
 			if (! $helpcenterlink) {
 				echo ')';
@@ -133,7 +133,7 @@ function donnefocus() {
 		}
 
 		if ($helpcenterlink) {
-			echo '<a style="color: #888888; font-size: 10px" href="'.$dol_url_root.'/support/index.php" target="_blank">';
+			echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/support/index.php" target="_blank">';
 			if ($forgetpasslink) {
 				echo '&nbsp;-&nbsp;';
 			} else {
@@ -165,11 +165,11 @@ function donnefocus() {
 	<?php if ($main_google_ad_client) { ?>
 		<div align="center">
 			<script type="text/javascript"><!--
-				google_ad_client = <?php echo $main_google_ad_client ?>;
-				/* {$main_google_ad_width}x{$main_google_ad_height}, {$main_google_ad_name} */
-				google_ad_slot = <?php echo $main_google_ad_slot ?>;
-				google_ad_width = <?php echo $main_google_ad_width ?>;
-				google_ad_height = <?php echo $main_google_ad_height ?>;
+				google_ad_client = <?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>;
+				/* {$conf->global->MAIN_GOOGLE_AD_WIDTH}x{$conf->global->MAIN_GOOGLE_AD_HEIGHT}, {$conf->global->MAIN_GOOGLE_AD_NAME} */
+				google_ad_slot = <?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>;
+				google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
+				google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
 				//-->
 			</script>
 			<script type="text/javascript"
@@ -178,14 +178,11 @@ function donnefocus() {
 		</div>
 	<?php } ?>
 
-<!-- authentication mode = {$main_authentication} -->
-<!-- cookie name used for this session = {$session_name} -->
-<!-- urlfrom in this session = {$smarty.session.urlfrom} -->
+<!-- authentication mode = <?php echo $main_authentication ?> -->
+<!-- cookie name used for this session = <?php echo $session_name ?> -->
+<!-- urlfrom in this session = <?php echo $_SESSION["urlfrom"] ?> -->
 
-<?php
-	if ($main_html_footer)
-		echo $main_html_footer;
-?>
+<?php echo $conf->global->MAIN_HTML_FOOTER; ?>
 
 </body>
 </html>

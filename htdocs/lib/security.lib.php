@@ -32,7 +32,7 @@
  *	\param		mysoc		Company object
  *	\remarks    You must change HTML code in this page to change design of logon page.
  */
-function dol_loginfunction($langs,$conf,$mysoc)
+function dol_loginfunction_old($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
 
@@ -333,12 +333,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
  *	\param		langs		Lang object
  *	\param		conf		Conf object
  *	\param		mysoc		Company object
- *	\remarks    Test for smarty integration.
  */
-function dol_loginfunction2($langs,$conf,$mysoc)
+function dol_loginfunction($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
-	global $smarty;
 
 	$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
 	$langs->setDefaultLang($langcode);
@@ -347,46 +345,38 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	$langs->load("other");
 	$langs->load("help");
 
-	$smarty->assign('langs', $langs);
-
-	if (! empty($conf->global->MAIN_HTML_HEADER)) $smarty->assign('main_html_header', $conf->global->MAIN_HTML_HEADER);
+	$main_authentication=$conf->file->main_authentication;
+	$session_name=session_name();
 
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-
-	$smarty->assign('php_self', $php_self);
-	$smarty->assign('character_set_client',$conf->file->character_set_client);
 
 	// Select templates
 	if ($conf->browser->phone)
 	{
 		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/templates/";
-			$smarty->assign('theme', 'default');
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/templates/";
 		}
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/templates/";
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/templates/";
 		}
 	}
 	else
 	{
 		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/login.tpl"))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/";
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/";
 		}
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/core/templates/";
+			$template_dir=DOL_DOCUMENT_ROOT.'/core/templates/';
 		}
 
 		$conf->css = "theme/".$conf->theme."/".$conf->theme.".css";
 		$conf->css.=".php?lang=".$langs->defaultlang;
-		$smarty->assign('conf_css', DOL_URL_ROOT.'/'.$conf->css);
 	}
-
-	$smarty->assign('dol_url_root', DOL_URL_ROOT);
 
 	// Set cookie for timeout management
 	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
@@ -395,20 +385,18 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	if (! empty($_REQUEST["urlfrom"])) $_SESSION["urlfrom"]=$_REQUEST["urlfrom"];
 	else unset($_SESSION["urlfrom"]);
 
-	if (! $_REQUEST["username"]) $smarty->assign('focus_element', 'username');
-	else $smarty->assign('focus_element', 'password');
+	if (! $_REQUEST["username"]) $focus_element='username';
+	else $focus_element='password';
 
 	$login_background=DOL_URL_ROOT.'/theme/login_background.png';
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 	{
-		$smarty->assign('login_background', DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png');
+		$login_background=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
 	}
 
 	// Title
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
-
-	$smarty->assign('title', $title);
 
 	$demologin='';
 	$demopassword='';
@@ -444,8 +432,6 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 	// Login
 	$login = (!empty($lastuser)?$lastuser:(isset($_REQUEST["username"])?$_REQUEST["username"]:$demologin));
 	$password = $demopassword;
-	$smarty->assign('login', $login);
-	$smarty->assign('password', $password);
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
@@ -468,11 +454,8 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $rowspan++;
 
-	$smarty->assign('logo', $urllogo);
-	$smarty->assign('logo_width', $width);
-	$smarty->assign('logo_rowspan', $rowspan);
-
 	// Entity field
+	$select_entity='';
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
@@ -481,30 +464,30 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 		$mc->getEntities();
 
 		$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
-		$smarty->assign('select_entity', $select_entity);
 	}
 
 	// Security graphical code
+	$captcha=0;
+	$captcha_refresh='';
 	if (function_exists("imagecreatefrompng") && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 	{
 		$captcha=1;
-		$smarty->assign('captcha', $captcha);
-		$smarty->assign('captcha_refresh', img_refresh());
+		$captcha_refresh=img_refresh();
 	}
 
 	// Extra link
+	$forgetpasslink=0;
+	$helpcenterlink=0;
 	if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK) || empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
 	{
 		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 		{
 			$forgetpasslink=1;
-			$smarty->assign('forgetpasslink', $forgetpasslink);
 		}
 
 		if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
 		{
 			$helpcenterlink=1;
-			$smarty->assign('helpcenterlink', $helpcenterlink);
 		}
 	}
 
@@ -517,39 +500,82 @@ function dol_loginfunction2($langs,$conf,$mysoc)
 			$conf->global->MAIN_HOME=preg_replace('/__\('.$reg[1].'\)__/i',$langs->trans($reg[1]),$conf->global->MAIN_HOME);
 			$i++;
 		}
+	}
+
+
+	// START SMARTY
+	if ($conf->global->MAIN_SMARTY)
+	{
+		global $smarty;
+
+		$smarty->assign('conf_css', DOL_URL_ROOT.'/'.$conf->css);
+		$smarty->assign('langs', $langs);
+
+		if (! empty($conf->global->MAIN_HTML_HEADER)) $smarty->assign('main_html_header', $conf->global->MAIN_HTML_HEADER);
+
+		$smarty->assign('php_self', $php_self);
+		$smarty->assign('character_set_client',$conf->file->character_set_client);
+
+		$smarty->assign('theme', 'default');
+		$smarty->template_dir=$template_dir;
+		$smarty->assign('dol_url_root', DOL_URL_ROOT);
+
+		$smarty->assign('focus_element', $focus_element);
+
+		$smarty->assign('login_background', $login_background);
+
+		$smarty->assign('title', $title);
+
+		$smarty->assign('login', $login);
+		$smarty->assign('password', $password);
+
+		$smarty->assign('logo', $urllogo);
+		$smarty->assign('logo_width', $width);
+		$smarty->assign('logo_rowspan', $rowspan);
+
+		$smarty->assign('select_entity', $select_entity);
+		$smarty->assign('captcha', $captcha);
+		$smarty->assign('captcha_refresh', $captcha_refresh);
+
+		$smarty->assign('forgetpasslink', $forgetpasslink);
+		$smarty->assign('helpcenterlink', $helpcenterlink);
+
 		$smarty->assign('main_home', nl2br($conf->global->MAIN_HOME));
-	}
 
-    // Google Adsense (ex: demo mode)
-	if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+	    // Google Adsense (ex: demo mode)
+		if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+		{
+			$smarty->assign('main_google_ad_client', $conf->global->MAIN_GOOGLE_AD_CLIENT);
+			$smarty->assign('main_google_ad_name', $conf->global->MAIN_GOOGLE_AD_NAME);
+			$smarty->assign('main_google_ad_slot', $conf->global->MAIN_GOOGLE_AD_SLOT);
+			$smarty->assign('main_google_ad_width', $conf->global->MAIN_GOOGLE_AD_WIDTH);
+			$smarty->assign('main_google_ad_height', $conf->global->MAIN_GOOGLE_AD_HEIGHT);
+
+			$google_ad_template = DOL_DOCUMENT_ROOT."/core/templates/google_ad.tpl";
+			$smarty->assign('google_ad_tpl', $google_ad_template);
+		}
+
+		if (! empty($conf->global->MAIN_HTML_FOOTER)) $smarty->assign('main_html_footer', $conf->global->MAIN_HTML_FOOTER);
+		$smarty->assign('main_authentication', $main_authentication);
+		$smarty->assign('session_name', $session_name);
+
+		// Message
+		if (! empty($_SESSION["dol_loginmesg"]))
+		{
+			$smarty->assign('dol_loginmesg', $_SESSION["dol_loginmesg"]);
+		}
+
+		// Creation du template
+		$smarty->display('login.tpl');	// To use Smarty
+		// Suppression de la version compilee
+		$smarty->clear_compiled_tpl('login.tpl');
+
+		// END SMARTY
+	}
+	else
 	{
-		$smarty->assign('main_google_ad_client', $conf->global->MAIN_GOOGLE_AD_CLIENT);
-		$smarty->assign('main_google_ad_name', $conf->global->MAIN_GOOGLE_AD_NAME);
-		$smarty->assign('main_google_ad_slot', $conf->global->MAIN_GOOGLE_AD_SLOT);
-		$smarty->assign('main_google_ad_width', $conf->global->MAIN_GOOGLE_AD_WIDTH);
-		$smarty->assign('main_google_ad_height', $conf->global->MAIN_GOOGLE_AD_HEIGHT);
-
-		$google_ad_template = DOL_DOCUMENT_ROOT."/core/templates/google_ad.tpl";
-		$smarty->assign('google_ad_tpl', $google_ad_template);
+		include($template_dir.'login.tpl.php');	// To use native PHP
 	}
-
-	if (! empty($conf->global->MAIN_HTML_FOOTER)) $smarty->assign('main_html_footer', $conf->global->MAIN_HTML_FOOTER);
-
-	$smarty->assign('main_authentication', $conf->file->main_authentication);
-	$smarty->assign('session_name', session_name());
-
-	// Message
-	if (! empty($_SESSION["dol_loginmesg"]))
-	{
-		$smarty->assign('dol_loginmesg', $_SESSION["dol_loginmesg"]);
-	}
-
-	// Creation du template
-	$smarty->display('login.tpl');	// To use Smarty
-//	include(DOL_DOCUMENT_ROOT.'/core/templates/login.tpl.php');	// To use native PHP
-
-	// Suppression de la version compilee
-	$smarty->clear_compiled_tpl('login.tpl');
 
 	$_SESSION["dol_loginmesg"] = '';
 }

@@ -260,15 +260,15 @@ if (! defined('NOLOGIN'))
 	// Example: 'dolibarr'
 	// Example: 'ldap'
 	// Example: 'http,forceuser'
-	
+
 	// Authentication mode
 	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
 	// Authentication mode: forceuser
 	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
-	
+
 	// Set authmode
 	$authmode=explode(',',$dolibarr_main_authentication);
-	
+
 	// No authentication mode
 	if (! sizeof($authmode))
 	{
@@ -276,7 +276,7 @@ if (! defined('NOLOGIN'))
 		dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
 		exit;
 	}
-	
+
 	// Si la demande du login a deja eu lieu, on le recupere depuis la session
 	// sinon appel du module qui realise sa demande.
 	// A l'issu de cette phase, la variable $login sera definie.
@@ -285,27 +285,27 @@ if (! defined('NOLOGIN'))
 	if (! isset($_SESSION["dol_login"]))
 	{
 		// On est pas deja authentifie, on demande le login/mot de passe
-	
+
 		// Verification du code securite graphique
 		if ($test && isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 			require_once ARTICHOW."/AntiSpam.class.php";
-	
+
 			// On cree l'objet anti-spam
 			$object = new AntiSpam();
-	
+
 			// Verifie code
 			if (! $object->check('dol_antispam_value',$_POST['code'],true))
 			{
 				dol_syslog('Bad value for code, connexion refused');
 				$langs->load('main');
 				$langs->load('other');
-	
+
 				$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
-	
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($db);
@@ -314,14 +314,14 @@ if (! defined('NOLOGIN'))
 				// Fin appel triggers
 			}
 		}
-	
+
 		// Tests de validation user/mot de passe
 		// Si ok, la variable login sera initialisee
 		// Si erreur, on a placera message erreur dans session sous le nom dol_loginmesg
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
 		if (isset($_POST["username"])) $goontestloop=true;
-	
+
 		if ($test && $goontestloop)
 		{
 			foreach($authmode as $mode)
@@ -353,17 +353,17 @@ if (! defined('NOLOGIN'))
 					}
 				}
 			}
-	
+
 			if (! $login)
 			{
 				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
 				$langs->load('main');
 				$langs->load('other');
-	
+
 				// Bad password. No authmode has found a good password.
 				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-	
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($db);
@@ -372,24 +372,16 @@ if (! defined('NOLOGIN'))
 				// Fin appel triggers
 			}
 		}
-	
+
 		// Fin des tests de login/passwords
 		if (! $login)
 		{
 			// We show login page
 			include_once(DOL_DOCUMENT_ROOT."/lib/security.lib.php");
-			// TODO activer smarty par defaut ?
-			if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
-			{
-				dol_loginfunction2($langs,$conf,$mysoc);
-			}
-			else
-			{
-				dol_loginfunction($langs,$conf,$mysoc);
-			}
+			dol_loginfunction($langs,$conf,$mysoc);
 			exit;
 		}
-	
+
 		$resultFetchUser=$user->fetch($login);
 		if ($resultFetchUser <= 0)
 		{
@@ -397,12 +389,12 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_start();
-	
+
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
 				$langs->load('other');
-	
+
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 			}
@@ -411,14 +403,14 @@ if (! defined('NOLOGIN'))
 				$user->trigger_mesg=$user->error;
 				$_SESSION["dol_loginmesg"]=$user->error;
 			}
-	
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 			if ($result < 0) { $error++; }
 			// Fin appel triggers
-	
+
 			header('Location: '.DOL_URL_ROOT.'/index.php');
 			exit;
 		}
@@ -430,7 +422,7 @@ if (! defined('NOLOGIN'))
 		$login=$_SESSION["dol_login"];
 		$resultFetchUser=$user->fetch($login);
 		dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
-	
+
 		if ($resultFetchUser <= 0)
 		{
 			// Account has been removed after login
@@ -438,12 +430,12 @@ if (! defined('NOLOGIN'))
 			session_destroy();
 			session_name($sessionname);
 			session_start();
-	
+
 			if ($resultFetchUser == 0)
 			{
 				$langs->load('main');
 				$langs->load('other');
-	
+
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 			}
@@ -452,42 +444,42 @@ if (! defined('NOLOGIN'))
 				$user->trigger_mesg=$user->error;
 				$_SESSION["dol_loginmesg"]=$user->error;
 			}
-	
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
 			if ($result < 0) { $error++; }
 			// Fin appel triggers
-	
+
 			header('Location: '.DOL_URL_ROOT.'/index.php');
 			exit;
 		}
 	}
-	
+
 	// Is it a new session ?
 	if (! isset($_SESSION["dol_login"]))
 	{
 		$error=0;
-	
+
 		// New session for this login
 		$_SESSION["dol_login"]=$user->login;
 		$_SESSION["dol_authmode"]=$conf->authmode;
 		$_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
 		if ($conf->multicompany->enabled) $_SESSION["dol_entity"]=$conf->entity;
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
-	
+
 		$db->begin();
-	
+
 		$user->update_last_login_date();
-	
+
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($db);
 		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,$_POST["entity"]);
 		if ($result < 0) { $error++; }
 		// Fin appel triggers
-	
+
 		if ($error)
 		{
 			$db->rollback();
@@ -499,28 +491,28 @@ if (! defined('NOLOGIN'))
 		{
 			$db->commit();
 		}
-	
+
 		// Create entity cookie, just used for login page
 		if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && !empty($conf->global->MAIN_MULTICOMPANY_COOKIE) && isset($_POST["entity"]))
 		{
 			include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
-	
+
 			$entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
 			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 			// TTL : sera defini dans la page de config multicompany
 			$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
 			// Cryptkey : sera cree aleatoirement dans la page de config multicompany
 			$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-	
+
 			$entityCookie = new DolCookie($cryptkey);
 			$entityCookie->_setCookie($entityCookieName, $entity, $ttl);
 		}
-	
+
 		// Module webcalendar
 		if (! empty($conf->webcal->enabled) && $user->webcal_login != "")
 		{
 			$domain='';
-	
+
 			// Creation du cookie permettant de sauver le login
 			$cookiename='webcalendar_login';
 			if (! isset($_COOKIE[$cookiename]))
@@ -534,7 +526,7 @@ if (! defined('NOLOGIN'))
 				setcookie($cookiename, 'TODO', 0, "/", $domain, 0);
 			}
 		}
-	
+
 		// Module Phenix
 		if (! empty($conf->phenix->enabled) && $user->phenix_login != "" && $conf->phenix->cookie)
 		{
@@ -545,7 +537,7 @@ if (! defined('NOLOGIN'))
 			}
 		}
 	}
-	
+
 
 	// Si user admin, on force droits sur les modules base
 	if ($user->admin)
@@ -557,7 +549,7 @@ if (! defined('NOLOGIN'))
 		$user->rights->user->self->creer=1;
 		$user->rights->user->self->password=1;
 	}
-	
+
 	/*
 	 * Overwrite configs global par configs perso
 	 * ------------------------------------------
@@ -634,7 +626,7 @@ if (! defined('NOLOGIN'))
 	// Si le login n'a pu etre recupere, on est identifie avec un compte qui n'existe pas.
 	// Tentative de hacking ?
 	if (! $user->login) accessforbidden();
-	
+
 	// Check if user is active
 	if ($user->statut < 1)
 	{
@@ -862,7 +854,7 @@ function top_menu($head, $title='', $target='')
 	if (! $result)	// If failed to include, we try with standard
 	{
 		$conf->top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);		
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
 	}
 	$menutop = new MenuTop($db);
 	$menutop->atarget=$target;
