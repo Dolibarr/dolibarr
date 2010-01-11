@@ -25,13 +25,7 @@
  */
 
 
-/**
- *	\brief      Show Dolibarr default login page
- *	\param		langs		Lang object
- *	\param		conf		Conf object
- *	\param		mysoc		Company object
- *	\remarks    You must change HTML code in this page to change design of logon page.
- */
+/*
 function dol_loginfunction_old($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
@@ -305,7 +299,6 @@ function dol_loginfunction_old($langs,$conf,$mysoc)
 		print '<div align="center">'."\n";
 		print '<script type="text/javascript"><!--'."\n";
 		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
-		print '/* '.$conf->global->MAIN_GOOGLE_AD_WIDTH.'x'.$conf->global->MAIN_GOOGLE_AD_HEIGHT.', '.$conf->global->MAIN_GOOGLE_AD_NAME.' */'."\n";
 		print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
 		print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
 		print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
@@ -327,6 +320,7 @@ function dol_loginfunction_old($langs,$conf,$mysoc)
 	// Fin entete html
 	print "\n</body>\n</html>";
 }
+*/
 
 /**
  *	\brief      Show Dolibarr default login page
