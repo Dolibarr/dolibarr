@@ -84,7 +84,7 @@ function report_header($nom,$variante='',$period,$periodlink,$description,$build
 	print '</td></tr>';
 
 	print '<tr>';
-	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
+	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Chercher").'"></td>';
 	print '</tr>';
 
 	print '</table>';
