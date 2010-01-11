@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  *
@@ -20,15 +20,16 @@
  */
 
 /**
-	    \file       htdocs/compta/tva/clients.php
-        \ingroup    tax
-		\brief      Page des societes
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/tva/clients.php
+ *      \ingroup    tax
+ *		\brief      Page des societes
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $langs->load("bills");
@@ -36,30 +37,43 @@ $langs->load("compta");
 $langs->load("companies");
 $langs->load("products");
 
-$year=$_GET["year"];
-if ($year == 0 or $year!=intval(strval($year)))
+// Date range
+$year=$_REQUEST["year"];
+if (empty($year))
 {
-  $year_current = strftime("%Y",time());
-  $year_start = $year_current;
+	$year_current = strftime("%Y",dol_now());
+	$year_start = $year_current;
 } else {
-  $year_current = $year;
-  $year_start = $year;
+	$year_current = $year;
+	$year_start = $year;
+}
+$date_start=dol_mktime($_REQUEST["date_starthour"],$_REQUEST["date_startmin"],$_REQUEST["date_startsec"],$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+$date_end=dol_mktime($_REQUEST["date_endhour"],$_REQUEST["date_endmin"],$_REQUEST["date_endsec"],$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+// Quarter
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:1; // TODO Set current quarter
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,3); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4); $date_end=dol_get_last_day($year_start,6); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7); $date_end=dol_get_last_day($year_start,9); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10); $date_end=dol_get_last_day($year_start,12); }
+}
+else
+{
+	// TODO We define q
+
 }
 
-$min = $_GET["min"];
-if($min == 0 or $min!=floatval(strval($min))){
-	$min = 0.00;
-}else{
-	//keep min
-}
+$min = $_REQUEST["min"];
+if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
+if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -69,26 +83,26 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * View
  */
 
+$html=new Form($db);
+
 llxHeader();
 
 $company_static=new Societe($db);
 
-//print_fiche_titre($langs->trans("VAT"),"");
 
-$fsearch='<form method="get" action="clients.php?year='.$year.'">';
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
+$fsearch.='  <br><input type="hidden" name="year" value="'.$year.'">';
+$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  '.$langs->trans("SalesTurnover").' '.$langs->trans("Minimum").': ';
 $fsearch.='  <input type="text" name="min" value="'.$min.'">';
-$fsearch.='  <input type="submit" class="button" name="submit" value="'.$langs->trans("Chercher").'">';
-$fsearch.='</form>';
 
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByCustomersInDueDebtMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-    $period=$year_start;
-    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
+    //$period=$year_start;
+    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATDue");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
@@ -110,8 +124,9 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByCustomersInInputOutputMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
-    $period=$year_start;
-    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
+    //$period=$year_start;
+    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATIn");
     if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
@@ -146,7 +161,7 @@ print "<td align=\"right\">".$langs->trans("SalesTurnover")." ".$langs->trans("H
 print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
 
-$coll_list = vat_by_thirdparty($db,$year_current,$modetax,'sell');
+$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
 if (is_array($coll_list))
 {
 	$var=true;
@@ -218,7 +233,7 @@ print "</tr>\n";
 
 $company_static=new Societe($db);
 
-$coll_list = vat_by_thirdparty($db,$year_current,$modetax,'buy');
+$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 if (is_array($coll_list))
 {
 	$var=true;

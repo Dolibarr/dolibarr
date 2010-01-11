@@ -18,33 +18,34 @@
  */
 
 /**
-   \file       	htdocs/lib/report.lib.php
-   \brief      	Ensemble de fonctions de base de dolibarr pour reporting sous forme d'include
-   \version		$Id$
-*/
+ *  \file       	htdocs/lib/report.lib.php
+ *  \brief      	Set of functions for reporting
+ *  \version		$Id$
+ */
 
 
 /**
-*    \brief      Affiche la cartouche générique d'un rapport
-*    \param      nom             Valeur pour nom du rapport
-*    \param      variante        Lien optionnel de variante du rapport
-*    \param      period          Periode du reporting
-*    \param      periodlink      Lien pour changer de période
+*    \brief      Show header of a VAT report
+*    \param      nom             Name of report
+*    \param      variante        Link for alternate report
+*    \param      period          Period of report
+*    \param      periodlink      Link to switch period
 *    \param      description     Description
-*    \param      builddate       Date génération 
-*    \param      exportlink      Lien pour export
+*    \param      builddate       Date generation
+*    \param      exportlink      Link for export
 */
 function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink)
 {
 	global $langs;
-	
+
 	print "\n\n<!-- debut cartouche rapport -->\n";
 
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"];
 	$head[$h][1] = $langs->trans("Report");
 	dol_fiche_head($head, $hselected, $societe->nom);
-	
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table width="100%" class="border">';
 
 	// Ligne de titre
@@ -56,13 +57,13 @@ function report_header($nom,$variante='',$period,$periodlink,$description,$build
 	if ($variante) print '</td><td colspan="2">'.$variante;
 	print '</td>';
 	print '</tr>';
-	
+
 	// Ligne de la periode d'analyse du rapport
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	if (! $periodlink) print '<td colspan="3">';
 	else print '<td>';
-	print $period;
+	if ($period) print $period;
 	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
 	print '</td>';
 	print '</tr>';
@@ -81,8 +82,15 @@ function report_header($nom,$variante='',$period,$periodlink,$description,$build
 	print dol_print_date($builddate);
 	if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
 	print '</td></tr>';
-	
+
+	print '<tr>';
+	print '<td colspan="4" align="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></td>';
+	print '</tr>';
+
 	print '</table>';
+
+	print '</form>';
+
 	print '</div>';
 	print "\n<!-- fin cartouche rapport -->\n\n";
 }

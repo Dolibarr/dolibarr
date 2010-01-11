@@ -2262,10 +2262,13 @@ class Form
 	 *		@param	form_name 		Nom du formulaire de provenance. Utilise pour les dates en popup.
 	 *		@param	d				1=Affiche aussi les jours, mois, annees
 	 * 		@param	addnowbutton	Add a button "Now"
+	 * 		@param	nooutput		Do not output zone but return it
 	 */
-	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0)
+	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0)
 	{
 		global $conf,$langs;
+
+		$retstring='';
 
 		if($prefix=='') $prefix='re';
 		if($h == '') $h=0;
@@ -2320,46 +2323,46 @@ class Form
 				if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
 				{
 					// Zone de saisie manuelle de la date
-					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
-					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
-					print '>';
+					$retstring ='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
+					$retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
+					$retstring.='>';
 
 					// Icone calendrier
-					print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
+					$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
 					$base=DOL_URL_ROOT.'/lib/';
-					print ' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+					$retstring.=' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
 
-					print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
-					print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
-					print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
+					$retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
+					$retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
+					$retstring.='<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
 				}
 				else
 				{
 					// Calendrier popup version defaut
 					if ($langs->defaultlang != "")
 					{
-						print '<script type="text/javascript">';
-						print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
-						print '</script>';
+						$retstring.='<script type="text/javascript">';
+						$retstring.='selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
+						$retstring.='</script>';
 					}
-					print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
-					print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="9" value="'.$formated_date.'"';
-					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
-					print '> ';
-					print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
-					print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
-					print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
+					$retstring.='<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
+					$retstring.='<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="9" value="'.$formated_date.'"';
+					$retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
+					$retstring.='> ';
+					$retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
+					$retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
+					$retstring.='<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
 					if ($form_name =="")
 					{
-						print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">';
-						print '<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
-						print '</a>';
+						$retstring.='<a href="javascript:showCalendar(document.forms[3].'.$prefix.')">';
+						$retstring.='<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
+						$retstring.='</a>';
 					}
 					else
 					{
-						print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">';
-						print '<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
-						print '</a>';
+						$retstring.='<a href="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">';
+						$retstring.='<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
+						$retstring.='</a>';
 					}
 				}
 			}
@@ -2370,78 +2373,78 @@ class Form
 			if (! $conf->use_javascript_ajax || ! $conf->use_popup_calendar)
 			{
 				// Jour
-				print '<select class="flat" name="'.$prefix.'day">';
+				$retstring.='<select class="flat" name="'.$prefix.'day">';
 
 				if ($empty || $set_time == -1)
 				{
-					print '<option value="0" selected="true">&nbsp;</option>';
+					$retstring.='<option value="0" selected="true">&nbsp;</option>';
 				}
 
 				for ($day = 1 ; $day <= 31; $day++)
 				{
 					if ($day == $sday)
 					{
-						print "<option value=\"$day\" selected=\"true\">$day";
+						$retstring.="<option value=\"$day\" selected=\"true\">$day";
 					}
 					else
 					{
-						print "<option value=\"$day\">$day";
+						$retstring.="<option value=\"$day\">$day";
 					}
-					print "</option>";
+					$retstring.="</option>";
 				}
 
-				print "</select>";
+				$retstring.="</select>";
 
-				print '<select class="flat" name="'.$prefix.'month">';
+				$retstring.='<select class="flat" name="'.$prefix.'month">';
 				if ($empty || $set_time == -1)
 				{
-					print '<option value="0" selected="true">&nbsp;</option>';
+					$retstring.='<option value="0" selected="true">&nbsp;</option>';
 				}
 
 				// Mois
 				for ($month = 1 ; $month <= 12 ; $month++)
 				{
-					print '<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
-					print dol_print_date(mktime(1,1,1,$month,1,2000),"%b");
-					print "</option>";
+					$retstring.='<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
+					$retstring.=dol_print_date(mktime(1,1,1,$month,1,2000),"%b");
+					$retstring.="</option>";
 				}
-				print "</select>";
+				$retstring.="</select>";
 
 				// Ann�e
 				if ($empty || $set_time == -1)
 				{
-					print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+					$retstring.='<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
 				}
 				else
 				{
-					print '<select class="flat" name="'.$prefix.'year">';
+					$retstring.='<select class="flat" name="'.$prefix.'year">';
 
 					for ($year = $syear - 5; $year < $syear + 10 ; $year++)
 					{
 						if ($year == $syear)
 						{
-							print "<option value=\"$year\" selected=\"true\">$year";
+							$retstring.="<option value=\"$year\" selected=\"true\">".$year;
 						}
 						else
 						{
-							print "<option value=\"$year\">$year";
+							$retstring.="<option value=\"$year\">".$year;
 						}
-						print "</option>";
+						$retstring.="</option>";
 					}
-					print "</select>\n";
+					$retstring.="</select>\n";
 				}
 			}
 		}
 
-		if ($d && $h) print '&nbsp;';
+		if ($d && $h) $retstring.='&nbsp;';
 
 		if ($h)
 		{
 			/*
 			 * Affiche heure en select
 			 */
-			print '<select class="flat" name="'.$prefix.'hour">';
-			if ($empty) print '<option value="-1">&nbsp;</option>';
+			$retstring.='<select class="flat" name="'.$prefix.'hour">';
+			if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
 			for ($hour = 0; $hour < 24; $hour++)
 			{
 				if (strlen($hour) < 2)
@@ -2450,15 +2453,15 @@ class Form
 				}
 				if ($hour == $shour)
 				{
-					print "<option value=\"$hour\" selected=\"true\">$hour</option>";
+					$retstring.="<option value=\"$hour\" selected=\"true\">$hour</option>";
 				}
 				else
 				{
-					print "<option value=\"$hour\">$hour</option>";
+					$retstring.="<option value=\"$hour\">$hour</option>";
 				}
 			}
-			print "</select>";
-			print "H\n";
+			$retstring.="</select>";
+			$retstring.="H\n";
 		}
 
 		if ($m)
@@ -2466,8 +2469,8 @@ class Form
 			/*
 			 * Affiche min en select
 			 */
-			print '<select class="flat" name="'.$prefix.'min">';
-			if ($empty) print '<option value="-1">&nbsp;</option>';
+			$retstring.='<select class="flat" name="'.$prefix.'min">';
+			if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
 			for ($min = 0; $min < 60 ; $min++)
 			{
 				if (strlen($min) < 2)
@@ -2476,15 +2479,15 @@ class Form
 				}
 				if ($min == $smin)
 				{
-					print "<option value=\"$min\" selected=\"true\">$min</option>";
+					$retstring.="<option value=\"$min\" selected=\"true\">$min</option>";
 				}
 				else
 				{
-					print "<option value=\"$min\">$min</option>";
+					$retstring.="<option value=\"$min\">$min</option>";
 				}
 			}
-			print "</select>";
-			print "M\n";
+			$retstring.="</select>";
+			$retstring.="M\n";
 		}
 
 		// Added by Matelli http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
@@ -2519,13 +2522,17 @@ class Form
 			// If reset_scripts is not empty, print the button with the reset_scripts in OnClick
 			if ($reset_scripts)
 			{
-				print '<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Maintenant" onClick="'.$reset_scripts.'">';
-				print $langs->trans("Now");
+				$retstring.='<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Maintenant" onClick="'.$reset_scripts.'">';
+				$retstring.=$langs->trans("Now");
 				//print img_refresh($langs->trans("Now"));
-				print '</button> ';
+				$retstring.='</button> ';
 			}
 		}
 
+		if (! empty($nooutput)) return $retstring;
+
+		print $restring;
+		return;
 	}
 
 	/**

@@ -109,7 +109,7 @@ function dol_get_prev_month($month, $year)
  *	\param		year	Year
  *	\return		array	Next year,month
  */
-function dol_get_next_month ($month, $year)
+function dol_get_next_month($month, $year)
 {
 	if ($month == 12)
 	{
@@ -128,18 +128,18 @@ function dol_get_next_month ($month, $year)
 /**	\brief		Return GMT time with international string format for first day of a month or year
  *	\param		year		Year
  * 	\param		month		Month
- *	\return		Timestamp	Date for first day with format YYYY-MM-DD
+ *	\return		Timestamp	Date for first day
  */
 function dol_get_first_day($year,$month=1)
 {
-	return dol_date('Y-m-d',dol_mktime(12,0,0,$month,1,$year,1),1);
+	return dol_mktime(0,0,0,$month,1,$year,1);
 }
 
 
 /**	\brief		Return GMT time with international string format for last day of a month or year
  *	\param		year		Year
  * 	\param		month		Month
- *	\return		Timestamp	Date for first day with format YYYY-MM-DD
+ *	\return		Timestamp	Date for first day
  */
 function dol_get_last_day($year,$month=12)
 {
@@ -152,12 +152,12 @@ function dol_get_last_day($year,$month=12)
 	{
 		$month += 1;
 	}
-	
+
 	// On se deplace au debut du mois suivant, et on retire un jour
-	$datelim=dol_mktime(12,0,0,$month,1,$year,1);
+	$datelim=dol_mktime(0,0,0,$month,1,$year,1);
 	$datelim -= (3600 * 24);
-	
-	return dol_date('Y-m-d',$datelim,1);
+
+	return $datelim;
 }
 
 
@@ -284,7 +284,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 }
 
 /**
- *	\brief     Fonction retournant le nombre de jour entre deux dates sans les jours f�ri�s (jours ouvr�s)
+ *	\brief     Fonction retournant le nombre de jour entre deux dates sans les jours feries (jours ouvres)
  *	\param	   timestampStart      Timestamp de debut
  *	\param	   timestampEnd        Timestamp de fin
  *	\param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)

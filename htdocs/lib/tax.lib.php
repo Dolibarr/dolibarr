@@ -29,11 +29,13 @@
  * 	\brief		Look for collectable VAT clients in the chosen year
  *	\param		db			Database handle
  *	\param		y			Year
- *	\param		modetax		0 or 1 (option vat on debit)
+ *  \param		date_start	Start date
+ *	\param		date_end	End date
+ * 	\param		modetax		0 or 1 (option vat on debit)
  *	\param		direction	'sell' or 'buy'
  *	\return		array		List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
-function vat_by_thirdparty($db, $y, $modetax, $direction)
+function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction)
 {
 	global $conf;
 
@@ -65,7 +67,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 		{
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
 	        // n'est pas stocke dans la table des payments.
-	        // Seul le module compta expert peut r�soudre ce probl�me.
+	        // Seul le module compta expert peut resoudre ce probleme.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql = 'TODO';
@@ -78,7 +80,8 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicedettable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
 	        $sql.= " GROUP BY s.rowid";
 		}
@@ -89,22 +92,23 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 		{
 			// If vat paid on payments
 	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stock� dans la table des payments.
-	        // Seul le module compta expert peut r�soudre ce probl�me.
+	        // n'est pas stocke dans la table des payments.
+	        // Seul le module compta expert peut resoudre ce probleme.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
 			$sql = 'TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
-	        // Tva sur factures pay�s (should be on payment)
+	        // Tva sur factures payes (should be on payment)
 /*	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
 			$sql.= " sum(fd.total_ht) as amount, sum(".$total_tva.") as tva,";
 			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (2)";	// Paid (partially or completely)
-			$sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+			if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
 			$sql.= " GROUP BY s.rowid";
 */
@@ -143,13 +147,15 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
  * 				This function also accounts recurrent invoices
  * 	\param		db			Database handler object
  * 	\param		y			Year
- *	\param		q			Period. If 1-4, it's year quarter.
- *	\param		modetax		0 or 1 (option vat on debit)
+ * 	\param		q			Quarter
+ *  \param		date_start	Start date
+ *	\param		date_end	End date
+ * 	\param		modetax		0 or 1 (option vat on debit)
  *	\param		direction	'sell' (customer invoice) or 'buy' (supplier invoices)
  * 	\param		m			Month
  * 	\return		array		List of quarters with vat
  */
-function vat_by_quarter($db, $y, $q=0, $modetax, $direction, $m=0)
+function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
 {
 	global $conf;
 
@@ -207,9 +213,10 @@ function vat_by_quarter($db, $y, $q=0, $modetax, $direction, $m=0)
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
 	        $sql.= " AND f.rowid = d.".$fk_facture;
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
 	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
+	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND (d.product_type = 0";								// Limit to products
 	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
@@ -247,12 +254,14 @@ function vat_by_quarter($db, $y, $q=0, $modetax, $direction, $m=0)
 //	        $sql.= " AND pa.rowid = pf.".$fk_payment;
 //	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
 //	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
 	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
+	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND (d.product_type = 0";								// Limit to products
 	        $sql.= " AND d.date_start is null AND d.date_end IS NULL)";		// enhance detection of service
 			$sql.= " ORDER BY d.rowid, d.".$fk_facture;
+	        //print $sql;
 		}
     }
 
@@ -341,9 +350,10 @@ function vat_by_quarter($db, $y, $q=0, $modetax, $direction, $m=0)
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or paid (partially or completely)
 	        $sql.= " AND f.rowid = d.".$fk_facture;
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
+	        if ($y) $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
 	        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
 	        if ($m) $sql.= " AND (date_format(f.datef,'%m') > ".($m-1)." AND date_format(f.datef,'%m') <= ".($m).")";
+	        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	        $sql.= " AND (d.product_type = 1";								// Limit to services
 	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
 	        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
@@ -379,9 +389,10 @@ function vat_by_quarter($db, $y, $q=0, $modetax, $direction, $m=0)
 	        $sql.= " AND f.rowid = d.".$fk_facture;;
 	        $sql.= " AND pf.".$fk_facture2." = f.rowid";
 	        $sql.= " AND pa.rowid = pf.".$fk_payment;
-	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
+	        if ($y) $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
 	        if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
 	        if ($m) $sql.= " AND (date_format(pa.datep,'%m') > ".($m-1)." AND date_format(pa.datep,'%m') <= ".($m).")";
+	        if ($date_start && $date_end) $sql.= " AND pa.datep >= ".$db->idate($date_start)." AND pa.datep <= ".$db->idate($date_end);
 	        $sql.= " AND (d.product_type = 1";								// Limit to services
 	        $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";		// enhance detection of service
 			$sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";

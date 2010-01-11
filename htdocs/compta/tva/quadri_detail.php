@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  *
@@ -20,16 +20,17 @@
  */
 
 /**
-	    \file       htdocs/compta/tva/quadri_detail.php
-        \ingroup    tax
-		\brief      Trimestrial page - detailed version
-		\version    $Id$
-		\todo 		Deal with recurrent invoices as well
-*/
+ *	    \file       htdocs/compta/tva/quadri_detail.php
+ *      \ingroup    tax
+ *		\brief      Trimestrial page - detailed version
+ *		\version    $Id$
+ *		\todo 		Deal with recurrent invoices as well
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -42,24 +43,44 @@ $langs->load("compta");
 $langs->load("companies");
 $langs->load("products");
 
-$year=$_GET["year"];
+// Date range
+$year=$_REQUEST["year"];
 if (empty($year))
 {
-	$year_current = strftime("%Y",time());
+	$year_current = strftime("%Y",dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
 	$year_start = $year;
 }
-$q=(! empty($_GET["q"]))?$_GET["q"]:1;
+$date_start=dol_mktime($_REQUEST["date_starthour"],$_REQUEST["date_startmin"],$_REQUEST["date_startsec"],$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+$date_end=dol_mktime($_REQUEST["date_endhour"],$_REQUEST["date_endmin"],$_REQUEST["date_endsec"],$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+// Quarter
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:1; // TODO Set current quarter
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,3); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4); $date_end=dol_get_last_day($year_start,6); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7); $date_end=dol_get_last_day($year_start,9); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10); $date_end=dol_get_last_day($year_start,12); }
+}
+else
+{
+	// TODO We define q
+
+}
+
+$min = $_REQUEST["min"];
+if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
+if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
+if (empty($modetax)) $modetax=0;
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -71,6 +92,8 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 llxHeader();
 
+$html=new Form($db);
+
 $company_static=new Societe($db);
 $invoice_customer=new Facture($db);
 $invoice_supplier=new FactureFournisseur($db);
@@ -80,19 +103,25 @@ $paymentfourn_static=new PaiementFourn($db);
 
 //print_fiche_titre($langs->trans("VAT"),"");
 
+$fsearch.='  <br><input type="hidden" name="year" value="'.$year.'">';
+$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
+//$fsearch.='  '.$langs->trans("SalesTurnover").' '.$langs->trans("Minimum").': ';
+//$fsearch.='  <input type="text" name="min" value="'.$min.'">';
+
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=0">','</a>').')';
-    $period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
-	$prevyear=$year_start; $prevquarter=$q;
+    //$period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
+    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }
 	$nextyear=$year_start; $nextquarter=$q;
 	if ($nextquarter < 4) $nextquarter++;
 	else { $nextquarter=1; $nextyear++; }
-	$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
+	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATDue");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
@@ -114,14 +143,15 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=1">','</a>').')';
-    $period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
-	$prevyear=$year_start; $prevquarter=$q;
+    //$period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
+    $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+    $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }
 	$nextyear=$year_start; $nextquarter=$q;
 	if ($nextquarter < 4) $nextquarter++;
 	else { $nextquarter=1; $nextyear++; }
-	$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
+	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATIn");
     if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
@@ -152,8 +182,8 @@ $subtotal = 0;
 $i=0;
 
 // Load arrays of datas
-$x_coll = vat_by_quarter($db, $y, $q, $modetax, 'sell');
-$x_paye = vat_by_quarter($db, $y, $q, $modetax, 'buy');
+$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 if (! is_array($x_coll) || ! is_array($x_paye))
 {
@@ -520,17 +550,18 @@ else
 
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
-	print '<tr>';
-	print '<td colspan="'.($span-1).'"></td><td align="right" colspan="2">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").' '.$q.':</td>';
+	// Total to pay
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" colspan="'.($span-1).'"></td><td class="liste_titre" align="right" colspan="2">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").' '.$q.':</td>';
 	print '</tr>'."\n";
 
 	$diff = $x_coll_sum - $x_paye_sum;
-	print "<tr>";
-	print '<td colspan="'.$span.'"></td>';
-	print '<td nowrap align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
+	print '<tr class="list_total">';
+	print '<td class="liste_total" colspan="'.$span.'"></td>';
+	print '<td class="liste_total" nowrap="nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";
 
-	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>'."\n";
+	//print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>'."\n";
 
 	$i++;
 }
