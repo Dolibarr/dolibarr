@@ -512,8 +512,8 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *      \brief      Cree un contrat vierge en base
-	 *      \param      user        Utilisateur qui cree
+	 *      \brief      Create a contract into database
+	 *      \param      user        User that create
 	 *      \param      langs       Environnement langue de l'utilisateur
 	 *      \param      conf        Environnement de configuration lors de l'operation
 	 *      \return     int         <0 si erreur, id contrat cre sinon
@@ -540,13 +540,14 @@ class Contrat extends CommonObject
 		$this->db->begin();
 
 		// Insert contract
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat";
-		$sql.= ", fk_commercial_signature, fk_commercial_suivi";
-		$sql.= " , ref)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
+		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
+		$sql.= " ref)";
 		$sql.= " VALUES (".$this->db->idate(mktime()).",".$this->socid.",".$user->id;
 		$sql.= ",".$this->db->idate($this->date_contrat);
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
+		$sql.= ",".($this->fk_projet>0?$this->fk_projet:"NULL");
 		$sql .= ", " . (strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
 		$sql.= ")";
 		$resql=$this->db->query($sql);

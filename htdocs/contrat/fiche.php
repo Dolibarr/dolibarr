@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("contracts");
 $langs->load("orders");
@@ -113,7 +114,8 @@ if ($_POST["mode"]=='libre')
 	}
 }
 
-// Param si updateligne
+// Param dates
+$date_contrat='';
 $date_start_update='';
 $date_end_update='';
 $date_start_real_update='';
@@ -134,11 +136,13 @@ if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && 
 {
     $date_end_real_update=dol_mktime($_POST["date_end_real_updatehour"], $_POST["date_end_real_updatemin"], 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
 }
+if ($_POST["remonth"] && $_POST["reday"] && $_POST["reyear"])
+{
+	$datecontrat = dol_mktime($_POST["rehour"], $_POST["remin"], 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+}
 
 if ($_POST["action"] == 'add')
 {
-    $datecontrat = dol_mktime($_POST["rehour"], $_POST["remin"], 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-
     $contrat = new Contrat($db);
 
     $contrat->socid         = $_POST["socid"];
@@ -148,7 +152,7 @@ if ($_POST["action"] == 'add')
     $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
 
     $contrat->note           = trim($_POST["note"]);
-    $contrat->projetid       = trim($_POST["projetid"]);
+    $contrat->fk_projet      = trim($_POST["projetid"]);
     $contrat->remise_percent = trim($_POST["remise_percent"]);
     $contrat->ref            = trim($_POST["ref"]);
 
@@ -473,7 +477,7 @@ if ($_GET["action"] == 'create')
 
 			// Ref
 			print '<tr><td>'.$langs->trans("Ref").'</td>';
-			print '<td><input type="text" maxlength="30" name="ref" size="20"></td></tr>';
+			print '<td><input type="text" maxlength="30" name="ref" size="20" value="'.$_REQUEST["ref"].'"></td></tr>';
 
             // Customer
             print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
@@ -490,34 +494,39 @@ if ($_GET["action"] == 'create')
 			print '</td></tr>';
 
             // Commercial suivi
-            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
-			print $form->select_users('','commercial_suivi_id',1,'');
+            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'*</td><td>';
+			print $form->select_users($_REQUEST["commercial_suivi_id"],'commercial_suivi_id',1,'');
             print '</td></tr>';
 
             // Commercial signature
-            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</td><td>';
-			print $form->select_users('','commercial_signature_id',1,'');
+            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'*</td><td>';
+			print $form->select_users($_REQUEST["commercial_signature_id"],'commercial_signature_id',1,'');
             print '</td></tr>';
 
-            print '<tr><td>'.$langs->trans("Date").'</td><td>';
-            $form->select_date('','',0,0,'',"contrat");
+            print '<tr><td>'.$langs->trans("Date").'*</td><td>';
+            $form->select_date($datecontrat,'',0,0,'',"contrat");
             print "</td></tr>";
 
             if ($conf->projet->enabled)
             {
                 print '<tr><td>'.$langs->trans("Project").'</td><td>';
-                $proj = new Project($db);
-                $form->select_array("projetid",$proj->liste_array($soc->id),0,1);
+                select_projects($soc->id,$_REQUEST["projetid"],"projetid");
+                //$proj = new Project($db);
+                //$form->select_array("projetid",$proj->liste_array($soc->id),$_REQUEST["projetid"],1);
                 print "</td></tr>";
             }
 
             print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
-            print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
+            print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+            print $_REQUEST["note_public"];
+            print '</textarea></td></tr>';
 
 			if (! $user->societe_id)
 			{
 	            print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
-	            print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'"></textarea></td></tr>';
+	            print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+	            print $_REQUEST["note"];
+	            print '</textarea></td></tr>';
 			}
 
             print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
