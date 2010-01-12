@@ -30,6 +30,7 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
 $filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["filtert"])?$_REQUEST["filtert"]:'');
@@ -162,7 +163,7 @@ $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 print_fiche_titre($title,$nav);
 
 // Filters
-if ($canedit)
+if ($canedit || $conf->projet->enabled)
 {
 	print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -174,37 +175,47 @@ if ($canedit)
 	print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
 	print '<input type="hidden" name="action" value="'.$_REQUEST['action'].'">';
 	print '<table class="border" width="100%">';
-	print '<tr>';
-	print '<td nowrap="nowrap">';
-	//print '<input type="checkbox" name="userasked" '.($canedit?'':'disabled="true" ').($filtera?'checked="true"':'').'> ';
-	print $langs->trans("ActionsAskedBy");
-	print '</td><td nowrap="nowrap">';
-	print $form->select_users($filtera,'userasked',1,'',!$canedit);
-	print '</td>';
-	print '<td rowspan="3" align="center" valign="middle" nowrap="nowrap">';
-	print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
-	print '<br>';
-	print '<br>';
-	print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
-	print '</td>';
-	print '</tr>';
+	if ($canedit)
+	{
+		$rowspan=3;
+		if ($conf->projet->enabled) $rowspan++;
+		print '<tr>';
+		print '<td nowrap="nowrap">';
+		print $langs->trans("ActionsAskedBy");
+		print '</td><td nowrap="nowrap">';
+		print $form->select_users($filtera,'userasked',1,'',!$canedit);
+		print '</td>';
+		print '<td rowspan="'.$rowspan.'" align="center" valign="middle" nowrap="nowrap">';
+		print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
+		print '<br>';
+		print '<br>';
+		print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+		print '</td>';
+		print '</tr>';
 
-	print '<tr>';
-	print '<td nowrap="nowrap">';
-	//print '<input type="checkbox" name="usertodo" '.($canedit?'':'disabled="true" ').($filtert?'checked="true"':'').'> ';
-	print $langs->trans("ActionsToDoBy");
-	print '</td><td nowrap="nowrap">';
-	print $form->select_users($filtert,'usertodo',1,'',!$canedit);
-	print '</td></tr>';
+		print '<tr>';
+		print '<td nowrap="nowrap">';
+		print $langs->trans("ActionsToDoBy");
+		print '</td><td nowrap="nowrap">';
+		print $form->select_users($filtert,'usertodo',1,'',!$canedit);
+		print '</td></tr>';
 
-	print '<tr>';
-	print '<td nowrap="nowrap">';
-	//print '<input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
-	print $langs->trans("ActionsDoneBy");
-	print '</td><td nowrap="nowrap">';
-	print $form->select_users($filterd,'userdone',1,'',!$canedit);
-	print '</td></tr>';
-
+		print '<tr>';
+		print '<td nowrap="nowrap">';
+		print $langs->trans("ActionsDoneBy");
+		print '</td><td nowrap="nowrap">';
+		print $form->select_users($filterd,'userdone',1,'',!$canedit);
+		print '</td></tr>';
+	}
+	if ($conf->projet->enabled)
+	{
+		print '<tr>';
+		print '<td nowrap="nowrap">';
+		print $langs->trans("Project");
+		print '</td><td nowrap="nowrap">';
+		select_projects($socid,$_REQUEST["projectid"],'projectid');
+		print '</td></tr>';
+	}
 	print '</table>';
 	print '</form><br>';
 }
