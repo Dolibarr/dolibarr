@@ -23,11 +23,10 @@
  * 		\version	$Id$
  */
 
-require("../../master.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
 
-// Define lang object automatically using browser language
-$langs->setDefaultLang('auto');
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
 // Security check
 if (empty($conf->don->enabled)) accessforbidden('',1,1,1);

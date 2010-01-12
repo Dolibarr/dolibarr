@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,13 @@
  *		\version    $Id$
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
 
-require("../../master.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 
+// Security check
+if (! $conf->agenda->enabled) accessforbidden('',1,1,1);
 
 $mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
 $leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
@@ -50,10 +51,6 @@ if (! empty($_GET["logind"]))   $filters['logind']=$_GET["logind"];
 // C'est un wrapper, donc header vierge
 function llxHeader() { print '<html><title>Export agenda cal</title><body>'; }
 function llxFooter() { print '</body></html>'; }
-
-// Security check
-if (! $conf->agenda->enabled)
-	accessforbidden();
 
 
 // Check config

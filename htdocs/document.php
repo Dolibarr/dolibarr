@@ -36,7 +36,7 @@ $original_file = isset($_GET["file"])?$_GET["file"]:'';
 $modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
 $urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
-// Pour autre que bittorrent, on charge environnement + info issus de logon comme le user
+// Pour autre que bittorrent, on charge environnement + info issus de logon (comme le user)
 if (($modulepart == 'bittorrent') && ! defined("NOLOGIN")) define("NOLOGIN",1);
 
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');

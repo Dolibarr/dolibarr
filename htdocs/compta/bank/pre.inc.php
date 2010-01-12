@@ -44,7 +44,7 @@ function llxHeader($head = "")
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND clos = 0";
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -78,11 +78,6 @@ function llxHeader($head = "")
 	if ($user->rights->banque->transfer)
 	{
 		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
-	}
-
-	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)
-	{
-		$menu->add(DOL_URL_ROOT."/compta/bank/bplc.php","Transactions BPLC");
 	}
 
 	// Gestion cheques

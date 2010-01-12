@@ -4,13 +4,15 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.8 compared to 2.7 *****
 
 For users:
+- New: task #9935: Can edit accountancy code.
 - New: Add an option to make users email reuired.
 - New: Module notification can send mail on order or proposal validation.
 - New: Can use any antivirus on file upload.
 - New: A customer can also be a prospect.
-- New: task #9802 : Can link an action to a project.
-- New: Initial sold can be conciliated.
-- New: task #9935: Can edit accountancy code.
+- New: task #9802 : Can link an action to a project and use project to 
+       filter agenda.
+- New: Project can be set on contract creation.
+- New: Initial sold can be conciliated on bank module.
 - New: Add a default errors-to email for emailing module.
 - New: Can filter on user on stock movement list.
 - New: When creating a third party from a member, it is set as a new
@@ -34,6 +36,7 @@ For developers:
 - Qual: Reorganize /dev directory.
 - Qual: Change the way items are linked together.
 - New: Modules can add their own tab on projects cards.
+- Qual: The login page now use a template in /core/template/login.tpl.php.
 
 
 ***** ChangeLog for 2.7.1 compared to 2.7 *****

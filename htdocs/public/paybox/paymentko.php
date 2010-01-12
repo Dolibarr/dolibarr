@@ -25,12 +25,11 @@
  *		\version    $Id$
  */
 
-require("../../master.inc.php");
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
+
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-
-$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
-$langs->setDefaultLang($langcode);
 
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);

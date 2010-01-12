@@ -25,14 +25,13 @@
  *	\version    $Id$
  */
 
-require("../../master.inc.php");
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
+
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
-
-// Define lang object automatically using browser language
-$langs->setDefaultLang('auto');
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);

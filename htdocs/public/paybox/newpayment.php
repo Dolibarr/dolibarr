@@ -26,12 +26,16 @@
  *		\version    $Id$
  */
 
-// Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
-session_name($sessionname);
-session_start();
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
+
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+
+// Security check
+if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
 
 // Creation d'un jeton contre les failles CSRF
 $token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
@@ -47,18 +51,6 @@ if (isset($_POST['token']) && isset($_SESSION['token']))
 		unset($_POST);
 	}
 }
-
-require("../../master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-
-$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
-$langs->setDefaultLang($langcode);
-
-// Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
 
 $langs->load("main");
 $langs->load("other");

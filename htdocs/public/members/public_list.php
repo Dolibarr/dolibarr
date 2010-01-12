@@ -25,10 +25,9 @@
  *  \version    $Id$
  */
 
-require("../../master.inc.php");
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
 
-// Define lang object automatically using browser language
-$langs->setDefaultLang('auto');
+require("../../main.inc.php");
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);

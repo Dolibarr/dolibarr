@@ -25,10 +25,9 @@
  *		\version    $Id$
  */
 
-require("../../master.inc.php");
+define("NOLOGIN",1);	// This means this output page does not require to be logged.
 
-$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
-$langs->setDefaultLang($langcode);
+require("../../main.inc.php");
 
 $langs->load("main");
 $langs->load("other");
