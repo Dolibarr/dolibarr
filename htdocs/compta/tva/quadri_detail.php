@@ -103,7 +103,8 @@ $paymentfourn_static=new PaiementFourn($db);
 
 //print_fiche_titre($langs->trans("VAT"),"");
 
-$fsearch.='  <br><input type="hidden" name="year" value="'.$year.'">';
+//$fsearch.='<br>';
+$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 //$fsearch.='  '.$langs->trans("SalesTurnover").' '.$langs->trans("Minimum").': ';
 //$fsearch.='  <input type="text" name="min" value="'.$min.'">';
@@ -112,7 +113,7 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
-    $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=0">','</a>').')';
+    //$nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=0">','</a>').')';
     //$period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
     $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
@@ -123,6 +124,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	else { $nextquarter=1; $nextyear++; }
 	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesVATDue");
+    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
@@ -142,7 +144,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
-    $nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=1">','</a>').')';
+    //$nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=1">','</a>').')';
     //$period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
     $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
@@ -155,7 +157,8 @@ if ($modetax==0) 	// Invoice for goods, payment for services
     $description=$langs->trans("RulesVATIn");
     if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
-    $builddate=time();
+    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+	$builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");

@@ -4,6 +4,7 @@ Accountancy=Compta
 AccountancyCard=Fiche Compta
 Treasury=Tréso
 MenuFinancial=Compta/Tréso
+TaxModuleSetupToModifyRules=Aller dans la <a href="%s">configuration du module</a> pour modifier les règles de calcul
 OptionMode=Option de tenue de comptabilité
 OptionModeTrue=Option Recettes-Dépenses
 OptionModeVirtual=Option Créances-Dettes

@@ -4,6 +4,7 @@ Accountancy=Accountancy
 AccountancyCard=Accountancy card
 Treasury=Treasury
 MenuFinancial=Financial
+TaxModuleSetupToModifyRules=Go to <a href="%s">module setup</a> to modify rules for calculation
 OptionMode=Option for accountancy
 OptionModeTrue=Option Input-Output
 OptionModeVirtual=Option Credits-Debits
