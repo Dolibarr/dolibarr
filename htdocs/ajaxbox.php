@@ -34,7 +34,7 @@ if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Retrieve the entity in the cookie
-$entityCookieName = "DOLENTITYID_dolibarr";
+$entityCookieName = "DOLENTITYID_".md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$entityCookieName];
 
 require('master.inc.php');

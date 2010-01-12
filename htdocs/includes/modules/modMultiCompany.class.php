@@ -91,7 +91,7 @@ class modMultiCompany extends DolibarrModules
 		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
 		$this->const=array(1=>array('MAIN_MODULE_MULTICOMPANY_NEEDSMARTY',"chaine",1,'Need smarty',0,0));
-		
+
 		// Array to add new pages in new tabs
 		//$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
 		// where entity can be
@@ -204,7 +204,7 @@ class modMultiCompany extends DolibarrModules
 	function init()
 	{
 		$sql = array();
-		
+
 		return $this->_init($sql);
 	}
 
@@ -230,7 +230,7 @@ class modMultiCompany extends DolibarrModules
 	function destroy_cookie()
 	{
 		// Destroy entity cookie
-		$entityCookieName = "DOLENTITYID_dolibarr";
+		$entityCookieName = "DOLENTITYID_".md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 		setcookie($entityCookieName, '', 1, "/");
 	}
 }
