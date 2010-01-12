@@ -238,6 +238,7 @@ $sql.= ', '.MAIN_DB_PREFIX.'user as u';
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND u.entity in (0,'.$conf->entity.')';
+if ($_REQUEST["projectid"]) $sql.=" AND a.fk_project=".addslashes($_REQUEST["projectid"]);
 if ($_GET["action"] == 'show_day')
 {
 	$sql.= ' AND (';

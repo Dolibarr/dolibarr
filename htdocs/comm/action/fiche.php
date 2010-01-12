@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -688,6 +688,7 @@ if ($_GET["id"])
 		print $html->select_societes($act->societe->id,'socid',1,1);
 		print '</td>';
 
+		// Contact
 		print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
 		$html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
 		print '</td></tr>';
@@ -714,12 +715,12 @@ if ($_GET["id"])
 		print $act->author->getNomUrl(1);
 		print '</td></tr>';
 
-		// Affecte a
+		// Affected to
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		$html->select_users($act->usertodo->id,'affectedto',1);
 		print '</td></tr>';
 
-		// Realise par
+		// Realised by
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 		$html->select_users($act->userdone->id,'doneby',1);
 		print '</td></tr>';

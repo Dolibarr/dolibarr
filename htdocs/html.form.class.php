@@ -2263,6 +2263,7 @@ class Form
 	 *		@param	d				1=Affiche aussi les jours, mois, annees
 	 * 		@param	addnowbutton	Add a button "Now"
 	 * 		@param	nooutput		Do not output zone but return it
+	 * 		@return	nothing or string if nooutput is 1
 	 */
 	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0)
 	{
@@ -2323,7 +2324,7 @@ class Form
 				if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
 				{
 					// Zone de saisie manuelle de la date
-					$retstring ='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
+					$retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
 					$retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
 					$retstring.='>';
 
@@ -2531,7 +2532,7 @@ class Form
 
 		if (! empty($nooutput)) return $retstring;
 
-		print $restring;
+		print $retstring;
 		return;
 	}
 
