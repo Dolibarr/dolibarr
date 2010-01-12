@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,12 +101,19 @@ if (sizeof($shmoparray) > 0)
 {
 	$var=true;
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td><td colspan="2">'.$langs->trans("NbOfEntries").'</td></tr>'."\n";
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td>';
+	print '<td>'.$langs->trans("NbOfEntries").'</td>';
+	print '<td align="right">'.$langs->trans("Address").'</td>';
+	print '</tr>'."\n";
 
 	foreach($shmoparray as $key => $val)
 	{
 		$var=!$var;
-		print "<tr ".$bc[$var]."><td width=\"300\">".$key.'</td><td colspan="2">'.sizeof($val)."</td></tr>\n";
+		print "<tr ".$bc[$var]."><td width=\"300\">".$key.'</td>';
+		print '<td>'.sizeof($val)."</td>";
+		print '<td align="right">'.dol_getshmopaddress($key).'</td>';
+		print "</tr>\n";
 	}
 
 	print '</table>';

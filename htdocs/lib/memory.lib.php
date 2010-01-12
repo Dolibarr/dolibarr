@@ -34,6 +34,18 @@ $shmoffset=100;
 
 
 
+
+/**	\brief      Return shared memory address used to store dataset with key memoryid
+ *  \param      $memoryid		Memory id of shared area
+ * 	\return		int				<0 if KO, Memoy address of shared memory for key
+ */
+function dol_getshmopaddress($memoryid)
+{
+	global $shmkeys,$shmoffset;
+	if (empty($shmkeys[$memoryid])) return 0;
+	return $shmkeys[$memoryid]+$shmoffset;
+}
+
 /**	\brief      Return list of contents of all memory area shared
  * 	\return		int				0=Nothing is done, <0 if KO, >0 if OK
  */
@@ -59,7 +71,7 @@ function dol_getshmop($memoryid)
 	global $shmkeys,$shmoffset;
 
 	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_open")) return 0;
-	$shmkey=($shmkeys[$memoryid]+$shmoffset);
+	$shmkey=dol_getshmopaddress($memoryid);;
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
 	$handle=@shmop_open($shmkey,'a',0,0);
 	if ($handle)
@@ -87,7 +99,7 @@ function dol_setshmop($memoryid,$data)
 
 	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
 	if (empty($shmkeys[$memoryid]) || ! function_exists("shmop_write")) return 0;
-	$shmkey=$shmkeys[$memoryid]+$shmoffset;
+	$shmkey=dol_getshmopaddress($memoryid);
 	$newdata=serialize($data);
 	$size=strlen($newdata);
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";

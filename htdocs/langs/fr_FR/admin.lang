@@ -263,6 +263,7 @@ ModuleDisabled=Module désactivé
 ModuleDisabledSoNoEvent=Module désactivé donc évênement jamais créé
 ConfirmPurge=Etes vous sur de vouloir réaliser cette purge ?<br>Ceci effacera définitivement toutes vos données fichier (espace GED, pièces jointes, etc...). 
 MinLength=Longueur minimale
+LanguageFilesCachedIntoShmopSharedMemory=Fichiers .lang en mémoire partagée
 
 # Modules = undefined
 Module0Name = Utilisateurs & groupes
@@ -310,7 +311,7 @@ Module58Desc = Intégration de ClickToDial
 Module59Name = Bookmark4u
 Module59Desc = Ajoute fonction pour générer un compte Bookmark4u depuis un compte Dolibarr
 Module70Name = Interventions
-Module70Desc = Gestion des interventions
+Module70Desc = Gestion des interventions chez les tiers
 Module75Name = Notes de frais et déplacements
 Module75Desc = Gestion des notes de frais et déplacements
 Module80Name = Expéditions
