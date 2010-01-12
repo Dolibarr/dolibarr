@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2008      Chiptronik
+/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,24 +18,25 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/livraison/pdf/pdf_typhon.modules.php
- *	\ingroup    livraison
- *	\brief      Fichier de la classe permettant de generer les bons de livraison au modele Typhon
- *	\author	    Laurent Destailleur
+ *	\file       htdocs/includes/modules/project/pdf/pdf_baleine.modules.php
+ *	\ingroup    project
+ *	\brief      Fichier de la classe permettant de generer les projets au modele Baleine
+ *	\author	    Regis Houssin
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
-require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
+require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- *	\class      pdf_typhon
- *	\brief      Classe permettant de generer les bons de livraison au modele Typho
+ *	\class      pdf_baleine
+ *	\brief      Classe permettant de generer les projets au modele Baleine
  */
 
-class pdf_typhon extends ModelePDFDeliveryOrder
+class pdf_baleine extends ModelePDFProjects
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -46,18 +44,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *		\brief  Constructor
 	 *		\param	db		Database handler
 	 */
-	function pdf_typhon($db)
+	function pdf_baleine($db)
 	{
 		global $conf,$langs,$mysoc;
 
 		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("sendings");
+		$langs->load("projects");
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "typhon";
-		$this->description = $langs->trans("DocumentModelTyphon");
+		$this->name = "baleine";
+		$this->description = $langs->trans("DocumentModelBaleine");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -103,8 +100,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *	\brief      Fonction generant le bon de livraison sur le disque
-	 *	\param	    delivery		Object livraison a generer
+	 *	\brief      Fonction generant le projet sur le disque
+	 *	\param	    delivery		Object project a generer
 	 *	\param		outputlangs		Lang output object
 	 *	\return	    int         	1 if OK, <=0 if KO
 	 */
@@ -120,18 +117,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("deliveries");
-		$outputlangs->load("sendings");
+		$outputlangs->load("projects");
 
-		if ($conf->expedition->dir_output."/receipt")
+		if ($conf->projet->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Livraison($this->db);
+				$object = new Project($this->db);
 				$object->fetch($id);
 
 				if ($result < 0)
@@ -143,7 +137,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$nblignes = sizeof($object->lignes);
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->expedition->dir_output."/receipt";
+			$dir = $conf->projet->dir_output;
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".pdf";
 
@@ -172,43 +166,23 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-
 				// Complete object by loading several other informations
-				$expedition=new Expedition($this->db);
-				$result = $expedition->fetch($object->expedition_id);
-
-				$commande = new Commande($this->db);
-				if ($expedition->origin == 'commande')
-				{
-					$commande->fetch($expedition->origin_id);
-				}
-				$object->commande=$commande;
-
+				$task = new Task($this->db);
+				$result = $task->fetch($object->id);
 
 				$pdf->Open();
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
+				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
-
-				/*
-				 // Positionne $this->atleastonediscount si on a au moins une remise
-				 for ($i = 0 ; $i < $nblignes ; $i++)
-				 {
-				 if ($object->lignes[$i]->remise_percent)
-				 {
-				 $this->atleastonediscount++;
-				 }
-				 }
-				 */
 
 				// New page
 				$pdf->AddPage();
@@ -265,37 +239,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					/*
-					 // TVA
-					 $pdf->SetXY ($this->posxtva, $curY);
-					 $pdf->MultiCell(10, 4, ($object->lignes[$i]->tva_tx < 0 ? '*':'').abs($object->lignes[$i]->tva_tx), 0, 'R');
-
-					 // Prix unitaire HT avant remise
-					 $pdf->SetXY ($this->posxup, $curY);
-					 $pdf->MultiCell(18, 4, price($object->lignes[$i]->subprice), 0, 'R', 0);
-					 */
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'R');
-					/*
-					 // Remise sur ligne
-					 $pdf->SetXY ($this->posxdiscount, $curY);
-					 if ($object->lignes[$i]->remise_percent)
-					 {
-					 $pdf->MultiCell(14, 3, $object->lignes[$i]->remise_percent."%", 0, 'R');
-					 }
-
-					 // Total HT ligne
-					 $pdf->SetXY ($this->postotalht, $curY);
-					 $total = price($object->lignes[$i]->price * $object->lignes[$i]->qty);
-					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
-
-					 // Collecte des totaux par valeur de tva
-					 // dans le tableau tva["taux"]=total_tva
-					 $tvaligne=$object->lignes[$i]->price * $object->lignes[$i]->qty;
-					 if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-					 $this->tva[ (string)$object->lignes[$i]->tva_tx ] += $tvaligne;
-					 */
+					
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
@@ -357,43 +304,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				{
 					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
-				}
-				
-			$requeteTest = "SELECT ref, label, co.qty-li.qty";
-				$requeteTest = $requeteTest." FROM llx_commandedet AS co";
-				//$requeteTest = $requeteTest." INNER JOIN llx_element_element AS el ON co.fk_commande = el.fk_source";				
-				$requeteTest = $requeteTest." INNER JOIN llx_livraisondet AS li";
-				$requeteTest = $requeteTest." ON li.fk_origin_line = co.rowid";
-				$requeteTest = $requeteTest." INNER JOIN llx_product AS pr";	
-				$requeteTest = $requeteTest." ON pr.rowid = li.fk_product";			
-				$requeteTest = $requeteTest." WHERE fk_livraison =".$object->id;
-
-				$resultaTest = $this->db->query($requeteTest);
-				
-				if ($this->db->num_rows($resultaTest)) {
-			
-				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','',9);
-				$pdf->SetY(-65);
-				
-    			$w=array(40,100,50);
-				$header=array('Reference','Libelle','Quantite');
-    			
-    			//En-tÃªte
-    			for($i=0;$i<count($header);$i++)
-        			$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
-			    $pdf->Ln();
-			    
-			    //DonnÃ©es
-			    while($ligneTest = $this->db->fetch_array($resultaTest))
-				{
-					if ($ligneTest[2] > 0)
-					{
-					$pdf->Cell($w[0], 6, $ligneTest[0], 1, 0, 'L');
-					$pdf->Cell($w[1], 6, $ligneTest[1], 1, 0, 'L');
-					$pdf->Cell($w[2], 6, $ligneTest[2], 1, 1, 'R');
-					}
-			    }
 				}
 
 

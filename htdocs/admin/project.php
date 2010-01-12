@@ -26,6 +26,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/task.class.php');
 
 $langs->load("admin");
 $langs->load("other");
@@ -94,7 +95,7 @@ if ($_GET["action"] == 'del')
 {
 	$type='project';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$_GET["value"];
+	$sql.= " WHERE nom = '".$_GET["value"]."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 	if ($db->query($sql))
@@ -115,7 +116,7 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='project';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
@@ -177,7 +178,7 @@ if ($handle)
 
 	while (($file = readdir($handle))!==false)
 	{
-		if (substr($file, 0, 25) == 'mod_project_' && substr($file, strlen($file)-3, 3) == 'php')
+		if (substr($file, 0, 12) == 'mod_project_' && substr($file, strlen($file)-3, 3) == 'php')
 		{
 			$file = substr($file, 0, strlen($file)-4);
 

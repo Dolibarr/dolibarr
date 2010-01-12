@@ -193,7 +193,7 @@ class Project extends CommonObject
 
 				$this->db->free($resql);
 
-				return 0;
+				return 1;
 			}
 			else
 			{
@@ -768,11 +768,13 @@ class Project extends CommonObject
 
 		// Charge tableau des id de societe socids
 		$socids = array();
+		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE client IN (1, 3)";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -789,10 +791,12 @@ class Project extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
+		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
+		
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -814,33 +818,18 @@ class Project extends CommonObject
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
 		$this->date = time();
-		$this->fin_validite = $this->date+3600*24*30;
-		$this->cond_reglement_code = 'RECEP';
-		$this->mode_reglement_code = 'CHQ';
 		$this->note_public='SPECIMEN';
 		$nbp = rand(1, 9);
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new PropaleLigne($this->db);
+			$ligne=new Task($this->db);
 			$ligne->desc=$langs->trans("Description")." ".$xnbp;
 			$ligne->qty=1;
-			$ligne->subprice=100;
-			$ligne->price=100;
-			$ligne->tva_tx=19.6;
-			$ligne->total_ht=100;
-			$ligne->total_ttc=119.6;
-			$ligne->total_tva=19.6;
 			$prodid = rand(1, $num_prods);
 			$ligne->produit_id=$prodids[$prodid];
-			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}
-
-		$this->amount_ht      = $xnbp*100;
-		$this->total_ht       = $xnbp*100;
-		$this->total_tva      = $xnbp*19.6;
-		$this->total_ttc      = $xnbp*119.6;
 	}
 	
 }

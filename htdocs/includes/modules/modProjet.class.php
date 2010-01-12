@@ -62,7 +62,7 @@ class modProjet extends DolibarrModules
 		$this->picto='project';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array();
+		$this->dirs = array("/project/temp");
 
 		// Dependancies
 		$this->depends = array();
@@ -70,6 +70,18 @@ class modProjet extends DolibarrModules
 
 		// Constants
 		$this->const = array();
+		
+		$this->const[0][0] = "PROJECT_ADDON_PDF";
+		$this->const[0][1] = "chaine";
+		$this->const[0][2] = "baleine";
+		$this->const[0][3] = 'Nom du gestionnaire de generation des projets en PDF';
+		$this->const[0][4] = 0;
+
+		$this->const[1][0] = "PROJECT_ADDON";
+		$this->const[1][1] = "chaine";
+		$this->const[1][2] = "mod_project_universal";
+		$this->const[1][3] = 'Nom du gestionnaire de numerotation des projets';
+		$this->const[1][4] = 0;
 
 		// Boxes
 		$this->boxes = array();

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,30 +24,35 @@
  *      \ingroup    societe
  *      \version    $Id$
  */
-function project_prepare_head($objsoc)
+function project_prepare_head($object)
 {
 	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$objsoc->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Project");
     $head[$h][2] = 'project';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("ProjectContact");
+    $head[$h][2] = 'contact';
+	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$objsoc->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Tasks");
     $head[$h][2] = 'tasks';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$objsoc->id.'&mode=mine';
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id.'&mode=mine';
 	$head[$h][1] = $langs->trans("MyTasks");
     $head[$h][2] = 'mytasks';
 	$h++;
 
 	if ($conf->propal->enabled || $conf->commande->enabled || $conf->facture->enabled)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$objsoc->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
 	    $head[$h][2] = 'element';
 		$h++;
@@ -62,7 +68,7 @@ function project_prepare_head($objsoc)
         {
             $values=explode(':',$value);
             if ($values[2]) $langs->load($values[2]);
-            $head[$h][0] = preg_replace('/__ID__/i',$objsoc->id,$values[3]);
+            $head[$h][0] = preg_replace('/__ID__/i',$object->id,$values[3]);
             $head[$h][1] = $langs->trans($values[1]);
             $head[$h][2] = 'tab'.$values[1];
             $h++;

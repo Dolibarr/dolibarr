@@ -37,3 +37,5 @@ ALTER TABLE llx_notify ADD COLUMN email VARCHAR(255);
 
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (5,'NOTIFY_VAL_ORDER','Validation commande client','Executed when a customer order is validated','order');
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (6,'NOTIFY_VAL_PROPAL','Validation proposition client','Executed when a commercial proposal is validated','propal');
+
+UPDATE llx_c_type_contact SET element='project' WHERE element='projet';

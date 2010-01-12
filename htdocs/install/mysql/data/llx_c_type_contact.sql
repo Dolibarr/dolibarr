@@ -41,8 +41,8 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (40, 'propal',  'external', 'BILLING',       'Contact client facturation propale', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (41, 'propal',  'external', 'CUSTOMER',      'Contact client suivi propale', 1);
                                                                                                     
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'projet',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'projet',  'external', 'PROJECTLEADER', 'Chef de Projet', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'project',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'project',  'external', 'PROJECTLEADER', 'Chef de Projet', 1);
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (50, 'facture', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (60, 'facture', 'external', 'BILLING',       'Contact client facturation', 1);

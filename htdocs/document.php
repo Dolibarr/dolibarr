@@ -161,6 +161,7 @@ if ($modulepart)
 		$original_file=$conf->propale->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='$refname'";
 	}
+	
 	// Wrapping pour les commandes
 	if ($modulepart == 'commande')
 	{
@@ -171,6 +172,18 @@ if ($modulepart)
 		}
 		$original_file=$conf->commande->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='$refname'";
+	}
+	
+	// Wrapping pour les projets
+	if ($modulepart == 'project')
+	{
+		$user->getrights('projet');
+		if ($user->rights->projet->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->projet->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='$refname'";
 	}
 
 	// Wrapping pour les commandes fournisseurs

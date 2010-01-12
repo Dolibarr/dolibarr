@@ -37,7 +37,7 @@ class FormCompany
 
 	/**
 	 *	\brief     Constructeur
-	 *	\param     DB      handler d'acc�s base de donn�e
+	 *	\param     DB      handler d'acces base de donnee
 	 */
 	function FormCompany($DB)
 	{
@@ -177,13 +177,13 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Retourne la liste d�roulante des d�partements/province/cantons tout pays confondu ou pour un pays donn�.
+	 *    \brief      Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
 	 *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entr�e pour
-	 *                un code donn�e mais dans ce cas, le champ pays diff�re).
-	 *                Ainsi les liens avec les d�partements se font sur un d�partement ind�pendemment de son nom.
-	 *    \param      selected        code forme juridique a pr�s�lectionn�
-	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays � afficher
+	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entree pour
+	 *                un code donnee mais dans ce cas, le champ pays differe).
+	 *                Ainsi les liens avec les departements se font sur un departement independemment de son nom.
+	 *    \param      selected        code forme juridique a preselectionne
+	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays a afficher
 	 */
 	function select_departement($selected='',$pays_code=0)
 	{
@@ -259,9 +259,9 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Retourne la liste d�roulante des regions actives dont le pays est actif
-	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entr�e pour
-	 *                un code donn�e mais dans ce cas, le champ pays et lang diff�re).
+	 *    \brief      Retourne la liste deroulante des regions actives dont le pays est actif
+	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entree pour
+	 *                un code donnee mais dans ce cas, le champ pays et lang differe).
 	 *                Ainsi les liens avec les regions se font sur une region independemment
 	 *                de son nom.
 	 */
@@ -321,8 +321,8 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Retourne la liste d�roulante des civilite actives
-	 *    \param      selected    civilite pr�-s�lectionn�e
+	 *    \brief      Retourne la liste deroulante des civilite actives
+	 *    \param      selected    civilite pre-selectionnee
 	 */
 	function select_civilite($selected='')
 	{
@@ -369,10 +369,10 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Retourne la liste d�roulante des formes juridiques tous pays confondus ou pour un pays donn�.
+	 *    \brief      Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
-	 *    \param      selected        Code forme juridique a pr�-s�lectionn�
-	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays � afficher
+	 *    \param      selected        Code forme juridique a pre-selectionne
+	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays a afficher
 	 */
 	function select_forme_juridique($selected='',$pays_code=0)
 	{
