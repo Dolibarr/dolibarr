@@ -230,7 +230,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($fac->note_public), 0, 'J');
+					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
