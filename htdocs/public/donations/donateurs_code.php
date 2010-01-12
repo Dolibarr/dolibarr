@@ -45,48 +45,48 @@ $sql .= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 
 if ( $db->query( $sql) )
 {
-  $num = $db->num_rows();
+	$num = $db->num_rows();
 
-  if ($num)
-    {
-
-      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-
-      print '<TR>';
-      print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
-      print "<td>Date</td>";
-      print "<td align=\"right\">".$langs->trans("Amount")."</TD>";
-      print "</TR>\n";
-
-      $var=True;
-      $bc[1]='bgcolor="#f5f5f5"';
-      $bc[0]='bgcolor="#f0f0f0"';
-      while ($i < $num)
+	if ($num)
 	{
+
+		print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+
+		print '<TR>';
+		print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
+		print "<td>Date</td>";
+		print "<td align=\"right\">".$langs->trans("Amount")."</TD>";
+		print "</TR>\n";
+
+		$var=True;
+		$bc[1]='bgcolor="#f5f5f5"';
+		$bc[0]='bgcolor="#f0f0f0"';
+		while ($i < $num)
+		{
 	  $objp = $db->fetch_object( $i);
 
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  if ($objp->public)
-	    {
-	      print "<td>".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".stripslashes($objp->societe)."</td>\n";
-	    }
+	  {
+	  	print "<td>".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".stripslashes($objp->societe)."</td>\n";
+	  }
 	  else
-	    {
-	      print "<td>Anonyme Anonyme</td>\n";
-	    }
+	  {
+	  	print "<td>Anonyme Anonyme</td>\n";
+	  }
 	  print "<td>".dol_print_date($objp->datedon)."</td>\n";
 	  print '<td align="right">'.number_format($objp->amount,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td>';
 	  print "</tr>";
 	  $i++;
-	}
-      print "</table>";
+		}
+		print "</table>";
 
-    }
-    else
-    {
-    	print "Aucun don publique";
-    }
+	}
+	else
+	{
+		print "Aucun don publique";
+	}
 }
 else
 {

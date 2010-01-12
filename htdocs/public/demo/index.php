@@ -84,7 +84,7 @@ function llxHeaderVierge($title, $head = "")
 	print '<body style="margin: 20px;">'."\n";
 }
 
-function llxFooter()
+function llxFooterVierge()
 {
 	print "\n";
 	print "</body>\n";
@@ -280,5 +280,5 @@ if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN
 	print '</div>'."\n";
 }
 
-llxFooter('$Date$ - $Revision$');
+llxFooterVierge('$Date$ - $Revision$');
 ?>

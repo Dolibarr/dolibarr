@@ -51,7 +51,7 @@ function llxHeaderVierge($title, $head = "")
 	print "<body>\n";
 }
 
-function llxFooter()
+function llxFooterVierge()
 {
 	print "</body>\n";
 	print "</html>\n";
@@ -142,5 +142,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooterVierge('$Date$ - $Revision$');
 ?>

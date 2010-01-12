@@ -49,8 +49,8 @@ if (! empty($_GET["logind"]))   $filters['logind']=$_GET["logind"];
 
 
 // C'est un wrapper, donc header vierge
-function llxHeader() { print '<html><title>Export agenda cal</title><body>'; }
-function llxFooter() { print '</body></html>'; }
+function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>'; }
+function llxFooterVierge() { print '</body></html>'; }
 
 
 // Check config
@@ -58,9 +58,9 @@ if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 {
 	$user->getrights();
 
-	llxHeader();
+	llxHeaderVierge();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooter('$Date$ - $Revision$');
+	llxFooterVierge('$Date$ - $Revision$');
 	exit;
 }
 
@@ -69,9 +69,9 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 {
 	$user->getrights();
 
-	llxHeader();
+	llxHeaderVierge();
 	print '<div class="error">Bad value for key.</div>';
-	llxFooter('$Date$ - $Revision$');
+	llxFooterVierge('$Date$ - $Revision$');
 	exit;
 }
 
@@ -85,9 +85,9 @@ if (! $filename)
 {
 	$langs->load("main");
 	$langs->load("errors");
-	llxHeader();
+	llxHeaderVierge();
     print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
-	llxFooter('$Date$ - $Revision$');
+	llxFooterVierge('$Date$ - $Revision$');
 	exit;
 }
 
@@ -161,7 +161,7 @@ if ($format == 'rss')
 }
 
 
-llxHeader();
+llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';
-llxFooter('$Date$ - $Revision$');
+llxFooterVierge('$Date$ - $Revision$');
 ?>

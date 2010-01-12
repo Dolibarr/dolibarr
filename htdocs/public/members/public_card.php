@@ -106,7 +106,7 @@ if ($rowid > 0)
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooterVierge('$Date$ - $Revision$');
 
 
 /* Functions header and footer */
@@ -124,7 +124,7 @@ function llxHeaderVierge($title, $head = "")
 	print "<body>\n";
 }
 
-function llxFooter()
+function llxFooterVierge()
 {
 	print "</body>\n";
 	print "</html>\n";

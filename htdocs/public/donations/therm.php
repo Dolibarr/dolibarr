@@ -48,8 +48,8 @@ $db->close();
 
 
 /*
-* Graph thermometer
-*/
+ * Graph thermometer
+ */
 print moneyMeter($actualValue, $pendingValue, $intentValue);
 
 ?>

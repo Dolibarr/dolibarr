@@ -56,7 +56,7 @@ function llxHeaderVierge($title, $head = "")
 }
 
 // Function for page HTML footer
-function llxFooter()
+function llxFooterVierge()
 {
 	print "</body>\n";
 	print "</html>\n";
@@ -198,7 +198,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'added')
 		print "<tr><td><FONT COLOR=\"blue\">Nouvel Adherent ajoute. En attente de validation</FONT></td></tr>\n";
 		print '</table>';
 
-		llxFooter('$Date$ - $Revision$');
+		llxFooterVierge('$Date$ - $Revision$');
 		exit;
 	}
 }
@@ -286,5 +286,5 @@ print "</form>\n";
 
 $db->close();
 
-llxFooter('$Date$ - $Revision$');
+llxFooterVierge('$Date$ - $Revision$');
 ?>
