@@ -4,6 +4,7 @@ Accountancy = Contabilidad
 AccountancyCard = Ficha contable
 Treasury = Tesorería
 MenuFinancial = Financiera
+TaxModuleSetupToModifyRules = Ir a la <a href="%s">configuración del módulo</a> para modificar las reglas de cálculo
 OptionMode = Opción de gestión contable
 OptionModeTrue = Opción Ingresos-Gastos
 OptionModeVirtual = Opción Créditos-Deudas

@@ -4,6 +4,7 @@ Accountancy = Comptabilitat
 AccountancyCard = Fitxa comptable
 Treasury = Tresoreria
 MenuFinancial = Financera
+TaxModuleSetupToModifyRules = Anar a la <a href="%s"> configuració del mòdul</a> per modificar les regles de càlcul
 OptionMode = Opció de gestió comptable
 OptionModeTrue = Opció Ingressos-Despeses
 OptionModeVirtual = Opció Crèdits-Deutes
