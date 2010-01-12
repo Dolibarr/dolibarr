@@ -40,8 +40,8 @@ class Conf
 	var $db;
 	//! To store properties found in conf file
 	var $file;
-
-	var $dol_document_root;
+	//! To store if javascript/ajax is enabked
+	var $use_javascript_ajax;
 
 	//! Used to store current currency
 	var $monnaie;
