@@ -101,7 +101,7 @@ if ($_GET["action"] == 'del')
 {
 	$type='supplier_order';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$_GET["value"];
+	$sql.= " WHERE nom = '".$_GET["value"]."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 	if ($db->query($sql))
@@ -122,7 +122,7 @@ if ($_GET["action"] == 'setdoc')
 	// On active le modele
 	$type='supplier_order';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$_GET["value"];
+	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);

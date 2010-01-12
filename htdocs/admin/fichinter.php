@@ -110,7 +110,7 @@ if ($_GET["action"] == 'del')
 {
 	$type='ficheinter';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$_GET["value"];
+	$sql.= " WHERE nom = '".$_GET["value"]."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 
