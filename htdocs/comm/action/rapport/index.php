@@ -75,7 +75,10 @@ $sql.= " date_format(a.datep, '%Y') as year";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE a.fk_user_author = u.rowid";
-$sql.= " AND u.entity in (0, ".$conf->entity.")";
+if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
+{
+	$sql.= " AND u.entity in (0, ".$conf->entity.")";
+}
 $sql.= " AND percent = 100";
 $sql.= " GROUP BY year, month, df";
 $sql.= " ORDER BY year DESC, month DESC, df DESC";
