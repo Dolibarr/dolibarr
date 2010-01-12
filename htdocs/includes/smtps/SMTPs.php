@@ -1994,7 +1994,9 @@ class SMTPs
            /*
             * @TODO  Investigate "nested" boundary message parts
             */
-            $content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
+            //$content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
+            $content = 'Content-Type: multipart/mixed; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
+            
 // TODO Restore
 //                     . "\r\n"
 //                     . 'This is a multi-part message in MIME format.' . "\r\n";
@@ -2511,6 +2513,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.11  2010/01/12 13:02:07  hregis
+  * Fix: missing attach-files
+  *
   * Revision 1.10  2009/11/01 14:16:30  eldy
   * Fix: Sending mail with SMTPS was not working.
   *
