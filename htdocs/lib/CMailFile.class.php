@@ -196,7 +196,7 @@ class CMailFile
 					$this->css = $css;
 					$this->buildCSS();
 				}
-				
+
 				$msg = $this->html;
 			}
 
@@ -397,7 +397,7 @@ class CMailFile
 
 	/**
 	 * Send mail that was prepared by constructor
-	 * 
+	 *
 	 * @return    boolean     True if mail sent, false otherwise
 	 */
 	function sendfile()
@@ -597,7 +597,7 @@ class CMailFile
 
 	/**
 	 * Read a file on disk and return encoded content for emails
-	 * 
+	 *
 	 * @param      sourcefile
 	 * @return     <0 if KO, encoded string if OK
 	 */
@@ -650,7 +650,7 @@ class CMailFile
 
 	/**
 	 * Create SMTP headers
-	 * 
+	 *
 	 * @return	smtp headers
 	 */
 	function write_smtpheaders()
@@ -680,7 +680,7 @@ class CMailFile
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 
-		$out.=$this->eol;
+		//$out.=$this->eol;	// Comment this to try to solve pb of hidden attached files
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
 	}
@@ -688,7 +688,7 @@ class CMailFile
 
 	/**
 	 * Creation header MIME
-	 * 
+	 *
 	 * @param 		filename_list
 	 * @param 		mimefilename_list
 	 * @return		mime headers
@@ -716,7 +716,7 @@ class CMailFile
 
 	/**
 	 * Permet d'ecrire le corps du message (mode = 'mail')
-	 * 
+	 *
 	 * @param 		msgtext
 	 */
 	function write_body($msgtext)
@@ -813,7 +813,7 @@ class CMailFile
 
 	/**
 	 * Permet d'attacher un fichier
-	 * 
+	 *
 	 * @param 		filename_list		Tableau
 	 * @param 		mimetype_list		Tableau
 	 * @param 		mimefilename_list	Tableau
@@ -857,7 +857,7 @@ class CMailFile
 
 	/**
 	 * Permet d'attacher une image
-	 * 
+	 *
 	 * @param 		images_list		Tableau
 	 * @return		out					Chaine images encodees
 	 */
@@ -963,7 +963,7 @@ class CMailFile
 
 	/**
 	 * Recherche la presence d'images dans le message html
-	 * 
+	 *
 	 * @param 		images_dir		Emplacement des images
 	 * @return		int         	>0 if OK, <0 if KO
 	 */
@@ -982,22 +982,22 @@ class CMailFile
 				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i',$full,$regs))
 				{
 					$img = $regs[1];
-					
+
 					if (file_exists($images_dir.'/'.$img))
 					{
 						// Image path in src
 						$src = preg_quote($full,'/');
-						
+
 						// Image full path
 						$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
-						
+
 						// Image name
 						$this->html_images[$i]["name"] = $img;
-						
+
 						// Content type
 						$ext = preg_replace('/^.*\.(\w{3,4})$/e', 'strtolower("$1")', $img);
 						$this->html_images[$i]["content_type"] = $this->image_types[$ext];
-						
+
 						// cid
 						$this->html_images[$i]["cid"] = md5(uniqid(time()));
 						$this->html = preg_replace("/src=\"$src\"|src='$src'/i", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
@@ -1052,7 +1052,7 @@ class CMailFile
 
 	/**
 	 * Return an address for SMTP protocol
-	 * 
+	 *
 	 * @param      adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
 	 * @param		format			0=Auto, 1=emails with <>, 2=emails without <>
 	 * @param		encode			1=Encode name to RFC2822

@@ -17,20 +17,20 @@
  */
 
 /**
-        \file       htdocs/html.formmail.class.php
-        \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
-        \version    $Id$
-*/
+ *       \file       htdocs/html.formmail.class.php
+ *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 
 
 /**     \class      FormMail
-        \brief      Classe permettant la generation du formulaire html d'envoi de mail unitaire
-        \remarks    Utilisation: $formail = new FormMail($db)
-        \remarks                 $formmail->proprietes=1 ou chaine ou tableau de valeurs
-        \remarks                 $formmail->show_form() affiche le formulaire
-*/
+ *      \brief      Classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *      \remarks    Utilisation: $formail = new FormMail($db)
+ *      \remarks                 $formmail->proprietes=1 ou chaine ou tableau de valeurs
+ *      \remarks                 $formmail->show_form() affiche le formulaire
+ */
 class FormMail
 {
 	var $db;
@@ -65,9 +65,9 @@ class FormMail
 
 
 	/**
-		\brief     Constructeur
-	    \param     DB      handler d'acces base de donnee
-	*/
+	 *	\brief     Constructeur
+	 *  \param     DB      handler d'acces base de donnee
+	 */
 	function FormMail($DB)
 	{
 		$this->db = $DB;
@@ -176,7 +176,7 @@ class FormMail
 		$form=new Form($DB);
 
 		print "\n<!-- Debut form mail -->\n";
-		print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
+		print "<form method=\"POST\" name=\"mailform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		foreach ($this->param as $key=>$value)
 		{
@@ -475,7 +475,13 @@ class FormMail
 		}
 
 		print "<tr><td align=center colspan=2><center>";
-		print "<input class=\"button\" type=\"submit\" name=\"sendmail\" value=\"".$langs->trans("SendMail")."\">";
+		print "<input class=\"button\" type=\"submit\" name=\"sendmail\" value=\"".$langs->trans("SendMail")."\"";
+		// Add a javascript test to avoid to forget to submit file before sending email
+		if ($this->withfile == 2 && $conf->use_javascript_ajax)
+		{
+			print ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
+		}
+		print ">";
 		if ($this->withcancel)
 		{
 			print " &nbsp; &nbsp; ";

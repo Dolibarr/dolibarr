@@ -181,7 +181,7 @@ function dol_string_nospecial($str,$newstr='_')
 function dol_escape_js($stringtoescape)
 {
 	// escape quotes and backslashes, newlines, etc.
-	return strtr($stringtoescape, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
+	return strtr($stringtoescape, array("&#039;"=>"\\'",'\\'=>'\\\\',"'"=>"\\'",'"'=>"\\'","\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
 }
 
 
