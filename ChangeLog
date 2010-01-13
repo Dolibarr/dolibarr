@@ -34,6 +34,7 @@ For users:
 - Fix: Change error management when adding already used supplier ref
        for a product.
 - Fix: Running sending-email.php
+- Fix: Warning should not appears for invoice closed
 
 For developers:
 - Qual: Reorganize /dev directory.
