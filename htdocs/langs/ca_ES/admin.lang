@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - admin
+# Dolibarr language file - ca_ES - admin 
 CHARSET = UTF-8
 Version = Versió
 VersionProgram = Versió programa
@@ -263,6 +263,7 @@ ModuleDisabled = Mòdul desactivat
 ModuleDisabledSoNoEvent = Mòdul desactivat, per la qual cosa el esdeveniment mai es crea
 ConfirmPurge = Esteu segur de voler realitzar aquesta purga? <br> Això esborrarà definitivament totes les dades dels seus fitxers (àrea GED, arxius adjunts etc.).
 MinLength = Longuitud mínima
+LanguageFilesCachedIntoShmopSharedMemory = arxius .lang en memòria compartida
 # Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups
@@ -309,8 +310,8 @@ Module58Desc = Integració amb ClickToDial
 Module59Name = Bookmark4u
 Module59Desc = Afegeix funció per generar un compte Bookmark4u des d'un compte Dolibarr
 Module70Name = Intervencions
-Module70Desc = Gestió de les intervencions
-Module75Name = Notes de despeses i desplaçaments
+Module70Desc = Gestió de les intervencions a tercers
+Module75Name = Notes de despeses i desplaçaments 
 Module75Desc = Gestió de les notes de despeses i desplaçaments
 Module80Name = Expedicions
 Module80Desc = Gestió d'expedicions i recepcions
