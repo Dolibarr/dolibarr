@@ -649,6 +649,7 @@ MessageLogin=Login page message
 PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 EnableMultilangInterface=Enable multilingual interface
+EnableShowLogo=Show logo on left menu 
 SystemSuccessfulyUpdated=Your system has been updated successfully
 CompanyInfo=Company/foundation information
 CompanyIds=Company/foundation identities

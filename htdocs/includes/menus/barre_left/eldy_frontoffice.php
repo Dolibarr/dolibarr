@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
  *	\version    $Id$
  *
  *	\remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
- *	\remarks    A l'aide d'un objet $newmenu=new Menu() et de la m�thode add,
- *	\remarks    d�finir la liste des entr�es menu � faire apparaitre.
+ *	\remarks    A l'aide d'un objet $newmenu=new Menu() et de la methode add,
+ *	\remarks    definir la liste des entrees menu a faire apparaitre.
  *	\remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
- *	\remarks    Ce qui est d�fini dans un tel gestionnaire sera alors prioritaire sur
- *	\remarks    les d�finitions de menu des fichiers pre.inc.php
+ *	\remarks    Ce qui est defini dans un tel gestionnaire sera alors prioritaire sur
+ *	\remarks    les definitions de menu des fichiers pre.inc.php
  */
 
 
@@ -43,8 +43,8 @@ class MenuLeft {
 
 	/**
 	 *    \brief      Constructeur
-	 *    \param      db            Handler d'acc�s base de donn�e
-	 *    \param      menu_array    Tableau des entr�e de menu d�fini dans les fichier pre.inc.php
+	 *    \param      db            Handler d'acces base de donnee
+	 *    \param      menu_array    Tableau des entree de menu defini dans les fichier pre.inc.php
 	 */
 	function MenuLeft($db,&$menu_array)
 	{
@@ -104,7 +104,10 @@ class MenuLeft {
 			if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 			{
 				$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
-				print '<center><img title="'.$title.'" src="'.$urllogo.'"></center>';
+				print "\n".'<!-- Show logo on menu -->'."\n";
+				print '<div class="blockvmenuimpair">'."\n";
+				print '<center><img title="'.$title.'" src="'.$urllogo.'"></center>'."\n";
+				print '</div>'."\n";
 			}
 		}
 

@@ -649,6 +649,7 @@ MessageLogin = Message page login
 PermanentLeftSearchForm = Zone de recherche permanente du menu de gauche
 DefaultLanguage = Langue par défaut à utiliser (code langue)
 EnableMultilangInterface = Activer l'interface multi-langage
+EnableShowLogo=Aficher le logo dans le menu gauche
 SystemSuccessfulyUpdated = Votre système a été correctement mis à jour
 CompanyInfo = Informations sur la société/institution
 CompanyIds = Identifiants réglementaires
