@@ -2973,7 +2973,7 @@ function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
 	{
 		$dir=$dirroot."/includes/modules/substitutions";
 		$fonc='numberwords';	// For the moment only one file scan
-		if (file_exists($dir.'/functions_'.$fonc.'.lib.php'))
+		if ($conf->$fonc->enabled && file_exists($dir.'/functions_'.$fonc.'.lib.php'))
 		{
 			dol_syslog("Library functions_".$fonc.".lib.php found into ".$dir);
 			require_once($dir."/functions_".$fonc.".lib.php");
