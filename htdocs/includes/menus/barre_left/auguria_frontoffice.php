@@ -98,10 +98,10 @@ class MenuLeft {
 		// Show logo company
 		if (! empty($conf->global->MAIN_SHOW_LOGO))
 		{
-			$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
-			if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
+			$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
+			if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 			{
-				$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+				$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
 				print "\n".'<!-- Show logo on menu -->'."\n";
 				print '<div class="blockvmenuimpair">'."\n";
 				print '<center><img title="'.$title.'" src="'.$urllogo.'"></center>'."\n";

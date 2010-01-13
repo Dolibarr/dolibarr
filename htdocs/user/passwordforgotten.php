@@ -176,11 +176,9 @@ if ($conf->global->MAIN_SMARTY)
 			$smarty->template_dir = DOL_DOCUMENT_ROOT."/core/templates/";
 		}
 
-		$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+		$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
 
-		// Si feuille de style en php existe
-		if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php?lang=".$langs->defaultlang;
-		$smarty->assign('conf_css', DOL_URL_ROOT.'/'.$conf->css);
+		$smarty->assign('conf_css', DOL_URL_ROOT.$conf->css);
 	}
 
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
@@ -218,7 +216,7 @@ if ($conf->global->MAIN_SMARTY)
 	elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
-		$width=96;
+		$width=128;
 	}
 	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 	{
@@ -265,9 +263,7 @@ if ($conf->global->MAIN_SMARTY)
 }
 else
 {
-	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-	// Si feuille de style en php existe
-	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php";
 
 	header('Cache-Control: Public, must-revalidate');
 
@@ -279,7 +275,7 @@ else
 	print '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'."\n";
 	print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 	print "<title>Dolibarr Authentification</title>\n";
-	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
 	print '<style type="text/css">'."\n";
 	print '<!--'."\n";
 	print '#login {';
@@ -323,15 +319,7 @@ else
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 	print '<table class="login" summary="'.$title.'" cellpadding="0" cellspacing="0" border="0" align="center">'."\n";
-	if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
-	{
-		print '<tr><td colspan="3" style="text-align:center;">';
-		print '<img src="/logo.png"></td></tr>'."\n";
-	}
-	else
-	{
-		print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>'."\n";
-	}
+	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>'."\n";
 	print '</table>'."\n";
 	print '<br>'."\n";
 
@@ -351,19 +339,10 @@ else
 
 	$title='';
 
-	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
+	// Show lock logo
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-	if (isset($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
-	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small);
-	}
-	elseif (isset($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
-	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
-		$width=96;
-	}
-	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+	if (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
 	}

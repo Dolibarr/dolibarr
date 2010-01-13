@@ -33,7 +33,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <meta name="robots" content="noindex,nofollow">
 <title><?php echo $langs->trans('Login'); ?></title>
 
-<link rel="stylesheet" type="text/css" href="<?php echo $conf->css; ?>">
+<link rel="stylesheet" type="text/css" href="<?php echo $conf_css; ?>">
 
 <style type="text/css">
 <!--

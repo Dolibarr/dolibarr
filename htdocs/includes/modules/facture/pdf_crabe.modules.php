@@ -917,7 +917,7 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);	// width=0 (auto), max height=24
 			}
 			else
 			{

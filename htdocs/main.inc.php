@@ -567,7 +567,7 @@ if (! defined('NOLOGIN'))
 	if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 	{
 		$conf->theme=$user->conf->MAIN_THEME;
-		$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+		$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php";
 	}
 	// Set javascript option
 	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
@@ -601,10 +601,10 @@ else	// If language was forced on URL
 if (! empty($_GET["theme"]))
 {
 	$conf->theme=$_GET["theme"];
-	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php";
 }
 // Style sheet must be a php file
-$conf->css.=".php";
+//$conf->css.=".php";
 
 // Define menu manager to use
 if (empty($user->societe_id))    // Si utilisateur interne ou non defini
@@ -701,7 +701,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 {
 	global $user, $conf, $langs, $db;
 
-	if (empty($conf->css)) 		$conf->css = 'theme/eldy/eldy.css.php';
+	if (empty($conf->css)) $conf->css = '/theme/eldy/eldy.css.php';
 
 	//header("Content-type: text/html; charset=UTF-8");
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -729,8 +729,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print "\n";
 
 		// Output style sheets
-		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
-		// CSS forced by modules
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+		// CSS forced by modules (relative url starting with /)
 		if (is_array($conf->css_modules))
 		{
 			foreach($conf->css_modules as $cssfile)
@@ -738,12 +738,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
-		// CSS forced by page (in top_htmlhead call)
+		// CSS forced by page in top_htmlhead call (relative url starting with /)
 		if (is_array($arrayofcss))
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
 

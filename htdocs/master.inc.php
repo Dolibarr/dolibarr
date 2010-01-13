@@ -93,7 +93,7 @@ define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);			// URL relative root
 $uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);	// $uri contains url without http*
 $suburi = strstr ($uri, '/');		// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';	// If $suburi is /, it is now ''
-define('DOL_URL_ROOT', $suburi);	// URL relative root ('/', '/dolibarr', ...)
+define('DOL_URL_ROOT', $suburi);	// URL relative root ('', '/dolibarr', ...)
 if (! empty($dolibarr_main_url_root_static)) define('DOL_URL_ROOT_FULL_STATIC', $dolibarr_main_url_root_static);	// Used to put static images on another domain
 
 

@@ -37,6 +37,15 @@ $langs->load("companies");
 if (!$user->admin)
 accessforbidden();
 
+// Define size of logo small and mini
+$maxwidthsmall=270;$maxheightsmall=150;
+$maxwidthmini=128;$maxheightmini=72;
+$quality = 80;
+
+
+/*
+ * Actions
+ */
 
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
@@ -71,12 +80,12 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file,'chaine',0,'',$conf->entity);
 
-					// Create thumbs of logo
+					// Create thumbs of logo (Note that PDF use original file and not thumbs)
 					if ($isimage > 0)
 					{
-						$quality = 80;
-
-						$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, 200, 100, '_small', $quality);
+						// Create small thumbs for company (Ratio is near 16/9)
+						// Used on logon for example
+						$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
 						if (preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 						{
 							$imgThumbSmall = $reg[1];
@@ -84,8 +93,9 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						}
 						else dol_syslog($imgThumbSmall);
 
-						// Creation de la vignette de la page "Societe/Institution"
-						$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, 100, 30, '_mini', $quality);
+						// Create mini thumbs for company (Ratio is near 16/9)
+						// Used on menu or for setup page for example
+						$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
 						if (preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 						{
 							$imgThumbMini = $reg[1];
@@ -135,8 +145,9 @@ if ($_GET["action"] == 'addthumb')
 		// Create thumbs of logo
 		if ($isimage > 0)
 		{
-			// Creation de la vignette de la page login
-			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], 200, 100, '_small',80);
+			// Create small thumbs for company (Ratio is near 16/9)
+			// Used on logon for example
+			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small',$quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 			{
 				$imgThumbSmall = $reg[1];
@@ -144,8 +155,9 @@ if ($_GET["action"] == 'addthumb')
 			}
 			else dol_syslog($imgThumbSmall);
 
-			// Creation de la vignette de la page "Societe/Institution"
-			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], 100, 30, '_mini',80);
+			// Create mini thumbs for company (Ratio is near 16/9)
+			// Used on menu or for setup page for example
+			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini',$quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 			{
 				$imgThumbMini = $reg[1];
