@@ -35,6 +35,10 @@ ALTER TABLE llx_projet ADD COLUMN datee DATE AFTER dateo;
 
 ALTER TABLE llx_notify ADD COLUMN email VARCHAR(255);
 
+ALTER TABLE llx_c_currencies ADD COLUMN labelsing   varchar(64);
+update llx_c_currencies set labelsing='Euro' where code_iso='EUR';
+update llx_c_currencies set labelsing='Dollar' where code_iso='USD';
+
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (5,'NOTIFY_VAL_ORDER','Validation commande client','Executed when a customer order is validated','order');
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (6,'NOTIFY_VAL_PROPAL','Validation proposition client','Executed when a commercial proposal is validated','propal');
 

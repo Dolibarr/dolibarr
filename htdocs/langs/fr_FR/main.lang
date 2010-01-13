@@ -548,6 +548,8 @@ AccordingToGeoIPDatabase=(obtenu par conversion GeoIP)
 Line=Ligne
 NotSupported=Non supporté
 RequiredField=Champ obligatoire
+Result=Résultat
+ToTest=Tester
 
 # Week day
 Day1=Lundi

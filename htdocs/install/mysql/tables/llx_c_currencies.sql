@@ -23,6 +23,7 @@ create table llx_c_currencies
   code        varchar(2)   PRIMARY KEY,
   code_iso    varchar(3)   NOT NULL,
   label       varchar(64),
+  labelsing   varchar(64),
   active      tinyint DEFAULT 1  NOT NULL
 )type=innodb;
 

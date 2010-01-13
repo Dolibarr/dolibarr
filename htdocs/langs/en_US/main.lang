@@ -549,6 +549,8 @@ AccordingToGeoIPDatabase=(according to GeoIP convertion)
 Line=Line
 NotSupported=Not supported
 RequiredField=Required field
+Result=Result
+ToTest=Test
 
 # Week day
 Day1=Monday

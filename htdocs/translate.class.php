@@ -194,12 +194,12 @@ class Translate {
 			if ($filelangexists)
 			{
 				$found=false;
-				
+
 				// Enable cache of lang file in memory (faster but need more memory)
 				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 				$enablelangcacheinmemory=empty($conf->global->MAIN_OPTIMIZE_SPEED)?0:$conf->global->MAIN_OPTIMIZE_SPEED;
 				//$enablelangcacheinmemory=true;
-				
+
 				if ($alt == 2 && $enablelangcacheinmemory)
 				{
 					require_once(DOL_DOCUMENT_ROOT ."/lib/memory.lib.php");
@@ -220,7 +220,7 @@ class Translate {
 					if ($fp = @fopen($file_lang,"rt"))
 					{
 						if ($enablelangcacheinmemory) $tabtranslatedomain=array();	// To save lang in session
-						
+
 						while ($ligne = fgets($fp,4096))	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
 						{
 							if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
@@ -261,7 +261,7 @@ class Translate {
 						}
 						fclose($fp);
 						$fileread=1;
-						
+
 						// To save lang in session
 						if ($alt == 2 && $enablelangcacheinmemory && sizeof($tabtranslatedomain))
 						{
@@ -315,9 +315,9 @@ class Translate {
 			if (empty($this->tab_loaded[$newdomain])) $this->tab_loaded[$newdomain]=2;           // Marque ce fichier comme non trouve
 		}
 
-		// Clear SeparatorDecimal, SeparatorThousand 
+		// Clear SeparatorDecimal, SeparatorThousand
 		if (! empty($this->tab_translate["SeparatorDecimal"]) && ! empty($this->tab_translate["SeparatorThousand"])
-		&& $this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]=''; 
+		&& $this->tab_translate["SeparatorDecimal"] == $this->tab_translate["SeparatorThousand"]) $this->tab_translate["SeparatorThousand"]='';
 
 		return 1;
 	}
@@ -547,7 +547,7 @@ class Translate {
 		{
 			if (is_readable(dol_osencode($searchdir."/langs/".$this->defaultlang."/".$filename))) return true;
 
-			if ($searchalt) 
+			if ($searchalt)
 			{
 				// Test si fichier dans repertoire de la langue alternative
 				if ($this->defaultlang != "en_US") $filenamealt = $searchdir."/langs/en_US/".$filename;
@@ -574,10 +574,12 @@ class Translate {
 	{
 		global $conf;
 
+		/*
 		$outlang=$this->defaultlang;	// Output language we want
 		$outlangarray=explode('_',$outlang,2);
 		// If lang is xx_XX, then we use xx
 		if (strtolower($outlangarray[0]) == strtolower($outlangarray[1])) $outlang=$outlangarray[0];
+		*/
 
 		$newnumber=$number;
 		foreach ($conf->file->dol_document_root as $dirroot)

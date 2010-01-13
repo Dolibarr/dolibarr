@@ -2952,11 +2952,14 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *    	\brief      Add substitution required by external modules then make substitutions in array substitutionarray
+ *    	\brief      Add substitution required by external modules then make substitutions.
+ * 					There is two type of substitions:
+ * 					From substitutionarray (oldval=>newval)
+ * 					From special constants (__XXX__=>f(objet->xxx))
  *    	\param      chaine      			Source string in which we must do substitution
  *    	\param      substitutionarray		Array substitution old value => new value value
- * 		\param		outputlangs				If we want to add more substitution, we provide a language
- * 		\param		object					If we want to add more substitution, we provide a source object
+ * 		\param		outputlangs				If we want substitution from special constants, we provide a language
+ * 		\param		object					If we want substitution from special constants, we provide data in a source object
  *    	\return     string      			Output string after subsitutions
  */
 function make_substitutions($chaine,$substitutionarray,$outputlangs,$object='')
