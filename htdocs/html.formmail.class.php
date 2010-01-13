@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +137,31 @@ class FormMail
 	}
 
 	/**
+	 * Remove a file from the list of attached files (stored in SECTION array)
+	 *
+	 * @param unknown_type $file
+	 */
+	function remove_attached_files($keytodelete)
+	{
+		$listofpaths=array();
+		$listofnames=array();
+		$listofmimes=array();
+		if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+		if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+		if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+		if ($keytodelete >= 0)
+		{
+			unset ($listofpaths[$keytodelete]);
+			unset ($listofnames[$keytodelete]);
+			unset ($listofmimes[$keytodelete]);
+			$_SESSION["listofpaths"]=join(';',$listofpaths);
+			$_SESSION["listofnames"]=join(';',$listofnames);
+			$_SESSION["listofmimes"]=join(';',$listofmimes);
+			//var_dump($_SESSION['listofpaths']);
+		}
+	}
+
+	/**
 	 * Return list of attached files (stored in SECTION array)
 	 *
 	 * @return	unknown_type $type
@@ -153,11 +178,12 @@ class FormMail
 	}
 
 	/**
-	 *	\brief  		Affiche la partie de formulaire pour saisie d'un mail en fonction des proprietes
+	 *	\brief  		Show the form to input an email
 	 *	\param			addfileaction		Name of action when posting file attachments
+	 *	\param			removefileaction	Name of action when removing file attachments
 	 * 	\remarks		this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 */
-	function show_form($addfileaction='addfile')
+	function show_form($addfileaction='addfile',$removefileaction='removefile')
 	{
 		global $conf, $langs, $user;
 
@@ -189,7 +215,7 @@ class FormMail
 		{
 			print "<tr><td colspan=\"2\">";
 			$help="";
-		    foreach($this->substit as $key => $val)
+			foreach($this->substit as $key => $val)
 			{
 				$help.=$key.' -> '.$langs->trans($val).'<br>';
 			}
@@ -412,7 +438,9 @@ class FormMail
 			{
 				foreach($listofpaths as $key => $val)
 				{
-					print img_mime($listofnames[$key]).' '.$listofnames[$key].'<br>';
+					print img_mime($listofnames[$key]).' '.$listofnames[$key];
+					print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" name="removedfile">';
+					print '<br>';
 				}
 			}
 			else
@@ -422,7 +450,7 @@ class FormMail
 			if ($this->withfile == 2)	// Can add other files
 			{
 				//print '<td><td align="right">';
-				print "<input type=\"file\" class=\"flat\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+				print '<input type="file" class="flat" name="addedfile" value="'.$langs->trans("Upload").'"/>';
 				print ' ';
 				print '<input type="submit" class="button" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'">';
 				//print '</td></tr></table>';
@@ -458,7 +486,7 @@ class FormMail
 			{
 				if ($this->withfckeditor)
 				{
-				    // Editeur wysiwyg
+					// Editeur wysiwyg
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 					$doleditor=new DolEditor('message',$defaultmessage,280,'dolibarr_notes','In',true);
 					$doleditor->Create();
@@ -495,54 +523,55 @@ class FormMail
 	}
 
 
-  /*
-   *    \brief  Affiche la partie de formulaire pour saisie d'un mail
-   *    \param  withtopic   1 pour proposer a la saisie le sujet
-   *    \param  withbody    1 pour proposer a la saisie le corps du message
-   *    \param  withfile    1 pour proposer a la saisie l'ajout d'un fichier joint
-   *    \todo   Fonction a virer quand fichier /comm/mailing.php vire (= quand ecran dans /comm/mailing prets)
-   */
-  function mail_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody) {
-    global $langs;
+	/**
+	 *    \brief  Affiche la partie de formulaire pour saisie d'un mail
+	 *    \param  withtopic   1 pour proposer a la saisie le sujet
+	 *    \param  withbody    1 pour proposer a la saisie le corps du message
+	 *    \param  withfile    1 pour proposer a la saisie l'ajout d'un fichier joint
+	 *    \todo   Fonction a virer quand fichier /comm/mailing.php vire (= quand ecran dans /comm/mailing prets)
+	 */
+	function mail_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody)
+	{
+		global $langs;
 
-    $langs->load("other");
+		$langs->load("other");
 
-    print "<table class=\"border\" width=\"100%\">";
+		print "<table class=\"border\" width=\"100%\">";
 
-    // Topic
-    if ($withtopic)
-      {
-	print "<tr>";
-	print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
-	print "<td>";
-	print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
-	print "</td></tr>";
-      }
+		// Topic
+		if ($withtopic)
+		{
+			print "<tr>";
+			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
+			print "<td>";
+			print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
+			print "</td></tr>";
+		}
 
-    // Message
-    if ($withbody)
-      {
-	print "<tr>";
-	print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
-	print "<td>";
-	print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
-	print $defaultbody;
-	print "</textarea>";
-	print "</td></tr>";
-      }
+		// Message
+		if ($withbody)
+		{
+			print "<tr>";
+			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
+			print "<td>";
+			print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
+			print $defaultbody;
+			print "</textarea>";
+			print "</td></tr>";
+		}
 
-    // Si fichier joint
-    if ($withfile)
-      {
-	print "<tr>";
-	print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
-	print "<td>";
-	print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
-	print "</td></tr>";
-      }
+		// Si fichier joint
+		if ($withfile)
+		{
+			print "<tr>";
+			print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
+			print "<td>";
+			print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+			print "</td></tr>";
+		}
 
-    print "</table>";
-  }
+		print "</table>";
+	}
 
 }
 

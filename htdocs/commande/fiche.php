@@ -57,12 +57,8 @@ $result=restrictedArea($user,'commande',$comid,'');
 
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
-// Recuperation de l'id de projet
-$projetid = 0;
-if ($_GET["projetid"])
-{
-	$projetid = $_GET["projetid"];
-}
+$mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
+$projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
 
 
 /******************************************************************************/
@@ -703,7 +699,7 @@ if ($_REQUEST['action'] == 'remove_file')
 }
 
 /*
- * Add file
+ * Add file in email form
  */
 if ($_POST['addfile'])
 {
@@ -745,9 +741,46 @@ if ($_POST['addfile'])
 }
 
 /*
+ * Remove file in email form
+ */
+if (! empty($_POST['removedfile']))
+{
+	// Set tmp user directory
+	$vardir=$conf->user->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
+
+	$keytodelete=$_POST['removedfile'];
+	$keytodelete--;
+
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+
+	if ($keytodelete >= 0)
+	{
+		$pathtodelete=$listofpaths[$keytodelete];
+		$filetodelete=$listofnames[$keytodelete];
+		$result = dol_delete_file($pathtodelete,1);
+		if ($result >= 0)
+		{
+			$message = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
+			//print_r($_FILES);
+
+			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->remove_attached_files($keytodelete);
+		}
+	}
+	$_GET["action"]='presend';
+}
+
+/*
  * Send mail
  */
-if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
+if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
 
@@ -853,8 +886,9 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 						}
 						else
 						{
-							// Renvoie sur la fiche
-							Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&msg='.urlencode($mesg));
+							// Redirect here
+							// This avoid sending mail twice if going out and then back to page
+							Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&mesg='.urlencode($mesg));
 							exit;
 						}
 					}

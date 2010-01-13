@@ -1126,7 +1126,7 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 }
 
 /*
- * Add file
+ * Add file in email form
  */
 if ($_POST['addfile'])
 {
@@ -1168,9 +1168,46 @@ if ($_POST['addfile'])
 }
 
 /*
+ * Remove file in email form
+ */
+if (! empty($_POST['removedfile']))
+{
+	// Set tmp user directory
+	$vardir=$conf->user->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
+
+	$keytodelete=$_POST['removedfile'];
+	$keytodelete--;
+
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+
+	if ($keytodelete >= 0)
+	{
+		$pathtodelete=$listofpaths[$keytodelete];
+		$filetodelete=$listofnames[$keytodelete];
+		$result = dol_delete_file($pathtodelete,1);
+		if ($result >= 0)
+		{
+			$message = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
+			//print_r($_FILES);
+
+			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->remove_attached_files($keytodelete);
+		}
+	}
+	$_GET["action"]='presend';
+}
+
+/*
  * Send mail
  */
-if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['addfile'] && ! $_POST['cancel'])
+if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
 
@@ -3587,6 +3624,7 @@ else
 				print '<br>';
 			}
 
+			// Deprecated
 			if ($_GET['action'] == 'prerelance')
 			{
 				$ref = dol_sanitizeFileName($fac->ref);

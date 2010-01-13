@@ -2252,7 +2252,7 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
  *	\brief  	Remove a file or several files with a mask
  *	\param		file			File to delete or mask of file to delete
  * 	\param		disableglob		Disable usage of glob like *
- *	\param		boolean			True if file deleted, False if error
+ *	\param		boolean			True if file is deleted, False if error
  */
 function dol_delete_file($file,$disableglob=0)
 {

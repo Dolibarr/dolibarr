@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
 $langs->load("mails");
+$langs->load("other");
 
 if (!$user->admin)
 accessforbidden();
@@ -63,7 +64,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 
 /*
- * Add file
+ * Add file in email form
  */
 if ($_POST['addfile'] || $_POST['addfilehtml'])
 {
@@ -106,10 +107,48 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 }
 
 /*
+ * Remove file in email form
+ */
+if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
+{
+	// Set tmp user directory
+	$vardir=$conf->user->dir_output."/".$user->id;
+	$upload_dir = $vardir.'/temp/';
+
+	$keytodelete=isset($_POST['removedfile'])?$_POST['removedfile']:$_POST['removedfilehtml'];
+	$keytodelete--;
+
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+
+	if ($keytodelete >= 0)
+	{
+		$pathtodelete=$listofpaths[$keytodelete];
+		$filetodelete=$listofnames[$keytodelete];
+		$result = dol_delete_file($pathtodelete,1);
+		if ($result >= 0)
+		{
+			$message = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
+			//print_r($_FILES);
+
+			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->remove_attached_files($keytodelete);
+		}
+	}
+	if ($_POST['removedfile'])     $_GET["action"]='test';
+	if ($_POST['removedfilehtml']) $_GET["action"]='testhtml';
+}
+
+/*
  * Send mail
  */
 if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
-&& ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST['cancel'])
+&& ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST["removedfile"] && ! $_POST['cancel'])
 {
 	$error=0;
 
@@ -543,7 +582,7 @@ else
 			$formmail->clear_attached_files();
 		}
 
-		$formmail->show_form('addfile');
+		$formmail->show_form('addfile','removefile');
 
 		print '<br>';
 	}
@@ -588,7 +627,7 @@ else
 			$formmail->clear_attached_files();
 		}
 
-		$formmail->show_form('addfilehtml');
+		$formmail->show_form('addfilehtml','removefilehtml');
 
 		print '<br>';
 	}

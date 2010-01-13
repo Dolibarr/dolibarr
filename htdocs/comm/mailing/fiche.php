@@ -63,7 +63,6 @@ $substitutionarrayfortest=array(
 );
 
 
-
 // Action clone object
 if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
 {
