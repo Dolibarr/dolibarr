@@ -46,7 +46,7 @@ create table llx_propal
   total           double(24,8) DEFAULT 0,      -- montant total ttc apres remise globale
 
   fk_cond_reglement   integer,                 -- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement   integer,                 -- mode de reglement (Virement, Prélèvement)
+  fk_mode_reglement   integer,                 -- mode de reglement (Virement, Prelevement)
  
   note            text,
   note_public     text,
@@ -54,11 +54,3 @@ create table llx_propal
   date_livraison date default NULL,
   fk_adresse_livraison  integer                -- adresse de livraison
 )type=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company propal
--- 2 : second company propal
--- 3 : etc...
---

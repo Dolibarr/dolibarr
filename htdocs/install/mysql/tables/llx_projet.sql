@@ -32,5 +32,6 @@ create table llx_projet
   title            varchar(255),
   fk_user_resp     integer,      -- responsable du projet
   fk_user_creat    integer,      -- createur du projet
-  note             text
+  note             text,
+  model_pdf        varchar(50)
 )type=innodb;

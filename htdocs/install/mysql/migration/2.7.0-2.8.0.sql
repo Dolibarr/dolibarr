@@ -46,3 +46,4 @@ UPDATE llx_c_type_contact SET element='project' WHERE element='projet';
 
 UPDATE llx_const set value='mail' where value='simplemail' and name='MAIN_MAIL_SENDMODE';
 
+ALTER TABLE llx_projet ADD COLUMN model_pdf varchar(50) AFTER note;

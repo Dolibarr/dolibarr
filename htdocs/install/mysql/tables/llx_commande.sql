@@ -50,17 +50,9 @@ create table llx_commande
   model_pdf             varchar(50),
 
   facture               tinyint   default 0,
-  fk_cond_reglement     integer,                       -- condition de réglement
-  fk_mode_reglement     integer,                       -- mode de réglement
+  fk_cond_reglement     integer,                       -- condition de reglement
+  fk_mode_reglement     integer,                       -- mode de reglement
   date_livraison 	      date 	  default NULL,
   fk_adresse_livraison  integer,                       -- adresse de livraison
   import_key            varchar(14)
 )type=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company order
--- 2 : second company order
--- 3 : etc...
---

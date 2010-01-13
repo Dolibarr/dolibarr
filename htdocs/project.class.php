@@ -648,7 +648,7 @@ class Project extends CommonObject
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
 		}
 		$sql.= " ORDER BY p.ref, t.title";
-print $sql;
+
 		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)

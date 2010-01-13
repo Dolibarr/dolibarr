@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,11 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("projects");
+$langs->load('companies');
 
 $projectid = (isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:''));
 $ref = (isset($_GET["ref"])?$_GET["ref"]:'');
@@ -137,6 +136,35 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	{
 		$_GET["id"]=$_POST["id"];
 		$_GET['action']='edit';
+	}
+}
+
+// Build doc
+if ($_REQUEST['action'] == 'builddoc' && $user->rights->projet->creer)
+{
+	$project = new Project($db);
+	$project->fetch($_GET['id']);
+	if ($_REQUEST['model'])
+	{
+		$project->setDocModel($user, $_REQUEST['model']);
+	}
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	$result=project_pdf_create($db, $project->id, $project->modelpdf, $outputlangs);
+	if ($result <= 0)
+	{
+		dol_print_error($db,$result);
+		exit;
+	}
+	else
+	{
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$project->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		exit;
 	}
 }
 

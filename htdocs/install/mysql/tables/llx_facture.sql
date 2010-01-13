@@ -53,10 +53,10 @@ create table llx_facture
   fk_user_valid       integer,                      -- valideur de la facture
 
   fk_facture_source   integer,                      -- facture origine si facture avoir
-  fk_projet           integer,                      -- projet auquel est associ�e la facture
+  fk_projet           integer,                      -- projet auquel est associee la facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement   integer,                      -- mode de reglement (Virement, Pr�l�vement)
+  fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prelevement)
   date_lim_reglement  date,                         -- date limite de reglement
 
   note                text,
@@ -65,11 +65,3 @@ create table llx_facture
   import_key          varchar(14)
 
 )type=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company invoice
--- 2 : second company invoice
--- 3 : etc...
---
