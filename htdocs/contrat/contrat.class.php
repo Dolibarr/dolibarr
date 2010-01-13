@@ -1125,8 +1125,8 @@ class Contrat extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = "SELECT c.rowid, c.ref, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("date_cloture")." as date_cloture,";
-		$sql.= $this->db->pdate("c.tms")." as date_modification,";
+		$sql = "SELECT c.rowid, c.ref, c.datec, c.date_cloture,";
+		$sql.= " c.tms as date_modification,";
 		$sql.= " fk_user_author, fk_user_cloture";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " WHERE c.rowid = ".$id;
@@ -1152,9 +1152,9 @@ class Contrat extends CommonObject
 					$this->user_cloture = $cuser;
 				}
 				$this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->date_modification;
-				$this->date_cloture      = $obj->date_cloture;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->date_cloture      = $this->db->jdate($obj->date_cloture);
 			}
 
 			$this->db->free($result);
@@ -1529,17 +1529,17 @@ class ContratLigne
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 
-		$sql.= " ".$this->db->pdate('t.tms')." as tms,";
+		$sql.= " t.tms,";
 		$sql.= " t.fk_contrat,";
 		$sql.= " t.fk_product,";
 		$sql.= " t.statut,";
 		$sql.= " t.label,";
 		$sql.= " t.description,";
-		$sql.= " ".$this->db->pdate('t.date_commande')." as date_commande,";
-		$sql.= " ".$this->db->pdate('t.date_ouverture_prevue')." as date_ouverture_prevue,";
-		$sql.= " ".$this->db->pdate('t.date_ouverture')." as date_ouverture,";
-		$sql.= " ".$this->db->pdate('t.date_fin_validite')." as date_fin_validite,";
-		$sql.= " ".$this->db->pdate('t.date_cloture')." as date_cloture,";
+		$sql.= " t.date_commande,";
+		$sql.= " t.date_ouverture_prevue as date_ouverture_prevue,";
+		$sql.= " t.date_ouverture as date_ouverture,";
+		$sql.= " t.date_fin_validite as date_fin_validite,";
+		$sql.= " t.date_cloture as date_cloture,";
 		$sql.= " t.tva_tx,";
 		$sql.= " t.qty,";
 		$sql.= " t.remise_percent,";
@@ -1570,17 +1570,17 @@ class ContratLigne
 				$this->id    = $obj->rowid;
 				$this->ref   = $obj->rowid;
 
-				$this->tms = $obj->tms;
+				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->fk_product = $obj->fk_product;
 				$this->statut = $obj->statut;
 				$this->label = $obj->label;
 				$this->description = $obj->description;
-				$this->date_commande = $obj->date_commande;
-				$this->date_ouverture_prevue = $obj->date_ouverture_prevue;
-				$this->date_ouverture = $obj->date_ouverture;
-				$this->date_fin_validite = $obj->date_fin_validite;
-				$this->date_cloture = $obj->date_cloture;
+				$this->date_commande = $this->db->jdate($obj->date_commande);
+				$this->date_ouverture_prevue = $this->db->jdate($obj->date_ouverture_prevue);
+				$this->date_ouverture = $this->db->jdate($obj->date_ouverture);
+				$this->date_fin_validite = $this->db->jdate($obj->date_fin_validite);
+				$this->date_cloture = $this->db->jdate($obj->date_cloture);
 				$this->tva_tx = $obj->tva_tx;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;

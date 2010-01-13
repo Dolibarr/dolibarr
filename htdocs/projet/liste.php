@@ -69,7 +69,7 @@ $projectstatic = new Project($db);
 $userstatic = new User($db);
 $staticsoc=new Societe($db);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, ".$db->pdate("p.dateo")." as do, p.fk_user_resp,";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.dateo as do, p.fk_user_resp,";
 $sql.= " u.login,";
 $sql.= " s.nom, s.rowid as socid, s.client";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";

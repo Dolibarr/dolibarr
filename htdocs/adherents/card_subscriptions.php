@@ -267,8 +267,8 @@ print '<td valign="top" width="50%">';
  */
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
-$sql.= " ".$db->pdate("c.dateadh")." as dateadh,";
-$sql.= " ".$db->pdate("c.datef")." as datef,";
+$sql.= " c.dateadh,";
+$sql.= " c.datef,";
 $sql.= " c.fk_bank,";
 $sql.= " b.rowid as bid,";
 $sql.= " ba.rowid as baid, ba.label, ba.bank";
@@ -308,8 +308,8 @@ if ($result)
 		$cotisationstatic->ref=$objp->crowid;
 		$cotisationstatic->id=$objp->crowid;
 		print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-		print '<td align="center">'.dol_print_date($objp->dateadh,'day')."</td>\n";
-		print '<td align="center">'.dol_print_date($objp->datef,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($this->db->jdate($objp->dateadh),'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($this->db->jdate($objp->datef),'day')."</td>\n";
 		print '<td align="right">'.price($objp->cotisation).'</td>';
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 		{

@@ -18,19 +18,19 @@
  */
 
 /**
-        \file       htdocs/chargesociales.class.php
-		\ingroup    facture
-		\brief      Fichier de la classe des charges sociales
-		\version    $Id$
-*/
+ *      \file       htdocs/chargesociales.class.php
+ *		\ingroup    facture
+ *		\brief      Fichier de la classe des charges sociales
+ *		\version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 
 /**     \class      ChargeSociales
-		\brief      Classe permettant la gestion des paiements des charges
-                    La tva collectee n'est calculee que sur les factures payees.
-*/
+ *		\brief      Classe permettant la gestion des paiements des charges
+ *                  La tva collectee n'est calculee que sur les factures payees.
+ */
 class ChargeSociales extends CommonObject
 {
     var $db;
@@ -61,8 +61,8 @@ class ChargeSociales extends CommonObject
      */
     function fetch($id)
     {
-        $sql = "SELECT cs.rowid,".$this->db->pdate("cs.date_ech")." as date_ech,";
-        $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, ".$this->db->pdate("cs.periode")." as periode,";
+        $sql = "SELECT cs.rowid, cs.date_ech,";
+        $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
 		$sql.= " c.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
         $sql.= " WHERE cs.fk_type = c.id";
@@ -78,13 +78,13 @@ class ChargeSociales extends CommonObject
 
                 $this->id             = $obj->rowid;
                 $this->ref            = $obj->rowid;
-                $this->date_ech       = $obj->date_ech;
+                $this->date_ech       = $this->db->jdate($obj->date_ech);
                 $this->lib            = $obj->lib;
                 $this->type           = $obj->fk_type;
                 $this->type_libelle   = $obj->libelle;
                 $this->amount         = $obj->amount;
                 $this->paye           = $obj->paye;
-                $this->periode        = $obj->periode;
+                $this->periode        = $this->db->jdate($obj->periode);
 
                 return 1;
             }

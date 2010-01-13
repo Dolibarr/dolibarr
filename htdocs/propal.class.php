@@ -1514,7 +1514,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		$sql= "SELECT rowid as facid, facnumber, total,".$this->db->pdate("datef")." as df, fk_user_author, fk_statut, paye";
+		$sql= "SELECT rowid as facid, facnumber, total, datef as df, fk_user_author, fk_statut, paye";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
@@ -1692,8 +1692,8 @@ class Propal extends CommonObject
 	function info($id)
 	{
 		$sql = "SELECT c.rowid, ";
-		$sql.= $this->db->pdate("datec")." as datec, ".$this->db->pdate("date_valid")." as datev, ".$this->db->pdate("date_cloture")." as dateo";
-		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
+		$sql.= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
+		$sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
 		$sql.= " WHERE c.rowid = ".$id;
 
@@ -1707,9 +1707,9 @@ class Propal extends CommonObject
 
 				$this->id                = $obj->rowid;
 
-				$this->date_creation     = $obj->datec;
-				$this->date_validation   = $obj->datev;
-				$this->date_cloture      = $obj->dateo;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_cloture      = $this->db->jdate($obj->dateo);
 
 				$cuser = new User($this->db, $obj->fk_user_author);
 				$cuser->fetch();

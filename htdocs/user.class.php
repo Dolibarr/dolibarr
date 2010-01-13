@@ -150,10 +150,10 @@ class User extends CommonObject
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
 		$sql.= " u.statut, u.lang, u.entity,";
-		$sql.= " ".$this->db->pdate("u.datec")." as datec,";
-		$sql.= " ".$this->db->pdate("u.tms")." as datem,";
-		$sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
-		$sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
+		$sql.= " u.datec as datec,";
+		$sql.= " u.tms as datem,";
+		$sql.= " u.datelastlogin as datel,";
+		$sql.= " u.datepreviouslogin as datep";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if ($sid)
@@ -200,10 +200,10 @@ class User extends CommonObject
 				$this->lang = $obj->lang;
 				$this->entity = $obj->entity;
 
-				$this->datec  = $obj->datec;
-				$this->datem  = $obj->datem;
-				$this->datelastlogin     = $obj->datel;
-				$this->datepreviouslogin = $obj->datep;
+				$this->datec  = $this->db->jdate($obj->datec);
+				$this->datem  = $this->db->jdate($obj->datem);
+				$this->datelastlogin     = $this->db->jdate($obj->datel);
+				$this->datepreviouslogin = $this->db->jdate($obj->datep);
 
 				$this->webcal_login         = $obj->webcal_login;
 				$this->phenix_login         = $obj->phenix_login;
@@ -1765,8 +1765,8 @@ class User extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = "SELECT u.rowid, u.login as ref, ".$this->db->pdate("datec")." as datec,";
-		$sql.= $this->db->pdate("u.tms")." as date_modification, u.entity";
+		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
+		$sql.= " u.tms as date_modification, u.entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.rowid = ".$id;
 
@@ -1780,8 +1780,8 @@ class User extends CommonObject
 				$this->id = $obj->rowid;
 
 				$this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->date_modification;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->entity            = $obj->entity;
 			}
 

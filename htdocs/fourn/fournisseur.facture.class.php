@@ -216,10 +216,10 @@ class FactureFournisseur extends Facture
 	{
 		global $conf;
 
-		$sql = 'SELECT libelle, facnumber, amount, remise, '.$this->db->pdate(datef).'as df,';
+		$sql = 'SELECT libelle, facnumber, amount, remise, datef as df,';
 		$sql.= ' total_ht, total_tva, total_ttc, fk_user_author,';
 		$sql.= ' fk_statut, fk_projet as fk_project, paye, f.note, f.note_public,';
-		$sql.= ' '.$this->db->pdate('date_lim_reglement').'as de,';
+		$sql.= ' date_lim_reglement as de,';
 		$sql.= ' s.nom as socnom, s.rowid as socid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.rowid';
@@ -239,9 +239,9 @@ class FactureFournisseur extends Facture
 
 				$this->type          = 0;
 
-				$this->datep         = $obj->df;
-				$this->date          = $obj->df;
-				$this->date_echeance = $obj->de;
+				$this->datep         = $this->db->jdate($obj->df);
+				$this->date          = $this->db->jdate($obj->df);
+				$this->date_echeance = $this->db->jdate($obj->de);
 				$this->libelle       = $obj->libelle;
 
 				$this->remise        = $obj->remise;

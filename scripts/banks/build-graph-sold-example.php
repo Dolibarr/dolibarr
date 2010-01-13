@@ -141,16 +141,16 @@ foreach ($accounts as $account)
 	$height = 280;
 
 	// Calcul de $min et $max
-	$sql = "SELECT min(".$db->pdate("datev")."),max(".$db->pdate("datev").")";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
+	$sql = "SELECT min(datev), max(datev)";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank";
+	$sql.= " WHERE fk_account = ".$account;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
 		$row = $db->fetch_row($resql);
-		$min = $row[0];
-		$max = $row[1];
+		$min = $this->db->jdate($row[0]);
+		$max = $this->db->jdate($row[1]);
 	}
 	else
 	{

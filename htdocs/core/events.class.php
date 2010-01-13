@@ -166,10 +166,10 @@ class Events // extends CommonObject
 
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
-		$sql.= " ".$this->db->pdate('t.tms').",";
+		$sql.= " t.tms,";
 		$sql.= " t.type,";
 		$sql.= " t.entity,";
-		$sql.= " ".$this->db->pdate('t.dateevent').",";
+		$sql.= " t.dateevent,";
 		$sql.= " t.description,";
 		$sql.= " t.ip,";
 		$sql.= " t.user_agent";
@@ -185,10 +185,10 @@ class Events // extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
-				$this->tms = $obj->tms;
+				$this->tms = $this->db->jdate($obj->tms);
 				$this->type = $obj->type;
 				$this->entity = $obj->entity;
-				$this->dateevent = $obj->dateevent;
+				$this->dateevent = $this->db->jdate($obj->dateevent);
 				$this->description = $obj->description;
 				$this->ip = $obj->ip;
 				$this->user_agent = $obj->user_agent;

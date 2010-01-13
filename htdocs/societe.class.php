@@ -102,6 +102,9 @@ class Societe extends CommonObject
 
 	var $price_level;
 
+	var $datec;
+	var $date_update;
+
 	var $commercial_id; //Id du commercial affecte
 
 	var $import_key;
@@ -532,9 +535,9 @@ class Societe extends CommonObject
 			}
 		}
 
-		$sql = 'SELECT s.rowid, s.nom, s.entity, s.address,'.$this->db->pdate('s.datec').' as dc, s.prefix_comm';
+		$sql = 'SELECT s.rowid, s.nom, s.entity, s.address, s.datec as dc, s.prefix_comm';
 		$sql .= ', s.price_level';
-		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
+		$sql .= ', s.tms as date_update';
 		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
 		$sql .= ', s.siren, s.siret, s.ape, s.idprof4';
 		$sql .= ', s.capital, s.tva_intra';
@@ -580,7 +583,8 @@ class Societe extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
 
-				$this->date_update = $obj->date_update;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->date_update = $this->db->jdate($obj->date_update);
 
 				$this->nom = $obj->nom;
 				$this->address = $obj->address;
@@ -640,7 +644,7 @@ class Societe extends CommonObject
 
 				$this->prefix_comm = $obj->prefix_comm;
 
-				$this->remise_client = $obj->remise_client;
+				$this->remise_client  = $obj->remise_client;
 				$this->mode_reglement = $obj->mode_reglement;
 				$this->cond_reglement = $obj->cond_reglement;
 				$this->client      = $obj->client;
@@ -686,7 +690,7 @@ class Societe extends CommonObject
 		global $conf,$langs;
 
 		$sql = "SELECT l.rowid, l.label, l.fk_societe, l.nom, l.address, l.cp";
-		$sql .= ", ".$this->db->pdate("l.tms")."as dm, ".$this->db->pdate("l.datec")."as dc";
+		$sql .= ", l.tms as dm, l.datec as dc";
 		$sql .= ", l.ville, l.fk_pays, l.note, l.tel, l.fax";
 		$sql .= ", p.libelle as pays, p.code as pays_code, s.nom as socname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
@@ -701,8 +705,8 @@ class Societe extends CommonObject
 			$obj = $this->db->fetch_object($result);
 
 			$this->id             = $obj->rowid;
-			$this->datec          = $obj->dc;
-			$this->datem          = $obj->dm;
+			$this->datec          = $this->db->jdate($obj->dc);
+			$this->datem          = $this->db->jdate($obj->dm);
 			$this->label          = $obj->label;
 			$this->socid          = $obj->fk_societe;
 			$this->societe        = $obj->socname;
@@ -1829,7 +1833,7 @@ class Societe extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
+		$sql = "SELECT s.rowid, s.nom, s.datec, s.datea,";
 		$sql.= " fk_user_creat, fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.rowid = ".$id;
@@ -1855,8 +1859,8 @@ class Societe extends CommonObject
 					$this->user_modification = $muser;
 				}
 				$this->ref			     = $obj->nom;
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->datea;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datea);
 			}
 
 			$this->db->free($result);

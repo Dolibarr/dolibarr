@@ -180,17 +180,17 @@ class Entrepot extends CommonObject
 		$sql.= " WHERE fk_entrepot = " . $this->id;
 		dol_syslog("Entrepot::delete sql=".$sql);
 		$resql1=$this->db->query($sql);
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
 		$sql.= " WHERE fk_entrepot = " . $this->id;
 		dol_syslog("Entrepot::delete sql=".$sql);
 		$resql2=$this->db->query($sql);
-		
+
 		if ($resql1 && $resql2)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
-		
+
 			dol_syslog("Entrepot::delete sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -213,7 +213,7 @@ class Entrepot extends CommonObject
 			dol_syslog("Entrepot::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
-		
+
 	}
 
 
@@ -276,8 +276,8 @@ class Entrepot extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql  = "SELECT e.rowid, ".$this->db->pdate("datec")." as datec,";
-		$sql .= " ".$this->db->pdate("tms")." as datem,";
+		$sql  = "SELECT e.rowid, e.datec,";
+		$sql .= " e.datem,";
 		$sql .= " fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " WHERE e.rowid = ".$id;
@@ -303,8 +303,8 @@ class Entrepot extends CommonObject
 					$this->user_validation = $vuser;
 				}
 
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->datem;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
 
 			}
 

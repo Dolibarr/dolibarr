@@ -2024,7 +2024,7 @@ else
 	 * Show object in view mode
 	 */
 
-	$now=gmmktime();
+	$now=dol_now();
 
 	$id = $_GET['facid'];
 	$ref= $_GET['ref'];
@@ -2393,6 +2393,7 @@ else
 			if ($fac->type != 2 && $_GET['action'] != 'editinvoicedate' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
+
 			if ($fac->type != 2)
 			{
 				if ($_GET['action'] == 'editinvoicedate')

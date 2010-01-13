@@ -586,7 +586,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		// Search for last subscription id and end date
-		$sql = "SELECT rowid, ".$this->db->pdate("datef")." as datef";
+		$sql = "SELECT rowid, datef";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.= " WHERE fk_adherent='".$this->id."'";
 		$sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
@@ -596,7 +596,7 @@ class Adherent extends CommonObject
 		if ($resql)
 		{
 			$obj=$this->db->fetch_object($resql);
-			$datefin=$obj->datef;
+			$datefin=$this->db->jdate($obj->datef);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 			$sql.= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
@@ -924,11 +924,11 @@ class Adherent extends CommonObject
 		$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.fk_soc, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
 		$sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy,";
-		$sql.= " ".$this->db->pdate("d.datec")." as datec,";
-		$sql.= " ".$this->db->pdate("d.tms")." as datem,";
-		$sql.= " ".$this->db->pdate("d.datefin")." as datefin,";
+		$sql.= " d.datec as datec,";
+		$sql.= " d.tms as datem,";
+		$sql.= " d.datefin as datefin,";
 		$sql.= " d.naiss as datenaiss,";
-		$sql.= " ".$this->db->pdate("d.datevalid")." as datev,";
+		$sql.= " d.datevalid as datev,";
 		$sql.= " d.pays,";
 		$sql.= " p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
 		$sql.= " t.libelle as type, t.cotisation as cotisation,";
@@ -976,11 +976,11 @@ class Adherent extends CommonObject
 				$this->statut         = $obj->statut;
 				$this->public         = $obj->public;
 
-				$this->datec          = $obj->datec;
-				$this->datem          = $obj->datem;
-				$this->datefin        = $obj->datefin;
-				$this->datevalid      = $obj->datevalid;
-				$this->naiss          = $obj->datenaiss;
+				$this->datec          = $this->db->jdate($obj->datec);
+				$this->datem          = $this->db->jdate($obj->datem);
+				$this->datefin        = $this->db->jdate($obj->datefin);
+				$this->datevalid      = $this->db->jdate($obj->datev);
+				$this->naiss          = $this->db->jdate($obj->datenaiss);
 
 				$this->note           = $obj->note;
 				$this->morphy         = $obj->morphy;
@@ -2007,9 +2007,9 @@ class Adherent extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT a.rowid, '.$this->db->pdate('a.datec').' as datec,';
-		$sql.= ' '.$this->db->pdate('a.datevalid').' as datev,';
-		$sql.= ' '.$this->db->pdate('a.tms').' as datem,';
+		$sql = 'SELECT a.rowid, a.datec as datec,';
+		$sql.= ' a.datevalid as datev,';
+		$sql.= ' a.tms as datem,';
 		$sql.= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
 		$sql.= ' WHERE a.rowid = '.$id;
@@ -2043,9 +2043,9 @@ class Adherent extends CommonObject
 					$this->user_modification = $muser;
 				}
 
-				$this->date_creation     = $obj->datec;
-				$this->date_validation   = $obj->datev;
-				$this->date_modification = $obj->datem;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);

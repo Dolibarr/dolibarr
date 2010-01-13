@@ -39,9 +39,9 @@ $langs->load("donations");
  * View
  */
 
-$sql = "SELECT ".$db->pdate("d.datedon")." as datedon, d.nom, d.prenom, d.amount, d.public, d.societe";
-$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-$sql .= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
+$sql = "SELECT d.datedon as datedon, d.nom, d.prenom, d.amount, d.public, d.societe";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as d";
+$sql.= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 
 if ( $db->query( $sql) )
 {
@@ -69,13 +69,13 @@ if ( $db->query( $sql) )
 	  print "<TR $bc[$var]>";
 	  if ($objp->public)
 	  {
-	  	print "<td>".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".stripslashes($objp->societe)."</td>\n";
+	  	print "<td>".$objp->prenom." ".$objp->nom." ".$objp->societe."</td>\n";
 	  }
 	  else
 	  {
 	  	print "<td>Anonyme Anonyme</td>\n";
 	  }
-	  print "<td>".dol_print_date($objp->datedon)."</td>\n";
+	  print "<td>".dol_print_date($this->db->jdate($objp->datedon))."</td>\n";
 	  print '<td align="right">'.number_format($objp->amount,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td>';
 	  print "</tr>";
 	  $i++;

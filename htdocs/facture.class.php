@@ -545,11 +545,11 @@ class Facture extends CommonObject
 		global $conf;
 
 		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
-		$sql.= ','.$this->db->pdate('f.datef').' as df';
-		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
-		$sql.= ','.$this->db->pdate('f.datec').' as datec';
-		$sql.= ','.$this->db->pdate('f.date_valid').' as datev';
-		$sql.= ','.$this->db->pdate('f.tms').' as datem';
+		$sql.= ', f.datef as df';
+		$sql.= ', f.date_lim_reglement as dlr';
+		$sql.= ', f.datec as datec';
+		$sql.= ', f.date_valid as datev';
+		$sql.= ', f.tms as datem';
 		$sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
 		$sql.= ', f.fk_facture_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
@@ -576,9 +576,9 @@ class Facture extends CommonObject
 				$this->ref                    = $obj->facnumber;
 				$this->ref_client             = $obj->ref_client;
 				$this->type                   = $obj->type;
-				$this->date                   = $obj->df;
-				$this->date_creation          = $obj->datec;
-				$this->date_validation        = $obj->datev;
+				$this->date                   = $this->db->jdate($obj->df);
+				$this->date_creation          = $this->db->jdate($obj->datec);
+				$this->date_validation        = $this->db->jdate($obj->datev);
 				$this->datem                  = $this->db->jdate($obj->datem);
 				$this->amount                 = $obj->amount;
 				$this->remise_percent         = $obj->remise_percent;
@@ -592,7 +592,7 @@ class Facture extends CommonObject
 				$this->close_note             = $obj->close_note;
 				$this->socid                  = $obj->fk_soc;
 				$this->statut                 = $obj->fk_statut;
-				$this->date_lim_reglement     = $obj->dlr;
+				$this->date_lim_reglement     = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
 				$this->mode_reglement_code    = $obj->mode_reglement_code;
 				$this->mode_reglement         = $obj->mode_reglement_libelle;
@@ -666,7 +666,7 @@ class Facture extends CommonObject
 	{
 		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.product_type, l.price, l.qty, l.tva_taux, ';
 		$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
-		$sql.= ' '.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end,';
+		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
@@ -699,10 +699,10 @@ class Facture extends CommonObject
 				$faclig->fk_remise_except = $objp->fk_remise_except;
 				$faclig->produit_id       = $objp->fk_product;
 				$faclig->fk_product       = $objp->fk_product;
-				$faclig->date_start       = $objp->date_start;
-				$faclig->date_end         = $objp->date_end;
-				$faclig->date_start       = $objp->date_start;
-				$faclig->date_end         = $objp->date_end;
+				$faclig->date_start       = $this->db->jdate($objp->date_start);
+				$faclig->date_end         = $this->db->jdate($objp->date_end);
+				$faclig->date_start       = $this->db->jdate($objp->date_start);
+				$faclig->date_end         = $this->db->jdate($objp->date_end);
 				$faclig->info_bits        = $objp->info_bits;
 				$faclig->total_ht         = $objp->total_ht;
 				$faclig->total_tva        = $objp->total_tva;
@@ -2865,7 +2865,7 @@ class FactureLigne
 	{
 		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_taux,';
 		$sql.= ' fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
-		$sql.= ' '.$this->db->pdate('fd.date_start').' as date_start,'.$this->db->pdate('fd.date_end').' as date_end,';
+		$sql.= ' fd.date_start as date_start, fd.date_end as date_end,';
 		$sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.rang,';
 		$sql.= ' fd.fk_code_ventilation, fd.fk_export_compta,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
@@ -2887,8 +2887,8 @@ class FactureLigne
 			$this->produit_id     = $objp->fk_product;	// Ne plus utiliser
 			$this->fk_product     = $objp->fk_product;
 			$this->product_type   = $objp->product_type;
-			$this->date_start     = $objp->date_start;
-			$this->date_end       = $objp->date_end;
+			$this->date_start     = $this->db->jdate($objp->date_start);
+			$this->date_end       = $this->db->jdate($objp->date_end);
 			$this->info_bits      = $objp->info_bits;
 			$this->total_ht       = $objp->total_ht;
 			$this->total_tva      = $objp->total_tva;

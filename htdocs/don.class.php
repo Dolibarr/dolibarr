@@ -426,8 +426,8 @@ class Don extends CommonObject
 	 */
 	function fetch($rowid)
 	{
-		$sql = "SELECT d.rowid, ".$this->db->pdate("d.datec")." as datec,";
-		$sql.= " ".$this->db->pdate("d.datedon")." as datedon,";
+		$sql = "SELECT d.rowid, d.datec,";
+		$sql.= " d.datedon,";
 		$sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet,";
 		$sql.= " p.title as projet";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."don as d";
@@ -445,8 +445,8 @@ class Don extends CommonObject
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
-				$this->datec          = $obj->datec;
-				$this->date           = $obj->datedon;
+				$this->datec          = $this->db->jdate($obj->datec);
+				$this->date           = $this->db->jdate($obj->datedon);
 				$this->prenom         = $obj->prenom;
 				$this->nom            = $obj->nom;
 				$this->societe        = $obj->societe;

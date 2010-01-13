@@ -153,7 +153,7 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
  */
 $title=$langs->trans("ListOfThirdParties");
 
-$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
+$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea";
 $sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";

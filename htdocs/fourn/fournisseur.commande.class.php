@@ -57,7 +57,7 @@ class CommandeFournisseur extends Commande
 	{
 		$this->db = $DB;
 		$this->products = array();
-		
+
 		// List of language codes for status
 		$this->statuts[0] = 'StatusOrderDraft';
 		$this->statuts[1] = 'StatusOrderValidated';
@@ -81,7 +81,7 @@ class CommandeFournisseur extends Commande
 		global $conf;
 
 		$sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
-		$sql.= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
+		$sql.= " c.date_commande as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql.= " c.note, c.note_public, c.model_pdf,";
 		$sql.= " cm.libelle as methode_commande";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -105,8 +105,8 @@ class CommandeFournisseur extends Commande
 			$this->total_ht            = $obj->total_ht;
 			$this->total_tva           = $obj->tva;
 			$this->total_ttc           = $obj->total_ttc;
-			$this->date_commande       = $obj->date_commande; // date a laquelle la commande a ete transmise
-			$this->date                = $obj->date_creation;
+			$this->date_commande       = $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
+			$this->date                = $this->db->jdate($obj->date_creation);
 			$this->remise_percent      = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_methode_commande;
 			$this->methode_commande    = $obj->methode_commande;

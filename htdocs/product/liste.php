@@ -100,7 +100,7 @@ else
 }
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
-$sql.= ' p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
+$sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if ($conf->categorie->enabled && ($catid || !$user->rights->categorie->voir))
@@ -340,7 +340,7 @@ if ($resql)
 			}
 
 			// Date
-			print '<td align="center">'.dol_print_date($objp->datem,'day')."</td>\n";
+			print '<td align="center">'.dol_print_date($this->db->jdate($objp->datem),'day')."</td>\n";
 
 			// Duration
 			if ($conf->service->enabled && $type != 0)

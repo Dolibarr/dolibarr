@@ -73,7 +73,7 @@ class PaiementFourn
 	 */
 	function fetch($id)
 	{
-		$sql = 'SELECT p.rowid,'.$this->db->pdate('p.datep').' as dp, p.amount, p.statut, p.fk_bank,';
+		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -89,7 +89,7 @@ class PaiementFourn
 				$obj = $this->db->fetch_object($resql);
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
-				$this->date           = $obj->dp;
+				$this->date           = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
@@ -342,10 +342,9 @@ class PaiementFourn
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec, fk_user_author';
-		$sql .= ', '.$this->db->pdate('tms').' as tms';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql = 'SELECT c.rowid, datec, fk_user_author, tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
+		$sql.= ' WHERE c.rowid = '.$id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -367,8 +366,8 @@ class PaiementFourn
 					$muser->fetch();
 					$this->user_modification = $muser;
 				}
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->tms;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($resql);
 		}
@@ -538,7 +537,7 @@ class PaiementFourn
             $sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn";
             $sql.= " SET datep = ".$this->db->idate($date);
             $sql.= " WHERE rowid = ".$this->id;
-            
+
             dol_syslog("PaiementFourn::update_date sql=".$sql);
             $result = $this->db->query($sql);
             if ($result)

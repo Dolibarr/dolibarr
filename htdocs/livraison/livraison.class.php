@@ -250,7 +250,7 @@ class Livraison extends CommonObject
 
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_client, l.fk_user_author,";
 		$sql.=" l.total_ht, l.fk_statut, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
-		$sql.= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
+		$sql.= ", l.date_livraison as date_livraison, l.fk_adresse_livraison, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON l.rowid = el.fk_target";
@@ -265,9 +265,9 @@ class Livraison extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                   = $obj->rowid;
-				$this->date_livraison       = $obj->date_livraison;
-				$this->date_creation        = $obj->date_creation;
-				$this->date_valid           = $obj->date_valid;
+				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->date_creation        = $this->db->jdate($obj->date_creation);
+				$this->date_valid           = $this->db->jdate($obj->date_valid);
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
 				$this->socid                = $obj->fk_soc;

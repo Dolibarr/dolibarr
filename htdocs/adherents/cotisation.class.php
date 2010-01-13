@@ -100,10 +100,10 @@ class Cotisation extends CommonObject
 	 */
 	function fetch($rowid)
 	{
-        $sql ="SELECT rowid, fk_adherent, ".$this->db->pdate("datec")." as datec,";
+        $sql ="SELECT rowid, fk_adherent, datec,";
 		$sql.=" tms,";
-		$sql.=" ".$this->db->pdate("dateadh")." as dateadh,";
-		$sql.=" ".$this->db->pdate("datef")." as datef,";
+		$sql.=" dateadh,";
+		$sql.=" datef,";
 		$sql.=" cotisation, note, fk_bank";
 		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.="	WHERE rowid=".$rowid;
@@ -120,10 +120,10 @@ class Cotisation extends CommonObject
 				$this->ref            = $obj->rowid;
 
 				$this->fk_adherent    = $obj->fk_adherent;
-				$this->datec          = $obj->datec;
-				$this->datem          = $obj->tms;
-				$this->dateh          = $obj->dateadh;
-				$this->datef          = $obj->datef;
+				$this->datec          = $this->db->jdate($obj->datec);
+				$this->datem          = $this->db->jdate($obj->tms);
+				$this->dateh          = $this->db->jdate($obj->dateadh);
+				$this->datef          = $this->db->jdate($obj->datef);
 				$this->amount         = $obj->cotisation;
 				$this->note           = $obj->note;
 				$this->fk_bank        = $obj->fk_bank;

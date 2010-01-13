@@ -31,7 +31,7 @@ class FormActions
 {
 	var $db;
 	var $error;
-	
+
 
 	/**
 	*		\brief     Constructeur
@@ -40,7 +40,7 @@ class FormActions
 	function FormActions($DB)
 	{
 		$this->db = $DB;
-		
+
 		return 1;
 	}
 
@@ -85,7 +85,7 @@ class FormActions
 		}
 	}
 
-	
+
 	/**
 	*    	\brief      Show list of actions for element
 	*    	\param      object			Object
@@ -97,8 +97,8 @@ class FormActions
 	{
 		global $langs,$conf,$user;
 		global $bc;
-		
-		$sql = 'SELECT a.id, '.$this->db->pdate('a.datep').' as da, a.label, a.note,';
+
+		$sql = 'SELECT a.id, a.datep as da, a.label, a.note,';
 		$sql.= ' u.login';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
 		$sql.= ' WHERE a.fk_user_author = u.rowid';
@@ -133,7 +133,7 @@ class FormActions
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-					print '<td>'.dol_print_date($objp->da,'day').'</td>';
+					print '<td>'.dol_print_date($this->db->jdate($objp->da),'day').'</td>';
 					print '<td title="'.dol_escape_htmltag($objp->label).'">'.dol_trunc($objp->label,32).'</td>';
 					print '<td>'.$objp->login.'</td>';
 					print '</tr>';
@@ -141,7 +141,7 @@ class FormActions
 				}
 				print '</table>';
 			}
-			
+
 			return $num;
 		}
 		else
@@ -151,10 +151,10 @@ class FormActions
 		}
 	}
 
-	
+
 	/**
 	 *    \brief      Retourne la liste des types de comptes financiers
-	 *    \param      selected        Type pr�-s�lectionn�
+	 *    \param      selected        Type pre-selectionne
 	 *    \param      htmlname        Nom champ formulaire
 	 */
 	function select_type_actions($selected='',$htmlname='actioncode')
@@ -165,7 +165,7 @@ class FormActions
 		require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
 		$caction=new CActionComm($this->db);
 		$form=new Form($this->db);
-		
+
 		$arraylist=$caction->liste_array(1,'code');
 		$arraylist[0]='&nbsp;';
 		asort($arraylist);
@@ -173,5 +173,5 @@ class FormActions
 		$form->select_array($htmlname, $arraylist, $selected);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	}
-		
+
 }

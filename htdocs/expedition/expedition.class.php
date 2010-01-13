@@ -227,7 +227,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT e.rowid, e.fk_soc as socid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
-		$sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf, e.fk_adresse_livraison";
+		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_adresse_livraison";
 		$sql.= ", e.fk_expedition_methode, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id";
 		$sql.= ", ori.ref_client";
@@ -263,7 +263,7 @@ class Expedition extends CommonObject
 				$this->origin_id            = $obj->origin_id;
 				$this->livraison_id         = $obj->livraison_id;
 				$this->user_author_id       = $obj->fk_user_author;
-				$this->date                 = $obj->date_expedition;
+				$this->date                 = $this->db->jdate($obj->date_expedition);
 				$this->adresse_livraison_id = $obj->fk_adresse_livraison; // TODO obsolete
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
 				$this->modelpdf             = $obj->model_pdf;

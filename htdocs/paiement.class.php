@@ -69,7 +69,7 @@ class Paiement
 	 */
 	function fetch($id)
 	{
-		$sql = 'SELECT p.rowid,'.$this->db->pdate('p.datep').' as dp, p.amount, p.statut, p.fk_bank';
+		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank';
 		$sql.= ', c.code as type_code, c.libelle as type_libelle';
 		$sql.= ', p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
@@ -87,8 +87,8 @@ class Paiement
 				$obj = $this->db->fetch_object($result);
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
-				$this->date           = $obj->dp;
-				$this->datepaye       = $obj->dp;
+				$this->date           = $this->db->jdate($obj->dp);
+				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
@@ -337,10 +337,10 @@ class Paiement
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec, fk_user_creat, fk_user_modif';
-		$sql .= ', '.$this->db->pdate('tms').' as tms';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql = 'SELECT c.rowid, c.datec, c.fk_user_creat, c.fk_user_modif,';
+		$sql.= ' c.tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as c';
+		$sql.= ' WHERE c.rowid = '.$id;
 
 		dol_syslog('Paiement::info sql='.$sql);
 		$result = $this->db->query($sql);
@@ -363,8 +363,8 @@ class Paiement
 					$muser->fetch();
 					$this->user_modification = $muser;
 				}
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->tms;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
 		}

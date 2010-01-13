@@ -654,10 +654,10 @@ class Contact extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = "SELECT c.rowid, ".$this->db->pdate("c.datec")." as datec, c.fk_user_creat";
-		$sql .= ", ".$this->db->pdate("c.tms")." as tms, c.fk_user_modif";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
+		$sql.= " c.tms as tms, c.fk_user_modif";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql.= " WHERE c.rowid = ".$id;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -680,9 +680,8 @@ class Contact extends CommonObject
 					$this->user_modification = $muser;
 				}
 
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->tms;
-
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 
 			$this->db->free($resql);

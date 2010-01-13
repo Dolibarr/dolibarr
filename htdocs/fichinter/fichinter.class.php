@@ -186,9 +186,9 @@ class Fichinter extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT rowid, ref, description, fk_soc, fk_statut,";
-		$sql.= " ".$this->db->pdate("datec")." as datec,";
-		$sql.= " ".$this->db->pdate("date_valid")." as datev,";
-		$sql.= " ".$this->db->pdate("tms")." as datem,";
+		$sql.= " datec,";
+		$sql.= " as datev,";
+		$sql.= " datem,";
 		$sql.= " duree, fk_projet, note_public, note_private, model_pdf";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) $sql.= " WHERE f.ref='".$ref."'";
@@ -208,9 +208,9 @@ class Fichinter extends CommonObject
 				$this->socid        = $obj->fk_soc;
 				$this->statut       = $obj->fk_statut;
 				$this->duree        = $obj->duree;
-				$this->datec        = $obj->datec;
-				$this->datev        = $obj->datev;
-				$this->datem        = $obj->datem;
+				$this->datec        = $this->db->jdate($obj->datec);
+				$this->datev        = $this->db->jdate($obj->datev);
+				$this->datem        = $this->db->jdate($obj->datem);
 				$this->projetidp    = $obj->fk_projet;
 				$this->projet_id    = $obj->fk_projet;
 				$this->note_public  = $obj->note_public;
@@ -449,11 +449,11 @@ class Fichinter extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT f.rowid, ";
-		$sql.= $this->db->pdate("f.datec")." as datec";
-		$sql.= ", ".$this->db->pdate("f.date_valid")." as datev";
-		$sql.= ", f.fk_user_author";
-		$sql.= ", f.fk_user_valid";
+		$sql = "SELECT f.rowid,";
+		$sql.= " datec,";
+		$sql.= " f.date_valid as datev,";
+		$sql.= " f.fk_user_author,";
+		$sql.= " f.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql.= " WHERE f.rowid = ".$id;
 		$sql.= " AND f.entity = ".$conf->entity;
@@ -468,8 +468,8 @@ class Fichinter extends CommonObject
 
 				$this->id                = $obj->rowid;
 
-				$this->date_creation     = $obj->datec;
-				$this->date_validation   = $obj->datev;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_validation   = $this->db->jdate($obj->datev);
 
 				$cuser = new User($this->db, $obj->fk_user_author);
 				$cuser->fetch();
@@ -818,7 +818,7 @@ class FichinterLigne
 	function fetch($rowid)
 	{
 		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang,';
-		$sql.= ' '.$this->db->pdate('ft.date').' as datei';
+		$sql.= ' ft.date as datei';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql.= ' WHERE ft.rowid = '.$rowid;
 
@@ -829,7 +829,7 @@ class FichinterLigne
 			$objp = $this->db->fetch_object($result);
 			$this->rowid          	= $objp->rowid;
 			$this->fk_fichinter   	= $objp->fk_fichinter;
-			$this->datei			= $objp->datei;
+			$this->datei			= $this->db->jdate($objp->datei);
 			$this->desc           	= $objp->description;
 			$this->duration       	= $objp->duree;
 			$this->rang           	= $objp->rang;
