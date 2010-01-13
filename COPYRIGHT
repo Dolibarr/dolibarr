@@ -27,7 +27,6 @@ PHP_ExcelReader   2.21     MIT License                 Yes              Parse an
 Prototype         1.6.0.3  MIT License                 Yes              Ajax library
 PWC               1.3      MIT License                 Yes              Ajax library
 Scriptaculous     1.8.2    MIT License                 Yes              Ajax library
-SimpleMail        1.2      GPL                         Yes              SMTP library
 Smarty            2.6.26   LGPL 2.1                    Yes              Templates engine used by some pages
 SMTPs             1.15     GPL                         Yes              SMTPS library
 VCard             2.0      GPL 2.0                     Yes              Fonctions vcard

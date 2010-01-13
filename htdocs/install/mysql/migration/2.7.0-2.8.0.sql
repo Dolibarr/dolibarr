@@ -39,3 +39,6 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (5,'
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (6,'NOTIFY_VAL_PROPAL','Validation proposition client','Executed when a commercial proposal is validated','propal');
 
 UPDATE llx_c_type_contact SET element='project' WHERE element='projet';
+
+UPDATE llx_const set value='mail' where value='simplemail' and name='MAIN_MAIL_SENDMODE';
+

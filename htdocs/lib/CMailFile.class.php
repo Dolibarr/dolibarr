@@ -53,12 +53,12 @@ class CMailFile
 	var $atleastonefile=0;
 	var $error='';
 
-	var $smtps;				// Contains SMTPs object (if this method is used)
+	var $smtps;			// Contains SMTPs object (if this method is used)
 
 	// simplemail
-	var $simplemail;  // Contains simplemail object (if this method is used)
-	var $sName;
-	var $sEmail;
+	//var $simplemail;  // Contains simplemail object (if this method is used)
+	//var $sName;
+	//var $sEmail;
 
 	//CSS
 	var $css;
@@ -226,6 +226,7 @@ class CMailFile
 			// comme des injections mail par les serveurs de messagerie.
 			$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
 		}
+/*
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
 		{
 			// Use simplemail library
@@ -333,6 +334,7 @@ class CMailFile
 			}
 			$this->simplemail = $mail;
 		}
+*/
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 		{
 			// Use SMTPS library
@@ -476,6 +478,7 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER))	ini_restore('SMTP');
 				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT)) 	ini_restore('smtp_port');
 			}
+/*
 			else if ($conf->global->MAIN_MAIL_SENDMODE == 'simplemail')
 			{
 				// Use simplemmail function (Simplemail method)
@@ -524,6 +527,7 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER))	ini_restore('SMTP');
 				if (! empty($conf->global->MAIN_MAIL_SMTP_PORT)) 	ini_restore('smtp_port');
 			}
+*/
 			else if ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 			{
 
@@ -687,7 +691,7 @@ class CMailFile
 
 
 	/**
-	 * Creation header MIME
+	 * Creation header MIME (mode = 'mail')
 	 *
 	 * @param 		filename_list
 	 * @param 		mimefilename_list
@@ -812,7 +816,7 @@ class CMailFile
 	}
 
 	/**
-	 * Permet d'attacher un fichier
+	 * Permet d'attacher un fichier (mode = 'mail')
 	 *
 	 * @param 		filename_list		Tableau
 	 * @param 		mimetype_list		Tableau
@@ -856,10 +860,10 @@ class CMailFile
 
 
 	/**
-	 * Permet d'attacher une image
+	 * Permet d'attacher une image (mode = 'mail')
 	 *
 	 * @param 		images_list		Tableau
-	 * @return		out					Chaine images encodees
+	 * @return		out				Chaine images encodees
 	 */
 	function write_images($images_list)
 	{

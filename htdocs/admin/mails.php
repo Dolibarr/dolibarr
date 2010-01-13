@@ -250,7 +250,7 @@ if ($message) print $message.'<br>';
 // List of sending methods
 $listofmethods=array();
 $listofmethods['mail']='PHP mail function';
-$listofmethods['simplemail']='Simplemail class';
+//$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps']='SMTP/SMTPS socket library';
 
 
@@ -431,7 +431,7 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
-	if (empty($text)) $text=$langs->trans("Undefined");
+	if (empty($text)) $text=$langs->trans("Undefined").img_warning();
 	print $text;
 	print '</td></tr>';
 
