@@ -18,7 +18,7 @@
 
 /**
         \file       htdocs/html.formactions.class.php
-        \brief      Fichier de la classe des fonctions pr�d�finie de composants html actions
+        \brief      Fichier de la classe des fonctions predefinie de composants html actions
 		\version	$Id$
 */
 
@@ -106,6 +106,7 @@ class FormActions
 		if ($typeelement == 'invoice') $sql.= ' AND a.fk_facture = '.$object->id;
 		if ($typeelement == 'propal')  $sql.= ' AND a.propalrowid = '.$object->id;
 		if ($typeelement == 'order')   $sql.= ' AND a.fk_commande = '.$object->id;
+		if ($typeelement == 'project') $sql.= ' AND a.fk_project = '.$object->id;
 
 		dol_syslog("FormActions::showactions sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -117,6 +118,8 @@ class FormActions
 				if ($typeelement == 'invoice') $title=$langs->trans('ActionsOnBill');
 				if ($typeelement == 'propal')  $title=$langs->trans('ActionsOnPropal');
 				if ($typeelement == 'order')   $title=$langs->trans('ActionsOnOrder');
+				if ($typeelement == 'project') $title=$langs->trans('ActionsOnProject');
+				
 				print_titre($title);
 
 				$i = 0; $total = 0;	$var=true;

@@ -648,7 +648,7 @@ class Project extends CommonObject
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
 		}
 		$sql.= " ORDER BY p.ref, t.title";
-
+print $sql;
 		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -813,11 +813,10 @@ class Project extends CommonObject
 		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
-		$this->ref_client='NEMICEPS';
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
-		$this->date = time();
+		$this->dateo = time();
 		$this->note_public='SPECIMEN';
 		$nbp = rand(1, 9);
 		$xnbp = 0;

@@ -227,6 +227,16 @@ class FormFile
 					$modellist=$model->liste_modeles($this->db);
 				}
 			}
+			elseif ($modulepart == 'project')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/project/modules_project.php');
+					$model=new ModelePDFProjects();
+					$modellist=$model->liste_modeles($this->db);
+				}
+			}
 			elseif ($modulepart == 'export')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;

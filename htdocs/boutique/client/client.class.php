@@ -21,16 +21,16 @@
  */
 
 /**
-        \file       htdocs/boutique/client/client.class.php
-		\brief      Classe permettant de gèrer des clients de la boutique online
-		\author	    Rodolphe Quiedeville
-		\version    $Revision$
-*/
+ *      \file       htdocs/boutique/client/client.class.php
+ *      \brief      Classe permettant de gerer des clients de la boutique online
+ *      \author	    Rodolphe Quiedeville
+ *      \version    $Revision$
+ */
 
 /**
-        \class      Client
-		\brief      Classe permettant de gèrer des clients de la boutique online
-*/
+ *      \class      Client
+ *      \brief      Classe permettant de gerer des clients de la boutique online
+ */
 
 class Client
 {
@@ -46,10 +46,9 @@ class Client
     }
 
     /**
-            \brief      Fonction permettant de recupèrer les informations d'un clients de la boutique
-            \param      id			Id du client
-    */
-
+     *      \brief      Fonction permettant de recuperer les informations d'un clients de la boutique
+     *      \param      id			Id du client
+     */
     function fetch ($id)
     {
 		global $conf;

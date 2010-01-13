@@ -70,8 +70,6 @@ class pdf_baleine extends ModelePDFProjects
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 
-		$this->franchise=!$mysoc->tva_assuj;
-
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
@@ -79,15 +77,7 @@ class pdf_baleine extends ModelePDFProjects
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxcomm=120;
-		$this->posxtva=121;
-		$this->posxup=132;
-		$this->posxqty=168;
-		$this->posxdiscount=162;
-		$this->postotalht=177;
 
-		$this->tva=array();
-		$this->atleastoneratenotnull=0;
-		$this->atleastonediscount=0;
 	}
 
 	/**
@@ -167,8 +157,8 @@ class pdf_baleine extends ModelePDFProjects
 				}
 
 				// Complete object by loading several other informations
+				$tasks = $object->getTasksArray(0,0,1);
 				$task = new Task($this->db);
-				$result = $task->fetch($object->id);
 
 				$pdf->Open();
 				$pagenb=0;
@@ -193,9 +183,7 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 50;
-				$tab_height = 110;
-				$tab_height_newpage = 150;
+				$tab_height = 150;
 
 				// Affiche notes
 				if (! empty($object->note_public))
@@ -258,27 +246,9 @@ class pdf_baleine extends ModelePDFProjects
 						$nblineFollowDesc = 0;
 					}
 
-					// Test if a new page is required
-					if ($pagenb == 1)
+					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
-						$tab_top_in_current_page=$tab_top;
-						$tab_height_in_current_page=$tab_height;
-					}
-					else
-					{
-						$tab_top_in_current_page=$tab_top_newpage;
-						$tab_height_in_current_page=$tab_height_newpage;
-					}
-					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
-					{
-						if ($pagenb == 1)
-						{
-							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
-						}
-						else
-						{
-							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-						}
+						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
 
 						$this->_pagefoot($pdf, $object, $outputlangs);
 
@@ -295,17 +265,8 @@ class pdf_baleine extends ModelePDFProjects
 				}
 
 				// Show square
-				if ($pagenb == 1)
-				{
-					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top + $tab_height + 1;
-				}
-				else
-				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
-				}
-
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+				$bottomlasttab=$tab_top + $tab_height + 1;
 
 				/*
 				 * Pied de page
@@ -357,28 +318,7 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetFont('Arial','',10);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');
-
-		// Modif SEB pour avoir une col en plus pour les commentaires clients
-		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxcomm, $tab_top+2);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Comments"),'','L');
-
-		// Qty
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
-		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
-
-		// Modif Seb cadres signatures
-		$pdf->SetFont('Arial','',10);
-		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
-		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
-		$pdf->SetXY ($this->marge_gauche + 2, $tab_top + $tab_height + 5);
-		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->nom).":",'','L');
-
-		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
-		$pdf->SetXY (2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
-		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
+		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Task"),'','L');
 
 	}
 
@@ -422,22 +362,13 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Project")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 		$pdf->SetFont('Arial','',12);
 
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		if ($object->date_valid)
-		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_valid,"%d %b %Y",false,$outputlangs,true), '', 'R');
-		}
-		else
-		{
-			$pdf->SetTextColor(255,0,0);
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryNotValidated"), '', 'R');
-			$pdf->SetTextColor(0,0,60);
-		}
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->dateo,"%d %b %Y",false,$outputlangs,true), '', 'R');
 
 		$pdf->SetTextColor(0,0,60);
 
@@ -519,50 +450,26 @@ class pdf_baleine extends ModelePDFProjects
 
 			$object->fetch_client();
 
-			// If SHIPPING contact defined on invoice, we use it
-			$usecontact=false;
-			$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
+			// Nom client
+			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+
+			// Nom du contact facturation si c'est une societe
+			$arrayidcontact = $object->getIdContact('external','PROJECTLEADER');
 			if (sizeof($arrayidcontact) > 0)
 			{
-				$usecontact=true;
-				$result=$object->fetch_contact($arrayidcontact[0]);
-			}
-
-			if ($usecontact)
-			{
-				$socname = $object->client->nom;
-				$carac_client_name=$outputlangs->convToOutputCharset($socname);
-
-				// Customer name
-				$carac_client = $outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-
-				// Customer properties
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-				if ($object->contact->pays_code && $object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
-			}
-			else
-			{
-				// Nom client
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-
-				// Nom du contact facturation si c'est une societe
-				$arrayidcontact = $object->getIdContact('external','SHIPPING');
-				if (sizeof($arrayidcontact) > 0)
+				$object->fetch_contact($arrayidcontact[0]);
+				// On verifie si c'est une societe ou un particulier
+				if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 				{
-					$object->fetch_contact($arrayidcontact[0]);
-					// On verifie si c'est une societe ou un particulier
-					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
-					{
-						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-					}
+					$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 				}
-
-				// Caracteristiques client
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
-				if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 			}
+
+			// Caracteristiques client
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
+
 			// Numero TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
 

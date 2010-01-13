@@ -26,6 +26,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -33,13 +34,8 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 
 $langs->load("projects");
 
-$projetid='';
-$ref='';
-if (isset($_GET["id"]))  { $projetid=$_GET["id"]; }
-else $_GET["id"]=$_POST["id"];
-if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
-
-//var_dump($_REQUEST);exit;
+$projectid = (isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:''));
+$ref = (isset($_GET["ref"])?$_GET["ref"]:'');
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['socid_id']))
@@ -49,12 +45,11 @@ if (! empty($_REQUEST['socid_id']))
 	$_REQUEST['socid'] = $_REQUEST['socid_id'];
 }
 
-
-if ($projetid == '' && $ref == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
+if ($projectid == '' && $ref == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $projetid);
+$result = restrictedArea($user, 'projet', $projectid);
 
 
 /*
@@ -77,8 +72,8 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 
 	if (! $error)
 	{
-		//print $_POST["socid"];
 		$project = new Project($db);
+		
 		$project->ref             = $_POST["ref"];
 		$project->title           = $_POST["title"];
 		$project->socid           = $_POST["socid"];
@@ -124,19 +119,19 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	}
 	if (! $error)
 	{
-		$projet = new Project($db);
-		$projet->fetch($_POST["id"]);
+		$project = new Project($db);
+		$project->fetch($_POST["id"]);
 
-		$projet->ref          = $_POST["ref"];
-		$projet->title        = $_POST["title"];
-		$projet->socid        = $_POST["socid"];
-		$projet->user_resp_id = $_POST["officer_project"];
-		$projet->date_start   = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
-		$projet->date_end     = dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
+		$project->ref          = $_POST["ref"];
+		$project->title        = $_POST["title"];
+		$project->socid        = $_POST["socid"];
+		$project->user_resp_id = $_POST["officer_project"];
+		$project->date_start   = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+		$project->date_end     = dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
 
-		$result=$projet->update($user);
+		$result=$project->update($user);
 
-		$_GET["id"]=$projet->id;  // On retourne sur la fiche projet
+		$_GET["id"]=$project->id;  // On retourne sur la fiche projet
 	}
 	else
 	{
@@ -181,9 +176,9 @@ if ($_REQUEST['action'] == 'confirm_reopen' && $_REQUEST['confirm'] == 'yes')
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->supprimer)
 {
-	$projet = new Project($db);
-	$projet->id = $_GET["id"];
-	$result=$projet->delete($user);
+	$project = new Project($db);
+	$project->id = $_GET["id"];
+	$result=$project->delete($user);
 	if ($result >= 0)
 	{
 		Header("Location: index.php");
@@ -204,6 +199,7 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Projects"),$help_url);
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
@@ -216,7 +212,6 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	//if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
 	print '<table class="border" width="100%">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -226,17 +221,16 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'*</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
 
-	// Client
+	// Customer
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	//print $_REQUEST["socid"];
 	print $html->select_societes($_REQUEST["socid"],'socid','',1,1);
 	print '</td></tr>';
 
-	// Responsable du projet
+	// Project leader
 	print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
 	if ($_REQUEST["mode"] != 'mine')
 	{
-		$html->select_users($projet->user_resp_id,'officer_project',1);
+		$html->select_users($project->user_resp_id,'officer_project',1);
 	}
 	else
 	{
@@ -268,19 +262,19 @@ else
 
 	if ($mesg) print $mesg;
 
-	$projet = new Project($db);
-	$projet->fetch($_GET["id"],$_GET["ref"]);
+	$project = new Project($db);
+	$project->fetch($_GET["id"],$_GET["ref"]);
 
-	if ($projet->societe->id > 0)  $result=$projet->societe->fetch($projet->societe->id);
-	if ($projet->user_resp_id > 0) $result=$projet->fetch_user($projet->user_resp_id);
+	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+	if ($project->user_resp_id > 0) $result=$project->fetch_user($project->user_resp_id);
 
-	$head=project_prepare_head($projet);
+	$head=project_prepare_head($project);
 	dol_fiche_head($head, 'project', $langs->trans("Project"),0,'project');
 
 	// Confirmation validation
 	if ($_GET['action'] == 'validate')
 	{
-		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$projet->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
+		$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$project->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
 		if ($ret == 'html') print '<br>';
 	}
 	// Confirmation close
@@ -313,32 +307,32 @@ else
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$projet->ref.'"></td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$project->ref.'"></td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$projet->title.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$project->title.'"></td></tr>';
 
 		// Customer
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		print $html->select_societes($projet->societe->id,'socid','',1,1);
+		print $html->select_societes($project->societe->id,'socid','',1,1);
 		print '</td></tr>';
 
 		// Responsable du projet
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-		$html->select_users($projet->user_resp_id,'officer_project',1);
+		$html->select_users($project->user_resp_id,'officer_project',1);
 		print '</td></tr>';
 
 		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projet->getLibStatut(4).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print $html->select_date($projet->date_start,'project');
+		print $html->select_date($project->date_start,'project');
 		print '</td></tr>';
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print $html->select_date($projet->date_end?$projet->date_end:-1,'projectend');
+		print $html->select_date($project->date_end?$project->date_end:-1,'projectend');
 		print '</td></tr>';
 
 		print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -351,35 +345,35 @@ else
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-		print $html->showrefnav($projet,'ref','',1,'ref','ref');
+		print $html->showrefnav($project,'ref','',1,'ref','ref');
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
 
 		// Third party
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if ($projet->societe->id > 0) print $projet->societe->getNomUrl(1);
+		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
 
 		// Project leader
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-		if ($projet->user->id) print $projet->user->getNomUrl(1);
+		if ($project->user->id) print $project->user->getNomUrl(1);
 		else print $langs->trans('SharedProject');
 		print '</td></tr>';
 
 		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projet->getLibStatut(4).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print dol_print_date($projet->date_start,'day');
+		print dol_print_date($project->date_start,'day');
 		print '</td></tr>';
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print dol_print_date($projet->date_end,'day');
+		print dol_print_date($project->date_end,'day');
 		print '</td></tr>';
 
 		print '</table>';
@@ -395,38 +389,103 @@ else
 	if ($_GET["action"] != "edit")
 	{
 		// Validate
-		if ($projet->statut == 0 && $user->rights->projet->creer)
+		if ($project->statut == 0 && $user->rights->projet->creer)
 		{
 			print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=validate"';
 			print '>'.$langs->trans("Valid").'</a>';
 		}
 
 		// Modify
-		if ($projet->statut != 2 && $user->rights->projet->creer)
+		if ($project->statut != 2 && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+			print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 		}
 
 		// Close
-		if ($projet->statut != 2 && $user->rights->projet->creer)
+		if ($project->statut != 2 && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+			print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
 		}
 
 		// Reopen
-		if ($projet->statut == 2 && $user->rights->projet->creer)
+		if ($project->statut == 2 && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+			print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 		}
 
 		// Delete
 		if ($user->rights->projet->supprimer)
 		{
-			print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="fiche.php?id='.$project->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 		}
 	}
 
 	print "</div>";
+	print "<br>\n";
+	
+	if ($_GET['action'] != 'presend')
+	{
+		print '<table width="100%"><tr><td width="50%" valign="top">';
+		print '<a name="builddoc"></a>'; // ancre
+
+
+		/*
+		 * Documents generes
+		 */
+		$filename=dol_sanitizeFileName($project->ref);
+		$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
+		$urlsource=$_SERVER["PHP_SELF"]."?id=".$project->id;
+		$genallowed=$user->rights->projet->creer;
+		$delallowed=$user->rights->projet->supprimer;
+
+		$var=true;
+
+		$somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$project->modelpdf);
+
+
+		/*
+		 * Commandes rattachees
+		 */
+/*		if($conf->commande->enabled)
+		{
+			$propal->loadOrders();
+			$coms = $propal->commandes;
+			if (sizeof($coms) > 0)
+			{
+				if ($somethingshown) { print '<br>'; $somethingshown=1; }
+				print_titre($langs->trans('RelatedOrders'));
+				print '<table class="noborder" width="100%">';
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans("Ref").'</td>';
+				print '<td align="center">'.$langs->trans("Date").'</td>';
+				print '<td align="right">'.$langs->trans("Price").'</td>';
+				print '<td align="right">'.$langs->trans("Status").'</td>';
+				print '</tr>';
+				$var=true;
+				for ($i = 0 ; $i < sizeof($coms) ; $i++)
+				{
+					$var=!$var;
+					print '<tr '.$bc[$var].'><td>';
+					print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
+					print '<td align="center">'.dol_print_date($coms[$i]->date,'day').'</td>';
+					print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
+					print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
+					print "</tr>\n";
+				}
+				print '</table>';
+			}
+		}
+*/
+		print '</td><td valign="top" width="50%">';
+
+		// List of actions on element
+		include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+		$formactions=new FormActions($db);
+		$somethingshown=$formactions->showactions($project,'project',$socid);
+
+		print '</td></tr></table>';
+	}
+	
 
 }
 
