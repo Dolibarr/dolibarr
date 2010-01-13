@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/product/document.php
-        \ingroup    product
-        \brief      Page des documents joints sur les produits
-        \version    $Id$
-*/
+ *       \file       htdocs/product/document.php
+ *       \ingroup    product
+ *       \brief      Page des documents joints sur les produits
+ *       \version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -66,10 +66,10 @@ if ($_GET['id'] || $_GET["ref"])
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-    $upload_dir = $conf->produit->dir_output.'/'.dol_sanitizeFileName($product->ref);
+    if ($conf->produit->enabled) $upload_dir = $conf->produit->dir_output.'/'.dol_sanitizeFileName($product->ref);
+    elseif ($conf->service->enabled) $upload_dir = $conf->service->dir_output.'/'.dol_sanitizeFileName($product->ref);
 }
 $modulepart='produit';
-
 
 /*
  * Action envoie fichier
