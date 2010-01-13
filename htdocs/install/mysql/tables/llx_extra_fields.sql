@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,9 +18,20 @@
 -- $Id$
 -- ===================================================================
 
-
--- Supprimme orphelins pour permettre montee de la cle
--- V4 DELETE llx_facture_fourn_det FROM llx_facture_fourn_det LEFT JOIN llx_facture_fourn ON llx_facture_fourn_det.fk_facture_fourn = llx_facture_fourn.rowid WHERE llx_facture_fourn.rowid IS NULL;
-
-ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);
-ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);
+create table llx_extra_fields
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
+  
+  object 				varchar(64) NOT NULL,
+  assign 				integer,
+  name 					varchar(64) NOT NULL,
+  label					varchar(64) NOT NULL,
+  format				varchar(8) 	NOT NULL,
+  fieldsize 			integer,
+  maxlength 			integer,
+  options 				varchar(45),
+  rank 					integer
+  
+)type=innodb;

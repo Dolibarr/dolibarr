@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,9 +18,19 @@
 -- $Id$
 -- ===================================================================
 
+create table llx_extra_fields_values
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
+  
+  datec					datetime,
+  datem					datetime,
+  fk_object 			integer NOT NULL,
+  fk_extra_fields		integer NOT NULL,
+  value					varchar(255),
 
--- Supprimme orphelins pour permettre montee de la cle
--- V4 DELETE llx_facture_fourn_det FROM llx_facture_fourn_det LEFT JOIN llx_facture_fourn ON llx_facture_fourn_det.fk_facture_fourn = llx_facture_fourn.rowid WHERE llx_facture_fourn.rowid IS NULL;
-
-ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);
-ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);
+  fk_user_create 		integer,
+  fk_user_modif 		integer
+  
+)type=innodb;
