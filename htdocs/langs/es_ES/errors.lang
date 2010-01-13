@@ -60,4 +60,4 @@ ErrorContactEMail = Se ha producido un error técnico. Contacte con el administr
 ErrorWrongValueForField = Valor incorrecto para el campo número <b>%s</b> (el valor '<b>%s</b>' no cumple con la regla <b>%s</b>)
 ErrorsOnXLines = Errores en <b>%s</b> líneas fuente
 WarningsOnXLines = Alertas en <b>%s</b> líneas fuente
-ErrorFileIsInfectedWithAVirus = ¡Este archivo está infectado por un virus!
+ErrorFileIsInfectedWithAVirus = ¡El antivirus no ha podido validar este archivo (es probable que esté infectado por un virus)!
