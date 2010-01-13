@@ -680,7 +680,7 @@ class CMailFile
 		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mime_boundary."\"".$this->eol;
 		$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 
-		//$out.=$this->eol;	// Comment this to try to solve pb of hidden attached files
+		//$out.=$this->eol;	// Comment this to try to solve pb of hidden attached files. New line must be after the X-attachments
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
 	}
