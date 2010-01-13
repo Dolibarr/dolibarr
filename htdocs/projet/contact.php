@@ -40,9 +40,10 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 
 /*
- * Ajout d'un nouveau contact
+ * Actions
  */
 
+// Add new contact
 if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 {
 
@@ -166,12 +167,12 @@ $id = $_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$project = New Project($db);
-	
+	$project = new Project($db);
+
 	if ( $project->fetch($id,$ref) > 0)
 	{
-		$soc = new Societe($db, $project->socid);
-		$soc->fetch($project->socid);
+		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+		if ($project->user_resp_id > 0) $result=$project->fetch_user($project->user_resp_id);
 
 
 		$head = project_prepare_head($project);
@@ -186,15 +187,19 @@ if ($id > 0 || ! empty($ref))
 		//$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
 
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
 		print $html->showrefnav($project,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
+		// Label
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+
 		// Customer
-		if ( is_null($project->client) )
-			$project->fetch_client();
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$project->client->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">';
+		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+		else print '&nbsp;';
+		print '</td></tr>';
 
 		print "</table>";
 

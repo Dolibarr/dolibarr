@@ -318,7 +318,7 @@ else
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$projet->title.'"></td></tr>';
 
-		// Client
+		// Customer
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
 		print $html->select_societes($projet->societe->id,'socid','',1,1);
 		print '</td></tr>';
