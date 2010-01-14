@@ -189,7 +189,7 @@ class MenuTop {
 
 		// Financial
 		if ($conf->compta->enabled || $conf->accounting->enabled || $conf->banque->enabled
-		|| $conf->facture->enabled)
+		|| $conf->facture->enabled || $conf->deplacement->enabled)
 		{
 			$langs->load("compta");
 
