@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - main 
+# Dolibarr language file - ca_ES - main 
 CHARSET = UTF-8
 DIRECTION = ltr
 SeparatorDecimal = ,
@@ -548,6 +548,8 @@ AccordingToGeoIPDatabase = (Obtenido por conversión GeoIP)
 Line = Línea
 NotSupported = No soportado
 RequiredField = Campo obligatorio
+Result = Resultado
+ToTest = Probar
 # Week day = 
 Day1 = Lunes
 Day2 = Martes
