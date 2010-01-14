@@ -648,6 +648,7 @@ MessageLogin = Missatge del login
 PermanentLeftSearchForm = Zona de recerca permanent del menú de l'esquerra
 DefaultLanguage = Idioma per defecte a utilitzar (codi d'idioma)
 EnableMultilangInterface = Activar interface multiidioma
+EnableShowLogo = Mostra el logotip en el menú de l'esquerra
 SystemSuccessfulyUpdated = El seu sistema està actualitzat
 CompanyInfo = Informació de l'empresa/institució
 CompanyIds = Identificació reglamentaria
@@ -1143,3 +1144,6 @@ NoteOnPathLocation = Tingueu en compte que aquest arxiu ha d'estar en una carpet
 YouCanDownloadFreeDatFileTo = Pot descarregar-se una <b>versió demo gratuïta</b> de l'arxiu de països  Maxmind GeoIP a l'adreça %s.
 YouCanDownloadAdvancedDatFileTo = També pot descarregar-se una <b>versió més completa</b> de l'arxiu de països Maxmind GeoIP a l'adreça %s.
 TestGeoIPResult = Test de conversió IP -> País
+##### NumberWords ##### =  = 
+NumberWordsSetup = 
+DescNumberWords = 

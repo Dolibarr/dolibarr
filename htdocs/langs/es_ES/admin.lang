@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin 
+# Dolibarr language file - ca_ES - admin 
 CHARSET = UTF-8
 Version = Versión
 VersionProgram = Versión programa
@@ -648,6 +648,7 @@ MessageLogin = Mensaje del login
 PermanentLeftSearchForm = Zone de búsqueda permanente del menú izquierdo
 DefaultLanguage = Idioma por defecto a utilizar (código idioma)
 EnableMultilangInterface = Activar interface multiidioma
+EnableShowLogo = Mostrar el logotipo en el menú de la izquierda
 SystemSuccessfulyUpdated = Su sitema está actualizado
 CompanyInfo = Información de la empresa/institución
 CompanyIds = Identificación reglamentaria
@@ -1143,3 +1144,6 @@ NoteOnPathLocation = Tenga en cuenta que este archivo debe estar en una carpeta 
 YouCanDownloadFreeDatFileTo = Puede descargarse una <b>versión demo gratuita</b> del archivo de paises Maxmind GeoIP en la dirección %s.
 YouCanDownloadAdvancedDatFileTo = También puede descargarse una <b>versión más completa</b> del archivo de paises Maxmind GeoIP en la dirección %s.
 TestGeoIPResult = Test de conversión IP -> País
+##### NumberWords ##### = 
+NumberWordsSetup = 
+DescNumberWords = 
