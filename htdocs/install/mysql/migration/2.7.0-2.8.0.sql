@@ -48,3 +48,54 @@ UPDATE llx_c_type_contact SET element='project' WHERE element='projet';
 UPDATE llx_const set value='mail' where value='simplemail' and name='MAIN_MAIL_SENDMODE';
 
 ALTER TABLE llx_projet ADD COLUMN model_pdf varchar(50) AFTER note;
+
+
+-- Create table of extra fields
+create table llx_extra_fields
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  entity                integer  DEFAULT 1 NOT NULL,
+  object 				varchar(64) NOT NULL,
+  assign 				integer,
+  name 					varchar(64) NOT NULL,
+  label					varchar(64) NOT NULL,
+  format				varchar(8) 	NOT NULL,
+  fieldsize 			integer,
+  maxlength 			integer,
+  options 				varchar(45),
+  rank 					integer
+)type=innodb;
+
+ALTER TABLE llx_extra_fields ADD UNIQUE INDEX idx_extra_fields_name (name, entity);
+
+-- Create table of possible values
+create table llx_extra_fields_options
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  fk_extra_fields 		integer NOT NULL,
+  value 				varchar(255) NOT NULL,
+  rank 					integer
+)type=innodb;
+
+ALTER TABLE llx_extra_fields_options ADD INDEX idx_extra_fields_options_fk_extra_fields (fk_extra_fields, entity);
+ALTER TABLE llx_extra_fields_options ADD CONSTRAINT fk_extra_fields_options_fk_extra_fields FOREIGN KEY (fk_extra_fields) REFERENCES llx_extra_fields (rowid);
+
+-- Create table of values
+create table llx_extra_fields_values
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
+  datec					datetime,
+  datem					datetime,
+  fk_object 			integer NOT NULL,
+  fk_extra_fields		integer NOT NULL,
+  value					varchar(255),
+  fk_user_create 		integer,
+  fk_user_modif 		integer
+)type=innodb;
+
+ALTER TABLE llx_extra_fields_values ADD INDEX idx_extra_fields_values_fk_extra_fields (fk_extra_fields, entity);
+ALTER TABLE llx_extra_fields_values ADD CONSTRAINT fk_extra_fields_values_fk_extra_fields FOREIGN KEY (fk_extra_fields) REFERENCES llx_extra_fields (rowid);
