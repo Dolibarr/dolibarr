@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -34,16 +34,22 @@ require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 class Deplacement extends CommonObject
 {
 	var $db;
-	var $errors;
-	
+	var $error;
+	var $element='deplacement';
+	var $table_element='deplacement';
+	var $table_element_line = '';
+	var $fk_element = '';
+	var $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
 	var $id;
 	var $fk_user_author;
 	var $fk_user;
 	var $km;
 	var $note;
+	var $note_public;
 	var $socid;
-	
-	
+
+
    /**
 	*  \brief  Constructeur de la classe
 	*  \param  DB          handler acces base de donnees
@@ -66,7 +72,7 @@ class Deplacement extends CommonObject
 	function create($user)
 	{
 		global $conf;
-		
+
 		// Check parameters
 		if (empty($this->type) || $this->type < 0)
 		{
@@ -78,21 +84,25 @@ class Deplacement extends CommonObject
 			$this->error='ErrorBadParameter';
 			return -1;
 		}
-		
+
 		$this->db->begin();
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (";
 		$sql.= "datec";
 		$sql.= ", entity";
 		$sql.= ", fk_user_author";
 		$sql.= ", fk_user";
 		$sql.= ", type";
+		$sql.= ", note";
+		$sql.= ", note_public";
 		$sql.= ") VALUES (";
 		$sql.= $this->db->idate(mktime());
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
 		$sql.= ", '".$this->type."'";
+		$sql.= ", note = ".($this->note?"'".addslashes($this->note)."'":"null");
+		$sql.= ", note_public = ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql.= ")";
 
 		dol_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
@@ -116,13 +126,13 @@ class Deplacement extends CommonObject
 		{
 			$this->error=$this->db->error()." sql=".$sql;
 			$this->db->rollback();
-			return -1;	
+			return -1;
 		}
-		
+
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	function update($user)
 	{
@@ -130,7 +140,7 @@ class Deplacement extends CommonObject
 
 		// Clean parameters
 		$this->km=price2num($this->km);
-		
+
 		// Check parameters
 		if (! is_numeric($this->km)) $this->km = 0;
 		if (empty($this->type) || $this->type < 0)
@@ -143,13 +153,15 @@ class Deplacement extends CommonObject
 			$this->error='ErrorBadParameter';
 			return -1;
 		}
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
 		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
+		$sql .= " , note = ".($this->note?"'".addslashes($this->note)."'":"null");
+		$sql .= " , note_public = ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Deplacement::update sql=".$sql, LOG_DEBUG);
@@ -166,11 +178,11 @@ class Deplacement extends CommonObject
 	}
 
    /**
-	*
+	*	Load an object from database
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, fk_user, type, km, fk_soc,".$this->db->pdate("dated")." as dated";
+		$sql = "SELECT rowid, fk_user, type, km, fk_soc, dated, note, note_public";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -182,11 +194,13 @@ class Deplacement extends CommonObject
 
 			$this->id       = $obj->rowid;
 			$this->ref      = $obj->rowid;
-			$this->date     = $obj->dated;
+			$this->date     = $this->db->jdate($obj->dated);
 			$this->fk_user  = $obj->fk_user;
 			$this->socid    = $obj->fk_soc;
 			$this->km       = $obj->km;
 			$this->type     = $obj->type;
+			$this->note     = $obj->note;
+			$this->note_public = $obj->note_public;
 
 			return 1;
 		}
@@ -204,6 +218,7 @@ class Deplacement extends CommonObject
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".$id;
 
+		dol_syslog("Deplacement::delete sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

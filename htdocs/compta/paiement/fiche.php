@@ -41,7 +41,7 @@ $langs->load('companies');
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 if ($user->societe_id) $socid=$user->societe_id;
-// TODO ajouter r�gle pour restreindre acces paiement
+// TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $mesg='';
@@ -206,9 +206,10 @@ print '</table>';
 
 
 /*
- * Liste des factures
+ * List of invoices
  */
-$allow_delete = 1 ;
+
+$disable_delete = 0;
 $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom, s.rowid as socid';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql.= ' WHERE pf.fk_facture = f.rowid';
@@ -251,9 +252,9 @@ if ($resql)
 			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
-			if ($objp->paye == 1)
+			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
 			{
-				$allow_delete = 0;
+				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount;
 			$i++;
@@ -288,11 +289,19 @@ if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 		}
 	}
 }
-if ($user->societe_id == 0 && $allow_delete && $_GET['action'] == '')
+
+if ($user->societe_id == 0 && $_GET['action'] == '')
 {
 	if ($user->rights->facture->paiement)
 	{
-		print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+		if (! $disable_delete)
+		{
+			print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovedPaiementWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+		}
 	}
 }
 

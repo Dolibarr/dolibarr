@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,25 @@
  */
 
 /**
- *      \file       htdocs/compta/facture/note.php
- *      \ingroup    facture
- *      \brief      Fiche de notes sur une facture
+ *      \file       htdocs/compta/deplacement/note.php
+ *      \ingroup    trip
+ *      \brief      Notes on a trip card
  *		\version    $Id$
-*/
+ */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/deplacement.class.php");
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
-if (!$user->rights->facture->lire)
+if (!$user->rights->deplacement->lire)
   accessforbidden();
 
 $langs->load("companies");
 $langs->load("bills");
+$langs->load("trips");
 
-// Security check
+// Securiy check
 if ($user->societe_id > 0)
 {
   unset($_GET["action"]);
@@ -45,19 +44,20 @@ if ($user->societe_id > 0)
 }
 
 
-$fac = new Facture($db);
-$fac->fetch($_GET["facid"]);
+$trip = new Deplacement($db);
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
+if ($_POST["action"] == 'update_public' && $user->rights->deplacement->creer)
 {
 	$db->begin();
 
-	$res=$fac->update_note_public($_POST["note_public"],$user);
+	$trip->fetch($_GET["id"]);
+
+	$res=$trip->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$fac->error.'</div>';
@@ -69,11 +69,13 @@ if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
 	}
 }
 
-if ($_POST["action"] == 'update' && $user->rights->facture->creer)
+if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 {
 	$db->begin();
 
-	$res=$fac->update_note($_POST["note"],$user);
+	$trip->fetch($_GET["id"]);
+
+	$res=$trip->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$fac->error.'</div>';
@@ -95,18 +97,29 @@ llxHeader();
 
 $html = new Form($db);
 
-$id = $_GET['facid'];
+$id = $_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$fac = new Facture($db);
-	$fac->fetch($id,$ref);
+	$trip = new Deplacement($db);
+	$trip->fetch($id,$ref);
 
-	$soc = new Societe($db, $fac->socid);
-    $soc->fetch($fac->socid);
+	$soc = new Societe($db, $trip->socid);
+    $soc->fetch($trip->socid);
 
-    $head = facture_prepare_head($fac);
-    dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), 0, 'bill');
+	$h=0;
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$trip->id";
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/note.php?id=$trip->id";
+	$head[$h][1] = $langs->trans("Note");
+	$head[$h][2] = 'note';
+	$h++;
+
+	dol_fiche_head($head, 'note', $langs->trans("TripCard"), 0, 'trip');
 
 
     print '<table class="border" width="100%">';
@@ -115,58 +128,51 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
 	$morehtmlref='';
-	$discount=new DiscountAbsolute($db);
-	$result=$discount->fetch(0,$fac->id);
-	if ($result > 0)
-	{
-		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
-	}
-	if ($result < 0)
-	{
-		dol_print_error('',$discount->error);
-	}
-	print $html->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
+	print $html->showrefnav($trip,'ref','',1,'ref','ref',$morehtmlref);
 	print '</td></tr>';
 
-    // Company
-    print '<tr><td>'.$langs->trans("Company").'</td>';
-    print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
+	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($trip->type).'</td></tr>';
+
+	print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td>';
+	print '<td>';
+	if ($soc->id) print $soc->getNomUrl(1);
+	print '</td></tr>';
 
 	// Note publique
     print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
 	print '<td valign="top" colspan="3">';
     if ($_GET["action"] == 'edit')
     {
-        print '<form method="post" action="note.php?facid='.$fac->id.'">';
+        print '<form method="post" action="note.php?id='.$trip->id.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update_public">';
-        print '<textarea name="note_public" cols="80" rows="8">'.$fac->note_public."</textarea><br>";
+        print '<textarea name="note_public" cols="80" rows="8">'.$trip->note_public."</textarea><br>";
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
         print '</form>';
     }
     else
     {
-	    print ($fac->note_public?nl2br($fac->note_public):"&nbsp;");
+	    print ($trip->note_public?nl2br($trip->note_public):"&nbsp;");
     }
 	print "</td></tr>";
 
-	// Note priv�e
+	// Note privee
 	if (! $user->societe_id)
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
 		print '<td valign="top" colspan="3">';
 	    if ($_GET["action"] == 'edit')
 	    {
-	        print '<form method="post" action="note.php?facid='.$fac->id.'">';
+	        print '<form method="post" action="note.php?id='.$trip->id.'">';
 	        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	        print '<input type="hidden" name="action" value="update">';
-	        print '<textarea name="note" cols="80" rows="8">'.$fac->note."</textarea><br>";
+	        print '<textarea name="note" cols="80" rows="8">'.$trip->note."</textarea><br>";
 	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	        print '</form>';
 	    }
 		else
 		{
-		    print ($fac->note?nl2br($fac->note):"&nbsp;");
+		    print ($trip->note?nl2br($trip->note):"&nbsp;");
 		}
 		print "</td></tr>";
 	}
@@ -180,9 +186,9 @@ if ($id > 0 || ! empty($ref))
     print '</div>';
     print '<div class="tabsAction">';
 
-    if ($user->rights->facture->creer && $_GET["action"] <> 'edit')
+    if ($user->rights->deplacement->creer && $_GET["action"] <> 'edit')
     {
-        print "<a class=\"butAction\" href=\"note.php?facid=$fac->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
+        print "<a class=\"butAction\" href=\"note.php?id=$trip->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
     }
 
     print "</div>";

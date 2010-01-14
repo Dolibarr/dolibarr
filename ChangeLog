@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.8 compared to 2.7 *****
 
 For users:
+- New: Support note on trips module
 - New: Can link contacts to projects
 - New: Can removed attached file on email form if attachment was wrong.
 - New: Add option to show your logo on top of left menu.

@@ -32,5 +32,6 @@ create table llx_deplacement
   type				varchar(12) NOT NULL,
   km				real,
   fk_soc			integer,
-  note				text
+  note				text,
+  note_public       text
 )type=innodb;

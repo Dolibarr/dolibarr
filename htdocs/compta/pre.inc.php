@@ -18,11 +18,11 @@
  */
 
 /**
-      \file   	    htdocs/compta/pre.inc.php
-      \ingroup      compta
-      \brief  	    Fichier gestionnaire du menu compta
-	  \version		$Id$
-*/
+ *    \file   	    htdocs/compta/pre.inc.php
+ *    \ingroup      compta
+ *    \brief  	    Fichier gestionnaire du menu compta
+ *	  \version		$Id$
+ */
 
 require("../main.inc.php");
 
@@ -78,14 +78,14 @@ function llxHeader($head = '', $title='', $help_url='')
         $menu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&amp;afacturer=1", $langs->trans("MenuOrdersToBill"));
     }
 
-    // Les d�penses
+    // Les depenses
     if ($conf->fournisseur->enabled)
     {
         $langs->load("suppliers");
         $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
 
-    if ($conf->deplacement->enabled && $user->societe_id == 0)
+    if ($conf->deplacement->enabled)
     {
         $langs->load("trips");
         $menu->add(DOL_URL_ROOT."/compta/deplacement/", $langs->trans("Trips"));
@@ -102,7 +102,7 @@ function llxHeader($head = '', $title='', $help_url='')
     }
 
 
-    // Vision des recettes-d�penses
+    // Vision des recettes-depenses
     if ($conf->banque->enabled && $user->rights->banque->lire)
     {
         $langs->load("banks");

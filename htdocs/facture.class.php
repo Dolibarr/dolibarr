@@ -2040,7 +2040,7 @@ class Facture extends CommonObject
 	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      paye          	Etat paye
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Pict
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *		\param		alreadypaid	Montant deja paye
 	 *		\param		type			Type facture
 	 *    	\return     string        	Libelle du statut

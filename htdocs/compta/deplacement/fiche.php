@@ -193,17 +193,25 @@ else
 
 			if ($mesg) print $mesg."<br>";
 
+			$h=0;
+
+			$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
+			$head[$h][1] = $langs->trans("Card");
+			$head[$h][2] = 'card';
+			$h++;
+
+			$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/note.php?id=$deplacement->id";
+			$head[$h][1] = $langs->trans("Note");
+			$head[$h][2] = 'note';
+			$h++;
+
+			dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
+
 			if ($_GET["action"] == 'edit')
 			{
 				$soc = new Societe($db);
 				$soc->fetch($deplacement->socid);
 
-				$h=0;
-
-				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
-				$head[$h][1] = $langs->trans("Card");
-
-				dol_fiche_head($head, $hselected, $langs->trans("TripCard"), 0, 'trip');
 
 				print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -246,15 +254,8 @@ else
 			}
 			else
 			{
-				$h=0;
-
-				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
-				$head[$h][1] = $langs->trans("Card");
-
-				dol_fiche_head($head, $hselected, $langs->trans("TripCard"), 0, 'trip');
-
 				/*
-				 * Confirmation de la suppression du d�placement
+				 * Confirmation de la suppression du deplacement
 				 */
 				if ($_GET["action"] == 'delete')
 				{

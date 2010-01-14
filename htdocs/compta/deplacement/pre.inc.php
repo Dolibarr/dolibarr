@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,11 +21,11 @@
  *
  */
 
-/**   
-      \file   	    htdocs/compta/deplacement/pre.inc.php
-      \ingroup      deplacement
-      \brief  	    Fichier gestionnaire du menu deplacement
-*/
+/**
+ *     \file   	    htdocs/compta/deplacement/pre.inc.php
+ *     \ingroup      deplacement
+ *     \brief  	    Fichier gestionnaire du menu deplacement
+ */
 
 require("../../main.inc.php");
 require("./deplacement.class.php");

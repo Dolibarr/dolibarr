@@ -98,7 +98,8 @@ if ($_GET['action'] == 'reopen' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
 	$result = $fac->fetch($_GET['facid']);
-	if ($fac->statut == 3 && ($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
+	if ($fac->statut == 2
+	|| ($fac->statut == 3 && $fac->close_code != 'replaced'))
 	{
 		$result = $fac->set_unpaid($user);
 		if ($result > 0)
@@ -3250,10 +3251,23 @@ else
 						}
 					}
 
+					// Reopen a standard paid invoice
+					if ($fac->type == 1 && $fac->statut == 2)				// A paid invoice (partially or completely)
+					{
+						if (! $facidnext)
+						{
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+						}
+						else
+						{
+							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+						}
+					}
+
 					// Reopen a classified invoice
 					if ($fac->statut == 3 &&				// A abandoned invoice
 					$fac->getIdReplacingInvoice() == 0 &&	// Not replaced by another invoice
-					($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
+					$fac->close_code != 'replaced')			// Not replaced by another invoice
 					{
 						if (! $facidnext)
 						{
@@ -3398,6 +3412,10 @@ else
 						if ($facidnext)
 						{
 							print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</a>';
+						}
+						elseif ($fac->getSommePaiement())
+						{
+							print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecausePayments").'">'.$langs->trans('Delete').'</a>';
 						}
 						else
 						{
@@ -3721,7 +3739,7 @@ else
 
 		$sql = 'SELECT ';
 		$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
-		$sql.= ' '.$db->pdate('f.datef').' as df, '.$db->pdate('f.date_lim_reglement').' as datelimite,';
+		$sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 		$sql.= ' f.paye as paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid as socid';
 		if (! $sall) $sql.= ' ,sum(pf.amount) as am';
@@ -3858,6 +3876,8 @@ else
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
 
+					$datelimit=$db->jdate($objp->datelimite);
+
 					print '<tr '.$bc[$var].'>';
 					print '<td nowrap="nowrap">';
 
@@ -3885,10 +3905,10 @@ else
 					// Date
 					if ($objp->df > 0)
 					{
-						$y = dol_print_date($objp->df,'%Y');
-						$m = dol_print_date($objp->df,'%m');
-						$mt = dol_print_date($objp->df,'%b');
-						$d = dol_print_date($objp->df,'%d');
+						$y = dol_print_date($db->jdate($objp->df),'%Y');
+						$m = dol_print_date($db->jdate($objp->df),'%m');
+						$mt = dol_print_date($db->jdate($objp->df),'%b');
+						$d = dol_print_date($db->jdate($objp->df),'%d');
 						print '<td align="center" nowrap>';
 						print $d;
 						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
@@ -3902,8 +3922,8 @@ else
 					}
 
 					// Date limit
-					print '<td align="center" nowrap="1">'.dol_print_date($objp->datelimite,'day');
-					if ($objp->datelimite < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am)
+					print '<td align="center" nowrap="1">'.dol_print_date($datelimit,'day');
+					if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am)
 					{
 						print img_warning($langs->trans('Late'));
 					}
