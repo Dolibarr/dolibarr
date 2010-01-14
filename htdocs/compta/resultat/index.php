@@ -106,7 +106,8 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = $socid";
 $sql.= " GROUP BY dm";
 $sql.= " ORDER BY dm";
-print $sql;
+
+//print $sql;
 $result=$db->query($sql);
 if ($result)
 {
