@@ -149,8 +149,8 @@ foreach ($accounts as $account)
 	{
 		$num = $db->num_rows($resql);
 		$row = $db->fetch_row($resql);
-		$min = $this->db->jdate($row[0]);
-		$max = $this->db->jdate($row[1]);
+		$min = $db->jdate($row[0]);
+		$max = $db->jdate($row[1]);
 	}
 	else
 	{

@@ -308,8 +308,8 @@ if ($result)
 		$cotisationstatic->ref=$objp->crowid;
 		$cotisationstatic->id=$objp->crowid;
 		print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-		print '<td align="center">'.dol_print_date($this->db->jdate($objp->dateadh),'day')."</td>\n";
-		print '<td align="center">'.dol_print_date($this->db->jdate($objp->datef),'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
 		print '<td align="right">'.price($objp->cotisation).'</td>';
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 		{

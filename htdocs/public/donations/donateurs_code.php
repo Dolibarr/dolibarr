@@ -63,22 +63,22 @@ if ( $db->query( $sql) )
 		$bc[0]='bgcolor="#f0f0f0"';
 		while ($i < $num)
 		{
-	  $objp = $db->fetch_object( $i);
+			$objp = $db->fetch_object( $i);
 
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  if ($objp->public)
-	  {
-	  	print "<td>".$objp->prenom." ".$objp->nom." ".$objp->societe."</td>\n";
-	  }
-	  else
-	  {
-	  	print "<td>Anonyme Anonyme</td>\n";
-	  }
-	  print "<td>".dol_print_date($this->db->jdate($objp->datedon))."</td>\n";
-	  print '<td align="right">'.number_format($objp->amount,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td>';
-	  print "</tr>";
-	  $i++;
+			$var=!$var;
+			print "<TR $bc[$var]>";
+			if ($objp->public)
+			{
+				print "<td>".$objp->prenom." ".$objp->nom." ".$objp->societe."</td>\n";
+			}
+			else
+			{
+				print "<td>Anonyme Anonyme</td>\n";
+			}
+			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
+			print '<td align="right">'.number_format($objp->amount,2,'.',' ').' '.$langs->trans("Currency".$conf->monnaie).'</td>';
+			print "</tr>";
+			$i++;
 		}
 		print "</table>";
 

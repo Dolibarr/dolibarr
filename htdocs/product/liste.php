@@ -340,7 +340,7 @@ if ($resql)
 			}
 
 			// Date
-			print '<td align="center">'.dol_print_date($this->db->jdate($objp->datem),'day')."</td>\n";
+			print '<td align="center">'.dol_print_date($db->jdate($objp->datem),'day')."</td>\n";
 
 			// Duration
 			if ($conf->service->enabled && $type != 0)
