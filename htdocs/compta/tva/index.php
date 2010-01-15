@@ -142,13 +142,13 @@ for ($m = 1 ; $m < 13 ; $m++ )
 	$coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
 	$coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
-	if ($coll_listbuy == -1)
+	if (! is_array($coll_listbuy) && $coll_listbuy == -1)
 	{
 		$langs->load("errors");
 		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 		break;
 	}
-	if ($coll_listbuy == -2)
+	if (! is_array($coll_listbuy) && $coll_listbuy == -2)
 	{
 		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 		break;

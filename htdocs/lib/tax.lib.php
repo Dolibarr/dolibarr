@@ -270,7 +270,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 	if ($sql && $sql=='TODO') return -2;
 	if ($sql && $sql!='TODO')
 	{
-		dol_syslog("Tax.lib.php::vat_by_quarter sql=".$sql);
+		dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
 
 		$resql = $db->query($sql);
 	    if ($resql)
@@ -399,11 +399,15 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 		}
     }
 
-	if (! $sql) return -1;
-	if ($sql && $sql=='TODO') return -2;
+	if (! $sql)
+	{
+		dol_syslog("Tax.lib.php::vat_by_date no accountancy module enabled".$sql,LOG_ERR);
+		return -1;	// -1 = Not accountancy module enabled
+	}
+	if ($sql && $sql=='TODO') return -2; // -2 = Feature not yet available
 	if ($sql && $sql!='TODO')
 	{
-		dol_syslog("Tax.lib.php::vat_by_quarter sql=".$sql);
+		dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
