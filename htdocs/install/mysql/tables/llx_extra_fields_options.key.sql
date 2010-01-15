@@ -19,6 +19,6 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_extra_fields_options ADD INDEX idx_extra_fields_options_fk_extra_fields (fk_extra_fields, entity);
+ALTER TABLE llx_extra_fields_options ADD INDEX idx_extra_fields_options_fk_extra_fields (fk_extra_fields);
 
 ALTER TABLE llx_extra_fields_options ADD CONSTRAINT fk_extra_fields_options_fk_extra_fields FOREIGN KEY (fk_extra_fields) REFERENCES llx_extra_fields (rowid);
