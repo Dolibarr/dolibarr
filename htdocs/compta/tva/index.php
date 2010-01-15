@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,11 +20,11 @@
  */
 
 /**
-	    \file       htdocs/compta/tva/index.php
-        \ingroup    tax
-		\brief      Page des societes
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/tva/index.php
+ *      \ingroup    tax
+ *		\brief      Page des societes
+ *		\version    $Id$
+ */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
@@ -139,9 +139,15 @@ $total = 0;  $subtotal = 0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
-	$coll_listsell = vat_by_quarter($db, $y, 0, $modetax, 'sell', $m);
-	$coll_listbuy = vat_by_quarter($db, $y, 0, $modetax, 'buy', $m);
+	$coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
+	$coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
+	if ($coll_listbuy == -1)
+	{
+		$langs->load("errors");
+		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
+		break;
+	}
 	if ($coll_listbuy == -2)
 	{
 		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
