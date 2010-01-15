@@ -198,7 +198,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	\brief		Return array of next record in input file.
 	 * 	\return		Array		Array of field values. Data are UTF8 encoded.
-	 * 							[0]=>(['val']=>val,['type']=>-1=null,0=blank,1=string)
+	 * 							[0] => (['val']=>val, ['type']=>-1=null,0=blank,1=string)
 	 */
     function import_read_record()
     {
@@ -226,12 +226,12 @@ class ImportCsv extends ModeleImports
 		    		if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8')
 		    		{
 		    			$newarrayres[$key]['val']=$val;
-		    			$newarrayres[$key]['type']=1;
+		    			$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
 		    		}
 		    		else
 		    		{
 		    			$newarrayres[$key]['val']=utf8_encode($val);
-		    			$newarrayres[$key]['type']=1;
+		    			$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
 		    		}
 		    	}
 		    	else	// Autodetect format (UTF8 or ISO)
@@ -239,12 +239,12 @@ class ImportCsv extends ModeleImports
 					if (utf8_check($val))
 					{
 						$newarrayres[$key]['val']=$val;
-						$newarrayres[$key]['type']=1;
+						$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
 					}
 					else
 					{
 						$newarrayres[$key]['val']=utf8_encode($val);
-						$newarrayres[$key]['type']=1;
+						$newarrayres[$key]['type']=(strlen($val)?1:-1);	// If empty we considere it's null
 					}
 		    	}
 			}
@@ -359,6 +359,7 @@ class ImportCsv extends ModeleImports
 					}
 					$i++;
 				}
+				//print $listvalues;
 
 				if (! $errorforthistable)
 				{

@@ -12,6 +12,7 @@ FormatDateHourShort=%d/%m/%Y %I:%M %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Database connection
+NoError=No error
 Error=Error
 ErrorFieldRequired=Field '%s' is required
 ErrorFieldFormat=Field '%s' has a bad value

@@ -29,6 +29,7 @@ For users:
 - New: task #9916 : Add FREE text for interventions card.
 - New: Can define the new product ref when cloning.
 - New: Project module support status of project and end date.
+- Fix: Import module works even if prefix is empty in source file.
 - Fix: bug #28055 : Unable to modify the date of a cloned command.
 - Fix: bug #27891.
 - Fix: Change of numbering module was not effective.
@@ -36,6 +37,7 @@ For users:
        for a product.
 - Fix: Running sending-email.php
 - Fix: Warning should not appears for invoice closed
+- Fix: Import for companies works even with prefix empty.
 
 For developers:
 - Qual: Reorganize /dev directory.

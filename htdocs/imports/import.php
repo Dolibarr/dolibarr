@@ -1527,7 +1527,7 @@ if ($step == 6 && $datatoimport)
 	print '</div>';
 
 	// Show OK
-	if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoErrors").'</b><br><br>';
+	if (! sizeof($arrayoferrors) && ! sizeof($arrayofwarnings)) print img_tick().' <b>'.$langs->trans("NoError").'</b><br><br>';
 	else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
 
 	// Show Errors

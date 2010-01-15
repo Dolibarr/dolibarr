@@ -12,6 +12,7 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Connexion à la base
+NoError=Aucune erreur
 Error=Erreur
 ErrorFieldRequired=Le champ '%s' est obligatoire
 ErrorFieldFormat=Le champ '%s' a une valeur incorrecte
