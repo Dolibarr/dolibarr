@@ -974,7 +974,8 @@ class Commande extends CommonObject
 				$this->facturee               = $obj->facturee;
 				$this->note                   = $obj->note;
 				$this->note_public            = $obj->note_public;
-				$this->projet_id              = $obj->fk_projet;
+				$this->projet_id              = $obj->fk_projet; // TODO deprecated
+				$this->fk_project             = $obj->fk_projet;
 				$this->modelpdf               = $obj->model_pdf;
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
 				$this->mode_reglement_code    = $obj->mode_reglement_code;
@@ -984,7 +985,7 @@ class Commande extends CommonObject
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
 				$this->date_livraison         = $obj->date_livraison;
-				$this->adresse_livraison_id   = $obj->fk_adresse_livraison; // TODO obsolete
+				$this->adresse_livraison_id   = $obj->fk_adresse_livraison; // TODO deprecated
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
 				$this->propale_id             = $obj->fk_source;
 				$this->lignes                 = array();
@@ -1205,6 +1206,7 @@ class Commande extends CommonObject
 	 *      \brief      Load array this->expeditions of nb of products sent by line in order
 	 *      \param      filtre_statut       Filter on status
 	 *      \return     int                	<0 if KO, Nb of lines found if OK
+	 *      \TODO deprecated, move to Sending class
 	 */
 	function loadExpeditions($filtre_statut=-1)
 	{
@@ -1250,7 +1252,7 @@ class Commande extends CommonObject
 
 	/**
 	 * Renvoie un tableau avec nombre de lignes d'expeditions
-	 *
+	 * \TODO deprecated, move to Sending class
 	 */
 	function nb_expedition()
 	{
@@ -1269,31 +1271,15 @@ class Commande extends CommonObject
 	 *      \brief      Renvoie un tableau avec les livraisons par ligne
 	 *      \param      filtre_statut       Filtre sur statut
 	 *      \return     int                 0 si OK, <0 si KO
+	 *      \TODO  deprecated, move to Delivery class
 	 */
 	function livraison_array($filtre_statut=-1)
 	{
-		$this->livraisons = array();
-		$sql = 'SELECT cd.fk_product, sum(ed.qty)';
-		$sql.=' FROM '.MAIN_DB_PREFIX.'livraisondet as ld, '.MAIN_DB_PREFIX.'livraison as l, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
-		$sql.=' WHERE ld.fk_livraison = l.rowid AND ld.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid';
-		$sql.=' AND cd.fk_commande =' .$this->id;
-		if ($filtre_statut >= 0) $sql.=' AND l.fk_statut = '.$filtre_statut;
-		$sql .= ' GROUP BY cd.fk_product ';
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$row = $this->db->fetch_row($resql);
-				$this->livraisons[$row[0]] = $row[1];
-				$i++;
-			}
-			$this->db->free();
-		}
-
-		return 0;
+		$delivery = new Livraison($this->db);
+		
+		$deliveryArray = $delivery->livraison_array($filtre_statut);
+		
+		return $deliveryArray;
 	}
 
 	/**

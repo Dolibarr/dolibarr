@@ -358,49 +358,68 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
-				
-			$requeteTest = "SELECT ref, label, co.qty-li.qty";
-				$requeteTest = $requeteTest." FROM llx_commandedet AS co";
-				//$requeteTest = $requeteTest." INNER JOIN llx_element_element AS el ON co.fk_commande = el.fk_source";				
-				$requeteTest = $requeteTest." INNER JOIN llx_livraisondet AS li";
-				$requeteTest = $requeteTest." ON li.fk_origin_line = co.rowid";
-				$requeteTest = $requeteTest." INNER JOIN llx_product AS pr";	
-				$requeteTest = $requeteTest." ON pr.rowid = li.fk_product";			
-				$requeteTest = $requeteTest." WHERE fk_livraison =".$object->id;
-
-				$resultaTest = $this->db->query($requeteTest);
-				
-				if ($this->db->num_rows($resultaTest)) {
-			
-				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','',9);
-				$pdf->SetY(-65);
-				
-    			$w=array(40,100,50);
-				$header=array('Reference','Libelle','Quantite');
-    			
-    			//En-tÃªte
-    			for($i=0;$i<count($header);$i++)
-        			$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
-			    $pdf->Ln();
-			    
-			    //DonnÃ©es
-			    while($ligneTest = $this->db->fetch_array($resultaTest))
-				{
-					if ($ligneTest[2] > 0)
-					{
-					$pdf->Cell($w[0], 6, $ligneTest[0], 1, 0, 'L');
-					$pdf->Cell($w[1], 6, $ligneTest[1], 1, 0, 'L');
-					$pdf->Cell($w[2], 6, $ligneTest[2], 1, 1, 'R');
-					}
-			    }
-				}
 
 
 				/*
 				 * Pied de page
 				 */
 				$this->_pagefoot($pdf,$object,$outputlangs);
+				
+				// Check product remaining to be delivered
+				$waitingDelivery = $object->getRemainingDelivered();
+
+				if (is_array($waitingDelivery) & !empty($waitingDelivery))
+				{
+					$pdf->AddPage('P', 'A4');
+					
+					$this->_pagehead($pdf, $object, 1, $outputlangs);
+					$pdf-> SetY(90);
+					
+					$w=array(40,100,50);
+					$header=array($outputlangs->transnoentities('Reference'),
+								  $outputlangs->transnoentities('Label'),
+								  $outputlangs->transnoentities('Qty')
+								  );
+    					
+    				// Header
+   					for($i=0;$i<count($header);$i++)
+   					{
+   						$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
+   					}
+
+			    	$pdf->Ln();	
+
+			    	// Data
+					foreach($waitingDelivery as $value)
+					{
+						$pdf->Cell($w[0], 6, $value['ref'], 1, 0, 'L');
+						$pdf->Cell($w[1], 6, $value['label'], 1, 0, 'L');
+						$pdf->Cell($w[2], 6, $value['qty'], 1, 1, 'R');	
+						
+						if ($pdf->GetY() > 250)
+						{
+							$this->_pagefoot($pdf,$object,$outputlangs);
+							
+							$pdf->AddPage('P', 'A4');
+							
+							$pdf->SetFont('Arial','', 9);
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							
+							$pdf-> SetY(40);
+							
+							for($i=0;$i<count($header);$i++)
+							{
+								$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
+							}
+							
+							$pdf->Ln();	
+						}				
+					}
+					
+					$this->_pagefoot($pdf,$object,$outputlangs);
+											
+				}
+				
 				$pdf->AliasNbPages();
 
 				$pdf->Close();

@@ -780,14 +780,130 @@ class Livraison extends CommonObject
 		$ligne->total_ht       = 100;
 		$this->lignes[$i] = $ligne;
 	}
+	
+	/**
+	 *   \brief      Renvoie la quantite de produit restante a livrer pour une commande
+	 *   \return     array		Product remaining to be delivered
+	 */
+	function getRemainingDelivered()
+	{
+		// Get the source id and source type
+		$sqlSource = "SELECT fk_source, sourcetype";
+		$sqlSource.= " FROM ".MAIN_DB_PREFIX."element_element";
+		$sqlSource.= " WHERE fk_target = ".$this->id;
+		$sqlSource.= " AND targettype = '".$this->element."'";
+				
+		$resultSource = $this->db->query($sqlSource);
+		$objSource = $this->db->fetch_object($resultSource);
+				
+		// Get the product ref and qty in source
+		$sqlSourceLine = "SELECT p.ref, p.label, st.rowid, st.qty";
+		$sqlSourceLine.= " FROM ".MAIN_DB_PREFIX.$objSource->sourcetype."det as st";
+		$sqlSourceLine.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
+		$sqlSourceLine.= " WHERE fk_".$objSource->sourcetype." = ".$objSource->fk_source;
+				
+		$resultSourceLine = $this->db->query($sqlSourceLine);
+		if ($resultSourceLine)	
+		{
+			$num_lines = $this->db->num_rows($resultSourceLine);
+			$i = 0;
+			$resultArray = array();
+			while ($i < $num_lines)
+			{
+				$objSourceLine = $this->db->fetch_object($resultSourceLine);
+				
+				// Recupere les lignes de la source deja livrees
+				$sql3 = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
+				$sql3 .= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
+				$sql3 .= " ".MAIN_DB_PREFIX.$objSource->sourcetype." as c, ".MAIN_DB_PREFIX.$objSource->sourcetype."det as cd";
+				$sql3 .= " WHERE ld.fk_livraison = l.rowid AND ld.fk_origin_line = cd.rowid";
+				$sql3 .= " AND cd.fk_".$objSource->sourcetype." = c.rowid";
+				$sql3 .= " AND cd.fk_".$objSource->sourcetype." = ".$objSource->fk_source;
+				$sql3 .= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
+				$sql3 .= " GROUP BY ld.fk_origin_line";
+					
+				$result = $this->db->query($sql3);
+				$row = $this->db->fetch_row($result);
+					
+				if ($obj->qty - $row[1] > 0)	
+				{
+					if ($row[0] == $obj->rowid)
+					{
+						$array[$i]['qty'] = $obj->qty - $row[1];
+					}
+					else
+					{
+						$array[$i]['qty'] = $obj->qty;
+					}
+						
+					$array[$i]['ref'] = $obj->ref;
+					$array[$i]['label'] = $obj->label;
+				}
+				elseif($obj->qty - $row[1] < 0)
+				{
+					$array[$i]['qty'] = $obj->qty - $row[1]. " Erreur livraison !";
+					$array[$i]['ref'] = $obj->ref;
+					$array[$i]['label'] = $obj->label;					
+				}
+				
+					$i++;
+				}
+				return $array;
+			}
+			else
+			{
+				$this->error=$this->db->error()." - sql=$sql";
+				dol_syslog("livraison.class.php::getRemainingDelivered ".$this->error, LOG_ERR);
+				return -1;
+			}
+	}
+	
+	/**
+	 *      \brief      Renvoie un tableau avec les livraisons par ligne
+	 *      \param      filtre_statut       Filtre sur statut
+	 *      \return     int                 0 si OK, <0 si KO
+	 *      \TODO  obsolete
+	 */
+	function livraison_array($filtre_statut=-1)
+	{
+		$this->livraisons = array();
+		
+		$sql = 'SELECT cd.fk_product, SUM(ld.qty)';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'livraisondet as ld';
+		$sql.= ', '.MAIN_DB_PREFIX.'livraison as l';
+		$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
+		$sql.= ', '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql.= ' WHERE ld.fk_livraison = l.rowid';
+		$sql.= ' AND ld.fk_commande_ligne = cd .rowid';
+		$sql.= ' AND cd.fk_commande = c.rowid';
+		$sql.= ' AND cd.fk_commande =' .$this->id;
+		if ($filtre_statut >= 0) $sql.=' AND l.fk_statut = '.$filtre_statut;
+		$sql.= ' GROUP BY cd.fk_product ';
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$this->livraisons[$row[0]] = $row[1];
+				$i++;
+			}
+			$this->db->free();
+		}
+
+		return 0;
+	}
 
 }
 
 
 
 /**
- \class      LivraisonLigne
- \brief      Classe de gestion des lignes de bons de livraison
+ *  \class      LivraisonLigne
+ *  \brief      Classe de gestion des lignes de bons de livraison
  */
 class LivraisonLigne
 {

@@ -248,6 +248,31 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 	}
 }
 
+// Init Dwoo
+if ($conf->global->MAIN_DWOO2)
+{
+	// Usage of const in conf.php file can overwrite default dir.
+	if (empty($dolibarr_dwoo_libs_dir)) $dolibarr_dwoo_libs_dir=DOL_DOCUMENT_ROOT.'/includes/dwoo/';
+	if (empty($dolibarr_dwoo_compile))  $dolibarr_dwoo_compile=DOL_DATA_ROOT.'/dwoo/templates/temp';
+	if (empty($dolibarr_dwoo_cache))    $dolibarr_dwoo_cache=DOL_DATA_ROOT.'/dwoo/cache/temp';
+
+	//$dwoo_libs = $dolibarr_dwoo_libs_dir. "dwooAutoload.php";
+	$dwoo_libs = $dolibarr_dwoo_libs_dir. "Dwoo.php";
+	$dwoo_smarty_adapter = $dolibarr_dwoo_libs_dir. "Dwoo/Smarty/Adapter.php";
+	
+	if (include_once($dwoo_libs) && include_once($dwoo_smarty_adapter))
+	{
+		//$dwoo = new Dwoo($dolibarr_dwoo_compile,$dolibarr_dwoo_cache);
+		$smarty = new Dwoo_Smarty_Adapter();
+		$smarty->show_compat_errors = true;
+		$smarty->compile_dir = $dolibarr_smarty_compile;
+		$smarty->cache_dir = $dolibarr_smarty_cache;
+	}
+	else
+	{
+		dol_print_error('',"Library Dwoo ".$dwoo_libs." not found.");
+	}
+}
 
 /*
  * Phase authentication / login

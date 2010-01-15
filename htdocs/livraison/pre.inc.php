@@ -25,8 +25,9 @@
 */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+if ($conf->propale->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $langs->load("orders");
 $langs->load("sendings");

@@ -254,7 +254,7 @@ if ($_GET["action"] == 'create')
 
 		$lignes = $commande->fetch_lines(1);
 
-		/* Lecture des livraisons d�j� effectu�es */
+		/* Lecture des livraisons deje effectuees */
 		$commande->livraison_array();
 
 		$num = sizeof($commande->lignes);

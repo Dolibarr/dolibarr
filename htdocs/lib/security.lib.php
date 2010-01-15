@@ -206,6 +206,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if ($conf->global->MAIN_SMARTY)
 	{
 		global $smarty;
+		
+		$smarty->template_dir=$template_dir;
 
 		$smarty->assign('conf_css', $conf_css);
 		$smarty->assign('langs', $langs);
@@ -216,7 +218,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$smarty->assign('character_set_client',$conf->file->character_set_client);
 
 		$smarty->assign('theme', 'default');
-		$smarty->template_dir=$template_dir;
+
 		$smarty->assign('dol_url_root', DOL_URL_ROOT);
 
 		$smarty->assign('focus_element', $focus_element);
