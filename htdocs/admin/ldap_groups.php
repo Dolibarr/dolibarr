@@ -23,7 +23,7 @@
 /**
  *     	\file       htdocs/admin/ldap_groups.php
  *     	\ingroup    ldap
- *     	\brief      Page d'administration/configuration du module Ldap
+ *		\brief      Page to setup LDAP synchronization for groups
  *     	\version    $Id$
  */
 
@@ -54,7 +54,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',$_POST["objectclass"],'chaine',0,'',$conf->entity)) $error++;
 
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME',$_POST["fieldfullname"],'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
+	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION',$_POST["fielddescription"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS',$_POST["fieldgroupmembers"],'chaine',0,'',$conf->entity)) $error++;
 
@@ -140,19 +140,20 @@ print '</tr>';
 
 // Common name
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldCommonName").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_FULLNAME?' checked="true"':'')."></td>";
 print '</tr>';
 
 // Name
-$var=!$var;
+/*$var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_NAME?' checked="true"':'')."></td>";
 print '</tr>';
+*/
 
 // Description
 $var=!$var;

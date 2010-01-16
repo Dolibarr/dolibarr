@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     
+/**
  *  \defgroup   ldap     Module ldap
  *  \brief      Module pour interfacer les contacts avec un annuaire Ldap
  */
@@ -32,7 +32,7 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** 
+/**
  *  \class 		modLdap
  *	\brief      Classe de description et activation du module Ldap
  */
@@ -43,7 +43,7 @@ class modLdap extends DolibarrModules
 	 *   \param      DB      handler d'acces base
 	 */
 	function modLdap($DB)
-	{	
+	{
 		$this->db = $DB ;
 		$this->numero = 200 ;
 
@@ -75,12 +75,13 @@ class modLdap extends DolibarrModules
 		4=>array('LDAP_GROUP_DN','chaine','ou=groups,dc=my-domain,dc=com','',0),
 		5=>array('LDAP_FILTER_CONNECTION','chaine','&(objectClass=user)(objectCategory=person)','',0),
 		6=>array('LDAP_FIELD_LOGIN','chaine','uid','',0),
-		7=>array('LDAP_FIELD_NAME','chaine','sn','',0),
-		8=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0),
-		9=>array('LDAP_FIELD_MAIL','chaine','mail','',0),
-		10=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0),
-		11=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0),
-		12=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
+		7=>array('LDAP_FIELD_FULLNAME','chaine','cn','',0),
+		8=>array('LDAP_FIELD_NAME','chaine','sn','',0),
+		9=>array('LDAP_FIELD_FIRSTNAME','chaine','givenname','',0),
+		10=>array('LDAP_FIELD_MAIL','chaine','mail','',0),
+		11=>array('LDAP_FIELD_PHONE','chaine','telephonenumber','',0),
+		12=>array('LDAP_FIELD_FAX','chaine','facsimiletelephonenumber','',0),
+		13=>array('LDAP_FIELD_MOBILE','chaine','mobile','',0),
 		);
 
 		// Boites
