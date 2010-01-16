@@ -242,7 +242,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_FIELD_DESCRIPTION?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'"'.($conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_DESCRIPTION?' checked="true"':'')."></td>";
 print '</tr>';
 
 // Sid
@@ -250,7 +250,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSid").'</td><td>';
 print '<input size="25" type="text" name="fieldsid" value="'.$conf->global->LDAP_FIELD_SID.'">';
 print '</td><td>'.$langs->trans("LDAPFieldSidExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_SID.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_FIELD_SID?' checked="true"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_SID.'"'.($conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SID?' checked="true"':'')."></td>";
 print '</tr>';
 
 $var=!$var;
