@@ -18,14 +18,15 @@
  */
 
 /**
- *     	\file       htdocs/public/paybox/paymentok.php
+ *     	\file       htdocs/public/paybox/paymentko.php
  *		\ingroup    paybox
- *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
+ *		\brief      File to show page after a failed payment
  *		\author	    Laurent Destailleur
  *		\version    $Id$
  */
 
-define("NOLOGIN",1);	// This means this output page does not require to be logged.
+define("NOLOGIN",1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
