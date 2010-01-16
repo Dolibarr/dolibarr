@@ -111,8 +111,9 @@ analyse_sql_and_script($_GET);
 analyse_sql_and_script($_POST);
 
 // Security: CSRF protection
-// The test to do is to check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST']).
-if (! defined('NOCSRFCHECK') && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
+// This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
+// when we post forms (we allow GET to allow direct link to access a particular page).
+if (! defined('NOCSRFCHECK') && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['HTTP_REFERER']) && ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER']))
 {
 	//print 'HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 	print 'Access refused by CSRF protection in main.inc.php.';
@@ -259,7 +260,7 @@ if ($conf->global->MAIN_DWOO2)
 	//$dwoo_libs = $dolibarr_dwoo_libs_dir. "dwooAutoload.php";
 	$dwoo_libs = $dolibarr_dwoo_libs_dir. "Dwoo.php";
 	$dwoo_smarty_adapter = $dolibarr_dwoo_libs_dir. "Dwoo/Smarty/Adapter.php";
-	
+
 	if (include_once($dwoo_libs) && include_once($dwoo_smarty_adapter))
 	{
 		//$dwoo = new Dwoo($dolibarr_dwoo_compile,$dolibarr_dwoo_cache);
