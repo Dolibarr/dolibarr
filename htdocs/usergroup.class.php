@@ -1,6 +1,6 @@
 <?php
-/* Copyright (c) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (c) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +95,8 @@ class UserGroup extends CommonObject
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
 
+				$this->members=$this->listUsersForGroup();
+
 				// Sav current LDAP Current DN
 				//$this->ldap_dn = $this->_load_ldap_dn($this->_load_ldap_info(),0);
 			}
@@ -111,7 +113,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 * 	\brief		Return array of groups for a particular user
+	 * 	\brief		Return array of groups objects for a particular user
 	 *	\param		usertosearch
 	 * 	\return		array of groups objects
 	 */
@@ -119,7 +121,7 @@ class UserGroup extends CommonObject
 	{
 		$ret=array();
 
-		$sql = "SELECT g.rowid, g.nom, g.note, g.datec, tms as datem";
+		$sql = "SELECT g.rowid, g.nom, g.note, g.datec, g.tms as datem";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_usergroup = g.rowid";
@@ -147,6 +149,39 @@ class UserGroup extends CommonObject
 		{
 			$this->error=$this->db->lasterror();
 			dol_syslog("UserGroup::listGroupsForUser ".$this->error, LOG_ERR);
+			return -1;
+		}
+		return $ret;
+	}
+
+	/**
+	 * 	\brief		Return array of users id for group
+	 * 	\return		array of users id
+	 */
+	function listUsersForGroup()
+	{
+		$ret=array();
+
+		$sql = "SELECT u.rowid, u.login, u.name, u.firstname";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
+		$sql.= " WHERE ug.fk_user = u.rowid";
+		$sql.= " AND ug.fk_usergroup = ".$this->id;
+
+		dol_syslog("UserGroup::listUsersForGroup sql=".$sql,LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			while ($obj = $this->db->fetch_object($result))
+			{
+				$ret[]=$obj->rowid;
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("UserGroup::listUsersForGroup ".$this->error, LOG_ERR);
 			return -1;
 		}
 		return $ret;
@@ -483,9 +518,9 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *		\brief      Mise a jour en base d'un utilisateur
-	 *      	\param      notrigger	    0=non, 1=oui
-	 *    	\return     int				<0 si KO, >=0 si OK
+	 *		\brief      Update group into database
+	 *      \param      notrigger	    0=trigers enabled, 1=trigers disabled
+	 *    	\return     int				<0 if KO, >=0 if OK
 	 */
 	function update($notrigger=0)
 	{
@@ -502,27 +537,23 @@ class UserGroup extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if ($this->db->affected_rows($resql))
+			if (!$error && ! $notrigger)
 			{
-
-				if (!$error && ! $notrigger)
-				{
-					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
-				}
-
-				return 1;
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 			}
-			return 0;
+
+			if (! $error) return 1;
+			else return -$error;
 		}
 		else
 		{
 			dol_print_error($this->db);
-			return -2;
+			return -1;
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 
 /**
- *  Action suppression groupe
+ *  Action remove group
  */
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes")
 {
@@ -61,7 +61,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes")
 }
 
 /**
- *  Action ajout groupe
+ *  Action add group
  */
 if ($_POST["action"] == 'add')
 {
@@ -104,30 +104,62 @@ if ($_POST["action"] == 'add')
 	}
 }
 
+// Add user into group
 if ($_POST["action"] == 'adduser')
 {
-	if($caneditperms){
+	if($caneditperms)
+	{
 		if ($_POST["user"])
 		{
-			$edituser = new User($db, $_POST["user"]);
-			$edituser->SetInGroup($_GET["id"]);
+			$editgroup = new UserGroup($db);
+			$editgroup->fetch($_GET["id"]);
+			$editgroup->oldcopy=dol_clone($editgroup);
 
-			Header("Location: fiche.php?id=".$_GET["id"]);
+			$edituser = new User($db, $_POST["user"]);
+			$result=$edituser->SetInGroup($_GET["id"]);
+
+			// We reload members (list has changed)
+			$editgroup->members=$editgroup->listUsersForGroup();
+
+			// We update group to force triggers that update groups content
+			$result=$editgroup->update();
+
+			if ($result > 0)
+			{
+				header("Location: fiche.php?id=".$_GET["id"]);
+				exit;
+			}
 		}
 	}else{
 		$message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
 	}
 }
 
+// Remove user from group
 if ($_GET["action"] == 'removeuser')
 {
-	if($caneditperms){
+	if($caneditperms)
+	{
 		if ($_GET["user"])
 		{
+			$editgroup = new UserGroup($db);
+			$editgroup->fetch($_GET["id"]);
+			$editgroup->oldcopy=dol_clone($editgroup);
+
 			$edituser = new User($db, $_GET["user"]);
 			$edituser->RemoveFromGroup($_GET["id"]);
 
-			Header("Location: fiche.php?id=".$_GET["id"]);
+			// We reload members (list has changed)
+			$editgroup->members=$editgroup->listUsersForGroup();
+
+			// We update group to force triggers that update groups content
+			$result=$editgroup->update();
+
+			if ($result > 0)
+			{
+				header("Location: fiche.php?id=".$_GET["id"]);
+				exit;
+			}
 		}
 	}else{
 		$message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';

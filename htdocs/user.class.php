@@ -1167,13 +1167,13 @@ class User extends CommonObject
 
 
 	/**
-	 *   \brief     	Change le mot de passe d'un utilisateur
-	 *   \param     	user             		Object user de l'utilisateur qui fait la modification
-	 *   \param     	password         		Nouveau mot de passe en clair (a generer si non communique)
+	 *  \brief     	Change le mot de passe d'un utilisateur
+	 *  \param     	user             		Object user de l'utilisateur qui fait la modification
+	 *  \param     	password         		Nouveau mot de passe en clair (a generer si non communique)
 	 *	\param		changelater				1=Change password only after clicking on confirm email
 	 *	\param		notrigger				1=Ne declenche pas les triggers
 	 *	\param		nosyncmember	        Do not synchronize linked member
-	 *   \return    	string           		If OK return clear password, 0 if no change, < 0 if error
+	 *  \return    	string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
 	function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
 	{
@@ -1440,7 +1440,7 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Ajoute l'utilisateur dans un groupe
+	 *    \brief      Add user into a group
 	 *    \param      group       id du groupe
 	 */
 	function SetInGroup($group)
@@ -1459,7 +1459,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retire l'utilisateur d'un groupe
+	 *    \brief      Remove a user from a group
 	 *    \param      group       id du groupe
 	 */
 	function RemoveFromGroup($group)

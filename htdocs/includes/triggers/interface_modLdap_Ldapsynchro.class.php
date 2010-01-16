@@ -17,20 +17,18 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
-        \ingroup    core
-        \brief      Fichier de gestion des triggers LDAP
-		\version	$Id$
-*/
-
+ *      \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
+ *      \ingroup    core
+ *      \brief      Fichier de gestion des triggers LDAP
+ *		\version	$Id$
+ */
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 
 /**
-        \class      InterfaceLdapsynchro
-        \brief      Classe des fonctions triggers des actions de synchro LDAP
-*/
-
+ *       \class      InterfaceLdapsynchro
+ *       \brief      Classe des fonctions triggers des actions de synchro LDAP
+ */
 class InterfaceLdapsynchro
 {
     var $db;
@@ -137,7 +135,7 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
-        		
+
         		// Verify if entry exist
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
@@ -214,7 +212,7 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
-        		
+
         	    // Verify if entry exist
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
@@ -284,7 +282,7 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
-        		
+
         		// Verify if entry exist
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
@@ -407,7 +405,7 @@ class InterfaceLdapsynchro
 
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
-        		
+
         		// Verify if entry exist
         		$container=$object->oldcopy->_load_ldap_dn($oldinfo,1);
         		$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo,2).")";
