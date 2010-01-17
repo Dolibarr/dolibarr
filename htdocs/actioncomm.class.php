@@ -590,14 +590,26 @@ class ActionComm
 		// Check parameters
 		if (empty($format)) return -1;
 
+		// Define prefix
+		$prefix='';
+		foreach ($filters as $key => $value)
+		{
+			if ($key == 'year')     $prefix.='.year'.$value;
+			if ($key == 'idaction') $prefix.='.id'.$value;
+			if ($key == 'login')	$prefix.='.login'.$value;
+			if ($key == 'logina')	$prefix.='.logina'.$value;
+			if ($key == 'logind')	$prefix.='.logind'.$value;
+			if ($key == 'logint')	$prefix.='.logint'.$value;
+		}
+
 		// Clean parameters
 		if (! $filename)
 		{
 			$extension='vcs';
 			if ($format == 'ical') $extension='ics';
-			$filename=$format.'.'.$extension;
+			$filename=$format.$prefix.'.'.$extension;
 		}
-
+		else $filename.=$prefix;
 
 		// Create dir and define output file (definitive and temporary)
 		$result=create_exdir($conf->agenda->dir_temp);
@@ -644,7 +656,7 @@ class ActionComm
 			$sql.= " WHERE a.fk_action=c.id";
 			foreach ($filters as $key => $value)
 			{
-				if ($key == 'year')     $sql.=' AND ';
+				if ($key == 'year')     $sql.=' AND a.datep BETWEEN ( )'; // TODO Put year range
 				if ($key == 'idaction') $sql.=' AND a.id='.$value;
 				if ($key == 'login')
 				{
