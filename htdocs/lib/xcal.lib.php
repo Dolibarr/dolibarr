@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
- 
+
+
 /**
-   \file       htdocs/lib/xcal.lib.php
-   \brief      Function to manage calendar files (vcal/ical/...)
-   \version    $Id$
-*/
+ *  \file       htdocs/lib/xcal.lib.php
+ *  \brief      Function to manage calendar files (vcal/ical/...)
+ *  \version    $Id$
+ */
 
 /**
  *	\brief		Build a file from an array of events
@@ -37,20 +37,20 @@
 function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$filter='')
 {
 	global $langs;
-	
+
 	dol_syslog("xcal.lib.php::build_calfile Build cal file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) return -1;
-	
+
 	// Note: A cal file is an UTF8 encoded file
 	$calfileh=fopen($outputfile,'w');
 	if ($calfileh)
 	{
 		$now=mktime();
-		
+
 		$encoding='';
 		if ($format == 'vcal') $encoding='ENCODING=QUOTED-PRINTABLE:';
-		
+
 		// Print header
 		fwrite($calfileh,"BEGIN:VCALENDAR\n");
 		fwrite($calfileh,"VERSION:2.0\n");
@@ -61,7 +61,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		fwrite($calfileh,"X-WR-CALNAME:".$encoding.format_cal($format,$title)."\n");
 		fwrite($calfileh,"X-WR-CALDESC:".$encoding.format_cal($format,$desc)."\n");
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
-		
+
 		foreach ($events_array as $date => $event)
 		{
 			$eventqualified=true;
@@ -71,7 +71,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 
 				$eventqualified=false;
 			}
-			
+
 			if ($eventqualified)
 			{
 				// See http://fr.wikipedia.org/wiki/ICalendar for format
@@ -100,7 +100,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$description=format_cal($format,$description);
 				$category=format_cal($format,$category);
 				$location=format_cal($format,$location);
-				
+
 				// Output the vCard/iCal VEVENT object
 				if ($type == 'event')
 				{
@@ -115,7 +115,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					{
 						fwrite($calfileh,"URL:".$url."\n");
 					};
-					
+
 					fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
 					//fwrite($calfileh,'STATUS:CONFIRMED'."\n");
@@ -142,7 +142,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					if (! empty($location)) fwrite($calfileh,"LOCATION:".$encoding.$location."\n");
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
 
-					// Date must be GMT dates 
+					// Date must be GMT dates
 					fwrite($calfileh,"DTSTAMP:".dol_print_date($now,'dayhourxcard',true)."\n");
 					$startdatef = dol_print_date($startdate,'dayhourxcard',true);
 					fwrite($calfileh,"DTSTART:".$startdatef."\n");
@@ -154,7 +154,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
 					fwrite($calfileh,"END:VEVENT\n");
 				}
-				
+
 				// Output the vCard/iCal VTODO object
 				// ...
 				//PERCENT-COMPLETE:39
@@ -173,7 +173,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					{
 						fwrite($calfileh,"URL:".$url."\n");
 					};
-					
+
 					fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
 					fwrite($calfileh,'STATUS:CONFIRMED'."\n");
@@ -186,7 +186,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					fwrite($calfileh,"END:VJOURNAL\n");
 				}
 
-				
+
 				// Put other info in comment
 				/*
 				$comment=array();
@@ -198,20 +198,20 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$comment ['enddate']		= $enddate;
 				fwrite($calfileh,"COMMENT:" . serialize ($comment) . "\n");
 				*/
-				
+
 			}
 		}
 
 		// Footer
 		fwrite($calfileh,"END:VCALENDAR");
-		
+
 		fclose($calfileh);
-		if (! empty($conf->global->MAIN_UMASK)) 
+		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 	}
 	else
 	{
-		dol_syslog("xcal.lib.php::build_cal_file Failed to open file ".$outputfile." for writing");
+		dol_syslog("xcal.lib.php::build_calfile Failed to open file ".$outputfile." for writing");
 		return -2;
 	}
 }
@@ -231,11 +231,11 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 {
 	global $user,$conf,$langs;
 	global $dolibarr_main_url_root;
-	
+
 	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) return -1;
-	
+
 	$fichier=fopen($outputfile,'w');
 	if ($fichier)
 	{
@@ -247,12 +247,12 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		fwrite($fichier, "\n");
 		$html='<rss version="2.0">';
 		fwrite($fichier, $html);
-		fwrite($fichier, "\n"); 
-		  				
+		fwrite($fichier, "\n");
+
 		$html="<channel>\n".
 		"<title>".$title."</title>\n";
 		fwrite($fichier, $html);
-		
+
 		$html='<description><![CDATA['.$desc.'.]]></description>'."\n".
 //		'<language>fr</language>'."\n".
 		'<copyright>Dolibarr</copyright>'."\n".
@@ -271,12 +271,12 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 //		'<title><![CDATA[Dolibarr events]]></title>'."\n"
 //		'<link><![CDATA[http://www.lesbonnesannonces.com/]]></link>'."\n"
 //		'<width>144</width>'."\n"
-//		'<height>36</height>'."\n"	
+//		'<height>36</height>'."\n"
 //		'</image>'."\n";
 
 		#print $html;
-		fwrite($fichier, $html);		
-		
+		fwrite($fichier, $html);
+
 
 		foreach ($events_array as $date => $event)
 		{
@@ -287,7 +287,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 
 				$eventqualified=false;
 			}
-			
+
 			if ($eventqualified)
 			{
 				$uid		  = $event['uid'];
@@ -298,7 +298,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 				$category	  = $event['category'];
 				$description=preg_replace('/<br[\s\/]?>/i',"\n",$event['desc']);
  				$description=dol_string_nohtmltag($description,0);	// Remove html tags
- 				
+
 				fwrite ($fichier, "<item>\n");
 				fwrite ($fichier, "<title><![CDATA[".$summary."]]></title>"."\n");
 				fwrite ($fichier, "<link><![CDATA[".$url."]]></link>"."\n");
@@ -311,7 +311,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 				fwrite ($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
 				fwrite ($fichier, "<guid isPermaLink=\"true\"><![CDATA[".$uid."]]></guid>\n");
 				fwrite ($fichier, "<source><![CDATA[Dolibarr]]></source>\n");
-				fwrite ($fichier, "</item>\n");	
+				fwrite ($fichier, "</item>\n");
 			}
 		}
 
@@ -320,7 +320,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		fwrite($fichier, '</rss>');
 
 		fclose($fichier);
-		if (! empty($conf->global->MAIN_UMASK)) 
+		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 	}
 }
@@ -336,7 +336,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 function format_cal($format,$string)
 {
 	global $conf;
-	
+
 	if ($conf->file->character_set_client == 'ISO-8859-1') $newstring=utf8_encode($string);
 	else $newstring=$string;
 
@@ -354,7 +354,7 @@ function format_cal($format,$string)
 		// Must not exceed 75 char. Cut with "\r\n"+Space
 		$newstring=CalEncode($newstring);
 	}
-	
+
 	return $newstring;
 }
 
@@ -369,14 +369,14 @@ function CalEncode($line)
 	$out = '';
 
 	$newpara = '';
-	
+
 	// If mb_ functions exists, it's better to use them
 	if (function_exists('mb_strlen'))
 	{
 		for ($j = 0; $j <= mb_strlen($line, 'UTF-8') - 1; $j++)
 		{
 			$char = mb_substr ( $line, $j, 1, 'UTF-8' );	// Take char at position $j
-	
+
 			if ( ( mb_strlen ( $newpara, 'UTF-8') + mb_strlen ( $char, 'UTF-8' ) ) >= 75 )
 			{
 				$out .= $newpara . "\r\n ";	// CRLF + Space for cal
@@ -391,7 +391,7 @@ function CalEncode($line)
 		for ($j = 0; $j <= strlen($line) - 1; $j++)
 		{
 			$char = substr ( $line, $j, 1 );	// Take char at position $j
-	
+
 			if ( ( strlen ( $newpara ) + strlen ( $char ) ) >= 75 )
 			{
 				$out .= $newpara . "\r\n ";	// CRLF + Space for cal
@@ -401,7 +401,7 @@ function CalEncode($line)
 		}
 		$out .= $newpara;
 	}
-	
+
 	return trim($out);
 }
 
@@ -442,6 +442,6 @@ function QPDecode( $str )
 	$out = preg_replace('/=([A-F0-9]{2})/e', chr( hexdec ('\\1' ) ), $out);
 
 	return trim($out);
-} 
+}
 
 ?>

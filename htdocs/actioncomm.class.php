@@ -753,7 +753,8 @@ class ActionComm
 
 			if ($result < 0)
 			{
-				$this->error=$langs->trans("ErrorFailedToWriteFile",$outputfile);
+				$langs->load("errors");
+				$this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);
 			}
 		}
 

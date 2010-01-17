@@ -128,6 +128,12 @@ if ($format == 'ical' || $format == 'vcal')
 	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
+	else
+	{
+		print 'Error '.$agenda->error;
+
+		exit;
+	}
 }
 
 if ($format == 'rss')
@@ -157,6 +163,12 @@ if ($format == 'rss')
 		if (! $result) print 'File '.$outputfile.' was empty.';
 
 	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+		exit;
+	}
+	else
+	{
+		print 'Error '.$agenda->error;
+
 		exit;
 	}
 }
