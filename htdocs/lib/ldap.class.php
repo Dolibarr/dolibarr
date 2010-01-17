@@ -645,6 +645,7 @@ class Ldap
 		$content.="# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
 		$content.="# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
 		$content.="# ldapdelete $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
+		if (in_array('localhost',$this->server)) $content.="# If commands fails to connect, try without -h and -p\n";
 		$content.="dn: ".$dn."\n";
 		foreach($info as $key => $value)
 		{
@@ -697,7 +698,7 @@ class Ldap
 
 
 	// 2.4 Attribute methods -----------------------------------------------------
-	
+
     /**
 	 * 	\brief		Add a LDAP attribute in entry
 	 *	\param		dn			DN entry key
@@ -748,7 +749,7 @@ class Ldap
 			return -1;
 		}
 	}
-	
+
     /**
 	 * 	\brief		Update a LDAP attribute in entry
 	 *	\param		dn			DN entry key
@@ -799,7 +800,7 @@ class Ldap
 			return -1;
 		}
 	}
-	
+
     /**
 	 * 	\brief		Delete a LDAP attribute in entry
 	 *	\param		dn			DN entry key
@@ -850,12 +851,12 @@ class Ldap
 			return -1;
 		}
 	}
-	
+
     /**
 	 *  Returns an array containing attributes and values for first record
 	 */
 	function getAttribute($dn,$filter)
-	{		
+	{
 		// Check parameters
 		if (! $this->connection)
 		{
@@ -867,7 +868,7 @@ class Ldap
 			$this->error="NotConnected";
 			return -3;
 		}
-		
+
 		$search = ldap_search($this->connection,$dn,$filter);
 
 		// Only one entry should ever be returned

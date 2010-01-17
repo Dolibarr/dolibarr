@@ -21,11 +21,11 @@
  */
 
 /**
-    	\file       htdocs/admin/ldap_members.php
-		\ingroup    ldap adherent
-		\brief      Page d'administration/configuration du module Ldap adherent
-		\version    $Id$
-*/
+ *   	\file       htdocs/admin/ldap_members.php
+ *		\ingroup    ldap adherent
+ *		\brief      Page d'administration/configuration du module Ldap adherent
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -285,7 +285,7 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
 print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_MEMBER_FIELD_COUNTRY.'">';
-print '</td><td>'.$langs->trans("LDAPFieldCountryExample").'</td>';
+print '</td><td>&nbsp;</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
