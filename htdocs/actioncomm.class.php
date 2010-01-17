@@ -590,26 +590,13 @@ class ActionComm
 		// Check parameters
 		if (empty($format)) return -1;
 
-		// Define prefix
-		$prefix='';
-		foreach ($filters as $key => $value)
-		{
-			if ($key == 'year')     $prefix.='.year'.$value;
-			if ($key == 'idaction') $prefix.='.id'.$value;
-			if ($key == 'login')	$prefix.='.login'.$value;
-			if ($key == 'logina')	$prefix.='.logina'.$value;
-			if ($key == 'logind')	$prefix.='.logind'.$value;
-			if ($key == 'logint')	$prefix.='.logint'.$value;
-		}
-
 		// Clean parameters
 		if (! $filename)
 		{
 			$extension='vcs';
 			if ($format == 'ical') $extension='ics';
-			$filename=$format.$prefix.'.'.$extension;
+			$filename=$format.'.'.$extension;
 		}
-		else $filename.=$prefix;
 
 		// Create dir and define output file (definitive and temporary)
 		$result=create_exdir($conf->agenda->dir_temp);

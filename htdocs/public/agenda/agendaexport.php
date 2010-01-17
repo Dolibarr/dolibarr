@@ -78,10 +78,11 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
 $filename='';
-if ($format == 'vcal') $filename='dolibarrcalendar.vcs';
-if ($format == 'ical') $filename='dolibarrcalendar.ics';
-if ($format == 'rss')  $filename='dolibarrcalendar.rss';
-// Check filename
+$shortfilename='';
+if ($format == 'vcal') $shortfilename='dolibarrcalendar.vcs';
+if ($format == 'ical') $shortfilename='dolibarrcalendar.ics';
+if ($format == 'rss')  $shortfilename='dolibarrcalendar.rss';
+$filename=$shortfilename;
 if (! $filename)
 {
 	$langs->load("main");
@@ -123,7 +124,7 @@ if ($format == 'ical' || $format == 'vcal')
 		//$contenttype='ISO-8859-1';
 
 		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
-		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
+		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$shortfilename.'"');
 
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
