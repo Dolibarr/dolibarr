@@ -2027,7 +2027,7 @@ class Societe extends CommonObject
 		global $conf,$user,$langs;
 
 		$name = !empty($socname)?$socname:$member->societe;
-		if (empty($name)) $name=strtolower($member->nom.' '.$member->prenom);
+		if (empty($name)) $name=trim($member->nom.' '.$member->prenom);
 
 		// Positionne parametres
 		$this->email = $member->email;
