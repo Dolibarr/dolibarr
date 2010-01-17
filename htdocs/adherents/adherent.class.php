@@ -87,10 +87,10 @@ class Adherent extends CommonObject
 	var $fk_soc;
 
 	// Fields loaded by fetch_subscriptions()
-	var $fistsubscription_date;
-	var $fistsubscription_amount;
-	var $lastsubscription_date;
-	var $lastsubscription_amount;
+	var $first_subscription_date;
+	var $first_subscription_amount;
+	var $last_subscription_date;
+	var $last_subscription_amount;
 	var $subscriptions=array();
 
 	//  var $public;
@@ -413,9 +413,7 @@ class Adherent extends CommonObject
 		$sql.= ", fk_user_mod=".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Adherent::update UPDATE MEMBER");
-
-		dol_syslog("Adherent::update sql=".$sql);
+		dol_syslog("Adherent::update update member sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -448,7 +446,7 @@ class Adherent extends CommonObject
 				}
 				$sql.=")";
 
-				dol_syslog("Adherent::update sql=".$sql);
+				dol_syslog("Adherent::update update option sql=".$sql);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -466,7 +464,7 @@ class Adherent extends CommonObject
 			// Update password
 			if ($this->pass)
 			{
-				dol_syslog("Adherent::update UPDATE PASSWORD");
+				dol_syslog("Adherent::update update password");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 				{
 					// Si mot de passe saisi et different de celui en base
@@ -476,7 +474,7 @@ class Adherent extends CommonObject
 			}
 
 			// Remove link to user
-			dol_syslog("Adherent::update UPDATE LINK TO USER");
+			dol_syslog("Adherent::update update link to user");
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
 			dol_syslog("Adherent::update sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -496,7 +494,7 @@ class Adherent extends CommonObject
 				{
 					require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 
-					dol_syslog("Adherent::update UPDATE LINKED USER");
+					dol_syslog("Adherent::update update linked user");
 
 					// This member is linked with a user, so we also update users informations
 					// if this is an update.
@@ -573,9 +571,10 @@ class Adherent extends CommonObject
 
 
 	/**
-	 \brief 		Fonction qui met a jour le chp denormalise date fin adhesion
-	 \param		user			Utilisateur qui realise la mise a jour
-	 \return		int				<0 si KO, >0 si OK
+	 *	\brief 		Update denormalized last subscription date.
+	 * 				This function is called when we delete a subscription for example.
+	 *	\param		user			Utilisateur qui realise la mise a jour
+	 *	\return		int				<0 if KO, >0 if OK
 	 */
 	function update_end_date($user)
 	{
@@ -586,7 +585,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		// Search for last subscription id and end date
-		$sql = "SELECT rowid, datef";
+		$sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.= " WHERE fk_adherent='".$this->id."'";
 		$sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
@@ -596,7 +595,9 @@ class Adherent extends CommonObject
 		if ($resql)
 		{
 			$obj=$this->db->fetch_object($resql);
-			$datefin=$this->db->jdate($obj->datef);
+			$dateop=$this->db->jdate($obj->dateop);
+			$datedeb=$this->db->jdate($obj->datedeb);
+			$datefin=$this->db->jdate($obj->datefin);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 			$sql.= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
@@ -606,6 +607,10 @@ class Adherent extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$this->last_subscription_date=$dateop;
+				$this->last_subscription_date_start=$datedeb;
+				$this->last_subscription_date_end=$datefin;
+				$this->datefin=$datefin;
 				$this->db->commit();
 				return 1;
 			}
@@ -1012,10 +1017,10 @@ class Adherent extends CommonObject
 
 	/**
 	 *	\brief 		Fonction qui recupere pour un adherent les parametres
-	 *				firstsubscription_date
-	 *				fistrsubscription_amount
-	 *				lastsubscription_date
-	 *				lastsubscription_amount
+	 *				first_subscription_date
+	 *				first_subscription_amount
+	 *				last_subscription_date
+	 *				last_subscription_amount
 	 *	\return		int			<0 si KO, >0 si OK
 	 */
 	function fetch_subscriptions()
@@ -1042,11 +1047,11 @@ class Adherent extends CommonObject
 			{
 				if ($i==0)
 				{
-					$this->firstsubscription_date=$obj->dateadh;
-					$this->firstsubscription_amount=$obj->cotisation;
+					$this->first_subscription_date=$obj->dateadh;
+					$this->first_subscription_amount=$obj->cotisation;
 				}
-				$this->lastsubscription_date=$obj->dateadh;
-				$this->lastsubscription_amount=$obj->cotisation;
+				$this->last_subscription_date=$obj->dateadh;
+				$this->last_subscription_amount=$obj->cotisation;
 
 				$subscription=new Cotisation($this->db);
 				$subscription->id=$obj->rowid;
@@ -1138,7 +1143,7 @@ class Adherent extends CommonObject
 	{
 		global $conf,$langs,$user;
 
-		// Nettoyage parametres
+		// Clean parameters
 		if (! $montant) $montant=0;
 
 		$this->db->begin();
@@ -1157,8 +1162,8 @@ class Adherent extends CommonObject
 		// Create subscription
 		$cotisation=new Cotisation($this->db);
 		$cotisation->fk_adherent=$this->id;
-		$cotisation->dateh=$date;
-		$cotisation->datef=$datefin;
+		$cotisation->dateh=$date;		// Date of new subscription
+		$cotisation->datef=$datefin;	// End data of new subscription
 		$cotisation->amount=$montant;
 		$cotisation->note=$label;
 
@@ -1166,7 +1171,8 @@ class Adherent extends CommonObject
 
 		if ($rowid > 0)
 		{
-			// Update denormalized subscription end date
+			// Update denormalized subscription end date (read database subscription to find values)
+			// This will also update this->datefin
 			$result=$this->update_end_date($user);
 			if ($result > 0)
 			{
@@ -1217,11 +1223,11 @@ class Adherent extends CommonObject
 					}
 				}
 
-				// Ajout de proprietes pour le triggers
+				// Change properties of object (used by triggers)
 				$this->last_subscription_date=$dateop;
+				$this->last_subscription_amount=$montant;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
-				$this->last_subscription_amount=$montant;
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
 				// Appel des triggers
@@ -1931,10 +1937,10 @@ class Adherent extends CommonObject
 		$this->type='Type adherent';	// Libelle type adherent
 		$this->need_subscription=0;
 
-		$this->firstsubscription_date=time();
-		$this->firstsubscription_amount=10;
-		$this->lastsubscription_date=time();
-		$this->lastsubscription_amount=10;
+		$this->first_subscription_date=time();
+		$this->first_subscription_amount=10;
+		$this->last_subscription_date=time();
+		$this->last_subscription_amount=10;
 	}
 
 
@@ -1992,10 +1998,10 @@ class Adherent extends CommonObject
 		if ($this->datefin && $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
 
 		// Subscriptions
-		if ($this->firstsubscription_date && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dol_print_date($this->firstsubscription_date,'dayhourldap');
-		if (isset($this->firstsubscription_amount) && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT) $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->firstsubscription_amount;
-		if ($this->lastsubscription_date && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dol_print_date($this->lastsubscription_date,'dayhourldap');
-		if (isset($this->lastsubscription_amount) && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)   $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->lastsubscription_amount;
+		if ($this->first_subscription_date && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dol_print_date($this->first_subscription_date,'dayhourldap');
+		if (isset($this->first_subscription_amount) && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT) $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->first_subscription_amount;
+		if ($this->last_subscription_date && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dol_print_date($this->last_subscription_date,'dayhourldap');
+		if (isset($this->last_subscription_amount) && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)   $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->last_subscription_amount;
 
 		return $info;
 	}
