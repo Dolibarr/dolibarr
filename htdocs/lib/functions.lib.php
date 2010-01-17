@@ -1937,16 +1937,17 @@ function dol_print_error_email()
  *	\param	src_file			Source filename
  *	\param	dest_file			Target filename
  * 	\param	allowoverwrite		Overwrite if exists
+ * 	\param	disablevirusscan	Disable virus scan
  *	\return int         		>0 if OK, <0 if KO (an array with virus or errors if virus found or errors)
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0)
 {
 	global $conf;
 
 	$file_name = $dest_file;
 
 	// If we need to make a virus scan
-	if (file_exists($src_file) && $conf->global->MAIN_ANTIVIRUS_COMMAND)
+	if (empty($disablevirusscan) && file_exists($src_file) && $conf->global->MAIN_ANTIVIRUS_COMMAND)
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');

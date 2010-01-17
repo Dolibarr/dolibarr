@@ -36,7 +36,7 @@
  */
 function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$filter='')
 {
-	global $langs;
+	global $conf,$langs;
 
 	dol_syslog("xcal.lib.php::build_calfile Build cal file ".$outputfile." to format ".$format);
 

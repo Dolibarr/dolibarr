@@ -598,8 +598,12 @@ class ActionComm
 			$filename=$format.'.'.$extension;
 		}
 
+
+		// Create dir and define output file (definitive and temporary)
 		$result=create_exdir($conf->agenda->dir_temp);
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
+		$outputfiletmp=tempnam($conf->agenda->dir_temp,'tmp');	// Temporary file (allow call of function by different threads
+
 		$result=0;
 
 		$buildfile=true;
@@ -747,17 +751,21 @@ class ActionComm
 			}
 
 			// Write file
-			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
-			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
-			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfile);
+			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
+			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfiletmp);
+			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfiletmp);
 
-			if ($result < 0)
+			if ($result >= 0)
+			{
+				if (rename($outputfiletmp,$outputfile)) $result=1;
+				else $result=-1;
+			}
+			else
 			{
 				$langs->load("errors");
 				$this->error=$langs->trans("ErrorFailToCreateFile",$outputfile);
 			}
 		}
-
 
 		return $result;
 	}
