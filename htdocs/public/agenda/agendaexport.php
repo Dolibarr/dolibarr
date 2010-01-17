@@ -76,7 +76,7 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 	exit;
 }
 
-// Define filename
+// Define filename with prefix on filters predica (each predica set must have on cache file)
 $filename='';
 if ($format == 'vcal') $filename='dolibarrcalendar.vcs';
 if ($format == 'ical') $filename='dolibarrcalendar.ics';
@@ -90,6 +90,15 @@ if (! $filename)
     print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX",'format').'</div>';
 	llxFooterVierge('$Date$ - $Revision$');
 	exit;
+}
+foreach ($filters as $key => $value)
+{
+	if ($key == 'year')     $filename.='.year'.$value;
+	if ($key == 'idaction') $filename.='.id'.$value;
+	if ($key == 'login')	$filename.='.login'.$value;
+	if ($key == 'logina')	$filename.='.logina'.$value;
+	if ($key == 'logind')	$filename.='.logind'.$value;
+	if ($key == 'logint')	$filename.='.logint'.$value;
 }
 
 
