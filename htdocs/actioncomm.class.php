@@ -750,7 +750,13 @@ class ActionComm
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfile);
+
+			if ($result < 0)
+			{
+				$this->error=$langs->trans("ErrorFailedToWriteFile",$outputfile);
+			}
 		}
+
 
 		return $result;
 	}
