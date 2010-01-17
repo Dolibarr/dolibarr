@@ -237,7 +237,7 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
 print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_CONTACT_FIELD_COUNTRY.'">';
-print '</td><td>'.$langs->trans("LDAPFieldCountryExample").'</td>';
+print '</td><td>&nbsp;</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_CONTACT_FIELD_COUNTRY.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_COUNTRY?' checked="true"':'')."></td>";
 print '</tr>';
 

@@ -144,14 +144,14 @@ if ($message) { print $message; }
 
 print '<div class="tabsAction">';
 
-if ($conf->global->LDAP_CONTACT_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr')
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$contact->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if ($conf->global->LDAP_CONTACT_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
+if (! empty($conf->global->LDAP_CONTACT_ACTIVE) && $conf->global->LDAP_CONTACT_ACTIVE != 'ldap2dolibarr') print "<br>\n";
 
 
 
