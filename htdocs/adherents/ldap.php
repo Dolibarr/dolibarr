@@ -167,14 +167,14 @@ if ($message) { print $message; }
 
 print '<div class="tabsAction">';
 
-if ($conf->global->LDAP_MEMBER_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+if ($conf->global->LDAP_MEMBER_ACTIVE == 'dolibarr2ldap')
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$adh->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if ($conf->global->LDAP_MEMBER_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
+if ($conf->global->LDAP_MEMBER_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 
 
 
