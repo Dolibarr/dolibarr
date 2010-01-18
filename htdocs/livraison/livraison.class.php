@@ -787,21 +787,18 @@ class Livraison extends CommonObject
 	 */
 	function getRemainingDelivered()
 	{
-		// Get the source id and source type
-		$sqlSource = "SELECT fk_source, sourcetype";
-		$sqlSource.= " FROM ".MAIN_DB_PREFIX."element_element";
-		$sqlSource.= " WHERE fk_target = ".$this->id;
-		$sqlSource.= " AND targettype = '".$this->element."'";
-				
-		$resultSource = $this->db->query($sqlSource);
-		$objSource = $this->db->fetch_object($resultSource);
+		global $langs;
+		
+		// Get the linked object
+		$this->load_object_linked(-1,-1,$this->id,$this->element);
 				
 		// Get the product ref and qty in source
-		$sqlSourceLine = "SELECT p.ref, p.label, st.rowid, st.qty";
-		$sqlSourceLine.= " FROM ".MAIN_DB_PREFIX.$objSource->sourcetype."det as st";
+		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
+		$sqlSourceLine.= ", p.ref, p.label";
+		$sqlSourceLine.= " FROM ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as st";
 		$sqlSourceLine.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine.= " WHERE fk_".$objSource->sourcetype." = ".$objSource->fk_source;
-				
+		$sqlSourceLine.= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
+
 		$resultSourceLine = $this->db->query($sqlSourceLine);
 		if ($resultSourceLine)	
 		{
@@ -813,49 +810,51 @@ class Livraison extends CommonObject
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 				
 				// Recupere les lignes de la source deja livrees
-				$sql3 = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
-				$sql3 .= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
-				$sql3 .= " ".MAIN_DB_PREFIX.$objSource->sourcetype." as c, ".MAIN_DB_PREFIX.$objSource->sourcetype."det as cd";
-				$sql3 .= " WHERE ld.fk_livraison = l.rowid AND ld.fk_origin_line = cd.rowid";
-				$sql3 .= " AND cd.fk_".$objSource->sourcetype." = c.rowid";
-				$sql3 .= " AND cd.fk_".$objSource->sourcetype." = ".$objSource->fk_source;
-				$sql3 .= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
-				$sql3 .= " GROUP BY ld.fk_origin_line";
-					
-				$result = $this->db->query($sql3);
+				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
+				$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
+				$sql.= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
+				$sql.= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
+				$sql.= " WHERE ld.fk_livraison = l.rowid";
+				$sql.= " AND ld.fk_origin_line = cd.rowid";
+				$sql.= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
+				$sql.= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
+				$sql.= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
+				$sql.= " GROUP BY ld.fk_origin_line";
+	
+				$result = $this->db->query($sql);
 				$row = $this->db->fetch_row($result);
 					
-				if ($obj->qty - $row[1] > 0)	
+				if ($objSourceLine->qty - $row[1] > 0)	
 				{
-					if ($row[0] == $obj->rowid)
+					if ($row[0] == $objSourceLine->rowid)
 					{
-						$array[$i]['qty'] = $obj->qty - $row[1];
+						$array[$i]['qty'] = $objSourceLine->qty - $row[1];
 					}
 					else
 					{
-						$array[$i]['qty'] = $obj->qty;
+						$array[$i]['qty'] = $objSourceLine->qty;
 					}
 						
-					$array[$i]['ref'] = $obj->ref;
-					$array[$i]['label'] = $obj->label;
+					$array[$i]['ref'] = $objSourceLine->ref;
+					$array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;
 				}
-				elseif($obj->qty - $row[1] < 0)
+				elseif($objSourceLine->qty - $row[1] < 0)
 				{
-					$array[$i]['qty'] = $obj->qty - $row[1]. " Erreur livraison !";
-					$array[$i]['ref'] = $obj->ref;
-					$array[$i]['label'] = $obj->label;					
+					$array[$i]['qty'] = $objSourceLine->qty - $row[1]. " Erreur livraison !";
+					$array[$i]['ref'] = $objSourceLine->ref;
+					$array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;					
 				}
 				
 					$i++;
-				}
-				return $array;
 			}
-			else
-			{
-				$this->error=$this->db->error()." - sql=$sql";
-				dol_syslog("livraison.class.php::getRemainingDelivered ".$this->error, LOG_ERR);
-				return -1;
-			}
+			return $array;
+		}
+		else
+		{
+			$this->error=$this->db->error()." - sql=$sqlSourceLine";
+			dol_syslog("livraison.class.php::getRemainingDelivered ".$this->error, LOG_ERR);
+			return -1;
+		}
 	}
 	
 	/**
