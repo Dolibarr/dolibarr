@@ -186,19 +186,21 @@ if ($canedit || $conf->projet->enabled)
 			print '<tr>';
 			print '<td nowrap="nowrap">';
 			print $langs->trans("ActionsAskedBy");
-			print '</td><td nowrap="nowrap">';
+			print ' &nbsp;</td><td nowrap="nowrap">';
 			print $form->select_users($filtera,'userasked',1,'',!$canedit);
 			print '</td>';
 			print '</tr>';
 
-			print '<tr>';                                                                                           		print '<td nowrap="nowrap">';                                                                           		print $langs->trans("ActionsToDoBy");
-			print '</td><td nowrap="nowrap">';
+			print '<tr>';
+			print '<td nowrap="nowrap">';
+			print $langs->trans("ActionsToDoBy");
+			print ' &nbsp;</td><td nowrap="nowrap">';
 			print $form->select_users($filtert,'usertodo',1,'',!$canedit);
 			print '</td></tr>';
 			print '<tr>';
 			print '<td nowrap="nowrap">';
 			print $langs->trans("ActionsDoneBy");
-			print '</td><td nowrap="nowrap">';
+			print ' &nbsp;</td><td nowrap="nowrap">';
 			print $form->select_users($filterd,'userdone',1,'',!$canedit);
 			print '</td></tr>';
 		}
@@ -207,7 +209,10 @@ if ($canedit || $conf->projet->enabled)
 		{
 			print '<tr>';
 			print '<td nowrap="nowrap">';
-			print $langs->trans("Project").' &nbsp; ';                                                                         		print '</td><td nowrap="nowrap">';                                                                      		select_projects($socid,$_REQUEST["projectid"],'projectid');                                             		print '</td></tr>';
+			print $langs->trans("Project").' &nbsp; ';
+			print '</td><td nowrap="nowrap">';
+			select_projects($socid,$_REQUEST["projectid"],'projectid');
+			print '</td></tr>';
 		}
 
 		print '</table>';
