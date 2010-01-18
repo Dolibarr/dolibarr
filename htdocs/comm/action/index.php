@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -175,46 +175,52 @@ if ($canedit || $conf->projet->enabled)
 	print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
 	print '<input type="hidden" name="action" value="'.$_REQUEST['action'].'">';
 	print '<table class="border" width="100%">';
-	if ($canedit)
+	if ($canedit || $conf->projet->enabled)
 	{
-		$rowspan=3;
-		if ($conf->projet->enabled) $rowspan++;
-		print '<tr>';
-		print '<td nowrap="nowrap">';
-		print $langs->trans("ActionsAskedBy");
-		print '</td><td nowrap="nowrap">';
-		print $form->select_users($filtera,'userasked',1,'',!$canedit);
+		print '<tr><td nowrap="nowrap">';
+
+		print '<table class="nobordernopadding">';
+
+		if ($canedit)
+		{
+			print '<tr>';
+			print '<td nowrap="nowrap">';
+			print $langs->trans("ActionsAskedBy");
+			print '</td><td nowrap="nowrap">';
+			print $form->select_users($filtera,'userasked',1,'',!$canedit);
+			print '</td>';
+			print '</tr>';
+
+			print '<tr>';                                                                                           		print '<td nowrap="nowrap">';                                                                           		print $langs->trans("ActionsToDoBy");
+			print '</td><td nowrap="nowrap">';
+			print $form->select_users($filtert,'usertodo',1,'',!$canedit);
+			print '</td></tr>';
+			print '<tr>';
+			print '<td nowrap="nowrap">';
+			print $langs->trans("ActionsDoneBy");
+			print '</td><td nowrap="nowrap">';
+			print $form->select_users($filterd,'userdone',1,'',!$canedit);
+			print '</td></tr>';
+		}
+
+		if ($conf->projet->enabled)
+		{
+			print '<tr>';
+			print '<td nowrap="nowrap">';
+			print $langs->trans("Project").' &nbsp; ';                                                                         		print '</td><td nowrap="nowrap">';                                                                      		select_projects($socid,$_REQUEST["projectid"],'projectid');                                             		print '</td></tr>';
+		}
+
+		print '</table>';
 		print '</td>';
-		print '<td rowspan="'.$rowspan.'" align="center" valign="middle" nowrap="nowrap">';
+
+		// Buttons
+		print '<td align="center" valign="middle" nowrap="nowrap">';
 		print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
 		print '<br>';
 		print '<br>';
 		print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
 		print '</td>';
 		print '</tr>';
-
-		print '<tr>';
-		print '<td nowrap="nowrap">';
-		print $langs->trans("ActionsToDoBy");
-		print '</td><td nowrap="nowrap">';
-		print $form->select_users($filtert,'usertodo',1,'',!$canedit);
-		print '</td></tr>';
-
-		print '<tr>';
-		print '<td nowrap="nowrap">';
-		print $langs->trans("ActionsDoneBy");
-		print '</td><td nowrap="nowrap">';
-		print $form->select_users($filterd,'userdone',1,'',!$canedit);
-		print '</td></tr>';
-	}
-	if ($conf->projet->enabled)
-	{
-		print '<tr>';
-		print '<td nowrap="nowrap">';
-		print $langs->trans("Project");
-		print '</td><td nowrap="nowrap">';
-		select_projects($socid,$_REQUEST["projectid"],'projectid');
-		print '</td></tr>';
 	}
 	print '</table>';
 	print '</form><br>';
@@ -257,7 +263,7 @@ else
 	// To limit array
 	$sql.= ' AND (';
 	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
-    $sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';			// End 7 days after + 3 to go from 28 to 31
+	$sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';			// End 7 days after + 3 to go from 28 to 31
 	$sql.= ' OR ';
 	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
 	$sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';
@@ -344,8 +350,8 @@ if ($resql)
 			//}
 			//else
 			//{
-				$actionarray[$daykey][]=$action;
-				$j++;
+			$actionarray[$daykey][]=$action;
+			$j++;
 			//}
 			$daykey+=60*60*24;
 			if ($daykey > $action->date_end_in_calendar) $loop=false;
