@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ $eventstolog=array(
 	array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
 	array('id'=>'BILL_CANCELED',          'test'=>$conf->facture->enabled),
 	array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
+	array('id'=>'FICHEINTER_VALIDATE',    'test'=>$conf->ficheinter->enabled),
 	array('id'=>'ORDER_SUPPLIER_VALIDATE','test'=>$conf->fournisseur->enabled),
 	array('id'=>'BILL_SUPPLIER_VALIDATE', 'test'=>$conf->fournisseur->enabled),
 //	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
@@ -68,7 +69,7 @@ if ($_POST["action"] == "save" && empty($_POST["cancel"]))
     $i=0;
 
     $db->begin();
-    
+
 	foreach ($eventstolog as $key => $arr)
 	{
 		$param='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
@@ -76,7 +77,7 @@ if ($_POST["action"] == "save" && empty($_POST["cancel"]))
 		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
 		else dolibarr_del_const($db,$param,$conf->entity);
 	}
-	
+
     $db->commit();
     $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
 }

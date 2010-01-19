@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -187,8 +187,8 @@ class Fichinter extends CommonObject
 	{
 		$sql = "SELECT rowid, ref, description, fk_soc, fk_statut,";
 		$sql.= " datec,";
-		$sql.= " as datev,";
-		$sql.= " datem,";
+		$sql.= " date_valid as datev,";
+		$sql.= " tms as datem,";
 		$sql.= " duree, fk_projet, note_public, note_private, model_pdf";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) $sql.= " WHERE f.ref='".$ref."'";
@@ -852,6 +852,7 @@ class FichinterLigne
 	function insert()
 	{
 		dol_syslog("FichinterLigne::insert rang=".$this->rang);
+
 		$this->db->begin();
 
 		$rangToUse=$this->rang;
@@ -961,6 +962,8 @@ class FichinterLigne
 	function update_total()
 	{
 		global $conf;
+
+		$this->db->begin();
 
 		$sql = "SELECT SUM(duree) as total_duration";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet";

@@ -97,7 +97,9 @@ class ActionComm
     {
         global $langs,$conf;
 
-        // Clean parameters
+		$now=dol_now('tzserver');
+
+		// Clean parameters
 		$this->label=trim($this->label);
 		$this->location=trim($this->location);
 		$this->note=dol_htmlcleanlastbr(trim($this->note));
@@ -106,13 +108,12 @@ class ActionComm
         if (! $this->punctual)   $this->punctual = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
-		if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
+        if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
 		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
 		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
 		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
         if ($this->fk_project < 0) $this->fk_project = 0;
 
-		$now=time();
 		if (! $this->type_id && $this->type_code)
 		{
 			# Get id from code

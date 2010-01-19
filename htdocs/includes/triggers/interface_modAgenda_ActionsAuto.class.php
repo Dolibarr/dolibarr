@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 
 /**
  *	\file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
- *  \ingroup    core
- *  \brief      Trigger file for
+ *  \ingroup    agenda
+ *  \brief      Trigger file for agenda module
  *	\version	$Id$
  */
 
 
 /**
  *	\class      InterfaceActionsAuto
- *  \brief      Classe des fonctions triggers des actions agenda
+ *  \brief      Class of triggered functions for agenda module
  */
 class InterfaceActionsAuto
 {
@@ -293,6 +293,21 @@ class InterfaceActionsAuto
 			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
+		elseif ($action == 'FICHEINTER_VALIDATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("interventions");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$ok=1;
+		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -420,7 +435,7 @@ class InterfaceActionsAuto
         // Add entry in event table
         if ($ok)
         {
-			$now=gmmktime();
+			$now=dol_now('tzserver');
 
 			// Insertion action
 			require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
