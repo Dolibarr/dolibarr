@@ -38,6 +38,7 @@ if (! empty($_REQUEST['socid_id']))
 }
 
 // Security check
+$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 if (!$user->rights->categorie->lire) accessforbidden();
 
 if (isset ($_REQUEST['choix']))
@@ -61,18 +62,11 @@ if ($_REQUEST['catorigin'])
 	if ($_GET['type'] == 0) $idCatOrigin = $_REQUEST['catorigin'];
 }
 
-// If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
-{
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
 
 
 /*
-*	Actions
-*/
+ *	Actions
+ */
 
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
@@ -247,7 +241,7 @@ if ($user->rights->categorie->creer)
 			else
 			{
 				print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
-				print $html->select_societes($_REQUEST['socid_id'],'socid','s.client IN (1, 3) AND s.fournisseur = 0',1);
+				print $html->select_societes($socid,'socid','s.client IN (1, 3) AND s.fournisseur = 0',1);
 				print '</td></tr>';
 				print '<input type="hidden" name="catMere" value="-1">';
 				print '<input type="hidden" name="visible" value="1">';
