@@ -1018,6 +1018,7 @@ class DoliDb
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
+			dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -1030,6 +1031,7 @@ class DoliDb
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
+			dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -1039,6 +1041,7 @@ class DoliDb
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
+			dol_syslog("mysqli.lib::DDLCreateUser sql=".$sql, LOG_ERR);
 			return -1;
 		}
 

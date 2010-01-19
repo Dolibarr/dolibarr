@@ -698,13 +698,13 @@ class DoliDb
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
 		global $conf;
-		
+
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		$cryptType = ($conf->db->dolibarr_main_db_encryption?$conf->db->dolibarr_main_db_encryption:0);
-		
+
 		//Encryption key
 		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey)?$conf->db->dolibarr_main_db_cryptkey:'');
-		
+
 		$return = ($withQuotes?"'":"").addslashes($fieldorvalue).($withQuotes?"'":"");
 
 		if ($cryptType && !empty($cryptKey))
@@ -730,13 +730,13 @@ class DoliDb
 	function decrypt($value)
 	{
 		global $conf;
-		
+
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
 		$cryptType = ($conf->db->dolibarr_main_db_encryption?$conf->db->dolibarr_main_db_encryption:0);
-		
+
 		//Encryption key
 		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey)?$conf->db->dolibarr_main_db_cryptkey:'');
-		
+
 		$return = $value;
 
 		if ($cryptType && !empty($cryptKey))
@@ -1024,6 +1024,10 @@ class DoliDb
 
 		dol_syslog("mysql.lib::DDLCreateUser sql=".$sql,LOG_DEBUG);
 		$resql=$this->query($sql);
+		if (! $resql)
+		{
+			return -1;
+		}
 
 		return 1;
 	}
