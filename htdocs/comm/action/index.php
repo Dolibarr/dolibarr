@@ -30,6 +30,7 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
@@ -37,16 +38,14 @@ $filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["
 $filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:(isset($_REQUEST["filterd"])?$_REQUEST["filterd"]:'');
 $showbirthday = isset($_REQUEST["showbirthday"])?$_REQUEST["showbirthday"]:0;
 
-$page = $_GET["page"];
-$sortfield=$_GET["sortfield"];
-$sortorder=$_GET["sortorder"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="a.datec";
-
-$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -63,9 +62,12 @@ if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
 	$filterd=$user->id;
 }
 
+$action=isset($_REQUEST['action'])?$_REQUEST['action']:'';
 $year=isset($_REQUEST["year"])?$_REQUEST["year"]:date("Y");
 $month=isset($_REQUEST["month"])?$_REQUEST["month"]:date("m");
 $day=isset($_REQUEST["day"])?$_REQUEST["day"]:0;
+$pid=isset($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
+$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 $langs->load("other");
 
@@ -145,9 +147,9 @@ if ($filter)  $param.="&filter=".$filter;
 if ($filtera) $param.="&filtera=".$filtera;
 if ($filtert) $param.="&filtert=".$filtert;
 if ($filterd) $param.="&filterd=".$filterd;
-if ($time)    $param.="&time=".$_REQUEST["time"];
-if ($socid)   $param.="&socid=".$_REQUEST["socid"];
+if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
+if ($pid)     $param.="&projectid=".$pid;
 if (! empty($_REQUEST["type"]))   $param.="&type=".$_REQUEST["type"];
 
 // Show navigation bar
@@ -162,74 +164,7 @@ $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 
 print_fiche_titre($title,$nav);
 
-// Filters
-if ($canedit || $conf->projet->enabled)
-{
-	print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="status" value="'.$status.'">';
-	print '<input type="hidden" name="time" value="'.$_REQUEST["time"].'">';
-	print '<input type="hidden" name="year" value="'.$year.'">';
-	print '<input type="hidden" name="month" value="'.$month.'">';
-	print '<input type="hidden" name="day" value="'.$day.'">';
-	print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
-	print '<input type="hidden" name="action" value="'.$_REQUEST['action'].'">';
-	print '<table class="border" width="100%">';
-	if ($canedit || $conf->projet->enabled)
-	{
-		print '<tr><td nowrap="nowrap">';
-
-		print '<table class="nobordernopadding">';
-
-		if ($canedit)
-		{
-			print '<tr>';
-			print '<td nowrap="nowrap">';
-			print $langs->trans("ActionsAskedBy");
-			print ' &nbsp;</td><td nowrap="nowrap">';
-			print $form->select_users($filtera,'userasked',1,'',!$canedit);
-			print '</td>';
-			print '</tr>';
-
-			print '<tr>';
-			print '<td nowrap="nowrap">';
-			print $langs->trans("ActionsToDoBy");
-			print ' &nbsp;</td><td nowrap="nowrap">';
-			print $form->select_users($filtert,'usertodo',1,'',!$canedit);
-			print '</td></tr>';
-			print '<tr>';
-			print '<td nowrap="nowrap">';
-			print $langs->trans("ActionsDoneBy");
-			print ' &nbsp;</td><td nowrap="nowrap">';
-			print $form->select_users($filterd,'userdone',1,'',!$canedit);
-			print '</td></tr>';
-		}
-
-		if ($conf->projet->enabled)
-		{
-			print '<tr>';
-			print '<td nowrap="nowrap">';
-			print $langs->trans("Project").' &nbsp; ';
-			print '</td><td nowrap="nowrap">';
-			select_projects($socid,$_REQUEST["projectid"],'projectid');
-			print '</td></tr>';
-		}
-
-		print '</table>';
-		print '</td>';
-
-		// Buttons
-		print '<td align="center" valign="middle" nowrap="nowrap">';
-		print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
-		print '<br>';
-		print '<br>';
-		print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
-		print '</td>';
-		print '</tr>';
-	}
-	print '</table>';
-	print '</form><br>';
-}
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$action,$filtera,$filtert,$filterd,$pid,$socid);
 
 
 // Get event in an array
@@ -247,9 +182,9 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 $sql.= ', '.MAIN_DB_PREFIX.'c_actioncomm as ca';
 $sql.= ', '.MAIN_DB_PREFIX.'user as u';
 $sql.= ' WHERE a.fk_action = ca.id';
-$sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND u.entity in (0,'.$conf->entity.')';
-if ($_REQUEST["projectid"]) $sql.=" AND a.fk_project=".addslashes($_REQUEST["projectid"]);
+$sql.= ' AND a.fk_user_author = u.rowid';			// To limit to entity
+$sql.= ' AND u.entity in (0,'.$conf->entity.')';	// To limit to entity
+if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
 if ($_GET["action"] == 'show_day')
 {
 	$sql.= ' AND (';
@@ -281,17 +216,17 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
 	$sql.= " AND (";
 	if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
-	if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
-	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
+	if ($filtert > 0) $sql.= ($filtera>0?" AND ":"")." a.fk_user_action = ".$filtert;
+	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" AND ":"")." a.fk_user_done = ".$filterd;
 	$sql.= ")";
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 // Sort on date
 $sql.= ' ORDER BY datep';
-dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
-
 //print $sql;
+
+dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

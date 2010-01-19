@@ -20,9 +20,99 @@
 
 /**
  *  \file		htdocs/lib/agenda.lib.php
- *  \brief		Ensemble de fonctions de base de dolibarr sous forme d'include
+ *  \brief		Set of function for the agenda module
  *  \version	$Id$
  */
+
+
+/**
+ * Show filter form in agenda view
+ *
+ * @param unknown_type $canedit
+ * @param unknown_type $status
+ * @param unknown_type $year
+ * @param unknown_type $month
+ * @param unknown_type $day
+ * @param unknown_type $showborthday
+ * @param unknown_type $action
+ * @param unknown_type $filtera
+ * @param unknown_type $filtert
+ * @param unknown_type $filterd
+ * @param unknown_type $pid
+ * @param unknown_type $socid
+ */
+function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$action,$filtera,$filtert,$filterd,$pid,$socid)
+{
+	global $conf,$langs;
+
+	// Filters
+	if ($canedit || $conf->projet->enabled)
+	{
+		print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="status" value="'.$status.'">';
+		print '<input type="hidden" name="year" value="'.$year.'">';
+		print '<input type="hidden" name="month" value="'.$month.'">';
+		print '<input type="hidden" name="day" value="'.$day.'">';
+		print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
+		print '<input type="hidden" name="action" value="'.$action.'">';
+		print '<table class="border" width="100%">';
+		if ($canedit || $conf->projet->enabled)
+		{
+			print '<tr><td nowrap="nowrap">';
+
+			print '<table class="nobordernopadding">';
+
+			if ($canedit)
+			{
+				print '<tr>';
+				print '<td nowrap="nowrap">';
+				print $langs->trans("ActionsAskedBy");
+				print ' &nbsp;</td><td nowrap="nowrap">';
+				print $form->select_users($filtera,'userasked',1,'',!$canedit);
+				print '</td>';
+				print '</tr>';
+
+				print '<tr>';
+				print '<td nowrap="nowrap">';
+				print $langs->trans("ActionsToDoBy");
+				print ' &nbsp;</td><td nowrap="nowrap">';
+				print $form->select_users($filtert,'usertodo',1,'',!$canedit);
+				print '</td></tr>';
+				print '<tr>';
+				print '<td nowrap="nowrap">';
+				print $langs->trans("ActionsDoneBy");
+				print ' &nbsp;</td><td nowrap="nowrap">';
+				print $form->select_users($filterd,'userdone',1,'',!$canedit);
+				print '</td></tr>';
+			}
+
+			if ($conf->projet->enabled)
+			{
+				print '<tr>';
+				print '<td nowrap="nowrap">';
+				print $langs->trans("Project").' &nbsp; ';
+				print '</td><td nowrap="nowrap">';
+				select_projects($socid,$pid,'projectid');
+				print '</td></tr>';
+			}
+
+			print '</table>';
+			print '</td>';
+
+			// Buttons
+			print '<td align="center" valign="middle" nowrap="nowrap">';
+			print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
+			print '<br>';
+			print '<br>';
+			print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+			print '</td>';
+			print '</tr>';
+		}
+		print '</table>';
+		print '</form><br>';
+	}
+}
 
 
 /**

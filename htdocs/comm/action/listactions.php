@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,29 +20,44 @@
  */
 
 /**
-	    \file       htdocs/comm/action/listactions.php
-        \ingroup    agenda
-		\brief      Page liste des actions commerciales
-		\version    $Id$
-*/
+ *	    \file       htdocs/comm/action/listactions.php
+ *      \ingroup    agenda
+ *		\brief      Page liste des actions commerciales
+ *		\version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("companies");
 $langs->load("agenda");
+
+$action=isset($_REQUEST['action'])?$_REQUEST['action']:'';
+$year=isset($_REQUEST["year"])?$_REQUEST["year"]:'';
+$month=isset($_REQUEST["month"])?$_REQUEST["month"]:'';
+$day=isset($_REQUEST["day"])?$_REQUEST["day"]:0;
+$pid=isset($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
+$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 $filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
 $filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["filtert"])?$_REQUEST["filtert"]:'');
 $filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:(isset($_REQUEST["filterd"])?$_REQUEST["filterd"]:'');
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
+
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+if ($page == -1) { $page = 0 ; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="a.datec";
 
-$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -102,6 +117,16 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form=new Form($db);
 
+$param='';
+if ($status) $param="&status=".$status;
+if ($filter) $param.="&filter=".$filter;
+if ($filtera) $param.="&filtera=".$filtera;
+if ($filtert) $param.="&filtert=".$filtert;
+if ($filterd) $param.="&filterd=".$filterd;
+if ($socid) $param.="&socid=".$socid;
+if ($pid) $param.="&projectid=".$pid;
+if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
+
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
 //$sql.= " a.datea as da, a.datea2 as da2,";
@@ -111,28 +136,30 @@ $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.name, sp.firstname";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c,";
+$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c,";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
-$sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
+$sql.= " ".MAIN_DB_PREFIX."actioncomm as a,";
+$sql.= " ".MAIN_DB_PREFIX.'user as u)';
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON a.fk_user_author = ua.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
 $sql.= " WHERE c.id = a.fk_action";
-$sql.= " AND s.entity = ".$conf->entity;
+$sql.= ' AND a.fk_user_author = u.rowid';			// To limit to entity
+$sql.= ' AND u.entity in (0,'.$conf->entity.')';	// To limit to entity
+if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
 if (!$user->rights->societe->client->voir && !$socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($_GET["type"]) $sql.= " AND c.id = ".$_GET["type"];
-if ($_REQUEST["time"] == "today") $sql.= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
 	$sql.= " AND (";
 	if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
-	if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
-	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
+	if ($filtert > 0) $sql.= ($filtera>0?" AND ":"")." a.fk_user_action = ".$filtert;
+	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" AND ":"")." a.fk_user_done = ".$filterd;
 	$sql.= ")";
 }
 $sql.= " ORDER BY ".$sortfield." ".$sortorder;
@@ -152,16 +179,6 @@ if ($resql)
 	if ($status == 'done') $title=$langs->trans("DoneActions");
 	if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
-	$param='';
-	if ($status) $param="&status=".$status;
-	if ($filter) $param.="&filter=".$filter;
-	if ($filtera) $param.="&filtera=".$filtera;
-	if ($filtert) $param.="&filtert=".$filtert;
-	if ($filterd) $param.="&filterd=".$filterd;
-	if ($time) $param.="&time=".$_REQUEST["time"];
-	if ($socid) $param.="&socid=".$_REQUEST["socid"];
-	if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
-
     if ($socid)
     {
         $societe = new Societe($db);
@@ -176,12 +193,13 @@ if ($resql)
 
 	//print '<br>';
 
+	print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$action,$filtera,$filtert,$filterd,$pid,$socid);
+/*
 	if ($canedit)
 	{
 		print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="status" value="'.$status.'">';
-		print '<input type="hidden" name="time" value="'.$_REQUEST["time"].'">';
 		print '<table class="border" width="100%">';
 		print '<tr>';
 		print '<td>';
@@ -217,7 +235,7 @@ if ($resql)
 		print '</table>';
 		print '</form><br>';
 	}
-
+*/
 
 	$i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
