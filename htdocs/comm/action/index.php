@@ -171,10 +171,10 @@ print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$act
 $actionarray=array();
 
 $sql = 'SELECT a.id,a.label,';
-$sql.= ' '.$db->pdate('a.datep').' as datep,';
-$sql.= ' '.$db->pdate('a.datep2').' as datep2,';
-$sql.= ' '.$db->pdate('a.datea').' as datea,';
-$sql.= ' '.$db->pdate('a.datea2').' as datea2,';
+$sql.= ' datep,';
+$sql.= ' datep2,';
+$sql.= ' datea,';
+$sql.= ' datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' ca.code';
@@ -239,8 +239,8 @@ if ($resql)
 		// Create a new object action
 		$action=new ActionComm($db);
 		$action->id=$obj->id;
-		$action->datep=$obj->datep;
-		$action->datef=$obj->datep2;
+		$action->datep=$db->jdate($obj->datep);
+		$action->datef=$db->jdate($obj->datep2);
 		$action->type_code=$obj->code;
 		$action->libelle=$obj->label;
 		$action->percentage=$obj->percent;
