@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,4 +18,4 @@
 -- $Id$
 -- ===================================================================
 
-ALTER TABLE llx_bank_class ADD UNIQUE INDEX idx_bank_class_lineid (lineid);
+ALTER TABLE llx_bank_class ADD UNIQUE INDEX uk_bank_class_lineid (lineid, fk_categ);

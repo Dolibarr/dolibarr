@@ -99,3 +99,8 @@ create table llx_extra_fields_values
 
 ALTER TABLE llx_extra_fields_values ADD INDEX idx_extra_fields_values_fk_extra_fields (fk_extra_fields, entity);
 ALTER TABLE llx_extra_fields_values ADD CONSTRAINT fk_extra_fields_values_fk_extra_fields FOREIGN KEY (fk_extra_fields) REFERENCES llx_extra_fields (rowid);
+
+ALTER TABLE llx_bank_class DROP INDEX idx_bank_class_lineid;
+ALTER TABLE llx_bank_class DROP INDEX uk_bank_class_lineid;
+ALTER TABLE llx_bank_class ADD UNIQUE INDEX uk_bank_class_lineid (lineid, fk_categ);
+
