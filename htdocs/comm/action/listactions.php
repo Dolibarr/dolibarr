@@ -194,48 +194,6 @@ if ($resql)
 	//print '<br>';
 
 	print_actions_filter($form,$canedit,$status,$year,$month,$day,$showborthday,$action,$filtera,$filtert,$filterd,$pid,$socid);
-/*
-	if ($canedit)
-	{
-		print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="status" value="'.$status.'">';
-		print '<table class="border" width="100%">';
-		print '<tr>';
-		print '<td>';
-		//print '<input type="checkbox" name="userasked" '.($canedit?'':'disabled="true" ').($filtera?'checked="true"':'').'> ';
-		print $langs->trans("ActionsAskedBy");
-		print '</td><td>';
-		print $form->select_users($filtera,'userasked',1,'',!$canedit);
-		print '</td>';
-		print '<td rowspan="3" align="center" valign="middle">';
-		print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
-		print '<br>';
-		print '<br>';
-		print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
-		print '</td>';
-		print '</tr>';
-
-		print '<tr>';
-		print '<td>';
-		//print '<input type="checkbox" name="usertodo" '.($canedit?'':'disabled="true" ').($filtert?'checked="true"':'').'> ';
-		print $langs->trans("ActionsToDoBy");
-		print '</td><td>';
-		print $form->select_users($filtert,'usertodo',1,'',!$canedit);
-		print '</td></tr>';
-
-		print '<tr>';
-		print '<td>';
-		//print '<input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
-		print $langs->trans("ActionsDoneBy");
-		print '</td><td>';
-		print $form->select_users($filterd,'userdone',1,'',!$canedit);
-		print '</td></tr>';
-
-		print '</table>';
-		print '</form><br>';
-	}
-*/
 
 	$i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
