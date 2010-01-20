@@ -20,18 +20,18 @@
  */
 
 /**
- \file       htdocs/includes/modules/commande/pdf_edison.modules.php
- \ingroup    commande
- \brief      Fichier de la classe permettant de generer les commandes au modele Edison
- \version    $Id$
+ *	\file       htdocs/includes/modules/commande/pdf_edison.modules.php
+ *	\ingroup    commande
+ *	\brief      Fichier de la classe permettant de generer les commandes au modele Edison
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
- \class      pdf_edison
- \brief      Classe permettant de g�n�rer les commandes au mod�le Edison
+ *	\class      pdf_edison
+ *	\brief      Classe permettant de generer les commandes au modele Edison
  */
 
 class pdf_edison extends ModelePDFCommandes
@@ -40,7 +40,7 @@ class pdf_edison extends ModelePDFCommandes
 
 	/**
 	 * 	\brief      Constructeur
-	 *	\param	    db	    handler acc�s base de donn�e
+	 *	\param	    db	    handler acces base de donnee
 	 */
 	function pdf_edison($db=0)
 	{
@@ -85,7 +85,7 @@ class pdf_edison extends ModelePDFCommandes
 
 
 	/**	\brief      Renvoi derniere erreur
-	 \return     string      Derniere erreur
+	 *	\return     string      Derniere erreur
 	 */
 	function pdferror()
 	{
@@ -154,7 +154,7 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -258,6 +258,12 @@ class pdf_edison extends ModelePDFCommandes
 
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
+				$bottomlasttab=$tab_top + $tab_height + 1;
+
+				// Affiche zone infos
+				$this->_tableau_info($pdf, $com, $bottomlasttab, $outputlangs);
+
+				// Affiche zone totaux
 				$tab2_top = 241;
 				$tab2_lh = 7;
 				$tab2_height = $tab2_lh * 4;
@@ -313,6 +319,147 @@ class pdf_edison extends ModelePDFCommandes
 		return 0;   // Erreur par defaut
 	}
 
+	/**
+	 *	\brief      Affiche infos divers
+	 *	\param      pdf             Objet PDF
+	 *	\param      object          Objet commande
+	 *	\param		posy			Position depart
+	 *	\param		outputlangs		Objet langs
+	 *	\return     y               Position pour suite
+	 */
+	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	{
+		global $conf;
+
+		$pdf->SetFont('Arial','', 9);
+
+        // If France, show VAT mention if not applicable
+		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+		{
+			$pdf->SetFont('Arial','B',8);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+
+			$posy=$pdf->GetY()+4;
+		}
+
+        // Show payments conditions
+		if ($object->cond_reglement_code || $object->cond_reglement)
+		{
+			$pdf->SetFont('Arial','B',8);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("PaymentConditions").':';
+			$pdf->MultiCell(80, 5, $titre, 0, 'L');
+
+			$pdf->SetFont('Arial','',8);
+			$pdf->SetXY(50, $posy);
+			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
+			$pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
+
+			$posy=$pdf->GetY()+3;
+		}
+
+        // Check a payment mode is defined
+        /* Not used with orders
+        if (empty($object->mode_reglement_code)
+        	&& ! $conf->global->FACTURE_CHQ_NUMBER
+        	&& ! $conf->global->FACTURE_RIB_NUMBER)
+		{
+            $pdf->SetXY($this->marge_gauche, $posy);
+            $pdf->SetTextColor(200,0,0);
+            $pdf->SetFont('Arial','B',8);
+            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+            $pdf->SetTextColor(0,0,0);
+
+            $posy=$pdf->GetY()+1;
+        }*/
+
+      	// Show payment mode
+        if ($object->mode_reglement_code
+        	 && $object->mode_reglement_code != 'CHQ'
+           	 && $object->mode_reglement_code != 'VIR')
+           	 {
+	            $pdf->SetFont('Arial','B',8);
+	            $pdf->SetXY($this->marge_gauche, $posy);
+	            $titre = $outputlangs->transnoentities("PaymentMode").':';
+	            $pdf->MultiCell(80, 5, $titre, 0, 'L');
+
+	            $pdf->SetFont('Arial','',8);
+	            $pdf->SetXY(50, $posy);
+	            //print "xxx".$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code);exit;
+	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
+	            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
+
+	            $posy=$pdf->GetY()+2;
+           	 }
+
+		// Show payment mode CHQ
+        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
+        {
+        	// Si mode reglement non force ou si force a CHQ
+	        if ($conf->global->FACTURE_CHQ_NUMBER)
+	        {
+	            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
+	            {
+	                $account = new Account($this->db);
+	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+
+	                $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','B',8);
+	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+		            $posy=$pdf->GetY()+1;
+
+	                $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','',8);
+	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+		            $posy=$pdf->GetY()+2;
+	            }
+	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
+	            {
+	                $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','B',8);
+	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->nom).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+		            $posy=$pdf->GetY()+1;
+
+		            $pdf->SetXY($this->marge_gauche, $posy);
+	                $pdf->SetFont('Arial','',8);
+	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->adresse_full), 0, 'L', 0);
+		            $posy=$pdf->GetY()+2;
+	            }
+	        }
+		}
+
+        // If payment mode not forced or forced to VIR, show payment with BAN
+        /* Not enough space
+        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+        {
+	        if (! empty($conf->global->FACTURE_RIB_NUMBER))
+	        {
+                $account = new Account($this->db);
+                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+
+                $curx=$this->marge_gauche;
+                $cury=$posy;
+
+                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
+
+                $posy+=2;
+	        }
+		}
+		*/
+
+		return $posy;
+	}
+
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $pdf
+	 * @param unknown_type $tab_top
+	 * @param unknown_type $tab_height
+	 * @param unknown_type $nexY
+	 * @param unknown_type $outputlangs
+	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $langs,$conf;
@@ -398,11 +545,14 @@ class pdf_edison extends ModelePDFCommandes
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
-		$pdf->SetFont('Arial','B',13);
-		$pdf->SetXY(100,$posy);
+		$posy = 40;
+
+		$pdf->SetXY($this->marge_gauche,$posy+3);
+
+		// Sender name
 		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFont('Arial','B',12);
-		$posy+=20;
+		$pdf->SetFont('Arial','B',11);
+		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		// Sender properties
 		$carac_emetteur = '';
@@ -419,7 +569,7 @@ class pdf_edison extends ModelePDFCommandes
 		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 		$pdf->SetFont('Arial','',9);
-		$pdf->SetXY(10,$posy);
+		$pdf->SetXY($this->marge_gauche,$posy+7);
 		$pdf->MultiCell(80, 4, $carac_emetteur);
 
 		// Client destinataire

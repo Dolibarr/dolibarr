@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 /**
  *	\class      pdf_einstein
- *	\brief      Classe permettant de g�n�rer les commandes au mod�le Einstein
+ *	\brief      Classe permettant de generer les commandes au modele Einstein
  */
 class pdf_einstein extends ModelePDFCommandes
 {
@@ -44,7 +44,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
 	 *	\brief      Constructeur
-	 *	\param	    db		Handler acc�s base de donn�e
+	 *	\param	    db		Handler acces base de donnee
 	 */
 	function pdf_einstein($db)
 	{
@@ -98,8 +98,8 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *		\brief      Fonction g�n�rant la commande sur le disque
-	 *		\param	    com				Objet commande � g�n�rer
+	 *		\brief      Fonction generant la commande sur le disque
+	 *		\param	    com				Objet commande a generer
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int         	1=ok, 0=ko
 	 */
@@ -329,7 +329,6 @@ class pdf_einstein extends ModelePDFCommandes
 
 						$nexY = $tab_top_newpage + 7;
 					}
-
 				}
 
 				// Show square
@@ -382,7 +381,7 @@ class pdf_einstein extends ModelePDFCommandes
 		return 0;   // Erreur par defaut
 	}
 
-	/*
+	/**
 	 *   \brief      Affiche tableau des versement
 	 *   \param      pdf     	Objet PDF
 	 *   \param      object		Objet commande
@@ -396,7 +395,7 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 
-	/*
+	/**
 	 *	\brief      Affiche infos divers
 	 *	\param      pdf             Objet PDF
 	 *	\param      object          Objet commande
@@ -437,7 +436,8 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 
         // Check a payment mode is defined
-        if (empty($object->mode_reglement_code)
+        /* Not used with orders
+		if (empty($object->mode_reglement_code)
         	&& ! $conf->global->FACTURE_CHQ_NUMBER
         	&& ! $conf->global->FACTURE_RIB_NUMBER)
 		{
@@ -449,8 +449,9 @@ class pdf_einstein extends ModelePDFCommandes
 
             $posy=$pdf->GetY()+1;
         }
+		*/
 
-      	// Sown payment mode
+      	// Show payment mode
         if ($object->mode_reglement_code
         	 && $object->mode_reglement_code != 'CHQ'
            	 && $object->mode_reglement_code != 'VIR')
@@ -526,7 +527,7 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 
-	/*
+	/**
 	 *	\brief      Affiche le total a payer
 	 *	\param      pdf             Objet PDF
 	 *	\param      object          Objet commande
