@@ -23,7 +23,7 @@ create table llx_rights_def
 (
   id            integer,
   libelle       varchar(255),
-  module        varchar(12),
+  module        varchar(64),
   entity        integer DEFAULT 1 NOT NULL,
   perms         varchar(50),
   subperms      varchar(50),

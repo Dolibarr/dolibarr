@@ -104,3 +104,4 @@ ALTER TABLE llx_bank_class DROP INDEX idx_bank_class_lineid;
 ALTER TABLE llx_bank_class DROP INDEX uk_bank_class_lineid;
 ALTER TABLE llx_bank_class ADD UNIQUE INDEX uk_bank_class_lineid (lineid, fk_categ);
 
+ALTER TABLE llx_rights_def MODIFY COLUMN module varchar(64);
