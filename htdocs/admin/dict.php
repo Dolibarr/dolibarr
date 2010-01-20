@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -319,9 +319,15 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 		}
 		$sql.=",1)";
 
-		dol_syslog("dict actionadd sql=".$sql);
+		dol_syslog("actionadd sql=".$sql);
 		$result = $db->query($sql);
-		if (!$result)
+		if ($result)	// Add is ok
+		{
+			$oldid=$_POST["id"];
+			$_POST=array('id'=>$oldid);	// Clean $_POST array, we keep only
+			$_GET["id"]=$_POST["id"];   // Force affichage dictionnaire en cours d'edition
+		}
+		else
 		{
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$msg=$langs->trans("ErrorRecordAlreadyExists").'<br>';
@@ -347,7 +353,8 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 			$sql.= "'".addslashes($_POST["rowid"])."', ";
 		}
 		$i = 0;
-		foreach ($listfieldmodify as $field) {
+		foreach ($listfieldmodify as $field)
+		{
 			if ($field == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
 			if ($i) $sql.=",";
 			$sql.= $field."=";
@@ -356,7 +363,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 		}
 		$sql.= " WHERE ".$rowidcol." = '".$_POST["rowid"]."'";
 
-		dol_syslog("dict actionmodify sql=".$sql);
+		dol_syslog("actionmodify sql=".$sql);
 		//print $sql;
 		$resql = $db->query($sql);
 		if (! $resql)
@@ -381,7 +388,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')   
 
 	$sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE ".$rowidcol."='".$_GET["rowid"]."'";
 
-	dol_syslog("dict delete sql=".$sql);
+	dol_syslog("delete sql=".$sql);
 	$result = $db->query($sql);
 	if (! $result)
 	{
@@ -561,7 +568,18 @@ if ($_GET["id"])
 		// Line to type new values
 		print "<tr ".$bc[$var].">";
 
-		fieldList($fieldlist);
+		$obj='';
+		// If data was already input, we define them in obj to populate input fields.
+		if ($_POST["actionadd"])
+		{
+			foreach ($fieldlist as $key=>$val)
+			{
+				if (! empty($_POST[$val])) $obj->$val=$_POST[$val];
+
+			}
+		}
+
+		fieldList($fieldlist,$obj);
 
 		print '<td colspan="3" align="right"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
 		print "</tr>";
