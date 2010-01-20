@@ -425,12 +425,13 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetFont('Arial','B',8);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
-			$pdf->MultiCell(80, 5, $titre, 0, 'L');
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(50, $posy);
 			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
-			$pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
+			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
+			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
 
 			$posy=$pdf->GetY()+3;
 		}
@@ -689,7 +690,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 	}
 
-	/*
+	/**
 	 *   	\brief      Affiche en-tete commande
 	 *   	\param      pdf     		Objet PDF
 	 *   	\param      com     		Objet commande
