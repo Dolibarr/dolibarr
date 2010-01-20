@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
 
-/**	
-        \file       htdocs/dev/generate-produit.php
-		\brief      Script de generation de donnees aleatoires pour les produits
-		\version    $Id$
-*/
+/**
+ *      \file       htdocs/dev/generate-produit.php
+ *		\brief      Script de generation de donnees aleatoires pour les produits
+ *		\version    $Id$
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -52,15 +52,15 @@ define (GEN_NUMBER_PRODUIT, 5);
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 if ($db->query($sql)) {
-  $num = $db->num_rows(); $i = 0;	
+  $num = $db->num_rows(); $i = 0;
   while ($i < $num) {      $row = $db->fetch_row($i);      $productsid[$i] = $row[0];      $i++; } }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
+if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 while ($i < $num) { $row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
+if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
 

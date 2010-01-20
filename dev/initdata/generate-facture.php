@@ -19,10 +19,10 @@
  */
 
 /**
-	    \file       htdocs/dev/generate-facture.php
-		\brief      Script de generation de donnees aleatoires pour les factures
-		\version    $Id$
-*/
+ *	    \file       htdocs/dev/generate-facture.php
+ *		\brief      Script de generation de donnees aleatoires pour les factures
+ *		\version    $Id$
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
  */
 
 /**
-        \file       htdocs/dev/generate-societe.php
-		\brief      Script de generation de donnees aleatoires pour les societes
-		\version    $Id$
-*/
+ *      \file       htdocs/dev/generate-societe.php
+ *		\brief      Script de generation de donnees aleatoires pour les societes
+ *		\version    $Id$
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -45,7 +45,7 @@ include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 $villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
 $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
 
-	
+
 /*
  * Parametre
  */
@@ -55,15 +55,15 @@ define (GEN_NUMBER_SOCIETE, 10);
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 if ($db->query($sql)) {
-  $num = $db->num_rows(); $i = 0;	
+  $num = $db->num_rows(); $i = 0;
   while ($i < $num) {      $row = $db->fetch_row($i);      $productsid[$i] = $row[0];      $i++; } }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
+if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 while ($i < $num) { $row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
+if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
 

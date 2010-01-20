@@ -20,10 +20,10 @@
  */
 
 /**
-	    \file       htdocs/dev/generate-propale.php
-		\brief      Script de generation de donnees aleatoires pour les propales
-		\version    $Id$
-*/
+ *	    \file       htdocs/dev/generate-propale.php
+ *		\brief      Script de generation de donnees aleatoires pour les propales
+ *		\version    $Id$
+ */
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -49,7 +49,7 @@ define (GEN_NUMBER_PROPAL, 5);
 
 $sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $row = $db->fetch_row($resql);
   $user = new User($db, $row[0]);
@@ -58,14 +58,14 @@ if ($resql)
 $socids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num_socs = $db->num_rows($resql);
   $i = 0;
   while ($i < $num_socs)
     {
       $i++;
-      
+
       $row = $db->fetch_row($resql);
       $socids[$i] = $row[0];
     }
@@ -74,14 +74,14 @@ if ($resql)
 $contids = array();
 $sql = "SELECT rowid, fk_soc FROM ".MAIN_DB_PREFIX."socpeople";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num_conts = $db->num_rows($resql);
   $i = 0;
   while ($i < $num_conts)
     {
       $i++;
-      
+
       $row = $db->fetch_row($resql);
       $contids[$row[1]][0] = $row[0]; // A ameliorer
     }
@@ -90,14 +90,14 @@ if ($resql)
 $prodids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
 $resql = $db->query($sql);
-if ($resql) 
+if ($resql)
 {
   $num_prods = $db->num_rows($resql);
   $i = 0;
   while ($i < $num_prods)
     {
       $i++;
-      
+
       $row = $db->fetch_row($resql);
       $prodids[$i] = $row[0];
     }
@@ -106,9 +106,9 @@ if ($resql)
 $user->rights->propale->valider=1;
 
 
-if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
+if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
+	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 }
 
 $i=0;
@@ -118,23 +118,23 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 	$i++;
 	$socid = rand(1, $num_socs);
     print "Proposal ".$i." for socid ".$socid;
-	
+
 	$soc = new Societe($db);
-	
-	
+
+
 	$obj = $conf->global->PROPALE_ADDON;
 	$modPropale = new $obj;
 	$numpr = $modPropale->getNextValue($soc);
-	
+
 	$propal = new Propal($db, $socids[$socid]);
-	
+
 	$propal->ref = $numpr;
 	$propal->contactid = $contids[$socids[$socid]][0];
 	$propal->datep = time();
 	$propal->cond_reglement_id = 3;
 	$propal->mode_reglement_id = 3;
 	$propal->author = $user->id;
-	
+
 	$result=$propal->create($user);
 	if ($result >= 0)
 	{
