@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur    <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin          <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
@@ -34,8 +34,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /**
- \class      pdf_crabe
- \brief      Classe permettant de generer les factures au modele Crabe
+ *	\class      pdf_crabe
+ *	\brief      Classe permettant de generer les factures au modele Crabe
  */
 
 class pdf_crabe extends ModelePDFFactures
