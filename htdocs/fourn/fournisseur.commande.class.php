@@ -253,43 +253,73 @@ class CommandeFournisseur extends Commande
 			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-			$sql.= " SET ref='".$num."', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			$sql.= " SET ref='".$num."'";
+			$sql.= ", fk_statut = 1";
+			$sql.= ", date_valid=".$this->db->idate(mktime());
+			$sql.= ", fk_user_valid = ".$user->id;
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND fk_statut = 0";
 
 			$resql=$this->db->query($sql);
-			if ($resql)
+			if (! $resql)
+			{
+				dol_syslog("Commande::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+				dol_print_error($this->db);
+				$error++;
+			}
+			
+			if (! $error)
+			{
+				// Rename directory if dir was a temporary ref
+				if (preg_match('/^[\(]?PROV/i', $this->ref))
+				{
+					// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
+					// afin de ne pas perdre les fichiers attaches
+					$oldref = dol_sanitizeFileName($this->ref);
+					$newref = dol_sanitizeFileName($num);
+					$dirsource = $conf->fournisseur->dir_output.'/commande/'.$oldref;
+					$dirdest = $conf->fournisseur->dir_output.'/commande/'.$newref;
+					if (file_exists($dirsource))
+					{
+						dol_syslog("CommandeFournisseur::valid() rename dir ".$dirsource." into ".$dirdest);
+							
+						if (@rename($dirsource, $dirdest))
+						{
+							dol_syslog("Rename ok");
+							// Suppression ancien fichier PDF dans nouveau rep
+							dol_delete_file($dirdest.'/'.$oldref.'.*');
+						}
+					}
+				}
+			}
+			
+			if (! $error)
 			{
 				$result = 1;
 				$this->log($user, 1, time());	// Statut 1
 				$this->ref = $num;
+			}
 
-				if ($error == 0)
-				{
-					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
-				}
+			if (! $error)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
 
-				if ($error == 0)
-				{
-					$this->db->commit();
-					return 1;
-				}
-				else
-				{
-					$this->db->rollback();
-					$this->error=$this->db->lasterror();
-					return -1;
-				}
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
 				dol_syslog("CommandeFournisseur::valid ".$this->error, LOG_ERR);
 				$this->db->rollback();
+				$this->error=$this->db->lasterror();
 				return -1;
 			}
 		}
