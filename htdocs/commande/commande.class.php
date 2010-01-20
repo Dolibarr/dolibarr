@@ -939,7 +939,7 @@ class Commande extends CommonObject
 		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
 		$sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_facture';
+		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON (c.fk_cond_reglement = cr.rowid)';
@@ -983,7 +983,7 @@ class Commande extends CommonObject
 				$this->cond_reglement_id      = $obj->fk_cond_reglement;
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
-				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
+				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->date_livraison         = $obj->date_livraison;
 				$this->adresse_livraison_id   = $obj->fk_adresse_livraison; // TODO deprecated
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
@@ -1276,9 +1276,9 @@ class Commande extends CommonObject
 	function livraison_array($filtre_statut=-1)
 	{
 		$delivery = new Livraison($this->db);
-		
+
 		$deliveryArray = $delivery->livraison_array($filtre_statut);
-		
+
 		return $deliveryArray;
 	}
 

@@ -554,7 +554,7 @@ class Facture extends CommonObject
 		$sql.= ', f.fk_facture_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
+		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as c ON f.fk_cond_reglement = c.rowid';
@@ -599,7 +599,7 @@ class Facture extends CommonObject
 				$this->cond_reglement_id      = $obj->fk_cond_reglement;
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
-				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
+				$this->cond_reglement_facture = $obj->cond_reglement_libelle_doc;
 				$this->projetid               = $obj->fk_projet;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note                   = $obj->note;

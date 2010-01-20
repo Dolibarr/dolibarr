@@ -127,7 +127,7 @@ class FactureRec extends Facture
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
 			$sql.= ")";
-			
+
 			if ( $this->db->query($sql) )
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
@@ -194,7 +194,7 @@ class FactureRec extends Facture
 		$sql.= ', f.note, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
+		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as c ON f.fk_cond_reglement = c.rowid';
@@ -202,7 +202,7 @@ class FactureRec extends Facture
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'"; // TODO remplacer par une fonction
 		$sql.= ' WHERE f.rowid='.$rowid;
 		if ($socid > 0)	$sql.= ' AND f.fk_soc = '.$socid;
-		
+
 		$result = $this->db->query($sql);
 
 		if ($result)
@@ -237,7 +237,7 @@ class FactureRec extends Facture
 				$this->cond_reglement_id      = $obj->fk_cond_reglement;
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
-				$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
+				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->projetid               = $obj->fk_projet;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note                   = $obj->note;
