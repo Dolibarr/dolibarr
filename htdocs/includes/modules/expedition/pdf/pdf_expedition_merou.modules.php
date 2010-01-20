@@ -419,8 +419,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//$this->Code39($Xoff+43, $Yoff+1, $object->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe
 		$Xoff = 110;
-		$blSocX=11;
-		$blSocY=21;
+		$blSocX=90;
+		$blSocY=24;
 		$blSocW=50;
 		$blSocX2=$blSocW+$blSocXs;
 
@@ -450,12 +450,12 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		//Date Expedition
 		$Yoff = $Yoff+7;
-		$pdf->SetXY($blSocX,$blSocY+24);
+		$pdf->SetXY($blSocX-80,$blSocY+20);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs,true), '' , 'L');
 		//Date Expedition
-		$pdf->SetXY($blSocX2,$blSocY+24);
+		$pdf->SetXY($blSocX2,$blSocY+20);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($livreur->fullname), '' , 'L');

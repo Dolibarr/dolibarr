@@ -67,7 +67,7 @@ function company_save_refresh()
 	Purpose:  Pour la saisie des dates par calendrier
 	Input:    base			   "/theme/eldy"
 					  dateFieldID  "dateo"			  Nom du champ
-				    format			 "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat � utiliser pour retour
+				    format			 "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat a utiliser pour retour
 ==================================================================*/
 
 function showDP(base,dateFieldID,format)
