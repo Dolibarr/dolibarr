@@ -53,7 +53,7 @@ Password=Mot de passe
 PasswordAgain=Vérification du mot de passe
 AdminPassword=Mot de passe du propriétaire de la base de données Dolibarr.
 CreateDatabase=Créer la base de donnée
-CreateUser=Créer l'utilisateur
+CreateUser=Créer le propriétaire
 DatabaseSuperUserAccess=Serveur de base de données - Accès super utilisateur
 CheckToCreateDatabase=Cochez cette option si la base de données n'existe pas et doit être créée.<br>Dans ce cas, il faut renseigner le login/mot de passe du superutilisateur au bas de cette page.
 CheckToCreateUser=Cochez cette option si l'utilisateur propriétaire n'existe pas et doit être créé.<br>Dans ce cas, il faut renseigner le nom et mot de passe du propriétaire à créer ainsi que le login/mot de passe du superutilisateur au bas de cette page. Si la case n'est pas cochée, le nom et mot de passe du propriétaire doivent exister. 
@@ -138,6 +138,8 @@ InstallChoiceSuggested=<b>Choix suggéré par l'installeur</b>.
 CheckThatDatabasenameIsCorrect=Vérifiez que le nom de base "<b>%s</b>" est correct.
 IfAlreadyExistsCheckOption=Si ce nom est correct et que cette base n'existe pas déjà, vous devez cocher l'option "Créer la base de donnée".
 OpenBaseDir=Paramètre php openbasedir
+YouAskToCreateDatabaseSoRootRequired=Vous avez coché la case "Créer la base de donnée". Pour cela, le login/mot de passe du superutilisateur (en bas de formulaire) sont obligatoire.
+YouAskToCreateDatabaseUserSoRootRequired=Vous avez coché la case "Créer l'utilisateur propriétaire" de la base. Pour cela, le login/mot de passe du superutilisateur (en bas de formulaire) sont obligatoire.
 
 #########
 # upgrade

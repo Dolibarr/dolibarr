@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
@@ -23,7 +23,7 @@
 /**
  *       \file       htdocs/install/fileconf.php
  *       \ingroup    install
- *       \brief      Demande les infos qui constituerons le contenu du fichier conf.php (qui sera remplie a l'etape suivante)
+ *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
  *       \version    $Id$
  */
 include_once("./inc.php");
@@ -31,12 +31,15 @@ include_once("./inc.php");
 
 $err=0;
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:(isset($_GET["lang"])?$_GET["lang"]:'auto'));
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
 
-// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+// You can force preselected values of the config step of Dolibarr by adding a file
+// install.forced.php into directory htdocs/install (This is the case with some installer
+// lile DoliWamp, DoliMamp or DoliDeb.
+// We first init "forced values" to nothing.
 if (! isset($force_install_type))              $force_install_type='';
 if (! isset($force_install_port))              $force_install_port='';
 if (! isset($force_install_database))          $force_install_database='';
@@ -45,6 +48,7 @@ if (! isset($force_install_databaselogin))     $force_install_databaselogin='';
 if (! isset($force_install_databasepass))      $force_install_databasepass='';
 if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
+// Now we load forced value from install.forced.php file.
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
@@ -236,7 +240,7 @@ while (($file = readdir($handle))!==false)
 		if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
 		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
 		if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
-		
+
 		// Switch to mysql if mysqli is not present
 		if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
 
@@ -379,9 +383,66 @@ while (($file = readdir($handle))!==false)
 
 </table>
 
+<script type="text/javascript" language="javascript">
+function jscheckparam()
+{
+	ok=true;
+
+	if (document.forminstall.main_dir.value == '')
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("WebPagesDirectory"))); ?>');
+	}
+	else if (document.forminstall.main_data_dir.value == '')
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("DocumentsDirectory"))); ?>');
+	}
+	else if (document.forminstall.main_url.value == '')
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("URLRoot"))); ?>');
+	}
+	else if (document.forminstall.db_host.value == '')
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server"))); ?>');
+	}
+	else if (document.forminstall.db_name.value == '')
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+	}
+	// If create database asked
+	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
+	}
+	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
+	}
+	// If create user asked
+	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
+	}
+	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
+	}
+
+	return ok;
+}
+</script>
+
 <?php
 
 // $db->close();	Not database connexion yet
 
-pFooter($err,$setuplang);
+pFooter($err,$setuplang,'jscheckparam');
 ?>

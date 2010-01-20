@@ -170,7 +170,7 @@ if (! defined('SYSLOG_FILE_NO_ERROR'))
 // En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
-   return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
+	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
 //if (! preg_match('/PHP\/6/i', $_SERVER['SERVER_SOFTWARE']))
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
@@ -193,11 +193,11 @@ $bc[false]=' class="bg1"';
 $bc[true]=' class="bg2"';
 
 
-/*
-*	\brief		Load conf file (file must exists)
-*	\param		dolibarr_main_document_root		Root directory of Dolibarr bin files
-*	\return		int								<0 if KO, >0 if OK
-*/
+/**
+ *	\brief		Load conf file (file must exists)
+ *	\param		dolibarr_main_document_root		Root directory of Dolibarr bin files
+ *	\return		int								<0 if KO, >0 if OK
+ */
 function conf($dolibarr_main_document_root)
 {
 	global $conf;
@@ -209,8 +209,8 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_pass;
 	global $character_set_client;
 
-    $return=include_once($dolibarr_main_document_root."/core/conf.class.php");
-    if (! $return) return -1;
+	$return=include_once($dolibarr_main_document_root."/core/conf.class.php");
+	if (! $return) return -1;
 
 	$conf=new Conf();
 	$conf->db->type = trim($dolibarr_main_db_type);
@@ -252,83 +252,102 @@ function conf($dolibarr_main_document_root)
 }
 
 
-/*
-*	\brief		Show header of install pages
-*/
+/**
+ * Show header of install pages
+ *
+ * @param unknown_type $soutitre
+ * @param unknown_type $next
+ * @param unknown_type $action
+ * @param unknown_type $param
+ */
 function pHeader($soutitre,$next,$action='set',$param='')
 {
 	global $conf;
-    global $langs;
-    $langs->load("main");
-    $langs->load("admin");
+	global $langs;
+	$langs->load("main");
+	$langs->load("admin");
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
-    print '<html>'."\n";
-    print '<head>'."\n";
-    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
-    print '<link rel="stylesheet" type="text/css" href="./default.css">'."\n";
-    print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
-    print '</head>'."\n";
-    print '<body>'."\n";
-    print '<span class="titre">'.$langs->trans("DolibarrSetup");
-    if ($soutitre) {
-        print ' - '.$soutitre;
-    }
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+	print '<html>'."\n";
+	print '<head>'."\n";
+	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="./default.css">'."\n";
+	print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
+	print '</head>'."\n";
+	print '<body>'."\n";
+	print '<span class="titre">'.$langs->trans("DolibarrSetup");
+	if ($soutitre) {
+		print ' - '.$soutitre;
+	}
 	print '</span>'."\n";
 
-    print '<form action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
-    print '<input type="hidden" name="testpost" value="ok">'."\n";
-    print '<input type="hidden" name="action" value="'.$action.'">'."\n";
+	print '<form name="forminstall" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+	print '<input type="hidden" name="testpost" value="ok">'."\n";
+	print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
 	print '<table class="main" width="100%"><tr><td>'."\n";
 
 	print '<table class="main-inside" width="100%"><tr><td>'."\n";
 }
 
-function pFooter($nonext=0,$setuplang='')
+/**
+ * Output footer of install pages
+ *
+ * @param unknown_type $nonext
+ * @param unknown_type $setuplang
+ * @param unknown_type $jscheckfunction
+ */
+function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
 {
-    global $conf,$langs;
+	global $conf,$langs;
 
-    $langs->load("main");
-    $langs->load("admin");
+	$langs->load("main");
+	$langs->load("admin");
 
-    print '</td></tr></table>'."\n";
-    print '</td></tr></table>'."\n";
+	print '</td></tr></table>'."\n";
+	print '</td></tr></table>'."\n";
 
-    if (! $nonext)
-    {
-        print '<div class="barrebottom"><input type="submit" value="'.$langs->trans("NextStep").' ->"></div>';
-    }
-    if ($setuplang)
-    {
-        print '<input type="hidden" name="selectlang" value="'.$setuplang.'">';
-    }
+	if (! $nonext)
+	{
+		print '<div class="barrebottom"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
+		if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
+		print '></div>';
+	}
+	if ($setuplang)
+	{
+		print '<input type="hidden" name="selectlang" value="'.$setuplang.'">';
+	}
 
-    print '</form>'."\n";
+	print '</form>'."\n";
 
-    // If there is some logs in buffer to show
-    if (isset($conf->logbuffer) && sizeof($conf->logbuffer))
-    {
+	// If there is some logs in buffer to show
+	if (isset($conf->logbuffer) && sizeof($conf->logbuffer))
+	{
 		print "\n";
 		print "<!-- Start of log output\n";
-    	//print '<div class="hidden">'."\n";
-	    foreach($conf->logbuffer as $logline)
-	    {
-	    	print $logline."<br>\n";
-	    }
-	    //print '</div>'."\n";
+		//print '<div class="hidden">'."\n";
+		foreach($conf->logbuffer as $logline)
+		{
+			print $logline."<br>\n";
+		}
+		//print '</div>'."\n";
 		print "End of log output -->\n";
 		print "\n";
-    }
+	}
 
-    print '</body>'."\n";
-    print '</html>'."\n";
+	print '</body>'."\n";
+	print '</html>'."\n";
 }
 
-
+/**
+ * Log function for install pages
+ *
+ * @param unknown_type $message
+ * @param unknown_type $level
+ */
 function dolibarr_install_syslog($message, $level=LOG_DEBUG)
 {
 	if (! defined('LOG_DEBUG')) define('LOG_DEBUG',6);
