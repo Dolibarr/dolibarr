@@ -34,7 +34,7 @@ function project_prepare_head($object)
 	$head[$h][1] = $langs->trans("Project");
     $head[$h][2] = 'project';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ProjectContact");
     $head[$h][2] = 'contact';
@@ -60,7 +60,7 @@ function project_prepare_head($object)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['project']))
     {
         $i=0;
@@ -68,7 +68,7 @@ function project_prepare_head($object)
         {
             $values=explode(':',$value);
             if ($values[2]) $langs->load($values[2]);
-            $head[$h][0] = preg_replace('/__ID__/i',$object->id,$values[3]);
+            $head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$object->id,$values[3]);
             $head[$h][1] = $langs->trans($values[1]);
             $head[$h][2] = 'tab'.$values[1];
             $h++;
@@ -108,7 +108,7 @@ function task_prepare_head($object)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['task']))
     {
         $i=0;
@@ -116,7 +116,7 @@ function task_prepare_head($object)
         {
             $values=explode(':',$value);
             if ($values[2]) $langs->load($values[2]);
-            $head[$h][0] = preg_replace('/__ID__/i',$objsoc->id,$values[3]);
+            $head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$objsoc->id,$values[3]);
             $head[$h][1] = $langs->trans($values[1]);
             $head[$h][2] = 'tab'.$values[1];
             $h++;

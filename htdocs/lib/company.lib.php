@@ -124,7 +124,7 @@ function societe_prepare_head($objsoc)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['thirdparty']))
     {
         $i=0;

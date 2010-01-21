@@ -61,7 +61,7 @@ function facturefourn_prepare_head($fac)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['supplier_invoice']))
 	{
 		$i=0;
@@ -69,7 +69,7 @@ function facturefourn_prepare_head($fac)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = preg_replace('/__ID__/i',$fac->id,$values[3]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$fac->id,$values[3]);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;
@@ -126,7 +126,7 @@ function ordersupplier_prepare_head($commande)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['supplier_order']))
 	{
 		$i=0;
@@ -134,7 +134,7 @@ function ordersupplier_prepare_head($commande)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = preg_replace('/__ID__/i',$commande->id,$values[3]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$commande->id,$values[3]);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;

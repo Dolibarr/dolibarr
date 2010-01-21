@@ -121,7 +121,7 @@ function product_prepare_head($product, $user)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/dolibarr/mymodule/mypage.php?id=__ID__');
+	// $this->tabs = array('entity:MyModule:@mymodule:/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['product']))
 	{
 		$i=0;
@@ -129,7 +129,7 @@ function product_prepare_head($product, $user)
 		{
 			$values=explode(':',$value);
 			if ($values[2]) $langs->load($values[2]);
-			$head[$h][0] = preg_replace('/__ID__/i',$product->id,$values[3]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$product->id,$values[3]);
 			$head[$h][1] = $langs->trans($values[1]);
 			$head[$h][2] = 'tab'.$values[1];
 			$h++;
