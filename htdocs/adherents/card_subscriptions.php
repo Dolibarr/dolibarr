@@ -237,12 +237,12 @@ if ($errmsg)
  */
 print '<div class="tabsAction">';
 
-// Lien nouvelle cotisation si non brouillon et non r�sili�
+// Lien nouvelle cotisation si non brouillon et non resilie
 if ($user->rights->adherent->cotisation->creer)
 {
 	if ($action != 'addsubscription' && $adh->statut > 0)
 	{
-		print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("NewSubscription")."</a>";
+		print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("AddSubscription")."</a>";
 	}
 }
 print '</div>';
