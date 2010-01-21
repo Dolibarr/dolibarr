@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +132,7 @@ function societe_prepare_head($objsoc)
         {
             $values=explode(':',$value);
             if ($values[2]) $langs->load($values[2]);
-            $head[$h][0] = preg_replace('/__ID__/i',$objsoc->id,$values[3]);
+            $head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$objsoc->id,$values[3]);
             $head[$h][1] = $langs->trans($values[1]);
             $head[$h][2] = 'tab'.$values[1];
             $h++;
