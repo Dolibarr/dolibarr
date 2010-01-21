@@ -280,6 +280,15 @@ if ($_REQUEST['action'] ==	'confirm_approve' && $_REQUEST["confirm"] == 'yes'	&&
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
 	$result	= $commande->approve($user);
+	if ($result > 0)
+	{
+		Header("Location: fiche.php?id=".$id);
+		exit;
+	}
+	else
+	{
+		$mesg=$commande->error;
+	}
 }
 
 if ($_REQUEST['action'] ==	'confirm_refuse' &&	$_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->approuver)
@@ -287,13 +296,31 @@ if ($_REQUEST['action'] ==	'confirm_refuse' &&	$_REQUEST['confirm'] == 'yes' && 
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($id);
 	$result = $commande->refuse($user);
+	if ($result > 0)
+	{
+		Header("Location: fiche.php?id=".$id);
+		exit;
+	}
+	else
+	{
+		$mesg=$commande->error;
+	}
 }
 
 if ($_REQUEST['action'] ==	'confirm_commande' && $_REQUEST['confirm']	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
 	$commande =	new	CommandeFournisseur($db);
 	$commande->fetch($id);
-	$result	= $commande->commande($user, $_GET["datecommande"],	$_GET["methode"], $_GET['comment']);
+	$result	= $commande->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
+	if ($result > 0)
+	{
+		Header("Location: fiche.php?id=".$id);
+		exit;
+	}
+	else
+	{
+		$mesg=$commande->error;
+	}
 }
 
 
@@ -301,9 +328,16 @@ if ($_REQUEST['action'] ==	'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->id = $id;
-	$commande->delete();
-	Header('Location: index.php');
-	exit;
+	$result=$commande->delete();
+	if ($result > 0)
+	{
+		Header("Location: ".DOL_URL_ROOT.'/fourn/commande/liste.php');
+		exit;
+	}
+	else
+	{
+		$mesg=$commande->error;
+	}
 }
 
 if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->receptionner)
@@ -579,8 +613,8 @@ if ($id > 0 || ! empty($ref))
 		if ($_GET["action"]	== 'commande')
 		{
 			$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-			$ret=$html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"]."&amp;comment=".urlencode($_POST["comment"]),
-			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande");
+			$ret=$html->form_confirm("fiche.php?id=".$commande->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]),
+			$langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
 			if ($ret == 'html') print '<br>';
 		}
 
