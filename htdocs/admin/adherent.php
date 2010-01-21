@@ -288,7 +288,7 @@ function form_constantes($tableau)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-			print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+			print '<input type="hidden" name="constname" value="'.$const.'">';
 			print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
 
 			print "<tr $bc[$var]>";

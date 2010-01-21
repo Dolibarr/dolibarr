@@ -381,13 +381,14 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 	// Check parameters
 	if (empty($name))
 	{
-		dol_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
+		dol_print_error($db,"Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
 		exit;
 	}
 
+	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
+
 	$db->begin();
 
-	//dol_syslog("dolibarr_set_const name=$name, value=$value");
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql.= " WHERE ".$db->decrypt('name')." = '".addslashes($name)."'";
 	$sql.= " AND entity = ".$entity;
