@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,9 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 $langs->load("exports");
 $langs->load("errors");
 
-
-if (! $user->societe_id == 0)
-accessforbidden();
+// Security check
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'import',$origin_id,'');
 
 $entitytoicon=array(
 	'invoice'=>'bill','invoice_line'=>'bill',

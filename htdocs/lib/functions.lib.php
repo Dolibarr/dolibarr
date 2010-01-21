@@ -1571,7 +1571,8 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
 		else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
 		{
 			if (empty($user->rights->$feature->lire)
-			&& empty($user->rights->$feature->read)) $readok=0;
+			&& empty($user->rights->$feature->read)
+			&& empty($user->rights->$feature->run)) $readok=0;
 		}
 	}
 
