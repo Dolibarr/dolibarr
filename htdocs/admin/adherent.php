@@ -246,6 +246,8 @@ print '<br>';
 
 llxFooter('$Date$ - $Revision$');
 
+
+
 function form_constantes($tableau)
 {
 	global $db,$bc,$langs,$conf;
@@ -261,7 +263,8 @@ function form_constantes($tableau)
 	print "</tr>\n";
 	$var=true;
 
-	foreach($tableau as $const)
+	$listofparam=array();
+	foreach($tableau as $const)	// Loop on each param
 	{
 		$sql = "SELECT ";
 		$sql.= "rowid";
@@ -271,13 +274,16 @@ function form_constantes($tableau)
 		$sql.= ", note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$db->decrypt('name')." = '".$const."'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity in (0, ".$conf->entity.")";
+		$sql.= " ORDER BY name ASC, entity DESC";
 		$result = $db->query($sql);
 
+		dol_syslog("list params sql=".$sql);
 		if ($result)
 		{
-			$obj = $db->fetch_object($result);
+			$obj = $db->fetch_object($result);	// Take first result of select
 			$var=!$var;
+
 			print '<form action="adherent.php" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
