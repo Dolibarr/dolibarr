@@ -230,7 +230,7 @@ class pdf_baleine extends ModelePDFProjects
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'R');
-					
+
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
@@ -368,7 +368,10 @@ class pdf_baleine extends ModelePDFProjects
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->dateo,"%d %b %Y",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->date_start,'day',false,$outputlangs,true), '', 'R');
+		$posy+=6;
+		$pdf->SetXY(100,$posy);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');
 
 		$pdf->SetTextColor(0,0,60);
 
