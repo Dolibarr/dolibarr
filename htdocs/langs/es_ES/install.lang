@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - install = 
+# Dolibarr language file - es_ES - install
 CHARSET = UTF-8
 InstallEasy = Hemos procurado que la instalación sea lo más simple posible, usted sólo tiene que seguir los pasos uno a uno.
 MiscellanousChecks = Comprobación de los prerequisitos
@@ -53,7 +53,7 @@ Password = Contraseña
 PasswordAgain = Verificación de la contraseña
 AdminPassword = contraseña del administrador de la base de datos Dolibarr. Deje vacío si se conecta en anonymous
 CreateDatabase = Crear la base de datos
-CreateUser = Crear el usuario
+CreateUser = Crear el propietario
 DatabaseSuperUserAccess = Base de datos - Acceso super usuario
 CheckToCreateDatabase = Seleccione esta opción si la base de datos no existe y debe crearse. En este caso, es necesario indicar usuario/contraseña del superusuario más adelante en esta página.
 CheckToCreateUser = Seleccione esta opción si el usuario no existe y debe crearse.<br>En este caso, es necesario indicar usuario/contraseña del superusuario más adelante en esta página.
@@ -138,6 +138,8 @@ InstallChoiceSuggested = <b>Opción sugerida por el instalador</b>.
 CheckThatDatabasenameIsCorrect = Compruebe que el nombre de la base de datos "<b>%s</b>" es correcto.
 IfAlreadyExistsCheckOption = Si el nombre es correcto y la base de datos no existe, debe seleccionar la opción "Crear la base de datos"
 OpenBaseDir = Parámetro php openbasedir
+YouAskToCreateDatabaseSoRootRequired = Ha marcado la casilla "Crear la base de datos". Para ello, el usuario/contraseña del superusuario (al final del formulario) son obligatorios.
+YouAskToCreateDatabaseUserSoRootRequired = Ha marcado la casilla "Crear el usuario propietario" de la base de datos. Para ello, el usuario/contraseña del superusuario (al final del formulario) son obligatorios.
 ######### = 
 # upgrade = 
 MigrationFixData = Corrección de datos desnormalizados

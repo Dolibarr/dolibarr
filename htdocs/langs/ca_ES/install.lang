@@ -53,7 +53,7 @@ Password = Contrasenya
 PasswordAgain = Verificació de la contrasenya
 AdminPassword = contrasenya de l'administrador de la base de dades Dolibarr. Deixi buit si es connecta com a anonymous
 CreateDatabase = Crear la base de dades
-CreateUser = Crear l'usuari
+CreateUser = Crear el propietari
 DatabaseSuperUserAccess = Base de dades - Accés super usuari
 CheckToCreateDatabase = Seleccioneu aquesta opció si la base de dades no existeix i s'ha de crear. En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
 CheckToCreateUser = Seleccioneu aquesta opció si l'usuari no existeix i s'ha de crear.<br>En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
@@ -138,6 +138,8 @@ InstallChoiceSuggested = <b>Opció suggerida per l'instal·lador</b>.
 CheckThatDatabasenameIsCorrect = Comproveu que el nom de la base de dades "<b>%s</b>" és correcte.
 IfAlreadyExistsCheckOption = Si el nom és correcte i la base de dades no existeix, heu de seleccionar l'opció "Crear la base de dades"
 OpenBaseDir = Paràmetre php openbasedir
+YouAskToCreateDatabaseSoRootRequired = Ha marcat la casella "Crear la base de dades". Per això, l'usuari/contrasenya del superusuari (al final del formulari) són obligatoris.
+YouAskToCreateDatabaseUserSoRootRequired = Ha marcat la casella "Crear l'usuari propietari" de la base de dades. Per això, l'usuari/contrasenya del superusuari (al final del formulari) són obligatoris.
 ######### =  = 
 # upgrade =  = 
 MigrationFixData = Correcció de dades desnormalitzades
