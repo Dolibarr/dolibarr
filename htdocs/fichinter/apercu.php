@@ -19,16 +19,16 @@
  */
 
 /**
-		\file		htdocs/fichinter/apercu.php
-		\ingroup	fichinter
-		\brief		Page de l'onglet aper�u d'une fiche d'intervention
-		\version	$Id$
-*/
+ * 		\file		htdocs/fichinter/apercu.php
+ * 		\ingroup	fichinter
+ * 		\brief		Page de l'onglet apercu d'une fiche d'intervention
+ * 		\version	$Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/fichinter/fichinter.class.php');
-if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 
 $langs->load('interventions');
 

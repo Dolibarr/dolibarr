@@ -25,8 +25,8 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/task.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/projet/tasks/task.class.php');
 
 $langs->load("admin");
 $langs->load("other");

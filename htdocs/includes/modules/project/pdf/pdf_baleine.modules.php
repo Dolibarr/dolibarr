@@ -26,8 +26,8 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
-require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/task.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 

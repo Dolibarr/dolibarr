@@ -23,8 +23,8 @@
  *	\version    $Id$
  */
 require ("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/task.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
 
 $langs->load("projects");
 $langs->load("companies");

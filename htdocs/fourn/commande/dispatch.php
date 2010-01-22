@@ -30,7 +30,7 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fourn.lib.php");
-if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
 
 $langs->load('orders');
 $langs->load('sendings');

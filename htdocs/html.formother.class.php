@@ -213,7 +213,7 @@ class FormOther
 	{
 		global $user, $langs;
 
-		require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 
 		//print $modeproject.'-'.$modetask;
 		$project=new Project($this->db);

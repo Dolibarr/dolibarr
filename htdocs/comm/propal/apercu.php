@@ -22,14 +22,14 @@
 /**
 		\file		htdocs/comm/propal/apercu.php
 		\ingroup	propal
-		\brief		Page de l'onglet aper�u d'une propal
+		\brief		Page de l'onglet apercu d'une propal
 		\version	$Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 
 $langs->load('propal');
 $langs->load("bills");

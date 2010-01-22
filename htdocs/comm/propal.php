@@ -41,7 +41,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');

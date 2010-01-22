@@ -30,12 +30,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $mode=$_REQUEST["mode"];
 
-$projetid='';
-$projetid=isset($_GET["id"])?$_GET["id"]:$_POST["projetid"];
+$projectid='';
+$projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projetid"];
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $projetid);
+$result = restrictedArea($user, 'projet', $projectid);
 
 /*
  * Actions
@@ -43,16 +43,16 @@ $result = restrictedArea($user, 'projet', $projetid);
 
 if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
-
-	$result = $project->fetch($_GET["id"]);
+	$task = new Task($db);
+	
+	$task->fk_task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
+	$task->label = $_POST["task_name"];
+	
+	$result = $task->create($user);
 
 	if ($result == 0)
 	{
-		$task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
-		$project->CreateTask($user, $_POST["task_name"], $task_parent);
-
-		Header("Location:fiche.php?id=".$project->id);
+		Header("Location:fiche.php?id=".$projectid);
 		exit;
 	}
 }

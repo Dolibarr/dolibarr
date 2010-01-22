@@ -30,7 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 
 
 if (!$user->rights->facture->lire)

@@ -27,7 +27,7 @@
 
 require("./pre.inc.php");
 require_once("./facture-rec.class.php");
-require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 

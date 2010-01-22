@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       task.class.php
+ *      \file       htdocs/projet/tasks/task.class.php
  *      \ingroup    project
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
  *		\version    $Id$
@@ -89,28 +89,20 @@ class Task extends CommonObject
 		// Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task(";
-
-		$sql.= "fk_projet,";
-		$sql.= "fk_task_parent,";
-		$sql.= "title,";
-		$sql.= "duration_effective,";
-		$sql.= "fk_user_creat,";
-		$sql.= "statut,";
-		$sql.= "note";
-
-
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
+		$sql.= "fk_projet";
+		$sql.= ", fk_task_parent";
+		$sql.= ", label";
+		$sql.= ", duration_effective";
+		$sql.= ", fk_user_creat";
+		$sql.= ", note_private";
         $sql.= ") VALUES (";
-
-		$sql.= " ".(! isset($this->fk_projet)?'NULL':"'".$this->fk_projet."'").",";
-		$sql.= " ".(! isset($this->fk_task_parent)?'NULL':"'".$this->fk_task_parent."'").",";
-		$sql.= " ".(! isset($this->title)?'NULL':"'".$this->title."'").",";
-		$sql.= " ".(! isset($this->duration_effective)?'NULL':"'".$this->duration_effective."'").",";
-		$sql.= " ".(! isset($this->fk_user_creat)?'NULL':"'".$this->fk_user_creat."'").",";
-		$sql.= " ".(! isset($this->statut)?'NULL':"'".$this->statut."'").",";
-		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->note."'")."";
-
-
+		$sql.= $this->fk_projet;
+		$sql.= ", ".$this->fk_task_parent;
+		$sql.= ", '".addslashes($this->label)."'";
+		$sql.= ", ".(! isset($this->duration_effective)?'NULL':"'".$this->duration_effective."'").",";
+		$sql.= ", ".$user->id;
+		$sql.= ", '".addslashes($this->note_private)."'";
 		$sql.= ")";
 
 		$this->db->begin();
