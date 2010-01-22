@@ -21,6 +21,3 @@
 
 
 ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_projet FOREIGN KEY (fk_projet)    REFERENCES llx_projet (rowid);
-
-
-

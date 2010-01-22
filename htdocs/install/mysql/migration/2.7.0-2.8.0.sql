@@ -105,3 +105,19 @@ ALTER TABLE llx_bank_class DROP INDEX uk_bank_class_lineid;
 ALTER TABLE llx_bank_class ADD UNIQUE INDEX uk_bank_class_lineid (lineid, fk_categ);
 
 ALTER TABLE llx_rights_def MODIFY COLUMN module varchar(64);
+
+-- Enhancement of project tasks
+ALTER TABLE llx_projet_task ADD COLUMN datec datetime AFTER fk_task_parent;
+ALTER TABLE llx_projet_task ADD COLUMN tms timestamp AFTER datec;
+ALTER TABLE llx_projet_task ADD COLUMN dateo datetime AFTER tms;
+ALTER TABLE llx_projet_task ADD COLUMN datee datetime AFTER dateo;
+ALTER TABLE llx_projet_task ADD COLUMN datev datetime AFTER datee;
+ALTER TABLE llx_projet_task CHANGE title label varchar(255) NOT NULL;
+ALTER TABLE llx_projet_task ADD COLUMN description varchar(255) AFTER label;
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_valid integer AFTER fk_user_modif;
+UPDATE llx_projet_task SET statut='1' WHERE statut='open';
+ALTER TABLE llx_projet_task CHANGE statut fk_statut smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_projet_task CHANGE note note_private text;
+ALTER TABLE llx_projet_task ADD COLUMN note_public text AFTER note_private;
+

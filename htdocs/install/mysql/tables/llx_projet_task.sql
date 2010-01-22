@@ -1,5 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,12 +21,20 @@
 
 create table llx_projet_task
 (
-  rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  fk_projet          integer NOT NULL,
-  fk_task_parent     integer NOT NULL,
-  title              varchar(255),
-  duration_effective real NOT NULL,
-  fk_user_creat      integer,      -- createur
-  statut             varchar(6) DEFAULT 'open',
-  note               text
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  fk_projet				integer NOT NULL,
+  fk_task_parent		integer DEFAULT 0 NOT NULL,
+  datec					datetime,						-- date creation
+  tms					timestamp,						-- date creation/modification
+  dateo					datetime,						-- date start task
+  datee					datetime,						-- date end task
+  datev					datetime,						-- date validation
+  label					varchar(255) NOT NULL,
+  description			varchar(255),
+  duration_effective	real NOT NULL,
+  fk_user_creat			integer,						-- user who created the task
+  fk_user_valid			integer,						-- user who validated the task
+  fk_statut				smallint DEFAULT 0 NOT NULL,
+  note_private			text,
+  note_public			text
 )type=innodb;

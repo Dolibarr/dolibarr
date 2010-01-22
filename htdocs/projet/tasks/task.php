@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *	\file       htdocs/projet/tasks/task.php
  *	\ingroup    projet
- *	\brief      Fiche t�ches d'un projet
+ *	\brief      Fiche taches d'un projet
  *	\version    $Id$
  */
 
@@ -159,7 +160,7 @@ if ($_GET["id"] > 0)
 		 */
 		print '<div class="tabsAction">';
 
-		if (!$user->rights->projet->creer)
+		if ($user->rights->projet->supprimer)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
