@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +43,14 @@ class Task extends CommonObject
 
 	var $fk_projet;
 	var $fk_task_parent;
-	var $title;
+	var $label;
+	var $description;
 	var $duration_effective;
 	var $fk_user_creat;
+	var $fk_user_valid;
 	var $statut;
-	var $note;
-
-
+	var $note_private;
+	var $note_public;
 
 
     /**
@@ -71,19 +73,14 @@ class Task extends CommonObject
     function create($user, $notrigger=0)
     {
     	global $conf, $langs;
+    	
 		$error=0;
 
 		// Clean parameters
-
-		if (isset($this->fk_projet)) $this->fk_projet=trim($this->fk_projet);
-		if (isset($this->fk_task_parent)) $this->fk_task_parent=trim($this->fk_task_parent);
-		if (isset($this->title)) $this->title=trim($this->title);
-		if (isset($this->duration_effective)) $this->duration_effective=trim($this->duration_effective);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->statut)) $this->statut=trim($this->statut);
-		if (isset($this->note)) $this->note=trim($this->note);
-
-
+		$this->label = trim($this->label);
+		$this->description = trim($this->description);
+		$this->note_private = trim($this->note_private);
+		$this->note_public = trim($this->note_public);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -153,18 +150,18 @@ class Task extends CommonObject
     function fetch($id)
     {
     	global $langs;
+    	
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-
 		$sql.= " t.fk_projet,";
 		$sql.= " t.fk_task_parent,";
-		$sql.= " t.title,";
+		$sql.= " t.label,";
 		$sql.= " t.duration_effective,";
 		$sql.= " t.fk_user_creat,";
-		$sql.= " t.statut,";
-		$sql.= " t.note";
-
-
+		$sql.= " t.fk_user_valid,";
+		$sql.= " t.fk_statut,";
+		$sql.= " t.note_private,";
+		$sql.= " t.note_public";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
         $sql.= " WHERE t.rowid = ".$id;
 
@@ -176,19 +173,20 @@ class Task extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
-                $this->ref   = $obj->rowid;
-
-				$this->fk_projet = $obj->fk_projet;
-				$this->fk_task_parent = $obj->fk_task_parent;
-				$this->title = $obj->title;
-				$this->duration_effective = $obj->duration_effective;
-				$this->fk_user_creat = $obj->fk_user_creat;
-				$this->statut = $obj->statut;
-				$this->note = $obj->note;
-
-
+                $this->id					= $obj->rowid;
+                $this->ref					= $obj->rowid;
+				$this->fk_projet			= $obj->fk_projet;
+				$this->fk_task_parent		= $obj->fk_task_parent;
+				$this->label				= $obj->label;
+				$this->description			= $obj->description;
+				$this->duration_effective	= $obj->duration_effective;
+				$this->fk_user_creat		= $obj->fk_user_creat;
+				$this->fk_user_valid		= $obj->fk_user_valid;
+				$this->fk_statut			= $obj->fk_statut;
+				$this->note_private			= $obj->note_private;
+				$this->note_public			= $obj->note_public;
             }
+            
             $this->db->free($resql);
 
             return 1;
