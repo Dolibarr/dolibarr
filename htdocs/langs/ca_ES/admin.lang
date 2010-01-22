@@ -1147,3 +1147,7 @@ TestGeoIPResult = Test de conversió IP -> País
 ##### NumberWords ##### =  = 
 NumberWordsSetup = Configuració del mòdul NumberWords
 DescNumberWords = Aquest mòdul us ofereix convertir números o imports en qualsevol cadena. També realitza la substitució de les variables genèriques __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ o __TOTAL_VAT_WORDS__ pel valor d'imports totals, base o de l'IVA, en cadena dins el text al qual fan referència (text lliure de factures, ...)
+##### Projects ##### =  = 
+ProjectsNumberingModules = Mòdul de numeració per a les referències dels projectes
+ProjectsSetup = Configuració del mòdul Projectes
+ProjectsModelModule = Model de document per a informes de projectes

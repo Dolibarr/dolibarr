@@ -60,3 +60,5 @@ ConfirmCloseAProject = ¿Está seguro de querer cerrar este proyecto?
 ReOpenAProject = Reabrir proyecto
 ConfirmReOpenAProject = ¿Está seguro de querer reabrir este proyecto?
 ProjectContact = Contactos proyecto
+# Documents models = 
+DocumentModelBaleine = Modelo de informe de proyecto completo (logo...)

@@ -60,3 +60,5 @@ ConfirmCloseAProject = Esteu segur de voler tancar aquest projecte?
 ReOpenAProject = Reobrir projecte
 ConfirmReOpenAProject = Esteu segur de voler reobrir aquest projecte?
 ProjectContact = Contactes projecte
+# Documents models =  = 
+DocumentModelBaleine = Model d'informe de projecte complet (logo...)
