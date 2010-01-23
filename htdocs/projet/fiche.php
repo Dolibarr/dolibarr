@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("projects");
@@ -72,7 +73,7 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 	if (! $error)
 	{
 		$project = new Project($db);
-		
+
 		$project->ref             = $_POST["ref"];
 		$project->title           = $_POST["title"];
 		$project->socid           = $_POST["socid"];
@@ -243,8 +244,22 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '<table class="border" width="100%">';
 	print '<input type="hidden" name="action" value="add">';
 
+	$project = new Project($db);
+
+	$defaultref='';
+	$obj = $conf->global->PROJECT_ADDON;
+	if ($obj)
+	{
+		if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php"))
+		{
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php");
+			$modProject = new $obj;
+			$defaultref = $modProject->getNextValue($soc,$project);
+		}
+	}
+
 	// Ref
-	print '<tr><td>'.$langs->trans("Ref").'*</td><td><input size="8" type="text" name="ref" value="'.$_POST["ref"].'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'*</td><td><input size="8" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'*</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
@@ -450,7 +465,7 @@ else
 
 	print "</div>";
 	print "<br>\n";
-	
+
 	if ($_GET['action'] != 'presend')
 	{
 		print '<table width="100%"><tr><td width="50%" valign="top">';
@@ -513,7 +528,7 @@ else
 
 		print '</td></tr></table>';
 	}
-	
+
 
 }
 

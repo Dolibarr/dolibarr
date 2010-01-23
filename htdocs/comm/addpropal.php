@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
@@ -20,19 +20,15 @@
  */
 
 /**
- \file       htdocs/comm/addpropal.php
- \ingroup    propal
- \brief      Page d'ajout d'une proposition commmercial
- \version    $Id$
+ *	\file       htdocs/comm/addpropal.php
+ *	\ingroup    propal
+ *	\brief      Page to add a new commercial proposal
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
-if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
-{
-	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
-}
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 
 $langs->load("propal");
@@ -76,9 +72,17 @@ if ($_GET["action"] == 'create')
 	$propal = new Propal($db);
 	$propal->date=time();
 
+	$numpr='';
 	$obj = $conf->global->PROPALE_ADDON;
-	$modPropale = new $obj;
-	$numpr = $modPropale->getNextValue($soc,$propal);
+	if ($obj)
+	{
+		if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
+		{
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+			$modPropale = new $obj;
+			$numpr = $modPropale->getNextValue($soc,$propal);
+		}
+	}
 
 	// Fix pour modele numerotation qui deconne
 	// Si numero deja pris (ne devrait pas arriver), on incremente par .num+1
