@@ -1,4 +1,4 @@
-# This file seems to be useless
+# This file seems to be useless for Ubuntu
 # Good way to add menu on Ubuntu is adding file dolibarr.desktop
 ?package(dolibarr):needs="X11" section="Applications/File Management" \
   title="Dolibarr" command="/usr/share/dolibarr/build/deb/rundolibarr.sh" icon="/usr/share/pixmaps/dolibarr.xpm"
