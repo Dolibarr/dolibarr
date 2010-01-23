@@ -6,6 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
+ * Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,11 @@ class Societe extends CommonObject
 
 	var $tva_assuj;
 	var $tva_intra;
-
+	
+	// Local taxes
+	var $localtax1_assuj;
+	var $localtax2_assuj;
+	
 	var $capital;
 	var $typent_id;
 	var $typent_code;
@@ -362,6 +367,10 @@ class Societe extends CommonObject
 
 		$this->tva_assuj=trim($this->tva_assuj);
 		$this->tva_intra=dol_sanitizeFileName($this->tva_intra,'');
+		
+		// Local taxes
+		$this->localtax1_assuj=trim($this->localtax1_assuj);
+		$this->localtax2_assuj=trim($this->localtax2_assuj);
 
 		$this->capital=trim($this->capital);
 		if (strlen($this->capital) == 0) $this->capital = 0;
@@ -418,7 +427,11 @@ class Societe extends CommonObject
 
 			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
 			$sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
-
+			
+			// Local taxes
+			$sql .= ",localtax1_assuj = ".($this->localtax1_assuj>=0?"'".$this->localtax1_assuj."'":"null");
+			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj>=0?"'".$this->localtax2_assuj."'":"null");
+			
 			$sql .= ",capital = '" .   addslashes($this->capital) ."'";
 
 			$sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
@@ -546,7 +559,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.gencod';
 		$sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
-		$sql .= ', s.fk_prospectlevel';
+		$sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel';
 		$sql .= ', s.import_key';
 		$sql .= ', fj.libelle as forme_juridique';
 		$sql .= ', e.libelle as effectif';
@@ -630,6 +643,11 @@ class Societe extends CommonObject
 
 				$this->tva_assuj      = $obj->tva_assuj;
 				$this->tva_intra      = $obj->tva_intra;
+				
+				// Local Taxes
+				$this->localtax1_assuj      = $obj->localtax1_assuj;
+				$this->localtax2_assuj      = $obj->localtax2_assuj;
+				
 
 				$this->typent_id      = $obj->typent_id;
 				$this->typent_code    = $obj->typent_code;

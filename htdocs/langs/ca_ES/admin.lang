@@ -588,6 +588,17 @@ VATManagement = Gestió IVA
 VATIsUsedDesc = El tipus d'IVA proposat per defecte en les creacions de pressupostos, factures, comandes, etc. Respon a la següent regla: <br> Si el venedor no està subjecte a IVA, IVA per defecte = 0. Final de regla. <br> Si el país del venedor = país del comprador llavors IVA per defecte = IVA del producte venut. Final de regla. <br> Si venedor i comprador resideixen a la Comunitat Europea i el bé venut = nou mitjà de transports (auto, vaixell, avió), IVA per defecte = 0 (l'IVA ha de ser pagat pel comprador a la hisenda pública del seu país i no al venedor). Final de regla <br> Si venedor i comprador resideixen a la Comunitat Europea i comprador = particular o empresa sense NIF intracomunitari llavors IVA per defecte = IVA del producte venut. Final de regla. <br> Si venedor i comprador resideixen a la Comunitat Europea i comprador = empresa amb NIF intracomunitari llavors IVA per defecte = 0. Final de regla. <br> Sinó, IVA proposat per defecte = 0. Final de regla. <br>
 VATIsNotUsedDesc = El tipus d'IVA proposat per defecte és 0. Aquest és el cas d'associacions, particulars o algunes petites societats.
 VATIsUsedExampleFR = A França, es tracta de les societats o organismes que trien un règim fiscal general (General simplificat o General normal), règim en el qual es declara l'IVA.
+##### Local Taxes #####
+LocalTax1ManagementES = Gestió Recàrrec d'Equivalència
+LocalTax1IsUsedDescES = El tipus de RE proposat per defecte en les creacions de pressupostos, factures, comandes, etc. Respon a la següent regla:<br>Si el comprador no està subjecte a RE, RE per defecte = 0. Final de regla.<br>Si el comprador està subjecte a RE aleshores s'aplica valor de RE per defecte. Final de regla.<br>
+LocalTax1IsNotUsedDescES = El tipus de RE proposat per defecte es 0. Final de regla.
+LocalTax1IsUsedExampleES = A Espanya, es tracta de persones físiques: autònoms subjectes a uns epígrafs concrets de l'IAE.
+LocalTax1IsNotUsedExampleES = A Espanya, es tracta d'empreses jurídiques: Societats limitades, anònimes, etc. i persones físiques (autònoms) subjectes a certs epígrafs de l'IAE.
+LocalTax2ManagementES = Gestió IRPF
+LocalTax2IsUsedDescES = El tipus d'IRPF proposat per defecte en les creacions de pressupostos, factures, comandes, etc. Respon a la següent regla:<br>Si el venedor no està subjecte a IRPF, IRPF per defecte = 0. Final de regla.<br>Si el venedor està subjecte a IRPF aleshores s'aplica valor d'IRPF per defecte. Final de regla.<br>
+LocalTax2IsNotUsedDescES = El tipus d'IRPF proposat per defecte es 0. Final de regla.
+LocalTax2IsUsedExampleES = A Espanya, es tracta de persones físiques: autònoms i professionals independents que presten serveis i empreses que han triat el règim fiscal de mòduls.
+LocalTax2IsNotUsedExampleES = A Espanya, es tracta d'empreses no subjectes al règim fiscal de mòduls.
 VATIsNotUsedExampleFR = A França, es tracta d'associacions exemptes d'IVA o societats, organismes o professions liberals que han eligedo el règim fiscal de mòduls (IVA en franquícia), pagant un IVA en franquícia sense fer declaració d'IVA. Aquesta elecció fa aparèixer l'anotació "IVA no aplicable - art-293B del CGI" en les factures.
 LabelUsedByDefault = Etiqueta que s'utilitzarà si no es troba traducció per aquest codi
 LabelOnDocuments = Etiqueta sobre documents

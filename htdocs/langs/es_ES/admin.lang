@@ -589,6 +589,17 @@ VATIsUsedDesc = El tipo de IVA propuesto por defecto en las creaciones de presup
 VATIsNotUsedDesc = El tipo de IVA propuesto por defecto es 0. Este es el caso de asociaciones, particulares o algunas pequeñas sociedades.
 VATIsUsedExampleFR = En Francia, se trata de las sociedades u organismos que eligen un régimen fiscal general (General simplificado o General normal), régimen en el cual se declara el IVA.
 VATIsNotUsedExampleFR = En Francia, se trata de asociaciones exentas de IVA o sociedades, organismos o profesiones liberales que han eligedo el régimen fiscal de módulos (IVA en franquicia), pagando un IVA en franquicia sin hacer declaración de IVA. Esta elección hace aparecer la anotación  "IVA no aplicable - art-293B del CGI" en las facturas.
+##### Local Taxes #####
+LocalTax1ManagementES = Gestión RE
+LocalTax1IsUsedDescES = El tipo de RE propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el comprador no está sujeto a RE, RE por defecto=0. Final de regla.<br>Si el comprador está sujeto a RE entoces se aplica valor de RE por defecto. Final de regla.<br>
+LocalTax1IsNotUsedDescES = El tipo de RE propuesto por defecto es 0. Final de regla.
+LocalTax1IsUsedExampleES = En España, se trata de personas físicas: autónomos sujetos a unos epígrafes concretos del IAE.
+LocalTax1IsNotUsedExampleES = En España, se trata de empresas jurídicas: Sociedades limitadas, anónimas, etc. y personas físicas (autónomos) sujetos a ciertos epígrafes del IAE.
+LocalTax2ManagementES = Gestión IRPF
+LocalTax2IsUsedDescES = El tipo de IRPF propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IRPF, IRPF por defecto=0. Final de regla.<br>Si el vendedor está sujeto a IRPF entoces se aplica valor de IRPF por defecto. Final de regla.<br>
+LocalTax2IsNotUsedDescES = El tipo de IRPF propuesto por defecto es 0. Final de regla.
+LocalTax2IsUsedExampleES = En España, se trata de personas físicas: autónomos y profesionales independientes que prestan servicios y empresas que han elegido el régimen fiscal de módulos.
+LocalTax2IsNotUsedExampleES = En España, se trata de empresas no sujetas al régimen fiscal de módulos.
 LabelUsedByDefault = Etiqueta que se utilizará si no se encuentra traducción para este código
 LabelOnDocuments = Etiqueta sobre documentos
 NbOfDays = Nº de días

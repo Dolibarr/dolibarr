@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
+ * Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -380,6 +381,10 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 
 	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
 	$mysoc->tva_assuj=($conf->global->FACTURE_TVAOPTION=='franchise'?0:1);
+	
+	// Define if company use local taxes
+	$mysoc->localtax1_assuj=($conf->global->FACTURE_LOCAL_TAX1_OPTION=='franchise'?0:1);
+	$mysoc->localtax2_assuj=($conf->global->FACTURE_LOCAL_TAX2_OPTION=='franchise'?0:1);
 }
 
 

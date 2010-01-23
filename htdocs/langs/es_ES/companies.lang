@@ -70,6 +70,11 @@ Town = Población
 Web = Web
 VATIsUsed = Sujeto a IVA
 VATIsNotUsed = No sujeto a IVA
+##### Local Taxes #####
+LocalTax1IsUsedES = Sujeto a RE
+LocalTax1IsNotUsedES = No sujeto a RE
+LocalTax2IsUsedES = Sujeto a IRPF
+LocalTax2IsNotUsedES = No sujeto a IRPF 
 ThirdPartyEMail = %s
 WrongCustomerCode = Código cliente incorrecto
 WrongSupplierCode = Código proveedor incorrecto

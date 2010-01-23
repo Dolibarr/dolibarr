@@ -590,6 +590,17 @@ VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders 
 VATIsNotUsedDesc=By default the proposed VAT is 0 which can be used for cases like associations, individuals ou small companies.
 VATIsUsedExampleFR=In France, it means companies or organisations having a real fiscal system (Simplified real or normal real).  A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organisations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
+##### Local Taxes #####
+LocalTax1ManagementES = RE Management
+LocalTax1IsUsedDescES = The RE rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If te buyer is not subjected to RE, RE by default=0. End of rule.<br>If the buyer is subjected to RE then the RE by default. End of rule.<br>
+LocalTax1IsNotUsedDescES = By default the proposed RE is 0. End of rule.
+LocalTax1IsUsedExampleES = In Spain they are professionals subject to some specific sections of the Spanish IAE.
+LocalTax1IsNotUsedExampleES = In Spain they are professional and societies and subject to certain sections of the Spanish IAE.
+LocalTax2ManagementES = IRPF Management
+LocalTax2IsUsedDescES = The RE rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is not subjected to IRPF, then IRPF by default=0. End of rule.<br>If the seller is subjected to IRPF then the IRPF by default. End of rule.<br>
+LocalTax2IsNotUsedDescES = By default the proposed IRPF is 0. End of rule.
+LocalTax2IsUsedExampleES = In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
+LocalTax2IsNotUsedExampleES = In Spain they are bussines not subject to tax system of modules.
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 NbOfDays=Nb of days

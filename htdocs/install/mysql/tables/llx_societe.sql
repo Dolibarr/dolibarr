@@ -2,6 +2,7 @@
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -71,6 +72,8 @@ create table llx_societe
   mode_reglement           tinyint,                             -- mode de reglement
   cond_reglement           tinyint,                             -- condition de reglement
   tva_assuj                tinyint        DEFAULT 1,	        -- assujeti ou non a la TVA
+  localtax1_assuj          tinyint        DEFAULT 0,	        -- assujeti ou non a local tax 1
+  localtax2_assuj          tinyint        DEFAULT 0,	        -- assujeti ou non a local tax 2
   gencod                   varchar(255),                        -- barcode
   price_level              integer NULL,                        -- level of price for multiprices
   import_key               varchar(14)                          -- import key

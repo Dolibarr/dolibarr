@@ -69,6 +69,11 @@ Town=City
 Web=Web
 VATIsUsed=VAT is used
 VATIsNotUsed=VAT is not used
+##### Local Taxes #####
+LocalTax1IsUsedES = RE is used
+LocalTax1IsNotUsedES = RE is not used
+LocalTax2IsUsedES = IRPF is used
+LocalTax2IsNotUsedES = IRPF is not used 
 ThirdPartyEMail=%s
 WrongCustomerCode=Customer code invalid
 WrongSupplierCode=Supplier code invalid

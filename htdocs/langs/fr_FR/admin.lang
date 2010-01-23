@@ -590,6 +590,17 @@ VATIsUsedDesc = Le taux de TVA proposé par défaut lors de la création de prop
 VATIsNotUsedDesc = Le taux de TVA proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.
 VATIsUsedExampleFR = En France, il s'agit des sociétés ou organismes ayant choisi un régime fiscale réel (Réel simplifié ou Réel normal), régime dans lequel la TVA est déclarée.
 VATIsNotUsedExampleFR = En France, il s'agit des associations ne déclarant pas de TVA ou sociétés, organismes ou professions libérales ayant choisi le régime fiscal micro entreprise (TVA en franchise) et payant une TVA en franchise sans faire de déclaration de TVA. Ce choix fait de plus apparaitre la mention "TVA non applicable - art-293B du CGI" sur les factures.
+##### Local Taxes #####
+LocalTax1ManagementES = Gestion RE
+LocalTax1IsUsedDescES = Le taux de RE proposé par défaut lors de la création de propale, facture, commande, etc répond à la règle standard suivante:<br>Si acheteur non assujeti à RE, RE par défaut=0. Fin de règle.<br>Si acheteur non assujeti à RE alors RE par défaut. Fin de règle.<br>
+LocalTax1IsNotUsedDescES = Le taux de RE proposé par défaut est 0. Fin de règle.
+LocalTax1IsUsedExampleES = En Espagne, ce sont des professionnels sous réserve de certaines sections spécifiques de l'IAE Espagnol.
+LocalTax1IsNotUsedExampleES = En Espagne, ce sont des sociétés en commandite, les sociétés anonymes, etc. et les individus (autonomes) sous réserve de certaines sections de l'IAE Espagnol.
+LocalTax2ManagementES = Gestion IRPF
+LocalTax2IsUsedDescES = Le IRPF proposé par défaut lors de la création de propale, facture, commande, etc répond à la règle standard suivante:<br>Si vendeur non assujeti à IRPF, IRPF par défaut=0. Fin de règle.<br>Si vendeur non assujeti à IRPF alors IRPF par défaut. Fin de règle.<br>
+LocalTax2IsNotUsedDescES = Le IRPF proposé par défaut est 0. Fin de règle.
+LocalTax2IsUsedExampleES = En Espagne, ce sont des professionels autonomes et indépendants qui offrent des services, et des sociétés qui ont choisi le système fiscal du modules. 
+LocalTax2IsNotUsedExampleES = En Espagne, ce sont sociétés que ne sont pas soumis aux système fiscal du modules.
 LabelUsedByDefault = Libellé qui sera utilisé si aucune traduction n'est trouvée pour ce code
 LabelOnDocuments = Libellé sur documents
 NbOfDays = Nbre de jours

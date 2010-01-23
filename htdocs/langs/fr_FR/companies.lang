@@ -70,6 +70,11 @@ Town=Ville
 Web=Web
 VATIsUsed=Assujetti à TVA
 VATIsNotUsed=Non assujetti à TVA
+##### Local Taxes #####
+LocalTax1IsUsedES = Assujetti à RE
+LocalTax1IsNotUsedES = Non assujetti à RE
+LocalTax2IsUsedES = Assujetti à IRPF
+LocalTax2IsNotUsedES = Non assujetti à IRPF 
 ThirdPartyEMail=%s
 WrongCustomerCode=Code client incorrect
 WrongSupplierCode=Code fournisseur incorrect
