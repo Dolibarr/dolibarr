@@ -851,7 +851,7 @@ else
 					}
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
 					print '<td align="right" nowrap="nowrap">';
-					if ($user->rights->contrat->creer && sizeof($arrayothercontracts) && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))))
+					if ($user->rights->contrat->creer && sizeof($arrayothercontracts) && ($contrat->statut >= 0))
 					{
 						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
@@ -860,7 +860,7 @@ else
 					else {
 						print '&nbsp;';
 					}
-					if ($user->rights->contrat->creer && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
+					if ($user->rights->contrat->creer && ($contrat->statut >= 0))
 					{
 						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
@@ -869,7 +869,7 @@ else
 					else {
 						print '&nbsp;';
 					}
-					if ( $user->rights->contrat->creer && ($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
+					if ( $user->rights->contrat->creer && ($contrat->statut >= 0))
 					{
 						print '&nbsp;';
 						print '<a href="fiche.php?id='.$contrat->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
@@ -1188,8 +1188,7 @@ else
 		/*
 		 * Ajouter une ligne produit/service
 		 */
-		if ($user->rights->contrat->creer &&
-			($contrat->statut == 0 || ($contrat->statut >= 1 && empty($conf->global->CONTRAT_NOEDITWHENVALIDATED))) )
+		if ($user->rights->contrat->creer && ($contrat->statut >= 0))
 		{
 			print '<br>';
 			print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
