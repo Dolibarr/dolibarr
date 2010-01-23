@@ -351,10 +351,18 @@ PaymentInvoiceRef=Paiement facture %s
 ValidateInvoice=Valider facture
 Cash=Liquide
 Reported=Différé
-
 InvoiceDeposit=Facture d'acompte
 InvoiceDepositAsk=Facture d'acompte
 InvoiceDepositDesc=La <b>facture d'acompte</b> est le type de facture qui fait suite à réception d'un acompte, s'il n'est pas encore possible de saisir le paiement sur une facture définitive.
+##### Types de contacts #####
+TypeContact_facture_internal_SALESREPFOLL=Reponsable suivi facture client
+TypeContact_facture_external_BILLING=Contact client facturation
+TypeContact_facture_external_SHIPPING=Contact client livraison
+TypeContact_facture_external_SERVICE=Contact client prestation
+TypeContact_facture_fourn_internal_SALESREPFOLL=Reponsable suivi facture fournisseur
+TypeContact_facture_fourn_external_BILLING=Contact fournisseur facturation
+TypeContact_facture_fourn_external_SHIPPING=Contact fournisseur livraison
+TypeContact_facture_fourn_external_SERVICE=Contact fournisseur prestation
 
 
 

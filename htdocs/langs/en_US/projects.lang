@@ -60,5 +60,8 @@ ConfirmCloseAProject=Are you sure you want to close this project ?
 ReOpenAProject=Open project
 ConfirmReOpenAProject=Are you sure you want to re-open this project ?
 ProjectContact=Project contacts
+##### Types de contacts #####
+TypeContact_project_internal_PROJECTLEADER=Project leader
+TypeContact_project_external_PROJECTLEADER=Project leader
 # Documents models
 DocumentModelBaleine=A complete project's report model (logo...)

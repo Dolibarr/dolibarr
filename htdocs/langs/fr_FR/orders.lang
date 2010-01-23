@@ -104,6 +104,17 @@ UserWithApproveOrderGrant=Utilisateurs habilités à approuver les commandes
 PaymentOrderRef=Paiement commande %s
 CloneOrder=Cloner commande
 ConfirmCloneOrder=Etes-vous sur de vouloir cloner cette commande <b>%s</b> ?
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Reponsable suivi commande client
+TypeContact_commande_internal_SHIPPING=Reponsable envoi commande client
+TypeContact_commande_external_BILLING=Contact client facturation commande
+TypeContact_commande_external_SHIPPING=Contact client livraison commande
+TypeContact_commande_external_CUSTOMER=Contact client suivi commande
+TypeContact_order_supplier_internal_SALESREPFOLL=Reponsable suivi commande fournisseur
+TypeContact_order_supplier_internal_SHIPPING=Reponsable réception commande fournisseur
+TypeContact_order_supplier_external_BILLING=Contact fournisseur facturation commande
+TypeContact_order_supplier_external_SHIPPING=Contact fournisseur livraison commande
+TypeContact_order_supplier_external_CUSTOMER=Contact fournisseur suivi commande
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON non définie
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON non définie

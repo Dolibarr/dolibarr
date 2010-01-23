@@ -81,6 +81,10 @@ ClonePropal=Cloner proposition commerciale
 ConfirmClonePropal=Etes-vous sur de vouloir cloner cette proposition commerciale <b>%s</b> ?
 ProposalsAndProposalsLines=Propositions commerciales clientes et lignes de propositions
 ProposalLine=Ligne de proposition
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Commercial suivi propale
+TypeContact_propal_external_BILLING=Contact client facturation propale
+TypeContact_propal_external_CUSTOMER=Contact client suivi propale
 
 # Documents models
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)

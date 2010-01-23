@@ -352,6 +352,16 @@ PaymentInvoiceRef=Payment invoice %s
 ValidateInvoice=Validate invoice
 Cash=Cash
 Reported=Delayed
+##### Types de contacts #####
+TypeContact_facture_internal_SALESREPFOLL=Representative following-up customer invoice
+TypeContact_facture_external_BILLING=Customer invoice contact
+TypeContact_facture_external_SHIPPING=Customer shipping contact
+TypeContact_facture_external_SERVICE=Customer service contact
+TypeContact_facture_fourn_internal_SALESREPFOLL=Representative following-up supplier invoice
+TypeContact_facture_fourn_external_BILLING=Supplier invoice contact
+TypeContact_facture_fourn_external_SHIPPING=Supplier shipping contact
+TypeContact_facture_fourn_external_SERVICE=Supplier service contact
+
 
 # oursin PDF model
 Of=du
