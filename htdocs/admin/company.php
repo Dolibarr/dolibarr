@@ -829,7 +829,7 @@ else
 	/*
 	 *  Local Taxes
 	 */
-	if ($obj->code=='ES')
+	if ($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
 		// Local Tax 1
 		print '<br>';
