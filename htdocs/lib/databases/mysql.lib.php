@@ -369,7 +369,8 @@ class DoliDb
 		}
 		else
 		{
-			$ret = mysql_db_query($this->database_name, $query, $this->db);
+			mysql_select_db($this->database_name);
+			$ret = mysql_query($query, $this->db);
 		}
 
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))

@@ -255,6 +255,7 @@ CivilityMTRE=-
 
 ##### Currencies #####
 Currencyeuros=Euro
+CurrencyNOK=NOK
 CurrencyAUD=Australske dollar
 CurrencyCAD=Kanadiske dollar
 CurrencyCHF=Sveitsiske franc

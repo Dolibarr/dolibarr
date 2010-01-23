@@ -429,6 +429,7 @@ class pdf_oursin extends ModelePDFFactures
 						$oper = 'CHQ';
 						break;
 				}
+				$oper = $outputlangs->transnoentities("PaymentTypeShort" . $oper);
 				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $row[3], 0, 'L', 0);
