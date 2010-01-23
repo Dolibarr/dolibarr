@@ -99,7 +99,11 @@ case "$1" in
 		db_purge
 	;;
 	remove)
+		echo "Force remove of /usr/share/dolibarr/htdocs/install"
 		rm -fr /usr/share/dolibarr/htdocs/install
+
+		echo "Remove menu entry"
+		if test -x /usr/bin/update-menus; then update-menus; fi
 	;;
 	upgrade)
 	;;

@@ -127,7 +127,8 @@ case "$1" in
 			done
 		done
 
-		echo "Go on page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
+		echo "Install menu entry"
+		if test -x /usr/bin/update-menus; then update-menus; fi
 
 		# TODO Create the file to force parameters in Web installer
 		#if grep DBHOST /usr/share/dolibarr/htdocs/conf/conf.php > /dev/null
@@ -141,6 +142,7 @@ case "$1" in
 		servers="apache2-ssl apache2 mysql"
 		. /usr/share/wwwconfig-common/restart.sh
 
+		echo "Launch Dolibarr on page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)

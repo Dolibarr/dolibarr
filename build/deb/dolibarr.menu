@@ -1,0 +1,2 @@
+?package(dolibarr):needs="X11" section="Applications/File Management" \
+  title="Dolibarr" command="/usr/bin/rundolibarr.sh" icon="/usr/share/pixmaps/nautilus.xpm"

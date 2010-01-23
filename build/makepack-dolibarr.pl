@@ -384,6 +384,7 @@ if ($nboftargetok) {
             open (SPECTO,">$BUILDROOT/$PROJECT/DEBIAN/control") || die "Error";
             while (<SPECFROM>) {
             	$newbuild = $BUILD;
+                $newbuild =~ s/dev/0/gi;
                 $newbuild =~ s/alpha/0/gi;
                 $newbuild =~ s/beta/1/gi;
                 if ($newbuild !~ /-/) { $newbuild.='-2'; }
