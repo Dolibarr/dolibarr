@@ -1,3 +1,3 @@
-# This file seems to be useless
+# This file seems to be useless for Ubuntu
 # Good way to add menu on Ubuntu is adding file dolibarr.desktop
 text Apps/Misc dolibarr none "Dolibarr ERP/CRM" rundolibarr.sh
