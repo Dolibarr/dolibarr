@@ -5,8 +5,9 @@ Encoding=UTF-8
 Name=Dolibarr ERP/CRM
 GenericName=Dolibarr ERP/CRM
 Comment=The easy to use manager for small and medium enterprises or foundations
-Exec=rundolibarr.sh
-Icon=system-file-manager
+# xdg-open use default bowser to open url (exo-open for xfde, gnome-open for gnome, ...)
+Exec=xdg-open http://localhost/dolibarr
+Icon=dolibarr
 Terminal=false
 Type=Application
 Category=Application;Office

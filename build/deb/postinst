@@ -127,9 +127,20 @@ case "$1" in
 			done
 		done
 
-		echo "Install menu entry"
-		if test -x /usr/bin/update-menus; then update-menus; fi
+		# Copy icon file
+		echo "Copy icon file"
+		fileorig="/usr/share/dolibarr/doc/images/dolibarr.xpm"
+		target="/usr/share/pixmaps/"
+		cp -p $fileorig $target
 
+		echo "Install menu entry"
+		# This one is for Gnome ubuntu
+		fileorig="/usr/share/dolibarr/build/deb/dolibarr.desktop"
+		target="/usr/share/applications/"
+		cp -p $fileorig $target
+		# Not sure this one is usefulle
+		if test -x /usr/bin/update-menus; then update-menus; fi
+		
 		# TODO Create the file to force parameters in Web installer
 		#if grep DBHOST /usr/share/dolibarr/htdocs/conf/conf.php > /dev/null
 		#then

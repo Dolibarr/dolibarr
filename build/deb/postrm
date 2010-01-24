@@ -102,7 +102,12 @@ case "$1" in
 		echo "Force remove of /usr/share/dolibarr/htdocs/install"
 		rm -fr /usr/share/dolibarr/htdocs/install
 
-		echo "Remove menu entry"
+		echo "Remove menu entry and image"
+		fileorig="/usr/share/applications/dolibarr.desktop"
+		rm -f $fileorig
+		fileorig="/usr/share/pixmaps/dolibarr.xpm"
+		rm -f $fileorig
+		# Not sure this is usefulle
 		if test -x /usr/bin/update-menus; then update-menus; fi
 	;;
 	upgrade)
