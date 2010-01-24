@@ -1018,10 +1018,14 @@ if ($rowid && $action != 'edit')
     // Confirm validate member
     if ($action == 'valid')
     {
+		$langs->load("mails");
+
 		// Cree un tableau formulaire
 		$formquestion=array();
-		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-
+		$label=$langs->trans("SendAnEMailToMember");
+		$label.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+		$label.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>)';
+		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
         $ret=$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion);
         if ($ret == 'html') print '<br>';
     }
