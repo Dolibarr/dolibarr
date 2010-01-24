@@ -357,9 +357,6 @@ TitanNumRefModelDesc4						   =In questo esempio, avremo il 1 ° settembre 2006,
 PlutonNumRefModelDesc1						   =Restituire un numero di fattura personalizzabile in base ad una maschera definito.
 ValidatePayment								   =Convalidare questo pagamento?
 
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
 BillsStatisticsSuppliers=Fornitori &#39;fatture statistiche
 NumberOfBillsByMonthHT=Nb di fatture per mese (al netto delle imposte)
 AmountOfBills=Importo delle fatture
@@ -369,13 +366,6 @@ CloneInvoice=Clone fattura
 CloneMainAttributes=Clone oggetto con i suoi principali attributi
 ConfirmCloneInvoice=Sei sicuro di voler clonare presente <b>fattura %s?</b>
 DisabledBecauseReplacedInvoice=Azione disabili perché fattura è stato sostituito
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
 InvoiceDeposit=Deposito fattura
 InvoiceDepositAsk=Deposito fattura
 InvoiceDepositDesc=Questo tipo di fattura viene fatto quando un deposito è stato ricevuto.
@@ -408,11 +398,13 @@ ConfirmRemoveDiscount=Sei sicuro di voler rimuovere questo sconto?
 UseCredit=Utilizzo di credito
 ShowUnpaidLateOnly=Visualizza tardi unpaid fattura solo
 PaymentInvoiceRef=Pagamento fattura %s
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
-// Reference language: en_US
 ConfirmCancelBillQuestion=perché si desidera classificare questa fattura &#39;abbandonato&#39;?
 ConfirmValidatePayment=Sei sicuro di voler convalidare questo pagamento? Nessun cambiamento può essere fatto una volta paiement è convalidato.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
+TypeContact_facture_internal_SALESREPFOLL=Responsabile pagamenti clienti
+TypeContact_facture_external_BILLING=Contatto fatturazioni clienti
+TypeContact_facture_external_SHIPPING=Contatto spedizioni clienti
+TypeContact_facture_external_SERVICE=Contatto servizio clienti
+TypeContact_facture_fourn_internal_SALESREPFOLL=Responsabile pagamenti fornitori
+TypeContact_facture_fourn_external_BILLING=Contatto fatturazioni fournitori
+TypeContact_facture_fourn_external_SHIPPING=Contatto spedizioni fornitori
+TypeContact_facture_fourn_external_SERVICE=Contatto servizio fornitori

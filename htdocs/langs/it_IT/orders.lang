@@ -98,6 +98,26 @@ Error_COMMANDE_ADDON_NotDefined				=Costante COMMANDE_ADDON non definita
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File		=Impossibile caricare il modulo file '%s' 
 Error_FailedToLoad_COMMANDE_ADDON_File			=Impossibile caricare il modulo file '%s' 
 UseCustomerContactAsOrderRecipientIfExist		=Utilizzare l'indirizzo di contatto con i clienti se definiti invece di terze parti come indirizzo per indirizzo del destinatario 
+CustomersOrdersAndOrdersLines=Ordini dei clienti e degli ordini &#39;linee
+OrdersStatisticsSuppliers=Fornitore ordini &#39;di statistiche
+AmountOfOrdersByMonthHT=quantità di ordini da mesi (al netto delle imposte)
+RunningOrders=Ordini in corso
+UserWithApproveOrderGrant=Useres concesso con &quot;approvare ordini&quot; permesso.
+MarbreNumRefDesc=Renvoie le numro sous la forme syymm% aa-nnnn ou est l&#39;année, le mois et millimetri nnnn un compteur sequentiel sans rottura et sans remise e 0
+OrderLine=Ordine linea
+PaymentOrderRef=Il pagamento della fine %s
+CloneOrder=Clone fine
+ConfirmCloneOrder=Sei sicuro di voler clonare questo <b>modo %s?</b>
+TypeContact_commande_internal_SALESREPFOLL=Responsabbile ordini clienti
+TypeContact_commande_internal_SHIPPING=Contatto controllo spedizioni
+TypeContact_commande_external_BILLING=Contatto faturazioni clienti
+TypeContact_commande_external_SHIPPING=Contatto spedizioni clienti
+TypeContact_commande_external_CUSTOMER=Contatto controllo ordini clienti
+TypeContact_order_supplier_internal_SALESREPFOLL=Contatto controllo ordini fornitori
+TypeContact_order_supplier_internal_SHIPPING=Contatto controllo spedizioni fornitori
+TypeContact_order_supplier_external_BILLING=Contatto faturazioni fornitori
+TypeContact_order_supplier_external_SHIPPING=Contatto spedizioni fornitori
+TypeContact_order_supplier_external_CUSTOMER=Contatto controllo ordini fornitore
 
 # Sources
 OrderSource0						=Proposta commerciale 
@@ -110,29 +130,5 @@ OrderSource6						=Negozio
 QtyOrdered						=Quantità ordinata 
 AddDeliveryCostLine					=Aggiungi un costo di consegna linea che indica il peso dell'ordine
 
-
 # einstein PDF Model
 PDFEinsteinDescription					=Un modello completo per (logo. ..)
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-CustomersOrdersAndOrdersLines=Ordini dei clienti e degli ordini &#39;linee
-OrdersStatisticsSuppliers=Fornitore ordini &#39;di statistiche
-AmountOfOrdersByMonthHT=quantità di ordini da mesi (al netto delle imposte)
-RunningOrders=Ordini in corso
-UserWithApproveOrderGrant=Useres concesso con &quot;approvare ordini&quot; permesso.
-MarbreNumRefDesc=Renvoie le numro sous la forme syymm% aa-nnnn ou est l&#39;année, le mois et millimetri nnnn un compteur sequentiel sans rottura et sans remise e 0
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-OrderLine=Ordine linea
-PaymentOrderRef=Il pagamento della fine %s
-CloneOrder=Clone fine
-ConfirmCloneOrder=Sei sicuro di voler clonare questo <b>modo %s?</b>
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

@@ -73,28 +73,19 @@ CopyPropalFrom					       =Crea commerciale proposta da copia esistente proposta
 CreateEmptyPropal				       =Crea vuoto VIERGE proposte commerciali o dalla lista dei prodotti / servizi 
 DefaultProposalDurationValidity			       =Default proposta commerciale durata di validità (in giorni) 
 UseCustomerContactAsPropalRecipientIfExist	       =Utilizzare l'indirizzo di contatto con i clienti se invece definito di indirizzo di terzi come proposta indirizzo del destinatario 
-
-# Documents models
-DocModelAzurDescription                    =Modello di proposta completa (logo...)
-DocModelJauneDescription                   =Modello di proposta Jaune
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
 AmountOfProposalsByMonthHT=Importo per mese (al netto delle imposte)
 ClonePropal=Clone proposta commerciale
 ConfirmClonePropal=Sei sicuro di voler clonare presente proposta <b>commerciale %s?</b>
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
 ProposalShort=Proposta
 LastModifiedProposals=Ultimo %s proposte modificate
 DatePropal=Data della proposta
 ProposalsAndProposalsLines=Proposta commerciale e le linee
 ProposalLine=Proposta linea
 MarbreNumRefModelDesc=Torna numero con formato %syymm-nnnn a presentare proposte in cui è aa anno, MM è il mese e nnnn è una sequenza senza interruzione e senza possibilità di ritorno a 0
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+TypeContact_propal_internal_SALESREPFOLL=Responsabile proposta vendite
+TypeContact_propal_external_BILLING=Contatto proposta fatturazioni
+TypeContact_propal_external_CUSTOMER=Contatto proposta clienti
+
+# Documents models
+DocModelAzurDescription                    =Modello di proposta completa (logo...)
+DocModelJauneDescription                   =Modello di proposta Jaune
