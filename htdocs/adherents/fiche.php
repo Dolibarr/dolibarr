@@ -386,10 +386,10 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
         }
     }
 
-    // Test validite des parametres
-    if (empty($typeid)) {
-        $error++;
-        $errmsg .= $langs->trans("ErrorMemberTypeNotDefined")."<br>\n";
+    // Check parameters
+    if (empty($morphy) || $morphy == "-1") {
+    	$error++;
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person"))."<br>\n";
     }
     // Test si le login existe deja
     if (empty($login)) {
@@ -417,6 +417,10 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 		$error++;
         $langs->load("errors");
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
+    }
+    if (! ($typeid > 0)) {	// Keep () before !
+        $error++;
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"))."<br>\n";
     }
     if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($email)) {
         $error++;
@@ -631,13 +635,6 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $html = new Form($db);
 
-if ($errmsg)
-{
-    print '<div class="error">'.$errmsg.'</div>';
-    print "\n";
-}
-if ($mesg) print '<div class="ok">'.$mesg.'</div>';
-
 // fetch optionals attributes and labels
 $adho->fetch_name_optionals_label();
 
@@ -669,6 +666,13 @@ if ($action == 'edit')
 	$head = member_prepare_head($adh);
 
 	dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
+
+	if ($errmsg)
+	{
+	    print '<div class="error">'.$errmsg.'</div>';
+	}
+	if ($mesg) print '<div class="ok">'.$mesg.'</div>';
+
 
 	$rowspan=15;
 	$rowspan+=sizeof($adho->attribute_label);
@@ -825,6 +829,12 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans("NewMember"));
 
+	if ($errmsg)
+	{
+	    print '<div class="error">'.$errmsg.'</div>';
+	}
+	if ($mesg) print '<div class="ok">'.$mesg.'</div>';
+
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -835,7 +845,7 @@ if ($action == 'create')
     $morphys["phy"] = "Physique";
     $morphys["mor"] = "Morale";
     print "<tr><td>".$langs->trans("Person")."*</td><td>\n";
-    $html->select_array("morphy", $morphys, $adh->morphy);
+    $html->select_array("morphy", $morphys, $adh->morphy, 1);
     print "</td>\n";
 
     // Company
@@ -872,7 +882,7 @@ if ($action == 'create')
     $listetype=$adht->liste_array();
     if (sizeof($listetype))
     {
-        $html->select_array("typeid", $listetype, $typeid);
+        $html->select_array("typeid", $listetype, $typeid, 1);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
     }
@@ -1285,7 +1295,8 @@ if ($rowid && $action != 'edit')
 		{
 			if ($user->rights->societe->creer)
 			{
-				print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+				if ($adh->statut != -1) print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+				else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 			else
 			{

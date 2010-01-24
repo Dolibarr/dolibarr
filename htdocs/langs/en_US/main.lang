@@ -552,7 +552,7 @@ NotSupported=Not supported
 RequiredField=Required field
 Result=Result
 ToTest=Test
-
+ValidateBefore=Card must be validated before using this feature
 # Week day
 Day1=Monday
 Day2=Tuesday
