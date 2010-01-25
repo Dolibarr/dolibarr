@@ -125,3 +125,19 @@ ALTER TABLE llx_projet_task CHANGE statut fk_statut smallint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_projet_task CHANGE note note_private text;
 ALTER TABLE llx_projet_task ADD COLUMN note_public text AFTER note_private;
 
+ALTER TABLE llx_element_contact DROP FOREIGN KEY fk_element_contact_fk_c_type_contact;
+ALTER TABLE llx_element_contact DROP INDEX fk_element_contact_fk_c_type_contact;
+UPDATE llx_c_type_contact SET rowid='160' WHERE rowid='80';
+UPDATE llx_c_type_contact SET rowid='170' WHERE rowid='81';
+UPDATE llx_element_contact SET fk_c_type_contact='160' WHERE rowid='80';
+UPDATE llx_element_contact SET fk_c_type_contact='170' WHERE rowid='81';
+ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_c_type_contact FOREIGN KEY (fk_c_type_contact) REFERENCES llx_c_type_contact(rowid);
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (161, 'project',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (171, 'project',  'external', 'CONTRIBUTOR', 'Intervenant', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (180, 'project_task',  'internal', 'TASKEXECUTIVE', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (181, 'project_task',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (190, 'project_task',  'external', 'TASKEXECUTIVE', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (191, 'project_task',  'external', 'CONTRIBUTOR', 'Intervenant', 1);
+
+

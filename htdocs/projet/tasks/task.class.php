@@ -36,16 +36,19 @@ class Task extends CommonObject
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='projet_task';			//!< Id that identify managed objects
-	var $table_element='projet_task';	//!< Name of table without prefix where object is stored
+	var $element='project_task';			//!< Id that identify managed objects
+	var $table_element='project_task';	//!< Name of table without prefix where object is stored
 
     var $id;
 
-	var $fk_projet;
+	var $fk_project;
 	var $fk_task_parent;
 	var $label;
 	var $description;
 	var $duration_effective;
+	var $date_c;
+	var $date_start;
+	var $date_end;
 	var $fk_user_creat;
 	var $fk_user_valid;
 	var $statut;
@@ -90,11 +93,13 @@ class Task extends CommonObject
 		$sql.= "fk_projet";
 		$sql.= ", fk_task_parent";
 		$sql.= ", label";
+		$sql.= ", datec";
 		$sql.= ", fk_user_creat";
         $sql.= ") VALUES (";
-		$sql.= $this->fk_projet;
+		$sql.= $this->fk_project;
 		$sql.= ", ".$this->fk_task_parent;
 		$sql.= ", '".addslashes($this->label)."'";
+		$sql.= ", ".$this->db->idate($this->date_c);
 		$sql.= ", ".$user->id;
 		$sql.= ")";
 
@@ -152,7 +157,10 @@ class Task extends CommonObject
 		$sql.= " t.fk_projet,";
 		$sql.= " t.fk_task_parent,";
 		$sql.= " t.label,";
+		$sql.= " t.description,";
 		$sql.= " t.duration_effective,";
+		$sql.= " t.dateo,";
+		$sql.= " t.datee,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_valid,";
 		$sql.= " t.fk_statut,";
@@ -171,11 +179,14 @@ class Task extends CommonObject
 
                 $this->id					= $obj->rowid;
                 $this->ref					= $obj->rowid;
-				$this->fk_projet			= $obj->fk_projet;
+				$this->fk_project			= $obj->fk_projet;
 				$this->fk_task_parent		= $obj->fk_task_parent;
 				$this->label				= $obj->label;
 				$this->description			= $obj->description;
 				$this->duration_effective	= $obj->duration_effective;
+				$this->date_c				= $this->db->jdate($obj->datec);
+				$this->date_start			= $this->db->jdate($obj->dateo);
+				$this->date_end				= $this->db->jdate($obj->datee);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_statut			= $obj->fk_statut;
@@ -208,32 +219,24 @@ class Task extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
-		if (isset($this->fk_projet)) $this->fk_projet=trim($this->fk_projet);
+		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
 		if (isset($this->fk_task_parent)) $this->fk_task_parent=trim($this->fk_task_parent);
-		if (isset($this->title)) $this->title=trim($this->title);
+		if (isset($this->label)) $this->label=trim($this->label);
+		if (isset($this->description)) $this->description=trim($this->description);
 		if (isset($this->duration_effective)) $this->duration_effective=trim($this->duration_effective);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->statut)) $this->statut=trim($this->statut);
-		if (isset($this->note)) $this->note=trim($this->note);
-
-
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
-
-		$sql.= " fk_projet=".(isset($this->fk_projet)?$this->fk_projet:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " fk_task_parent=".(isset($this->fk_task_parent)?$this->fk_task_parent:"null").",";
-		$sql.= " title=".(isset($this->title)?"'".addslashes($this->title)."'":"null").",";
+		$sql.= " label=".(isset($this->label)?"'".addslashes($this->label)."'":"null").",";
+		$sql.= " description=".(isset($this->description)?"'".addslashes($this->description)."'":"null").",";
 		$sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
-		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
-		$sql.= " statut=".(isset($this->statut)?$this->statut:"null").",";
-		$sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null")."";
-
-
+		$sql.= " dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null').",";
+		$sql.= " datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null');
         $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -466,7 +469,7 @@ class Task extends CommonObject
 			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
 		}
 		$sql.= " ORDER BY p.ref, t.label";
-
+print $sql;
 		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)

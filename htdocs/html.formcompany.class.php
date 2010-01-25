@@ -534,15 +534,15 @@ class FormCompany
 	/**
 	 *
 	 */
-	function selectTypeContact($object, $defValue, $htmlname = 'type', $source)
+	function selectTypeContact($object, $defValue, $htmlname = 'type', $source, $order='code')
 	{
-	 $lesTypes = $object->liste_type_contact($source);
-	 print '<select class="flat" name="'.$htmlname.'">';
-	 foreach($lesTypes as $key=>$value)
-	 {
-		 print '<option value="'.$key.'">'.$value.'</option>';
-	 }
-	 print "</select>\n";
+		$lesTypes = $object->liste_type_contact($source, $order);
+		print '<select class="flat" name="'.$htmlname.'">';
+		foreach($lesTypes as $key=>$value)
+		{
+			print '<option value="'.$key.'">'.$value.'</option>';
+		}
+		print "</select>\n";
 	}
 
 

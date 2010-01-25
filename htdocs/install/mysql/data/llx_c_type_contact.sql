@@ -41,13 +41,15 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (40, 'propal',  'external', 'BILLING',       'Contact client facturation propale', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (41, 'propal',  'external', 'CUSTOMER',      'Contact client suivi propale', 1);
                                                                                                     
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'project',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'project',  'external', 'PROJECTLEADER', 'Chef de Projet', 1);
-
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (50, 'facture', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (60, 'facture', 'external', 'BILLING',       'Contact client facturation', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (61, 'facture', 'external', 'SHIPPING',      'Contact client livraison', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (62, 'facture', 'external', 'SERVICE',       'Contact client prestation', 1);
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (70, 'facture_fourn', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (71, 'facture_fourn', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (72, 'facture_fourn', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (73, 'facture_fourn', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (91, 'commande','internal', 'SALESREPFOLL',  'Responsable suivi de la commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (100,'commande','external', 'BILLING',       'Contact client facturation commande', 1);
@@ -59,13 +61,18 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (130, 'fichinter','external', 'BILLING',       'Contact client facturation intervention', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (131, 'fichinter','external', 'CUSTOMER',      'Contact client suivi de l''intervention', 1);
 
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (70, 'facture_fourn', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (71, 'facture_fourn', 'external', 'BILLING',       'Contact fournisseur facturation', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (72, 'facture_fourn', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (73, 'facture_fourn', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
-
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (140,'order_supplier','internal', 'SALESREPFOLL',  'Responsable suivi de la commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (141,'order_supplier','internal', 'SHIPPING',      'Responsable réception de la commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (142,'order_supplier','external', 'BILLING',       'Contact fournisseur facturation commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (143,'order_supplier','external', 'CUSTOMER',      'Contact fournisseur suivi commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (145,'order_supplier','external', 'SHIPPING',      'Contact fournisseur livraison commande', 1);
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (160, 'project',  'internal', 'PROJECTLEADER', 'Chef de Projet', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (161, 'project',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (170, 'project',  'external', 'PROJECTLEADER', 'Chef de Projet', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (171, 'project',  'external', 'CONTRIBUTOR', 'Intervenant', 1);
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (180, 'project_task',  'internal', 'TASKEXECUTIVE', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (181, 'project_task',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (190, 'project_task',  'external', 'TASKEXECUTIVE', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (191, 'project_task',  'external', 'CONTRIBUTOR', 'Intervenant', 1);

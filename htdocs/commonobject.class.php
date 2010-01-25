@@ -249,20 +249,21 @@ class CommonObject
 
 	/**
 	 *      \brief      La liste des valeurs possibles de type de contacts
-	 *      \param      source      internal ou externam
+	 *      \param      source      internal ou external
+	 *      \param		order		Sort order by : code or rowid
 	 *      \return     array       La liste des natures
 	 */
-	function liste_type_contact($source)
+	function liste_type_contact($source, $order='code')
 	{
 		global $langs;
 
 		$tab = array();
 
-		$sql = "SELECT distinct tc.rowid, tc.code, tc.libelle";
+		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-		$sql.= " WHERE element='".$this->element."'";
-		$sql.= " AND source='".$source."'";
-		$sql.= " ORDER by tc.code";
+		$sql.= " WHERE tc.element='".$this->element."'";
+		$sql.= " AND tc.source='".$source."'";
+		$sql.= " ORDER by tc.".$order;
 
 		$resql=$this->db->query($sql);
 		if ($resql)

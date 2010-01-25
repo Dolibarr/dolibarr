@@ -248,7 +248,7 @@ if ($id > 0 || ! empty($ref))
 			$html->select_users($user->id,'contactid',0);
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($project, '', 'type','internal');
+			$formcompany->selectTypeContact($project, '', 'type','internal','rowid');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -270,8 +270,8 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->client->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($project, 'id', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($project, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -279,7 +279,7 @@ if ($id > 0 || ! empty($ref))
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($project, '', 'type','external');
+			$formcompany->selectTypeContact($project, '', 'type','external','rowid');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';

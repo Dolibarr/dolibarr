@@ -82,7 +82,7 @@ if ($_GET["id"] > 0)
 	if ($task->fetch($_GET["id"]) >= 0 )
 	{
 		$projet = new Project($db);
-		$result=$projet->fetch($task->fk_projet);
+		$result=$projet->fetch($task->fk_project);
 		if (! empty($projet->socid)) $projet->societe->fetch($projet->socid);
 
 		$head=task_prepare_head($task);
@@ -120,6 +120,16 @@ if ($_GET["id"] > 0)
 		print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
 		if ($projet->societe->id) print $projet->societe->getNomUrl(1);
 		else print '&nbsp;';
+		print '</td></tr>';
+		
+		// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
+		print dol_print_date($task->date_start,'day');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
+		print dol_print_date($task->date_end,'day');
 		print '</td></tr>';
 		
 		// Description

@@ -68,10 +68,16 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			$task->label = $_POST["label"];
 			$task->description = $_POST['description'];
 			$task->fk_task_parent = $task_parent;
-			$task->datestart = $_POST['dateo'];
-			$task->dateend = $_POST['datee'];
+			$task->date_c = dol_now('tzserver');
+			$task->date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
+			$task->date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 
-			$result=$task->create($user);
+			$taskid = $task->create($user);
+			
+			if ($taskid > 0)
+			{
+				$task->update($user);
+			}
 		}
 	}
 
@@ -162,7 +168,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-	print $htmlother->selectProjectTasks($project->id, 'task_parent', $user->admin?0:1, 0, 1);
+	print $htmlother->selectProjectTasks($projectid, 'task_parent', $user->admin?0:1, 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';

@@ -63,5 +63,11 @@ ProjectContact=Project contacts
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader
+TypeContact_project_internal_CONTRIBUTOR=Contributor
+TypeContact_project_external_CONTRIBUTOR=Contributor
+TypeContact_project_task_internal_TASKEXECUTIVE=Task executive
+TypeContact_project_task_external_TASKEXECUTIVE=Task executive
+TypeContact_project_task_internal_CONTRIBUTOR=Contributor
+TypeContact_project_task_external_CONTRIBUTOR=Contributor
 # Documents models
 DocumentModelBaleine=A complete project's report model (logo...)
