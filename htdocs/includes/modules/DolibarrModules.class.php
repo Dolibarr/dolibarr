@@ -993,7 +993,8 @@ class DolibarrModules
 			$menu->target=$this->menu[$key]['target'];
 			$menu->user=$this->menu[$key]['user'];
 			//$menu->constraint=$this->menu[$key]['constraint'];
-			$menu->enabled=$this->menu[$key]['enabled'];
+			$menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
+
 			if (! $err)
 			{
 				$result=$menu->create($user);
