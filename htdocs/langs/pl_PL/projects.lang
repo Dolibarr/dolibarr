@@ -58,7 +58,7 @@ ListContractAssociatedProject=Wykaz umów związanych z projektem
 ActivityOnProjectThisWeek=Aktywność na projekt w tym tygodniu
 ActivityOnProjectThisMonth=Aktywność w sprawie projektu w tym miesiącu
 ActivityOnProjectThisYear=Aktywność na projekt w tym roku
-ChildOfTaks=Dziecko projektu / zadania
+ChildOfTask=Dziecko projektu / zadania
 NotOwnerOfProject=Nie prywatnego właściciela tego projektu
 AffectedTo=Affected do
 // Date 2009-01-19 00:44:06

@@ -50,7 +50,7 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 	{
 		if (empty($_POST['task_parent']))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTaks"));
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask"));
 			$_GET["action"]='create';
 			$error++;
 		}
@@ -155,7 +155,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '<input type="text" size="25" name="task_name" class="flat">';
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("ChildOfTaks").'</td><td>';
+	print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
 	print $htmlother->selectProjectTasks($projet->id, 'task_parent', $user->admin?0:1, 0, 1);
 	print '</td></tr>';
 

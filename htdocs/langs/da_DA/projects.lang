@@ -58,7 +58,7 @@ ListContractAssociatedProject=Liste over kontrakter i forbindelse med projektet
 ActivityOnProjectThisWeek=Aktivitet på projektet i denne uge
 ActivityOnProjectThisMonth=Aktivitet på projektet i denne måned
 ActivityOnProjectThisYear=Aktivitet på projektet i år
-ChildOfTaks=Barn af projekt / opgave
+ChildOfTask=Barn af projekt / opgave
 NotOwnerOfProject=Ikke ejer af denne private projekt
 AffectedTo=Påvirkes i
 // Date 2009-01-19 21:26:39

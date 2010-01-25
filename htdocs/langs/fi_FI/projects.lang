@@ -56,7 +56,7 @@ ListContractAssociatedProject=Luettelo sopimukset hankkeeseen liittyvät
 ActivityOnProjectThisWeek=Toiminta hanke tällä viikolla
 ActivityOnProjectThisMonth=Toiminta hankkeen tässä kuussa
 ActivityOnProjectThisYear=Toiminta hanke tänä vuonna
-ChildOfTaks=Child Hankkeen / tehtävä
+ChildOfTask=Child Hankkeen / tehtävä
 NotOwnerOfProject=Ei omistaja tämän yksityistä hanketta
 AffectedTo=Vaikuttaa
 // Date 2009-01-19 22:07:11

@@ -47,7 +47,7 @@ ListContractAssociatedProject=Lijst van opdrachten in verband met het project
 ActivityOnProjectThisWeek=Activiteiten op project(en) van deze week
 ActivityOnProjectThisMonth=Activiteiten op project(en) van deze maand
 ActivityOnProjectThisYear=Activiteiten op projecten van dit jaar
-ChildOfTaks=Uitvoering in project / taak
+ChildOfTask=Uitvoering in project / taak
 NotOwnerOfProject=Geen eigenaar van dit project
 AffectedTo=Uitgevoerd door
 
