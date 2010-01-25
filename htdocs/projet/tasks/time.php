@@ -81,7 +81,7 @@ if ($_GET["id"] > 0)
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->title.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print $projet->getNomUrl(1);

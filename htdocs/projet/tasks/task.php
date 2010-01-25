@@ -111,15 +111,20 @@ if ($_GET["id"] > 0)
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->title.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 		print $projet->getNomUrl(1);
 		print '</td></tr>';
 
-		print '<td>'.$langs->trans("Company").'</td><td>';
+		print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
 		if ($projet->societe->id) print $projet->societe->getNomUrl(1);
 		else print '&nbsp;';
+		print '</td></tr>';
+		
+		// Description
+		print '<td>'.$langs->trans("Description").'</td><td colspan="3">';
+		print nl2br($task->description);
 		print '</td></tr>';
 
 		/* List of time spent */

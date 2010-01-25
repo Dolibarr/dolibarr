@@ -213,11 +213,11 @@ class FormOther
 	{
 		global $user, $langs;
 
-		require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
 
 		//print $modeproject.'-'.$modetask;
-		$project=new Project($this->db);
-		$tasksarray=$project->getTasksArray($modetask?$user:0, $modeproject?$user:0, $mode);
+		$task=new Task($this->db);
+		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $mode);
 		if ($tasksarray)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';

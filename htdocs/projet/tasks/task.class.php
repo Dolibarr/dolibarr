@@ -90,16 +90,12 @@ class Task extends CommonObject
 		$sql.= "fk_projet";
 		$sql.= ", fk_task_parent";
 		$sql.= ", label";
-		$sql.= ", duration_effective";
 		$sql.= ", fk_user_creat";
-		$sql.= ", note_private";
         $sql.= ") VALUES (";
 		$sql.= $this->fk_projet;
 		$sql.= ", ".$this->fk_task_parent;
 		$sql.= ", '".addslashes($this->label)."'";
-		$sql.= ", ".(! isset($this->duration_effective)?'NULL':"'".$this->duration_effective."'").",";
 		$sql.= ", ".$user->id;
-		$sql.= ", '".addslashes($this->note_private)."'";
 		$sql.= ")";
 
 		$this->db->begin();
@@ -408,6 +404,98 @@ class Task extends CommonObject
 		$this->fk_user_creat='';
 		$this->statut='';
 		$this->note='';
+	}
+	
+	/**
+	 * Return list of task for all projects or a particular project
+	 * Sort order is on project, TODO then of position of task, and last on title of first level task
+	 * @param	usert	Object user to limit task affected to a particular user
+	 * @param	userp	Object user to limit projects of a particular user
+	 * @param	mode	0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 * @return 	array	Array of tasks
+	 */
+	function getTasksArray($usert=0, $userp=0, $mode=0, $socid=0)
+	{
+		global $conf;
+
+		$tasks = array();
+
+		//print $usert.'-'.$userp.'<br>';
+
+		// List of tasks
+		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel,";
+		$sql.= " t.rowid, t.label, t.description, t.fk_task_parent, t.duration_effective,";
+		$sql.= " up.name, up.firstname";
+		if ($mode == 0)
+		{
+			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as t";
+			if (is_object($usert))	// Limit to task affected to a user
+			{
+				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
+			}
+			$sql.= ")";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
+			$sql.= " WHERE t.fk_projet = p.rowid";
+			$sql.= " AND p.entity = ".$conf->entity;
+			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
+			if (is_object($usert)) $sql .= " AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
+			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
+		}
+		if ($mode == 1)
+		{
+			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
+			if (is_object($usert))	// Limit to task affected to a user
+			{
+				$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta)";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+			}
+			else
+			{
+				$sql.= ")";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+			}
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
+			$sql.= " WHERE p.entity = ".$conf->entity;
+			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
+			if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
+			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
+		}
+		$sql.= " ORDER BY p.ref, t.label";
+
+		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$tasks[$i]->id           = $obj->rowid;
+				$tasks[$i]->projectid    = $obj->projectid;
+				$tasks[$i]->projectref   = $obj->ref;
+				$tasks[$i]->projectlabel = $obj->plabel;
+				$tasks[$i]->label        = $obj->label;
+				$tasks[$i]->description  = $obj->description;
+				$tasks[$i]->fk_parent    = $obj->fk_task_parent;
+				$tasks[$i]->duration     = $obj->duration_effective;
+				$tasks[$i]->name         = $obj->name;			// Name of project leader
+				$tasks[$i]->firstname    = $obj->firstname;		// Firstname of project leader
+				$i++;
+			}
+			$this->db->free();
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $tasks;
 	}
 
 }

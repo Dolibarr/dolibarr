@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
- *	\ingroup    projet
- *	\brief      Fiche t�ches d'un projet
+ *	\file       htdocs/projet/tasks/who.php
+ *	\ingroup    project
+ *	\brief      Fiche taches d'un projet
  *	\version    $Id$
  */
 
@@ -79,7 +80,7 @@ if ($_GET["id"] > 0)
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->title.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print $projet->getNomUrl(1);
@@ -93,13 +94,14 @@ if ($_GET["id"] > 0)
 
 		/* Liste des affectations */
 
-		$sql = "SELECT t.title, t.duration_effective, t.fk_task_parent, t.statut,";
+		$sql = "SELECT t.label, t.duration_effective, t.fk_task_parent, t.fk_statut,";
 		$sql.= " u.login, u.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t,";
 		$sql.= " ".MAIN_DB_PREFIX."projet_task_actors as ta,";
 		$sql.= " ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE t.rowid =".$task->id;
-		$sql.= " AND t.rowid = ta.fk_projet_task AND ta.fk_user = u.rowid";
+		$sql.= " AND t.rowid = ta.fk_projet_task";
+		$sql.= " AND ta.fk_user = u.rowid";
 
 		$lines=array();
 		$var=true;

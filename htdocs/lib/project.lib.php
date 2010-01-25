@@ -354,7 +354,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				{
 					print "&nbsp; &nbsp; &nbsp;";
 				}
-				print $lines[$i]->title;
+				print $lines[$i]->label;
 				if ($showlineingray) print '</i>';
 				else print '</a>';
 				print "</td>\n";
