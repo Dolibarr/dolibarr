@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,26 +44,6 @@ $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
 
-
-/*
- * Actions
- */
-
-if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
-{
-	$project = new Project($db);
-
-	$result = $project->fetch($_GET["id"]);
-
-	if ($result == 0)
-	{
-		$task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
-		$project->CreateTask($user, $_POST["task_name"], $task_parent);
-
-		Header("Location:fiche.php?id=".$project->id);
-	}
-}
-
 /*
  * View
  */
@@ -79,15 +59,15 @@ llxHeader("",$title,"Projet");
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 
-$project = new Project($db);
+$task = new Task($db);
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray=$project->getTasksArray(0, 0, 0, $socid);
+$tasksarray=$task->getTasksArray(0, 0, 0, $socid);
 // We load also tasks limited to a particular user
-$tasksrole=($_REQUEST["mode"]=='mine' ? $project->getTasksRoleForUser($user) : '');
+$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksRoleForUser($user) : '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

@@ -276,7 +276,7 @@ else
 	// can have a parent that is not affected to him).
 	$tasksarray=$task->getTasksArray(0, 0, 0);
 	// We load also tasks limited to a particular user
-	$tasksrole=($_REQUEST["mode"]=='mine' ? $project->getTasksRoleForUser($user) : '');
+	$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksRoleForUser($user) : '');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

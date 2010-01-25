@@ -497,6 +497,45 @@ class Task extends CommonObject
 
 		return $tasks;
 	}
+	
+	/**
+	 * Return array of role of user for each projects
+	 *
+	 * @param unknown_type $user
+	 * @return unknown
+	 */
+	function getTasksRoleForUser($user)
+	{
+		$tasksrole = array();
+
+		/* Liste des taches et role sur la tache du user courant dans $tasksrole */
+		$sql = "SELECT a.fk_projet_task, a.role";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as a";
+		$sql.= " WHERE pt.rowid = a.fk_projet_task";
+		$sql.= " AND a.fk_user = ".$user->id;
+		if ($this->id) $sql.= " AND pt.fk_projet =".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$tasksrole[$row[0]] = $row[1];
+				$i++;
+			}
+			$this->db->free();
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $tasksrole;
+	}
 
 }
 ?>
