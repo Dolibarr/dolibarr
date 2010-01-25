@@ -129,8 +129,8 @@ ALTER TABLE llx_element_contact DROP FOREIGN KEY fk_element_contact_fk_c_type_co
 ALTER TABLE llx_element_contact DROP INDEX fk_element_contact_fk_c_type_contact;
 UPDATE llx_c_type_contact SET rowid='160' WHERE rowid='80';
 UPDATE llx_c_type_contact SET rowid='170' WHERE rowid='81';
-UPDATE llx_element_contact SET fk_c_type_contact='160' WHERE rowid='80';
-UPDATE llx_element_contact SET fk_c_type_contact='170' WHERE rowid='81';
+UPDATE llx_element_contact SET fk_c_type_contact='160' WHERE fk_c_type_contact='80';
+UPDATE llx_element_contact SET fk_c_type_contact='170' WHERE fk_c_type_contact='81';
 ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_c_type_contact FOREIGN KEY (fk_c_type_contact) REFERENCES llx_c_type_contact(rowid);
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (161, 'project',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);
