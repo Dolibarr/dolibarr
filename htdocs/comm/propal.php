@@ -1613,7 +1613,9 @@ if ($id > 0 || ! empty($ref))
 					}
 					else
 					{
-						print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
+						$nbrows=ROWS_2;
+						if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+						print '<textarea name="desc" cols="70" class="flat" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
 					}
 				}
 				print '</td>';

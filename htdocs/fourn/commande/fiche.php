@@ -858,7 +858,9 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<textarea name="eldesc" class="flat" cols="70" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($commandline->description).'</textarea>';
+					$nbrows=ROWS_2;
+					if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+					print '<textarea name="eldesc" class="flat" cols="70" rows="'.$nbrows.'">'.dol_htmlentitiesbr_decode($commandline->description).'</textarea>';
 				}
 				print '</td>';
 				print '<td>';
