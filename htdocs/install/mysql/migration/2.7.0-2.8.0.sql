@@ -118,12 +118,15 @@ ALTER TABLE llx_projet_task ADD COLUMN datee datetime AFTER dateo;
 ALTER TABLE llx_projet_task ADD COLUMN datev datetime AFTER datee;
 ALTER TABLE llx_projet_task CHANGE title label varchar(255) NOT NULL;
 ALTER TABLE llx_projet_task ADD COLUMN description varchar(255) AFTER label;
+ALTER TABLE llx_projet_task ADD COLUMN progress	integer	DEFAULT 0 AFTER duration_effective;
+ALTER TABLE llx_projet_task ADD COLUMN priority	integer	DEFAULT 0 AFTER progress;
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_valid integer AFTER fk_user_modif;
 UPDATE llx_projet_task SET statut='1' WHERE statut='open';
 ALTER TABLE llx_projet_task CHANGE statut fk_statut smallint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_projet_task CHANGE note note_private text;
 ALTER TABLE llx_projet_task ADD COLUMN note_public text AFTER note_private;
+ALTER TABLE llx_projet_task ADD COLUMN rang	integer	DEFAULT 0 AFTER note_public;
 
 ALTER TABLE llx_element_contact DROP FOREIGN KEY fk_element_contact_fk_c_type_contact;
 ALTER TABLE llx_element_contact DROP INDEX fk_element_contact_fk_c_type_contact;

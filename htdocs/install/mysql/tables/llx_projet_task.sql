@@ -32,9 +32,12 @@ create table llx_projet_task
   label					varchar(255) NOT NULL,
   description			varchar(255),
   duration_effective	real NOT NULL,
+  progress				integer	DEFAULT 0,				-- percentage increase
+  priority				integer	DEFAULT 0,				-- priority
   fk_user_creat			integer,						-- user who created the task
   fk_user_valid			integer,						-- user who validated the task
   fk_statut				smallint DEFAULT 0 NOT NULL,
   note_private			text,
-  note_public			text
+  note_public			text,
+  rang					integer	DEFAULT 0
 )type=innodb;
