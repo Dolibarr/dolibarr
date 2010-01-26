@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -826,12 +826,17 @@ function fieldList($fieldlist,$obj='')
 			$langs->load("project");
 			$langs->load("propal");
 			$langs->load("bills");
+			$langs->load("interventions");
 			print '<td>';
 			$elementList = array("commande"=>$langs->trans("Order"),
+			"order_supplier"=>$langs->trans("SupplierOrder"),
 			"contrat"=>$langs->trans("Contract"),
-			"projet"=>$langs->trans("Project"),
+			"project"=>$langs->trans("Project"),
+			"project_task"=>$langs->trans("Task"),
 			"propal"=>$langs->trans("Propal"),
-			"facture"=>$langs->trans("Bill"));
+			"facture"=>$langs->trans("Bill"),
+			"facture_fourn"=>$langs->trans("SupplierBill"),
+			"fichinter"=>$langs->trans("InterventionCard"));
 			$html->select_array('element', $elementList,$obj->$fieldlist[$field]);
 			print '</td>';
 		}
