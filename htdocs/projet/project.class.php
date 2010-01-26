@@ -161,7 +161,7 @@ class Project extends CommonObject
 	{
 		if (empty($id) && empty($ref)) return -1;
 
-		$sql = "SELECT rowid, ref, title, datec, tms, dateo, datee, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
+		$sql = "SELECT rowid, ref, title, datec, tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		if ($ref) $sql.= " WHERE ref='".$ref."'";
 		else $sql.= " WHERE rowid=".$id;
@@ -188,7 +188,6 @@ class Project extends CommonObject
 				$this->socid          = $obj->fk_soc;
 				$this->societe->id    = $obj->fk_soc;	// TODO For backward compatibility
 				$this->user_author_id = $obj->fk_user_creat;
-				$this->user_resp_id   = $obj->fk_user_resp;
 				$this->statut         = $obj->fk_statut;
 
 				$this->db->free($resql);

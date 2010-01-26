@@ -101,9 +101,9 @@ function task_prepare_head($object)
 	$head[$h][2] = 'time';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/who.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Affectations");
-	$head[$h][2] = 'who';
+	$head[$h][2] = 'contact';
 	$h++;
 
 	// Show more tabs from modules

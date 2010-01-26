@@ -426,50 +426,17 @@ class Task extends CommonObject
 		//print $usert.'-'.$userp.'<br>';
 
 		// List of tasks
-		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel,";
-		$sql.= " t.rowid, t.label, t.description, t.fk_task_parent, t.duration_effective,";
-		$sql.= " up.name, up.firstname";
-		if ($mode == 0)
-		{
-			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as t";
-			if (is_object($usert))	// Limit to task affected to a user
-			{
-				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta";
-			}
-			$sql.= ")";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
-			$sql.= " WHERE t.fk_projet = p.rowid";
-			$sql.= " AND p.entity = ".$conf->entity;
-			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
-			if (is_object($usert)) $sql .= " AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
-			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
-		}
-		if ($mode == 1)
-		{
-			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
-			if (is_object($usert))	// Limit to task affected to a user
-			{
-				$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-				$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as ta)";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-			}
-			else
-			{
-				$sql.= ")";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-			}
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as up on p.fk_user_resp = up.rowid";
-			$sql.= " WHERE p.entity = ".$conf->entity;
-			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-			if ($this->id) $sql .= " AND t.fk_projet =".$this->id;
-			if (is_object($usert)) $sql .= " AND t.fk_projet = p.rowid AND ta.fk_projet_task = t.rowid AND ta.fk_user = ".$usert->id;
-			if (is_object($userp)) $sql .= " AND (p.fk_user_resp = ".$userp->id." OR p.fk_user_resp IS NULL OR p.fk_user_resp = -1)";
-		}
+		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel";
+		$sql.= ", t.rowid, t.label, t.description, t.fk_task_parent, t.duration_effective";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+		$sql.= ", ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		$sql.= " WHERE t.fk_projet = p.rowid";
+		$sql.= " AND p.entity = ".$conf->entity;
+		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+		if ($this->id) $sql.= " AND t.fk_projet =".$this->id;
 		$sql.= " ORDER BY p.ref, t.label";
-print $sql;
+
 		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -512,11 +479,14 @@ print $sql;
 		$tasksrole = array();
 
 		/* Liste des taches et role sur la tache du user courant dans $tasksrole */
-		$sql = "SELECT a.fk_projet_task, a.role";
+		$sql = "SELECT ec.element_id, ctc.code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
-		$sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as a";
-		$sql.= " WHERE pt.rowid = a.fk_projet_task";
-		$sql.= " AND a.fk_user = ".$user->id;
+		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+		$sql.= " WHERE pt.rowid = ec.element_id";
+		$sql.= " AND ctc.element = '".$this->element."'";
+		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+		$sql.= " AND ec.fk_socpeople = ".$user->id;
 		if ($this->id) $sql.= " AND pt.fk_projet =".$this->id;
 
 		$resql = $this->db->query($sql);

@@ -58,9 +58,8 @@ if ($_GET["id"] > 0)
 	$task = new Task($db);
 	if ($task->fetch($_GET["id"]) >= 0 )
 	{
-		$projet = new Project($db);
-		$result=$projet->fetch($task->fk_projet);
-		if (! empty($projet->socid)) $projet->societe->fetch($projet->socid);
+		$result=$projectstatic->fetch($task->fk_project);
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
 		$head=task_prepare_head($task);
 
@@ -68,7 +67,7 @@ if ($_GET["id"] > 0)
 
 		if ($mesg) print $mesg.'<br>';
 
-		print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<table class="border" width="100%">';
@@ -84,11 +83,11 @@ if ($_GET["id"] > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		print $projet->getNomUrl(1);
+		print $projectstatic->getNomUrl(1);
 		print '</td></tr>';
 
 		print '<td>'.$langs->trans("Company").'</td><td>';
-		if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 

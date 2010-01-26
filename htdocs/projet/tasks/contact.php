@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +19,13 @@
  */
 
 /**
- *       \file       htdocs/projet/contact.php
- *       \ingroup    project
- *       \brief      Onglet de gestion des contacts du projet
- *       \version    $Id$
+ *	\file       htdocs/projet/tasks/who.php
+ *	\ingroup    project
+ *	\brief      Fiche taches d'un projet
+ *	\version    $Id$
  */
 
 require ("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
@@ -32,11 +33,12 @@ require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 $langs->load("projects");
 $langs->load("companies");
 
-$projectid = isset($_GET["id"])?$_GET["id"]:'';
+$taskid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $projectid);
+//$result = restrictedArea($user, 'projet', $taskid, 'projet_task');
+if (!$user->rights->projet->lire) accessforbidden();
 
 
 /*
@@ -48,43 +50,43 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 {
 
 	$result = 0;
-	$project = new Project($db);
-	$result = $project->fetch($projectid);
+	$task = new Task($db);
+	$result = $task->fetch($taskid);
 
-    if ($result > 0 && $projectid > 0)
+    if ($result > 0 && $taskid > 0)
     {
-  		$result = $project->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+  		$result = $task->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$project->id);
+		Header("Location: contact.php?id=".$task->id);
 		exit;
 	}
 	else
 	{
-		if ($project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		if ($task->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$project->error.'</div>';
+			$mesg = '<div class="error">'.$task->error.'</div>';
 		}
 	}
 }
 // modification d'un contact. On enregistre le type
 if ($_POST["action"] == 'updateline' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
-	if ($project->fetch($projectid))
+	$task = new Task($db);
+	if ($task->fetch($taskid))
 	{
-		$contact = $project->detail_contact($_POST["elrowid"]);
+		$contact = $task->detail_contact($_POST["elrowid"]);
 		$type = $_POST["type"];
 		$statut = $contact->statut;
 
-		$result = $project->update_contact($_POST["elrowid"], $statut, $type);
+		$result = $task->update_contact($_POST["elrowid"], $statut, $type);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -103,14 +105,14 @@ if ($_POST["action"] == 'updateline' && $user->rights->projet->creer)
 // bascule du statut d'un contact
 if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
-	if ($project->fetch($projectid))
+	$task = new Task($db);
+	if ($task->fetch($taskid))
 	{
-		$contact = $project->detail_contact($_GET["ligne"]);
+		$contact = $task->detail_contact($_GET["ligne"]);
 		$id_type_contact = $contact->fk_c_type_contact;
 		$statut = ($contact->statut == 4) ? 5 : 4;
 
-		$result = $project->update_contact($_GET["ligne"], $statut, $id_type_contact);
+		$result = $task->update_contact($_GET["ligne"], $statut, $id_type_contact);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -129,13 +131,13 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 // Efface un contact
 if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
-	$project->fetch($projectid);
-	$result = $project->delete_contact($_GET["lineid"]);
+	$task = new Task($db);
+	$task->fetch($taskid);
+	$result = $task->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$project->id);
+		Header("Location: contact.php?id=".$task->id);
 		exit;
 	}
 	else
@@ -149,11 +151,12 @@ if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
  * View
  */
 
-llxHeader('', $langs->trans("Project"), "Project");
+llxHeader('', $langs->trans("Task"));
 
 $html = new Form($db);
-$formcompany= new FormCompany($db);
-$contactstatic=new Contact($db);
+$formcompany   = new FormCompany($db);
+$contactstatic = new Contact($db);
+$projectstatic = new Project($db);
 
 
 /* *************************************************************************** */
@@ -167,14 +170,15 @@ $id = $_GET['id'];
 $ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$project = new Project($db);
+	$task = new Task($db);
 
-	if ( $project->fetch($id,$ref) > 0)
+	if ( $task->fetch($id,$ref) > 0)
 	{
-		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+		$result=$projectstatic->fetch($task->fk_project);
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
-		$head = project_prepare_head($project);
-		dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, 'project');
+		$head = task_prepare_head($task);
+		dol_fiche_head($head, 'contact', $langs->trans("Task"), 0, 'projecttask');
 
 
 		/*
@@ -186,16 +190,16 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		print $html->showrefnav($project,'ref',$linkback,1,'ref','ref','');
+		print $html->showrefnav($task,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$task->label.'</td></tr>';
 
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">';
-		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 
@@ -246,7 +250,7 @@ if ($id > 0 || ! empty($ref))
 			$html->select_users($user->id,'contactid',0);
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($project, '', 'type','internal','rowid');
+			$formcompany->selectTypeContact($task, '', 'type','internal','rowid');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -268,8 +272,8 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($project, 'id', $selectedCompany, 'newcompany');
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($task, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -277,7 +281,7 @@ if ($id > 0 || ! empty($ref))
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($project, '', 'type','external','rowid');
+			$formcompany->selectTypeContact($task, '', 'type','external','rowid');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="true"';
@@ -304,7 +308,7 @@ if ($id > 0 || ! empty($ref))
 
 		foreach(array('internal','external') as $source)
 		{
-			$tab = $project->liste_contact(-1,$source);
+			$tab = $task->liste_contact(-1,$source);
 			$num=sizeof($tab);
 
 			$i = 0;
@@ -358,9 +362,9 @@ if ($id > 0 || ! empty($ref))
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($project->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($task->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($project->statut >= 0) print '</a>';
+				if ($task->statut >= 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete
@@ -368,7 +372,7 @@ if ($id > 0 || ! empty($ref))
 				if ($user->rights->projet->creer)
 				{
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -389,5 +393,5 @@ if ($id > 0 || ! empty($ref))
 
 $db->close();
 
-llxFooter('$Date$');
+llxFooter('$Date$ - $Revision$');
 ?>

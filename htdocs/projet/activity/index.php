@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,15 +67,15 @@ print "</tr>\n";
 $sql = "SELECT p.rowid, p.ref, p.title, count(t.rowid) as nb";
 $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-if ($mode == 'mine') $sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as pta";
+//if ($mode == 'mine') $sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as pta";
 $sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as s on s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 if ($socid) $sql.= " AND p.fk_soc = ".$socid;
-if ($mode == 'mine') $sql.=" AND t.rowid = pta.fk_projet_task";
-if ($mode == 'mine') $sql.=" AND pta.fk_user = ".$user->id;
+//if ($mode == 'mine') $sql.=" AND t.rowid = pta.fk_projet_task";
+//if ($mode == 'mine') $sql.=" AND pta.fk_user = ".$user->id;
 $sql.= " GROUP BY p.rowid";
 
 $var=true;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 $sql.= " WHERE p.entity = ".$conf->entity;
-if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
+//if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY p.title, p.rowid";
 
@@ -113,7 +113,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " WHERE p.entity = ".$conf->entity;
-if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
+//if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
