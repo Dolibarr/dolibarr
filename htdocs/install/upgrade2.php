@@ -257,6 +257,8 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 			migrate_relationship_tables($db,$langs,$conf,'co_fa','fk_commande','commande','fk_facture','facture');
 			
+			migrate_project_user_resp($db,$langs,$conf);
+			
 			migrate_project_task_actors($db,$langs,$conf);
 		}
 
@@ -277,8 +279,6 @@ else
 
 
 pFooter($error,$setuplang);
-
-
 
 
 /**
@@ -366,7 +366,6 @@ function migrate_paiements($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
 
 /**
  * Corrige paiement orphelins (liens paumes suite a bugs)
@@ -487,7 +486,6 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
 
 /**
  * Corrige paiement orphelins (liens paumes suite a bugs)
@@ -627,7 +625,6 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
 function migrate_paiements_orphelins_3($db,$langs,$conf)
 {
 
@@ -640,7 +637,6 @@ function migrate_paiements_orphelins_3($db,$langs,$conf)
 	 */
 
 }
-
 
 /*
  * Mise a jour des contrats (gestion du contrat + detail de contrat)
@@ -735,7 +731,6 @@ function migrate_contracts_det($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
 function migrate_links_transfert($db,$langs,$conf)
 {
 	print '<tr><td colspan="4">';
@@ -812,7 +807,6 @@ function migrate_links_transfert($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
 /*
  * Mise a jour des date de contrats non renseignees
  */
@@ -843,7 +837,6 @@ function migrate_contracts_date1($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
 
 /*
  * Mise a jour date contrat avec date min effective mise en service si inferieur
@@ -909,7 +902,6 @@ function migrate_contracts_date2($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
 /*
  * Mise a jour des dates de creation de contrat
  */
@@ -931,7 +923,6 @@ function migrate_contracts_date3($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
 
 /*
  * Reouverture des contrats qui ont au moins une ligne non fermee
@@ -986,7 +977,6 @@ function migrate_contracts_open($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
 
 /**
  * Factures fournisseurs
@@ -1100,8 +1090,6 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	}
 }
 
-
-
 /*
  * Mise a jour des totaux lignes de facture
  */
@@ -1211,7 +1199,6 @@ function migrate_price_facture($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
 /*
  * Mise a jour des totaux lignes de propal
  */
@@ -1314,8 +1301,6 @@ function migrate_price_propal($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
-
 
 /*
  * Mise a jour des totaux lignes de propal
@@ -1420,7 +1405,6 @@ function migrate_price_contrat($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
 
 /*
  * Mise a jour des totaux lignes de commande
@@ -1534,7 +1518,6 @@ function migrate_price_commande($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
 /*
  * Mise a jour des totaux lignes de commande fournisseur
  */
@@ -1646,7 +1629,6 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
 
 /*
  * Mise a jour des modeles selectionnes
@@ -1826,8 +1808,6 @@ function migrate_commande_expedition($db,$langs,$conf)
 
 			if ($num)
 			{
-				$db->begin();
-
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
@@ -2076,8 +2056,6 @@ function migrate_detail_livraison($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
-
 /*
  * Migration du champ stock dans produits
  */
@@ -2146,8 +2124,6 @@ function migrate_stocks($db,$langs,$conf)
 
 	print '</td></tr>';
 }
-
-
 
 /*
  * Migration of menus (use only 1 table instead of 3)
@@ -2303,7 +2279,6 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-
 /*
  * Migration du champ fk_remise_except dans llx_facturedet doit correspondre a
  * lien dans llx_societe_remise_except vers llx_facturedet
@@ -2455,6 +2430,98 @@ function migrate_restore_missing_links($db,$langs,$conf)
 		$db->rollback();
 	}
 
+	print '</td></tr>';
+}
+
+/*
+ * Migration du champ fk_user_resp de llx_projet vers llx_element_contact
+ */
+function migrate_project_user_resp($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_project_user_resp");
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationProjectUserResp')."</b><br>\n";
+
+	$result = $db->DDLDescTable(MAIN_DB_PREFIX."projet","fk_user_resp");
+	$obj = $db->fetch_object($result);
+	if ($obj)
+	{
+		$error = 0;
+
+		$db->begin();
+
+		$sql = "SELECT rowid, fk_user_resp FROM ".MAIN_DB_PREFIX."projet";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$i = 0;
+			$num = $db->num_rows($resql);
+
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
+					$sql2.= "datecreate";
+					$sql2.= ", statut";
+					$sql2.= ", element_id";
+					$sql2.= ", fk_c_type_contact";
+					$sql2.= ", fk_socpeople";
+					$sql2.= ") VALUES (";
+					$sql2.= $db->idate(dol_now());
+					$sql2.= ", '4'";
+					$sql2.= ", ".$obj->rowid;
+					$sql2.= ", '160'";
+					$sql2.= ", ".$obj->fk_user_resp;
+					$sql2.= ")";
+					
+					if ($obj->fk_user_resp > 0)
+					{
+						$resql2=$db->query($sql2);
+						if (!$resql2)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+					}
+					print ". ";
+
+					$i++;
+				}
+			}
+
+			if ($error == 0)
+			{
+				$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."projet DROP COLUMN fk_user_resp";
+				if ($db->query($sqlDrop))
+				{
+					$db->commit();
+				}
+				else
+				{
+					$db->rollback();
+				}
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+			$db->rollback();
+		}
+	}
+	else
+	{
+		print $langs->trans('AlreadyDone')."<br>\n";
+	}
 	print '</td></tr>';
 }
 
@@ -2635,7 +2702,6 @@ function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcet
 
 	print '</td></tr>';
 }
-
 
 /*
  * Migration directory

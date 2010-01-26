@@ -212,3 +212,6 @@ MigrationDeliveryAddress=Mise a jour des adresses de livraison dans les bons d'e
 
 # Migration project task actors
 MigrationProjectTaskActors=Migration de la table llx_projet_task_actors
+
+# Migration project user resp
+MigrationProjectUserResp=Migration du champ fk_user_resp de llx_projet vers llx_element_contact

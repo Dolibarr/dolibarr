@@ -30,7 +30,6 @@ create table llx_projet
   ref              varchar(50),
   entity           integer DEFAULT 1 NOT NULL, -- multi company id
   title            varchar(255),
-  fk_user_resp     integer,      -- responsable du projet
   fk_user_creat    integer,      -- createur du projet
   note             text,
   model_pdf        varchar(50)
