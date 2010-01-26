@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - main
+# Dolibarr language file - ca_ES - main 
 CHARSET = UTF-8
 DIRECTION = ltr
 SeparatorDecimal = ,
@@ -551,6 +551,7 @@ NotSupported = No suportat
 RequiredField = Camp obligatori
 Result = Resultat
 ToTest = provar
+ValidateBefore = Per poder utilitzar aquesta funció ha de validar la fitxa
 # Week day =  = 
 Day1 = Dillus
 Day2 = Dimarts

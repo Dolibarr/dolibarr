@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - main
+# Dolibarr language file - es_ES - main 
 CHARSET = UTF-8
 DIRECTION = ltr
 SeparatorDecimal = ,
@@ -551,6 +551,7 @@ NotSupported = No soportado
 RequiredField = Campo obligatorio
 Result = Resultado
 ToTest = Probar
+ValidateBefore = Para poder usar esta función debe validarse la ficha
 # Week day = 
 Day1 = Lunes
 Day2 = Martes
