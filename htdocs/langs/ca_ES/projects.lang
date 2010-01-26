@@ -60,5 +60,8 @@ ConfirmCloseAProject = Esteu segur de voler tancar aquest projecte?
 ReOpenAProject = Reobrir projecte
 ConfirmReOpenAProject = Esteu segur de voler reobrir aquest projecte?
 ProjectContact = Contactes projecte
+##### Types de contacts ##### =  = 
+TypeContact_project_internal_PROJECTLEADER = Cap de projecte
+TypeContact_project_external_PROJECTLEADER = Cap de projecte
 # Documents models =  = 
 DocumentModelBaleine = Model d'informe de projecte complet (logo...)

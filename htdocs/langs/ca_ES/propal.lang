@@ -81,6 +81,10 @@ ClonePropal = Clonar pressupost
 ConfirmClonePropal = Esteu segur de voler clonar aquest pressupost <b>%s</b>?
 ProposalsAndProposalsLines = Pressupostos a clients i línies de pressupostos
 ProposalLine = Línia de pressupost
+##### Types de contacts ##### =  = 
+TypeContact_propal_internal_SALESREPFOLL = Comercial seguiment pressupost
+TypeContact_propal_external_BILLING = Contacte client de facturació pressupost
+TypeContact_propal_external_CUSTOMER = Contacte client seguiment pressupost
 # Documents models =  = 
 DocModelAzurDescription = Model de pressupost complet (logo...)
 DocModelJauneDescription = Model de pressupost Jaune

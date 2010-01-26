@@ -103,6 +103,17 @@ UserWithApproveOrderGrant = Usuaris habilitats per aprovar les comandes
 PaymentOrderRef = Pagament comanda %s
 CloneOrder = Clonar comanda
 ConfirmCloneOrder = Esteu segur de voler clonar aquesta comanda <b>%s</b>?
+##### Types de contacts ##### =  = 
+TypeContact_commande_internal_SALESREPFOLL = Responsable seguiment comanda client
+TypeContact_commande_internal_SHIPPING = Responsable enviament comanda client
+TypeContact_commande_external_BILLING = Contacte client facturació comanda
+TypeContact_commande_external_SHIPPING = Contacte client lliurament comanda
+TypeContact_commande_external_CUSTOMER = Contacte client seguiment comanda
+TypeContact_order_supplier_internal_SALESREPFOLL = Responsable seguiment comanda a proveïdor
+TypeContact_order_supplier_internal_SHIPPING = Responsable recepció comanda a proveïdor
+TypeContact_order_supplier_external_BILLING = Contacte proveïdor facturació comanda
+TypeContact_order_supplier_external_SHIPPING = Contacte proveïdor lliurament comanda
+TypeContact_order_supplier_external_CUSTOMER = Contacte proveïdor seguiment comanda
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined = Constant COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined = Constant COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File = Error en la càrrega de l'arxiu mòdul '%s'

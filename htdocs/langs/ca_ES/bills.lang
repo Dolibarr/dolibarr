@@ -352,6 +352,15 @@ Reported = Ajornat
 InvoiceDeposit = Factura de bestreta
 InvoiceDepositAsk = Factura de bestreta
 InvoiceDepositDesc = La <b>factura de bestreta</b> és el tipus de factura que es crea a la recepció d'una bestreta, si no és possible realitzar el pagament sobre una factura definitiva.
+##### Types de contacts ##### =  = 
+TypeContact_facture_internal_SALESREPFOLL = Responsable seguiment factura a client
+TypeContact_facture_external_BILLING = Contacte client facturació
+TypeContact_facture_external_SHIPPING = Contacte client entregues
+TypeContact_facture_external_SERVICE = Contacte client serveis
+TypeContact_facture_fourn_internal_SALESREPFOLL = Responsable seguiment factures de proveïdor
+TypeContact_facture_fourn_external_BILLING = Contacte proveïdor facturació
+TypeContact_facture_fourn_external_SHIPPING = Contacte proveïdor entregues
+TypeContact_facture_fourn_external_SERVICE = Contacte proveïdor serveis
 # oursin PDF model =  = 
 Of = de
 # bernique PDF model =  = 
