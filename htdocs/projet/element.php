@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,15 +44,15 @@ if ($conf->commande->enabled) $langs->load("orders");
 if ($conf->propal->enabled)   $langs->load("propal");
 
 // Security check
-$projetid='';
+$projectid='';
 $ref='';
-if (isset($_GET["id"]))  { $projetid=$_GET["id"]; }
+if (isset($_GET["id"]))  { $projectid=$_GET["id"]; }
 if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
-if ($projetid == '' && $ref == '') accessforbidden();
+if ($projectid == '' && $ref == '') accessforbidden();
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $projetid);
+$result = restrictedArea($user, 'projet', $projectid);
 
 
 /*
@@ -63,39 +63,56 @@ llxHeader("",$langs->trans("Referers"),"EN:Module_Projects|FR:Module_Projets|ES:
 
 $form = new Form($db);
 
-$projet = new Project($db);
-$projet->fetch($_GET["id"],$_GET["ref"]);
-$projet->societe->fetch($projet->societe->id);
-if ($projet->user_resp_id > 0)
-{
-	$result=$projet->fetch_user($projet->user_resp_id);
-}
+$userstatic=new User($db);
 
-$head=project_prepare_head($projet);
+$project = new Project($db);
+$project->fetch($_GET["id"],$_GET["ref"]);
+$project->societe->fetch($project->societe->id);
+
+$head=project_prepare_head($project);
 dol_fiche_head($head, 'element', $langs->trans("Project"),0,'project');
 
 
 print '<table class="border" width="100%">';
 
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-print $form->showrefnav($projet,'ref','',1,'ref','ref');
+print $form->showrefnav($project,'ref','',1,'ref','ref');
 print '</td></tr>';
 
-print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
+print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
 
 print '<tr><td>'.$langs->trans("Company").'</td><td>';
-if (! empty($projet->societe->id)) print $projet->societe->getNomUrl(1);
+if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
 else print '&nbsp;';
 print '</td></tr>';
 
 // Project leader
 print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-if ($projet->user->id) print $projet->user->getNomUrl(1);
-else print $langs->trans('SharedProject');
+$contact = $project->liste_contact(4,'internal');
+$num=sizeof($contact);
+if ($num)
+{
+	$i = 0;
+	while ($i < $num)
+	{
+		if ($contact[$i]['code'] == 'PROJECTLEADER')
+		{
+			$userstatic->id = $contact[$i]['id'];
+			$userstatic->fetch();
+			print $userstatic->getNomUrl(1);
+			print '<br>';
+		}
+		$i++;
+	}
+}
+else
+{
+	print $langs->trans('SharedProject');
+}
 print '</td></tr>';
 
 // Statut
-print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projet->getLibStatut(4).'</td></tr>';
+print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
 print '</table>';
 
@@ -160,7 +177,7 @@ foreach ($listofreferent as $key => $value)
 		if (empty($value['disableamount'])) print '<td align="right">'.$langs->trans("Amount").'</td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
-		$elementarray = $projet->get_element_list($key);
+		$elementarray = $project->get_element_list($key);
 		if (sizeof($elementarray)>0 && is_array($elementarray))
 		{
 			$var=true;
@@ -208,30 +225,30 @@ foreach ($listofreferent as $key => $value)
 		 */
 		print '<div class="tabsAction">';
 
-		if ($projet->societe->prospect || $projet->societe->client)
+		if ($project->societe->prospect || $project->societe->client)
 		{
 			if ($key == 'propal' && $conf->propal->enabled && $user->rights->propale->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddProp").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$project->societe->id.'&amp;action=create&amp;projetid='.$project->id.'">'.$langs->trans("AddProp").'</a>';
 			}
 			if ($key == 'order' && $conf->commande->enabled && $user->rights->commande->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$project->societe->id.'&amp;action=create&amp;projetid='.$project->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
 			}
 			if ($key == 'invoice' && $conf->facture->enabled && $user->rights->facture->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$project->societe->id.'&amp;action=create&amp;projetid='.$project->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
 			}
 		}
-		if ($projet->societe->fournisseur)
+		if ($project->societe->fournisseur)
 		{
 			if ($key == 'order_supplier' && $conf->fournisseur->enabled && $user->rights->fournisseur->commande->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$project->societe->id.'&amp;action=create&amp;projetid='.$project->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
 			}
 			if ($key == 'invoice_supplier' && $conf->fournisseur->enabled && $user->rights->fournisseur->facture->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?socid='.$projet->societe->id.'&amp;action=create&amp;projetid='.$projet->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?socid='.$project->societe->id.'&amp;action=create&amp;projetid='.$project->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
 			}
 		}
 		print '</div>';

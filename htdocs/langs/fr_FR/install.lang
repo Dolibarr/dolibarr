@@ -209,3 +209,6 @@ MigrationMenusDetail=Mise a jour table des menus dynamiques
 
 # Migration delivery address
 MigrationDeliveryAddress=Mise a jour des adresses de livraison dans les bons d'expedition
+
+# Migration project task actors
+MigrationProjectTaskActors=Migration de la table llx_projet_task_actors

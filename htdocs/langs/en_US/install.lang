@@ -207,3 +207,6 @@ MigrationMenusDetail=Update dynamic menus tables
 
 # Migration delivery address
 MigrationDeliveryAddress=Update delivery address in shipments
+
+# Migration project task actors
+MigrationProjectTaskActors=Data migration for llx_projet_task_actors table

@@ -173,13 +173,13 @@ class CommonObject
 
 		$tab=array();
 
-		$sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
-		if ($source == 'internal') $sql.=" '-1' as socid,";
-		if ($source == 'external') $sql.=" t.fk_soc as socid,";
-		$sql.=" t.name as nom,";
-		$sql.= "tc.source, tc.element, tc.code, tc.libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc,";
-		$sql.= " ".MAIN_DB_PREFIX."element_contact ec";
+		$sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";
+		if ($source == 'internal') $sql.=", '-1' as socid";
+		if ($source == 'external') $sql.=", t.fk_soc as socid";
+		$sql.= ", t.name as nom, t.firstname";
+		$sql.= ", tc.source, tc.element, tc.code, tc.libelle";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
+		$sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
 		if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
 		if ($source == 'external') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
 		$sql.= " WHERE ec.element_id =".$this->id;
@@ -203,7 +203,7 @@ class CommonObject
 
 				$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 				$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-				$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom,
+				$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,'nom'=>$obj->nom, 'firstname'=>$obj->firstname,
                                'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut);
 				$i++;
 			}

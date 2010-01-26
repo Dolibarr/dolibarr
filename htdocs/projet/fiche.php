@@ -309,7 +309,6 @@ else
 	$project->fetch($projectid,$projectref);
 
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
-	if ($project->user_resp_id > 0) $result=$project->fetch_user($project->user_resp_id);
 
 	$head=project_prepare_head($project);
 	dol_fiche_head($head, 'project', $langs->trans("Project"),0,'project');
@@ -386,6 +385,8 @@ else
 	}
 	else
 	{
+		$userstatic=new User($db);
+
 		print '<table class="border" width="100%">';
 
 		// Ref
@@ -404,8 +405,27 @@ else
 
 		// Project leader
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-		if ($project->user->id) print $project->user->getNomUrl(1);
-		else print $langs->trans('SharedProject');
+		$contact = $project->liste_contact(4,'internal');
+		$num=sizeof($contact);
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				if ($contact[$i]['code'] == 'PROJECTLEADER')
+				{
+					$userstatic->id = $contact[$i]['id'];
+					$userstatic->fetch();
+					print $userstatic->getNomUrl(1);
+					print '<br>';
+				}
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('SharedProject');
+		}
 		print '</td></tr>';
 
 		// Statut

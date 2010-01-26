@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,6 +256,8 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_relationship_tables($db,$langs,$conf,'fa_pr','fk_propal','propal','fk_facture','facture');
 
 			migrate_relationship_tables($db,$langs,$conf,'co_fa','fk_commande','commande','fk_facture','facture');
+			
+			migrate_project_task_actors($db,$langs,$conf);
 		}
 
 		// On commit dans tous les cas.
@@ -2453,6 +2455,93 @@ function migrate_restore_missing_links($db,$langs,$conf)
 		$db->rollback();
 	}
 
+	print '</td></tr>';
+}
+
+/*
+ * Migration de la table llx_projet_task_actors vers llx_element_contact
+ */
+function migrate_project_task_actors($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_project_task_actors");
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationProjectTaskActors')."</b><br>\n";
+
+	if ($db->DDLInfoTable(MAIN_DB_PREFIX."projet_task_actors"))
+	{
+		$error = 0;
+
+		$db->begin();
+
+		$sql = "SELECT fk_projet_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$i = 0;
+			$num = $db->num_rows($resql);
+
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
+					$sql2.= "datecreate";
+					$sql2.= ", statut";
+					$sql2.= ", element_id";
+					$sql2.= ", fk_c_type_contact";
+					$sql2.= ", fk_socpeople";
+					$sql2.= ") VALUES (";
+					$sql2.= $db->idate(dol_now());
+					$sql2.= ", '4'";
+					$sql2.= ", ".$obj->fk_projet_task;
+					$sql2.= ", '180'";
+					$sql2.= ", ".$obj->fk_user;
+					$sql2.= ")";
+					
+					$resql2=$db->query($sql2);
+
+					if (!$resql2)
+					{
+						$error++;
+						dol_print_error($db);
+					}
+					print ". ";
+					$i++;
+				}
+			}
+
+			if ($error == 0)
+			{
+				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX."projet_task_actors";
+				if ($db->query($sqlDrop))
+				{
+					$db->commit();
+				}
+				else
+				{
+					$db->rollback();
+				}
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+			$db->rollback();
+		}
+	}
+	else
+	{
+		print $langs->trans('AlreadyDone')."<br>\n";
+	}
 	print '</td></tr>';
 }
 
