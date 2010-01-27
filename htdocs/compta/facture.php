@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -698,7 +698,10 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 								$date_end,
 								0,
 								$prop->lignes[$i]->info_bits,
-								$prop->lignes[$i]->fk_remise_except
+								$prop->lignes[$i]->fk_remise_except,
+								'HT',
+								0,
+								$prop->lignes[$i]->product_type
 								);
 
 								if ($result < 0)
@@ -753,7 +756,10 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 								$date_end,
 								0,
 								$lines[$i]->info_bits,
-								$lines[$i]->fk_remise_except
+								$lines[$i]->fk_remise_except,
+								'HT',
+								0,
+								$lines[$i]->product_type
 								);
 
 								if ($result < 0)
@@ -1892,7 +1898,7 @@ if ($_GET['action'] == 'create')
 	{
 		$title=$langs->trans('Products');
 
-		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.fk_remise_except, pt.remise_percent,';
+		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.fk_remise_except, pt.remise_percent, pt.product_type,';
 		$sql.= ' pt.description, pt.info_bits, pt.date_start as date_debut_prevue, pt.date_end as date_fin_prevue,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';

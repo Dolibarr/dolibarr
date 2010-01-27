@@ -131,6 +131,7 @@ class Commande extends CommonObject
 			$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
 			$CommLigne->fk_product        = $propal->lignes[$i]->fk_product;
 			$CommLigne->info_bits         = $propal->lignes[$i]->info_bits;
+			$CommLigne->product_type      = $propal->lignes[$i]->product_type;
 			$this->lines[$i] = $CommLigne;
 		}
 

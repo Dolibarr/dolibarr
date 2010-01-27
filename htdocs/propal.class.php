@@ -870,7 +870,7 @@ class Propal extends CommonObject
 				 * Lignes propales liees a un produit ou non
 				 */
 				$sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
-				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang,";
+				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang, d.product_type,";
 				$sql.= " p.ref, p.label, p.description as product_desc";
 				$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -889,6 +889,7 @@ class Propal extends CommonObject
 
 						$ligne                   = new PropaleLigne($this->db);
 
+						$ligne->product_type     = $objp->product_type;
 						$ligne->desc             = $objp->description;  // Description ligne
 						$ligne->qty              = $objp->qty;
 						$ligne->tva_tx           = $objp->tva_tx;
@@ -1121,7 +1122,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *      \brief      D�finit une remise globale relative sur la proposition
+	 *      \brief      Definit une remise globale relative sur la proposition
 	 *      \param      user        Objet utilisateur qui modifie
 	 *      \param      remise      Montant remise
 	 *      \return     int         <0 si ko, >0 si ok
@@ -1154,7 +1155,7 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      D�finit une remise globale absolue sur la proposition
+	 *      \brief      Definit une remise globale absolue sur la proposition
 	 *      \param      user        Objet utilisateur qui modifie
 	 *      \param      remise      Montant remise
 	 *      \return     int         <0 si ko, >0 si ok
@@ -2149,7 +2150,7 @@ class PropaleLigne
 	}
 
 	/**
-	 *      \brief     Recup�re l'objet ligne de propal
+	 *      \brief     Recupere l'objet ligne de propal
 	 *      \param     rowid           id de la ligne de propal
 	 */
 	function fetch($rowid)
