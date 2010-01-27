@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - install
+# Dolibarr language file - es_ES - install 
 CHARSET = UTF-8
 InstallEasy = Hemos procurado que la instalación sea lo más simple posible, usted sólo tiene que seguir los pasos uno a uno.
 MiscellanousChecks = Comprobación de los prerequisitos
@@ -196,3 +196,7 @@ MigrationStockDetail = Actualizar valor en stock de los productos
 MigrationMenusDetail = Actualización de la tabla de menús dinámicos
 # Migration delivery address = 
 MigrationDeliveryAddress = Actualización de las direcciones de envío en las notas de entrega
+# Migration project task actors = 
+MigrationProjectTaskActors = Migración de la tabla llx_projet_task_actors
+# Migration project user resp = 
+MigrationProjectUserResp = Migración del campo fk_user_resp de llx_projet a llx_element_contact
