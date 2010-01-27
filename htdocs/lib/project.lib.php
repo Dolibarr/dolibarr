@@ -223,7 +223,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 				print "&nbsp;&nbsp;&nbsp;";
 			}
 
-			print $lines[$i]->title;
+			print $lines[$i]->label;
 			print "</td>\n";
 
 			// Project
@@ -238,7 +238,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			$minutes = substr("00"."$minutes", -2);
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
-			if ($tasksrole[$lines[$i]->id] == 'admin')
+			if ($tasksrole[$lines[$i]->id] == 'TASKEXECUTIVE')
 			{
 				print '<td nowrap="nowrap">';
 				print $form->select_date('',$lines[$i]->id,'','','',"addtime");

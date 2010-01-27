@@ -209,18 +209,18 @@ class Project extends CommonObject
 
 	/**
 	 *	\brief		Return list of projects
-	 * 	\param		id_societe		To filter on a particular third party
+	 * 	\param		socid			To filter on a particular third party
 	 * 	\return		array			Liste of projects
 	 */
-	function liste_array($id_societe='')
+	function liste_array($socid='')
 	{
-		$projets = array();
+		global $conf;
+		
+		$projects = array();
 
 		$sql = "SELECT rowid, title FROM ".MAIN_DB_PREFIX."projet";
-		if (! empty($id_societe))
-		{
-			$sql .= " WHERE fk_soc = ".$id_societe;
-		}
+		$sql.= " WHERE entity = ".$conf->entity;
+		if (! empty($socid)) $sql.= " AND fk_soc = ".$socid;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -234,11 +234,11 @@ class Project extends CommonObject
 				{
 					$obj = $this->db->fetch_object($resql);
 
-					$projets[$obj->rowid] = $obj->title;
+					$projects[$obj->rowid] = $obj->title;
 					$i++;
 				}
 			}
-			return $projets;
+			return $projects;
 		}
 		else
 		{
@@ -495,55 +495,6 @@ class Project extends CommonObject
 		{
 			dol_syslog("Project::CreateTask error -1 ref null");
 			$result = -1;
-		}
-
-		return $result;
-	}
-
-
-	/**
-	 *    \brief     Cree une tache dans le projet
-	 *    \param     user     Id utilisateur qui cree
-	 *    \param     title    titre de la tache
-	 *    \param     parent   tache parente
-	 */
-	function TaskAddTime($user, $task, $time, $date)
-	{
-		$result = 0;
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (fk_task, task_date, task_duration, fk_user)";
-		$sql .= " VALUES (".$task.",'".$this->db->idate($date)."',".$time.", ".$user->id.")";
-
-		dol_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
-		if ($this->db->query($sql) )
-		{
-			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
-			$result = 0;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Project::TaskAddTime error -2 ".$this->error,LOG_ERR);
-			$result = -2;
-		}
-
-		if ($result == 0)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = duration_effective + '".price2num($time)."'";
-			$sql .= " WHERE rowid = '".$task."';";
-
-			dol_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
-			if ($this->db->query($sql) )
-			{
-				$result = 0;
-			}
-			else
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Project::TaskAddTime error -3 ".$this->error, LOG_ERR);
-				$result = -2;
-			}
 		}
 
 		return $result;

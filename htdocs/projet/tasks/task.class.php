@@ -509,6 +509,63 @@ class Task extends CommonObject
 
 		return $tasksrole;
 	}
+	
+	/**
+	 *    \brief     Add time spent
+	 *    \param     user     Id utilisateur qui cree
+	 *    \param     time     Time spent
+	 *    \param     date     date
+	 */
+	function addTimeSpent($user, $time, $date)
+	{
+		$result = 0;
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
+		$sql.= "fk_task";
+		$sql.= ", task_date";
+		$sql.= ", task_duration";
+		$sql.= ", fk_user";
+		$sql.= ") VALUES (";
+		$sql.= $this->id;
+		$sql.= ", '".$this->db->idate($date)."'";
+		$sql.= ", ".$time;
+		$sql.= ", ".$user->id;
+		$sql.= ")";
+
+		dol_syslog("Project::addTimeSpent sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql) )
+		{
+			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
+			$result = 0;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("Project::addTimeSpent error -2 ".$this->error,LOG_ERR);
+			$result = -2;
+		}
+
+		if ($result == 0)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
+			$sql.= " SET duration_effective = duration_effective + '".price2num($time)."'";
+			$sql.= " WHERE rowid = ".$this->id;
+
+			dol_syslog("Project::addTimeSpent sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql) )
+			{
+				$result = 0;
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Project::addTimeSpent error -3 ".$this->error, LOG_ERR);
+				$result = -2;
+			}
+		}
+
+		return $result;
+	}
 
 }
 ?>

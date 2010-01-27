@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 $mode=$_REQUEST["mode"];
 
 $projectid='';
-$projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projetid"];
+$projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -74,11 +74,8 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 				$task=new Task($db);
 				$task->fetch($id);
 
-				$project = new Project($db);
-				$result = $project->fetch($task->fk_projet);
-
 		  		$date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-		  		$project->TaskAddTime($user, $id , $post, $date);
+		  		$task->addTimeSpent($user, $post, $date);
 		  	}
 		  	else
 		  	{
@@ -100,11 +97,13 @@ if ($mode == 'mine') $title=$langs->trans("MyTimeSpent");
 
 llxHeader("",$title,"");
 
-$projet = new Project($db);
+$project = new Project($db);
+$task = new Task($db);
+
 if ($_GET["id"])
 {
-	$projet->fetch($_GET["id"]);
-	$projet->societe->fetch($projet->societe->id);
+	$project->fetch($_GET["id"]);
+	$project->societe->fetch($project->societe->id);
 }
 
 
@@ -117,11 +116,11 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorde
 
 if ($mesg) print $mesg;
 
-$tasksrole=$projet->getTasksRoleForUser($user);
-$tasksarray=$projet->getTasksArray(0,0);
+$tasksrole=$task->getTasksRoleForUser($user);
+$tasksarray=$task->getTasksArray(0,0);
 //var_dump($tasksarray);
 
-print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$projet->id.'">';
+print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
 
