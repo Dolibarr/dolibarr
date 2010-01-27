@@ -78,10 +78,11 @@ if ($socid) $sql.= " AND p.fk_soc = ".$socid;
 //if ($mode == 'mine') $sql.=" AND pta.fk_user = ".$user->id;
 $sql.= " GROUP BY p.rowid";
 
-$var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
+	$var=true;
+	
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -117,20 +118,22 @@ print '<td width="50%" align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
-$sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
-$sql .= " AND date_format(task_date,'%d%m%y') = ".strftime("%d%m%y",time());
-$sql .= " GROUP BY p.rowid";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql.= " WHERE t.fk_projet = p.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND tt.fk_task = t.rowid";
+$sql.= " AND tt.fk_user = ".$user->id;
+$sql.= " AND date_format(task_date,'%d%m%y') = ".strftime("%d%m%y",time());
+$sql.= " GROUP BY p.rowid";
 
-$var=true;
-$total=0;
 $resql = $db->query($sql);
 if ( $resql )
 {
+	$var=true;
+	$total=0;
+	
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
@@ -165,20 +168,22 @@ print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
-$sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
-$sql .= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%d%m%y') = ".strftime("%d%m%y",time());
-$sql .= " GROUP BY p.rowid";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql.= " WHERE t.fk_projet = p.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND tt.fk_task = t.rowid";
+$sql.= " AND tt.fk_user = ".$user->id;
+$sql.= " AND date_format(date_add(task_date, INTERVAL 1 DAY),'%d%m%y') = ".strftime("%d%m%y",time());
+$sql.= " GROUP BY p.rowid";
 
-$var=true;
-$total=0;
 $resql = $db->query($sql);
 if ( $resql )
 {
+	$var=true;
+	$total=0;
+	
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
@@ -215,19 +220,22 @@ print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
-$sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
-$sql .= " AND week(task_date) = ".strftime("%W",time());
-$sql .= " GROUP BY p.rowid";
-$total = 0;
-$var=true;
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
+$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql.= " WHERE t.fk_projet = p.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND tt.fk_task = t.rowid";
+$sql.= " AND tt.fk_user = ".$user->id;
+$sql.= " AND week(task_date) = ".strftime("%W",time());
+$sql.= " GROUP BY p.rowid";
+
 $resql = $db->query($sql);
 if ( $resql )
 {
+	$total = 0;
+	$var=true;
+	
 	while ($row = $db->fetch_object($resql))
 	{
 		$var=!$var;
@@ -262,19 +270,21 @@ print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
-$sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
-$sql .= " AND month(task_date) = ".strftime("%m",$now);
-$sql .= " GROUP BY p.rowid";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql.= " WHERE t.fk_projet = p.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND tt.fk_task = t.rowid";
+$sql.= " AND tt.fk_user = ".$user->id;
+$sql.= " AND month(task_date) = ".strftime("%m",$now);
+$sql.= " GROUP BY p.rowid";
 
-$var=false;
 $resql = $db->query($sql);
 if ( $resql )
 {
+	$var=false;
+	
 	while ($row = $db->fetch_object($resql))
 	{
 		print "<tr $bc[$var]>";
@@ -295,7 +305,7 @@ else
 }
 print "</table>";
 
-/* Affichage de la liste des projets de l'ann�e */
+/* Affichage de la liste des projets de l'annee */
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
@@ -303,14 +313,15 @@ print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.rowid, p.ref, p.title, sum(tt.task_duration) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
-$sql .= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
-$sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
-$sql .= " AND YEAR(task_date) = ".strftime("%Y",$now);
-$sql .= " GROUP BY p.rowid";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+$sql.= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
+$sql.= " WHERE t.fk_projet = p.rowid";
+$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND tt.fk_task = t.rowid";
+$sql.= " AND tt.fk_user = ".$user->id;
+$sql.= " AND YEAR(task_date) = ".strftime("%Y",$now);
+$sql.= " GROUP BY p.rowid";
 
 $var=false;
 $resql = $db->query($sql);
