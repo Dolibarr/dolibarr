@@ -67,7 +67,7 @@ $task = new Task($db);
 // can have a parent that is not affected to him).
 $tasksarray=$task->getTasksArray(0, 0, 0, $socid);
 // We load also tasks limited to a particular user
-$tasksrole = $task->getTasksRoleForUser($user); var_dump($tasksrole);
+$tasksrole = $task->getTasksRoleForUser($user);
 $tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksRoleForUser($user) : '');
 
 print '<table class="noborder" width="100%">';

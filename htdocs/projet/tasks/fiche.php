@@ -48,9 +48,9 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 	if (empty($_POST["cancel"]))
 	{
-		if (empty($_POST['task_parent']))
+		if (empty($_POST['label']))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask"));
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
 			$_GET["action"]='create';
 			$error++;
 		}
@@ -59,11 +59,12 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 		{
 			$tmparray=explode('_',$_POST['task_parent']);
 			$projectid=$tmparray[0];
+			if (empty($projectid)) $projectid = $_POST["projectid"]; // If projectid is ''
 			$task_parent=$tmparray[1];
-			if (empty($task_parent)) $task_parent=0;	// If task_parent is ''
+			if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
 
 			$task = new Task($db);
-			
+
 			$task->fk_project = $projectid;
 			$task->label = $_POST["label"];
 			$task->description = $_POST['description'];
@@ -90,42 +91,11 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 		}
 		else
 		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$projectid);
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/task.php?id='.$taskid);
 			exit;
 		}
 	}
 }
-
-if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
-{
-	$task = new Task($db);
-	$result = $task->fetch($_GET["id"]);
-
-	if ($result == 0)
-	{
-		foreach ($_POST as $key => $post)
-		{
-			//$pro->CreateTask($user, $_POST["task_name"]);
-			if (substr($key,0,4) == 'task')
-			{
-				if ($post > 0)
-				{
-					$post=intval($post)+(($post-intval($post))*(1+2/3));
-					$post=price2num($post);
-
-					$id = str_replace("task","",$key);
-
-					$date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-					$task->addTimeSpent($user, $post, $date);
-				}
-			}
-		}
-
-		Header("Location:fiche.php?id=".$task->id);
-		exit;
-	}
-}
-
 
 /*
  * View
@@ -157,13 +127,13 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
-	if ($_GET['id'])   print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
+	if ($_GET['id'])   print '<input type="hidden" name="projectid" value="'.$_GET['id'].'">';
 	if ($_GET['mode']) print '<input type="hidden" name="mode" value="'.$_GET['mode'].'">';
 
 	print '<table class="border" width="100%">';
 
 	print '<tr><td>'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" size="25" name="label" class="flat">';
+	print '<input type="text" size="25" name="label" class="flat" value="'.$_POST["label"].'">';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
