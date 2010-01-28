@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
 $projectid='';
-$projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["projectid"];
+$projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["id"];
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -59,7 +59,7 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 		{
 			$tmparray=explode('_',$_POST['task_parent']);
 			$projectid=$tmparray[0];
-			if (empty($projectid)) $projectid = $_POST["projectid"]; // If projectid is ''
+			if (empty($projectid)) $projectid = $_POST["id"]; // If projectid is ''
 			$task_parent=$tmparray[1];
 			if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
 
@@ -72,27 +72,30 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			$task->date_c = dol_now('tzserver');
 			$task->date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 			$task->date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+			$task->progress = $_POST['progress'];
 
 			$taskid = $task->create($user);
 			
 			if ($taskid > 0)
 			{
 				$task->update($user);
+				
+				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
 			}
 		}
-	}
-
-	if (! $error)
-	{
-		if (empty($projectid))
+		
+		if (! $error)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($_REQUEST["mode"])?'':'?mode='.$_REQUEST["mode"]));
-			exit;
-		}
-		else
-		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks/task.php?id='.$taskid);
-			exit;
+			if (empty($projectid))
+			{
+				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($_REQUEST["mode"])?'':'?mode='.$_REQUEST["mode"]));
+				exit;
+			}
+			else
+			{
+				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/task.php?id='.$taskid);
+				exit;
+			}
 		}
 	}
 }
@@ -102,7 +105,7 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
  */
 
 $form=new Form($db);
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Tasks"),$help_url);
@@ -127,7 +130,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
-	if ($_GET['id'])   print '<input type="hidden" name="projectid" value="'.$_GET['id'].'">';
+	if ($_GET['id'])   print '<input type="hidden" name="id" value="'.$_GET['id'].'">';
 	if ($_GET['mode']) print '<input type="hidden" name="mode" value="'.$_GET['mode'].'">';
 
 	print '<table class="border" width="100%">';
@@ -137,7 +140,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-	print $htmlother->selectProjectTasks($projectid, 'task_parent', $user->admin?0:1, 0, 1);
+	print $formother->selectProjectTasks($projectid, 'task_parent', $user->admin?0:1, 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
@@ -152,6 +155,11 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print $form->select_date(-1,'datee');
+	print '</td></tr>';
+	
+	// Progress
+	print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+	print $formother->select_percent($task->progress,'progress');
 	print '</td></tr>';
 	
 	// Description

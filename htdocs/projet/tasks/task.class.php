@@ -49,6 +49,8 @@ class Task extends CommonObject
 	var $date_c;
 	var $date_start;
 	var $date_end;
+	var $progress;
+	var $priority;
 	var $fk_user_creat;
 	var $fk_user_valid;
 	var $statut;
@@ -238,7 +240,8 @@ class Task extends CommonObject
 		$sql.= " description=".(isset($this->description)?"'".addslashes($this->description)."'":"null").",";
 		$sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
 		$sql.= " dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null').",";
-		$sql.= " datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null');
+		$sql.= " datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null').",";
+		$sql.= " progress=".$this->progress;
         $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
