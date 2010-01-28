@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -200,6 +200,37 @@ class FormOther
 		}
 	}
 
+	/**
+	 *    \brief     Retourne une liste de pourcentage
+	 *    \param     selected      pourcentage pre-selectionne
+	 *    \param     htmlname      nom de la liste deroulante
+	 *    \param     increment     increment value
+	 *    \param     start         start value
+	 *    \param     end           end value
+	 *    \return    return        combo   
+	 */
+	function select_percent($selected=0,$htmlname='percent',$increment=5,$start=0,$end=100)
+	{
+		$return = '<select class="flat" name="'.$htmlname.'">';
+		
+		for ($i = $start ; $i <= $end ; $i += $increment)
+		{
+			if ($selected == $i)
+			{
+				$return.= '<option value="'.$i.'" selected="true">';
+			}
+			else
+			{
+				$return.= '<option value="'.$i.'">';
+			}
+			$return.= $i.' % ';
+			$return.= '</option>';
+		}
+		
+		$return.= '</select>';
+		
+		return $return;
+	}
 
 	/**
 	 *	\brief     	Retourn list of project and tasks
@@ -217,7 +248,7 @@ class FormOther
 
 		//print $modeproject.'-'.$modetask;
 		$task=new Task($this->db);
-		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $mode);
+		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $selected);
 		if ($tasksarray)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -296,7 +327,7 @@ class FormOther
 		$couleur = imagecolorallocate($image,$rouge,$vert,$bleu);
 		//print $rouge.$vert.$bleu;
 		imagefill($image,0,0,$couleur); //on remplit l'image
-		// On cree la couleur et on l'attribue � une variable pour ne pas la perdre
+		// On cree la couleur et on l'attribue a une variable pour ne pas la perdre
 		ImagePng($image,$file); //renvoie une image sous format png
 		ImageDestroy($image);
 	}
@@ -366,7 +397,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0)
 				{
 					print "&nbsp;&nbsp;&nbsp;";
 				}
-				print $lines[$i]->title."</option>\n";
+				print $lines[$i]->label."</option>\n";
 				$inc++;
 			}
 

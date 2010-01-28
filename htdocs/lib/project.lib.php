@@ -137,12 +137,13 @@ function task_prepare_head($object)
  */
 function select_projects($socid, $selected='', $htmlname='projectid')
 {
-	global $db,$langs;
+	global $db,$conf,$langs;
 
 	// On recherche les projets
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-	$sql.= " WHERE (fk_soc='".$socid."' or fk_soc IS NULL)";
+	$sql.= " WHERE (p.fk_soc='".$socid."' OR p.fk_soc IS NULL)";
+	$sql.= " AND p.entity = ".$conf->entity;
 	$sql.= " ORDER BY p.title ASC";
 
 	dol_syslog("project.lib::select_projects sql=".$sql);
@@ -447,7 +448,9 @@ function clean_orphelins($db)
 
 	// There is orphelins. We clean that
 	$listofid=array();
-	$sql='SELECT rowid from '.MAIN_DB_PREFIX.'projet_task';
+	
+	$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
+	
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -469,13 +472,24 @@ function clean_orphelins($db)
 	{
 		// Removed orphelins records
 		print 'Some orphelins were found and restored to be parents so records are visible again.';
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task set fk_task_parent = 0 where fk_task_parent';
-		$sql.= ' NOT IN ('.join(',',$listofid).')';
-		$resql = $db->query($sql);
-		$nb=$db->affected_rows($sql);
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
+		$sql.= " SET fk_task_parent = 0";
+		$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";
+		
+		$resql = $db->query($sql);		
+		if ($resql)
+		{
+			$nb=$db->affected_rows($sql);
+			
+			return $nb;
+		}
+		else
+		{
+			return -1;
+		}	
 	}
-
-	return $nb;
+	
 }
 
 ?>

@@ -300,9 +300,9 @@ else
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user
 	// can have a parent that is not affected to him).
-	$tasksarray=$task->getTasksArray(0, 0, 0);
+	$tasksarray=$task->getTasksArray(0, 0, $project->id);
 	// We load also tasks limited to a particular user
-	$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksRoleForUser($user) : '');
+	$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksRoleForUser($user,$project->id) : '');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

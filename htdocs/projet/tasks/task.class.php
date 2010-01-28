@@ -417,7 +417,7 @@ class Task extends CommonObject
 	 * @param	mode	0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 * @return 	array	Array of tasks
 	 */
-	function getTasksArray($usert=0, $userp=0, $mode=0, $socid=0)
+	function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0)
 	{
 		global $conf;
 
@@ -434,7 +434,7 @@ class Task extends CommonObject
 		$sql.= " WHERE t.fk_projet = p.rowid";
 		$sql.= " AND p.entity = ".$conf->entity;
 		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-		if ($this->id) $sql.= " AND t.fk_projet =".$this->id;
+		if ($projectid) $sql.= " AND t.fk_projet =".$projectid;
 		$sql.= " ORDER BY p.ref, t.label";
 
 		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
@@ -474,7 +474,7 @@ class Task extends CommonObject
 	 * @param unknown_type $user
 	 * @return unknown
 	 */
-	function getTasksRoleForUser($user)
+	function getTasksRoleForUser($user,$projectid=0)
 	{
 		$tasksrole = array();
 
@@ -487,7 +487,7 @@ class Task extends CommonObject
 		$sql.= " AND ctc.element = '".$this->element."'";
 		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
 		$sql.= " AND ec.fk_socpeople = ".$user->id;
-		if ($this->id) $sql.= " AND pt.fk_projet =".$this->id;
+		if ($projectid) $sql.= " AND pt.fk_projet =".$projectid;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
