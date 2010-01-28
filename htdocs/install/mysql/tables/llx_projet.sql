@@ -1,5 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,15 +23,17 @@ create table llx_projet
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc           integer,
-  fk_statut        smallint NOT NULL,
-  datec            date,         -- date creation project
+  datec            date,						-- date creation project
   tms              timestamp,
-  dateo            date,         -- date start project
-  datee            date,         -- date end project
+  dateo            date,						-- date start project
+  datee            date,						-- date end project
   ref              varchar(50),
-  entity           integer DEFAULT 1 NOT NULL, -- multi company id
-  title            varchar(255),
-  fk_user_creat    integer,      -- createur du projet
-  note             text,
+  entity           integer DEFAULT 1 NOT NULL,	-- multi company id
+  title            varchar(255) NOT NULL,
+  description      text,
+  fk_user_creat    integer,						-- createur du projet
+  fk_statut        smallint DEFAULT 0 NOT NULL,
+  note_private     text,
+  note_public      text,
   model_pdf        varchar(50)
 )type=innodb;

@@ -82,8 +82,6 @@ class Task extends CommonObject
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
-		$this->note_private = trim($this->note_private);
-		$this->note_public = trim($this->note_public);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -164,6 +162,8 @@ class Task extends CommonObject
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_valid,";
 		$sql.= " t.fk_statut,";
+		$sql.= " t.progress,";
+		$sql.= " t.priority,";
 		$sql.= " t.note_private,";
 		$sql.= " t.note_public";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
@@ -190,6 +190,8 @@ class Task extends CommonObject
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_statut			= $obj->fk_statut;
+				$this->progress				= $obj->progress;
+				$this->priority				= $obj->priority;
 				$this->note_private			= $obj->note_private;
 				$this->note_public			= $obj->note_public;
             }

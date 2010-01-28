@@ -117,7 +117,8 @@ ALTER TABLE llx_projet_task ADD COLUMN dateo datetime AFTER tms;
 ALTER TABLE llx_projet_task ADD COLUMN datee datetime AFTER dateo;
 ALTER TABLE llx_projet_task ADD COLUMN datev datetime AFTER datee;
 ALTER TABLE llx_projet_task CHANGE title label varchar(255) NOT NULL;
-ALTER TABLE llx_projet_task ADD COLUMN description varchar(255) AFTER label;
+ALTER TABLE llx_projet_task ADD COLUMN description text AFTER label;
+ALTER TABLE llx_projet_task MODIFY description text;
 ALTER TABLE llx_projet_task ADD COLUMN progress	integer	DEFAULT 0 AFTER duration_effective;
 ALTER TABLE llx_projet_task ADD COLUMN priority	integer	DEFAULT 0 AFTER progress;
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
@@ -143,4 +144,7 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (190, 'project_task',  'external', 'TASKEXECUTIVE', 'Responsable', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (191, 'project_task',  'external', 'CONTRIBUTOR', 'Intervenant', 1);
 
-
+ALTER TABLE llx_projet ADD COLUMN description text AFTER title;
+ALTER TABLE llx_projet CHANGE note note_private text;
+ALTER TABLE llx_projet ADD COLUMN note_public text AFTER note_private;
+ALTER TABLE llx_projet CHANGE fk_statut smallint DEFAULT 0 NOT NULL;

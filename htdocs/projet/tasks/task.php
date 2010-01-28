@@ -27,6 +27,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
@@ -68,124 +69,190 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 llxHeader("",$langs->trans("Task"));
 
 $html = new Form($db);
+$formother = new FormOther($db);
 
 $projectstatic = new Project($db);
 
 
 if ($_GET["id"] > 0)
 {
-	/*
-	 * Fiche projet en mode visu
-	 *
-	 */
 	$task = new Task($db);
+	
 	if ($task->fetch($_GET["id"]) >= 0 )
 	{
 		$projet = new Project($db);
 		$result=$projet->fetch($task->fk_project);
 		if (! empty($projet->socid)) $projet->societe->fetch($projet->socid);
-
+			
 		$head=task_prepare_head($task);
-
+			
 		dol_fiche_head($head, 'task', $langs->trans("Task"),0,'projecttask');
-
-		if ($mesg) print $mesg.'<br>';
-
-		if ($_GET["action"] == 'delete')
+		
+		if ($_GET["action"] == 'edit' && $user->rights->projet->creer)
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
-			if ($ret == 'html') print '<br>';
+			print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="createtask">';
+			print '<table class="border" width="100%">';
+			
+			if ($mesg) print $mesg.'<br>';
+			
+			// Ref
+			print '<tr><td width="30%">';
+			print $langs->trans("Ref");
+			print '</td><td colspan="3">';
+			print $html->showrefnav($task,'id','',1,'rowid','ref','','');
+			print '</td>';
+			print '</tr>';
+			
+			// Label
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
+			
+			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+			print $projet->getNomUrl(1);
+			print '</td></tr>';
+			
+			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+			if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+			else print '&nbsp;';
+			print '</td></tr>';
+			
+			// Date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
+			print dol_print_date($task->date_start,'day');
+			print '</td></tr>';
+			
+			// Date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
+			print dol_print_date($task->date_end,'day');
+			print '</td></tr>';
+			
+			// Progress
+			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+			print $formother->select_percent($task->progress,'progress');
+			print '</td></tr>';
+			
+			// Description
+			print '<td>'.$langs->trans("Description").'</td><td colspan="3">';
+			print nl2br($task->description);
+			print '</td></tr>';
+			
+			print '</table></form>';
+			print '</div>';
 		}
-
-		print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="createtask">';
-		print '<table class="border" width="100%">';
-
-		// Ref
-		print '<tr><td width="30%">';
-		print $langs->trans("Ref");
-		print '</td><td colspan="3">';
-		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
-		print '</td>';
-		print '</tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
-
-		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $projet->getNomUrl(1);
-		print '</td></tr>';
-
-		print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
-		if ($projet->societe->id) print $projet->societe->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-		
-		// Date start
-		print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
-		print dol_print_date($task->date_start,'day');
-		print '</td></tr>';
-
-		// Date end
-		print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
-		print dol_print_date($task->date_end,'day');
-		print '</td></tr>';
-		
-		// Description
-		print '<td>'.$langs->trans("Description").'</td><td colspan="3">';
-		print nl2br($task->description);
-		print '</td></tr>';
-
-		/* List of time spent */
-
-		$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login, u.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql .= " , ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE t.fk_task =".$task->id;
-		$sql .= " AND t.fk_user = u.rowid";
-		$sql .= " ORDER BY t.task_date DESC";
-
-		$var=true;
-		$resql = $db->query($sql);
-		if ($resql)
+		else
 		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			$tasks = array();
-			while ($i < $num)
+			/*
+			 * Fiche tache en mode visu
+			 */
+			
+			if ($_GET["action"] == 'delete')
 			{
-				$row = $db->fetch_object($resql);
-				$tasks[$i] = $row;
-				$i++;
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+				if ($ret == 'html') print '<br>';
 			}
-			$db->free($resql);
+
+			print '<table class="border" width="100%">';
+			
+			// Ref
+			print '<tr><td width="30%">';
+			print $langs->trans("Ref");
+			print '</td><td colspan="3">';
+			print $html->showrefnav($task,'id','',1,'rowid','ref','','');
+			print '</td>';
+			print '</tr>';
+			
+			// Label
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
+			
+			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
+			print $projet->getNomUrl(1);
+			print '</td></tr>';
+			
+			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+			if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+			else print '&nbsp;';
+			print '</td></tr>';
+			
+			// Date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
+			print dol_print_date($task->date_start,'day');
+			print '</td></tr>';
+			
+			// Date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
+			print dol_print_date($task->date_end,'day');
+			print '</td></tr>';
+			
+			// Progress
+			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+			print $task->progress.' %';
+			print '</td></tr>';
+			
+			// Description
+			print '<td>'.$langs->trans("Description").'</td><td colspan="3">';
+			print nl2br($task->description);
+			print '</td></tr>';
+			
+			/* List of time spent */
+			
+			$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login, u.rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+			$sql.= ", ".MAIN_DB_PREFIX."user as u";
+			$sql.= " WHERE t.fk_task =".$task->id;
+			$sql.= " AND t.fk_user = u.rowid";
+			$sql.= " ORDER BY t.task_date DESC";
+			
+			$var=true;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				$i = 0;
+				$tasks = array();
+				while ($i < $num)
+				{
+					$row = $db->fetch_object($resql);
+					$tasks[$i] = $row;
+					$i++;
+				}
+				$db->free($resql);
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+			
+			print '</table></form>';
+			print '</div>';
+			
+			/*
+			 * Actions
+			 */
+			print '<div class="tabsAction">';
+			
+			// Modify
+			if ($user->rights->projet->creer)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+			}
+			
+			// Delete
+			if ($user->rights->projet->supprimer)
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+			}
+			
+			print '</div>';
 		}
-		else
-		{
-			dol_print_error($db);
-		}
-
-		print '</table></form>';
-		print '</div>';
-
-
-		/*
-		 * Actions
-		 */
-		print '<div class="tabsAction">';
-
-		if ($user->rights->projet->supprimer)
-		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else
-		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-		}
-
-		print '</div>';
-
 	}
 }
 

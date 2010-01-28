@@ -77,6 +77,7 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 		$project->ref             = $_POST["ref"];
 		$project->title           = $_POST["title"];
 		$project->socid           = $_POST["socid"];
+		$project->description     = $_POST["description"];
 		$project->user_resp_id    = $_POST["officer_project"];
 		$project->datec=dol_now('tzserver');
 		$project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
@@ -125,7 +126,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 		$project->ref          = $_POST["ref"];
 		$project->title        = $_POST["title"];
 		$project->socid        = $_POST["socid"];
-		$project->user_resp_id = $_POST["officer_project"];
+		$project->description  = $_POST["description"];
 		$project->date_start   = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
 		$project->date_end     = dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
 
@@ -230,6 +231,8 @@ llxHeader("",$langs->trans("Projects"),$help_url);
 $html = new Form($db);
 $formfile = new FormFile($db);
 
+$userstatic=new User($db);
+
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
 	/*
@@ -259,7 +262,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	}
 
 	// Ref
-	print '<tr><td>'.$langs->trans("Ref").'*</td><td><input size="8" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'*</td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'*</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
@@ -290,6 +293,12 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print $html->select_date(-1,'projectend');
+	print '</td></tr>';
+	
+	// Description
+	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+	print '<td>';
+	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
 	print '</td></tr>';
 
 	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
@@ -349,19 +358,41 @@ else
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$project->ref.'"></td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
+		print '<td><input size="12" name="ref" value="'.$project->ref.'"></td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$project->title.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td>';
+		print '<td><input size="30" name="title" value="'.$project->title.'"></td></tr>';
 
 		// Customer
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
 		print $html->select_societes($project->societe->id,'socid','',1,1);
 		print '</td></tr>';
 
-		// Responsable du projet
+		// Project leader
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-		$html->select_users($project->user_resp_id,'officer_project',1);
+		$contact = $project->liste_contact(4,'internal');
+		$num=sizeof($contact);
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				if ($contact[$i]['code'] == 'PROJECTLEADER')
+				{
+					$userstatic->id = $contact[$i]['id'];
+					$userstatic->fetch();
+					print $userstatic->getNomUrl(1);
+					print '<br>';
+				}
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('SharedProject');
+		}
 		print '</td></tr>';
 
 		// Statut
@@ -376,6 +407,12 @@ else
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 		print $html->select_date($project->date_end?$project->date_end:-1,'projectend');
 		print '</td></tr>';
+		
+		// Description
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+		print '<td>';
+		print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$project->description.'</textarea>';
+		print '</td></tr>';
 
 		print '<tr><td align="center" colspan="2">';
 		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; ';
@@ -385,8 +422,7 @@ else
 	}
 	else
 	{
-		$userstatic=new User($db);
-
+		
 		print '<table class="border" width="100%">';
 
 		// Ref
@@ -439,6 +475,11 @@ else
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 		print dol_print_date($project->date_end,'day');
+		print '</td></tr>';
+		
+		// Description
+		print '<td valign="top">'.$langs->trans("Description").'</td><td>';
+		print nl2br($project->description);
 		print '</td></tr>';
 
 		print '</table>';

@@ -40,6 +40,7 @@ class Project extends CommonObject
 
 	var $id;
 	var $ref;
+	var $description;
 	var $statut;
 	var $title;
 	var $date_c;
@@ -48,6 +49,8 @@ class Project extends CommonObject
 	var $date_end;
 	var $socid;
 	var $user_resp_id;
+	var $note_private;
+	var $note_public;
 
 	var $statuts_short;
 	var $statuts;
@@ -80,15 +83,25 @@ class Project extends CommonObject
 			return -1;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, datec, dateo, datee, fk_statut)";
-		$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
-		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
-		$sql.= " ".$user->id.",";
-		$sql.= " ".($this->user_resp_id>0?$this->user_resp_id:'null').",";
-		$sql.= " ".($this->datec!=''?$this->db->idate($this->datec):'null').",";
-		$sql.= " ".($this->dateo!=''?$this->db->idate($this->dateo):'null').",";
-		$sql.= " ".($this->datee!=''?$this->db->idate($this->datee):'null').",";
-		$sql.= " 0)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (";
+		$sql.= "ref";
+		$sql.= ", title";
+		$sql.= ", description";
+		$sql.= ", fk_soc";
+		$sql.= ", fk_user_creat";
+		$sql.= ", datec";
+		$sql.= ", dateo";
+		$sql.= ", datee";
+		$sql.= ") VALUES (";
+		$sql.= "'".addslashes($this->ref)."'";
+		$sql.= ", '".addslashes($this->title)."'";
+		$sql.= ", '".addslashes($this->description)."'";
+		$sql.= ", ".($this->socid > 0?$this->socid:"null");
+		$sql.= ", ".($this->user_resp_id>0?$this->user_resp_id:'null');
+		$sql.= ", ".($this->datec!=''?$this->db->idate($this->datec):'null');
+		$sql.= ", ".($this->dateo!=''?$this->db->idate($this->dateo):'null');
+		$sql.= ", ".($this->datee!=''?$this->db->idate($this->datee):'null');
+		$sql.= ")";
 
 		dol_syslog("Project::create sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -116,13 +129,17 @@ class Project extends CommonObject
 	 */
 	function update($user)
 	{
+		// Clean parameters
+		$this->title = trim($this->title);
+		$this->description = trim($this->description);
+		
 		if (strlen(trim($this->ref)) > 0)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql.= " SET ref='".$this->ref."'";
-			$sql.= ", title = '".$this->title."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet SET";
+			$sql.= " ref='".$this->ref."'";
+			$sql.= ", title = '".addslashes($this->title)."'";
+			$sql.= ", description = '".addslashes($this->description)."'";
 			$sql.= ", fk_soc = ".($this->socid > 0?$this->socid:"null");
-			$sql.= ", fk_user_resp = ".$this->user_resp_id;
 			$sql.= ", fk_statut = ".$this->statut;
 			$sql.= ", datec=".($this->date_c!=''?$this->db->idate($this->date_c):'null');
 			$sql.= ", dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null');
@@ -161,7 +178,8 @@ class Project extends CommonObject
 	{
 		if (empty($id) && empty($ref)) return -1;
 
-		$sql = "SELECT rowid, ref, title, datec, tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note";
+		$sql = "SELECT rowid, ref, title, description, datec";
+		$sql.= ", tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		if ($ref) $sql.= " WHERE ref='".$ref."'";
 		else $sql.= " WHERE rowid=".$id;
@@ -178,13 +196,15 @@ class Project extends CommonObject
 				$this->ref            = $obj->ref;
 				$this->title          = $obj->title;
 				$this->titre          = $obj->title; // TODO deprecated
+				$this->description    = $obj->description;
 				$this->date_c         = $this->db->jdate($obj->datec);
 				$this->datec          = $this->db->jdate($obj->datec);	// TODO deprecated
 				$this->date_m         = $this->db->jdate($obj->tms);
 				$this->datem          = $this->db->jdate($obj->tms);		// TODO deprecated
 				$this->date_start     = $this->db->jdate($obj->dateo);
 				$this->date_end       = $this->db->jdate($obj->datee);
-				$this->note           = $obj->note;
+				$this->note_private   = $obj->note_private;
+				$this->note_public    = $obj->note_public;
 				$this->socid          = $obj->fk_soc;
 				$this->societe->id    = $obj->fk_soc;	// TODO For backward compatibility
 				$this->user_author_id = $obj->fk_user_creat;
@@ -218,7 +238,8 @@ class Project extends CommonObject
 		
 		$projects = array();
 
-		$sql = "SELECT rowid, title FROM ".MAIN_DB_PREFIX."projet";
+		$sql = "SELECT rowid, title";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE entity = ".$conf->entity;
 		if (! empty($socid)) $sql.= " AND fk_soc = ".$socid;
 
@@ -421,83 +442,6 @@ class Project extends CommonObject
 				return -1;
 			}
 		}
-	}
-
-	/**
-	 *  \brief     	Create a task into project
-	 *  \param     	user    	Id user that create
-	 *  \param		title    	Title of task
-	 *  \param     	parent   	Id task parent
-	 *	\param		id_resp		Id of responsible user
-	 * 	\return		int			Task id if succes, <0 if KO
-	 *  @obsolete   now use task.class.php
-	 */
-	function CreateTask($user, $title, $parent=0, $id_resp=0)
-	{
-		$result = 0;
-		$task_id = -1;
-
-		if (trim($title))
-		{
-			$this->db->begin();
-
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat, fk_task_parent, duration_effective)";
-			$sql.= " VALUES (".$this->id.",'".addslashes($title)."', ".$user->id.",".($parent>0?$parent:'0').", 0)";
-
-			dol_syslog("Project::CreateTask sql=".$sql, LOG_DEBUG);
-			if ($this->db->query($sql))
-			{
-				$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
-				$result = $task_id;
-			}
-			else
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Project::CreateTask error -1 ".$this->error, LOG_ERR);
-				$result = -1;
-			}
-
-			if ($result >= 0)
-			{
-				if ($id_resp > 0)
-				{
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user)";
-					$sql.= " VALUES (".$task_id.",".($id_resp>0?$id_resp:'null').")";
-
-					dol_syslog("Project::CreateTask sql=".$sql, LOG_DEBUG);
-					if ($this->db->query($sql) )
-					{
-						$this->db->commit();
-						return $task_id;
-					}
-					else
-					{
-						$this->error=$this->db->lasterror();
-						dol_syslog("Project::CreateTask error -3 ".$this->error, LOG_ERR);
-						$this->db->rollback();
-						return -3;
-					}
-				}
-				else
-				{
-					$this->db->commit();
-					return $task_id;
-				}
-			}
-			else
-			{
-				dol_syslog("Project::CreateTask error -2 ".$this->error,LOG_ERR);
-				$this->db->rollback();
-				return -2;
-			}
-		}
-		else
-		{
-			dol_syslog("Project::CreateTask error -1 ref null");
-			$result = -1;
-		}
-
-		return $result;
 	}
 
 	/**
