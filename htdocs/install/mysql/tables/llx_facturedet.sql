@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ create table llx_facturedet
   fk_facture          integer    NOT NULL,
   fk_product          integer    NULL,					-- Doit pouvoir etre nul pour ligne detail sans produits
   description         text,
-  tva_taux            real,								-- Taux tva produit/service (exemple 19.6)
+  tva_tx              real,								-- Taux tva produit/service (exemple 19.6)
   qty                 real,								-- Quantity (exemple 2)
   remise_percent      real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise              real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)

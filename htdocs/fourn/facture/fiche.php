@@ -592,7 +592,7 @@ else
 
 				// Affichage simple de la ligne
 				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i]->description.'</td>';
-				print '<td align="right">'.vatrate($fac->lignes[$i]->tva_taux).'%</td>';
+				print '<td align="right">'.vatrate($fac->lignes[$i]->tva_tx).'%</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';
 				print '<td align="right" nowrap="nowrap">'.($fac->lignes[$i]->pu_ttc?price($fac->lignes[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
 				print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
@@ -950,7 +950,7 @@ else
 
 					// VAT
 					print '<td align="right">';
-					$html->select_tva('tauxtva',$fac->lignes[$i]->tva_taux,$societe,$mysoc);
+					$html->select_tva('tauxtva',$fac->lignes[$i]->tva_tx,$societe,$mysoc);
 					print '</td>';
 
 					// Unit price
@@ -1007,7 +1007,7 @@ else
 					print '</td>';
 
 					// VAT
-					print '<td align="right">'.vatrate($fac->lignes[$i]->tva_taux).'%</td>';
+					print '<td align="right">'.vatrate($fac->lignes[$i]->tva_tx).'%</td>';
 
 					// Unit price
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';

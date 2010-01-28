@@ -65,7 +65,7 @@ class ComptaExport
 		$sql = "SELECT f.rowid as facid, f.facnumber, ".$this->db->pdate("f.datef")." as datef";
 		$sql .= " , f.total_ttc, f.tva ";
 		$sql .= " ,s.nom, s.rowid as socid, s.code_compta";
-		$sql .= " , l.price, l.tva_taux";
+		$sql .= " , l.price, l.tva_tx";
 		$sql .= " , c.numero, f.increment";
 		$sql .= " , l.rowid as lrowid";
 

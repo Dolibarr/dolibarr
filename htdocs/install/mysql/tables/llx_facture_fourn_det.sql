@@ -30,7 +30,7 @@ create table llx_facture_fourn_det
   pu_ht             double(24,8), -- unit price excluding tax
   pu_ttc            double(24,8), -- unit price with tax
   qty               real,         -- quantity of product/service
-  tva_taux          double(6,3),  -- TVA tax product/service
+  tva_tx            double(6,3),  -- TVA taux product/service
   total_ht          double(24,8), -- Total line price of product excluding tax
   tva               double(24,8), -- Total TVA of line
   total_ttc         double(24,8), -- Total line with tax

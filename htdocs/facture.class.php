@@ -664,7 +664,7 @@ class Facture extends CommonObject
 	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.product_type, l.price, l.qty, l.tva_taux, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta,';
@@ -694,7 +694,7 @@ class Facture extends CommonObject
 				$faclig->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$faclig->qty              = $objp->qty;
 				$faclig->subprice         = $objp->subprice;
-				$faclig->tva_tx           = $objp->tva_taux;
+				$faclig->tva_tx           = $objp->tva_tx;
 				$faclig->remise_percent   = $objp->remise_percent;
 				$faclig->fk_remise_except = $objp->fk_remise_except;
 				$faclig->produit_id       = $objp->fk_product;
@@ -2863,7 +2863,7 @@ class FactureLigne
 	 */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_taux,';
+		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_tx,';
 		$sql.= ' fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
 		$sql.= ' fd.date_start as date_start, fd.date_end as date_end,';
 		$sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.rang,';
@@ -2881,7 +2881,7 @@ class FactureLigne
 			$this->desc           = $objp->description;
 			$this->qty            = $objp->qty;
 			$this->subprice       = $objp->subprice;
-			$this->tva_tx         = $objp->tva_taux;
+			$this->tva_tx         = $objp->tva_tx;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->produit_id     = $objp->fk_product;	// Ne plus utiliser
@@ -2957,7 +2957,7 @@ class FactureLigne
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
-		$sql.= ' (fk_facture, description, qty, tva_taux,';
+		$sql.= ' (fk_facture, description, qty, tva_tx,';
 		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
 		$sql.= ' rang,';
@@ -3092,7 +3092,7 @@ class FactureLigne
 		$sql.= ",remise_percent=".price2num($this->remise_percent)."";
 		if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_taux=".price2num($this->tva_tx)."";
+		$sql.= ",tva_tx=".price2num($this->tva_tx)."";
 		$sql.= ",qty=".price2num($this->qty)."";
 		if ($this->date_start) { $sql.= ",date_start='".$this->db->idate($this->date_start)."'"; }
 		else { $sql.=',date_start=null'; }

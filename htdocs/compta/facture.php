@@ -2718,7 +2718,7 @@ else
 			// Lit lignes de facture pour determiner montant
 			// On s'en sert pas mais ca sert pour debuggage
 			/*
-			$sql  = 'SELECT l.price as price, l.qty, l.rowid, l.tva_taux,';
+			$sql  = 'SELECT l.price as price, l.qty, l.rowid, l.tva_tx,';
 			$sql .= ' l.remise_percent, l.subprice';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l ';
 			$sql .= ' WHERE l.fk_facture = '.$fac->id;
@@ -2734,7 +2734,7 @@ else
 			{
 			$obj=$db->fetch_object($resql);
 			$ligne_ht=($obj->price*$obj->qty);
-			$ligne_vat=($ligne_ht*$obj->tva_taux/100);
+			$ligne_vat=($ligne_ht*$obj->tva_tx/100);
 			$ligne_ttc=($ligne_ht+$ligne_vat);
 			$total_lignes_ht+=$ligne_ht;
 			$total_lignes_vat+=$ligne_vat;
@@ -2794,7 +2794,7 @@ else
 			/*
 			 * Lines
 			 */
-			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_taux,';
+			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
 			$sql.= ' l.fk_remise_except,';
 			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
@@ -2913,7 +2913,7 @@ else
 						}
 
 						// VAT
-						print '<td align="right">'.vatrate($objp->tva_taux,'%',$objp->info_bits).'</td>';
+						print '<td align="right">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
 
 						// Unit price
 						print '<td align="right">'.price($objp->subprice)."</td>\n";
@@ -3032,7 +3032,7 @@ else
 
 						// VAT
 						print '<td align="right">';
-						print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc,'',$objp->info_bits);
+						print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$soc,'',$objp->info_bits);
 						print '</td>';
 
 						// Unit price

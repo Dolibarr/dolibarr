@@ -26,7 +26,7 @@ create table llx_facturedet_rec
   fk_product      integer,
   product_type    integer DEFAULT 0,
   description     text,
-  tva_taux        real DEFAULT 19.6, -- taux tva
+  tva_tx          real DEFAULT 19.6, -- taux tva
   qty             real,              -- quantity
   remise_percent  real DEFAULT 0,    -- pourcentage de remise
   remise          real DEFAULT 0,    -- montant de la remise

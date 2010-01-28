@@ -80,7 +80,7 @@ class ComptaJournalVente  {
 	  $sql = "SELECT f.rowid as facid, f.facnumber, ".$this->db->pdate("f.datef")." as dp";
 	  $sql .= " , f.total_ttc as amount, f.tva";
 	  $sql .= " , s.nom, s.code_compta";
-	  $sql .= " , l.price, l.tva_taux";
+	  $sql .= " , l.price, l.tva_tx";
 	  $sql .= " , c.numero, f.increment";
 	  $sql .= " , l.rowid as lrowid";
 	  
@@ -136,7 +136,7 @@ class ComptaJournalVente  {
 		      $pdf->cell($wc[2],$hligne,'');
 		      $pdf->cell($wc[3],$hligne,'Compte');
 		      $pdf->cell($wc[4],$hligne,'Tiers');
-		      $pdf->cell($wc[5],$hligne,'Libellé');
+		      $pdf->cell($wc[5],$hligne,'Libellï¿½');
 		      $pdf->cell($wc[6],$hligne,'Facture');
 		      $pdf->cell($wc[7],$hligne,'Montant',0,0,'R');
 		      $pdf->cell($wc[8],$hligne,'');

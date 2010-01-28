@@ -73,14 +73,14 @@ if ($result)
 }
 
 /*
- * Création
+ * Creation
  *
  */
 $form = new Form($db);
 
 if($_GET["id"])
 {
-  $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ttc, l.qty, l.rowid, l.tva_taux, l.fk_code_ventilation ";
+  $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ttc, l.qty, l.rowid, l.tva_tx, l.fk_code_ventilation ";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as l";
   $sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
   $sql .= " WHERE f.rowid = l.fk_facture_fourn AND f.fk_statut = 1 AND l.rowid = ".$_GET["id"];

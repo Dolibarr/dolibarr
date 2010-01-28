@@ -170,7 +170,7 @@ if ($_GET["action"] == 'create')
 		print '<table class="noborder" width="100%">';
 		print '<tr><td colspan="3">';
 
-		$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_taux,';
+		$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
 		$sql.= ' l.fk_remise_except,';
 		$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
@@ -259,7 +259,7 @@ if ($_GET["action"] == 'create')
 				}
 
 
-				print '<TD align="center">'.$objp->tva_taux.' %</TD>';
+				print '<TD align="center">'.$objp->tva_tx.' %</TD>';
 				print '<TD align="center">'.$objp->qty.'</TD>';
 				if ($objp->remise_percent > 0)
 				{

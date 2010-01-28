@@ -147,4 +147,9 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 ALTER TABLE llx_projet ADD COLUMN description text AFTER title;
 ALTER TABLE llx_projet CHANGE note note_private text;
 ALTER TABLE llx_projet ADD COLUMN note_public text AFTER note_private;
-ALTER TABLE llx_projet CHANGE fk_statut smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_projet MODIFY fk_statut smallint DEFAULT 0 NOT NULL;
+
+-- Uniformize code: change tva_taux to tva_tx
+ALTER TABLE llx_facturedet CHANGE tva_taux tva_tx real;
+ALTER TABLE llx_facture_fourn_det CHANGE tva_taux tva_tx double(6,3);
+ALTER TABLE llx_facturedet_rec CHANGE tva_taux tva_tx real DEFAULT 19.6;

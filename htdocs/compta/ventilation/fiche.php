@@ -80,7 +80,7 @@ if ($result)
 }
 
 /*
- * Création
+ * Crï¿½ation
  *
  */
 $form = new Form($db);
@@ -89,7 +89,7 @@ $facture_static=new Facture($db);
 if($_GET["id"])
 {
     $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price,";
-    $sql .= " l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice,";
+    $sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
     $sql .= " ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end,";
     $sql .= " l.fk_code_ventilation ";
     $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";

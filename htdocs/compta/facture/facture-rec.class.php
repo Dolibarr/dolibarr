@@ -299,7 +299,7 @@ class FactureRec extends Facture
  	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_taux, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.description, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc';
@@ -326,7 +326,7 @@ class FactureRec extends Facture
 				$faclig->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$faclig->qty              = $objp->qty;
 				$faclig->subprice         = $objp->subprice;
-				$faclig->tva_tx           = $objp->tva_taux;
+				$faclig->tva_tx           = $objp->tva_tx;
 				$faclig->remise_percent   = $objp->remise_percent;
 				$faclig->fk_remise_except = $objp->fk_remise_except;
 				$faclig->produit_id       = $objp->fk_product;
@@ -453,7 +453,7 @@ class FactureRec extends Facture
 			$sql.= ", description";
 			$sql.= ", price";
 			$sql.= ", qty";
-			$sql.= ", tva_taux";
+			$sql.= ", tva_tx";
 			$sql.= ", fk_product";
 			$sql.= ", product_type";
 			$sql.= ", remise_percent";

@@ -168,7 +168,7 @@ class FactureFournisseur extends Facture
 					$this->updateline($idligne,
 					$this->lignes[$i]->description,
 					$this->lignes[$i]->pu_ht,
-					$this->lignes[$i]->tva_taux,
+					$this->lignes[$i]->tva_tx,
 					$this->lignes[$i]->qty,
 					$this->lignes[$i]->fk_product,
 					'HT',
@@ -298,7 +298,7 @@ class FactureFournisseur extends Facture
 	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_taux, f.tva';
+		$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_tx, f.tva';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
 		$sql.= ', p.rowid as product_id, p.ref, p.label as label, p.description as product_desc';
 		//$sql.= ', pf.ref_fourn';
@@ -326,7 +326,7 @@ class FactureFournisseur extends Facture
 					$this->lignes[$i]->product_desc     = $obj->product_desc;    // Description du produit
 					$this->lignes[$i]->pu_ht            = $obj->pu_ht;
 					$this->lignes[$i]->pu_ttc           = $obj->pu_ttc;
-					$this->lignes[$i]->tva_taux         = $obj->tva_taux;
+					$this->lignes[$i]->tva_tx           = $obj->tva_tx;
 					$this->lignes[$i]->qty              = $obj->qty;
 					$this->lignes[$i]->tva              = $obj->tva;
 					$this->lignes[$i]->total_ht         = $obj->total_ht;
@@ -651,20 +651,19 @@ class FactureFournisseur extends Facture
 			$product_type = $type;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
-		$sql.= 'SET ';
-		$sql.= 'description =\''.addslashes($label).'\'';
-		$sql.= ', pu_ht = '  .price2num($pu_ht);
-		$sql.= ', pu_ttc= '  .price2num($pu_ttc);
-		$sql.= ', qty ='     .price2num($qty);
-		$sql.= ', tva_taux=' .price2num($tauxtva);
-		$sql.= ', total_ht=' .price2num($total_ht);
-		$sql.= ', tva='      .price2num($total_tva);
-		$sql.= ', total_ttc='.price2num($total_ttc);
-		if ($idproduct) $sql.= ', fk_product='.$idproduct;
-		else $sql.= ', fk_product=null';
-		$sql.= ', product_type='.$product_type;
-		$sql.= ' WHERE rowid = '.$id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
+		$sql.= " description ='".addslashes($label)."'";
+		$sql.= ", pu_ht = ".price2num($pu_ht);
+		$sql.= ", pu_ttc = ".price2num($pu_ttc);
+		$sql.= ", qty = ".price2num($qty);
+		$sql.= ", tva_tx = ".price2num($tauxtva);
+		$sql.= ", total_ht = ".price2num($total_ht);
+		$sql.= ", tva= ".price2num($total_tva);
+		$sql.= ", total_ttc = ".price2num($total_ttc);
+		if ($idproduct) $sql.= ", fk_product = ".$idproduct;
+		else $sql.= ", fk_product = null";
+		$sql.= ", product_type = ".$product_type;
+		$sql.= " WHERE rowid = ".$id;
 
 		dol_syslog("Fournisseur.facture::updateline sql=".$sql);
 		$resql=$this->db->query($sql);
