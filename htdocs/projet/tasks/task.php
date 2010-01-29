@@ -29,11 +29,46 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
+$taskid = (isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:''));
+$taskref = (isset($_GET["ref"])?$_GET["ref"]:'');
+
 if (!$user->rights->projet->lire) accessforbidden();
 
 /*
  * Actions
  */
+
+if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
+{
+	$error=0;
+
+	if (empty($_POST["label"]))
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+	}
+	if (! $error)
+	{
+		$task = new Task($db);
+		$task->fetch($_POST["id"]);
+
+		$task->label = $_POST["label"];
+		$task->description = $_POST['description'];
+		//$task->fk_task_parent = $task_parent;
+		$task->date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
+		$task->date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+		$task->progress = $_POST['progress'];
+
+		$result=$task->update($user);
+
+		$taskid=$task->id;  // On retourne sur la fiche tache
+	}
+	else
+	{
+		$taskid=$_POST["id"];
+		$_GET['action']='edit';
+	}
+}
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
 {
@@ -74,11 +109,11 @@ $formother = new FormOther($db);
 $projectstatic = new Project($db);
 
 
-if ($_GET["id"] > 0)
+if ($taskid)
 {
 	$task = new Task($db);
 	
-	if ($task->fetch($_GET["id"]) >= 0 )
+	if ($task->fetch($taskid) >= 0 )
 	{
 		$projet = new Project($db);
 		$result=$projet->fetch($task->fk_project);
@@ -90,23 +125,22 @@ if ($_GET["id"] > 0)
 		
 		if ($_GET["action"] == 'edit' && $user->rights->projet->creer)
 		{
-			print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="createtask">';
+			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="id" value="'.$task->id.'">';
+			
 			print '<table class="border" width="100%">';
 			
 			if ($mesg) print $mesg.'<br>';
 			
 			// Ref
-			print '<tr><td width="30%">';
-			print $langs->trans("Ref");
-			print '</td><td colspan="3">';
-			print $html->showrefnav($task,'id','',1,'rowid','ref','','');
-			print '</td>';
-			print '</tr>';
+			print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
+			print '<td>'.$task->ref.'</td></tr>';
 			
 			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Label").'</td>';
+			print '<td><input size="30" name="label" value="'.$task->label.'"></td></tr>';
 			
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 			print $projet->getNomUrl(1);
@@ -118,13 +152,13 @@ if ($_GET["id"] > 0)
 			print '</td></tr>';
 			
 			// Date start
-			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
-			print dol_print_date($task->date_start,'day');
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+			print $html->select_date($task->date_start,'dateo');
 			print '</td></tr>';
 			
 			// Date end
-			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
-			print dol_print_date($task->date_end,'day');
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print $html->select_date($task->date_end?$task->date_end:-1,'datee');
 			print '</td></tr>';
 			
 			// Progress
@@ -133,12 +167,16 @@ if ($_GET["id"] > 0)
 			print '</td></tr>';
 			
 			// Description
-			print '<td>'.$langs->trans("Description").'</td><td colspan="3">';
-			print nl2br($task->description);
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+			print '<td>';
+			print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$task->description.'</textarea>';
 			print '</td></tr>';
 			
-			print '</table></form>';
-			print '</div>';
+			print '<tr><td align="center" colspan="2">';
+			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+			print '</table>';
+			print '</form>';
 		}
 		else
 		{
