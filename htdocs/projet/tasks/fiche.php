@@ -77,9 +77,7 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			$taskid = $task->create($user);
 			
 			if ($taskid > 0)
-			{
-				$task->update($user);
-				
+			{	
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
 			}
 		}

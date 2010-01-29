@@ -31,7 +31,7 @@ create table llx_projet_task
   datev					datetime,						-- date validation
   label					varchar(255) NOT NULL,
   description			text,
-  duration_effective	real NOT NULL,
+  duration_effective	real DEFAULT 0 NOT NULL,
   progress				integer	DEFAULT 0,				-- percentage increase
   priority				integer	DEFAULT 0,				-- priority
   fk_user_creat			integer,						-- user who created the task

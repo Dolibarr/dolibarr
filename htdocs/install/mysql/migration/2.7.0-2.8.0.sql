@@ -119,6 +119,7 @@ ALTER TABLE llx_projet_task ADD COLUMN datev datetime AFTER datee;
 ALTER TABLE llx_projet_task CHANGE title label varchar(255) NOT NULL;
 ALTER TABLE llx_projet_task ADD COLUMN description text AFTER label;
 ALTER TABLE llx_projet_task MODIFY description text;
+ALTER TABLE llx_projet_task MODIFY duration_effective real DEFAULT 0 NOT NULL;
 ALTER TABLE llx_projet_task ADD COLUMN progress	integer	DEFAULT 0 AFTER duration_effective;
 ALTER TABLE llx_projet_task ADD COLUMN priority	integer	DEFAULT 0 AFTER progress;
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
