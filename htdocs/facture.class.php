@@ -2021,6 +2021,7 @@ class Facture extends CommonObject
 		if ($this->type == 1) return $langs->trans("InvoiceReplacement");
 		if ($this->type == 2) return $langs->trans("InvoiceAvoir");
 		if ($this->type == 3) return $langs->trans("InvoiceDeposit");
+		if ($this->type == 4) return $langs->trans("InvoiceProFormat");
 		return $langs->trans("Unknown");
 	}
 

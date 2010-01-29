@@ -1623,7 +1623,7 @@ if ($_GET['action'] == 'create')
 		print '<tr height="18"><td width="16px" valign="middle">';
 		print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="true"':'').'>';
 		print '</td><td valign="middle">';
-		$desc=$html->textwithpicto($langs->trans("InvoiceProformat"),$langs->transnoentities("InvoiceProformatDesc"),1);
+		$desc=$html->textwithpicto($langs->trans("InvoiceProFormat"),$langs->transnoentities("InvoiceProFormatDesc"),1);
 		print $desc;
 		print '</td></tr>'."\n";
 	}
