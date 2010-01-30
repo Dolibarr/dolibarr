@@ -1697,8 +1697,10 @@ class Commande extends CommonObject
 		{
 			dol_syslog('Commande::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
+			$sql.= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
+			
 			if ($this->db->query($sql) )
 			{
 				$this->ref_client = $ref_client;

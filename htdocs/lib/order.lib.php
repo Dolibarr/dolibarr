@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ function commande_prepare_head($commande)
 	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
+		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$commande->id;
 		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;

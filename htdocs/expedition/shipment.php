@@ -21,7 +21,7 @@
 // Code identique a /expedition/fiche.php
 
 /**
- *	\file       htdocs/expedition/commande.php
+ *	\file       htdocs/expedition/shipment.php
  *	\ingroup    expedition
  *	\version    $Id$
  */
@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
-
-if (!$user->rights->commande->lire) accessforbidden();
 
 $langs->load('orders');
 $langs->load("companies");
@@ -50,7 +48,7 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$id,'');
+$result=restrictedArea($user,'commande',$id);
 
 // Chargement des permissions
 $error = $user->load_entrepots();
@@ -158,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($_GET["action"] == 'cloture')
 		{
-			$ret=$html->form_confirm("commande.php?id=".$_GET["id"],$langs->trans("CloseOrder"),$langs->trans("ConfirmCloseOrder"),"confirm_cloture");
+			$ret=$html->form_confirm($_SERVER['PHP_SELF']."?id=".$_GET["id"],$langs->trans("CloseOrder"),$langs->trans("ConfirmCloseOrder"),"confirm_cloture");
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -185,7 +183,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
 		{
-			print '<form action="fiche.php?id='.$id.'" method="post">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="set_ref_client">';
 			print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
