@@ -231,8 +231,8 @@ class InterfaceEcotax
 	else
 	  {
 	    // Insertion dans base de la ligne
-	    // See class CommandeLigne
-	    // we don't use the class CommandeLigne for insert, because
+	    // See class OrderLine
+	    // we don't use the class OrderLine for insert, because
 	    // then the trigger would be called again ... and again ... and ...
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet";
 	    $sql.= " (fk_commande, description, qty, tva_tx,";

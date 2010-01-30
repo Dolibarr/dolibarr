@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
@@ -383,11 +383,13 @@ class Expedition extends CommonObject
 				require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
 
 				// Loop on each product line to add a stock movement
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine
 				$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
 				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 				$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
 				$sql.= " WHERE ed.fk_expedition = ".$this->id;
 				$sql.= " AND cd.rowid = ed.fk_origin_line";
+				
 				dol_syslog("Expedition::valid select details sql=".$sql);
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -403,7 +405,7 @@ class Expedition extends CommonObject
 						{
 							$mouvS = new MouvementStock($this->db);
 							// We decrement stock of product (and sub-products)
-							$entrepot_id = "1"; // TODO ajouter possibilit� de choisir l'entrepot
+							$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
 							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice);
 							if ($result < 0) { $error++; }
 						}

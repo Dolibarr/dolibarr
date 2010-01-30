@@ -89,6 +89,8 @@ class Propal extends CommonObject
 	var $adresse;
 
 	var $products=array();
+	
+	var $lines = array();
 
 	var $labelstatut=array();
 	var $labelstatut_short=array();
@@ -887,33 +889,34 @@ class Propal extends CommonObject
 					{
 						$objp                    = $this->db->fetch_object($result);
 
-						$ligne                   = new PropaleLigne($this->db);
+						$line                   = new PropaleLigne($this->db);
 
-						$ligne->product_type     = $objp->product_type;
-						$ligne->desc             = $objp->description;  // Description ligne
-						$ligne->qty              = $objp->qty;
-						$ligne->tva_tx           = $objp->tva_tx;
-						$ligne->subprice         = $objp->subprice;
-						$ligne->fk_remise_except = $objp->fk_remise_except;
-						$ligne->remise_percent   = $objp->remise_percent;
-						$ligne->price            = $objp->price;		// deprecated
+						$line->product_type     = $objp->product_type;
+						$line->desc             = $objp->description;  // Description ligne
+						$line->qty              = $objp->qty;
+						$line->tva_tx           = $objp->tva_tx;
+						$line->subprice         = $objp->subprice;
+						$line->fk_remise_except = $objp->fk_remise_except;
+						$line->remise_percent   = $objp->remise_percent;
+						$line->price            = $objp->price;		// deprecated
 
-						$ligne->info_bits        = $objp->info_bits;
-						$ligne->total_ht         = $objp->total_ht;
-						$ligne->total_tva        = $objp->total_tva;
-						$ligne->total_ttc        = $objp->total_ttc;
-						$ligne->marge_tx         = $objp->marge_tx;
-						$ligne->marque_tx        = $objp->marque_tx;
-						$ligne->special_code     = $objp->special_code;
-						$ligne->rang             = $objp->rang;
+						$line->info_bits        = $objp->info_bits;
+						$line->total_ht         = $objp->total_ht;
+						$line->total_tva        = $objp->total_tva;
+						$line->total_ttc        = $objp->total_ttc;
+						$line->marge_tx         = $objp->marge_tx;
+						$line->marque_tx        = $objp->marque_tx;
+						$line->special_code     = $objp->special_code;
+						$line->rang             = $objp->rang;
 
-						$ligne->fk_product       = $objp->fk_product;
+						$line->fk_product       = $objp->fk_product;
 
-						$ligne->libelle          = $objp->label;        // Label produit
-						$ligne->product_desc     = $objp->product_desc; // Description produit
-						$ligne->ref              = $objp->ref;
+						$line->libelle          = $objp->label;        // Label produit
+						$line->product_desc     = $objp->product_desc; // Description produit
+						$line->ref              = $objp->ref;
 
-						$this->lignes[$i]        = $ligne;
+						$this->lignes[$i]       = $line; // TODO: deprecated
+						$this->lines[$i]        = $line;
 						//dol_syslog("1 ".$ligne->fk_product);
 						//print "xx $i ".$this->lignes[$i]->fk_product;
 						$i++;

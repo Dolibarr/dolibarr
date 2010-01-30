@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -497,7 +497,7 @@ if ($id > 0 || ! empty($ref))
 					$product->fetch($objp->fk_product);
 				}
 
-				if ($objp->fk_product > 0 && $conf->stock->enabled)
+				if ($objp->fk_product > 0 && $type == 0 && $conf->stock->enabled)
 				{
 					print '<td align="center">';
 					print $product->stock_reel;

@@ -80,7 +80,7 @@ $com->note           = 'A comment';
 $com->source         = 1;
 $com->remise_percent = 0;
 
-$orderline1=new CommandeLigne($db);
+$orderline1=new OrderLine($db);
 $orderline1->tva_tx=10.0;
 $orderline1->remise_percent=0;
 $orderline1->qty=1;

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,39 +388,48 @@ if ($_GET["action"] == 'create')
 			{
 				$product = new Product($db);
 
-				$ligne = $object->lignes[$indiceAsked];
+				$line = $object->lines[$indiceAsked];
 				$var=!$var;
 				print "<tr ".$bc[$var].">\n";
 
 				// Desc
-				if ($ligne->fk_product > 0)
+				if ($line->fk_product > 0)
 				{
-					$product->fetch($ligne->fk_product);
+					$product->fetch($line->fk_product);
 
 					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-					if ($ligne->desc) print '<br>'.dol_nl2br(dol_htmlcleanlastbr($ligne->desc),1);
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product.'">';
+					if ($line->product_type == 1)
+					{
+						print img_object($langs->trans("ShowService"),"service");
+					}
+					else
+					{
+						print img_object($langs->trans("ShowProduct"),"product");
+					}
+					print ' '.$product->ref.'</a> - '.$product->libelle;
+					if ($line->desc) print '<br>'.dol_nl2br(dol_htmlcleanlastbr($line->desc),1);
 					print '</td>';
 				}
 				else
 				{	//var_dump($ligne);
-					print "<td>".nl2br($ligne->desc)."</td>\n";
+					print "<td>".nl2br($line->desc)."</td>\n";
 				}
 
 				// Qty
-				print '<td align="center">'.$ligne->qty.'</td>';
-				$qtyProdCom=$ligne->qty;
+				print '<td align="center">'.$line->qty.'</td>';
+				$qtyProdCom=$line->qty;
 
 				// Sendings
 				print '<td align="center">';
-				$quantityDelivered = $object->expeditions[$ligne->id];
+				$quantityDelivered = $object->expeditions[$line->id];
 				print $quantityDelivered;
 				print '</td>';
 
-				$quantityAsked = $ligne->qty;
+				$quantityAsked = $line->qty;
 				$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 
-				if ($conf->stock->enabled)
+				if ($conf->stock->enabled && $line->product_type == 0)
 				{
 					$defaultqty=0;
 					if ($_GET["entrepot_id"])
@@ -433,8 +442,8 @@ if ($_GET["action"] == 'create')
 
 					// Quantity
 					print '<td align="center">';
-					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
-					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+					print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$defaultqty.'">';
 					print '</td>';
 
 					// Stock
@@ -453,8 +462,11 @@ if ($_GET["action"] == 'create')
 						$array=array();
 
 						$sql = "SELECT e.rowid, e.label, ps.reel";
-						$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."entrepot as e";
-						$sql.= " WHERE ps.fk_entrepot = e.rowid AND fk_product = '".$product->id."'";
+						$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+						$sql.= ", ".MAIN_DB_PREFIX."entrepot as e";
+						$sql.= " WHERE ps.fk_entrepot = e.rowid";
+						$sql.= " AND fk_product = '".$product->id."'";
+						
 						$result = $db->query($sql) ;
 						if ($result)
 						{
@@ -486,16 +498,17 @@ if ($_GET["action"] == 'create')
 				else
 				{
 					// Quantity
-					print '<td align="center">';
-					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
+					print '<td align="center" '.$colspan.'>';
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 					print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$quantityToBeDelivered.'">';
 					print '</td>';
+					if ($line->product_type == 1) print '<td>&nbsp;</td>';
 				}
 
 				print "</tr>\n";
 
 				// Show subproducts of product
-				if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $ligne->fk_product > 0)
+				if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
 				{
 					$product->get_sousproduits_arbo ();
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);

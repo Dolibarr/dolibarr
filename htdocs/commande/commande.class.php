@@ -120,19 +120,21 @@ class Commande extends CommonObject
 		$this->source = 0;
 		for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
 		{
-			$CommLigne = new CommandeLigne($this->db);
-			$CommLigne->libelle           = $propal->lignes[$i]->libelle;
-			$CommLigne->desc              = $propal->lignes[$i]->desc;
-			$CommLigne->price             = $propal->lignes[$i]->price;
-			$CommLigne->subprice          = $propal->lignes[$i]->subprice;
-			$CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
-			$CommLigne->qty               = $propal->lignes[$i]->qty;
-			$CommLigne->fk_remise_except  = $propal->lignes[$i]->fk_remise_except;
-			$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
-			$CommLigne->fk_product        = $propal->lignes[$i]->fk_product;
-			$CommLigne->info_bits         = $propal->lignes[$i]->info_bits;
-			$CommLigne->product_type      = $propal->lignes[$i]->product_type;
-			$this->lines[$i] = $CommLigne;
+			$line = new OrderLine($this->db);
+			
+			$line->libelle           = $propal->lignes[$i]->libelle;
+			$line->desc              = $propal->lignes[$i]->desc;
+			$line->price             = $propal->lignes[$i]->price;
+			$line->subprice          = $propal->lignes[$i]->subprice;
+			$line->tva_tx            = $propal->lignes[$i]->tva_tx;
+			$line->qty               = $propal->lignes[$i]->qty;
+			$line->fk_remise_except  = $propal->lignes[$i]->fk_remise_except;
+			$line->remise_percent    = $propal->lignes[$i]->remise_percent;
+			$line->fk_product        = $propal->lignes[$i]->fk_product;
+			$line->info_bits         = $propal->lignes[$i]->info_bits;
+			$line->product_type      = $propal->lignes[$i]->product_type;
+			
+			$this->lines[$i] = $line;
 		}
 
 		$this->socid                = $propal->socid;
@@ -797,31 +799,31 @@ class Commande extends CommonObject
 			}
 
 			// Insert line
-			$ligne=new CommandeLigne($this->db);
+			$line=new OrderLine($this->db);
 
-			$ligne->fk_commande=$commandeid;
-			$ligne->desc=$desc;
-			$ligne->qty=$qty;
-			$ligne->tva_tx=$txtva;
-			$ligne->fk_product=$fk_product;
-			$ligne->fk_remise_except=$fk_remise_except;
-			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$pu_ht;
-			$ligne->rang=-1;
-			$ligne->info_bits=$info_bits;
-			$ligne->total_ht=$total_ht;
-			$ligne->total_tva=$total_tva;
-			$ligne->total_ttc=$total_ttc;
-			$ligne->product_type=$type;
+			$line->fk_commande=$commandeid;
+			$line->desc=$desc;
+			$line->qty=$qty;
+			$line->tva_tx=$txtva;
+			$line->fk_product=$fk_product;
+			$line->fk_remise_except=$fk_remise_except;
+			$line->remise_percent=$remise_percent;
+			$line->subprice=$pu_ht;
+			$line->rang=-1;
+			$line->info_bits=$info_bits;
+			$line->total_ht=$total_ht;
+			$line->total_tva=$total_tva;
+			$line->total_ttc=$total_ttc;
+			$line->product_type=$type;
 
 			// \TODO Ne plus utiliser
-			$ligne->price=$price;
-			$ligne->remise=$remise;
+			$line->price=$price;
+			$line->remise=$remise;
 
-			$ligne->date_start=$date_start;
-			$ligne->date_end=$date_end;
+			$line->date_start=$date_start;
+			$line->date_end=$date_end;
 
-			$result=$ligne->insert();
+			$result=$line->insert();
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
@@ -840,7 +842,7 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				$this->error=$ligne->error;
+				$this->error=$line->error;
 				dol_syslog("Commande::addline error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -879,7 +881,8 @@ class Commande extends CommonObject
 			else
 			$price = $prod->price;
 
-			$line=new CommandeLigne($this->db);
+			$line=new OrderLine($this->db);
+			
 			$line->fk_product=$idproduct;
 			$line->desc=$prod->description;
 			$line->qty=$qty;
@@ -1063,25 +1066,26 @@ class Commande extends CommonObject
 				return -5;
 			}
 
-			$comligne=new CommandeLigne($this->db);
-			$comligne->fk_commande=$this->id;
-			$comligne->fk_remise_except=$remise->id;
-			$comligne->desc=$remise->description;   	// Description ligne
-			$comligne->tva_tx=$remise->tva_tx;
-			$comligne->subprice=-$remise->amount_ht;
-			$comligne->price=-$remise->amount_ht;
-			$comligne->fk_product=0;					// Id produit predefini
-			$comligne->qty=1;
-			$comligne->remise=0;
-			$comligne->remise_percent=0;
-			$comligne->rang=-1;
-			$comligne->info_bits=2;
+			$line = new OrderLine($this->db);
+			
+			$line->fk_commande=$this->id;
+			$line->fk_remise_except=$remise->id;
+			$line->desc=$remise->description;   	// Description ligne
+			$line->tva_tx=$remise->tva_tx;
+			$line->subprice=-$remise->amount_ht;
+			$line->price=-$remise->amount_ht;
+			$line->fk_product=0;					// Id produit predefini
+			$line->qty=1;
+			$line->remise=0;
+			$line->remise_percent=0;
+			$line->rang=-1;
+			$line->info_bits=2;
 
-			$comligne->total_ht  = -$remise->amount_ht;
-			$comligne->total_tva = -$remise->amount_tva;
-			$comligne->total_ttc = -$remise->amount_ttc;
+			$line->total_ht  = -$remise->amount_ht;
+			$line->total_tva = -$remise->amount_tva;
+			$line->total_ttc = -$remise->amount_ttc;
 
-			$result=$comligne->insert();
+			$result=$line->insert();
 			if ($result > 0)
 			{
 				$result=$this->update_price();
@@ -1098,7 +1102,7 @@ class Commande extends CommonObject
 			}
 			else
 			{
-				$this->error=$comligne->error;
+				$this->error=$line->error;
 				$this->db->rollback();
 				return -2;
 			}
@@ -1114,7 +1118,7 @@ class Commande extends CommonObject
 	/**
 	 *      \brief      Reinitialize array lignes
 	 *		\param		only_product	Return only physical products
-	 *		\return		array			Array of CommandeLigne
+	 *		\return		array			Array of OrderLine
 	 */
 	function fetch_lines($only_product=0)
 	{
@@ -1142,38 +1146,39 @@ class Commande extends CommonObject
 			{
 				$objp = $this->db->fetch_object($result);
 
-				$ligne = new CommandeLigne($this->db);
-				$ligne->rowid            = $objp->rowid;				// \deprecated
-				$ligne->id               = $objp->rowid;
-				$ligne->fk_commande      = $objp->fk_commande;
-				$ligne->commande_id      = $objp->fk_commande;			// \deprecated
-				$ligne->desc             = $objp->description;  		// Description ligne
-				$ligne->product_type     = $objp->product_type;
-				$ligne->qty              = $objp->qty;
-				$ligne->tva_tx           = $objp->tva_tx;
-				$ligne->total_ht         = $objp->total_ht;
-				$ligne->total_ttc        = $objp->total_ttc;
-				$ligne->total_tva        = $objp->total_tva;
-				$ligne->subprice         = $objp->subprice;
-				$ligne->fk_remise_except = $objp->fk_remise_except;
-				$ligne->remise_percent   = $objp->remise_percent;
-				$ligne->price            = $objp->price;
-				$ligne->fk_product       = $objp->fk_product;
-				$ligne->marge_tx         = $objp->marge_tx;
-				$ligne->marque_tx        = $objp->marque_tx;
-				$ligne->rang             = $objp->rang;
-				$ligne->info_bits        = $objp->info_bits;
+				$line = new OrderLine($this->db);
+				
+				$line->rowid            = $objp->rowid;				// \deprecated
+				$line->id               = $objp->rowid;
+				$line->fk_commande      = $objp->fk_commande;
+				$line->commande_id      = $objp->fk_commande;			// \deprecated
+				$line->desc             = $objp->description;  		// Description ligne
+				$line->product_type     = $objp->product_type;
+				$line->qty              = $objp->qty;
+				$line->tva_tx           = $objp->tva_tx;
+				$line->total_ht         = $objp->total_ht;
+				$line->total_ttc        = $objp->total_ttc;
+				$line->total_tva        = $objp->total_tva;
+				$line->subprice         = $objp->subprice;
+				$line->fk_remise_except = $objp->fk_remise_except;
+				$line->remise_percent   = $objp->remise_percent;
+				$line->price            = $objp->price;
+				$line->fk_product       = $objp->fk_product;
+				$line->marge_tx         = $objp->marge_tx;
+				$line->marque_tx        = $objp->marque_tx;
+				$line->rang             = $objp->rang;
+				$line->info_bits        = $objp->info_bits;
 
-				$ligne->ref              = $objp->product_ref;
-				$ligne->libelle          = $objp->label;
-				$ligne->product_desc     = $objp->product_desc; 		// Description produit
-				$ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
+				$line->ref              = $objp->product_ref;
+				$line->libelle          = $objp->label;
+				$line->product_desc     = $objp->product_desc; 		// Description produit
+				$line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
-				$ligne->date_start       = $this->db->jdate($objp->date_start);
-				$ligne->date_end         = $this->db->jdate($objp->date_end);
+				$line->date_start       = $this->db->jdate($objp->date_start);
+				$line->date_end         = $this->db->jdate($objp->date_end);
 
-				$this->lignes[$i] = $ligne;		// For backward compatibility
-				$this->lines[$i] = $ligne;
+				$this->lignes[$i] = $line;		// For backward compatibility
+				$this->lines[$i] = $line;
 				$i++;
 			}
 			$this->db->free($result);
@@ -1348,10 +1353,12 @@ class Commande extends CommonObject
 					$product->id = $obj->fk_product;
 
 					// Supprime ligne
-					$ligne = new CommandeLigne($this->db);
-					$ligne->id = $idligne;
-					$ligne->fk_commande = $this->id; // On en a besoin dans les triggers
-					$result=$ligne->delete($user);
+					$line = new OrderLine($this->db);
+					
+					$line->id = $idligne;
+					$line->fk_commande = $this->id; // On en a besoin dans les triggers
+					
+					$result=$line->delete($user);
 
 					if ($result > 0)
 					{
@@ -1794,7 +1801,8 @@ class Commande extends CommonObject
 			$subprice  = price2num($subprice);
 
 
-			$LigneOld = new CommandeLigne($this->db);
+			// TODO: utile ?
+			$LigneOld = new OrderLine($this->db);
 			$LigneOld->fetch($rowid);
 
 			// Mise a jour ligne en base
@@ -2219,19 +2227,24 @@ class Commande extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new CommandeLigne($this->db);
-			$ligne->desc=$langs->trans("Description")." ".$xnbp;
-			$ligne->qty=1;
-			$ligne->subprice=100;
-			$ligne->price=100;
-			$ligne->tva_tx=19.6;
-			$ligne->total_ht=100;
-			$ligne->total_ttc=119.6;
-			$ligne->total_tva=19.6;
+			$line=new OrderLine($this->db);
+			
 			$prodid = rand(1, $num_prods);
-			$ligne->produit_id=$prodids[$prodid];
-			$ligne->fk_product=$prodids[$prodid];
-			$this->lignes[$xnbp]=$ligne;
+			
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->qty=1;
+			$line->subprice=100;
+			$line->price=100;
+			$line->tva_tx=19.6;
+			$line->total_ht=100;
+			$line->total_ttc=119.6;
+			$line->total_tva=19.6;
+			$line->produit_id=$prodids[$prodid];
+			$line->fk_product=$prodids[$prodid];
+			
+			$this->lignes[$xnbp]=$line; // TODO: deprecated
+			$this->lines[$xnbp]=$line;
+			
 			$xnbp++;
 		}
 
@@ -2286,10 +2299,10 @@ class Commande extends CommonObject
 
 
 /**
- *  \class      CommandeLigne
+ *  \class      OrderLine
  *  \brief      Classe de gestion des lignes de commande
  */
-class CommandeLigne
+class OrderLine
 {
 	var $db;
 	var $error;
@@ -2333,7 +2346,7 @@ class CommandeLigne
 	 *      \brief     Constructeur d'objets ligne de commande
 	 *      \param     DB      handler d'acces base de donnee
 	 */
-	function CommandeLigne($DB)
+	function OrderLine($DB)
 	{
 		$this->db= $DB;
 	}
@@ -2405,7 +2418,7 @@ class CommandeLigne
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->id."';";
 
-		dol_syslog("CommandeLigne::delete sql=".$sql);
+		dol_syslog("OrderLine::delete sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2421,7 +2434,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("CommandeLigne::delete ".$this->error, LOG_ERR);
+			dol_syslog("OrderLine::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2435,7 +2448,7 @@ class CommandeLigne
 	{
 		global $langs, $conf, $user;
 
-		dol_syslog("CommandeLigne::insert rang=".$this->rang);
+		dol_syslog("OrderLine::insert rang=".$this->rang);
 
 		$this->db->begin();
 
@@ -2497,7 +2510,7 @@ class CommandeLigne
 		else { $sql.='null'; }
 		$sql.= ')';
 
-		dol_syslog("CommandeLigne::insert sql=".$sql);
+		dol_syslog("OrderLine::insert sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2519,7 +2532,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommandeLigne::insert Error ".$this->error, LOG_ERR);
+			dol_syslog("OrderLine::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2541,7 +2554,7 @@ class CommandeLigne
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog("CommandeLigne::update_total sql=$sql");
+		dol_syslog("OrderLine::update_total sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2552,7 +2565,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("CommandeLigne::update_total Error ".$this->error, LOG_ERR);
+			dol_syslog("OrderLine::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

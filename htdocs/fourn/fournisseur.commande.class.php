@@ -1462,7 +1462,7 @@ class CommandeFournisseur extends Commande
  *  \class      CommandeFournisseurLigne
  *  \brief      Classe de gestion des lignes de commande
  */
-class CommandeFournisseurLigne extends CommandeLigne
+class CommandeFournisseurLigne extends OrderLine
 {
 	// From llx_commandedet
 	var $qty;
