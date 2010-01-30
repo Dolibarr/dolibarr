@@ -319,9 +319,10 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="40">'.$langs->trans("Status")."</td>\n";
+print '<td align="center" width="40">'.$langs->trans("Default")."</td>\n";
+print '<td align="center" width="40">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
