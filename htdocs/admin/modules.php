@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,8 +335,7 @@ print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
 //print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Status")."</td>\n";
 print "  <td>".$langs->trans("SetupShort")."</td>\n";
 print "</tr>\n";
 
@@ -431,19 +430,6 @@ foreach ($orders as $key => $value)
         print $objMod->getVersion();
         print "</td>\n";
 
-        // Tick
-        print "<td align=\"center\" valign=\"top\">";
-        if (! empty($conf->global->$const_name))
-        {
-            print img_tick();
-        }
-        else
-        {
-            print "&nbsp;";
-        }
-
-        print "</td>\n";
-
         // Activate/Disable and Setup
         print "<td align=\"center\" valign=\"top\">";
         if (! empty($conf->global->$const_name))
@@ -458,7 +444,9 @@ foreach ($orders as $key => $value)
             }
             else
             {
-            	print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Disable") . "</a></td>\n";
+            	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+            	print img_picto($langs->trans("Activated"),'on');
+            	print '</a></td>'."\n";
             }
 
             if (! empty($objMod->config_page_url) && !$disableSetup)
@@ -503,7 +491,9 @@ foreach ($orders as $key => $value)
             }
 
             // Module non actif
-           	print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
+           	print '<a href="modules.php?id='.$objMod->numero.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+           	print img_picto($langs->trans("Disabled"),'off'); 
+           	print "</a></td>\n  <td>&nbsp;</td>\n";
         }
 
         print "</tr>\n";

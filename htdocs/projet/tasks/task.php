@@ -228,38 +228,9 @@ if ($taskid)
 			print '</td></tr>';
 			
 			// Description
-			print '<td>'.$langs->trans("Description").'</td><td colspan="3">';
+			print '<td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 			print nl2br($task->description);
 			print '</td></tr>';
-			
-			/* List of time spent */
-			
-			$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login, u.rowid";
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-			$sql.= ", ".MAIN_DB_PREFIX."user as u";
-			$sql.= " WHERE t.fk_task =".$task->id;
-			$sql.= " AND t.fk_user = u.rowid";
-			$sql.= " ORDER BY t.task_date DESC";
-			
-			$var=true;
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				$i = 0;
-				$tasks = array();
-				while ($i < $num)
-				{
-					$row = $db->fetch_object($resql);
-					$tasks[$i] = $row;
-					$i++;
-				}
-				$db->free($resql);
-			}
-			else
-			{
-				dol_print_error($db);
-			}
 			
 			print '</table></form>';
 			print '</div>';
