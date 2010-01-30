@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio         <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -203,7 +203,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
 print '<td>'.$langs->trans("Description")."</td>\n";
 print '<td nowrap>'.$langs->trans("Example")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
 print '</tr>'."\n";
 
@@ -246,11 +246,13 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						print '<td align="center">';
 						if ($conf->global->PROPALE_ADDON == "$file")
 						{
-							print img_tick($langs->trans("Activated"));
+							print img_picto($langs->trans("Activated"),'on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"),'off');
+							print '</a>';
 						}
 						print '</td>';
 
@@ -325,7 +327,7 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td width=\"140\">".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
@@ -352,37 +354,39 @@ while (($file = readdir($handle))!==false)
 		print '</td>';
 
 		// Activate
+		print "<td align=\"center\">\n";
 		if (in_array($name, $def))
 		{
-			print "<td align=\"center\">\n";
 			if ($conf->global->PROPALE_ADDON_PDF != "$name")
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-				print img_tick($langs->trans("Disable"));
+				print img_picto($langs->trans("Activated"),'on');
 				print '</a>';
 			}
 			else
 			{
-				print img_tick($langs->trans("Enabled"));
+				print img_picto($langs->trans("Activated"),'on');
 			}
-			print "</td>";
 		}
 		else
 		{
-			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-			print "</td>";
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">';
+			print img_picto($langs->trans("Disabled"),'off');
+			print '</a>';
 		}
+		print "</td>";
 
 		// Default
 		print "<td align=\"center\">";
 		if ($conf->global->PROPALE_ADDON_PDF == "$name")
 		{
-			print img_tick($langs->trans("Default"));
+			print img_picto($langs->trans("Yes"),'on');
 		}
 		else
 		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'">';
+			print img_picto($langs->trans("No"),'off');
+			print '</a>';
 		}
 		print '</td>';
 
