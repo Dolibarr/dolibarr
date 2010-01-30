@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,8 +109,8 @@ print "<tr class=\"liste_titre\">\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
-print '  <td align="center">'.$langs->trans("Activated").'</td>';
-print '  <td align="center" width="20">'.$langs->trans("Infos").'</td>';
+print '  <td align="center">'.$langs->trans("Status").'</td>';
+print '  <td align="center" width="30">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -145,12 +145,14 @@ if ($handle)
 			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
 			{
 				print "<td align=\"center\">\n";
-				print img_tick();
+				print img_picto($langs->trans("Activated"),'on');
 				print "</td>\n";
 			}
 			else
 			{
-				print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
+				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
+				print img_picto($langs->trans("Disabled"),'off');
+				print '</a></td>';
 			}
 
 			print '<td align="center">';
@@ -178,8 +180,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="30">&nbsp;</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -193,32 +195,33 @@ if ($handle)
 	{
 		if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
 		{
-	  $file = substr($file, 0, strlen($file)-4);
-
-	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
-
-	  $modCodeCompta = new $file;
-	  $var = !$var;
-
-	  print '<tr '.$bc[$var].'>';
-	  print '<td width="140">'.$modCodeCompta->nom."</td><td>\n";
-	  print $modCodeCompta->info($langs);
-	  print '</td>';
-	  print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
-
-	  if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
-	  {
-	  	print '<td align="center">';
-	  	print img_tick();
-	  	print '</td>';
-	  }
-	  else
-	  {
-	  	print '<td align="center"><a href="societe.php?action=setcodecompta&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
-
-	  }
-	  print '<td>&nbsp;</td>';
-	  print "</tr>\n";
+			$file = substr($file, 0, strlen($file)-4);
+			
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
+			
+			$modCodeCompta = new $file;
+			$var = !$var;
+			
+			print '<tr '.$bc[$var].'>';
+			print '<td width="140">'.$modCodeCompta->nom."</td><td>\n";
+			print $modCodeCompta->info($langs);
+			print '</td>';
+			print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
+			
+			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
+			{
+				print '<td align="center">';
+				print img_picto($langs->trans("Activated"),'on');
+				print '</td>';
+			}
+			else
+			{
+				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;value='.$file.'">';
+				print img_picto($langs->trans("Disabled"),'off');
+				print '</a></td>';
+			}
+			print '<td>&nbsp;</td>';
+			print "</tr>\n";
 		}
 	}
 	closedir($handle);
@@ -233,15 +236,15 @@ $html=new Form($db);
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print "  <td>".$langs->trans("Parameters")."</td>\n";
-print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
-print "  <td width=\"80\">&nbsp;</td></tr>\n";
+print "<td>".$langs->trans("Parameters")."</td>\n";
+print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td width="80">&nbsp;</td></tr>'."\n";
 
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;
-print "<form method=\"post\" action=\"societe.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectcompany\">";
+print '<input type="hidden" name="action" value="usesearchtoselectcompany">';
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
 if (! $conf->use_javascript_ajax)
