@@ -39,8 +39,10 @@ accessforbidden();
 
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = $langs->trans("Activate");
-$actl[1] = $langs->trans("Disable");
+//$actl[0] = $langs->trans("Activate");
+//$actl[1] = $langs->trans("Disable");
+$actl[0] = img_picto($langs->trans("Disabled"),'off');
+$actl[1] = img_picto($langs->trans("Activated"),'on');
 
 $active = 1;
 
@@ -634,7 +636,7 @@ if ($_GET["id"])
 					print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield,$sortorder);
 				}
 			}
-			print_liste_field_titre($langs->trans("Action"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Status"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield,$sortorder);
 			print '<td colspan="2"  class="liste_titre">&nbsp;</td>';
 			print '</tr>';
 
