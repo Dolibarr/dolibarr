@@ -1103,7 +1103,7 @@ function migrate_price_facture($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 
 	// Liste des lignes facture non a jour
-	$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_taux, fd.total_ttc, fd.info_bits,";
+	$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as tva_taux, fd.total_ttc, fd.info_bits,";
 	$sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE fd.fk_facture = f.rowid";
@@ -1446,7 +1446,7 @@ function migrate_price_commande($db,$langs,$conf)
 				$info_bits = $obj->info_bits;
 
 				// On met a jour les 3 nouveaux champs
-				$commandeligne= new CommandeLigne($db);
+				$commandeligne= new OrderLine($db);
 				$commandeligne->fetch($rowid);
 
 				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT',$info_bits);

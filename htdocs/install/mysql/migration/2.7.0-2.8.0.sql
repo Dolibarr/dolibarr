@@ -154,3 +154,18 @@ ALTER TABLE llx_projet MODIFY fk_statut smallint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_facturedet CHANGE tva_taux tva_tx real;
 ALTER TABLE llx_facture_fourn_det CHANGE tva_taux tva_tx double(6,3);
 ALTER TABLE llx_facturedet_rec CHANGE tva_taux tva_tx real DEFAULT 19.6;
+
+-- Create table for entities
+create table llx_entity
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  tms				timestamp,
+  label				varchar(255) NOT NULL,
+  description		text,
+  datec				datetime,
+  fk_user_creat		integer,
+  visible			tinyint DEFAULT 1 NOT NULL,
+  active			tinyint DEFAULT 1 NOT NULL
+) type=innodb;
+
+INSERT INTO llx_entity (label, description, datec, fk_user_creat, visible, active) VALUES ('Default Entity', 'This is the default entity', NOW(), 1, 1, 1);
