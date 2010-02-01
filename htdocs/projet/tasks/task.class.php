@@ -443,7 +443,6 @@ class Task extends CommonObject
 		$sql.= ", t.rowid, t.label, t.description, t.fk_task_parent, t.duration_effective";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
 		$sql.= ", ".MAIN_DB_PREFIX."projet as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		$sql.= " WHERE t.fk_projet = p.rowid";
 		$sql.= " AND p.entity = ".$conf->entity;
 		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
@@ -458,20 +457,33 @@ class Task extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
+				$error=0;
+				
 				$obj = $this->db->fetch_object($resql);
-				$tasks[$i]->id           = $obj->rowid;
-				$tasks[$i]->projectid    = $obj->projectid;
-				$tasks[$i]->projectref   = $obj->ref;
-				$tasks[$i]->projectlabel = $obj->plabel;
-				$tasks[$i]->label        = $obj->label;
-				$tasks[$i]->description  = $obj->description;
-				$tasks[$i]->fk_parent    = $obj->fk_task_parent;
-				$tasks[$i]->duration     = $obj->duration_effective;
-				$tasks[$i]->name         = $obj->name;			// Name of project leader
-				$tasks[$i]->firstname    = $obj->firstname;		// Firstname of project leader
+				
+				if ($usert || $userp)
+				{
+					if (! $this->getTasksRoleForUser($usert?$usert:$userp,$userp?$obj->projectid:0,$usert?$obj->rowid:0))
+					{
+						$error++;
+					}
+				}
+				
+				if (!$error)
+				{
+					$tasks[$i]->id           = $obj->rowid;
+					$tasks[$i]->projectid    = $obj->projectid;
+					$tasks[$i]->projectref   = $obj->ref;
+					$tasks[$i]->projectlabel = $obj->plabel;
+					$tasks[$i]->label        = $obj->label;
+					$tasks[$i]->description  = $obj->description;
+					$tasks[$i]->fk_parent    = $obj->fk_task_parent;
+					$tasks[$i]->duration     = $obj->duration_effective;
+				}
+				
 				$i++;
 			}
-			$this->db->free();
+			$this->db->free($resql);
 		}
 		else
 		{
@@ -482,12 +494,12 @@ class Task extends CommonObject
 	}
 	
 	/**
-	 * Return array of role of user for each projects
+	 * Return array of role of user for each projects or tasks
 	 *
 	 * @param unknown_type $user
 	 * @return unknown
 	 */
-	function getTasksRoleForUser($user,$projectid=0)
+	function getTasksRoleForUser($user,$projectid=0,$taskid=0)
 	{
 		$tasksrole = array();
 
@@ -500,7 +512,8 @@ class Task extends CommonObject
 		$sql.= " AND ctc.element = '".$this->element."'";
 		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
 		$sql.= " AND ec.fk_socpeople = ".$user->id;
-		if ($projectid) $sql.= " AND pt.fk_projet =".$projectid;
+		if ($projectid) $sql.= " AND pt.fk_projet = ".$projectid;
+		if ($taskid) $sql.= " AND pt.rowid = ".$taskid;
 
 		$resql = $this->db->query($sql);
 		if ($resql)

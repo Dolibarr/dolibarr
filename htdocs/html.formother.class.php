@@ -235,12 +235,13 @@ class FormOther
 	/**
 	 *	\brief     	Retourn list of project and tasks
 	 *	\param     	selected    	Pre-selected value
+	 *  \param      projectid       Project id
 	 * 	\param     	htmlname    	Name of html select
 	 * 	\param		modeproject		1 to restrict on projects owned by user
 	 * 	\param		modetask		1 to restrict on tasks associated to user
 	 * 	\param		mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 */
-	function selectProjectTasks($selected='',$htmlname='task_parent', $modeproject=0, $modetask=0, $mode)
+	function selectProjectTasks($selected='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0)
 	{
 		global $user, $langs;
 
@@ -248,14 +249,14 @@ class FormOther
 
 		//print $modeproject.'-'.$modetask;
 		$task=new Task($this->db);
-		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $selected);
+		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid);
 		if ($tasksarray)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
-			print '<option value="0" selected="true">&nbsp;</option>';
+			//print '<option value="0" selected="true">&nbsp;</option>';
 			$j=0;
 			$level=0;
-			PLineSelect($j, 0, $tasksarray, $level);
+			PLineSelect($j, 0, $tasksarray, $level, $selected);
 			print '</select>';
 		}
 		else
@@ -343,7 +344,7 @@ class FormOther
  * @param unknown_type $lines
  * @param unknown_type $level
  */
-function PLineSelect(&$inc, $parent, $lines, $level=0)
+function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 {
 	global $langs, $user, $conf;
 
@@ -382,7 +383,9 @@ function PLineSelect(&$inc, $parent, $lines, $level=0)
 			// Print task
 			if ($lines[$i]->id > 0)
 			{
-				print '<option value="'.$lines[$i]->projectid.'_'.$lines[$i]->id.'">';
+				print '<option value="'.$lines[$i]->projectid.'_'.$lines[$i]->id.'"';
+				if ($lines[$i]->id == $selected) print ' selected="true"';
+				print '>';
 				print $langs->trans("Project").' '.$lines[$i]->projectref;
 				if ($lines[$i]->name || $lines[$i]->fistname)
 				{
@@ -402,7 +405,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0)
 			}
 
 			$level++;
-			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level);
+			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level, $selected);
 			$level--;
 		}
 	}

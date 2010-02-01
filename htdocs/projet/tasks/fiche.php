@@ -138,7 +138,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-	print $formother->selectProjectTasks($projectid, 'task_parent', $user->admin?0:1, 0, 1);
+	print $formother->selectProjectTasks('',$projectid, 'task_parent', $user->admin?0:1, 0);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';

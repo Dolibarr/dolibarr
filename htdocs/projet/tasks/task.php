@@ -51,10 +51,14 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	{
 		$task = new Task($db);
 		$task->fetch($_POST["id"]);
+		
+		$tmparray=explode('_',$_POST['task_parent']);
+		$task_parent=$tmparray[1];
+		if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
 
 		$task->label = $_POST["label"];
 		$task->description = $_POST['description'];
-		//$task->fk_task_parent = $task_parent;
+		$task->fk_task_parent = $task_parent;
 		$task->date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 		$task->date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 		$task->progress = $_POST['progress'];
@@ -106,18 +110,15 @@ llxHeader("",$langs->trans("Task"));
 $html = new Form($db);
 $formother = new FormOther($db);
 
-$projectstatic = new Project($db);
-
-
 if ($taskid)
 {
 	$task = new Task($db);
+	$projectstatic = new Project($db);
 	
 	if ($task->fetch($taskid) >= 0 )
 	{
-		$projet = new Project($db);
-		$result=$projet->fetch($task->fk_project);
-		if (! empty($projet->socid)) $projet->societe->fetch($projet->socid);
+		$result=$projectstatic->fetch($task->fk_project);
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 			
 		$head=task_prepare_head($task);
 			
@@ -143,12 +144,16 @@ if ($taskid)
 			print '<td><input size="30" name="label" value="'.$task->label.'"></td></tr>';
 			
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-			print $projet->getNomUrl(1);
+			print $projectstatic->getNomUrl(1);
 			print '</td></tr>';
 			
 			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
-			if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
+			print '</td></tr>';
+			
+			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			print $formother->selectProjectTasks($task->fk_task_parent,$projectstatic->id, 'task_parent', $user->admin?0:1, 0);
 			print '</td></tr>';
 			
 			// Date start
@@ -204,11 +209,11 @@ if ($taskid)
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 			
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-			print $projet->getNomUrl(1);
+			print $projectstatic->getNomUrl(1);
 			print '</td></tr>';
 			
 			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
-			if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
 			
