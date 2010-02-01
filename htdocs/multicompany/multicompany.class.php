@@ -115,12 +115,12 @@ class Multicompany
     /**
 	 *    \brief      Enable/disable entity
 	 */
-	function setEntity($id,$active)
+	function setEntity($id, $type='active', $value)
 	{
 		global $conf;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entity";
-		$sql.= " SET active = ".$active;
+		$sql.= " SET ".$type." = ".$value;
 		$sql.= " WHERE rowid = ".$id;
 		
 		dol_syslog("Multicompany::setEntity sql=".$sql, LOG_DEBUG);
@@ -206,7 +206,8 @@ class Multicompany
 		$smarty->assign('entities',$this->entities);
 		$smarty->assign('img_on',img_picto($langs->trans("Activated"),'on'));
 		$smarty->assign('img_off',img_picto($langs->trans("Disabled"),'off'));
-
+		$smarty->assign('img_modify',img_edit());
+		$smarty->assign('img_delete',img_delete());
 	}
 
 

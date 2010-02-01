@@ -23,26 +23,45 @@
  <tr class="liste_titre">
 
    <td>{$langs->trans('Name')}</td>
+   <td align="left">{$langs->trans('Description')}</td>
    <td align="left">{$langs->trans('Town')}</td>
    <td align="left">{$langs->trans('Country')}</td>
    <td align="left">{$langs->trans('Currency')}</td>
+   <td align="center">{$langs->trans('Visible')}</td>
    <td align="center">{$langs->trans('Status')}</td>
+   <td align="center" colspan="2">&nbsp;</td>
 
 {section name=mc loop=$entities}
 {strip}
    <tr class="{cycle values="impair,pair"}">
       <td>{$entities[mc].label}</td>
+      <td align="left">{$entities[mc].description}</td>
       <td align="left">{$entities[mc].details.MAIN_INFO_SOCIETE_VILLE}</td>
       <td align="left">{$entities[mc].details.MAIN_INFO_SOCIETE_PAYS}</td>
       <td align="left">{$entities[mc].details.MAIN_MONNAIE}</td>
-      <td align="center">
+      <td align="center" width="30">
       
-      {if $entities[mc].active}
-      <a href="{$smarty.server.SCRIPT_NAME}?action=set&amp;active=0&amp;id={$entities[mc].id}">{$img_on}</a>
+      {if $entities[mc].visible}
+      	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=setvisible&amp;value=0">{$img_on}</a>
       {else}
-      <a href="{$smarty.server.SCRIPT_NAME}?action=set&amp;active=1&amp;id={$entities[mc].id}">{$img_off}</a>
+      	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=setvisible&amp;value=1">{$img_off}</a>
       {/if}
       
+      </td>
+      <td align="center" width="30">
+      
+      {if $entities[mc].active}
+      	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=setactive&amp;value=0">{$img_on}</a>
+      {else}
+      	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=setactive&amp;value=1">{$img_off}</a>
+      {/if}
+      
+      </td>
+      <td align="center" width="20">
+      	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=modify">{$img_modify}</a>
+      </td>
+      <td align="center" width="20">
+      	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=delete">{$img_delete}</a>
       </td>
    </tr>
 {/strip}

@@ -39,9 +39,14 @@ $mc = new Multicompany($db);
  * Actions
  */
 
-if ($_GET["action"] == 'set')
+if ($_GET["action"] == 'setactive')
 {
-	$mc->setEntity($_GET['id'],$_GET["active"]);
+	$mc->setEntity($_GET['id'],'active',$_GET["value"]);
+}
+
+if ($_GET["action"] == 'setvisible')
+{
+	$mc->setEntity($_GET['id'],'visible',$_GET["value"]);
 }
 
 
@@ -69,7 +74,7 @@ if ($_GET["action"] == 'create')
  * Edit
  */
 
-else if ($_GET["action"] == 'edit')
+else if ($_GET["action"] == 'modify')
 {
 	print_titre($langs->trans("EditEntity"));	
 	
