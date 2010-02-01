@@ -39,9 +39,9 @@ $mc = new Multicompany($db);
  * Actions
  */
 
-if ($_GET["action"] == 'enable' || $_GET["action"] == 'disable')
+if ($_GET["action"] == 'set')
 {
-	$mc->setEntity($_GET['id'],$_GET["action"]);
+	$mc->setEntity($_GET['id'],$_GET["active"]);
 }
 
 

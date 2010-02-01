@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2009-2010 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,28 +49,6 @@ class Multicompany
 		$this->canvas = "default";
 		$this->name = "admin";
 		$this->description = "";
-		
-		/*
-		$this->active = MAIN_MULTICOMPANY;
-		
-		$this->menu_new = 'Admin';
-		$this->menu_add = 1;
-		$this->menu_clear = 1;
-
-		$this->no_button_copy = 1;
-
-		$this->menus[0][0] = '';
-		$this->menus[0][1] = '';
-		$this->menus[1][0] = '';
-		$this->menus[1][1] = '';
-
-		$this->next_prev_filter = "canvas='default'";
-
-		$this->onglets[0][0] = 'URL';
-		$this->onglets[0][1] = 'name1';
-		$this->onglets[1][0] = 'URL';
-		$this->onglets[1][1] = 'name2';
-		*/
 	}
 
 	/**
@@ -137,23 +115,13 @@ class Multicompany
     /**
 	 *    \brief      Enable/disable entity
 	 */
-	function setEntity($id,$action)
+	function setEntity($id,$active)
 	{
 		global $conf;
 
-		if ($action == 'enable') 
-		{
-			$newid = str_replace('-','',$id);
-		}
-		else if ($action == 'disable')
-		{
-			$newid = '-'.$id;
-		}
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."const";
-		$sql.= " SET entity = ".$newid;
-		$sql.= " WHERE ".$this->db->decrypt('name')." = 'MAIN_INFO_SOCIETE_NOM'";
-		$sql.= " AND entity = ".$id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."entity";
+		$sql.= " SET active = ".$active;
+		$sql.= " WHERE rowid = ".$id;
 		
 		dol_syslog("Multicompany::setEntity sql=".$sql, LOG_DEBUG);
 		
@@ -167,12 +135,8 @@ class Multicompany
 	{
 		global $conf;
 		
-		$sql = "SELECT ";
-		$sql.= $this->db->decrypt('value')." as value";
-		$sql.= ", entity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE ".$this->db->decrypt('name')." = 'MAIN_INFO_SOCIETE_NOM'";
-		$sql.= " ORDER BY value ASC";
+		$sql = "SELECT rowid, label, description, visible, active";
+		$sql.= " FROM ".MAIN_DB_PREFIX."entity";
 		
 		$result = $this->db->query($sql);
 		if ($result)
@@ -184,19 +148,12 @@ class Multicompany
 			{
 				$obj = $this->db->fetch_object($result);
 				
-				$active = 1;
-				$entity = $obj->entity;
-				
-				if ($obj->entity < 0)
-				{
-					$entity = str_replace('-','',$obj->entity);
-					$active = 0;
-				}
-				
-				$this->entities[$i]['label']   = $obj->value;
-				$this->entities[$i]['id']      = $obj->entity;
-				if ($details) $this->entities[$i]['details'] = $this->fetch($entity);
-				$this->entities[$i]['active']  = $active;
+				$this->entities[$i]['id']			= $obj->rowid;
+				$this->entities[$i]['label']		= $obj->label;
+				$this->entities[$i]['description'] 	= $obj->description;
+				$this->entities[$i]['visible'] 		= $obj->visible;
+				$this->entities[$i]['active']		= $obj->active;
+				if ($details) $this->entities[$i]['details'] = $this->fetch($obj->rowid);
 				
 				$i++;
 			}

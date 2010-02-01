@@ -38,9 +38,9 @@
       <td align="center">
       
       {if $entities[mc].active}
-      <a href="{$smarty.server.SCRIPT_NAME}?action=disable&amp;id={$entities[mc].id}">{$img_on}</a>
+      <a href="{$smarty.server.SCRIPT_NAME}?action=set&amp;active=0&amp;id={$entities[mc].id}">{$img_on}</a>
       {else}
-      <a href="{$smarty.server.SCRIPT_NAME}?action=enable&amp;id={$entities[mc].id}">{$img_off}</a>
+      <a href="{$smarty.server.SCRIPT_NAME}?action=set&amp;active=1&amp;id={$entities[mc].id}">{$img_off}</a>
       {/if}
       
       </td>
