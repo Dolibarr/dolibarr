@@ -42,6 +42,7 @@ $mc = new Multicompany($db);
 if ($_GET["action"] == 'setactive')
 {
 	$mc->setEntity($_GET['id'],'active',$_GET["value"]);
+	if ($_GET["value"] == 0) $mc->setEntity($_GET['id'],'visible',$_GET["value"]);
 }
 
 if ($_GET["action"] == 'setvisible')

@@ -158,7 +158,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
 
 		$mc = new Multicompany($db);
-		$mc->getEntities();
+		$mc->getEntities(0,1);
 
 		$select_entity=$mc->select_entities($mc->entities,$lastentity,'tabindex="3"');
 	}

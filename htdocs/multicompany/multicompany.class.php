@@ -131,12 +131,13 @@ class Multicompany
 	/**
 	 *    \brief      List of entities
 	 */
-	function getEntities($details=0)
+	function getEntities($details=0,$visible=0)
 	{
 		global $conf;
 		
 		$sql = "SELECT rowid, label, description, visible, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entity";
+		if ($visible) $sql.= " WHERE visible = 1";
 		
 		$result = $this->db->query($sql);
 		if ($result)

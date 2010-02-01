@@ -44,7 +44,11 @@
       {if $entities[mc].visible}
       	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=setvisible&amp;value=0">{$img_on}</a>
       {else}
-      	<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=setvisible&amp;value=1">{$img_off}</a>
+      	{if $entities[mc].active}
+      		<a href="{$smarty.server.SCRIPT_NAME}?id={$entities[mc].id}&amp;action=setvisible&amp;value=1">{$img_off}</a>
+      	{else}
+      		{$img_off}
+      	{/if}
       {/if}
       
       </td>
