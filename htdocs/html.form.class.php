@@ -2290,12 +2290,12 @@ class Form
 		}
 		elseif (strval($set_time) != '' && $set_time != -1)
 		{
-			// Date est un timestamps (0 possible)
-			$syear = date("Y", $set_time);
-			$smonth = date("n", $set_time);
-			$sday = date("d", $set_time);
-			$shour = date("H", $set_time);
-			$smin = date("i", $set_time);
+			// set_time est un timestamps (0 possible)
+			$syear = dol_print_date($set_time, "%Y", true);
+			$smonth = dol_print_date($set_time, "%m", true);
+			$sday = dol_print_date($set_time, "%d", true);
+			$shour = dol_print_date($set_time, "%H", true);
+			$smin = dol_print_date($set_time, "%m", true);
 		}
 		else
 		{
