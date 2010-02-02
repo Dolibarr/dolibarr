@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,8 +174,14 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
+$vatcust=$langs->trans("VATReceived");
+$vatsup=$langs->trans("VATPaid");
+
 
 // VAT Received and paid
+
+//print "<br>";
+//print_titre($vatcust);
 
 echo '<table class="noborder" width="100%">';
 
@@ -402,6 +408,8 @@ else
 				$x_coll_sum           += $temp_vat;
 			}
 		}
+
+		// Total customers
 		print '<tr class="liste_total">';
 		print '<td></td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
@@ -414,7 +422,6 @@ else
 		print '<td nowrap align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
 		print '</tr>';
 	}
-
 
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
@@ -538,6 +545,7 @@ else
 			}
 		}
 
+		// Total suppliers
 		print '<tr class="liste_total">';
 		print '<td>&nbsp;</td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
@@ -555,11 +563,11 @@ else
 
 	// Total to pay
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" colspan="'.($span-1).'"></td><td class="liste_titre" align="right" colspan="2">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").' '.$q.':</td>';
+	print '<td class="liste_titre" colspan="'.($span-1).'"></td><td class="liste_titre" align="right" colspan="2">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').':</td>';
 	print '</tr>'."\n";
 
 	$diff = $x_coll_sum - $x_paye_sum;
-	print '<tr class="list_total">';
+	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'"></td>';
 	print '<td class="liste_total" nowrap="nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";

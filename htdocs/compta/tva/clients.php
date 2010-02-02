@@ -113,12 +113,10 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
 	$amountcust=$langs->trans("AmountHT");
-	$vatcust=$langs->trans("VATReceived");
 	if ($mysoc->tva_assuj) $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
-	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
@@ -137,21 +135,22 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
 	$amountcust=$langs->trans("AmountHT");
-	$vatcust=$langs->trans("VATReceived");
 	if ($mysoc->tva_assuj) $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
-	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
+$vatcust=$langs->trans("VATReceived");
+$vatsup=$langs->trans("VATPaid");
+
 
 // VAT Received
 
-print "<br>";
-print_titre($vatcust);
+//print "<br>";
+//print_titre($vatcust);
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
@@ -215,15 +214,15 @@ else
 		print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
 }
 
-print '</table>';
+//print '</table>';
 
 
 // VAT Paid
 
-print "<br>";
-print_titre($vatsup);
+//print "<br>";
+//print_titre($vatsup);
 
-print "<table class=\"noborder\" width=\"100%\">";
+//print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Supplier")."</td>";

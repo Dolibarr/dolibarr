@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,10 @@
  */
 
 /**
-   \file        htdocs/compta/resultat/clientfourn.php
-   \brief       Page reporting resultat
-   \version     $Id$
-*/
+ *  \file        htdocs/compta/resultat/clientfourn.php
+ *	\brief       Page reporting resultat
+ *  \version     $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
@@ -35,8 +35,33 @@ $langs->load("bills");
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-$year=$_GET["year"];
-if (! $year) { $year = strftime("%Y", time()); }
+// Date range
+$year=$_REQUEST["year"];
+if (empty($year))
+{
+	$year_current = strftime("%Y",dol_now());
+	$year_start = $year_current;
+} else {
+	$year_current = $year;
+	$year_start = $year;
+}
+$date_start=dol_mktime($_REQUEST["date_starthour"],$_REQUEST["date_startmin"],$_REQUEST["date_startsec"],$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+$date_end=dol_mktime($_REQUEST["date_endhour"],$_REQUEST["date_endmin"],$_REQUEST["date_endsec"],$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+// Quarter
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:1; // TODO Set current quarter
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,3); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4); $date_end=dol_get_last_day($year_start,6); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7); $date_end=dol_get_last_day($year_start,9); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10); $date_end=dol_get_last_day($year_start,12); }
+}
+else
+{
+	// TODO We define q
+
+}
+
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
@@ -451,7 +476,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
     $sql.= " ORDER BY dm DESC";
-    
+
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -530,7 +555,7 @@ else
     $sql.= " AND t.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
     $sql.= " ORDER BY dm DESC";
-    
+
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -570,7 +595,7 @@ else
     $sql.= " AND t.entity = ".$conf->entity;
     $sql.= " GROUP BY dm";
     $sql.= " ORDER BY dm DESC";
-    
+
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
