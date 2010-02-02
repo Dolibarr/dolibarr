@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 20010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ class mod_project_universal extends ModeleNumRefProjects
    /**
 	*  \brief      Return next value
 	*  \param      objsoc		Object third party
-	*  \param      commande		Object project
+	*  \param      project		Object project
 	*  \return     string		Value if OK, 0 if KO
 	*/
     function getNextValue($objsoc=0,$project='')
@@ -119,16 +119,16 @@ class mod_project_universal extends ModeleNumRefProjects
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'projet','ref','',$objsoc->code_client,$project->datec);
+		$numFinal=get_next_value($db,$mask,'projet','ref','',$objsoc->code_client,$project->date_c);
 
 		return  $numFinal;
 	}
 
 
-    /**     \brief      Renvoie la reference de commande suivante non utilisee
+    /**     \brief      Return next reference not yet used as a reference
      *      \param      objsoc      Object third party
-     *      \param      commande	Object project
-     *      \return     string      Texte descripif
+     *      \param      project		Object project
+     *      \return     string      Next not used reference
      */
     function project_get_num($objsoc=0,$project='')
     {

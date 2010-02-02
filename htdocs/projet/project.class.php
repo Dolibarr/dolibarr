@@ -132,7 +132,7 @@ class Project extends CommonObject
 		// Clean parameters
 		$this->title = trim($this->title);
 		$this->description = trim($this->description);
-		
+
 		if (strlen(trim($this->ref)) > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet SET";
@@ -235,7 +235,7 @@ class Project extends CommonObject
 	function liste_array($socid='')
 	{
 		global $conf;
-		
+
 		$projects = array();
 
 		$sql = "SELECT rowid, title";
@@ -522,7 +522,7 @@ class Project extends CommonObject
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}
-	
+
 	/**
 	 *		\brief		Initialise object with default value to be used as example
 	 */
@@ -530,15 +530,17 @@ class Project extends CommonObject
 	{
 		global $user,$langs,$conf;
 
+		$now=mktime();
+
 		// Charge tableau des id de societe socids
 		$socids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE client IN (1, 3)";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " LIMIT 10";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -555,12 +557,12 @@ class Project extends CommonObject
 
 		// Charge tableau des produits prodids
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -580,7 +582,9 @@ class Project extends CommonObject
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
-		$this->dateo = time();
+		$this->date_c = $now;
+		$this->date_m = $now;
+		$this->date_start = $now;
 		$this->note_public='SPECIMEN';
 		$nbp = rand(1, 9);
 		$xnbp = 0;
@@ -594,6 +598,6 @@ class Project extends CommonObject
 			$xnbp++;
 		}
 	}
-	
+
 }
 ?>

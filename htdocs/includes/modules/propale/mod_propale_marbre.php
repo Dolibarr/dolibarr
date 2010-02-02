@@ -19,125 +19,124 @@
  */
 
 /**
-     	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
-		\ingroup    propale
-		\brief      Fichier contenant la classe du modele de numerotation de reference de propale Marbre
-		\version    $Id$
-*/
+ *    	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
+ *		\ingroup    propale
+ *		\brief      Fichier contenant la classe du modele de numerotation de reference de propale Marbre
+ *		\version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
 
 /**	    \class      mod_propale_marbre
-		\brief      Classe du modele de numerotation de reference de propale Marbre
-*/
-
+ *		\brief      Classe du modele de numerotation de reference de propale Marbre
+ */
 class mod_propale_marbre extends ModeleNumRefPropales
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PR';
-    var $error='';
+	var $error='';
 	var $nom = "Marbre";
-	
-
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
-    	global $langs;
-      	return $langs->trans("MarbreNumRefModelDesc");
-    }
 
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-        return "PR0501-0001";
-    }
+	/**     \brief      Return description of numbering module
+	 *      \return     string      Text with description
+	 */
+	function info()
+	{
+		global $langs;
+		return $langs->trans("MarbreNumRefModelDesc");
+	}
 
 
-    /**     \brief      Test si les numeros deje en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numerotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
-    {
-    	global $conf;
-    	
-        $pryymm='';
-        
-        $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-        $sql.= " WHERE entity = ".$conf->entity;
-        
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $row = $db->fetch_row($resql);
-            if ($row) $pryymm = substr($row[0],0,6);
-        }
-        if (! $pryymm || preg_match('/PR[0-9][0-9][0-9][0-9]/i',$pryymm))
-        {
-            return true;
-        }
-        else
-        {
-            $this->error='Une propal commencant par $pryymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
-            return false;    
-        }
-    }
+	/**     \brief      Return an example of numbering module values
+	 *      \return     string      Example
+	 */
+	function getExample()
+	{
+		return $this->prefix."0501-0001";
+	}
+
+
+	/**     \brief      Test si les numeros deje en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
+	 *      \return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		global $conf;
+
+		$pryymm='';
+
+		$sql = "SELECT MAX(ref)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " WHERE entity = ".$conf->entity;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row) $pryymm = substr($row[0],0,6);
+		}
+		if (! $pryymm || preg_match('/PR[0-9][0-9][0-9][0-9]/i',$pryymm))
+		{
+			return true;
+		}
+		else
+		{
+			$this->error='Une propal commencant par $pryymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
+			return false;
+		}
+	}
 
 	/**		\brief      Return next value
-    *      	\param      objsoc      Object third party
-	* 		\param		propal		Object commercial proposal
-    *   	\return     string      Valeur
-    */
+	 *      \param      objsoc      Object third party
+	 * 		\param		propal		Object commercial proposal
+	 *   	\return     string      Valeur
+	 */
 	function getNextValue($objsoc,$propal)
-    {
-        global $db,$conf;
+	{
+		global $db,$conf;
 
-        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
-        $posindice=8;
-        $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-        $sql.= " WHERE ref like '".$this->prefix."%'";
-        $sql.= " AND entity = ".$conf->entity;
-        
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $obj = $db->fetch_object($resql);
-            if ($obj) $max = $obj->max;
-            else $max=0;
-        }
-        else
-        {
-        	dol_syslog("mod_propale_marbre::getNextValue sql=".$sql);
-        	return -1;
-        }
+		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
+		$posindice=8;
+		$sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " WHERE ref like '".$this->prefix."%'";
+		$sql.= " AND entity = ".$conf->entity;
 
-        $date=$propal->date;
-        //$yymm = strftime("%y%m",time());
-        $yymm = strftime("%y%m",$date);
-        $num = sprintf("%04s",$max+1);
-        
-        dol_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
-        return $this->prefix.$yymm."-".$num;
-    }
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $max = $obj->max;
+			else $max=0;
+		}
+		else
+		{
+			dol_syslog("mod_propale_marbre::getNextValue sql=".$sql);
+			return -1;
+		}
+
+		$date=$propal->date;
+		//$yymm = strftime("%y%m",time());
+		$yymm = strftime("%y%m",$date);
+		$num = sprintf("%04s",$max+1);
+
+		dol_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+		return $this->prefix.$yymm."-".$num;
+	}
 
 	/**		\brief      Return next free value
-    *      	\param      objsoc      Object third party
-	* 		\param		objforref	Object for number to search
-    *   	\return     string      Next free value
-    */
-    function getNumRef($objsoc,$objforref)
-    {
-        return $this->getNextValue($objsoc,$objforref);
-    }
-        
+	 *      	\param      objsoc      Object third party
+	 * 		\param		objforref	Object for number to search
+	 *   	\return     string      Next free value
+	 */
+	function getNumRef($objsoc,$objforref)
+	{
+		return $this->getNextValue($objsoc,$objforref);
+	}
+
 }
 
 ?>

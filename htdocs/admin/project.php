@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/projet/tasks/task.class.php');
 
 $langs->load("admin");
 $langs->load("other");
+$langs->load("projects");
 
 if (!$user->admin)
 accessforbidden();

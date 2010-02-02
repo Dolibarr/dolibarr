@@ -71,3 +71,5 @@ TypeContact_project_task_internal_CONTRIBUTOR=Intervenant
 TypeContact_project_task_external_CONTRIBUTOR=Intervenant
 # Documents models
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)
+# NumRef Modules
+SimpleNumRefModelDesc=Renvoie le numero sous la forme PJyymm-nnnn où yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise à 0

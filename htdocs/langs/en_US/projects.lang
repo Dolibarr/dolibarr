@@ -71,3 +71,5 @@ TypeContact_project_task_internal_CONTRIBUTOR=Contributor
 TypeContact_project_task_external_CONTRIBUTOR=Contributor
 # Documents models
 DocumentModelBaleine=A complete project's report model (logo...)
+# NumRef Modules
+SimpleNumRefModelDesc=Return the reference number with format PJyymm-nnnn where yy is year, mm is month and nnnn is a sequence without hole and with no reset

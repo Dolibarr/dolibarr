@@ -85,10 +85,8 @@ ProposalLine=Ligne de proposition
 TypeContact_propal_internal_SALESREPFOLL=Commercial suivi propale
 TypeContact_propal_external_BILLING=Contact client facturation propale
 TypeContact_propal_external_CUSTOMER=Contact client suivi propale
-
 # Documents models
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)
 DocModelJauneDescription=Modele de proposition Jaune
-
 # NumRef Modules
 MarbreNumRefModelDesc=Renvoie le numero sous la forme PRyymm-nnnn où yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise à 0
