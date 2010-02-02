@@ -509,7 +509,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 		$var=true;
 
 		$var=!$var;
-		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax1\" value=\"reel\"".($conf->global->FACTURE_LOCAL_TAX1_OPTION != "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$code_pays)."</label></td>";
+		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax1\" value=\"vatre\"".($conf->global->FACTURE_LOCAL_TAX1_OPTION != "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$code_pays)."</label></td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td>".$langs->transcountry("LocalTax1IsUsedDesc",$code_pays)."</td></tr>";
@@ -518,7 +518,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print "</td></tr>\n";
 
 		$var=!$var;
-		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax1\" value=\"franchise\"".($conf->global->FACTURE_LOCAL_TAX1_OPTION == "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$code_pays)."</label></td>";
+		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax1\" value=\"0\"".($conf->global->FACTURE_LOCAL_TAX1_OPTION == "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$code_pays)."</label></td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td>".$langs->transcountry("LocalTax1IsNotUsedDesc",$code_pays)."</td></tr>";
@@ -537,7 +537,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 		$var=true;
 
 		$var=!$var;
-		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax2\" value=\"reel\"".($conf->global->FACTURE_LOCAL_TAX2_OPTION != "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$code_pays)."</label></td>";
+		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax2\" value=\"vatirpf\"".($conf->global->FACTURE_LOCAL_TAX2_OPTION != "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$code_pays)."</label></td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td>".$langs->transcountry("LocalTax2IsUsedDesc",$code_pays)."</td></tr>";
@@ -546,7 +546,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print "</td></tr>\n";
 
 		$var=!$var;
-		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax2\" value=\"franchise\"".($conf->global->FACTURE_LOCAL_TAX2_OPTION == "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax2IsNotUsed",$code_pays)."</label></td>";
+		print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optionlocaltax2\" value=\"0\"".($conf->global->FACTURE_LOCAL_TAX2_OPTION == "franchise"?" checked":"")."> ".$langs->transcountry("LocalTax2IsNotUsed",$code_pays)."</label></td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td>".$langs->transcountry("LocalTax2IsNotUsedDesc",$code_pays)."</td></tr>";
