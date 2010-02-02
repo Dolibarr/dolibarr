@@ -380,11 +380,11 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 
 	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
-	$mysoc->tva_assuj=($conf->global->FACTURE_TVAOPTION=='franchise'?0:1);
-	
+	$mysoc->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);
+
 	// Define if company use local taxes
-	$mysoc->localtax1_assuj=($conf->global->FACTURE_LOCAL_TAX1_OPTION=='franchise'?0:1);
-	$mysoc->localtax2_assuj=($conf->global->FACTURE_LOCAL_TAX2_OPTION=='franchise'?0:1);
+	$mysoc->localtax1_assuj=($conf->global->FACTURE_LOCAL_TAX1_OPTION?1:0);
+	$mysoc->localtax2_assuj=($conf->global->FACTURE_LOCAL_TAX2_OPTION?1:0);
 }
 
 
