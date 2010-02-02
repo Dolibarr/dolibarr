@@ -29,6 +29,7 @@ For users:
 - New: task #9916 : Add FREE text for interventions card.
 - New: Can define the new product ref when cloning.
 - New: Project module support status of project and end date.
+- New: Provide a debian/ubuntu package.
 - Fix: Import module works even if prefix is empty in source file.
 - Fix: bug #28055 : Unable to modify the date of a cloned command.
 - Fix: bug #27891.
