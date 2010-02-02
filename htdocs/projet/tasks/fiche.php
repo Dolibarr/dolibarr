@@ -196,9 +196,24 @@ else
 	dol_fiche_head($head, $tab, $langs->trans("Project"),0,'project');
 
 	$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
-
-	print '<form name="addtime" method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$project->id.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	
+	// To verify role of users
+	$userAccess = 0;
+	foreach(array('internal','external') as $source)
+	{
+		$userRole = $project->liste_contact(4,$source);
+		$num=sizeof($userRole);
+		
+		$i = 0;
+		while ($i < $num)
+		{
+			if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+			{
+				$userAccess++;
+			}
+			$i++;
+		}
+	}
 
 	print '<table class="border" width="100%">';
 
@@ -246,10 +261,7 @@ else
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
 	print '</table>';
-
-	print '<input type="hidden" name="action" value="addtime">';
-
-	print '</form>';
+	
 	print '</div>';
 
 	/*
@@ -259,7 +271,7 @@ else
 
 	if ($user->rights->projet->creer)
 	{
-		if (empty($project->user_resp_id) || $project->user_resp_id == -1 || $project->user_resp_id == $user->id)
+		if ($userAccess)
 		{
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$project->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
 		}

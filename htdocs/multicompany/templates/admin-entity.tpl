@@ -22,8 +22,9 @@
 <table class="noborder" width="100%">
  <tr class="liste_titre">
 
-   <td>{$langs->trans('Name')}</td>
+   <td>{$langs->trans('Label')}</td>
    <td align="left">{$langs->trans('Description')}</td>
+   <td align="left">{$langs->trans('Name')}</td>
    <td align="left">{$langs->trans('Town')}</td>
    <td align="left">{$langs->trans('Country')}</td>
    <td align="left">{$langs->trans('Currency')}</td>
@@ -36,6 +37,7 @@
    <tr class="{cycle values="impair,pair"}">
       <td>{$entities[mc].label}</td>
       <td align="left">{$entities[mc].description}</td>
+      <td align="left">{$entities[mc].details.MAIN_INFO_SOCIETE_NOM}</td>
       <td align="left">{$entities[mc].details.MAIN_INFO_SOCIETE_VILLE}</td>
       <td align="left">{$entities[mc].details.MAIN_INFO_SOCIETE_PAYS}</td>
       <td align="left">{$entities[mc].details.MAIN_MONNAIE}</td>
