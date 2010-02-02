@@ -735,16 +735,16 @@ SSLCertificateKeyFile "WAMPROOT/myserver.key"
 
 
 
-# OPTIMIZE: To use gzip compression (for already compressed files)
-# Note that constant MAIN_OPTIMIZE_SPEED must be defined. 
+# OPTIMIZE: To use gzip compression (for already compressed files).
+# Note that constant MAIN_OPTIMIZE_SPEED must have a value with bit 0 set. 
 #AddType text/javascript .jgz
 #AddEncoding gzip .jgz
 
-# OPTIMIZE: To use gzip compression (on the fly)
+# OPTIMIZE: To use gzip compression (on the fly).
 # Note that you must also enable the module mod_deflate 
 #TODO
 
-# OPTIMIZE: To use cache on static pages
+# OPTIMIZE: To use cache on static pages.
 # Note that you must also enable the module mod_expires
 #ExpiresActive On
 #ExpiresByType image/gif A86400
