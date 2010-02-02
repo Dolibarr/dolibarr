@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-if ($_GET["action"] == 'create' && $user->rights->projet->creer)
+if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && $userAccess)
 {
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -269,7 +269,7 @@ else
 	 */
 	print '<div class="tabsAction">';
 
-	if ($user->rights->projet->creer)
+	if ($user->rights->projet->task->creer)
 	{
 		if ($userAccess)
 		{

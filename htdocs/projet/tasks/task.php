@@ -32,13 +32,13 @@ require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 $taskid = (isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:''));
 $taskref = (isset($_GET["ref"])?$_GET["ref"]:'');
 
-if (!$user->rights->projet->lire) accessforbidden();
+if (!$user->rights->projet->task->lire) accessforbidden();
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
+if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet->task->creer)
 {
 	$error=0;
 
@@ -74,7 +74,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	}
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->task->creer)
 {
 	$task = new Task($db);
 	if ($task->fetch($_GET["id"]) >= 0 )
@@ -124,7 +124,7 @@ if ($taskid)
 			
 		dol_fiche_head($head, 'task', $langs->trans("Task"),0,'projecttask');
 		
-		if ($_GET["action"] == 'edit' && $user->rights->projet->creer)
+		if ($_GET["action"] == 'edit' && $user->rights->projet->task->creer)
 		{
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -246,7 +246,7 @@ if ($taskid)
 			print '<div class="tabsAction">';
 			
 			// Modify
-			if ($user->rights->projet->creer)
+			if ($user->rights->projet->task->creer)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
@@ -256,7 +256,7 @@ if ($taskid)
 			}
 			
 			// Delete
-			if ($user->rights->projet->supprimer)
+			if ($user->rights->projet->task->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 			}

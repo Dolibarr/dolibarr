@@ -28,7 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
-if (!$user->rights->projet->lire) accessforbidden();
+if (!$user->rights->projet->task->lire) accessforbidden();
 
 /*
  * Actions

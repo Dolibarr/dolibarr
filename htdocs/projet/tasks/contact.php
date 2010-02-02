@@ -38,7 +38,7 @@ $taskid = isset($_GET["id"])?$_GET["id"]:'';
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $taskid, 'projet_task');
-if (!$user->rights->projet->lire) accessforbidden();
+if (!$user->rights->projet->task->lire) accessforbidden();
 
 
 /*
@@ -46,7 +46,7 @@ if (!$user->rights->projet->lire) accessforbidden();
  */
 
 // Add new contact
-if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
+if ($_POST["action"] == 'addcontact' && $user->rights->projet->task->creer)
 {
 
 	$result = 0;
@@ -77,7 +77,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 	}
 }
 // modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateline' && $user->rights->projet->creer)
+if ($_POST["action"] == 'updateline' && $user->rights->projet->task->creer)
 {
 	$task = new Task($db);
 	if ($task->fetch($taskid))
@@ -103,7 +103,7 @@ if ($_POST["action"] == 'updateline' && $user->rights->projet->creer)
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
+if ($_GET["action"] == 'swapstatut' && $user->rights->projet->task->creer)
 {
 	$task = new Task($db);
 	if ($task->fetch($taskid))
@@ -129,7 +129,7 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
+if ($_GET["action"] == 'deleteline' && $user->rights->projet->task->creer)
 {
 	$task = new Task($db);
 	$task->fetch($taskid);
@@ -216,7 +216,7 @@ if ($id > 0 || ! empty($ref))
 		 * Ajouter une ligne de contact
 		 * Non affiche en mode modification de ligne
 		 */
-		if ($_GET["action"] != 'editline' && $user->rights->projet->creer)
+		if ($_GET["action"] != 'editline' && $user->rights->projet->task->creer)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -369,7 +369,7 @@ if ($id > 0 || ! empty($ref))
 
 				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($user->rights->projet->creer)
+				if ($user->rights->projet->task->creer)
 				{
 					print '&nbsp;';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
