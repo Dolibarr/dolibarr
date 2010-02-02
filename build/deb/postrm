@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 # postrm script for dolibarr
 #
 # see: dh_installdeb(1)
@@ -16,9 +16,12 @@ set -e
 #        * <disappearer's-postrm> `disappear' <r>overwrit>r> <new-version>
 # for details, see /usr/share/doc/packaging-manual/
 
+
 . /usr/share/debconf/confmodule
 
 db_version 2.0
+
+echo Run the postrm script
 
 #echo "postrm db_get dolibarr/webserver"
 # We disable set -e to avoid premature end of script if error
@@ -40,23 +43,40 @@ case "$1" in
 	purge)
 		echo "postrm purge webservers=$webservers includefile=$includefile"
 
-		#echo "postrm db_get dolibarr/postrm"
+		# Ask if we must delete database
+		echo "postrm db_input dolibarr/postrm"
+		db_input critical "dolibarr/postrm" || true
+		db_go || true
+
+		echo "postrm db_get dolibarr/postrm"
 		# We disable set -e to avoid premature end of script if error
 		set +e
 		db_get "dolibarr/postrm"
 		set -e
 	
 		if [ "$RET" = "true" ] ; then
+			echo postrm Mysql database deletion
 			# Get database configuration
 			dbserver="localhost"
-			db_get "dolibarr/db/name"
-			dbname="$RET"
-			db_get "dolibarr/db/admin/name"
-			dbadmin="$RET"
-			db_get "dolibarr/db/admin/password"
-			dbadmpass="$RET"
+			dbname="dolibarr"
+			#db_get "dolibarr/db/name"
+			#dbname="$RET"
+			superuserlogin=''
+			superuserpassword=''
+			if [ -f /etc/mysql/debian.cnf ] ; then
+				# Load superuser login and pass
+				superuserlogin=$(/bin/grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
+				superuserpassword=$(/bin/grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
+			fi
+			echo postrm Mysql superuser found to use is $superuserlogin
+			dbadmin="$superuserlogin"
+			dbadmpass="$superuserpassword"
+			#db_get "dolibarr/db/admin/name"
+			#dbadmin="$RET"
+			#db_get "dolibarr/db/admin/password"
+			#dbadmpass="$RET"
 			dbtype="mysql"
-
+			
 			. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
 			. /usr/share/wwwconfig-common/${dbtype}-dropdb.sh
 		fi
@@ -84,36 +104,50 @@ case "$1" in
 
 		rm -rf /etc/dolibarr
 
-		# Restart
+		# Restart servers
 		servers="apache2-ssl apache2 mysql"
 		if [ -f /usr/share/wwwconfig-common/restart.sh ] ;
 		then
 			. /usr/share/wwwconfig-common/restart.sh
+		else
+			# Another way to restart
+			for server in $servers ; do
+        		if [ -x /usr/sbin/invoke-rc.d ]; then
+        		     invoke-rc.d $server reload || true
+        		else
+        		     /etc/init.d/$server reload || true
+        		fi
+			done
 		fi
-
+		
 		# Remove file and conf file
 		for dir in /usr/share/dolibarr ; do
 			if [ -d ${dir} ] ; then rm -rf ${dir} ; fi
 		done
 		
+		db_reset "dolibarr/postrm"
 		db_purge
 	;;
+
 	remove)
-		echo "Force remove of /usr/share/dolibarr/htdocs/install"
+		echo "postrm Force remove of /usr/share/dolibarr/htdocs/install"
 		rm -fr /usr/share/dolibarr/htdocs/install
 
-		echo "Remove menu entry and image"
+		echo "postrm Remove menu entry and image"
 		fileorig="/usr/share/applications/dolibarr.desktop"
 		rm -f $fileorig
 		fileorig="/usr/share/pixmaps/dolibarr.xpm"
 		rm -f $fileorig
-		# Not sure this is usefulle
+		# Not sure this is usefull
 		if test -x /usr/bin/update-menus; then update-menus; fi
 	;;
+
 	upgrade)
 	;;
+
 	failed-upgrade|abort-install|abort-upgrade|disappear)
 	;;
+
 	*)
 		echo "postrm called with unknown argument \`$1'" >&2
 		exit 0
@@ -121,5 +155,7 @@ case "$1" in
 esac
 
 db_stop
+
+#DEBHELPER#
 
 exit 0

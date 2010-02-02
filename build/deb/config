@@ -13,6 +13,7 @@
 
 set -e
 
+
 . /usr/share/debconf/confmodule
 
 db_version 2.0
@@ -24,8 +25,8 @@ echo Run the config script
 if [ "$1" = "reconfigure" ] ; then
 	config="/etc/dolibarr/apache.conf"
 	for i in $(seq 8 -1 0) ; do
-		if [ -f ${config}.$i ]
-			then mv ${config}.$i ${config}.$(($i +1))
+		if [ -f ${config}.$i ] ; then
+			mv ${config}.$i ${config}.$(($i +1))
 		fi
 	done
 	mv ${config} ${config}.0
@@ -35,20 +36,18 @@ fi
 
 db_capb backup
 
+db_title "dolibarr" || true
+
 
 # Ask for web server type.
 #db_input critical "dolibarr/webserver" || true
 
-db_title "dolibarr" || true
 if db_go ; then
     okcancel="1"
 else
 	okcancel="0"
 fi
 
-
-# Ask on wich host the DBMS is installed.
-#db_input critical "dolibarr/db/host" || true
 
 # Get the database administrator name and password.
 #db_beginblock
@@ -66,9 +65,12 @@ fi
 #db_input critical "dolibarr/db/user/password" || true
 
 # Ask for deleting all the database on package purge.
-#db_input medium "dolibarr/postrm" || true
-#onsuccess='finished="true"'
+#db_input critical "dolibarr/postrm" || true
 
+# Launch input screens
+#db_go || true
 
+onsuccess='finished="true"'
 db_stop
+
 exit 0

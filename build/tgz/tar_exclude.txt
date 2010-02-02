@@ -21,6 +21,8 @@ doc/wiki
 document
 documents
 htdocs/conf/conf.php
+htdocs/conf/conf.php.mysql
+htdocs/conf/conf.php.postgres
 htdocs/avoir
 htdocs/document
 htdocs/documents

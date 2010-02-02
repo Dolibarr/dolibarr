@@ -15,7 +15,9 @@ set -e
 #          <conflicting-package> <version>
 # for details, see /usr/share/doc/packaging-manual/
 
+
 . /usr/share/debconf/confmodule
+
 db_version 2.0
 
 #
@@ -53,11 +55,23 @@ case "$1" in
 		mkdir -p /etc/dolibarr
 		cp -p $fileorig $config
 
-		# Copy install.forced.php
-		fileorig="/usr/share/dolibarr/build/deb/install.forced.php"
+		# Create install.forced.php
+		fileorig="/usr/share/dolibarr/build/deb/install.forced.php.install"
 		config="/usr/share/dolibarr/htdocs/install/install.forced.php"
-		cp -p $fileorig $config
-
+		superuserlogin=''
+		superuserpassword=''
+		if [ -f /etc/mysql/debian.cnf ] ; then
+			# Load superuser login and pass
+			superuserlogin=$(/bin/grep --max-count=1 "user" /etc/mysql/debian.cnf | /bin/sed -e 's/^user[ =]*//g')
+			superuserpassword=$(/bin/grep --max-count=1 "password" /etc/mysql/debian.cnf | /bin/sed -e 's/^password[ =]*//g')
+		fi
+		echo Mysql superuser found to use is $superuserlogin
+		if [ -z "$superuserlogin" ] ; then
+			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/root/g' | sed -e 's/__SUPERUSERPASSWORD__//g' > $config
+		else
+			cat $fileorig | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $config
+		fi
+		
 		# Create empty conf.php
 		if [ ! -f /usr/share/dolibarr/htdocs/conf/conf.php ]
 		then 
@@ -150,14 +164,26 @@ case "$1" in
 		#    perl -pi -e "s/DBPASS/$dbpass/" /usr/share/dolibarr/htdocs/conf/conf.php
 		#fi
 
+		# Restart servers
 		servers="apache2-ssl apache2 mysql"
-		. /usr/share/wwwconfig-common/restart.sh
-
+		if [ -f /usr/share/wwwconfig-common/restart.sh ] ;
+		then
+			. /usr/share/wwwconfig-common/restart.sh
+		else
+			# Another way to restart
+			for server in $servers ; do
+        		if [ -x /usr/sbin/invoke-rc.d ]; then
+        	    	invoke-rc.d $server reload || true
+        		else
+        	    	/etc/init.d/$server reload || true
+        		fi
+			done
+		fi
+		
 		echo "Launch Dolibarr on page http://localhost/dolibarr/ to complete the installation and use Dolibarr."
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)
-
 	;;
 
 	*)

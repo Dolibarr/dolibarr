@@ -96,7 +96,7 @@ Description: Please, insert the DBMS administrator password (if any):
 Template: dolibarr/postrm
 Type: boolean
 Default: true
-Description: Delete *ALL*?
- Datas subjected to this question are the DBMS account, the DB and the
- Dolibarr users ang group files. Do I have to delete *ALL* datas whenever
- the Dolibarr package will be completely removed from the system?
+Description: Delete database ?
+ Do I have to delete also the Dolibarr MySQL database and all its datas
+ (datas subjected to this quetion are the Dolibarr DBMS account and all
+ Dolibarr tables) ?
