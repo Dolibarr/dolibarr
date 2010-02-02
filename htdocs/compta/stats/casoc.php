@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -27,11 +27,11 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load("companies");
 
-$year=$_GET["year"];
-if (! $year) { $year = strftime("%Y", time()); }
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
@@ -41,9 +41,49 @@ $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="nom";
 
-// Securite acces client
+// Security check
+$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 if ($user->societe_id > 0) $socid = $user->societe_id;
+if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
+accessforbidden();
 
+// Date range
+$year=$_REQUEST["year"];
+if (empty($year))
+{
+	$year_current = strftime("%Y",dol_now());
+	$year_start = $year_current;
+} else {
+	$year_current = $year;
+	$year_start = $year;
+}
+$date_start=dol_mktime($_REQUEST["date_starthour"],$_REQUEST["date_startmin"],$_REQUEST["date_startsec"],$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+$date_end=dol_mktime($_REQUEST["date_endhour"],$_REQUEST["date_endmin"],$_REQUEST["date_endsec"],$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+// Quarter
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:0;
+	if ($q==0)
+	{
+		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"]); $date_end=dol_get_last_day($year_start,$_REQUEST["month"]); }
+		else { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,12); }
+	}
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,3); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4); $date_end=dol_get_last_day($year_start,6); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7); $date_end=dol_get_last_day($year_start,9); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10); $date_end=dol_get_last_day($year_start,12); }
+}
+else
+{
+	// TODO We define q
+
+}
+
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -54,8 +94,9 @@ if ($modecompta=="CREANCES-DETTES")
 {
 	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period=$langs->trans("Year")." ".$year;
-	$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	//$period=$langs->trans("Year")." ".$year;
+	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCADue");
 	$builddate=time();
 	$exportlink=$langs->trans("NotYetAvailable");
@@ -63,8 +104,9 @@ if ($modecompta=="CREANCES-DETTES")
 else {
 	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$period=$langs->trans("Year")." ".$year;
-	$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	//$period=$langs->trans("Year")." ".$year;
+	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCAIn");
 	$builddate=time();
 	$exportlink=$langs->trans("NotYetAvailable");
@@ -81,7 +123,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	$sql.= " AND f.fk_soc = s.rowid";
-	if ($year) $sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
 else
 {
@@ -97,7 +139,7 @@ else
 	$sql .= " WHERE p.rowid = pf.fk_paiement";
 	$sql.= " AND pf.fk_facture = f.rowid";
 	$sql.= " AND f.fk_soc = s.rowid";
-	if ($year) $sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -134,7 +176,7 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " AND p.fk_bank = b.rowid";
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity = ".$conf->entity;
-	if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	$sql.= " GROUP BY nom";
 	$sql.= " ORDER BY nom";
 

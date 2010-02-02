@@ -20,7 +20,7 @@
  */
 
 /**     \defgroup   comptabilite     Module comptabilite
-        \brief      Module pour inclure des fonctions de comptabilit� (gestion de comptes comptables et rapports)
+        \brief      Module pour inclure des fonctions de comptabilite (gestion de comptes comptables et rapports)
 		\version	$Id$
 */
 

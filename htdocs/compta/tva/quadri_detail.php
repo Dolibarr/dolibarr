@@ -58,7 +58,12 @@ $date_end=dol_mktime($_REQUEST["date_endhour"],$_REQUEST["date_endmin"],$_REQUES
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:1; // TODO Set current quarter
+	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:0;
+	if ($q==0)
+	{
+		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"]); $date_end=dol_get_last_day($year_start,$_REQUEST["month"]); }
+		else $q=1;
+	}
 	if ($q==1) { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,3); }
 	if ($q==2) { $date_start=dol_get_first_day($year_start,4); $date_end=dol_get_last_day($year_start,6); }
 	if ($q==3) { $date_start=dol_get_first_day($year_start,7); $date_end=dol_get_last_day($year_start,9); }

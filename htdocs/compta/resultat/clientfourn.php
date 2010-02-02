@@ -28,12 +28,17 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 
 $langs->load("bills");
 
-if (!$user->rights->facture->lire)
-  accessforbidden();
+// Security check
+$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+if ($user->societe_id > 0) $socid = $user->societe_id;
+if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
+accessforbidden();
 
 // Date range
 $year=$_REQUEST["year"];
@@ -50,7 +55,12 @@ $date_end=dol_mktime($_REQUEST["date_endhour"],$_REQUEST["date_endmin"],$_REQUES
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:1; // TODO Set current quarter
+	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:0;
+	if ($q==0)
+	{
+		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"]); $date_end=dol_get_last_day($year_start,$_REQUEST["month"]); }
+		else { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,12); }
+	}
 	if ($q==1) { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,3); }
 	if ($q==2) { $date_start=dol_get_first_day($year_start,4); $date_end=dol_get_last_day($year_start,6); }
 	if ($q==3) { $date_start=dol_get_first_day($year_start,7); $date_end=dol_get_last_day($year_start,9); }
@@ -68,6 +78,10 @@ if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $html=new Form($db);
@@ -75,60 +89,61 @@ $html=new Form($db);
 // Affiche en-tete de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    $nom=$langs->trans("AnnualByCompaniesDueDebtMode");
-    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-    $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
-    $description=$langs->trans("RulesResultDue");
-    $builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+	$nom=$langs->trans("AnnualByCompaniesDueDebtMode");
+	$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	//$period=$langs->trans("Year")." ".$year;
+	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	$description=$langs->trans("RulesResultDue");
+	$builddate=time();
+	$exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    $nom=$langs->trans("AnnualByCompaniesInputOutputMode");
-    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-    $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
-    $description=$langs->trans("RulesResultInOut");
-    $builddate=time();
-    $exportlink=$langs->trans("NotYetAvailable");
+	$nom=$langs->trans("AnnualByCompaniesInputOutputMode");
+	$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
+	//$period=$langs->trans("Year")." ".$year;
+	$period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	$description=$langs->trans("RulesResultInOut");
+	$builddate=time();
+	$exportlink=$langs->trans("NotYetAvailable");
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
-// Affiche rapport
+// Show report array
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="10%">&nbsp;</td><td>'.$langs->trans("Element").'</td>';
 if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".$langs->trans("AmountHT")."</td>";
 print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
 print "</tr>\n";
-print '<tr><td colspan="4">&nbsp;</td></tr>';
 
 /*
  * Factures clients
  */
-print '<tr><td colspan="4">Facturation clients</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
-    $sql = "SELECT s.nom, s.rowid as socid, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    $sql.= ", ".MAIN_DB_PREFIX."facture as f";
-    $sql.= " WHERE f.fk_soc = s.rowid";
-    $sql.= " AND f.fk_statut in (1,2)";
-    if ($year) $sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	$sql = "SELECT s.nom, s.rowid as socid, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " WHERE f.fk_soc = s.rowid";
+	$sql.= " AND f.fk_statut in (1,2)";
+	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 } else {
-    /*
-     * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
-     */
+	/*
+	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
+	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+	 */
 	$sql = "SELECT s.nom as nom, s.rowid as socid, sum(pf.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
-  $sql.= " WHERE p.rowid = pf.fk_paiement";
-  $sql.= " AND pf.fk_facture = f.rowid";
-  $sql.= " AND f.fk_soc = s.rowid";
-  if ($year) $sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	$sql.= " WHERE p.rowid = pf.fk_paiement";
+	$sql.= " AND pf.fk_facture = f.rowid";
+	$sql.= " AND f.fk_soc = s.rowid";
+	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -137,80 +152,80 @@ $sql.= " ORDER BY nom";
 
 $result = $db->query($sql);
 if ($result) {
-    $num = $db->num_rows($result);
-    $i = 0;
-    $var=true;
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($result);
-        $var=!$var;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$var=true;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
 
-        print "<tr $bc[$var]><td>&nbsp;</td>";
-        print "<td>".$langs->trans("Bills")." <a href=\"../facture.php?socid=".$objp->socid."\">$objp->nom</td>\n";
+		print "<tr $bc[$var]><td>&nbsp;</td>";
+		print "<td>".$langs->trans("Bills")." <a href=\"../facture.php?socid=".$objp->socid."\">$objp->nom</td>\n";
 
-        if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-        print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+		if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
+		print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
 
-        $total_ht = $total_ht + $objp->amount_ht;
-        $total_ttc = $total_ttc + $objp->amount_ttc;
-        print "</tr>\n";
-        $i++;
-    }
-    $db->free($result);
+		$total_ht = $total_ht + $objp->amount_ht;
+		$total_ttc = $total_ttc + $objp->amount_ttc;
+		print "</tr>\n";
+		$i++;
+	}
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // On ajoute les paiements clients anciennes version, non lie par paiement_facture
 if ($modecompta != 'CREANCES-DETTES')
 {
-    $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-    $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-    $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE pf.rowid IS NULL";
-    $sql.= " AND p.fk_bank = b.rowid";
-    $sql.= " AND b.fk_account = ba.rowid";
-    $sql.= " AND ba.entity = ".$conf->entity;
-    if ($year) $sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    $sql.= " GROUP BY nom";
-    $sql.= " ORDER BY nom";
+	$sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+	$sql.= " WHERE pf.rowid IS NULL";
+	$sql.= " AND p.fk_bank = b.rowid";
+	$sql.= " AND b.fk_account = ba.rowid";
+	$sql.= " AND ba.entity = ".$conf->entity;
+	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	$sql.= " GROUP BY nom";
+	$sql.= " ORDER BY nom";
 
-    $result = $db->query($sql);
-    if ($result) {
-        $num = $db->num_rows($result);
-        $i = 0;
-        if ($num) {
-            while ($i < $num)
-            {
-                $objp = $db->fetch_object($result);
-                $var=!$var;
+	$result = $db->query($sql);
+	if ($result) {
+		$num = $db->num_rows($result);
+		$i = 0;
+		if ($num) {
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($result);
+				$var=!$var;
 
-                print "<tr $bc[$var]><td>&nbsp;</td>";
-                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
+				print "<tr $bc[$var]><td>&nbsp;</td>";
+				print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
 
-                if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
-                print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
+				if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
+				print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
 
-                $total_ht = $total_ht + $objp->amount_ht;
-                $total_ttc = $total_ttc + $objp->amount_ttc;
-                print "</tr>\n";
-                $i++;
-            }
-        }
-        $db->free($result);
-    } else {
-        dol_print_error($db);
-    }
+				$total_ht = $total_ht + $objp->amount_ht;
+				$total_ttc = $total_ttc + $objp->amount_ttc;
+				print "</tr>\n";
+				$i++;
+			}
+		}
+		$db->free($result);
+	} else {
+		dol_print_error($db);
+	}
 }
 
 if ($total_ttc == 0)
 {
-    $var=!$var;
-    print "<tr $bc[$var]><td>&nbsp;</td>";
-    print '<td colspan="3">'.$langs->trans("None").'</td>';
-    print '</tr>';
+	$var=!$var;
+	print "<tr $bc[$var]><td>&nbsp;</td>";
+	print '<td colspan="3">'.$langs->trans("None").'</td>';
+	print '</tr>';
 }
 
 print '<tr class="liste_total">';
@@ -225,13 +240,11 @@ print '</tr>';
 if ($modecompta == 'CREANCES-DETTES')
 {
 	$sql = "SELECT s.nom, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
-  $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-  $sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-  $sql.= " WHERE f.fk_soc = s.rowid";
-  $sql.= " AND f.fk_statut in (1,2)";
-  if ($year) {
-  	$sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-  }
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql.= " WHERE f.fk_soc = s.rowid";
+	$sql.= " AND f.fk_statut in (1,2)";
+	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 } else {
 	$sql = "SELECT s.nom, s.rowid as socid, date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
@@ -240,53 +253,51 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql .= " ON pf.fk_facturefourn = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " ON f.fk_soc = s.rowid";
-  $sql .= " WHERE p.rowid = pf.fk_paiementfourn ";
-  if ($year) {
-  	$sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-  }
+	$sql .= " WHERE p.rowid = pf.fk_paiementfourn ";
+	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY nom, s.rowid";
 $sql .= " ORDER BY nom, s.rowid";
 
-print '<tr><td colspan="4">Facturation fournisseurs</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 $result = $db->query($sql);
 if ($result) {
-  $num = $db->num_rows($result);
-  $i = 0;
-  $var=true;
-  if ($num > 0) {
-    while ($i < $num) {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$var=true;
+	if ($num > 0) {
+		while ($i < $num) {
+			$objp = $db->fetch_object($result);
+			$var=!$var;
 
-      print "<tr $bc[$var]><td>&nbsp;</td>";
-      print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/index.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
+			print "<tr $bc[$var]><td>&nbsp;</td>";
+			print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/index.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
 
-      if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
-      print "<td align=\"right\">".price(-$objp->amount_ttc)."</td>\n";
+			if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
+			print "<td align=\"right\">".price(-$objp->amount_ttc)."</td>\n";
 
-      $total_ht = $total_ht - $objp->amount_ht;
-      $total_ttc = $total_ttc - $objp->amount_ttc;
-      $subtotal_ht = $subtotal_ht + $objp->amount_ht;
-      $subtotal_ttc = $subtotal_ttc + $objp->amount_ttc;
-      print "</tr>\n";
-      $i++;
-    }
-  }
-  else {
-    $var=!$var;
-    print "<tr $bc[$var]><td>&nbsp;</td>";
-    print '<td colspan="3">'.$langs->trans("None").'</td>';
-    print '</tr>';
-  }
+			$total_ht = $total_ht - $objp->amount_ht;
+			$total_ttc = $total_ttc - $objp->amount_ttc;
+			$subtotal_ht = $subtotal_ht + $objp->amount_ht;
+			$subtotal_ttc = $subtotal_ttc + $objp->amount_ttc;
+			print "</tr>\n";
+			$i++;
+		}
+	}
+	else {
+		$var=!$var;
+		print "<tr $bc[$var]><td>&nbsp;</td>";
+		print '<td colspan="3">'.$langs->trans("None").'</td>';
+		print '</tr>';
+	}
 
-  $db->free($result);
+	$db->free($result);
 } else {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
@@ -302,26 +313,22 @@ print '</tr>';
 print '<tr><td colspan="4">Prestations/Charges NON deductibles</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-    $sql.= " WHERE s.fk_type = c.id";
-    $sql.= " AND c.deductible = 0";
-    if ($year) {
-    	$sql.= " AND s.date_ech between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
+	$sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+	$sql.= " WHERE s.fk_type = c.id";
+	$sql.= " AND c.deductible = 0";
+	if ($date_start && $date_end) $sql.= " AND s.date_ech >= '".$db->idate($date_start)."' AND s.date_ech <= '".$db->idate($date_end)."'";
 }
 else {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-    $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
-    $sql.= " WHERE p.fk_charge = s.rowid";
-    $sql.= " AND s.fk_type = c.id";
-    $sql.= " AND c.deductible = 0";
-    if ($year) {
-    	$sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
+	$sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
+	$sql.= " WHERE p.fk_charge = s.rowid";
+	$sql.= " AND s.fk_type = c.id";
+	$sql.= " AND c.deductible = 0";
+	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle";
@@ -330,35 +337,35 @@ $result=$db->query($sql);
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($result) {
-    $num = $db->num_rows($result);
-    $var=true;
-    $i = 0;
-    if ($num) {
-      while ($i < $num) {
-        $obj = $db->fetch_object($result);
+	$num = $db->num_rows($result);
+	$var=true;
+	$i = 0;
+	if ($num) {
+		while ($i < $num) {
+			$obj = $db->fetch_object($result);
 
-        $total_ht = $total_ht - $obj->amount;
-        $total_ttc = $total_ttc - $obj->amount;
-        $subtotal_ht = $subtotal_ht + $obj->amount;
-        $subtotal_ttc = $subtotal_ttc + $obj->amount;
+			$total_ht = $total_ht - $obj->amount;
+			$total_ttc = $total_ttc - $obj->amount;
+			$subtotal_ht = $subtotal_ht + $obj->amount;
+			$subtotal_ttc = $subtotal_ttc + $obj->amount;
 
-        $var = !$var;
-        print "<tr $bc[$var]><td>&nbsp;</td>";
-        print '<td>'.$obj->nom.'</td>';
-        if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
-        print '<td align="right">'.price(-$obj->amount).'</td>';
-        print '</tr>';
-        $i++;
-      }
-    }
-    else {
-        $var = !$var;
-    	print "<tr $bc[$var]><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
-        print '</tr>';
-    }
+			$var = !$var;
+			print "<tr $bc[$var]><td>&nbsp;</td>";
+			print '<td>'.$obj->nom.'</td>';
+			if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
+			print '<td align="right">'.price(-$obj->amount).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	else {
+		$var = !$var;
+		print "<tr $bc[$var]><td>&nbsp;</td>";
+		print '<td colspan="3">'.$langs->trans("None").'</td>';
+		print '</tr>';
+	}
 } else {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
@@ -373,65 +380,61 @@ print '</tr>';
 print '<tr><td colspan="4">Prestations/Charges deductibles</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
-    $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-    $sql.= " WHERE s.fk_type = c.id";
-    $sql.= " AND c.deductible = 1";
-    if ($year) {
-    	$sql.= " AND s.date_ech between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
-    $sql.= " AND s.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle DESC";
+	$sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+	$sql.= " WHERE s.fk_type = c.id";
+	$sql.= " AND c.deductible = 1";
+	if ($date_start && $date_end) $sql.= " AND s.date_ech >= '".$db->idate($date_start)."' AND s.date_ech <= '".$db->idate($date_end)."'";
+	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " GROUP BY c.libelle DESC";
 }
 else {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
-    $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
-    $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
-    $sql .= " WHERE p.fk_charge = s.rowid";
-    $sql.= " AND s.fk_type = c.id";
-    $sql.= " AND c.deductible = 1";
-    if ($year) {
-    	$sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
-    $sql.= " AND s.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle";
+	$sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
+	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
+	$sql .= " WHERE p.fk_charge = s.rowid";
+	$sql.= " AND s.fk_type = c.id";
+	$sql.= " AND c.deductible = 1";
+	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	$sql.= " AND s.entity = ".$conf->entity;
+	$sql.= " GROUP BY c.libelle";
 }
 
 $result=$db->query($sql);
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($result) {
-    $num = $db->num_rows($result);
-    $var=true;
-    $i = 0;
-    if ($num) {
-        while ($i < $num) {
-        $obj = $db->fetch_object($result);
+	$num = $db->num_rows($result);
+	$var=true;
+	$i = 0;
+	if ($num) {
+		while ($i < $num) {
+			$obj = $db->fetch_object($result);
 
-        $total_ht = $total_ht - $obj->amount;
-        $total_ttc = $total_ttc - $obj->amount;
-        $subtotal_ht = $subtotal_ht + $obj->amount;
-        $subtotal_ttc = $subtotal_ttc + $obj->amount;
+			$total_ht = $total_ht - $obj->amount;
+			$total_ttc = $total_ttc - $obj->amount;
+			$subtotal_ht = $subtotal_ht + $obj->amount;
+			$subtotal_ttc = $subtotal_ttc + $obj->amount;
 
-        $var = !$var;
-        print "<tr $bc[$var]><td>&nbsp;</td>";
-        print '<td>'.$obj->nom.'</td>';
-        if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
-        print '<td align="right">'.price(-$obj->amount).'</td>';
-        print '</tr>';
-        $i++;
-        }
-    }
-    else {
-        $var = !$var;
-    	print "<tr $bc[$var]><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
-        print '</tr>';
-    }
+			$var = !$var;
+			print "<tr $bc[$var]><td>&nbsp;</td>";
+			print '<td>'.$obj->nom.'</td>';
+			if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
+			print '<td align="right">'.price(-$obj->amount).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	else {
+		$var = !$var;
+		print "<tr $bc[$var]><td>&nbsp;</td>";
+		print '<td colspan="3">'.$langs->trans("None").'</td>';
+		print '</tr>';
+	}
 } else {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 print '<tr class="liste_total">';
 if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
@@ -465,164 +468,156 @@ $subtotal_ttc = 0;
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    // TVA a payer
-    $amount=0;
-    $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
-    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-    $sql.= " WHERE f.fk_statut in (1,2)";
-    if ($year) {
-    	$sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
-    $sql.= " AND f.entity = ".$conf->entity;
-    $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm DESC";
+	// TVA a payer
+	$amount=0;
+	$sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " WHERE f.fk_statut in (1,2)";
+	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " GROUP BY dm";
+	$sql.= " ORDER BY dm DESC";
 
-    $result=$db->query($sql);
-    if ($result) {
-        $num = $db->num_rows($result);
-        $var=false;
-        $i = 0;
-        if ($num) {
-          while ($i < $num) {
-            $obj = $db->fetch_object($result);
+	$result=$db->query($sql);
+	if ($result) {
+		$num = $db->num_rows($result);
+		$var=false;
+		$i = 0;
+		if ($num) {
+			while ($i < $num) {
+				$obj = $db->fetch_object($result);
 
-            $amount = $amount - $obj->amount;
-            $total_ht = $total_ht - $obj->amount;
-            $total_ttc = $total_ttc - $obj->amount;
-            $subtotal_ht = $subtotal_ht - $obj->amount;
-            $subtotal_ttc = $subtotal_ttc - $obj->amount;
-            $i++;
-          }
-        }
-    } else {
-        dol_print_error($db);
-    }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
-    print "<td>".$langs->trans("VATToPay")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
-    print "<td align=\"right\">".price($amount)."</td>\n";
-    print "</tr>\n";
+				$amount = $amount - $obj->amount;
+				$total_ht = $total_ht - $obj->amount;
+				$total_ttc = $total_ttc - $obj->amount;
+				$subtotal_ht = $subtotal_ht - $obj->amount;
+				$subtotal_ttc = $subtotal_ttc - $obj->amount;
+				$i++;
+			}
+		}
+	} else {
+		dol_print_error($db);
+	}
+	print "<tr $bc[$var]><td>&nbsp;</td>";
+	print "<td>".$langs->trans("VATToPay")."</td>\n";
+	if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+	print "<td align=\"right\">".price($amount)."</td>\n";
+	print "</tr>\n";
 
-    // TVA a recuperer
-    $amount=0;
-    $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
-    $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-    $sql.= " WHERE f.fk_statut in (1,2)";
-    if ($year) {
-    	$sql.= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
-    $sql.= " AND f.entity = ".$conf->entity;
-    $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm DESC";
+	// TVA a recuperer
+	$amount=0;
+	$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql.= " WHERE f.fk_statut in (1,2)";
+	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " GROUP BY dm";
+	$sql.= " ORDER BY dm DESC";
 
-    $result=$db->query($sql);
-    if ($result) {
-        $num = $db->num_rows($result);
-        $var=true;
-        $i = 0;
-        if ($num) {
-          while ($i < $num) {
-            $obj = $db->fetch_object($result);
+	$result=$db->query($sql);
+	if ($result) {
+		$num = $db->num_rows($result);
+		$var=true;
+		$i = 0;
+		if ($num) {
+			while ($i < $num) {
+				$obj = $db->fetch_object($result);
 
-            $amount = $amount + $obj->amount;
-            $total_ht = $total_ht + $obj->amount;
-            $total_ttc = $total_ttc + $obj->amount;
-            $subtotal_ht = $subtotal_ht + $obj->amount;
-            $subtotal_ttc = $subtotal_ttc + $obj->amount;
+				$amount = $amount + $obj->amount;
+				$total_ht = $total_ht + $obj->amount;
+				$total_ttc = $total_ttc + $obj->amount;
+				$subtotal_ht = $subtotal_ht + $obj->amount;
+				$subtotal_ttc = $subtotal_ttc + $obj->amount;
 
-            $i++;
-          }
-        }
-    } else {
-        dol_print_error($db);
-    }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
-    print "<td>".$langs->trans("VATToCollect")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
-    print "<td align=\"right\">".price($amount)."</td>\n";
-    print "</tr>\n";
+				$i++;
+			}
+		}
+	} else {
+		dol_print_error($db);
+	}
+	print "<tr $bc[$var]><td>&nbsp;</td>";
+	print "<td>".$langs->trans("VATToCollect")."</td>\n";
+	if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+	print "<td align=\"right\">".price($amount)."</td>\n";
+	print "</tr>\n";
 }
 else
 {
-    // TVA reellement deja payee
-    $amount=0;
-    $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
-    $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
-    $sql.= " WHERE amount > 0";
-    if ($year) {
-    	$sql.= " AND t.datev between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
-    $sql.= " AND t.entity = ".$conf->entity;
-    $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm DESC";
+	// TVA reellement deja payee
+	$amount=0;
+	$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+	$sql.= " WHERE amount > 0";
+	if ($date_start && $date_end) $sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
+	$sql.= " AND t.entity = ".$conf->entity;
+	$sql.= " GROUP BY dm";
+	$sql.= " ORDER BY dm DESC";
 
-    $result=$db->query($sql);
-    if ($result) {
-        $num = $db->num_rows($result);
-        $var=false;
-        $i = 0;
-        if ($num) {
-          while ($i < $num) {
-            $obj = $db->fetch_object($result);
+	$result=$db->query($sql);
+	if ($result) {
+		$num = $db->num_rows($result);
+		$var=false;
+		$i = 0;
+		if ($num) {
+			while ($i < $num) {
+				$obj = $db->fetch_object($result);
 
-            $amount = $amount - $obj->amount;
-            $total_ht = $total_ht - $obj->amount;
-            $total_ttc = $total_ttc - $obj->amount;
-            $subtotal_ht = $subtotal_ht - $obj->amount;
-            $subtotal_ttc = $subtotal_ttc - $obj->amount;
+				$amount = $amount - $obj->amount;
+				$total_ht = $total_ht - $obj->amount;
+				$total_ttc = $total_ttc - $obj->amount;
+				$subtotal_ht = $subtotal_ht - $obj->amount;
+				$subtotal_ttc = $subtotal_ttc - $obj->amount;
 
-            $i++;
-          }
-        }
-        $db->free($result);
-    } else {
-        dol_print_error($db);
-    }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
-    print "<td>".$langs->trans("VATPaid")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
-    print "<td align=\"right\">".price($amount)."</td>\n";
-    print "</tr>\n";
+				$i++;
+			}
+		}
+		$db->free($result);
+	} else {
+		dol_print_error($db);
+	}
+	print "<tr $bc[$var]><td>&nbsp;</td>";
+	print "<td>".$langs->trans("VATPaid")."</td>\n";
+	if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+	print "<td align=\"right\">".price($amount)."</td>\n";
+	print "</tr>\n";
 
-    // TVA recuperee
-    $amount=0;
-    $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
-    $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
-    $sql.= " WHERE amount < 0";
-    if ($year) {
-    	$sql.= " AND t.datev between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    }
-    $sql.= " AND t.entity = ".$conf->entity;
-    $sql.= " GROUP BY dm";
-    $sql.= " ORDER BY dm DESC";
+	// TVA recuperee
+	$amount=0;
+	$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+	$sql.= " WHERE amount < 0";
+	if ($date_start && $date_end) $sql.= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
+	$sql.= " AND t.entity = ".$conf->entity;
+	$sql.= " GROUP BY dm";
+	$sql.= " ORDER BY dm DESC";
 
-    $result=$db->query($sql);
-    if ($result) {
-        $num = $db->num_rows($result);
-        $var=true;
-        $i = 0;
-        if ($num) {
-          while ($i < $num) {
-            $obj = $db->fetch_object($result);
+	$result=$db->query($sql);
+	if ($result) {
+		$num = $db->num_rows($result);
+		$var=true;
+		$i = 0;
+		if ($num) {
+			while ($i < $num) {
+				$obj = $db->fetch_object($result);
 
-            $amount = $amount + $obj->amount;
-            $total_ht = $total_ht + $obj->amount;
-            $total_ttc = $total_ttc + $obj->amount;
-            $subtotal_ht = $subtotal_ht + $obj->amount;
-            $subtotal_ttc = $subtotal_ttc + $obj->amount;
+				$amount = $amount + $obj->amount;
+				$total_ht = $total_ht + $obj->amount;
+				$total_ttc = $total_ttc + $obj->amount;
+				$subtotal_ht = $subtotal_ht + $obj->amount;
+				$subtotal_ttc = $subtotal_ttc + $obj->amount;
 
-            $i++;
-          }
-        }
-        $db->free($result);
-    } else {
-        dol_print_error($db);
-    }
-    print "<tr $bc[$var]><td>&nbsp;</td>";
-    print "<td>".$langs->trans("VATCollected")."</td>\n";
-    if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
-    print "<td align=\"right\">".price($amount)."</td>\n";
-    print "</tr>\n";
+				$i++;
+			}
+		}
+		$db->free($result);
+	} else {
+		dol_print_error($db);
+	}
+	print "<tr $bc[$var]><td>&nbsp;</td>";
+	print "<td>".$langs->trans("VATCollected")."</td>\n";
+	if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
+	print "<td align=\"right\">".price($amount)."</td>\n";
+	print "</tr>\n";
 }
 
 
@@ -637,7 +632,7 @@ if ($mysoc->tva_assuj != 'franchise')	// Assujeti
 
 if ($mysoc->tva_assuj != 'franchise')	// Assujeti
 {
-// Total
+	// Total
 	print '<tr>';
 	print '<td colspan="4">&nbsp;</td>';
 	print '</tr>';

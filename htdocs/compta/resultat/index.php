@@ -39,18 +39,21 @@ else {
 	$year_end=$year_start + ($nbofyear-1);
 }
 
-/*
- * Securite acces client
- */
-if ($user->societe_id > 0)
-{
-	$socid = $user->societe_id;
-}
+// Security check
+$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+if ($user->societe_id > 0) $socid = $user->societe_id;
+if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
+accessforbidden();
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -151,13 +154,6 @@ if ($modecompta != 'CREANCES-DETTES') {
 			$encaiss[$row->dm] += $row->amount_ht;
 			$encaiss_ttc[$row->dm] += $row->amount_ttc;
 
-			// For DEBUG Only
-			if (preg_match('/^2007/',$row->dm))
-			{
-				$subtotal_ht = $subtotal_ht + $row->amount_ht;
-				$subtotal_ttc = $subtotal_ttc + $row->amount_ttc;
-			}
-
 			$i++;
 		}
 	}
@@ -165,16 +161,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 		dol_print_error($db);
 	}
 }
-/*
- print "<br>Facture clients: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
- for ($mois = 1 ; $mois <= 12 ; $mois++)
- {
- $annee = 2007;
- $case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
- print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
- print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
- }
- */
+
 
 /*
  * Frais, factures fournisseurs.
@@ -210,13 +197,6 @@ if ($result)
 		$decaiss[$row->dm] = $row->amount_ht;
 		$decaiss_ttc[$row->dm] = $row->amount_ttc;
 
-		// For DEBUG Only
-		if (preg_match('/^2007/',$row->dm))
-		{
-			$subtotal_ht = $subtotal_ht + $row->amount_ht;
-			$subtotal_ttc = $subtotal_ttc + $row->amount_ttc;
-		}
-
 		$i++;
 	}
 	$db->free($result);
@@ -224,16 +204,7 @@ if ($result)
 else {
 	dol_print_error($db);
 }
-/*
- print "<br>Facture fournisseurs: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
- for ($mois = 1 ; $mois <= 12 ; $mois++)
- {
- $annee = 2007;
- $case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
- print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
- print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
- }
- */
+
 
 /*
  * TVA
@@ -311,12 +282,6 @@ else {
 
 				$decaiss[$obj->dm] += $obj->amount;
 				$decaiss_ttc[$obj->dm] += $obj->amount;
-				// For DEBUG Only
-				if (preg_match('/^2007/',$obj->dm))
-				{
-					$subtotal_ht = $subtotal_ht + $obj->amount;
-					$subtotal_ttc = $subtotal_ttc + $obj->amount;
-				}
 
 				$i++;
 			}
@@ -342,12 +307,6 @@ else {
 
 				$encaiss[$obj->dm] += $obj->amount;
 				$encaiss_ttc[$obj->dm] += $obj->amount;
-				// For DEBUG Only
-				if (preg_match('/^2007/',$obj->dm))
-				{
-					$subtotal_ht = $subtotal_ht + $obj->amount;
-					$subtotal_ttc = $subtotal_ttc + $obj->amount;
-				}
 
 				$i++;
 			}
@@ -356,16 +315,6 @@ else {
 		dol_print_error($db);
 	}
 }
-/*
- print "<br>TVA: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
- for ($mois = 1 ; $mois <= 12 ; $mois++)
- {
- $annee = 2007;
- $case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
- print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
- print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
- }
- */
 
 /*
  * Charges sociales non deductibles
@@ -378,9 +327,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
 	$sql.= " WHERE s.fk_type = c.id";
 	$sql.= " AND c.deductible = 0";
-	if ($year) {
-		$sql.= " AND s.date_ech between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-	}
 }
 else {
 	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
@@ -390,9 +336,6 @@ else {
 	$sql.= " WHERE p.fk_charge = s.rowid";
 	$sql.= " AND s.fk_type = c.id";
 	$sql.= " AND c.deductible = 0";
-	if ($year) {
-		$sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-	}
 }
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
@@ -410,33 +353,17 @@ if ($result) {
 			$decaiss[$obj->dm] += $obj->amount_ht;
 			$decaiss_ttc[$obj->dm] += $obj->amount_ttc;
 
-			// For DEBUG Only
-			if (preg_match('/^2007/',$obj->dm))
-			{
-				$subtotal_ht = $subtotal_ht + $obj->amount_ht;
-				$subtotal_ttc = $subtotal_ttc + $obj->amount_ttc;
-			}
-
 			$i++;
 		}
 	}
 } else {
 	dol_print_error($db);
 }
-/*
- print "<br>Charges sociales non deduc: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
- for ($mois = 1 ; $mois <= 12 ; $mois++)
- {
- $annee = 2007;
- $case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
- print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
- print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
- }
- */
 
 /*
  * Charges sociales deductibles
  */
+
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
@@ -446,9 +373,6 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
 	$sql.= " WHERE s.fk_type = c.id";
 	$sql.= " AND c.deductible = 1";
-	if ($year) {
-		$sql.= " AND s.date_ech between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-	}
 }
 else
 {
@@ -459,9 +383,6 @@ else
 	$sql.= " WHERE p.fk_charge = s.rowid";
 	$sql.= " AND s.fk_type = c.id";
 	$sql.= " AND c.deductible = 1";
-	if ($year) {
-		$sql.= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-	}
 }
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
@@ -478,34 +399,19 @@ if ($result) {
 			$decaiss[$obj->dm] += $obj->amount_ht;
 			$decaiss_ttc[$obj->dm] += $obj->amount_ttc;
 
-			// For DEBUG Only
-			if (preg_match('/^2007/',$obj->dm))
-			{
-				$subtotal_ht = $subtotal_ht + $obj->amount_ht;
-				$subtotal_ttc = $subtotal_ttc + $obj->amount_ttc;
-			}
-
 			$i++;
 		}
 	}
 } else {
 	dol_print_error($db);
 }
-/*
- print "<br>Charges sociales deduc: subtotal_ht=".$subtotal_ht.' - subtotal_ttc='.$subtotal_ttc."<br>\n";
- for ($mois = 1 ; $mois <= 12 ; $mois++)
- {
- $annee = 2007;
- $case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
- print 'Mois '.$mois.': '.$decaiss_ttc[$case].' ';
- print 'Mois '.$mois.': '.$encaiss_ttc[$case].' ';
- }
- */
+
 
 
 /*
- * Affiche tableau
+ * Show result array
  */
+
 $totentrees=array();
 $totsorties=array();
 
@@ -526,11 +432,12 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print '</tr>';
 
 $var=True;
+// Loop on each month
 for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,$annee),"%b")."</td>";
+	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,$annee),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois,1,$annee));
@@ -538,7 +445,7 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 		print '<td align="right">&nbsp;';
 		if ($decaiss_ttc[$case] != 0)
 		{
-			print price($decaiss_ttc[$case]);
+			print '<a href="clientfourn.php?year='.$annee.'&month='.$mois.'">'.price($decaiss_ttc[$case]).'</a>';
 			$totsorties[$annee]+=$decaiss_ttc[$case];
 		}
 		print "</td>";
@@ -546,7 +453,7 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 		print '<td align="right">&nbsp;';
 		if ($encaiss_ttc[$case] != 0)
 		{
-			print price($encaiss_ttc[$case]);
+			print '<a href="clientfourn.php?year='.$annee.'&month='.$mois.'">'.price($encaiss_ttc[$case]).'</a>';
 			$totentrees[$annee]+=$encaiss_ttc[$case];
 		}
 		print "</td>";

@@ -154,7 +154,7 @@ function dol_get_last_day($year,$month=12)
 	}
 
 	// On se deplace au debut du mois suivant, et on retire un jour
-	$datelim=dol_mktime(0,0,0,$month,1,$year,1);
+	$datelim=dol_mktime(23,59,59,$month,1,$year,1);
 	$datelim -= (3600 * 24);
 
 	return $datelim;
