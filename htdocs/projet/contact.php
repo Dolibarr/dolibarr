@@ -172,6 +172,24 @@ if ($id > 0 || ! empty($ref))
 	if ( $project->fetch($id,$ref) > 0)
 	{
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+		
+		// To verify role of users
+		$userAccess = 0;
+		foreach(array('internal','external') as $source)
+		{
+			$userRole = $project->liste_contact(4,$source);
+			$num=sizeof($userRole);
+			
+			$i = 0;
+			while ($i < $num)
+			{
+				if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+				{
+					$userAccess++;
+				}
+				$i++;
+			}
+		}
 
 		$head = project_prepare_head($project);
 		dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, 'project');
@@ -212,7 +230,7 @@ if ($id > 0 || ! empty($ref))
 		 * Ajouter une ligne de contact
 		 * Non affiche en mode modification de ligne
 		 */
-		if ($_GET["action"] != 'editline' && $user->rights->projet->creer)
+		if ($_GET["action"] != 'editline' && $user->rights->projet->creer && $userAccess)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -358,14 +376,14 @@ if ($id > 0 || ! empty($ref))
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($project->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($project->statut >= 0 && $userAccess) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($project->statut >= 0) print '</a>';
+				if ($project->statut >= 0 && $userAccess) print '</a>';
 				print '</td>';
 
 				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($user->rights->projet->creer)
+				if ($user->rights->projet->creer && $userAccess)
 				{
 					print '&nbsp;';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';

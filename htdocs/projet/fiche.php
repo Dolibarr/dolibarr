@@ -320,6 +320,24 @@ else
 	$project->fetch($projectid,$projectref);
 
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+	
+	// To verify role of users
+	$userAccess = 0;
+	foreach(array('internal','external') as $source)
+	{
+		$userRole = $project->liste_contact(4,$source);
+		$num=sizeof($userRole);
+		
+		$i = 0;
+		while ($i < $num)
+		{
+			if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+			{
+				$userAccess++;
+			}
+			$i++;
+		}
+	}
 
 	$head=project_prepare_head($project);
 	dol_fiche_head($head, 'project', $langs->trans("Project"),0,'project');
@@ -350,7 +368,7 @@ else
 	}
 
 
-	if ($_GET["action"] == 'edit')
+	if ($_GET["action"] == 'edit' && $userAccess)
 	{
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -494,37 +512,71 @@ else
 	 */
 	print '<div class="tabsAction">';
 
-	if ($_GET["action"] != "edit")
+	if ($_GET["action"] != "edit" )
 	{
 		// Validate
 		if ($project->statut == 0 && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$project->id.'&action=validate"';
-			print '>'.$langs->trans("Valid").'</a>';
+			if ($userAccess)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$project->id.'&action=validate">'.$langs->trans("Valid").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Valid').'</a>';
+			}
 		}
 
 		// Modify
 		if ($project->statut != 2 && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+			if ($userAccess)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
+			}
 		}
 
 		// Close
 		if ($project->statut != 2 && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+			if ($userAccess)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
+			}
 		}
 
 		// Reopen
 		if ($project->statut == 2 && $user->rights->projet->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+			if ($userAccess)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
+			}
 		}
 
 		// Delete
 		if ($user->rights->projet->supprimer)
 		{
-			print '<a class="butActionDelete" href="fiche.php?id='.$project->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			if ($userAccess)
+			{
+				print '<a class="butActionDelete" href="fiche.php?id='.$project->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
+			}
 		}
 	}
 
@@ -543,8 +595,8 @@ else
 		$filename=dol_sanitizeFileName($project->ref);
 		$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$project->id;
-		$genallowed=$user->rights->projet->creer;
-		$delallowed=$user->rights->projet->supprimer;
+		$genallowed=($user->rights->projet->creer && $userAccess);
+		$delallowed=($user->rights->projet->supprimer && $userAccess);
 
 		$var=true;
 

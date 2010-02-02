@@ -117,6 +117,24 @@ if ($id > 0 || ! empty($ref))
 	$project = new Project($db);
 	$project->fetch($_REQUEST["id"],$_GET["ref"]);
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+	
+	// To verify role of users
+	$userAccess = 0;
+	foreach(array('internal','external') as $source)
+	{
+		$userRole = $project->liste_contact(4,$source);
+		$num=sizeof($userRole);
+		
+		$i = 0;
+		while ($i < $num)
+		{
+			if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+			{
+				$userAccess++;
+			}
+			$i++;
+		}
+	}
 }
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
@@ -196,24 +214,6 @@ else
 	dol_fiche_head($head, $tab, $langs->trans("Project"),0,'project');
 
 	$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
-	
-	// To verify role of users
-	$userAccess = 0;
-	foreach(array('internal','external') as $source)
-	{
-		$userRole = $project->liste_contact(4,$source);
-		$num=sizeof($userRole);
-		
-		$i = 0;
-		while ($i < $num)
-		{
-			if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
-			{
-				$userAccess++;
-			}
-			$i++;
-		}
-	}
 
 	print '<table class="border" width="100%">';
 
