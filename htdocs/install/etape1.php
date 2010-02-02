@@ -42,8 +42,8 @@ dolibarr_install_syslog("etape1: Entering etape1.php page");
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 pHeader($langs->trans("ConfigurationFile"),"etape2");
 
@@ -68,10 +68,10 @@ if (substr($_POST["main_url"], strlen($_POST["main_url"]) -1) == "/")
 $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 
-/*
-* Actions
-*/
 
+/*
+ * Actions
+ */
 
 
 if ($_POST["action"] == "set")
@@ -114,8 +114,8 @@ if ($_POST["action"] == "set")
 
 
 	/***************************************************************************
-	* Create directories
-	***************************************************************************/
+	 * Create directories
+	 ***************************************************************************/
 
 	// Create subdirectory main_data_dir
 	if (! $error)
@@ -133,7 +133,7 @@ if ($_POST["action"] == "set")
 			print '</td><td>';
 			print '<font class="error">'.$langs->trans("Error").'</font>';
 			print "</td></tr>";
-    		print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
+			print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
 			$error++;
 		}
 		else
@@ -196,7 +196,7 @@ if ($_POST["action"] == "set")
 				print '</td><td>';
 				print '<font class="error">'.$langs->trans("Error").'</font>';
 				print "</td></tr>";
-	    		print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
+				print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
 			}
 		}
 	}
@@ -208,8 +208,8 @@ if ($_POST["action"] == "set")
 	}
 
 	/**
-	* Create database and admin user database
-	*/
+	 * Create database and admin user database
+	 */
 	if (! $error)
 	{
 		conf($dolibarr_main_document_root);
@@ -219,8 +219,8 @@ if ($_POST["action"] == "set")
 
 
 		/**
-		* 	Si creation utilisateur admin demandee, on le cree
-		*/
+		 * 	Si creation utilisateur admin demandee, on le cree
+		 */
 		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 		{
 			dolibarr_install_syslog("etape1: Create database user: ".$dolibarr_main_db_user);
@@ -312,8 +312,8 @@ if ($_POST["action"] == "set")
 
 
 		/*
-		* If database creation is asked, we create it
-		*/
+		 * If database creation is asked, we create it
+		 */
 		if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
 		{
 			dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name, LOG_DEBUG);
@@ -378,8 +378,8 @@ if ($_POST["action"] == "set")
 
 
 		/*
-		* On test maintenant l'acces par le user admin dolibarr
-		*/
+		 * On test maintenant l'acces par le user admin dolibarr
+		 */
 		if (! $error)
 		{
 			dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name, LOG_DEBUG);
@@ -463,7 +463,22 @@ if ($_POST["action"] == "set")
 	print '</table>';
 }
 
-pFooter($error,$setuplang);
+?>
+
+<script type="text/javascript" language="javascript">
+function jsinfo()
+{
+	ok=true;
+
+	alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
+
+	return ok;
+}
+</script>
+
+<?php
+
+pFooter($error,$setuplang,'jsinfo');
 
 
 /**

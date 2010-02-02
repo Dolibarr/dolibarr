@@ -139,6 +139,7 @@ IfAlreadyExistsCheckOption=If this name is correct and that database does not ex
 OpenBaseDir=PHP openbasedir parameter
 YouAskToCreateDatabaseSoRootRequired=You checked the box "Create database". For this, you need to provide login/password of superuser (bottom of form).
 YouAskToCreateDatabaseUserSoRootRequired=You checked the box "Create database owner". For this, you need to provide login/password of superuser (bottom of form).
+NextStepMightLastALongTime=Next step may last several minutes. After clicking on validation, please wait until the next screen is shown completely before continuing.
 
 #########
 # upgrade
