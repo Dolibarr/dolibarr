@@ -759,7 +759,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 
 			$mini='';$ext='.js';
-			if (! empty($conf->global->MAIN_OPTIMIZE_SPEED)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
+			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
 			// This one is required for all Ajax features
 			if (! defined('DISABLE_PROTOTYPE'))
@@ -1174,7 +1174,7 @@ function llxFooter($foot='')
 	if (! empty($_SERVER['DOL_TUNING']))
 	{
 		$micro_end_time=dol_microtime_float(true);
-		print "\n".'<script type="text/javascript">window.status="MAIN_OPTIMIZE_SPEED '.(empty($conf->global->MAIN_OPTIMIZE_SPEED)?'off - ':'on - ').'Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		print "\n".'<script type="text/javascript">window.status="MAIN_OPTIMIZE_SPEED '.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off').' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Mem: '.memory_get_usage();
