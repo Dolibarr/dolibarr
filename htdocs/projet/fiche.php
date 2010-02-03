@@ -87,7 +87,7 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 		if ($result > 0)
 		{
 			$result = $project->add_contact($_POST["officer_project"], 'PROJECTLEADER', 'internal');
-			
+
 			Header("Location:fiche.php?id=".$project->id);
 			exit;
 		}
@@ -129,8 +129,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 		$project->title        = $_POST["title"];
 		$project->socid        = $_POST["socid"];
 		$project->description  = $_POST["description"];
-		$project->date_start   = dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
-		$project->date_end     = dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
+		$project->date_start   = empty($_POST["project"])?'':dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
+		$project->date_end     = empty($_POST["projectend"])?'':dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
 
 		$result=$project->update($user);
 
@@ -296,7 +296,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print $html->select_date(-1,'projectend');
 	print '</td></tr>';
-	
+
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 	print '<td>';
@@ -320,22 +320,27 @@ else
 	$project->fetch($projectid,$projectref);
 
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
-	
+
 	// To verify role of users
 	$userAccess = 0;
-	foreach(array('internal','external') as $source)
+	var_dump($project);
+	if (empty($project->user_author_id)) $userAccess=1;
+	else
 	{
-		$userRole = $project->liste_contact(4,$source);
-		$num=sizeof($userRole);
-		
-		$i = 0;
-		while ($i < $num)
+		foreach(array('internal','external') as $source)
 		{
-			if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+			$userRole = $project->liste_contact(4,$source);
+			$num=sizeof($userRole);
+
+			$i = 0;
+			while ($i < $num)
 			{
-				$userAccess++;
+				if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+				{
+					$userAccess++;
+				}
+				$i++;
 			}
-			$i++;
 		}
 	}
 
@@ -427,7 +432,7 @@ else
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 		print $html->select_date($project->date_end?$project->date_end:-1,'projectend');
 		print '</td></tr>';
-		
+
 		// Description
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 		print '<td>';
@@ -442,7 +447,7 @@ else
 	}
 	else
 	{
-		
+
 		print '<table class="border" width="100%">';
 
 		// Ref
@@ -496,7 +501,7 @@ else
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 		print dol_print_date($project->date_end,'day');
 		print '</td></tr>';
-		
+
 		// Description
 		print '<td valign="top">'.$langs->trans("Description").'</td><td>';
 		print nl2br($project->description);

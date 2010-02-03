@@ -153,7 +153,9 @@ llxHeader('', $langs->trans("Project"), "Project");
 
 $html = new Form($db);
 $formcompany= new FormCompany($db);
+
 $contactstatic=new Contact($db);
+$userstatic=new User($db);
 
 
 /* *************************************************************************** */
@@ -172,14 +174,14 @@ if ($id > 0 || ! empty($ref))
 	if ( $project->fetch($id,$ref) > 0)
 	{
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
-		
+
 		// To verify role of users
 		$userAccess = 0;
 		foreach(array('internal','external') as $source)
 		{
 			$userRole = $project->liste_contact(4,$source);
 			$num=sizeof($userRole);
-			
+
 			$i = 0;
 			while ($i < $num)
 			{
@@ -216,6 +218,34 @@ if ($id > 0 || ! empty($ref))
 		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
+
+		// Project leader
+		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
+		$contact = $project->liste_contact(4,'internal');
+		$num=sizeof($contact);
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				if ($contact[$i]['code'] == 'PROJECTLEADER')
+				{
+					$userstatic->id = $contact[$i]['id'];
+					$userstatic->fetch();
+					print $userstatic->getNomUrl(1);
+					print '<br>';
+				}
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('SharedProject');
+		}
+		print '</td></tr>';
+
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
 		print "</table>";
 

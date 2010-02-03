@@ -80,14 +80,16 @@ if ($_POST['action'] == 'update_private' && $user->rights->projet->creer)
 }
 
 
-
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
 $html = new Form($db);
+
+$userstatic=new User($db);
+
 
 $id = $_GET['id'];
 $ref= $_GET['ref'];
@@ -99,18 +101,18 @@ if ($id > 0 || ! empty($ref))
 
 	$project = new Project($db);
 	$userstatic = new User($db);
-	
+
 	if ($project->fetch($id, $ref))
 	{
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
-		
+
 		// To verify role of users
 		$userAccess = 0;
 		foreach(array('internal','external') as $source)
 		{
 			$userRole = $project->liste_contact(4,$source);
 			$num=sizeof($userRole);
-			
+
 			$i = 0;
 			while ($i < $num)
 			{
@@ -121,7 +123,7 @@ if ($id > 0 || ! empty($ref))
 				$i++;
 			}
 		}
-		
+
 		$head = project_prepare_head($project);
 		dol_fiche_head($head, 'note', $langs->trans('Project'), 0, 'project');
 
@@ -133,7 +135,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 		print $html->showrefnav($project,'ref','',1,'ref','ref');
 		print '</td></tr>';
-			
+
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
 
@@ -142,7 +144,7 @@ if ($id > 0 || ! empty($ref))
 		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
-			
+
 		// Project leader
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
 		$contact = $project->liste_contact(4,'internal');
@@ -167,6 +169,9 @@ if ($id > 0 || ! empty($ref))
 			print $langs->trans('SharedProject');
 		}
 		print '</td></tr>';
+
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
 		// Note publique
 		print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';

@@ -48,7 +48,8 @@ class Project extends CommonObject
 	var $date_start;
 	var $date_end;
 	var $socid;
-	var $user_resp_id;
+	var $user_author_id;				//!< Id of project creator. Not defined if shared project.
+	var $user_resp_id;					//!< Id of project responsible. Not defined if shared project.
 	var $note_private;
 	var $note_public;
 
@@ -68,7 +69,7 @@ class Project extends CommonObject
 		$this->statuts=array(0=>'Draft',1=>'Validated',2=>'Closed');
 	}
 
-	/*
+	/**
 	 *    \brief      Cree un projet en base
 	 *    \param      user        Id utilisateur qui cree
 	 *    \return     int         <0 si ko, id du projet cree si ok
@@ -97,7 +98,7 @@ class Project extends CommonObject
 		$sql.= ", '".addslashes($this->title)."'";
 		$sql.= ", '".addslashes($this->description)."'";
 		$sql.= ", ".($this->socid > 0?$this->socid:"null");
-		$sql.= ", ".($this->user_resp_id>0?$this->user_resp_id:'null');
+		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->datec!=''?$this->db->idate($this->datec):'null');
 		$sql.= ", ".($this->dateo!=''?$this->db->idate($this->dateo):'null');
 		$sql.= ", ".($this->datee!=''?$this->db->idate($this->datee):'null');
