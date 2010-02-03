@@ -168,4 +168,10 @@ create table llx_entity
   active			tinyint DEFAULT 1 NOT NULL
 ) type=innodb;
 
-INSERT INTO llx_entity (label, description, datec, fk_user_creat, visible, active) VALUES ('Default Entity', 'This is the default entity', NOW(), 1, 1, 1);
+INSERT INTO llx_entity (rowid, label, description, datec, fk_user_creat, visible, active) VALUES (1, 'Default Entity', 'This is the default entity', NOW(), 1, 1, 1);
+
+-- Add constraint
+ALTER TABLE llx_fichinterdet ADD INDEX idx_fichinterdet_fk_fichinter (fk_fichinter);
+ALTER TABLE llx_fichinterdet ADD CONSTRAINT fk_fichinterdet_fk_fichinter FOREIGN KEY (fk_fichinter) REFERENCES llx_fichinter (rowid);
+
+
