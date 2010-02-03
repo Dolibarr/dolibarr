@@ -108,19 +108,23 @@ if ($id > 0 || ! empty($ref))
 
 		// To verify role of users
 		$userAccess = 0;
-		foreach(array('internal','external') as $source)
+		if (!empty($project->user_author_id) && $project->user_author_id == $user->id) $userAccess=1;
+		else
 		{
-			$userRole = $project->liste_contact(4,$source);
-			$num=sizeof($userRole);
-
-			$i = 0;
-			while ($i < $num)
+			foreach(array('internal','external') as $source)
 			{
-				if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+				$userRole = $project->liste_contact(4,$source);
+				$num=sizeof($userRole);
+				
+				$i = 0;
+				while ($i < $num)
 				{
-					$userAccess++;
+					if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+					{
+						$userAccess++;
+					}
+					$i++;
 				}
-				$i++;
 			}
 		}
 

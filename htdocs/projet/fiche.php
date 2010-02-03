@@ -323,8 +323,7 @@ else
 
 	// To verify role of users
 	$userAccess = 0;
-	var_dump($project);
-	if (empty($project->user_author_id)) $userAccess=1;
+	if (!empty($project->user_author_id) && $project->user_author_id == $user->id) $userAccess=1;
 	else
 	{
 		foreach(array('internal','external') as $source)
