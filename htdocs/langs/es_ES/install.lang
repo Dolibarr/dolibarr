@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - install 
+# Dolibarr language file - es_ES - install
 CHARSET = UTF-8
 InstallEasy = Hemos procurado que la instalación sea lo más simple posible, usted sólo tiene que seguir los pasos uno a uno.
 MiscellanousChecks = Comprobación de los prerequisitos
@@ -128,7 +128,7 @@ BecauseConnectionFailedParametersMayBeWrong = La conexión falla, los parámetro
 OrphelinsPaymentsDetectedByMethod = Pagos huérfanos detectados por el método %s
 RemoveItManuallyAndPressF5ToContinue = Suprimalo manualmente y pulse F5 para continuar.
 KeepDefaultValuesWamp = Está utilizando el asistente de instalación DoliWamp, los valores propuestos aquí están optimizados. Cambielos sólamente si está seguro de ello.
-KeepDefaultValuesDeb = Está utilizando el asistente de instalación Dolibarr de un paquete de Ubuntu o Debian, los valores propuestos aquí están optimizados. Sólo serán necesarias la contraseña del propietario de la base de datos a crear y la contraseña del superadministrador del servidor de la base de datos. Cambie la otra información sólamente si está seguro de ello.
+KeepDefaultValuesDeb = Está utilizando el asistente de instalación Dolibarr de un paquete de Ubuntu o Debian, los valores propuestos aquí están optimizados. Sólo será necesaria la contraseña del propietario de la base de datos a crear. Cambie la otra información sólamente si está seguro de ello.
 KeepDefaultValuesMamp = Está utilizando el asistente de instalación DoliMamp, los valores propuestos aquí están optimizados. Cambielos sólamente si está seguro de ello.
 FieldRenamed = Campo renombrado
 IfLoginDoesNotExistsCheckCreateUser = Si el login aún no existe, debe seleccionar la opción "Creación del usuario"
@@ -140,6 +140,7 @@ IfAlreadyExistsCheckOption = Si el nombre es correcto y la base de datos no exis
 OpenBaseDir = Parámetro php openbasedir
 YouAskToCreateDatabaseSoRootRequired = Ha marcado la casilla "Crear la base de datos". Para ello, el usuario/contraseña del superusuario (al final del formulario) son obligatorios.
 YouAskToCreateDatabaseUserSoRootRequired = Ha marcado la casilla "Crear el usuario propietario" de la base de datos. Para ello, el usuario/contraseña del superusuario (al final del formulario) son obligatorios.
+NextStepMightLastALongTime = El siguiente paso puede tardar varios minutos. Después de haber validado, le agradecemos espere a la completa visualización de la página siguiente para continuar.
 ######### = 
 # upgrade = 
 MigrationFixData = Corrección de datos desnormalizados

@@ -128,7 +128,7 @@ BecauseConnectionFailedParametersMayBeWrong = La connexió falla, els paràmetre
 OrphelinsPaymentsDetectedByMethod = Pagaments orfes detectats pel mètode %s
 RemoveItManuallyAndPressF5ToContinue = Esborreu manualment i premeu F5 per continuar.
 KeepDefaultValuesWamp = Està utilitzant l'assistent d'instal·lació DoliWamp, els valors proposats aquí estan optimitzats. Canviels només si està segur d'això.
-KeepDefaultValuesDeb = Està utilitzant l'assistent d'instal·lació Dolibarr d'un paquet d'Ubuntu o Debian, els valors proposats per als paràmetres ja estan optimitzats. Només seran necessàries la contrasenya del propietari de la base de dades a crear i la contrasenya de l'superadministrador del servidor de la base de dades. Canvie l'altra informació només si està segur d'això.
+KeepDefaultValuesDeb = Està utilitzant l'assistent d'instal·lació Dolibarr d'un paquet d'Ubuntu o Debian, els valors proposats per als paràmetres ja estan optimitzats. Només serà necessària la contrasenya del propietari de la base de dades a crear. Canvie l'altra informació només si està segur d'això.
 KeepDefaultValuesMamp = Està utilitzant l'assistent d'instal·lació DoliMamp, els valors proposats aquí estan optimitzats. Canviels només si està segur d'això.
 FieldRenamed = Camp renombrat
 IfLoginDoesNotExistsCheckCreateUser = Si l'login encara no existeix, ha de seleccionar l'opció "Creació de l'usuari"
@@ -140,6 +140,7 @@ IfAlreadyExistsCheckOption = Si el nom és correcte i la base de dades no existe
 OpenBaseDir = Paràmetre php openbasedir
 YouAskToCreateDatabaseSoRootRequired = Ha marcat la casella "Crear la base de dades". Per això, l'usuari/contrasenya del superusuari (al final del formulari) són obligatoris.
 YouAskToCreateDatabaseUserSoRootRequired = Ha marcat la casella "Crear l'usuari propietari" de la base de dades. Per això, l'usuari/contrasenya del superusuari (al final del formulari) són obligatoris.
+NextStepMightLastALongTime = El següent pas pot trigar diversos minuts. Després d'haver validat, li agraïm esperi a la completa visualització de la pàgina següent per continuar.
 ######### =  = 
 # upgrade =  = 
 MigrationFixData = Correcció de dades desnormalitzades
