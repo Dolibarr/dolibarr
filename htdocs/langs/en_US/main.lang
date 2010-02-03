@@ -553,6 +553,8 @@ RequiredField=Required field
 Result=Result
 ToTest=Test
 ValidateBefore=Card must be validated before using this feature
+Visibility=Visibility
+Private=Private
 # Week day
 Day1=Monday
 Day2=Tuesday
