@@ -53,21 +53,21 @@ if (empty($year))
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start=dol_mktime($_REQUEST["date_starthour"],$_REQUEST["date_startmin"],$_REQUEST["date_startsec"],$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"],1);
-$date_end=dol_mktime($_REQUEST["date_endhour"],$_REQUEST["date_endmin"],$_REQUEST["date_endsec"],$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"],1);
+$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
 	$q=(! empty($_REQUEST["q"]))?$_REQUEST["q"]:0;
 	if ($q==0)
 	{
-		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"]); $date_end=dol_get_last_day($year_start,$_REQUEST["month"]); }
+		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,$_REQUEST["month"],false); }
 		else $q=1;
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1); $date_end=dol_get_last_day($year_start,3); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4); $date_end=dol_get_last_day($year_start,6); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7); $date_end=dol_get_last_day($year_start,9); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10); $date_end=dol_get_last_day($year_start,12); }
+	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
 else
 {
@@ -118,8 +118,6 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
-    //$nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=0">','</a>').')';
-    //$period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
     $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
@@ -149,8 +147,6 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
-    //$nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&q='.$q.'&modetax=1">','</a>').')';
-    //$period=$year_start.' - '.$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(12,0,0,(($q-1)*3)+1,1,$year_start),"%b %Y").' - '.dol_print_date(dol_mktime(12,0,0,($q*3),1,$year_start),"%b %Y").")";
     $period=$html->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;

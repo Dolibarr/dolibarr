@@ -405,7 +405,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
 /**
  *	\brief      Output date in a string format according to outputlangs (or langs if not defined).
  * 				Return charset is always UTF-8, except if encodetoouput is defined. In this cas charset is output charset.
- *	\param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' in server TZ)
+ *	\param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS')
  *	\param	    format      	Output date format
  *								"%d %b %Y",
  *								"%d/%m/%Y %H:%M",
@@ -466,7 +466,7 @@ function dol_print_date($time,$format='',$to_gmt=false,$outputlangs='',$encodeto
 		$smin = $reg[5];
 		$ssec = $reg[6];
 
-		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear);
+		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
 		$ret=adodb_strftime($format,$time,$to_gmt);
 	}
 	else
@@ -598,13 +598,13 @@ function dol_getdate($timestamp,$fast=false)
 }
 
 /* For backward compatibility */
-function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
+function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 {
 	return dol_mktime($hour,$minute,$second,$month,$day,$year,$gm,$check);
 }
 
 /**
- *	Return a GMT date built from detailed informations
+ *	Return a timestamp date built from detailed informations (by default a local PHP server timestamp)
  * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  * 	@param		hour			Hour	(can be -1 for undefined)
@@ -613,12 +613,12 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
  *	@param		month			Month
  *	@param		day				Day
  *	@param		year			Year
- *	@param		gm				1=Input informations are GMT values, otherwise local to user
+ *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
  *	@return		timestamp		Date en timestamp, '' if error
  * 	@see 		dol_date, dol_stringtotime
  */
-function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
+function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 {
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
@@ -664,7 +664,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 
 
 /* For backward compatibility */
-function dolibarr_date($fmt, $timestamp, $gm=0)
+function dolibarr_date($fmt, $timestamp, $gm=false)
 {
 	return dol_date($fmt, $timestamp, $gm);
 }
@@ -677,7 +677,7 @@ function dolibarr_date($fmt, $timestamp, $gm=0)
  *	\return		string			Formated date
  * 	\see		dol_mktime, dol_stringtotime
  */
-function dol_date($fmt, $timestamp, $gm=0)
+function dol_date($fmt, $timestamp, $gm=false)
 {
 	$usealternatemethod=false;
 	if ($timestamp <= 0) $usealternatemethod=true;

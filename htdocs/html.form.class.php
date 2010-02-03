@@ -2251,10 +2251,10 @@ class Form
 	 *		Affiche zone de selection de date
 	 *      Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
 	 *      Les champs sont pre-selectionnes avec:
-	 *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
-	 *            	- La date du jour si set_time vaut ''
+	 *            	- La date set_time (Local PHP server timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
+	 *            	- La date local du server PHP si set_time vaut ''
 	 *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 1)
-	 *		@param	set_time 		Date de pre-selection
+	 *		@param	set_time 		Pre-selected date (must be a local PHP server timestamp)
 	 *		@param	prefix			Prefix pour nom champ
 	 *		@param	h				1=Affiche aussi les heures
 	 *		@param	m				1=Affiche aussi les minutes
@@ -2291,11 +2291,11 @@ class Form
 		elseif (strval($set_time) != '' && $set_time != -1)
 		{
 			// set_time est un timestamps (0 possible)
-			$syear = dol_print_date($set_time, "%Y", true);
-			$smonth = dol_print_date($set_time, "%m", true);
-			$sday = dol_print_date($set_time, "%d", true);
-			$shour = dol_print_date($set_time, "%H", true);
-			$smin = dol_print_date($set_time, "%m", true);
+			$syear = dol_print_date($set_time, "%Y");
+			$smonth = dol_print_date($set_time, "%m");
+			$sday = dol_print_date($set_time, "%d");
+			$shour = dol_print_date($set_time, "%H");
+			$smin = dol_print_date($set_time, "%M");
 		}
 		else
 		{
@@ -2402,16 +2402,16 @@ class Form
 					$retstring.='<option value="0" selected="true">&nbsp;</option>';
 				}
 
-				// Mois
+				// Month
 				for ($month = 1 ; $month <= 12 ; $month++)
 				{
 					$retstring.='<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
-					$retstring.=dol_print_date(mktime(1,1,1,$month,1,2000),"%b");
+					$retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
 					$retstring.="</option>";
 				}
 				$retstring.="</select>";
 
-				// Ann�e
+				// Year
 				if ($empty || $set_time == -1)
 				{
 					$retstring.='<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';

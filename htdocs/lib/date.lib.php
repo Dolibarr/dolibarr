@@ -125,23 +125,23 @@ function dol_get_next_month($month, $year)
 }
 
 
-/**	\brief		Return GMT time with international string format for first day of a month or year
+/**	\brief		Return GMT time for first day of a month or year
  *	\param		year		Year
  * 	\param		month		Month
  *	\return		Timestamp	Date for first day
  */
-function dol_get_first_day($year,$month=1)
+function dol_get_first_day($year,$month=1,$gm=true)
 {
-	return dol_mktime(0,0,0,$month,1,$year,1);
+	return dol_mktime(0,0,0,$month,1,$year,$gm);
 }
 
 
-/**	\brief		Return GMT time with international string format for last day of a month or year
+/**	\brief		Return GMT time for last day of a month or year
  *	\param		year		Year
  * 	\param		month		Month
  *	\return		Timestamp	Date for first day
  */
-function dol_get_last_day($year,$month=12)
+function dol_get_last_day($year,$month=12,$gm=true)
 {
 	if ($month == 12)
 	{
@@ -154,7 +154,7 @@ function dol_get_last_day($year,$month=12)
 	}
 
 	// On se deplace au debut du mois suivant, et on retire un jour
-	$datelim=dol_mktime(23,59,59,$month,1,$year,1);
+	$datelim=dol_mktime(23,59,59,$month,1,$year,$gm);
 	$datelim -= (3600 * 24);
 
 	return $datelim;
