@@ -49,7 +49,8 @@ class Project extends CommonObject
 	var $date_end;
 	var $socid;
 	var $user_author_id;				//!< Id of project creator. Not defined if shared project.
-	var $user_resp_id;					//!< Id of project responsible. Not defined if shared project.
+	//var $user_resp_id;					//!< Id of project responsible. Not defined if shared project.
+	var $public;						//!< Tell if this is a public or private project
 	var $note_private;
 	var $note_public;
 
@@ -90,6 +91,7 @@ class Project extends CommonObject
 		$sql.= ", description";
 		$sql.= ", fk_soc";
 		$sql.= ", fk_user_creat";
+		$sql.= ", public";
 		$sql.= ", datec";
 		$sql.= ", dateo";
 		$sql.= ", datee";
@@ -99,6 +101,7 @@ class Project extends CommonObject
 		$sql.= ", '".addslashes($this->description)."'";
 		$sql.= ", ".($this->socid > 0?$this->socid:"null");
 		$sql.= ", ".$user->id;
+		$sql.= ", ".($this->public?1:0);
 		$sql.= ", ".($this->datec!=''?$this->db->idate($this->datec):'null');
 		$sql.= ", ".($this->dateo!=''?$this->db->idate($this->dateo):'null');
 		$sql.= ", ".($this->datee!=''?$this->db->idate($this->datee):'null');
@@ -142,6 +145,7 @@ class Project extends CommonObject
 			$sql.= ", description = '".addslashes($this->description)."'";
 			$sql.= ", fk_soc = ".($this->socid > 0?$this->socid:"null");
 			$sql.= ", fk_statut = ".$this->statut;
+			$sql.= ", public = ".($this->public?1:0);
 			$sql.= ", datec=".($this->date_c!=''?$this->db->idate($this->date_c):'null');
 			$sql.= ", dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null');
 			$sql.= ", datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null');
@@ -179,7 +183,7 @@ class Project extends CommonObject
 	{
 		if (empty($id) && empty($ref)) return -1;
 
-		$sql = "SELECT rowid, ref, title, description, datec";
+		$sql = "SELECT rowid, ref, title, description, public, datec";
 		$sql.= ", tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
 		if ($ref) $sql.= " WHERE ref='".$ref."'";
@@ -209,6 +213,7 @@ class Project extends CommonObject
 				$this->socid          = $obj->fk_soc;
 				$this->societe->id    = $obj->fk_soc;	// TODO For backward compatibility
 				$this->user_author_id = $obj->fk_user_creat;
+				$this->public         = $obj->public;
 				$this->statut         = $obj->fk_statut;
 
 				$this->db->free($resql);

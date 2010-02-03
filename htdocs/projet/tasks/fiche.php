@@ -75,13 +75,13 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			$task->progress = $_POST['progress'];
 
 			$taskid = $task->create($user);
-			
+
 			if ($taskid > 0)
-			{	
+			{
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
 			}
 		}
-		
+
 		if (! $error)
 		{
 			if (empty($projectid))
@@ -117,7 +117,7 @@ if ($id > 0 || ! empty($ref))
 	$project = new Project($db);
 	$project->fetch($_REQUEST["id"],$_GET["ref"]);
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
-	
+
 	// To verify role of users
 	$userAccess = 0;
 	if (!empty($project->user_author_id) && $project->user_author_id == $user->id) $userAccess=1;
@@ -166,7 +166,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && $userAc
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print $form->select_users($user->id,'userid',1);
 	print '</td></tr>';
-	
+
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 	print $form->select_date('','dateo');
@@ -176,18 +176,18 @@ if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && $userAc
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print $form->select_date(-1,'datee');
 	print '</td></tr>';
-	
+
 	// Progress
 	print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
 	print $formother->select_percent($task->progress,'progress');
 	print '</td></tr>';
-	
+
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 	print '<td>';
 	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
 	print '</td></tr>';
-	
+
 	$tasksarray=$task->getTasksArray(0, $user, 1);
 
 	print '<tr><td colspan="2" align="center">';
@@ -210,7 +210,7 @@ else
 	 *
 	 */
 	$userstatic=new User($db);
-	
+
 	$tab='tasks';
 	if ($_REQUEST["mode"]=='mine') $tab='mytasks';
 
@@ -236,36 +236,17 @@ else
 	print '</td>';
 	print '</tr>';
 
-	// Project leader
-	print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-	$contact = $project->liste_contact(4,'internal');
-	$num=sizeof($contact);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			if ($contact[$i]['code'] == 'PROJECTLEADER')
-			{
-				$userstatic->id = $contact[$i]['id'];
-				$userstatic->fetch();
-				print $userstatic->getNomUrl(1);
-				print '<br>';
-			}
-			$i++;
-		}
-	}
-	else
-	{
-		print $langs->trans('SharedProject');
-	}
+	// Visibility
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+	if ($project->public) print $langs->trans('SharedProject');
+	else print $langs->trans('Private');
 	print '</td></tr>';
 
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
 	print '</table>';
-	
+
 	print '</div>';
 
 	/*

@@ -223,29 +223,10 @@ if ($id > 0 || ! empty($ref))
 		else print '&nbsp;';
 		print '</td></tr>';
 
-		// Project leader
-		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
-		$contact = $project->liste_contact(4,'internal');
-		$num=sizeof($contact);
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
-				if ($contact[$i]['code'] == 'PROJECTLEADER')
-				{
-					$userstatic->id = $contact[$i]['id'];
-					$userstatic->fetch();
-					print $userstatic->getNomUrl(1);
-					print '<br>';
-				}
-				$i++;
-			}
-		}
-		else
-		{
-			print $langs->trans('SharedProject');
-		}
+		// Visibility
+		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+		if ($project->public) print $langs->trans('SharedProject');
+		else print $langs->trans('Private');
 		print '</td></tr>';
 
 		// Statut

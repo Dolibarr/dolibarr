@@ -110,7 +110,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("OfficerProject"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
