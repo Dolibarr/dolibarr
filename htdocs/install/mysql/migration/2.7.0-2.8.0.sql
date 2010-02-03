@@ -150,6 +150,7 @@ ALTER TABLE llx_projet ADD COLUMN description text AFTER title;
 ALTER TABLE llx_projet CHANGE note note_private text;
 ALTER TABLE llx_projet ADD COLUMN note_public text AFTER note_private;
 ALTER TABLE llx_projet MODIFY fk_statut smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_projet MODIFY fk_user_creat integer NOT NULL;
 
 -- Uniformize code: change tva_taux to tva_tx
 ALTER TABLE llx_facturedet CHANGE tva_taux tva_tx real;
