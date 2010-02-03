@@ -78,7 +78,7 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 		$project->title           = $_POST["title"];
 		$project->socid           = $_POST["socid"];
 		$project->description     = $_POST["description"];
-		//$project->user_resp_id    = $_POST["officer_project"];
+		$project->public          = $_POST["public"];
 		$project->datec=dol_now('tzserver');
 		$project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
 		$project->datee=dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
@@ -129,6 +129,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 		$project->title        = $_POST["title"];
 		$project->socid        = $_POST["socid"];
 		$project->description  = $_POST["description"];
+		$project->public       = $_POST["public"];
 		$project->date_start   = empty($_POST["project"])?'':dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
 		$project->date_end     = empty($_POST["projectend"])?'':dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
 
@@ -389,8 +390,8 @@ else
 
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		if ($project->public) print $langs->trans('SharedProject');
-		else print $langs->trans('Private');
+		$array=array(0 => $langs->trans("Private"),1 => $langs->trans("SharedProject"));
+		$html->select_array('public',$array,$project->public);
 		print '</td></tr>';
 
 		// Statut
