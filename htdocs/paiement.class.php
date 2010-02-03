@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,18 +19,17 @@
  */
 
 /**
- \file       htdocs/paiement.class.php
- \ingroup    facture
- \brief      Fichier de la classe des paiement de factures clients
- \remarks	Cette classe est presque identique a paiementfourn.class.php
- \version    $Id$
+ *	\file       htdocs/paiement.class.php
+ *	\ingroup    facture
+ *	\brief      Fichier de la classe des paiement de factures clients
+ *	\remarks	Cette classe est presque identique a paiementfourn.class.php
+ *	\version    $Id$
  */
 
 
 /**     \class      Paiement
- \brief      Classe permettant la gestion des paiements des factures clients
+ *		\brief      Classe permettant la gestion des paiements des factures clients
  */
-
 class Paiement
 {
 	var $id;
@@ -126,6 +125,8 @@ class Paiement
 		$error = 0;
 
 		// Clean parameters
+		$now=dol_now();
+
 		$this->total = 0;
 		foreach ($this->amounts as $key => $value)	// How payment is dispatch
 		{
@@ -141,10 +142,10 @@ class Paiement
 		if ($this->total <> 0) // On accepte les montants negatifs pour les rejets de prelevement
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)';
-			$sql.= ' VALUES ('.$this->db->idate(mktime()).', '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.addslashes($this->note).'\', '.$user->id.')';
-			$resql = $this->db->query($sql);
+			$sql.= ' VALUES ('.$this->db->idate($now).', '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.addslashes($this->note).'\', '.$user->id.')';
 
 			dol_syslog("Paiement::Create insert paiement sql=".$sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
