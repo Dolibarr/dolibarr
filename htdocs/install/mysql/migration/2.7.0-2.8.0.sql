@@ -33,8 +33,6 @@ ALTER TABLE llx_ecm_documents ADD COLUMN cipher varchar(50) DEFAULT 'twofish' NO
 ALTER TABLE llx_facture_fourn_det MODIFY COLUMN qty real;
 
 
-ALTER TABLE llx_projet ADD COLUMN datee DATE AFTER dateo;
-
 ALTER TABLE llx_notify ADD COLUMN email VARCHAR(255);
 
 ALTER TABLE llx_c_currencies ADD COLUMN labelsing   varchar(64);
@@ -111,6 +109,9 @@ ALTER TABLE llx_bank_class ADD UNIQUE INDEX uk_bank_class_lineid (lineid, fk_cat
 ALTER TABLE llx_rights_def MODIFY COLUMN module varchar(64);
 
 -- Enhancement of project tasks
+ALTER TABLE llx_projet ADD COLUMN datee DATE AFTER dateo;
+ALTER TABLE llx_projet ADD COLUMN public integer;
+
 ALTER TABLE llx_projet_task ADD COLUMN datec datetime AFTER fk_task_parent;
 ALTER TABLE llx_projet_task ADD COLUMN tms timestamp AFTER datec;
 ALTER TABLE llx_projet_task ADD COLUMN dateo datetime AFTER tms;
