@@ -721,8 +721,15 @@ class CommonObject
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($this->table_element == 'fichinter') $sql.= " SET note_private = '".addslashes($note)."'";
-		else $sql.= " SET note = '".addslashes($note)."'";
+		// TODO uniformize fields note_private
+		if ($this->table_element == 'fichinter' || $this->table_element == 'projet' || $this->table_element == 'projet_task')
+		{
+			$sql.= " SET note_private = '".addslashes($note)."'";
+		}
+		else
+		{
+			$sql.= " SET note = '".addslashes($note)."'";
+		}
 		$sql.= " WHERE rowid =". $this->id;
 
 		dol_syslog("CommonObject::update_note sql=".$sql, LOG_DEBUG);

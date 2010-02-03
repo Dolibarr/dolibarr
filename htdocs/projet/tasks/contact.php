@@ -195,6 +195,11 @@ if ($id > 0 || ! empty($ref))
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$task->label.'</td></tr>';
+		
+		// Project
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		print $projectstatic->getNomUrl(1);
+		print '</td></tr>';
 
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";

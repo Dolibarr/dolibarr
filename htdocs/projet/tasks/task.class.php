@@ -36,8 +36,8 @@ class Task extends CommonObject
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='project_task';			//!< Id that identify managed objects
-	var $table_element='project_task';	//!< Name of table without prefix where object is stored
+	var $element='project_task';		//!< Id that identify managed objects
+	var $table_element='projet_task';	//!< Name of table without prefix where object is stored
 
     var $id;
 

@@ -114,6 +114,7 @@ if ($taskid)
 {
 	$task = new Task($db);
 	$projectstatic = new Project($db);
+	$userstatic = new User($db);
 	
 	if ($task->fetch($taskid) >= 0 )
 	{
@@ -143,15 +144,18 @@ if ($taskid)
 			print '<tr><td>'.$langs->trans("Label").'</td>';
 			print '<td><input size="30" name="label" value="'.$task->label.'"></td></tr>';
 			
+			// Project
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 			print $projectstatic->getNomUrl(1);
 			print '</td></tr>';
 			
+			// Third party
 			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
 			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
 			
+			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
 			print $formother->selectProjectTasks($task->fk_task_parent,$projectstatic->id, 'task_parent', $user->admin?0:1, 0);
 			print '</td></tr>';
@@ -208,13 +212,40 @@ if ($taskid)
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
 			
+			// Project
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 			print $projectstatic->getNomUrl(1);
 			print '</td></tr>';
 			
+			// Third party
 			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
 			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
+			print '</td></tr>';
+			
+			// Task executive
+			print '<tr><td>'.$langs->trans("TaskExecutive").'</td><td>';
+			$contact = $task->liste_contact(4,'internal');
+			$num=sizeof($contact);
+			if ($num)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					if ($contact[$i]['code'] == 'TASKEXECUTIVE')
+					{
+						$userstatic->id = $contact[$i]['id'];
+						$userstatic->fetch();
+						print $userstatic->getNomUrl(1);
+						print '<br>';
+					}
+					$i++;
+				}
+			}
+			else
+			{
+				print $langs->trans('SharedTask');
+			}
 			print '</td></tr>';
 			
 			// Date start

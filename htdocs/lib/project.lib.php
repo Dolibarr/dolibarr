@@ -57,6 +57,11 @@ function project_prepare_head($object)
 	    $head[$h][2] = 'element';
 		$h++;
 	}
+	
+	$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Notes');
+	$head[$h][2] = 'note';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -104,6 +109,11 @@ function task_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Affectations");
 	$head[$h][2] = 'contact';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Notes');
+	$head[$h][2] = 'note';
 	$h++;
 
 	// Show more tabs from modules
