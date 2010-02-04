@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -173,7 +173,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	$sql.= " AND s.entity = ".$conf->entity;
 	$sql.= " AND c.statut = 0";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+	if ($socid) $sql.= " AND s.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
 
