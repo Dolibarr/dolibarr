@@ -62,11 +62,11 @@ if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
 	$filterd=$user->id;
 }
 
-$action=isset($_REQUEST['action'])?$_REQUEST['action']:'';
-$year=isset($_REQUEST["year"])?$_REQUEST["year"]:date("Y");
-$month=isset($_REQUEST["month"])?$_REQUEST["month"]:date("m");
-$day=isset($_REQUEST["day"])?$_REQUEST["day"]:0;
-$pid=isset($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
+$action=! empty($_REQUEST['action'])?$_REQUEST['action']:'';
+$year=! empty($_REQUEST["year"])?$_REQUEST["year"]:date("Y");
+$month=! empty($_REQUEST["month"])?$_REQUEST["month"]:date("m");
+$day=! empty($_REQUEST["day"])?$_REQUEST["day"]:0;
+$pid=! empty($_REQUEST["projectid"])?$_REQUEST["projectid"]:0;
 $status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 $langs->load("other");
@@ -203,21 +203,21 @@ else
 	// To limit array
 	$sql.= ' AND (';
 	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
-	$sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';			// End 7 days after + 3 to go from 28 to 31
+	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';			// End 7 days after + 3 to go from 28 to 31
 	$sql.= ' OR ';
 	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
-	$sql.= ' AND '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';
+	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';
 	$sql.= ' OR ';
 	$sql.= ' (datep < '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
-	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(0,0,0,$month,28,$year)+(60*60*24*10)).')';
+	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';
 	$sql.= ')';
 }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
 	$sql.= " AND (";
 	if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
-	if ($filtert > 0) $sql.= ($filtera>0?" AND ":"")." a.fk_user_action = ".$filtert;
-	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" AND ":"")." a.fk_user_done = ".$filterd;
+	if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
+	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
 	$sql.= ")";
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
