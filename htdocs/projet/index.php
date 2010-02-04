@@ -44,10 +44,18 @@ if ($user->societe_id > 0)
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 
+$projectsIdArray=array();
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$projectsListArray = $projectstatic->getProjectsAuthorizedForUser($user,$mine);
+foreach ($projectsListArray as $key => $value)
+{
+	$projectsIdArray[] = $key;
+}
+
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $text=$langs->trans("Projects");
-if ($_REQUEST["mode"]=='mine') $text=$langs->trans("MyProjects");
+if ($mine) $text=$langs->trans("MyProjects");
 print_fiche_titre($text);
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -64,6 +72,7 @@ $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, 
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 $sql.= " WHERE p.entity = ".$conf->entity;
+if ($mine) $sql.= " AND p.rowid IN (".(!empty($projectsIdArray) ? implode(',',$projectsIdArray) : 0).")";
 if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY p.title, p.rowid";
 
@@ -107,14 +116,6 @@ else
 print "</table>";
 
 print '</td><td width="70%" valign="top" class="notopnoleft">';
-
-$projectsIdArray=array();
-$mine = $_GET['mode']=='mine'?1:0;
-$projectsListArray = $projectstatic->getProjectsAuthorizedForUser($user,$mine);
-foreach ($projectsListArray as $key => $value)
-{
-	$projectsIdArray[] = $key;
-}
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
