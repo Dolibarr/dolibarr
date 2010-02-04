@@ -176,26 +176,7 @@ if ($id > 0 || ! empty($ref))
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
 
 		// To verify role of users
-		$userAccess = 0;
-		if (!empty($project->user_author_id) && $project->user_author_id == $user->id) $userAccess=1;
-		else
-		{
-			foreach(array('internal','external') as $source)
-			{
-				$userRole = $project->liste_contact(4,$source);
-				$num=sizeof($userRole);
-				
-				$i = 0;
-				while ($i < $num)
-				{
-					if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
-					{
-						$userAccess++;
-					}
-					$i++;
-				}
-			}
-		}
+		$userAccess = $project->restrictedProjectArea($user);
 
 		$head = project_prepare_head($project);
 		dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, 'project');

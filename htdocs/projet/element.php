@@ -69,6 +69,9 @@ $project = new Project($db);
 $project->fetch($_GET["id"],$_GET["ref"]);
 $project->societe->fetch($project->societe->id);
 
+// To verify role of users
+$userAccess = $project->restrictedProjectArea($user);
+
 $head=project_prepare_head($project);
 dol_fiche_head($head, 'element', $langs->trans("Project"),0,'project');
 

@@ -604,6 +604,41 @@ class Project extends CommonObject
 			$xnbp++;
 		}
 	}
+	
+	/**
+	 *		\brief		Check permissions
+	 */
+	function restrictedProjectArea($user)
+	{
+		// To verify role of users
+		$userAccess = 0;
+		if (!empty($this->user_author_id) && $this->user_author_id == $user->id)
+		{
+			$userAccess = 1;
+		}
+		else
+		{
+			foreach(array('internal','external') as $source)
+			{
+				$userRole = $this->liste_contact(4,$source);
+				$num=sizeof($userRole);
+				
+				$i = 0;
+				while ($i < $num)
+				{
+					if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
+					{
+						$userAccess++;
+					}
+					$i++;
+				}
+			}
+		}
+		
+		if (!$userAccess && !$this->public) accessforbidden('',0);
+		
+		return $userAccess;
+	}
 
 }
 ?>
