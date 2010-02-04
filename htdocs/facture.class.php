@@ -2377,7 +2377,7 @@ class Facture extends CommonObject
 		$facref = substr($this->ref, 1, 4);
 
 		// Si facture non brouillon et non provisoire
-		if ($facref != 'PROV' && $conf->global->FACTURE_ENABLE_EDITDELETE)
+		if ($facref != 'PROV')
 		{
 			// On ne peut supprimer que la derniere facture validee
 			// pour ne pas avoir de trou dans la numerotation

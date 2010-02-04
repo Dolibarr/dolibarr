@@ -321,7 +321,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 }
 
 // Repasse la facture en mode brouillon
-if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->global->FACTURE_ENABLE_EDITDELETE)
+if ($_GET['action'] == 'modif' && $user->rights->facture->modifier)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
@@ -3244,7 +3244,7 @@ else
 						// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 						$ventilExportCompta = $fac->getVentilExportCompta();
 
-						if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
+						if ($user->rights->facture->modifier
 						&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
 						{
 							if (! $facidnext)

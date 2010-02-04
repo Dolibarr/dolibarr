@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne                  <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
@@ -170,11 +170,6 @@ if ($_POST["action"] == 'set_FACTURE_FREE_TEXT')
 if ($_POST["action"] == 'setforcedate')
 {
 	dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"],'chaine',0,'',$conf->entity);
-}
-
-if ($_POST["action"] == 'set_enable_editdelete')
-{
-	dolibarr_set_const($db, "FACTURE_ENABLE_EDITDELETE",$_POST["enable_editdelete"],'chaine',0,'',$conf->entity);
 }
 
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
@@ -589,20 +584,6 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
 print $html->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
-
-// Active la possibilite d'editer/supprimer une facture validee sans paiement
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_enable_editdelete">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("EnableEditDeleteValidInvoice");
-print '</td><td width="60" align="center">';
-print $html->selectyesno("enable_editdelete",$conf->global->FACTURE_ENABLE_EDITDELETE,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
