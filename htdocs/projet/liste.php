@@ -69,8 +69,8 @@ $projectstatic = new Project($db);
 $userstatic = new User($db);
 $staticsoc=new Societe($db);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.dateo as do,";
-$sql.= " s.nom, s.rowid as socid, s.client";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.dateo as do, p.public";
+$sql.= ", s.nom, s.rowid as socid, s.client";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on p.fk_user_resp = u.rowid";
@@ -110,7 +110,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -160,12 +160,10 @@ if ($resql)
 		}
 		print '</td>';
 
-		// Title
-		$userstatic->id=$objp->fk_user_resp;
-		$userstatic->nom=$objp->login;
+		// Visibility
 		print '<td align="left">';
-		if ($objp->fk_user_resp > 0) print $userstatic->getNomUrl(1);
-		else print $langs->trans("SharedProject");
+		if ($objp->public) print $langs->trans('SharedProject');
+		else print $langs->trans('Private');
 		print '</td>';
 
 		// Status
