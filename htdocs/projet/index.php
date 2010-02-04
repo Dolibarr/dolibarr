@@ -109,7 +109,8 @@ print "</table>";
 print '</td><td width="70%" valign="top" class="notopnoleft">';
 
 $projectsIdArray=array();
-$projectsListArray = $projectstatic->getProjectsAuthorizedForUser($user);
+$mine = $_GET['mode']=='mine'?1:0;
+$projectsListArray = $projectstatic->getProjectsAuthorizedForUser($user,$mine);
 foreach ($projectsListArray as $key => $value)
 {
 	$projectsIdArray[] = $key;
@@ -126,7 +127,7 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
-$sql.= " AND p.rowid IN (".implode(',',$projectsIdArray).")";
+$sql.= " AND p.rowid IN (".(!empty($projectsIdArray) ? implode(',',$projectsIdArray) : 0).")";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
 

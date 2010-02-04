@@ -657,10 +657,10 @@ class Project extends CommonObject
 	 * @param unknown_type $user
 	 * @return unknown
 	 */
-	function getProjectsAuthorizedForUser($user)
+	function getProjectsAuthorizedForUser($user,$mine=0)
 	{
 		global $conf;
-		
+
 		$projects = array();
 
 		$sql = "SELECT DISTINCT p.rowid, p.ref";
@@ -668,12 +668,23 @@ class Project extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		$sql.= " AND ( p.public = 1";
-		$sql.= " OR p.fk_user_creat = ".$user->id;
-		$sql.= " OR ( ec.element_id = p.rowid";
-		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
-		$sql.= " AND ctc.element = '".$this->element."'";
-		$sql.= " AND ec.fk_socpeople = ".$user->id." ) )";
+		
+		if ($mine)
+		{
+			$sql.= " AND ec.element_id = p.rowid";
+			$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+			$sql.= " AND ctc.element = '".$this->element."'";
+			$sql.= " AND ec.fk_socpeople = ".$user->id;
+		}
+		else
+		{
+			$sql.= " AND ( p.public = 1";
+			$sql.= " OR p.fk_user_creat = ".$user->id;
+			$sql.= " OR ( ec.element_id = p.rowid";
+			$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+			$sql.= " AND ctc.element = '".$this->element."'";
+			$sql.= " AND ec.fk_socpeople = ".$user->id." ) )";
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql)
