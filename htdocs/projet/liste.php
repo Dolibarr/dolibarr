@@ -68,13 +68,8 @@ llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:
 $projectstatic = new Project($db);
 $socstatic = new Societe($db);
 
-$projectsIdArray=array();
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-$projectsListArray = $projectstatic->getProjectsAuthorizedForUser($user,$mine);
-foreach ($projectsListArray as $key => $value)
-{
-	$projectsIdArray[] = $key;
-}
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
@@ -82,7 +77,7 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine) $sql.= " AND p.rowid IN (".(!empty($projectsIdArray) ? implode(',',$projectsIdArray) : 0).")";
+if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
 if ($_GET["search_ref"])

@@ -657,11 +657,12 @@ class Project extends CommonObject
 	 * @param unknown_type $user
 	 * @return unknown
 	 */
-	function getProjectsAuthorizedForUser($user,$mine=0)
+	function getProjectsAuthorizedForUser($user,$mine=0,$list=0)
 	{
 		global $conf;
 
 		$projects = array();
+		$temp = array();
 
 		$sql = "SELECT DISTINCT p.rowid, p.ref";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -695,9 +696,18 @@ class Project extends CommonObject
 			{
 				$row = $this->db->fetch_row($resql);
 				$projects[$row[0]] = $row[1];
+				$temp[] = $row[0];
 				$i++;
 			}
-			$this->db->free();
+			
+			$this->db->free($resql);
+			
+			if ($list)
+			{
+				if (empty($temp)) return 0;
+				$result = implode(',',$temp);
+				return $result;
+			}
 		}
 		else
 		{

@@ -44,13 +44,8 @@ if ($user->societe_id > 0)
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 
-$projectsIdArray=array();
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-$projectsListArray = $projectstatic->getProjectsAuthorizedForUser($user,$mine);
-foreach ($projectsListArray as $key => $value)
-{
-	$projectsIdArray[] = $key;
-}
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
@@ -72,7 +67,7 @@ $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, 
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 $sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine) $sql.= " AND p.rowid IN (".(!empty($projectsIdArray) ? implode(',',$projectsIdArray) : 0).")";
+if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY p.title, p.rowid";
 
@@ -128,7 +123,7 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
-$sql.= " AND p.rowid IN (".(!empty($projectsIdArray) ? implode(',',$projectsIdArray) : 0).")";
+$sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
 
