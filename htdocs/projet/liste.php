@@ -68,8 +68,9 @@ llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:
 $projectstatic = new Project($db);
 $staticsoc=new Societe($db);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.dateo as do, p.public";
-$sql.= ", s.nom, s.rowid as socid, s.client";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public";
+$sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
+$sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
