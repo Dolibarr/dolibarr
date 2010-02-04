@@ -22,21 +22,21 @@
  */
 
 /**
- *       \defgroup   agenda     Module agenda
- *       \brief      Module pour gerer l'agenda et actions
+ *		\defgroup   agenda     Module agenda
+ *      \brief      Module pour gerer l'agenda et actions
  *		\brief		$Id$
  */
 
 /**
- *       \file       htdocs/includes/modules/modAgenda.class.php
- *       \ingroup    agenda
- *       \brief      Fichier de description et activation du module agenda
+ *      \file       htdocs/includes/modules/modAgenda.class.php
+ *      \ingroup    agenda
+ *      \brief      Fichier de description et activation du module agenda
  */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
- *       \class      modAdherent
- *       \brief      Classe de description et activation du module Adherent
+ *      \class      modAdherent
+ *      \brief      Classe de description et activation du module Adherent
  */
 class modAgenda extends DolibarrModules
 {

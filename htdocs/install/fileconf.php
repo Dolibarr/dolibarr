@@ -35,6 +35,7 @@ $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["select
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
+$langs->load("errors");
 
 // You can force preselected values of the config step of Dolibarr by adding a file
 // install.forced.php into directory htdocs/install (This is the case with some installer
@@ -384,6 +385,12 @@ while (($file = readdir($handle))!==false)
 </table>
 
 <script type="text/javascript" language="javascript">
+
+function checkDatabaseName(databasename) {
+	if (databasename.match(/[-;_\.]/)) { return false; }
+	return true;
+}
+
 function jscheckparam()
 {
 	ok=true;
@@ -413,24 +420,29 @@ function jscheckparam()
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired",$langs->transnoentitiesnoconv("DatabaseName"))); ?>');
 	}
+	else if (! checkDatabaseName(document.forminstall.db_name.value))
+	{
+		ok=false;
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorSpecialCharNotAllowedForField",$langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+	}
 	// If create database asked
-	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
 	}
-	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
 	}
 	// If create user asked
-	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
 	}
-	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == '' || document.forminstall.db_pass_root.value == ''))
+	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');

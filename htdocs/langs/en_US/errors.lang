@@ -60,3 +60,4 @@ ErrorWrongValueForField=Wrong value for field number <b>%s</b> (value '<b>%s</b>
 ErrorsOnXLines=Errors on <b>%s</b> source lines
 WarningsOnXLines=Warnings on <b>%s</b> source lines
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
+ErrorSpecialCharNotAllowedForField=Special characters are not allowed for field "%s"

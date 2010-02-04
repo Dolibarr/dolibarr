@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
@@ -211,7 +211,7 @@ if ($_POST["action"] == "set")
 			$oldcontent = dol_openfile($conffile, 'r', '');
 			if (! dol_openfile($conffile.'.old', 'w', $oldcontent)) $error++;
 		}
-		
+
 		$error+=write_conf_file($conffile);
 	}
 
@@ -351,7 +351,7 @@ if ($_POST["action"] == "set")
 					print $langs->trans("DatabaseCreation").' : ';
 					print $dolibarr_main_db_name;
 					print '</td>';
-					print '<td>'.$langs->trans("Error").' '.$db->errno().'</td></tr>';
+					print '<td>'.$langs->trans("Error").' '.$db->lasterrno().'</td></tr>';
 
 					// Affiche aide diagnostique
 					print '<tr><td colspan="2"><br>';
@@ -360,6 +360,7 @@ if ($_POST["action"] == "set")
 					print '<br>';
 					print '</td></tr>';
 
+					dolibarr_install_syslog('etape1: Failed to create database '.$dolibarr_main_db_name.' '.$db->lasterrno(), LOG_ERR);
 					$error++;
 				}
 				$db->close();

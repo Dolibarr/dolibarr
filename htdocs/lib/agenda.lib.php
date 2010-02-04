@@ -75,13 +75,14 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbort
 
 				print '<tr>';
 				print '<td nowrap="nowrap">';
-				print $langs->trans("ActionsToDoBy");
+				print $langs->trans("or").' '.$langs->trans("ActionsToDoBy");
 				print ' &nbsp;</td><td nowrap="nowrap">';
 				print $form->select_users($filtert,'usertodo',1,'',!$canedit);
 				print '</td></tr>';
+
 				print '<tr>';
 				print '<td nowrap="nowrap">';
-				print $langs->trans("ActionsDoneBy");
+				print $langs->trans("or").' '.$langs->trans("ActionsDoneBy");
 				print ' &nbsp;</td><td nowrap="nowrap">';
 				print $form->select_users($filterd,'userdone',1,'',!$canedit);
 				print '</td></tr>';
