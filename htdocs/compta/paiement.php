@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -274,17 +274,17 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 		print '<table class="border" width="100%">';
 
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
+		print '<tr><td><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
 
 		// Date payment
-		print '<tr><td>'.$langs->trans('Date').'</td><td>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
 		$datepayment = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
 		$html->select_date($datepayment,'','','',0,"add_paiement");
 		print '</td>';
 		print '<td>'.$langs->trans('Comments').'</td></tr>';
 
-		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
 		$html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
 		print "</td>\n";
 
@@ -294,8 +294,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<tr>';
 		if ($conf->banque->enabled)
 		{
-			if ($facture->type != 2) print '<td>'.$langs->trans('AccountToCredit').'</td>';
-			if ($facture->type == 2) print '<td>'.$langs->trans('AccountToDebit').'</td>';
+			if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
+			if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
 			print '<td>';
 			$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
 			print '</td>';

@@ -848,7 +848,7 @@ if ($step == 4 && $datatoimport)
 		$more='';
 		if (preg_match('/\*$/',$label))
 		{
-			$text='<b>'.$text.'*</b>';
+			$text='<span class="fieldrequired">'.$text.'</span>';
 			$more=((! empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= sizeof($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
 			if ($mandatoryfieldshavesource) $mandatoryfieldshavesource=(! empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= sizeof($fieldssource)));
 			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;

@@ -265,10 +265,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	}
 
 	// Ref
-	print '<tr><td>'.$langs->trans("Ref").'*</td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'*</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
 
 	// Customer
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';

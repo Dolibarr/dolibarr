@@ -127,7 +127,7 @@ print "</tr>\n";
 
 // DN Pour les adherents
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPMemberDn").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPMemberDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.$conf->global->LDAP_MEMBER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPMemberDnExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -135,7 +135,7 @@ print '</tr>';
 
 // List of object class used to define attributes in structure
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPMemberObjectClassList").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPMemberObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_MEMBER_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPMemberObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -155,7 +155,7 @@ print "</tr>\n";
 // Filtre
 /*
 $var=!$var;
-print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFilterConnection").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td><span class="fieldrequired">'.$langs->trans("LDAPFilterConnection").'</span></td><td>';
 print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
 print '</tr>';

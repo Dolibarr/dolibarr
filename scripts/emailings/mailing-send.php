@@ -78,9 +78,7 @@ if ($resql)
 		$replyto  = $obj->email_replyto;
 		$errorsto = $obj->email_errorsto;
 
-		// Le message est-il en html
-		$msgishtml=-1;	// Inconnu par defaut
-		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
+		$msgishtml=-1;
 
 		$i++;
 	}

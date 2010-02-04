@@ -494,16 +494,16 @@ if ($_GET["action"] == 'create')
 			print '</td></tr>';
 
             // Commercial suivi
-            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'*</td><td>';
+            print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
 			print $form->select_users($_REQUEST["commercial_suivi_id"],'commercial_suivi_id',1,'');
             print '</td></tr>';
 
             // Commercial signature
-            print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'*</td><td>';
+            print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
 			print $form->select_users($_REQUEST["commercial_signature_id"],'commercial_signature_id',1,'');
             print '</td></tr>';
 
-            print '<tr><td>'.$langs->trans("Date").'*</td><td>';
+            print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
             $form->select_date($datecontrat,'',0,0,'',"contrat");
             print "</td></tr>";
 

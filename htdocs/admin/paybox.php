@@ -125,28 +125,28 @@ print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_CGI_URL_V2").'*</td><td>';
+print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/modulev2_redhat72.cgi';
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_PBX_SITE").'*</td><td>';
+print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_SITE").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_SITE" value="'.$conf->global->PAYBOX_IBS_SITE.'">';
 print '<br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_PBX_RANG").'*</td><td>';
+print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_RANG").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="'.$conf->global->PAYBOX_IBS_RANG.'">';
 print '<br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')';
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("PAYBOX_PBX_IDENTIFIANT").'*</td><td>';
+print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_IDENTIFIANT").'</span></td><td>';
 print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
 print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
 print '</td></tr>';

@@ -112,7 +112,7 @@ print "</tr>\n";
 
 // DN Pour les contacts
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPContactDn").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
 print '<input size="48" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
 print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -120,7 +120,7 @@ print '</tr>';
 
 // List of object class used to define attributes in structure
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPContactObjectClassList").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPContactObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_CONTACT_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPContactObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';

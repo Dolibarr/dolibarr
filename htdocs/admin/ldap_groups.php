@@ -104,7 +104,7 @@ print "</tr>\n";
 
 // DN pour les groupes
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPGroupDn").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupDn").'</span></td><td>';
 print '<input size="48" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
 print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -112,7 +112,7 @@ print '</tr>';
 
 // List of object class used to define attributes in structure
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPGroupObjectClassList").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_GROUP_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPGroupObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -132,7 +132,7 @@ print "</tr>\n";
 // Filtre
 /*
 $var=!$var;
-print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFilterConnection").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td><span class="fieldrequired">'.$langs->trans("LDAPFilterConnection").'</span></td><td>';
 print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
 print '</tr>';

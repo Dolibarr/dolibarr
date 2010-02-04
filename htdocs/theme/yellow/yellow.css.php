@@ -717,6 +717,8 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.fieldrequired { font-weight: bold; color: #442200; }
+
 #pictotitle {
 	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
 }

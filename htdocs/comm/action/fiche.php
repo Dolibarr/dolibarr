@@ -455,7 +455,7 @@ if ($_GET["action"] == 'create')
 	print '<table class="border" width="100%">';
 
 	// Type d'action actifs
-	print '<tr><td width="30%"><b>'.$langs->trans("Type").'*</b></td><td>';
+	print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 	if ($_GET["actioncode"])
 	{
 		print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
@@ -537,7 +537,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	// Date start
-	print '<tr><td width="30%" nowrap="nowrap"><b>'.$langs->trans("DateActionStart").'*</b></td><td>';
+	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
 	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
 	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
 	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);

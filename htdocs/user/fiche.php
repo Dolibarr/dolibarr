@@ -512,7 +512,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '<tr>';
 
 	// Nom
-	print '<td valign="top" width="160">'.$langs->trans("Lastname").'*</td>';
+	print '<td valign="top" width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
 	print '<td>';
 	if ($ldap_nom)
 	{
@@ -540,7 +540,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td></tr>';
 
 	// Login
-	print '<tr><td valign="top">'.$langs->trans("Login").'*</td>';
+	print '<tr><td valign="top"><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
 	print '<td>';
 	if ($ldap_login)
 	{
@@ -1290,7 +1290,7 @@ else
 			print '</tr>';
 
 			// Nom
-			print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
+			print "<tr>".'<td valign="top">'.$langs->trans("Name").'</span></td>';
 			print '<td colspan="2">';
 			if ($caneditfield && !$fuser->ldap_sid)
 			{
@@ -1304,7 +1304,7 @@ else
 			print '</td></tr>';
 
 			// Prenom
-			print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
+			print "<tr>".'<td valign="top"><span class="fieldrequired">'.$langs->trans("Firstname").'</td>';
 			print '<td colspan="2">';
 			if ($caneditfield && !$fuser->ldap_sid)
 			{
@@ -1318,7 +1318,7 @@ else
 			print '</td></tr>';
 
 			// Login
-			print "<tr>".'<td valign="top">'.$langs->trans("Login").'*</td>';
+			print "<tr>".'<td valign="top"><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
 			print '<td>';
 			if ($user->admin  && !$fuser->ldap_sid)
 			{

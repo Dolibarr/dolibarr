@@ -692,7 +692,7 @@ if ($action == 'edit')
 	// Physique-Moral
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
-	print "<tr><td>".$langs->trans("Person").'*</td><td colspan="2">';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Person").'</span></td><td colspan="2">';
 	$html->select_array("morphy",  $morphys, $adh->morphy);
 	print "</td></tr>";
 
@@ -700,7 +700,7 @@ if ($action == 'edit')
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2"><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
 	// Nom
-	print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
 
 	// Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
@@ -716,17 +716,17 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Prenom
-	print '<tr><td width="20%">'.$langs->trans("Firstname").'*</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
+	print '<tr><td width="20%"><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	print '</tr>';
 
 	// Login
-	print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="30" value="'.$adh->login.'"></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td><td><input type="text" name="login" size="30" value="'.$adh->login.'"></td></tr>';
 
 	// Password
-	print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="30" value="'.$adh->pass.'"></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td><input type="password" name="pass" size="30" value="'.$adh->pass.'"></td></tr>';
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'*</td><td>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
 	if ($user->rights->adherent->creer)
 	{
 		$html->select_array("typeid",  $adht->liste_array(), $adh->typeid);
@@ -760,7 +760,7 @@ if ($action == 'edit')
 	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.$adh->phone_mobile.'"></td></tr>';
 
 	// EMail
-	print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
+	print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -844,7 +844,7 @@ if ($action == 'create')
 	// Moral-Physique
     $morphys["phy"] = "Physique";
     $morphys["mor"] = "Morale";
-    print "<tr><td>".$langs->trans("Person")."*</td><td>\n";
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Person")."</span></td><td>\n";
     $html->select_array("morphy", $morphys, $adh->morphy, 1);
     print "</td>\n";
 
@@ -852,15 +852,15 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
     // Nom
-    print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
     print '</tr>';
 
 	// Prenom
-    print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
     print '</tr>';
 
 	// Login
-    print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
 
 	// Mot de passe
 	$generated_password='';
@@ -873,12 +873,12 @@ if ($action == 'create')
 		$genhandler=new $nomclass($db,$conf,$langs,$user);
 		$generated_password=$genhandler->getNewGeneratedPassword();
 	}
-    print '<tr><td>'.$langs->trans("Password").'*</td><td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
 	print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
 	print '</td></tr>';
 
 	// Type
-    print '<tr><td>'.$langs->trans("MemberType").'*</td><td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberType").'</span></td><td>';
     $listetype=$adht->liste_array();
     if (sizeof($listetype))
     {
@@ -888,7 +888,7 @@ if ($action == 'create')
     }
     print "</td>\n";
 
-    // Adresse
+    // Address
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
 
@@ -910,7 +910,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.$adh->phone_mobile.'"></td></tr>';
 
     // EMail
-    print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="member_email" size="40" value="'.$adh->email.'"></td></tr>';
+    print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.$adh->email.'"></td></tr>';
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";

@@ -115,7 +115,7 @@ print "</tr>\n";
 
 // DN Pour les utilisateurs
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPUserDn").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.$conf->global->LDAP_USER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td>';
 print '<td>&nbsp;</td>';
@@ -123,7 +123,7 @@ print '</tr>';
 
 // List of object class used to define attributes in structure
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPUserObjectClassList").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPUserObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_USER_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPUserObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';

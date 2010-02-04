@@ -410,7 +410,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		if ($soc->particulier)
 		{
-			print '<tr><td>'.$langs->trans('LastName').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans('LastName').'</span></td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 			print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
@@ -420,12 +420,12 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		}
 		else
 		{
-			print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 		}
 
 		// Prospect/Customer
-		print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
+		print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
 		print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
 		print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
 		print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
@@ -446,7 +446,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		// Fournisseur
 		print '<tr>';
-		print '<td>'.$langs->trans('Supplier').'</td><td>';
+		print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
 		print $form->selectyesno("fournisseur",$soc->fournisseur,1);
 		print '</td>';
 		print '<td>'.$langs->trans('SupplierCode').'</td><td>';
@@ -739,7 +739,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<table class="border" width="100%">';
 
 		// Name
-		print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans('Name').'</span></td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
 		// Prefix
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
@@ -756,7 +756,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '</td>';
 
 		// Prospect/Customer
-		print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
+		print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
 		print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
 		print '<option value="3"'.($soc->client==3?' selected="true"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
 		print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
@@ -789,7 +789,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		// Fournisseur
 		print '<tr>';
-		print '<td>'.$langs->trans('Supplier').'</td><td>';
+		print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
 		print $form->selectyesno("fournisseur",$soc->fournisseur,1);
 		print '</td>';
 		print '<td>'.$langs->trans('SupplierCode').'</td><td>';

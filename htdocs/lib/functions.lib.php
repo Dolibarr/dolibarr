@@ -2719,7 +2719,7 @@ function create_exdir($dir)
  */
 function picto_required()
 {
-	return '<b>*</b>';
+	return '<span class="fieldrequired">*</span>';
 }
 
 
