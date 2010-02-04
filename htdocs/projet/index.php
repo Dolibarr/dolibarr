@@ -41,7 +41,7 @@ if ($user->societe_id > 0)
  * View
  */
 
-$company=new Societe($db);
+$socstatic=new Societe($db);
 $projectstatic=new Project($db);
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
@@ -60,13 +60,10 @@ print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"'
 print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, p.fk_statut, count(t.rowid) as nb";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, count(t.rowid) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 $sql.= " WHERE p.entity = ".$conf->entity;
-//if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY p.title, p.rowid";
 
@@ -79,14 +76,24 @@ if ( $resql )
 
 	while ($i < $num)
 	{
-		$row = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$row->rowid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$row->title.'</a></td>';
-		print '<td align="right">'.$row->nb.'</td>';
-		$projectstatic->statut=$row->fk_statut;
-		print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
-		print "</tr>\n";
+		$objp = $db->fetch_object($resql);
+		
+		$projectstatic->id = $objp->projectid;
+		$projectstatic->user_author_id = $objp->fk_user_creat;
+		$projectstatic->public = $objp->public;
+		
+		$userAccess = $projectstatic->restrictedProjectArea($user,1);
+	
+		if ($userAccess >= 0)
+		{
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$objp->projectid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$objp->title.'</a></td>';
+			print '<td align="right">'.$objp->nb.'</td>';
+			$projectstatic->statut = $objp->fk_statut;
+			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
+			print "</tr>\n";
+		}
 
 		$i++;
 	}
@@ -108,12 +115,11 @@ print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$s
 print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
-$sql = "SELECT count(p.rowid) as nb, s.nom, s.rowid as socid";
+$sql = "SELECT count(p.rowid) as nb";
+$sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " WHERE p.entity = ".$conf->entity;
-//if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
@@ -133,9 +139,9 @@ if ( $resql )
 		print '<td nowrap="nowrap">';
 		if ($obj->socid)
 		{
-			$company->id=$obj->socid;
-			$company->nom=$obj->nom;
-			print $company->getNomUrl(1);
+			$socstatic->id=$obj->socid;
+			$socstatic->nom=$obj->nom;
+			print $socstatic->getNomUrl(1);
 		}
 		else
 		{

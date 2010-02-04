@@ -608,7 +608,7 @@ class Project extends CommonObject
 	/**
 	 *		\brief		Check permissions
 	 */
-	function restrictedProjectArea($user)
+	function restrictedProjectArea($user,$list=0)
 	{
 		// To verify role of users
 		$userAccess = 0;
@@ -635,7 +635,18 @@ class Project extends CommonObject
 			}
 		}
 		
-		if (!$userAccess && !$this->public) accessforbidden('',0);
+		if (!$userAccess && !$this->public)
+		{
+			if (!$list)
+			{
+				accessforbidden('',0);
+			}
+			else
+			{
+				return -1;
+			}
+			
+		}
 		
 		return $userAccess;
 	}

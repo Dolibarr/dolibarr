@@ -66,9 +66,9 @@ $pagenext = $page + 1;
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $projectstatic = new Project($db);
-$staticsoc=new Societe($db);
+$socstatic = new Societe($db);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -128,46 +128,57 @@ if ($resql)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-
-		print "<td>";
-		$projectstatic->id=$objp->projectid;
-		$projectstatic->ref=$objp->ref;
-		print $projectstatic->getNomUrl(1);
-		print "</td>";
-
-		// Title
-		print '<td>';
-		print dol_trunc($objp->title,24);
-		print '</td>';
-
-		// Company
-		print '<td>';
-		if ($objp->socid)
+		
+		$projectstatic->id = $objp->projectid;
+		$projectstatic->user_author_id = $objp->fk_user_creat;
+		$projectstatic->public = $objp->public;
+		
+		$userAccess = $projectstatic->restrictedProjectArea($user,1);
+	
+		if ($userAccess >= 0)
 		{
-			$staticsoc->id=$objp->socid;
-			$staticsoc->nom=$objp->nom;
-			print $staticsoc->getNomUrl(1);
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			
+			// Project url
+			print "<td>";
+			$projectstatic->ref = $objp->ref;
+			print $projectstatic->getNomUrl(1);
+			print "</td>";
+			
+			// Title
+			print '<td>';
+			print dol_trunc($objp->title,24);
+			print '</td>';
+			
+			// Company
+			print '<td>';
+			if ($objp->socid)
+			{
+				$socstatic->id=$objp->socid;
+				$socstatic->nom=$objp->nom;
+				print $socstatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			
+			// Visibility
+			print '<td align="left">';
+			if ($objp->public) print $langs->trans('SharedProject');
+			else print $langs->trans('Private');
+			print '</td>';
+			
+			// Status
+			$projectstatic->statut = $objp->fk_statut;
+			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
+			
+			print "</tr>\n";
+
 		}
-		else
-		{
-		 	print '&nbsp;';
-		}
-		print '</td>';
-
-		// Visibility
-		print '<td align="left">';
-		if ($objp->public) print $langs->trans('SharedProject');
-		else print $langs->trans('Private');
-		print '</td>';
-
-		// Status
-		$projectstatic->statut=$objp->fk_statut;
-		print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
-
-		print "</tr>\n";
-
+		
 		$i++;
 	}
 
