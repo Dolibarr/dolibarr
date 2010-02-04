@@ -66,7 +66,6 @@ else
 	define('LOG_DEBUG',7);
 }
 
-
 $includeconferror='';
 $conffile = "../conf/conf.php";
 
@@ -240,7 +239,7 @@ function conf($dolibarr_main_document_root)
 		if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
 		else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
 		else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
-		else if (@is_writable('../../../../')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
+		else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
 		else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
 		//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
 	}

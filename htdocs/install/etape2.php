@@ -176,9 +176,11 @@ if ($_POST["action"] == "set")
 				}
 
 				dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-				if ($db->query($buffer))
+				$resql=$db->query($buffer);
+				if ($resql)
 				{
 					// print "<td>OK requete ==== $buffer</td></tr>";
+					$db->free($resql);
 				}
 				else
 				{
@@ -312,9 +314,11 @@ if ($_POST["action"] == "set")
 						}
 
 						dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-						if ($db->query($buffer))
+						$resql=$db->query($buffer);
+						if ($resql)
 						{
 							//print "<td>OK requete ==== $buffer</td></tr>";
+							$db->free($resql);
 						}
 						else
 						{
@@ -399,9 +403,11 @@ if ($_POST["action"] == "set")
 				if ($buffer)
 				{
 					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-					if ($db->query($buffer))
+					$resql=$db->query($buffer);
+					if ($resql)
 					{
 						$ok = 1;
+						$db->free($resql);
 					}
 					else
 					{
@@ -435,7 +441,7 @@ if ($_POST["action"] == "set")
 
 	/***************************************************************************************
 	 *
-	 * Chargement fichier data.sql
+	 * Load files data/*.sql
 	 *
 	 ***************************************************************************************/
 	if ($ok && $createdata)
@@ -479,13 +485,15 @@ if ($_POST["action"] == "set")
 						}
 
 						//dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-						if ($db->query($buffer))
+						$resql=$db->query($buffer);
+						if ($resql)
 						{
 							$ok = 1;
+							$db->free($resql);
 						}
 						else
 						{
-							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+							if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 							{
 								//print "<tr><td>Insertion ligne : $buffer</td><td>";
 							}
