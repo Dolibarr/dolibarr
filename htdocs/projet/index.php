@@ -107,7 +107,8 @@ else
 print "</table>";
 
 print '</td><td width="70%" valign="top" class="notopnoleft">';
-
+//$result = $projectstatic->getProjectsAuthorizedForUser($user);
+//var_dump($result);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -122,7 +123,6 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
-//$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $var=true;
 $resql = $db->query($sql);

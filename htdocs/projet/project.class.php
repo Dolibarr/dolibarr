@@ -650,6 +650,51 @@ class Project extends CommonObject
 		
 		return $userAccess;
 	}
+	
+	/**
+	 * Return array of projects authorized for a user
+	 *
+	 * @param unknown_type $user
+	 * @return unknown
+	 */
+	function getProjectsAuthorizedForUser($user)
+	{
+		global $conf;
+		
+		$projects = array();
+
+		$sql = "SELECT DISTINCT p.rowid, p.ref";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
+		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
+		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " AND ( p.public = 1";
+		$sql.= " OR p.fk_user_creat = ".$user->id;
+		$sql.= " OR ( ec.element_id = p.rowid";
+		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
+		$sql.= " AND ctc.element = '".$this->element."'";
+		$sql.= " AND ec.fk_socpeople = ".$user->id." ) )";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$projects[$row[0]] = $row[1];
+				$i++;
+			}
+			$this->db->free();
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $projects;
+	}
 
 }
 ?>
