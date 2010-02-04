@@ -30,6 +30,7 @@ define('DOL_VERSION','2.8.0-dev');	// Also defined in htdocs/master.inc.php
 require_once('../translate.class.php');
 require_once('../lib/functions.lib.php');
 require_once('../lib/admin.lib.php');
+require_once('../lib/files.lib.php');
 
 // DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 

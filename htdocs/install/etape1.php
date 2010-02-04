@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +159,7 @@ if ($_POST["action"] == "set")
 			$dir[0] = "$main_data_dir/facture";
 			$dir[1] = "$main_data_dir/users";
 			$dir[2] = "$main_data_dir/propale";
-			$dir[3] = "$main_data_dir/societe";
+			$dir[3] = "$main_data_dir/mycompany";
 			$dir[4] = "$main_data_dir/ficheinter";
 			$dir[5] = "$main_data_dir/produit";
 			$dir[6] = "$main_data_dir/rapport";
@@ -204,6 +205,13 @@ if ($_POST["action"] == "set")
 	// Write conf file on disk
 	if (! $error)
 	{
+		// Save old conf file on disk
+		if (file_exists("$conffile"))
+		{
+			$oldcontent = dol_openfile($conffile, 'r', '');
+			if (! dol_openfile($conffile.'.old', 'w', $oldcontent)) $error++;
+		}
+		
 		$error+=write_conf_file($conffile);
 	}
 
