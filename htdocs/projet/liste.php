@@ -66,18 +66,13 @@ $pagenext = $page + 1;
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $projectstatic = new Project($db);
-$userstatic = new User($db);
 $staticsoc=new Societe($db);
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.dateo as do, p.public";
 $sql.= ", s.nom, s.rowid as socid, s.client";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on p.fk_user_resp = u.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " WHERE p.entity = ".$conf->entity;
-//if ($_REQUEST["mode"]=='mine') $sql.=' AND p.fk_user_resp='.$user->id;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND (p.fk_soc IS NULL or sc.fk_soc IS NOT NULL)";
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
 if ($_GET["search_ref"])
