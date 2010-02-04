@@ -3272,7 +3272,7 @@ else
 					}
 
 					// Reopen a classified invoice
-					if ($fac->statut == 3 &&				// A abandoned invoice
+					if (($fac->statut == 2 || $fac->statut == 3) &&				// Closed invoice
 					$fac->getIdReplacingInvoice() == 0 &&	// Not replaced by another invoice
 					$fac->close_code != 'replaced')			// Not replaced by another invoice
 					{
@@ -3315,7 +3315,6 @@ else
 
 					if ($conf->global->FACTURE_SHOW_SEND_REMINDER)	// For backward compatibility
 					{
-						// Envoyer une relance
 						if (($fac->statut == 1 || $fac->statut == 2) && $resteapayer > 0 && $user->rights->facture->envoyer)
 						{
 							if ($facidnext)

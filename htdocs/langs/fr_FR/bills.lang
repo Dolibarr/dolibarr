@@ -354,6 +354,8 @@ Reported=Différé
 InvoiceDeposit=Facture d'acompte
 InvoiceDepositAsk=Facture d'acompte
 InvoiceDepositDesc=La <b>facture d'acompte</b> est le type de facture qui fait suite à réception d'un acompte, s'il n'est pas encore possible de saisir le paiement sur une facture définitive.
+DisabledBecausePayments=Non disponible car il existe des paiements
+CantRemovePaymentWithOneInvoicePaid=Suppression impossible quand il existe au moins une facture classée payée.
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Reponsable suivi facture client
 TypeContact_facture_external_BILLING=Contact client facturation
