@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - main 
+# Dolibarr language file - es_ES - main
 CHARSET = UTF-8
 DIRECTION = ltr
 SeparatorDecimal = ,
@@ -552,6 +552,8 @@ RequiredField = Campo obligatorio
 Result = Resultado
 ToTest = Probar
 ValidateBefore = Para poder usar esta función debe validarse la ficha
+Visibility = Visibilidad
+Private = Privado
 # Week day = 
 Day1 = Lunes
 Day2 = Martes
