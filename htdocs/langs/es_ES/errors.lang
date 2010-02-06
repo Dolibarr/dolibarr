@@ -61,3 +61,4 @@ ErrorWrongValueForField = Valor incorrecto para el campo número <b>%s</b> (el v
 ErrorsOnXLines = Errores en <b>%s</b> líneas fuente
 WarningsOnXLines = Alertas en <b>%s</b> líneas fuente
 ErrorFileIsInfectedWithAVirus = ¡El antivirus no ha podido validar este archivo (es probable que esté infectado por un virus)!
+ErrorSpecialCharNotAllowedForField = Los caracteres especiales no son admitidos por el campo "%s"

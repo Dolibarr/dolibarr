@@ -61,3 +61,4 @@ ErrorWrongValueForField = Valor incorrecte per al camp nombre <b>%s</b> (el valo
 ErrorsOnXLines = Errors a <b>%s</b> línies font
 WarningsOnXLines = Alertes a <b>%s</b> línies font
 ErrorFileIsInfectedWithAVirus = L'antivirus no ha pogut validar aquest arxiu (és probable que estigui infectat per un virus)!
+ErrorSpecialCharNotAllowedForField = Els caràcters especials no són admesos pel camp "%s"
