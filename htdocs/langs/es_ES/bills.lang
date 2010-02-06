@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - bills 
+# Dolibarr language file - es_ES - bills
 CHARSET = UTF-8
 Bill = Factura
 Bills = Facturas
@@ -352,6 +352,8 @@ Reported = Aplazado
 InvoiceDeposit = Factura de anticipo
 InvoiceDepositAsk = Factura de anticipo
 InvoiceDepositDesc = La <b>factura de anticipo</b> es el tipo de factura que se crea a la recepción de un anticipo, si no es posible realizar el pago sobre una factura definitiva.
+DisabledBecausePayments = No disponible ya que existen pagos
+CantRemovePaymentWithOneInvoicePaid = Eliminación imposible cuando existe al menos una factura clasificada como pagada.
 ##### Types de contacts ##### = 
 TypeContact_facture_internal_SALESREPFOLL = Responsable seguimiento factura a cliente
 TypeContact_facture_external_BILLING = Contacto cliente facturación

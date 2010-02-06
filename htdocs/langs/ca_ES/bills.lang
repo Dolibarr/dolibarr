@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - bills 
+# Dolibarr language file - ca_ES - bills
 CHARSET = UTF-8
 Bill = Factura
 Bills = Factures
@@ -352,6 +352,8 @@ Reported = Ajornat
 InvoiceDeposit = Factura de bestreta
 InvoiceDepositAsk = Factura de bestreta
 InvoiceDepositDesc = La <b>factura de bestreta</b> és el tipus de factura que es crea a la recepció d'una bestreta, si no és possible realitzar el pagament sobre una factura definitiva.
+DisabledBecausePayments = No disponible ja que hi ha pagaments
+CantRemovePaymentWithOneInvoicePaid = Eliminació impossible quan hi ha almenys una factura classificada com a pagada.
 ##### Types de contacts ##### =  = 
 TypeContact_facture_internal_SALESREPFOLL = Responsable seguiment factura a client
 TypeContact_facture_external_BILLING = Contacte client facturació
