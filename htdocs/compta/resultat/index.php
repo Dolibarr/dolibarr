@@ -111,6 +111,7 @@ $sql.= " GROUP BY dm";
 $sql.= " ORDER BY dm";
 
 //print $sql;
+dol_syslog("get customers invoices sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {
@@ -143,6 +144,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm";
 
+	dol_syslog("get old customers payments not linked to invoices sql=".$sql);
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -174,7 +176,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= " WHERE f.fk_statut IN (1,2)";
 } else {
-	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
+	$sql = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
 	$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
@@ -185,6 +187,7 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY dm";
 
+dol_syslog("get suppliers invoices sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {
@@ -219,6 +222,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm DESC";
 
+	dol_syslog("get vat to pay sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -244,6 +248,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
+	dol_syslog("get vat to receive back sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -271,6 +276,7 @@ else {
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
+	dol_syslog("get vat really paid sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -296,6 +302,7 @@ else {
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
+	dol_syslog("get vat really received back sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -340,8 +347,8 @@ else {
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
+dol_syslog("get social contributions deductible=0  sql=".$sql);
 $result=$db->query($sql);
-
 if ($result) {
 	$num = $db->num_rows($result);
 	$var=false;
@@ -387,6 +394,7 @@ else
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
+dol_syslog("get social contributions paid deductible=1 sql=".$sql);
 $result=$db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);

@@ -164,6 +164,7 @@ print adodb_gmstrftime('%Y-%d-%m %H:%M',$date_end).'<br>';
 print $sql;
 */
 
+dol_syslog("get customer invoices sql=".$sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -206,6 +207,7 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " GROUP BY nom";
 	$sql.= " ORDER BY nom";
 
+	dol_syslog("get old customer payments not linked to invoices sql=".$sql);
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -276,8 +278,10 @@ $sql .= " GROUP BY nom, s.rowid";
 $sql .= " ORDER BY nom, s.rowid";
 
 print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
+
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
+dol_syslog("get suppliers invoices sql=".$sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -324,7 +328,7 @@ print '</tr>';
  * Charges sociales non deductibles
  */
 
-print '<tr><td colspan="4">Prestations/Charges NON deductibles</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributions").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
@@ -347,6 +351,7 @@ else {
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle";
 
+dol_syslog("get social contributions deductible=0 sql=".$sql);
 $result=$db->query($sql);
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -391,7 +396,7 @@ print '</tr>';
  * Charges sociales deductibles
  */
 
-print '<tr><td colspan="4">Prestations/Charges deductibles</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributions").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
@@ -416,6 +421,7 @@ else {
 	$sql.= " GROUP BY c.libelle";
 }
 
+dol_syslog("get social contributions deductible=1 sql=".$sql);
 $result=$db->query($sql);
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -492,6 +498,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm DESC";
 
+	dol_syslog("get vat to pay sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -528,6 +535,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm DESC";
 
+	dol_syslog("get vat received back sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -567,6 +575,7 @@ else
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm DESC";
 
+	dol_syslog("get vat really paid sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -605,6 +614,7 @@ else
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm DESC";
 
+	dol_syslog("get vat really received back sql=".$sql);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
