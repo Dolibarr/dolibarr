@@ -231,7 +231,7 @@ class pdf_standard {
 
 
 	// On imprime une etiquette
-	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='')
+	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='',$idmember)
 	{
 		global $mysoc,$conf,$langs;
 
@@ -243,9 +243,11 @@ class pdf_standard {
 		$_PosX = $this->_Margin_Left+($this->_COUNTX*($this->_Width+$this->_X_Space));
 		$_PosY = $this->_Margin_Top+($this->_COUNTY*($this->_Height+$this->_Y_Space));
 
+		// Define logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
 		if (! is_readable($logo))
 		{
+			$logo='';
 			if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 			{
 				$logo=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
@@ -256,23 +258,23 @@ class pdf_standard {
 			}
 		}
 
+		// Define photo
+		$dir=$conf->adherent->dir_output;
+		$file=$idmember.".jpg";
+		$photo=$dir.'/'.$file;
+		if (! is_readable($photo)) $photo='';
+
 		if ($this->_Avery_Name == "CARD")
 		{
 			$this->Tformat=$this->_Avery_Labels["CARD"];
 			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
 			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
-			if($this->Tformat['fond'] != '' and file_exists($this->Tformat['fond'])){
-				$this->image($this->Tformat['fond'],$_PosX,$_PosY,$this->_Width,$this->_Height);
-			}
-			/*if($this->Tformat['logo1'] != '' and file_exists($this->Tformat['logo1'])){
-				$this->image($this->Tformat['logo1'],$_PosX+$this->_Width-21,$_PosY+1,20,20);
-			}
-			if($this->Tformat['logo2'] != '' and file_exists($this->Tformat['logo2'])){
-				$this->image($this->Tformat['logo2'],$_PosX+$this->_Width-21,$_PosY+25,20,20);
-			}*/
 
 			// Top
 			if ($header!=''){
+				$pdf->SetDrawColor(128,128,128);
+				$pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1);
+				$pdf->SetDrawColor(0,0,0);
 				$pdf->SetXY($_PosX, $_PosY+1);
 				$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
 			}
@@ -280,7 +282,8 @@ class pdf_standard {
 			// Center
 			if ($textright=='')	// Only a left part
 			{
-				if ($textleft == '%LOGO%') $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+				if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+				else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
 				else
 				{
 					$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
@@ -289,30 +292,33 @@ class pdf_standard {
 			}
 			else if ($textleft!='' && $textright!='')	//
 			{
-				if ($textleft == '%LOGO%')
+				if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
 				{
-					$pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
-					$pdf->SetXY($_PosX+22, $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell($this->_Width-20, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+					if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+					else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+					$pdf->SetXY($_PosX+21, $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 				}
-				else if ($textright == '%LOGO%')
+				else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
 				{
-					$pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+					if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+					else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
 					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
 					$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
 				}
 				else
 				{
-					$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
 					$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+					$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 				}
 
 			}
 			else	// Only a right part
 			{
-				if ($textright == '%LOGO%') $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+				if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+				else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
 				else
 				{
 					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
@@ -323,6 +329,9 @@ class pdf_standard {
 			// Bottom
 			if ($footer!='')
 			{
+				$pdf->SetDrawColor(128,128,128);
+				$pdf->Line($_PosX, $_PosY+$this->_Height-$this->_Line_Height-2, $_PosX+$this->_Width, $_PosY+$this->_Height-$this->_Line_Height-2);
+				$pdf->SetDrawColor(0,0,0);
 				$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
 				$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 			}
@@ -510,7 +519,7 @@ class pdf_standard {
 		foreach($arrayofmembers as $val)
 		{
 			// imprime le texte specifique sur la carte
-			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright']);
+			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id']);
 		}
 
 

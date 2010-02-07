@@ -21,18 +21,14 @@
 /**
  *	\file 		htdocs/adherents/cartes/carte.php
  *	\ingroup    adherent
- *	\brief      Page de creation d'une carte PDF
+ *	\brief      Page to output members business cards
  *	\version    $Id$
  */
 
 require("./pre.inc.php");
-
-require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
-
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/PDF_card.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/cards/modules_cards.php");
 
 
 // liste des patterns remplacable dans le texte a imprimer
@@ -48,39 +44,27 @@ $patterns = array (
 '/%PAYS%/',
 '/%EMAIL%/',
 '/%NAISS%/',
-'/%PHOTO%/',
 '/%TYPE%/',
 '/%ID%/',
-'/%ANNEE%/'
-		   );
+'/%ANNEE%/',	// For backward compatibility
+'/%YEAR%/',
+'/%MONTH%/',
+'/%DAY%/'
+);
 
-
-$dir = $conf->adherent->dir_temp;
-$file = $dir . "/tmpcard.pdf";
-
-if (! file_exists($dir))
-{
-	if (create_exdir($dir) < 0)
-	{
-		$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-		return 0;
-	}
-}
-
-$pdf = new PDF_card('CARD', 1, 1);
-
-$pdf->Open();
-$pdf->AddPage();
 
 // Choix de l'annee d'impression ou annee courante.
-if (!isset($annee)){
-	$now = getdate();
-	$annee=$now['year'];
-}
+$now = dol_now();
+$year=dol_print_date($now,'%Y');
+$month=dol_print_date($now,'%m');
+$day=dol_print_date($now,'%d');
+
+
+$arrayofmembers=array();
 
 // requete en prenant que les adherents a jour de cotisation
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.login, d.societe, d.datefin,";
-$sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
+$sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email,";
 $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
@@ -112,45 +96,35 @@ if ($result)
 		$objp->pays,
 		$objp->email,
 		$objp->naiss,
-		$objp->photo,
 		$objp->type,
 		$objp->rowid,
-		$annee
+		$year,
+		$year,
+		$month,
+		$day
 		);
 
-		// imprime le texte specifique sur la carte
-		$pdf->Add_PDF_card(preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT),
-		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_HEADER_TEXT),
-		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT), $langs,
-		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT_RIGHT));
+		$textleft=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT);
+		$textheader=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_HEADER_TEXT);
+		$textfooter=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT);
+		$textright=preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT_RIGHT);
+
+		$arrayofmembers[]=array('textleft'=>$textleft,
+								'textheader'=>$textheader,
+								'textfooter'=>$textfooter,
+								'textright'=>$textright,
+								'id'=>$objp->rowid);
+
 		$i++;
 	}
 
-	// Output to http strem
-	$pdf->Output($file);
-
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($file, octdec($conf->global->MAIN_UMASK));
-
-	$db->close();
-
-	clearstatcache();
-
-	$attachment=true;
-	if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-	$filename='tmpcards.pdf';
-	$type=dol_mimetype($filename);
-
-	if ($encoding)   header('Content-Encoding: '.$encoding);
-	if ($type)       header('Content-Type: '.$type);
-	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-	else header('Content-Disposition: inline; filename="'.$filename.'"');
-
-	// Ajout directives pour resoudre bug IE
-	header('Cache-Control: Public, must-revalidate');
-	header('Pragma: public');
-
-	readfile($file);
+	// Build and output PDF
+	$result=members_card_pdf_create($db, $arrayofmembers, '', $outputlangs);
+	if ($result <= 0)
+	{
+		dol_print_error($db,$result);
+		exit;
+	}
 }
 else
 {

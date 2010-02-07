@@ -226,8 +226,9 @@ print_fiche_titre($langs->trans("MembersCards"),'','');
 form_constantes($constantes);
 
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
+print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
+print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+print '%YEAR%, %MONTH%, %DAY%, %LOGO%, %PHOTO%';
 //print '%INFOS%'; Deprecated
 print '<br>';
 
@@ -342,7 +343,7 @@ function form_constantes($tableau)
 				}
 				else if ($obj->type == 'texte')
 				{
-					print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
+					print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">'."\n";
 					print $obj->value;
 					print "</textarea>\n";
 					print '</td><td>';
