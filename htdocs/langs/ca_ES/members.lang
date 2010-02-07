@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - members 
+# Dolibarr language file - ca_ES - members
 CHARSET = UTF-8
 MembersArea = Àrea membres
 PublicMembersArea = Àrea pública dels membres
@@ -139,7 +139,8 @@ DescADHERENT_MAIL_RESIL = E-mail de baixa
 DescADHERENT_MAIL_FROM = E-mail emissor per als e-mails automàtics
 DescADHERENT_ETIQUETTE_TYPE = Format etiquetes
 DescADHERENT_CARD_HEADER_TEXT = Text a imprimir en la part superior del carnet de membre
-DescADHERENT_CARD_TEXT = Text a imprimir en el carnet de membre
+DescADHERENT_CARD_TEXT = Text a imprimir en el carnet de membre (Alineat a la dreta)
+DescADHERENT_CARD_TEXT_RIGHT = Text a imprimir en el carnet de membre (Alineat a la dreta)
 DescADHERENT_CARD_FOOTER_TEXT = Text a imprimir a la part inferior del carnet de membre
 ShowTypeCard = Veure tipus '%s'
 HTPasswordExport = Generació fitxer htpassword
