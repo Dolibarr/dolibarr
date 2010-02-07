@@ -597,23 +597,6 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<td>';
 		print $html->selectyesno('assujtva_value',1,1);		// Assujeti par defaut en creation
 		print '</td>';
-		
-		
-		// Local Taxes
-		if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
-		{
-			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
-			print '<td>';
-			print $html->selectyesno('localtax1assuj_value',0,1);
-			print '</td>';
-			print '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
-			print '<td>';
-			print $html->selectyesno('localtax2assuj_value',0,1);
-			print '</td>';
-			print '</tr>';
-		}
-		
-
 		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
 		$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
@@ -642,7 +625,21 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '</script>';
 			print "\n";
 		}
-
+		
+		// Local Taxes
+		if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		{
+			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
+			print '<td>';
+			print $html->selectyesno('localtax1assuj_value',0,1);
+			print '</td>';
+			print '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
+			print '<td>';
+			print $html->selectyesno('localtax2assuj_value',0,1);
+			print '</td>';
+			print '</tr>';
+		}
+		
 		if ($user->rights->societe->client->voir)
 		{
 			//Affecter un commercial
