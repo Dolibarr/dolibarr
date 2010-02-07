@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	{
 		$task = new Task($db);
 		$task->fetch($_POST["id"]);
-		
+
 		$tmparray=explode('_',$_POST['task_parent']);
 		$task_parent=$tmparray[1];
 		if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
@@ -115,72 +115,72 @@ if ($taskid)
 	$task = new Task($db);
 	$projectstatic = new Project($db);
 	$userstatic = new User($db);
-	
+
 	if ($task->fetch($taskid) >= 0 )
 	{
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-			
+
 		$head=task_prepare_head($task);
-			
+
 		dol_fiche_head($head, 'task', $langs->trans("Task"),0,'projecttask');
-		
+
 		if ($_GET["action"] == 'edit' && $user->rights->projet->task->creer)
 		{
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$task->id.'">';
-			
+
 			print '<table class="border" width="100%">';
-			
+
 			if ($mesg) print $mesg.'<br>';
-			
+
 			// Ref
 			print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
 			print '<td>'.$task->ref.'</td></tr>';
-			
+
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td>';
 			print '<td><input size="30" name="label" value="'.$task->label.'"></td></tr>';
-			
+
 			// Project
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 			print $projectstatic->getNomUrl(1);
 			print '</td></tr>';
-			
+
 			// Third party
 			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
 			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
-			
+
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
 			print $formother->selectProjectTasks($task->fk_task_parent,$projectstatic->id, 'task_parent', $user->admin?0:1, 0);
 			print '</td></tr>';
-			
+
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 			print $html->select_date($task->date_start,'dateo');
 			print '</td></tr>';
-			
+
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 			print $html->select_date($task->date_end?$task->date_end:-1,'datee');
 			print '</td></tr>';
-			
+
 			// Progress
 			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
 			print $formother->select_percent($task->progress,'progress');
 			print '</td></tr>';
-			
+
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 			print '<td>';
 			print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$task->description.'</textarea>';
 			print '</td></tr>';
-			
+
 			print '<tr><td align="center" colspan="2">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -192,7 +192,7 @@ if ($taskid)
 			/*
 			 * Fiche tache en mode visu
 			 */
-			
+
 			if ($_GET["action"] == 'delete')
 			{
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
@@ -200,7 +200,7 @@ if ($taskid)
 			}
 
 			print '<table class="border" width="100%">';
-			
+
 			// Ref
 			print '<tr><td width="30%">';
 			print $langs->trans("Ref");
@@ -208,74 +208,49 @@ if ($taskid)
 			print $html->showrefnav($task,'id','',1,'rowid','ref','','');
 			print '</td>';
 			print '</tr>';
-			
+
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
-			
+
 			// Project
 			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 			print $projectstatic->getNomUrl(1);
 			print '</td></tr>';
-			
+
 			// Third party
 			print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
 			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td></tr>';
-			
-			// Task executive
-			print '<tr><td>'.$langs->trans("TaskExecutive").'</td><td>';
-			$contact = $task->liste_contact(4,'internal');
-			$num=sizeof($contact);
-			if ($num)
-			{
-				$i = 0;
-				while ($i < $num)
-				{
-					if ($contact[$i]['code'] == 'TASKEXECUTIVE')
-					{
-						$userstatic->id = $contact[$i]['id'];
-						$userstatic->fetch();
-						print $userstatic->getNomUrl(1);
-						print '<br>';
-					}
-					$i++;
-				}
-			}
-			else
-			{
-				print $langs->trans('SharedTask');
-			}
-			print '</td></tr>';
-			
+
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
 			print dol_print_date($task->date_start,'day');
 			print '</td></tr>';
-			
+
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 			print dol_print_date($task->date_end,'day');
 			print '</td></tr>';
-			
+
 			// Progress
 			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
 			print $task->progress.' %';
 			print '</td></tr>';
-			
+
 			// Description
 			print '<td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 			print nl2br($task->description);
 			print '</td></tr>';
-			
+
 			print '</table></form>';
 			print '</div>';
-			
+
 			/*
 			 * Actions
 			 */
 			print '<div class="tabsAction">';
-			
+
 			// Modify
 			if ($user->rights->projet->task->creer)
 			{
@@ -285,7 +260,7 @@ if ($taskid)
 			{
 				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 			}
-			
+
 			// Delete
 			if ($user->rights->projet->task->supprimer)
 			{
@@ -295,7 +270,7 @@ if ($taskid)
 			{
 				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 			}
-			
+
 			print '</div>';
 		}
 	}

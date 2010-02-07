@@ -158,7 +158,7 @@ class pdf_baleine extends ModelePDFProjects
 
 				// Complete object by loading several other informations
 				$task = new Task($this->db);
-				$tasksarray = $task->getTasksArray(0,0,1);
+				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
 				$pdf->Open();
 				$pagenb=0;

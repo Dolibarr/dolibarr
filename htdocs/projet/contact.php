@@ -273,30 +273,33 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="source" value="external">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
-			// Ligne ajout pour contact externe
-			$var=!$var;
-			print "<tr $bc[$var]>";
+			// Line to add external contact. Only if project is linked to a third party.
+			if ($project->societe->id)
+			{
+				$var=!$var;
+				print "<tr $bc[$var]>";
 
-			print '<td nowrap="nowrap">';
-			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
-			print '</td>';
+				print '<td nowrap="nowrap">';
+				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
+				print '</td>';
 
-			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($project, 'id', $selectedCompany, 'newcompany');
-			print '</td>';
+				print '<td colspan="1">';
+				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($project, 'id', $selectedCompany, 'newcompany');
+				print '</td>';
 
-			print '<td colspan="1">';
-			$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0);
-			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
-			print '</td>';
-			print '<td>';
-			$formcompany->selectTypeContact($project, '', 'type','external','rowid');
-			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
-			if (! $nbofcontacts) print ' disabled="true"';
-			print '></td>';
-			print '</tr>';
+				print '<td colspan="1">';
+				$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0);
+				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
+				print '</td>';
+				print '<td>';
+				$formcompany->selectTypeContact($project, '', 'type','external','rowid');
+				print '</td>';
+				print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
+				if (! $nbofcontacts) print ' disabled="true"';
+				print '></td>';
+				print '</tr>';
+			}
 
 			print "</form>";
 

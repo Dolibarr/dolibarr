@@ -189,6 +189,7 @@ function project_pdf_create($db, $comid, $modele,$outputlangs)
 			return 0;
 		}
 	}
+
 	// Charge le modele
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))

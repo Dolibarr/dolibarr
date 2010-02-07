@@ -253,16 +253,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	$project = new Project($db);
 
 	$defaultref='';
-	$obj = $conf->global->PROJECT_ADDON;
-	if ($obj)
+	$obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
+	if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php"))
 	{
-		if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php"))
-		{
-			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php");
-			$modProject = new $obj;
-			$defaultref = $modProject->getNextValue($soc,$project);
-		}
+		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/project/".$conf->global->PROJECT_ADDON.".php");
+		$modProject = new $obj;
+		$defaultref = $modProject->getNextValue($soc,$project);
 	}
+	if (empty($defaultref)) $defaultref='';
 
 	// Ref
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'"></td></tr>';

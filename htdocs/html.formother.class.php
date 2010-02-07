@@ -207,12 +207,12 @@ class FormOther
 	 *    \param     increment     increment value
 	 *    \param     start         start value
 	 *    \param     end           end value
-	 *    \return    return        combo   
+	 *    \return    return        combo
 	 */
 	function select_percent($selected=0,$htmlname='percent',$increment=5,$start=0,$end=100)
 	{
 		$return = '<select class="flat" name="'.$htmlname.'">';
-		
+
 		for ($i = $start ; $i <= $end ; $i += $increment)
 		{
 			if ($selected == $i)
@@ -226,9 +226,9 @@ class FormOther
 			$return.= $i.' % ';
 			$return.= '</option>';
 		}
-		
+
 		$return.= '</select>';
-		
+
 		return $return;
 	}
 
@@ -241,7 +241,7 @@ class FormOther
 	 * 	\param		modetask		1 to restrict on tasks associated to user
 	 * 	\param		mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 */
-	function selectProjectTasks($selected='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0)
+	function selectProjectTasks($selected='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0)
 	{
 		global $user, $langs;
 
@@ -249,7 +249,7 @@ class FormOther
 
 		//print $modeproject.'-'.$modetask;
 		$task=new Task($this->db);
-		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid);
+		$tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid, 0, $mode);
 		if ($tasksarray)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';

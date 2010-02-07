@@ -111,7 +111,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorde
 if ($mesg) print $mesg;
 
 $tasksarray=$task->getTasksArray(0,0,$project->id,0);
-$tasksrole=$task->getTasksForProjectOwnedByAUser($user,0,$project->id,0);
+$tasksrole=$task->getUserRolesForProjetsOrTasks($user,0,$project->id,0);
 //var_dump($tasksarray);
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';

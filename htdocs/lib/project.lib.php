@@ -57,7 +57,7 @@ function project_prepare_head($object)
 	    $head[$h][2] = 'element';
 		$h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
@@ -110,7 +110,7 @@ function task_prepare_head($object)
 	$head[$h][1] = $langs->trans("Affectations");
 	$head[$h][2] = 'contact';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
@@ -287,7 +287,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
  * @param 	$level				Level of task
  * @param 	$var				Color
  * @param 	$showproject		Show project columns
- * @param	$taskrole			Array of task filtered on a particular user
+ * @param	$taskrole			Array of tasks filtered on a particular user
  */
 function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole)
 {
@@ -458,9 +458,9 @@ function clean_orphelins($db)
 
 	// There is orphelins. We clean that
 	$listofid=array();
-	
+
 	$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
-	
+
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -482,24 +482,24 @@ function clean_orphelins($db)
 	{
 		// Removed orphelins records
 		print 'Some orphelins were found and restored to be parents so records are visible again.';
-		
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " SET fk_task_parent = 0";
 		$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";
-		
-		$resql = $db->query($sql);		
+
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$nb=$db->affected_rows($sql);
-			
+
 			return $nb;
 		}
 		else
 		{
 			return -1;
-		}	
+		}
 	}
-	
+
 }
 
 ?>

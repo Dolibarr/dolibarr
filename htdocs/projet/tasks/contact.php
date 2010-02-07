@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/who.php
+ *	\file       htdocs/projet/tasks/contact.php
  *	\ingroup    project
- *	\brief      Fiche taches d'un projet
+ *	\brief      Actors of a task
  *	\version    $Id$
  */
 
@@ -156,7 +156,7 @@ llxHeader('', $langs->trans("Task"));
 $html = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
-$projectstatic = new Project($db);
+$project = new Project($db);
 
 
 /* *************************************************************************** */
@@ -174,8 +174,8 @@ if ($id > 0 || ! empty($ref))
 
 	if ( $task->fetch($id,$ref) > 0)
 	{
-		$result=$projectstatic->fetch($task->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		$result=$project->fetch($task->fk_project);
+		if (! empty($project->socid)) $project->societe->fetch($project->socid);
 
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'contact', $langs->trans("Task"), 0, 'projecttask');
@@ -190,21 +190,21 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		print $html->showrefnav($task,'ref',$linkback,1,'ref','ref','');
+		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$task->label.'</td></tr>';
-		
+
 		// Project
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		print $projectstatic->getNomUrl(1);
+		print $project->getNomUrl(1);
 		print '</td></tr>';
 
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">';
-		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
+		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 
@@ -268,30 +268,33 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="source" value="external">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
-			// Ligne ajout pour contact externe
-			$var=!$var;
-			print "<tr $bc[$var]>";
+			// Line to add an external contact. Only if project linked to a third party.
+			if ($project->socid)
+			{
+				$var=!$var;
+				print "<tr $bc[$var]>";
 
-			print '<td nowrap="nowrap">';
-			print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
-			print '</td>';
+				print '<td nowrap="nowrap">';
+				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
+				print '</td>';
 
-			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($task, 'id', $selectedCompany, 'newcompany');
-			print '</td>';
+				print '<td colspan="1">';
+				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($task, 'id', $selectedCompany, 'newcompany');
+				print '</td>';
 
-			print '<td colspan="1">';
-			$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0);
-			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
-			print '</td>';
-			print '<td>';
-			$formcompany->selectTypeContact($task, '', 'type','external','rowid');
-			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
-			if (! $nbofcontacts) print ' disabled="true"';
-			print '></td>';
-			print '</tr>';
+				print '<td colspan="1">';
+				$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0);
+				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
+				print '</td>';
+				print '<td>';
+				$formcompany->selectTypeContact($task, '', 'type','external','rowid');
+				print '</td>';
+				print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
+				if (! $nbofcontacts) print ' disabled="true"';
+				print '></td>';
+				print '</tr>';
+			}
 
 			print "</form>";
 

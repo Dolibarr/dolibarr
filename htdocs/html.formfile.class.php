@@ -313,14 +313,15 @@ class FormFile
 			{
 				print '<td align="center">';
 				print $langs->trans('Model').' ';
-				$html->select_array('model',$modellist,$modelselected,0,0,1);
+				print $html->selectarray('model',$modellist,$modelselected,0,0,1);
+				print '</td>';
 			}
 			else
 			{
 				print '<td align="left">';
 				print $langs->trans("Files");
+				print '</td>';
 			}
-			print '</td>';
 			print '<td align="center">';
 			if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
@@ -334,7 +335,7 @@ class FormFile
 			}
 			print '</td>';
 			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
-			print '<input class="button" type="submit" value="'.$buttonlabel.'">';
+			print '<input class="button" '.((is_array($modellist) && sizeof($modellist))?'':' disabled="true"').' type="submit" value="'.$buttonlabel.'">';
 			print '</td></tr>';
 		}
 

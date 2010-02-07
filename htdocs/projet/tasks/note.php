@@ -81,10 +81,9 @@ if ($_POST['action'] == 'update_private' && $user->rights->projet->task->creer)
 }
 
 
-
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -101,19 +100,19 @@ if ($id > 0 || ! empty($ref))
 	$task = new Task($db);
 	$projectstatic = new Project($db);
 	$userstatic = new User($db);
-	
+
 	if ($task->fetch($id, $ref))
 	{
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-		
+
 		// To verify role of users
 		$userAccess = 0;
 		foreach(array('internal','external') as $source)
 		{
 			$userRole = $projectstatic->liste_contact(4,$source);
 			$num=sizeof($userRole);
-			
+
 			$i = 0;
 			while ($i < $num)
 			{
@@ -124,7 +123,7 @@ if ($id > 0 || ! empty($ref))
 				$i++;
 			}
 		}
-		
+
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'note', $langs->trans('Task'), 0, 'projecttask');
 
@@ -134,12 +133,12 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-		print $html->showrefnav($task,'ref','',1,'ref','ref');
+		print $html->showrefnav($task,'id','',1,'rowid','ref','','');
 		print '</td></tr>';
-			
+
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$task->label.'</td></tr>';
-		
+
 		// Project
 		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 		print $projectstatic->getNomUrl(1);
@@ -149,31 +148,6 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
 		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
 		else print'&nbsp;';
-		print '</td></tr>';
-			
-		// Task executive
-		print '<tr><td>'.$langs->trans("TaskExecutive").'</td><td>';
-		$contact = $task->liste_contact(4,'internal');
-		$num=sizeof($contact);
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
-				if ($contact[$i]['code'] == 'TASKEXECUTIVE')
-				{
-					$userstatic->id = $contact[$i]['id'];
-					$userstatic->fetch();
-					print $userstatic->getNomUrl(1);
-					print '<br>';
-				}
-				$i++;
-			}
-		}
-		else
-		{
-			print $langs->trans('SharedTask');
-		}
 		print '</td></tr>';
 
 		// Note publique

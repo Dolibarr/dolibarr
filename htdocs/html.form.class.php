@@ -2587,6 +2587,7 @@ class Form
 	 *	\param  option          Valeur de l'option en fonction du type choisi
 	 *	\param  translate       Traduire la valeur
 	 * 	\param	maxlen			Length maximum for labels
+	 * 	\return	string			HTML select string
 	 */
 	function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0)
 	{
