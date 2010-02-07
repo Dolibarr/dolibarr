@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@
 ////////////////////////////////////////////////////
 // PDF_Label
 //
-// Classe afin d'�diter au format PDF des �tiquettes
-// au format Avery ou personnalis�
+// Classe afin d'editer au format PDF des etiquettes
+// au format Avery ou personnalise
 //
 //
 // Copyright (C) 2003 Laurent PASSEBECQ (LPA)
-// Bas� sur les fonctions de Steve Dillon : steved@mad.scientist.com
+// Base sur les fonctions de Steve Dillon : steved@mad.scientist.com
 //
 //-------------------------------------------------------------------
 // VERSIONS :
@@ -54,7 +54,7 @@
 ////////////////////////////////////////////////////
 
 /**
- *	\file       htdocs/adherents/cartes/PDF_card.class.php
+ *	\file       htdocs/includes/modules/member/card/pdf_standard.class.php
  *	\ingroup    adherent
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  *	\author     Steve Dillon
@@ -69,10 +69,10 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- *	\class      PDF_card
+ *	\class      pdf_standard
  *	\brief      Classe afin d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
-class PDF_card extends FPDF {
+class pdf_standard {
 
 	// Proprietes privees
 	var $_Avery_Name	= '';	// Nom du format de l'etiquette
@@ -198,80 +198,53 @@ class PDF_card extends FPDF {
 	/**
 	 * Constructor
 	 *
-	 * @param unknown_type $format		Avery format of label paper. For example 5160, 5161, 5162, 5163, 5164, 8600, L7163
+	 * @param unknown_type $format		Avery format of label paper. For example 5160, 5161, 5162, 5163, 5164, 8600, L7163, CARD
 	 * @param unknown_type $posX
 	 * @param unknown_type $posY
 	 * @param unknown_type $unit
 	 * @return PDF_card
 	 */
-	function PDF_card ($format, $posX=1, $posY=1, $unit='mm')
+	function pdf_standard($db, $format='CARD', $posX=1, $posY=1, $unit='mm')
 	{
-		global $conf,$mysoc;
+		global $conf,$langs,$mysoc;
 
-		if (is_array($format)) {
-			// Si c'est un format personnel alors on maj les valeurs
-			$Tformat = $format;
-		} else {
-			// If it's an Avery format, we get array that describe it from key and we store it in Tformat.
-			$Tformat = $this->_Avery_Labels[$format];
-			if (empty($Tformat))
-			{
-				dol_print_error('','Format value "'.$format.'" is not supported.');
-				exit;
-			}
-		}
+		$this->db = $db;
 
-		parent::FPDF('P', $unit, $Tformat['paper-size']);
+		$this->Tformat = $this->_Avery_Labels[$format];
 
+		// Dimension page pour format A4
+		$this->type = 'pdf';
+		$this->format = $this->Tformat['paper-size'];
 
-		$this->SetMargins(0,0);
-		$this->SetAutoPageBreak(false);
-
-		$this->_Metric_Doc = $unit;
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
-		if ($posX > 0) $posX--; else $posX=0;
-		if ($posY > 0) $posY--; else $posY=0;
-		$this->_COUNTX = $posX;
-		$this->_COUNTY = $posY;
-		$this->_Set_Format($Tformat);
 	}
 
 
 	//Methode qui permet de modifier la taille des caracteres
 	// Cela modiera aussi l'espace entre chaque ligne
-	function Set_Char_Size($pt) {
+	function Set_Char_Size(&$pdf,$pt) {
 		if ($pt > 3) {
 			$this->_Char_Size = $pt;
 			$this->_Line_Height = $this->_Get_Height_Chars($pt);
-			$this->SetFont('Arial','',$pt);
+			$pdf->SetFont('Arial','',$pt);
 		}
 	}
 
 
 	// On imprime une etiquette
-	function Add_PDF_card($textleft,$header='',$footer='',$outputlangs,$textright='')
+	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='')
 	{
 		global $mysoc,$conf,$langs;
 
-		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expects text to be encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("members");
-
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
-			$this->AddPage();
+			$pdf->AddPage();
 		}
 		$this->_First=0;
 		$_PosX = $this->_Margin_Left+($this->_COUNTX*($this->_Width+$this->_X_Space));
 		$_PosY = $this->_Margin_Top+($this->_COUNTY*($this->_Height+$this->_Y_Space));
 
 		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-		if (is_readable($logo))
+		if (! is_readable($logo))
 		{
 			if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 			{
@@ -285,55 +258,55 @@ class PDF_card extends FPDF {
 
 		if ($this->_Avery_Name == "CARD")
 		{
-			$Tformat=$this->_Avery_Labels["CARD"];
-			//$this->_Pointille($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
-			$this->_Croix($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,10);
-			if($Tformat['fond'] != '' and file_exists($Tformat['fond'])){
-				$this->image($Tformat['fond'],$_PosX,$_PosY,$this->_Width,$this->_Height);
+			$this->Tformat=$this->_Avery_Labels["CARD"];
+			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
+			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
+			if($this->Tformat['fond'] != '' and file_exists($this->Tformat['fond'])){
+				$this->image($this->Tformat['fond'],$_PosX,$_PosY,$this->_Width,$this->_Height);
 			}
-			if($Tformat['logo1'] != '' and file_exists($Tformat['logo1'])){
-				$this->image($Tformat['logo1'],$_PosX+$this->_Width-21,$_PosY+1,20,20);
+			/*if($this->Tformat['logo1'] != '' and file_exists($this->Tformat['logo1'])){
+				$this->image($this->Tformat['logo1'],$_PosX+$this->_Width-21,$_PosY+1,20,20);
 			}
-			if($Tformat['logo2'] != '' and file_exists($Tformat['logo2'])){
-				$this->image($Tformat['logo2'],$_PosX+$this->_Width-21,$_PosY+25,20,20);
-			}
+			if($this->Tformat['logo2'] != '' and file_exists($this->Tformat['logo2'])){
+				$this->image($this->Tformat['logo2'],$_PosX+$this->_Width-21,$_PosY+25,20,20);
+			}*/
 
 			// Top
 			if ($header!=''){
-				$this->SetXY($_PosX, $_PosY+1);
-				$this->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
+				$pdf->SetXY($_PosX, $_PosY+1);
+				$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
 			}
 
 			// Center
 			if ($textright=='')	// Only a left part
 			{
-				if ($textleft == '%LOGO%') $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+				if ($textleft == '%LOGO%') $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
 				else
 				{
-					$this->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
-					$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+					$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
 				}
 			}
 			else if ($textleft!='' && $textright!='')	//
 			{
 				if ($textleft == '%LOGO%')
 				{
-					$this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-					$this->SetXY($_PosX+22, $_PosY+3+$this->_Line_Height);
-					$this->MultiCell($this->_Width-20, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+					$pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+					$pdf->SetXY($_PosX+22, $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell($this->_Width-20, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 				}
 				else if ($textright == '%LOGO%')
 				{
-					$this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-					$this->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-					$this->MultiCell($this->_Width-20, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+					$pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
 				}
 				else
 				{
-					$this->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
-					$this->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-					$this->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-					$this->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+					$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
 				}
 
 			}
@@ -342,23 +315,23 @@ class PDF_card extends FPDF {
 				if ($textright == '%LOGO%') $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
 				else
 				{
-					$this->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-					$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+					$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 				}
 			}
 
 			// Bottom
 			if ($footer!='')
 			{
-				$this->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
-				$this->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
+				$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
+				$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 			}
 
 		}
 		else
 		{
-			$this->SetXY($_PosX+3, $_PosY+3);
-			$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+			$pdf->SetXY($_PosX+3, $_PosY+3);
+			$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
 		}
 		$this->_COUNTY++;
 
@@ -376,9 +349,9 @@ class PDF_card extends FPDF {
 	}
 
 
-	function _Pointille($x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
+	function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
 	{
-		$this->SetLineWidth($epaisseur);
+		$pdf->SetLineWidth($epaisseur);
 		$longueur=abs($x1-$x2);
 		$hauteur=abs($y1-$y2);
 		if($longueur>$hauteur) {
@@ -390,16 +363,16 @@ class PDF_card extends FPDF {
 		for($i=$x1;$i<=$x2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($x2-1)) {
-	    $this->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
-	    $this->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
+	    $pdf->Line($j,$y1,$j+1,$y1); // on trace le pointill? du haut, point par point
+	    $pdf->Line($j,$y2,$j+1,$y2); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
 		for($i=$y1;$i<=$y2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($y2-1)) {
-	    $this->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
-	    $this->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
+	    $pdf->Line($x1,$j,$x1,$j+1); // on trace le pointill? du haut, point par point
+	    $pdf->Line($x2,$j,$x2,$j+1); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
@@ -408,26 +381,26 @@ class PDF_card extends FPDF {
 	/*
 	 * Fonction realisant une croix aux 4 coins des cartes
 	 */
-	function _Croix($x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=5)
+	function _Croix(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=4)
 	{
-		//$this->Color('#888888');
+		$pdf->SetDrawColor(192,192,192);
 
-		$this->SetLineWidth($epaisseur);
+		$pdf->SetLineWidth($epaisseur);
 		$lg=$taille/2;
 		// croix haut gauche
-		$this->Line($x1,$y1-$lg,$x1,$y1+$lg);
-		$this->Line($x1-$lg,$y1,$x1+$lg,$y1);
+		$pdf->Line($x1,$y1-$lg,$x1,$y1+$lg);
+		$pdf->Line($x1-$lg,$y1,$x1+$lg,$y1);
 		// croix bas gauche
-		$this->Line($x1,$y2-$lg,$x1,$y2+$lg);
-		$this->Line($x1-$lg,$y2,$x1+$lg,$y2);
+		$pdf->Line($x1,$y2-$lg,$x1,$y2+$lg);
+		$pdf->Line($x1-$lg,$y2,$x1+$lg,$y2);
 		// croix haut droit
-		$this->Line($x2,$y1-$lg,$x2,$y1+$lg);
-		$this->Line($x2-$lg,$y1,$x2+$lg,$y1);
+		$pdf->Line($x2,$y1-$lg,$x2,$y1+$lg);
+		$pdf->Line($x2-$lg,$y1,$x2+$lg,$y1);
 		// croix bas droit
-		$this->Line($x2,$y2-$lg,$x2,$y2+$lg);
-		$this->Line($x2-$lg,$y2,$x2+$lg,$y2);
+		$pdf->Line($x2,$y2-$lg,$x2,$y2+$lg);
+		$pdf->Line($x2-$lg,$y2,$x2+$lg,$y2);
 
-		//$this->Color('#000000');
+		$pdf->SetDrawColor(0,0,0);
 	}
 
 	// convert units (in to mm, mm to in)
@@ -453,7 +426,8 @@ class PDF_card extends FPDF {
 		}
 	}
 
-	function _Set_Format($format) {
+	function _Set_Format(&$pdf, $format) {
+
 		$this->_Metric 	= $format['metric'];
 		$this->_Avery_Name 	= $format['name'];
 		$this->_Margin_Left	= $this->_Convert_Metric ($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
@@ -464,7 +438,108 @@ class PDF_card extends FPDF {
 		$this->_Y_Number 	= $format['NY'];
 		$this->_Width 	= $this->_Convert_Metric ($format['width'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Height	= $this->_Convert_Metric ($format['height'], $this->_Metric, $this->_Metric_Doc);
-		$this->Set_Char_Size( $format['font-size']);
+		$this->Set_Char_Size($pdf, $format['font-size']);
+	}
+
+
+	/**
+	 *		\brief      Function to build PDF on disk, then output on HTTP strem.
+	 *		\param	    arrayofmembers	Array of members informations
+	 *		\param		outputlangs		Lang object for output language
+	 *		\return	    int     		1=ok, 0=ko
+	 */
+	function write_file($arrayofmembers,$outputlangs)
+	{
+		global $user,$langs,$conf;
+
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		// Force output charset to ISO, because, FPDF expect text encoded in ISO
+		$outputlangs->charset_output='ISO-8859-1';
+
+		$outputlangs->load("main");
+		$outputlangs->load("dict");
+		$outputlangs->load("companies");
+		$outputlangs->load("members");
+
+
+		$dir = $conf->adherent->dir_temp;
+		$file = $dir . "/tmpcard.pdf";
+
+		if (! file_exists($dir))
+		{
+			if (create_exdir($dir) < 0)
+			{
+				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				return 0;
+			}
+		}
+
+
+		// Protection et encryption du pdf
+		if ($conf->global->PDF_SECURITY_ENCRYPTION)
+		{
+			$pdf=new FPDI_Protection('P','mm',$this->format);
+			$pdfrights = array('print'); // Ne permet que l'impression du document
+			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+			$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
+			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+		}
+		else
+		{
+			$pdf=new FPDI('P','mm',$this->format);
+		}
+
+
+		$pdf->SetMargins(0,0);
+		$pdf->SetAutoPageBreak(false);
+
+		$this->_Metric_Doc = 'mm';
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		if ($posX > 0) $posX--; else $posX=0;
+		if ($posY > 0) $posY--; else $posY=0;
+		$this->_COUNTX = $posX;
+		$this->_COUNTY = $posY;
+		$this->_Set_Format($pdf, $this->Tformat);
+
+
+		$pdf->Open();
+		$pdf->AddPage();
+
+
+		// Add each record
+		foreach($arrayofmembers as $val)
+		{
+			// imprime le texte specifique sur la carte
+			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright']);
+		}
+
+
+		// Output to file
+		$pdf->Output($file);
+
+		if (! empty($conf->global->MAIN_UMASK))
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+
+
+		// Output to http stream
+		clearstatcache();
+
+		$attachment=true;
+		if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+		$filename='tmpcards.pdf';
+		$type=dol_mimetype($filename);
+
+		if ($encoding)   header('Content-Encoding: '.$encoding);
+		if ($type)       header('Content-Type: '.$type);
+		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+		else header('Content-Disposition: inline; filename="'.$filename.'"');
+
+		// Ajout directives pour resoudre bug IE
+		header('Cache-Control: Public, must-revalidate');
+		header('Pragma: public');
+
+		readfile($file);
 	}
 
 }
