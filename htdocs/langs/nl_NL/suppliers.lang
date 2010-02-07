@@ -17,6 +17,7 @@ ChangeSupplierPrice=Verander leveranciersprijs
 ErrorQtyTooLowForThisSupplier=Hoeveelheid te laag voor deze leverancier of geen prijs vastgesteld voor dit product van deze leverancier
 ErrorSupplierCountryIsNotDefined=Land voor deze leverancier is niet gedefinieerd. Corrigeer dit eerst.
 ProductHasAlreadyReferenceInThisSupplier=Dit product heeft al een referentie naar deze leverancier
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Deze leveranciersverwijzing is al in verband met de referentie: %s
 NoRecordedSuppliers=Geen leveranciers geregistreerd
 SupplierPayment=Leverancier betaling
 SuppliersArea=Leveranciers gedeelte
