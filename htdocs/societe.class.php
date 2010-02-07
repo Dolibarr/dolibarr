@@ -6,7 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
