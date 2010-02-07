@@ -48,12 +48,22 @@ $page = $page == -1 ? 0 : $page;
  * View
  */
 
-$form=new Form($db);
-
 $title=$langs->trans("Tasks");
 if ($mode == 'mine') $title=$langs->trans("MyTasks");
 
 llxHeader("",$title,"Projet");
+
+$form=new Form($db);
+
+$project = new Project($db);
+$task = new Task($db);
+
+if ($_GET["id"])
+{
+	$project->fetch($_GET["id"]);
+	$project->societe->fetch($project->societe->id);
+}
+
 
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
@@ -65,10 +75,9 @@ $task = new Task($db);
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray=$task->getTasksArray(0, 0, 0, $socid);
+$tasksarray=$task->getTasksArray(0, 0, $project->id, $socid);
 // We load also tasks limited to a particular user
-$tasksrole = $task->getTasksRoleForUser($user);
-$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksRoleForUser($user) : '');
+$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksForProjectOwnedByAUser(0,$user,$project->id,0) : '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

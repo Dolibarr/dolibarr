@@ -44,10 +44,10 @@ $result = restrictedArea($user, 'projet', $projectid);
 if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 {
 	$task = new Task($db);
-	
+
 	$task->fk_task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
 	$task->label = $_POST["task_name"];
-	
+
 	$result = $task->create($user);
 
 	if ($result == 0)
@@ -106,18 +106,12 @@ if ($_GET["id"])
 	$project->societe->fetch($project->societe->id);
 }
 
-
-/*
- * Fiche projet en mode visu
- *
- */
-
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 if ($mesg) print $mesg;
 
-$tasksrole=$task->getTasksRoleForUser($user);
-$tasksarray=$task->getTasksArray(0,0);
+$tasksarray=$task->getTasksArray(0,0,$project->id,0);
+$tasksrole=$task->getTasksForProjectOwnedByAUser($user,0,$project->id,0);
 //var_dump($tasksarray);
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,9 @@ $projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["id"];
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
+
+$userAccess=0;
+
 
 /*
  * Actions
@@ -122,7 +125,7 @@ if ($id > 0 || ! empty($ref))
 	$userAccess = $project->restrictedProjectArea($user);
 }
 
-if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && $userAccess)
+if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && (empty($project->societe->id) || $userAccess))
 {
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -141,7 +144,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && $userAc
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-	print $formother->selectProjectTasks('',$projectid, 'task_parent', $user->admin?0:1, 0);
+	print $formother->selectProjectTasks('',$projectid, 'task_parent', 0, 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
@@ -169,14 +172,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && $userAc
 	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
 	print '</td></tr>';
 
-	$tasksarray=$task->getTasksArray(0, $user, 1);
+	//$tasksarray=$task->getTasksArray(0, $user, $projectid, 0, 1);	// Check
 
 	print '<tr><td colspan="2" align="center">';
-	if (sizeof($tasksarray))
-	{
+	//if (sizeof($tasksarray))
+	//{
 		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 		print ' &nbsp; &nbsp; ';
-	}
+	//}
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</td></tr>';
 
@@ -246,6 +249,10 @@ else
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
 		}
 	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+	}
 
 	print '</div>';
 
@@ -254,9 +261,9 @@ else
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user
 	// can have a parent that is not affected to him).
-	$tasksarray=$task->getTasksArray(0, 0, $project->id);
+	$tasksarray=$task->getTasksArray(0, 0, $project->id, $socid, 0);
 	// We load also tasks limited to a particular user
-	$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksRoleForUser($user,$project->id) : '');
+	$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getTasksForProjectOwnedByAUser(0,$user,$project->id,0) : '');
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

@@ -27,8 +27,8 @@
 
 
 /**
- *      \class      Projet_task
- *      \brief      Put here description of your class
+ *      \class      Task
+ *      \brief      Class to manage tasks
  *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
 class Task extends CommonObject
@@ -78,7 +78,7 @@ class Task extends CommonObject
     function create($user, $notrigger=0)
     {
     	global $conf, $langs;
-    	
+
 		$error=0;
 
 		// Clean parameters
@@ -159,7 +159,7 @@ class Task extends CommonObject
     function fetch($id)
     {
     	global $langs;
-    	
+
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.fk_projet,";
@@ -205,7 +205,7 @@ class Task extends CommonObject
 				$this->note_private			= $obj->note_private;
 				$this->note_public			= $obj->note_public;
             }
-            
+
             $this->db->free($resql);
 
             return 1;
@@ -421,55 +421,95 @@ class Task extends CommonObject
 		$this->statut='';
 		$this->note='';
 	}
-	
+
 	/**
 	 * Return list of task for all projects or a particular project
 	 * Sort order is on project, TODO then of position of task, and last on title of first level task
-	 * @param	usert	Object user to limit task affected to a particular user
-	 * @param	userp	Object user to limit projects of a particular user
-	 * @param	mode	0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 * @return 	array	Array of tasks
+	 * @param	usert		Object user to limit task affected to a particular user
+	 * @param	userp		Object user to limit projects of a particular user and public projects
+	 * @param	projectid	Project id
+	 * @param	socid		Third party id
+	 * @param	mode		0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 * @return 	array		Array of tasks
 	 */
-	function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0)
+	function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0)
 	{
 		global $conf;
 
 		$tasks = array();
 
-		//print $usert.'-'.$userp.'<br>';
+		//print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
 
 		// List of tasks
-		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel";
-		$sql.= ", t.rowid, t.label, t.description, t.fk_task_parent, t.duration_effective";
-		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
-		$sql.= ", ".MAIN_DB_PREFIX."projet as p";
-		$sql.= " WHERE t.fk_projet = p.rowid";
-		$sql.= " AND p.entity = ".$conf->entity;
-		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-		if ($projectid) $sql.= " AND t.fk_projet =".$projectid;
+		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public,";
+		$sql.= " t.rowid, t.label, t.fk_task_parent, t.duration_effective";
+		if ($mode == 0)
+		{
+			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as t)";
+			/*if (is_object($userp) && $userp->id)	// Limit to projects affected to a user
+			{
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
+			}
+			if (is_object($usert) && $usert->id)	// Limit to tasks affected to a user
+			{
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
+			}*/
+			$sql.= " WHERE t.fk_projet = p.rowid";
+			$sql.= " AND p.entity = ".$conf->entity;
+			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+			if ($projectid) $sql.= " AND p.rowid =".$projectid;
+			/*if (is_object($userp)) $sql .= " AND (p.public=1 OR (ec.fk_socpeople = ".$userp->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project'))";
+			if (is_object($usert)) $sql .= " AND (p.public=1 OR (ec.fk_socpeople = ".$usert->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project_task'))";
+			*/
+		}
+		if ($mode == 1)
+		{
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+			/*if (is_object($userp) && $userp->id)	// Limit to projects affected to a user
+			{
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
+			}
+			if (is_object($usert) && $usert->id)	// Limit to tasks affected to a user
+			{
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
+			}*/
+			$sql.= " WHERE p.entity = ".$conf->entity;
+			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+			if ($projectid) $sql.= " AND p.rowid =".$projectid;
+			/*if (is_object($userp) && $userp->id) $sql .= " AND (p.public=1 OR (ec.fk.socpeople = ".$userp->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project'))";
+			if (is_object($usert) && $usert->id) $sql .= " AND (p.public=1 OR (ec.fk.socpeople = ".$usert->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project_task'))";
+			*/
+		}
 		$sql.= " ORDER BY p.ref, t.label";
 
-		dol_syslog("Project::getTasksArray sql=".$sql, LOG_DEBUG);
+		//print $sql;
+		dol_syslog("Task::getTasksArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			// Loop on each record found, so each couple (project id, task id)
 			while ($i < $num)
 			{
 				$error=0;
-				
+
 				$obj = $this->db->fetch_object($resql);
-				
-				if ($usert || $userp)
+
+				if ((! $obj->public) && ($userp || $usert))	// If not public and we ask a filter on user
 				{
-					if (! $this->getTasksRoleForUser($usert?$usert:$userp,$userp?$obj->projectid:0,$usert?$obj->rowid:0))
+					if (! $this->getTasksForProjectOwnedByAUser($userp, $usert, $obj->projectid, $obj->rowid))
 					{
 						$error++;
 					}
 				}
-				
-				if (!$error)
+
+				if (! $error)
 				{
 					$tasks[$i]->id           = $obj->rowid;
 					$tasks[$i]->projectid    = $obj->projectid;
@@ -480,7 +520,7 @@ class Task extends CommonObject
 					$tasks[$i]->fk_parent    = $obj->fk_task_parent;
 					$tasks[$i]->duration     = $obj->duration_effective;
 				}
-				
+
 				$i++;
 			}
 			$this->db->free($resql);
@@ -492,29 +532,51 @@ class Task extends CommonObject
 
 		return $tasks;
 	}
-	
+
 	/**
-	 * Return array of role of user for each projects or tasks
-	 *
-	 * @param unknown_type $user
-	 * @return unknown
+	 * Return Array of role of user for each projects or each tasks
+	 * @param 	userp
+	 * @param	usert
+	 * @param 	projectid
+	 * @param 	taskid
+	 * @return 	array			Array of role of user for each projects or each tasks
 	 */
-	function getTasksRoleForUser($user,$projectid=0,$taskid=0)
+	function getTasksForProjectOwnedByAUser($userp,$usert,$projectid=0,$taskid=0)
 	{
 		$tasksrole = array();
 
+		// We want role of user for projet or role of user for task. Both are not possible.
+		if (empty($userp) && empty($usert))
+		{
+			$this->error="CallWithWrongParameters";
+			return -1;
+		}
+
 		/* Liste des taches et role sur la tache du user courant dans $tasksrole */
 		$sql = "SELECT ec.element_id, ctc.code";
-		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+		if ($userp) $sql.= " FROM ".MAIN_DB_PREFIX."projet as pt";
+		if ($usert) $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql.= " WHERE pt.rowid = ec.element_id";
-		$sql.= " AND ctc.element = '".$this->element."'";
+		if ($userp) $sql.= " AND ctc.element = 'project'";
+		if ($usert) $sql.= " AND ctc.element = 'project_task'";
 		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
-		$sql.= " AND ec.fk_socpeople = ".$user->id;
-		if ($projectid) $sql.= " AND pt.fk_projet = ".$projectid;
-		if ($taskid) $sql.= " AND pt.rowid = ".$taskid;
+		if ($userp) $sql.= " AND ec.fk_socpeople = ".$userp->id;
+		if ($usert) $sql.= " AND ec.fk_socpeople = ".$usert->id;
+		$sql.= " AND ec.statut = 4";
+		if ($projectid)
+		{
+			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
+			if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
+		}
+		if ($taskid)
+		{
+			if ($userp) $sql.= " ERROR SHOULD NOT HAPPEN ";
+			if ($usert) $sql.= " AND pt.rowid = ".$projectid;
+		}
 
+		dol_syslog("Task::getTasksForProjectOwnedByAUser sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -526,7 +588,7 @@ class Task extends CommonObject
 				$tasksrole[$row[0]] = $row[1];
 				$i++;
 			}
-			$this->db->free();
+			$this->db->free($resql);
 		}
 		else
 		{
@@ -535,7 +597,7 @@ class Task extends CommonObject
 
 		return $tasksrole;
 	}
-	
+
 	/**
 	 *    \brief     Add time spent
 	 *    \param     user     Id utilisateur qui cree
@@ -558,7 +620,7 @@ class Task extends CommonObject
 		$sql.= ", ".$user->id;
 		$sql.= ")";
 
-		dol_syslog("Project::addTimeSpent sql=".$sql, LOG_DEBUG);
+		dol_syslog("Task::addTimeSpent sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
 			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
@@ -567,7 +629,7 @@ class Task extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Project::addTimeSpent error -2 ".$this->error,LOG_ERR);
+			dol_syslog("Task::addTimeSpent error -2 ".$this->error,LOG_ERR);
 			$result = -2;
 		}
 
@@ -585,7 +647,7 @@ class Task extends CommonObject
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Project::addTimeSpent error -3 ".$this->error, LOG_ERR);
+				dol_syslog("Task::addTimeSpent error -3 ".$this->error, LOG_ERR);
 				$result = -2;
 			}
 		}
