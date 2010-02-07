@@ -48,8 +48,11 @@ $now = gmmktime();
 
 $projectstatic=new Project($db);
 
-if ($mode == 'mine') $title=$langs->trans("MyActivities");
-else $title=$langs->trans("Activities");
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+
+$title=$langs->trans("Activities");
+if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title);
 
@@ -60,23 +63,19 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td align="left">'.$langs->trans("Project").'</td>';
-print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
+print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
-$sql = "SELECT p.rowid, p.ref, p.title, count(t.rowid) as nb";
-$sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, count(t.rowid) as nb";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-//if ($mode == 'mine') $sql.= ", ".MAIN_DB_PREFIX."projet_task_actors as pta";
-$sql.= ")";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as s on s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
+if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid) $sql.= " AND p.fk_soc = ".$socid;
-//if ($mode == 'mine') $sql.=" AND t.rowid = pta.fk_projet_task";
-//if ($mode == 'mine') $sql.=" AND pta.fk_user = ".$user->id;
-$sql.= " GROUP BY p.rowid";
+$sql.= " GROUP BY p.ref";
 
 $resql = $db->query($sql);
 if ( $resql )
@@ -88,16 +87,27 @@ if ( $resql )
 
 	while ($i < $num)
 	{
-		$row = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr $bc[$var]>";
-		print '<td>';
-		$projectstatic->id=$row->rowid;
-		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
-		print '</td>';
-		print '<td align="right">'.$row->nb.'</td>';
-		print "</tr>\n";
+		$objp = $db->fetch_object($resql);
+		
+		$projectstatic->id = $objp->projectid;
+		$projectstatic->user_author_id = $objp->fk_user_creat;
+		$projectstatic->public = $objp->public;
+		
+		$userAccess = $projectstatic->restrictedProjectArea($user,1);
+	
+		if ($userAccess >= 0)
+		{
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td nowrap="nowrap">';
+			$projectstatic->ref=$objp->ref;
+			print $projectstatic->getNomUrl(1);
+			print ' - '.$objp->title.'</td>';
+			print '<td align="right">'.$objp->nb.'</td>';
+			$projectstatic->statut = $objp->fk_statut;
+			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
+			print "</tr>\n";
+		}
 
 		$i++;
 	}

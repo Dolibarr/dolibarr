@@ -55,29 +55,25 @@ llxHeader("",$title,"Projet");
 
 $form=new Form($db);
 
-$project = new Project($db);
-$task = new Task($db);
+$projectstatic = new Project($db);
+$taskstatic = new Task($db);
 
 if ($_GET["id"])
 {
-	$project->fetch($_GET["id"]);
-	$project->societe->fetch($project->societe->id);
+	$projectstatic->fetch($_GET["id"]);
+	$projectstatic->societe->fetch($projectstatic->societe->id);
 }
-
-
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-
 $task = new Task($db);
-
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray=$task->getTasksArray(0, 0, $project->id, $socid);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid);
 // We load also tasks limited to a particular user
-$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjetsOrTasks(0,$user,$project->id,0) : '');
+$tasksrole=($_REQUEST["mode"]=='mine' ? $taskstatic->getUserRolesForProjetsOrTasks(0,$user,$projectstatic->id,0) : '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -91,14 +87,12 @@ $j=0; $level=0;
 $nboftaskshown=PLines($j, 0, $tasksarray, $level, true, 1, $tasksrole);
 print "</table>";
 
-
 print '</div>';
-
 
 /*
  * Actions
  */
-if ($user->rights->projet->creer)
+if ($user->rights->projet->task->creer)
 {
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?action=create">'.$langs->trans('AddTask').'</a>';

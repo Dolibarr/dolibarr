@@ -51,6 +51,7 @@ llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:
 
 $text=$langs->trans("Projects");
 if ($mine) $text=$langs->trans("MyProjects");
+
 print_fiche_titre($text);
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -69,7 +70,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-$sql.= " GROUP BY p.title, p.rowid";
+$sql.= " GROUP BY p.ref";
 
 $var=true;
 $resql = $db->query($sql);
@@ -92,7 +93,10 @@ if ( $resql )
 		{
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$objp->projectid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$objp->title.'</a></td>';
+			print '<td nowrap="nowrap">';
+			$projectstatic->ref=$objp->ref;
+			print $projectstatic->getNomUrl(1);
+			print ' - '.$objp->title.'</td>';
 			print '<td align="right">'.$objp->nb.'</td>';
 			$projectstatic->statut = $objp->fk_statut;
 			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
