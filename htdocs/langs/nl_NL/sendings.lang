@@ -27,8 +27,10 @@ DateSendingShort=Datum versturing bestelling
 SendingsForSameOrder=Verzendingen voor deze bestelling
 SendingsAndReceivingForSameOrder=Verzendingen en ontvangsten voor deze bestelling
 SendingsToValidate=Valideer verzending
+StatusSendingCanceled=Geannuleerd
 StatusSendingDraft=Ontwerp
 StatusSendingValidated=Gevalideerd (producten te versturen of reeds verzonden)
+StatusSendingCanceledShort=Geannuleerd
 StatusSendingDraftShort=Ontwerp
 StatusSendingValidatedShort=Gevalideerd
 SendingSheet=Verzendbrief
@@ -43,11 +45,16 @@ GenericTransport=Generiek vervoer
 Enlevement=Afhalen door klant
 DocumentModelSimple=Eenvoudig document model
 WarningNoQtyLeftToSend=Waarschuwing, geen producten in afwachting van de levering.
+StatsOnShipmentsOnlyValidated=Statistieken uitgevoerd alleen betreffende de gevalideerde versturing
+
 # Sending methods
 SendingMethodCATCH=Verwijdering door de klant
 SendingMethodTRANS=Vervoerder
 SendingMethodCOLSUI=Colissimo
+
 # NumRef
 NumRefModelJade=Terugkeer van een referentienummer met formaat BLYY00001, ... waar is YY jaar. Aantal op het einde is nooit nul.
+
+# ModelDocument
 DocumentModelSirocco=Voorbeeld voor eenvoudige ontvangstbewijs
 DocumentModelTyphon=Model ontvangstbewijs volledige levering (logo...)

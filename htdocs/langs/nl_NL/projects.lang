@@ -41,14 +41,35 @@ Time=Tijd
 ListProposalsAssociatedProject=Lijst van offertes in verband met het project
 ListOrdersAssociatedProject=Lijst van orders in verband met het project
 ListInvoicesAssociatedProject=Lijst van facturen in verband met het project
+ListPredefinedInvoicesAssociatedProject=Lijst van vooraf te factureren klanten in verband met project
 ListSupplierOrdersAssociatedProject=Lijst van leveranciers orders in verband met het project
 ListSupplierInvoicesAssociatedProject=Lijst van leveranciers facturen in verband met het project
 ListContractAssociatedProject=Lijst van opdrachten in verband met het project
+ListActionsAssociatedProject=Lijst van acties in verband met het project
 ActivityOnProjectThisWeek=Activiteit op project deze week
 ActivityOnProjectThisMonth=Activiteit op project deze maand
 ActivityOnProjectThisYear=Activiteit op project dit jaar
 ChildOfTask=Sub- van het project/taak
 NotOwnerOfProject=Geen eigenaar van dit prive-project
 AffectedTo=Beïnvloed in
-ListPredefinedInvoicesAssociatedProject=Lijst van vooraf te factureren klanten in verband met project
 CantRemoveProject=Dit project kan niet worden verwijderd, er wordt verwezen door een andere object (facturen, bestellingen of andere). Zie verwijzings tabblad.
+ValidateProject=Valideer project
+ConfirmValidateProject=Weet u zeker dat u dit project te valideren?
+CloseAProject=Sluit project
+ConfirmCloseAProject=Weet u zeker dat u dit project sluiten?
+ReOpenAProject=Heropen project
+ConfirmReOpenAProject=Weet u zeker dat u dit project wilt heropenen?
+ProjectContact=Project Contacten
+##### Soorten Contacten #####
+TypeContact_project_internal_PROJECTLEADER=Projectmanager
+TypeContact_project_external_PROJECTLEADER=Projectmanager
+TypeContact_project_internal_CONTRIBUTOR=Medewerker
+TypeContact_project_external_CONTRIBUTOR=Medewerker
+TypeContact_project_task_internal_TASKEXECUTIVE=Verantwoordelijke
+TypeContact_project_task_external_TASKEXECUTIVE=Verantwoordelijke
+TypeContact_project_task_internal_CONTRIBUTOR=Medewerker
+TypeContact_project_task_external_CONTRIBUTOR=Medewerker
+# Documenten modulen
+DocumentModelBaleine=Model Project Report Compleet (logo. ..)
+# NumRef Modules
+SimpleNumRefModelDesc=Geeft het aantal als PJyymm-nnnn waar yy jaar is, mm de maand en nnnn een sequencer naadloos en zonder vervangde 0
