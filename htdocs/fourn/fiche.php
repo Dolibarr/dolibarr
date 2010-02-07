@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +111,21 @@ if ( $societe->fetch($socid) )
 	print yn($societe->tva_assuj);
 	print '</td>';
 	print '</tr>';
+	
+// Local Taxes
+	if ($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		print '<tr>';
+		print '<td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+		print yn($societe->localtax1_assuj);
+		print '</td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+		print yn($societe->localtax2_assuj);
+		print '</td>';
+		print '</tr>';
+	}
 
 	print '</table>';
 

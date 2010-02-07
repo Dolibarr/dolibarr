@@ -5,6 +5,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +112,11 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->gencod                = $_POST["gencod"];
 
 	$soc->tva_assuj             = $_POST["assujtva_value"];
+	
+	// Local Taxes
+	$soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
+	$soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
+	
 	$soc->tva_intra             = $_POST["tva_intra"];
 
 	$soc->forme_juridique_code  = $_POST["forme_juridique_code"];
@@ -356,6 +362,11 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$soc->effectif_id=($_POST["effectif_id"]&&!$_POST["cleartype"])?$_POST["effectif_id_id"]:($_REQUEST["private"]?'EF1-5':'');
 
 		$soc->tva_assuj = $_POST["assujtva_value"];
+		
+		//Local Taxes
+		$soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
+		$soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
+
 		$soc->tva_intra=$_POST["tva_intra"];
 
 		$soc->commercial_id=$_POST["commercial_id"];
@@ -586,18 +597,23 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<td>';
 		print $html->selectyesno('assujtva_value',1,1);		// Assujeti par defaut en creation
 		print '</td>';
-
-		// Code TVA
-		if ($conf->use_javascript_ajax)
+		
+		
+		// Local Taxes
+		if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
-			print "\n";
-			print '<script language="JavaScript" type="text/javascript">';
-			print "function CheckVAT(a) {\n";
-			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
-			print "}\n";
-			print '</script>';
-			print "\n";
+			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
+			print '<td>';
+			print $html->selectyesno('localtax1assuj_value',0,1);
+			print '</td>';
+			print '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
+			print '<td>';
+			print $html->selectyesno('localtax2assuj_value',0,1);
+			print '</td>';
+			print '</tr>';
 		}
+		
+
 		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
 		$s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$soc->tva_intra.'">';
@@ -614,6 +630,18 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '</td>';
 
 		print '</tr>';
+		
+		// Code TVA
+		if ($conf->use_javascript_ajax)
+		{
+			print "\n";
+			print '<script language="JavaScript" type="text/javascript">';
+			print "function CheckVAT(a) {\n";
+			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+			print "}\n";
+			print '</script>';
+			print "\n";
+		}
 
 		if ($user->rights->societe->client->voir)
 		{
@@ -709,6 +737,10 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 			$soc->tva_assuj = $_POST["assujtva_value"];
 			$soc->tva_intra=$_POST["tva_intra"];
+			
+			//Local Taxes
+			$soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
+			$soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
 
 			// On positionne pays_id, pays_code et libelle du pays choisi
 			if ($soc->pays_id)
@@ -935,7 +967,22 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		print '</td>';
 		print '</tr>';
-
+		
+		// Local Taxes
+		if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		{
+			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
+			print '<td>';	
+			print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
+			print '</td>';
+		
+			print '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
+			print '<td>';	
+			print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
+			print '</td>';
+			print '</tr>';
+		}
+		
 		print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
@@ -1156,6 +1203,23 @@ else
 	print '</td>';
 
 	print '</tr>';
+		
+	// Local Taxes
+	if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		print '<tr><td>';
+		print $langs->trans('LocalTax1IsUsedES');
+		print '</td><td>';
+		print yn($soc->localtax1_assuj);
+		print '</td>';
+		
+		print '<td>';
+		print $langs->trans('LocalTax2IsUsedES');
+		print '</td><td>';
+		print yn($soc->localtax2_assuj);
+		print '</td>';
+	}
+		
 
 	// Capital
 	print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';

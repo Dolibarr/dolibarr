@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,6 +242,21 @@ if ($socid > 0)
 	print yn($societe->tva_assuj);
 	print '</td>';
 	print '</tr>';
+	
+	// Local Taxes
+	if ($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		print '<tr>';
+		print '<td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+		print yn($societe->localtax1_assuj);
+		print '</td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+		print yn($societe->localtax2_assuj);
+		print '</td>';
+		print '</tr>';
+	}
 
 	// TVA Intra
 	print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';

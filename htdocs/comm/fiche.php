@@ -5,6 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010      Juanjo Menent               <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,6 +208,21 @@ if ($socid > 0)
 	print yn($objsoc->tva_assuj);
 	print '</td>';
 	print '</tr>';
+	
+	// Local Taxes
+	if ($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		print '<tr>';
+		print '<td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+		print yn($objsoc->localtax1_assuj);
+		print '</td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+		print yn($objsoc->localtax2_assuj);
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Conditions de reglement par defaut
 	$langs->load('bills');
