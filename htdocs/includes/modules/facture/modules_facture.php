@@ -35,10 +35,9 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
 
 
 /**
- \class      ModelePDFFactures
- \brief      Classe mere des modeles de facture
+ *	\class      ModelePDFFactures
+ *	\brief      Classe mere des modeles de facture
  */
-
 class ModelePDFFactures extends FPDF
 {
 	var $error='';
@@ -89,8 +88,8 @@ class ModelePDFFactures extends FPDF
 }
 
 /**
- \class      ModeleNumRefFactures
- \brief      Classe mere des modeles de numerotation des references de facture
+ *	\class      ModeleNumRefFactures
+ *	\brief      Classe mere des modeles de numerotation des references de facture
  */
 class ModeleNumRefFactures
 {

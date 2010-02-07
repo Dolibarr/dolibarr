@@ -139,7 +139,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
 	}
-	elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
+	elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
 		$width=128;
@@ -206,7 +206,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if ($conf->global->MAIN_SMARTY)
 	{
 		global $smarty;
-		
+
 		$smarty->template_dir=$template_dir;
 
 		$smarty->assign('conf_css', $conf_css);

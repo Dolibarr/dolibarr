@@ -213,6 +213,28 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 }
 
 /*
+ * Edition info modele document
+ */
+$constantes=array(
+		'ADHERENT_CARD_HEADER_TEXT',
+		'ADHERENT_CARD_TEXT',
+		'ADHERENT_CARD_TEXT_RIGHT',
+		'ADHERENT_CARD_FOOTER_TEXT'
+		);
+print_fiche_titre($langs->trans("MembersCards"),'','');
+
+form_constantes($constantes);
+
+print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
+print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
+//print '%INFOS%'; Deprecated
+print '<br>';
+
+print '<br>';
+
+
+/*
  * Edition des variables globales non rattache a un theme specifique
  */
 $constantes=array(
@@ -225,20 +247,18 @@ $constantes=array(
 		'ADHERENT_MAIL_RESIL_SUBJECT',
 		'ADHERENT_MAIL_RESIL',
 		'ADHERENT_MAIL_FROM',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_FOOTER_TEXT',
 		'ADHERENT_ETIQUETTE_TYPE'
 		);
 print_fiche_titre($langs->trans("Other"),'','');
 
-print $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+form_constantes($constantes);
+
+print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
 print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
 //print '%INFOS%'; Deprecated
 print '<br>';
 
-form_constantes($constantes);
 
 $db->close();
 
@@ -257,7 +277,7 @@ function form_constantes($tableau)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Value").'*</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";

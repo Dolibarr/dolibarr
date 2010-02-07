@@ -54,14 +54,14 @@
 ////////////////////////////////////////////////////
 
 /**
- \file       htdocs/adherents/cartes/PDF_card.class.php
- \ingroup    adherent
- \brief      Fichier de la classe permettant d'�diter au format PDF des �tiquettes au format Avery ou personnalis�
- \author     Steve Dillon
- \author	    Laurent Passebecq
- \author	    Rodolphe Quiedville
- \author	    Jean Louis Bergamo.
- \version    $Id$
+ *	\file       htdocs/adherents/cartes/PDF_card.class.php
+ *	\ingroup    adherent
+ *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *	\author     Steve Dillon
+ *	\author	    Laurent Passebecq
+ *	\author	    Rodolphe Quiedville
+ *	\author	    Jean Louis Bergamo.
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -69,23 +69,23 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- \class      PDF_card
- \brief      Classe afin d'�diter au format PDF des �tiquettes au format Avery ou personnalis�
+ *	\class      PDF_card
+ *	\brief      Classe afin d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 class PDF_card extends FPDF {
 
-	// Propri�t�s priv�es
-	var $_Avery_Name	= '';	// Nom du format de l'�tiquette
-	var $_Margin_Left	= 0;	// Marge de gauche de l'�tiquette
-	var $_Margin_Top	= 0;	// marge en haut de la page avant la premi�re �tiquette
-	var $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'�tiquettes
-	var $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'�tiquettes
-	var $_X_Number 	= 0;	// Nombre d'�tiquettes sur la largeur de la page
-	var $_Y_Number 	= 0;	// Nombre d'�tiquettes sur la hauteur de la page
-	var $_Width 		= 0;	// Largeur de chaque �tiquette
-	var $_Height 		= 0;	// Hauteur de chaque �tiquette
-	var $_Char_Size	= 10;	// Hauteur des caract�res
-	var $_Line_Height	= 10;	// Hauteur par d�faut d'une ligne
+	// Proprietes privees
+	var $_Avery_Name	= '';	// Nom du format de l'etiquette
+	var $_Margin_Left	= 0;	// Marge de gauche de l'etiquette
+	var $_Margin_Top	= 0;	// marge en haut de la page avant la premiere etiquette
+	var $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'etiquettes
+	var $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'etiquettes
+	var $_X_Number 	= 0;	// Nombre d'etiquettes sur la largeur de la page
+	var $_Y_Number 	= 0;	// Nombre d'etiquettes sur la hauteur de la page
+	var $_Width 		= 0;	// Largeur de chaque etiquette
+	var $_Height 		= 0;	// Hauteur de chaque etiquette
+	var $_Char_Size	= 10;	// Hauteur des caracteres
+	var $_Line_Height	= 10;	// Hauteur par defaut d'une ligne
 	var $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
 	var $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
 
@@ -209,6 +209,8 @@ class PDF_card extends FPDF {
 	 */
 	function PDF_card ($format, $posX=1, $posY=1, $unit='mm')
 	{
+		global $conf,$mysoc;
+
 		if (is_array($format)) {
 			// Si c'est un format personnel alors on maj les valeurs
 			$Tformat = $format;
@@ -223,11 +225,13 @@ class PDF_card extends FPDF {
 		}
 
 		parent::FPDF('P', $unit, $Tformat['paper-size']);
+
+
 		$this->SetMargins(0,0);
 		$this->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $unit;
-		// Permet de commencer l'impression � l'�tiquette d�sir�e dans le cas o� la page a d�j� servie
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
 		if ($posX > 0) $posX--; else $posX=0;
 		if ($posY > 0) $posY--; else $posY=0;
 		$this->_COUNTX = $posX;
@@ -236,7 +240,7 @@ class PDF_card extends FPDF {
 	}
 
 
-	//M�thode qui permet de modifier la taille des caract�res
+	//Methode qui permet de modifier la taille des caracteres
 	// Cela modiera aussi l'espace entre chaque ligne
 	function Set_Char_Size($pt) {
 		if ($pt > 3) {
@@ -247,10 +251,10 @@ class PDF_card extends FPDF {
 	}
 
 
-	// On imprime une �tiqette
-	function Add_PDF_card($texte,$header='',$footer='',$outputlangs)
+	// On imprime une etiquette
+	function Add_PDF_card($textleft,$header='',$footer='',$outputlangs,$textright='')
 	{
-		global $langs;
+		global $mysoc,$conf,$langs;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expects text to be encoded in ISO
@@ -269,6 +273,19 @@ class PDF_card extends FPDF {
 		$_PosX = $this->_Margin_Left+($this->_COUNTX*($this->_Width+$this->_X_Space));
 		$_PosY = $this->_Margin_Top+($this->_COUNTY*($this->_Height+$this->_Y_Space));
 
+		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
+		if (is_readable($logo))
+		{
+			if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
+			{
+				$logo=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+			}
+			elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
+			{
+				$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
+			}
+		}
+
 		if ($this->_Avery_Name == "CARD")
 		{
 			$Tformat=$this->_Avery_Labels["CARD"];
@@ -284,14 +301,58 @@ class PDF_card extends FPDF {
 				$this->image($Tformat['logo2'],$_PosX+$this->_Width-21,$_PosY+25,20,20);
 			}
 
-			//$this->image('logo1.jpg',$_PosX+$this->_Width-21,$_PosY+1,20);
+			// Top
 			if ($header!=''){
 				$this->SetXY($_PosX, $_PosY+1);
 				$this->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
 			}
-			$this->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
-			$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($texte));
-			if ($footer!=''){
+
+			// Center
+			if ($textright=='')	// Only a left part
+			{
+				if ($textleft == '%LOGO%') $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+				else
+				{
+					$this->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
+					$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				}
+			}
+			else if ($textleft!='' && $textright!='')	//
+			{
+				if ($textleft == '%LOGO%')
+				{
+					$this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+					$this->SetXY($_PosX+22, $_PosY+3+$this->_Line_Height);
+					$this->MultiCell($this->_Width-20, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				}
+				else if ($textright == '%LOGO%')
+				{
+					$this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+					$this->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+					$this->MultiCell($this->_Width-20, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				}
+				else
+				{
+					$this->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
+					$this->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+					$this->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+					$this->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				}
+
+			}
+			else	// Only a right part
+			{
+				if ($textright == '%LOGO%') $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+				else
+				{
+					$this->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+					$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				}
+			}
+
+			// Bottom
+			if ($footer!='')
+			{
 				$this->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
 				$this->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 			}
@@ -300,7 +361,7 @@ class PDF_card extends FPDF {
 		else
 		{
 			$this->SetXY($_PosX+3, $_PosY+3);
-			$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($texte));
+			$this->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
 		}
 		$this->_COUNTY++;
 
@@ -386,7 +447,7 @@ class PDF_card extends FPDF {
 
 	// Give the height for a char size given.
 	function _Get_Height_Chars($pt) {
-		// Tableau de concordance entre la hauteur des caract�res et de l'espacement entre les lignes
+		// Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
 		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>4, 10=>5, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
 		if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
 			return $_Table_Hauteur_Chars[$pt];

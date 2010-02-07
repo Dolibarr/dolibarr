@@ -26,6 +26,10 @@
  */
 
 require("./pre.inc.php");
+
+require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
+
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/PDF_card.class.php");
@@ -93,6 +97,8 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 
+		if ($objp->pays == '-') $objp->pays='';
+
 		// List of values to scan for a replacement
 		$replace = array (
 		$objp->prenom,
@@ -115,7 +121,8 @@ if ($result)
 		// imprime le texte specifique sur la carte
 		$pdf->Add_PDF_card(preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT),
 		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_HEADER_TEXT),
-		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT), $langs);
+		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT), $langs,
+		preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT_RIGHT));
 		$i++;
 	}
 
