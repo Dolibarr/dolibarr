@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -2792,8 +2792,9 @@ else
 
 
 			/*
-			 * Lines
+			 * Inoice lines
 			 */
+
 			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
 			$sql.= ' l.fk_remise_except,';
 			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
@@ -2936,7 +2937,7 @@ else
 						}
 
 						// Montant total HT
-						print '<td align="right">'.price($objp->total_ht)."</td>\n";
+						print '<td align="right" nowrap="nowrap">'.price($objp->total_ht)."</td>\n";
 
 						// Icone d'edition et suppression
 						if ($fac->statut == 0  && $user->rights->facture->creer)
