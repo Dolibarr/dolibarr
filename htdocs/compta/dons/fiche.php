@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ if ($_GET["action"] == 'create')
 
 	print '<input type="hidden" name="action" value="add">';
 
-	print '<tr><td>'.$langs->trans("Date").'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$html->select_date('','','','','',"add");
 	print '</td>';
 
@@ -239,7 +239,7 @@ if ($_GET["action"] == 'create')
 		print "</td></tr>\n";
 	}
 
-	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
+	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
 	print $html->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
 
@@ -251,7 +251,7 @@ if ($_GET["action"] == 'create')
 	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" value="'.$_POST["cp"].'" size="8"> <input type="text" name="ville" value="'.$_POST["ville"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" value="'.$_POST["pays"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.$_POST["email"].'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.$_POST["amount"].'" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.$_POST["amount"].'" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	print "<tr>".'<td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 	print "</table>\n";
 	print "</form>\n";
@@ -292,7 +292,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 	print '</tr>';
 
 	// Date
-	print "<tr>".'<td>'.$langs->trans("Date").'</td><td>';
+	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$html->select_date($don->date,'','','','',"update");
 	print '</td>';
 
@@ -311,7 +311,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 		print '</td></tr>';
 	}
 
-	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
+	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
 	print $html->selectyesno("public",1,1);
 	print "</td>";
 	print "</tr>\n";
@@ -325,7 +325,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$don->cp.'"> <input type="text" name="ville" size="40" value="'.$don->ville.'"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	$html->select_types_paiements('', 'modepaiement', 'CRDT', 0);
