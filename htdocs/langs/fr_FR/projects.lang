@@ -60,6 +60,7 @@ ConfirmCloseAProject=Etes-vous sur de vouloir clore ce projet ?
 ReOpenAProject=Réouvrir projet
 ConfirmReOpenAProject=Etes-vous sur de vouloir rouvrir ce projet ?
 ProjectContact=Contacts projet
+ActionsOnProject=Actions sur le projet
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chef de projet
 TypeContact_project_external_PROJECTLEADER=Chef de projet
