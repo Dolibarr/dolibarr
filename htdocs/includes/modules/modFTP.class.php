@@ -100,16 +100,14 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
 
-		/* Not yet developed
 		$r++;
 		$this->rights[$r][0] = 2801;
-		$this->rights[$r][1] = 'Use FTP client in write mode (can also upload files)';
+		$this->rights[$r][1] = 'Use FTP client in write mode (delete or upload files)';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
-		*/
 
-        // Menus
+		// Menus
 		//------
 		$this->menus = array();			// List of menus to add
 		$r=0;
