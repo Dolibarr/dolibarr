@@ -786,7 +786,7 @@ else
 					print '<tr '.$bc[$var].'>';
 					print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('Payment'),'payment').'</a> '.dol_print_date($objp->dp,'day')."</td>\n";
 					print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-					print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
+					print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 
 					if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 					{
@@ -803,13 +803,13 @@ else
 
 				if ($fac->paye == 0)
 				{
-					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 					$resteapayer = $fac->total_ttc - $totalpaye;
 
 					print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
-					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 				}
 				print '</table>';
 				$db->free($result);
