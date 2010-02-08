@@ -264,6 +264,7 @@ ModuleDisabledSoNoEvent=Module désactivé donc évênement jamais créé
 ConfirmPurge=Etes vous sur de vouloir réaliser cette purge ?<br>Ceci effacera définitivement toutes vos données fichier (espace GED, pièces jointes, etc...). 
 MinLength=Longueur minimale
 LanguageFilesCachedIntoShmopSharedMemory=Fichiers .lang en mémoire partagée
+ExamplesWithCurrentSetup=Exemples avec le paramétrage actif courant
 
 # Modules = undefined
 Module0Name = Utilisateurs & groupes

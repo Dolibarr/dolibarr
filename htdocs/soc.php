@@ -112,11 +112,11 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->gencod                = $_POST["gencod"];
 
 	$soc->tva_assuj             = $_POST["assujtva_value"];
-	
+
 	// Local Taxes
 	$soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
 	$soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
-	
+
 	$soc->tva_intra             = $_POST["tva_intra"];
 
 	$soc->forme_juridique_code  = $_POST["forme_juridique_code"];
@@ -362,7 +362,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$soc->effectif_id=($_POST["effectif_id"]&&!$_POST["cleartype"])?$_POST["effectif_id_id"]:($_REQUEST["private"]?'EF1-5':'');
 
 		$soc->tva_assuj = $_POST["assujtva_value"];
-		
+
 		//Local Taxes
 		$soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
 		$soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
@@ -613,7 +613,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '</td>';
 
 		print '</tr>';
-		
+
 		// Code TVA
 		if ($conf->use_javascript_ajax)
 		{
@@ -625,9 +625,9 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '</script>';
 			print "\n";
 		}
-		
+
 		// Local Taxes
-		if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		if($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
 			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
 			print '<td>';
@@ -639,7 +639,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '</td>';
 			print '</tr>';
 		}
-		
+
 		if ($user->rights->societe->client->voir)
 		{
 			//Affecter un commercial
@@ -734,7 +734,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 			$soc->tva_assuj = $_POST["assujtva_value"];
 			$soc->tva_intra=$_POST["tva_intra"];
-			
+
 			//Local Taxes
 			$soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
 			$soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
@@ -964,22 +964,22 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		print '</td>';
 		print '</tr>';
-		
+
 		// Local Taxes
-		if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		if($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
 			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
-			print '<td>';	
+			print '<td>';
 			print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
 			print '</td>';
-		
+
 			print '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
-			print '<td>';	
+			print '<td>';
 			print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
 			print '</td>';
 			print '</tr>';
 		}
-		
+
 		print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
@@ -1200,23 +1200,24 @@ else
 	print '</td>';
 
 	print '</tr>';
-		
+
 	// Local Taxes
-	if($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
 		print '<tr><td>';
 		print $langs->trans('LocalTax1IsUsedES');
 		print '</td><td>';
 		print yn($soc->localtax1_assuj);
 		print '</td>';
-		
+
 		print '<td>';
 		print $langs->trans('LocalTax2IsUsedES');
 		print '</td><td>';
 		print yn($soc->localtax2_assuj);
 		print '</td>';
+		print '</tr>';
 	}
-		
+
 
 	// Capital
 	print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';

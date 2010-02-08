@@ -264,6 +264,7 @@ ModuleDisabledSoNoEvent=Module disabled so event never created
 ConfirmPurge=Are you sure you want to execute this purge ?<br>This will delete definitely all your data files with no way to restore them (ECM files, attached files...). 
 MinLength=Minimum length
 LanguageFilesCachedIntoShmopSharedMemory=Files .lang loaded in shared memory
+ExamplesWithCurrentSetup=Examples with current running setup
 
 # Modules
 Module0Name=Users & groups

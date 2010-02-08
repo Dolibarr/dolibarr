@@ -242,9 +242,9 @@ if ($socid > 0)
 	print yn($societe->tva_assuj);
 	print '</td>';
 	print '</tr>';
-	
+
 	// Local Taxes
-	if ($obj->code='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if ($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
 		print '<tr>';
 		print '<td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
