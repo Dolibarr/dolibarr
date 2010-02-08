@@ -24,7 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -790,9 +790,9 @@
      showgrid="false"
      inkscape:document-units="cm"
      units="cm"
-     inkscape:zoom="0.088134766"
-     inkscape:cx="1492.3861"
-     inkscape:cy="3852.5751"
+     inkscape:zoom="0.24856758"
+     inkscape:cx="1846.0185"
+     inkscape:cy="6930.1639"
      inkscape:window-x="-4"
      inkscape:window-y="-4"
      inkscape:window-maximized="1"
@@ -1112,26 +1112,26 @@
        y="2178.5884">- Nombreux autres modules fonctionnels :</tspan></text>
   <text
      xml:space="preserve"
-     style="font-size:74.67679596px;font-style:normal;font-weight:normal;fill:#fefefe;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="2080.9939"
-     y="2282.5305"
+     style="font-size:76.00852203px;font-style:normal;font-weight:normal;fill:#fefefe;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="2044.4495"
+     y="2323.2354"
      id="text2945-4-9"
-     transform="scale(0.68186791,1.4665597)"><tspan
+     transform="scale(0.69402782,1.4408644)"><tspan
        sodipodi:role="line"
        id="tspan2947-0-4"
-       x="2080.9939"
-       y="2282.5305">- Point de vente, expédiitions, contrats de service,</tspan></text>
+       x="2044.4495"
+       y="2323.2354">- Point de vente, expédiitions, contrats de service,</tspan></text>
   <text
      xml:space="preserve"
-     style="font-size:74.67679596px;font-style:normal;font-weight:normal;fill:#fefefe;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-     x="2078.0608"
-     y="2378.2666"
+     style="font-size:75.87614441px;font-style:normal;font-weight:normal;fill:#fefefe;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     x="2045.1368"
+     y="2416.4629"
      id="text2945-4-9-8"
-     transform="scale(0.68186791,1.4665597)"><tspan
+     transform="scale(0.69281909,1.4433782)"><tspan
        sodipodi:role="line"
        id="tspan2947-0-4-8"
-       x="2078.0608"
-       y="2378.2666">gestion des dons, connectivité LDAP, exports, imports,,</tspan></text>
+       x="2045.1368"
+       y="2416.4629">gestion des dons, connectivité LDAP, exports, imports,</tspan></text>
   <text
      xml:space="preserve"
      style="font-size:74.67679596px;font-style:normal;font-weight:normal;fill:#fefefe;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1241,7 +1241,7 @@
          height="113.4626"
          x="2297.6177"
          y="2421.7148" /></flowRegion><flowPara
-       id="flowPara4060"></flowPara></flowRoot>  <image
+       id="flowPara4060" /></flowRoot>  <image
      y="2356.804"
      x="2105.6479"
      id="image4083"
