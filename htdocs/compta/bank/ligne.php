@@ -97,12 +97,12 @@ if ($_POST["action"] == "update")
 	$db->begin();
 
 	$amount = price2num($_POST['amount']);
-	$dateop = $_POST["dateoyear"].'-'.$_POST["dateomonth"].'-'.$_POST["dateoday"];
-	$dateval= $_POST["datevyear"].'-'.$_POST["datevmonth"].'-'.$_POST["datevday"];
+	$dateop = dol_mktime(12,0,0,$_POST["dateomonth"],$_POST["dateoday"],$_POST["dateoyear"]);
+	$dateval= dol_mktime(12,0,0,$_POST["datevmonth"],$_POST["datevday"],$_POST["datevyear"]);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-	$sql.= " SET label='".addslashes($_POST["label"])."',"; // Todo: cr�er une classe pour s�parer les requ�tes sql
+	$sql.= " SET label='".addslashes($_POST["label"])."',";
 	if (isset($_POST['amount'])) $sql.=" amount='$amount',";
-	$sql.= " dateo = '".$dateop."', datev = '".$dateval."',";
+	$sql.= " dateo = '".$db->idate($dateop)."', datev = '".$db->idate($dateval)."',";
 	$sql.= " fk_account = ".$_POST['accountid'];
 	$sql.= " WHERE rowid = ".$rowid;
 
@@ -203,7 +203,7 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans('LineRecord'),0,'account');
 
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro,";
+$sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
 $sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account";
 $sql.= ",b.emetteur,b.banque";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -274,13 +274,13 @@ if ($result)
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
 			print '<td colspan="3">';
-			$html->select_date($objp->do,'dateo','','','','update');
+			$html->select_date($db->jdate($objp->do),'dateo','','','','update');
 			print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
 		}
 		else
 		{
 			print '<td colspan="4">';
-			print dol_print_date($objp->do);
+			print dol_print_date($db->jdate($objp->do));
 		}
 		print '</td></tr>';
 
@@ -289,7 +289,7 @@ if ($result)
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
 			print '<td colspan="3">';
-			$html->select_date($objp->dv,'datev','','','','update');
+			$html->select_date($db->jdate($objp->dv),'datev','','','','update');
 			print ' &nbsp; ';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
@@ -301,7 +301,7 @@ if ($result)
 		else
 		{
 			print '<td colspan="4">';
-			print dol_print_date($objp->dv,"day");
+			print dol_print_date($db->jdate($objp->dv),"day");
 			print '</td>';
 		}
 		print "</tr>";
