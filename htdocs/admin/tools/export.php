@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,7 +186,9 @@ if ($what == 'mysql')
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
 	if ($handle)
 	{
-		$errormsg = fgets($handle,2048);	// Get 2048 first chars of error message.
+		// Get 2048 first chars of error message.
+		$errormsg = fgets($handle,2048);
+		// Close file
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
 		if ($compression == 'bz')   bzclose($handle);
@@ -201,7 +203,6 @@ if ($what == 'mysql')
 			if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");
 		}
 	}
-	fclose($handle);
 	// Fin execution commande
 }
 
