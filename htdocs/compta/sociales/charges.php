@@ -261,7 +261,7 @@ if ($chid > 0)
 		$head[$h][2] = 'card';
 		$h++;
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"));
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
 
 		/*
 		* Confirmation de la suppression de la charge
