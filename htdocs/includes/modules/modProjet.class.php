@@ -83,7 +83,7 @@ class modProjet extends DolibarrModules
 
 		$this->const[$r][0] = "PROJECT_ADDON";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_project_universal";
+		$this->const[$r][2] = "mod_project_simple";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des projets';
 		$this->const[$r][4] = 0;
 		$r++;
