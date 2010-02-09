@@ -137,6 +137,10 @@ InstallChoiceRecommanded=Aanbevolen keuze te installeren versie <b>%s</b> van uw
 InstallChoiceSuggested=<b>Installeer voorgestelde keuze.</b>
 CheckThatDatabasenameIsCorrect=Controleer of de database naam "<b>%s</b>" juist is.
 IfAlreadyExistsCheckOption=Als de naam juist is, maar de database bestaat niet, moet u de optie "Maak Database" kiezen.
+OpenBaseDir=Parameter php openbasedir
+YouAskToCreateDatabaseSoRootRequired=U hebt het selectievak "Maak Database" geselecteerd. Hiervoor zijn de inlognaam en wachtwoord van de root (standaard inlog) verplicht.
+YouAskToCreateDatabaseUserSoRootRequired=U hebt het selectievak "Maak gebruiker-eigenaar" Geselecteerd. Hiervoor zijn de inlognaam en wachtwoord van de root (standaard inlog) verplicht.
+NextStepMightLastALongTime=De volgende stap kan enkele minuten duren. Na het verzenden, dank u voor het wachten op de volledige weergave van de volgende pagina.
 
 #########
 # upgrade
@@ -149,6 +153,7 @@ MigrationInvoice=Data migratie voor klant facturen
 MigrationContract=Data migratie voor contracten
 MigrationSuccessfullUpdate=Upgrade succesvol
 MigrationUpdateFailed=De update is mislukt
+MigrationRelationshipTables=Migratie van de relatie tabellen (%s)
 
 # Payments Update
 MigrationPaymentsUpdate=Betalingsgegevens correctie
@@ -205,3 +210,9 @@ MigrationMenusDetail=Update dynamische menu's tabellen
 
 # Migration delivery address
 MigrationDeliveryAddress=Update afleveradres bij levering
+
+# Migration project task actors
+MigrationProjectTaskActors=Migratie Tabellen llx_projet_task_actors
+
+# Migration project user resp
+MigrationProjectUserResp=Migratie gebied fk_user_resp van llx_projet te llx_element_contact
