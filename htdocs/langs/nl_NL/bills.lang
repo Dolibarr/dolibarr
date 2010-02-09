@@ -80,7 +80,6 @@ DeleteBill=Verwijderen factuur
 SearchACustomerInvoice=Zoek een klant factuur
 SearchASupplierInvoice=Zoek een leveranciers factuur
 CancelBill=Verwijder factuur
-SendByMail=E-mail
 SendRemindByMail=E-mail herinnering
 DoPayment=Heeft betaling
 DoPaymentBack=Doe terugbetaling
@@ -352,10 +351,20 @@ PaymentInvoiceRef=Betaling factuur %s
 ValidateInvoice=Valideer facture
 Cash=Contant
 Reported=Uitgestelde
-
 InvoiceDeposit=Borgsom factuur
 InvoiceDepositAsk=Borgsom factuur
 InvoiceDepositDesc=Dit soort factuur wordt gedaan wanneer een aanbetaling heeft plaats ontvangen.
+DisabledBecausePayments=Niet beschikbaar omdat er betalingen bestaan
+CantRemovePaymentWithOneInvoicePaid=Verwijder onmogelijk wanneer er minstens een factuur betaald is ingedeeld.
+##### Soorten contacten #####
+TypeContact_facture_internal_SALESREPFOLL=Verantwoordelijke toezicht klant factuur
+TypeContact_facture_external_BILLING=Contact klant facturering
+TypeContact_facture_external_SHIPPING=Contact opnemen met Customer Delivery
+TypeContact_facture_external_SERVICE=Contact klantenservice
+TypeContact_facture_fourn_internal_SALESREPFOLL=Verantwoordelijke verkoper factuur bijhouden
+TypeContact_facture_fourn_external_BILLING=Contacteer leverancier facturatie
+TypeContact_facture_fourn_external_SHIPPING=Raadpleeg leverancier levering
+TypeContact_facture_fourn_external_SERVICE=Contacteer aanbieder
 
 
 
