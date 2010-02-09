@@ -1133,7 +1133,7 @@ else
 					print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
-					print '<td align="center" valign="middle" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+					print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 					print '</tr>';
 					print '</form>';
 				}
