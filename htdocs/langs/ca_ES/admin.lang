@@ -264,6 +264,7 @@ ModuleDisabledSoNoEvent = Mòdul desactivat, per la qual cosa el esdeveniment ma
 ConfirmPurge = Esteu segur de voler realitzar aquesta purga? <br> Això esborrarà definitivament totes les dades dels seus fitxers (àrea GED, arxius adjunts etc.).
 MinLength = Longuitud mínima
 LanguageFilesCachedIntoShmopSharedMemory = arxius .lang en memòria compartida
+ExamplesWithCurrentSetup = Exemples amb la configuració activa actual
 # Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups
@@ -592,7 +593,7 @@ VATIsUsedDesc = El tipus d'IVA proposat per defecte en les creacions de pressupo
 VATIsNotUsedDesc = El tipus d'IVA proposat per defecte és 0. Aquest és el cas d'associacions, particulars o algunes petites societats.
 VATIsUsedExampleFR = A França, es tracta de les societats o organismes que trien un règim fiscal general (General simplificat o General normal), règim en el qual es declara l'IVA.
 VATIsNotUsedExampleFR = A França, es tracta d'associacions exemptes d'IVA o societats, organismes o professions liberals que han eligedo el règim fiscal de mòduls (IVA en franquícia), pagant un IVA en franquícia sense fer declaració d'IVA. Aquesta elecció fa aparèixer l'anotació "IVA no aplicable - art-293B del CGI" en les factures.
-##### Local Taxes ##### = undefined = 
+##### Local Taxes ##### =  = 
 LocalTax1ManagementES = Gestió Recàrrec d'Equivalència
 LocalTax1IsUsedDescES = El tipus de RE proposat per defecte en les creacions de pressupostos, factures, comandes, etc. Respon a la següent regla:<br>Si el comprador no està subjecte a RE, RE per defecte = 0. Final de regla.<br>Si el comprador està subjecte a RE aleshores s'aplica valor de RE per defecte. Final de regla.<br>
 LocalTax1IsNotUsedDescES = El tipus de RE proposat per defecte es 0. Final de regla.
