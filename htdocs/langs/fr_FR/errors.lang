@@ -62,3 +62,4 @@ ErrorsOnXLines=Erreurs sur <b>%s</b> lignes sources
 WarningsOnXLines=Alertes sur <b>%s</b> lignes sources
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
 ErrorSpecialCharNotAllowedForField=Les caractères spéciaux ne sont pas admins pour le champ "%s"
+WarningNoDocumentModelActivated=Aucun modèle, pour la génération de document, n'a été activé. Un modèle sera pris par défaut en attendant la correction de configuration du module.

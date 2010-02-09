@@ -394,15 +394,17 @@ class Form
 	/**
 	 *		\brief      Return list of types of lines (product or service)
 	 *		\param      selected        Preselected type
-	 *		\param      htmlname        Name of field in form
+	 *		\param      htmlname        Name of field in html form
 	 * 		\param		showempty		Add an empty field
+	 * 		\param		hidetext		Do not show label before combo box
+	 * 		\param		forceall		Force to show products and services in combo list, whatever are activated modules
 	 */
-	function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0)
+	function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
 	{
 		global $db,$langs,$user,$conf;
 
 		// If product & services are enabled or both disabled.
-		if (($conf->produit->enabled && $conf->service->enabled)
+		if ($forceall || ($conf->produit->enabled && $conf->service->enabled)
 			|| (empty($conf->produit->enabled) && empty($conf->service->enabled)))
 		{
 			if (empty($hidetext)) print $langs->trans("Type").': ';
@@ -425,11 +427,11 @@ class Form
 			print '</select>';
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		}
-		if (empty($conf->produit->enabled) && $conf->service->enabled)
+		if (! $forceall && empty($conf->produit->enabled) && $conf->service->enabled)
 		{
 			print '<input type="hidden" name="'.$htmlname.'" value="1">';
 		}
-		if ($conf->produit->enabled && empty($conf->service->enabled))
+		if (! $forceall && $conf->produit->enabled && empty($conf->service->enabled))
 		{
 			print '<input type="hidden" name="'.$htmlname.'" value="0">';
 		}

@@ -335,11 +335,18 @@ class FormFile
 			}
 			print '</td>';
 			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
-			print '<input class="button" '.((is_array($modellist) && sizeof($modellist))?'':' disabled="true"').' type="submit" value="'.$buttonlabel.'">';
+			print '<input class="button" ';
+			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
+			print ' type="submit" value="'.$buttonlabel.'">';
+			if (is_array($modellist) && ! sizeof($modellist))
+			{
+				$langs->load("errors");
+				print ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
+			}
 			print '</td></tr>';
 		}
 
-		// Recupe liste des fichiers
+		// Get list of files
 		$png = '';
 		$filter = '';
 		if ($iconPDF==1)
@@ -359,12 +366,12 @@ class FormFile
 			print '<table class="border" summary="listofdocumentstable" width="100%">';
 		}
 
-		// Boucle sur chaque ligne trouvee
+		// Loop on each file found
 		foreach($file_list as $i => $file)
 		{
 			$var=!$var;
 
-			// Defini chemin relatif par rapport au module pour lien download
+			// Define relative path for download link (depends on module)
 			$relativepath=$file["name"];								// Cas general
 			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
 			// Autre cas
@@ -373,7 +380,7 @@ class FormFile
 
 			if (!$iconPDF) print "<tr ".$bc[$var].">";
 
-			// Affiche nom fichier avec lien download
+			// Show file name with link to download
 			if (!$iconPDF) print '<td>';
 			print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">';
 			if (!$iconPDF)

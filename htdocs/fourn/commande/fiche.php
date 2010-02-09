@@ -903,8 +903,10 @@ if ($id > 0 || ! empty($ref))
 			print '<tr '.$bc[$var].'>';
 			print '<td>';
 
-			print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-			if ($conf->produit->enabled && $conf->service->enabled) print '<br>';
+			$forceall=1;
+			print $html->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
+			if ($forceall || ($conf->produit->enabled && $conf->service->enabled)
+			|| (empty($conf->produit->enabled) && empty($conf->service->enabled))) print '<br>';
 
 			// Editor wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)

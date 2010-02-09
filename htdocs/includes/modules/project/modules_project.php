@@ -171,7 +171,7 @@ class ModeleNumRefProjects
  */
 function project_pdf_create($db, $comid, $modele,$outputlangs)
 {
-	global $langs;
+	global $conf,$langs;
 	$langs->load("projects");
 
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/project/pdf/";
