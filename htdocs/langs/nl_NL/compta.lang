@@ -4,6 +4,7 @@ Accountancy=Boekhouding
 AccountancyCard=Boekhouding details
 Treasury=treasury/kasstromen
 MenuFinancial=Boekhouding
+TaxModuleSetupToModifyRules=Ga naar de <a href="%s"> module configuratie </a> om de regels voor de berekening te wijzigen
 OptionMode=Optie boekhouding
 OptionModeTrue=Optie Inkomsten-Uitgaves
 OptionModeVirtual=Optie Vorderingen-Schulden

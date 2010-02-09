@@ -81,7 +81,12 @@ ClonePropal=Kopieer offerte
 ConfirmClonePropal=Weet u zeker dat u deze offerte wilt kopieren <b>%s</b>?
 ProposalsAndProposalsLines=Business voorstellen en klantgerichtheid van voorstellen
 ProposalLine=Offerte regels
-
+##### Soorten contacten #####
+TypeContact_propal_internal_SALESREPFOLL=Commerciële toezicht voorstel
+TypeContact_propal_external_BILLING=Contact klant facturering voorstel
+TypeContact_propal_external_CUSTOMER=Contact klant tracking voorstel
 # Document models
 DocModelAzurDescription=Een complete offerte model (logo. ..)
 DocModelJauneDescription=Geel offerte model
+# NumRef Modules
+MarbreNumRefModelDesc=Geeft het aantal als PRyymm-nnnn waar yy jaar is, mm de maand en nnnn een naadloze sequencer zonder vervangings 0

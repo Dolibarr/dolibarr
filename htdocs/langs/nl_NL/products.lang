@@ -151,3 +151,5 @@ CloneProduct=Kopieer product of dienst
 ConfirmCloneProduct=Weet u zeker dat u het product of dienst <b>%s</b> wilt kopieren?
 CloneContentProduct=Kopieer alle belangrijke informatie van het product/dienst
 ClonePricesProduct=Kopieer belangrijkste informatie en prijzen
+ProductIsUsed=Dit product wordt gebruikt
+NewRefForClone=Referentie naar nieuw produkt/dienst

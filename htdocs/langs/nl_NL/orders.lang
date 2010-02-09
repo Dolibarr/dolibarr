@@ -9,6 +9,7 @@ OrderLine=Bestel online
 OrderFollow=Opvolging
 OrderContact=Bestel contacten
 OrderDate=Besteldatum
+OrderToProcess=Bestelling behandelen
 NewOrder=Nieuwe bestelling
 ToOrder=Te bestellen
 MakeOrder=Plaats bestelling
@@ -103,6 +104,17 @@ UserWithApproveOrderGrant=Gebruikers gerechtigd bestellingen goed te keuren.
 PaymentOrderRef=Betaling van bestelling %s
 CloneOrder=Kloon bestelling
 ConfirmCloneOrder=Weet u zeker dat u deze bestelling <b>%s</b> wilt klonen?
+##### Soorten contacten #####
+TypeContact_commande_internal_SALESREPFOLL=Verantwoordelijk tracking klantorder 
+TypeContact_commande_internal_SHIPPING=Verantwoordelijk verzenden verkooporder
+TypeContact_commande_external_BILLING=Contact klant facturering
+TypeContact_commande_external_SHIPPING=Contact opnemen met Customer Delivery Order
+TypeContact_commande_external_CUSTOMER=Contact opnemen met Customer Order Tracking
+TypeContact_order_supplier_internal_SALESREPFOLL=Verantwoordelijk toezicht leverancier
+TypeContact_order_supplier_internal_SHIPPING=Verantwoordelijk ontvangst leverancier
+TypeContact_order_supplier_external_BILLING=Contacteer leverancier factuur ter controle
+TypeContact_order_supplier_external_SHIPPING=Contacteer leverancier leveringsbon
+TypeContact_order_supplier_external_CUSTOMER=Contacteer leverancier controle commando
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON niet gedefinieerd
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON niet gedefinieerd
@@ -122,6 +134,3 @@ AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhan
 
 # Document models
 PDFEinsteinDescription=Een complete zakelijk voorstel model (logo. ..)
-
-# NumRef Modules
-MarbreNumRefDesc=Geeft het nummer als %syymm-nnnn waar yy het jaar, mm de maand en nnnn een opeenvolging is zonder onderbreking of vervanging van 0

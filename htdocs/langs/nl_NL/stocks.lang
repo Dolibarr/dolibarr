@@ -67,3 +67,5 @@ AverageUnitPricePMPShort=Gem. in. prijs
 AverageUnitPricePMP=Gemiddelde invoer prijs
 EstimatedStockValueShort=Geschatte voorraadwaarde
 EstimatedStockValue=Geschatte waarde van de voorraad
+DeleteAWarehouse=Verwijder de voorraad
+ConfirmDeleteWarehouse=Weet u zeker dat u de voorraad <b>%s</b> wilt verwijderen?

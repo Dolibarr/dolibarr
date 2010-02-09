@@ -1,7 +1,5 @@
 # Dolibarr language file - nl_NL - companies
 CHARSET=UTF-8
-ErrorBadEMail=E-mail %s is verkeerd
-ErrorBadUrl=Url %s verkeerd
 ErrorCompanyNameAlreadyExists=Bedrijfsnaam %s bestaat reeds. Kies een andere.
 ErrorPrefixAlreadyExists=Prefix  %s bestaat reeds. Kies een andere.
 ErrorSetACountryFirst=Stel eerst het land in
@@ -72,6 +70,11 @@ Town=Plaats
 Web=Web
 VATIsUsed=BTW wordt gebruikt
 VATIsNotUsed=BTW wordt niet gebruikt
+##### Local Taxes #####
+LocalTax1IsUsedES = Afhankelijk van RE
+LocalTax1IsNotUsedES = Niet onderworpen aan RE
+LocalTax2IsUsedES = Afhankelijk van inkomstenbelasting
+LocalTax2IsNotUsedES = Niet onderworpen aan de inkomstenbelasting 
 ThirdPartyEMail=%s
 WrongCustomerCode=Ongeldige klant code
 WrongSupplierCode=Ongeldige leverancier code

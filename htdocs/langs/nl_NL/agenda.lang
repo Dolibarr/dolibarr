@@ -32,6 +32,7 @@ ActionsEvents=Evenementen waarvoor Dolibarr een item automatisch zal maken in de
 PropalValidatedInDolibarr=Voorstel gevalideerd
 InvoiceValidatedInDolibarr=Factuur gevalideerd
 OrderValidatedInDolibarr=Bestelliing gevalideerd
+InterventionValidatedInDolibarr=Interventie %s gevalideerd
 NewCompanyToDolibarr=Derden aangemaakt
 DateActionPlannedStart=Geplande startdatum
 DateActionPlannedEnd=Geplande einddatum

@@ -71,10 +71,10 @@ DateLastSend=Datum van de laatse verzenden
 # vrije modules mailing lijst van ontvangers
 MailingModuleDescContactCompanies=Contacten van alle derden (klant, prospect, leverancier, ...)
 MailingModuleDescDolibarrUsers=Alle Dolibarr gebruikers met e-mail
+MailingModuleDescFundationMembers=Stichting leden/donateurs met e-mails
 MailingModuleDescEmailsFromFile=E-mail van een tekstbestand (e-mail, naam, achternaam)
 MailingModuleDescContactsCategories=Contacten van alle derden (per categorie)
 MailingModuleDescDolibarrContractsLinesExpired=Verstreken contract lijnen derden
-MailingModuleDescFundationMembers=Stichting leden/donateurs met e-mails
 
 LineInFile=Regel %s in bestand
 RecipientSelectionModules=Omschreven verzoeken om ontvangers te selecteren
@@ -107,3 +107,4 @@ ANotificationsWillBeSent=1 aanmelding zal worden verzonden per e-mail
 SomeNotificationsWillBeSent=%s aanmeldingen worden verzonden per e-mail
 AddNewNotification=Activeren van een nieuw kennisgeving verzoek
 ListOfActiveNotifications=Een lijst van alle actieve aanmeldings verzoeken
+ListOfNotificationsDone=Lijst van verzonden kennisgeving e-mails
