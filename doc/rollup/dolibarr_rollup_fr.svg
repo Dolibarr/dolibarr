@@ -31,17 +31,17 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:window-width="1280"
-     inkscape:window-height="968"
+     inkscape:window-height="752"
      id="namedview2818"
      showgrid="false"
      inkscape:document-units="cm"
      units="cm"
-     inkscape:zoom="0.090879795"
-     inkscape:cx="653.81681"
-     inkscape:cy="3765.7249"
-     inkscape:window-x="-4"
-     inkscape:window-y="-4"
-     inkscape:window-maximized="1"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="1520.091"
+     inkscape:cy="5992.2827"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
      inkscape:current-layer="svg2816"
      inkscape:showpageshadow="false"
      showborder="true"
@@ -195,7 +195,7 @@
        x2="1221.0221"
        y1="1026.5248"
        x1="1223.7272"
-       gradientTransform="matrix(1.3443321,0,0,1.3443323,-82.153603,-495.26057)"
+       gradientTransform="matrix(1.3443321,0,0,1.3443323,-84.203155,-503.06717)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient5510"
        xlink:href="#linearGradient3734"
@@ -394,7 +394,7 @@
        x2="3164.687"
        y2="6001.1572"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(-46.417306,0.00993776)" />
+       gradientTransform="translate(-159.14511,0.00993776)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient7625"
@@ -448,21 +448,21 @@
      style="opacity:0.8;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#0000ff;stroke-width:1.04935145;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4209)" />
   <rect
      y="726.17676"
-     x="501.58249"
+     x="479.58249"
      height="323.36841"
      width="473.70636"
      id="rect5304-9"
      style="opacity:0.51851849;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:4;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;filter:url(#filter5352-5)" />
   <rect
-     y="701.14551"
-     x="475.13907"
+     y="713.14551"
+     x="463.13907"
      height="319.52393"
      width="469.86188"
      id="rect5306"
      style="fill:#72abbc;fill-opacity:1;fill-rule:nonzero;stroke:none" />
   <rect
      y="785.73926"
-     x="432.5575"
+     x="426.5575"
      height="323.36841"
      width="473.70636"
      id="rect5304"
@@ -480,9 +480,9 @@
      id="text2828-6"
      y="887.85065"
      x="537.1402"
-     style="font-size:886.12506104px;font-style:normal;font-weight:normal;opacity:0.36700003;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter8715);font-family:Bitstream Vera Sans"
+     style="font-size:886.12506104px;font-style:normal;font-weight:normal;opacity:0.36700027;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter8715);font-family:Bitstream Vera Sans"
      xml:space="preserve"><tspan
-       style="font-size:518.16009521px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Aharoni;-inkscape-font-specification:Aharoni Bold"
+       style="font-size:518.16009521000000859px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Bauhaus 93;-inkscape-font-specification:Bauhaus 93"
        y="887.85065"
        x="537.1402"
        id="tspan2830-9"
@@ -490,24 +490,24 @@
   <text
      transform="scale(0.97582454,1.0247744)"
      id="text2828"
-     y="1265.9525"
-     x="600.70654"
+     y="1258.1459"
+     x="598.65698"
      style="font-size:886.12506104px;font-style:normal;font-weight:normal;fill:url(#linearGradient5510);fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:4.53997803;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;font-family:Bitstream Vera Sans"
      xml:space="preserve"><tspan
-       style="font-size:518.16009521px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient5510);fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:4.53997803;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;font-family:Aharoni;-inkscape-font-specification:Aharoni Bold"
-       y="1265.9525"
-       x="600.70654"
+       style="font-size:518.16009521px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient5510);fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:4.53997803;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;font-family:Bauhaus 93;-inkscape-font-specification:Bauhaus 93"
+       y="1258.1459"
+       x="598.65698"
        id="tspan2830"
        sodipodi:role="line">Dolibarr</tspan></text>
   <text
      transform="scale(0.7574996,1.3201327)"
      id="text5484"
      y="751.19165"
-     x="2850.7134"
+     x="2760.9404"
      style="font-size:106.24382019px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
      xml:space="preserve"><tspan
        y="751.19165"
-       x="2850.7134"
+       x="2760.9404"
        id="tspan5486"
        sodipodi:role="line">ERP/CRM</tspan></text>
   <text
@@ -529,11 +529,11 @@
      transform="scale(0.90483506,1.1051738)"
      id="text5518"
      y="6024.9346"
-     x="1282.5382"
+     x="1169.8115"
      style="font-size:91.84264374px;font-style:normal;font-weight:normal;fill:url(#linearGradient7623);fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
      xml:space="preserve"><tspan
        y="6024.9346"
-       x="1282.5382"
+       x="1169.8115"
        id="tspan5520"
        sodipodi:role="line"
        style="fill:url(#linearGradient7623);fill-opacity:1">Soyez libre dans la gestion de votre activité...</tspan></text>
