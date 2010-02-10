@@ -2169,7 +2169,15 @@ class Form
 
 		if (is_object($societe_vendeuse))
 		{
-			$code_pays=$societe_vendeuse->pays_code;
+			if ($societe_vendeuse->isInEEC() && (! empty($societe_vendeuse->tva_intra))
+				&& preg_match('/^([A-Z][A-Z])/',$societe_vendeuse->tva_intra,$reg))
+			{
+				$code_pays=$reg[1];
+			}
+			else
+			{
+				$code_pays=$societe_vendeuse->pays_code;
+			}
 		}
 		else
 		{
