@@ -121,6 +121,8 @@ if ($taskid)
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
+		if ($mesg) print $mesg;
+		
 		$head=task_prepare_head($task);
 
 		dol_fiche_head($head, 'task', $langs->trans("Task"),0,'projecttask');
@@ -262,7 +264,7 @@ if ($taskid)
 			}
 
 			// Delete
-			if ($user->rights->projet->supprimer)
+			if ($user->rights->projet->supprimer && ! $task->hasChildren())
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 			}
