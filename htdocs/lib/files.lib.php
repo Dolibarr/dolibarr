@@ -301,69 +301,14 @@ function dol_is_file($pathoffile)
 	$newpathoffile=dol_osencode($pathoffile);
 	return is_file($newpathoffile);
 }
+
 /**
- * Reading or writing to a text file
- * 
- * @param	$file		File to open or create
- * @param	$mode		Mode to open file : r = returns the text of a file, or returns FALSE if the file isn't found
- * 											w = creates or overrides a file with the text
- * 											r+ = reads a text file, then writes the text to the end of the file
- * @param	$input		String of text
- * @return	boolean		True if ok, false if error
+ * Copy a file to another file
+ * @return	boolean		True if OK, false if KO
  */
-function dol_openfile($file, $mode, $input)
+function dol_copy($srcfile, $destfile)
 {
-	if ($mode == "r")
-	{
-        if (file_exists($file))
-        {
-            $handle = fopen($file, "r");
-            $output = fread($handle, filesize($file));
-            return $output; // output file text
-        }
-        else
-        {
-            return false; // failed.
-        }
-    }
-    elseif ($mode == "w")
-    {
-        $handle = fopen($file, "w");
-        if (!fwrite($handle, $input))
-        {
-            return false; // failed.
-        }
-        else
-        {
-            return true; //success.
-        }
-    }
-    elseif ($mode == "r+")
-    {       
-        if (file_exists($file) && isset($input))
-        {
-            $handle = fopen($file, "r+");
-            $read = fread($handle, filesize($file));
-            $data = $read.$input;
-            if (!fwrite($handle, $data))
-            {
-                return false; // failed.
-            }
-            else
-            {
-                return true; // success.
-            }
-        }
-        else
-        {
-            return false; // failed.
-        }
-    }
-    else
-    {
-        return false; // failed.
-    }
-    fclose($handle);
+	return @copy($srcfile, $destfile);
 }
 
 ?>

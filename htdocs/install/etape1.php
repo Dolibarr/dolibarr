@@ -208,8 +208,7 @@ if ($_POST["action"] == "set")
 		// Save old conf file on disk
 		if (file_exists("$conffile"))
 		{
-			$oldcontent = dol_openfile($conffile, 'r', '');
-			if (! dol_openfile($conffile.'.old', 'w', $oldcontent)) $error++;
+			@dol_copy($conffile, $conffile.'.old');	// We must ignore errors as an existing old file may alreday exists and not be replacable
 		}
 
 		$error+=write_conf_file($conffile);
