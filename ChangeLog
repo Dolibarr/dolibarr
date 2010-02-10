@@ -30,6 +30,8 @@ For users:
 - New: Can define the new product ref when cloning.
 - New: Project module support status of project and end date.
 - New: Provide a debian/ubuntu package.
+- New: Add link to check a SIREN for french users.
+- New: Add link "now" to fill date when creating invoices.
 - Fix: Import module works even if prefix is empty in source file.
 - Fix: bug #28055 : Unable to modify the date of a cloned command.
 - Fix: bug #27891.

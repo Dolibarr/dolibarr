@@ -689,7 +689,7 @@ else
 		if ($langs->transcountry("ProfId1",$code_pays) != '-')
 		{
 			print $conf->global->MAIN_INFO_SIREN;
-			if ($code_pays == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp">'.$langs->trans("Check").'</a>';
+			if ($code_pays == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp" target="_blank">'.$langs->trans("Check").'</a>';
 		}
 		print '</td></tr>';
 	}
