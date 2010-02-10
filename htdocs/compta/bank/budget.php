@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,7 @@ if ($result)
 
 	print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 	print '<td align="right" class="liste_total">'.price($total).'</td>';
-	print '<td align="right" colspan="2" class="liste_total">'.price(price2num($total / $totalnb, 'MT')).'</td></tr>';
+	print '<td align="right" colspan="2" class="liste_total">'.price($totalnb?price2num($total / $totalnb, 'MT'):0).'</td></tr>';
 }
 else
 {
