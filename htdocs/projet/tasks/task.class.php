@@ -357,7 +357,8 @@ class Task extends CommonObject
 	{
 		$ret=0;
 
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet_task";
+		$sql = "SELECT COUNT(*) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE fk_task_parent=".$this->id;
 
 		dol_syslog(get_class($this)."::hasChildren sql=".$sql, LOG_DEBUG);
