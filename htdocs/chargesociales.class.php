@@ -346,15 +346,16 @@ class ChargeSociales extends CommonObject
 /**     \class      PaiementCharge
  *		\brief      Classe permettant la gestion des paiements des charges
  */
-class PaiementCharge
+class PaiementCharge extends CommonObject
 {
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
-	//var $element='paiementcharge';			//!< Id that identify managed objects
-	//var $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	var $element='paiementcharge';			//!< Id that identify managed objects
+	var $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
 
     var $id;
+    var $ref;
 
 	var $fk_charge;
 	var $datec='';
@@ -463,7 +464,6 @@ class PaiementCharge
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-
 		$sql.= " t.fk_charge,";
 		$sql.= " t.datec,";
 		$sql.= " t.tms,";
@@ -475,10 +475,10 @@ class PaiementCharge
 		$sql.= " t.fk_bank,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
-
-		$sql.= " pt.code as type_code, pt.libelle as type_libelle";
-
-        $sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t, ".MAIN_DB_PREFIX."c_paiement as pt";
+		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
+		$sql.= ' b.fk_account';
+		$sql.= " FROM (".MAIN_DB_PREFIX."paiementcharge as t, ".MAIN_DB_PREFIX."c_paiement as pt)";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
         $sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
 
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -490,6 +490,7 @@ class PaiementCharge
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id    = $obj->rowid;
+                $this->ref   = $obj->rowid;
 
 				$this->fk_charge = $obj->fk_charge;
 				$this->datec = $this->db->jdate($obj->datec);
@@ -505,6 +506,9 @@ class PaiementCharge
 
 				$this->type_code = $obj->type_code;
 				$this->type_libelle = $obj->type_libelle;
+
+				$this->bank_account   = $obj->fk_account;
+				$this->bank_line      = $obj->fk_bank;
             }
             $this->db->free($resql);
 

@@ -23,7 +23,7 @@
 /**
  *	    \file       htdocs/compta/bank/account.php
  *		\ingroup    banque
- *		\brief      Page de d�tail des transactions bancaires
+ *		\brief      List of detail of bank transaction for an account
  *		\version    $Id$
  */
 
@@ -500,28 +500,18 @@ if ($account || $_GET["ref"])
 
 				$links = $acct->get_url($objp->rowid);
 
-				$isbanktransfert=false;
-				foreach($links as $key=>$val) { if ($val['type']=='banktransfert') $isbanktransfert=true; }
-				$issocialcontrib=false;
-				foreach($links as $key=>$val) { if ($val['type']=='sc') $issocialcontrib=true; }
-
-				$showlabel=true;
-				//if (sizeof($links) == 0) $showlabel=true;
-				//if ($isbanktransfert || $issocialcontrib) $showlabel=true;
-				if ($showlabel)
+				// Sgow generic description
+				if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
 				{
-					if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
-					{
-						// Genereic description because between (). We show it after translating.
-						print $langs->trans($reg[1]);
-					}
-					else
-					{
-						print dol_trunc($objp->label,60);
-					}
+					// Generic description because between (). We show it after translating.
+					print $langs->trans($reg[1]);
+				}
+				else
+				{
+					print dol_trunc($objp->label,60);
 				}
 
-				// Add links in description field
+				// Add links after description
 				foreach($links as $key=>$val)
 				{
 					if ($links[$key]['type']=='payment') {
@@ -544,12 +534,11 @@ if ($account || $_GET["ref"])
 					else if ($links[$key]['type']=='payment_sc')
 					{
 						//print ' - ';
-						/*
-						print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
-						//print img_object($langs->trans('ShowPayment'),'payment').' ';
-						print $langs->trans("SocialContributionPayment");
+						print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						//print $langs->trans("SocialContributionPayment");
 						print '</a>';
-						*/
+
 					}
 					else if ($links[$key]['type']=='payment_vat')
 					{

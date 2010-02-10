@@ -187,7 +187,9 @@ if ($resql)
 		// Date
 		print '<td align="left" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")." &nbsp; </td>\n";
 
+		// Description
 		print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
+		//print $objp->label;
 		$reg=array();
 		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);

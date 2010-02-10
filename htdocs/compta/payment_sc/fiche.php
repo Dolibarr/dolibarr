@@ -28,7 +28,6 @@
  */
 
 require('./pre.inc.php');
-require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 include_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
@@ -56,7 +55,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 {
 	$db->begin();
 
-	$paiement = new Paiement($db);
+	$paiement = new PaiementCharge($db);
 	$paiement->fetch($_GET['id']);
 	$result = $paiement->delete();
 	if ($result > 0)
@@ -76,7 +75,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 {
 	$db->begin();
 
-	$paiement = new Paiement($db);
+	$paiement = new PaiementCharge($db);
 	$paiement->id = $_GET['id'];
 	if ($paiement->valide() > 0)
 	{
@@ -166,7 +165,10 @@ if ($mesg) print $mesg.'<br>';
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td>';
+print '<td colspan="3">';
+print $html->showrefnav($paiement,'id','',1,'rowid','id');
+print '</td></tr>';
 
 // Date
 print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->datep,'day').'</td></tr>';
@@ -205,11 +207,11 @@ print '</table>';
 
 
 /*
- * List of invoices
+ * List of social contributions payed
  */
 
 $disable_delete = 0;
-$sql = 'SELECT f.rowid as scid, f.libelle, f.paye, pf.amount, pc.libelle as sc_type';
+$sql = 'SELECT f.rowid as scid, f.libelle, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql.= ' WHERE pf.fk_charge = f.rowid AND pf.fk_typepaiement = pc.id';
 $sql.= ' AND f.entity = '.$conf->entity;
@@ -225,8 +227,9 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
+	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -247,7 +250,11 @@ if ($resql)
 			print $socialcontribstatic->getNomUrl(1);
 			print "</td>\n";
 			print '<td>'.$objp->libelle.'</td>';
+			// Expected to pay
+			print '<td align="right">'.price($objp->sc_amount).'</td>';
+			// Status
 			print '<td align="center">'.$socialcontribstatic->LibStatut($objp->fk_statut,2).'</td>';
+			// Amount payed
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete

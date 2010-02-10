@@ -280,7 +280,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
 		$datepayment = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
-		$html->select_date($datepayment,'','','',0,"add_paiement");
+		$html->select_date($datepayment,'','','',0,"add_paiement",1,1);
 		print '</td>';
 		print '<td>'.$langs->trans('Comments').'</td></tr>';
 

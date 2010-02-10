@@ -226,9 +226,10 @@ if ($resql)
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -242,15 +243,27 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
+
+			// Invoice
 			print '<td>';
 			$facturestatic->id=$objp->facid;
 			$facturestatic->ref=$objp->facnumber;
 			$facturestatic->type=$objp->type;
 			print $facturestatic->getNomUrl(1);
 			print "</td>\n";
-			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
+
+			// Third party
 			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+
+			// Expected to pay
+			print '<td align="right">'.price($objp->total_ttc).'</td>';
+
+			// Statut
+			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
+
+			// Amount payed
 			print '<td align="right">'.price($objp->amount).'</td>';
+
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
 			{

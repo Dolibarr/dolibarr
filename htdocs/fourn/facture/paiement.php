@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
@@ -232,11 +232,11 @@ if ($action == 'create' || $action == 'add_paiement')
 
 			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Payment').'</td>';
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$obj->nom.'</td></tr>';
-			print '<tr><td>'.$langs->trans('Date').'</td><td>';
-			$html->select_date($dateinvoice,'','','','',"addpaiement");
+			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
+			$html->select_date($dateinvoice,'','','','',"addpaiement",1,1);
 			print '</td>';
 			print '<td>'.$langs->trans('Comments').'</td></tr>';
-			print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
 			print '</td>';
 			print '<td rowspan="3" valign="top">';
@@ -244,7 +244,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
 			if ($conf->banque->enabled)
 			{
-				print '<tr><td>'.$langs->trans('Account').'</td><td>';
+				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
 				$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
 				print '</td></tr>';
 			}
@@ -252,6 +252,8 @@ if ($action == 'create' || $action == 'add_paiement')
 			{
 				print '<tr><td colspan="2">&nbsp;</td></tr>';
 			}
+			print '</table>';
+
 			/*
 			 * Autres factures impayees
 			 */
@@ -270,7 +272,8 @@ if ($action == 'create' || $action == 'add_paiement')
 				if ($num > 0)
 				{
 					$i = 0;
-					print '<tr><td colspan="3">';
+					print '<br>';
+
 					print $langs->trans('Invoices').'<br>';
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
@@ -326,7 +329,7 @@ if ($action == 'create' || $action == 'add_paiement')
 						print '<td align="center">&nbsp;</td>';
 						print "</tr>\n";
 					}
-					print "</table></td></tr>\n";
+					print "</table>\n";
 				}
 				$db->free($resql);
 			}
@@ -338,8 +341,10 @@ if ($action == 'create' || $action == 'add_paiement')
 			/*
 			 *
 			 */
-			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
-			print '</table>';
+
+			print '<br>';
+			print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'"></center>';
+
 			print '</form>';
 		}
 	}

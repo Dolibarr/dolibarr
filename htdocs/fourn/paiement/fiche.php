@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2006      Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,24 +156,6 @@ print '<table class="border" width="100%">';
 
 print '<tr>';
 print '<td valign="top" width="140" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
-if ($conf->banque->enabled)
-{
-	if ($paiement->bank_account)
-	{
-		// Si compte renseign�, on affiche libelle
-		$bank=new Account($db);
-		$bank->fetch($paiement->bank_account);
-
-		$bankline=new AccountLine($db);
-		$bankline->fetch($paiement->bank_line);
-
-		print '<tr>';
-		print '<td valign="top" width="140" colspan="2">'.$langs->trans('BankAccount').'</td>';
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.img_object($langs->trans('ShowAccount'),'account').' '.$bank->label.'</a></td>';
-		print '<td>'.$langs->trans('BankLineConciliated').'</td><td>'.yn($bankline->rappro).'</td>';
-		print '</tr>';
-	}
-}
 
 //switch through edition options for date (only available when statut is -not 1- (=validated))
 if (empty($_GET['action']) || $_GET['action']!='edit_date')
@@ -242,6 +224,25 @@ if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 	print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$paiement->getLibStatut(4).'</td></tr>';
 }
 
+if ($conf->banque->enabled)
+{
+	if ($paiement->bank_account)
+	{
+		// Si compte renseigne, on affiche libelle
+		$bank=new Account($db);
+		$bank->fetch($paiement->bank_account);
+
+		$bankline=new AccountLine($db);
+		$bankline->fetch($paiement->bank_line);
+
+		print '<tr>';
+		print '<td valign="top" width="140" colspan="2">'.$langs->trans('BankAccount').'</td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.img_object($langs->trans('ShowAccount'),'account').' '.$bank->label.'</a></td>';
+		print '<td>'.$langs->trans('BankLineConciliated').'</td><td>'.yn($bankline->rappro).'</td>';
+		print '</tr>';
+	}
+}
+
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 
 print '</table>';
@@ -270,9 +271,10 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Ref').'</td>';
 	print '<td>'.$langs->trans('RefSupplier').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -286,12 +288,19 @@ if ($resql)
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
+			// Ref
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 			print $objp->ref;
 			print "</a></td>\n";
+			// Ref supplier
 			print '<td>'.$objp->ref_supplier."</td>\n";
-			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
+			// Third party
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+			// Expected to pay
+			print '<td align="right">'.price($objp->total_ttc).'</td>';
+			// Status
+			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
+			// Payed
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)
