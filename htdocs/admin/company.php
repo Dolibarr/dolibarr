@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Juanjo Menent             <jmenent@2byte.es>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -689,6 +689,7 @@ else
 		if ($langs->transcountry("ProfId1",$code_pays) != '-')
 		{
 			print $conf->global->MAIN_INFO_SIREN;
+			if ($code_pays == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp">'.$langs->trans("Check").'</a>';
 		}
 		print '</td></tr>';
 	}
