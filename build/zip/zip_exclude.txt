@@ -16,6 +16,7 @@
 */doc/dev/html/*
 */doc/dev/iso-normes/*
 */doc/flyer/*
+*/doc/font/*
 */doc/rollup/*
 */doc/tshirt/*
 */doc/wiki/*

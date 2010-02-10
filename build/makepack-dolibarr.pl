@@ -378,6 +378,10 @@ if ($nboftargetok) {
 		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.tgz`;
 		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.zip`;
 		    $ret=`rm -f $BUILDROOT/$PROJECT/usr/share/$PROJECT/build/dolibarr-*.deb`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/flyer`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/font`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/tshirt`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/rollup`;
 
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
