@@ -16,7 +16,9 @@ doc/dev/dbmodel
 doc/dev/normes
 doc/dev/html
 doc/dev/iso-normes
-doc/plaquette
+doc/flyer
+doc/rollup
+doc/tshirt
 doc/wiki
 document
 documents
