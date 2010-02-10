@@ -125,7 +125,7 @@ if ($id > 0 || ! empty($ref))
 	$userAccess = $project->restrictedProjectArea($user);
 }
 
-if ($_GET["action"] == 'create' && $user->rights->projet->task->creer && (empty($project->societe->id) || $userAccess))
+if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($project->societe->id) || $userAccess))
 {
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -238,7 +238,7 @@ else
 	 */
 	print '<div class="tabsAction">';
 
-	if ($user->rights->projet->task->creer)
+	if ($user->rights->projet->creer)
 	{
 		if ($userAccess)
 		{

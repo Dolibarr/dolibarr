@@ -33,7 +33,7 @@ $id = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-if (!$user->rights->projet->task->lire) accessforbidden();
+if (!$user->rights->projet->lire) accessforbidden();
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
 
@@ -42,7 +42,7 @@ if (!$user->rights->projet->task->lire) accessforbidden();
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->projet->task->creer)
+if ($_POST["action"] == 'update_public' && $user->rights->projet->creer)
 {
 	$task = new Task($db);
 	$task->fetch($_GET['id']);
@@ -61,7 +61,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->projet->task->creer)
 	}
 }
 
-if ($_POST['action'] == 'update_private' && $user->rights->projet->task->creer)
+if ($_POST['action'] == 'update_private' && $user->rights->projet->creer)
 {
 	$task = new Task($db);
 	$task->fetch($_GET['id']);
@@ -198,7 +198,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 
 		print '<div class="tabsAction">';
-		if ($user->rights->projet->task->creer && $_GET['action'] <> 'edit')
+		if ($user->rights->projet->creer && $_GET['action'] <> 'edit')
 		{
 			if ($userAccess)
 			{
