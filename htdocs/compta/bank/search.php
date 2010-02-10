@@ -188,13 +188,87 @@ if ($resql)
 		print '<td align="left" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")." &nbsp; </td>\n";
 
 		// Description
-		print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
-		//print $objp->label;
+		print "<td>";
+
+		/* This bloc is same than in page compta/bank/account.php
+
+		 		// Show generic description
+				if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
+				{
+					// Generic description because between (). We show it after translating.
+					print $langs->trans($reg[1]);
+				}
+				else
+				{
+					print dol_trunc($objp->label,60);
+				}
+				// Add links after description
+				$links = $acct->get_url($objp->rowid);
+				foreach($links as $key=>$val)
+				{
+					if ($links[$key]['type']=='payment') {
+						$paymentstatic->id=$links[$key]['url_id'];
+						print ' '.$paymentstatic->getNomUrl(2);
+					}
+					else if ($links[$key]['type']=='payment_supplier') {
+						$paymentsupplierstatic->id=$links[$key]['url_id'];
+						$paymentsupplierstatic->ref=$links[$key]['url_id'];
+						print ' '.$paymentsupplierstatic->getNomUrl(2);
+					}
+					else if ($links[$key]['type']=='company') {
+					}
+					else if ($links[$key]['type']=='sc') {	// This is waiting for card to link to payment_sc
+						$chargestatic->id=$links[$key]['url_id'];
+						$chargestatic->ref=$links[$key]['url_id'];
+						$chargestatic->lib=$langs->trans("SocialContribution");
+						print ' '.$chargestatic->getNomUrl(2);
+					}
+					else if ($links[$key]['type']=='payment_sc')
+					{
+						//print ' - ';
+						print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						//print $langs->trans("SocialContributionPayment");
+						print '</a>';
+
+					}
+					else if ($links[$key]['type']=='payment_vat')
+					{
+						$paymentvatstatic->id=$links[$key]['url_id'];
+						$paymentvatstatic->ref=$links[$key]['url_id'];
+						print ' '.$paymentvatstatic->getNomUrl(2);
+					}
+					else if ($links[$key]['type']=='banktransfert') {
+						// Do not show this link (avoid confusion). Can already be accessed from transaction detail
+					}
+					else if ($links[$key]['type']=='member') {
+					}
+					else {
+						//print ' - ';
+						print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+						{
+							// Label generique car entre parentheses. On l'affiche en le traduisant
+							if ($reg[1]=='paiement') $reg[1]='Payment';
+							print $langs->trans($reg[1]);
+						}
+						else
+						{
+							print $links[$key]['label'];
+						}
+						print '</a>';
+					}
+				}
+		*/
+
+		print "<a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
 		$reg=array();
 		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthee on tente recherche de traduction
 		if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 		else print dol_trunc($objp->label,40);
 		print "</a>&nbsp;";
+
+		print '</td>';
 
 		// Third party
 		print "<td>";

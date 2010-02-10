@@ -497,10 +497,7 @@ if ($account || $_GET["ref"])
 
 				// Description
 				print '<td>';
-
-				$links = $acct->get_url($objp->rowid);
-
-				// Sgow generic description
+				// Show generic description
 				if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
 				{
 					// Generic description because between (). We show it after translating.
@@ -510,8 +507,8 @@ if ($account || $_GET["ref"])
 				{
 					print dol_trunc($objp->label,60);
 				}
-
 				// Add links after description
+				$links = $acct->get_url($objp->rowid);
 				foreach($links as $key=>$val)
 				{
 					if ($links[$key]['type']=='payment') {
@@ -547,7 +544,7 @@ if ($account || $_GET["ref"])
 						print ' '.$paymentvatstatic->getNomUrl(2);
 					}
 					else if ($links[$key]['type']=='banktransfert') {
-						/* Do not show this link (avoid confusion). Can already be accessed from transaction detail */
+						// Do not show this link (avoid confusion). Can already be accessed from transaction detail
 					}
 					else if ($links[$key]['type']=='member') {
 					}
