@@ -134,7 +134,7 @@ class Translate {
 
 
 	/**
-	 *  \brief      Load in a memory array, translation key-value for a particular file.
+	 *  \brief      Load translation key-value for a particular file, into a memory array.
 	 *              If data for file already loaded, do nothing.
 	 * 				All data in translation array are stored in UTF-8 format.
 	 *  \param      domain      		File name to load (.lang file). Use @ before value if domain is in a module directory.
