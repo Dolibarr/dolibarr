@@ -131,6 +131,18 @@ ALTER TABLE llx_projet_task CHANGE note note_private text;
 ALTER TABLE llx_projet_task ADD COLUMN note_public text AFTER note_private;
 ALTER TABLE llx_projet_task ADD COLUMN rang	integer	DEFAULT 0 AFTER note_public;
 
+-- Delete old key
+ALTER TABLE llx_projet_task DROP INDEX fk_projet;
+ALTER TABLE llx_projet_task DROP INDEX fk_user_creat;
+ALTER TABLE llx_projet_task DROP INDEX statut;
+-- Add new key
+ALTER TABLE llx_projet_task ADD INDEX idx_projet_task_fk_projet (fk_projet);
+ALTER TABLE llx_projet_task ADD INDEX idx_projet_task_fk_user_creat (fk_user_creat);
+ALTER TABLE llx_projet_task ADD INDEX idx_projet_task_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_projet 	FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
+ALTER TABLE llx_projet_task ADD CONSTRAINT fk_projet_task_fk_user_valid FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
+
 ALTER TABLE llx_element_contact DROP FOREIGN KEY fk_element_contact_fk_c_type_contact;
 ALTER TABLE llx_element_contact DROP INDEX fk_element_contact_fk_c_type_contact;
 UPDATE llx_c_type_contact SET rowid='160' WHERE rowid='80';
