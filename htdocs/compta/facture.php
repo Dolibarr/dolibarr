@@ -1693,7 +1693,7 @@ if ($_GET['action'] == 'create')
 
 	// Date invoice
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">';
-	$html->select_date($dateinvoice,'','','','',"add");
+	$html->select_date($dateinvoice,'','','','',"add",1,1);
 	print '</td></tr>';
 
 	// Payment term

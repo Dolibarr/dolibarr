@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
@@ -423,10 +423,10 @@ if ($_GET['action'] == 'create')
 		$societe->fetch($_GET['socid']);
 	}
 
-	$datefacture=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-	$datedue=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
-
-	$dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
+	$datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
+	$dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
+	$datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+	$datedue=($datetmp==''?-1:$datetmp);
 
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -456,12 +456,12 @@ if ($_GET['action'] == 'create')
 
 	// Date invoice
 	print '<tr><td>'.$langs->trans('DateInvoice').'</td><td>';
-	$html->select_date($dateinvoice,'','','','',"add");
+	$html->select_date($dateinvoice,'','','','',"add",1,1);
 	print '</td></tr>';
 
 	// Due date
 	print '<tr><td>'.$langs->trans('DateEcheance').'</td><td>';
-	$html->select_date('','ech','','','',"add");
+	$html->select_date($datedue,'ech','','','',"add",1,1);
 	print '</td></tr>';
 
 	print '</table><br>';
