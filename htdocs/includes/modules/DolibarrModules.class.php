@@ -1082,7 +1082,7 @@ class DolibarrModules
 					$name      = $constname.strtoupper($this->dirs[$key][0]);
 				}
 
-				// Define directory full path
+				// Define directory full path ($dir must start with "/")
 				if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $conf->entity == 1) $fulldir = DOL_DATA_ROOT.$dir;
 				else $fulldir = DOL_DATA_ROOT."/".$conf->entity.$dir;
 				// Create dir if it does not exists
