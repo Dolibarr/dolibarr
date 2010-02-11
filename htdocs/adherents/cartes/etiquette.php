@@ -44,13 +44,8 @@ if (! file_exists($dir))
 }
 
 
-
-//$pdf = new PDF_card('CARD', 1, 1);
-if (defined("ADHERENT_ETIQUETTE_TYPE") && ADHERENT_ETIQUETTE_TYPE !=''){
-	$pdf = new PDF_card(ADHERENT_ETIQUETTE_TYPE, 1, 1);
-}else{
-	$pdf = new PDF_card('L7163', 1, 1);
-}
+if (empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) $conf->global->ADHERENT_ETIQUETTE_TYPE='L7163';
+$pdf = new PDF_card($conf->global->ADHERENT_ETIQUETTE_TYPE, 1, 1);
 
 $pdf->Open();
 $pdf->AddPage();

@@ -43,6 +43,8 @@ $typeconst=array('yesno','texte','chaine');
 // Action mise a jour ou ajout d'une constante
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
+	if (($_POST["constname"]=='ADHERENT_CARD_TYPE' || $_POST["constname"]=='ADHERENT_ETIQUETTE_TYPE')
+		&& $_POST["constvalue"] == -1) $_POST["constvalue"]='';
 	$result=dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'',$conf->entity);
 	if ($result < 0)
 	{
@@ -69,6 +71,7 @@ if ($_GET["action"] == 'unset')
 		print $db->error();
 	}
 }
+
 
 
 /*
@@ -219,7 +222,8 @@ $constantes=array(
 		'ADHERENT_CARD_HEADER_TEXT',
 		'ADHERENT_CARD_TEXT',
 		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
+		'ADHERENT_CARD_FOOTER_TEXT',
+		'ADHERENT_CARD_TYPE'
 		);
 print_fiche_titre($langs->trans("MembersCards"),'','');
 
@@ -271,7 +275,7 @@ llxFooter('$Date$ - $Revision$');
 
 function form_constantes($tableau)
 {
-	global $db,$bc,$langs,$conf;
+	global $db,$bc,$langs,$conf,$_Avery_Labels;
 
 	$form = new Form($db);
 
@@ -319,16 +323,17 @@ function form_constantes($tableau)
 			print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
 			print "</td>\n";
 
-			if ($const == 'ADHERENT_ETIQUETTE_TYPE')
+			if ($const == 'ADHERENT_CARD_TYPE' || $const == 'ADHERENT_ETIQUETTE_TYPE')
 			{
 				print '<td>';
-				// List of possible labels. Values must exists in
-				// file htdocs/adherents/PDF_Card.class.php
-				require_once(DOL_DOCUMENT_ROOT.'/includes/modules/member/PDF_card.class.php');
-				$pdfcardstatic=new PDF_card('5160',1,1,'mm');
-				$arrayoflabels=array_keys($pdfcardstatic->_Avery_Labels);
-
-				$form->select_array('constvalue',$arrayoflabels,$obj->value,1,0,1);
+				// List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+				require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
+				$arrayoflabels=array();
+				foreach(array_keys($_Avery_Labels) as $codecards)
+				{
+					$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
+				}
+				$form->select_array('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
 				print '</td><td>';
 				$form->select_array('consttype',array('yesno','texte','chaine'),1);
 			}

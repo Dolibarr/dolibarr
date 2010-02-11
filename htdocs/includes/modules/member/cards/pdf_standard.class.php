@@ -65,6 +65,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -74,14 +75,17 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
  */
 class pdf_standard {
 
+	var $code;		// Code of format
+	var $format;	// Array with informations
+
 	// Proprietes privees
 	var $_Avery_Name	= '';	// Nom du format de l'etiquette
 	var $_Margin_Left	= 0;	// Marge de gauche de l'etiquette
 	var $_Margin_Top	= 0;	// marge en haut de la page avant la premiere etiquette
 	var $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'etiquettes
 	var $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'etiquettes
-	var $_X_Number 	= 0;	// Nombre d'etiquettes sur la largeur de la page
-	var $_Y_Number 	= 0;	// Nombre d'etiquettes sur la hauteur de la page
+	var $_X_Number 	= 0;	// NX Nombre d'etiquettes sur la largeur de la page
+	var $_Y_Number 	= 0;	// NY Nombre d'etiquettes sur la hauteur de la page
 	var $_Width 		= 0;	// Largeur de chaque etiquette
 	var $_Height 		= 0;	// Hauteur de chaque etiquette
 	var $_Char_Size	= 10;	// Hauteur des caracteres
@@ -93,129 +97,13 @@ class pdf_standard {
 	var $_COUNTY = 1;
 	var $_First = 1;
 
-	// Listing of labels size
-	var $_Avery_Labels = array (
-			      '5160'=>array('name'=>'5160',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>1.762,
-					    'marginTop'=>10.7,
-					    'NX'=>3,
-					    'NY'=>10,
-					    'SpaceX'=>3.175,
-					    'SpaceY'=>0,
-					    'width'=>66.675,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      '5161'=>array('name'=>'5161',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>0.967,
-					    'marginTop'=>10.7,
-					    'NX'=>2,
-					    'NY'=>10,
-					    'SpaceX'=>3.967,
-					    'SpaceY'=>0,
-					    'width'=>101.6,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      '5162'=>array('name'=>'5162',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>0.97,
-					    'marginTop'=>20.224,
-					    'NX'=>2,
-					    'NY'=>7,
-					    'SpaceX'=>4.762,
-					    'SpaceY'=>0,
-					    'width'=>100.807,
-					    'height'=>35.72,
-					    'font-size'=>8),
-			      '5163'=>array('name'=>'5163',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>1.762,
-					    'marginTop'=>10.7,
-					    'NX'=>2,
-					    'NY'=>5,
-					    'SpaceX'=>3.175,
-					    'SpaceY'=>0,
-					    'width'=>101.6,
-					    'height'=>50.8,
-					    'font-size'=>8),
-			      '5164'=>array('name'=>'5164',
-					    'paper-size'=>'letter',
-					    'metric'=>'in',
-					    'marginLeft'=>0.148,
-					    'marginTop'=>0.5,
-					    'NX'=>2,
-					    'NY'=>3,
-					    'SpaceX'=>0.2031,
-					    'SpaceY'=>0,
-					    'width'=>4.0,
-					    'height'=>3.33,
-					    'font-size'=>12),
-			      '8600'=>array('name'=>'8600',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>7.1,
-					    'marginTop'=>19,
-					    'NX'=>3,
-					    'NY'=>10,
-					    'SpaceX'=>9.5,
-					    'SpaceY'=>3.1,
-					    'width'=>66.6,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      'L7163'=>array('name'=>'L7163',
-					     'paper-size'=>'A4',
-					     'metric'=>'mm',
-					     'marginLeft'=>5,
-					     'marginTop'=>15,
-					     'NX'=>2,
-					     'NY'=>7,
-					     'SpaceX'=>25,
-					     'SpaceY'=>0,
-					     'width'=>99.1,
-					     'height'=>38.1,
-					     'font-size'=>10),
-			      'CARD'=>array('name'=>'CARD',
-					    'paper-size'=>'A4',
-					    'metric'=>'mm',
-					    'marginLeft'=>15,
-					    'marginTop'=>15,
-					    'NX'=>2,
-					    'NY'=>5,
-					    'SpaceX'=>0,
-					    'SpaceY'=>0,
-					    'width'=>85,
-					    'height'=>54,
-					    'font-size'=>10)
-	);
-
-
 
 	/**
 	 * Constructor
-	 *
-	 * @param unknown_type $format		Avery format of label paper. For example 5160, 5161, 5162, 5163, 5164, 8600, L7163, CARD
-	 * @param unknown_type $posX
-	 * @param unknown_type $posY
-	 * @param unknown_type $unit
-	 * @return PDF_card
 	 */
-	function pdf_standard($db, $format='CARD', $posX=1, $posY=1, $unit='mm')
+	function pdf_standard($db)
 	{
-		global $conf,$langs,$mysoc;
-
 		$this->db = $db;
-
-		$this->Tformat = $this->_Avery_Labels[$format];
-
-		// Dimension page pour format A4
-		$this->type = 'pdf';
-		$this->format = $this->Tformat['paper-size'];
-
 	}
 
 
@@ -264,84 +152,88 @@ class pdf_standard {
 		$photo=$dir.'/'.$file;
 		if (! is_readable($photo)) $photo='';
 
-		if ($this->_Avery_Name == "CARD")
+		// Print lines
+		if ($this->code == "CARD")
 		{
 			$this->Tformat=$this->_Avery_Labels["CARD"];
 			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
 			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
+		}
 
-			// Top
-			if ($header!=''){
+		// Top
+		if ($header!='')
+		{
+			if ($this->code == "CARD")
+			{
 				$pdf->SetDrawColor(128,128,128);
 				$pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1);
 				$pdf->SetDrawColor(0,0,0);
-				$pdf->SetXY($_PosX, $_PosY+1);
-				$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
+			}
+			$pdf->SetXY($_PosX, $_PosY+1);
+			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
+		}
+
+		// Center
+		if ($textright=='')	// Only a left part
+		{
+			if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+			else
+			{
+				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
+				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+			}
+		}
+		else if ($textleft!='' && $textright!='')	//
+		{
+			if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
+			{
+				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+				else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
+				$pdf->SetXY($_PosX+21, $_PosY+3+$this->_Line_Height);
+				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+			}
+			else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
+			{
+				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
+				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+			}
+			else
+			{
+				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
+				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
 
-			// Center
-			if ($textright=='')	// Only a left part
+		}
+		else	// Only a right part
+		{
+			if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
+			else
 			{
-				if ($textleft == '%LOGO%' && $logo) $this->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-				else if ($textleft == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-				else
-				{
-					$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
-				}
+				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
+				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
-			else if ($textleft!='' && $textright!='')	//
-			{
-				if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
-				{
-					if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-					else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+2,$_PosY+3+$this->_Line_Height,20);
-					$pdf->SetXY($_PosX+21, $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-				}
-				else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
-				{
-					if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
-					else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
-					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
-				}
-				else
-				{
-					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
-					$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-				}
+		}
 
-			}
-			else	// Only a right part
-			{
-				if ($textright == '%LOGO%' && $logo) $this->Image($logo,$_PosX+$this->_Width-21,$_PosY+1,20);
-				else if ($textright == '%PHOTO%' && $photo) $this->Image($photo,$_PosX+$this->_Width-21,$_PosY+1,20);
-				else
-				{
-					$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-					$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
-				}
-			}
-
-			// Bottom
-			if ($footer!='')
+		// Bottom
+		if ($footer!='')
+		{
+			if ($this->code == "CARD")
 			{
 				$pdf->SetDrawColor(128,128,128);
 				$pdf->Line($_PosX, $_PosY+$this->_Height-$this->_Line_Height-2, $_PosX+$this->_Width, $_PosY+$this->_Height-$this->_Line_Height-2);
 				$pdf->SetDrawColor(0,0,0);
-				$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
-				$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 			}
+			$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
+			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
+		}
+		//print "$_PosY+$this->_Height-$this->_Line_Height-1<br>\n";
 
-		}
-		else
-		{
-			$pdf->SetXY($_PosX+3, $_PosY+3);
-			$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
-		}
 		$this->_COUNTY++;
 
 		if ($this->_COUNTY == $this->_Y_Number) {
@@ -439,6 +331,7 @@ class pdf_standard {
 
 		$this->_Metric 	= $format['metric'];
 		$this->_Avery_Name 	= $format['name'];
+		$this->_Avery_Code	= $format['code'];
 		$this->_Margin_Left	= $this->_Convert_Metric ($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top	= $this->_Convert_Metric ($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space 	= $this->_Convert_Metric ($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
@@ -459,7 +352,14 @@ class pdf_standard {
 	 */
 	function write_file($arrayofmembers,$outputlangs)
 	{
-		global $user,$langs,$conf;
+		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
+
+		// Choose type (CARD by default)
+		$this->code=empty($conf->global->ADHERENT_CARD_TYPE)?'CARD':$conf->global->ADHERENT_CARD_TYPE;
+		$this->Tformat = $_Avery_Labels[$this->code];
+		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
+		$this->type = 'pdf';
+		$this->format = $this->Tformat['paper-size'];
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
@@ -487,7 +387,7 @@ class pdf_standard {
 		// Protection et encryption du pdf
 		if ($conf->global->PDF_SECURITY_ENCRYPTION)
 		{
-			$pdf=new FPDI_Protection('P','mm',$this->format);
+			$pdf=new FPDI_Protection('P',$this->Tformat['metric'],$this->format);
 			$pdfrights = array('print'); // Ne permet que l'impression du document
 			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
 			$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
@@ -495,15 +395,17 @@ class pdf_standard {
 		}
 		else
 		{
-			$pdf=new FPDI('P','mm',$this->format);
+			$pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
 		}
 
 
 		$pdf->SetMargins(0,0);
 		$pdf->SetAutoPageBreak(false);
 
-		$this->_Metric_Doc = 'mm';
+		$this->_Metric_Doc = $this->Tformat['metric'];
 		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		$posX=1;
+		$posY=1;
 		if ($posX > 0) $posX--; else $posX=0;
 		if ($posY > 0) $posY--; else $posY=0;
 		$this->_COUNTX = $posX;
@@ -521,6 +423,9 @@ class pdf_standard {
 			// imprime le texte specifique sur la carte
 			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id']);
 		}
+
+		//$pdf->SetXY(10, 295);
+		//$pdf->Cell($this->_Width, $this->_Line_Height, 'XXX',0,1,'C');
 
 
 		// Output to file

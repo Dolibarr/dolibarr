@@ -65,6 +65,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/format_cards.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -73,6 +74,9 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
  *	\brief      Classe afin d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 class PDF_card extends FPDF {
+
+	var $code;		// Code of format
+	var $format;	// Array with informations
 
 	// Proprietes privees
 	var $_Avery_Name	= '';	// Nom du format de l'etiquette
@@ -93,106 +97,6 @@ class PDF_card extends FPDF {
 	var $_COUNTY = 1;
 	var $_First = 1;
 
-	// Listing of labels size
-	var $_Avery_Labels = array (
-			      '5160'=>array('name'=>'5160',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>1.762,
-					    'marginTop'=>10.7,
-					    'NX'=>3,
-					    'NY'=>10,
-					    'SpaceX'=>3.175,
-					    'SpaceY'=>0,
-					    'width'=>66.675,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      '5161'=>array('name'=>'5161',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>0.967,
-					    'marginTop'=>10.7,
-					    'NX'=>2,
-					    'NY'=>10,
-					    'SpaceX'=>3.967,
-					    'SpaceY'=>0,
-					    'width'=>101.6,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      '5162'=>array('name'=>'5162',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>0.97,
-					    'marginTop'=>20.224,
-					    'NX'=>2,
-					    'NY'=>7,
-					    'SpaceX'=>4.762,
-					    'SpaceY'=>0,
-					    'width'=>100.807,
-					    'height'=>35.72,
-					    'font-size'=>8),
-			      '5163'=>array('name'=>'5163',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>1.762,
-					    'marginTop'=>10.7,
-					    'NX'=>2,
-					    'NY'=>5,
-					    'SpaceX'=>3.175,
-					    'SpaceY'=>0,
-					    'width'=>101.6,
-					    'height'=>50.8,
-					    'font-size'=>8),
-			      '5164'=>array('name'=>'5164',
-					    'paper-size'=>'letter',
-					    'metric'=>'in',
-					    'marginLeft'=>0.148,
-					    'marginTop'=>0.5,
-					    'NX'=>2,
-					    'NY'=>3,
-					    'SpaceX'=>0.2031,
-					    'SpaceY'=>0,
-					    'width'=>4.0,
-					    'height'=>3.33,
-					    'font-size'=>12),
-			      '8600'=>array('name'=>'8600',
-					    'paper-size'=>'letter',
-					    'metric'=>'mm',
-					    'marginLeft'=>7.1,
-					    'marginTop'=>19,
-					    'NX'=>3,
-					    'NY'=>10,
-					    'SpaceX'=>9.5,
-					    'SpaceY'=>3.1,
-					    'width'=>66.6,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      'L7163'=>array('name'=>'L7163',
-					     'paper-size'=>'A4',
-					     'metric'=>'mm',
-					     'marginLeft'=>5,
-					     'marginTop'=>15,
-					     'NX'=>2,
-					     'NY'=>7,
-					     'SpaceX'=>25,
-					     'SpaceY'=>0,
-					     'width'=>99.1,
-					     'height'=>38.1,
-					     'font-size'=>10),
-			      'CARD'=>array('name'=>'CARD',
-					    'paper-size'=>'A4',
-					    'metric'=>'mm',
-					    'marginLeft'=>15,
-					    'marginTop'=>15,
-					    'NX'=>2,
-					    'NY'=>5,
-					    'SpaceX'=>0,
-					    'SpaceY'=>0,
-					    'width'=>85,
-					    'height'=>54,
-					    'font-size'=>10)
-	);
-
 
 
 	/**
@@ -206,14 +110,14 @@ class PDF_card extends FPDF {
 	 */
 	function PDF_card ($format, $posX=1, $posY=1, $unit='mm')
 	{
-		global $conf,$mysoc;
+		global $conf,$langs,$mysoc,$_Avery_Labels;
 
 		if (is_array($format)) {
 			// Si c'est un format personnel alors on maj les valeurs
 			$Tformat = $format;
 		} else {
 			// If it's an Avery format, we get array that describe it from key and we store it in Tformat.
-			$Tformat = $this->_Avery_Labels[$format];
+			$Tformat = $_Avery_Labels[$format];
 			if (empty($Tformat))
 			{
 				dol_print_error('','Format value "'.$format.'" is not supported.');
@@ -456,6 +360,7 @@ class PDF_card extends FPDF {
 	function _Set_Format($format) {
 		$this->_Metric 	= $format['metric'];
 		$this->_Avery_Name 	= $format['name'];
+		$this->_Avery_Code	= $format['code'];
 		$this->_Margin_Left	= $this->_Convert_Metric ($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top	= $this->_Convert_Metric ($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space 	= $this->_Convert_Metric ($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
