@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ create table llx_product
   datec              datetime,
   tms                timestamp,
   ref                varchar(32)  NOT NULL,
-  entity             integer DEFAULT 1 NOT NULL, -- multi company id
+  entity             integer	  DEFAULT 1 NOT NULL, -- multi company id
   label              varchar(255) NOT NULL,
   description        text,
   note               text,
@@ -38,10 +38,10 @@ create table llx_product
   tva_tx             double(6,3),
   fk_user_author     integer,
   envente            tinyint      DEFAULT 1,
-  fk_product_type    integer      DEFAULT 0,	-- Type 0 for regular product, 1 for service
+  fk_product_type    integer      DEFAULT 0,		-- Type 0 for regular product, 1 for service
   duration           varchar(6),
   seuil_stock_alerte integer      DEFAULT 0,
-  stock_loc          varchar(10),               -- emplacement dans le stock
+  stock_loc          varchar(10),               	-- emplacement dans le stock
   barcode            varchar(255) DEFAULT NULL,
   fk_barcode_type    integer      DEFAULT 0,
   partnumber         varchar(32),
@@ -49,17 +49,9 @@ create table llx_product
   weight_units       tinyint      DEFAULT NULL,
   volume             float        DEFAULT NULL,
   volume_units       tinyint      DEFAULT NULL,
-  stock              integer,                  -- physical stock
-  pmp                double(24,8) default 0 NOT NULL,
+  stock              integer,						-- physical stock
+  pmp                double(24,8) DEFAULT 0 NOT NULL,
   canvas             varchar(15)  DEFAULT '',
   finished           tinyint      DEFAULT NULL,
-  import_key         varchar(14)			   -- import key
+  import_key         varchar(14)					-- import key
 )type=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company product
--- 2 : second company product
--- 3 : etc...
---
