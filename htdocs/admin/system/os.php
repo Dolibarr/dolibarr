@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +19,12 @@
 
 /**
  *      \file       htdocs/admin/system/os.php
- *		\brief      Page des infos syst�me de l'OS
+ *		\brief      Page des infos systeme de l'OS
  *		\version    $Id$
  */
 
 require("./pre.inc.php");
-
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 $langs->load("admin");
 
@@ -46,12 +47,8 @@ print "\n";
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
 
 // Recupere la version de l'OS
-ob_start();
-phpinfo();
-$chaine = ob_get_contents();
-ob_end_clean();
-preg_match('/System <\/td><td class="v">([^\\/]*)<\/td>/i',$chaine,$reg);
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
+$osversion=version_os();
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
 print '</table>';
 
 
