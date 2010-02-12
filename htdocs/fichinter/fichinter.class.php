@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ class Fichinter extends CommonObject
 	var $description;
 	var $note_private;
 	var $note_public;
-	var $projet_id;
+	var $project_id;
 	var $modelpdf;
 
 	var $lignes = array();
@@ -122,7 +122,7 @@ class Fichinter extends CommonObject
 		$sql.= ", ".$this->author;
 		$sql.= ", '".addslashes($this->description)."'";
 		$sql.= ", '".$this->modelpdf."'";
-		$sql.= ", ".($this->projet_id ? $this->projet_id : 0);
+		$sql.= ", ".($this->project_id ? $this->project_id : 0);
 		$sql.= ")";
 
 		dol_syslog("Fichinter::create sql=".$sql);
@@ -152,9 +152,9 @@ class Fichinter extends CommonObject
 		global $conf;
 
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
-		if (! strlen($this->projet_id))
+		if (! strlen($this->project_id))
 		{
-			$this->projet_id = 0;
+			$this->project_id = 0;
 		}
 
 		/*
@@ -163,7 +163,7 @@ class Fichinter extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql.= ", description  = '".addslashes($this->description)."'";
 		$sql.= ", duree = ".$this->duree;
-		$sql.= ", fk_projet = ".$this->projet_id;
+		$sql.= ", fk_projet = ".$this->project_id;
 		$sql.= " WHERE rowid = ".$id;
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -211,8 +211,7 @@ class Fichinter extends CommonObject
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
-				$this->projetidp    = $obj->fk_projet;
-				$this->projet_id    = $obj->fk_projet;
+				$this->project_id   = $obj->fk_projet;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->modelpdf     = $obj->model_pdf;

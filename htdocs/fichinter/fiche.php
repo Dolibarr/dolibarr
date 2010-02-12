@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ if ($_POST["action"] == 'add')
 
 	$fichinter->socid = $_POST["socid"];
 	$fichinter->duree = $_POST["duree"];
-	$fichinter->projet_id = $_POST["projetidp"];
+	$fichinter->project_id = $_POST["projectid"];
 	$fichinter->author = $user->id;
 	$fichinter->description = $_POST["description"];
 	$fichinter->ref = $_POST["ref"];
@@ -170,7 +170,7 @@ if ($_POST["action"] == 'update')
 	$fichinter = new Fichinter($db);
 
 	$fichinter->socid = $_POST["socid"];
-	$fichinter->projet_id = $_POST["projetidp"];
+	$fichinter->project_id = $_POST["projectid"];
 	$fichinter->author = $user->id;
 	$fichinter->description = $_POST["description"];
 	$fichinter->ref = $_POST["ref"];
@@ -212,7 +212,7 @@ if ($_POST['action'] == 'classin')
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
-	$result=$fichinter->setProject($_POST['projetid']);
+	$result=$fichinter->setProject($_POST['projectid']);
 	if ($result < 0) dol_print_error($db,$fichinter->error);
 }
 
@@ -453,7 +453,7 @@ if ($_GET["action"] == 'create')
 			$langs->load("project");
 
 			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-			$numprojet=select_projects($societe->id,$projetid,'projetidp');
+			$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
 			if ($numprojet==0)
 			{
 				print ' &nbsp; <a href="../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -573,11 +573,11 @@ elseif ($fichinterid)
 		print '</td><td colspan="3">';
 		if ($_GET['action'] == 'classin')
 		{
-			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->projetidp,'projetid');
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->project_id,'projetid');
 		}
 		else
 		{
-			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->projetidp,'none');
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->project_id,'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -622,12 +622,12 @@ elseif ($fichinterid)
 	/*
 	 * Lignes d'intervention
 	 */
-
 	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang';
 	$sql.= ', '.$db->pdate('ft.date').' as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 	$sql.= ' WHERE ft.fk_fichinter = '.$fichinterid;
 	$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
+	
 	$resql = $db->query($sql);
 	if ($resql)
 	{
