@@ -67,6 +67,7 @@ Fax=Fax
 Zip=Zip Code
 Town=City
 Web=Web
+Poste = Position
 VATIsUsed=VAT is used
 VATIsNotUsed=VAT is not used
 ##### Local Taxes #####

@@ -68,6 +68,7 @@ Fax=Fax
 Zip=Code postal
 Town=Ville
 Web=Web
+Poste = Poste
 VATIsUsed=Assujetti à TVA
 VATIsNotUsed=Non assujetti à TVA
 ##### Local Taxes #####
