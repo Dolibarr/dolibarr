@@ -79,6 +79,8 @@ case "$1" in
 			
 			. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
 			. /usr/share/wwwconfig-common/${dbtype}-dropdb.sh
+		else
+			echo "postrm Delete of dolibarr database not wanted" 
 		fi
 	
 		# Remove include files
@@ -91,7 +93,7 @@ case "$1" in
 				if [ -s $conffile ] ;
 				then
 					# We disable set -e to avoid premature end of script if error
-					echo postrm remove include to /etc/dolibarr/apache.conf
+					echo postrm remove dolibarr include from /etc/dolibarr/apache.conf
 					set +e
 					. /usr/share/wwwconfig-common/apache-uninclude.sh
 					set -e
