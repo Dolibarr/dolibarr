@@ -240,6 +240,8 @@ if ($nboftargetok) {
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
 	}
@@ -382,6 +384,8 @@ if ($nboftargetok) {
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/font`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/tshirt`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/doc/rollup`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.mysql`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECT/usr/share/$PROJECT/htdocs/conf/conf.php.postgres`;
 
  			print "Edit version in file $BUILDROOT/$PROJECT/DEBIAN/control\n";
             open (SPECFROM,"<$SOURCE/build/deb/control") || die "Error";
