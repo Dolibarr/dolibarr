@@ -306,14 +306,19 @@ function dol_is_file($pathoffile)
  * Copy a file to another file
  * @param	$srcfile	Source file
  * @param	$destfile	Destination file
- * @param	$newmask	Mask for new file
+ * @param	$newmask	Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @return	boolean		True if OK, false if KO
  */
-function dol_copy($srcfile, $destfile, $newmask)
+function dol_copy($srcfile, $destfile, $newmask=0)
 {
+	global $conf;
+
 	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask);
 	$result=@copy($srcfile, $destfile);
-	@chmod($file, octdec($newmask));	// File must not be readable by any others
+
+	if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+	@chmod($file, octdec($newmask));
+
 	return $result;
 }
 
