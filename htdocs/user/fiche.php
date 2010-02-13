@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -31,6 +31,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
@@ -69,6 +70,11 @@ $langs->load("ldap");
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 $form = new Form($db);
+
+// Define size of logo small and mini (might be set into other pages)
+$maxwidthsmall=270;$maxheightsmall=150;
+$maxwidthmini=128;$maxheightmini=72;
+$quality = 80;
 
 
 
@@ -254,6 +260,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$edituser->phenix_pass   = $_POST["phenix_pass"];
 		$edituser->entity        = $_POST["entity"];
 
+		$edituser->photo         = $_FILES['photo']['name'];
+
 		$ret=$edituser->update($user);
 		if ($ret < 0)
 		{
@@ -281,17 +289,26 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		{
 			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
-				// If photo is provided
-				if (! is_dir($conf->user->dir_output))
+				$dir= $conf->user->dir_output . '/' . get_exdir($edituser->id,2,0,1);
+
+				create_exdir($dir);
+
+				if (@is_dir($dir))
 				{
-					create_exdir($conf->user->dir_output);
-				}
-				if (is_dir($conf->user->dir_output))
-				{
-					$newfile=$conf->user->dir_output . "/" . $edituser->id . ".jpg";
+					$newfile=$dir.'/'.$_FILES['photo']['name'];
 					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
 					{
 						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+					}
+					else
+					{
+						// Create small thumbs for company (Ratio is near 16/9)
+						// Used on logon for example
+						$imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+						// Create mini thumbs for company (Ratio is near 16/9)
+						// Used on menu or for setup page for example
+						$imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
 					}
 				}
 			}

@@ -86,6 +86,7 @@ class User extends CommonObject
 	var $datelastlogin;
 	var $datepreviouslogin;
 	var $statut;
+	var $photo;
 	var $lang;
 
 	var $userpref_limite_liste;
@@ -153,7 +154,8 @@ class User extends CommonObject
 		$sql.= " u.datec as datec,";
 		$sql.= " u.tms as datem,";
 		$sql.= " u.datelastlogin as datel,";
-		$sql.= " u.datepreviouslogin as datep";
+		$sql.= " u.datepreviouslogin as datep,";
+		$sql.= " u.photo as photo";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if ($sid)
@@ -197,6 +199,7 @@ class User extends CommonObject
 				$this->admin = $obj->admin;
 				$this->note = $obj->note;
 				$this->statut = $obj->statut;
+				$this->photo = $obj->photo;
 				$this->lang = $obj->lang;
 				$this->entity = $obj->entity;
 
@@ -1023,6 +1026,7 @@ class User extends CommonObject
 		$sql.= ", phenix_login = '".addslashes($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
 		$sql.= ", note = '".addslashes($this->note)."'";
+		$sql.= ", photo = ".($this->photo?"'".addslashes($this->photo)."'":"null");
 		//$sql.= ", entity = '".$this->entity."'";
 		$sql.= " WHERE rowid = ".$this->id;
 
