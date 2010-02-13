@@ -615,7 +615,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$chec
  *	@param		year			Year
  *	@param		gm				1=Input informations are GMT values, otherwise local to server TZ
  *	@param		check			0=No check on parameters (Can use day 32, etc...)
- *	@return		timestamp		Date en timestamp, '' if error
+ *	@return		timestamp		Date as a timestamp, '' if error
  * 	@see 		dol_date, dol_stringtotime
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)

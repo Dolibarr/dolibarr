@@ -37,6 +37,9 @@ $langs->load("bills");
 
 $mesg="";
 
+$don = new Don($db);
+$donation_date=dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+
 
 /*
  * Actions
@@ -44,10 +47,24 @@ $mesg="";
 
 if ($_POST["action"] == 'update')
 {
-	if ($_POST["amount"] > 0)
-	{
+	$error=0;
 
-		$don = new Don($db);
+	if (! $_POST["amount"] > 0)
+	{
+		$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+		$_GET["action"] = "create";
+		$error=1;
+	}
+
+	if (empty($donation_date))
+	{
+		$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
+		$_GET["action"] = "create";
+		$error=1;
+	}
+
+	if (! $error)
+	{
 		$don->id = $_POST["rowid"];
 		$don->fetch($_POST["rowid"]);
 
@@ -59,7 +76,7 @@ if ($_POST["action"] == 'update')
 		$don->cp          = $_POST["cp"];
 		$don->ville       = $_POST["ville"];
 		$don->email       = $_POST["email"];
-		$don->date        = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$don->date        = $donation_date;
 		$don->note        = $_POST["note"];
 		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
@@ -73,18 +90,28 @@ if ($_POST["action"] == 'update')
 			exit;
 		}
 	}
-	else
-	{
-		$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
-	}
 }
 
 if ($_POST["action"] == 'add')
 {
-	if ($_POST["amount"] > 0)
-	{
-		$don = new Don($db);
+	$error=0;
 
+	if (! $_POST["amount"] > 0)
+	{
+		$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+		$_GET["action"] = "create";
+		$error=1;
+	}
+
+	if (empty($donation_date))
+	{
+		$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
+		$_GET["action"] = "create";
+		$error=1;
+	}
+
+	if (! $error)
+	{
 		$don->prenom      = $_POST["prenom"];
 		$don->nom         = $_POST["nom"];
 		$don->societe     = $_POST["societe"];
@@ -93,7 +120,7 @@ if ($_POST["action"] == 'add')
 		$don->cp          = $_POST["cp"];
 		$don->ville       = $_POST["ville"];
 		$don->email       = $_POST["email"];
-		$don->date        = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$don->date        = $donation_date;
 		$don->note        = $_POST["note"];
 		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
@@ -107,30 +134,22 @@ if ($_POST["action"] == 'add')
 			exit;
 		}
 	}
-	else
-	{
-		$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
-		$_GET["action"] = "create";
-	}
 }
 
 if ($_GET["action"] == 'delete')
 {
-	$don = new Don($db);
 	$don->delete($_GET["rowid"]);
 	Header("Location: liste.php");
 	exit;
 }
 if ($_POST["action"] == 'commentaire')
 {
-	$don = new Don($db);
 	$don->fetch($_POST["rowid"]);
 	$don->update_note($_POST["commentaire"]);
 	$_GET["rowid"] = $_POST["rowid"];
 }
 if ($_GET["action"] == 'valid_promesse')
 {
-	$don = new Don($db);
 	if ($don->valid_promesse($_GET["rowid"], $user->id))
 	{
 		Header("Location: fiche.php?rowid=".$_GET["rowid"]);
@@ -139,7 +158,6 @@ if ($_GET["action"] == 'valid_promesse')
 }
 if ($_GET["action"] == 'set_paid')
 {
-	$don = new Don($db);
 	if ($don->set_paye($_GET["rowid"], $modepaiement))
 	{
 		Header("Location: fiche.php?rowid=".$_GET["rowid"]);
@@ -148,7 +166,6 @@ if ($_GET["action"] == 'set_paid')
 }
 if ($_GET["action"] == 'set_encaisse')
 {
-	$don = new Don($db);
 	if ($don->set_encaisse($_GET["rowid"]))
 	{
 		Header("Location: liste.php");
@@ -217,8 +234,8 @@ if ($_GET["action"] == 'create')
 
 	print '<input type="hidden" name="action" value="add">';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$html->select_date('','','','','',"add");
+	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>'.$donation_date;
+	$html->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
 	$nbrows=11;
@@ -266,7 +283,6 @@ if ($_GET["action"] == 'create')
 
 if ($_GET["rowid"] && $_GET["action"] == 'edit')
 {
-	$don = new Don($db);
 	$don->id = $_GET["rowid"];
 	$don->fetch($_GET["rowid"]);
 
@@ -350,7 +366,6 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 /* ************************************************************ */
 if ($_GET["rowid"] && $_GET["action"] != 'edit')
 {
-	$don = new Don($db);
 	$don->id = $_GET["rowid"];
 	$don->fetch($_GET["rowid"]);
 
