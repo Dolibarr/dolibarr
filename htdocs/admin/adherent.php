@@ -232,7 +232,7 @@ form_constantes($constantes);
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
 print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
-print '%YEAR%, %MONTH%, %DAY%, %PHOTO%';
+print '%YEAR%, %MONTH%, %DAY%';
 //print '%INFOS%'; Deprecated
 print '<br>';
 
@@ -252,7 +252,7 @@ form_constantes($constantes);
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
 print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
-print '%YEAR%, %MONTH%, %DAY%, %PHOTO%';
+print '%YEAR%, %MONTH%, %DAY%';
 //print '%INFOS%'; Deprecated
 print '<br>';
 
@@ -278,7 +278,8 @@ form_constantes($constantes);
 
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%,';
+print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%';
+//print '%YEAR%, %MONTH%, %DAY%';	// Not supported
 //print '%INFOS%'; Deprecated
 print '<br>';
 
