@@ -152,12 +152,25 @@ class pdf_standard {
 		$photo=$dir.'/'.$file;
 		if (! is_readable($photo)) $photo='';
 
+		// Define background image
+		$backgroundimage='';
+		if(! empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND))
+		{
+			$backgroundimage=$conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND;
+		}
+
 		// Print lines
 		if ($this->code == "CARD")
 		{
 			$this->Tformat=$this->_Avery_Labels["CARD"];
 			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
 			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
+		}
+
+		// Background
+		if ($backgroundimage)
+		{
+			$pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
 		}
 
 		// Top
