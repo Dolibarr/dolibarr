@@ -77,8 +77,30 @@ case "$1" in
 			#dbadmpass="$RET"
 			dbtype="mysql"
 			
-			. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
+			# To delete a mysql user (disabled)
+			# Needs:        $dbuser    - the user name to create (or replace).
+			#               $dballow   - what hosts to allow (defaults to %).
+			#               $dbname    - the database that user should have access to.
+			#               $dbpass    - the password to use.
+			#               $dbserver  - the server to connect to.
+			#               $dbadmin   - the administrator name.
+			#               $dbadmpass - the administrator password.
+			#               which
+			#               mysql
+			#               /usr/share/wwwconfig-coomon/mysql.get
+			#. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
+			
+			# To delete database
+			# Needs:        $dbname    - the database that user should have access to.
+			#               $dbserver  - the server to connect to.
+			#               $dbadmin   - the administrator name.
+			#               $dbadmpass - the administrator password.
+			#               which
+			#               mysql
+			#               /usr/share/wwwconfig-common/mysql.get
+			echo "postrm Delete database $dbname on server $dbserver using account $dbadmin"
 			. /usr/share/wwwconfig-common/${dbtype}-dropdb.sh
+
 		else
 			echo "postrm Delete of dolibarr database not wanted" 
 		fi
