@@ -2640,15 +2640,16 @@ function yn($yesno, $case=1, $color=0)
  *	\remarks    Examples: 	'001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
  *	\remarks    Examples: 	'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
  */
-function get_exdir($num,$level=3,$alpha=0)
+function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
 {
 	$path = '';
 	if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
 	else $num = preg_replace('/^.*\-/i','',$num);
 	$num = substr("000".$num, -$level);
-	if ($level == 1) $path = substr($num,0,1).'/';
-	if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1).'/';
-	if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1).'/';
+	if ($level == 1) $path = substr($num,0,1);
+	if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
+	if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
+	if (empty($withoutslash)) $path.='/';
 	return $path;
 }
 

@@ -219,11 +219,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
  * Edition info modele document
  */
 $constantes=array(
+		'ADHERENT_CARD_TYPE',
 		'ADHERENT_CARD_HEADER_TEXT',
 		'ADHERENT_CARD_TEXT',
 		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT',
-		'ADHERENT_CARD_TYPE'
+		'ADHERENT_CARD_FOOTER_TEXT'
 		);
 print_fiche_titre($langs->trans("MembersCards"),'','');
 
@@ -232,13 +232,31 @@ form_constantes($constantes);
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
 print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
-print '%YEAR%, %MONTH%, %DAY%, %LOGO%, %PHOTO%';
+print '%YEAR%, %MONTH%, %DAY%, %PHOTO%';
 //print '%INFOS%'; Deprecated
 print '<br>';
 
 print '<br>';
 
 
+/*
+ * Edition info modele document
+ */
+$constantes=array(
+		'ADHERENT_ETIQUETTE_TYPE'
+		);
+print_fiche_titre($langs->trans("MembersTickets"),'','');
+
+form_constantes($constantes);
+
+print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
+print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+print '%YEAR%, %MONTH%, %DAY%, %PHOTO%';
+//print '%INFOS%'; Deprecated
+print '<br>';
+
+print '<br>';
 /*
  * Edition des variables globales non rattache a un theme specifique
  */
@@ -252,7 +270,7 @@ $constantes=array(
 		'ADHERENT_MAIL_RESIL_SUBJECT',
 		'ADHERENT_MAIL_RESIL',
 		'ADHERENT_MAIL_FROM',
-		'ADHERENT_ETIQUETTE_TYPE'
+
 		);
 print_fiche_titre($langs->trans("Other"),'','');
 

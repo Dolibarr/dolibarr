@@ -30,14 +30,14 @@
  *    	\brief     Create a thumbnail from an image file (une small et un mini)
  *    	\brief     Les extensions prises en compte sont jpg et png
  *    	\param     file           	Chemin du fichier image a redimensionner
- *    	\param     maxWidth       	Largeur maximum que dois faire la miniature (160 par defaut)
- *    	\param     maxHeight      	Hauteur maximum que dois faire l'image (120 par defaut)
+ *    	\param     maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 par defaut)
+ *    	\param     maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 par defaut)
  *    	\param     extName        	Extension pour differencier le nom de la vignette
  *    	\param     quality        	Quality of compression (0=worst, 100=best)
  *    	\return    string			Full path of thumb
  *		\remarks					With file=myfile.jpg -> myfile_small.jpg
  */
-function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50)
+function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs')
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
@@ -63,22 +63,25 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	{
 		return 'This file '.$file.' does not seem to be an image format file name.';
 	}
-	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < 0){
+	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1){
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
 		return 'Valeur de la largeur incorrecte.';
 	}
-	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < 0){
+	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1){
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
 		return 'Valeur de la hauteur incorrecte.';
 	}
 
-	$fichier = realpath($file); // Chemin canonique absolu de l'image
-	$dir = dirname($file).'/'; // Chemin du dossier contenant l'image
-	$dirthumb = $dir.'thumbs/'; // Chemin du dossier contenant les vignettes
+	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
+	$dir = dirname($file); 			// Chemin du dossier contenant l'image
+	$dirthumb = $dir.($outdir?'/'.$outdir:''); 	// Chemin du dossier contenant les vignettes
 
 	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
+
+	if ($maxWidth  == -1) $maxWidth=$infoImg[0];	// If size is -1, we keep unchanged
+	if ($maxHeight == -1) $maxHeight=$infoImg[1];	// If size is -1, we keep unchanged
 
 	// Si l'image est plus petite que la largeur et la hauteur max, on ne cree pas de vignette
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
@@ -114,10 +117,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 
 	// On cree le repertoire contenant les vignettes
-	if (! file_exists($dirthumb))
-	{
-		create_exdir($dirthumb);
-	}
+	create_exdir($dirthumb);
 
 	// Initialisation des variables selon l'extension de l'image
 	switch($infoImg[2])
@@ -214,7 +214,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
 	$fileName = basename($fileName);
-	$imgThumbName = $dirthumb.$fileName.$extName.$extImg; // Chemin complet du fichier de la vignette
+	$imgThumbName = $dirthumb.'/'.$fileName.$extName.$extImg; // Chemin complet du fichier de la vignette
 
 	// Check if permission are ok
 	//$fp = fopen($imgThumbName, "w");
@@ -278,7 +278,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$imageColorActual = $imageDir . "therm_color_actual.png";
 	$imageColorPending = $imageDir . "therm_color_pending.png";
 	$imageColorIntent = $imageDir . "therm_color_intent.png";
-	 
+
 	$htmlThermTop = '
         <!-- Thermometer Begin -->
         <table cellpadding="0" cellspacing="4" border="0">
@@ -293,7 +293,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 
 	$htmlSection = '
           <tr><td><img src="{image}" width="26" height="{height}" border="0"></td></tr>';
-	 
+
 	$htmlThermbottom = '
               </table>
             </td>
@@ -304,7 +304,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
           </tr>
         </table>
         </td>
-      </tr></table>';        
+      </tr></table>';
 
 	// legenda
 

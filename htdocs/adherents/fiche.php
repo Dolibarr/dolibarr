@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
@@ -87,6 +88,11 @@ if ($rowid)
 {
 	$caneditfieldmember=$user->rights->adherent->creer;
 }
+
+// Define size of logo small and mini (might be set into other pages)
+$maxwidthsmall=270;$maxheightsmall=150;
+$maxwidthmini=128;$maxheightmini=72;
+$quality = 80;
 
 
 
@@ -244,6 +250,8 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 
 		$adh->amount      = $_POST["amount"];
 
+		$adh->photo       = $_FILES['photo']['name'];
+
 		// Get status and public property
 		$adh->statut      = $_POST["statut"];
 		$adh->public      = $_POST["public"];
@@ -277,18 +285,26 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 		{
 			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
+				$dir= $conf->adherent->dir_output . '/' . get_exdir($adh->id,2,0,1);
 
-				// If photo is provided
-				if (! is_dir($conf->adherent->dir_output))
+				create_exdir($dir);
+
+				if (@is_dir($dir))
 				{
-					create_exdir($conf->adherent->dir_output);
-				}
-				if (is_dir($conf->adherent->dir_output))
-				{
-					$newfile=$conf->adherent->dir_output . "/" . $adh->id . ".jpg";
+					$newfile=$dir.'/'.$_FILES['photo']['name'];
 					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
 					{
 						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+					}
+					else
+					{
+						// Create small thumbs for company (Ratio is near 16/9)
+						// Used on logon for example
+						$imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+						// Create mini thumbs for company (Ratio is near 16/9)
+						// Used on menu or for setup page for example
+						$imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
 					}
 				}
 			}

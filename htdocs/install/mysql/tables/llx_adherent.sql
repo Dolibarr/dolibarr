@@ -47,7 +47,7 @@ create table llx_adherent
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
   naiss            date,             -- date de naissance
-  photo            varchar(255),     -- url vers photo
+  photo            varchar(255),     -- filename or url of photo
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   datefin          datetime,  -- date de fin de validite de la cotisation

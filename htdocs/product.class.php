@@ -2308,15 +2308,14 @@ class Product extends CommonObject
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
-		$dir .= "photos/";
+		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/photos";
 
 		create_exdir($dir);
 
 		$dir_osencoded=$dir;
-		if (file_exists($dir_osencoded))
+		if (is_dir($dir_osencoded))
 		{
-			$originImage = $dir . $file['name'];
+			$originImage = $dir . '/' . $file['name'];
 
 			// Cree fichier en taille origine
 			$result=dol_move_uploaded_file($file['tmp_name'], $originImage, 1);

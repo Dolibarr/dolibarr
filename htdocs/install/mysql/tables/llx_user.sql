@@ -51,6 +51,7 @@ create table llx_user
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
   statut            tinyint DEFAULT 1,
+  photo             varchar(255),     -- filename or url of photo
   lang              varchar(6)
 )type=innodb;
 

@@ -2914,7 +2914,7 @@ class Form
 	/**
 	 *    	\brief      Return HTML code to output a photo
 	 *    	\param      modulepart		Id to define module concerned
-	 *     	\param      object			Object containing data to retreive file name
+	 *     	\param      object			Object containing data to retrieve file name
 	 * 		\param		width			Width of photo
 	 * 	  	\return     string    		HTML code to output photo
 	 */
@@ -2927,13 +2927,15 @@ class Form
 		if ($modulepart=='userphoto')
 		{
 			$dir=$conf->user->dir_output;
-			$file=$object->id.".jpg";
+			$file=get_exdir($object->id,2).$object->photo;
+			$altfile=$object->id.".jpg";	// For backward compatibility
 			$email=$object->email;
 		}
 		if ($modulepart=='memberphoto')
 		{
 			$dir=$conf->adherent->dir_output;
-			$file=$object->id.".jpg";
+			$file=get_exdir($object->id,2).$object->photo;
+			$altfile=$object->id.".jpg";	// For backward compatibility
 			$email=$object->email;
 		}
 
@@ -2942,6 +2944,10 @@ class Form
 			if (file_exists($dir."/".$file))
 		    {
 		        $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($file).'">';
+		    }
+			else if (file_exists($dir."/".$altfile))
+		    {
+		        $ret.='<img alt="Photo" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($altfile).'">';
 		    }
 		    else
 		    {

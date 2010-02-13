@@ -51,6 +51,7 @@ ALTER TABLE llx_projet ADD COLUMN model_pdf varchar(50) AFTER note;
 ALTER TABLE llx_societe ADD COLUMN localtax1_assuj          tinyint        DEFAULT 0 after tva_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_assuj          tinyint        DEFAULT 0 after localtax1_assuj;
 
+ALTER TABLE llx_user ADD COLUMN   photo varchar(255) after statut;
 
 -- Create table of extra fields
 create table llx_extra_fields
