@@ -119,7 +119,7 @@ class pdf_standard {
 
 
 	// On imprime une etiquette
-	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='',$idmember)
+	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='',$idmember,$photomember)
 	{
 		global $mysoc,$conf,$langs;
 
@@ -148,7 +148,7 @@ class pdf_standard {
 
 		// Define photo
 		$dir=$conf->adherent->dir_output;
-		$file=$idmember.".jpg";
+		$file=get_exdir($idmember,2).$photomember;
 		$photo=$dir.'/'.$file;
 		if (! is_readable($photo)) $photo='';
 
@@ -421,7 +421,7 @@ class pdf_standard {
 		foreach($arrayofmembers as $val)
 		{
 			// imprime le texte specifique sur la carte
-			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id']);
+			$this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['id'],$val['photo']);
 		}
 
 		//$pdf->SetXY(10, 295);

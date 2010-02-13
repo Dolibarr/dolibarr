@@ -63,7 +63,7 @@ $arrayofmembers=array();
 
 // requete en prenant que les adherents a jour de cotisation
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.login, d.societe, d.datefin,";
-$sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email,";
+$sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
 $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
@@ -112,7 +112,8 @@ if ($result)
 								'textheader'=>$textheader,
 								'textfooter'=>$textfooter,
 								'textright'=>$textright,
-								'id'=>$objp->rowid);
+								'id'=>$objp->rowid,
+								'photo'=>$objp->photo);
 
 		$i++;
 	}
