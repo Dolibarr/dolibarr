@@ -447,7 +447,7 @@ class Task extends CommonObject
 		if ($mode == 0)
 		{
 			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as t)";
-			/*if (is_object($userp) && $userp->id)	// Limit to projects affected to a user
+			if (is_object($userp) && $userp->id)	// Limit to projects affected to a user
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
@@ -456,20 +456,19 @@ class Task extends CommonObject
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
-			}*/
+			}
 			$sql.= " WHERE t.fk_projet = p.rowid";
 			$sql.= " AND p.entity = ".$conf->entity;
 			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 			if ($projectid) $sql.= " AND p.rowid =".$projectid;
-			/*if (is_object($userp)) $sql .= " AND (p.public=1 OR (ec.fk_socpeople = ".$userp->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project'))";
+			if (is_object($userp)) $sql .= " AND (p.public=1 OR (ec.fk_socpeople = ".$userp->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project'))";
 			if (is_object($usert)) $sql .= " AND (p.public=1 OR (ec.fk_socpeople = ".$usert->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project_task'))";
-			*/
 		}
 		if ($mode == 1)
 		{
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-			/*if (is_object($userp) && $userp->id)	// Limit to projects affected to a user
+			if (is_object($userp) && $userp->id)	// Limit to projects affected to a user
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
@@ -478,13 +477,12 @@ class Task extends CommonObject
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
-			}*/
+			}
 			$sql.= " WHERE p.entity = ".$conf->entity;
 			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 			if ($projectid) $sql.= " AND p.rowid =".$projectid;
-			/*if (is_object($userp) && $userp->id) $sql .= " AND (p.public=1 OR (ec.fk.socpeople = ".$userp->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project'))";
+			if (is_object($userp) && $userp->id) $sql .= " AND (p.public=1 OR (ec.fk.socpeople = ".$userp->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project'))";
 			if (is_object($usert) && $usert->id) $sql .= " AND (p.public=1 OR (ec.fk.socpeople = ".$usert->id." AND tc.active = 1 AND tc.source = 'internal' AND tc.element='project_task'))";
-			*/
 		}
 		$sql.= " ORDER BY p.ref, t.label";
 
@@ -568,13 +566,13 @@ class Task extends CommonObject
 		$sql.= " AND ec.statut = 4";
 		if ($projectid)
 		{
-			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
-			if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
+			if ($userp) $sql.= " AND pt.fk_projet = ".$projectid;
+			if ($usert) $sql.= " AND pt.rowid = ".$taskid;
 		}
 		if ($taskid)
 		{
 			if ($userp) $sql.= " ERROR SHOULD NOT HAPPEN ";
-			if ($usert) $sql.= " AND pt.rowid = ".$projectid;
+			if ($usert) $sql.= " AND pt.rowid = ".$taskid;
 		}
 
 		dol_syslog("Task::getTasksForProjectOwnedByAUser sql=".$sql);

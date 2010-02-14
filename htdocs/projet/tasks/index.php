@@ -28,8 +28,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
-$mode=$_REQUEST["mode"];
-
 $langs->load('projects');
 
 // Security check
@@ -47,9 +45,10 @@ $page = $page == -1 ? 0 : $page;
 /*
  * View
  */
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
 $title=$langs->trans("Tasks");
-if ($mode == 'mine') $title=$langs->trans("MyTasks");
+if ($mine) $title=$langs->trans("MyTasks");
 
 llxHeader("",$title,"Projet");
 
@@ -64,16 +63,16 @@ if ($_GET["id"])
 	$projectstatic->societe->fetch($projectstatic->societe->id);
 }
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 
-$task = new Task($db);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
 $tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid);
 // We load also tasks limited to a particular user
-$tasksrole=($_REQUEST["mode"]=='mine' ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
+$tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
