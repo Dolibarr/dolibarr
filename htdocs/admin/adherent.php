@@ -171,16 +171,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 			    'ADHERENT_MAILMAN_LISTS_COTISANT',
 			    'ADHERENT_MAILMAN_ADMINPW',
 			    'ADHERENT_MAILMAN_SERVER',
-			    'ADHERENT_MAILMAN_UNSUB_URL',
-			    'ADHERENT_MAILMAN_URL'
+			    'ADHERENT_MAILMAN_URL',
+			    'ADHERENT_MAILMAN_UNSUB_URL'
 			    );
-			    print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
+			    print_fiche_titre("Mailman mailing list system",$lien,'');
 			    form_constantes($constantes);
 	}
 	else
 	{
 		$lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
-		print_fiche_titre("Mailman - Systeme de mailing listes",$lien,'');
+		print_fiche_titre("Mailman mailing list system",$lien,'');
 	}
 
 	print "<hr>\n";
