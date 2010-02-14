@@ -63,8 +63,6 @@ if ($_GET["id"])
 	$projectstatic->societe->fetch($projectstatic->societe->id);
 }
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 // Get list of tasks in tasksarray and taskarrayfiltered
