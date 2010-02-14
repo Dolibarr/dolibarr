@@ -305,12 +305,14 @@ class ChargeSociales extends CommonObject
 
 		$result='';
 
+		if (empty($this->ref)) $this->ref=$this->lib;
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution"),'bill').$lienfin.' ');
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution").': '.$this->lib,'bill').$lienfin.' ');
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->lib,$maxlen):$this->lib).$lienfin;
+		if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
 		return $result;
 	}
 

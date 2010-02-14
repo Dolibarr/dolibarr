@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,8 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load("compta");
 
@@ -44,6 +46,8 @@ if (! $year) { $year=date("Y", time()); }
 /*
  * View
  */
+
+$tva_static = new Tva($db);
 
 llxHeader('',$langs->trans("TaxAndDividendsArea"));
 
@@ -62,7 +66,7 @@ print '<td width="120">'.$langs->trans("PeriodEndDate").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 print "<td>".$langs->trans("Type")."</td>";
 print "<td align=\"right\">".$langs->trans("Amount")."</td>";
-print "<td align=\"right\">".$langs->trans("NbOfPayments")."</td>";
+print "<td align=\"center\">".$langs->trans("NbOfPayments")."</td>";
 print "<td align=\"right\">".$langs->trans("AlreadyPaid")."</td>";
 print "</tr>\n";
 
@@ -108,11 +112,11 @@ if ($resql)
 		$socialcontrib=new ChargeSociales($db);
 		$socialcontrib->id=$obj->rowid;
 		$socialcontrib->lib=$obj->libelle;
-		print $socialcontrib->getNomUrl(1,'16');
+		print $socialcontrib->getNomUrl(1,'20');
 		print '</td>';
 		print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
 		print '<td align="right">'.price($obj->total).'</td>';
-		print '<td align="right">'.$obj->nb.'</td>';
+		print '<td align="center">'.$obj->nb.'</td>';
 		print '<td align="right">'.price($obj->totalpaye).'</td>';
 		print '</tr>';
 		$total = $total + $obj->total;
@@ -121,9 +125,9 @@ if ($resql)
 		$i++;
 	}
     print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").'</td>';
-    print '<td align="right"><b>'.price($total)."</b></td>";
-    print '<td align="right"><b>'.$totalnb.'</b></td>';
-    print '<td align="right"><b>'.price($totalpaye)."</b></td>";
+    print '<td align="right" width="10%"><b>'.price($total)."</b></td>";
+    print '<td align="center" width="15%"><b>'.$totalnb.'</b></td>';
+    print '<td align="right" width="10%"><b>'.price($totalpaye)."</b></td>";
 	print "</tr>";
 }
 else
@@ -143,14 +147,14 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 
 	print_titre($langs->trans("VATPayments"));
 
-	$sql = "SELECT f.rowid, f.amount, f.label, ".$db->pdate("f.datev")." as dm";
+	$sql = "SELECT f.rowid, f.amount, f.label, f.datev as dm";
 	$sql.= " FROM ".MAIN_DB_PREFIX."tva as f ";
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	if ($year > 0)
 	{
 		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
 		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-		$sql.= " AND date_format(f.datev, '%Y') = ".$year;
+		$sql.= " AND f.datev between '".$db->idate(dol_get_first_day($year,1))."' AND '".$db->idate(dol_get_last_day($year,12))."'";
 	}
 	$sql.= " ORDER BY dm DESC";
 
@@ -164,22 +168,27 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	    print '<tr class="liste_titre">';
 	    print '<td width="120" nowrap="nowrap">'.$langs->trans("PeriodEndDate").'</td>';
 	    print "<td>".$langs->trans("Label")."</td>";
-	    print '<td align="right">'.$langs->trans("Amount")."</td>";
-	    print '<td align="center">'.$langs->trans("DatePayment")."</td>";
-	    print "<td align=\"right\">".$langs->trans("AlreadyPaid")."</td>";
+	    print '<td align="right" width="10%">'.$langs->trans("Amount")."</td>";
+	    print '<td align="center" width="15%">'.$langs->trans("DatePayment")."</td>";
+	    print '<td align="right" width="10%">'.$langs->trans("AlreadyPaid")."</td>";
 	    print "</tr>\n";
 	    $var=1;
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($result);
-	        $var=!$var;
-	        print "<tr $bc[$var]>";
-	        print '<td align="left">'.dol_print_date($obj->dm,'day').' ? </td>'."\n";
-	        print "<td>".$obj->label."</td>\n";
+
 	        $total = $total + $obj->amount;
 
+	        $var=!$var;
+	        print "<tr $bc[$var]>";
+	        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').' ? </td>'."\n";
+
+			$tva_static->id=$obj->rowid;
+			$tva_static->ref=$obj->label;
+	        print "<td>".$tva_static->getNomUrl(1)."</td>\n";
+
 	        print "<td align=\"right\">".price($obj->amount)."</td>";
-	        print '<td align="center">'.dol_print_date($obj->dm,'day')."</td>\n";
+	        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
 	        print "<td align=\"right\">".price($obj->amount)."</td>";
 	        print "</tr>\n";
 

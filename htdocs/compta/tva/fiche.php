@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/compta/tva/fiche.php
  *      \ingroup    tax
- *		\brief      Page des r�glements de TVA
+ *		\brief      Page of VAT payments
  *		\version    $Id$
  */
 
@@ -48,12 +48,12 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $tva = new Tva($db);
-    
+
     $db->begin();
-    
+
     $datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
     $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
-    
+
     $tva->accountid=$_POST["accountid"];
     $tva->paymenttype=$_POST["paiementtype"];
     $tva->datev=$datev;
@@ -80,11 +80,11 @@ if ($_GET["action"] == 'delete')
 {
     $tva = new Tva($db);
     $result=$tva->fetch($_GET['id']);
-	
+
 	if ($tva->rappro == 0)
 	{
 	    $db->begin();
-	    
+
 	    $ret=$tva->delete($user);
 	    if ($ret > 0)
 	    {
@@ -94,7 +94,7 @@ if ($_GET["action"] == 'delete')
 				$result=$accountline->fetch($tva->fk_bank);
 				$result=$accountline->delete($user);
 			}
-			
+
 			if ($result > 0)
 			{
 				$db->commit();
@@ -146,13 +146,13 @@ if ($_GET["action"] == 'create')
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    
+
     print_fiche_titre($langs->trans("NewVATPayment"));
-      
+
     if ($mesg) print $mesg;
-    
+
     print '<table class="border" width="100%">';
-    
+
     print "<tr>";
     print '<td>'.$langs->trans("DatePayment").'</td><td>';
     print $html->select_date($datep,"datep",'','','','add');
@@ -163,10 +163,10 @@ if ($_GET["action"] == 'create')
     print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';    
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';
 
 	// Amount
-	print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';    
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
 
     if ($conf->banque->enabled)
     {
@@ -178,18 +178,18 @@ if ($_GET["action"] == 'create')
 	    $html->select_types_paiements($_POST["paiementtype"], "paiementtype");
 	    print "</td>\n";
 	}
-        
+
 	print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
     print '</table>';
-    print '</form>';      
+    print '</form>';
 }
 
 
 /* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
 /* ************************************************************************** */
 
 if ($id)
@@ -202,11 +202,11 @@ if ($id)
 	$head[$h][2] = 'card';
 	$h++;
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"));
+	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
 
 
 	print '<table class="border" width="100%">';
-	
+
 	print "<tr>";
 	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $vatpayment->ref;
@@ -222,7 +222,7 @@ if ($id)
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
-	
+
 	if ($conf->banque->enabled)
 	{
 		if ($vatpayment->fk_account > 0)
@@ -233,16 +233,16 @@ if ($id)
 	    	print '<tr>';
 	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
-			print $bankline->getNomUrl(1,0,'showall');			
+			print $bankline->getNomUrl(1,0,'showall');
 	    	print '</td>';
 	    	print '</tr>';
 		}
 	}
 
 	print '</table>';
-	
+
 	print '</div>';
-	
+
 	/*
 	* Boutons d'actions
 	*/
