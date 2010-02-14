@@ -128,9 +128,12 @@ function dol_get_next_month($month, $year)
 /**	\brief		Return GMT time for first day of a month or year
  *	\param		year		Year
  * 	\param		month		Month
- *	\return		Timestamp	Date for first day
+ * 	\param		gm			False = Return date to compare with server TZ, True to compare with GM date.
+ *                          Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after dol_print_date will return 1970-01-01 00:00:00
+ *                          Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after dol_print_date will return 1970-01-01 00:00:00
+ *  \return		Timestamp	Date for first day
  */
-function dol_get_first_day($year,$month=1,$gm=true)
+function dol_get_first_day($year,$month=1,$gm=false)
 {
 	return dol_mktime(0,0,0,$month,1,$year,$gm);
 }
@@ -139,9 +142,10 @@ function dol_get_first_day($year,$month=1,$gm=true)
 /**	\brief		Return GMT time for last day of a month or year
  *	\param		year		Year
  * 	\param		month		Month
+ * 	\param		gm			False = Return date to compare with server TZ, True to compare with GM date.
  *	\return		Timestamp	Date for first day
  */
-function dol_get_last_day($year,$month=12,$gm=true)
+function dol_get_last_day($year,$month=12,$gm=false)
 {
 	if ($month == 12)
 	{

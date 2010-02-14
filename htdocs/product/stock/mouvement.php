@@ -101,13 +101,13 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 if ($month > 0)
 {
 	if ($year > 0)
-	$sql.= " AND m.datem between '".$db->idate(dol_get_first_day($year,$month))."' AND '".$db->idate(dol_get_last_day($year,$month))."'";
+	$sql.= " AND m.datem between '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
 	else
 	$sql.= " AND date_format(m.datem, '%m') = '$month'";
 }
 else if ($year > 0)
 {
-	$sql.= " AND m.datem between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."'";
+	$sql.= " AND m.datem between '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if (! empty($search_movment))
 {

@@ -109,6 +109,9 @@ $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next(
 
 print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
+print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
+print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
+print '<br>';
 
 echo '<table width="100%" class="nobordernopadding">';
 echo '<tr><td>';
@@ -211,9 +214,8 @@ print '</table>';
 
 echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
 
-
 /*
-* Reglee
+* Payed
 */
 
 $sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
