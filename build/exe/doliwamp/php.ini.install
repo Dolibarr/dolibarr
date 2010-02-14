@@ -708,7 +708,7 @@ extension=php_zip.dll
 [Date]
 ; Defines the default timezone used by the date functions
 ; date.timezone = UTC => You have local = greenwich.
-; date.timezone =     => You use system OS TZ.
+; Comment line to use system OS TZ.
 ;date.timezone =
 
 ;date.default_latitude = 31.7667
