@@ -11,6 +11,7 @@ OptionModeVirtual=Optie Vorderingen-Schulden
 OptionModeTrueDesc=In deze modus wordt de omzet berekend op kasbasis (betalingsdatum). \nDe geldigheid van de cijfers is slechts verzekerd wanneer de boekhouding wordt gecontroleerd door middel van de Inkomsten/Uitgaves op de rekeningen via de facturen.
 OptionModeVirtualDesc=In deze modus wordt de omzet berekend over de facturen (validatiedatum). Betaald of niet, verschijnen ze in de resultaten van de omzet.
 FeatureIsSupportedInInOutModeOnly=Functie alleen beschikbaar in het VORDERINGEN-SCHULDEN (zie Boekhouding module configuratie)
+VATReportBuildWithOptionDefinedInModule=De verkregen bedragen die zijn berekend met de regels van de berekenings parameters voor module Belastingen.
 Param=Setup
 AccountsGeneral=Algemene Rekeningen
 Account=Rekening
