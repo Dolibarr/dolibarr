@@ -144,6 +144,7 @@ DescADHERENT_CARD_HEADER_TEXT=Text printed on top of member cards
 DescADHERENT_CARD_TEXT=Text printed on member cards (align on left)
 DescADHERENT_CARD_TEXT_RIGHT=Text printed on member cards (align on right)
 DescADHERENT_CARD_FOOTER_TEXT=Text printed on bottom of member cards
+DescADHERENT_MAILMAN_LISTS=List(s) for automatic insription of new members (separated by a comma)
 ShowTypeCard=Show type '%s'
 HTPasswordExport=htpassword file generation
 NoThirdPartyAssociatedToMember=No third party associated to this member
