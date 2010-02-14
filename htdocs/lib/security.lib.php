@@ -198,6 +198,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$i++;
 		}
 	}
+	$main_home=nl2br($conf->global->MAIN_HOME);
 
 	$conf_css=DOL_URL_ROOT.$conf->css;
 
@@ -241,7 +242,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$smarty->assign('forgetpasslink', $forgetpasslink);
 		$smarty->assign('helpcenterlink', $helpcenterlink);
 
-		$smarty->assign('main_home', nl2br($conf->global->MAIN_HOME));
+		$smarty->assign('main_home', $main_home);
 
 	    // Google Adsense (ex: demo mode)
 		if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
