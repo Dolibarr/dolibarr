@@ -113,6 +113,7 @@ if ($mesg) print $mesg;
 $tasksarray=$task->getTasksArray(0,0,$project->id,0);
 $tasksrole=$task->getUserRolesForProjectsOrTasks($user,0,$project->id,0);
 //var_dump($tasksarray);
+var_dump($tasksrole);
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

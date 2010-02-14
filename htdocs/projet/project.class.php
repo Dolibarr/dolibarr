@@ -612,7 +612,7 @@ class Project extends CommonObject
 	{
 		// To verify role of users
 		$userAccess = 0;
-		if (!empty($this->user_author_id) && $this->user_author_id == $user->id)
+		if ((!empty($this->user_author_id) && $this->user_author_id == $user->id) || $user->rights->projet->all->lire)
 		{
 			$userAccess = 1;
 		}

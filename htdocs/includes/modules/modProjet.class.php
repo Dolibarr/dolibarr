@@ -121,7 +121,7 @@ class modProjet extends DolibarrModules
 		$this->rights[$r][0] = 141; // id de la permission
 		$this->rights[$r][1] = "Lire tous les projets et taches (y compris prives qui ne me sont pas affectes)"; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'lire';
 
