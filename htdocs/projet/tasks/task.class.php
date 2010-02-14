@@ -504,7 +504,7 @@ class Task extends CommonObject
 
 				if ((! $obj->public) && ($userp || $usert))	// If not public and we ask a filter on user
 				{
-					if (! $this->getUserRolesForProjetsOrTasks($userp, $usert, $obj->projectid, $obj->rowid))
+					if (! $this->getUserRolesForProjectsOrTasks($userp, $usert, $obj->projectid, $obj->rowid))
 					{
 						$error++;
 					}
@@ -542,7 +542,7 @@ class Task extends CommonObject
 	 * @param 	taskid
 	 * @return 	array			Array of role of user for each projects or each tasks
 	 */
-	function getUserRolesForProjetsOrTasks($userp,$usert,$projectid=0,$taskid=0)
+	function getUserRolesForProjectsOrTasks($userp,$usert,$projectid=0,$taskid=0)
 	{
 		$tasksrole = array();
 
