@@ -25,6 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/memory.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load("admin");
 $langs->load("install");
@@ -170,7 +171,7 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("PHPTZ")." (php.ini d
 if (function_exists('date_default_timezone_get'))
 {
 	$var=!$var;
-	print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentTimeZone")."</td><td>";
+	print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentTimeZone")."</td><td>";	// Timezone server PHP
 	print date_default_timezone_get();
 	print "</td></tr>\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 }
@@ -180,6 +181,10 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dol_print_date(dol_now('tzserver'),'dayhour')."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext")."</td>";
+$var=!$var;
+print "<tr ".$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false)." &nbsp; &nbsp; (with dol_print_date() or idate() = ".dol_print_date(dol_get_first_day(1970,1,false),'dayhour').")</td>";
+$var=!$var;
+print "<tr ".$bc[$var].'><td width="300">=> dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true)." &nbsp; &nbsp; (with dol_print_date() or idate() = ".dol_print_date(dol_get_first_day(1970,1,true),'dayhour').")</td>";
 # Parent company
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CompanyTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
