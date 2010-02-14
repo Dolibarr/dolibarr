@@ -382,6 +382,7 @@ class pdf_standard {
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("members");
+		$outputlangs->load("admin");
 
 
 		$dir = $conf->adherent->dir_temp;
@@ -411,6 +412,12 @@ class pdf_standard {
 			$pdf=new FPDI('P',$this->Tformat['metric'],$this->format);
 		}
 
+		$pdf->SetTitle($outputlangs->transnoentities('MembersCards'));
+		$pdf->SetSubject($outputlangs->transnoentities("MembersCards"));
+		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
+		$pdf->SetKeyWords($outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->nom));
+		if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 		$pdf->SetMargins(0,0);
 		$pdf->SetAutoPageBreak(false);
@@ -467,6 +474,8 @@ class pdf_standard {
 		header('Pragma: public');
 
 		readfile($file);
+
+		return 1;
 	}
 
 }
