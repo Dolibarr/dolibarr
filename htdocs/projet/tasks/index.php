@@ -33,8 +33,8 @@ $mode=$_REQUEST["mode"];
 $langs->load('projects');
 
 // Security check
-if (!$user->rights->projet->lire) accessforbidden();
 $socid=0;
+if (!$user->rights->projet->lire) accessforbidden();
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
