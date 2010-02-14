@@ -22,12 +22,13 @@
 /**
  *	    \file       htdocs/compta/tva/index.php
  *      \ingroup    tax
- *		\brief      Page des societes
+ *		\brief      Index page of VAT reports
  *		\version    $Id$
  */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 $langs->load("other");
 
@@ -135,7 +136,7 @@ $y = $year_current ;
 
 
 $var=True;
-$total = 0;  $subtotal = 0;
+$total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
@@ -163,6 +164,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
 	{
 		$x_coll+=$val['vat'];
 	}
+	$subtotalcoll = $subtotalcoll + $x_coll;
 	print "<td nowrap align=\"right\">".price($x_coll)."</td>";
 
 	$x_paye = 0;
@@ -170,6 +172,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
 	{
 		$x_paye+=$val['vat'];
 	}
+	$subtotalpaye = $subtotalpaye + $x_paye;
 	print "<td nowrap align=\"right\">".price($x_paye)."</td>";
 
 	$diff = $x_coll - $x_paye;
@@ -182,12 +185,17 @@ for ($m = 1 ; $m < 13 ; $m++ )
 
 	$i++;
 	if ($i > 2) {
-		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td>&nbsp;</td></tr>';
+		print '<tr class="liste_total">';
+		print '<td align="right">'.$langs->trans("SubTotal").':</td>';
+		print '<td nowrap align="right">'.price($subtotalcoll).'</td>';
+		print '<td nowrap align="right">'.price($subtotalpaye).'</td>';
+		print '<td nowrap align="right">'.price($subtotal).'</td>';
+		print '<td>&nbsp;</td></tr>';
 		$i = 0;
-		$subtotal = 0;
+		$subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 	}
 }
-print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
+print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td nowrap align="right">'.price($total).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
@@ -211,8 +219,8 @@ echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
 $sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
-$sql.= " AND f.datev >= '$y-01-01'";
-$sql.= " AND f.datev <= '$y-12-31' ";
+$sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+$sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
 $sql.= " GROUP BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
