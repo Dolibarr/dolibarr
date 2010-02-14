@@ -92,27 +92,27 @@ exit;;
 esac
 
 # ---------------------------- chemin d'acces du repertoire documents
-DIALOG=${DIALOG=dialog}
-fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
-trap "rm -f $fichtemp" 0 1 2 5 15
-$DIALOG --title "Init Dolibarr with demo values" --clear \
-        --inputbox "Full path to documents directory (ex: /var/www/dolibarr/documents)- no / at end :" 16 51 2> $fichtemp
+#DIALOG=${DIALOG=dialog}
+#fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
+#trap "rm -f $fichtemp" 0 1 2 5 15
+#$DIALOG --title "Init Dolibarr with demo values" --clear \
+#        --inputbox "Full path to documents directory (ex: /var/www/dolibarr/documents)- no / at end :" 16 51 2> $fichtemp
 
-valret=$?
+#valret=$?
 
-case $valret in
-  0)
-docs=`cat $fichtemp`;;
-  1)
-exit;;
-  255)
-exit;;
-esac
+#case $valret in
+#  0)
+#docs=`cat $fichtemp`;;
+#  1)
+#exit;;
+#  255)
+#exit;;
+#esac
 
 # ---------------------------- confirmation
 DIALOG=${DIALOG=dialog}
 $DIALOG --title "Init Dolibarr with demo values" --clear \
-        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd' \n Documents dir : '$docs'" 15 40
+        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd'" 15 40
 
 case $? in
         0)      echo "Ok, start process...";;
@@ -125,8 +125,10 @@ if [ "x$passwd" != "x" ]
 then
 	export passwd="-p$passwd"
 fi
-echo "mysql -u$admin $passwd $base < $mydir/initdemo.sql"
-mysql -u$admin $passwd $base < $mydir/initdemo.sql
+#echo "mysql -P$port -u$admin $passwd $base < $mydir/initdemo.sql"
+#mysql -P$port -u$admin $passwd $base < $mydir/initdemo.sql
+echo "mysql -P$port $base < $mydir/initdemo.sql"
+mysql -P$port $base < $mydir/initdemo.sql
 
 echo "Dolibarr data demo has been loaded."
 echo
