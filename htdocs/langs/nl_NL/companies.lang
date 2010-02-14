@@ -68,6 +68,7 @@ Fax=Fax
 Zip=Postcode
 Town=Plaats
 Web=Web
+Poste = Positie
 VATIsUsed=BTW wordt gebruikt
 VATIsNotUsed=BTW wordt niet gebruikt
 ##### Local Taxes #####
