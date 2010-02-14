@@ -356,15 +356,17 @@ InvoiceDepositAsk=Borgsom factuur
 InvoiceDepositDesc=Dit soort factuur wordt gedaan wanneer een aanbetaling heeft plaats ontvangen.
 DisabledBecausePayments=Niet beschikbaar omdat er betalingen bestaan
 CantRemovePaymentWithOneInvoicePaid=Verwijder onmogelijk wanneer er minstens een factuur betaald is ingedeeld.
+ExpectedToPay=Betalingstermijn
+PayedByThisPayment=Betaald door deze betaling
 ##### Soorten contacten #####
 TypeContact_facture_internal_SALESREPFOLL=Verantwoordelijke toezicht klant factuur
-TypeContact_facture_external_BILLING=Contact klant facturering
-TypeContact_facture_external_SHIPPING=Contact opnemen met Customer Delivery
-TypeContact_facture_external_SERVICE=Contact klantenservice
+TypeContact_facture_external_BILLING=Klant facturerings contact
+TypeContact_facture_external_SHIPPING=KLant leverings contact
+TypeContact_facture_external_SERVICE=Klantenservice contact
 TypeContact_facture_fourn_internal_SALESREPFOLL=Verantwoordelijke verkoper factuur bijhouden
-TypeContact_facture_fourn_external_BILLING=Contacteer leverancier facturatie
-TypeContact_facture_fourn_external_SHIPPING=Raadpleeg leverancier levering
-TypeContact_facture_fourn_external_SERVICE=Contacteer aanbieder
+TypeContact_facture_fourn_external_BILLING=Leverancier facturerings contact
+TypeContact_facture_fourn_external_SHIPPING=Leverancier leverings contact
+TypeContact_facture_fourn_external_SERVICE=Leverancier service contact
 
 
 
