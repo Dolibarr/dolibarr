@@ -278,11 +278,10 @@ if ($_POST["action"] == "set")
 	{
 		// Install is finished
 		print $langs->trans("SystemIsInstalled")."<br>";
-		if (empty($force_install_lockinstall))
-		{
-			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
-		}
-		else
+
+		$createlock=0;
+
+		if (! empty($force_install_lockinstall))
 		{
 			// Install is finished, we create the lock file
 			$lockfile="../../install.lock";
@@ -292,7 +291,12 @@ if ($_POST["action"] == "set")
 				fwrite($fp, "This is a lock file to prevent use of install pages");
 				fclose($fp);
 				@chmod($lockfile, octdec(444));
+				$createlock=1;
 			}
+		}
+		if (empty($createlock))
+		{
+			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
 		print "<br>";
@@ -323,16 +327,25 @@ elseif (preg_match('/upgrade/i',$_POST["action"]))
 	{
 		// Upgrade is finished
 		print $langs->trans("SystemIsUpgraded")."<br>";
-		if (empty($force_install_lockinstall))
-		{
-			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
-		}
-		else
+
+		$createlock=0;
+
+		if (! empty($force_install_lockinstall))
 		{
 			// Upgrade is finished, we create the lock file
-			$fp = fopen("../../install.lock", "w");
-			fwrite($fp, "This is a lock file to prevent use of install pages");
-			fclose($fp);
+			$lockfile="../../install.lock";
+			$fp = @fopen($lockfile, "w");
+			if ($fp)
+			{
+				fwrite($fp, "This is a lock file to prevent use of install pages");
+				fclose($fp);
+				@chmod($lockfile, octdec(444));
+				$createlock=1;
+			}
+		}
+		if (empty($createlock))
+		{
+			print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
 		print "<br>";
