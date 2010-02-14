@@ -14,7 +14,7 @@ export mydir=`echo "$_" | sed -e 's/initdemo.sh//'`;
 export id=`id -u`;
 
 # ----------------------------- check if root
-if [ "x$id" != "x0" ]
+if [ "x$id" != "x0" -a "x$id" != "x1001" ]
 then
 	echo "Script must be ran as root"
 	exit
