@@ -48,6 +48,8 @@ if (! $year) { $year=date("Y", time()); }
  */
 
 $tva_static = new Tva($db);
+$socialcontrib=new ChargeSociales($db);
+$payment_sc_static=new PaiementCharge($db);
 
 llxHeader('',$langs->trans("TaxAndDividendsArea"));
 
@@ -65,13 +67,15 @@ print "<tr class=\"liste_titre\">";
 print '<td width="120">'.$langs->trans("PeriodEndDate").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 print "<td>".$langs->trans("Type")."</td>";
-print "<td align=\"right\">".$langs->trans("Amount")."</td>";
-print "<td align=\"center\">".$langs->trans("NbOfPayments")."</td>";
-print "<td align=\"right\">".$langs->trans("AlreadyPaid")."</td>";
+print '<td align="right" width="10%">'.$langs->trans("ExpectedToPay")."</td>";
+print '<td align="right" width="10%">'.$langs->trans("RefPayment")."</td>";
+print '<td align="center" width="15%">'.$langs->trans("DatePayment")."</td>";
+print '<td align="right" width="10%">'.$langs->trans("PayedByThisPayment")."</td>";
 print "</tr>\n";
 
-$sql = "SELECT c.id, c.libelle as lib, s.rowid, s.libelle, s.fk_type as type, s.periode, s.date_ech,";
-$sql.= " count(s.rowid) as nb, sum(s.amount) as total, sum(pc.amount) as totalpaye";
+$sql = "SELECT c.id, c.libelle as lib,";
+$sql.= " s.rowid, s.libelle, s.fk_type as type, s.periode, s.date_ech, s.amount as total,";
+$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql.= " ".MAIN_DB_PREFIX."chargesociales as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = s.rowid";
@@ -109,14 +113,17 @@ if ($resql)
 		if (empty($date)) $date=$obj->date_ech;
 		print '<td>'.dol_print_date($date,'day').'</td>';
 		print '<td align="left">';
-		$socialcontrib=new ChargeSociales($db);
 		$socialcontrib->id=$obj->rowid;
 		$socialcontrib->lib=$obj->libelle;
 		print $socialcontrib->getNomUrl(1,'20');
 		print '</td>';
 		print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
 		print '<td align="right">'.price($obj->total).'</td>';
-		print '<td align="center">'.$obj->nb.'</td>';
+
+		$payment_sc_static->id=$obj->pid;
+		$payment_sc_static->ref=$obj->pid;
+		print '<td align="right">'.$payment_sc_static->getNomUrl(1)."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day').'</td>';
 		print '<td align="right">'.price($obj->totalpaye).'</td>';
 		print '</tr>';
 		$total = $total + $obj->total;
@@ -125,9 +132,10 @@ if ($resql)
 		$i++;
 	}
     print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").'</td>';
-    print '<td align="right" width="10%"><b>'.price($total)."</b></td>";
-    print '<td align="center" width="15%"><b>'.$totalnb.'</b></td>';
-    print '<td align="right" width="10%"><b>'.price($totalpaye)."</b></td>";
+    print '<td align="right">'.price($total)."</td>";
+    print '<td align="center">&nbsp;</td>';
+    print '<td align="center">&nbsp;</td>';
+    print '<td align="right">'.price($totalpaye)."</td>";
 	print "</tr>";
 }
 else
@@ -168,9 +176,10 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	    print '<tr class="liste_titre">';
 	    print '<td width="120" nowrap="nowrap">'.$langs->trans("PeriodEndDate").'</td>';
 	    print "<td>".$langs->trans("Label")."</td>";
-	    print '<td align="right" width="10%">'.$langs->trans("Amount")."</td>";
+	    print '<td align="right" width="10%">'.$langs->trans("ExpectedToPay")."</td>";
+	    print '<td align="right" width="10%">'.$langs->trans("RefPayment")."</td>";
 	    print '<td align="center" width="15%">'.$langs->trans("DatePayment")."</td>";
-	    print '<td align="right" width="10%">'.$langs->trans("AlreadyPaid")."</td>";
+	    print '<td align="right" width="10%">'.$langs->trans("PayedByThisPayment")."</td>";
 	    print "</tr>\n";
 	    $var=1;
 	    while ($i < $num)
@@ -183,11 +192,14 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	        print "<tr $bc[$var]>";
 	        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').' ? </td>'."\n";
 
-			$tva_static->id=$obj->rowid;
-			$tva_static->ref=$obj->label;
-	        print "<td>".$tva_static->getNomUrl(1)."</td>\n";
+	        print "<td>".$obj->label."</td>\n";
 
-	        print "<td align=\"right\">".price($obj->amount)."</td>";
+	        print '<td align="right">'.price($obj->amount)."</td>";
+
+			$tva_static->id=$obj->rowid;
+			$tva_static->ref=$obj->rowid;
+	        print '<td align="right">'.$tva_static->getNomUrl(1)."</td>\n";
+
 	        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
 	        print "<td align=\"right\">".price($obj->amount)."</td>";
 	        print "</tr>\n";
@@ -195,9 +207,10 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	        $i++;
 	    }
 	    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
-	    print '<td align="right"><b>'.price($total)."</b></td>";
-	    print '<td>&nbsp;</td>';
-	    print '<td align="right"><b>'.price($total)."</b></td>";
+	    print '<td align="right">'.price($total)."</td>";
+	    print '<td align="center">&nbsp;</td>';
+	    print '<td align="center">&nbsp;</td>';
+	    print '<td align="right">'.price($total)."</td>";
 	    print "</tr>";
 
 	    print "</table>";

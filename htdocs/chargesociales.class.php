@@ -767,6 +767,29 @@ class PaiementCharge extends CommonObject
             return 0;
         }
     }
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 * 		\param		maxlen			Longueur max libelle
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$maxlen=0)
+	{
+		global $langs;
+
+		$result='';
+
+		if (empty($this->ref)) $this->ref=$this->lib;
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$lienfin.' ');
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+		return $result;
+	}
 }
 
 

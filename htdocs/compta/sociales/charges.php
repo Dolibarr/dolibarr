@@ -322,7 +322,8 @@ if ($chid > 0)
 		}
 		print "</td>";
 
-		print '<td rowspan="4" valign="top">';
+		$rowspan=5;
+		print '<td rowspan="'.$rowspan.'" valign="top">';
 
 		/*
 		* Paiements
@@ -398,6 +399,8 @@ if ($chid > 0)
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
+
+		print '<tr><td coslpan="2">&nbsp;</td></tr>';
 
 		if ($_GET['action'] == 'edit')
 		{
