@@ -90,7 +90,8 @@ class mod_project_simple extends ModeleNumRefProjects
 			return -1;
 		}
 
-		$date=$project->date_c;
+		$date=empty($project->date_c)?dol_now():$project->date_c;
+
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m",$date);
 		$num = sprintf("%04s",$max+1);

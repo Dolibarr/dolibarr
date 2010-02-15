@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/projet/fiche.php
  *	\ingroup    projet
- *	\brief      Fiche projet
+ *	\brief      Project card
  *	\version    $Id$
  */
 
@@ -260,6 +260,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 		$modProject = new $obj;
 		$defaultref = $modProject->getNextValue($soc,$project);
 	}
+
 	if (empty($defaultref)) $defaultref='';
 
 	// Ref
