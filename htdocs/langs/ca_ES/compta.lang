@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - compta 
+# Dolibarr language file - ca_ES - compta
 CHARSET = UTF-8
 Accountancy = Comptabilitat
 AccountancyCard = Fitxa comptable
@@ -11,6 +11,7 @@ OptionModeVirtual = Opció Crèdits-Deutes
 OptionModeTrueDesc = En aquest mètode, el balanç es calcula sobre la base de les factures pagades.\nLa validesa de les xifres no està garantida ja que la gestió de la comptabilitat passa rigorosament les per entrades/sortides dels comptes mitjançant les factures.\n Nota: en aquesta versió, Dolibarr utilitza la data de pas de la factura a l'estat 'Validat' i no la data de pas a l'estat 'pagada'.
 OptionModeVirtualDesc = En aquest mètode, el balanç es calcula sobre la base de les factures validades. Pagades o no, apareixen en el resultat quant siguin disposades.
 FeatureIsSupportedInInOutModeOnly = Funció disponible només en el mode comptes CREDITS-DEUTES (Veure la configuració del mòdul comptes)
+VATReportBuildWithOptionDefinedInModule = Els imports obtinguts es calculen segons la configuració del mòdul Impostos.
 Param = Parametrizaje
 AccountsGeneral = Comptes generals
 Account = Compte

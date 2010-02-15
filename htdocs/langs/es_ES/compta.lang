@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - compta 
+# Dolibarr language file - es_ES - compta
 CHARSET = UTF-8
 Accountancy = Contabilidad
 AccountancyCard = Ficha contable
@@ -11,6 +11,7 @@ OptionModeVirtual = Opción Créditos-Deudas
 OptionModeTrueDesc = En este método, el balance se calcula sobre la base de las facturas pagadas.\nLa validez de las cifras no está garantizada pues la gestión de la contabilidad pasa rigurosamente las por entradas/salidas de las cuentas mediante las facturas.\nNota : en esta versión, Dolibarr utiliza la fecha de paso de la factura al estado ' Validada ' y no la fecha de paso al estado ' Pagada '.
 OptionModeVirtualDesc = En este método, el balance se calcula sobre la base de las facturas validadas. Pagadas o no, aparecen en el resultado en cuanto sean dispuestas.
 FeatureIsSupportedInInOutModeOnly = Función disponible solamente en el modo cuentas CREDITOS-DEUDAS (Véase la configuración del módulo cuentas)
+VATReportBuildWithOptionDefinedInModule = Los importes obtenidos se calculan según la configuración del módulo Impuestos.
 Param = Parametrizaje
 AccountsGeneral = Cuentas generales
 Account = Cuenta
