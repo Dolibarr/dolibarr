@@ -17,10 +17,10 @@
  */
 
 /**
- \file       htdocs/fourn/product/fourn.php
- \ingroup    product
- \brief      Page de la fiche produit fournisseur
- \version    $Id$
+ *	\file       htdocs/fourn/product/fourn.php
+ *	\ingroup    product
+ *	\brief      Page de la fiche produit fournisseur
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");

@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/includes/menus/barre_top/auguria_backoffice.php
+ *	\file       htdocs/includes/menus/barre_top/auguria_frontoffice.php
  *	\brief      Gestionnaire nomme Auguria du menu du haut
  *	\version    $Id$
  *
