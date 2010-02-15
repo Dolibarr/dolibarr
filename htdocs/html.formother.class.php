@@ -241,7 +241,7 @@ class FormOther
 	 * 	\param		modetask		1 to restrict on tasks associated to user
 	 * 	\param		mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 */
-	function selectProjectTasks($selected='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0)
+	function selectProjectTasks($selected='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0)
 	{
 		global $user, $langs;
 
@@ -253,7 +253,7 @@ class FormOther
 		if ($tasksarray)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
-			//print '<option value="0" selected="true">&nbsp;</option>';
+			if ($useempty) print '<option value="0" selected="true">&nbsp;</option>';
 			$j=0;
 			$level=0;
 			PLineSelect($j, 0, $tasksarray, $level, $selected);
@@ -364,9 +364,9 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 					if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="true">----------</option>';
 					print '<option value="'.$lines[$i]->projectid.'_0">';	// Project -> Task
 					print $langs->trans("Project").' '.$lines[$i]->projectref;
-					if ($lines[$i]->name || $lines[$i]->fistname)
+					if (empty($lines[$i]->public))
 					{
-						if ($user->admin) print ' ('.$langs->trans("Owner").': '.$lines[$i]->name.($lines[$i]->name && $lines[$i]->firstname?' ':'').$lines[$i]->firstname.')';
+						print ' ('.$langs->trans("Private").')';
 					}
 					else
 					{
@@ -387,9 +387,9 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 				if ($lines[$i]->id == $selected) print ' selected="true"';
 				print '>';
 				print $langs->trans("Project").' '.$lines[$i]->projectref;
-				if ($lines[$i]->name || $lines[$i]->fistname)
+				if (empty($lines[$i]->public))
 				{
-					if ($user->admin) print ' ('.$langs->trans("Owner").': '.$lines[$i]->name.($lines[$i]->name && $lines[$i]->firstname?' ':'').$lines[$i]->firstname.')';
+					print ' ('.$langs->trans("Private").')';
 				}
 				else
 				{
