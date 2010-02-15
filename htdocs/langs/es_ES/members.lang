@@ -143,6 +143,7 @@ DescADHERENT_CARD_HEADER_TEXT = Texto a imprimir en la parte superior del carné
 DescADHERENT_CARD_TEXT = Texto a imprimir en el carné de miembro (Alineat a l'esquerra)
 DescADHERENT_CARD_TEXT_RIGHT = Texto a imprimir en el carné de miembro (Alineado a la derecha)
 DescADHERENT_CARD_FOOTER_TEXT = Texto a imprimir en la parte inferior del carné de miembro
+DescADHERENT_MAILMAN_LISTS = Lista(s) para la inscripción automática de los nuevos miembros (separados por comas)
 ShowTypeCard = Ver tipo '%s'
 HTPasswordExport = Generación archivo htpassword
 NoThirdPartyAssociatedToMember = Ningún tercero asociado a este miembro

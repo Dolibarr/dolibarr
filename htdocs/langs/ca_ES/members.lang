@@ -143,6 +143,7 @@ DescADHERENT_CARD_HEADER_TEXT = Text a imprimir en la part superior del carnet d
 DescADHERENT_CARD_TEXT = Text a imprimir en el carnet de membre (Alineat a la dreta)
 DescADHERENT_CARD_TEXT_RIGHT = Text a imprimir en el carnet de membre (Alineat a la dreta)
 DescADHERENT_CARD_FOOTER_TEXT = Text a imprimir a la part inferior del carnet de membre
+DescADHERENT_MAILMAN_LISTS = Llista(s) per a la inscripció automàtica dels nous membres (separats per comes)
 ShowTypeCard = Veure tipus '%s'
 HTPasswordExport = Generació fitxer htpassword
 NoThirdPartyAssociatedToMember = Cap tercer associat a aquest membre
