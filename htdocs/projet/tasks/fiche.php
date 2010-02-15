@@ -270,6 +270,8 @@ else
 	$tasksarray=$task->getTasksArray(0, 0, $project->id, $socid, 0);
 	// We load also tasks limited to a particular user
 	$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$project->id,0) : '');
+	//var_dump($tasksarray);
+	//var_dump($tasksrole);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

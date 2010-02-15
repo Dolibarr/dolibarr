@@ -442,11 +442,12 @@ class Task extends CommonObject
 		//print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
-		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public,";
-		$sql.= " t.rowid, t.label, t.fk_task_parent, t.duration_effective";
+		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public";
+		$sql.= ", t.rowid as taskid, t.label, t.fk_task_parent, t.duration_effective";
 		if ($mode == 0)
 		{
-			$sql.= " FROM (".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."projet_task as t)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+			$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 			$sql.= " WHERE t.fk_projet = p.rowid";
 			$sql.= " AND p.entity = ".$conf->entity;
 			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
@@ -476,9 +477,9 @@ class Task extends CommonObject
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((! $obj->public) && ($userp || $usert))	// If not public and we ask a filter on user
+				if ((! $obj->public) && (is_object($userp) || is_object($usert)))	// If not public and we ask a filter on user
 				{
-					if (! $this->getUserRolesForProjectsOrTasks($userp, $usert, $obj->projectid, $obj->rowid))
+					if (! $this->getUserRolesForProjectsOrTasks($userp, $usert, $obj->projectid, $obj->taskid))
 					{
 						$error++;
 					}
@@ -486,7 +487,7 @@ class Task extends CommonObject
 
 				if (! $error)
 				{
-					$tasks[$i]->id           = $obj->rowid;
+					$tasks[$i]->id           = $obj->taskid;
 					$tasks[$i]->projectid    = $obj->projectid;
 					$tasks[$i]->projectref   = $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
@@ -542,8 +543,8 @@ class Task extends CommonObject
 		$sql.= " AND ec.statut = 4";
 		if ($projectid)
 		{
-			if ($userp) $sql.= " AND pt.fk_projet = ".$projectid;
-			if ($usert) $sql.= " AND pt.rowid = ".$taskid;
+			if ($userp || $usert) $sql.= " AND pt.fk_projet = ".$projectid;
+			//if ($usert) $sql.= " AND pt.rowid = ".$taskid;
 		}
 		if ($taskid)
 		{
