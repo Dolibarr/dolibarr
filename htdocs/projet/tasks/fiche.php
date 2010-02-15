@@ -57,6 +57,12 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 			$_GET["action"]='create';
 			$error++;
 		}
+		else if (empty($_POST['task_parent']))
+		{
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask"));
+			$_GET["action"]='create';
+			$error++;
+		}
 
 		if (! $error)
 		{
@@ -139,12 +145,12 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td>'.$langs->trans("Label").'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
 	print '<input type="text" size="25" name="label" class="flat" value="'.$_POST["label"].'">';
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-	print $formother->selectProjectTasks('',$projectid, 'task_parent', 0, 0, 1);
+	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfTask").'</td><td>';
+	print $formother->selectProjectTasks('',$projectid, 'task_parent', 0, 0, 1, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';

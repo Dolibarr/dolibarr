@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,20 +21,19 @@
 /**
  *       \file       htdocs/projet/index.php
  *       \ingroup    projet
- *       \brief      Page d'accueil du module projet
+ *       \brief      Main project home page
  *       \version    $Id$
  */
 
 require("./pre.inc.php");
 $langs->load("projects");
 
-if (!$user->rights->projet->lire) accessforbidden();
-
 // Security check
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
 }
+if (!$user->rights->projet->lire) accessforbidden();
 
 
 /*
@@ -82,13 +81,13 @@ if ( $resql )
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($resql);
-		
+
 		$projectstatic->id = $objp->projectid;
 		$projectstatic->user_author_id = $objp->fk_user_creat;
 		$projectstatic->public = $objp->public;
-		
+
 		$userAccess = $projectstatic->restrictedProjectArea($user,1);
-	
+
 		if ($userAccess >= 0)
 		{
 			$var=!$var;
@@ -118,7 +117,7 @@ print '</td><td width="70%" valign="top" class="notopnoleft">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("ThirdParties"),"index.php","s.nom","","","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
@@ -152,7 +151,7 @@ if ( $resql )
 		}
 		else
 		{
-			print $langs->trans("Public");
+			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$obj->socid.'">'.$obj->nb.'</a></td>';
