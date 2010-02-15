@@ -181,7 +181,8 @@ if (! empty($conf->global->MAIN_NOT_INSTALLED) || ! empty($conf->global->MAIN_NO
 	exit;
 }
 // If an upgrade process is required, we call the install page.
-if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
+if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VERSION_LAST_UPGRADE != DOL_VERSION))
+|| (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ! empty($conf->global->MAIN_VERSION_LAST_INSTALL) && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION)))
 {
 	require_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
 	$dolibarrversionlastupgrade=preg_split('/[.-]/',$conf->global->MAIN_VERSION_LAST_UPGRADE);
