@@ -16,11 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \file   	htdocs/compta/resultat/pre.inc.php
-        \ingroup    compta
-        \brief  	Fichier gestionnaire du menu paramétrage de la compta
-		\version	$Id$
-*/
+/**     \file   	htdocs/compta/resultat/bilan.php
+ *      \ingroup    compta
+ *      \brief  	Fichier page bilan compta
+ *		\version	$Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
@@ -29,11 +29,11 @@ require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 if (!$user->rights->compta->resultat->lire)
   accessforbidden();
 
-  
+
 /*
  *	Views
  */
- 
+
 llxHeader();
 
 $year=$_GET["year"];
@@ -41,13 +41,13 @@ $month=$_GET["month"];
 if (! $year) { $year = strftime("%Y", time()); }
 
 
-/* Le compte de résultat est un document officiel requis par l'administration selon le status ou activité */
+/* Le compte de rï¿½sultat est un document officiel requis par l'administration selon le status ou activitï¿½ */
 
-print_titre("Bilan".($year?" année $year":""));
+print_titre("Bilan".($year?" annï¿½e $year":""));
 
 print '<br>';
 
-print "Cet état n'est pas disponible.";
+print "Cet ï¿½tat n'est pas disponible.";
 
 
 $db->close();
