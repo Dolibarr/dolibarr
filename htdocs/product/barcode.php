@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,18 +62,16 @@ if ($_POST['action'] ==	'setbarcode'	&& $user->rights->barcode->creer)
 {
 	$product =	new	Product($db);
 	$product->fetch($_GET["id"]);
-	$product->barcode = $_POST['barcode']; //Todo: ajout v�rification de la validit� du code barre en fonction du type
+	$product->barcode = $_POST['barcode']; //Todo: ajout verification de la validite du code barre en fonction du type
 	$result = $product->update_barcode($user);
 	Header("Location: barcode.php?id=".$_GET["id"]);
 	exit;
 }
 
 
-/* *****************************************/
-/*																			   */
-/* Mode vue et edition										 */
-/*																			   */
-/* *************************************** */
+/*
+ *   Mode vue et edition
+ */
 
 llxHeader("","",$langs->trans("BarCode"));
 
@@ -84,10 +82,10 @@ $product = new Product($db);
 if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
-dol_fiche_head($head, 'barcode', $titre);
+$picto=($product->type==1?'service':'product');
+dol_fiche_head($head, 'barcode', $titre, 0, $picto);
 
 
 print '<table class="border" width="100%">'."\n";
@@ -170,14 +168,6 @@ print '</td></tr>'."\n";
 
 print "</table>\n";
 print "</div>\n";
-
-
-/*
- * Affiche code barre
- */
-
-
-
 
 $db->close();
 

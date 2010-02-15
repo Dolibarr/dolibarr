@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,8 +82,8 @@ $html = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
 {
-
 	$product = new Product($db);
+	
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
