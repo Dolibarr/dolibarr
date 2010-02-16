@@ -96,7 +96,7 @@ print "</table>\n";
 
 
 /*
- * Tableau de bord d'etats Dolibarr (statistiques)
+ * Dashboard Dolibarr states (statistics)
  * Hidden for external users
  */
 $langs->load("commercial");
@@ -112,7 +112,7 @@ if ($user->societe_id == 0)
 
 	$var=true;
 
-	// Condition a verifier pour affichage de chaque ligne du tableau de bord
+	// Condition to be checked for each display line dashboard
 	$conditions=array(
 	! empty($conf->societe->enabled) && $user->rights->societe->lire,
 	! empty($conf->societe->enabled) && $user->rights->societe->lire,
@@ -125,7 +125,7 @@ if ($user->societe_id == 0)
 	! empty($conf->facture->enabled) && $user->rights->facture->lire,
 	! empty($conf->telephonie->enabled) && $user->rights->telephonie->lire,
 	! empty($conf->societe->enabled) && $user->rights->contrat->activer);
-	// Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
+	// Class file containing the method load_state_board for each line 
 	$includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
 	DOL_DOCUMENT_ROOT."/prospect.class.php",
 	DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
@@ -137,7 +137,7 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/facture.class.php",
 	DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
 	DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
-	// Nom des classes qui contiennent la methode load_state_board pour chaque ligne
+	// Name class containing the method load_state_board for each line
 	$classes=array('Client',
                    'Prospect',
                    'Fournisseur',
@@ -149,7 +149,7 @@ if ($user->societe_id == 0)
 				   'Facture',
                    'LigneTel',
                    'Contrat');
-	// Cle de tableau retourne par la methode load_state_board pour chaque ligne
+	// Cle array returned by the method load_state_board for each line
 	$keys=array('customers',
                 'prospects',
                 'suppliers',
@@ -161,7 +161,7 @@ if ($user->societe_id == 0)
 				'invoices',
                 'sign',
 				'Contracts');
-	// Icon des lignes du tableau de bord
+	// Dashboard Icon lines 
 	$icons=array('company',
                  'company',
                  'company',
@@ -185,7 +185,7 @@ if ($user->societe_id == 0)
                   "BillsCustomers",
                   "Lignes de telephonie suivis",
                   "Contracts");
-	// Lien des lignes du tableau de bord
+	// Dashboard Link lines 
 	$links=array(DOL_URL_ROOT.'/comm/clients.php',
 	DOL_URL_ROOT.'/comm/prospect/prospects.php',
 	DOL_URL_ROOT.'/fourn/index.php',
@@ -212,13 +212,13 @@ if ($user->societe_id == 0)
 
 	//print memory_get_usage()."<br>";
 
-	// Boucle et affiche chaque ligne du tableau
+	// Loop and displays each line of table
 	foreach ($keys as $key=>$val)
 	{
 		if ($conditions[$key])
 		{
 			$classe=$classes[$key];
-			// Cherche dans cache si le load_state_board deja realise
+			// Search in cache if load_state_board is already realized
 			if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
 			{
 				include_once($includes[$key]);
@@ -263,10 +263,10 @@ $nboflate=0;
 $var=true;
 
 //
-// Ne pas inclure de sections sans gestion de permissions
+// Do not include sections without management permission
 //
 
-// Nbre actions a faire (en retard)
+// Number actions to do (late)
 if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
 	include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -292,7 +292,7 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 	print "\n";
 }
 
-// Nbre commandes clients a traiter
+// Number customer orders a deal
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
 	include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
@@ -316,7 +316,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	print "\n";
 }
 
-// Nbre propales ouvertes (expirees)
+// Number propale open (expired)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
@@ -341,7 +341,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print '</tr>';
 }
 
-// Nbre propales fermees signees (a facturer)
+// Number propale CLOSED signed (billed)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
@@ -367,7 +367,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print "\n";
 }
 
-// Nbre services a activer (en retard)
+// Number services is enabled (delayed)
 if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$langs->load("contracts");
@@ -393,7 +393,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	print "\n";
 }
 
-// Nbre services actifs (expired)
+// Number of active services (expired)
 if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$langs->load("contracts");
@@ -419,7 +419,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 	print "\n";
 }
 
-// Nbre factures fournisseurs (a payer)
+// Number of supplier invoices (has paid)
 if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
 {
 	$langs->load("bills");
@@ -445,7 +445,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
 	print "\n";
 }
 
-// Nbre factures clients (a payer)
+// Number invoices customers (has paid)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	$langs->load("bills");
@@ -471,7 +471,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	print "\n";
 }
 
-// Nbre ecritures a rapprocher
+// Number Scripture closer
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
 	$langs->load("banks");
@@ -497,7 +497,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 	print "\n";
 }
 
-// Nbre ecritures a rapprocher
+// Number Scripture closer
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
 	$langs->load("banks");
@@ -523,7 +523,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 	print "\n";
 }
 
-// Nbre adherent valides (attente cotisation)
+// Participant Number valid (awaiting assessment)
 if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societe_id)
 {
 	$langs->load("members");
