@@ -1547,7 +1547,7 @@ if ($_GET['action'] == 'create')
 				}
 				print '</select></td></tr>';
 			}
-			$db->free();
+			$db->free($resql);
 		}
 		else
 		{
@@ -2291,7 +2291,8 @@ else
 
 			// Third party
 			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
+			print '<td colspan="5">'.$soc->getNomUrl(1,'compta');
+			print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
 			print '</tr>';
 
 			// Type

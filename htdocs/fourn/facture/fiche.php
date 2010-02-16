@@ -700,7 +700,9 @@ else
 			print '</tr>';
 
 			// Third party
-			print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1).' (<a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td></tr>';
+			print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1);
+			print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
+			print '</tr>';
 
 			// Type
 			print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
@@ -754,7 +756,7 @@ else
 			if ($conf->projet->enabled) $nbrows++;
 
 			print '<td rowspan="'.$nbrows.'" valign="top">';
-			$sql  = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
+			$sql  = 'SELECT datep as dp, pf.amount,';
 			$sql .= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
@@ -784,7 +786,7 @@ else
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
-					print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('Payment'),'payment').'</a> '.dol_print_date($objp->dp,'day')."</td>\n";
+					print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
 					print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 					print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 
