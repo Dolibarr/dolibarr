@@ -1017,6 +1017,12 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 	<?php print !empty($conf->browser->phone)?'display: none;':''; ?>
 }
 
+.photo {
+border: 0px;
+/* filter:alpha(opacity=55); */
+/* opacity:.55; */
+}
+
 div.titre {
 	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;

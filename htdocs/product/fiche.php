@@ -845,17 +845,18 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<table class="border" width="100%"><tr>';
 
 			// Reference
-			print '<td width="15%">'.$langs->trans("Ref").'</td><td width="85%">';
+			print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
 			print $html->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 
-			$nblignes=6;
-			if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
-			if ($product->isservice()) $nblignes++;
+			$nblignes=4;
+			if (! empty($conf->global->PRODUIT_MULTIPRICES_LIMIT) && empty($socid)) $nblignes+=$conf->global->PRODUIT_MULTIPRICES_LIMIT;
+			else $nblignes+=3;
+
 			if ($product->is_photo_available($conf->produit->dir_output))
 			{
 				// Photo
-				print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
+				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
 				$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
 				print '</td>';
 			}
@@ -992,7 +993,7 @@ if ($_GET["id"] || $_GET["ref"])
 			// Nature
 			if($product->type!=1)
 			{
-				print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+				print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
 				print $product->getLibFinished();
 				print '</td></tr>';
 			}
@@ -1000,7 +1001,7 @@ if ($_GET["id"] || $_GET["ref"])
 			if ($product->isservice())
 			{
 				// Duration
-				print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
+				print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2">'.$product->duration_value.'&nbsp;';
 				if ($product->duration_value > 1)
 				{
 					$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
@@ -1016,7 +1017,7 @@ if ($_GET["id"] || $_GET["ref"])
 			else
 			{
 				// Weight / Volume
-				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+				print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
 				if ($product->weight != '')
 				{
 					print $product->weight." ".measuring_units_string($product->weight_units,"weight");
@@ -1027,7 +1028,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print "</td></tr>\n";
 
-				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+				print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
 				if ($product->volume != '')
 				{
 					print $product->volume." ".measuring_units_string($product->volume_units,"volume");
@@ -1040,7 +1041,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 
 			// Note
-			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
+			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.nl2br($product->note).'</td></tr>';
 
 			print "</table>\n";
 			print "</div>\n<!-- CUT HERE -->\n";

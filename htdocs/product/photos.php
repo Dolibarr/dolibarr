@@ -83,7 +83,7 @@ $html = new Form($db);
 if ($_GET["id"] || $_GET["ref"])
 {
 	$product = new Product($db);
-	
+
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
@@ -201,6 +201,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 				//                if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
+				// Do not use show_photo because there is more information to show
 				if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
 				if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
@@ -224,7 +225,7 @@ if ($_GET["id"] || $_GET["ref"])
 				$imgWidth = ($product->imgWidth < $maxWidth) ? $product->imgWidth : $maxWidth;
 				$imgHeight = ($product->imgHeight < $maxHeight) ? $product->imgHeight : $maxHeight;
 
-				print '<img border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
+				print '<img class="photo" border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
 
 				print '</a>';
 				print '<br>'.$viewfilename;

@@ -2459,10 +2459,10 @@ class Product extends CommonObject
 
 						// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
 						if ($photo_vignette && dol_is_file($dirthumb.$photo_vignette)) {
-							print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'">';
+							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'">';
 						}
 						else {
-							print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
 						}
 
 						print '</a>';
@@ -2472,8 +2472,9 @@ class Product extends CommonObject
 
 					}
 
-					if ($size == 0)     // Format origine
-					print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+					if ($size == 0) {     // Format origine
+						print '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+					}
 
 					// On continue ou on arrete de boucler ?
 					if ($nbmax && $nbphoto >= $nbmax) break;

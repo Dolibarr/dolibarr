@@ -142,7 +142,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		// Ref
 		print '<tr>';
-		print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
+		print '<td width="30%">'.$langs->trans("Ref").'</td><td>';
 		print $html->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
@@ -314,7 +314,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<table class="border" width="100%">';
-		
+
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
 		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
@@ -324,7 +324,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</td>';
 		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
 		print '</tr>';
-		
+
 		// Label
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("Label").'</td>';

@@ -440,6 +440,7 @@ class MenuTop {
 					else $class='class="tmenu"';
 
 					print '<td class="tmenu" id="td_'.$idsel.'">';
+					print '<span id="mainmenu_'.$idsel.'">';
 					print '<a '.$class.' id="mainmenu_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($this->atarget?" target=$this->atarget":"")).'>';
 					print $tabMenu[$i]['titre'];
 					print '</a>';
@@ -458,6 +459,7 @@ class MenuTop {
 		}
 
 		print '</tr></table>';
+		print "\n";
 	}
 
 }

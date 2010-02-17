@@ -890,7 +890,7 @@ class MenuLeft {
 			$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
 
 			/*
-			 * Menu AUTRES (Pour les menus du haut qui ne serait pas g�r�s)
+			 * Menu AUTRES (Pour les menus du haut qui ne serait pas geres)
 			 */
 			if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
 
