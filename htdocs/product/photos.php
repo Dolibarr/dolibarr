@@ -189,77 +189,16 @@ if ($_GET["id"] || $_GET["ref"])
 			$maxWidth = 160;
 			$maxHeight = 120;
 
-			$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
-			$dir = $conf->produit->dir_output . '/'. $pdir;
-
-			print '<br>';
-			print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
-
-			foreach ($product->liste_photos($dir) as $key => $obj)
-			{
-				$nbphoto++;
-
-				//                if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
-
-				// Do not use show_photo because there is more information to show
-				if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
-				if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
-
-				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="'.dol_escape_htmltag($langs->trans("OriginalSize")).'" target="_blank">';
-
-				// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-				if ($obj['photo_vignette'])
-				{
-					$filename='thumbs/'.$obj['photo_vignette'];
-				}
-				else
-				{
-					$filename=$obj['photo'];
-				}
-
-				// Nom affiche
-				$viewfilename=$obj['photo'];
-
-				// Taille de l'image
-				$product->get_image_size($dir.$filename);
-				$imgWidth = ($product->imgWidth < $maxWidth) ? $product->imgWidth : $maxWidth;
-				$imgHeight = ($product->imgHeight < $maxHeight) ? $product->imgHeight : $maxHeight;
-
-				print '<img class="photo" border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
-
-				print '</a>';
-				print '<br>'.$viewfilename;
-				print '<br>';
-
-				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
-				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
-				}
-				if ($user->rights->produit->creer || $user->rights->service->creer)
-				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-					print img_delete().'</a>';
-				}
-				if ($nbbyrow) print '</td>';
-				if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
-			}
-
-			// Ferme tableau
-			while ($nbphoto % $nbbyrow)
-			{
-				print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
-				$nbphoto++;
-			}
+			$nbphoto=$product->show_photos($conf->produit->dir_output,1,1000,$nbbyrow,1,1);
 
 			if ($nbphoto < 1)
 			{
-				print '<tr align=center valign=middle border=1><td class="photo">';
+				print '<br>';
+				print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';				print '<tr align=center valign=middle border=1><td class="photo">';
 				print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
 				print '</td></tr>';
+				print '</table>';
 			}
-
-			print '</table>';
 		}
 	}
 }

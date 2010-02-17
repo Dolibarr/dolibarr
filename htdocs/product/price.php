@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/product/price.php
  *	\ingroup    product
- *	\brief      Page de la fiche produit
+ *	\brief      Page to show product prices
  *	\version    $Id$
  */
 
@@ -126,17 +126,26 @@ dol_fiche_head($head, 'price', $titre, 0, $picto);
 
 print '<table class="border" width="100%">';
 
-// Reference
-print '<tr>';
-print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
+// Ref
+print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
 print $html->showrefnav($product,'ref','',1,'ref');
 print '</td>';
+
+$nblignes=3;
+if (! empty($conf->global->PRODUIT_MULTIPRICES_LIMIT) && empty($socid)) $nblignes+=$conf->global->PRODUIT_MULTIPRICES_LIMIT;
+else $nblignes+=3;
+
+if ($product->is_photo_available($conf->produit->dir_output))
+{
+	// Photo
+	print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
+	$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
+	print '</td>';
+}
 print '</tr>';
 
-// Libelle
-print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
-print '</tr>';
-
+// Label
+print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
 
 // MultiPrix
 if($conf->global->PRODUIT_MULTIPRICES)
@@ -252,12 +261,11 @@ else
 	print '</td></tr>';
 
 	// TVA
-	print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">'.vatrate($product->tva_tx,true).'</td></tr>';
-
+	print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
 }
 
 // Statut
-print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+print '<tr><td>'.$langs->trans("Status").'</td><td>';
 print $product->getLibStatut(2);
 print '</td></tr>';
 

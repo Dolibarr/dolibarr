@@ -844,12 +844,12 @@ if ($_GET["id"] || $_GET["ref"])
 			// En mode visu
 			print '<table class="border" width="100%"><tr>';
 
-			// Reference
+			// Ref
 			print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
 			print $html->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 
-			$nblignes=4;
+			$nblignes=3;
 			if (! empty($conf->global->PRODUIT_MULTIPRICES_LIMIT) && empty($socid)) $nblignes+=$conf->global->PRODUIT_MULTIPRICES_LIMIT;
 			else $nblignes+=3;
 
@@ -862,7 +862,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 			print '</tr>';
 
-			// Libelle
+			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
 
 			// MultiPrix
@@ -988,7 +988,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.nl2br($product->description).'</td></tr>';
 
 			// Nature
 			if($product->type!=1)
