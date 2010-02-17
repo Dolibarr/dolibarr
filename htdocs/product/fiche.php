@@ -621,7 +621,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
-		print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$product->ref.'">';
+		print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$product->ref.'">';
 		if ($_error == 1)
 		{
 			print $langs->trans("RefAlreadyExists");
@@ -629,10 +629,10 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 		$html->select_array('statut',$statutarray,$_POST["statut"]);
 		print '</td></tr>';
@@ -748,9 +748,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 		print '<br>';
 
-		print '<table class="border" width="100%">';
-		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-		print '</table>';
+		print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
 		print '</form>';
 	}
