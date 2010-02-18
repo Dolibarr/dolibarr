@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/bookmarks/liste.php
- *       \brief      Page affichage des bookmarks
+ *       \brief      Page display bookmarks
  *       \ingroup    bookmark
  *       \version    $Id$
  */

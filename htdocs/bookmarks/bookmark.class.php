@@ -19,14 +19,14 @@
 /**
         \file       htdocs/bookmarks/bookmark.class.php
         \ingroup    bookmark
-        \brief      Fichier de la classe des bookmark
+        \brief      File the bookmark class
         \version    $Id$
 */
 
 
 /**
         \class      Bookmark
-        \brief      Classe permettant la gestion des bookmarks
+        \brief      Class for managing bookmarks
 */
 
 class Bookmark
@@ -43,9 +43,9 @@ class Bookmark
 
 
     /**
-     *    \brief      Constructeur
-     *    \param      db          Handler d'acc�s base de donn�es
-     *    \param      id          Id du bookmark
+     *    \brief      Manufacturer
+     *    \param      db          Handler for Database Access
+     *    \param      id          Bookmark Id
      */
     function Bookmark($db, $id=-1)
     {
@@ -54,8 +54,8 @@ class Bookmark
     }
 
     /**
-     *    \brief      Charge le bookmark
-     *    \param      id          Id du bookmark � charger
+     *    \brief      Directs the bookmark
+     *    \param      id          Bookmark Id Loader
      */
     function fetch($id)
     {
@@ -173,8 +173,8 @@ class Bookmark
     }
 
     /**
-     *      \brief      Supprime le bookmark
-     *      \param      id          Id bookmark � supprimer
+     *      \brief      Removes the bookmark
+     *      \param      id          Id removed bookmark
      *      \return     int         <0 si ko, >0 si ok
      */
     function remove($id)

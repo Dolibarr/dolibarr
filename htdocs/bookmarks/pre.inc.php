@@ -19,7 +19,7 @@
 /**
         \file       htdocs/bookmarks/pre.inc.php
         \ingroup    bookmark
-        \brief      Fichier de gestion du menu gauche des bookmarks
+        \brief      File Management menu left bookmarks
         \version    $Id$
 */
 

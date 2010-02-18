@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/bookmarks/fiche.php
- *       \brief      Page affichage/creation des bookmarks
+ *       \brief      Page display/creation of bookmarks
  *       \ingroup    bookmark
  *       \version    $Id$
  */
@@ -130,7 +130,7 @@ $html=new Form($db);
 if ($action == 'create')
 {
     /*
-     * Fiche bookmark en mode creation
+     * Fact bookmark creation mode
      */
 
     print '<form action="fiche.php" method="post" enctype="multipart/form-data">'."\n";
@@ -170,7 +170,7 @@ if ($action == 'create')
 if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 {
     /*
-     * Fiche bookmark en mode visu ou edition
+     * Fact bookmark mode or visually edition
      */
     $bookmark=new Bookmark($db);
     $bookmark->fetch($_GET["id"]);
