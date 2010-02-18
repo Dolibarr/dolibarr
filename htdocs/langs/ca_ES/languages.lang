@@ -1,0 +1,25 @@
+# Dolibarr language file - ca_ES - languages
+CHARSET=UTF-8
+
+Language_ar_AR=Àrab
+Language_ca_ES=Català
+Language_da_DA=Danès
+Language_de_DE=Alemany
+Language_en_AU=Anglès (Australia)
+Language_en_GB=Anglès (Regne Unit)
+Language_en_US=Anglès (Estats Units)
+Language_es_ES=Espanyol
+Language_fi_FI=Finès
+Language_fr_BE=Francès (Bèlgica)
+Language_fr_CA=Francès (Canadà)
+Language_fr_CH=Francès (Suïssa)
+Language_fr_FR=Francès
+Language_it_IT=Italià
+Language_nb_NO=Noruec (Bokmal)
+Language_nl_BE=Neerlandès (Bèlgica)
+Language_nl_NL=Neerlandès (Països Baixos)
+Language_pl_PL=Polonès
+Language_pt_BR=Portuguès (Brasil)
+Language_pt_PT=Portuguès
+Language_ro_RO=Romanès
+Language_ru_RU=Rus
