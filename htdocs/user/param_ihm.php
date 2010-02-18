@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +32,14 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
 $langs->load("users");
+$langs->load("languages");
 
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);
 
 if ($_REQUEST["id"])
 {
-  // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edit�
+  // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edite
   $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
 		  || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
 }
@@ -60,12 +62,12 @@ $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
 
-// Charge utilisateur edit�
+// Charge utilisateur edite
 $fuser = new User($db, $id);
 $fuser->fetch();
 $fuser->getrights();
 
-// Liste des zone de recherche permanantes support�es
+// Liste des zone de recherche permanentes supportees
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
@@ -164,7 +166,7 @@ if ($_GET["action"] == 'edit')
     // Langue par defaut
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
-    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT).'</td>';
+    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT)).'</td>';
     print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"");
     print ! empty($dolibarr_main_demo)?' disabled="true"':'';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
@@ -206,9 +208,9 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
-    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT).'</td>';
+    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT)).'</td>';
     print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td>'.($fuser->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$fuser->conf->MAIN_LANG_DEFAULT).'</td></tr>';
+    print '<td>'.($fuser->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):($fuser->conf->MAIN_LANG_DEFAULT?$langs->trans("Language_".$fuser->conf->MAIN_LANG_DEFAULT):'')).'</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
@@ -231,7 +233,7 @@ else
 	}
 	else
 	{
-		if ($caneditfield  || $user->admin)       // Si utilisateur �dit� = utilisateur courant ayant les droits de cr�er ou admin
+		if ($caneditfield  || $user->admin)       // Si utilisateur edite = utilisateur courant ayant les droits de creer ou admin
 	    {
 	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Modify").'</a>';
 	    }
