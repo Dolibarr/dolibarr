@@ -3,7 +3,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 2.8.0 or higher. 
+-- when current version is 2.7.0 or higher. 
 --
 
 ALTER TABLE llx_actioncomm CHANGE fk_projet fk_project integer;
