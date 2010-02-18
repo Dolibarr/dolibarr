@@ -40,7 +40,7 @@ if (isset($_COOKIE[$entityCookieName])) $_SESSION["dol_entity"] = $_COOKIE[$enti
 require('master.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
-// Enregistrement de la position des boxes
+// Registering the location of boxes
 if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))
 {
 	dol_syslog("AjaxBox boxorder=".$_GET['boxorder']." userid=".$_GET['userid'], LOG_DEBUG);

@@ -22,7 +22,7 @@
 
 /**
  *        \file       htdocs/about.php
- *       \brief      Fichier page a propos
+ *       \brief      About Dolibarr File page
  *       \version    $Id$
  */
 
@@ -67,7 +67,7 @@ print '<ul>';
 print '<li>';
 print '<a target="blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
-// Si langue francaise, on affiche site web francophone
+// If the French language, it displays French website
 if (preg_match('/^fr_/i',$langs->getDefaultLang()))
 {
 	print '<li>';

@@ -1,5 +1,5 @@
 <html>
 <body>
-Cette fonctionnalité a été désactivée sur ce serveur de test.
+Cette fonctionnalitÃˆ a ÃˆtÃˆ dÃˆsactivÃˆe sur ce serveur de test. This feature has been disabled on this test server.
 </body>
 </html>

@@ -34,7 +34,7 @@
 /**
  *       \file       htdocs/searchpostalcode.php
  *       \ingroup    societe
- *       \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societe, si on a deux clients dans la meme ville c'est direct. Si jamais la recherche ne donne rien alors on lance la recherche dans la table des codes postaux.
+ *       \brief      Search the city corresponding to the ZIP code entered. 1st round is sought in the company table, if we have two customers in the same city that is direct. If the search never does anything then we start looking in the table of postcodes.
  *       \version    $Id$
  */
 require("pre.inc.php");
@@ -71,7 +71,7 @@ function run_request($table)
 }
 
 
-// Securite acces client
+// Security Access Client
 if ($user->societe_id > 0)
 {
     $_GET["action"] = '';
@@ -135,7 +135,7 @@ if ($result)
 		$num=$db->num_rows($result);
 	}
 
-	// Si on n'a pas ou un seul resultat on switche direct et on remplit le formulaire
+	// If it has not, or only one result on switch and fill the form
 	if($num <= 1)
 	{
 		$obj = $db->fetch_object($result);
@@ -148,7 +148,7 @@ if ($result)
 	}
 	else
 	{
-		// Sinon on affiche la liste des villes dont c'est le code postal ...
+		// Otherwise it displays the list of cities which is the postal code ...
 	    for ($i = 0; $i < $num; $i++)
 	    {
 	        $obj = $db->fetch_object($result);

@@ -45,7 +45,7 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
-// Initialisation de l'objet Societe
+// Initialization Company Object
 $soc = new Societe($db);
 
 
@@ -55,13 +55,13 @@ $soc = new Societe($db);
 
 if ($_POST["getcustomercode"])
 {
-	// On defini valeur pour code_client
+	// We defined value code_client
 	$_POST["code_client"]="aa";
 }
 
 if ($_POST["getsuppliercode"])
 {
-	// On defini valeur pour code_fournisseur
+	// We defined value code_fournisseur
 	$_POST["code_fournisseur"]="aa";
 }
 
@@ -123,7 +123,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->effectif_id           = $_POST["effectif_id"];
 	if ($_REQUEST["private"] == 1)
 	{
-		$soc->typent_id             = 8; // TODO prevoir autre methode si le champs "particulier" change de rowid
+		$soc->typent_id             = 8; // TODO predict another method if the field "special" change of rowid
 	}
 	else
 	{
@@ -304,11 +304,11 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 $_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
 	/*
-	 *	Fiche en mode creation
+	 *	Sheet mode creation
 	 */
 	if ($user->rights->societe->creer)
 	{
-		// Charge objet modCodeTiers
+		// Load object modCodeTiers
 		$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
 		if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -327,7 +327,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$modCodeFournisseur = new $module;
 
 		/*
-		 * Fiche societe en mode creation
+		 * Company Fact creation mode
 		 */
 		if ($_GET["type"]=='f')  { $soc->fournisseur=1; }
 		if ($_GET["type"]=='c')  { $soc->client=1; }
@@ -371,7 +371,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		$soc->commercial_id=$_POST["commercial_id"];
 
-		// On positionne pays_id, pays_code et libelle du pays choisi
+		// We set pays_id, pays_code and libel the selected country
 		$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
 		if ($soc->pays_id)
 		{
@@ -455,7 +455,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		print '</td></tr>';
 
-		// Fournisseur
+		// Supplier
 		print '<tr>';
 		print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
 		print $form->selectyesno("fournisseur",$soc->fournisseur,1);
@@ -529,7 +529,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 
 		print '<tr>';
-		// IdProf1 (SIREN pour France)
+		// IdProf1 (SIREN for France)
 		$idprof=$langs->transcountry('ProfId1',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -538,7 +538,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
-		// IdProf2 (SIRET pour France)
+		// IdProf2 (SIRET for France)
 		$idprof=$langs->transcountry('ProfId2',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -549,7 +549,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
 		print '</tr>';
 		print '<tr>';
-		// IdProf3 (APE pour France)
+		// IdProf3 (APE for France)
 		$idprof=$langs->transcountry('ProfId3',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -558,7 +558,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
-		// IdProf4 (NU pour France)
+		// IdProf4 (NU for France)
 		$idprof=$langs->transcountry('ProfId4',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -569,7 +569,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
 		print '</tr>';
 
-		// Forme juridique
+		// Legal Form
 		print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
 		print '<td colspan="3">';
 		if ($soc->pays_id)
@@ -642,7 +642,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		if ($user->rights->societe->client->voir)
 		{
-			//Affecter un commercial
+			// Assign a Name
 			print '<tr>';
 			print '<td>'.$langs->trans("AllocateCommercial").'</td>';
 			print '<td colspan="3">';
@@ -663,13 +663,13 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 {
 	/*
-	 * Fiche societe en mode edition
+	 * Company Fact Mode edition
 	 */
 	print_fiche_titre($langs->trans("EditCompany"));
 
 	if ($socid)
 	{
-		// Charge objet modCodeTiers
+		// Load object modCodeTiers
 		$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
 		if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -678,7 +678,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeClient = new $module;
-		// On verifie si la balise prefix est utilisee
+		// We verified if the tag prefix is used
 		if ($modCodeClient->code_auto)
 		{
 			$prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
@@ -739,7 +739,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			$soc->localtax1_assuj		= $_POST["localtax1assuj_value"];
 			$soc->localtax2_assuj		= $_POST["localtax2assuj_value"];
 
-			// On positionne pays_id, pays_code et libelle du pays choisi
+			// We set pays_id, and pays_code label of the chosen country
 			if ($soc->pays_id)
 			{
 				$sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$soc->pays_id;
@@ -772,7 +772,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		// Prefix
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-		// On ne permet pas la modification du prefix en mode de numerotation auto utilisant le prefix
+		// It does not change the prefix mode using the auto numbering prefix
 		if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
 		{
 			print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
@@ -816,7 +816,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		print '</td></tr>';
 
-		// Fournisseur
+		// Supplier
 		print '<tr>';
 		print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
 		print $form->selectyesno("fournisseur",$soc->fournisseur,1);
@@ -893,7 +893,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
 
 		print '<tr>';
-		// IdProf1 (SIREN pour France)
+		// IdProf1 (SIREN for France)
 		$idprof=$langs->transcountry('ProfId1',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -902,7 +902,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
-		// IdProf2 (SIRET pour France)
+		// IdProf2 (SIRET for France)
 		$idprof=$langs->transcountry('ProfId2',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -913,7 +913,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
 		print '</tr>';
 		print '<tr>';
-		// IdProf3 (APE pour France)
+		// IdProf3 (APE for France)
 		$idprof=$langs->transcountry('ProfId3',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -922,7 +922,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
-		// IdProf4 (NU pour France)
+		// IdProf4 (NU for France)
 		$idprof=$langs->transcountry('ProfId4',$soc->pays_code);
 		if ($idprof!='-')
 		{
@@ -933,12 +933,12 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
 		print '</tr>';
 
-		// Assujeti TVA
+		// VAT payers
 		print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td>';
 		print $form->selectyesno('assujtva_value',$soc->tva_assuj,1);
 		print '</td>';
 
-		// Code TVA
+		// VAT Code
 		if ($conf->use_javascript_ajax)
 		{
 			print "\n";
@@ -1008,7 +1008,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 else
 {
 	/*
-	 * Fiche societe en mode visu
+	 * Company Fact Sheet mode visu
 	 */
 	$soc = new Societe($db);
 	$soc->id = $socid;
@@ -1099,7 +1099,7 @@ else
 	print dol_print_url($soc->url);
 	print '</td></tr>';
 
-	// ProfId1 (SIREN pour France)
+	// ProfId1 (SIREN for France)
 	$profid=$langs->transcountry('ProfId1',$soc->pays_code);
 	if ($profid!='-')
 	{
@@ -1113,7 +1113,7 @@ else
 		print '</td>';
 	}
 	else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
-	// ProfId2 (SIRET pour France)
+	// ProfId2 (SIRET for France)
 	$profid=$langs->transcountry('ProfId2',$soc->pays_code);
 	if ($profid!='-')
 	{
@@ -1128,7 +1128,7 @@ else
 	}
 	else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-	// ProfId3 (APE pour France)
+	// ProfId3 (APE for France)
 	$profid=$langs->transcountry('ProfId3',$soc->pays_code);
 	if ($profid!='-')
 	{
@@ -1142,7 +1142,7 @@ else
 		print '</td>';
 	}
 	else print '<tr><td>&nbsp;</td><td>&nbsp;</td>';
-	// ProfId4 (NU pour France)
+	// ProfId4 (NU for France)
 	$profid=$langs->transcountry('ProfId4',$soc->pays_code);
 	if ($profid!='-')
 	{
@@ -1157,7 +1157,7 @@ else
 	}
 	else print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-	// Assujeti TVA
+	// VAT payers
 	$html = new Form($db);
 	print '<tr><td>';
 	print $langs->trans('VATIsUsed');
@@ -1225,7 +1225,7 @@ else
 	else print '&nbsp;';
 	print '</td></tr>';
 
-	// Statut juridique
+	// Legal
 	print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
 	// Type + Staff
@@ -1272,7 +1272,7 @@ else
 	}
 	print '</td></tr>';
 
-	// Commerciaux
+	// Commercial
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('SalesRepresentatives');
@@ -1361,7 +1361,7 @@ else
 	}
 
 	/*
-	 * Liste des contacts
+	 * Contact List
 	 */
 	show_contacts($conf,$langs,$db,$soc);
 }
