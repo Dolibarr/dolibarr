@@ -521,13 +521,15 @@ class Translate {
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
 	{
 		// We scan directory langs to detect available languages
-		$handle=opendir($langdir ."/langs");
+		$handle=opendir($langdir."/langs");
 		$langs_available=array();
-		while ($file = trim(readdir($handle)))
+		while ($dir = trim(readdir($handle)))
 		{
-			if (preg_match('/^[a-z]+_[A-Z]+/i',$file))
+			if (preg_match('/^[a-z]+_[A-Z]+/i',$dir))
 			{
-				array_push($langs_available,$file);
+				$this->load("languages");
+				
+				$langs_available[$dir] = $this->trans('Language_'.$dir);
 			}
 		}
 		return $langs_available;

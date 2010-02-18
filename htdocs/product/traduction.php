@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
 $langs->load("products");
-$langs->load("bills");
+$langs->load("languages");
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -80,12 +80,12 @@ $_POST["cancel"] != $langs->trans("Cancel") &&
 	if ( $product->setMultiLangs() > 0 )
 	{
 		$_GET["action"] = '';
-		$mesg = 'Fiche mise � jour';
+		$mesg = 'Fiche mise a jour';
 	}
 	else
 	{
 		$_GET["action"] = 'add';
-		$mesg = 'Fiche non mise � jour !' . "<br>" . $product->mesg_error;
+		$mesg = 'Fiche non mise a jour !' . "<br>" . $product->mesg_error;
 	}
 }
 
@@ -144,6 +144,8 @@ $titre=$langs->trans("CardProduct".$product->type);
 $picto=($product->type==1?'service':'product');
 dol_fiche_head($head, 'translation', $titre, 0, $picto);
 
+if ($mesg) print '<div class="error">'.$mesg.'</div>';
+
 print '<table class="border" width="100%">';
 
 // Reference
@@ -156,14 +158,14 @@ print '</table>';
 
 if ($_GET["action"] == 'edit')
 {
-	print '<form action="" method="post">';
+	print '<form action="" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
 	foreach ( $product->multilangs as $key => $value)
 	{
-		print "<br /><b><u>$key :</u></b><br />";
+		print "<br /><b><u>".$langs->trans('Language_'.$key)." :</u></b><br />";
 		print '<table class="border" width="100%">';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
@@ -207,7 +209,7 @@ else
 	foreach ( $product->multilangs as $key => $value)
 	{
 		$cnt_trans++;
-		print "<br /><b><u>$key :</u></b><br />";
+		print "<br /><b><u>".$langs->trans('Language_'.$key)." :</u></b><br />";
 		print '<table class="border" width="100%">';
 		print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$product->multilangs[$key]["libelle"].'</td></tr>';
 		print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$product->multilangs[$key]["description"].'</td></tr>';
@@ -240,19 +242,8 @@ print "\n</div>\n";
 /*
  * Formulaire d'ajout de traduction
  */
-if ($_GET["action"] == 'add' || ($user->rights->produit->creer || $user->rights->service->creer))
+if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	$langs_available = $langs->get_available_languages();
-	$current_lang = $langs->getDefaultLang();
-
-
-    // on construit la liste des traduction qui n'existe pas deja
-	$select = '<select class="flat" name="lang">';
-	foreach ($langs_available as $value)
-	if ( !array_key_exists($value, $product->multilangs) ) // si la traduction n'existe pas
-	$select.= "<option value='$value'>$value</option>";
-	$select.='</select>';
-
 	print '<br>';
 	print '<form action="" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -260,7 +251,7 @@ if ($_GET["action"] == 'add' || ($user->rights->produit->creer || $user->rights-
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 	print '<table class="border" width="100%">';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Translation').'</td><td>';
-    $formadmin->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'lang',0);
+    $formadmin->select_lang('','lang',0,$product->multilangs);
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80"></textarea></td></tr>';

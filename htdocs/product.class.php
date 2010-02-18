@@ -580,14 +580,16 @@ class Product extends CommonObject
 		$langs_available = $langs->get_available_languages();
 		$current_lang = $langs->getDefaultLang();
 
-		foreach ($langs_available as $value)
+		foreach ($langs_available as $key => $value)
 		{
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+			$sql = "SELECT rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql.= " WHERE fk_product=".$this->id;
+			$sql.= " AND lang='".$key."'";
 
 			$result = $this->db->query($sql);
 
-			if ($value == $current_lang)
+			if ($key == $current_lang)
 			{
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
@@ -595,12 +597,12 @@ class Product extends CommonObject
 					$sql2.= " SET label='".addslashes($this->libelle)."',";
 					$sql2.= " description='".addslashes($this->description)."',";
 					$sql2.= " note='".addslashes($this->note)."'";
-					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->libelle);
+					$sql2.= " VALUES(".$this->id.",'".$key."','". addslashes($this->libelle);
 					$sql2.= "','".addslashes($this->description);
 					$sql2.= "','".addslashes($this->note)."')";
 				}
@@ -611,21 +613,21 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".addslashes($this->multilangs["$value"]["libelle"])."',";
-					$sql2.= " description='".addslashes($this->multilangs["$value"]["description"])."',";
-					$sql2.= " note='".addslashes($this->multilangs["$value"]["note"])."'";
-					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+					$sql2.= " SET label='".addslashes($this->multilangs["$key"]["libelle"])."',";
+					$sql2.= " description='".addslashes($this->multilangs["$key"]["description"])."',";
+					$sql2.= " note='".addslashes($this->multilangs["$key"]["note"])."'";
+					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->multilangs["$value"]["libelle"]);
-					$sql2.= "','".addslashes($this->multilangs["$value"]["description"]);
-					$sql2.= "','".addslashes($this->multilangs["$value"]["note"])."')";
+					$sql2.= " VALUES(".$this->id.",'".$key."','". addslashes($this->multilangs["$key"]["libelle"]);
+					$sql2.= "','".addslashes($this->multilangs["$key"]["description"]);
+					$sql2.= "','".addslashes($this->multilangs["$key"]["note"])."')";
 				}
 
 				// on ne sauvegarde pas des champs vides
-				if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] )
+				if ( $this->multilangs["$key"]["libelle"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
 				if (!$this->db->query($sql2)) return -1;
 			}
 		}
@@ -642,8 +644,8 @@ class Product extends CommonObject
 		$langs_available = $langs->get_available_languages();
 
 		if ( $langue != '')
-		foreach ($langs_available as $value)
-		if ( $value == $langue ) $current_lang = $value; // si $langue est une valeur correcte
+		foreach ($langs_available as $key => $value)
+		if ( $key == $langue ) $current_lang = $key; // si $langue est une valeur correcte
 
 		if ( !$current_lang )
 		$current_lang = $langs->getDefaultLang(); // sinon on choisi la langue par defaut

@@ -52,7 +52,7 @@ class FormAdmin
 	 *    \param      htmlname        Nom de la zone select
 	 *    \param      showauto        Affiche choix auto
 	 */
-	function select_lang($selected='',$htmlname='lang_id',$showauto=0)
+	function select_lang($selected='',$htmlname='lang_id',$showauto=0,$filter=0)
 	{
 		global $langs;
 
@@ -66,23 +66,26 @@ class FormAdmin
 			print '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
-		sort($langs_available);
-		$num = count($langs_available);
-		$i = 0;
-		if ($num)
+		asort($langs_available);
+		
+		foreach ($langs_available as $key => $value)
 		{
-			while ($i < $num)
+			if ($filter && is_array($filter))
 			{
-				if ($selected == $langs_available[$i])
+				if ( ! array_key_exists($key, $filter))
 				{
-					print '<option value="'.$langs_available[$i].'" selected="true">'.$langs_available[$i].'</option>';
+					print '<option value="'.$key.'">'.$value.'</option>';
 				}
-				else
-				{
-					print '<option value="'.$langs_available[$i].'">'.$langs_available[$i].'</option>';
-				}
-				$i++;
 			}
+			else if ($selected == $key)
+			{
+				print '<option value="'.$key.'" selected="true">'.$value.'</option>';
+			}
+			else
+			{
+				print '<option value="'.$key.'">'.$value.'</option>';
+			}
+			$i++;
 		}
 		print '</select>';
 	}
