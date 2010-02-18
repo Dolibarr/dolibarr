@@ -102,7 +102,7 @@ class box_produits extends ModeleBoxes {
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					{
 						$sqld = "SELECT label";
-						$sqld.= " FROM ".MAIN_DB_PREFIX."product_det";
+						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sqld.= " WHERE fk_product=".$objp->rowid;
 						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sqld.= " LIMIT 1";

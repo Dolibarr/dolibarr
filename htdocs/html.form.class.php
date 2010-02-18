@@ -876,7 +876,8 @@ class Form
 		if ($conf->global->MAIN_MULTILANGS)
 		{
 			$sqld = "SELECT d.fk_product, d.label";
-			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
+			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p";
+			$sqld.= ", ".MAIN_DB_PREFIX."product_lang as d";
 			$sqld.= " WHERE d.fk_product = p.rowid";
 			$sqld.= " AND p.entity = ".$conf->entity;
 			$sqld.= " AND p.envente = 1";

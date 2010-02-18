@@ -113,8 +113,10 @@ class box_services_vendus extends ModeleBoxes {
 					// Multilangs
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					{
-						$sqld = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-						$sqld.= " WHERE fk_product=".$objp->pid." AND lang='". $langs->getDefaultLang() ."'";
+						$sqld = "SELECT label";
+						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
+						$sqld.= " WHERE fk_product=".$objp->pid;
+						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sqld.= " LIMIT 1";
 
 						$resultd = $db->query($sqld);

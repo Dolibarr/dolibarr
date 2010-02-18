@@ -25,6 +25,8 @@ create table llx_product
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   datec              datetime,
   tms                timestamp,
+  virtual			 tinyint	  DEFAULT 0 NOT NULL, -- value 0 for physical product, 1 for virtual product
+  fk_parent			 integer	  DEFAULT 0,		  -- virtual product id
   ref                varchar(32)  NOT NULL,
   entity             integer	  DEFAULT 1 NOT NULL, -- multi company id
   label              varchar(255) NOT NULL,

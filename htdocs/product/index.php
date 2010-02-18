@@ -195,8 +195,11 @@ if ($result)
 	  //Multilangs
 	  if ($conf->global->MAIN_MULTILANGS)
 	  {
-	  	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-	  	$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+	  	$sql = "SELECT label";
+	  	$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+	  	$sql.= " WHERE fk_product=".$objp->rowid;
+	  	$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+	  	
 	  	$resultd = $db->query($sql);
 	  	if ($resultd)
 	  	{

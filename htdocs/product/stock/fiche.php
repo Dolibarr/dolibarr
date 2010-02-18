@@ -385,7 +385,7 @@ else
 					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 					{
 						$sql = "SELECT label";
-						$sql.= " FROM ".MAIN_DB_PREFIX."product_det";
+						$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sql.= " WHERE fk_product=".$objp->rowid;
 						$sql.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sql.= " LIMIT 1";

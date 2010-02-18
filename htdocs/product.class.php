@@ -530,7 +530,7 @@ class Product extends CommonObject
 				$sqlb.= " WHERE fk_product = ".$id;
 				$resultb = $this->db->query($sqlb);
 
-				$sqlc = "DELETE from ".MAIN_DB_PREFIX."product_det";
+				$sqlc = "DELETE from ".MAIN_DB_PREFIX."product_lang";
 				$sqlc.= " WHERE fk_product = ".$id;
 				$resultc = $this->db->query($sqlc);
 
@@ -582,7 +582,7 @@ class Product extends CommonObject
 
 		foreach ($langs_available as $value)
 		{
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_det";
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
 
 			$result = $this->db->query($sql);
@@ -591,7 +591,7 @@ class Product extends CommonObject
 			{
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
-					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
 					$sql2.= " SET label='".addslashes($this->libelle)."',";
 					$sql2.= " description='".addslashes($this->description)."',";
 					$sql2.= " note='".addslashes($this->note)."'";
@@ -599,7 +599,7 @@ class Product extends CommonObject
 				}
 				else
 				{
-					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
 					$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->libelle);
 					$sql2.= "','".addslashes($this->description);
 					$sql2.= "','".addslashes($this->note)."')";
@@ -610,7 +610,7 @@ class Product extends CommonObject
 			{
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
-					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
 					$sql2.= " SET label='".addslashes($this->multilangs["$value"]["libelle"])."',";
 					$sql2.= " description='".addslashes($this->multilangs["$value"]["description"])."',";
 					$sql2.= " note='".addslashes($this->multilangs["$value"]["note"])."'";
@@ -618,7 +618,7 @@ class Product extends CommonObject
 				}
 				else
 				{
-					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
 					$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->multilangs["$value"]["libelle"]);
 					$sql2.= "','".addslashes($this->multilangs["$value"]["description"]);
 					$sql2.= "','".addslashes($this->multilangs["$value"]["note"])."')";
@@ -649,7 +649,7 @@ class Product extends CommonObject
 		$current_lang = $langs->getDefaultLang(); // sinon on choisi la langue par defaut
 
 		$sql = "SELECT lang, label, description, note";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_det";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id;
 
 		$result = $this->db->query($sql);

@@ -1,6 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,12 +18,8 @@
 -- $Id$
 -- ============================================================================
 
-create table llx_product_det
-(
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_product     integer      DEFAULT 0 NOT NULL,
-  lang           varchar(5)   DEFAULT 0 NOT NULL,
-  label          varchar(255) NOT NULL,
-  description    text,
-  note           text
-)type=innodb;
+
+ALTER TABLE llx_product_lang ADD UNIQUE INDEX uk_product_lang (fk_product, lang);
+
+
+ALTER TABLE llx_product_lang ADD CONSTRAINT fk_product_lang_fk_product 	FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
