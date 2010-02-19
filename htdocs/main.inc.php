@@ -30,7 +30,7 @@
  */
 
 // For optionnal tuning. Enabled if environment variable DOL_TUNING is defined.
-// A appeler avant tout. Fait l'equivalent de la fonction dol_microtime_float pas encore chargee.
+// A call first. Is the equivalent function dol_microtime_float not yet loaded.
 $micro_start_time=0;
 if (! empty($_SERVER['DOL_TUNING']))
 {
@@ -41,11 +41,10 @@ if (! empty($_SERVER['DOL_TUNING']))
 	if (defined('XDEBUGCOVERAGE')) { xdebug_start_code_coverage(); }
 }
 
-
-// Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
-// (Sinon il faudrait a chaque POST, conditionner
-// la lecture de variable par stripslashes selon etat de get_magic_quotes).
-// En mode off (recommande, il faut juste faire addslashes au moment d'un insert/update.
+// Forcing parameter setting magic_quotes_gpc and cleaning parameters
+// (Otherwise he would have for each position, condition
+// Reading stripslashes variable according to state get_magic_quotes_gpc).
+// Off mode (recommended, you just do addslashes when an insert / update.
 function stripslashes_deep($value)
 {
 	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
@@ -195,7 +194,7 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 	}
 }
 
-// Creation d'un jeton contre les failles CSRF
+// Creation of a token against CSRF vulnerabilities
 if (! defined('NOTOKENRENEWAL'))
 {
 	$token = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
@@ -255,7 +254,7 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 $login='';
 if (! defined('NOLOGIN'))
 {
-	// $authmode contient la liste des differents modes d'identification a tester par ordre de preference.
+	// $authmode lists the different means of identification to be tested in order of preference.
 	// Example: 'http'
 	// Example: 'dolibarr'
 	// Example: 'ldap'
@@ -277,22 +276,22 @@ if (! defined('NOLOGIN'))
 		exit;
 	}
 
-	// Si la demande du login a deja eu lieu, on le recupere depuis la session
-	// sinon appel du module qui realise sa demande.
-	// A l'issu de cette phase, la variable $login sera definie.
+	// If requested by the login has already occurred, it is retrieved from the session
+	// Call module if not realized that his request.
+	// At the end of this phase, the variable $login is defined.
 	$resultFetchUser='';
 	$test=true;
 	if (! isset($_SESSION["dol_login"]))
 	{
-		// On est pas deja authentifie, on demande le login/mot de passe
+		// It is not already authenticated, it requests the login / password
 
-		// Verification du code securite graphique
+		// Verification security graphic code
 		if ($test && isset($_POST["username"]) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 			require_once ARTICHOW."/AntiSpam.class.php";
 
-			// On cree l'objet anti-spam
+			// It creates an anti-spam object
 			$object = new AntiSpam();
 
 			// Verifie code
@@ -315,9 +314,9 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		// Tests de validation user/mot de passe
-		// Si ok, la variable login sera initialisee
-		// Si erreur, on a placera message erreur dans session sous le nom dol_loginmesg
+		// Validation tests user / password
+		// If ok, the variable will be initialized login
+		// If error, we will put error message in session under the name dol_loginmesg		$goontestloop=false;
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
 		if (isset($_POST["username"])) $goontestloop=true;
@@ -373,7 +372,7 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		// Fin des tests de login/passwords
+		// End test login / passwords
 		if (! $login)
 		{
 			// We show login page
@@ -404,12 +403,12 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$user->error;
 			}
 
-			// Appel des triggers
+			// Call triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 			if ($result < 0) { $error++; }
-			// Fin appel triggers
+			// End call triggers
 
 			header('Location: '.DOL_URL_ROOT.'/index.php');
 			exit;
@@ -417,8 +416,8 @@ if (! defined('NOLOGIN'))
 	}
 	else
 	{
-		// On est deja en session qui a sauvegarde login
-		// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
+		// It is already in a backup session login
+		// Remarks: We do not save user object poses for bp in some cases misidentified
 		$login=$_SESSION["dol_login"];
 		$resultFetchUser=$user->fetch($login);
 		dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
@@ -445,12 +444,12 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$user->error;
 			}
 
-			// Appel des triggers
+			// Call triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
 			if ($result < 0) { $error++; }
-			// Fin appel triggers
+			// End call triggers
 
 			header('Location: '.DOL_URL_ROOT.'/index.php');
 			exit;
@@ -473,12 +472,12 @@ if (! defined('NOLOGIN'))
 
 		$user->update_last_login_date();
 
-		// Appel des triggers
+		// Call triggers
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($db);
 		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,$_POST["entity"]);
 		if ($result < 0) { $error++; }
-		// Fin appel triggers
+		// End call triggers
 
 		if ($error)
 		{
@@ -499,9 +498,9 @@ if (! defined('NOLOGIN'))
 
 			$entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
 			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-			// TTL : sera defini dans la page de config multicompany
+			// TTL : is defined in the config page multicompany
 			$ttl = (! empty($conf->global->MAIN_MULTICOMPANY_COOKIE_TTL) ? $conf->global->MAIN_MULTICOMPANY_COOKIE_TTL : time()+60*60*8 );
-			// Cryptkey : sera cree aleatoirement dans la page de config multicompany
+			// Cryptkey : will be created randomly in the config page multicompany
 			$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 
 			$entityCookie = new DolCookie($cryptkey);
@@ -513,13 +512,13 @@ if (! defined('NOLOGIN'))
 		{
 			$domain='';
 
-			// Creation du cookie permettant de sauver le login
+			// Creation of a cookie to save login
 			$cookiename='webcalendar_login';
 			if (! isset($_COOKIE[$cookiename]))
 			{
 				setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
 			}
-			// Creation du cookie permettant de sauver la session
+			// Creation of a cookie to save session
 			$cookiename='webcalendar_session';
 			if (! isset($_COOKIE[$cookiename]))
 			{
@@ -539,7 +538,7 @@ if (! defined('NOLOGIN'))
 	}
 
 
-	// Si user admin, on force droits sur les modules base
+	// If user admin, we force the rights-based modules
 	if ($user->admin)
 	{
 		$user->rights->user->user->lire=1;
@@ -580,7 +579,7 @@ if (! defined('NOLOGIN'))
 
 if (empty($_GET["lang"]))	// If language was not forced on URL
 {
-	// If user has choosed its own language
+	// If user has chosen its own language
 	if (! empty($user->conf->MAIN_LANG_DEFAULT))
 	{
 		// If different than current language
@@ -597,7 +596,7 @@ else	// If language was forced on URL
 }
 
 
-// Cas de forcage du style depuis url
+// Case forcing style from url
 if (! empty($_GET["theme"]))
 {
 	$conf->theme=$_GET["theme"];
@@ -607,14 +606,14 @@ if (! empty($_GET["theme"]))
 //$conf->css.=".php";
 
 // Define menu manager to use
-if (empty($user->societe_id))    // Si utilisateur interne ou non defini
+if (empty($user->societe_id))    // If internal user or not defined
 {
 	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
 	$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
 	// Pour compatibilite
 	if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
 }
-else                        // Si utilisateur externe
+else                        // If external user
 {
 	$conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
 	$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
@@ -623,14 +622,14 @@ else                        // Si utilisateur externe
 
 if (! defined('NOLOGIN'))
 {
-	// Si le login n'a pu etre recupere, on est identifie avec un compte qui n'existe pas.
-	// Tentative de hacking ?
+	// If the login is not recovered, it is identified with an account that does not exist.
+	// Hacking attempt?
 	if (! $user->login) accessforbidden();
 
 	// Check if user is active
 	if ($user->statut < 1)
 	{
-		// Si non actif, on delogue le user
+		// If not active, we refuse the user
 		$langs->load("other");
 		dol_syslog ("Authentification ko as login is disabled");
 		accessforbidden($langs->trans("ErrorLoginDisabled"));
@@ -648,7 +647,7 @@ dol_syslog("Access to ".$_SERVER["PHP_SELF"]);
 // For backward compatibility
 if (! defined('MAIN_INFO_SOCIETE_PAYS')) define('MAIN_INFO_SOCIETE_PAYS','1');
 
-// On charge les fichiers lang principaux
+// It supports main lang files
 $langs->load("main");
 $langs->load("dict");
 
@@ -656,7 +655,7 @@ $langs->load("dict");
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
-// Sert uniquement dans module telephonie
+// Used only in telephony module
 $yesno[0]="no";
 $yesno[1]="yes";
 
@@ -716,11 +715,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 		print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
 
-		// Affiche meta
+		// Displays meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
-		// Affiche title
+		// Displays title
 		$appli='Dolibarr';
 		if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
@@ -828,7 +827,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 /**
  *  \brief      Show an HTML header + a BODY + The top menu bar
- *  \param      head    lignes d'en-tete head
+ *  \param      head    lines in the HEAD
  *  \param      title   titre page web
  *  \param      target  target to add in menu links
  */
@@ -929,11 +928,11 @@ function top_menu($head, $title='', $target='')
 
 /**
  *  \brief      Show left menu bar
- *  \param      menu_array      	Tableau des entrees de menu
+ *  \param      menu_array      	Table menu entries
  *  \param      helppagename    	Name of wiki page for help ('' by default).
  * 				Syntax is: 			For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									For other external page: http://server/url
- *  \param      moresearchform     	Formulaire de recherche permanant supplementaire
+ *  \param      moresearchform     	Search Form Permanent Supplemental
  */
 function left_menu($menu_array, $helppagename='', $moresearchform='')
 {
@@ -1133,11 +1132,11 @@ function getHelpParamFor($helppagename,$langs)
 
 /**
  *  \brief   Show a search area
- *  \param   urlaction          Url du post
- *  \param   urlobject          Url du lien sur titre de la zone de recherche
- *  \param   title              Titre de la zone de recherche
+ *  \param   urlaction          Url post
+ *  \param   urlobject          Url of the link under the search box
+ *  \param   title              Title search area
  *  \param   htmlmodesearch     'search'
- *  \param   htmlinputname      Nom du champ input du formulaire
+ *  \param   htmlinputname      Field Name input form
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
