@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C)      2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -191,7 +191,7 @@ div.tmenu
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 4px 0px;
     font-weight: normal;
-    height: 19px;
+    height: 59px;
     background: #b3c5cc;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000;
@@ -258,8 +258,8 @@ a.tmenu:hover
   font-weight: normal;
   background: #dee7ec;
   border-<?php print $right; ?>: 1px solid #555555;
-  border-top: 1px solid #D8D8D8;
   border-<?php print $left; ?>: 1px solid #D8D8D8;
+  border-top: 1px solid #D8D8D8;
   border-bottom: 2px solid #dee7ec;
 }
 a.tmenu:active
@@ -270,8 +270,8 @@ a.tmenu:active
   font-weight: normal;
   background: #F4F4F4;
   border-<?php print $right; ?>: 1px solid #555555;
-  border-top: 1px solid #D8D8D8;
   border-<?php print $left; ?>: 1px solid #D8D8D8;
+  border-top: 1px solid #D8D8D8;
   border-bottom: 2px solid #dee7ec;
 }
 
@@ -326,8 +326,8 @@ a.tmenusel:active
 
 table.tmenu
 {
-    padding: 0px 0px 10px 0px;	/* x y z w x=top offset */
-    margin: 0px 0px 0px 6px;
+    padding: 0px 0px 10px 0px;	/* t r b l */
+    margin: 40px 0px 0px 6px;	/* t r b l */
 }
 
 * html li.tmenu a
@@ -352,6 +352,28 @@ li.tmenu {
     margin: 0px 0px 0px 0px;
 	font-weight: normal;
 }
+
+/*
+div.mainmenu_home {
+	position : absolute;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/calc.png' ?>);
+	width:22px;
+	height:22px;
+	top: 10px;
+	margin-left: 10px;
+}
+
+div.mainmenu_companies {
+	position : absolute;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/calc.png' ?>);
+	width:22px;
+	height:22px;
+	top: 10px;
+	margin-left: 10px;
+}
+*/
 
 
 /* Login */
