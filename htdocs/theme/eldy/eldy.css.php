@@ -191,7 +191,7 @@ div.tmenu
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 4px 0px;
     font-weight: normal;
-    height: 59px;
+    height: 19px;
     background: #b3c5cc;
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000;
@@ -327,7 +327,7 @@ a.tmenusel:active
 table.tmenu
 {
     padding: 0px 0px 10px 0px;	/* t r b l */
-    margin: 40px 0px 0px 6px;	/* t r b l */
+    margin: 0px 0px 0px 6px;	/* t r b l */
 }
 
 * html li.tmenu a
