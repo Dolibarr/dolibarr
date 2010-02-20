@@ -124,16 +124,6 @@ class Translate {
 
 
 	/**
-	 *	Deprecated function. Do nothing.
-	 *	@deprecated		Kept for backward compatibility with third party modules.
-	 */
-	function setPhpLang()
-	{
-		return;
-	}
-
-
-	/**
 	 *  \brief      Load translation key-value for a particular file, into a memory array.
 	 *              If data for file already loaded, do nothing.
 	 * 				All data in translation array are stored in UTF-8 format.
@@ -528,7 +518,7 @@ class Translate {
 			if (preg_match('/^[a-z]+_[A-Z]+/i',$dir))
 			{
 				$this->load("languages");
-				
+
 				$langs_available[$dir] = $this->trans('Language_'.$dir);
 			}
 		}
