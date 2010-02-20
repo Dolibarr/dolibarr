@@ -545,6 +545,7 @@ class Product extends CommonObject
 	function setMultiLangs()
 	{
 		global $langs;
+		
 		$langs_available = $langs->get_available_languages();
 		$current_lang = $langs->getDefaultLang();
 
@@ -609,6 +610,7 @@ class Product extends CommonObject
 	function getMultiLangs($langue='')
 	{
 		global $langs;
+		
 		$langs_available = $langs->get_available_languages();
 
 		if ( $langue != '')
@@ -1533,55 +1535,60 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      retire le lien entre un sousproduit et un produit/service
-	 *    \param      id_pere    Id du produit auquel ne sera plus li� le produit li
-	 *    \param      id_fils  Id du produit � ne plus li
-	 *    \return     int         < 0 si erreur, > 0 si ok
+	 *    \brief      Retire le lien entre un sousproduit et un produit/service
+	 *    \param      fk_parent		Id du produit auquel ne sera plus lie le produit lie
+	 *    \param      fk_child		Id du produit a ne plus lie
+	 *    \return     int			< 0 si erreur, > 0 si ok
 	 */
-	function del_sousproduit($id_pere, $id_fils)
+	function del_sousproduit($fk_parent, $fk_child)
 	{
-		$sql = 'delete from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
+		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
+		$sql.= " AND fk_product_fils = '".$fk_child."'";
+		
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
 			return -1;
 		}
-		else
+
 		return 1;
 	}
 
 	/**
-	 *    \brief      retire le lien entre un sousproduit et un produit/service
-	 *    \param      id_pere    Id du produit auquel ne sera plus li� le produit li
-	 *    \param      id_fils  Id du produit � ne plus li
-	 *    \return     int         < 0 si erreur, > 0 si ok
+	 *    \brief      Verifie si c'est un sous-produit
+	 *    \param      fk_parent		Id du produit auquel le produit est lie
+	 *    \param      fk_child		Id du produit lie
+	 *    \return     int			< 0 si erreur, > 0 si ok
 	 */
-	function is_sousproduit($id_pere, $id_fils)
+	function is_sousproduit($fk_parent, $fk_child)
 	{
-		$sql = 'select fk_product_pere,qty from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" and fk_product_fils = "'.$id_fils.'"';
-		if (! $this->db->query($sql))
+		$sql = "SELECT fk_product_pere, qty";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
+		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
+		$sql.= " AND fk_product_fils = '".$fk_child."'";
+		
+		$result = $this->db->query($sql);
+		if ($result)
 		{
-			dol_print_error($this->db);
-			return -1;
+			$num = $this->db->num_rows($result);
+			
+			if($num > 0)
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->is_sousproduit_qty = $obj->qty;
+				
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		else
 		{
-			$result = $this->db->query($sql) ;
-			if ($result)
-	  {
-	  	$num = $this->db->num_rows($result);
-	  	if($num > 0)
-	  	{
-	  		$obj = $this->db->fetch_object($result);
-	  		$this->is_sousproduit_qty = $obj->qty;
-
-	  		return true;
-	  	}
-	  	else
-	  	return false;
-	  }
+			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -1594,8 +1601,9 @@ class Product extends CommonObject
 		$this->subproducts_id = array();
 		$i = 0;
 
-		$sql = "SELECT fk_product_subproduct FROM ".MAIN_DB_PREFIX."product_subproduct";
-		$sql .= " WHERE fk_product=$this->id;";
+		$sql = "SELECT fk_product_subproduct";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_subproduct";
+		$sql.= " WHERE fk_product = ".$this->id;
 
 		if ($result = $this->db->query($sql))
 		{
@@ -1616,7 +1624,7 @@ class Product extends CommonObject
 
 	/**
 	 *    \brief      Lie un sous produit au produit/service
-	 *    \param      id_sub     Id du produit � lier
+	 *    \param      id_sub     Id du produit a lier
 	 *    \return     int        < 0 si erreur, > 0 si ok
 	 */
 	function add_subproduct($id_sub)
@@ -1626,14 +1634,14 @@ class Product extends CommonObject
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_subproduct(fk_product,fk_product_subproduct)';
 			$sql .= ' VALUES ("'.$this->id.'","'.$id_sub.'")';
 			if (! $this->db->query($sql))
-	  {
-	  	dol_print_error($this->db);
-	  	return -1;
-	  }
-	  else
-	  {
-	  	return 0;
-	  }
+			{
+				dol_print_error($this->db);
+				return -1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
