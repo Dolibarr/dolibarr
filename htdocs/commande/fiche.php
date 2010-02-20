@@ -1032,7 +1032,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '</td></tr>';
 
 			// Date
-			print '<tr><td>'.$langs->trans('Date').'</td><td>';
+			print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 			$html->select_date('','re','','','',"crea_commande");
 			print '</td></tr>';
 
