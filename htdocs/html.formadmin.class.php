@@ -67,7 +67,7 @@ class FormAdmin
 		}
 
 		asort($langs_available);
-		
+
 		foreach ($langs_available as $key => $value)
 		{
 			if ($filter && is_array($filter))
@@ -108,14 +108,11 @@ class FormAdmin
         {
             if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
             {
-                $filelib=preg_replace('/\.php$/i','',$file);
+                if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
+            	$filelib=preg_replace('/\.php$/i','',$file);
 				$prefix='';
-				if (preg_match('/^eldy/i',$file)) $prefix='0';			// Recommanded
-				else if (preg_match('/^auguria/i',$file)) $prefix='2';	// Other
-				else if (preg_match('/^default/i',$file)) $prefix='2';	// Other
-				else if (preg_match('/^rodolphe/i',$file)) $prefix='2';	// Other
-				else if (preg_match('/^empty/i',$file)) $prefix='2';	// Other
-				else $prefix='1';								// Experimental
+				if (preg_match('/^eldy/i',$file)) $prefix='0';	// 0=Recommanded, 1=Experimental, 2=Other
+				else $prefix='2';
 
                 if ($file == $selected)
                 {

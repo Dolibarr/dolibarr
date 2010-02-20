@@ -2402,8 +2402,10 @@ class Product extends CommonObject
 	 *    \param      nbbyrow     Nombre vignettes par ligne (si mode vignette)
 	 *    \return     int         Nombre de photos affichees
 	 */
-	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5)
+	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0)
 	{
+		global $user;
+
 		include_once(DOL_DOCUMENT_ROOT ."/lib/files.lib.php");
 
 		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
@@ -2427,12 +2429,14 @@ class Product extends CommonObject
 				{
 					$nbphoto++;
 					$photo = $file;
+					$viewfilename = $file;
 
 					if ($size == 1) {   // Format vignette
 						// On determine nom du fichier vignette
 						$photo_vignette='';
 						if (preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$photo,$regs)) {
 							$photo_vignette=preg_replace('/'.$regs[0].'/i','',$photo)."_small".$regs[0];
+							if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
 						}
 
 
@@ -2444,7 +2448,7 @@ class Product extends CommonObject
 						print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
 
 						// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-						if ($photo_vignette && dol_is_file($dirthumb.$photo_vignette)) {
+						if ($photo_vignette) {
 							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'">';
 						}
 						else {
@@ -2453,6 +2457,22 @@ class Product extends CommonObject
 
 						print '</a>';
 
+						if ($showfilename) print '<br>'.$viewfilename;
+						if ($showaction)
+						{
+							print '<br>';
+							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+							}
+							if ($user->rights->produit->creer || $user->rights->service->creer)
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								print img_delete().'</a>';
+							}
+						}
+
 						if ($nbbyrow) print '</td>';
 						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
 
@@ -2460,6 +2480,16 @@ class Product extends CommonObject
 
 					if ($size == 0) {     // Format origine
 						print '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+
+						if ($showfilename) print '<br>'.$viewfilename;
+						if ($showaction)
+						{
+							if ($user->rights->produit->creer || $user->rights->service->creer)
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								print img_delete().'</a>';
+							}
+						}
 					}
 
 					// On continue ou on arrete de boucler ?
@@ -2470,7 +2500,8 @@ class Product extends CommonObject
 			if ($nbbyrow && $size==1)
 			{
 				// Ferme tableau
-				while ($nbphoto % $nbbyrow) {
+				while ($nbphoto % $nbbyrow)
+				{
 					print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
 					$nbphoto++;
 				}

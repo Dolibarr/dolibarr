@@ -24,7 +24,13 @@
  */
 
 
-
+/**
+ * Core function to output top menu eldy
+ *
+ * @param unknown_type $db
+ * @param unknown_type $atarget
+ * @param unknown_type $hideifnotallowed
+ */
 function print_eldy_menu($db,$atarget,$hideifnotallowed)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
