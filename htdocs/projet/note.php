@@ -104,7 +104,7 @@ if ($id > 0 || ! empty($ref))
 	if ($project->fetch($id, $ref))
 	{
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
-		
+
 		// To verify role of users
 		$userAccess = $project->restrictedProjectArea($user);
 
@@ -132,7 +132,7 @@ if ($id > 0 || ! empty($ref))
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 		if ($project->public) print $langs->trans('SharedProject');
-		else print $langs->trans('Private');
+		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
 		// Statut

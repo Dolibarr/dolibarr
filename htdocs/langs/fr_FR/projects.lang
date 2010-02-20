@@ -2,7 +2,14 @@
 CHARSET=UTF-8
 Project=Projet
 Projects=Projets
-SharedProject=Projet partagé
+SharedProject=Tout le monde
+PrivateProject=Contacts du projet
+MyProjectsDesc=Cette vue projet est restreinte aux projets pour lesquels vous êtes un contact affecté (quelqu'en soit le type).
+ProjectsPublicDesc=Cette vue présente tous les projets pour lesquels vous êtes habilités à avoir une visibilité.
+ProjectsDesc=Cette vue présente tous les projets (vos habilitations vous offrant une vue exhaustive).
+MyTasksDesc=Cette vue est restreinte aux projets et taches pour lesquels vous êtes un contact affecté à au moins une tache (quelqu'en soit le type).
+TasksPublicDesc=Cette vue présente tous les projets et taches pour lesquels vous êtes habilités à avoir une visibilité.
+TasksDesc=Cette vue présente tous les projets et taches (vos habilitations vous offrant une vue exhaustive).
 Myprojects=Mes projets
 ProjectsArea=Espace projet
 NewProject=Nouveau projet

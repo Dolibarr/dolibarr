@@ -276,7 +276,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 	// Public
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	$array=array(0 => $langs->trans("Private"),1 => $langs->trans("SharedProject"));
+	$array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
 	$html->select_array('public',$array,$project->public);
 	print '</td></tr>';
 
@@ -370,7 +370,7 @@ else
 
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		$array=array(0 => $langs->trans("Private"),1 => $langs->trans("SharedProject"));
+		$array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
 		$html->select_array('public',$array,$project->public);
 		print '</td></tr>';
 
@@ -421,7 +421,7 @@ else
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 		if ($project->public) print $langs->trans('SharedProject');
-		else print $langs->trans('Private');
+		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
 		// Statut

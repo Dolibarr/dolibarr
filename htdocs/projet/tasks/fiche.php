@@ -229,7 +229,7 @@ else
 	// Visibility
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($project->public) print $langs->trans('SharedProject');
-	else print $langs->trans('Private');
+	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
 	// Statut

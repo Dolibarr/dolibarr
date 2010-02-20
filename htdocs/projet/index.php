@@ -26,6 +26,10 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+
+$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+
 $langs->load("projects");
 
 // Security check
@@ -43,7 +47,6 @@ if (!$user->rights->projet->lire) accessforbidden();
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
@@ -53,65 +56,17 @@ if ($mine) $text=$langs->trans("MyProjects");
 
 print_fiche_titre($text);
 
+if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
+else
+{
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
+	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+}
+
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
-print "</tr>\n";
-
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, count(t.rowid) as nb";
-$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-$sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
-if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-$sql.= " GROUP BY p.ref";
-
-$var=true;
-$resql = $db->query($sql);
-if ( $resql )
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($resql);
-
-		$projectstatic->id = $objp->projectid;
-		$projectstatic->user_author_id = $objp->fk_user_creat;
-		$projectstatic->public = $objp->public;
-
-		$userAccess = $projectstatic->restrictedProjectArea($user,1);
-
-		if ($userAccess >= 0)
-		{
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print '<td nowrap="nowrap">';
-			$projectstatic->ref=$objp->ref;
-			print $projectstatic->getNomUrl(1);
-			print ' - '.$objp->title.'</td>';
-			print '<td align="right">'.$objp->nb.'</td>';
-			$projectstatic->statut = $objp->fk_statut;
-			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
-			print "</tr>\n";
-		}
-
-		$i++;
-	}
-
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
-}
-print "</table>";
+print_projecttasks_array($db,$mine,$socid,$projectsListId);
 
 print '</td><td width="70%" valign="top" class="notopnoleft">';
 

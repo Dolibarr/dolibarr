@@ -147,10 +147,10 @@ function task_prepare_head($object)
  */
 function select_projects($socid, $selected='', $htmlname='projectid')
 {
-	global $db,$conf,$langs;
+	global $db,$user,$conf,$langs;
 
 	// On recherche les projets
-	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc';
+	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
 	$sql.= " WHERE (p.fk_soc='".$socid."' OR p.fk_soc IS NULL)";
 	$sql.= " AND p.entity = ".$conf->entity;
@@ -170,14 +170,21 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 			{
 				$obj = $db->fetch_object($resql);
 				$labeltoshow=dol_trunc($obj->ref,12).' - '.dol_trunc($obj->title,12);
-				if (empty($obj->fk_soc)) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
-				if (!empty($selected) && $selected == $obj->rowid)
+				//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
+				//else $labeltoshow.=' ('.$langs->trans("Private").')';
+				if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 				{
 					print '<option value="'.$obj->rowid.'" selected="true">'.$labeltoshow.'</option>';
 				}
 				else
 				{
-					print '<option value="'.$obj->rowid.'">'.$labeltoshow.'</option>';
+					print '<option value="'.$obj->rowid.'"';
+					if (! $obj->fk_statut > 0)
+					{
+						print ' disabled="true"';
+						$labeltoshow.=' - '.$langs->trans("Draft");
+					}
+					print '>'.$labeltoshow.'</option>';
 				}
 				$i++;
 			}
@@ -499,7 +506,84 @@ function clean_orphelins($db)
 			return -1;
 		}
 	}
+}
 
+
+/**
+ * Return HTML table with list of projects and number of opened tasks
+ *
+ * @param unknown_type $db
+ * @param unknown_type $mine
+ * @param unknown_type $socid
+ * @param unknown_type $projectsListId
+ */
+function print_projecttasks_array($db,$mine,$socid,$projectsListId)
+{
+	global $langs,$conf,$user;
+
+	require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+
+	$projectstatic=new Project($db);
+
+	$sortfield='';
+	$sortorder='';
+
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
+
+	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, count(t.rowid) as nb";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
+	$sql.= " WHERE p.entity = ".$conf->entity;
+	if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
+	if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+	$sql.= " GROUP BY p.ref";
+
+	$var=true;
+	$resql = $db->query($sql);
+	if ( $resql )
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($resql);
+
+			$projectstatic->id = $objp->projectid;
+			$projectstatic->user_author_id = $objp->fk_user_creat;
+			$projectstatic->public = $objp->public;
+
+			$userAccess = $projectstatic->restrictedProjectArea($user,1);
+
+			if ($userAccess >= 0)
+			{
+				$var=!$var;
+				print "<tr $bc[$var]>";
+				print '<td nowrap="nowrap">';
+				$projectstatic->ref=$objp->ref;
+				print $projectstatic->getNomUrl(1);
+				print ' - '.$objp->title.'</td>';
+				print '<td align="right">'.$objp->nb.'</td>';
+				$projectstatic->statut = $objp->fk_statut;
+				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
+				print "</tr>\n";
+			}
+
+			$i++;
+		}
+
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+	print "</table>";
 }
 
 ?>
