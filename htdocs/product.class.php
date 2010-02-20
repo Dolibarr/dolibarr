@@ -399,7 +399,7 @@ class Product extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 		$sql .= " SET label = '" . addslashes($this->libelle) ."'";
-		if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
+		$sql .= ",ref = '" . $this->ref ."'";
 		$sql .= ",tva_tx = " . $this->tva_tx;
 		$sql .= ",envente = " . $this->status;
 		$sql .= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
