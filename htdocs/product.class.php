@@ -167,6 +167,7 @@ class Product extends CommonObject
 	function create($user)
 	{
 		global $conf ;
+		
 		$this->errno = 0;
 
 		// Clean parameters
@@ -221,7 +222,9 @@ class Product extends CommonObject
 			$this->db->begin();
 
 			$sql = "SELECT count(*)";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product";
+			$sql.= " WHERE ref = '" .$this->ref."'";
+			$sql.= " AND entity = ".$conf->entity;
 
 			$result = $this->db->query($sql) ;
 			if ($result)
@@ -230,24 +233,35 @@ class Product extends CommonObject
 				if ($row[0] == 0)
 				{
 					// Produit non deja existant
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product";
-					$sql.= " (datec, ";
-					if ($this->ref) $sql.= "ref, ";
-					$sql.= "price_min, price_min_ttc, ";
-					$sql.= "label, ";
-					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas, finished)";
-					$sql.= " VALUES (".$this->db->idate(mktime()).", ";
-					if ($this->ref) $sql.= "'".$this->ref."',";
-					$sql.= price2num($price_min_ht).",";
-					$sql.= price2num($price_min_ttc).",";
-					$sql.= " ".($this->libelle?"'".addslashes($this->libelle)."'":"null").",";
-					$sql.= $user->id.",";
-					$sql.= " ".$this->type.",";
-					$sql.= price2num($price_ht).",";
-					$sql.= price2num($price_ttc).",";
-					$sql.= "'".$this->price_base_type."',";
-					$sql.= "'".$this->canvas."',";
-					$sql.= " ".$this->finished.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product (";
+					$sql.= "datec";
+					$sql.= ", entity";
+					$sql.= ", ref";
+					$sql.= ", price_min";
+					$sql.= ", price_min_ttc";
+					$sql.= ", label";
+					$sql.= ", fk_user_author";
+					$sql.= ", fk_product_type";
+					$sql.= ", price";
+					$sql.= ", price_ttc";
+					$sql.= ", price_base_type";
+					$sql.= ", canvas";
+					$sql.= ", finished";
+					$sql.= ") VALUES (";
+					$sql.= $this->db->idate(mktime());
+					$sql.= ", ".$conf->entity;
+					$sql.= ", '".$this->ref."'";
+					$sql.= ", ".price2num($price_min_ht);
+					$sql.= ", ".price2num($price_min_ttc);
+					$sql.= ", ".($this->libelle?"'".addslashes($this->libelle)."'":"null");
+					$sql.= ", ".$user->id;
+					$sql.= ", ".$this->type;
+					$sql.= ", ".price2num($price_ht);
+					$sql.= ", ".price2num($price_ttc);
+					$sql.= ", '".$this->price_base_type."'";
+					$sql.= ", '".$this->canvas."'";
+					$sql.= ", ".$this->finished;
+					$sql.= ")";
 
 					dol_syslog("Product::Create sql=".$sql);
 					$result = $this->db->query($sql);
@@ -257,11 +271,11 @@ class Product extends CommonObject
 
 						if ($id > 0)
 						{
-							$this->id = $id;
-							$this->price     = $price_ht;
-							$this->price_ttc = $price_ttc;
-							$this->price_min     = $price_min_ht;
-							$this->price_min_ttc = $price_min_ttc;
+							$this->id				= $id;
+							$this->price			= $price_ht;
+							$this->price_ttc		= $price_ttc;
+							$this->price_min		= $price_min_ht;
+							$this->price_min_ttc	= $price_min_ttc;
 
 							$result = $this->_log_price($user);
 							if ($result > 0)
