@@ -366,7 +366,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 					print $langs->trans("Project").' '.$lines[$i]->projectref;
 					if (empty($lines[$i]->public))
 					{
-						print ' ('.$langs->trans("Private").')';
+						print ' ('.$langs->trans("PrivateProject").')';
 					}
 					else
 					{
@@ -389,7 +389,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 				print $langs->trans("Project").' '.$lines[$i]->projectref;
 				if (empty($lines[$i]->public))
 				{
-					print ' ('.$langs->trans("Private").')';
+					print ' ('.$langs->trans("PrivateProject").')';
 				}
 				else
 				{

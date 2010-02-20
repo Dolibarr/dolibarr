@@ -132,29 +132,29 @@ if ($resql)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($resql);
-		
+
 		$projectstatic->id = $objp->projectid;
 		$projectstatic->user_author_id = $objp->fk_user_creat;
 		$projectstatic->public = $objp->public;
-		
+
 		$userAccess = $projectstatic->restrictedProjectArea($user,1);
-	
+
 		if ($userAccess >= 0)
 		{
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			
+
 			// Project url
 			print "<td>";
 			$projectstatic->ref = $objp->ref;
 			print $projectstatic->getNomUrl(1);
 			print "</td>";
-			
+
 			// Title
 			print '<td>';
 			print dol_trunc($objp->title,24);
 			print '</td>';
-			
+
 			// Company
 			print '<td>';
 			if ($objp->socid)
@@ -168,21 +168,21 @@ if ($resql)
 				print '&nbsp;';
 			}
 			print '</td>';
-			
+
 			// Visibility
 			print '<td align="left">';
 			if ($objp->public) print $langs->trans('SharedProject');
-			else print $langs->trans('Private');
+			else print $langs->trans('PrivateProject');
 			print '</td>';
-			
+
 			// Status
 			$projectstatic->statut = $objp->fk_statut;
 			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
-			
+
 			print "</tr>\n";
 
 		}
-		
+
 		$i++;
 	}
 

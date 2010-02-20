@@ -2,7 +2,8 @@
 CHARSET=UTF-8
 Project=Project
 Projects=Projects
-SharedProject=Shared project
+SharedProject=Everybody
+PrivateProject=Contacts of project
 Myprojects=My projects
 ProjectsArea=Projects area
 NewProject=New project
