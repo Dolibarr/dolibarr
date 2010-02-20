@@ -121,7 +121,7 @@ class Commande extends CommonObject
 		for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
 		{
 			$line = new OrderLine($this->db);
-			
+
 			$line->libelle           = $propal->lignes[$i]->libelle;
 			$line->desc              = $propal->lignes[$i]->desc;
 			$line->price             = $propal->lignes[$i]->price;
@@ -133,7 +133,7 @@ class Commande extends CommonObject
 			$line->fk_product        = $propal->lignes[$i]->fk_product;
 			$line->info_bits         = $propal->lignes[$i]->info_bits;
 			$line->product_type      = $propal->lignes[$i]->product_type;
-			
+
 			$this->lines[$i] = $line;
 		}
 
@@ -882,7 +882,7 @@ class Commande extends CommonObject
 			$price = $prod->price;
 
 			$line=new OrderLine($this->db);
-			
+
 			$line->fk_product=$idproduct;
 			$line->desc=$prod->description;
 			$line->qty=$qty;
@@ -1067,7 +1067,7 @@ class Commande extends CommonObject
 			}
 
 			$line = new OrderLine($this->db);
-			
+
 			$line->fk_commande=$this->id;
 			$line->fk_remise_except=$remise->id;
 			$line->desc=$remise->description;   	// Description ligne
@@ -1147,7 +1147,7 @@ class Commande extends CommonObject
 				$objp = $this->db->fetch_object($result);
 
 				$line = new OrderLine($this->db);
-				
+
 				$line->rowid            = $objp->rowid;				// \deprecated
 				$line->id               = $objp->rowid;
 				$line->fk_commande      = $objp->fk_commande;
@@ -1354,10 +1354,10 @@ class Commande extends CommonObject
 
 					// Supprime ligne
 					$line = new OrderLine($this->db);
-					
+
 					$line->id = $idligne;
 					$line->fk_commande = $this->id; // On en a besoin dans les triggers
-					
+
 					$result=$line->delete($user);
 
 					if ($result > 0)
@@ -1700,7 +1700,7 @@ class Commande extends CommonObject
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
 			$sql.= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
-			
+
 			if ($this->db->query($sql) )
 			{
 				$this->ref_client = $ref_client;
@@ -1886,7 +1886,7 @@ class Commande extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE fk_target = ".$this->id;
-		$sql.= " AND targettype = ".$this->element;
+		$sql.= " AND targettype = '".$this->element."'";
 		if (! $this->db->query($sql) )
 		{
 			$err++;
@@ -2230,9 +2230,9 @@ class Commande extends CommonObject
 		while ($xnbp < $nbp)
 		{
 			$line=new OrderLine($this->db);
-			
+
 			$prodid = rand(1, $num_prods);
-			
+
 			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->qty=1;
 			$line->subprice=100;
@@ -2243,10 +2243,10 @@ class Commande extends CommonObject
 			$line->total_tva=19.6;
 			$line->produit_id=$prodids[$prodid];
 			$line->fk_product=$prodids[$prodid];
-			
+
 			$this->lignes[$xnbp]=$line; // TODO: deprecated
 			$this->lines[$xnbp]=$line;
-			
+
 			$xnbp++;
 		}
 
