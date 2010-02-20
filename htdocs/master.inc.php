@@ -77,8 +77,8 @@ if (empty($dolibarr_main_db_host))
 }
 if (empty($dolibarr_main_url_root))
 {
-	print 'Value for parameter dolibarr_main_url_root is not defined in your conf.php file'."\n";
-	print 'You must add here your Dolibarr full Url (Example: http://mydomain/myurl/)'."\n";
+	print 'Value for parameter \'dolibarr_main_url_root\' is not defined in your \'htdocs\conf\conf.php\' file.<br>'."\n";
+	print 'You must add this parameter with your full Dolibarr root Url (Example: http://myvirtualdomain/ or http://mydomain/mydolibarrurl/)'."\n";
 	exit;
 }
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
