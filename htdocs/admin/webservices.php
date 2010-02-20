@@ -64,16 +64,15 @@ if ($mesg) print '<br>'.$mesg;
 print '<br><br>';
 
 // Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
-$firstpart=$dolibarr_main_url_root;
-$firstpart=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$firstpart);
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
-$url=$firstpart.DOL_URL_ROOT.'/webservices/server.php?wsdl';
+$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server.php?wsdl';
 print img_picto('','puce.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 print '<br>';
 
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
-$url=$firstpart.DOL_URL_ROOT.'/webservices/server.php';
+$url=$urlwithouturlroot.DOL_URL_ROOT.'/webservices/server.php';
 print img_picto('','puce.png').' '.'<a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 print '<br>';
 
