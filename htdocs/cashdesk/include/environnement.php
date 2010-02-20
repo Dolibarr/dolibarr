@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2009      Laurent Destailleur  <eldy@users.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,9 +33,6 @@ $conf_db_host = $dolibarr_main_db_host;
 $conf_db_user = $dolibarr_main_db_user;
 $conf_db_pass = $dolibarr_main_db_pass;
 $conf_db_base = $dolibarr_main_db_name;
-
-// Parametres generaux
-$conf_url_racine = $dolibarr_main_url_root.'/cashdesk';
 
 // Identifiant unique correspondant au tiers generique pour la vente
 $conf_fksoc = $conf->global->CASHDESK_ID_THIRDPARTY;
