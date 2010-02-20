@@ -1787,21 +1787,21 @@ class Product extends CommonObject
 	 */
 	function clone_price($fromId, $toId)
 	{
-		global $db;
-
-		$db->begin();
+		$this->db->begin();
 
 		// les prix
-		$sql = "insert "	.MAIN_DB_PREFIX."product_price ("
+		$sql = "INSERT ".MAIN_DB_PREFIX."product_price ("
 		. " fk_product, date_price, price, tva_tx, fk_user_author, envente )"
-		. " select ".$toId . ", date_price, price, tva_tx, fk_user_author, envente "
-		. " from ".MAIN_DB_PREFIX."product_price "
-		. " where fk_product = ". $fromId . ";" ;
-		if ( ! $db->query($sql ) ) {
-			$db->rollback();
+		. " SELECT ".$toId . ", date_price, price, tva_tx, fk_user_author, envente "
+		. " FROM ".MAIN_DB_PREFIX."product_price "
+		. " WHERE fk_product = ". $fromId;
+		
+		if ( ! $this->db->query($sql ) )
+		{
+			$this->db->rollback();
 			return -1;
 		}
-		$db->commit();
+		$this->db->commit();
 		return 1;
 	}
 
@@ -1813,31 +1813,34 @@ class Product extends CommonObject
 	 */
 	function clone_fournisseurs($fromId, $toId)
 	{
-		global $db;
-
-		$db->begin();
+		$this->db->begin();
 
 		// les fournisseurs
-		$sql = "insert ".MAIN_DB_PREFIX."product_fournisseur ("
+		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur ("
 		. " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
-		. " select '".$this->db->idate(mktime())."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
-		. " from ".MAIN_DB_PREFIX."product_fournisseur "
-		. " where fk_product = ".$fromId .";" ;
-		if ( ! $db->query($sql ) ) {
-			$db->rollback();
+		. " SELECT '".$this->db->idate(mktime())."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
+		. " FROM ".MAIN_DB_PREFIX."product_fournisseur"
+		. " WHERE fk_product = ".$fromId;
+		
+		if ( ! $this->db->query($sql ) )
+		{
+			$this->db->rollback();
 			return -1;
 		}
+		
 		// les prix de fournisseurs.
-		$sql = "insert ".MAIN_DB_PREFIX."product_fournisseur_price ("
+		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price ("
 		. " datec, fk_product, fk_soc, price, quantity, fk_user )"
-		. " select '".$this->db->idate(mktime())."', ".$toId. ", fk_soc, price, quantity, fk_user"
-		. " from ".MAIN_DB_PREFIX."product_fournisseur_price"
-		. " where fk_product = ".$fromId.";";
-		if ( ! $db->query($sql ) ) {
-			$db->rollback();
+		. " SELECT '".$this->db->idate(mktime())."', ".$toId. ", fk_soc, price, quantity, fk_user"
+		. " FROM ".MAIN_DB_PREFIX."product_fournisseur_price"
+		. " WHERE fk_product = ".$fromId;
+		
+		if ( ! $this->db->query($sql ) )
+		{
+			$this->db->rollback();
 			return -1;
 		}
-		$db->commit();
+		$this->db->commit();
 		return 1;
 	}
 
@@ -1961,12 +1964,13 @@ class Product extends CommonObject
 	function get_pere()
 	{
 
-		$sql  = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id FROM ";
-		$sql  .= MAIN_DB_PREFIX."product_association as pa,";
-		$sql  .= MAIN_DB_PREFIX."product as p";
-		$sql  .= " where p.rowid=pa.fk_product_pere and p.rowid = '".$this->id."'";
+		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa";
+		$sql.= ", ".MAIN_DB_PREFIX."product as p";
+		$sql.= " WHERE p.rowid = pa.fk_product_pere";
+		$sql.= " AND p.rowid = ".$this->id;
 
-		$res = $this->db->query ($sql);
+		$res = $this->db->query($sql);
 		if ($res)
 		{
 			$prods = array ();
@@ -1989,15 +1993,17 @@ class Product extends CommonObject
 	 */
 	function get_fils_arbo ($id_pere)
 	{
-		$sql  = "SELECT p.rowid, p.label as label,pa.qty as qty,pa.fk_product_fils as id FROM ";
-		$sql .= MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."product_association as pa";
-		$sql .= " WHERE p.rowid = pa.fk_product_fils and pa.fk_product_pere = '".$id_pere."'";
+		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id";
+		$sql.= "FROM ".MAIN_DB_PREFIX."product as p";
+		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
+		$sql.= " WHERE p.rowid = pa.fk_product_fils";
+		$sql.= " AND pa.fk_product_pere = ".$id_pere;
 
-		$res  = $this->db->query ($sql);
+		$res  = $this->db->query($sql);
 		if ($res)
 		{
 			$prods = array();
-			while ($rec = $this->db->fetch_array ($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
 				$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				foreach($this -> get_fils_arbo($rec['id']) as $kf=>$vf)
@@ -2123,7 +2129,7 @@ class Product extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libell� du finished du produit
+	 *    	\brief      Retourne le libelle du finished du produit
 	 *    	\return     string		Libelle
 	 */
 	function getLibFinished()
@@ -2152,8 +2158,10 @@ class Product extends CommonObject
 		{
 			$this->db->begin();
 
-			$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_stock";
-			$sql .= " WHERE fk_product = ".$this->id." AND fk_entrepot = ".$id_entrepot;
+			$sql = "SELECT count(*) as nb";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
+			$sql.= " WHERE fk_product = ".$this->id;
+			$sql.= " AND fk_entrepot = ".$id_entrepot;
 
 			dol_syslog("Product::correct_stock sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -2612,8 +2620,8 @@ class Product extends CommonObject
 	function update_barcode($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-		$sql .= " SET barcode = '".$this->barcode."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql.= " SET barcode = '".$this->barcode."'";
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Product::update_barcode sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -2635,8 +2643,8 @@ class Product extends CommonObject
 	function update_barcode_type($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-		$sql .= " SET fk_barcode_type = '".$this->barcode_type."'";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql.= " SET fk_barcode_type = '".$this->barcode_type."'";
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Product::update_barcode_type sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -2652,27 +2660,35 @@ class Product extends CommonObject
 	}
 
 	/**
-	 \brief Affecte les valeurs smarty
-	 \remarks Rodolphe : pour l'instant la fonction est vide mais necessaire pour compatibilite
-	 avec les canvas A terme la fiche produit utilisera aussi smarty
+	 *  \brief Affecte les valeurs smarty
+	 *  \remarks Rodolphe : pour l'instant la fonction est vide mais necessaire pour compatibilite
+	 *   avec les canvas A terme la fiche produit utilisera aussi smarty
 	 */
 	function assign_smarty_values(&$smarty)
 	{
 
 	}
 
-	function isproduct() {
-		if ($this->type != 1) {
+	function isproduct()
+	{
+		if ($this->type != 1)
+		{
 			return 1;
-		} else {
+		}
+		else
+		{
 			return 0;
 		}
 	}
 
-	function isservice() {
-		if ($this->type==1) {
+	function isservice() 
+	{
+		if ($this->type==1)
+		{
 			return 1;
-		} else {
+		}
+		else
+		{
 			return 0;
 		}
 	}
