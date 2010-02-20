@@ -451,62 +451,23 @@ class Product extends CommonObject
 	function verif_prod_use($id)
 	{
 		$sqr = 0;
+		
+		$element = array('propaldet','commandedet','facturedet','contratdet');
 
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
-		$sql.= " WHERE fk_product = ".$id;
-
-		$result = $this->db->query($sql);
-		if ($result)
+		foreach($element as $table)
 		{
-			$num = $this->db->num_rows($result);
-			if ($num != 0)
+			$sql = "SELECT rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX.$table;
+			$sql.= " WHERE fk_product = ".$id;
+
+			$result = $this->db->query($sql);
+			if ($result)
 			{
-				$sqr++;
-			}
-		}
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet";
-		$sql.= " WHERE fk_product = ".$id;
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			if ($num != 0)
-			{
-				$sqr++;
-			}
-		}
-
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
-		$sql.= " WHERE fk_product = ".$id;
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			if ($num != 0)
-			{
-				$sqr++;
-			}
-		}
-
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet";
-		$sql.= " WHERE fk_product = ".$id;
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			if ($num != 0)
-			{
-				$sqr++;
+				$num = $this->db->num_rows($result);
+				if ($num != 0)
+				{
+					$sqr++;
+				}
 			}
 		}
 
