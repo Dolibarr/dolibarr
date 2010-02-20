@@ -1556,7 +1556,7 @@ if ($_GET['action'] == 'create')
 	}
 
 	// Tiers
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">';
 	print $soc->getNomUrl(1);
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
@@ -1598,7 +1598,7 @@ if ($_GET['action'] == 'create')
 		$optionsav.='</option>';
 	}
 
-	print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="2">';
+	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
 	print '<table class="nobordernopadding">'."\n";
 
 	// Standard invoice
@@ -1692,7 +1692,7 @@ if ($_GET['action'] == 'create')
 	print '</td></tr>';
 
 	// Date invoice
-	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date($dateinvoice,'','','','',"add",1,1);
 	print '</td></tr>';
 

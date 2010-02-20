@@ -1,5 +1,13 @@
 English Dolibarr ChangeLog
 
+***** ChangeLog for 2.9 compared to 2.8 *****
+
+For users:
+New: Add "payment due before" field in invoice exports
+
+For developers:
+
+
 
 ***** ChangeLog for 2.8 compared to 2.7 *****
 
