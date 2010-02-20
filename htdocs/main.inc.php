@@ -133,35 +133,44 @@ session_start();
 // This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
 require_once("master.inc.php");
 
-// Check if HTTPS
+// Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
 if ($conf->file->main_force_https)
 {
-	if (! empty($_SERVER["SCRIPT_URI"]))	// If SCRIPT_URI supported by server
+	$newurl='';
+	if ($conf->file->main_force_https == '1')
 	{
-		if (preg_match('/^http:/i',$_SERVER["SCRIPT_URI"]) && ! preg_match('/^https:/i',$_SERVER["SCRIPT_URI"]))	// If link is http
+		if (! empty($_SERVER["SCRIPT_URI"]))	// If SCRIPT_URI supported by server
 		{
-			$newurl=preg_replace('/^http:/i','https:',$_SERVER["SCRIPT_URI"]);
-
-			dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
-			header("Location: ".$newurl);
-			exit;
+			if (preg_match('/^http:/i',$_SERVER["SCRIPT_URI"]) && ! preg_match('/^https:/i',$_SERVER["SCRIPT_URI"]))	// If link is http
+			{
+				$newurl=preg_replace('/^http:/i','https:',$_SERVER["SCRIPT_URI"]);
+			}
+		}
+		else	// Check HTTPS environment variable (Apache/mod_ssl only)
+		{
+			// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
+			if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
+			{
+				$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
+				$val=explode('/',$uri);	// $val[0] contains domain name and port
+				$newurl='https://'.$val[0].$_SERVER["REQUEST_URI"];
+			}
 		}
 	}
-	else	// Check on HTTPS environment variable (Apache/mod_ssl only)
+	else
 	{
-		// $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
-		if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
-		{
-			$uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
-			$val=explode('/',$uri);
-			$domaineport=$val[0];	// $domaineport contient nom domaine et port
-
-			$newurl='https://'.$domaineport.$_SERVER["REQUEST_URI"];
-			//print 'eee'.$newurl; 	exit;
-			dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
-			header("Location: ".$newurl);
-			exit;
-		}
+		$newurl=$conf->file->main_force_https.$_SERVER["REQUEST_URI"];
+	}
+	// Start redirect
+	if ($newurl)
+	{
+		dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
+		header("Location: ".$newurl);
+		exit;
+	}
+	else
+	{
+		dol_syslog("main.inc: dolibarr_main_force_https is on but we failed to forge new https url so no redirect is done", LOG_WARNING);
 	}
 }
 

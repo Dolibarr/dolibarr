@@ -18,8 +18,8 @@
  */
 
 /**
- *  \file       htdocs/lib/memory.lib.php
- *  \brief      Fichier page info systemes Dolibarr
+ *  \file       htdocs/admin/system/dolibarr.php
+ *  \brief      Page to show Dolibarr informations
  *  \version    $Id$
  */
 
@@ -74,7 +74,7 @@ print '<br>';
 // Session
 $var=true;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path()."</td></tr>\n";
 $var=!$var;

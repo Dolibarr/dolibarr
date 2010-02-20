@@ -75,6 +75,12 @@ if (empty($dolibarr_main_db_host))
 	print 'Please, click <a href="install/index.php">here to finish Dolibarr install process</a> ...'."\n";
 	exit;
 }
+if (empty($dolibarr_main_url_root))
+{
+	print 'Value for parameter dolibarr_main_url_root is not defined in your conf.php file'."\n";
+	print 'You must add here your Dolibarr full Url (Example: http://mydomain/myurl/)'."\n";
+	exit;
+}
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_data_root))
 {
@@ -86,6 +92,7 @@ if (empty($dolibarr_main_data_root))
 // Define some constants
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);		// Filesystem pages php (htdocs)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);				// Filesystem donnes (documents)
+// If dolibarr_main_url_root = auto (Hidden feature for developers only), we try to forge it.
 if ($dolibarr_main_url_root == 'auto' && ! empty($_SERVER["SCRIPT_URL"]) && ! empty($_SERVER["SCRIPT_URI"]))
 {
 	$dolibarr_main_url_root=str_replace($_SERVER["SCRIPT_URL"],'',$_SERVER["SCRIPT_URI"]);
