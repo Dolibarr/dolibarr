@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/commande/fiche.php
  *	\ingroup    commande
- *	\brief      Fiche commande client
+ *	\brief      Page to show customer order
  *	\version    $Id$
  */
 
@@ -93,13 +93,20 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 // Suppression de la commande
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
-	if ($user->rights->commande->supprimer )
+	if ($user->rights->commande->supprimer)
 	{
 		$commande = new Commande($db);
 		$commande->fetch($_GET['id']);
-		$commande->delete($user);
-		Header('Location: index.php');
-		exit;
+		$result=$commande->delete($user);
+		if ($result > 0)
+		{
+			Header('Location: index.php');
+			exit;
+		}
+		else
+		{
+			$mesg=$commande->error;
+		}
 	}
 }
 
@@ -140,7 +147,7 @@ if ($_POST['action'] == 'classin')
 	$commande->setProject($_POST['projetid']);
 }
 
-// Ajout commande
+// Add order
 if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 {
 	$datecommande='';

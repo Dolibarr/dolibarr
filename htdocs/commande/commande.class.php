@@ -1866,29 +1866,35 @@ class Commande extends CommonObject
 	 */
 	function delete($user)
 	{
-		global $conf, $lang;
+		global $conf, $langs;
 
 		$err = 0;
 
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
+		dol_syslog("Commande::delete sql=".$sql);
 		if (! $this->db->query($sql) )
 		{
+			dol_syslog("Commande::delete error", LOG_ERR);
 			$err++;
 		}
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
+		dol_syslog("Commande::delete sql=".$sql);
 		if (! $this->db->query($sql) )
 		{
+			dol_syslog("Commande::delete error", LOG_ERR);
 			$err++;
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE fk_target = ".$this->id;
 		$sql.= " AND targettype = '".$this->element."'";
+		dol_syslog("Commande::delete sql=".$sql);
 		if (! $this->db->query($sql) )
 		{
+			dol_syslog("Commande::delete error", LOG_ERR);
 			$err++;
 		}
 
