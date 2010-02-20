@@ -557,7 +557,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 else
 {
 	/*
-	 * Affichage des parametres
+	 * Show parameters
 	 */
 
 	if ($message) print $message.'<br>';
@@ -689,7 +689,7 @@ else
 		if ($langs->transcountry("ProfId1",$code_pays) != '-')
 		{
 			print $conf->global->MAIN_INFO_SIREN;
-			if ($code_pays == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp" target="_blank">'.$langs->trans("Check").'</a>';
+			if ($conf->global->MAIN_INFO_SIREN && $code_pays == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp" target="_blank">'.$langs->trans("Check").'</a>';
 		}
 		print '</td></tr>';
 	}
