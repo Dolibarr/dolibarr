@@ -452,9 +452,9 @@ class Product extends CommonObject
 	{
 		$sqr = 0;
 		
-		$element = array('propaldet','commandedet','facturedet','contratdet');
+		$elements = array('propaldet','commandedet','facturedet','contratdet');
 
-		foreach($element as $table)
+		foreach($elements as $table)
 		{
 			$sql = "SELECT rowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX.$table;
@@ -497,21 +497,14 @@ class Product extends CommonObject
 			$prod_use = $this->verif_prod_use($id);
 			if ($prod_use == 0)
 			{
-				$sqla = "DELETE from ".MAIN_DB_PREFIX."product_price";
-				$sqla.= " WHERE fk_product = ".$id;
-				$resulta = $this->db->query($sqla);
-
-				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price_min";
-				$sqlb.= " WHERE fk_product = ".$id;
-				$resultb = $this->db->query($sqlb);
-
-				$sqlc = "DELETE from ".MAIN_DB_PREFIX."product_lang";
-				$sqlc.= " WHERE fk_product = ".$id;
-				$resultc = $this->db->query($sqlc);
-
-				$sqld = "DELETE from ".MAIN_DB_PREFIX."categorie_product";
-				$sqld.= " WHERE fk_product = ".$id;
-				$resultd = $this->db->query($sqld);
+				$elements = array('product_price','product_price_min','product_lang','categorie_product');
+				
+				foreach($elements as $table)
+				{
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql.= " WHERE fk_product = ".$id;
+					$result = $this->db->query($sql);
+				}
 
 				$sqlz = "DELETE from ".MAIN_DB_PREFIX."product";
 				$sqlz.= " WHERE rowid = ".$id;
