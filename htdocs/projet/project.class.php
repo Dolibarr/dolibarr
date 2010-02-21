@@ -521,7 +521,7 @@ class Project extends CommonObject
 
 		$picto='project';
 
-		$label=$langs->trans("ShowProject").': '.$this->ref;
+		$label=$langs->trans("ShowProject").': '.$this->ref.($this->label?' - '.$this->label:'');
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

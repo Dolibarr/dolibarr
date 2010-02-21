@@ -202,10 +202,10 @@ function select_projects($socid, $selected='', $htmlname='projectid')
  * @param unknown_type $parent
  * @param unknown_type $lines
  * @param unknown_type $level
- * @param unknown_type $tasksrole
+ * @param unknown_type $projectsrole
  * @return unknown
  */
-function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
+function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 {
 	global $user, $bc, $langs;
 	global $form;
@@ -242,6 +242,8 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			print "<td>";
 			$projectstatic->id=$lines[$i]->projectid;
 			$projectstatic->ref=$lines[$i]->projectref;
+			$projectstatic->public=$lines[$i]->public;
+			$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->projectid];
 			print $projectstatic->getNomUrl(1);
 			print "</td>";
 
@@ -252,13 +254,13 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 
 			$disabled=1;
 			// If at least one role for project
-			if (! empty($tasksrole[$lines[$i]->id])
-				&& sizeof($tasksrole[$lines[$i]->id]) > 0) $disabled=0;
+			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->projectid])) $disabled=0;
 
 			print '<td nowrap="nowrap">';
 			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
 			print '&nbsp;<input size="4" type="text" class="flat"'.($disabled?' disabled="true"':'').' name="task'.$lines[$i]->id.'" value="">';
 			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
+			if ((! $lines[$i]->public) && $disabled) print '('.$langs->trans("YouAreNotContactOfProject").')';
 			print '</td>';
 			print "<td>&nbsp;";
 			print '</td>';
@@ -266,7 +268,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			print "</tr>\n";
 			$inc++;
 			$level++;
-			if ($lines[$i]->id) PLinesb($inc, $lines[$i]->id, $lines, $level, $tasksrole);
+			if ($lines[$i]->id) PLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole);
 			$level--;
 		}
 		else
@@ -353,6 +355,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				{
 					$taskstatic->id=$lines[$i]->id;
 					$taskstatic->ref=$lines[$i]->id;
+					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 					print $taskstatic->getNomUrl(1);
 				}
 				print '</td>';

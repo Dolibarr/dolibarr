@@ -112,9 +112,9 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorde
 if ($mesg) print $mesg;
 
 $tasksarray=$task->getTasksArray(0,0,$project->id,$socid);
-$tasksrole=$task->getUserRolesForProjectsOrTasks($user,0,$project->id,0);
+$projectsrole=$task->getUserRolesForProjectsOrTasks($user,0,$project->id,0);
 //var_dump($tasksarray);
-//var_dump($tasksrole);
+//var_dump($projectsrole);
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -128,7 +128,7 @@ print '<td>'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
-PLinesb($j, 0, $tasksarray, $level, $tasksrole);
+PLinesb($j, 0, $tasksarray, $level, $projetsrole);
 print '</form>';
 
 
