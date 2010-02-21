@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -504,11 +504,11 @@ if ($_GET["action"] == 'create')
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td colspan="2">&nbsp;</td></tr>';
-	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'"></td></tr>';
-	print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	$htmlother->select_color($_POST['bgcolor'],'bgcolor','new_mailing');
 	print '</td></tr>';
@@ -532,8 +532,10 @@ if ($_GET["action"] == 'create')
 		print '<textarea cols="70" rows="20" name="body" value="'.$_POST['body'].'"></textarea>';
 	}
 	print '</td></tr>';
-	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></td></tr>';
 	print '</table>';
+
+	print '<br><center><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></center>';
+
 	print '</form>';
 }
 else
@@ -769,11 +771,11 @@ else
 			print '<input type="hidden" name="id" value="'.$mil->id.'">';
 			print '<table class="border" width="100%">';
 
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
-			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.$mil->titre.'"></td></tr>';
-			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.$mil->email_from.'"></td></tr>';
+			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
+			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td colspan="3"><input class="flat" type="text" size=40 name="titre" value="'.$mil->titre.'"></td></tr>';
+			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td colspan="3"><input class="flat" type="text" size=40 name="from" value="'.$mil->email_from.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3"><input class="flat" type="text" size=40 name="errorsto" value="'.$mil->email_errorsto.'"></td></tr>';
-			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
+			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 			$htmlother->select_color($mil->bgcolor,'bgcolor','edit_mailing');
 			print '</td></tr>';
