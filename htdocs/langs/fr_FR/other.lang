@@ -120,6 +120,7 @@ NewLength=Nouvelle largeur
 NewHeight=Nouvelle hauteur
 NewSizeAfterCropping=Nouvelles dimensions après recadrage
 DefineNewAreaToPick=Définissez la zone d'image à conserver (clic gauche sur l'image puis drag vers les coin opposé)
+CurrentInformationOnImage=Informations courante sur l'image
 
 ##### Bookmark #####
 Bookmark=Marque page

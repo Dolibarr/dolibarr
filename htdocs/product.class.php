@@ -130,7 +130,7 @@ class Product extends CommonObject
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
 		$this->canvas = '';
-		
+
 		if ($this->id > 0) $this->fetch($this->id);
 	}
 
@@ -2397,7 +2397,7 @@ class Product extends CommonObject
 
 	/**
 	 *    \brief      Affiche toutes les photos du produit (nbmax maximum)
-	 *    \param      sdir        Repertoire a scanner
+	 *    \param      sdir        Directory to scan
 	 *    \param      size        0=taille origine, 1 taille vignette
 	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
 	 *    \param      nbbyrow     Nombre vignettes par ligne (si mode vignette)
@@ -2408,6 +2408,7 @@ class Product extends CommonObject
 		global $conf,$user,$langs;
 
 		include_once(DOL_DOCUMENT_ROOT ."/lib/files.lib.php");
+		include_once(DOL_DOCUMENT_ROOT ."/lib/images.lib.php");
 
 		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
 		$dir = $sdir . '/'. $pdir;
@@ -2424,7 +2425,7 @@ class Product extends CommonObject
 			{
 				$photo='';
 
-				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure date is stored in UTF8 in memory
+				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
 				if (dol_is_file($dir.$file))
 				{
@@ -2440,20 +2441,28 @@ class Product extends CommonObject
 							if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
 						}
 
+						// Get filesize of original file
+						$imgarray=dol_getImageSize($dir.$photo);
 
 						if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
 						if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
 						if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
-						print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
+						print "\n";
+						print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" target="_blank">';
 
-						// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-						if ($photo_vignette) {
-							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'">';
+						// Show image (width height=120)
+						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
+						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
+						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
+						if ($photo_vignette && $imgarray['height'] > 120) {
+							print '<!-- Show thumb -->';
+							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 						}
 						else {
-							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+							print '<!-- Show original file -->';
+							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 						}
 
 						print '</a>';
@@ -2477,6 +2486,7 @@ class Product extends CommonObject
 								print img_delete().'</a>';
 							}
 						}
+						print "\n";
 
 						if ($nbbyrow) print '</td>';
 						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
@@ -2491,7 +2501,11 @@ class Product extends CommonObject
 						{
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								// Link to resize
+			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+
+			               		// Link to delete
+			               		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
 								print img_delete().'</a>';
 							}
 						}

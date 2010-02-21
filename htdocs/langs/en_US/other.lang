@@ -120,6 +120,7 @@ NewLength=New width
 NewHeight=New height
 NewSizeAfterCropping=New size after cropping
 DefineNewAreaToPick=Define new area on image to pick (left click on image then drag until you reach the opposite corner)
+CurrentInformationOnImage=Informations on current image
 
 ##### Bookmark #####
 Bookmark=Bookmark

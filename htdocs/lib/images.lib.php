@@ -26,7 +26,7 @@
 
 
 /**
- *    	\brief     	Return size of image file on disk
+ *    	\brief     	Return size of image file on disk (Supported extensions are gif, jpg, png and bmp)
  * 		\param		$file		Full path name of file
  * 		\return		Array		array('width'=>width, 'height'=>height)
  */
@@ -50,21 +50,23 @@ function dol_getImageSize($file)
 
 
 /**
- *    	\brief     	Resize an image file
- *    	\brief     	Supported extensions are jpg and png
- *    	\param     	file           	Chemin du fichier image a redimensionner
- *    	\param     	newWidth       	Largeur maximum que dois faire la miniature (-1=unchanged)
- *    	\param     	newHeight      	Hauteur maximum que dois faire l'image (-1=unchanged)
+ *    	\brief     	Resize or crop an image file (Supported extensions are gif, jpg, png and bmp)
+ *    	\param     	file           	Path of file to resize/crop
+ * 		\param		mode			0=Resize, 1=Crop
+ *    	\param     	newWidth       	Largeur maximum que dois faire l'image destination (0=keep ratio)
+ *    	\param     	newHeight      	Hauteur maximum que dois faire l'image destination (0=keep ratio)
+ * 		\param		src_x			Position of croping image in source image (not use if mode=0)
+ * 		\param		src_y			Position of croping image in source image (not use if mode=0)
  *		\return		int				File name if OK, error message if KO
  *		\remarks					With file=myfile.jpg -> myfile_small.jpg
  */
-function dol_imageResize($file, $newWidth, $newHeight)
+function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $src_y=0)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 	global $conf,$langs;
 
-	dol_syslog("dol_imageResize file=".$file." newWidth=".$newWidth." newHeight=".$newHeight);
+	dol_syslog("dol_imageResizeOrCrop file=".$file." mode=".$mode." newWidth=".$newWidth." newHeight=".$newHeight." src_x=".$src_x." src_y=".$src_y);
 
 	// Clean parameters
 	$file=trim($file);
@@ -82,14 +84,19 @@ function dol_imageResize($file, $newWidth, $newHeight)
 	}
 	elseif(image_format_supported($file) < 0)
 	{
-		return 'This file '.$file.' does not seem to be an image format file name.';
+		return 'This filename '.$file.' does not seem to be an image filename.';
 	}
-	elseif(!is_numeric($newWidth) && !is_numeric($newHeight)){
+	elseif(!is_numeric($newWidth) && !is_numeric($newHeight))
+	{
 		return 'Wrong value for parameter newWidth or newHeight';
 	}
-	elseif ($newWidth <= 0 && $newHeight <= 0)
+	elseif ($mode == 0 && $newWidth <= 0 && $newHeight <= 0)
 	{
-		return 'At least newHeight or newWidth must be defined';
+		return 'At least newHeight or newWidth must be defined for resizing';
+	}
+	elseif ($mode == 1 && ($newWidth <= 0 || $newHeight <= 0))
+	{
+		return 'Both newHeight or newWidth must be defined for croping';
 	}
 
 	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
@@ -99,13 +106,16 @@ function dol_imageResize($file, $newWidth, $newHeight)
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
-	if ($newWidth  <= 0)
+	if ($mode == 0)	// If resize, we check parameters
 	{
-		$newWidth=intval(($newHeight / $imgHeight) * $imgWidth);	// Keep ratio
-	}
-	if ($newHeight <= 0)
-	{
-		$newHeight=intval(($newWidth / $imgWidth) * $imgHeight);	// Keep ratio
+		if ($newWidth  <= 0)
+		{
+			$newWidth=intval(($newHeight / $imgHeight) * $imgWidth);	// Keep ratio
+		}
+		if ($newHeight <= 0)
+		{
+			$newHeight=intval(($newWidth / $imgWidth) * $imgHeight);	// Keep ratio
+		}
 	}
 
 	$imgfonction='';
@@ -138,23 +148,23 @@ function dol_imageResize($file, $newWidth, $newHeight)
 	{
 		case 1:	// Gif
 			$img = imagecreatefromgif($fichier);
-			$extImg = '.gif'; // Extension de l'image
-			$newquality='NU';
+			$extImg = '.gif';	// File name extension of image
+			$newquality='NU';	// Quality is not used for this format
 			break;
 		case 2:	// Jpg
 			$img = imagecreatefromjpeg($fichier);
-			$extImg = '.jpg'; // Extension de l'image
-			$newquality=100;
+			$extImg = '.jpg';
+			$newquality=100;	// % quality maximum
 			break;
 		case 3:	// Png
 			$img = imagecreatefrompng($fichier);
 			$extImg = '.png';
-			$newquality=10;
+			$newquality=0;		// No compression (0-9)
 			break;
 		case 4:	// Bmp
 			$img = imagecreatefromwbmp($fichier);
 			$extImg = '.bmp';
-			$newquality='NU';
+			$newquality='NU';	// Quality is not used for this format
 			break;
 	}
 
@@ -201,9 +211,9 @@ function dol_imageResize($file, $newWidth, $newHeight)
 	}
 	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
 
-	dol_syslog("dol_imageResize: convert image from ($imgWidth x $imgHeight) to ($newWidth x $newHeight) as $extImg, newquality=$newquality");
+	dol_syslog("dol_imageResizeOrCrop: convert image from ($imgWidth x $imgHeight) at position ($src_x x $src_y) to ($newWidth x $newHeight) as $extImg, newquality=$newquality");
 	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
-	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $newWidth, $newHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
+	imagecopyresampled($imgThumb, $img, 0, 0, $src_x, $src_y, $newWidth, $newHeight, ($mode==0?$imgWidth:$newWidth), ($mode==0?$imgHeight:$newHeight)); // Insere l'image de base redimensionnee
 
 	$imgThumbName = $file;
 
@@ -234,13 +244,14 @@ function dol_imageResize($file, $newWidth, $newHeight)
 	// Free memory
 	imagedestroy($imgThumb);
 
+	clearstatcache();	// File was replaced by a modified on, so we clear file caches.
+
 	return $imgThumbName;
 }
 
 
 /**
- *    	\brief     Create a thumbnail from an image file (une small et un mini)
- *    	\brief     Les extensions prises en compte sont jpg et png
+ *    	\brief     Create 2 thumbnails from an image file: one small and one mini (Supported extensions are gif, jpg, png and bmp)
  *    	\param     file           	Chemin du fichier image a redimensionner
  *    	\param     maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 par defaut)
  *    	\param     maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 par defaut)

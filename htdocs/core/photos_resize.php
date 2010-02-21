@@ -1,8 +1,6 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009 Meos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +24,17 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 $langs->load("products");
 
-// Security check
+$modulepart=$_REQUEST['modulepart']?$_REQUEST['modulepart']:'produit|service';
 if (isset($_GET["id"]))
 {
 	$id = isset($_GET["id"])?$_GET["id"]:'';
 }
-$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
-
-
 $original_file = isset($_REQUEST["file"])?urldecode($_REQUEST["file"]):'';
 
-$langs->load("products");
-
-if (!$user->rights->produit->lire) accessforbidden();
+// Security check
+if ($modulepart=='produit|service') $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
+else accessforbidden('Bad value for modulepart');
+if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
 
 
 
@@ -48,8 +44,8 @@ if (!$user->rights->produit->lire) accessforbidden();
 
 if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
 {
-	$fullpath=$conf->produit->dir_output."/".$_POST["file"];
-	$result=dol_imageResize($fullpath,$_POST['sizex'],$_POST['sizey']);
+	$fullpath=$conf->produit->dir_output."/".$original_file;
+	$result=dol_imageResizeOrCrop($fullpath,0,$_POST['sizex'],$_POST['sizey']);
 
 	if ($result == $fullpath)
 	{
@@ -65,16 +61,22 @@ if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (is
 }
 
 // Crop d'une image
-if ($_POST["action"] == 'confirm_crop' && $_POST["file"])
+if ($_POST["action"] == 'confirm_crop')
 {
-	// TODO Add function to crop image in images.lib.php
-/*	$thumb = new Imagick($conf->produit->dir_output."/".urldecode($_POST["file"]));
-	$thumb->cropImage($_POST['w'], $_POST['h'], $_POST['x'], $_POST['y']);
-	$thumb->writeImage($conf->produit->dir_output."/".urldecode($_POST["file"]));
-	$thumb->destroy();
-*/
-	header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["product"].'&action=addthumb&file='.urldecode($_POST["file"]));
-	exit;
+	$fullpath=$conf->produit->dir_output."/".$original_file;
+	$result=dol_imageResizeOrCrop($fullpath,1,$_POST['w'],$_POST['h'],$_POST['x'],$_POST['y']);
+
+	if ($result == $fullpath)
+	{
+		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["product"].'&action=addthumb&file='.urldecode($_POST["file"]));
+		exit;
+	}
+	else
+	{
+		$mesg=$result;
+		$_GET['file']=$_POST["file"];
+		$_GET['id']=$_POST["id"];
+	}
 }
 
 
@@ -92,17 +94,18 @@ if ($mesg) print '<div class="error">'.$mesg.'</div>';
 $infoarray=dol_getImageSize($conf->produit->dir_output."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
-print $langs->trans("Size").': </p>
-   <ul>
+print $langs->trans("CurrentInformationOnImage").':';
+print '<ul>
    <li>'.$langs->trans("Width").': '.$width.' px</li>
    <li>'.$langs->trans("Height").': '.$height.' px</li>
    </ul>';
 
 print '<br>';
-print_fiche_titre($langs->trans("Resize"),'','');
 
 print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="POST">';
 
+print '<fieldset id="redim_file">';
+print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
 print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px <br /> ';
 print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br />';
@@ -111,16 +114,17 @@ print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$_GET['id'].'" />';
 print '<input type="hidden" name="id" value="'.$_GET['id'].'" />';
 print '<br><input class="button" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
+print '</fieldset>';
 print '<br></form>';
-print '<br>';
 
 /*
  * Recadrage d'une image
  */
 
 print '<br>';
-print_fiche_titre($langs->trans("Recenter"),'','');
 
+print '<fieldset id="redim_file">';
+print '<legend>'.$langs->trans("Recenter").'</legend>';
 print $langs->trans("DefineNewAreaToPick").'...<br>';
 print '<br>';
 print '<img style="border: 1px solid #888888;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.$original_file.'" alt="Taille origine" id="cropbox" />';
@@ -145,6 +149,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="post" 
 	  <input type="hidden" name="id" value="'.$_GET['id'].'" />
       <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
    </form>';
+print '</fieldset>';
 
 llxFooter('$Date$ - $Revision$');
 ?>
