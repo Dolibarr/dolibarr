@@ -1994,7 +1994,7 @@ class Product extends CommonObject
 	function get_fils_arbo ($id_pere)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id";
-		$sql.= "FROM ".MAIN_DB_PREFIX."product as p";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
 		$sql.= " AND pa.fk_product_pere = ".$id_pere;
