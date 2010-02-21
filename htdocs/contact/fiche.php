@@ -564,7 +564,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	{
 		$langs->load("mails");
 		print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
-		print '<td>'.$contact->getNbOfEMailings().'</td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php?filteremail='.urlencode($contact->email).'">'.$contact->getNbOfEMailings().'</a></td>';
 	}
 	else
 	{

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (c) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -1369,8 +1369,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 * \brief     Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
-	 * \return    string      chaine erreur
+	 * 		\brief     Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
+	 * 		\return    string      chaine erreur
 	 */
 	function error()
 	{
@@ -1798,6 +1798,33 @@ class User extends CommonObject
 		}
 	}
 
+
+	/**
+	 *    \brief        Return number of mass Emailing received by this contacts with its email
+	 *    \return       int     Number of EMailings
+	 */
+	function getNbOfEMailings()
+	{
+		$sql = "SELECT count(mc.email) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+		$sql.= " WHERE mc.email = '".addslashes($this->email)."'";
+		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb=$obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
 }
 
 
@@ -1847,7 +1874,5 @@ function creer_pass_aleatoire_2($sel = "")
 	}
 	return $pass;
 }
-
-
 
 ?>

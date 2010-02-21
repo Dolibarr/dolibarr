@@ -695,9 +695,9 @@ class Contact extends CommonObject
 		}
 	}
 
-	/*
-	 *    \brief        Renvoi nombre d'emailings recu par le contact avec son email
-	 *    \return       int     Nombre d'emailings
+	/**
+	 *    \brief        Return number of mass Emailing received by this contacts with its email
+	 *    \return       int     Number of EMailings
 	 */
 	function getNbOfEMailings()
 	{
