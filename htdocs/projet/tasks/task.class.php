@@ -398,7 +398,7 @@ class Task extends CommonObject
 
 		$picto='projecttask';
 
-		$label=$langs->trans("ShowTask").': '.$this->ref;
+		$label=$langs->trans("ShowTask").': '.$this->ref.($this->label?' - '.$this->label:'');
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -520,6 +520,7 @@ class Task extends CommonObject
 	 */
 	function getUserRolesForProjectsOrTasks($userp,$usert,$projectid=0,$taskid=0)
 	{
+		$projectsrole = array();
 		$tasksrole = array();
 
 		dol_syslog("Task::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
@@ -531,8 +532,8 @@ class Task extends CommonObject
 			return -1;
 		}
 
-		/* Liste des taches et role sur la tache du user courant dans $tasksrole */
-		$sql = "SELECT ec.element_id, ctc.code";
+		/* Liste des taches et role sur les projets ou taches */
+		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code";
 		if ($userp) $sql.= " FROM ".MAIN_DB_PREFIX."projet as pt";
 		if ($usert) $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -546,8 +547,8 @@ class Task extends CommonObject
 		$sql.= " AND ec.statut = 4";
 		if ($projectid)
 		{
-			if ($userp || $usert) $sql.= " AND pt.fk_projet = ".$projectid;
-			//if ($usert) $sql.= " AND pt.rowid = ".$taskid;
+			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
+			//if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
 		}
 		if ($taskid)
 		{
@@ -564,9 +565,9 @@ class Task extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row($resql);
-				if (empty($tasksrole[$row[0]])) $tasksrole[$row[0]] = $row[1];
-				else $tasksrole[$row[0]].=','.$row[1];
+				$obj = $this->db->fetch_object($resql);
+				if (empty($projectsrole[$obj->pid])) $projectsrole[$obj->pid] = $obj->code;
+				else $projectsrole[$obj->pid].=','.$obj->code;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -576,7 +577,7 @@ class Task extends CommonObject
 			dol_print_error($this->db);
 		}
 
-		return $tasksrole;
+		return $projectsrole;
 	}
 
 	/**

@@ -109,7 +109,7 @@ if ($id > 0 || ! empty($ref))
 		$userAccess = $project->restrictedProjectArea($user);
 
 		$head = project_prepare_head($project);
-		dol_fiche_head($head, 'note', $langs->trans('Project'), 0, 'project');
+		dol_fiche_head($head, 'note', $langs->trans('Project'), 0, ($project->public?'projectpub':'project'));
 
 		print '<table class="border" width="100%">';
 

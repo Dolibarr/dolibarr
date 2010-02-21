@@ -318,7 +318,7 @@ else
 	$userAccess = $project->restrictedProjectArea($user);
 
 	$head=project_prepare_head($project);
-	dol_fiche_head($head, 'project', $langs->trans("Project"),0,'project');
+	dol_fiche_head($head, 'project', $langs->trans("Project"),0,($project->public?'projectpub':'project'));
 
 	// Confirmation validation
 	if ($_GET['action'] == 'validate')

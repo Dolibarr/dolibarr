@@ -179,7 +179,7 @@ if ($id > 0 || ! empty($ref))
 		$userAccess = $project->restrictedProjectArea($user);
 
 		$head = project_prepare_head($project);
-		dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, 'project');
+		dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, ($project->public?'projectpub':'project'));
 
 
 		/*

@@ -206,7 +206,7 @@ else
 	if ($_REQUEST["mode"]=='mine') $tab='mytasks';
 
 	$head=project_prepare_head($project);
-	dol_fiche_head($head, $tab, $langs->trans("Project"),0,'project');
+	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
 
 	$param=($_REQUEST["mode"]=='mine'?'&mode=mine':'');
 

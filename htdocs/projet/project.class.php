@@ -519,9 +519,10 @@ class Project extends CommonObject
 		$lien = '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-		$picto='project';
+		$picto='projectpub';
+		if (! $this->public) $picto='project';
 
-		$label=$langs->trans("ShowProject").': '.$this->ref;
+		$label=$langs->trans("ShowProject").': '.$this->ref.($this->label?' - '.$this->label:'');
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -604,7 +605,7 @@ class Project extends CommonObject
 			$xnbp++;
 		}
 	}
-	
+
 	/**
 	 *		\brief		Check permissions
 	 */
@@ -622,7 +623,7 @@ class Project extends CommonObject
 			{
 				$userRole = $this->liste_contact(4,$source);
 				$num=sizeof($userRole);
-				
+
 				$i = 0;
 				while ($i < $num)
 				{
@@ -634,7 +635,7 @@ class Project extends CommonObject
 				}
 			}
 		}
-		
+
 		if (!$userAccess && !$this->public)
 		{
 			if (!$list)
@@ -645,12 +646,12 @@ class Project extends CommonObject
 			{
 				return -1;
 			}
-			
+
 		}
-		
+
 		return $userAccess;
 	}
-	
+
 	/**
 	 * Return array of projects authorized for a user
 	 *
@@ -669,7 +670,7 @@ class Project extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		
+
 		if ($mine)
 		{
 			$sql.= " AND ec.element_id = p.rowid";
@@ -699,9 +700,9 @@ class Project extends CommonObject
 				$temp[] = $row[0];
 				$i++;
 			}
-			
+
 			$this->db->free($resql);
-			
+
 			if ($list)
 			{
 				if (empty($temp)) return 0;

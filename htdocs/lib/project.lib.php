@@ -211,7 +211,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
  * @param unknown_type $tasksrole
  * @return unknown
  */
-function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
+function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 {
 	global $user, $bc, $langs;
 	global $form;
@@ -235,6 +235,8 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			print "<td>";
 			$projectstatic->id=$lines[$i]->projectid;
 			$projectstatic->ref=$lines[$i]->projectref;
+			$projectstatic->public=$lines[$i]->public;
+			$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->projectid];
 			print $projectstatic->getNomUrl(1);
 			print "</td>";
 
@@ -262,14 +264,17 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			$disabled=1;
+			//print "x".$lines[$i]->projectid;
+			//var_dump($lines[$i]);
+			//var_dump($projectsrole[$lines[$i]->projectid]);
 			// If at least one role for project
-			if (! empty($tasksrole[$lines[$i]->id])
-				&& sizeof($tasksrole[$lines[$i]->id]) > 0) $disabled=0;
+			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->projectid])) $disabled=0;
 
 			print '<td nowrap="nowrap">';
 			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
 			print '&nbsp;<input size="4" type="text" class="flat"'.($disabled?' disabled="true"':'').' name="task'.$lines[$i]->id.'" value="">';
 			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
+			if ((! $lines[$i]->public) && $disabled) print '('.$langs->trans("YouAreNotContactOfProject").')';
 			print '</td>';
 			print "<td>&nbsp;";
 			print '</td>';
@@ -277,7 +282,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			print "</tr>\n";
 			$inc++;
 			$level++;
-			if ($lines[$i]->id) PLinesb($inc, $lines[$i]->id, $lines, $level, $tasksrole);
+			if ($lines[$i]->id) PLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole);
 			$level--;
 		}
 		else
@@ -298,7 +303,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
  * @param 	$level				Level of task
  * @param 	$var				Color
  * @param 	$showproject		Show project columns
- * @param	$taskrole			Array of tasks filtered on a particular user
+ * @param	$taskrole			Array of roles of user for each tasks
  */
 function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole)
 {
@@ -358,9 +363,11 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				if ($showproject)
 				{
 					print "<td>";
+					//var_dump($taskrole);
 					if ($showlineingray) print '<i>';
 					$projectstatic->id=$lines[$i]->projectid;
 					$projectstatic->ref=$lines[$i]->projectref;
+					$projectstatic->public=$lines[$i]->public;
 					print $projectstatic->getNomUrl(1);
 					if ($showlineingray) print '</i>';
 					print "</td>";
@@ -376,6 +383,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				{
 					$taskstatic->id=$lines[$i]->id;
 					$taskstatic->ref=$lines[$i]->id;
+					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 					print $taskstatic->getNomUrl(1);
 				}
 				print '</td>';
