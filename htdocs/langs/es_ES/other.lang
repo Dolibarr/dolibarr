@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - other 
+# Dolibarr language file - es_ES - other
 CHARSET = UTF-8
 ErrorPasswordDiffers = Las contraseñas no son identicas, vuelva a introducirlas
 ErrorForbidden = Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
@@ -115,6 +115,14 @@ EMailTextOrderRefused = Pedido %s rechazado
 EMailTextOrderRefusedBy = Pedido %s rechazado por %s
 ImportedWithSet = Lote de importación (import key)
 DolibarrNotification = Notificación automática
+ResizeDesc = Introduzca el nuevo ancho <b>O</b> la nueva altura. La relación se conserva al cambiar el tamaño ...
+
+NewLength = Nuevo ancho
+NewHeight = Nueva altura
+NewSizeAfterCropping = Nuevas dimensiones después de recortar
+DefineNewAreaToPick = Establezca la zona de imagen a conservar (clic izquierdo sobre la imagen y arrastre hasta la esquina opuesta)
+
+CurrentInformationOnImage = Información actual sobre la imagen
 ##### Bookmark ##### = 
 Bookmark = Marcador
 Bookmarks = Marcadores

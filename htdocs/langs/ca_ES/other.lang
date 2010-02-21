@@ -115,6 +115,12 @@ EMailTextOrderRefused = Comanda %s rebutjada
 EMailTextOrderRefusedBy = Comanda %s rebutjada per %s
 ImportedWithSet = Lot d'importació (import key)
 DolibarrNotification = Notificació automàtica
+ResizeDesc = Introduïu l'ample <b>O</b> la nova alçada. La relació es conserva en canviar la mida...
+NewLength = Nou ample
+NewHeight = Nova alçada
+NewSizeAfterCropping = Noves dimensions després de retallar
+DefineNewAreaToPick = Indiqueu la zona d'imatge a conservar (Clic sobre la imatge i arrossegueu fins a la cantonada oposada)
+CurrentInformationOnImage = Informació actual sobre la imatge
 ##### Bookmark ##### =  = 
 Bookmark = Marcador
 Bookmarks = Marcadors
