@@ -90,14 +90,6 @@ if ($_POST["action"] == 'add_action')
 	}
 
 	// Clean parameters
-	if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
-	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
-	if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
-	if ($_POST["p2min"] == -1) $_POST["p2min"]='0';
-	//if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
-	//if ($_POST["admin"] == -1) $_POST["admin"]='0';
-	//if ($_POST["a2hour"] == -1) $_POST["a2hour"]='0';
-	//if ($_POST["a2min"] == -1) $_POST["a2min"]='0';
 	$datep=dol_mktime($_POST["aphour"],
 	$_POST["apmin"],
 	0,
@@ -111,7 +103,7 @@ if ($_POST["action"] == 'add_action')
 	$_POST["p2day"],
 	$_POST["p2year"]);
 
-
+	// Check parameters
 	if (! $datep2 && $_POST["percentage"] == 100)
 	{
 		$error=1;
