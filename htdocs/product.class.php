@@ -125,13 +125,13 @@ class Product extends CommonObject
 		global $langs;
 
 		$this->db = $DB;
-		$this->id   = $id ;
+		$this->id = $id ;
 		$this->status = 0;
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
-
 		$this->canvas = '';
-		if ($id>0) $this->fetch($id);
+		
+		if ($this->id > 0) $this->fetch($this->id);
 	}
 
 	/**
@@ -285,7 +285,7 @@ class Product extends CommonObject
 									if ($this->catid > 0)
 									{
 										require_once(DOL_DOCUMENT_ROOT ."/categories/categorie.class.php");
-										$cat = new Categorie ($this->db, $this->catid);
+										$cat = new Categorie($this->db, $this->catid);
 										$cat->add_type($this,"product");
 									}
 								}
@@ -629,6 +629,7 @@ class Product extends CommonObject
 		{
 			while ( $obj = $this->db->fetch_object($result) )
 			{
+				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
 				if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courant on les charge en infos principales.
 				{
 					$this->libelle		= $obj->label;
