@@ -63,9 +63,9 @@ if ($result)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td nowrap align="left">'.$langs->trans("Ref").'</td>';
-    print '<td nowrap align="left">'.$langs->trans("Date").'</td>';
     print "<td>".$langs->trans("Label")."</td>";
-    print "<td align=\"right\">".$langs->trans("Amount")."</td>";
+    print '<td nowrap align="left">'.$langs->trans("DatePayment").'</td>';
+    print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
     $var=1;
     while ($i < $num)
@@ -77,8 +77,8 @@ if ($result)
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
+        print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="left">'.dol_print_date($obj->dm,'day')."</td>\n";
-        print "<td>".$obj->label."</td>\n";
         $total = $total + $obj->amount;
 
         print "<td align=\"right\">".price($obj->amount)."</td>";

@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/compta/charges/index.php
  *      \ingroup    compta
- *		\brief      Page liste des charges
+ *		\brief      Page to list social contributions
  *		\version    $Id$
  */
 

@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $langs->load("compta");
 $langs->load("banks");
+$langs->load("bills");
 
 $id=$_REQUEST["id"];
 
@@ -154,27 +155,27 @@ if ($_GET["action"] == 'create')
     print '<table class="border" width="100%">';
 
     print "<tr>";
-    print '<td>'.$langs->trans("DatePayment").'</td><td>';
+    print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
     print $html->select_date($datep,"datep",'','','','add');
     print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
     print $html->select_date($datev,"datev",'','','','add');
     print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';
 
 	// Amount
-	print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
 
     if ($conf->banque->enabled)
     {
-		print '<tr><td>'.$langs->trans("Account").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
         $html->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
-	    print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
+	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
 	    $html->select_types_paiements($_POST["paiementtype"], "paiementtype");
 	    print "</td>\n";
 	}

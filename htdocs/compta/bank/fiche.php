@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 /**
  *	    \file       htdocs/compta/bank/fiche.php
  *      \ingroup    banque
- *		\brief      Fiche creation compte bancaire
+ *		\brief      Page to create/view a bank account
  *		\version    $Id$
  */
 
@@ -176,21 +176,21 @@ if ($_GET["action"] == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td valign="top">'.$langs->trans("Ref").'</td>';
+	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.$account->ref.'"></td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("LabelBankCashAccount").'</td>';
+	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
 	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$_POST["label"].'"></td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
+	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">';
 	print $form->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
 	print '</td></tr>';
 
 	// Code compta
-	if ($conf->accounting->enabled)
+	if ($conf->global->MAIN_BANCK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
 	{
-		print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
 	}
 	else
@@ -199,7 +199,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	// Currency
-	print '<tr><td valign="top">'.$langs->trans("Currency").'</td>';
+	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Currency").'</td>';
 	print '<td colspan="3">';
 
 	$selectedcode=$account->account_currency_code;
@@ -211,7 +211,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	// Pays
-	print '<tr><td valign="top">'.$langs->trans("Country").'</td>';
+	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Country").'</td>';
 	print '<td colspan="3">';
 	$selectedcode=$account->account_country_code;
 	if (! $selectedcode) $selectedcode=$mysoc->pays_code;
