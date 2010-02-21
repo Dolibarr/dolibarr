@@ -68,6 +68,7 @@ ReOpenAProject=Réouvrir projet
 ConfirmReOpenAProject=Etes-vous sur de vouloir rouvrir ce projet ?
 ProjectContact=Contacts projet
 ActionsOnProject=Actions sur le projet
+YouAreNotContactOfProject=Vous n'etes pas contact de ce projet privé
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chef de projet
 TypeContact_project_external_PROJECTLEADER=Chef de projet
