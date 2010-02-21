@@ -29,11 +29,11 @@ require("../main.inc.php");
 $langs->load("products");
 
 
-function llxHeader($head = "", $help_url = "", $title="")
+function llxHeader($head = '',$help_url='',  $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $user, $conf, $langs;
 
-	top_menu($head, $title);
+	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 	$menu = new Menu();
 

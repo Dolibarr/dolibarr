@@ -167,7 +167,7 @@ class Product extends CommonObject
 	function create($user)
 	{
 		global $conf ;
-		
+
 		$this->errno = 0;
 
 		// Clean parameters
@@ -451,7 +451,7 @@ class Product extends CommonObject
 	function verif_prod_use($id)
 	{
 		$sqr = 0;
-		
+
 		$elements = array('propaldet','commandedet','facturedet','contratdet');
 
 		foreach($elements as $table)
@@ -498,7 +498,7 @@ class Product extends CommonObject
 			if ($prod_use == 0)
 			{
 				$elements = array('product_price','product_price_min','product_lang','categorie_product');
-				
+
 				foreach($elements as $table)
 				{
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
@@ -545,7 +545,7 @@ class Product extends CommonObject
 	function setMultiLangs()
 	{
 		global $langs;
-		
+
 		$langs_available = $langs->get_available_languages();
 		$current_lang = $langs->getDefaultLang();
 
@@ -610,7 +610,7 @@ class Product extends CommonObject
 	function getMultiLangs($langue='')
 	{
 		global $langs;
-		
+
 		$langs_available = $langs->get_available_languages();
 
 		if ( $langue != '')
@@ -1545,7 +1545,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
 		$sql.= " AND fk_product_fils = '".$fk_child."'";
-		
+
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -1567,17 +1567,17 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
 		$sql.= " AND fk_product_fils = '".$fk_child."'";
-		
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
-			
+
 			if($num > 0)
 			{
 				$obj = $this->db->fetch_object($result);
 				$this->is_sousproduit_qty = $obj->qty;
-				
+
 				return true;
 			}
 			else
@@ -1795,7 +1795,7 @@ class Product extends CommonObject
 		. " SELECT ".$toId . ", date_price, price, tva_tx, fk_user_author, envente "
 		. " FROM ".MAIN_DB_PREFIX."product_price "
 		. " WHERE fk_product = ". $fromId;
-		
+
 		if ( ! $this->db->query($sql ) )
 		{
 			$this->db->rollback();
@@ -1821,20 +1821,20 @@ class Product extends CommonObject
 		. " SELECT '".$this->db->idate(mktime())."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
 		. " FROM ".MAIN_DB_PREFIX."product_fournisseur"
 		. " WHERE fk_product = ".$fromId;
-		
+
 		if ( ! $this->db->query($sql ) )
 		{
 			$this->db->rollback();
 			return -1;
 		}
-		
+
 		// les prix de fournisseurs.
 		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price ("
 		. " datec, fk_product, fk_soc, price, quantity, fk_user )"
 		. " SELECT '".$this->db->idate(mktime())."', ".$toId. ", fk_soc, price, quantity, fk_user"
 		. " FROM ".MAIN_DB_PREFIX."product_fournisseur_price"
 		. " WHERE fk_product = ".$fromId;
-		
+
 		if ( ! $this->db->query($sql ) )
 		{
 			$this->db->rollback();
@@ -2404,7 +2404,7 @@ class Product extends CommonObject
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0)
 	{
-		global $user;
+		global $user,$langs;
 
 		include_once(DOL_DOCUMENT_ROOT ."/lib/files.lib.php");
 
@@ -2468,6 +2468,12 @@ class Product extends CommonObject
 							}
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
+								if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+								{
+									// Link to resize
+				               		print '<a href="'.DOL_URL_ROOT.'/product/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a>';
+								}
+								// Link to delete
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
 								print img_delete().'</a>';
 							}
@@ -2712,7 +2718,7 @@ class Product extends CommonObject
 		}
 	}
 
-	function isservice() 
+	function isservice()
 	{
 		if ($this->type==1)
 		{

@@ -20,11 +20,11 @@
  */
 
 /**
-		\file		htdocs/comm/propal/apercu.php
-		\ingroup	propal
-		\brief		Page de l'onglet apercu d'une propal
-		\version	$Id$
-*/
+ \file		htdocs/comm/propal/apercu.php
+ \ingroup	propal
+ \brief		Page de l'onglet apercu d'une propal
+ \version	$Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
@@ -43,8 +43,8 @@ $result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 /*
-* View
-*/
+ * View
+ */
 
 llxHeader();
 
@@ -70,8 +70,8 @@ if ($_GET["propalid"] > 0)
 
 
 		/*
-		*   Propal
-		*/
+		 *   Propal
+		 */
 		$sql = 'SELECT s.nom, s.rowid, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
 		$sql.= ' p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -91,7 +91,7 @@ if ($_GET["propalid"] > 0)
 				print '<table class="border" width="100%">';
 
 				// Ref
-		        print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
+				print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
 
 				// Ref client
 				print '<tr><td>';
@@ -111,7 +111,7 @@ if ($_GET["propalid"] > 0)
 				print '</tr>';
 
 				// Ligne info remises tiers
-			    print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+				print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 				if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 				else print $langs->trans("CompanyHasNoRelativeDiscount");
 				$absolute_discount=$societe->getAvailableDiscounts();
@@ -131,8 +131,8 @@ if ($_GET["propalid"] > 0)
 				print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
 
 				/*
-  				 * Documents
- 				 */
+				 * Documents
+				 */
 				$propalref = dol_sanitizeFileName($propal->ref);
 				$dir_output = $conf->propale->dir_output . "/";
 				$filepath = $dir_output . $propalref . "/";
@@ -141,7 +141,7 @@ if ($_GET["propalid"] > 0)
 				$relativepath = "${propalref}/${propalref}.pdf";
 				$relativepathdetail = "${propalref}/${propalref}-detail.pdf";
 
-                // Chemin vers png aper�us
+				// Chemin vers png apercus
 				$relativepathimage = "${propalref}/${propalref}.pdf.png";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
@@ -163,7 +163,7 @@ if ($_GET["propalid"] > 0)
 					print '</tr>';
 
 					// Si fichier detail PDF existe
-					if (file_exists($filedetail)) { // propal d�taill�e suppl�mentaire
+					if (file_exists($filedetail)) { // propal detaillee supplementaire
 						print "<tr $bc[$var]><td>Propal detaillee</td>";
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
@@ -213,29 +213,29 @@ if ($_GET["propalid"] > 0)
 			dol_print_error($db);
 		}
 	} else {
-	// Propal non trouv�e
-	print $langs->trans("ErrorPropalNotFound",$_GET["propalid"]);
+		// Propal non trouvee
+		print $langs->trans("ErrorPropalNotFound",$_GET["propalid"]);
 	}
 }
 
-// Si fichier png PDF d'1 page trouv�
+// Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
-	{
+{
 	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($relativepathimage).'">';
-	}
-// Si fichier png PDF de plus d'1 page trouv�
+}
+// Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
+{
+	$multiple = $relativepathimage . ".";
+
+	for ($i = 0; $i < 20; $i++)
 	{
-		$multiple = $relativepathimage . ".";
+		$preview = $multiple.$i;
 
-		for ($i = 0; $i < 20; $i++)
+		if (file_exists($dir_output.$preview))
 		{
-			$preview = $multiple.$i;
-
-			if (file_exists($dir_output.$preview))
-      {
-      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($preview).'"><p>';
-      }
+			print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercupropal&file='.urlencode($preview).'"><p>';
+		}
 	}
 }
 

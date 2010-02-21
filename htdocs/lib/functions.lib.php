@@ -1052,7 +1052,7 @@ function img_object($alt, $object)
 /**
  *	\brief      Show picto (generic function)
  *	\param      alt         		Text on alt and title of image
- *	\param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
+ *	\param      picto       		Name of image file to show (I no extension provided, we use '.png')
  *	\param		options				Attribut supplementaire a la balise img
  *	\param		pictoisfullpath		If 1, image path is a full path
  *	\return     string      		Retourne tag img

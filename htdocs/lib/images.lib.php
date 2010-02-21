@@ -25,6 +25,29 @@
  */
 
 
+/**
+ *    	\brief     	Return size of image file on disk
+ * 		\param		$file		Full path name of file
+ * 		\return		Array		array('width'=>width, 'height'=>height)
+ */
+function dol_getImageSize($file)
+{
+	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+
+	$ret=array();
+
+	if (image_format_supported($file) < 0) return $ret;
+
+	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
+	$dir = dirname($file); 			// Chemin du dossier contenant l'image
+
+	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
+	$ret['width']=$infoImg[0]; // Largeur de l'image
+	$ret['height']=$infoImg[1]; // Hauteur de l'image
+
+	return $ret;
+}
+
 
 /**
  *    	\brief     Create a thumbnail from an image file (une small et un mini)

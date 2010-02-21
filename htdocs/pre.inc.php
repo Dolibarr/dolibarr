@@ -28,11 +28,11 @@
 require ("./main.inc.php");
 
 
-function llxHeader($head = '', $title='', $help_url='')
+function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $user, $conf, $langs;
 
-	top_menu($head);
+	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 	$menu = new Menu();
 

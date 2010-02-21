@@ -836,18 +836,22 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 /**
  *  \brief      Show an HTML header + a BODY + The top menu bar
- *  \param      head    lines in the HEAD
- *  \param      title   titre page web
- *  \param      target  target to add in menu links
+ *  \param      head    	Lines in the HEAD
+ *  \param      title   	Title of web page
+ *  \param      target  	Target to use in menu links
+ *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	\param		disablehead	Do not output head section
+ *	\param		arrayofjs	Array of js files to add in header
+ *	\param		arrayofcss	Array of css files to add in header
  */
-function top_menu($head, $title='', $target='')
+function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
 
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
 
-	top_htmlhead($head, $title);	// Show html headers
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 
 	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
