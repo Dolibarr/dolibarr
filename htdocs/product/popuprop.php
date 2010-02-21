@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /**     \file       htdocs/product/popuprop.php
 		\ingroup    propal, produit
-		\brief      Liste des produits/services par popularit�
+		\brief      Liste des produits/services par popularite
 		\version    $Id$
 */
 
@@ -57,6 +57,7 @@ llxHeader();
 $sql = "SELECT count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."product";
 $sql.= " WHERE entity = ".$conf->entity;
+if (isset($_GET['type'])) $sql.= " AND fk_product_type = ".$_GET['type'];
 
 $result=$db->query($sql);
 if ($result)
@@ -65,7 +66,16 @@ if ($result)
     $num = $obj->c;
 }
 
-print_barre_liste($langs->trans("ListProductByPopularity"), $page, "popuprop.php","","","","",$num);
+$param = '';
+$title = $langs->trans("ListProductServiceByPopularity");
+if (isset($_GET['type']))
+{
+	$param = '&amp;type='.$_GET['type'];
+	$title = $langs->trans("ListProductByPopularity");
+	if ($_GET['type'] == 1) $title = $langs->trans("ListServiceByPopularity");
+} 
+
+print_barre_liste($title, $page, "popuprop.php",$param,"","","",$num);
 
 
 print '<table class="noborder" width="100%">';
@@ -77,21 +87,22 @@ print_liste_field_titre($langs->trans("Label"),"popuprop.php", "p.label","","","
 print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
-$sql  = "SELECT p.rowid, p.label, p.ref, fk_product_type, count(*) as c";
+$sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 $sql.= " WHERE p.rowid = pd.fk_product";
 $sql.= " AND p.entity = ".$conf->entity;
+if (isset($_GET['type'])) $sql.= " AND fk_product_type = ".$_GET['type'];
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql.= ' AND COALESCE(c.visible,1)=1';
 }
-$sql.= " group by (p.rowid)";
+$sql.= " GROUP BY (p.rowid)";
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit( $limit ,$offset);
 
@@ -126,7 +137,7 @@ if ($result)
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$objp->rowid.'">';
-	  if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
+	  if ($objp->type==1) print img_object($langs->trans("ShowService"),"service");
 	  else print img_object($langs->trans("ShowProduct"),"product");
       print " ";
       print $objp->ref.'</a></td>';
