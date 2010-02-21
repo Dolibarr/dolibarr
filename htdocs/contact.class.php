@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
- * Copyright (C) 2004-2009 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/contact.class.php
  *	\ingroup    societe
- *	\brief      Fichier de la classe des contacts
+ *	\brief      File of contacts class
  *	\version    $Id$
  */
 
@@ -57,6 +57,7 @@ class Contact extends CommonObject
 	var $code;
 	var $email;
 	var $birthday;
+	var $default_lang;
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
 	var $ref_contrat;           // Nb de reference contrat pour lequel il est contact
@@ -135,8 +136,8 @@ class Contact extends CommonObject
 		}
 	}
 
-	/*
-	 *      \brief      Mise a jour des infos en base
+	/**
+	 *      \brief      Update informations into database
 	 *      \param      id          	Id du contact a mettre a jour
 	 *      \param      user        	Objet utilisateur qui effectue la mise a jour
 	 *      \param      notrigger	    0=non, 1=oui
@@ -182,6 +183,7 @@ class Contact extends CommonObject
 		$sql .= ", jabberid = '".addslashes($this->jabberid)."'";
 		$sql .= ", priv = '".$this->priv."'";
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
+		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
 		$sql .= " WHERE rowid=".$id;
 
 		dol_syslog("Contact::update sql=".$sql,LOG_DEBUG);
@@ -390,9 +392,9 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		$sql.= " c.priv, c.note,";
+		$sql.= " c.priv, c.note, c.default_lang";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
-		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity";
+		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
@@ -442,6 +444,7 @@ class Contact extends CommonObject
 				//print "fetch: ".$obj->birthday.'-'.$this->birthday;
 				$this->birthday_alert = $obj->birthday_alert;
 				$this->note           = $obj->note;
+				$this->default_lang   = $obj->default_lang;
 				$this->user_id        = $obj->user_id;
 				$this->user_login     = $obj->user_login;
 

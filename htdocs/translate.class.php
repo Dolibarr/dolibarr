@@ -505,8 +505,9 @@ class Translate {
 
 
 	/**
-	 *  \brief       Return list of all available languages
-	 *  \return      array     list of languages
+	 *  \brief      Return list of all available languages
+	 * 	\param		langdir		Directory to scan
+	 *  \return     array     	List of languages
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
 	{
@@ -519,7 +520,7 @@ class Translate {
 			{
 				$this->load("languages");
 
-				$langs_available[$dir] = $this->trans('Language_'.$dir);
+				$langs_available[$dir] = $this->trans('Language_'.$dir).' - '.$dir;
 			}
 		}
 		return $langs_available;

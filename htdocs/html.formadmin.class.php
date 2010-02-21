@@ -47,18 +47,26 @@ class FormAdmin
 
 
 	/**
-	 *    \brief      Retourne la liste deroulante des langues disponibles
-	 *    \param      selected        Langue pre-selectionnee
-	 *    \param      htmlname        Nom de la zone select
-	 *    \param      showauto        Affiche choix auto
+	 *    	\brief      Retourne la liste deroulante des langues disponibles
+	 *    	\param      selected        Langue pre-selectionnee
+	 *    	\param      htmlname        Nom de la zone select
+	 *    	\param      showauto        Affiche choix auto
+	 * 		\param		filter			Array of keys to exclude in list
+	 * 		\param		showempty		Add empty value
 	 */
-	function select_lang($selected='',$htmlname='lang_id',$showauto=0,$filter=0)
+	function select_lang($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0)
 	{
 		global $langs;
 
 		$langs_available=$langs->get_available_languages();
 
 		print '<select class="flat" name="'.$htmlname.'">';
+		if ($showempty)
+		{
+			print '<option value=""';
+			if ($selected == '') print ' selected="true"';
+			print '>&nbsp;</option>';
+		}
 		if ($showauto)
 		{
 			print '<option value="auto"';

@@ -68,6 +68,7 @@ Zip=Zip Code
 Town=City
 Web=Web
 Poste = Position
+DefaultLang=Language by default
 VATIsUsed=VAT is used
 VATIsNotUsed=VAT is not used
 ##### Local Taxes #####

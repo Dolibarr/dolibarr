@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
@@ -31,6 +31,7 @@
 
 require("pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
@@ -134,6 +135,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
 
 	$soc->commercial_id         = $_POST["commercial_id"];
+	$soc->default_lang          = $_POST["default_lang"];
 
 	// Check parameters
 	if (empty($_POST["cancel"]))
@@ -295,6 +297,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('','',$help_url);
 
 $form = new Form($db);
+$formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
@@ -370,6 +373,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		$soc->tva_intra=$_POST["tva_intra"];
 
 		$soc->commercial_id=$_POST["commercial_id"];
+		$soc->default_lang=$_POST["default_lang"];
 
 		// We set pays_id, pays_code and libel the selected country
 		$soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
@@ -591,6 +595,14 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
+		if ($conf->global->MAIN_MULTILANGS)
+		{
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
+	    	$formadmin->select_lang(($soc->default_lang?$soc->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+			print '</td>';
+			print '</tr>';
+		}
+
 		// Assujeti TVA
 		$html = new Form($db);
 		print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
@@ -653,7 +665,8 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 
 		print '<tr><td colspan="4" align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'"></td></tr>'."\n";
+		print '<input type="submit" class="button" value="'.$langs->trans('AddThirdParty').'">';
+		print '</td></tr>'."\n";
 
 		print '</table>'."\n";
 		print '</form>'."\n";
@@ -731,6 +744,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			$soc->effectif_id=$_POST["effectif_id"];
 			$soc->gencod=$_POST["gencod"];
 			$soc->forme_juridique_code=$_POST["forme_juridique_code"];
+			$soc->default_lang=$_POST["default_lang"];
 
 			$soc->tva_assuj = $_POST["assujtva_value"];
 			$soc->tva_intra=$_POST["tva_intra"];
@@ -995,6 +1009,14 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
+		if ($conf->global->MAIN_MULTILANGS)
+		{
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
+	    	$formadmin->select_lang($soc->default_lang,'default_lang',0,0,1);
+			print '</td>';
+			print '</tr>';
+		}
+
 		print '<tr><td align="center" colspan="4">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
@@ -1232,6 +1254,14 @@ else
 	$arr = $formcompany->typent_array(1);
 	$soc->typent= $arr[$soc->typent_code];
 	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
+
+	// Language
+	if ($conf->global->MAIN_MULTILANGS)
+	{
+		$langs->load("languages");
+		$labellang=$langs->trans('Language_'.$soc->default_lang).' ('.$soc->default_lang.')';
+		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'.$labellang.'</td></tr>';
+	}
 
 	// Ban
 	print '<tr><td>';

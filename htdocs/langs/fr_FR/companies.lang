@@ -69,6 +69,7 @@ Zip=Code postal
 Town=Ville
 Web=Web
 Poste = Poste
+DefaultLang=Langue par défaut
 VATIsUsed=Assujetti à TVA
 VATIsNotUsed=Non assujetti à TVA
 ##### Local Taxes #####
