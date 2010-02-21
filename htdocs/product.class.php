@@ -2404,7 +2404,7 @@ class Product extends CommonObject
 	 */
 	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0)
 	{
-		global $user,$langs;
+		global $conf,$user,$langs;
 
 		include_once(DOL_DOCUMENT_ROOT ."/lib/files.lib.php");
 
@@ -2468,12 +2468,10 @@ class Product extends CommonObject
 							}
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
-								if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-								{
-									// Link to resize
-				               		print '<a href="'.DOL_URL_ROOT.'/product/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a>';
-								}
-								// Link to delete
+								// Link to resize
+			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+
+			               		// Link to delete
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
 								print img_delete().'</a>';
 							}

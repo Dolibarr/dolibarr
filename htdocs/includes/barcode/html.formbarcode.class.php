@@ -153,7 +153,7 @@ class FormBarCode
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setbarcodetype">';
-            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
             $this->select_barcode_type($selected, $htmlname, 1);
             print '</td>';

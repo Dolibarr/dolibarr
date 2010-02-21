@@ -115,6 +115,11 @@ EMailTextOrderRefused=La commande %s a été réfusée.
 EMailTextOrderRefusedBy=La commande %s a été réfusée par %s.
 ImportedWithSet=Lot d'importation (Import key)
 DolibarrNotification=Notification automatique
+ResizeDesc=Entrer la nouvelle largeur <b>OU</b> la nouvelle hauteur. Le ratio est conservé lors du redimensionnement...
+NewLength=Nouvelle largeur
+NewHeight=Nouvelle hauteur
+NewSizeAfterCropping=Nouvelles dimensions après recadrage
+DefineNewAreaToPick=Définissez la zone d'image à conserver (clic gauche sur l'image puis drag vers les coin opposé)
 
 ##### Bookmark #####
 Bookmark=Marque page

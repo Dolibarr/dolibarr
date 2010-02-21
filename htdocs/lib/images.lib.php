@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,195 @@ function dol_getImageSize($file)
 
 
 /**
+ *    	\brief     	Resize an image file
+ *    	\brief     	Supported extensions are jpg and png
+ *    	\param     	file           	Chemin du fichier image a redimensionner
+ *    	\param     	newWidth       	Largeur maximum que dois faire la miniature (-1=unchanged)
+ *    	\param     	newHeight      	Hauteur maximum que dois faire l'image (-1=unchanged)
+ *		\return		int				File name if OK, error message if KO
+ *		\remarks					With file=myfile.jpg -> myfile_small.jpg
+ */
+function dol_imageResize($file, $newWidth, $newHeight)
+{
+	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+
+	global $conf,$langs;
+
+	dol_syslog("dol_imageResize file=".$file." newWidth=".$newWidth." newHeight=".$newHeight);
+
+	// Clean parameters
+	$file=trim($file);
+
+	// Check parameters
+	if (! $file)
+	{
+		// Si le fichier n'a pas ete indique
+		return 'Bad parameter file';
+	}
+	elseif (! file_exists($file))
+	{
+		// Si le fichier passe en parametre n'existe pas
+		return $langs->trans("ErrorFileNotFound",$file);
+	}
+	elseif(image_format_supported($file) < 0)
+	{
+		return 'This file '.$file.' does not seem to be an image format file name.';
+	}
+	elseif(!is_numeric($newWidth) && !is_numeric($newHeight)){
+		return 'Wrong value for parameter newWidth or newHeight';
+	}
+	elseif ($newWidth <= 0 && $newHeight <= 0)
+	{
+		return 'At least newHeight or newWidth must be defined';
+	}
+
+	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
+	$dir = dirname($file); 			// Chemin du dossier contenant l'image
+
+	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
+	$imgWidth = $infoImg[0]; // Largeur de l'image
+	$imgHeight = $infoImg[1]; // Hauteur de l'image
+
+	if ($newWidth  <= 0)
+	{
+		$newWidth=intval(($newHeight / $imgHeight) * $imgWidth);	// Keep ratio
+	}
+	if ($newHeight <= 0)
+	{
+		$newHeight=intval(($newWidth / $imgWidth) * $imgHeight);	// Keep ratio
+	}
+
+	$imgfonction='';
+	switch($infoImg[2])
+	{
+		case 1:	// IMG_GIF
+			$imgfonction = 'imagecreatefromgif';
+			break;
+		case 2:	// IMG_JPG
+			$imgfonction = 'imagecreatefromjpeg';
+			break;
+		case 3:	// IMG_PNG
+			$imgfonction = 'imagecreatefrompng';
+			break;
+		case 4:	// IMG_WBMP
+			$imgfonction = 'imagecreatefromwbmp';
+			break;
+	}
+	if ($imgfonction)
+	{
+		if (! function_exists($imgfonction))
+		{
+			// Fonctions de conversion non presente dans ce PHP
+			return 'Resize not possible. This PHP does not support GD functions '.$imgfonction;
+		}
+	}
+
+	// Initialisation des variables selon l'extension de l'image
+	switch($infoImg[2])
+	{
+		case 1:	// Gif
+			$img = imagecreatefromgif($fichier);
+			$extImg = '.gif'; // Extension de l'image
+			$newquality='NU';
+			break;
+		case 2:	// Jpg
+			$img = imagecreatefromjpeg($fichier);
+			$extImg = '.jpg'; // Extension de l'image
+			$newquality=100;
+			break;
+		case 3:	// Png
+			$img = imagecreatefrompng($fichier);
+			$extImg = '.png';
+			$newquality=10;
+			break;
+		case 4:	// Bmp
+			$img = imagecreatefromwbmp($fichier);
+			$extImg = '.bmp';
+			$newquality='NU';
+			break;
+	}
+
+	// Create empty image
+	if ($infoImg[2] == 1)
+	{
+		// Compatibilite image GIF
+		$imgThumb = imagecreate($newWidth, $newHeight);
+	}
+	else
+	{
+		$imgThumb = imagecreatetruecolor($newWidth, $newHeight);
+	}
+
+	// Activate antialiasing for better quality
+	if (function_exists('imageantialias'))
+	{
+		imageantialias($imgThumb, true);
+	}
+
+	// This is to keep transparent alpha channel if exists (PHP >= 4.2)
+	if (function_exists('imagesavealpha'))
+	{
+		imagesavealpha($imgThumb, true);
+	}
+
+	// Initialisation des variables selon l'extension de l'image
+	switch($infoImg[2])
+	{
+		case 1:	// Gif
+			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procede autrement pour le format GIF
+			imagecolortransparent($imgThumb,$trans_colour);
+			break;
+		case 2:	// Jpg
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			break;
+		case 3:	// Png
+			imagealphablending($imgThumb,false); // Pour compatibilite sur certain systeme
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);	// Keep transparent channel
+			break;
+		case 4:	// Bmp
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			break;
+	}
+	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
+
+	dol_syslog("dol_imageResize: convert image from ($imgWidth x $imgHeight) to ($newWidth x $newHeight) as $extImg, newquality=$newquality");
+	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
+	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $newWidth, $newHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
+
+	$imgThumbName = $file;
+
+	// Check if permission are ok
+	//$fp = fopen($imgThumbName, "w");
+	//fclose($fp);
+
+	// Create image on disk
+	switch($infoImg[2])
+	{
+		case 1:	// Gif
+			imagegif($imgThumb, $imgThumbName);
+			break;
+		case 2:	// Jpg
+			imagejpeg($imgThumb, $imgThumbName, $newquality);
+			break;
+		case 3:	// Png
+			imagepng($imgThumb, $imgThumbName, $newquality);
+			break;
+		case 4:	// Bmp
+			image2wmp($imgThumb, $imgThumbName);
+			break;
+	}
+
+	// Set permissions on file
+	if (! empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
+
+	// Free memory
+	imagedestroy($imgThumb);
+
+	return $imgThumbName;
+}
+
+
+/**
  *    	\brief     Create a thumbnail from an image file (une small et un mini)
  *    	\brief     Les extensions prises en compte sont jpg et png
  *    	\param     file           	Chemin du fichier image a redimensionner
@@ -66,7 +255,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	global $conf,$langs;
 
-	dol_syslog("functions.inc::vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);
+	dol_syslog("vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);
 
 	// Clean parameters
 	$file=trim($file);
@@ -88,11 +277,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1){
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
-		return 'Valeur de la largeur incorrecte.';
+		return 'Wrong value for parameter maxWidth';
 	}
 	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1){
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
-		return 'Valeur de la hauteur incorrecte.';
+		return 'Wrong value for parameter maxHeight';
 	}
 
 	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
@@ -271,15 +460,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 
 /**
- \brief permet d'afficher un thermometre monetaire.
- \param actualValue
- \param pendingValue
- \param intentValue
- \return thermometer htmlLegenda
- This function returns the html for the moneymeter.
- cachedValue: amount of actual money
- pendingValue: amount of money of pending memberships
- intentValue: amount of intended money (that's without the amount of actual money)
+ *	\brief	This function returns the html for the moneymeter.
+ *	\param	actualValue: amount of actual money
+ *	\param	pendingValue: amount of money of pending memberships
+ *	\param	intentValue: amount of intended money (that's without the amount of actual money)
+ *	\return thermometer htmlLegenda
  */
 function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 {

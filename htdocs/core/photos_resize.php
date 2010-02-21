@@ -34,7 +34,7 @@ if (isset($_GET["id"]))
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 
-$original_file = isset($_GET["file"])?urldecode($_GET["file"]):'';
+$original_file = isset($_REQUEST["file"])?urldecode($_REQUEST["file"]):'';
 
 $langs->load("products");
 
@@ -46,32 +46,28 @@ if (!$user->rights->produit->lire) accessforbidden();
  * Actions
  */
 
-if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") &&(isset($_POST["sizey"]) != ""))
+if ($_POST["action"] == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POST["sizex"]) != "") && (isset($_POST["sizey"]) != ""))
 {
-/*	$thumb = new Imagick($conf->produit->dir_output."/".$_POST["file"]);
-	$height=$thumb->getImageHeight();	// dimensions de l'image actuelle
-	$width=$thumb->getImageWidth();		// dimensions de l'image actuelle
+	$fullpath=$conf->produit->dir_output."/".$_POST["file"];
+	$result=dol_imageResize($fullpath,$_POST['sizex'],$_POST['sizey']);
 
-	if($_POST["sizex"] != "")
+	if ($result == $fullpath)
 	{
-		if ($width > $_POST['sizex'])
-		$thumb->scaleImage(intval($_POST['sizex']), 0);
+		header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["product"].'&action=addthumb&file='.urldecode($_POST["file"]));
+		exit;
 	}
-	if($_POST["sizey"] != "")
+	else
 	{
-		if ($height > $_POST['sizey'])
-		$thumb->scaleImage(0, intval($_POST['sizey']));
+		$mesg=$result;
+		$_GET['file']=$_POST["file"];
+		$_GET['id']=$_POST["id"];
 	}
-	$thumb->writeImage($conf->produit->dir_output."/".$_POST["file"]);
-	$thumb->destroy();
-*/
-	header("Location: ".DOL_URL_ROOT."/product/photos.php?id=".$_POST["product"].'&action=addthumb&file='.urldecode($_POST["file"]));
-	exit;
 }
 
 // Crop d'une image
 if ($_POST["action"] == 'confirm_crop' && $_POST["file"])
 {
+	// TODO Add function to crop image in images.lib.php
 /*	$thumb = new Imagick($conf->produit->dir_output."/".urldecode($_POST["file"]));
 	$thumb->cropImage($_POST['w'], $_POST['h'], $_POST['x'], $_POST['y']);
 	$thumb->writeImage($conf->produit->dir_output."/".urldecode($_POST["file"]));
@@ -86,31 +82,35 @@ if ($_POST["action"] == 'confirm_crop' && $_POST["file"])
  * View
  */
 
-llxHeader($head, $langs->trans("Resize"), '', '', 0, 0, array('includes/jcrop/js/jquery.min.js','includes/jcrop/js/jquery.Jcrop.min.js','lib/lib_photosresize.js'), array(DOL_URL_ROOT.'/includes/jcrop/css/jquery.Jcrop.css'));
+llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('includes/jcrop/js/jquery.min.js','includes/jcrop/js/jquery.Jcrop.min.js','lib/lib_photosresize.js'), array(DOL_URL_ROOT.'/includes/jcrop/css/jquery.Jcrop.css'));
 
 
-print_fiche_titre($langs->trans("Current"));
+print_fiche_titre($langs->trans("Image"));
+
+if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 $infoarray=dol_getImageSize($conf->produit->dir_output."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
 print $langs->trans("Size").': </p>
    <ul>
-   <li>'.$langs->trans("Length").': '.$width.' px</li>
-   <li>'.$langs->trans("Width").': '.$height.' px</li>
+   <li>'.$langs->trans("Width").': '.$width.' px</li>
+   <li>'.$langs->trans("Height").': '.$height.' px</li>
    </ul>';
 
 print '<br>';
 print_fiche_titre($langs->trans("Resize"),'','');
 
-print '<form name="redim_file" action="'.DOL_URL_ROOT.'/product/photos_resize.php?id='.$_GET['id'].'" method="post">';
-print 'Entrer la nouvelle largeur <strong>OU</strong> la nouvelle hauteur. Le ratio est conservé lors du redimensionnement...<br>';
-print 'Nouvelle largeur : <input class="flat" name="sizex" size="10" type="text" > px <br /> ';
-print 'Nouvelle hauteur : <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br />';
+print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="POST">';
+
+print $langs->trans("ResizeDesc").'<br>';
+print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px <br /> ';
+print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br />';
 print '<input type="hidden" name="file" value="'.$_GET['file'].'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$_GET['id'].'" />';
-print '<br><input class="button" name="sendit" value="Redimensionner" type="submit" />';
+print '<input type="hidden" name="id" value="'.$_GET['id'].'" />';
+print '<br><input class="button" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
 print '<br></form>';
 print '<br>';
 
@@ -121,14 +121,16 @@ print '<br>';
 print '<br>';
 print_fiche_titre($langs->trans("Recenter"),'','');
 
-print 'Define new area to keep...<br>';
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.$original_file.'" alt="Taille origine"  id="cropbox" />';
+print $langs->trans("DefineNewAreaToPick").'...<br>';
+print '<br>';
+print '<img style="border: 1px solid #888888;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.$original_file.'" alt="Taille origine" id="cropbox" />';
+print '<br>';
 $infoarray=dol_getImageSize($conf->produit->dir_output."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
-print '<form action="photos_resize.php" method="post" onsubmit="return checkCoords();">
+print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id'].'" method="post" onsubmit="return checkCoords();">
       <div class="jc_coords">
-         <div class="titre">Nouvelles dimensions après recadrage</div>
+         '.$langs->trans("NewSizeAfterCropping").':
          <label>X1 <input type="text" size="4" id="x" name="x" /></label>
          <label>Y1 <input type="text" size="4" id="y" name="y" /></label>
          <label>X2 <input type="text" size="4" id="x2" name="x2" /></label>
@@ -140,7 +142,8 @@ print '<form action="photos_resize.php" method="post" onsubmit="return checkCoor
       <input type="hidden" id="file" name="file" value="'.urlencode($original_file).'" />
       <input type="hidden" id="action" name="action" value="confirm_crop" />
       <input type="hidden" id="product" name="product" value="'.$_GET['id'].'" />
-      <br><input type="submit" class="button" value="Recadrer" />
+	  <input type="hidden" name="id" value="'.$_GET['id'].'" />
+      <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
    </form>';
 
 llxFooter('$Date$ - $Revision$');
