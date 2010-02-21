@@ -32,9 +32,9 @@ function barcode_coder_save(formNameID)
 	Licence:  GPL
 ==================================================================*/
 
-function autofilltownfromzip_PopupPostalCode(postalcode,objecttown,objectcountry,objectstate)
+function autofilltownfromzip_PopupPostalCode(url_root, postalcode,objecttown,objectcountry,objectstate)
 {
-    var url = 'searchpostalcode.php?cp=' + postalcode;
+    var url = url_root + '/core/searchpostalcode.php?cp=' + postalcode;
     url = url + '&targettown=window.opener.document.formsoc.' + objecttown.name;
     url = url + '&targetcountry=window.opener.document.formsoc.' + objectcountry.name;
     url = url + '&targetstate=window.opener.document.formsoc.' + objectstate.name;

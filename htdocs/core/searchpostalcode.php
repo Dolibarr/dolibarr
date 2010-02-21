@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,36 +41,6 @@ require("pre.inc.php");
 
 $langs->load("companies");
 
-
-function run_request($table)
-{
-    global $db;
-	$cp=isset($_GET["cp"])?trim($_GET["cp"]):'';
-
-    $sql = "SELECT DISTINCT cp, ville, fk_departement, fk_pays, p.code as pays_code, p.libelle as pays_lib";
-    $sql.= " FROM ".MAIN_DB_PREFIX.$table;
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_pays as p ON fk_pays = p.rowid';
-    $sql.= " WHERE";
-    if ($cp)
-    {
-    	$cp=str_replace('*','%',$cp);
-    	$sql.= " cp LIKE '".addslashes($cp)."' AND";
-    	$sql.= " (ville IS NOT NULL OR fk_departement IS NOT NULL OR fk_pays IS NOT NULL)";
-    }
-    else $sql.= " cp != '' AND cp IS NOT NULL";
-	$sql.= " ORDER by fk_pays, ville, cp";
-	$sql.= ' '.$db->plimit(50);	// Avoid pb with bad criteria
-
-    //print $sql.'<br>';
-	$result=$db->query($sql);
-    if (!$result)
-    {
-        dol_print_error($db);
-    }
-    return $result;
-}
-
-
 // Security Access Client
 if ($user->societe_id > 0)
 {
@@ -79,6 +49,12 @@ if ($user->societe_id > 0)
     $_GET["socid"] = $user->societe_id;
 }
 
+// Entry parameter are
+// $_GET = array
+//  'cp' => string '78180' (length=5)
+//  'targettown' => string 'window.opener.document.formsoc.ville' (length=36)
+//  'targetcountry' => string 'window.opener.document.formsoc.pays_id' (length=38)
+//  'targetstate'
 
 /*
  * View
@@ -104,10 +80,12 @@ function MAJ(targettown,targetcountry,targetstate)
 //-->
 </script>\n";
 
+
 top_htmlhead("", $langs->trans("SearchTown"));
 
 // Same as llxHeader. Open what llxFooter close
 print '<body>';
+
 print $javascript;
 
 print '<table summary="" width="100%"><tr><td>';
@@ -131,9 +109,14 @@ if ($result)
 	//print 'sql='.$sql.' num='.$num; exit;
 	if($num == 0)
 	{
-		$result = run_request("postalcode");
-		$num=$db->num_rows($result);
+		if ($conf->global->MAIN_AUTOFILL_TOWNFROMZIP == 2)
+		{
+			$result = run_request("postalcode");	// If a table llx_postalcode exists
+			$num=$db->num_rows($result);
+		}
 	}
+
+	$showselect=1;
 
 	// If it has not, or only one result on switch and fill the form
 	if($num <= 1)
@@ -141,9 +124,18 @@ if ($result)
 		$obj = $db->fetch_object($result);
 		$ville = $obj->ville;
 		$ville_code = urlencode("$ville");
-	    print "<tr ".$bc[$var]."><td width=\"10%\">";
-		print '<input type="radio" name="town" value="'.$ville.'" checked>';
-		print "<script language=\"javascript\" type=\"text/javascript\">document.searchform.submit();</script>\n";
+		print "<tr ".$bc[$var]."><td width=\"10%\">";
+		if ($ville && $ville_code)
+		{
+			print '<input type="radio" name="town" value="'.$ville.'" checked>';
+			print "<script language=\"javascript\" type=\"text/javascript\">document.searchform.submit();</script>\n";
+		}
+		else
+		{
+			$langs->load("errors");
+			print $langs->trans("ErrorRecordNotFound");
+			$showselect=0;
+		}
 	    print "</td></tr>";
 	}
 	else
@@ -155,6 +147,7 @@ if ($result)
 
 	        $cp = $obj->cp;
 	        $ville = $obj->ville;
+			$ville_code = urlencode("$ville");
 
 	        $dep = $obj->fk_departement;
 	        $dep_lib = $obj->fk_departement;
@@ -179,8 +172,11 @@ if ($result)
 $var=!$var;
 print "<tr><td align=\"center\" colspan=\"3\">";
 print "<br><input type=\"hidden\" name=\"nb_i\" value=\"$i\">";
-print "<input type=\"submit\" class=\"button\" name=\"envoyer\" value=\"".$langs->trans("Select")."\">";
-print " &nbsp; ";
+if ($showselect)
+{
+	print "<input type=\"submit\" class=\"button\" name=\"envoyer\" value=\"".$langs->trans("Select")."\">";
+	print " &nbsp; ";
+}
 print "<input type=\"button\" class=\"button\" value=\"".$langs->trans("Cancel")."\" onClick=\"window.close();\">";
 print "</td></tr>";
 
@@ -189,4 +185,42 @@ print "</table></form><br>\n";
 $db->close();
 
 llxFooter('$Date$ - $Revision$',0);
+
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $table
+ * @return unknown
+ */
+function run_request($table)
+{
+    global $db;
+	$cp=isset($_GET["cp"])?trim($_GET["cp"]):'';
+
+    $sql = "SELECT DISTINCT cp, ville, fk_departement, fk_pays, p.code as pays_code, p.libelle as pays_lib";
+    $sql.= " FROM ".MAIN_DB_PREFIX.$table;
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_pays as p ON fk_pays = p.rowid';
+    $sql.= " WHERE";
+    if ($cp)
+    {
+    	$cp=str_replace('*','%',$cp);
+    	$sql.= " cp LIKE '".addslashes($cp)."' AND";
+    	$sql.= " (ville IS NOT NULL OR fk_departement IS NOT NULL OR fk_pays IS NOT NULL)";
+    }
+    else $sql.= " cp != '' AND cp IS NOT NULL";
+	$sql.= " ORDER by fk_pays, ville, cp";
+	$sql.= ' '.$db->plimit(50);	// Avoid pb with bad criteria
+
+    //print $sql.'<br>';
+	$result=$db->query($sql);
+    if (!$result)
+    {
+        dol_print_error($db);
+        exit;
+    }
+
+    return $result;
+}
+
 ?>

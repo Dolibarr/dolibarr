@@ -109,7 +109,7 @@ if ($_GET["action"] == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
 
 	// Reference client
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
@@ -117,7 +117,7 @@ if ($_GET["action"] == 'create')
 	print '</tr>';
 
 	// Societe
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$soc->getNomUrl(1);
+	print '<tr><td class="fieldrequired">'.$langs->trans('Company').'</td><td colspan="2">'.$soc->getNomUrl(1);
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>';
@@ -140,12 +140,12 @@ if ($_GET["action"] == 'create')
 	print '.';
 	print '</td></tr>';
 
-	// Date facture
-	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">';
+	// Date
+	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date('','','','','',"addprop");
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="'.$conf->global->PROPALE_VALIDITY_DURATION.'"> '.$langs->trans("days").'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="'.$conf->global->PROPALE_VALIDITY_DURATION.'"> '.$langs->trans("days").'</td></tr>';
 
 	// Terms of payment
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
