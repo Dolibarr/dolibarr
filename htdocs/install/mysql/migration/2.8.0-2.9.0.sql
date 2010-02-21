@@ -37,3 +37,7 @@ create table llx_product_variant_lang
 
 ALTER TABLE llx_product_variant_lang ADD UNIQUE INDEX uk_product_variant_lang (fk_product_variant, lang);
 ALTER TABLE llx_product_variant_lang ADD CONSTRAINT fk_product_variant_lang_fk_product_variant 	FOREIGN KEY (fk_product_variant) REFERENCES llx_product_variant (rowid);
+
+
+alter table llx_societe add column   default_lang   varchar(6) after price_level;
+alter table llx_socpeople add column   default_lang   varchar(6) after note;

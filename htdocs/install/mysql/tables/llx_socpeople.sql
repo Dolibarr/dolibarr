@@ -43,9 +43,10 @@ create table llx_socpeople
   email          varchar(255),
   jabberid       varchar(255),
   priv           smallint NOT NULL DEFAULT 0,
-  fk_user_creat  integer DEFAULT 0,             -- user qui a créé l'enregistrement
+  fk_user_creat  integer DEFAULT 0,             -- user qui a creel'enregistrement
   fk_user_modif  integer,
   note           text,
+  default_lang   varchar(6),
   import_key     varchar(14)
 )type=innodb;
 

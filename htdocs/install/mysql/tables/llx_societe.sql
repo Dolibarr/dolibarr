@@ -76,6 +76,7 @@ create table llx_societe
   localtax2_assuj          tinyint        DEFAULT 0,	        -- assujeti ou non a local tax 2
   gencod                   varchar(255),                        -- barcode
   price_level              integer NULL,                        -- level of price for multiprices
+  default_lang             varchar(6),
   import_key               varchar(14)                          -- import key
 )type=innodb;
 
