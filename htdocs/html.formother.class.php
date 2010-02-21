@@ -366,11 +366,11 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 					print $langs->trans("Project").' '.$lines[$i]->projectref;
 					if (empty($lines[$i]->public))
 					{
-						print ' ('.$langs->trans("PrivateProject").')';
+						print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
 					}
 					else
 					{
-						print ' ('.$langs->trans("SharedProject").')';
+						print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
 					}
 					//print '-'.$parent.'-'.$lines[$i]->projectid.'-'.$lastprojectid;
 					print "</option>\n";

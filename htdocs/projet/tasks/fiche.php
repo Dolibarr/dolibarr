@@ -149,6 +149,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer && (empty($proje
 	print '<input type="text" size="25" name="label" class="flat" value="'.$_POST["label"].'">';
 	print '</td></tr>';
 
+	// List of projects
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfTask").'</td><td>';
 	print $formother->selectProjectTasks('',$projectid, 'task_parent', 0, 0, 1, 1);
 	print '</td></tr>';
@@ -244,9 +245,9 @@ else
 	 */
 	print '<div class="tabsAction">';
 
-	if ($user->rights->projet->creer)
+	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 	{
-		if ($userAccess)
+		if ($project->public || $userAccess)
 		{
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$project->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
 		}

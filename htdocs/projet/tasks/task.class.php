@@ -495,6 +495,7 @@ class Task extends CommonObject
 					$tasks[$i]->description  = $obj->description;
 					$tasks[$i]->fk_parent    = $obj->fk_task_parent;
 					$tasks[$i]->duration     = $obj->duration_effective;
+					$tasks[$i]->public       = $obj->public;
 				}
 
 				$i++;
@@ -510,16 +511,18 @@ class Task extends CommonObject
 	}
 
 	/**
-	 * Return Array of role of user for each projects or each tasks
+	 * Return list of roles for a user for each projects or each tasks (or a particular project or task)
 	 * @param 	userp
-	 * @param	usert
-	 * @param 	projectid
-	 * @param 	taskid
-	 * @return 	array			Array of role of user for each projects or each tasks
+	 * @param	usert			Deprecated. Permissions are on project.
+	 * @param 	projectid		Project id to filter on a project
+	 * @param 	taskid			Task id to filter on a task
+	 * @return 	array			Array (projectid => 'list of roles for project')
 	 */
 	function getUserRolesForProjectsOrTasks($userp,$usert,$projectid=0,$taskid=0)
 	{
 		$tasksrole = array();
+
+		dol_syslog("Task::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
 
 		// We want role of user for projet or role of user for task. Both are not possible.
 		if (empty($userp) && empty($usert))
@@ -552,7 +555,8 @@ class Task extends CommonObject
 			if ($usert) $sql.= " AND pt.rowid = ".$taskid;
 		}
 
-		dol_syslog("Task::getTasksForProjectOwnedByAUser sql=".$sql);
+		//print $sql;
+		dol_syslog("Task::getUserRolesForProjectsOrTasks sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -561,7 +565,8 @@ class Task extends CommonObject
 			while ($i < $num)
 			{
 				$row = $this->db->fetch_row($resql);
-				$tasksrole[$row[0]] = $row[1];
+				if (empty($tasksrole[$row[0]])) $tasksrole[$row[0]] = $row[1];
+				else $tasksrole[$row[0]].=','.$row[1];
 				$i++;
 			}
 			$this->db->free($resql);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,12 +21,14 @@
 /**
  *	\file       htdocs/projet/tasks/index.php
  *	\ingroup    project
- *	\brief      Fiche taches d'un projet
+ *	\brief      List all task of a project
  *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
 
 $langs->load('projects');
 
@@ -68,15 +70,15 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorde
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Project").'</td>';
 print '<td width="80">'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
-print '<td>'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
 // Show all lines in taskarray (recursive function to go down on tree)

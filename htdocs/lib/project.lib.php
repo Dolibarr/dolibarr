@@ -217,6 +217,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 	global $form;
 
 	$projectstatic = new Project($db);
+	$taskstatic = new Task($db);
 
 	$var=true;
 
@@ -230,8 +231,19 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			$var = !$var;
 			print "<tr $bc[$var]>\n";
 
+			// Project
+			print "<td>";
+			$projectstatic->id=$lines[$i]->projectid;
+			$projectstatic->ref=$lines[$i]->projectref;
+			print $projectstatic->getNomUrl(1);
+			print "</td>";
+
 			// Ref
-			print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'">'.$lines[$i]->id.'</a></td>';
+			print '<td>';
+			$taskstatic->id=$lines[$i]->id;
+			$taskstatic->ref=$lines[$i]->id;
+			print $taskstatic->getNomUrl(1);
+			print '</td>';
 
 			// Label task
 			print "<td>";
@@ -244,32 +256,24 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			print $lines[$i]->label;
 			print "</td>\n";
 
-			// Project
-			print "<td>";
-			$projectstatic->id=$lines[$i]->projectid;
-			$projectstatic->ref=$lines[$i]->projectref;
-			print $projectstatic->getNomUrl(1);
-			print "</td>";
-
 			$heure = intval($lines[$i]->duration);
 			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
-			if ($tasksrole[$lines[$i]->id] == 'TASKEXECUTIVE')
-			{
-				print '<td nowrap="nowrap">';
-				print $form->select_date('',$lines[$i]->id,'','','',"addtime");
-				print '&nbsp;<input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-				print '</td>';
-				print "<td>&nbsp;";
-				print '</td>';
-			}
-			else
-			{
-				print '<td colspan="2">&nbsp;</td>';
-			}
+			$disabled=1;
+			// If at least one role for project
+			if (! empty($tasksrole[$lines[$i]->id])
+				&& sizeof($tasksrole[$lines[$i]->id]) > 0) $disabled=0;
+
+			print '<td nowrap="nowrap">';
+			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
+			print '&nbsp;<input size="4" type="text" class="flat"'.($disabled?' disabled="true"':'').' name="task'.$lines[$i]->id.'" value="">';
+			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
+			print '</td>';
+			print "<td>&nbsp;";
+			print '</td>';
+
 			print "</tr>\n";
 			$inc++;
 			$level++;
@@ -350,6 +354,18 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 
 				print "<tr ".$bc[$var].">\n";
 
+				// Project
+				if ($showproject)
+				{
+					print "<td>";
+					if ($showlineingray) print '<i>';
+					$projectstatic->id=$lines[$i]->projectid;
+					$projectstatic->ref=$lines[$i]->projectref;
+					print $projectstatic->getNomUrl(1);
+					if ($showlineingray) print '</i>';
+					print "</td>";
+				}
+
 				// Ref of task
 				print '<td>';
 				if ($showlineingray)
@@ -376,18 +392,6 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				if ($showlineingray) print '</i>';
 				else print '</a>';
 				print "</td>\n";
-
-				// Project
-				if ($showproject)
-				{
-					print "<td>";
-					if ($showlineingray) print '<i>';
-					$projectstatic->id=$lines[$i]->projectid;
-					$projectstatic->ref=$lines[$i]->projectref;
-					print $projectstatic->getNomUrl(1);
-					if ($showlineingray) print '</i>';
-					print "</td>";
-				}
 
 				$heure = intval($lines[$i]->duration);
 				$minutes = round((($lines[$i]->duration - $heure) * 60),0);

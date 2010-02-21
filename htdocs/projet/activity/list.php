@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/fiche.php
+ *	\file       htdocs/projet/activity/list.php
  *	\ingroup    projet
- *	\brief      Fiche taches d'un projet
+ *	\brief      List activities of tasks
  *	\version    $Id$
  */
 
@@ -122,9 +122,9 @@ print '<input type="hidden" name="action" value="addtime">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
-print '<td>'.$langs->trans("Project").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
