@@ -97,7 +97,6 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
 	$dir = dirname($file); 			// Chemin du dossier contenant l'image
-	$dirthumb = $dir.($outdir?'/'.$outdir:''); 	// Chemin du dossier contenant les vignettes
 
 	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
@@ -140,6 +139,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 
 	// On cree le repertoire contenant les vignettes
+	$dirthumb = $dir.($outdir?'/'.$outdir:''); 	// Chemin du dossier contenant les vignettes
 	create_exdir($dirthumb);
 
 	// Initialisation des variables selon l'extension de l'image
