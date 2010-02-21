@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - products 
+# Dolibarr language file - es_ES - products
 CHARSET = UTF-8
 ProductRef = Ref. producto
 ProductLabel = Etiqueta producto
@@ -144,7 +144,9 @@ RecordedProductsAndServices = Productos/servicios en venta
 GenerateThumb = Generar la etiqueta
 ProductCanvasAbility = Usar las extensiones especiales "canvas"
 ServiceNb = Servicio no %s
+ListProductServiceByPopularity = Listado de productos/servicios por popularidad
 ListProductByPopularity = Listado de productos/servicios por popularidad
+ListServiceByPopularity = Listado de servicios por popularidad
 Finished = Producto manofacturado
 RowMaterial = Materia prima
 CloneProduct = Clonar producto/servicio
