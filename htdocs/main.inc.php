@@ -799,6 +799,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Output module javascript
 		if (is_array($arrayofjs))
 		{
+			print '<!-- Includes specific to page -->'."\n";
 			foreach($arrayofjs as $jsfile)
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/'.$jsfile.'"></script>'."\n";
