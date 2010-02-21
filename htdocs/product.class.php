@@ -2006,8 +2006,8 @@ class Product extends CommonObject
 			while ($rec = $this->db->fetch_array($res))
 			{
 				$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
-				foreach($this -> getChildsArbo($rec['id']) as $kf=>$vf)
-				$prods[addslashes($rec['label'])][$kf] = $vf;
+				foreach($this->getChildsArbo($rec['id']) as $keyChild => $valueChild)
+				$prods[addslashes($rec['label'])][$keyChild] = $valueChild;
 			}
 			return $prods;
 		}
