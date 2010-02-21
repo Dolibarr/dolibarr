@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - companies 
+# Dolibarr language file - ca_ES - companies
 CHARSET = UTF-8
 ErrorCompanyNameAlreadyExists = El nom de l'empresa %s ja existeix. Indiqui altre.
 ErrorPrefixAlreadyExists = El prefix %s ja existeix. Indiqui altre.
@@ -69,9 +69,10 @@ Zip = Codi postal
 Town = Població
 Web = Web
 Poste = Lloc
+DefaultLang = Idioma per defecte
 VATIsUsed = Subjecte a IVA
 VATIsNotUsed = No subjecte a IVA
-##### Local Taxes #####
+##### Local Taxes ##### = undefined = 
 LocalTax1IsUsedES = Subjecte a RE
 LocalTax1IsNotUsedES = No subjecte a RE
 LocalTax2IsUsedES = Subjecte a IRPF
@@ -115,6 +116,10 @@ ProfId1GB = Número registre
 ProfId2GB = -
 ProfId3GB = SIC
 ProfId4GB = -
+ProfId1MA = Id prof. 1 (R.C.)
+ProfId2MA = Id prof. 2 (Patente)
+ProfId3MA = Id prof. 3 (I.F.)
+ProfId4MA = Id prof. 4 (C.N.S.S.)
 ProfId1PT = NIPC
 ProfId2PT = Núm seguretat social
 ProfId3PT = Num reg. comercial
