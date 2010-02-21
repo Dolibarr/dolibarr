@@ -250,20 +250,19 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$tasksrole)
 			$minutes = substr("00"."$minutes", -2);
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
-			if ($tasksrole[$lines[$i]->id] == 'TASKEXECUTIVE')
-			{
-				print '<td nowrap="nowrap">';
-				print $form->select_date('',$lines[$i]->id,'','','',"addtime");
-				print '&nbsp;<input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-				print '</td>';
-				print "<td>&nbsp;";
-				print '</td>';
-			}
-			else
-			{
-				print '<td colspan="2">&nbsp;</td>';
-			}
+			$disabled=1;
+			// If at least one role for project
+			if (! empty($tasksrole[$lines[$i]->id])
+				&& sizeof($tasksrole[$lines[$i]->id]) > 0) $disabled=0;
+
+			print '<td nowrap="nowrap">';
+			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
+			print '&nbsp;<input size="4" type="text" class="flat"'.($disabled?' disabled="true"':'').' name="task'.$lines[$i]->id.'" value="">';
+			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
+			print '</td>';
+			print "<td>&nbsp;";
+			print '</td>';
+
 			print "</tr>\n";
 			$inc++;
 			$level++;

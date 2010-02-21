@@ -244,9 +244,9 @@ else
 	 */
 	print '<div class="tabsAction">';
 
-	if ($user->rights->projet->creer)
+	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 	{
-		if ($userAccess)
+		if ($project->public || $userAccess)
 		{
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$project->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
 		}

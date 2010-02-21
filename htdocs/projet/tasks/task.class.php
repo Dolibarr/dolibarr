@@ -495,6 +495,7 @@ class Task extends CommonObject
 					$tasks[$i]->description  = $obj->description;
 					$tasks[$i]->fk_parent    = $obj->fk_task_parent;
 					$tasks[$i]->duration     = $obj->duration_effective;
+					$tasks[$i]->public       = $obj->public;
 				}
 
 				$i++;
@@ -561,7 +562,8 @@ class Task extends CommonObject
 			while ($i < $num)
 			{
 				$row = $this->db->fetch_row($resql);
-				$tasksrole[$row[0]] = $row[1];
+				if (empty($tasksrole[$row[0]])) $tasksrole[$row[0]] = $row[1];
+				else $tasksrole[$row[0]].=','.$row[1];
 				$i++;
 			}
 			$this->db->free($resql);
