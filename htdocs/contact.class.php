@@ -392,7 +392,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		$sql.= " c.priv, c.note, c.default_lang";
+		$sql.= " c.priv, c.note, c.default_lang,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";

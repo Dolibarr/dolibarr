@@ -1259,7 +1259,7 @@ else
 	if ($conf->global->MAIN_MULTILANGS)
 	{
 		$langs->load("languages");
-		$labellang=$langs->trans('Language_'.$soc->default_lang).' ('.$soc->default_lang.')';
+		$labellang = ($soc->default_lang?$langs->trans('Language_'.$soc->default_lang).' ('.$soc->default_lang.')':'');
 		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'.$labellang.'</td></tr>';
 	}
 
