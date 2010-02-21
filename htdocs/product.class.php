@@ -1961,7 +1961,7 @@ class Product extends CommonObject
 	 *   \brief 	Return all parent products
 	 *   \return 	array prod
 	 */
-	function get_pere()
+	function getParent()
 	{
 
 		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id";
@@ -1991,13 +1991,13 @@ class Product extends CommonObject
 	 *  \brief 		Return childs
 	 *  \return     array        prod
 	 */
-	function get_fils_arbo ($id_pere)
+	function getChildsArbo($fk_parent)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
-		$sql.= " AND pa.fk_product_pere = ".$id_pere;
+		$sql.= " AND pa.fk_product_pere = ".$fk_parent;
 
 		$res  = $this->db->query($sql);
 		if ($res)
@@ -2006,7 +2006,7 @@ class Product extends CommonObject
 			while ($rec = $this->db->fetch_array($res))
 			{
 				$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
-				foreach($this -> get_fils_arbo($rec['id']) as $kf=>$vf)
+				foreach($this -> getChildsArbo($rec['id']) as $kf=>$vf)
 				$prods[addslashes($rec['label'])][$kf] = $vf;
 			}
 			return $prods;
@@ -2025,18 +2025,18 @@ class Product extends CommonObject
 	 */
 	function get_sousproduits_arbo()
 	{
-		$peres = $this -> get_pere();
-		foreach($peres as $k=>$v)
+		$parent = $this->getParent();
+		foreach($parent as $key => $value)
 		{
-			foreach($this -> get_fils_arbo($v[0]) as $kf=>$vf)
+			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)
 			{
-				$peres[$k][$kf] = $vf;
+				$parent[$key][$keyChild] = $valueChild;
 			}
 		}
 		// concatenation
-		foreach($peres as $k=>$v)
+		foreach($parent as $key => $value)
 		{
-			$this -> sousprods[$k]=$v;
+			$this->sousprods[$key] = $value;
 		}
 	}
 
