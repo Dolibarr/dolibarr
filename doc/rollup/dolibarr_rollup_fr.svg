@@ -16,9 +16,9 @@
    width="3011.811"
    height="7334.6455"
    sodipodi:docname="dolibarr_rollup_fr.svg"
-   inkscape:export-filename="D:\Mes Developpements\dolibarr\doc\rollup\dolibarr_rollup_fr.png"
-   inkscape:export-xdpi="300"
-   inkscape:export-ydpi="300">
+   inkscape:export-filename="C:\Temp\dolibarr_rollup_fr.png"
+   inkscape:export-xdpi="150"
+   inkscape:export-ydpi="150">
   <title
      id="title3054">Rollkup</title>
   <sodipodi:namedview
@@ -36,9 +36,9 @@
      showgrid="false"
      inkscape:document-units="cm"
      units="cm"
-     inkscape:zoom="0.12575751"
+     inkscape:zoom="0.35467548"
      inkscape:cx="1491.7384"
-     inkscape:cy="5919.4171"
+     inkscape:cy="6691.906"
      inkscape:window-x="-4"
      inkscape:window-y="-4"
      inkscape:window-maximized="1"
@@ -448,22 +448,22 @@
      id="rect4181"
      style="opacity:0.8;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#0000ff;stroke-width:1.04935145;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4209)" />
   <rect
-     y="622.17676"
-     x="479.58249"
+     y="620.17676"
+     x="473.58249"
      height="323.36841"
      width="473.70636"
      id="rect5304-9"
      style="opacity:0.51851849;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:4;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;filter:url(#filter5352-5)" />
   <rect
-     y="609.14551"
-     x="463.13907"
+     y="627.14551"
+     x="451.13907"
      height="319.52393"
      width="469.86188"
      id="rect5306"
      style="fill:#72abbc;fill-opacity:1;fill-rule:nonzero;stroke:none" />
   <rect
-     y="681.73926"
-     x="426.5575"
+     y="679.73926"
+     x="420.5575"
      height="323.36841"
      width="473.70636"
      id="rect5304"
@@ -710,7 +710,7 @@
        x="352.43979"
        id="tspan2947"
        sodipodi:role="line"
-       style="fill:#ffffff;fill-opacity:1;font-family:Arial;-inkscape-font-specification:Arial">- Gestion de votre catalogue de services/produits et stocks.</tspan></text>
+       style="fill:#ffffff;fill-opacity:1;font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000001">- Gestion de votre catalogue de services/produits et stocks.</tspan></text>
   <text
      transform="scale(0.70146583,1.4255862)"
      id="text2945-1"
@@ -722,7 +722,7 @@
        x="351.91925"
        id="tspan2947-7"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Application modulaire, paramétrable.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:79.99999972">- Application modulaire, paramétrable.</tspan></text>
   <text
      transform="scale(0.72089248,1.3871694)"
      id="text2945-4"
@@ -734,7 +734,7 @@
        x="1970.8702"
        id="tspan2947-0"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Point de vente, expéditions, contrats de service.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000044">- Point de vente, expéditions, contrats de service.</tspan></text>
   <text
      transform="scale(0.73374833,1.3628651)"
      id="text2945-4-9"
@@ -746,7 +746,7 @@
        x="1939.2797"
        id="tspan2947-0-4"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Nombreux autres modules fonctionnels.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000035">- Nombreux autres modules fonctionnels.</tspan></text>
   <text
      transform="scale(0.73247044,1.3652428)"
      id="text2945-4-9-8"
@@ -758,7 +758,7 @@
        x="1939.6188"
        id="tspan2947-0-4-8"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Connectivité LDAP, exports, imports, PDF, etc...</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000022">- Connectivité LDAP, exports, imports, PDF, etc...</tspan></text>
   <text
      transform="scale(0.70146583,1.4255862)"
      id="text2945-1-5"
@@ -770,7 +770,7 @@
        x="351.91925"
        id="tspan2947-7-5"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Accès local/internet/smartphones par un simple navigateur Web.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:79.99999972">- Accès local/internet/smartphones par un simple navigateur Web.</tspan></text>
   <text
      transform="scale(0.70146583,1.4255862)"
      id="text2945-1-1"
@@ -782,7 +782,7 @@
        x="351.91925"
        id="tspan2947-7-7"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Application multi-utilisateurs, multi-langues.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:79.99999972">- Application multi-utilisateurs, multi-langues.</tspan></text>
   <text
      transform="scale(0.70146583,1.4255862)"
      id="text2945-1-1-1"
@@ -794,7 +794,7 @@
        x="351.91925"
        id="tspan2947-7-7-1"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Communauté internationnale très active et une gouvernance transparente.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:79.99999972">- Communauté internationnale très active et une gouvernance transparente.</tspan></text>
   <text
      transform="scale(0.7077518,1.4129247)"
      id="text2945-5-7"
@@ -806,7 +806,7 @@
        x="359.99243"
        id="tspan2947-2-6"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Annuaire des clients/fournisseurs/prospects/adhérents.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000001">- Annuaire des clients/fournisseurs/prospects/adhérents.</tspan></text>
   <text
      transform="scale(0.7077518,1.4129247)"
      id="text2945-5-7-1"
@@ -818,7 +818,7 @@
        x="356.12079"
        id="tspan2947-2-6-4"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Gestion des paiements, trésorerie, rapprochements bancaires.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000001">- Gestion des paiements, trésorerie, rapprochements bancaires.</tspan></text>
   <text
      transform="scale(0.7077518,1.4129247)"
      id="text2945-5-7-1-2"
@@ -830,19 +830,19 @@
        x="357.44702"
        id="tspan2947-2-6-4-3"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Agenda, emailings....</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000001">- Agenda, emailings....</tspan></text>
   <text
      transform="scale(0.87807386,1.1388564)"
      id="text2945-1-1-1-2"
      y="4161.8179"
      x="1730.9403"
-     style="font-size:150.67871094px;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+     style="font-size:149.99999736;font-style:normal;font-weight:normal;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
      xml:space="preserve"><tspan
        y="4161.8179"
        x="1730.9403"
        id="tspan2947-7-7-1-2"
        sodipodi:role="line"
-       style="fill:#000000;fill-opacity:1;font-family:Arial;-inkscape-font-specification:Arial">et surtout une application...</tspan></text>
+       style="fill:#000000;fill-opacity:1;font-family:Arial;-inkscape-font-specification:Arial;font-size:149.99999736">et surtout une application...</tspan></text>
   <flowRoot
      style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
      id="flowRoot4054"
@@ -913,5 +913,5 @@
        x="350.6727"
        id="tspan2947-2-6-4-7"
        sodipodi:role="line"
-       style="font-family:Arial;-inkscape-font-specification:Arial">- Gestion des paiements, trésorerie, rapprochements bancaires.</tspan></text>
+       style="font-family:Arial;-inkscape-font-specification:Arial;font-size:80.00000001">- Gestion des paiements, trésorerie, rapprochements bancaires.</tspan></text>
 </svg>

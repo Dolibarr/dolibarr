@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1052.3622"
+   height="744.09448"
+   id="svg2953"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="dolibarr_tshirts.svg">
+  <defs
+     id="defs3">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective2959" />
+    <inkscape:perspective
+       id="perspective2961"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(0.59172,0,0,0.59172016,-241.72147,287.8142)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient5510"
+       xlink:href="#linearGradient3734"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3734">
+      <stop
+         id="stop3736"
+         offset="0"
+         style="stop-color:#0b5b85;stop-opacity:1;" />
+      <stop
+         id="stop3738"
+         offset="1"
+         style="stop-color:#4fbedf;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(1.3443321,0,0,1.3443323,-84.203155,-604.54637)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient2969"
+       xlink:href="#linearGradient3734"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient2971">
+      <stop
+         id="stop2973"
+         offset="0"
+         style="stop-color:#0b5b85;stop-opacity:1;" />
+      <stop
+         id="stop2975"
+         offset="1"
+         style="stop-color:#4fbedf;stop-opacity:1" />
+    </linearGradient>
+    <inkscape:perspective
+       id="perspective3788"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(0.59172,0,0,0.59172016,-238.06681,287.8142)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient5510-7"
+       xlink:href="#linearGradient3734-4"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3734-4">
+      <stop
+         id="stop3736-0"
+         offset="0"
+         style="stop-color:#0b5b85;stop-opacity:1;" />
+      <stop
+         id="stop3738-9"
+         offset="1"
+         style="stop-color:#4fbedf;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(0.59172,0,0,0.59172016,-238.06681,287.8142)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3796"
+       xlink:href="#linearGradient3734-4"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3798">
+      <stop
+         id="stop3800"
+         offset="0"
+         style="stop-color:#0b5b85;stop-opacity:1;" />
+      <stop
+         id="stop3802"
+         offset="1"
+         style="stop-color:#4fbedf;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(0.64317245,0,0,0.64317264,-265.7108,-221.05337)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3808"
+       xlink:href="#linearGradient3734-4"
+       inkscape:collect="always" />
+    <inkscape:perspective
+       id="perspective3851"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(0.59172,0,0,0.59172016,-239.06564,-128.74015)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3808-4"
+       xlink:href="#linearGradient3734-4-5"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3734-4-5">
+      <stop
+         id="stop3736-0-5"
+         offset="0"
+         style="stop-color:#0b5b85;stop-opacity:1;" />
+      <stop
+         id="stop3738-9-1"
+         offset="1"
+         style="stop-color:#4fbedf;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(0.59172,0,0,0.59172016,-239.06564,-128.74015)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3859"
+       xlink:href="#linearGradient3734-4-5"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient3861">
+      <stop
+         id="stop3863"
+         offset="0"
+         style="stop-color:#0b5b85;stop-opacity:1;" />
+      <stop
+         id="stop3865"
+         offset="1"
+         style="stop-color:#4fbedf;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       y2="1317.5959"
+       x2="1221.0221"
+       y1="1026.5248"
+       x1="1223.7272"
+       gradientTransform="matrix(0.64576725,0,0,0.64576741,-264.21722,120.26204)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3871"
+       xlink:href="#linearGradient3734-4-5"
+       inkscape:collect="always" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:document-units="mm"
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.69799173"
+     inkscape:cx="509.47445"
+     inkscape:cy="420.2311"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-global="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="968"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-308.2677)">
+    <text
+       transform="scale(1.0067426,0.99330258)"
+       id="text2828-4"
+       y="621.56976"
+       x="60.991871"
+       style="font-size:423.95123291px;font-style:normal;font-weight:normal;fill:url(#linearGradient3808);fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:2.17207408;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:247.90473938px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3808);fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:2.17207408;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;font-family:Bauhaus 93;-inkscape-font-specification:Bauhaus 93"
+         y="621.56976"
+         x="60.991871"
+         id="tspan2830-8"
+         sodipodi:role="line">Dolibarr</tspan></text>
+    <text
+       transform="scale(0.92379094,1.082496)"
+       id="text5484-8"
+       y="438.42856"
+       x="875.20703"
+       style="font-size:40.16991425px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="438.42856"
+         x="875.20703"
+         id="tspan5486-2"
+         sodipodi:role="line"
+         style="fill:#000000;fill-opacity:1;font-family:Arial;-inkscape-font-specification:Arial">ERP/CRM</tspan></text>
+    <text
+       transform="scale(1.0026876,0.99731961)"
+       id="text2828-4-7"
+       y="966.28461"
+       x="63.803482"
+       style="font-size:425.66162109px;font-style:normal;font-weight:normal;fill:url(#linearGradient3871);fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:2.18083692;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:248.90486145px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3871);fill-opacity:1;fill-rule:nonzero;stroke:#010101;stroke-width:2.18083692;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:0.45798322;stroke-dasharray:none;font-family:Bauhaus 93;-inkscape-font-specification:Bauhaus 93"
+         y="966.28461"
+         x="63.803482"
+         id="tspan2830-8-1"
+         sodipodi:role="line">Dolibarr</tspan></text>
+    <text
+       transform="scale(0.92379094,1.082496)"
+       id="text5484-8-1"
+       y="757.02539"
+       x="877.98615"
+       style="font-size:40.16991425px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="757.02539"
+         x="877.98615"
+         id="tspan5486-2-5"
+         sodipodi:role="line"
+         style="fill:#000000;fill-opacity:1;font-family:Arial;-inkscape-font-specification:Arial">ERP/CRM</tspan></text>
+  </g>
+</svg>
