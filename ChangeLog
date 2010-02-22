@@ -41,6 +41,7 @@ For users:
 - Fix: Running sending-email.php
 - Fix: Warning should not appears for invoice closed
 - Fix: Import for companies works even with prefix empty.
+- Fix: bug #28895 : Création d'utilisateur impossible.
 
 For developers:
 - Qual: Reorganize /dev directory.
