@@ -999,7 +999,7 @@ class DoliDb
 	{
 		$sql = "INSERT INTO user ";
 		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
+		$sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_user)."',password('".addslashes($dolibarr_main_db_pass)."')";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog("mysql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
@@ -1012,7 +1012,7 @@ class DoliDb
 
 		$sql = "INSERT INTO db ";
 		$sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv,Lock_tables_priv)";
-		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
+		$sql.= " VALUES ('".addslashes($dolibarr_main_db_host)."','".addslashes($dolibarr_main_db_name)."','".addslashes($dolibarr_main_db_user)."'";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y','Y')";
 
 		dol_syslog("mysql.lib::DDLCreateUser sql=".$sql,LOG_DEBUG);

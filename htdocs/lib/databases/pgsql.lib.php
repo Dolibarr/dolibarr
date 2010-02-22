@@ -915,7 +915,7 @@ class DoliDb
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		$sql = "create user \"".$dolibarr_main_db_user."\" with password '".$dolibarr_main_db_pass."'";
+		$sql = "create user \"".addslashes($dolibarr_main_db_user)."\" with password '".addslashes($dolibarr_main_db_pass)."'";
 
 		dol_syslog("pgsql.lib::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
