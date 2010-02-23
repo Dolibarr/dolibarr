@@ -639,6 +639,14 @@ class Translate {
 		}
 	}
 
+	/**
+	 * @deprecated
+	 */
+	function setPhpLang()
+	{
+		return;
+	}
+
 }
 
 ?>
