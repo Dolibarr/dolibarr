@@ -143,6 +143,7 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","
 $var=!$var;
 $thousand=$langs->trans("SeparatorThousand");
 if ($thousand == 'SeparatorThousand') $thousand=' ';	// ' ' does not work on trans method
+if ($thousand == 'None') $thousand='';
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorThousand")."</td><td>".($thousand==' '?$langs->trans("Space"):$thousand)."</td></tr>\n";
 // Decimals
 $var=!$var;

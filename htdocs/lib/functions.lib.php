@@ -2389,7 +2389,8 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=-1)
 
 	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
 	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
-	//print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec=".$dec." thousand=".$thousand;
+	if ($thousand == 'None') $thousand='';
+	//print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	//print "amount=".$amount."-";
 	$amount = str_replace(',','.',$amount);	// should be useless
@@ -2450,6 +2451,8 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	$dec=','; $thousand=' ';
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
+	if ($thousand == 'None') $thousand='';
+	//print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format

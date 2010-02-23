@@ -4,14 +4,13 @@
  * Generation date 2009-08-11 13:27:01
  */
 
-
 // Date 2009-08-11 13:27:01
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
 DIRECTION=rtl
 SeparatorDecimal=.
-SeparatorThousand=،
+SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
 FormatHourShort=%H:%M
@@ -26,9 +25,9 @@ ErrorFieldRequired=الميدان &#39;٪ ق&#39; مطلوب
 ErrorFieldFormat=الميدان &#39;٪ ق&#39; سيئة القيمة
 ErrorFileDoesNotExists=ملف ٪ ق لا يوجد
 ErrorFailedToOpenFile=فشل في فتح الملف ٪ ق
-ErrorCanNotCreateDir=لا يمكن إنشاء دير ق ٪
-ErrorCanNotReadDir=لا يمكن قراءة دير ق ٪
-ErrorConstantNotDefined=معلمة ٪ ق لم تحدد
+ErrorCanNotCreateDir=لا يمكن إنشاء دير ق
+ErrorCanNotReadDir=لا يمكن قراءة دير ق
+ErrorConstantNotDefined=معلمة ٪s ق لم تحدد
 ErrorUnknown=Unkown خطأ
 ErrorSQL=خطأ SQL
 ErrorLogoFileNotFound=شعار ملف &#39;٪ ق&#39; لم يتم العثور على
@@ -540,28 +539,12 @@ ShortThursday=تي
 ShortFriday=واو
 ShortSaturday=دإ
 ShortSunday=دإ
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:22:26).
-// Reference language: en_US
 Login=تسجيل الدخول
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:22:26).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
-// Reference language: en_US
 ErrorGoToGlobalSetup=اذهب إلى &#39;شركة / مؤسسة&#39; الإعداد لتثبيت هذا
 ErrorFailedToSendMail=فشل إرسال البريد (ق = ٪ مرسل ، واستقبال = ٪)
 ErrorAttachedFilesDisabled=إرفاق ملفات الميزة المعوقين على هذا الخادم
 GoToWikiHelpPage=الانترنت تساعد على قراءة (على ضرورة الوصول إلى الإنترنت)
 CompanyFoundation=الشركة / المؤسسة
 FileTransferComplete=تم تحميل الملف بنجاح
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
 Paid=دفع
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
