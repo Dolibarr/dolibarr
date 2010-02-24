@@ -6,6 +6,7 @@ For users:
 - New: Add "payment due before" field in invoice exports
 - New: Add feature to resize or crop image files (for products photos)
 - New: task #10113 : Show list of emailing on clicking on "number of mass emailing received"
+- Fix: Formant number as wrong for ar_AR language.
 
 For developers:
 - More comments in code
