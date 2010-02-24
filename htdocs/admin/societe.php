@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -328,13 +328,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					$name = substr($file, 4, strlen($file) -16);
 					$classname = substr($file, 0, strlen($file) -12);
 
-					print '<tr '.$bc[$var].'><td width="100">';
-					echo "$name";
-					print "</td><td>\n";
-
 					require_once($dir.'/'.$file);
 					$module = new $classname($db);
-					print $module->description;
+
+					print '<tr '.$bc[$var].'><td width="100">';
+					echo $module->name;
+					print "</td><td>\n";
+					if (method_exists($module,'info')) print $module->info($langs);
+					else print $module->description;
 					print '</td>';
 
 					// Active
