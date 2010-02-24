@@ -33,9 +33,15 @@ if (!$user->rights->projet->lire) accessforbidden();
 /*
  * Actions
  */
+if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->creer)
+{
+	
+}
 
-
-
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
+{
+	
+}
 
 
 /*
@@ -69,6 +75,12 @@ if ($_GET["id"] > 0)
 		dol_fiche_head($head, 'time', $langs->trans("Task"),0,'projecttask');
 
 		if ($mesg) print $mesg.'<br>';
+		
+		if ($_GET["action"] == 'deleteline')
+		{
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			if ($ret == 'html') print '<br>';
+		}
 
 		print '<table class="border" width="100%">';
 
@@ -175,10 +187,15 @@ if ($_GET["id"] > 0)
 			$minutes = substr("00"."$minutes", -2);
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 			
-			// Icon update et delete
-			print '<td align="center" nowrap>';
+			// Edit and delete icon
+			print '<td align="right" nowrap>';
 			if ($user->rights->projet->creer && $userAccess)
 			{
+				print '&nbsp;';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.'">';
+				print img_edit();
+				print '</a>';
+				
 				print '&nbsp;';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.'">';
 				print img_delete();
