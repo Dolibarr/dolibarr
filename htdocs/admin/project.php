@@ -204,11 +204,11 @@ if ($handle)
 				print '<td align="center">';
 				if ($conf->global->PROJECT_ADDON == "$file")
 				{
-					print img_tick($langs->trans("Activated"));
+					print img_picto($langs->trans("Activated"),'on');
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 				}
 				print '</td>';
 
@@ -316,19 +316,19 @@ while (($file = readdir($handle))!==false)
 			if ($conf->global->PROJECT_ADDON_PDF != "$name")
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-				print img_tick($langs->trans("Disable"));
+				print img_picto($langs->trans("Enabled"),'on');
 				print '</a>';
 			}
 			else
 			{
-				print img_tick($langs->trans("Enabled"));
+				print img_picto($langs->trans("Enabled"),'on');
 			}
 			print "</td>";
 		}
 		else
 		{
 			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			print "</td>";
 		}
 
@@ -336,11 +336,11 @@ while (($file = readdir($handle))!==false)
 		print "<td align=\"center\">";
 		if ($conf->global->PROJECT_ADDON_PDF == "$name")
 		{
-			print img_tick($langs->trans("Default"));
+			print img_picto($langs->trans("Default"),'on');
 		}
 		else
 		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 		}
 		print '</td>';
 

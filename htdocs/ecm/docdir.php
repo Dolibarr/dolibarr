@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -157,7 +157,7 @@ if ($_GET["action"] == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
 	print $formecm->select_all_sections(! empty($_GET["catParent"])?$_GET["catParent"]:$ecmdir->fk_parent,'catParent');
@@ -170,13 +170,15 @@ if ($_GET["action"] == 'create')
 	print '</textarea>';
 	print '</td></tr>'."\n";
 
-	print '<tr><td colspan="3" align="center">';
+	print '</td></tr>'."\n";
+
+	print '</table><br>';
+
+	print '<center>';
 	print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>'."\n";
-
-	print '</table>';
+	print '</center>';
 	print '</form>';
 }
 

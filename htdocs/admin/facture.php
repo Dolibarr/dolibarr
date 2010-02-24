@@ -23,7 +23,7 @@
 /**
  *      \file       htdocs/admin/facture.php
  *		\ingroup    facture
- *		\brief      Page d'administration/configuration du module Facture
+ *		\brief      Page to setup invoice module
  *		\version    $Id$
  */
 
@@ -223,7 +223,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td nowrap>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
 print '</tr>'."\n";
 
@@ -273,11 +273,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							print '<td align="center">';
 							if ($conf->global->FACTURE_ADDON == "$file")
 							{
-								print img_tick($langs->trans("Activated"));
+								print img_picto($langs->trans("Activated"),'on');
 							}
 							else
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 							}
 							print '</td>';
 
@@ -367,7 +367,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
@@ -409,19 +409,19 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						if ($conf->global->FACTURE_ADDON_PDF != "$name")
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-							print img_tick($langs->trans("Disable"));
+							print img_picto($langs->trans("Enabled"),'on');
 							print '</a>';
 						}
 						else
 						{
-							print img_tick($langs->trans("Enabled"));
+							print img_picto($langs->trans("Enabled"),'on');
 						}
 						print "</td>";
 					}
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 						print "</td>";
 					}
 
@@ -429,11 +429,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					print "<td align=\"center\">";
 					if ($conf->global->FACTURE_ADDON_PDF == "$name")
 					{
-						print img_tick($langs->trans("Default"));
+						print img_picto($langs->trans("Default"),'on');
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 					}
 					print '</td>';
 

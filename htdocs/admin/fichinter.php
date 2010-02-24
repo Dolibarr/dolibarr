@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin                <regis@dolibarr.fr>
@@ -190,7 +190,7 @@ print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
@@ -229,11 +229,11 @@ if ($handle)
 				print '<td align="center">';
 				if ($conf->global->FICHEINTER_ADDON == $className)
 				{
-					print img_tick($langs->trans("Activated"));
+					print img_picto($langs->trans("Activated"),'on');
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$className.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$className.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 				}
 				print '</td>';
 
@@ -294,7 +294,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
@@ -328,19 +328,19 @@ while (($file = readdir($handle))!==false)
 			if ($conf->global->FICHEINTER_ADDON_PDF != "$name")
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-				print img_tick($langs->trans("Disable"));
+				print img_picto($langs->trans("Enabled"),'on');
 				print '</a>';
 			}
 			else
 			{
-				print img_tick($langs->trans("Enabled"));
+				print img_picto($langs->trans("Enabled"),'on');
 			}
 			print "</td>";
 		}
 		else
 		{
 			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			print "</td>";
 		}
 
@@ -348,11 +348,11 @@ while (($file = readdir($handle))!==false)
 		print "<td align=\"center\">";
 		if ($conf->global->FICHEINTER_ADDON_PDF == "$name")
 		{
-			print img_tick($langs->trans("Default"));
+			print img_picto($langs->trans("Default"),'on');
 		}
 		else
 		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 		}
 		print '</td>';
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ if ($_GET["action"] == 'del')
 
 
 /*
- * Affiche page
+ * View
  */
 
 $dir = "../includes/modules/dons/";
@@ -207,20 +207,20 @@ while (($file = readdir($handle))!==false)
 		        print "<td align=\"center\">\n";
 				if ($conf->global->DON_ADDON_MODEL == $name)
 		        {
-		            print img_tick($langs->trans("Enabled"));
+		            print img_picto($langs->trans("Enabled"),'on');
 		        }
 		        else
 		        {
 		            print '&nbsp;';
 		            print '</td><td align="center">';
-		            print '<a href="dons.php?action=setdoc&value='.$name.'">'.$langs->trans("Activate").'</a>';
+		            print '<a href="dons.php?action=setdoc&value='.$name.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
 		        }
 		        print '</td>';
 			}
 			else
 			{
 				print "<td align=\"center\">\n";
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 				print "</td>";
 			}
 
@@ -228,11 +228,11 @@ while (($file = readdir($handle))!==false)
 			print "<td align=\"center\">";
 			if ($conf->global->DON_ADDON_MODEL == "$name")
 			{
-				print img_tick($langs->trans("Default"));
+				print img_picto($langs->trans("Default"),'on');
 			}
 			else
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			}
 			print '</td>';
 

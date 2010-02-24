@@ -50,7 +50,7 @@ class odt_generic extends ModeleDocProjects
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "Generic";
+		$this->name = "Generic ODT";
 		$this->description = $langs->trans("DocumentModelOdt");
 
 		// Dimension page pour format A4
@@ -66,8 +66,6 @@ class odt_generic extends ModeleDocProjects
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
-
-		$this->params=array('COMPANY_ADDON_PDF_ODT'=>array('type'=>'TEXTAREA','default'=>''));
 	}
 
 	/**		\brief      Renvoi la description du module
@@ -78,25 +76,41 @@ class odt_generic extends ModeleDocProjects
 		global $conf,$langs;
 
 		$langs->load("companies");
+		$langs->load("errors");
 
 		$form = new Form($db);
 
-		$texte = $this->description."<br>\n";
+		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateModule">';
+		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
+		$texte.= '<input type="hidden" name="param1" value="COMPANY_ADDON_PDF_ODTPATH">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
-		$texte.= '<tr><td>'.$langs->trans("ListOfDirectories").':<br>';
-		$texte.= '<textarea class="flat" cols="80" name="COMPANY_ADDON_PDF_ODTPATH">';
+		$texte.= '<tr><td>'.$langs->trans("ListOfDirectoriesForModelGenODT").' : ';
+
+		$listofdir=explode(',',preg_replace('/\r\n/',',',$conf->global->COMPANY_ADDON_PDF_ODTPATH));
+		foreach($listofdir as $tmpdir)
+		{
+			$tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
+			if (! is_dir($tmpdir)) $texte.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
+		}
+		//var_dump($listofdir);
+
+		$texte.= '<br>';
+
+		$texte.= '<textarea class="flat" cols="80" name="value1">';
 		$texte.=$conf->global->COMPANY_ADDON_PDF_ODTPATH;
-		$texte.= '</textarea>';
+		$texte.= '</textarea></td><td valign="top" rowspan="2">';
+		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte.= '</td>';
 		$texte.= '</tr>';
 
 		// Example
-		$texte.= '<tr><td>'.$langs->trans("ExampleOfDirectories").':';
-		$texte.= '</br>';
+		$texte.= '<tr><td align="center">';
+		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte.= '</td>';
 		$texte.= '</tr>';
 
 		$texte.= '</table>';

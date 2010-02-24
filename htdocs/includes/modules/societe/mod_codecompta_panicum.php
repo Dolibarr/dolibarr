@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,18 @@
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codecompta_panicum.class.php
-        \ingroup    societe
-        \brief      Fichier de la classe des gestion panicum des codes compta des societes clientes
-        \version    $Id$
-*/
-
+ *      \file       htdocs/includes/modules/societe/mod_codecompta_panicum.class.php
+ *      \ingroup    societe
+ *      \brief      Fichier de la classe des gestion panicum des codes compta des societes clientes
+ *      \version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
 
 /**
-        \class 		mod_codecompta_panicum
-        \brief 		Classe permettant la gestion panicum des codes compta des societes clients
-*/
-
+ *      \class 		mod_codecompta_panicum
+ *      \brief 		Classe permettant la gestion panicum des codes compta des societes clients
+ */
 class mod_codecompta_panicum extends ModeleAccountancyCode
 {
 	var $nom;
@@ -49,17 +47,25 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		return $langs->trans("ModuleCompanyCode".$this->nom);
 	}
 
-  /**
-   *    \brief      Renvoi code
-   *    \param      DB              Handler d'acc�s base
-   *    \param      societe         Objet societe
-   */
-  function get_code($DB, $societe)
-  {
-    // Renvoie toujours ok
-    $this->code = $societe->code_compta;
-    return 0;
-  }
+	/**
+	 *    \brief      Return example
+	 */
+	function getExample()
+	{
+		return '';
+	}
+
+	/**
+	 *    \brief      Renvoi code
+	 *    \param      DB              Handler d'acc�s base
+	 *    \param      societe         Objet societe
+	 */
+	function get_code($DB, $societe)
+	{
+		// Renvoie toujours ok
+		$this->code = $societe->code_compta;
+		return 0;
+	}
 }
 
 ?>

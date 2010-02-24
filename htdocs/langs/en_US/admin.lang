@@ -52,6 +52,7 @@ JavascriptDisabled=JavaScript disabled
 UsePopupCalendar=Use popup for dates input
 UsePreviewTabs=Use preview tabs
 ShowPreview=Show preview
+PreviewNotAvailable=Preview not available
 ThemeCurrentlyActive=Theme currently active
 CurrentTimeZone=PHP server TimeZone
 Space=Space
@@ -265,6 +266,8 @@ ConfirmPurge=Are you sure you want to execute this purge ?<br>This will delete d
 MinLength=Minimum length
 LanguageFilesCachedIntoShmopSharedMemory=Files .lang loaded in shared memory
 ExamplesWithCurrentSetup=Examples with current running setup
+ListOfDirectoriesForModelGenODT=List of directories contenaining models files with OpenDocument format
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 
 # Modules
 Module0Name=Users & groups

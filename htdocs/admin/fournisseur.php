@@ -71,8 +71,8 @@ if ($_GET["action"] == 'specimen')
 
 		if ($obj->write_file($commande,$langs) > 0)
 		{
-	 	 	header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
-	  		return;
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
+			return;
 		}
 		else
 		{
@@ -177,7 +177,7 @@ print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
 print "</tr>\n";
 
@@ -215,11 +215,11 @@ if ($handle)
 				print '<td align="center">';
 				if ($conf->global->COMMANDE_SUPPLIER_ADDON == "$file")
 				{
-					print img_tick($langs->trans("Activated"));
+					print img_picto($langs->trans("Activated"),'on');
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 				}
 				print '</td>';
 
@@ -296,7 +296,7 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
 print "</tr>\n";
@@ -324,35 +324,35 @@ while (($file = readdir($handle))!==false)
 		// Active
 		if (in_array($name, $def))
 		{
-	  print "<td align=\"center\">\n";
-	  if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
-	  {
-	  	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-	  	print img_tick($langs->trans("Disable"));
-	  	print '</a>';
-	  }
-	  else
-	  {
-	  	print img_tick($langs->trans("Enabled"));
-	  }
+			print "<td align=\"center\">\n";
+			if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+				print img_picto($langs->trans("Enabled"),'on');
+				print '</a>';
+			}
+			else
+			{
+				print img_picto($langs->trans("Enabled"),'on');
+			}
 			print "</td>";
 		}
 		else
 		{
-	  print "<td align=\"center\">\n";
-	  print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-	  print "</td>";
+			print "<td align=\"center\">\n";
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+			print "</td>";
 		}
 
 		// Defaut
 		print "<td align=\"center\">";
 		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
 		{
-	  print img_tick($langs->trans("Default"));
+	  		print img_picto($langs->trans("Default"),'on');
 		}
 		else
 		{
-	  print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+	  		print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'on').'</a>';
 		}
 		print '</td>';
 

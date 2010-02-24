@@ -78,10 +78,11 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
 }
 
 // define constants for tigre model
-if ($_POST["action"] == 'updateMask')
+if ($_POST["action"] == 'setModuleOptions')
 {
-	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_CUSTOMER",$_POST["maskcustomer"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_SUPPLIER",$_POST["masksupplier"],'chaine',0,'',$conf->entity);
+	$param=$_POST["param1"];
+	$value=$_POST["value1"];
+	dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'set')
@@ -345,19 +346,19 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-							print img_tick($langs->trans("Disable"));
+							print img_picto($langs->trans("Enabled"),'on');
 							print '</a>';
 						}
 						else
 						{
-							print img_tick($langs->trans("Enabled"));
+							print img_picto($langs->trans("Enabled"),'on');
 						}
 						print "</td>";
 					}
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 						print "</td>";
 					}
 
@@ -365,11 +366,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					print "<td align=\"center\">";
 					if ($conf->global->COMPANY_ADDON_PDF == "$name")
 					{
-						print img_tick($langs->trans("Default"));
+						print img_picto($langs->trans("Default"),'on');
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 					}
 					print '</td>';
 
@@ -392,7 +393,10 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					{
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
 					}
-					else print '&nbsp;';
+					else
+					{
+						print '<a href="#">'.img_object($langs->trans("PreviewNotAvailable"),'generic').'</a>';
+					}
 					print '</td>';
 
 					print "</tr>\n";
@@ -405,6 +409,8 @@ foreach ($conf->file->dol_document_root as $dirroot)
 print '</table>';
 
 print '<br>';
+
+print_titre($langs->trans("Other"));
 
 // Autres options
 $html=new Form($db);

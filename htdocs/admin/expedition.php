@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -22,10 +22,10 @@
  */
 
 /**
- \file       htdocs/admin/expedition.php
- \ingroup    expedition
- \brief      Page d'administration/configuration du module Expedition
- \version    $Id$
+ *	\file       htdocs/admin/expedition.php
+ *	\ingroup    expedition
+ *	\brief      Page d'administration/configuration du module Expedition
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -97,7 +97,7 @@ if ($_GET["action"] == 'del')
 	$sql.= " WHERE nom = '".$_GET["value"]."'";
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
-	
+
 	if ($db->query($sql))
 	{
 
@@ -146,7 +146,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode";
 	$sql.= " WHERE rowid = ".$moduleid;
-	
+
 	$resql = $db->query($sql);
 	if ($resql && ($statut == 1 || $_GET["action"] == 'setmod'))
 	{
@@ -155,7 +155,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 		$sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
 		$sqlu.= " SET statut=1";
 		$sqlu.= " WHERE rowid=".$moduleid;
-		
+
 		$result=$db->query($sqlu);
 		if ($result)
 		{
@@ -288,7 +288,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
@@ -319,26 +319,26 @@ if(is_dir($dir))
 			print $module->description;
 			print '</td>';
 
-			// Activ
+			// Active
 			if (in_array($name, $def))
 			{
 				print "<td align=\"center\">\n";
 				if ($conf->global->EXPEDITION_ADDON_PDF != $name)
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-					print img_tick($langs->trans("Disable"));
+					print img_picto($langs->trans("Activated"),'on');
 					print '</a>';
 				}
 				else
 				{
-					print img_tick($langs->trans("Activated"));
+					print img_picto($langs->trans("Activated"),'on');
 				}
 				print "</td>";
 			}
 			else
 			{
 				print "<td align=\"center\">\n";
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 				print "</td>";
 			}
 
@@ -346,11 +346,11 @@ if(is_dir($dir))
 			print "<td align=\"center\">";
 			if ($conf->global->EXPEDITION_ADDON_PDF == $name)
 			{
-				print img_tick($langs->trans("Default"));
+				print img_picto($langs->trans("Default"),'on');
 			}
 			else
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			}
 			print '</td>';
 
@@ -378,10 +378,6 @@ else
 }
 print '</table>';
 
-/*
- *
- *
- */
 
 $db->close();
 

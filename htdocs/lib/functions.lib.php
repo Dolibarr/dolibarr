@@ -193,7 +193,7 @@ function dol_escape_js($stringtoescape)
 function dol_escape_htmltag($stringtoescape)
 {
 	// escape quotes and backslashes, newlines, etc.
-	return strtr($stringtoescape, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n'));
+	return strtr($stringtoescape, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
 }
 
 

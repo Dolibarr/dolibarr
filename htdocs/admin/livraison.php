@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -22,11 +22,11 @@
  */
 
 /**
-        \file       htdocs/admin/livraison.php
-        \ingroup    livraison
-        \brief      Page d'administration/configuration du module Livraison
-        \version    $Id$
-*/
+ *      \file       htdocs/admin/livraison.php
+ *      \ingroup    livraison
+ *      \brief      Page d'administration/configuration du module Livraison
+ *      \version    $Id$
+ */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
@@ -197,7 +197,7 @@ print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td nowrap>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
 print '</tr>'."\n";
 
@@ -236,11 +236,11 @@ if ($handle)
 				print '<td align="center">';
 				if ($conf->global->LIVRAISON_ADDON == "$file")
 				{
-					print img_tick($langs->trans("Activated"));
+					print img_picto($langs->trans("Activated"),'on');
 				}
 				else
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 				}
 				print '</td>';
 
@@ -314,7 +314,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
@@ -352,19 +352,19 @@ if(is_dir($dir))
 				if ($conf->global->LIVRAISON_ADDON_PDF != "$name")
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-					print img_tick($langs->trans("Disable"));
+					print img_picto($langs->trans("Enabled"),'on');
 					print '</a>';
 				}
 				else
 				{
-					print img_tick($langs->trans("Enabled"));
+					print img_picto($langs->trans("Enabled"),'on');
 				}
 				print "</td>";
 			}
 			else
 			{
 				print "<td align=\"center\">\n";
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 				print "</td>";
 			}
 
@@ -372,11 +372,11 @@ if(is_dir($dir))
 			print "<td align=\"center\">";
 			if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
 			{
-				print img_tick($langs->trans("Default"));
+				print img_picto($langs->trans("Default"),'on');
 			}
 			else
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 			}
 			print '</td>';
 
