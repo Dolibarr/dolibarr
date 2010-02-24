@@ -107,22 +107,7 @@ if ($id > 0 || ! empty($ref))
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
 		// To verify role of users
-		$userAccess = 0;
-		foreach(array('internal','external') as $source)
-		{
-			$userRole = $projectstatic->liste_contact(4,$source);
-			$num=sizeof($userRole);
-
-			$i = 0;
-			while ($i < $num)
-			{
-				if ($userRole[$i]['code'] == 'PROJECTLEADER' && $user->id == $userRole[$i]['id'])
-				{
-					$userAccess++;
-				}
-				$i++;
-			}
-		}
+		$userAccess = $projectstatic->restrictedProjectArea($user);
 
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'note', $langs->trans('Task'), 0, 'projecttask');
