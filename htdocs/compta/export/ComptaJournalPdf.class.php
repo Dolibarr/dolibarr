@@ -20,20 +20,19 @@
  */
 
 /**
-        \file       htdocs/compta/export/ComptaJournalPdf.php
-        \ingroup    compta
-        \brief      Fichier de la classe export compta journal
-        \version    $Revision$
-*/
-
+ *       \file       htdocs/compta/export/ComptaJournalPdf.php
+ *       \ingroup    compta
+ *       \brief      Fichier de la classe export compta journal
+ *       \version    $Revision$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
-        \class      ComptaJournalPdf
-        \brief      Classe export compta journal
-*/
+ *       \class      ComptaJournalPdf
+ *       \brief      Classe export compta journal
+ */
 class ComptaJournalPdf extends FPDF  {
 
   function Footer()

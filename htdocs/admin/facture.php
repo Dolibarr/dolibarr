@@ -190,7 +190,7 @@ if ($_GET["action"] == 'delete')
 
 
 /*
- * View page
+ * View
  */
 
 llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');

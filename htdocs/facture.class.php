@@ -1458,43 +1458,56 @@ class Facture extends CommonObject
 	{
 		global $conf,$langs;
 
-		if ($this->statut != 0)
+		$error=0;
+
+		if ($this->statut == 0)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
-			$sql.= " SET fk_statut = 0";
-			$sql.= " WHERE rowid = ".$this->id;
+			dol_syslog("Facture::set_draft already draft status", LOG_WARNING);
+			return 0;
+		}
 
-			dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
-			if ($this->db->query($sql))
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+		$sql.= " SET fk_statut = 0";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			// Si active on decremente le produit principal et ses composants a la validation de facture
+			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
 			{
-				// Si active on decremente le produit principal et ses composants a la validation de facture
-				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
-					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				{
+					if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
 					{
-						if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
-						{
-							$mouvP = new MouvementStock($this->db);
-							// We decrease stock for product
-							$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-							$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
-						}
+						$mouvP = new MouvementStock($this->db);
+						// We decrease stock for product
+						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
 					}
 				}
+			}
 
+			if ($error == 0)
+			{
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
-				$this->error=$this->db->error();
+				$this->db->rollback();
 				return -1;
 			}
 		}
 		else
 		{
-			dol_syslog("Facture::set_draft Invoice already with draf status", LOG_WARNING);
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
 		}
 	}
 

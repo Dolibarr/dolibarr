@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/includes/modules/expedition/pdf/pdf_expedition_rouget.modules.php
  *	\ingroup    expedition
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au mod�le Rouget
+ *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Rouget
  *	\version    $Id$
  */
 
@@ -40,8 +40,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 
 	/**
-	 \brief  Constructeur
-	 \param	db		Handler acc�s base de donn�e
+	 *	\brief  Constructeur
+	 *	\param	db		Database handler
 	 */
 	function pdf_expedition_rouget($db=0)
 	{
@@ -263,7 +263,19 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 			if (file_exists($dir))
 			{
-				$pdf=new ModelePdfExpedition();
+				// Protection et encryption du pdf
+				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+				{
+					$pdf=new FPDI_Protection('P','mm',$this->format);
+					$pdfrights = array('print'); // Ne permet que l'impression du document
+					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
+					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+				}
+				else
+				{
+					$pdf=new FPDI('P','mm',$this->format);
+				}
 
 				$pdf->Open();
 				$pagenb=0;

@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/includes/modules/expedition/pdf/pdf_expedition_merou.modules.php
  *	\ingroup    expedition
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au mod�le Merou
+ *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Merou
  *	\version    $Id$
  */
 
@@ -138,16 +138,18 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			//Si le dossier existe
 			if (file_exists($dir))
 			{
-				// Initialisation Bon vierge
-				$pdf = new FPDI_Protection('l','mm',$this->format);
-
 				// Protection et encryption du pdf
 				if ($conf->global->PDF_SECURITY_ENCRYPTION)
 				{
+					$pdf=new FPDI_Protection('l','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
 					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+				}
+				else
+				{
+					$pdf=new FPDI('l','mm',$this->format);
 				}
 
 				$pdf->Open();

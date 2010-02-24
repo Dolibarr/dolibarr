@@ -72,7 +72,7 @@ if ($_POST["action"] == 'builddoc')
 	{
 		$outputlangs->charset_output=$sav_charset_output;
 		dol_syslog("Erreur dans commande_pdf_create");
-		dol_print_error($db,$obj->pdferror());
+		dol_print_error($db,$obj->error);
 	}
 
 	$year = $_POST["reyear"];

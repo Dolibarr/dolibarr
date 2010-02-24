@@ -84,6 +84,45 @@ if ($_POST["action"] == 'updateMask')
 	dolibarr_set_const($db, "COMPANY_ELEPHANT_MASK_SUPPLIER",$_POST["masksupplier"],'chaine',0,'',$conf->entity);
 }
 
+if ($_GET["action"] == 'set')
+{
+	$type='company';
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	if ($db->query($sql))
+	{
+
+	}
+}
+
+if ($_GET["action"] == 'setdoc')
+{
+	$db->begin();
+
+	if (dolibarr_set_const($db, "COMPANY_ADDON_PDF",$_GET["value"],'chaine',0,'',$conf->entity))
+	{
+		$conf->global->COMPANY_ADDON_PDF = $_GET["value"];
+	}
+
+	// On active le modele
+	$type='company';
+	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql_del.= " WHERE nom = '".$_GET["value"]."'";
+	$sql_del.= " AND type = '".$type."'";
+	$sql_del.= " AND entity = ".$conf->entity;
+	$result1=$db->query($sql_del);
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	$result2=$db->query($sql);
+	if ($result1 && $result2)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
+}
+
+
 
 /*
  * 	View
@@ -196,18 +235,18 @@ if ($handle)
 		if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
 		{
 			$file = substr($file, 0, strlen($file)-4);
-			
+
 			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
-			
+
 			$modCodeCompta = new $file;
 			$var = !$var;
-			
+
 			print '<tr '.$bc[$var].'>';
 			print '<td width="140">'.$modCodeCompta->nom."</td><td>\n";
 			print $modCodeCompta->info($langs);
 			print '</td>';
 			print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
-			
+
 			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
 			{
 				print '<td align="center">';
@@ -228,8 +267,143 @@ if ($handle)
 }
 print "</table>\n";
 
-print '<br>';
 
+//
+/*
+ *  Modeles de documents
+ */
+print '<br>';
+print_titre($langs->trans("ModelModules"));
+
+// Defini tableau def de modele invoice
+$def = array();
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = 'company'";
+$sql.= " AND entity = ".$conf->entity;
+$resql=$db->query($sql);
+if ($resql)
+{
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
+}
+else
+{
+	dol_print_error($db);
+}
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+
+$var=true;
+foreach ($conf->file->dol_document_root as $dirroot)
+{
+	$dir = $dirroot . "/includes/modules/societe/doc";
+
+	if (is_dir($dir))
+	{
+		$handle=opendir($dir);
+		if ($handle)
+		{
+			while (($file = readdir($handle))!==false)
+			{
+				if (preg_match('/\.modules\.php$/i',$file))
+				{
+					$var = !$var;
+					$name = substr($file, 4, strlen($file) -16);
+					$classname = substr($file, 0, strlen($file) -12);
+
+					print '<tr '.$bc[$var].'><td width="100">';
+					echo "$name";
+					print "</td><td>\n";
+
+					require_once($dir.'/'.$file);
+					$module = new $classname($db);
+					print $module->description;
+					print '</td>';
+
+					// Active
+					if (in_array($name, $def))
+					{
+						print "<td align=\"center\">\n";
+						if ($conf->global->COMPANY_ADDON_PDF != "$name")
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+							print img_tick($langs->trans("Disable"));
+							print '</a>';
+						}
+						else
+						{
+							print img_tick($langs->trans("Enabled"));
+						}
+						print "</td>";
+					}
+					else
+					{
+						print "<td align=\"center\">\n";
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+						print "</td>";
+					}
+
+					// Defaut
+					print "<td align=\"center\">";
+					if ($conf->global->COMPANY_ADDON_PDF == "$name")
+					{
+						print img_tick($langs->trans("Default"));
+					}
+					else
+					{
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+					}
+					print '</td>';
+
+					// Info
+					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+					if ($modele->type == 'pdf')
+					{
+						$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+					}
+					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn($module->option_draft_watermark,1,1);
+
+
+					print '<td align="center">';
+					print $form->textwithpicto('',$htmltooltip,1,0);
+					print '</td>';
+					print '<td align="center">';
+					if ($modele->type == 'pdf')
+					{
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+					}
+					else print '&nbsp;';
+					print '</td>';
+
+					print "</tr>\n";
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+print '</table>';
+
+print '<br>';
 
 // Autres options
 $html=new Form($db);

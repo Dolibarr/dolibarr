@@ -516,7 +516,7 @@ class RemiseCheque extends CommonObject
 			{
 				$outputlangs->charset_output=$sav_charset_output;
 				dol_syslog("Error");
-				dol_print_error($db,$pdf->pdferror());
+				dol_print_error($db,$pdf->error);
 				return 0;
 			}
 		}

@@ -779,6 +779,9 @@ ModuleCompanyCodePanicum=Return an empty accountancy code.
 ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The code is composed of the character "C" in the first position followed by the first 5 characters of the third party code.  
 UseNotifications=Use notifications
 NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events, to third parties (customers or suppliers) that are configured to. Choice of active notification and targets contacts is made one third party at time.
+ModelModules=Documents templates
+DocumentModelOdt=Generate documents from .ODT file format templates (OpenOffice...)
+WatermarkOnDraft=Watermark on draft document
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar
