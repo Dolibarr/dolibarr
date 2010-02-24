@@ -571,42 +571,6 @@ else
 			print '</table>';
 			print '</form>';
 
-			/*
-			 * Lines of invoice
-			 */
-			print '<br>';
-			$var=true;
-
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
-			print '<td align="right">'.$langs->trans('VAT').'</td>';
-			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-			print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-			print '<td align="right">'.$langs->trans('Qty').'</td>';
-			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
-			print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
-			print '<td colspan="2">&nbsp;</td></tr>';
-			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
-			{
-				$var=!$var;
-
-				// Affichage simple de la ligne
-				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i]->description.'</td>';
-				print '<td align="right">'.vatrate($fac->lignes[$i]->tva_tx).'%</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';
-				print '<td align="right" nowrap="nowrap">'.($fac->lignes[$i]->pu_ttc?price($fac->lignes[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
-				print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht,'MT').'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc,'MT').'</td>';
-				print '<td align="center" width="16">';
-				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a>';
-				print '</td>';
-				print '<td align="center" width="16">';
-				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a>';
-				print '</td>';
-				print '</td></tr>';
-			}
-
 			print '</table>';
 		}
 		else
