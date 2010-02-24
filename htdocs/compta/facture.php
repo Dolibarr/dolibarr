@@ -332,7 +332,6 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier)
 	$sql.= ' WHERE pf.fk_facture = '.$fac->id;
 
 	$result = $db->query($sql);
-
 	if ($result)
 	{
 		$i = 0;
@@ -340,10 +339,14 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier)
 
 		while ($i < $num)
 		{
-	  $objp = $db->fetch_object($result);
-	  $totalpaye += $objp->amount;
-	  $i++;
+			$objp = $db->fetch_object($result);
+			$totalpaye += $objp->amount;
+			$i++;
 		}
+	}
+	else
+	{
+		dol_print_error($db,'');
 	}
 
 	$resteapayer = $fac->total_ttc - $totalpaye;

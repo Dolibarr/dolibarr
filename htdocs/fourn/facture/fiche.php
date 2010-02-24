@@ -373,7 +373,7 @@ if ($_GET['action'] == 'addline')
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-		//supplier_invoice_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		//supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
 
 		unset($_POST['qty']);
 		unset($_POST['type']);
@@ -398,6 +398,53 @@ if ($_POST['action'] == 'classin')
 	$facture->fetch($_GET['facid']);
 	$facture->setProject($_POST['projetid']);
 }
+
+
+// Repasse la facture en mode brouillon
+if ($_GET['action'] == 'edit' && $user->rights->fournisseur->facture->creer)
+{
+	$fac = new FactureFournisseur($db);
+	$fac->fetch($_GET['facid']);
+
+	// On verifie si la facture a des paiements
+	$sql = 'SELECT pf.amount';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf';
+	$sql.= ' WHERE pf.fk_facturefourn = '.$fac->id;
+
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$i = 0;
+		$num = $db->num_rows($result);
+
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($result);
+			$totalpaye += $objp->amount;
+			$i++;
+		}
+	}
+
+	$resteapayer = $fac->total_ttc - $totalpaye;
+
+	// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
+	//$ventilExportCompta = $fac->getVentilExportCompta();
+
+	// On verifie si aucun paiement n'a ete effectue
+	if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
+	{
+		$fac->set_draft($user);
+
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		//supplier_invoice_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
+	}
+}
+
 
 
 /*
@@ -549,11 +596,11 @@ else
 			print '<input size="30" name="libelle" type="text" value="'.$fac->libelle.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
-			$html->select_date($fac->datep,'','','','',"update");
+			$html->select_date($fac->datep,'','','','',"update",1,1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
-			$html->select_date($fac->date_echeance,'ech','','','',"update");
+			$html->select_date($fac->date_echeance,'ech','','','',"update",1,1);
 			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 

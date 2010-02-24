@@ -472,6 +472,8 @@ class FactureFournisseur extends Facture
 	{
 		global $conf,$langs;
 
+		$error=0;
+
 		// Protection
 		if ($this->statut > 0)	// This is to avoid to validate twice (avoid errors on logs and stock management)
 		{
@@ -489,8 +491,6 @@ class FactureFournisseur extends Facture
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$error=0;
-
 			// Si activé on décrémente le produit principal et ses composants à la validation de facture
 			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
 			{
@@ -540,21 +540,84 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 * 		\brief     	Ajoute une ligne de facture (associ� � aucun produit/service pr�d�fini)
+	 *		\brief		Set draft status
+	 *		\param		user		Object user that modify
+	 *		\param		int			<0 if KO, >0 if OK
+	 */
+	function set_draft($user)
+	{
+		global $conf,$langs;
+
+		$error=0;
+
+		if ($this->statut == 0)
+		{
+			dol_syslog("FactureFournisseur::set_draft already draft status", LOG_WARNING);
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
+		$sql.= " SET fk_statut = 0";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog("FactureFournisseur::set_draft sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			// Si active on decremente le produit principal et ses composants a la validation de facture
+			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				{
+					if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We increase stock for product
+						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
+						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+					}
+				}
+			}
+
+			if ($error == 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 * 		\brief     	Ajoute une ligne de facture (associe a aucun produit/service predefini)
 	 * 		\param    	desc            Description de la ligne
 	 * 		\param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
-	 * 		\param    	txtva           Taux de tva forc�, sinon -1
-	 * 		\param    	qty             Quantit�
-	 *		\param    	fk_product      Id du produit/service pred�fini
+	 * 		\param    	txtva           Taux de tva force, sinon -1
+	 * 		\param    	qty             Quantite
+	 *		\param    	fk_product      Id du produit/service predefini
 	 * 		\param    	remise_percent  Pourcentage de remise de la ligne
-	 * 		\param    	date_start      Date de debut de validit� du service
-	 * 		\param    	date_end        Date de fin de validit� du service
+	 * 		\param    	date_start      Date de debut de validite du service
+	 * 		\param    	date_end        Date de fin de validite du service
 	 * 		\param    	ventil          Code de ventilation comptable
 	 * 		\param    	info_bits		Bits de type de lignes
 	 * 		\param    	price_base_type HT ou TTC
 	 * 		\param		type			Type of line (0=product, 1=service)
-	 * 		\remarks	Les parametres sont deja cens� etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete d�fini
+	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
