@@ -196,19 +196,17 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Actions
 		 */
-
 		print '<div class="tabsAction">';
-		if ($user->rights->projet->creer && $_GET['action'] <> 'edit')
+		
+		if ((($user->rights->projet->creer && $userAccess) || $user->rights->projet->all->creer) && $_GET['action'] <> 'edit')
 		{
-			if ($userAccess)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
-			}
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
+		}
+		
 		print '</div>';
 	}
 }
