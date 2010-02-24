@@ -135,6 +135,7 @@ var apachePort: String;
 var mysqlPort: String;
 var newPassword: String;
 
+var lockFile: String;
 var srcFile: String;
 var destFile: String;
 var srcFileH: String;
@@ -334,7 +335,12 @@ begin
 
 
     // Remove lock file
-    DeleteFile(pathWithSlashes+'/www/dolibarr/install.lock');
+    lockfile := pathWithSlashes+'/www/dolibarr/install.lock';
+    if FileExists (lockfile) and not DeleteFile(lockfile) then
+    begin
+      themessage := 'Failed to delete file '+pathWithSlashes+'/www/dolibarr/install.lock. You may have to remove it manually later when asked. Click OK to continue...';
+ 		  MsgBox(themessage,mbInformation,MB_OK)
+    end
 
 
 
