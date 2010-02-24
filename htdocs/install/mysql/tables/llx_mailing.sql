@@ -22,7 +22,7 @@
 
 -- redaction : 0
 -- valide    : 1
--- approuvé  : 2
+-- approuve  : 2
 -- envoye    : 3
 
 create table llx_mailing
@@ -44,10 +44,13 @@ create table llx_mailing
   date_valid         datetime,                            -- 
   date_appro         datetime,                            -- 
   date_envoi         datetime,                            -- date d'envoi
-  fk_user_creat      integer,                             -- utilisateur qui a créé l'info
-  fk_user_valid      integer,                             -- utilisateur qui a créé l'info
-  fk_user_appro      integer                              -- utilisateur qui a créé l'info
-
+  fk_user_creat      integer,                             -- user creator
+  fk_user_valid      integer,                             -- user validator
+  fk_user_appro      integer,                              -- not used
+  joined_file1       varchar(255),
+  joined_file2       varchar(255),
+  joined_file3       varchar(255),
+  joined_file4       varchar(255)
 )type=innodb;
 
 --

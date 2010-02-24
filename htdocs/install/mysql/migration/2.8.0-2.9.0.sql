@@ -16,3 +16,9 @@ ALTER TABLE llx_product ADD COLUMN fk_parent integer DEFAULT 0 AFTER virtual;
 
 alter table llx_societe add column   default_lang   varchar(6) after price_level;
 alter table llx_socpeople add column   default_lang   varchar(6) after note;
+
+
+alter table llx_mailing add column   joined_file1       varchar(255);
+alter table llx_mailing add column   joined_file2       varchar(255);
+alter table llx_mailing add column   joined_file3       varchar(255);
+alter table llx_mailing add column   joined_file4       varchar(255);
