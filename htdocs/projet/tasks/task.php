@@ -74,7 +74,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->projet-
 	}
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->supprimer)
 {
 	$task = new Task($db);
 	if ($task->fetch($_GET["id"]) >= 0 )
