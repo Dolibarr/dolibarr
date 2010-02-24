@@ -23,7 +23,7 @@ AppVerName=DoliWamp-2.8.0-beta
 OutputBaseFilename=DoliWamp-2.8.0-beta
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-SourceDir=D:\Mes developpements\dolibarr
+SourceDir=D:\Mes developpements\dolibarrold
 ; ----- End of change
 AppId=doliwamp
 AppPublisher=NLTechno
@@ -135,6 +135,7 @@ var apachePort: String;
 var mysqlPort: String;
 var newPassword: String;
 
+var lockFile: String;
 var srcFile: String;
 var destFile: String;
 var srcFileH: String;
@@ -334,8 +335,12 @@ begin
 
 
     // Remove lock file
-    DeleteFile(pathWithSlashes+'/www/dolibarr/install.lock');
-
+    lockfile := pathWithSlashes+'/www/dolibarr/install.lock';
+    if FileExists (lockfile) and not DeleteFile(lockfile) then
+    begin
+      themessage := 'Failed to delete file '+pathWithSlashes+'/www/dolibarr/install.lock. You may have to remove it manually later when asked. Click OK to continue...';
+ 		  MsgBox(themessage,mbInformation,MB_OK)
+    end
 
 
 		// Check if parameters already defined in conf.php file
