@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/includes/modules/rapport/pdf_paiement.class.php
  *	\ingroup    banque
- *	\brief      Fichier de la classe permettant de g�n�rer les rapports de paiement
+ *	\brief      Fichier de la classe permettant de generer les rapports de paiement
  *	\version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
  *	\class      pdf_paiement
  *	\brief      Classe permettant de generer les rapports de paiement
  */
-class pdf_paiement extends FPDF
+class pdf_paiement
 {
 	/**
 	 *	\brief  Constructeur

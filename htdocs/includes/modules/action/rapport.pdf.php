@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/includes/modules/action/rapport.pdf.php
- \ingroup    commercial
- \brief      Fichier de generation de PDF pour les rapports d'actions
- \version    $Id$
+ *	\file       htdocs/includes/modules/action/rapport.pdf.php
+ *	\ingroup    commercial
+ *	\brief      Fichier de generation de PDF pour les rapports d'actions
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
@@ -31,8 +31,8 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
- \class      CommActionRapport
- \brief      Classe permettant la generation des rapports d'actions
+ *	\class      CommActionRapport
+ *	\brief      Classe permettant la generation des rapports d'actions
  */
 class CommActionRapport
 {

@@ -38,17 +38,9 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
  *	\class      ModelePDFFactures
  *	\brief      Classe mere des modeles de facture
  */
-class ModelePDFFactures extends FPDF
+class ModelePDFFactures
 {
 	var $error='';
-
-	/**
-	 *       \brief      Renvoi le dernier message d'erreur de creation de facture
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
 
 	/**
 	 *      \brief      Renvoi la liste des modeles actifs

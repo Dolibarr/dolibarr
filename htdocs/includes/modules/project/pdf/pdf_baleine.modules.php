@@ -80,14 +80,6 @@ class pdf_baleine extends ModelePDFProjects
 
 	}
 
-	/**
-	 *	\brief      Renvoi dernere erreur
-	 *	\return     string      Derniere erreur
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
 
 	/**
 	 *	\brief      Fonction generant le projet sur le disque

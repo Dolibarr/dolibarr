@@ -32,9 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  *	\class      BordereauChequeBlochet
- *	\brief      Classe permettant de g�n�rer les bordereau de remise de cheque
+ *	\brief      Classe permettant de generer les bordereau de remise de cheque
  */
-class BordereauChequeBlochet extends FPDF
+class BordereauChequeBlochet
 {
     var $error='';
 
@@ -175,14 +175,6 @@ class BordereauChequeBlochet extends FPDF
 		return 1;   // Pas d'erreur
 	}
 
-
-	/**
-     *      \brief      Renvoi le dernier message d'erreur de cr�ation de propale
-     */
-    function pdferror()
-    {
-        return $this->error;
-    }
 
 	/**
 	 *	\brief  Generate Header

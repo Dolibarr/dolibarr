@@ -34,36 +34,26 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
  *  \class      ModelePdfExpedition
  *  \brief      Parent class of ssending receipts models
  */
-
-class ModelePdfExpedition extends FPDF
+class ModelePdfExpedition
 {
     var $error='';
 
 
-   /**
-        \brief Renvoi le dernier message d'erreur de creation de PDF de commande
-    */
-    function pdferror()
-    {
-        return $this->error;
-    }
-
-
     /**
-     *      \brief      Renvoi la liste des mod�les actifs
+     *      \brief      Renvoi la liste des modeles actifs
      *      \return    array        Tableau des modeles (cle=id, valeur=libelle)
      */
     function liste_modeles($db)
     {
     	global $conf;
-    	
+
     	$type='shipping';
     	$liste=array();
     	$sql ="SELECT nom as id, nom as lib";
     	$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
     	$sql.=" WHERE type = '".$type."'";
     	$sql.= " AND entity = ".$conf->entity;
-    	
+
     	$resql = $db->query($sql);
       if ($resql)
       {
@@ -151,7 +141,7 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			dol_syslog("Erreur dans expedition_pdf_create");
-			dol_print_error($db,$obj->pdferror());
+			dol_print_error($db,$obj->error);
 			return 0;
 		}
 	}

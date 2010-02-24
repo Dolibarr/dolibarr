@@ -90,14 +90,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->atleastonediscount=0;
 	}
 
-	/**
-	 \brief      Renvoi derniere erreur
-	 \return     string      Derniere erreur
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
 
 	/**
 	 * 	\brief      Fonction generant la commande sur le disque

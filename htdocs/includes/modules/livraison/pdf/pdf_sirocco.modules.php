@@ -73,15 +73,6 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	}
 
 
-	/**		\brief      Renvoi derniere erreur
-	 *		\return     string      Derniere erreur
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
-
-
 	/**
 	 *	\brief      Fonction generant le bon de livraison sur le disque
 	 *	\param	    delivery		Object livraison a generer

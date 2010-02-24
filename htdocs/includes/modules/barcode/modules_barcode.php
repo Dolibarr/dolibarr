@@ -21,20 +21,18 @@
  */
 
 /**
-   \file       htdocs/includes/modules/barcode/modules_barcode.php
-   \ingroup    barcode
-   \brief      Fichier contenant la classe mère de generation des codes barres
-   \version    $Id$
-*/
-
+ *   \file       htdocs/includes/modules/barcode/modules_barcode.php
+ *   \ingroup    barcode
+ *   \brief      Fichier contenant la classe mere de generation des codes barres
+ *   \version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 
 
 /**
-   \class      ModeleBarCode
-   \brief      Classe mère des modèles de code barre
-*/
-
+ *  \class      ModeleBarCode
+ *	\brief      Classe mere des modeles de code barre
+ */
 class ModeleBarCode
 {
 	var $error='';

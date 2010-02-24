@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2008      Chiptronik
+/* Copyright (C) 2010 Laurent Destailleur <ely@users.sourceforge.net>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,24 +18,24 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/livraison/pdf/pdf_typhon.modules.php
- *	\ingroup    livraison
- *	\brief      Fichier de la classe permettant de generer les bons de livraison au modele Typhon
+ *	\file       htdocs/includes/modules/societe/doc/odt_generic.modules.php
+ *	\ingroup    project
+ *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
-require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- *	\class      pdf_typhon
- *	\brief      Classe permettant de generer les bons de livraison au modele Typho
+ *	\class      odt_generic
+ *	\brief      Classe permettant de generer les projets au modele Baleine
  */
 
-class pdf_typhon extends ModelePDFDeliveryOrder
+class odt_generic extends ModeleDocProjects
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -46,34 +43,30 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *		\brief  Constructor
 	 *		\param	db		Database handler
 	 */
-	function pdf_typhon($db)
+	function odt_generic($db)
 	{
 		global $conf,$langs,$mysoc;
 
 		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("sendings");
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "typhon";
-		$this->description = $langs->trans("DocumentModelTyphon");
+		$this->name = "odt";
+		$this->description = $langs->trans("DocumentModelOdt");
 
 		// Dimension page pour format A4
-		$this->type = 'pdf';
-		$this->page_largeur = 210;
-		$this->page_hauteur = 297;
+		$this->type = 'odt';
+		$this->page_largeur = 0;
+		$this->page_hauteur = 0;
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-		$this->marge_gauche=10;
-		$this->marge_droite=10;
-		$this->marge_haute=10;
-		$this->marge_basse=10;
+		$this->marge_gauche=0;
+		$this->marge_droite=0;
+		$this->marge_haute=0;
+		$this->marge_basse=0;
 
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
-
-		$this->franchise=!$mysoc->tva_assuj;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
@@ -82,21 +75,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxcomm=120;
-		$this->posxtva=121;
-		$this->posxup=132;
-		$this->posxqty=168;
-		$this->posxdiscount=162;
-		$this->postotalht=177;
 
-		$this->tva=array();
-		$this->atleastoneratenotnull=0;
-		$this->atleastonediscount=0;
+		$this->params=array('COMPANY_ADDON_PDF_ODT'=>array('type'=>'TEXTAREA','default'=>''));
 	}
 
-
 	/**
-	 *	\brief      Fonction generant le bon de livraison sur le disque
-	 *	\param	    delivery		Object livraison a generer
+	 *	\brief      Fonction generant le projet sur le disque
+	 *	\param	    delivery		Object project a generer
 	 *	\param		outputlangs		Lang output object
 	 *	\return	    int         	1 if OK, <=0 if KO
 	 */
@@ -112,18 +97,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("deliveries");
-		$outputlangs->load("sendings");
+		$outputlangs->load("projects");
 
-		if ($conf->expedition->dir_output."/receipt")
+		if ($conf->projet->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Livraison($this->db);
+				$object = new Project($this->db);
 				$object->fetch($id);
 
 				if ($result < 0)
@@ -135,7 +117,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$nblignes = sizeof($object->lignes);
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->expedition->dir_output."/receipt";
+			$dir = $conf->projet->dir_output;
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".pdf";
 
@@ -164,43 +146,23 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-
 				// Complete object by loading several other informations
-				$expedition=new Expedition($this->db);
-				$result = $expedition->fetch($object->expedition_id);
-
-				$commande = new Commande($this->db);
-				if ($expedition->origin == 'commande')
-				{
-					$commande->fetch($expedition->origin_id);
-				}
-				$object->commande=$commande;
-
+				$task = new Task($this->db);
+				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
 				$pdf->Open();
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
+				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->fullname));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
-
-				/*
-				 // Positionne $this->atleastonediscount si on a au moins une remise
-				 for ($i = 0 ; $i < $nblignes ; $i++)
-				 {
-				 if ($object->lignes[$i]->remise_percent)
-				 {
-				 $this->atleastonediscount++;
-				 }
-				 }
-				 */
 
 				// New page
 				$pdf->AddPage();
@@ -211,9 +173,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 50;
-				$tab_height = 110;
-				$tab_height_newpage = 150;
+				$tab_height = 150;
 
 				// Affiche notes
 				if (! empty($object->note_public))
@@ -257,37 +217,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
-					/*
-					 // TVA
-					 $pdf->SetXY ($this->posxtva, $curY);
-					 $pdf->MultiCell(10, 4, ($object->lignes[$i]->tva_tx < 0 ? '*':'').abs($object->lignes[$i]->tva_tx), 0, 'R');
-
-					 // Prix unitaire HT avant remise
-					 $pdf->SetXY ($this->posxup, $curY);
-					 $pdf->MultiCell(18, 4, price($object->lignes[$i]->subprice), 0, 'R', 0);
-					 */
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'R');
-					/*
-					 // Remise sur ligne
-					 $pdf->SetXY ($this->posxdiscount, $curY);
-					 if ($object->lignes[$i]->remise_percent)
-					 {
-					 $pdf->MultiCell(14, 3, $object->lignes[$i]->remise_percent."%", 0, 'R');
-					 }
 
-					 // Total HT ligne
-					 $pdf->SetXY ($this->postotalht, $curY);
-					 $total = price($object->lignes[$i]->price * $object->lignes[$i]->qty);
-					 $pdf->MultiCell(23, 3, $total, 0, 'R', 0);
-
-					 // Collecte des totaux par valeur de tva
-					 // dans le tableau tva["taux"]=total_tva
-					 $tvaligne=$object->lignes[$i]->price * $object->lignes[$i]->qty;
-					 if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-					 $this->tva[ (string)$object->lignes[$i]->tva_tx ] += $tvaligne;
-					 */
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
@@ -303,27 +236,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$nblineFollowDesc = 0;
 					}
 
-					// Test if a new page is required
-					if ($pagenb == 1)
+					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
-						$tab_top_in_current_page=$tab_top;
-						$tab_height_in_current_page=$tab_height;
-					}
-					else
-					{
-						$tab_top_in_current_page=$tab_top_newpage;
-						$tab_height_in_current_page=$tab_height_newpage;
-					}
-					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
-					{
-						if ($pagenb == 1)
-						{
-							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
-						}
-						else
-						{
-							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-						}
+						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
 
 						$this->_pagefoot($pdf, $object, $outputlangs);
 
@@ -340,78 +255,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 
 				// Show square
-				if ($pagenb == 1)
-				{
-					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top + $tab_height + 1;
-				}
-				else
-				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
-				}
-
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+				$bottomlasttab=$tab_top + $tab_height + 1;
 
 				/*
 				 * Pied de page
 				 */
 				$this->_pagefoot($pdf,$object,$outputlangs);
-
-				// Check product remaining to be delivered
-				$waitingDelivery = $object->getRemainingDelivered();
-
-				if (is_array($waitingDelivery) & !empty($waitingDelivery))
-				{
-					$pdf->AddPage('P', 'A4');
-
-					$this->_pagehead($pdf, $object, 1, $outputlangs);
-					$pdf-> SetY(90);
-
-					$w=array(40,100,50);
-					$header=array($outputlangs->transnoentities('Reference'),
-								  $outputlangs->transnoentities('Label'),
-								  $outputlangs->transnoentities('Qty')
-								  );
-
-    				// Header
-   					for($i=0;$i<count($header);$i++)
-   					{
-   						$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
-   					}
-
-			    	$pdf->Ln();
-
-			    	// Data
-					foreach($waitingDelivery as $value)
-					{
-						$pdf->Cell($w[0], 6, $value['ref'], 1, 0, 'L');
-						$pdf->Cell($w[1], 6, $value['label'], 1, 0, 'L');
-						$pdf->Cell($w[2], 6, $value['qty'], 1, 1, 'R');
-
-						if ($pdf->GetY() > 250)
-						{
-							$this->_pagefoot($pdf,$object,$outputlangs);
-
-							$pdf->AddPage('P', 'A4');
-
-							$pdf->SetFont('Arial','', 9);
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
-
-							$pdf-> SetY(40);
-
-							for($i=0;$i<count($header);$i++)
-							{
-								$pdf->Cell($w[$i],7,$header[$i],1,0,'C');
-							}
-
-							$pdf->Ln();
-						}
-					}
-
-					$this->_pagefoot($pdf,$object,$outputlangs);
-
-				}
-
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -458,28 +308,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','',10);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');
-
-		// Modif SEB pour avoir une col en plus pour les commentaires clients
-		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxcomm, $tab_top+2);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Comments"),'','L');
-
-		// Qty
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
-		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
-
-		// Modif Seb cadres signatures
-		$pdf->SetFont('Arial','',10);
-		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
-		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
-		$pdf->SetXY ($this->marge_gauche + 2, $tab_top + $tab_height + 5);
-		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->nom).":",'','L');
-
-		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
-		$pdf->SetXY (2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
-		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
+		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Task"),'','L');
 
 	}
 
@@ -523,22 +352,16 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Project")." ".$outputlangs->convToOutputCharset($object->ref), '' , 'R');
 		$pdf->SetFont('Arial','',12);
 
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		if ($object->date_valid)
-		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_valid,"%d %b %Y",false,$outputlangs,true), '', 'R');
-		}
-		else
-		{
-			$pdf->SetTextColor(255,0,0);
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryNotValidated"), '', 'R');
-			$pdf->SetTextColor(0,0,60);
-		}
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->date_start,'day',false,$outputlangs,true), '', 'R');
+		$posy+=6;
+		$pdf->SetXY(100,$posy);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');
 
 		$pdf->SetTextColor(0,0,60);
 
@@ -620,50 +443,26 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			$object->fetch_client();
 
-			// If SHIPPING contact defined on invoice, we use it
-			$usecontact=false;
-			$arrayidcontact=$object->commande->getIdContact('external','SHIPPING');
+			// Nom client
+			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+
+			// Nom du contact facturation si c'est une societe
+			$arrayidcontact = $object->getIdContact('external','PROJECTLEADER');
 			if (sizeof($arrayidcontact) > 0)
 			{
-				$usecontact=true;
-				$result=$object->fetch_contact($arrayidcontact[0]);
-			}
-
-			if ($usecontact)
-			{
-				$socname = $object->client->nom;
-				$carac_client_name=$outputlangs->convToOutputCharset($socname);
-
-				// Customer name
-				$carac_client = $outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-
-				// Customer properties
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-				if ($object->contact->pays_code && $object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
-			}
-			else
-			{
-				// Nom client
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-
-				// Nom du contact facturation si c'est une societe
-				$arrayidcontact = $object->getIdContact('external','SHIPPING');
-				if (sizeof($arrayidcontact) > 0)
+				$object->fetch_contact($arrayidcontact[0]);
+				// On verifie si c'est une societe ou un particulier
+				if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 				{
-					$object->fetch_contact($arrayidcontact[0]);
-					// On verifie si c'est une societe ou un particulier
-					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
-					{
-						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-					}
+					$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
 				}
-
-				// Caracteristiques client
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
-				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
-				if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 			}
+
+			// Caracteristiques client
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
+			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
+			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
+
 			// Numero TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
 

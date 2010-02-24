@@ -84,15 +84,6 @@ class pdf_edison extends ModelePDFCommandes
 	}
 
 
-	/**	\brief      Renvoi derniere erreur
-	 *	\return     string      Derniere erreur
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
-
-
 	/**
 	 *	\brief      Fonction generant la commande sur le disque
 	 *	\param	    com				id de la propale a generer

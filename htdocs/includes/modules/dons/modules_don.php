@@ -23,7 +23,7 @@
 /**
 	    \file       htdocs/includes/modules/dons/modules_don.php
 		\ingroup    don
-		\brief      Fichier contenant la classe mère de generation des dons
+		\brief      Fichier contenant la classe mï¿½re de generation des dons
 		\version    $Id$
 */
 
@@ -34,20 +34,15 @@ require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
 
 /**
-	    \class      ModeleDon
-		\brief      Classe mère des modèles de dons
-*/
-class ModeleDon extends FPDF
+ *	    \class      ModeleDon
+ *		\brief      Classe mere des modeles de dons
+ */
+class ModeleDon
 {
     var $error='';
 
-    function pdferror()
-    {
-        return $this->error;
-    }
-
     /**
-     *      \brief      Renvoi la liste des modèles actifs
+     *      \brief      Renvoi la liste des modeles actifs
      *      \param      db      Handler de base
      */
     function liste_modeles($db)
@@ -82,7 +77,7 @@ class ModeleDon extends FPDF
 
 /**
 	\class 		ModeleNumRefDons
-	\brief  	Classe mère des modèles de numérotation des références des dons
+	\brief  	Classe mï¿½re des modï¿½les de numï¿½rotation des rï¿½fï¿½rences des dons
 */
 class ModeleNumRefDons
 {
@@ -96,7 +91,7 @@ class ModeleNumRefDons
 		return true;
 	}
 
-    /**     \brief      Renvoi la description par defaut du modele de numérotation
+    /**     \brief      Renvoi la description par defaut du modele de numï¿½rotation
      *      \return     string      Texte descripif
      */
     function info()
@@ -106,7 +101,7 @@ class ModeleNumRefDons
         return $langs->trans("NoDescription");
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numï¿½rotation
      *      \return     string      Example
      */
     function getExample()
@@ -116,8 +111,8 @@ class ModeleNumRefDons
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
+    /**     \brief      Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numï¿½rotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -125,7 +120,7 @@ class ModeleNumRefDons
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
+    /**     \brief      Renvoi prochaine valeur attribuï¿½e
      *      \return     string      Valeur
      */
     function getNextValue()
@@ -151,11 +146,11 @@ class ModeleNumRefDons
 
 
 /**
-    \brief      Crée un don sur disque en fonction du modèle de DON_ADDON_PDF
-    \param	    db  			objet base de donnée
-    \param	    id				id du don à créer
+    \brief      Crï¿½e un don sur disque en fonction du modï¿½le de DON_ADDON_PDF
+    \param	    db  			objet base de donnï¿½e
+    \param	    id				id du don ï¿½ crï¿½er
     \param	    message			message
-	\param	    modele			force le modele à utiliser ('' par defaut)
+	\param	    modele			force le modele ï¿½ utiliser ('' par defaut)
 	\param		outputlangs		objet lang a utiliser pour traduction
     \return     int         	0 si KO, 1 si OK
 */
@@ -166,7 +161,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 
     $dir = DOL_DOCUMENT_ROOT . "/includes/modules/dons/";
 
-	// Positionne modele sur le nom du modele à utiliser
+	// Positionne modele sur le nom du modele ï¿½ utiliser
 	if (! strlen($modele))
 	{
 		if ($conf->global->DON_ADDON_MODEL)
@@ -197,7 +192,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 		$sav_charset_output=$outputlangs->charset_output;
         if ($obj->write_file($id,$outputlangs) > 0)
         {
-            // Succès de la création de la facture. On génère le fichier meta
+            // Succï¿½s de la crï¿½ation de la facture. On gï¿½nï¿½re le fichier meta
             don_meta_create($db, $id);
             // et on supprime l'image correspondant au preview
             don_delete_preview($db, $id);
@@ -209,7 +204,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         {
 			$outputlangs->charset_output=$sav_charset_output;
         	dol_syslog("Erreur dans don_create");
-            dol_print_error($db,$obj->pdferror());
+            dol_print_error($db,$obj->error);
             return 0;
         }
     }
@@ -221,9 +216,9 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 }
 
 /**
-   \brief       Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
-   \param	    db  		Objet base de donnée
-   \param	    donid		Id du don à créer
+   \brief       Crï¿½ï¿½ un meta fichier ï¿½ cï¿½tï¿½ de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payï¿½e ou compliquï¿½e ï¿½ gï¿½rer ... avec un rgrep c'est vite fait bien fait [eric seigne]
+   \param	    db  		Objet base de donnï¿½e
+   \param	    donid		Id du don ï¿½ crï¿½er
    \param       message     Message
 */
 function don_meta_create($db, $donid, $message="")
@@ -237,8 +232,8 @@ function don_meta_create($db, $donid, $message="")
 
 
 /**
-   \brief       Supprime l'image de prévisualitation, pour le cas de régénération de facture
-   \param	    db  		Objet base de donnée
+   \brief       Supprime l'image de prï¿½visualitation, pour le cas de rï¿½gï¿½nï¿½ration de facture
+   \param	    db  		Objet base de donnï¿½e
    \param	    donid		Id du don
 */
 function don_delete_preview($db, $donid)

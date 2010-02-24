@@ -33,20 +33,12 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- \class      ModelePDFDeliveryOrder
- \brief      Classe mere des modeles de bon de livraison
+ *	\class      ModelePDFDeliveryOrder
+ *	\brief      Classe mere des modeles de bon de livraison
  */
-class ModelePDFDeliveryOrder extends FPDF
+class ModelePDFDeliveryOrder
 {
 	var $error='';
-
-	/**
-	 \brief Renvoi le dernier message d'erreur de creation de PDF de bon de livraison
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
 
 	/**
 	 *      \brief      Renvoi la liste des modeles actifs
@@ -211,7 +203,7 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			dol_syslog("Erreur dans delivery_order_pdf_create");
-			dol_print_error($db,$obj->pdferror());
+			dol_print_error($db,$obj->error);
 			return 0;
 		}
 	}

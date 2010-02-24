@@ -74,15 +74,6 @@ class pdf_propale_jaune extends ModelePDFPropales
 	}
 
 
-	/**	\brief      Renvoi derniere erreur
-	 *	\return     string      Derniere erreur
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
-
-
 	/**
 	 *	\brief      Fonction generant la propale sur le disque
 	 *	\param	    propale			Objet propal

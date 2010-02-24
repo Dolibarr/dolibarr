@@ -51,16 +51,6 @@ class html_cerfafr extends ModeleDon
     }
 
 
-    /**
-    	    \brief      Renvoi derni�re erreur
-            \return     string      Derni�re erreur
-    */
-    function pdferror()
-    {
-    	return $this->error;
-    }
-
-
 	/**     \brief     	Return if a module can be used or not
 	*      	\return		boolean     true if module can be used
 	*/

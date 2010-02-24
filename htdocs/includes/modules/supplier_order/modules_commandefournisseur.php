@@ -36,18 +36,10 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
  *	\class      ModelePDFSuppliersOrders
  *	\brief      Parent class for supplier orders models
  */
-
-class ModelePDFSuppliersOrders extends FPDF
+class ModelePDFSuppliersOrders
 {
 	var $error='';
 
-	/**
-	 \brief Renvoi le dernier message d'erreur de creation de PDF de commande
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
 
 	/**
 	 *      \brief      Renvoi la liste des modeles actifs
@@ -211,7 +203,7 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			dol_syslog("Erreur dans supplier_order_pdf_create");
-			dol_print_error($db,$obj->pdferror());
+			dol_print_error($db,$obj->error);
 			return 0;
 		}
 	}
@@ -221,6 +213,14 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 		return 0;
 	}
 }
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $db
+ * @param unknown_type $propalid
+ * @return unknown
+ */
 function supplier_order_delete_preview($db, $propalid)
 {
 	global $langs,$conf;

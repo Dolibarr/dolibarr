@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -21,23 +21,67 @@
  */
 
 /**
-	    \file       htdocs/includes/modules/societe/modules_societe.class.php
-		\ingroup    societe
-		\brief      Fichier contenant la classe m�re de module de generation societes
-		\version    $Id$
-*/
+ *	    \file       htdocs/includes/modules/societe/modules_societe.class.php
+ *		\ingroup    societe
+ *		\brief      Fichier contenant la classe mere de module de generation societes
+ *		\version    $Id$
+ */
 
 
 /**
-	    \class      ModeleThirdPartyCode
-		\brief  	Classe m�re des mod�les de num�rotation des codes tiers
-*/
+ *	\class      ModeleDocProjects
+ *	\brief      Parent class for third parties models
+ */
+class ModeleDocProjects
+{
+	var $error='';
 
+	/**
+	 *      \brief      Renvoi la liste des modeles actifs
+	 */
+	function liste_modeles($db)
+	{
+		global $conf;
+
+		$type='project';
+		$liste=array();
+
+		$sql = "SELECT nom as id, nom as lib";
+		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.= " WHERE type = '".$type."'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$liste[$row[0]]=$row[1];
+				$i++;
+			}
+		}
+		else
+		{
+			$this->error=$db->error();
+			return -1;
+		}
+		return $liste;
+	}
+
+}
+
+/**
+ *	    \class      ModeleThirdPartyCode
+ *		\brief  	Classe mere des modeles de numerotation des codes tiers
+ */
 class ModeleThirdPartyCode
 {
     var $error='';
 
-    /**     \brief      Renvoi la description par defaut du modele de num�rotation
+    /**     \brief      Renvoi la description par defaut du modele de numerotation
      *      \return     string      Texte descripif
      */
     function info($langs)
@@ -55,7 +99,7 @@ class ModeleThirdPartyCode
     }
 
 
-    /**     \brief      Renvoi un exemple de num�rotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample($langs)
@@ -64,8 +108,8 @@ class ModeleThirdPartyCode
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette num�rotation de fonctionner.
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -200,15 +244,14 @@ class ModeleThirdPartyCode
 
 
 /**
-		\class		ModeleAccountancyCode
-		\brief  	Classe m�re des mod�les de num�rotation des codes compta
-*/
-
+ *		\class		ModeleAccountancyCode
+ *		\brief  	Classe mere des modeles de numerotation des codes compta
+ */
 class ModeleAccountancyCode
 {
     var $error='';
 
-    /**     \brief      Renvoi la description par defaut du modele de num�rotation
+    /**     \brief      Renvoi la description par defaut du modele de numerotation
      *      \return     string      Texte descripif
      */
     function info($langs)
@@ -217,7 +260,7 @@ class ModeleAccountancyCode
         return $langs->trans("NoDescription");
     }
 
-    /**     \brief      Renvoi un exemple de num�rotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample($langs)
@@ -226,8 +269,8 @@ class ModeleAccountancyCode
         return $langs->trans("NoExample");
     }
 
-    /**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette num�rotation de fonctionner.
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -235,7 +278,7 @@ class ModeleAccountancyCode
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribu�e
+    /**     \brief      Renvoi prochaine valeur attribuee
      *      \return     string      Valeur
      */
     function getNextValue($langs)

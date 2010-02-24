@@ -33,21 +33,13 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
 
 
 /**
- \class      ModelePDFPropales
- \brief      Classe mere des modeles de propale
+ *	\class      ModelePDFPropales
+ *	\brief      Classe mere des modeles de propale
  */
-
-class ModelePDFPropales extends FPDF
+class ModelePDFPropales
 {
 	var $error='';
 
-	/**
-	 *      \brief      Renvoi le dernier message d'erreur de creation de propale
-	 */
-	function pdferror()
-	{
-		return $this->error;
-	}
 
 	/**
 	 *      \brief      Renvoi la liste des modeles actifs
@@ -220,7 +212,7 @@ function propale_pdf_create($db, $id, $modele, $outputlangs)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			dol_syslog("modules_propale::propale_pdf_create error");
-			dol_print_error($db,$obj->pdferror());
+			dol_print_error($db,$obj->error);
 			return 0;
 		}
 	}

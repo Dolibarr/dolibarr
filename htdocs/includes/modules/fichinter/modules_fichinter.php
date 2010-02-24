@@ -32,27 +32,19 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- \class      ModelePDFFicheinter
- \brief      Classe mere des modeles de fiche intervention
+ *	\class      ModelePDFFicheinter
+ *	\brief      Classe mere des modeles de fiche intervention
  */
-class ModelePDFFicheinter extends FPDF
+class ModelePDFFicheinter
 {
 	var $error='';
 
 	/**
-	 \brief      Constructeur
+	 *	\brief      Constructeur
 	 */
 	function ModelePDFFicheinter()
 	{
 
-	}
-
-	/**
-	 \brief      Renvoi le dernier message d'erreur de creation de fiche intervention
-	 */
-	function pdferror()
-	{
-		return $this->error;
 	}
 
 	/**
@@ -214,7 +206,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,$obj->pdferror());
+			dol_print_error($db,$obj->error);
 			return 0;
 		}
 	}
