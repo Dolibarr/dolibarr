@@ -113,6 +113,16 @@ class Project extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
 			$result = $this->id;
+			
+			if (! $notrigger)
+			{
+	            // Call triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('PROJECT_CREATE',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
+			}
 		}
 		else
 		{
@@ -154,6 +164,16 @@ class Project extends CommonObject
 			dol_syslog("Project::Update sql=".$sql,LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
+				if (! $notrigger)
+				{
+					// Call triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('PROJECT_MODIFY',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// End call triggers
+				}
+				
 				$result = 0;
 			}
 			else
@@ -326,7 +346,7 @@ class Project extends CommonObject
 	 *    \brief    Supprime le projet dans la base
 	 *    \param    Utilisateur
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;
@@ -335,6 +355,16 @@ class Project extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			if (! $notrigger)
+			{
+	            // Call triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('PROJECT_DELETE',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
+			}
+			
 			return 1;
 		}
 		else
