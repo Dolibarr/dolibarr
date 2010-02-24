@@ -558,7 +558,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '</td>';
 		}
 		else print '<td>&nbsp;</td><td>&nbsp;</td>';
-		// IdProf4 (NU pour France)
+		// IdProf4 (RCS pour France)
 		$idprof=$langs->transcountry('ProfId4',$soc->pays_code);
 		if ($idprof!='-')
 		{

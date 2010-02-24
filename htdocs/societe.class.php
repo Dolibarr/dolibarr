@@ -73,11 +73,11 @@ class Societe extends CommonObject
 
 	var $tva_assuj;
 	var $tva_intra;
-	
+
 	// Local taxes
 	var $localtax1_assuj;
 	var $localtax2_assuj;
-	
+
 	var $capital;
 	var $typent_id;
 	var $typent_code;
@@ -367,7 +367,7 @@ class Societe extends CommonObject
 
 		$this->tva_assuj=trim($this->tva_assuj);
 		$this->tva_intra=dol_sanitizeFileName($this->tva_intra,'');
-		
+
 		// Local taxes
 		$this->localtax1_assuj=trim($this->localtax1_assuj);
 		$this->localtax2_assuj=trim($this->localtax2_assuj);
@@ -427,11 +427,11 @@ class Societe extends CommonObject
 
 			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
 			$sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
-			
+
 			// Local taxes
 			$sql .= ",localtax1_assuj = ".($this->localtax1_assuj>=0?"'".$this->localtax1_assuj."'":"null");
 			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj>=0?"'".$this->localtax2_assuj."'":"null");
-			
+
 			$sql .= ",capital = '" .   addslashes($this->capital) ."'";
 
 			$sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
@@ -643,11 +643,11 @@ class Societe extends CommonObject
 
 				$this->tva_assuj      = $obj->tva_assuj;
 				$this->tva_intra      = $obj->tva_intra;
-				
+
 				// Local Taxes
 				$this->localtax1_assuj      = $obj->localtax1_assuj;
 				$this->localtax2_assuj      = $obj->localtax2_assuj;
-				
+
 
 				$this->typent_id      = $obj->typent_id;
 				$this->typent_code    = $obj->typent_code;
@@ -2023,7 +2023,7 @@ class Societe extends CommonObject
 			if ($idprof==1) $formlength=9;
 			if ($idprof==2) $formlength=14;
 			if ($idprof==3) $formlength=5;		// 4 chiffres et 1 lettre depuis janvier
-			if ($idprof==4) $formlength=12;
+			if ($idprof==4) $formlength=32;		// No maximum as we need to include a town name in this id
 		}
 		$selected=$preselected;
 		if (! $selected && $idprof==1) $selected=$this->siren;
