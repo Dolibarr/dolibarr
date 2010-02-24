@@ -139,7 +139,7 @@ if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 }
 if (file_exists('../../install.lock'))
 {
-	print 'Install pages have been disabled for security reason (by lock file install.lock).<br>';
+	print 'Install pages have been disabled for security reason (by lock file install.lock in dolibarr root directory. Remove it manually if following link loops to this page).<br>';
 	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 	print 'Click here to go to Dolibarr';
 	print '</a>';
