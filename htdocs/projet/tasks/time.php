@@ -96,7 +96,8 @@ if ($_GET["id"] > 0)
 		/*
 		 *  List of time spent
 		 */
-		$sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login, u.rowid";
+		$sql = "SELECT t.task_date, t.task_duration, t.fk_user";
+		$sql.= ", u.rowid, u.name, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_task =".$task->id;
@@ -156,7 +157,7 @@ if ($_GET["id"] > 0)
   		    print "<tr ".$bc[$var].">";
 
   		    // Date
-  		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'day').' '.dol_print_date($db->jdate($task_time->task_date),'%A').'</td>';
+  		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'%A').' '.dol_print_date($db->jdate($task_time->task_date),'daytext').'</td>';
 
 		    // Time spent
 		    $heure = intval($task_time->task_duration);
@@ -165,8 +166,9 @@ if ($_GET["id"] > 0)
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			// User
-			$user->id=$task_time->rowid;
-		    $user->nom=$task_time->login;
+			$user->id		= $task_time->rowid;
+		    $user->nom		= $task_time->name;
+		    $user->prenom 	= $task_time->firstname;
 		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
 		    print "</tr>\n";
 		}
