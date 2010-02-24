@@ -60,6 +60,9 @@ if ($_GET["id"] > 0)
 	{
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		
+		// To verify role of users
+		$userAccess = $projectstatic->restrictedProjectArea($user);
 
 		$head=task_prepare_head($task);
 
@@ -67,9 +70,6 @@ if ($_GET["id"] > 0)
 
 		if ($mesg) print $mesg.'<br>';
 
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="createtask">';
 		print '<table class="border" width="100%">';
 
 		// Ref
@@ -93,11 +93,34 @@ if ($_GET["id"] > 0)
 		else print '&nbsp;';
 		print '</td></tr>';
 
+		print '</table>';
+		print '</div>';
+
+
+		/*
+		 * Actions
+		 */
+		print '<div class="tabsAction">';
+
+		// Add time spent
+		if ($user->rights->projet->creer && $userAccess)
+		{
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=addtime">'.$langs->trans('NewTimeSpent').'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+		}
+
+		print '</div>';
+
+		print '<br>';
+		
 		/*
 		 *  List of time spent
 		 */
-		$sql = "SELECT t.task_date, t.task_duration, t.fk_user";
-		$sql.= ", u.rowid, u.name, u.firstname";
+		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user";
+		$sql.= ", u.rowid as userid, u.name, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_task =".$task->id;
@@ -123,38 +146,25 @@ if ($_GET["id"] > 0)
 		{
 			dol_print_error($db);
 		}
-
-		print '</table></form>';
-		print '</div>';
-
-
-		/*
-		 * Actions
-		 */
-		print '<div class="tabsAction">';
-
-		/*
-		if ($user->rights->projet->creer)
-		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		*/
-
-		print '</div>';
-
-		print '<br>';
-		print '<input type="hidden" name="action" value="addtime">';
+		
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("By").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-		print '<td align="right">'.$langs->trans("By").'</td>';
+		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
 
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
   		    print "<tr ".$bc[$var].">";
+  		    
+  		    // User
+			$user->id		= $task_time->userid;
+		    $user->nom		= $task_time->name;
+		    $user->prenom 	= $task_time->firstname;
+		    print '<td>'.$user->getNomUrl(1).'</td>';
 
   		    // Date
   		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'%A').' '.dol_print_date($db->jdate($task_time->task_date),'daytext').'</td>';
@@ -164,13 +174,19 @@ if ($_GET["id"] > 0)
 			$minutes = round((($task_time->task_duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-
-			// User
-			$user->id		= $task_time->rowid;
-		    $user->nom		= $task_time->name;
-		    $user->prenom 	= $task_time->firstname;
-		    print '<td align="right">'.$user->getNomUrl(1).'</td>';
-		    print "</tr>\n";
+			
+			// Icon update et delete
+			print '<td align="center" nowrap>';
+			if ($user->rights->projet->creer && $userAccess)
+			{
+				print '&nbsp;';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.'">';
+				print img_delete();
+				print '</a>';
+			}
+			print '</td>';
+			
+			print "</tr>\n";
 		}
 
 		print "</table>";
