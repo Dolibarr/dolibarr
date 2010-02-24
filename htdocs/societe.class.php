@@ -2021,13 +2021,13 @@ class Societe extends CommonObject
 	{
 		global $langs;
 
-		$formlength=16;
+		$formlength=24;
 		if ($this->pays_code == 'FR')
 		{
 			if ($idprof==1) $formlength=9;
 			if ($idprof==2) $formlength=14;
 			if ($idprof==3) $formlength=5;		// 4 chiffres et 1 lettre depuis janvier
-			if ($idprof==4) $formlength=12;
+			if ($idprof==4) $formlength=32;		// No maximum as we need to include a town name in this id
 		}
 		$selected=$preselected;
 		if (! $selected && $idprof==1) $selected=$this->siren;
