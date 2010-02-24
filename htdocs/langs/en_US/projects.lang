@@ -69,6 +69,8 @@ ConfirmReOpenAProject=Are you sure you want to re-open this project ?
 ProjectContact=Project contacts
 ActionsOnProject=Actions on project
 YouAreNotContactOfProject=You are not a contact of this private project
+DeleteATimeSpent=Delete time spent
+ConfirmDeleteATimeSpent=Are you sure you want to delete this time spent ?
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader

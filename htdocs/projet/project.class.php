@@ -75,7 +75,7 @@ class Project extends CommonObject
 	 *    \param      user        Id utilisateur qui cree
 	 *    \return     int         <0 si ko, id du projet cree si ok
 	 */
-	function create($user)
+	function create($user, $notrigger=0)
 	{
 		// Check parameters
 		if (! trim($this->ref))
@@ -131,7 +131,7 @@ class Project extends CommonObject
 	 * @param unknown_type $user
 	 * @return unknown
 	 */
-	function update($user)
+	function update($user, $notrigger=0)
 	{
 		// Clean parameters
 		$this->title = trim($this->title);
@@ -326,7 +326,7 @@ class Project extends CommonObject
 	 *    \brief    Supprime le projet dans la base
 	 *    \param    Utilisateur
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;
