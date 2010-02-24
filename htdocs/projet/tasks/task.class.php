@@ -586,7 +586,7 @@ class Task extends CommonObject
 	 *    \param     time     Time spent
 	 *    \param     date     date
 	 */
-	function addTimeSpent($user, $time, $date)
+	function addTimeSpent($user, $time, $date, $notrigger=0)
 	{
 		$result = 0;
 
@@ -607,6 +607,16 @@ class Task extends CommonObject
 		{
 			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
 			$result = 0;
+			
+			if (! $notrigger)
+			{
+	            // Call triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('TASK_TIMESPENT_CREATE',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
+			}
 		}
 		else
 		{

@@ -326,7 +326,7 @@ class Project extends CommonObject
 	 *    \brief    Supprime le projet dans la base
 	 *    \param    Utilisateur
 	 */
-	function delete($user, $notrigger=0)
+	function delete($user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;

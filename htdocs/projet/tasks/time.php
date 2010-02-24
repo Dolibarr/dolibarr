@@ -121,7 +121,7 @@ if ($_GET["id"] > 0)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('NewTimeSpent').'</a>';
 		}
 
 		print '</div>';
