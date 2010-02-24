@@ -548,12 +548,12 @@ else
 			print '<tr><td valign="top">'.$langs->trans('Label').'</td><td>';
 			print '<input size="30" name="libelle" type="text" value="'.$fac->libelle.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
-			$html->select_date($fac->datep,'','','','',"update");
+			print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td nowrap="nowrap">';
+			$html->select_date($fac->datep,'','','','',"update",1,1);
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
-			$html->select_date($fac->date_echeance,'ech','','','',"update");
+			print '<tr><td class="fieldrequired">'.$langs->trans('DateEcheance').'</td><td nowrap="nowrap">';
+			$html->select_date($fac->date_echeance,'ech','','','',"update",1,1);
 			if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 
@@ -570,44 +570,6 @@ else
 			print '</td></tr>';
 			print '</table>';
 			print '</form>';
-
-			/*
-			 * Lines of invoice
-			 */
-			print '<br>';
-			$var=true;
-
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
-			print '<td align="right">'.$langs->trans('VAT').'</td>';
-			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-			print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-			print '<td align="right">'.$langs->trans('Qty').'</td>';
-			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
-			print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
-			print '<td colspan="2">&nbsp;</td></tr>';
-			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
-			{
-				$var=!$var;
-
-				// Affichage simple de la ligne
-				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i]->description.'</td>';
-				print '<td align="right">'.vatrate($fac->lignes[$i]->tva_tx).'%</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';
-				print '<td align="right" nowrap="nowrap">'.($fac->lignes[$i]->pu_ttc?price($fac->lignes[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
-				print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht,'MT').'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc,'MT').'</td>';
-				print '<td align="center" width="16">';
-				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a>';
-				print '</td>';
-				print '<td align="center" width="16">';
-				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a>';
-				print '</td>';
-				print '</td></tr>';
-			}
-
-			print '</table>';
 		}
 		else
 		{
@@ -700,9 +662,7 @@ else
 			print '</tr>';
 
 			// Third party
-			print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1);
-			print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
-			print '</tr>';
+			print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1).' (<a href="index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td></tr>';
 
 			// Type
 			print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
@@ -756,7 +716,7 @@ else
 			if ($conf->projet->enabled) $nbrows++;
 
 			print '<td rowspan="'.$nbrows.'" valign="top">';
-			$sql  = 'SELECT datep as dp, pf.amount,';
+			$sql  = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
 			$sql .= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
@@ -786,7 +746,7 @@ else
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
-					print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
+					print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('Payment'),'payment').'</a> '.dol_print_date($objp->dp,'day')."</td>\n";
 					print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 					print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 
