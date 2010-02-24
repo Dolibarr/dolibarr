@@ -60,27 +60,28 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
-	foreach ($_POST as $key => $post)
+	foreach ($_POST as $key => $time)
 	{
-  		//$pro->CreateTask($user, $_POST["task_name"]);
   		if (substr($key,0,4) == 'task')
   		{
-		  	if ($post > 0)
+		  	if ($time > 0)
 		  	{
-				$post=intval($post)+(($post-intval($post))*(1+2/3));
-				$post=price2num($post);
+				$time = intval($time)+(($time-intval($time))*(1+2/3));
+				$time = price2num($time);
 
 				$id = str_replace("task","",$key);
 
-				$task=new Task($db);
+				$task = new Task($db);
 				$task->fetch($id);
 
-		  		$date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-		  		$task->addTimeSpent($user, $post, $date);
+		  		$task->timespent_duration = $time;
+				$task->timespent_date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
+		  		
+		  		$task->addTimeSpent($user);
 		  	}
 		  	else
 		  	{
-		  		if ($post != '') $mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
+		  		if ($time != '') $mesg='<div class="error">'.$langs->trans("ErrorBadValue").'</div>';
 		  	}
 		}
 	}

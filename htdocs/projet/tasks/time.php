@@ -38,9 +38,18 @@ if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->pro
 	
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->projet->creer)
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->creer)
 {
-	
+	$task = new Task($db);
+	$task->fetchTimeSpent($_GET['lineid']);
+	$result = $task->delTimeSpent($user);
+
+	if (!$result)
+	{
+		$langs->load("errors");
+		$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
+		$_POST["action"]='';
+	}
 }
 
 
@@ -78,7 +87,7 @@ if ($_GET["id"] > 0)
 		
 		if ($_GET["action"] == 'deleteline')
 		{
-			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&lineid='.$_GET["lineid"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -131,8 +140,8 @@ if ($_GET["id"] > 0)
 		/*
 		 *  List of time spent
 		 */
-		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user";
-		$sql.= ", u.rowid as userid, u.name, u.firstname";
+		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
+		$sql.= ", u.name, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_task =".$task->id;
@@ -163,6 +172,7 @@ if ($_GET["id"] > 0)
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("By").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td>'.$langs->trans("Note").'</td>';
 		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
@@ -173,7 +183,7 @@ if ($_GET["id"] > 0)
   		    print "<tr ".$bc[$var].">";
   		    
   		    // User
-			$user->id		= $task_time->userid;
+			$user->id		= $task_time->fk_user;
 		    $user->nom		= $task_time->name;
 		    $user->prenom 	= $task_time->firstname;
 		    print '<td>'.$user->getNomUrl(1).'</td>';
@@ -181,7 +191,10 @@ if ($_GET["id"] > 0)
   		    // Date
   		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'%A').' '.dol_print_date($db->jdate($task_time->task_date),'daytext').'</td>';
 
-		    // Time spent
+		    // Note
+		    print '<td>'.dol_nl2br($task_time->note).'</td>';
+  		    
+  		    // Time spent
 		    $heure = intval($task_time->task_duration);
 			$minutes = round((($task_time->task_duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);

@@ -56,6 +56,12 @@ class Task extends CommonObject
 	var $statut;
 	var $note_private;
 	var $note_public;
+	
+	var $timespent_id;
+	var $timespent_duration;
+	var $timespent_date;
+	var $timespent_user;
+	var $timespent_note;
 
 
     /**
@@ -299,6 +305,7 @@ class Task extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf, $langs;
+		
 		$error=0;
 
 		$this->db->begin();
@@ -586,7 +593,7 @@ class Task extends CommonObject
 	 *    \param     time     Time spent
 	 *    \param     date     date
 	 */
-	function addTimeSpent($user, $time, $date, $notrigger=0)
+	function addTimeSpent($user, $notrigger=0)
 	{
 		$result = 0;
 
@@ -597,12 +604,12 @@ class Task extends CommonObject
 		$sql.= ", fk_user";
 		$sql.= ") VALUES (";
 		$sql.= $this->id;
-		$sql.= ", '".$this->db->idate($date)."'";
-		$sql.= ", ".$time;
+		$sql.= ", '".$this->db->idate($this->timespent_date)."'";
+		$sql.= ", ".$this->timespent_duration;
 		$sql.= ", ".$user->id;
 		$sql.= ")";
 
-		dol_syslog("Task::addTimeSpent sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
 			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
@@ -621,17 +628,17 @@ class Task extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Task::addTimeSpent error -2 ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error,LOG_ERR);
 			$result = -2;
 		}
 
 		if ($result == 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql.= " SET duration_effective = duration_effective + '".price2num($time)."'";
+			$sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Project::addTimeSpent sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
 				$result = 0;
@@ -639,12 +646,130 @@ class Task extends CommonObject
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Task::addTimeSpent error -3 ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::addTimeSpent error -3 ".$this->error, LOG_ERR);
 				$result = -2;
 			}
 		}
 
 		return $result;
+	}
+	
+    /**
+     *    \brief      Load object in memory from database
+     *    \param      id          id object
+     *    \return     int         <0 if KO, >0 if OK
+     */
+    function fetchTimeSpent($id)
+    {
+    	global $langs;
+
+        $sql = "SELECT";
+		$sql.= " t.rowid,";
+		$sql.= " t.fk_task,";
+		$sql.= " t.task_date,";
+		$sql.= " t.task_duration,";
+		$sql.= " t.fk_user,";
+		$sql.= " t.note";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+        $sql.= " WHERE t.rowid = ".$id;
+
+    	dol_syslog(get_class($this)."::fetchTimeSpent sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+
+                $this->timespent_id			= $obj->rowid;
+				$this->id					= $obj->fk_task;
+				$this->timespent_date		= $obj->task_date;
+				$this->timespent_duration	= $obj->task_duration;
+				$this->timespent_user		= $obj->fk_user;
+				$this->timespent_note		= $obj->note;
+            }
+
+            $this->db->free($resql);
+
+            return 1;
+        }
+        else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            dol_syslog(get_class($this)."::fetchTimeSpent ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
+
+	/**
+	 *    \brief      Delete time spent
+	 *    \param      user        	User that delete
+	 *    \param      notrigger	    0=launch triggers after, 1=disable triggers
+	 *    \return		int			<0 if KO, >0 if OK
+	 */
+	function delTimeSpent($user, $notrigger=0)
+	{
+		global $conf, $langs;
+		
+		$error=0;
+		
+		$this->db->begin();
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
+		$sql.= " WHERE rowid = ".$this->timespent_id;
+	
+		dol_syslog(get_class($this)."::delTimeSpent sql=".$sql);
+		$resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+		        // Call triggers
+		        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		        $interface=new Interfaces($this->db);
+		        $result=$interface->run_triggers('TASK_TIMESPENT_DELETE',$this,$user,$langs,$conf);
+		        if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		        // End call triggers
+			}
+		}
+		
+		if (! $error)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
+			$sql.= " SET duration_effective = duration_effective - '".price2num($this->timespent_duration)."'";
+			$sql.= " WHERE rowid = ".$this->id;
+
+			dol_syslog(get_class($this)."::delTimeSpent sql=".$sql, LOG_DEBUG);
+			if ($this->db->query($sql) )
+			{
+				$result = 0;
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this)."::addTimeSpent error -3 ".$this->error, LOG_ERR);
+				$result = -2;
+			}
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(get_class($this)."::delTimeSpent ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 }

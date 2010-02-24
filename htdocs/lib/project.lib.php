@@ -268,7 +268,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 			//var_dump($lines[$i]);
 			//var_dump($projectsrole[$lines[$i]->projectid]);
 			// If at least one role for project
-			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->projectid])) $disabled=0;
+			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->projectid]) || $user->rights->projet->all->creer) $disabled=0;
 
 			print '<td nowrap="nowrap">';
 			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
