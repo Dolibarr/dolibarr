@@ -496,7 +496,7 @@ if ($_GET["action"] == 'create')
 		$langs->load("project");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-		$numprojet=select_projects($societe->id,$projetid,'projectid');
+		$numprojet=select_projects($societe->id,$_REQUEST["projectid"]?$_REQUEST["projectid"]:$projetid,'projectid');
 		if ($numprojet==0)
 		{
 			print ' &nbsp; <a href="../../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -508,13 +508,13 @@ if ($_GET["action"] == 'create')
 	print '<br>';
 	print '<table class="border" width="100%">';
 
-	// Affecte a
+	// Affected by
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	//	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
 	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
 	print '</td></tr>';
 
-	// Realise par
+	// Realised by
 	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
 	$html->select_users($_REQUEST["doneby"]?$_REQUEST["doneby"]:$actioncomm->userdone,'doneby',1);
 	print '</td></tr>';
@@ -579,13 +579,13 @@ if ($_GET["action"] == 'create')
 	}
 	print '</td></tr>';
 
-	print '<tr><td align="center" colspan="2">';
+	print '</table>';
+
+	print '<center><br>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</td></tr>';
-
-	print '</table>';
+	print '</center>';
 
 	print "</form>";
 }
@@ -759,11 +759,13 @@ if ($_GET["id"])
 
 		print '</td></tr>';
 
-		print '<tr><td align="center" colspan="4"><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
+		print '</table>';
 
-		print '</table></form>';
+		print '<center><br><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</center>';
+
+		print '</form>';
 	}
 	else
 	{
