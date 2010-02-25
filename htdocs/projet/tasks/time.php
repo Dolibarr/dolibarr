@@ -149,7 +149,8 @@ if ($_GET["id"] > 0)
 		print '<table class="noborder" width="100%">';
 		
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Note").'</td>';
+		print '<td width="50%">'.$langs->trans("Note").'</td>';
+		print '<td>'.$langs->trans("By").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td colspan="2">'.$langs->trans("Duration").'</td>';
 		print "</tr>\n";
@@ -157,8 +158,13 @@ if ($_GET["id"] > 0)
 		print '<tr>';
 		
 		// Note
-		print '<td nowrap="nowrap">';
+		print '<td nowrap="nowrap" width="50%">';
 		print '<textarea name="timespent_note" cols="80" rows="4"></textarea>';
+		print '</td>';
+		
+		// Contributor
+		print '<td nowrap="nowrap">';
+		print '&nbsp;'; // TODO ajout liste deroulante des participants
 		print '</td>';
 		
 		// Date
@@ -212,10 +218,10 @@ if ($_GET["id"] > 0)
 		
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
+		print '<td width="50%">'.$langs->trans("Note").'</td>';
 		print '<td>'.$langs->trans("By").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td>'.$langs->trans("Note").'</td>';
-		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+		print '<td align="right">'.$langs->trans("Duration").'</td>';
 		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
 
@@ -224,6 +230,18 @@ if ($_GET["id"] > 0)
 			$var=!$var;
   		    print "<tr ".$bc[$var].">";
   		    
+  		    // Note
+  		    print '<td width="50%">';
+  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+  		    {
+  		    	print '<textarea name="timespent_note" cols="80" rows="4">'.$task_time->note.'</textarea>';
+  		    }
+  		    else
+  		    {
+  		    	print dol_nl2br($task_time->note);
+  		    }
+  		    print '</td>';
+  		    
   		    // User
 			$user->id		= $task_time->fk_user;
 		    $user->nom		= $task_time->name;
@@ -231,10 +249,16 @@ if ($_GET["id"] > 0)
 		    print '<td>'.$user->getNomUrl(1).'</td>';
 
   		    // Date
-  		    print '<td>'.dol_print_date($db->jdate($task_time->task_date),'%A').' '.dol_print_date($db->jdate($task_time->task_date),'daytext').'</td>';
-
-		    // Note
-		    print '<td>'.dol_nl2br($task_time->note).'</td>';
+  		    print '<td>';
+  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+  		    {
+  		    	print $html->select_date($task_time->task_date,'timeline','','','',"timespent_date");
+  		    }
+  		    else
+  		    {
+  		    	print dol_print_date($db->jdate($task_time->task_date),'%A').' '.dol_print_date($db->jdate($task_time->task_date),'daytext');
+  		    }
+  		    print '</td>';
   		    
   		    // Time spent
 		    $heure = intval($task_time->task_duration);
