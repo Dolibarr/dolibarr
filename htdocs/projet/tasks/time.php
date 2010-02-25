@@ -33,6 +33,27 @@ if (!$user->rights->projet->lire) accessforbidden();
 /*
  * Actions
  */
+if ($_POST["action"] == 'addtimespent' && $user->rights->projet->creer)
+{
+	if ($_POST["timespent_note"] && $_POST["timespent_duration"])
+	{
+		$task = new Task($db);
+		$task->fetch($_POST["id"]);
+
+		$task->timespent_note = $_POST["timespent_note"];
+		$task->timespent_duration = $_POST["timespent_duration"];
+		$task->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+		  		
+		$task->addTimeSpent($user);
+	}
+	else
+	{
+		$langs->load("errors");
+		$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
+		$_POST["action"]='';
+	}
+}
+
 if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
 	
@@ -116,24 +137,45 @@ if ($_GET["id"] > 0)
 
 		print '</table>';
 		print '</div>';
-
-
+		
 		/*
-		 * Actions
+		 * Add time spent
 		 */
-		print '<div class="tabsAction">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="addtimespent">';
+		print '<input type="hidden" name="id" value="'.$task->id.'">';
 
-		// Add time spent
-		if ($user->rights->projet->creer && $userAccess)
-		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$task->id.'&amp;action=addtime">'.$langs->trans('NewTimeSpent').'</a>';
-		}
-		else
-		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('NewTimeSpent').'</a>';
-		}
-
-		print '</div>';
+		print '<table class="noborder" width="100%">';
+		
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Note").'</td>';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td colspan="2">'.$langs->trans("Duration").'</td>';
+		print "</tr>\n";
+		
+		print '<tr>';
+		
+		// Note
+		print '<td nowrap="nowrap">';
+		print '<textarea name="timespent_note" cols="80" rows="4"></textarea>';
+		print '</td>';
+		
+		// Date
+		print '<td nowrap="nowrap">';
+		print $html->select_date('','time','','','',"timespent_date");
+		print '</td>';
+		
+		// Duration
+		print '<td nowrap="nowrap">';
+		print '<input size="4" type="text" class="flat" name="timespent_duration" value="">';
+		print '</td>';
+		
+		print '<td>';
+		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+		print '</td></tr>';
+		
+		print '</table></form>';
 
 		print '<br>';
 		

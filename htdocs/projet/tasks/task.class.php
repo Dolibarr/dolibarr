@@ -596,17 +596,24 @@ class Task extends CommonObject
 	function addTimeSpent($user, $notrigger=0)
 	{
 		$result = 0;
+		
+		// Clean parameters
+		$this->timespent_duration = intval($this->timespent_duration)+(($this->timespent_duration-intval($this->timespent_duration))*(1+2/3));
+		$this->timespent_duration = price2num($this->timespent_duration);
+		if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
 		$sql.= "fk_task";
 		$sql.= ", task_date";
 		$sql.= ", task_duration";
 		$sql.= ", fk_user";
+		$sql.= ", note";
 		$sql.= ") VALUES (";
 		$sql.= $this->id;
 		$sql.= ", '".$this->db->idate($this->timespent_date)."'";
 		$sql.= ", ".$this->timespent_duration;
 		$sql.= ", ".$user->id;
+		$sql.= ", ".(isset($this->timespent_note)?"'".addslashes($this->timespent_note)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);

@@ -66,9 +66,6 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
   		{
 		  	if ($time > 0)
 		  	{
-				$time = intval($time)+(($time-intval($time))*(1+2/3));
-				$time = price2num($time);
-
 				$id = str_replace("task","",$key);
 
 				$task = new Task($db);
