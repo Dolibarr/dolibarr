@@ -659,7 +659,7 @@ if ($_GET["id"])
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
 
 		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
 
 		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
@@ -713,7 +713,7 @@ if ($_GET["id"])
 		print '</table><br><table class="border" width="100%">';
 
 		// Date start
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		print '<tr><td width="30%" nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
 		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
 		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
