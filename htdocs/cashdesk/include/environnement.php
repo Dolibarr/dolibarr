@@ -17,9 +17,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+// Add real path in session
+$realpath='';
+if (preg_match('/\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"]))
+{
+	$result = preg_match('/^([^.]+)\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"],$regs);
+	$realpath = $regs[1];
+}
+
 // Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
+$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
+$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_start();
