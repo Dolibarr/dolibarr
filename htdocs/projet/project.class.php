@@ -647,6 +647,10 @@ class Project extends CommonObject
 		{
 			$userAccess = 1;
 		}
+		else if ($this->public && $user->rights->projet->lire)
+		{
+			$userAccess = 1;
+		}
 		else
 		{
 			foreach(array('internal','external') as $source)

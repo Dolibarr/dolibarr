@@ -141,47 +141,50 @@ if ($_GET["id"] > 0)
 		/*
 		 * Add time spent
 		 */
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="addtimespent">';
-		print '<input type="hidden" name="id" value="'.$task->id.'">';
-
-		print '<table class="noborder" width="100%">';
-		
-		print '<tr class="liste_titre">';
-		print '<td width="50%">'.$langs->trans("Note").'</td>';
-		print '<td>'.$langs->trans("By").'</td>';
-		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td colspan="2">'.$langs->trans("Duration").'</td>';
-		print "</tr>\n";
-		
-		print '<tr>';
-		
-		// Note
-		print '<td nowrap="nowrap" width="50%">';
-		print '<textarea name="timespent_note" cols="80" rows="4"></textarea>';
-		print '</td>';
-		
-		// Contributor
-		print '<td nowrap="nowrap">';
-		print '&nbsp;'; // TODO ajout liste deroulante des participants
-		print '</td>';
-		
-		// Date
-		print '<td nowrap="nowrap">';
-		print $html->select_date('','time','','','',"timespent_date");
-		print '</td>';
-		
-		// Duration
-		print '<td nowrap="nowrap">';
-		print '<input size="4" type="text" class="flat" name="timespent_duration" value="">';
-		print '</td>';
-		
-		print '<td>';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-		print '</td></tr>';
-		
-		print '</table></form>';
+		if ($user->rights->projet->creer && $userAccess)
+		{
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="addtimespent">';
+			print '<input type="hidden" name="id" value="'.$task->id.'">';
+			
+			print '<table class="noborder" width="100%">';
+			
+			print '<tr class="liste_titre">';
+			print '<td width="50%">'.$langs->trans("Note").'</td>';
+			print '<td>'.$langs->trans("By").'</td>';
+			print '<td>'.$langs->trans("Date").'</td>';
+			print '<td colspan="2">'.$langs->trans("Duration").'</td>';
+			print "</tr>\n";
+			
+			print '<tr>';
+			
+			// Note
+			print '<td nowrap="nowrap" width="50%">';
+			print '<textarea name="timespent_note" cols="80" rows="4"></textarea>';
+			print '</td>';
+			
+			// Contributor
+			print '<td nowrap="nowrap">';
+			print '&nbsp;'; // TODO ajout liste deroulante des participants
+			print '</td>';
+			
+			// Date
+			print '<td nowrap="nowrap">';
+			print $html->select_date('','time','','','',"timespent_date");
+			print '</td>';
+			
+			// Duration
+			print '<td nowrap="nowrap">';
+			print '<input size="4" type="text" class="flat" name="timespent_duration" value="">';
+			print '</td>';
+			
+			print '<td>';
+			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+			print '</td></tr>';
+			
+			print '</table></form>';
+		}
 
 		print '<br>';
 		
@@ -215,6 +218,11 @@ if ($_GET["id"] > 0)
 		{
 			dol_print_error($db);
 		}
+		
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="updateline">';
+		print '<input type="hidden" name="id" value="'.$task->id.'">';
 		
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -286,7 +294,7 @@ if ($_GET["id"] > 0)
 		}
 
 		print "</table>";
-
+		print "</form>";
 	}
 }
 
