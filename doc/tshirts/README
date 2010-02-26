@@ -1,0 +1,10 @@
+README (english)
+--------------------------------
+Rollups
+--------------------------------
+
+This directory contains source for the Inkscape vector
+graphic editor (www.inkscape.org) to create rollups.
+
+Note: You may need to install some font to read correctly files
+into this directory. For this, see directory doc/font.
