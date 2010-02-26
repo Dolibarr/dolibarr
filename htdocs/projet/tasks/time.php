@@ -269,14 +269,30 @@ if ($_GET["id"] > 0)
   		    print '</td>';
   		    
   		    // Time spent
-		    $heure = intval($task_time->task_duration);
-			$minutes = round((($task_time->task_duration - $heure) * 60),0);
-			$minutes = substr("00"."$minutes", -2);
-			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
+  		    print '<td align="right">';
+  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+  		    {
+  		    	print '<input size="4" type="text" class="flat" name="timespent_duration" value="'.$task_time->task_duration.'">';
+  		    }
+  		    else
+  		    {
+  		    	// TODO add function
+  		    	$hour = intval($task_time->task_duration);
+  		    	$minutes = round((($task_time->task_duration - $hour) * 60),0);
+  		    	$minutes = substr("00"."$minutes", -2);
+  		    	print $hour."&nbsp;h&nbsp;".$minutes;
+  		    }
+  		    print '</td>';
 			
 			// Edit and delete icon
-			print '<td align="right" nowrap>';
-			if ($user->rights->projet->creer && $userAccess)
+			print '<td align="center" valign="middle">';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+  		    {
+  		    	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+  		    	print '<br>';
+  		    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+  		    }
+  		    else if ($user->rights->projet->creer && $userAccess)
 			{
 				print '&nbsp;';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.'">';
