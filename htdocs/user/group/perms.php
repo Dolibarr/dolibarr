@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -74,7 +74,7 @@ if ($_GET["id"])
 	 */
 	$head = group_prepare_head($fgroup);
 	$title = $langs->trans("Group");
-	dol_fiche_head($head, 'rights', $title);
+	dol_fiche_head($head, 'rights', $title, 0, 'group');
 
 
     $db->begin();
@@ -212,7 +212,7 @@ if ($_GET["id"])
                 $oldmod = $obj->module;
                 $var = !$var;
 
-                // Rupture détectée, on récupère objMod
+                // Rupture dï¿½tectï¿½e, on rï¿½cupï¿½re objMod
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
 

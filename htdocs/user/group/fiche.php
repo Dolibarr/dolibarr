@@ -224,7 +224,7 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	print "<tr>".'<td valign="top">'.$langs->trans("Name").'</td>';
+	print "<tr>".'<td valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 
 	print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
@@ -264,7 +264,7 @@ else
 		 */
 		$head = group_prepare_head($group);
 		$title = $langs->trans("Group");
-		dol_fiche_head($head, 'group', $title);
+		dol_fiche_head($head, 'group', $title, 0, 'group');
 
 		/*
 		 * Confirmation suppression
@@ -520,7 +520,7 @@ else
             print '<input type="hidden" name="action" value="update">';
 
             print '<table class="border" width="100%">';
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+            print '<tr><td width="25%" valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
             print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$group->nom.'">';
             if (!$group->entity)
             {

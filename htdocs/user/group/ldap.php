@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,7 @@ $form = new Form($db);
 
 $head = group_prepare_head($fgroup);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Group"));
+dol_fiche_head($head, 'ldap', $langs->trans("Group"), 0, 'group');
 
 print '<table class="border" width="100%">';
 

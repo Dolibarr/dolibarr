@@ -9,7 +9,8 @@ For users:
 - New: Add default language for third parties and use it when multilang is enabled
        to define default language for document generation.
 - New: Can reopen a closed supplier invoice.
-- Fix: Formant number as wrong for ar_AR language.
+- Fix: Format number was wrong for ar_AR language.
+- Fix: Can change password if has only permission change password.
 
 For developers:
 - More comments in code
@@ -56,6 +57,7 @@ For users:
 - Fix: Warning should not appears for invoice closed
 - Fix: Import for companies works even with prefix empty.
 - Fix: bug #28895 : Création d'utilisateur impossible.
+- Fix: Can change password if has only permission change password.
 
 For developers:
 - Qual: Reorganize /dev directory.
