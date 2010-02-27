@@ -154,7 +154,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(0, 4, '', 0, 'J');		// Set interline to 4
 
 				// Pagehead
-								
+
 				//Affiche le filigrane brouillon - Print Draft Watermark
 				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
 				{
@@ -246,7 +246,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetTextColor(0,0,100);
 				$pdf->SetFont('Arial','B',14);
-				$pdf->Text(11, 94, $outputlangs->trans("InterventionCard")." : ".$outputlangs->convToOutputCharset($fichinter->ref));
+				$pdf->Text(11, 94, $outputlangs->transnoentities("InterventionCard")." : ".$outputlangs->convToOutputCharset($fichinter->ref));
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetTextColor(0,0,0);
@@ -257,7 +257,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$tab_top_newpage = 50;
 				$tab_height = 110;
 				$tab_height_newpage = 150;
-				
+
 				// Affiche notes
 				if (! empty($fichinter->note_public))
 				{
@@ -280,7 +280,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				{
 					$height_note=0;
 				}
-	
+
 				$pdf->SetXY (10, $tab_top);
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
@@ -300,25 +300,25 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				//dol_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$nblignes = sizeof($fichinter->lignes);
-				
+
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
-				
+
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$fichinterligne = $fichinter->lignes[$i];
-					
+
 					$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
 					if ($valide>0)
 					{
 						$curY = $nexY+3;
-					
+
 						$pdf->SetXY (10, $curY);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY,
 						dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($fichinterligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 1, 0);
 						$nexY = $pdf->GetY();
-						
+
 						$pdf->SetXY (10, $curY + 3);
 						$desc = dol_htmlentitiesbr($fichinterligne->desc,1);
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY + 3, $desc, 0, 1, 0);
