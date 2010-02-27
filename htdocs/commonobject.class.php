@@ -524,6 +524,7 @@ class CommonObject
 		dol_syslog("CommonObject::setProject sql=".$sql);
 		if ($this->db->query($sql))
 		{
+			$this->project_id=$projid;
 			$this->projet_id=$projid;
 			$this->projetidp=$projid;
 			return 1;

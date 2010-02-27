@@ -615,7 +615,7 @@ elseif ($fichinterid)
 		print '</td><td colspan="3">';
 		if ($_GET['action'] == 'classin')
 		{
-			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->project_id,'projetid');
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->project_id,'projectid');
 		}
 		else
 		{
