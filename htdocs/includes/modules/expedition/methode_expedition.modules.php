@@ -46,37 +46,21 @@ class methode_expedition
 
 
 	/**
-	 *      \brief      Renvoi la liste des mod�les actifs
-	 *      \param      db      Handler de base
+	 *      \brief      Return list of active generation modules
+	 * 		\param		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
-		$type='invoice';
-		$liste=array();
-		$sql ="SELECT nom as id, nom as lib";
-		$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-		$sql.=" WHERE type = '".$type."'";
+		global $conf;
 
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$row = $db->fetch_row($resql);
-				$liste[$row[0]]=$row[1];
-				$i++;
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-			return -1;
-		}
+		$type='???';
+		$liste=array();
+
+		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+		$liste=getListOfModels($db,$type,'');
+
 		return $liste;
 	}
-
 }
 
 ?>

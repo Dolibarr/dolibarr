@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/societe/doc/odt_generic.modules.php
+ *	\file       htdocs/includes/modules/societe/doc/doc_generic_odt.modules.php
  *	\ingroup    project
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
@@ -32,10 +32,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 
 /**
- *	\class      odt_generic
+ *	\class      doc_genericodt
  *	\brief      Classe permettant de generer les projets au modele Baleine
  */
-class odt_generic extends ModeleDocProjects
+class doc_generic_odt extends ModeleThirdPartyDoc
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -43,7 +43,7 @@ class odt_generic extends ModeleDocProjects
 	 *		\brief  Constructor
 	 *		\param	db		Database handler
 	 */
-	function odt_generic($db)
+	function doc_generic_odt($db)
 	{
 		global $conf,$langs,$mysoc;
 

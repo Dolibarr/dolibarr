@@ -168,7 +168,17 @@ class FormFile
 		if ($genallowed)
 		{
 			$modellist=array();
-			if ($modulepart == 'propal')
+			if ($modulepart == 'company')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/societe/modules_societe.class.php');
+					$model=new ModeleThirdPartyDoc();
+					$modellist=$model->liste_modeles($this->db);
+				}
+			}
+			else if ($modulepart == 'propal')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else

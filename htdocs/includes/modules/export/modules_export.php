@@ -56,7 +56,7 @@ class ModeleExports
 	 */
 	function liste_modeles($db)
 	{
-		dol_syslog("ModeleExport::loadFormat");
+		dol_syslog("ModeleExport::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/includes/modules/export/";
 		$handle=opendir($dir);

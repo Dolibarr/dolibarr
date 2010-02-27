@@ -1009,3 +1009,41 @@ function picto_from_langcode($codelang)
     }
     return $ret;
 }
+
+
+/**
+ * 	\brief		Return list of activated modules of doc generation
+ * 	\param		$db			Database handler
+ * 	\param		$type		Type of models (company, invoice, ...)
+ * 	\param		$dirodts	List of directories to scan for templates
+ */
+function getListOfModels($db,$type,$dirtoscan='')
+{
+	global $conf;
+	$liste=array();
+
+	$sql = "SELECT nom as id, nom as lib, libelle as label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+	$sql.= " WHERE type = '".$type."'";
+	$sql.= " AND entity = ".$conf->entity;
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+			$i++;
+		}
+	}
+	else
+	{
+		$this->error=$db->error();
+		return -1;
+	}
+
+	return $liste;
+}

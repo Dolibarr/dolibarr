@@ -41,44 +41,29 @@ class ModeleDon
 {
     var $error='';
 
-    /**
-     *      \brief      Renvoi la liste des modeles actifs
-     *      \param      db      Handler de base
-     */
-    function liste_modeles($db)
-    {
-        $type='donation';
-        $liste=array();
-        $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-        $sql.=" WHERE type = '".$type."'";
+	/**
+	 *      \brief      Return list of active generation modules
+	 * 		\param		$db		Database handler
+	 */
+	function liste_modeles($db)
+	{
+		global $conf;
 
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $db->fetch_row($resql);
-                $liste[$row[0]]=$row[1];
-                $i++;
-            }
-        }
-        else
-        {
-            return -1;
-        }
-        return $liste;
-    }
+		$type='donation';
+		$liste=array();
 
+		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+		$liste=getListOfModels($db,$type,'');
+
+		return $liste;
+	}
 }
 
 
 /**
-	\class 		ModeleNumRefDons
-	\brief  	Classe m�re des mod�les de num�rotation des r�f�rences des dons
-*/
+ *	\class 		ModeleNumRefDons
+ *	\brief  	Classe mere des modeles de numerotation des references des dons
+ */
 class ModeleNumRefDons
 {
     var $error='';

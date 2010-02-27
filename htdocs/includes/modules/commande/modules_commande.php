@@ -44,8 +44,8 @@ class ModelePDFCommandes
 	var $error='';
 
 	/**
-	 *      \brief      Renvoi la liste des modeles actifs
-	 *      \return    array        Tableau des modeles (cle=id, valeur=libelle)
+	 *      \brief      Return list of active generation modules
+	 * 		\param		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
@@ -53,31 +53,12 @@ class ModelePDFCommandes
 
 		$type='order';
 		$liste=array();
-		$sql = "SELECT nom as id, nom as lib";
-		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-		$sql.= " WHERE type = '".$type."'";
-		$sql.= " AND entity = ".$conf->entity;
 
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$row = $db->fetch_row($resql);
-				$liste[$row[0]]=$row[1];
-				$i++;
-			}
-		}
-		else
-		{
-			$this->error=$db->error();
-			return -1;
-		}
+		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+		$liste=getListOfModels($db,$type,'');
+
 		return $liste;
 	}
-
 }
 
 

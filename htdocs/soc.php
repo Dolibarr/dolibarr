@@ -33,6 +33,7 @@ require("pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
@@ -297,6 +298,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('','',$help_url);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
@@ -1372,14 +1374,6 @@ else
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 		}
 
-		/* Not specific to third party. Must go on Project menu to create a project.
-		if ($conf->projet->enabled && $user->rights->projet->creer)
-		{
-			$langs->load("projects");
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
-		}
-		*/
-
 		if ($user->rights->societe->contact->creer)
 		{
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
@@ -1393,6 +1387,30 @@ else
 		print '</div>';
 		print '<br>';
 	}
+
+
+
+	print '<table width="100%"><tr><td width="50%" valign="top">';
+	print '<a name="builddoc"></a>'; // ancre
+
+	/*
+	 * Documents generes
+	 */
+	$filedir=$conf->societe->dir_output;
+	$urlsource=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
+	$genallowed=$user->rights->societe->creer;
+	$delallowed=$user->rights->societe->supprimer;
+
+	$var=true;
+
+	$somethingshown=$formfile->show_documents('company','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,28,0,'',0,'',$soc->default_lang);
+
+	print '</td><td>';
+
+	print '</td></tr>';
+	print '</table>';
+
+	print '<br>';
 
 	/*
 	 * Contact List

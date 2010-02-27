@@ -2081,7 +2081,7 @@ else
 	$pagenext = $page + 1;
 
 	$sql = 'SELECT s.nom, s.rowid, s.client, ';
-	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv,';
+	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 	$sql.= ' u.login';
 	$sql.= ' FROM ('.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
@@ -2237,10 +2237,10 @@ else
 
 			// Date propale
 			print '<td align="center">';
-			$y = dol_print_date($objp->dp,'%Y');
-			$m = dol_print_date($objp->dp,'%m');
-			$mt= dol_print_date($objp->dp,'%b');
-			$d = dol_print_date($objp->dp,'%d');
+			$y = dol_print_date($db->jdate($objp->dp),'%Y');
+			$m = dol_print_date($db->jdate($objp->dp),'%m');
+			$mt= dol_print_date($db->jdate($objp->dp),'%b');
+			$d = dol_print_date($db->jdate($objp->dp),'%d');
 			print $d."\n";
 			print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
 			print $mt."</a>\n";
@@ -2250,7 +2250,7 @@ else
 			// Date fin validite
 			if ($objp->dfv)
 			{
-				print '<td align="center">'.dol_print_date($objp->dfv,'day');
+				print '<td align="center">'.dol_print_date($db->jdate($objp->dfv),'day');
 				print '</td>';
 			}
 			else

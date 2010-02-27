@@ -88,7 +88,7 @@ if ($_POST["action"] == 'setModuleOptions')
 if ($_GET["action"] == 'set')
 {
 	$type='company';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.", ".($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').")";
 	if ($db->query($sql))
 	{
 
@@ -111,7 +111,8 @@ if ($_GET["action"] == 'setdoc')
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type,entity) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.")";
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle) VALUES ('".$_GET["value"]."', '".$type."', ".$conf->entity.", ".($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -333,7 +334,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					$module = new $classname($db);
 
 					print '<tr '.$bc[$var].'><td width="100">';
-					echo $module->name;
+					print $module->name;
 					print "</td><td>\n";
 					if (method_exists($module,'info')) print $module->info($langs);
 					else print $module->description;
@@ -345,7 +346,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						print "<td align=\"center\">\n";
 						if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"),'on');
 							print '</a>';
 						}
@@ -358,7 +359,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 						print "</td>";
 					}
 
@@ -370,7 +371,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 					}
 					print '</td>';
 

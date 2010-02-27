@@ -29,45 +29,28 @@
 
 
 /**
- *	\class      ModeleDocProjects
- *	\brief      Parent class for third parties models
+ *	\class      ModeleThirdPartyDoc
+ *	\brief      Parent class for third parties models of doc generators
  */
-class ModeleDocProjects
+class ModeleThirdPartyDoc
 {
 	var $error='';
 
 	/**
-	 *      \brief      Renvoi la liste des modeles actifs
+	 *      \brief      Return list of active generation modules
+	 * 		\param		$db		Database handler
 	 */
 	function liste_modeles($db)
 	{
 		global $conf;
 
-		$type='project';
+		$type='company';
 		$liste=array();
+		$dirtoscan=$conf->global->COMPANY_ADDON_PDF_ODTPATH;
 
-		$sql = "SELECT nom as id, nom as lib";
-		$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-		$sql.= " WHERE type = '".$type."'";
-		$sql.= " AND entity = ".$conf->entity;
+		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+		$liste=getListOfModels($db,$type,$dirtoscan);
 
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$row = $db->fetch_row($resql);
-				$liste[$row[0]]=$row[1];
-				$i++;
-			}
-		}
-		else
-		{
-			$this->error=$db->error();
-			return -1;
-		}
 		return $liste;
 	}
 
@@ -142,7 +125,7 @@ class ModeleThirdPartyCode
 	}
 
 	/**
-     *      \brief      Renvoi la liste des mod�les actifs
+     *      \brief      Renvoi la liste des modeles de numéroation
      *      \param      db      Handler de base
      */
     function liste_modeles($db)
