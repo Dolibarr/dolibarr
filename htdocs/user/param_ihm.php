@@ -48,16 +48,16 @@ if ($_REQUEST["id"])
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
+if ($user->id == $_REQUEST["id"])	// A user can always read its own card
 {
 	$feature2='';
 	$canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+$result = restrictedArea($user, 'user', $_REQUEST["id"], '', $feature2);
 if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
 
 
-$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$id=! empty($_GET["id"])?$_GET["id"]:$_POST["id"];
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
@@ -167,7 +167,8 @@ if ($_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
     print '<td>';
-    print picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+    $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+    print $s?$s.' ':'';
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
     print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"");
@@ -244,9 +245,9 @@ else
 	}
 	else
 	{
-		if ($caneditfield  || $user->admin)       // Si utilisateur edite = utilisateur courant ayant les droits de creer ou admin
+		if ($user->id == $fuser->id || $user->admin)       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
 	    {
-	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Modify").'</a>';
+	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$fuser->id.'">'.$langs->trans("Modify").'</a>';
 	    }
 	   	else
 		{
