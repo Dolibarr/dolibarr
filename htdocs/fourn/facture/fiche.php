@@ -445,6 +445,27 @@ if ($_GET['action'] == 'edit' && $user->rights->fournisseur->facture->creer)
 	}
 }
 
+if ($_GET['action'] == 'reopen' && $user->rights->fournisseur->facture->creer)
+{
+	$fac = new FactureFournisseur($db);
+	$result = $fac->fetch($_GET['facid']);
+	if ($fac->statut == 2
+	|| ($fac->statut == 3 && $fac->close_code != 'replaced'))
+	{
+		$result = $fac->set_unpaid($user);
+		if ($result > 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$fac->error.'</div>';
+		}
+	}
+}
+
+
 
 
 /*
@@ -1164,6 +1185,20 @@ else
 		 */
 
 		print '<div class="tabsAction">';
+
+		// Reopen a standard paid invoice
+		if ($fac->type == 1 && $fac->statut == 2)				// A paid invoice (partially or completely)
+		{
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+		}
+
+		// Reopen a classified invoice
+		if (($fac->statut == 2 || $fac->statut == 3) &&				// Closed invoice
+		$fac->getIdReplacingInvoice() == 0 &&	// Not replaced by another invoice
+		$fac->close_code != 'replaced')			// Not replaced by another invoice
+		{
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+		}
 
 		if ($_GET['action'] != 'edit' && $fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
 		{

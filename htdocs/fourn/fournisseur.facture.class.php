@@ -52,9 +52,9 @@ class FactureFournisseur extends Facture
 	//! 0=Standard invoice, 1=Replacement invoice, 2=Credit note invoice, 3=Deposit invoice, 4=Proformat invoice
 	var $type;
 	//! 0=draft,
-	//! 1=validated,
-	//! TODO Ce statut doit etre 2 et non 1 classee payee partiellement (close_code='discount_vat','badcustomer') ou completement (close_code=null),
-	//! TODO Ce statut doit etre 2 et non 1 classee abandonnee et aucun paiement n'a eu lieu (close_code='badcustomer','abandon' ou 'replaced')
+	//! 1=validated
+	//! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
+	//! Also 2, should be 3=classified abandoned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
 	var $statut;
 	//! 1 si facture payee COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
 	var $paye;
@@ -419,10 +419,10 @@ class FactureFournisseur extends Facture
 	{
 		if ($user->rights->fournisseur->facture->creer)
 		{
-			dol_syslog('FactureFournisseur::set_ref_supplier this->id='.$this->id.', ref_supplier='.$ref_supplier);
-
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET facnumber = '.(empty($ref_supplier) ? 'NULL' : '\''.addslashes($ref_supplier).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
+
+			dol_syslog("FactureFournisseur::set_ref_supplier sql=".$sql);
 			if ($this->db->query($sql))
 			{
 				$this->ref_supplier = $ref_supplier;
@@ -448,20 +448,98 @@ class FactureFournisseur extends Facture
 	 */
 	function set_paid($user)
 	{
+		global $conf,$langs;
+		$error=0;
+
+		$this->db->begin();
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-		$sql.= ' SET paye = 1';
+		$sql.= ' SET paye = 1, fk_statut=2';
 		$sql.= ' WHERE rowid = '.$this->id;
 
+		dol_syslog("FactureFournisseur::set_paid sql=".$sql);
 		$resql = $this->db->query($sql);
-		if (! $resql)
+		if ($resql)
 		{
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('BILL_SUPPLIER_PAYED',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+		else
+		{
+			$error++;
 			$this->error=$this->db->error();
 			dol_print_error($this->db);
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
 			return -1;
 		}
-		return 1;
 	}
 
+
+	/**
+	 *      \brief      Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+	 *				   	Fonction utilisee quand un paiement prelevement est refuse,
+	 * 					ou quand une facture annulee et reouverte.
+	 *      \param      user        Object user that change status
+	 *      \return     int         <0 si ok, >0 si ok
+	 */
+	function set_unpaid($user)
+	{
+		global $conf,$langs;
+		$error=0;
+
+		$this->db->begin();
+
+		dol_syslog("FactureFournisseur::set_unpaid rowid=".$this->id, LOG_DEBUG);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
+		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
+		$sql.= ' WHERE rowid = '.$this->id;
+
+		dol_syslog("FactureFournisseur::set_unpaid sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('BILL_SUPPLIER_UNPAYED',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+		else
+		{
+			$error++;
+			$this->error=$this->db->error();
+			dol_print_error($this->db);
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 *      \brief      Set invoice status as validated
@@ -487,7 +565,7 @@ class FactureFournisseur extends Facture
 		$sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("FactureFournisseur::set_valid sql=".$sql, LOG_DEBUG);
+		dol_syslog("FactureFournisseur::set_valid sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

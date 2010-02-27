@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
@@ -24,7 +24,7 @@
 /**
  *	\file       	htdocs/comm/propal.php
  *	\ingroup    	propale
- *	\brief      	Page liste des propales (vision commercial)
+ *	\brief      	Page of commercial proposals card and list
  *	\version		$Id$
  */
 
@@ -162,10 +162,13 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 	if ($result >= 0)
 	{
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	}

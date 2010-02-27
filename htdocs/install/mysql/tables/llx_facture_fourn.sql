@@ -35,6 +35,10 @@ create table llx_facture_fourn
   paye                smallint         DEFAULT 0 NOT NULL,
   amount              double(24,8)     DEFAULT 0 NOT NULL,
   remise              double(24,8)     DEFAULT 0,
+
+  close_code          varchar(16),		              -- Code motif cloture sans paiement complet
+  close_note          varchar(128),		              -- Commentaire cloture sans paiement complet
+
   tva                 double(24,8)     DEFAULT 0,
   total               double(24,8)     DEFAULT 0,
   total_ht            double(24,8)     DEFAULT 0,

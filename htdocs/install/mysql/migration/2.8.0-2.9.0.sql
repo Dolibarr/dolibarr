@@ -22,3 +22,8 @@ alter table llx_mailing add column   joined_file1       varchar(255);
 alter table llx_mailing add column   joined_file2       varchar(255);
 alter table llx_mailing add column   joined_file3       varchar(255);
 alter table llx_mailing add column   joined_file4       varchar(255);
+
+update llx_facture_fourn set fk_statut=2 where fk_statut=1 AND paye=1;
+
+alter table llx_facture_fourn add column close_code          varchar(16) after remise;
+alter table llx_facture_fourn add column close_note          varchar(128) after close_code;

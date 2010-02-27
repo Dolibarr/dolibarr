@@ -1113,16 +1113,19 @@ class Facture extends CommonObject
 	/**
 	 *      \brief      Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
 	 *      \param      user      	Objet utilisateur qui modifie
-	 *	   \param      close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas ecompte par exemple)
-	 *	   \param      close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas ecompte par exemple)
-	 *      \return     int         	<0 si ok, >0 si ok
+	 *		\param      close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas ecompte par exemple)
+	 *	   	\param      close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas ecompte par exemple)
+	 *      \return     int         <0 si ok, >0 si ok
 	 */
 	function set_paid($user,$close_code='',$close_note='')
 	{
 		global $conf,$langs;
+		$error=0;
 
 		if ($this->paye != 1)
 		{
+			$this->db->begin();
+
 			dol_syslog("Facture::set_paid rowid=".$this->id, LOG_DEBUG);
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 			$sql.= ' fk_statut=2';
@@ -1143,8 +1146,23 @@ class Facture extends CommonObject
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
+			else
+			{
+				$error++;
+				$this->error=$this->db->error();
+				dol_print_error($this->db);
+			}
 
-			return 1;
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
 		}
 		else
 		{
@@ -1163,8 +1181,10 @@ class Facture extends CommonObject
 	function set_unpaid($user)
 	{
 		global $conf,$langs;
+		$error=0;
 
-		dol_syslog("Facture::set_unpaid rowid=".$this->id, LOG_DEBUG);
+		$this->db->begin();
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
@@ -1182,18 +1202,33 @@ class Facture extends CommonObject
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
+		else
+		{
+			$error++;
+			$this->error=$this->db->error();
+			dol_print_error($this->db);
+		}
 
-		return 1;
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 
 	/**
-		\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
-		\param      user        Objet utilisateur qui modifie
-		\param		close_code	Code de fermeture
-		\param		close_note	Commentaire de fermeture
-		\return     int         <0 si ok, >0 si ok
-		*/
+	 *	\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
+	 *	\param      user        Objet utilisateur qui modifie
+	 *	\param		close_code	Code de fermeture
+	 *	\param		close_note	Commentaire de fermeture
+	 *	\return     int         <0 si ok, >0 si ok
+	 */
 	function set_canceled($user,$close_code='',$close_note='')
 	{
 		global $conf,$langs;
