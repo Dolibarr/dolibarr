@@ -111,14 +111,6 @@ function societe_prepare_head($objsoc)
 		$h++;
 	}
 
-	if ($objsoc->fournisseur)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/fiche-stats.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Statistics");
-		$head[$h][2] = 'supplierstat';
-		$h++;
-	}
-
 	if ($user->societe_id == 0)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$objsoc->id;

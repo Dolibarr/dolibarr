@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *   \file       htdocs/fourn/commande/liste.php
  *   \ingroup    fournisseur
- *   \brief      Liste des commandes fournisseurs
+ *   \brief      List of suppliers orders
  *   \version    $Id$
  */
 
@@ -47,15 +47,15 @@ $result = restrictedArea($user, 'commande_fournisseur', $orderid,'');
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 $title = $langs->trans("SuppliersOrders");
 if ($socid > 0)
 {
-  $fourn = new Fournisseur($db);
-  $fourn->fetch($socid);
-  $title .= ' (<a href="liste.php">'.$fourn->nom.'</a>)';
+	$fourn = new Fournisseur($db);
+	$fourn->fetch($socid);
+	$title .= ' ('.$fourn->nom.')';
 }
 
 llxHeader('',$title);
@@ -97,7 +97,7 @@ if ($suser)
 }
 if ($sttc)
 {
-    $sql .= " AND total_ttc = ".price2num($sttc);
+	$sql .= " AND total_ttc = ".price2num($sttc);
 }
 if ($sall)
 {
@@ -107,7 +107,7 @@ if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if (strlen($_GET["statut"]))
 {
-    $sql .= " AND fk_statut =".$_GET["statut"];
+	$sql .= " AND fk_statut =".$_GET["statut"];
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -116,88 +116,88 @@ $resql = $db->query($sql);
 if ($resql)
 {
 
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
 
-    print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
-    print '<form action="liste.php" method="GET">';
-    print '<table class="liste">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","","",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","","",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"',$sortfield,$sortorder);
-    print "</tr>\n";
+	print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+	print '<form action="liste.php" method="GET">';
+	print '<table class="liste">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
 
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
-    print '<td colspan="2" class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-    print '</td>';
-    print '</tr>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
+	print '<td colspan="2" class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '</td>';
+	print '</tr>';
 
-    $var=true;
+	$var=true;
 
-    $userstatic = new User($db);
+	$userstatic = new User($db);
 
-    while ($i < min($num,$conf->liste_limit))
-    {
-        $obj = $db->fetch_object($resql);
-        $var=!$var;
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
 
-        print "<tr $bc[$var]>";
+		print "<tr $bc[$var]>";
 
-        // Ref
-        print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
+		// Ref
+		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
 
-        // Company
-        print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
-        print $obj->nom.'</a></td>'."\n";
+		// Company
+		print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
+		print $obj->nom.'</a></td>'."\n";
 
-        // Author
-        $userstatic->id=$obj->fk_user_author;
-        $userstatic->login=$obj->login;
-        print "<td>";
-        if ($userstatic->id) print $userstatic->getLoginUrl(1);
-        else print "&nbsp;";
-        print "</td>";
+		// Author
+		$userstatic->id=$obj->fk_user_author;
+		$userstatic->login=$obj->login;
+		print "<td>";
+		if ($userstatic->id) print $userstatic->getLoginUrl(1);
+		else print "&nbsp;";
+		print "</td>";
 
-        // Amount
-        print '<td align="right" width="100">'.price($obj->total_ttc)."</td>";
+		// Amount
+		print '<td align="right" width="100">'.price($obj->total_ttc)."</td>";
 
-        // Date
-        print "<td align=\"center\" width=\"100\">";
-        if ($obj->dc)
-        {
-            print dol_print_date($obj->dc,"day");
-        }
-        else
-        {
-            print "-";
-        }
-        print '</td>';
+		// Date
+		print "<td align=\"center\" width=\"100\">";
+		if ($obj->dc)
+		{
+			print dol_print_date($obj->dc,"day");
+		}
+		else
+		{
+			print "-";
+		}
+		print '</td>';
 
-        // Statut
-        print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+		// Statut
+		print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
 
-        print "</tr>\n";
-        $i++;
-    }
-    print "</table>\n";
-    print "</form>\n";
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>\n";
+	print "</form>\n";
 
-    $db->free($resql);
+	$db->free($resql);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();
