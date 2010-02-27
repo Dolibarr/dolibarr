@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/user/param_ihm.php
- *       \brief      Onglet parametrage de la fiche utilisateur
+ *       \brief      Page to show user setup for display
  *       \version    $Id$
  */
 
@@ -166,7 +166,10 @@ if ($_GET["action"] == 'edit')
     // Langue par defaut
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
-    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT)).'</td>';
+    print '<td>';
+    print picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+    print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+    print '</td>';
     print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"");
     print ! empty($dolibarr_main_demo)?' disabled="true"':'';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
@@ -208,9 +211,17 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
-    print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT)).'</td>';
+    print '<td>';
+    $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
+    print ($s?$s.' ':'');
+    print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+    print '</td>';
     print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td>'.($fuser->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):($fuser->conf->MAIN_LANG_DEFAULT?$langs->trans("Language_".$fuser->conf->MAIN_LANG_DEFAULT):'')).'</td></tr>';
+    print '<td>';
+    $s=picto_from_langcode($fuser->conf->MAIN_LANG_DEFAULT);
+    print ($s?$s.' ':'');
+    print ($fuser->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):($fuser->conf->MAIN_LANG_DEFAULT?$langs->trans("Language_".$fuser->conf->MAIN_LANG_DEFAULT):''));
+    print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';

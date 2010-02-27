@@ -982,3 +982,30 @@ function version_webserver()
 {
 	return $_SERVER["SERVER_SOFTWARE"];
 }
+
+
+/**
+ * 	\brief		Show picto of country for a language code
+ * 	\return		string
+ */
+function picto_from_langcode($codelang)
+{
+	$ret='';
+    if (! empty($codelang))
+    {
+    	if ($codelang == 'auto') $ret=img_picto('','/theme/common/flags/int.png','',1);
+    	else {
+    		//print $codelang;
+    		$langtocountryflag=array('fr_CA'=>'mq','es_CA','catalonia','ar_AR'=>'');
+    		$tmpcode='';
+    		if (isset($langtocountryflag[$codelang])) $tmpcode=$langtocountryflag[$codelang];
+    		else
+    		{
+    			$tmparray=explode('_',$codelang);
+    			$tmpcode=$tmparray[1];
+    		}
+    		if ($tmpcode) $ret.=img_picto($codelang,'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
+    	}
+    }
+    return $ret;
+}
