@@ -993,7 +993,7 @@ function picto_from_langcode($codelang)
 	$ret='';
     if (! empty($codelang))
     {
-    	if ($codelang == 'auto') $ret=img_picto('','/theme/common/flags/int.png','',1);
+    	if ($codelang == 'auto') $ret=img_picto('',DOL_URL_ROOT.'/theme/common/flags/int.png','',1);
     	else {
     		//print $codelang;
     		$langtocountryflag=array('fr_CA'=>'mq','ca_ES'=>'catalonia','ar_AR'=>'');
@@ -1004,7 +1004,7 @@ function picto_from_langcode($codelang)
     			$tmparray=explode('_',$codelang);
     			$tmpcode=$tmparray[1];
     		}
-    		if ($tmpcode) $ret.=img_picto($codelang,'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
+    		if ($tmpcode) $ret.=img_picto($codelang,DOL_URL_ROOT.'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
     	}
     }
     return $ret;
