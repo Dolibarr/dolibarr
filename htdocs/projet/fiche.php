@@ -86,7 +86,8 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 		$result = $project->create($user);
 		if ($result > 0)
 		{
-			$result = $project->add_contact($_POST["officer_project"], 'PROJECTLEADER', 'internal');
+			// Add myself as project leader
+			$result = $project->add_contact($user->id, 'PROJECTLEADER', 'internal');
 
 			Header("Location:fiche.php?id=".$project->id);
 			exit;
