@@ -129,17 +129,18 @@ class FormFile
 	 *      \param      genallowed          Generation is allowed (1/0 or array of formats)
 	 *      \param      delallowed          Remove is allowed (1/0)
 	 *      \param      modelselected       Model to preselect by default
-	 *      \param      modelliste			Tableau des modeles possibles. Use '' to hide combo select list.
+	 *      \param      modelliste			Array of possible models. Use '' to hide this combo select list.
 	 *      \param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
 	 *      \param      iconPDF             Show only PDF icon with link (1/0)
 	 * 		\param		maxfilenamelength	Max length for filename shown
-	 * 		\param		noform				Do not output html form start and end
+	 * 		\param		noform				Do not output html form tags
 	 * 		\param		param				More param on http links
 	 * 		\param		title				Title to show on top of form
 	 * 		\param		buttonlabel			Label on submit button
-	 *		\return		int					<0 si ko, nbre de fichiers affiches si ok
+	 * 		\param		codelang			Defautl language code to use on lang combo box if multilang is enabled
+	 * 		\return		int					<0 si ko, nbre de fichiers affiches si ok
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='')
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -323,11 +324,13 @@ class FormFile
 				print '</td>';
 			}
 			print '<td align="center">';
+			// Language code (if multilang)
 			if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/html.formadmin.class.php');
 				$formadmin=new FormAdmin($this->db);
-				$formadmin->select_lang($langs->getDefaultLang());
+				$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
+				$formadmin->select_lang($defaultlang);
 			}
 			else
 			{
@@ -381,7 +384,7 @@ class FormFile
 			if (!$iconPDF) print "<tr ".$bc[$var].">";
 
 			// Show file name with link to download
-			if (!$iconPDF) print '<td>';
+			if (!$iconPDF) print '<td nowrap="nowrap">';
 			print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">';
 			if (!$iconPDF)
 			{
@@ -394,9 +397,9 @@ class FormFile
 			print '</a>';
 			if (!$iconPDF) print '</td>';
 			// Affiche taille fichier
-			if (!$iconPDF) print '<td align="right">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
+			if (!$iconPDF) print '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
 			// Affiche date fichier
-			if (!$iconPDF) print '<td align="right">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+			if (!$iconPDF) print '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
 
 			if ($delallowed)
 			{

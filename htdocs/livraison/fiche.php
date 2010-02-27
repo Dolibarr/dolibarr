@@ -598,7 +598,7 @@ else
 			$genallowed=$user->rights->expedition->livraison->creer;
 			$delallowed=$user->rights->expedition->livraison->supprimer;
 
-			$somethingshown=$formfile->show_documents('livraison',$livraisonref,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
+			$somethingshown=$formfile->show_documents('livraison',$livraisonref,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf,'',0,0,28,0,'','','',$soc->default_lang);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 
 			print '</td><td valign="top" width="50%">';

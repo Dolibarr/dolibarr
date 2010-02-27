@@ -1910,7 +1910,7 @@ if ($id > 0 || ! empty($ref))
 
 		$var=true;
 
-		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf,'',0,0,28,0,'',0,'',$societe->default_lang);
 
 
 		/*

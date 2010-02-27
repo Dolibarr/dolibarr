@@ -466,7 +466,7 @@ if ($_GET["action"] == 'create')
 						$sql.= ", ".MAIN_DB_PREFIX."entrepot as e";
 						$sql.= " WHERE ps.fk_entrepot = e.rowid";
 						$sql.= " AND fk_product = '".$product->id."'";
-						
+
 						$result = $db->query($sql) ;
 						if ($result)
 						{
@@ -559,7 +559,7 @@ else
 			{
 				print '<div class="error">'.$mesg.'</div>';
 			}
-			
+
 			$typeobject = $expedition->origin;
 			$origin = $expedition->origin;
 			$expedition->fetch_object();
@@ -912,7 +912,7 @@ else
 			//$genallowed=1;
 			//$delallowed=0;
 
-			$somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
+			$somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf,'',0,0,28,0,'','',$soc->default_lang);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 		}
 

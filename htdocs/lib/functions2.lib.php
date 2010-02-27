@@ -996,7 +996,7 @@ function picto_from_langcode($codelang)
     	if ($codelang == 'auto') $ret=img_picto('','/theme/common/flags/int.png','',1);
     	else {
     		//print $codelang;
-    		$langtocountryflag=array('fr_CA'=>'mq','es_CA','catalonia','ar_AR'=>'');
+    		$langtocountryflag=array('fr_CA'=>'mq','ca_ES'=>'catalonia','ar_AR'=>'');
     		$tmpcode='';
     		if (isset($langtocountryflag[$codelang])) $tmpcode=$langtocountryflag[$codelang];
     		else

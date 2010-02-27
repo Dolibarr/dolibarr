@@ -627,7 +627,7 @@ elseif ($fichinterid)
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 	$sql.= ' WHERE ft.fk_fichinter = '.$fichinterid;
 	$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
-	
+
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -873,7 +873,7 @@ elseif ($fichinterid)
 	$var=true;
 
 	print "<br>\n";
-	$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fichinter->modelpdf);
+	$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fichinter->modelpdf,'',0,0,28,0,'','','',$societe->default_lang);
 
 	print "</td><td>";
 	print "&nbsp;</td>";

@@ -3456,7 +3456,7 @@ else
 				$var=true;
 
 				print '<br>';
-				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf,'',0,0,28,0,'','','',$soc->default_lang);
 
 				/*
 				 *   Propales rattachees

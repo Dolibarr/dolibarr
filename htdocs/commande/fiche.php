@@ -2137,7 +2137,7 @@ else
 				$genallowed=$user->rights->commande->creer;
 				$delallowed=$user->rights->commande->supprimer;
 
-				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf,'',0,0,28,0,'','','',$soc->default_lang);
 
 				/*
 				 * Liste des factures
