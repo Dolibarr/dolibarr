@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 
 /**
  *  \file       	htdocs/compta/deplacement/fiche.php
- *  \brief      	Page fiche d'un deplacement
+ *  \brief      	Page to show a trip card
  *  \version		$Id$
  */
 require("./pre.inc.php");
@@ -66,6 +66,8 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 {
 	if (! $_POST["cancel"])
 	{
+		$error=0;
+
 		$deplacement = new Deplacement($db);
 
 		$deplacement->date = dol_mktime(12, 0, 0,
@@ -78,16 +80,34 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 		$deplacement->socid = $_POST["socid"];
 		$deplacement->fk_user = $_POST["fk_user"];
 
-		$id = $deplacement->create($user);
-
-		if ($id > 0)
+		if ($deplacement->type == '-1') 	// Otherwise it is TF_LUNCH,...
 		{
-			Header ( "Location: fiche.php?id=".$id);
-			exit;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
+			$error++;
+		}
+		if (! ($deplacement->fk_user > 0))
+		{
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")).'</div>';
+			$error++;
+		}
+
+		if (! $error)
+		{
+			$id = $deplacement->create($user);
+
+			if ($id > 0)
+			{
+				Header ( "Location: fiche.php?id=".$id);
+				exit;
+			}
+			else
+			{
+				$mesg=$deplacement->error;
+				$_GET["action"]='create';
+			}
 		}
 		else
 		{
-			$mesg=$deplacement->error;
 			$_GET["action"]='create';
 		}
 	}
@@ -157,29 +177,31 @@ if ($_GET["action"] == 'create')
 	print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td width="25%">'.$langs->trans("CompanyVisited").'</td><td>';
-	print $html->select_societes($_GET["socid"],'socid','',1);
-	print '</td></tr>';
-
-	print "<tr>";
-	print '<td>'.$langs->trans("Type").'</td><td>';
+	print '<td width="25%" class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 	print $html->select_type_fees($_GET["type"],'type',1);
 	print '</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("Person").'</td><td>';
+	print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
 	print $html->select_users($_GET["fk_user"],'fk_user',1);
 	print '</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("Date").'</td><td>';
+	print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	print $html->select_date('','','','','','add');
 	print '</td></tr>';
 
+	print "<tr>";
+	print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+	print $html->select_societes($_GET["socid"],'socid','',1);
+	print '</td></tr>';
+
 	print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value=""></td></tr>';
-	print '<tr><td colspan="2" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	print '</table>';
+
+	print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
+
 	print '</form>';
 }
 else
@@ -226,28 +248,31 @@ else
 				print '</td></tr>';
 
 				print "<tr>";
-				print '<td>'.$langs->trans("Type").'</td><td>';
-				print $html->select_type_fees($deplacement->type,'type',1);
+				print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
+				print $html->select_type_fees($deplacement->type,'type',0);
 				print '</td></tr>';
+
+				print "<tr>";
+				print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
+				print $html->select_users($deplacement->fk_user,'fk_user',0);
+				print '</td></tr>';
+
+				print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+				print $html->select_date($deplacement->date,'','','','','update');
+				print '</td></tr>';
+				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
 
 				print "<tr>";
 				print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
 				print $html->select_societes($soc->id,'socid','',1);
 				print '</td></tr>';
 
-				print "<tr>";
-				print '<td>'.$langs->trans("Person").'</td><td>';
-				print $html->select_users($deplacement->fk_user,'fk_user',1);
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("Date").'</td><td>';
-				print $html->select_date($deplacement->date,'','','','','update');
-				print '</td></tr>';
-				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
-
-				print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-				print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
 				print '</table>';
+
+				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+				print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+				print '</center>';
+
 				print '</form>';
 
 				print '</div>';
@@ -275,11 +300,6 @@ else
 
 				print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
 
-				print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td>';
-				print '<td>';
-				if ($soc->id) print $soc->getNomUrl(1);
-				print '</td></tr>';
-
 				print '<tr><td>'.$langs->trans("Person").'</td><td>';
 				$userfee=new User($db,$deplacement->fk_user);
 				$userfee->fetch();
@@ -288,6 +308,11 @@ else
 
 				print '<tr><td>'.$langs->trans("Date").'</td><td>';
 				print dol_print_date($deplacement->date);
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
+				print '<td>';
+				if ($soc->id) print $soc->getNomUrl(1);
 				print '</td></tr>';
 
 				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$deplacement->km.'</td></tr>';
