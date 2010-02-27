@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin
+# Dolibarr language file - es_ES - admin 
 CHARSET = UTF-8
 Version = Versión
 VersionProgram = Versión programa
@@ -266,7 +266,9 @@ ConfirmPurge = ¿Está seguro de querer realizar esta purga?<br>Esto borrará de
 MinLength = Longuitud mínima
 LanguageFilesCachedIntoShmopSharedMemory = archivos .lang en memoria compartida
 ExamplesWithCurrentSetup = Ejemplos con la configuración activa actual
-ListOfDirectoriesForModelGenODT = Listado de directorios con documentos modelo OpenDocument
+ListOfDirectories = Listado de directorios de plantillas OpenDocument
+ListOfDirectoriesForModelGenODT = Listado de directorios con plantillas de documentos OpenDocument.<br><br>Indicar la ruta completa del directorio.<br>Añadir un retorno a la línea entre cada directorio.<b>Para indicar un directorio del módulo GED, indicar <b>DOL_DATA_ROOT/ecm/nombredeldirectorio</b>.<br><br>Los archivos de plantilla de estos directorios deben terminar con <b>.odt</b> 
+NumberOfModelFilesFound = Número de archivos de plantillas ODT encontrados en este/estos directorio(s)
 ExampleOfDirectoriesForModelGen = Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 # Modules = undefined = 
 Module0Name = Usuarios y grupos

@@ -266,9 +266,10 @@ ConfirmPurge = Esteu segur de voler realitzar aquesta purga? <br> Això esborrar
 MinLength = Longuitud mínima
 LanguageFilesCachedIntoShmopSharedMemory = arxius .lang en memòria compartida
 ExamplesWithCurrentSetup = Exemples amb la configuració activa actual
-ListOfDirectoriesForModelGenODT = Llistat de directoris amb documents model OpenDocument
+ListOfDirectories = Llistat de directoris de plantilles OpenDocument
+ListOfDirectoriesForModelGenODT = Llistat de directoris amb documents model OpenDocument.<br><br>Indiqueu el camí complet del directori.<br>Afegir un retorn a la línia entre cada directori.<b>Per indicar un directori del mòdul GED, indiqueu <b>DOL_DATA_ROOT/ecm/nomdeldirectori</b>.<br><br>Els arxius de plantilla d'aquests directoris han d'acabar amb <b>.odt</b>
+NumberOfModelFilesFound = Nombre d'arxius de plantilles ODT trobats en aquest(s) directori(s)
 ExampleOfDirectoriesForModelGen = Exemples de sintaxi:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-
 # Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups
