@@ -46,16 +46,16 @@ if ($_REQUEST["id"])
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
+if ($user->id == $_REQUEST["id"])	// A user can always read its own card
 {
 	$feature2='';
 	$canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+$result = restrictedArea($user, 'user', $_REQUEST["id"], '', $feature2);
 if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
 
 
-$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$id=! empty($_GET["id"])?$_GET["id"]:$_POST["id"];
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
@@ -231,9 +231,9 @@ else
 	}
 	else
 	{
-		if ($caneditfield  || $user->admin)       // Si utilisateur �dit� = utilisateur courant ayant les droits de cr�er ou admin
+		if ($user->id == $fuser->id || $user->admin)       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
 	    {
-	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Modify").'</a>';
+	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$fuser->id.'">'.$langs->trans("Modify").'</a>';
 	    }
 	   	else
 		{
