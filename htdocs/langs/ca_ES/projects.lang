@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - projects
+# Dolibarr language file - es_ES - projects = 
 CHARSET = UTF-8
 Project = Projecte
 Projects = Projectes
@@ -22,7 +22,7 @@ OfficerProject = Responsable del projecte
 LastProjects = Els %s ultims projectes
 AllProjects = Tots els projectes
 ProjectsList = Llistat de projectes
-ShowProject = Afegir projecte
+ShowProject = Veure projecte
 SetProject = Definir projecte
 NoProject = Cap projecte definit
 NbOpenTasks = Nº Tasques obertes
@@ -68,6 +68,9 @@ ReOpenAProject = Reobrir projecte
 ConfirmReOpenAProject = Esteu segur de voler reobrir aquest projecte?
 ProjectContact = Contactes projecte
 ActionsOnProject = Accions del projecte
+YouAreNotContactOfProject = Vostè no és contacte d'aquest projecte privat
+DeleteATimeSpent = Eliminació de temps dedicat
+ConfirmDeleteATimeSpent = Esteu segur de voler eliminar aquest temps dedicat?
 ##### Types de contacts ##### =  = 
 TypeContact_project_internal_PROJECTLEADER = Cap de projecte
 TypeContact_project_external_PROJECTLEADER = Cap de projecte
