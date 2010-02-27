@@ -296,8 +296,9 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
 	print '</td></tr>';
 
-	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 	print '</table>';
+
+	print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 	print '</form>';
 
 }
