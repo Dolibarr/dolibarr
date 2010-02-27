@@ -38,6 +38,7 @@ ErrorFeatureNeedJavascript = Esta funcionalidad precisa de javascript activo par
 ErrorTopMenuMustHaveAParentWithId0 = Un menú del tipo 'Superior' no puede tener un menú padre. Ponga 0 en el ID padre o busque un menu del tipo 'Izquierdo'
 ErrorLeftMenuMustHaveAParentId = Un menú del tipo 'Izquierdo' debe de tener un ID de padre
 ErrorFileNotFound = Archivo <b>%s</b> no encontrado (ruta incorrecta, permisos incorrectos o acceso prohibido por el parámetro openbasedir)
+ErrorDirNotFound = Directorio<b>%s</b>no encontrado (Ruta incorrecta, permisos inadecuados o acceso prohibido por el parámetro PHP openbasedir o safe_mode)
 ErrorFunctionNotAvailableInPHP = La función  <b>%s</b> es requerida por esta funcionalidad, pero no se encuetra disponible en esta versión/instalación de PHP.
 ErrorDirAlreadyExists = Ya existe un directorio con ese nombre.
 ErrorFieldCanNotContainSpecialCharacters = El campo <b>%s</b> no debe contener carácteres especiales

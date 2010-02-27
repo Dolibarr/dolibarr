@@ -52,6 +52,7 @@ JavascriptDisabled = Javascript desactivado
 UsePopupCalendar = Utilizar popups para la introducción de las fechas
 UsePreviewTabs = Ver fichas "vista previa"
 ShowPreview = Ver vista previa
+PreviewNotAvailable = Vista previa no disponible
 ThemeCurrentlyActive = Tema actualmente activo
 CurrentTimeZone = Zona horaria actual
 Space = Área
@@ -265,6 +266,8 @@ ConfirmPurge = ¿Está seguro de querer realizar esta purga?<br>Esto borrará de
 MinLength = Longuitud mínima
 LanguageFilesCachedIntoShmopSharedMemory = archivos .lang en memoria compartida
 ExamplesWithCurrentSetup = Ejemplos con la configuración activa actual
+ListOfDirectoriesForModelGenODT = Listado de directorios con documentos modelo OpenDocument
+ExampleOfDirectoriesForModelGen = Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 # Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos
@@ -777,6 +780,9 @@ ModuleCompanyCodePanicum = Devuelve un código contable vacío.
 ModuleCompanyCodeDigitaria = Devuelve un código contable compuesto siguiendo el código de tercero. El código está formado por carácter ' C ' en primera posición seguido de los 5 primeros caracteres del código tercero.
 UseNotifications = Usar notificaciones
 NotificationsDesc = La función de las notificaciones permite enviar automáticamente un correo electrónico para un determinado evento Dolibarr en las empresas configuradas para ello
+ModelModules = Modelos de documentos
+DocumentModelOdt = Generación desde los documentos con formato .ODT (OpenOffice...)
+WatermarkOnDraft = Marca de agua en los documentos borrador
 ##### Webcal setup ##### = undefined = 
 WebCalSetup = Configuración de enlace con el calendario Webcalendar
 WebCalSyncro = Integrar los eventos Dolibarr en WebCalendar

@@ -52,6 +52,7 @@ JavascriptDisabled = Javascript desactivat
 UsePopupCalendar = Utilitzar popups per a la introducció de les dades
 UsePreviewTabs = Veure fitxes "vista prèvia"
 ShowPreview = Veure previsualització
+PreviewNotAvailable = Vista prèvia no disponible
 ThemeCurrentlyActive = Tema actualment actiu
 CurrentTimeZone = Fus horari actual
 Space = Àrea
@@ -265,6 +266,9 @@ ConfirmPurge = Esteu segur de voler realitzar aquesta purga? <br> Això esborrar
 MinLength = Longuitud mínima
 LanguageFilesCachedIntoShmopSharedMemory = arxius .lang en memòria compartida
 ExamplesWithCurrentSetup = Exemples amb la configuració activa actual
+ListOfDirectoriesForModelGenODT = Llistat de directoris amb documents model OpenDocument
+ExampleOfDirectoriesForModelGen = Exemples de sintaxi:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+
 # Modules = undefined =  = 
 Module0Name = Usuaris y grups
 Module0Desc = Gestió d'usuaris i grups
@@ -777,6 +781,9 @@ ModuleCompanyCodePanicum = Retorna un codi comptable buit.
 ModuleCompanyCodeDigitaria = Retorna un codi comptable compost seguint el codi de tercer. El codi està format per caràcter 'C' en primera posició seguit dels 5 primers caràcters del codi tercer.
 UseNotifications = Utilitza notificacions
 NotificationsDesc = La funció de les notificacions permet enviar automàticament un correu electrònic per a un determinat esdeveniment Dolibarr en les empreses configurades per a això
+ModelModules = Models de documents
+DocumentModelOdt = Generació des dels documents amb format .ODT (OpenOffice. ..)
+WatermarkOnDraft = Marca d'aigua en els documents esborrany
 ##### Webcal setup ##### = undefined =  = 
 WebCalSetup = Configuració d'enllaç amb el calendari webcalendar
 WebCalSyncro = Integrar els esdeveniments Dolibarr a webcalendar
