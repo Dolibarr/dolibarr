@@ -1255,12 +1255,16 @@ else
 	$soc->typent= $arr[$soc->typent_code];
 	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
-	// Language
+	// Default language
 	if ($conf->global->MAIN_MULTILANGS)
 	{
+		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
+		$s=picto_from_langcode($soc->default_lang);
+		print ($s?$s.' ':'');
 		$langs->load("languages");
-		$labellang = ($soc->default_lang?$langs->trans('Language_'.$soc->default_lang).' ('.$soc->default_lang.')':'');
-		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'.$labellang.'</td></tr>';
+		$labellang = ($soc->default_lang?$langs->trans('Language_'.$soc->default_lang):'');
+		print $labellang;
+		print '</td></tr>';
 	}
 
 	// Ban
