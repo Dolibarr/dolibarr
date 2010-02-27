@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - users 
+# Dolibarr language file - es_ES - users
 CHARSET = UTF-8
 UserCard = Ficha usuario
 ContactCard = Ficha contacto
@@ -90,6 +90,7 @@ Reactivate = Reactivar
 CreateInternalUserDesc = Esta pantalla permite crear un usuario interno de su empresa/institución. Para crear a un usuario externo (cliente, proveedor...) utilice el botón ' crear a usuario Dolibarr ' que se encuentra en la ficha contacto del tercero en cuestión.
 InternalExternalDesc = Un usuario <b>interno</b> es un usuario que pertenece a su empresa/institución.<br>Un usuario <b>externo</b> es un usuario cliente, proveedor u otro.<br><br>En los 2 casos, los permisos de usuarios definen los derechos de acceso, pero el usuario externo puede además tener  un gestor de menús diferente al usuario interno (véase Inicio - Configuración - Visualización)
 PermissionInheritedFromAGroup = El permiso se concede ya que lo hereda de un grupo al cual pertenece el usuario.
+Inherited = Heredado
 IdPhoneCaller = ID llamante (telefóno)
 UserLogged = Usuario %s conectado
 NewUserCreated = usuario %s  creado

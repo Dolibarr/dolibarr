@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - users 
+# Dolibarr language file - ca_ES - users
 CHARSET = UTF-8
 UserCard = Fitxa usuari
 ContactCard = Fitxa contacte
@@ -90,6 +90,7 @@ Reactivate = Reactivar
 CreateInternalUserDesc = Aquesta pantalla permet crear un usuari intern de la seva empresa/institució. Per crear un usuari extern (client, proveïdor...) utilitzeu el botó 'crear a usuari Dolibarr' que es troba a la fitxa contacte del tercer en qüestió.
 InternalExternalDesc = Un usuari <b>intern</b> és un usuari que pertany a la seva empresa/institució. <br>Un usuari<b>extern</b> és un usuari client, proveïdor o un altre.<br> En els 2 casos, els permisos d'usuari defineixen els drets d'accés, però l'usuari extern pot a més tenir un gestor de menús diferent a l'usuari intern (vegeu Inici->Configuració->Visualització)
 PermissionInheritedFromAGroup = El permís es concedeix ja que ho hereta d'un grup al qual pertany l'usuari.
+Inherited = Heretat
 IdPhoneCaller = ID trucant (telèfon)
 UserLogged = Usuari %s conectat
 NewUserCreated = usuari %s  creat
