@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - mails 
+# Dolibarr language file - ca_ES - mails
 CHARSET = UTF-8
 Mailing = E-Mailing
 EMailing = E-Mailing
@@ -67,6 +67,8 @@ ConfirmCloneEMailing = Esteu segur de voler clonar aquest e-mailing?
 CloneContent = Clonar missatge
 CloneReceivers = Clonar destinataris
 DateLastSend = Data últim enviament
+DateSending = Data enviament
+SentTo = Enviat a <b>%s</b>
 # Libelle des modules de liste de destinataires mailing =  = 
 MailingModuleDescContactCompanies = Contactes de tercers (clients potencials, clients, proveïdors ...)
 MailingModuleDescDolibarrUsers = Usuaris de Dolibarr que tenen e-mail
