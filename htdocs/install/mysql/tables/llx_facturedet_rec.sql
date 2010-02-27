@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@ create table llx_facturedet_rec
   product_type    integer DEFAULT 0,
   description     text,
   tva_tx          real DEFAULT 19.6, -- taux tva
+  localtax1_tx    double(6,3) DEFAULT 0,    -- tax local tax 1
+  localtax2_tx	  double(6,3) DEFAULT 0,    -- tax local tax 2
   qty             real,              -- quantity
   remise_percent  real DEFAULT 0,    -- pourcentage de remise
   remise          real DEFAULT 0,    -- montant de la remise
@@ -34,5 +37,7 @@ create table llx_facturedet_rec
   price           real,               -- prix final
   total_ht        real,	             	-- Total HT de la ligne toute quantity et incluant remise ligne et globale
   total_tva       real,	             	-- Total TVA de la ligne toute quantity et incluant remise ligne et globale
+  total_localtax1 double(24,8) DEFAULT 0,		-- Total LocalTax1 for total quantity of line
+  total_localtax2 double(24,8) DEFAULT 0,		-- total LocalTax2 for total quantity of line
   total_ttc       real	             	-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
 )type=innodb;

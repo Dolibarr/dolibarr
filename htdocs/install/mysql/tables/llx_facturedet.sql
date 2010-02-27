@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010 Juanjo Menent             <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@ create table llx_facturedet
   fk_product          integer    NULL,					-- Doit pouvoir etre nul pour ligne detail sans produits
   description         text,
   tva_tx              real,								-- Taux tva produit/service (exemple 19.6)
+  localtax1_tx        double(6,3) 		 DEFAULT 0,    			-- tax local tax 1
+  localtax2_tx	      double(6,3) 		 DEFAULT 0,    			-- tax local tax 2
   qty                 real,								-- Quantity (exemple 2)
   remise_percent      real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise              real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)
@@ -36,6 +39,8 @@ create table llx_facturedet
   price               real,								-- P.U. HT apres remise % de ligne
   total_ht            real,								-- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva           real,								-- Total TVA de la ligne toute quantite et incluant remise ligne et globale
+  total_localtax1     double(24,8)  	 DEFAULT 0,				-- Total LocalTax1 for total quantity of line
+  total_localtax2     double(24,8)		 DEFAULT 0,				-- total LocalTax2 for total quantity of line
   total_ttc           real,								-- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type		  integer    DEFAULT 0,
   date_start          datetime   DEFAULT NULL,			-- date debut si service

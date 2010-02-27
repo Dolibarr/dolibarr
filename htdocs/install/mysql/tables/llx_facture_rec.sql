@@ -2,6 +2,7 @@
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,6 +34,8 @@ create table llx_facture_rec
   remise_percent     real     DEFAULT 0,
   remise_absolue     real     DEFAULT 0,
   tva                real     DEFAULT 0,
+  localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
+  localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2
   total              real     DEFAULT 0,
   total_ttc          real     DEFAULT 0,
 

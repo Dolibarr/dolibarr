@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010 Juanjo Menent             <jmenent@2byte.es>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -44,6 +45,8 @@ create table llx_facture
   close_note          varchar(128),		              -- Commentaire cloture sans paiement complet
 
   tva                 real     DEFAULT 0,           -- montant tva apres remise totale
+  localtax1			  double(24,8)     DEFAULT 0,           -- amount localtax1
+  localtax2           double(24,8)     DEFAULT 0,           -- amount localtax2	
   total               real     DEFAULT 0,           -- montant total ht apres remise totale
   total_ttc           real     DEFAULT 0,           -- montant total ttc apres remise totale
 
