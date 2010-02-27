@@ -222,106 +222,120 @@ if ($_GET["action"] == 'removegroup' && $caneditfield)
 	}
 }
 
-if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
+if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 {
-	$message="";
-
-	if (! $_POST["nom"])
+	if ($caneditfield)
 	{
-		$message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
-		$action="edit";       // Go back to create page
-	}
-	if (! $_POST["login"])
-	{
-		$message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
-		$action="edit";       // Go back to create page
-	}
+		$message="";
 
-	if (! $message)
-	{
-		$db->begin();
-
-		$edituser = new User($db, $_GET["id"]);
-		$edituser->fetch();
-
-		$edituser->oldcopy=dol_clone($edituser);
-
-		$edituser->nom           = $_POST["nom"];
-		$edituser->prenom        = $_POST["prenom"];
-		$edituser->login         = $_POST["login"];
-		$edituser->pass          = $_POST["password"];
-		$edituser->admin         = $_POST["admin"];
-		$edituser->office_phone  = $_POST["office_phone"];
-		$edituser->office_fax    = $_POST["office_fax"];
-		$edituser->user_mobile   = $_POST["user_mobile"];
-		$edituser->email         = $_POST["email"];
-		$edituser->webcal_login  = $_POST["webcal_login"];
-		$edituser->phenix_login  = $_POST["phenix_login"];
-		$edituser->phenix_pass   = $_POST["phenix_pass"];
-		$edituser->entity        = $_POST["entity"];
-
-		$edituser->photo         = $_FILES['photo']['name'];
-
-		$ret=$edituser->update($user);
-		if ($ret < 0)
+		if (! $_POST["nom"])
 		{
-			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-			{
-				$langs->load("errors");
-				$message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-			}
-			else
-			{
-				$message.='<div class="error">'.$edituser->error.'</div>';
-			}
+			$message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+			$action="edit";       // Go back to create page
+		}
+		if (! $_POST["login"])
+		{
+			$message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+			$action="edit";       // Go back to create page
 		}
 
-		if ($ret >= 0 && ! sizeof($edituser->errors) && isset($_POST["password"]) && $_POST["password"] !='')
+		if (! $message)
 		{
-			$ret=$edituser->setPassword($user,$_POST["password"]);
+			$db->begin();
+
+			$edituser = new User($db, $_GET["id"]);
+			$edituser->fetch();
+
+			$edituser->oldcopy=dol_clone($edituser);
+
+			$edituser->nom           = $_POST["nom"];
+			$edituser->prenom        = $_POST["prenom"];
+			$edituser->login         = $_POST["login"];
+			$edituser->pass          = $_POST["password"];
+			$edituser->admin         = $_POST["admin"];
+			$edituser->office_phone  = $_POST["office_phone"];
+			$edituser->office_fax    = $_POST["office_fax"];
+			$edituser->user_mobile   = $_POST["user_mobile"];
+			$edituser->email         = $_POST["email"];
+			$edituser->webcal_login  = $_POST["webcal_login"];
+			$edituser->phenix_login  = $_POST["phenix_login"];
+			$edituser->phenix_pass   = $_POST["phenix_pass"];
+			$edituser->entity        = $_POST["entity"];
+
+			$edituser->photo         = $_FILES['photo']['name'];
+
+			$ret=$edituser->update($user);
 			if ($ret < 0)
 			{
-				$message.='<div class="error">'.$edituser->error.'</div>';
-			}
-		}
-
-		if ($ret >=0 && ! sizeof($edituser->errors))
-		{
-			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
-			{
-				$dir= $conf->user->dir_output . '/' . get_exdir($edituser->id,2,0,1);
-
-				create_exdir($dir);
-
-				if (@is_dir($dir))
+				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
-					$newfile=$dir.'/'.$_FILES['photo']['name'];
-					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
-					{
-						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
-					}
-					else
-					{
-						// Create small thumbs for company (Ratio is near 16/9)
-						// Used on logon for example
-						$imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+					$langs->load("errors");
+					$message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+				}
+				else
+				{
+					$message.='<div class="error">'.$edituser->error.'</div>';
+				}
+			}
 
-						// Create mini thumbs for company (Ratio is near 16/9)
-						// Used on menu or for setup page for example
-						$imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+			if ($ret >= 0 && ! sizeof($edituser->errors) && isset($_POST["password"]) && $_POST["password"] !='')
+			{
+				$ret=$edituser->setPassword($user,$_POST["password"]);
+				if ($ret < 0)
+				{
+					$message.='<div class="error">'.$edituser->error.'</div>';
+				}
+			}
+
+			if ($ret >=0 && ! sizeof($edituser->errors))
+			{
+				if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+				{
+					$dir= $conf->user->dir_output . '/' . get_exdir($edituser->id,2,0,1);
+
+					create_exdir($dir);
+
+					if (@is_dir($dir))
+					{
+						$newfile=$dir.'/'.$_FILES['photo']['name'];
+						if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
+						{
+							$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+						}
+						else
+						{
+							// Create small thumbs for company (Ratio is near 16/9)
+							// Used on logon for example
+							$imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+							// Create mini thumbs for company (Ratio is near 16/9)
+							// Used on menu or for setup page for example
+							$imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+						}
 					}
 				}
 			}
-		}
 
-		if ($ret >= 0 && ! sizeof($edituser->errors))
-		{
-			$message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
-			$db->commit();
+			if ($ret >= 0 && ! sizeof($edituser->errors))
+			{
+				$message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
 		}
-		else
+	}
+	else if ($caneditpassword)	// Case we can edit only password
+	{
+		$edituser = new User($db, $_GET["id"]);
+		$edituser->fetch();
+
+		$ret=$edituser->setPassword($user,$_POST["password"]);
+		if ($ret < 0)
 		{
-			$db->rollback();
+			$message.='<div class="error">'.$edituser->error.'</div>';
 		}
 	}
 }
