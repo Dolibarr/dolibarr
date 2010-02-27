@@ -266,7 +266,9 @@ ConfirmPurge=Etes vous sur de vouloir réaliser cette purge ?<br>Ceci effacera d
 MinLength=Longueur minimale
 LanguageFilesCachedIntoShmopSharedMemory=Fichiers .lang en mémoire partagée
 ExamplesWithCurrentSetup=Exemples avec le paramétrage actif courant
-ListOfDirectoriesForModelGenODT=Liste des répertoires contenant des documents modèles OpenDocument
+ListOfDirectories=Liste des répertoires de modèles OpenDocument
+ListOfDirectoriesForModelGenODT=Liste des répertoires contenant des documents modèles OpenDocument.<br><br>Indiquer le chemin complet du répertoire.<br>Ajouter un retour à la ligne entre chaque répertoire.<br>Pour indiquer un répertoire du module GED, indiquer <b>DOL_DATA_ROOT/ecm/nomdurepertoire</b>.<br><br>Les fichiers modèles dans ces répertoires doivent se terminer par <b>.odt</b>.
+NumberOfModelFilesFound=Nombre de fichiers modèles ODT trouvés dans ce(s) répertoire(s) 
 ExampleOfDirectoriesForModelGen=Exemples de syntaxe:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 
 # Modules = undefined

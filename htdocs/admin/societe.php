@@ -395,7 +395,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					}
 					else
 					{
-						print '<a href="#">'.img_object($langs->trans("PreviewNotAvailable"),'generic').'</a>';
+						print img_object($langs->trans("PreviewNotAvailable"),'generic');
 					}
 					print '</td>';
 

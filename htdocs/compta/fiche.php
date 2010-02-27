@@ -506,20 +506,23 @@ if ($socid > 0)
 	print "<br>\n";
 
 
-	/*
-	 * Liste des contacts
-	 */
-	show_contacts($conf,$langs,$db,$societe);
+	if ($conf->global->MAIN_REPEATCONTACTTASKONEACHTAB)
+	{
+		/*
+		 * Liste des contacts
+		 */
+		show_contacts($conf,$langs,$db,$societe);
 
-	/*
-	 *      Listes des actions a faire
-	 */
-	show_actions_todo($conf,$langs,$db,$societe);
+		/*
+		 *      Listes des actions a faire
+		 */
+		show_actions_todo($conf,$langs,$db,$societe);
 
-	/*
-	 *      Listes des actions effectuees
-	 */
-	show_actions_done($conf,$langs,$db,$societe);
+		/*
+		 *      Listes des actions effectuees
+		 */
+		show_actions_done($conf,$langs,$db,$societe);
+	}
 }
 else
 {

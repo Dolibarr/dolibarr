@@ -145,7 +145,7 @@ if ($_GET["socid"])
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
+	print '<tr><td width="25%">'.$langs->trans("Name").'</td><td colspan="3">';
 	print $html->showrefnav($soc,'socid','',1,'rowid','nom');
 	print '</td></tr>';
 
@@ -169,10 +169,15 @@ if ($_GET["socid"])
 		print '</td></tr>';
 	}
 
+	if ($conf->global->MAIN_MODULE_BARCODE)
+	{
+		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
+	}
+
 	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 
-	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
-	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
+	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->ville."</td></tr>";
 	if ($soc->pays) {
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td></tr>';
 	}
@@ -180,7 +185,15 @@ if ($_GET["socid"])
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->pays_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->pays_code,0,$soc->id,'AC_FAX').'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$soc->url\" target=\"_blank\">".$soc->url."</a>&nbsp;</td></tr>";
+	// EMail
+	print '<tr><td>'.$langs->trans('EMail').'</td><td>';
+	print dol_print_email($soc->email,0,$soc->id,'AC_EMAIL');
+	print '</td>';
+
+	// Web
+	print '<td>'.$langs->trans('Web').'</td><td>';
+	print dol_print_url($soc->url);
+	print '</td></tr>';
 
 	// Assujeti a TVA ou pas
 	print '<tr>';

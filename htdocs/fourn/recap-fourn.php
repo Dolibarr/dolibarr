@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-    	\file       htdocs/fourn/recap-fourn.php
-		\ingroup    fournisseur
-		\brief      Page de fiche recap fournisseur
-		\version    $Id$
-*/
+ *  	\file       htdocs/fourn/recap-fourn.php
+ *		\ingroup    fournisseur
+ *		\brief      Page de fiche recap fournisseur
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -57,7 +57,7 @@ if ($socid > 0)
      */
 	$head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"));
+    dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
 
 
     print "<table width=\"100%\">\n";

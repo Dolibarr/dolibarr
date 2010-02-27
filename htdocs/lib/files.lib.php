@@ -28,7 +28,7 @@
  *  \param		$path        	Starting path from which to search
  *  \param		$types        	Can be "directories", "files", or "all"
  *  \param		$recursive		Determines whether subdirectories are searched
- *  \param		$filter        	Regex for filter
+ *  \param		$filter        	Regex for include filter
  *  \param		$exludefilter  	Regex for exclude filter (example: '\.meta$')
  *  \param		$sortcriteria	Sort criteria ("name","date","size")
  *  \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)

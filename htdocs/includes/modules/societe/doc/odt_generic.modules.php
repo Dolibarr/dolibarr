@@ -28,6 +28,7 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 
 /**
@@ -88,21 +89,36 @@ class odt_generic extends ModeleDocProjects
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
-		$texte.= '<tr><td>'.$langs->trans("ListOfDirectoriesForModelGenODT").' : ';
-
-		$listofdir=explode(',',preg_replace('/\r\n/',',',$conf->global->COMPANY_ADDON_PDF_ODTPATH));
-		foreach($listofdir as $tmpdir)
+		$texte.= '<tr><td>';
+		$textbis=$langs->trans("ListOfDirectories");
+		$listofdir=explode(',',preg_replace('/\r\n/',',',trim($conf->global->COMPANY_ADDON_PDF_ODTPATH)));
+		$listoffiles=array();
+		foreach($listofdir as $key=>$tmpdir)
 		{
+			$tmpdir=trim($tmpdir);
 			$tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
-			if (! is_dir($tmpdir)) $texte.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
+			if (! $tmpdir) { unset($listofdir[$key]); continue; }
+			if (! is_dir($tmpdir)) $textbis.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
+			else
+			{
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				$listoffiles=array_merge($listoffiles,$tmpfiles);
+			}
 		}
+		$texte.= $form->textwithpicto($textbis,$langs->trans("ListOfDirectoriesForModelGenODT"),1,'help');
 		//var_dump($listofdir);
-
-		$texte.= '<br>';
 
 		$texte.= '<textarea class="flat" cols="80" name="value1">';
 		$texte.=$conf->global->COMPANY_ADDON_PDF_ODTPATH;
-		$texte.= '</textarea></td><td valign="top" rowspan="2">';
+		$texte.= '</textarea>';
+
+		// Scan directories
+		if (sizeof($listofdir)) $texte.='<br>'.$langs->trans("NumberOfModelFilesFound").': '.sizeof($listoffiles);
+
+		$texte.= '</td>';
+
+
+		$texte.= '<td valign="top" rowspan="2">';
 		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte.= '</td>';
 		$texte.= '</tr>';

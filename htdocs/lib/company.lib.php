@@ -44,10 +44,16 @@ function societe_prepare_head($objsoc)
 	$head[$h][2] = 'company';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$objsoc->id;
+	$head[$h][1] = $langs->trans("Agenda");
+	$head[$h][2] = 'agenda';
+	$h++;
+
+
 	if ($objsoc->client==1 || $objsoc->client==3)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Customer");;
+		$head[$h][1] = $langs->trans("Customer");
 		$head[$h][2] = 'customer';
 		$h++;
 	}

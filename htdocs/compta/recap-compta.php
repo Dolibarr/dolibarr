@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-   \file       htdocs/compta/recap-compta.php
-   \ingroup    compta
-   \brief      Page de fiche recap compta
-   \version    $Id$
-*/
+ *  \file       htdocs/compta/recap-compta.php
+ *	\ingroup    compta
+ *  \brief      Page de fiche recap compta
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -38,6 +38,7 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+
 
 
 /*
@@ -56,7 +57,7 @@ if ($socid > 0)
      */
 	$head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
+    dol_fiche_head($head, 'compta', $langs->trans("ThirdParty"), 0, 'company');
 
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
