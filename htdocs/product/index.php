@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,14 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 
-if (!$user->rights->produit->lire && !$user->rights->service->lire)
-accessforbidden();
+$type=isset($_GET["type"])?$_GET["type"]:(isset($_POST["type"])?$_POST["type"]:'');
+if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
+if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on prpduct page only
+
+// Security check
+if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
+else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
 
 $product_static = new Product($db);
 
@@ -130,11 +136,11 @@ if ($conf->service->enabled)
 	$statServices.= '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
 	$statServices.= "</tr>";
 }
-if (isset($_GET["type"]) && $_GET["type"] == 0)
+if ($type == '0')
 {
 	print $statProducts;
 }
-else if (isset($_GET["type"]) && $_GET["type"] == 1)
+else if ($type == '1')
 {
 	print $statServices;
 }
@@ -165,7 +171,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
 $sql.= " AND p.entity = ".$conf->entity;
 if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND COALESCE(c.visible,1)=1 ";
-if (isset($_GET["type"])) $sql.= " AND p.fk_product_type = ".$_GET["type"];
+if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 $sql.= " ORDER BY p.tms DESC ";
 $sql.= $db->plimit($max,0);
 $result = $db->query($sql) ;
@@ -199,7 +205,7 @@ if ($result)
 	  	$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 	  	$sql.= " WHERE fk_product=".$objp->rowid;
 	  	$sql.= " AND lang='". $langs->getDefaultLang() ."'";
-	  	
+
 	  	$resultd = $db->query($sql);
 	  	if ($resultd)
 	  	{

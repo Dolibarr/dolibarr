@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,11 +51,15 @@ $offset = $limit * $_GET["page"] ;
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
-$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut";
+$sql = "SELECT e.rowid, e.ref, e.date_expedition, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
 $sql.= ", ori.ref as origin_ref, ori.rowid as origin_id";
-$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
+$sql.= " FROM (".MAIN_DB_PREFIX."expedition as e";
+if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
+{
+	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
+$sql.= ") LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
 if ($conf->commande->enabled)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as ori ON el.fk_source = ori.rowid";
@@ -68,9 +72,9 @@ else
 }
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql.= " WHERE e.entity = ".$conf->entity;
-if (!$user->rights->societe->client->voir && !$socid)
+if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+	$sql.= " AND e.fk_soc = sc.fk_soc";
 	$sql.= " AND sc.fk_user = " .$user->id;
 }
 if ($socid)
@@ -134,7 +138,7 @@ if ($resql)
     $now = time();
     $lim = 3600 * 24 * 15 ;
 
-    if ( ($now - $objp->date_expedition) > $lim && $objp->statutid == 1 )
+    if ( ($now - $db->jdate($objp->date_expedition)) > $lim && $objp->statutid == 1 )
     {
     	print "<td><b> &gt; 15 jours</b></td>";
     }
@@ -144,10 +148,10 @@ if ($resql)
     }
 
     print "<td align=\"right\">";
-    $y = dol_print_date($objp->date_expedition,"%Y");
-    $m = dol_print_date($objp->date_expedition,"%m");
-    $mt = dol_print_date($objp->date_expedition,"%b");
-    $d = dol_print_date($objp->date_expedition,"%d");
+    $y = dol_print_date($db->jdate($objp->date_expedition),"%Y");
+    $m = dol_print_date($db->jdate($objp->date_expedition),"%m");
+    $mt = dol_print_date($db->jdate($objp->date_expedition),"%b");
+    $d = dol_print_date($db->jdate($objp->date_expedition),"%d");
     print $d."\n";
     print " <a href=\"propal.php?year=$y&amp;month=$m\">";
     print $b."</a>\n";

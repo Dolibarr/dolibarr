@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,11 +31,6 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/categ
 
 $langs->load("products");
 
-// Security check
-if (!$user->rights->produit->lire && !$user->rights->service->lire)
-accessforbidden();
-
-
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
 $sbarcode=isset($_GET["sbarcode"])?$_GET["sbarcode"]:$_POST["sbarcode"];
 $snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
@@ -54,6 +49,12 @@ if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
+
+// Security check
+if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fieldid);
+else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
+else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
+
 
 
 /*
@@ -313,7 +314,7 @@ if ($resql)
 				$sql.= " WHERE fk_product=".$objp->rowid;
 				$sql.= " AND lang='". $langs->getDefaultLang() ."'";
 				$sql.= " LIMIT 1";
-				
+
 				$result = $db->query($sql);
 				if ($result)
 				{
