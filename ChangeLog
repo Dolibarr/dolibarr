@@ -42,6 +42,7 @@ For users:
 - Fix: Warning should not appears for invoice closed
 - Fix: Import for companies works even with prefix empty.
 - Fix: bug #28895 : Création d'utilisateur impossible.
+- Fix: Can change password if has only permission change password.
 
 For developers:
 - Qual: Reorganize /dev directory.
