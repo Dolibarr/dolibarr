@@ -71,17 +71,19 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *    \brief      Cree un projet en base
+	 *    \brief      Create a project into database
 	 *    \param      user        Id utilisateur qui cree
 	 *    \return     int         <0 si ko, id du projet cree si ok
 	 */
 	function create($user, $notrigger=0)
 	{
+		$ret=0;
+
 		// Check parameters
 		if (! trim($this->ref))
 		{
 			$this->error='ErrorFieldsRequired';
-			dol_syslog("Project::Create error -1 ref null");
+			dol_syslog("Project::Create error -1 ref null", LOG_ERR);
 			return -1;
 		}
 
@@ -112,8 +114,8 @@ class Project extends CommonObject
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
-			$result = $this->id;
-			
+			$ret = $this->id;
+
 			if (! $notrigger)
 			{
 	            // Call triggers
@@ -128,10 +130,10 @@ class Project extends CommonObject
 		{
 			$this->error=$this->db->lasterror();
 			dol_syslog("Project::Create error -2 ".$this->error, LOG_ERR);
-			$result = -2;
+			$ret = -2;
 		}
 
-		return $result;
+		return $ret;
 	}
 
 
@@ -173,7 +175,7 @@ class Project extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// End call triggers
 				}
-				
+
 				$result = 0;
 			}
 			else
@@ -364,7 +366,7 @@ class Project extends CommonObject
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // End call triggers
 			}
-			
+
 			return 1;
 		}
 		else
