@@ -119,14 +119,20 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 	{
 		$commande = new Commande($db);
 		$commande->fetch($_GET['id']);
+		$commande->fetch_client();
+
 		$result = $commande->delete_line($_GET['lineid']);
 		if ($result > 0)
 		{
+			// Define output language
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			$newlang='';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				$outputlangs->setDefaultLang($newlang);
 			}
 			commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
 		}
@@ -445,11 +451,15 @@ if ($_POST['action'] == 'addline' && $user->rights->commande->creer)
 
 				if ($result > 0)
 				{
+					// Define output language
 					$outputlangs = $langs;
-					if (! empty($_REQUEST['lang_id']))
+					$newlang='';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+						$outputlangs->setDefaultLang($newlang);
 					}
 					commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 
@@ -478,6 +488,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 {
 	$commande = new Commande($db,'',$_POST['id']);
 	if (! $commande->fetch($_POST['id']) > 0) dol_print_error($db);
+	$commande->fetch_client();
 
 	// Clean parameters
 	$date_start='';
@@ -541,11 +552,15 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 		if ($result >= 0)
 		{
+			// Define output language
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			$newlang='';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				$outputlangs->setDefaultLang($newlang);
 			}
 			commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 		}
@@ -568,15 +583,20 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);	// Load order and lines
+	$commande->fetch_client();
 
 	$result=$commande->valid($user);
 	if ($result	>= 0)
 	{
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
@@ -605,15 +625,20 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 	 */
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);		// Load order and lines
+	$commande->fetch_client();
 
 	$result = $commande->set_draft($user);
 	if ($result	>= 0)
 	{
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
@@ -627,15 +652,22 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db,'',$_GET['id']);
 	$commande->fetch($_GET['id']);
+	$commande->fetch_client();
 	$commande->line_up($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
+
 	commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
 	exit;
 }
@@ -644,15 +676,21 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db,'',$_GET['id']);
 	$commande->fetch($_GET['id']);
+	$commande->fetch_client();
 	$commande->line_down($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
 	exit;
 }
@@ -667,16 +705,22 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$commande = new Commande($db, 0, $_REQUEST['id']);
 	$result=$commande->fetch($_REQUEST['id']);
+	$commande->fetch_client();
+
 	if ($_REQUEST['model'])
 	{
 		$commande->setDocModel($user, $_REQUEST['model']);
 	}
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$commande->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	$result=commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	if ($result <= 0)
@@ -1274,7 +1318,7 @@ else
 			 */
 			if ($_GET['action'] == 'delete')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1302,7 +1346,7 @@ else
 					$text.='<br>';
 					$text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$commande->socid);
 				}
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1311,7 +1355,7 @@ else
 			 */
 			if ($_GET['action'] == 'close')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1320,7 +1364,7 @@ else
 			 */
 			if ($_GET['action'] == 'cancel')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1329,7 +1373,7 @@ else
 			 */
 			if ($_GET['action'] == 'ask_deleteline')
 			{
-				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+				$ret=$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -1371,7 +1415,7 @@ else
 			print '</td><td colspan="3">';
 			if ($user->rights->commande->creer && $_GET['action'] == 'refcustomer')
 			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="set_ref_client">';
 				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
@@ -1737,13 +1781,13 @@ else
 							}
 							else
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
 								print img_edit();
 								print '</a>';
 							}
 							print '</td>';
 							print '<td align="center">';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
 							print img_delete();
 							print '</a></td>';
 							if ($num > 1)
@@ -1777,7 +1821,7 @@ else
 						print '<form action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 						print '<input type="hidden" name="action" value="updateligne">';
-						print '<input type="hidden" name="id" value="'.$id.'">';
+						print '<input type="hidden" name="id" value="'.$commande->id.'">';
 						print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
 						print '<tr '.$bc[$var].'>';
 						print '<td>';
@@ -1886,9 +1930,9 @@ else
 				print '</tr>';
 
 				// Add free products/services form
-				print '<form action="fiche.php?id='.$id.'#add" method="post">';
+				print '<form action="fiche.php?id='.$commande->id.'#add" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="id" value="'.$id.'">';
+				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 				print '<input type="hidden" name="action" value="addline">';
 
 				$var=true;
@@ -1958,9 +2002,9 @@ else
 					print '<td colspan="4">&nbsp;</td>';
 					print '</tr>';
 
-					print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'#add" method="post">';
+					print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="id" value="'.$id.'">';
+					print '<input type="hidden" name="id" value="'.$commande->id.'">';
 					print '<input type="hidden" name="action" value="addline">';
 
 					$var=!$var;

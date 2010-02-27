@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009  Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2009       Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2010  Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-	\file       htdocs/fichinter/info.php
-	\ingroup    fichinter
-	\brief      Page d'affichage des infos d'une fiche d'intervention
-	\version    $Id$
-*/
+ *	\file       htdocs/fichinter/info.php
+ *	\ingroup    fichinter
+ *	\brief      Page d'affichage des infos d'une fiche d'intervention
+ *	\version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
@@ -51,7 +51,7 @@ $societe = new Societe($db);
 $societe->fetch($fichinter->socid);
 
 $head = fichinter_prepare_head($fichinter);
-dol_fiche_head($head, 'info', $langs->trans('InterventionCard'));
+dol_fiche_head($head, 'info', $langs->trans('InterventionCard'), 0, 'intervention');
 
 $fichinter->info($fichinter->id);
 

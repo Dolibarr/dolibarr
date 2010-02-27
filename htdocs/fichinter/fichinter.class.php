@@ -370,6 +370,30 @@ class Fichinter extends CommonObject
 	}
 
 	/**
+	 *	\brief      Return clicable name (with picto eventually)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		$picto='intervention';
+
+		$label=$langs->trans("Show").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
+	/**
 	 *      \brief      Verifie si la ref n'est pas deja utilisee
 	 *      \param	    soc  		            objet societe
 	 */

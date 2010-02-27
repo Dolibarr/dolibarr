@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/fichinter/index.php
- *	\brief      Page accueil espace fiches interventions
+ *	\brief      List of all interventions
  *	\ingroup    ficheinter
  *	\version    $Id$
  */
@@ -87,7 +87,7 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$fichinter_static=new Fichinter($db);
+	$interventionstatic=new Fichinter($db);
 
 	$urlparam="&amp;socid=$socid";
 	print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php",$urlparam,$sortfield,$sortorder,'',$num);
@@ -127,13 +127,17 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"fiche.php?id=".$objp->fichid."\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
+		print "<td>";
+		$interventionstatic->id=$objp->fichid;
+		$interventionstatic->ref=$objp->ref;
+		print $interventionstatic->getNomUrl(1);
+		print "</td>\n";
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44)."</a></td>\n";
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
 		print '<td align="center">'.dol_print_date($objp->dp,'dayhour')."</td>\n";
 		print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
-		print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
+		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
 
 		print "</tr>\n";
 

@@ -186,11 +186,15 @@ if ($_REQUEST['action'] == 'builddoc')
 		$donation->setDocModel($user, $_REQUEST['model']);
 	}
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$donation->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	$result=don_create($db, $donation->id, '', $donation->modelpdf, $outputlangs);
 	if ($result <= 0)

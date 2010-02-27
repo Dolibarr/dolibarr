@@ -172,7 +172,7 @@ if ($id > 0)
 
 
 		$head = fichinter_prepare_head($fichinter);
-		dol_fiche_head($head, 'contact', $langs->trans("InterventionCard"));
+		dol_fiche_head($head, 'contact', $langs->trans("InterventionCard"), 0, 'intervention');
 
 
 		/*

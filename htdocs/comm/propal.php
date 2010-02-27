@@ -135,13 +135,18 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 	{
 		$propal = new Propal($db);
 		$propal->fetch($_GET['propalid']);
+		$propal->fetch_client();
 		$result = $propal->delete_product($_GET['lineid']);
 
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	}
@@ -161,6 +166,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 	$result=$propal->valid($user);
 	if ($result >= 0)
 	{
+		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
@@ -313,15 +319,18 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		{
 			$db->commit();
 
-			// Generation document PDF
+			// Define output language
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			$newlang='';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				$outputlangs->setDefaultLang($newlang);
 			}
 			propale_pdf_create($db, $id, $_REQUEST['model'], $outputlangs);
-			dol_syslog('Redirect to '.$_SERVER["PHP_SELF"].'?propalid='.$id);
+
 			Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$id);
 			exit;
 		}
@@ -615,14 +624,20 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 	 */
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
+	$propal->fetch_client();
 	$propal->set_draft($user);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
+
 	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
@@ -758,11 +773,15 @@ if ($_POST['action'] == "addline" && $user->rights->propale->creer)
 
 			if ($result > 0)
 			{
+				// Define output language
 				$outputlangs = $langs;
-				if (! empty($_REQUEST['lang_id']))
+				$newlang='';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+				if (! empty($newlang))
 				{
 					$outputlangs = new Translate("",$conf);
-					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+					$outputlangs->setDefaultLang($newlang);
 				}
 				propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 
@@ -791,6 +810,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 		dol_print_error($db,$propal->error);
 		exit;
 	}
+	$propal->fetch_client();
 
 	// Define info_bits
 	$info_bits=0;
@@ -822,11 +842,15 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 			'HT',
 		$info_bits);
 
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	}
@@ -839,16 +863,22 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
+	$propal->fetch_client();
+
 	if ($_REQUEST['model'])
 	{
 		$propal->setDocModel($user, $_REQUEST['model']);
 	}
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	$result=propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	if ($result <= 0)
@@ -913,15 +943,21 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db, '', $_GET["propalid"]);
 	$propal->fetch($_GET['propalid']);
+	$propal->fetch_client();
 	$propal->line_up($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
 	exit;
 }
@@ -930,15 +966,21 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db, '', $_GET["propalid"]);
 	$propal->fetch($_GET['propalid']);
+	$propal->fetch_client();
 	$propal->line_down($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$propal->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
 	exit;
 }

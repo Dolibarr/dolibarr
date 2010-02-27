@@ -17,10 +17,10 @@
  */
 
 /**
- \file       htdocs/fichinter/note.php
- \ingroup    fichinter
- \brief      Fiche d'information sur une fiche d'intervention
- \version    $Id$
+ *	\file       htdocs/fichinter/note.php
+ *	\ingroup    fichinter
+ *	\brief      Fiche d'information sur une fiche d'intervention
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
@@ -99,13 +99,13 @@ if ($_GET['id'])
 		if ( $societe->fetch($fichinter->socid) )
 		{
 			$head = fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'note', $langs->trans('InterventionCard'));
+			dol_fiche_head($head, 'note', $langs->trans('InterventionCard'), 0, 'intervention');
 
 			print '<table class="border" width="100%">';
 
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fichinter->ref.'</td></tr>';
 
-			// Société
+			// Sociï¿½tï¿½
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
 			// Note publique
@@ -126,7 +126,7 @@ if ($_GET['id'])
 			}
 			print "</td></tr>";
 
-			// Note privée
+			// Note privï¿½e
 			if (! $user->societe_id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
@@ -146,7 +146,7 @@ if ($_GET['id'])
 				}
 				print "</td></tr>";
 			}
-				
+
 			print "</table>";
 
 			print '</div>';

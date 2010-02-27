@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,20 +28,19 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 
-llxHeader();
-
 /*
- * Liste
- *
+ * View
  */
+
+llxHeader();
 
 if ($sortorder == "")
 {
-  $sortorder="ASC";
+	$sortorder="ASC";
 }
 if ($sortfield == "")
 {
-  $sortfield="f.datei";
+	$sortfield="f.datei";
 }
 
 if ($page == -1) { $page = 0 ; }
@@ -61,13 +60,13 @@ $sql.= " AND f.entity = ".$conf->entity;
 
 if ($socid > 0)
 {
-  $sql .= " AND s.rowid = " . $socid;
+	$sql .= " AND s.rowid = " . $socid;
 }
 
 if (empty ($MM))
-  $MM=strftime("%m",time());
+$MM=strftime("%m",time());
 if (empty($YY))
-  $YY=strftime("%Y",time());;
+$YY=strftime("%Y",time());;
 echo "<div class='noprint'>";
 echo "\n<form action='rapport.php'>";
 echo "<input type='hidden' name='socid' value='".$socid."'>";
@@ -80,13 +79,13 @@ echo "</div>";
 $start="$YY-$MM-01 00:00:00";
 if ($MM ==12)
 {
-  $y = $YY+1;
-  $end="$y-01-01 00:00:00";
+	$y = $YY+1;
+	$end="$y-01-01 00:00:00";
 }
 else
 {
-  $m = $MM+1;
-  $end="$YY-$m-01 00:00:00";
+	$m = $MM+1;
+	$end="$YY-$m-01 00:00:00";
 }
 $sql .= " AND datei >= '".$start."' AND datei < '".$end."'" ;
 
@@ -94,52 +93,51 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 
 if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  $title = $langs->trans("Report")." ".dol_print_date(strtotime($start),"%B %Y");
-  print_barre_liste($title, $page, "rapport.php","&socid=".$socid,$sortfield,$sortorder,'',$num);
+	$num = $db->num_rows();
+	$title = $langs->trans("Report")." ".dol_print_date(strtotime($start),"%B %Y");
+	print_barre_liste($title, $page, "rapport.php","&socid=".$socid,$sortfield,$sortorder,'',$num);
 
-  $i = 0;
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-  print "<tr class=\"liste_titre\">";
-  print '<td>Num</td>';
-  if (empty($socid))
-    print '<td>'.$langs->trans("Customers").'</td>';
-  print '<td align="center">'.$langs->trans("Description").'</td>';
+	$i = 0;
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	print "<tr class=\"liste_titre\">";
+	print '<td>Num</td>';
+	if (empty($socid))
+	print '<td>'.$langs->trans("Customers").'</td>';
+	print '<td align="center">'.$langs->trans("Description").'</td>';
 
-  print '<td align="center">Date</td>';
-  print '<td align="center">'.$langs->trans("Duration").'</td>';
-  print "</tr>\n";
-  $var=True;
-  $DureeTotal = 0;
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object();
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$objp->fichid.'">'.$objp->ref.'</a></td>\n';
+	print '<td align="center">Date</td>';
+	print '<td align="center">'.$langs->trans("Duration").'</td>';
+	print "</tr>\n";
+	$var=True;
+	$DureeTotal = 0;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object();
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print '<td><a href="fiche.php?id='.$objp->fichid.'">'.$objp->ref.'</a></td>\n';
 
-      if (empty($socid))
-      {
-	if (!empty($MM))
-	  $filter="&MM=$MM&YY=$YY";
-        print '<td><a href="rapport.php?socid='.$objp->socid.$filter.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-        print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid.$filter."\">".$objp->nom."</a></TD>\n";
-      }
-      print '<td>'.nl2br($objp->description).'</td>';
-      print "<td>".dol_print_date($objp->dp,"%d %B %Y")."</td>\n";
-      print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
-      $DureeTotal += $objp->duree;
-      print "</tr>\n";
+		if (empty($socid))
+		{
+			if (!empty($MM)) $filter="&MM=$MM&YY=$YY";
+			print '<td><a href="rapport.php?socid='.$objp->socid.$filter.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
+			print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid.$filter."\">".$objp->nom."</a></TD>\n";
+		}
+		print '<td>'.nl2br($objp->description).'</td>';
+		print "<td>".dol_print_date($objp->dp,"%d %B %Y")."</td>\n";
+		print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
+		$DureeTotal += $objp->duree;
+		print "</tr>\n";
 
-      $i++;
-    }
-  print "</table>";
-  $db->free();
-  print "<br />".$langs->trans("Total")." $DureeTotal jour[s]";
+		$i++;
+	}
+	print "</table>";
+	$db->free();
+	print "<br />".$langs->trans("Total")." $DureeTotal jour[s]";
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 $db->close();
 

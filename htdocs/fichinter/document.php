@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/contrat/document.php
-        \ingroup    contrat
-        \brief      Page des documents joints sur les contrats
-        \version    $Id$
-*/
+ *       \file       htdocs/fichinter/document.php
+ *       \ingroup    fichinter
+ *       \brief      Page des documents joints sur les contrats
+ *       \version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
@@ -128,7 +128,7 @@ if ($object->id)
 
 	$head=fichinter_prepare_head($object, $user);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("InterventionCard"));
+	dol_fiche_head($head, 'documents',  $langs->trans("InterventionCard"), 0, 'intervention');
 
 
 	// Construit liste des fichiers

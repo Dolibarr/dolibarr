@@ -53,13 +53,13 @@ if ($_GET["id"] > 0) {
 	$fichinter = new Fichinter($db);
 
 	if ( $fichinter->fetch($_GET["id"], $user->societe_id) > 0)
-		{
+	{
 		$soc = new Societe($db, $fichinter->socid);
 		$soc->fetch($fichinter->socid);
 
 
 		$head = fichinter_prepare_head($fichinter);
-    dol_fiche_head($head, 'preview', $langs->trans("InterventionCard"));
+		dol_fiche_head($head, 'preview', $langs->trans("InterventionCard"), 0, 'intervention');
 
 
 		/*
@@ -86,16 +86,16 @@ if ($_GET["id"] > 0) {
 
 				print '<table class="border" width="100%">';
 
-			    // Ref
-			    print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
-			    print '<td colspan="2">'.$fichinter->ref.'</td>';
+				// Ref
+				print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
+				print '<td colspan="2">'.$fichinter->ref.'</td>';
 
-			    $nbrow=4;
+				$nbrow=4;
 				print '<td rowspan="'.$nbrow.'" valign="top" width="50%">';
 
 				/*
-  			 	 * Documents
- 				 */
+				 * Documents
+				 */
 				$fichinterref = dol_sanitizeFileName($fichinter->ref);
 				$dir_output = $conf->ficheinter->dir_output . "/";
 				$filepath = $dir_output . $fichinterref . "/";
@@ -104,7 +104,7 @@ if ($_GET["id"] > 0) {
 				$relativepath = "${fichinterref}/${fichinterref}.pdf";
 				$relativepathdetail = "${fichinterref}/${fichinterref}-detail.pdf";
 
-        		// Chemin vers png apercus
+				// Chemin vers png apercus
 				$relativepathimage = "${fichinterref}/${fichinterref}.pdf.png";
 				$fileimage = $file.".png";          // Si PDF d'1 page
 				$fileimagebis = $file.".png.0";     // Si PDF de plus d'1 page
@@ -167,22 +167,22 @@ if ($_GET["id"] > 0) {
 				print "</td></tr>";
 
 
-		        // Client
-		        print "<tr><td>".$langs->trans("Customer")."</td>";
-		        print '<td colspan="2">';
-		        print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id.'">'.$societe->nom.'</a>';
-		        print '</td>';
-		        print '</tr>';
+				// Client
+				print "<tr><td>".$langs->trans("Customer")."</td>";
+				print '<td colspan="2">';
+				print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id.'">'.$societe->nom.'</a>';
+				print '</td>';
+				print '</tr>';
 
-		        // Statut
-		        print '<tr><td>'.$langs->trans("Status").'</td>';
-		        print "<td colspan=\"2\">".$fichinter->getLibStatut(4)."</td>\n";
-		        print '</tr>';
+				// Statut
+				print '<tr><td>'.$langs->trans("Status").'</td>';
+				print "<td colspan=\"2\">".$fichinter->getLibStatut(4)."</td>\n";
+				print '</tr>';
 
-		        // Date
-		        print '<tr><td>'.$langs->trans("Date").'</td>';
-		        print "<td colspan=\"2\">".dol_print_date($fichinter->date,"daytext")."</td>\n";
-		        print '</tr>';
+				// Date
+				print '<tr><td>'.$langs->trans("Date").'</td>';
+				print "<td colspan=\"2\">".dol_print_date($fichinter->date,"daytext")."</td>\n";
+				print '</tr>';
 
 				print '</table>';
 			}
@@ -190,31 +190,31 @@ if ($_GET["id"] > 0) {
 			dol_print_error($db);
 		}
 	} else {
-	// Intervention non trouv�e
-	print $langs->trans("ErrorFichinterNotFound",$_GET["id"]);
+		// Intervention non trouv�e
+		print $langs->trans("ErrorFichinterNotFound",$_GET["id"]);
 	}
 }
 
 // Si fichier png PDF d'1 page trouv�
 if (file_exists($fileimage))
-	{
+{
 	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($relativepathimage).'">';
-	}
+}
 // Si fichier png PDF de plus d'1 page trouv�
 elseif (file_exists($fileimagebis))
+{
+	$multiple = $relativepathimage . ".";
+
+	for ($i = 0; $i < 20; $i++)
 	{
-		$multiple = $relativepathimage . ".";
+		$preview = $multiple.$i;
 
-		for ($i = 0; $i < 20; $i++)
+		if (file_exists($dir_output.$preview))
 		{
-			$preview = $multiple.$i;
-
-			if (file_exists($dir_output.$preview))
-      {
-      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($preview).'"><p>';
-      }
+			print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($preview).'"><p>';
 		}
 	}
+}
 
 
 print '</div>';

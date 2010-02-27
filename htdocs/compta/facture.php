@@ -143,14 +143,20 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && $_REQUEST['confirm'] =
 	{
 		$fac = new Facture($db);
 		$fac->fetch($_GET['facid']);
+		$fac->fetch_client();
+
 		$result = $fac->deleteline($_GET['rowid'], $user);
 		if ($result > 0)
 		{
+			// Define output language
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			$newlang='';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				$outputlangs->setDefaultLang($newlang);
 			}
 			$result=facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 			if ($result > 0)
@@ -306,11 +312,15 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	$result = $fac->set_valid($user);
 	if ($result >= 0)
 	{
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
@@ -325,6 +335,7 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
+	$fac->fetch_client();
 
 	// On verifie si la facture a des paiements
 	$sql = 'SELECT pf.amount';
@@ -359,11 +370,15 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier)
 	{
 		$fac->set_draft($user);
 
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
@@ -987,11 +1002,15 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 
 	if ($result > 0)
 	{
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 
@@ -1016,6 +1035,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 {
 	$fac = new Facture($db,'',$_POST['facid']);
 	if (! $fac->fetch($_POST['facid']) > 0) dol_print_error($db);
+	$fac->fetch_client();
 
 	// Clean parameters
 	$date_start='';
@@ -1078,11 +1098,15 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$type
 		);
 
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
@@ -1105,15 +1129,21 @@ if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db,'',$_GET['facid']);
 	$fac->fetch($_GET['facid']);
+	$fac->fetch_client();
 	$fac->line_up($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
 	exit;
 }
@@ -1122,15 +1152,21 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db,'',$_GET['facid']);
 	$fac->fetch($_GET['facid']);
+	$fac->fetch_client();
 	$fac->line_down($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
 	exit;
 }
@@ -1390,17 +1426,22 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$fac = new Facture($db, 0, $_GET['facid']);
 	$fac->fetch($_GET['facid']);
+	$fac->fetch_client();
 
 	if ($_REQUEST['model'])
 	{
 		$fac->setDocModel($user, $_REQUEST['model']);
 	}
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	$result=facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	if ($result <= 0)
@@ -3598,11 +3639,15 @@ else
 				// Construit PDF si non existant
 				if (! is_readable($file))
 				{
+					// Define output language
 					$outputlangs = $langs;
-					if (! empty($_REQUEST['lang_id']))
+					$newlang='';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+						$outputlangs->setDefaultLang($newlang);
 					}
 					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 					if ($result <= 0)
@@ -3663,11 +3708,15 @@ else
 				// Construit PDF si non existant
 				if (! is_readable($file))
 				{
+					// Define output language
 					$outputlangs = $langs;
-					if (! empty($_REQUEST['lang_id']))
+					$newlang='';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
+					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+						$outputlangs->setDefaultLang($newlang);
 					}
 					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
 					if ($result <= 0)

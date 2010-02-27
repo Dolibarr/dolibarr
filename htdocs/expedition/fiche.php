@@ -144,8 +144,26 @@ if ($_REQUEST["action"] == 'confirm_valid' && $_REQUEST["confirm"] == 'yes' && $
 {
 	$expedition = new Expedition($db);
 	$expedition->fetch($_GET["id"]);
+	$expedition->fetch_client();
+
 	$result = $expedition->valid($user);
-	//$expedition->PdfWrite();
+
+	// Define output language
+	$outputlangs = $langs;
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$expedition->client->default_lang;
+	if (! empty($newlang))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($newlang);
+	}
+	$result=expedition_pdf_create($db,$expedition->id,$expedition->modelpdf,$outputlangs);
+	if ($result <= 0)
+	{
+		dol_print_error($db,$result);
+		exit;
+	}
 }
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
@@ -177,17 +195,22 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$expedition = new Expedition($db, 0, $_REQUEST['id']);
 	$expedition->fetch($_REQUEST['id']);
+	$expedition->fetch_client();
 
 	if ($_REQUEST['model'])
 	{
 		$expedition->setDocModel($user, $_REQUEST['model']);
 	}
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$expedition->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	$result=expedition_pdf_create($db,$expedition->id,$expedition->modelpdf,$outputlangs);
 	if ($result <= 0)

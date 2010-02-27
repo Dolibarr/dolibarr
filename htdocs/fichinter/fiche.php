@@ -85,17 +85,21 @@ if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && ! ($_REQU
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 {
 	$fichinter = new Fichinter($db);
-	$fichinter->id = $_GET["id"];
 	$fichinter->fetch($_GET["id"]);
+	$fichinter->fetch_client();
 
 	$result = $fichinter->setValid($user, $conf->fichinter->outputdir);
 	if ($result >= 0)
 	{
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		$result=fichinter_create($db, $fichinter, $_REQUEST['model'], $outputlangs);
 		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$fichinter->id);
@@ -110,17 +114,21 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 if ($_REQUEST['action'] == 'confirm_modify' && $_REQUEST['confirm'] == 'yes')
 {
 	$fichinter = new Fichinter($db);
-	$fichinter->id = $_GET["id"];
 	$fichinter->fetch($_GET["id"]);
+	$fichinter->fetch_client();
 
 	$result = $fichinter->setDraft($user);
 	if ($result >= 0)
 	{
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		$result=fichinter_create($db, $fichinter, (empty($_REQUEST['model'])?$fichinter->model:$_REQUEST['model']), $outputlangs);
 		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$fichinter->id);
@@ -186,6 +194,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
+	$fichinter->fetch_client();
 	$fichinter->fetch_lines();
 
 	if ($_REQUEST['model'])
@@ -193,11 +202,15 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$fichinter->setDocModel($user, $_REQUEST['model']);
 	}
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	$result=fichinter_create($db, $fichinter, $_REQUEST['model'], $outputlangs);
 	if ($result <= 0)
@@ -243,6 +256,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 	{
 		$fichinter = new Fichinter($db);
 		$ret=$fichinter->fetch($_POST['fichinterid']);
+		$fichinter->fetch_client();
 
 		$desc=$_POST['np_desc'];
 		$date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
@@ -255,11 +269,15 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 		$duration
 		);
 
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST['fichinterid']);
@@ -278,12 +296,15 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 		dol_print_error($db);
 		exit;
 	}
+
 	$fichinter = new Fichinter($db);
 	if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
 	{
 		dol_print_error($db);
 		exit;
 	}
+	$fichinter->fetch_client();
+
 	$desc=$_POST['np_desc'];
 	$date_intervention = dol_mktime($_POST["dihour"], $_POST["dimin"], 0, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
 	$duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
@@ -298,11 +319,15 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 		exit;
 	}
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 
@@ -339,11 +364,15 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 			exit;
 		}
 
+		// Define output language
 		$outputlangs = $langs;
-		if (! empty($_REQUEST['lang_id']))
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			$outputlangs->setDefaultLang($newlang);
 		}
 		fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 	}
@@ -359,13 +388,18 @@ if ($_GET['action'] == 'up' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
+	$fichinter->fetch_client();
 	$fichinter->line_up($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
@@ -376,13 +410,18 @@ if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
+	$fichinter->fetch_client();
 	$fichinter->line_down($_GET['rowid']);
 
+	// Define output language
 	$outputlangs = $langs;
-	if (! empty($_REQUEST['lang_id']))
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fichinter->client->default_lang;
+	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$outputlangs->setDefaultLang($newlang);
 	}
 	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
@@ -440,11 +479,11 @@ if ($_GET["action"] == 'create')
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
-		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Company").'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
 
 		print '<input type="hidden" name="action" value="add">';
 
-		print '<tr><td>'.$langs->trans("Ref").'</td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
 		print '<td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
 
 		if ($conf->projet->enabled)
@@ -476,25 +515,28 @@ if ($_GET["action"] == 'create')
 		print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
 		print '</td></tr>';
 
-		print '<tr><td colspan="2" align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</td></tr>';
-
 		print '</table>';
+
+		print '<center><br>';
+		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
+		print '</center>';
+
 		print '</form>';
 	}
 	else
 	{
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 		print '<table class="border" width="100%">';
-		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Company").'</td><td>';
 		$html->select_societes('','socid','',1,1);
 		print '</td></tr>';
-		print '<tr><td colspan="2" align="center">';
+		print '</table>';
+
+		print '<br><center>';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</td></tr>';
-		print '</table>';
+		print '</center>';
+
 		print '</form>';
 	}
 
@@ -513,7 +555,7 @@ elseif ($fichinterid)
 
 	$head = fichinter_prepare_head($fichinter);
 
-	dol_fiche_head($head, 'card', $langs->trans("InterventionCard"));
+	dol_fiche_head($head, 'card', $langs->trans("InterventionCard"), 0, 'intervention');
 
 	// Confirmation de la suppression de la fiche d'intervention
 	if ($_GET['action'] == 'delete')
