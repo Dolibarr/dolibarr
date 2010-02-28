@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - admin 
+# Dolibarr language file - es_ES - admin
 CHARSET = UTF-8
 Version = Versión
 VersionProgram = Versión programa
@@ -638,6 +638,8 @@ Database = Base de datos
 DatabaseServer = Host de la base de datos
 DatabaseName = Nombre de la base de datos
 DatabasePort = puerto de la base de datos
+DatabaseUser = Login de la base de datos
+DatabasePassword = Contraseña de la base de datos
 DatabaseConfiguration = Configuración de la base de datos
 Tables = Tablas
 TableName = Nombre de la tabla
