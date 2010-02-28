@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,11 @@
  *		\author		Put author name here
  *		\remarks	Put here some comments
  */
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
+
+// Change this following line to use the correct relative path (../, ../../, etc)
+require("../main.inc.php");
+// Change this following line to use the correct relative path from htdocs (do not remove DOL_DOCUMENT_ROOT)
+require_once(DOL_DOCUMENT_ROOT."/skeleton/skeleton_class.class.php");
 
 // Load traductions files requiredby by page
 $langs->load("companies");
