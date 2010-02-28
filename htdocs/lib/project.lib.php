@@ -101,14 +101,14 @@ function task_prepare_head($object)
 	$head[$h][2] = 'task';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("TimeSpent");
-	$head[$h][2] = 'time';
-	$h++;
-
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Affectations");
 	$head[$h][2] = 'contact';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("TimeSpent");
+	$head[$h][2] = 'time';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id;
@@ -478,8 +478,8 @@ function clean_orphelins($db)
 	// There is orphelins. We clean that
 	$listofid=array();
 
+	// Get list of id in array listofid
 	$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
-
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -500,7 +500,8 @@ function clean_orphelins($db)
 	if (sizeof($listofid))
 	{
 		// Removed orphelins records
-		print 'Some orphelins were found and restored to be parents so records are visible again.';
+		print 'Some orphelins were found and restored to be parents so records are visible again: ';
+		print join(',',$listofid);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " SET fk_task_parent = 0";

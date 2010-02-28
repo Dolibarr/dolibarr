@@ -595,7 +595,7 @@ class Task extends CommonObject
 	 */
 	function addTimeSpent($user, $notrigger=0)
 	{
-		$result = 0;
+		$ret = 0;
 
 		// Clean parameters
 		$this->timespent_duration = intval($this->timespent_duration)+(($this->timespent_duration-intval($this->timespent_duration))*(1+2/3));
@@ -612,15 +612,15 @@ class Task extends CommonObject
 		$sql.= $this->id;
 		$sql.= ", '".$this->db->idate($this->timespent_date)."'";
 		$sql.= ", ".$this->timespent_duration;
-		$sql.= ", ".$user->id;
+		$sql.= ", ".$this->timespent_fk_user;
 		$sql.= ", ".(isset($this->timespent_note)?"'".addslashes($this->timespent_note)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
-			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
-			$result = 0;
+			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
+			$ret = $task_id;
 
 			if (! $notrigger)
 			{
@@ -635,30 +635,26 @@ class Task extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error,LOG_ERR);
-			$result = -2;
+			dol_syslog(get_class($this)."::addTimeSpent error -1 ".$this->error,LOG_ERR);
+			$ret = -1;
 		}
 
-		if ($result == 0)
+		if ($ret >= 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
-			if ($this->db->query($sql) )
-			{
-				$result = 0;
-			}
-			else
+			if (! $this->db->query($sql) )
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::addTimeSpent error -3 ".$this->error, LOG_ERR);
-				$result = -2;
+				dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
+				$ret = -2;
 			}
 		}
 
-		return $result;
+		return $ret;
 	}
 
     /**

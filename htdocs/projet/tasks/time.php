@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,14 +19,15 @@
  */
 
 /**
- *	\file       htdocs/projet/tasks/task.php
+ *	\file       htdocs/projet/tasks/time.php
  *	\ingroup    projet
- *	\brief      Fiche taches d'un projet
+ *	\brief      Page to add new time spent on a task
  *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
@@ -35,28 +36,43 @@ if (!$user->rights->projet->lire) accessforbidden();
  */
 if ($_POST["action"] == 'addtimespent' && $user->rights->projet->creer)
 {
-	if ($_POST["timespent_note"] && $_POST["timespent_duration"])
+	$error=0;
+
+	if (empty($_POST["timespent_durationhour"]) && empty($_POST["timespent_durationmin"]))
+	{
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		$error++;
+	}
+
+	if (! $error)
 	{
 		$task = new Task($db);
 		$task->fetch($_POST["id"]);
 
 		$task->timespent_note = $_POST["timespent_note"];
-		$task->timespent_duration = $_POST["timespent_duration"];
+		$task->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
 		$task->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
-		  		
-		$task->addTimeSpent($user);
+		$task->timespent_fk_user = $_POST["userid"];
+
+		$result=$task->addTimeSpent($user);
+		if ($result >= 0)
+		{
+
+		}
+		else
+		{
+			$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
+		}
 	}
 	else
 	{
-		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
 		$_POST["action"]='';
 	}
 }
 
 if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
-	
+
 }
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->creer)
@@ -96,7 +112,7 @@ if ($_GET["id"] > 0)
 	{
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-		
+
 		// To verify role of users
 		$userAccess = $projectstatic->restrictedProjectArea($user);
 
@@ -105,7 +121,7 @@ if ($_GET["id"] > 0)
 		dol_fiche_head($head, 'time', $langs->trans("Task"),0,'projecttask');
 
 		if ($mesg) print $mesg.'<br>';
-		
+
 		if ($_GET["action"] == 'deleteline')
 		{
 			$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&lineid='.$_GET["lineid"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
@@ -136,58 +152,65 @@ if ($_GET["id"] > 0)
 		print '</td></tr>';
 
 		print '</table>';
+
 		print '</div>';
-		
+
 		/*
 		 * Add time spent
 		 */
 		if ($user->rights->projet->creer && $userAccess)
 		{
+			print '<br>';
+
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addtimespent">';
 			print '<input type="hidden" name="id" value="'.$task->id.'">';
-			
+
 			print '<table class="noborder" width="100%">';
-			
+
 			print '<tr class="liste_titre">';
-			print '<td width="50%">'.$langs->trans("Note").'</td>';
+			print '<td width="100">'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("By").'</td>';
-			print '<td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="2">'.$langs->trans("Duration").'</td>';
+			print '<td>'.$langs->trans("Note").'</td>';
+			print '<td align="right">'.$langs->trans("Duration").'</td>';
+			print '<td width="80">&nbsp;</td>';
 			print "</tr>\n";
-			
-			print '<tr>';
-			
-			// Note
-			print '<td nowrap="nowrap" width="50%">';
-			print '<textarea name="timespent_note" cols="80" rows="4"></textarea>';
-			print '</td>';
-			
-			// Contributor
-			print '<td nowrap="nowrap">';
-			print '&nbsp;'; // TODO ajout liste deroulante des participants
-			print '</td>';
-			
+
+			print '<tr '.$bc[false].'>';
+
 			// Date
 			print '<td nowrap="nowrap">';
-			print $html->select_date('','time','','','',"timespent_date");
+			$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+			print $html->select_date($newdate,'time','','','',"timespent_date");
 			print '</td>';
-			
-			// Duration
+
+			// Contributor
 			print '<td nowrap="nowrap">';
-			print '<input size="4" type="text" class="flat" name="timespent_duration" value="">';
+			// TODO We should use here a combo list with contacts affected to task only
+			print $html->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid');
 			print '</td>';
-			
-			print '<td>';
+
+			// Note
+			print '<td nowrap="nowrap">';
+			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_3.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
+			print '</td>';
+
+			// Duration
+			print '<td nowrap="nowrap" align="right">';
+			print $html->select_duree('timespent_duration');
+			//print '<input size="4" type="text" class="flat" name="timespent_duration" value="">';
+			print '</td>';
+
+			print '<td align="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 			print '</td></tr>';
-			
+
 			print '</table></form>';
 		}
 
 		print '<br>';
-		
+
 		/*
 		 *  List of time spent
 		 */
@@ -218,28 +241,46 @@ if ($_GET["id"] > 0)
 		{
 			dol_print_error($db);
 		}
-		
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="updateline">';
 		print '<input type="hidden" name="id" value="'.$task->id.'">';
-		
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="50%">'.$langs->trans("Note").'</td>';
+		print '<td width="100">'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("By").'</td>';
-		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td align="left">'.$langs->trans("Note").'</td>';
 		print '<td align="right">'.$langs->trans("Duration").'</td>';
-		print '<td colspan="2">&nbsp;</td>';
+		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
   		    print "<tr ".$bc[$var].">";
-  		    
-  		    // Note
-  		    print '<td width="50%">';
+
+  		    // Date
+  		    print '<td>';
+  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+  		    {
+  		    	print $html->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
+  		    }
+  		    else
+  		    {
+  		    	print dol_print_date($db->jdate($task_time->task_date),'day');
+  		    }
+  		    print '</td>';
+
+  		    // User
+			$user->id		= $task_time->fk_user;
+		    $user->nom		= $task_time->name;
+		    $user->prenom 	= $task_time->firstname;
+		    print '<td>'.$user->getNomUrl(1).'</td>';
+
+ 		    // Note
+  		    print '<td align="left">';
   		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
   		    	print '<textarea name="timespent_note" cols="80" rows="4">'.$task_time->note.'</textarea>';
@@ -249,25 +290,7 @@ if ($_GET["id"] > 0)
   		    	print dol_nl2br($task_time->note);
   		    }
   		    print '</td>';
-  		    
-  		    // User
-			$user->id		= $task_time->fk_user;
-		    $user->nom		= $task_time->name;
-		    $user->prenom 	= $task_time->firstname;
-		    print '<td>'.$user->getNomUrl(1).'</td>';
 
-  		    // Date
-  		    print '<td>';
-  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print $html->select_date($task_time->task_date,'timeline','','','',"timespent_date");
-  		    }
-  		    else
-  		    {
-  		    	print dol_print_date($db->jdate($task_time->task_date),'%A').' '.dol_print_date($db->jdate($task_time->task_date),'daytext');
-  		    }
-  		    print '</td>';
-  		    
   		    // Time spent
   		    print '<td align="right">';
   		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
@@ -276,16 +299,12 @@ if ($_GET["id"] > 0)
   		    }
   		    else
   		    {
-  		    	// TODO add function
-  		    	$hour = intval($task_time->task_duration);
-  		    	$minutes = round((($task_time->task_duration - $hour) * 60),0);
-  		    	$minutes = substr("00"."$minutes", -2);
-  		    	print $hour."&nbsp;h&nbsp;".$minutes;
+				print ConvertSecondToTime($task_time->task_duration,'all');
   		    }
   		    print '</td>';
-			
+
 			// Edit and delete icon
-			print '<td align="center" valign="middle">';
+			print '<td align="center" valign="middle" width="80">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
   		    	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -298,14 +317,14 @@ if ($_GET["id"] > 0)
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.'">';
 				print img_edit();
 				print '</a>';
-				
+
 				print '&nbsp;';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.'">';
 				print img_delete();
 				print '</a>';
 			}
 			print '</td>';
-			
+
 			print "</tr>\n";
 		}
 

@@ -289,7 +289,7 @@ else
 	print '</div>';
 
 	// Test if database is clean. If not we clean it.
-	//print '$nboftaskshown='.$nboftaskshown.' sizeof($tasksarray)='.sizeof($tasksarray).' sizeof($tasksrole)='.sizeof($tasksrole).'<br>';
+	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' sizeof($tasksarray)='.sizeof($tasksarray).' sizeof($tasksrole)='.sizeof($tasksrole).'<br>';
 	if ($_REQUEST["mode"]=='mine')
 	{
 		if ($nboftaskshown < sizeof($tasksrole)) clean_orphelins($db);
