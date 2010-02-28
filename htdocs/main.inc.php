@@ -594,25 +594,26 @@ if (! defined('NOLOGIN'))
 }
 
 
-
-if (empty($_GET["lang"]))	// If language was not forced on URL
+if (! defined('NOREQUIRETRAN'))
 {
-	// If user has chosen its own language
-	if (! empty($user->conf->MAIN_LANG_DEFAULT))
+	if (empty($_GET["lang"]))	// If language was not forced on URL
 	{
-		// If different than current language
-		//print ">>>".$langs->getDefaultLang()."-".$user->conf->MAIN_LANG_DEFAULT;
-		if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
+		// If user has chosen its own language
+		if (! empty($user->conf->MAIN_LANG_DEFAULT))
 		{
-			$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+			// If different than current language
+			//print ">>>".$langs->getDefaultLang()."-".$user->conf->MAIN_LANG_DEFAULT;
+			if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
+			{
+				$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+			}
 		}
 	}
+	else	// If language was forced on URL
+	{
+		$langs->setDefaultLang($_GET["lang"]);
+	}
 }
-else	// If language was forced on URL
-{
-	$langs->setDefaultLang($_GET["lang"]);
-}
-
 
 // Case forcing style from url
 if (! empty($_GET["theme"]))

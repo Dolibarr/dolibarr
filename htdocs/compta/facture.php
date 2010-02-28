@@ -506,7 +506,6 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 {
 	$facture = new Facture($db);
 	$facture->socid=$_POST['socid'];
-	$facture->fetch_client();
 
 	$db->begin();
 
@@ -530,6 +529,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		{
 			// This is a replacement invoice
 			$result=$facture->fetch($_POST['fac_replacement']);
+			$facture->fetch_client();
 
 			$facture->date           = $datefacture;
 			$facture->note_public    = trim($_POST['note_public']);
@@ -889,6 +889,11 @@ if (($_POST['action'] == 'addline' || $_POST['action'] == 'addline_predef') && $
 	if (empty($_POST['idprod']) && (! isset($_POST["pu"]) || $_POST["pu"]==''))	// Unit price can be 0 but not ''
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")).'</div>';
+		$result = -1 ;
+	}
+	if (empty($_POST['idprod']) && empty($_POST["np_desc"]) && empty($_POST["dp_desc"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 		$result = -1 ;
 	}
 	if (! isset($_POST['qty']) || $_POST['qty']=='')

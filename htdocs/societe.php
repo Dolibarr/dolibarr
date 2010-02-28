@@ -25,7 +25,7 @@
  *	\version    $Id$
  */
 
-require_once("./pre.inc.php");
+require_once("./main.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("companies");
