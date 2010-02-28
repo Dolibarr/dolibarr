@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/categories/edit.php
-        \ingroup    category
-        \brief      Page d'edition de categorie produit
-        \version    $Id$
-*/
+ *      \file       htdocs/categories/edit.php
+ *      \ingroup    category
+ *      \brief      Page d'edition de categorie produit
+ *      \version    $Id$
+ */
 
 require "./pre.inc.php";
 
@@ -95,7 +95,7 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 
 
 /*
- * Affichage fiche
+ * View
  */
 
 llxHeader("","",$langs->trans("Categories"));
@@ -125,7 +125,7 @@ print '<input type="hidden" name="id" value="'.$categorie->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 print '<table class="border" width="100%">';
-print '<tr><td>';
+print '<tr><td class="fieldrequired">';
 print $langs->trans("Ref").'</td>';
 print '<td><input type="text" size="25" id="nom" name ="nom" value="'.$categorie->label.'" />';
 print '</tr>';

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -340,7 +340,7 @@ function formCategory($db,$object,$type,$typeid)
 				print "<td>";
 				//$c->id=;
 				//print $c->getNomUrl(1);
-				print $way."</td>";
+				print img_object('','category').' '.$way."</td>";
 
 				// Lien supprimer
 				print '<td align="right">';

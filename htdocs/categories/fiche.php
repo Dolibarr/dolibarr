@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -208,7 +208,7 @@ if ($user->rights->categorie->creer)
 
 		print '<table width="100%" class="border">';
 		print '<tr>';
-		print '<td width="25%">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
+		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
 		print'</td></tr>';
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 
@@ -256,12 +256,14 @@ if ($user->rights->categorie->creer)
 			print $html->selectyesno("visible", 1,1);
 			print '</td></tr>';
 		}
-		print '<tr><td colspan="2" align="center">';
+		print '</table>';
+
+		print '<center><br>';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel" />';
-		print '</td></tr>';
-		print '</table>';
+		print '</center>';
+
 		print '</form>';
 	}
 }
