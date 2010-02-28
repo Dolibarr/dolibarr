@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +105,7 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.deductible, p.code as pays_code, p.libelle as pays, a.fk_pays as pays_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
 $tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
@@ -125,7 +126,7 @@ $tabsqlsort[6] ="a.type ASC, a.code ASC";
 $tabsqlsort[7] ="pays ASC, code ASC, a.libelle ASC";
 $tabsqlsort[8] ="libelle ASC";
 $tabsqlsort[9] ="code ASC";
-$tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC";
+$tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
 $tabsqlsort[12]="sortorder ASC, code ASC";
 $tabsqlsort[13]="code ASC";
@@ -146,7 +147,7 @@ $tabfield[6] = "code,libelle,type";
 $tabfield[7] = "code,libelle,pays_id,pays,deductible";
 $tabfield[8] = "code,libelle";
 $tabfield[9] = "code,code_iso,libelle";
-$tabfield[10]= "pays_id,pays,taux,recuperableonly,note";
+$tabfield[10]= "pays_id,pays,taux,recuperableonly,localtax1,localtax2,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type";
@@ -167,7 +168,7 @@ $tabfieldvalue[6] = "code,libelle,type";
 $tabfieldvalue[7] = "code,libelle,pays,deductible";
 $tabfieldvalue[8] = "code,libelle";
 $tabfieldvalue[9] = "code,code_iso,libelle";
-$tabfieldvalue[10]= "pays,taux,recuperableonly,note";
+$tabfieldvalue[10]= "pays,taux,recuperableonly,localtax1,localtax2,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldvalue[13]= "code,libelle,type";
@@ -188,7 +189,7 @@ $tabfieldinsert[6] = "code,libelle,type";
 $tabfieldinsert[7] = "code,libelle,fk_pays,deductible";
 $tabfieldinsert[8] = "code,libelle";
 $tabfieldinsert[9] = "code,code_iso,label";
-$tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
+$tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1,localtax2,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldinsert[13]= "code,libelle,type";

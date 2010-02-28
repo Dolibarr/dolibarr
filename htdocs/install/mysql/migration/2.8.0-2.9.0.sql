@@ -28,7 +28,7 @@ update llx_facture_fourn set fk_statut=2 where fk_statut=1 AND paye=1;
 alter table llx_facture_fourn add column close_code          varchar(16) after remise;
 alter table llx_facture_fourn add column close_note          varchar(128) after close_code;
 
---add local taxes to invoices
+--add local taxes
 alter table llx_facture add column localtax1 double(24,8) DEFAULT 0 after tva;
 alter table llx_facture add column localtax2 double(24,8) DEFAULT 0 after localtax1;
 alter table llx_facturedet add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
@@ -36,10 +36,12 @@ alter table llx_facturedet add column localtax2_tx double(6,3) DEFAULT 0 after l
 alter table llx_facturedet add column total_localtax1 double(24,8) DEFAULT 0 after total_tva;
 alter table llx_facturedet add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
 
-
 alter table llx_facture_rec add column localtax1 double(24,8) DEFAULT 0 after tva;
 alter table llx_facture_rec add column localtax2 double(24,8) DEFAULT 0 after localtax1;
 alter table llx_facturedet_rec add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
 alter table llx_facturedet_rec add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
 alter table llx_facturedet_rec add column total_localtax1 double(24,8) DEFAULT 0 after total_tva;
 alter table llx_facturedet_rec add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
+
+alter table llx_c_tva add column localtax1 double NOT NULL DEFAULT 0 after recuperableonly;
+alter table llx_c_tva add column localtax2 double NOT NULL DEFAULT 0 after localtax1;
