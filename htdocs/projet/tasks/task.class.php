@@ -56,7 +56,7 @@ class Task extends CommonObject
 	var $statut;
 	var $note_private;
 	var $note_public;
-	
+
 	var $timespent_id;
 	var $timespent_duration;
 	var $timespent_date;
@@ -305,7 +305,7 @@ class Task extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf, $langs;
-		
+
 		$error=0;
 
 		$this->db->begin();
@@ -431,7 +431,7 @@ class Task extends CommonObject
 	}
 
 	/**
-	 * Return list of task for all projects or a particular project
+	 * Return list of task for all projects or for one particular project
 	 * Sort order is on project, TODO then of position of task, and last on title of first level task
 	 * @param	usert		Object user to limit task affected to a particular user
 	 * @param	userp		Object user to limit projects of a particular user and public projects
@@ -555,7 +555,7 @@ class Task extends CommonObject
 		if ($projectid)
 		{
 			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
-			//if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
+			if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
 		}
 		if ($taskid)
 		{
@@ -596,7 +596,7 @@ class Task extends CommonObject
 	function addTimeSpent($user, $notrigger=0)
 	{
 		$result = 0;
-		
+
 		// Clean parameters
 		$this->timespent_duration = intval($this->timespent_duration)+(($this->timespent_duration-intval($this->timespent_duration))*(1+2/3));
 		$this->timespent_duration = price2num($this->timespent_duration);
@@ -621,7 +621,7 @@ class Task extends CommonObject
 		{
 			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
 			$result = 0;
-			
+
 			if (! $notrigger)
 			{
 	            // Call triggers
@@ -660,7 +660,7 @@ class Task extends CommonObject
 
 		return $result;
 	}
-	
+
     /**
      *    \brief      Load object in memory from database
      *    \param      id          id object
@@ -717,14 +717,14 @@ class Task extends CommonObject
 	function delTimeSpent($user, $notrigger=0)
 	{
 		global $conf, $langs;
-		
+
 		$error=0;
-		
+
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
 		$sql.= " WHERE rowid = ".$this->timespent_id;
-	
+
 		dol_syslog(get_class($this)."::delTimeSpent sql=".$sql);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
@@ -741,7 +741,7 @@ class Task extends CommonObject
 		        // End call triggers
 			}
 		}
-		
+
 		if (! $error)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
