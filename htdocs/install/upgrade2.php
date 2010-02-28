@@ -256,9 +256,9 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_relationship_tables($db,$langs,$conf,'fa_pr','fk_propal','propal','fk_facture','facture');
 
 			migrate_relationship_tables($db,$langs,$conf,'co_fa','fk_commande','commande','fk_facture','facture');
-			
+
 			migrate_project_user_resp($db,$langs,$conf);
-			
+
 			migrate_project_task_actors($db,$langs,$conf);
 		}
 
@@ -1720,7 +1720,8 @@ function migrate_delete_old_files($db,$langs,$conf)
 }
 
 /*
- * Supprime fichiers obsoletes
+ * Disable/Reenable features modules.
+ * We must do this when internal menu of module or permissions has changed
  */
 function migrate_module_menus($db,$langs,$conf)
 {
@@ -2479,7 +2480,7 @@ function migrate_project_user_resp($db,$langs,$conf)
 					$sql2.= ", '160'";
 					$sql2.= ", ".$obj->fk_user_resp;
 					$sql2.= ")";
-					
+
 					if ($obj->fk_user_resp > 0)
 					{
 						$resql2=$db->query($sql2);
@@ -2569,7 +2570,7 @@ function migrate_project_task_actors($db,$langs,$conf)
 					$sql2.= ", '180'";
 					$sql2.= ", ".$obj->fk_user;
 					$sql2.= ")";
-					
+
 					$resql2=$db->query($sql2);
 
 					if (!$resql2)

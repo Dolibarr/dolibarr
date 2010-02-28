@@ -25,12 +25,12 @@
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-require("../master.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
-
 // C'est un wrapper, donc header vierge
 function llxHeader() { print '<html><title>Export cal</title><body>'; }
 function llxFooter() { print '</body></html>'; }
+
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
 
 // Security check
 if (! $conf->webcal->enabled)
@@ -102,15 +102,15 @@ if ($result >= 0)
 	$encoding='UTF-8';
 	$type='text/calendar';
 	//$type='text/calendar';
-	
+
 	if ($encoding)   header('Content-Encoding: '.$encoding);
 	if ($type)       header('Content-Type: '.$type);
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-	
+
 	// Ajout directives pour resoudre bug IE
 	//header('Cache-Control: Public, must-revalidate');
 	//header('Pragma: public');
-	 
+
 	// Clean parameters
 	$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 	$result=readfile($outputfile);

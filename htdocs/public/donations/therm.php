@@ -37,8 +37,9 @@ if (empty($conf->don->enabled)) accessforbidden('',1,1,1);
 
 
 /*
- * 	View
+ * 	View (output an image)
  */
+
 $dontherm = new Don($db);
 
 $intentValue  = $dontherm->sum_donations(1);

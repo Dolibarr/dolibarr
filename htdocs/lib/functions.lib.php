@@ -234,11 +234,14 @@ function dol_syslog($message, $level=LOG_INFO)
 		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
-		// Load error message files if this is an error message (rare)
+		// Translate error message if this is an error message (rare) and langs is loaded
 		if ($level == LOG_ERR)
 		{
-			$langs->load("errors");
-			if ($message != $langs->trans($message)) $message = $langs->trans($message);
+			if (is_object($langs))
+			{
+				$langs->load("errors");
+				if ($message != $langs->trans($message)) $message = $langs->trans($message);
+			}
 		}
 
 		// Add page/script name to log message

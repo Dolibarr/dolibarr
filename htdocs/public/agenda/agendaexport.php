@@ -26,6 +26,10 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
+// C'est un wrapper, donc header vierge
+function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>'; }
+function llxFooterVierge() { print '</body></html>'; }
+
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 
@@ -47,11 +51,6 @@ if (! empty($_GET["login"]))    $filters['login']=$_GET["login"];
 if (! empty($_GET["logina"]))   $filters['logina']=$_GET["logina"];
 if (! empty($_GET["logint"]))   $filters['logint']=$_GET["logint"];
 if (! empty($_GET["logind"]))   $filters['logind']=$_GET["logind"];
-
-
-// C'est un wrapper, donc header vierge
-function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>'; }
-function llxFooterVierge() { print '</body></html>'; }
 
 
 // Check config

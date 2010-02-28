@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -24,7 +24,7 @@
  *	\file       htdocs/document.php
  *  \brief      Wrapper to download data files
  *  \version    $Id$
- *  \remarks    Call of this wrapper is mad with URL:
+ *  \remarks    Call of this wrapper is made with URL:
  * 				document.php?modulepart=repfichierconcerne&file=pathrelatifdufichier
  */
 
@@ -37,19 +37,21 @@ $modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
 $urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
 // Pour autre que bittorrent, on charge environnement + info issus de logon (comme le user)
-if (($modulepart == 'bittorrent') && ! defined("NOLOGIN")) define("NOLOGIN",1);
+if (($modulepart == 'bittorrent') && ! defined("NOLOGIN"))
+{
+	define("NOLOGIN",1);
+	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+}
 
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-require("./main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-
-
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
+require("./main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 // Define mime type
 $type = 'application/octet-stream';

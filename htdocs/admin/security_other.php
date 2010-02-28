@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,30 +178,23 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Enable Captcha code
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
-print '<td align="center" width="60">';
-if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
-{
-	print img_tick();
-}
-print '</td>';
-print '<td align="center" width="100">';
+print '<td align="center">';
 if (function_exists("imagecreatefrompng"))
 {
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
 	{
-		print '<a href="security_other.php?action=activate_captcha">'.$langs->trans("Activate").'</a>';
+		print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	}
 	if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
 	{
-		print '<a href="security_other.php?action=disable_captcha">'.$langs->trans("Disable").'</a>';
+		print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'on').'</a>';
 	}
 }
 else

@@ -29,16 +29,16 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 $datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
 $format=isset($_GET["format"])? $_GET["format"] : (isset($_POST["format"])?$_POST["format"]:'');
 
-require("../master.inc.php");
+// C'est un wrapper, donc header vierge
+function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
+function llxFooter() { print '</body></html>'; }
+
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
 
 $langs->load("exports");
-
-// C'est un wrapper, donc header vierge
-function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
-function llxFooter() { print '</body></html>'; }
 
 // Check exportkey
 if (empty($datatoimport))

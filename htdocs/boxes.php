@@ -19,11 +19,11 @@
  */
 
 /**
- \file       htdocs/boxes.php
- \brief      Fichier de la classe boxes
- \author     Rodolphe Qiedeville
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/boxes.php
+ *	\brief      Fichier de la classe boxes
+ *	\author     Rodolphe Qiedeville
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 

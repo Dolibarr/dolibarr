@@ -248,7 +248,7 @@ if (! empty($_SESSION["disablemodules"]))
 // Init Smarty
 if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 {
-	// Usage of const in conf.php file can overwrite default dir.
+	// Usage of const in conf.php file (deprecated) can overwrite default dir.
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
@@ -259,7 +259,6 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 		$smarty = new Smarty();
 		$smarty->compile_dir = $dolibarr_smarty_compile;
 		$smarty->cache_dir = $dolibarr_smarty_cache;
-		//$smarty->config_dir = '/web/www.domain.com/smarty/configs';
 	}
 	else
 	{
@@ -621,23 +620,25 @@ if (! empty($_GET["theme"]))
 	$conf->theme=$_GET["theme"];
 	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php";
 }
-// Style sheet must be a php file
-//$conf->css.=".php";
 
 // Define menu manager to use
 if (empty($user->societe_id))    // If internal user or not defined
 {
 	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
 	$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
-	// Pour compatibilite
+	// For backward compatibility
 	if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
+	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_backoffice.php';
+	if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_backoffice.php';
 }
 else                        // If external user
 {
 	$conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
 	$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
+	// For backward compatibility
+	if ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_frontoffice.php';
+	if ($conf->left_menu == 'rodolphe.php') $conf->left_menu='eldy_frontoffice.php';
 }
-
 
 if (! defined('NOLOGIN'))
 {
@@ -666,9 +667,12 @@ dol_syslog("Access to ".$_SERVER["PHP_SELF"]);
 // For backward compatibility
 if (! defined('MAIN_INFO_SOCIETE_PAYS')) define('MAIN_INFO_SOCIETE_PAYS','1');
 
-// It supports main lang files
-$langs->load("main");
-$langs->load("dict");
+// Load main languages files
+if (! defined('NOREQUIRETRAN'))
+{
+	$langs->load("main");
+	$langs->load("dict");
+}
 
 // Define some constants used for style of arrays
 $bc[0]="class=\"impair\"";

@@ -48,6 +48,8 @@ function llxHeaderVierge($title, $head = "")
 {
 	global $user, $conf, $langs;
 
+	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
 	print "<html>\n";
 	print "<head>\n";
 	print "<title>".$title."</title>\n";
@@ -210,13 +212,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'added')
  * View
  */
 
-llxHeaderVierge($langs->trans("NewSubscription"));
 $html = new Form($db);
-
-print_titre($langs->trans("NewSubscription"));
 
 $adht = new AdherentType($db);
 $adho = new AdherentOptions($db);
+
+llxHeaderVierge($langs->trans("NewSubscription"));
+
+print_titre($langs->trans("NewSubscription"));
 
 // fetch optionals attributes and labels
 $adho->fetch_name_optionals_label();
@@ -268,7 +271,7 @@ print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">**</FONT> Email</td
 print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$login.'"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("Password").'</td><td><input type="password" name="pass1" size="40"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="red">*</FONT> '.$langs->trans("PasswordAgain").'</td><td><input type="password" name="pass2" size="40"></td></tr>'."\n";
-print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Birthday").'<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>'."\n";
 print '<tr><td><FONT COLOR="blue">**</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>'."\n";
 print '<tr><td>'.$langs->trans("Public").' ?</td><td><input type="checkbox" name="public" value="1" checked></td></tr>'."\n";
 foreach($adho->attribute_label as $key=>$value){

@@ -39,8 +39,6 @@ function llxHeader($head = '', $title='', $help_url='')
 
 	$menuarray=array();
 
-	//if ($conf->left_menu == 'rodolphe.php')
-	//{
 	$langs->load("admin");
 	$langs->load("users");
 	$menu = new Menu();
@@ -59,7 +57,6 @@ function llxHeader($head = '', $title='', $help_url='')
 	$menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
 	$menu->add(DOL_URL_ROOT."/admin/tools/", $langs->trans("Tools"));
 	$varmenuarray=$menu->liste;
-	//}
 
 	left_menu($varmenuarray, $help_url);
 }

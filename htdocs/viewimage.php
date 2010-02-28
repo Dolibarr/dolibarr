@@ -41,13 +41,11 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-require("./main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-
-
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
+require("./main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 // Define mime type
 $type = 'application/octet-stream';
@@ -231,24 +229,6 @@ if ($modulepart)
 		$original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;
 	}
 
-	// Wrapping pour les graph telephonie
-	elseif ($modulepart == 'telephoniegraph')
-	{
-		$user->getrights('telephonie');
-		if ($user->rights->telephonie->lire)
-		{
-			$accessallowed=1;
-		}
-		$original_file=$conf->telephonie->dir_temp.'/'.$original_file;
-	}
-
-	// Wrapping pour les graph energie
-	elseif ($modulepart == 'energie')
-	{
-		$accessallowed=1;
-		$original_file=$conf->energie->dir_temp.'/'.$original_file;
-	}
-
 	// Wrapping pour les graph bank
 	elseif ($modulepart == 'bank')
 	{
@@ -329,10 +309,9 @@ if (! $accessallowed)
 // les noms de fichiers.
 if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 {
-	$langs->load("main");
-	dol_syslog("Refused to deliver file ".$original_file);
+	dol_syslog("Refused to deliver file ".$original_file, LOG_WARNING);
 	// Do no show plain path in shown error message
-	dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
+	dol_print_error(0,'Error: File '.$_GET["file"].' does not exists');
 	exit;
 }
 
@@ -372,8 +351,7 @@ else					// Open and return file
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (! file_exists($original_file_osencoded))
 	{
-		$langs->load("main");
-		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
+		dol_print_error(0,'Error: File '.$_GET["file"].' does not exists');
 		exit;
 	}
 

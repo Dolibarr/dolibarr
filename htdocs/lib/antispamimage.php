@@ -18,35 +18,19 @@
  */
 
 /**
-		\file       htdocs/lib/antispamimage.php
-		\brief      Return antispam image
-		\version    $Id$
-*/
+ *		\file       htdocs/lib/antispamimage.php
+ *		\brief      Return antispam image
+ *		\version    $Id$
+ */
+
+define('NOLOGIN',1);
 
 if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
 if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
 if (! defined('NOREQUIRESOC'))  define('NOREQUIRESOC','1');
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
-
-// Add real path in session
-$realpath='';
-if (preg_match('/\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"]))
-{
-	$result = preg_match('/^([^.]+)\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"],$regs);
-	$realpath = $regs[1];
-}
-
-// Init session. Name of session is specific to Dolibarr instance.
-$sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
-$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
-if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
-session_name($sessionname);
-session_start();
-
-require_once("../master.inc.php");
+require_once("../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';
 require_once ARTICHOW."/AntiSpam.class.php";
 
@@ -74,9 +58,5 @@ $object->border->setColor($colorbr);
 
 // On affiche l'image à l'écran
 $object->draw();
-
-
-// C'est un wrapper, donc header vierge
-function llxHeader() { }
 
 ?>
