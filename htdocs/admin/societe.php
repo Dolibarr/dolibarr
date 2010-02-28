@@ -82,13 +82,17 @@ if ($_POST["action"] == 'setModuleOptions')
 {
 	$param=$_POST["param1"];
 	$value=$_POST["value1"];
-	dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+	if ($param) dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
 }
 
 if ($_GET["action"] == 'set')
 {
 	$type='company';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle) VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.", ".($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+	$sql.= " VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.", ";
+	$sql.= ($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').", ";
+	$sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
+	$sql.= ")";
 	if ($db->query($sql))
 	{
 
@@ -112,7 +116,11 @@ if ($_GET["action"] == 'setdoc')
 	$sql_del.= " AND entity = ".$conf->entity;
 	$result1=$db->query($sql_del);
 
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle) VALUES ('".$_GET["value"]."', '".$type."', ".$conf->entity.", ".($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+	$sql.= " VALUES ('".$_GET["value"]."', '".$type."', ".$conf->entity.", ";
+	$sql.= ($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').", ";
+	$sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
+	$sql.= ")";
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -346,7 +354,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						print "<td align=\"center\">\n";
 						if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"),'on');
 							print '</a>';
 						}
@@ -359,7 +367,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 						print "</td>";
 					}
 
@@ -371,7 +379,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 					}
 					print '</td>';
 

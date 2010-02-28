@@ -1425,7 +1425,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 }
 
 /*
- * Generer ou regenerer le document PDF
+ * Generate document
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {

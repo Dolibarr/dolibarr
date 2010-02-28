@@ -53,6 +53,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->db = $db;
 		$this->name = "Generic ODT";
 		$this->description = $langs->trans("DocumentModelOdt");
+		$this->scandir = 'COMPANY_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
 		// Dimension page pour format A4
 		$this->type = 'odt';
@@ -69,8 +70,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
 	}
 
-	/**		\brief      Renvoi la description du module
-	 *      \return     string      Texte descripif
+	/**		\brief      Return description of a module
+	 *      \return     string      Description
 	 */
 	function info($langs)
 	{
@@ -85,13 +86,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte.= '<input type="hidden" name="param1" value="COMPANY_ADDON_PDF_ODTPATH">';
+		$texte.= '<input type="hidden" name="param1" value="COMPANY_ADDON_PDF_ODT_PATH">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
 		$texte.= '<tr><td>';
 		$textbis=$langs->trans("ListOfDirectories");
-		$listofdir=explode(',',preg_replace('/\r\n/',',',trim($conf->global->COMPANY_ADDON_PDF_ODTPATH)));
+		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->COMPANY_ADDON_PDF_ODT_PATH)));
 		$listoffiles=array();
 		foreach($listofdir as $key=>$tmpdir)
 		{
@@ -109,7 +110,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		//var_dump($listofdir);
 
 		$texte.= '<textarea class="flat" cols="80" name="value1">';
-		$texte.=$conf->global->COMPANY_ADDON_PDF_ODTPATH;
+		$texte.=$conf->global->COMPANY_ADDON_PDF_ODT_PATH;
 		$texte.= '</textarea>';
 
 		// Scan directories
@@ -136,12 +137,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	}
 
 	/**
-	 *	\brief      Fonction generant le projet sur le disque
-	 *	\param	    delivery		Object project a generer
-	 *	\param		outputlangs		Lang output object
-	 *	\return	    int         	1 if OK, <=0 if KO
+	 *	\brief      Function to build a document on disk using the generic odt module.
+	 *	\param	    object				Object source to build document
+	 *	\param		outputlangs			Lang output object
+	 * 	\param		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	\return	    int         		1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object,$outputlangs,$srctemplatepath)
 	{
 		global $user,$langs,$conf;
 
@@ -155,7 +157,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$outputlangs->load("companies");
 		$outputlangs->load("projects");
 
-		if ($conf->projet->dir_output)
+		if ($conf->societe->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -167,44 +169,67 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				if ($result < 0)
 				{
 					dol_print_error($db,$object->error);
+					return -1;
 				}
 			}
 
-			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->projet->dir_output;
+			$objectref = dol_sanitizeFileName($object->id);
+			$dir = $conf->societe->dir_output;
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
-			$file = $dir . "/" . $objectref . ".pdf";
+			$file = $dir . "/" . $objectref . ".odt";
 
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
 				{
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-					return 0;
+					return -1;
 				}
 			}
 
 			if (file_exists($dir))
 			{
-				// $file
+				//print "srctemplatepath=".$srctemplatepath;	// Src filename
+				$newfile=basename($srctemplatepath);
+				$file=$dir.'/'.$newfile;
+				//print "newdir=".$dir;
+				//print "newfile=".$newfile;
 
+				create_exdir($conf->societe->dir_temp);
 
+				// Define substitution array
+				$soc=array('societe'=>'bb','nom'=>'ee','name'=>'tt');
 
+				// Read template
+				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
+				$odfHandler = new odf($srctemplatepath, array(
+						'PATH_TO_TMP'	=>		$conf->societe->dir_temp.'/',
+						'ZIP_PROXY'		=>		'PhpZipProxy'));
+
+				// Make substitution
+				foreach($soc as $socProperty=>$socPropertyValue){
+					try {
+						$odfHandler->setVars($socProperty, $socPropertyValue, true, 'UTF-8');
+					} catch(OdfException $e) {}
+				}
+
+				// Write new file
+				//$result=$odfHandler->exportAsAttachedFile('toto');
+				$odfHandler->saveToDisk($file);
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				return 1;   // Pas d'erreur
+				return 1;   // Success
 			}
 			else
 			{
 				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-				return 0;
+				return -1;
 			}
 		}
 
-		$this->error=$langs->transnoentities("ErrorConstantNotDefined","LIVRAISON_OUTPUTDIR");
-		return 0;
+		return -1;
 	}
 
 }

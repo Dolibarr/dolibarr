@@ -46,10 +46,9 @@ class ModeleThirdPartyDoc
 
 		$type='company';
 		$liste=array();
-		$dirtoscan=preg_replace('/\r\n/',',',trim($conf->global->COMPANY_ADDON_PDF_ODTPATH));
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,$dirtoscan);
+		$liste=getListOfModels($db,$type);
 
 		return $liste;
 	}
@@ -269,5 +268,81 @@ class ModeleAccountancyCode
         return $langs->trans("NotAvailable");
     }
 }
+
+
+
+
+/**
+ *	\brief   	Create a document for third party
+ *	\param   	db  			Database handler
+ *	\param   	id				Id of third party to use
+ *	\param	    message			Message
+ *	\param	    modele			Force model to use ('' to not force). model can be a model name or a template file.
+ *	\param		outputlangs		Objet lang to use for translation
+ *	\return  	int        		<0 if KO, >0 if OK
+ */
+function thirdparty_doc_create($db, $id, $message, $modele, $outputlangs)
+{
+	global $conf,$langs;
+	$langs->load("bills");
+
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/societe/doc";
+	$srctemplatepath='';
+
+	// Positionne modele sur le nom du modele a utiliser
+	if (! strlen($modele))
+	{
+		if ($conf->global->COMPANY_ADDON_PDF)
+		{
+			$modele = $conf->global->COMPANY_ADDON_PDF;
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
+			return 0;
+		}
+	}
+
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+	if (! empty($tmp[1]))
+	{
+		$modele=$tmp[0];
+		$srctemplatepath=$tmp[1];
+	}
+
+	// Charge le modele
+	$file = "doc_".$modele.".modules.php";
+	if (file_exists($dir.'/'.$file))
+	{
+		$classname = "doc_".$modele;
+		require_once($dir.'/'.$file);
+
+		$obj = new $classname($db);
+		$obj->message = $message;
+
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
+		if ($obj->write_file($id, $outputlangs, $srctemplatepath) > 0)
+		{
+			$outputlangs->charset_output=$sav_charset_output;
+			return 1;
+		}
+		else
+		{
+			$outputlangs->charset_output=$sav_charset_output;
+			dol_print_error($db,"thirdparty_doc_create Error: ".$obj->error);
+			return -1;
+		}
+
+	}
+	else
+	{
+		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.'/'.$file));
+		return -1;
+	}
+}
+
 
 ?>
