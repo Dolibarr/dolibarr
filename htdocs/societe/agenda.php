@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,27 +35,10 @@ $langs->load("companies");
 
 $mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
 
-$dbtablename = '';
-if ($_REQUEST["socid"])
-{
-	if ($_REQUEST["typeid"] == 1) { $type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
-	if ($_REQUEST["typeid"] == 2) { $type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
-	$objecttype = 'societe&categorie';
-	$objectid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
-	$fieldid = 'rowid';
-}
-else if ($_REQUEST["id"] || $_REQUEST["ref"])
-{
-	$type = 'produit';
-	$objecttype = 'produit|service&categorie';
-	$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["ref"])?$_REQUEST["ref"]:'');
-	$dbtablename = 'product';
-	$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
-}
-
 // Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user,$objecttype,$objectid,$dbtablename,'','',$fieldid);
+$result = restrictedArea($user, 'societe', $socid);
 
 
 /*
