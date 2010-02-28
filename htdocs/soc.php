@@ -41,6 +41,7 @@ $langs->load("companies");
 $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
+$langs->load("users");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
