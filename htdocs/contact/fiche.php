@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -519,8 +519,8 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print '</td></tr>';
 
 	// Name
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-	print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+	print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td width="30%">'.$contact->name.'</td>';
+	print '<td width="25%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 	// Company
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
