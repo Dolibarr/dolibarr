@@ -39,6 +39,8 @@ if (file_exists($conffile) && isset($dolibarr_main_url_root))
     exit;
 }
 
+$langs->load("admin");
+
 
 /*
  * View
@@ -54,10 +56,7 @@ print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
 print DOL_VERSION.'<br><br>';
 print '</center>';
 
-// Propose la langue d'installation
-$langs->load("admin");
-$langs_available=$langs->get_available_languages("..");
-
+// Ask installation language
 print '<br><br><center>';
 print '<table><tr>';
 print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';

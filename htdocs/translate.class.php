@@ -416,9 +416,9 @@ class Translate {
 	 *               Parameters of this method must not contains any HTML tags.
 	 *  \param       key         key of string to translate
 	 *  \param       param1      chaine de param1
-	 *  \param       param2      chaine de param1
-	 *  \param       param3      chaine de param1
-	 *  \param       param4      chaine de param1
+	 *  \param       param2      chaine de param2
+	 *  \param       param3      chaine de param3
+	 *  \param       param4      chaine de param4
 	 *  \return      string      chaine traduite
 	 */
 	function transnoentities($key, $param1='', $param2='', $param3='', $param4='')

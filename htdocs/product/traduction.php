@@ -68,14 +68,14 @@ $_POST["cancel"] != $langs->trans("Cancel") &&
 	if ( $_POST["lang"] == $current_lang )
 	{
 		$product->libelle		= $_POST["libelle"];
-		$product->description	= $_POST["desc"];
-		$product->note			= $_POST["note"];
+		$product->description	= dol_htmlcleanlastbr($_POST["desc"]);
+		$product->note			= dol_htmlcleanlastbr($_POST["note"]);
 	}
 	else
 	{
 		$product->multilangs[$_POST["lang"]]["libelle"]		= $_POST["libelle"];
-		$product->multilangs[$_POST["lang"]]["description"]	= $_POST["desc"];
-		$product->multilangs[$_POST["lang"]]["note"]		= $_POST["note"];
+		$product->multilangs[$_POST["lang"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
+		$product->multilangs[$_POST["lang"]]["note"]		= dol_htmlcleanlastbr($_POST["note"]);
 	}
 
 	// sauvegarde en base
@@ -104,14 +104,14 @@ $_POST["cancel"] != $langs->trans("Cancel") &&
 		if ( $key == $current_lang )
 		{
 			$product->libelle		= $_POST["libelle-".$key];
-			$product->description	= $_POST["desc-".$key];
-			$product->note			= $_POST["note-".$key];
+			$product->description	= dol_htmlcleanlastbr($_POST["desc-".$key]);
+			$product->note			= dol_htmlcleanlastbr($_POST["note-".$key]);
 		}
 		else
 		{
-			$product->multilangs[$key]["libelle"]			= $_POST["libelle-".$key];
-			$product->multilangs[$key]["description"]	= $_POST["desc-".$key];
-			$product->multilangs[$key]["note"]				= $_POST["note-".$key];
+			$product->multilangs[$key]["libelle"]		= $_POST["libelle-".$key];
+			$product->multilangs[$key]["description"]	= dol_htmlcleanlastbr($_POST["desc-".$key]);
+			$product->multilangs[$key]["note"]			= dol_htmlcleanlastbr($_POST["note-".$key]);
 		}
 	}
 
@@ -292,7 +292,7 @@ if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights-
 
 	print '</form>';
 
-
+	print '<br>';
 }
 llxFooter('$Date$ - $Revision$');
 ?>

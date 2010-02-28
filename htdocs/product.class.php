@@ -605,20 +605,13 @@ class Product extends CommonObject
 
 
 	/**
-	 *		\brief Charge toutes les traductions du produit
+	 *		\brief 	Load array this->multilangs
 	 */
-	function getMultiLangs($langue='')
+	function getMultiLangs()
 	{
 		global $langs;
 
-		$langs_available = $langs->get_available_languages();
-
-		if ( $langue != '')
-		foreach ($langs_available as $key => $value)
-		if ( $key == $langue ) $current_lang = $key; // si $langue est une valeur correcte
-
-		if ( !$current_lang )
-		$current_lang = $langs->getDefaultLang(); // sinon on choisi la langue par defaut
+		$current_lang = $langs->getDefaultLang();
 
 		$sql = "SELECT lang, label, description, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
