@@ -1390,13 +1390,13 @@ else
 
 
 
-	print '<table width="100%"><tr><td width="50%" valign="top">';
+	print '<table width="100%"><tr><td valign="top" width="50%">';
 	print '<a name="builddoc"></a>'; // ancre
 
 	/*
 	 * Documents generes
 	 */
-	$filedir=$conf->societe->dir_output;
+	$filedir=$conf->societe->dir_output.'/'.$soc->id;
 	$urlsource=$_SERVER["PHP_SELF"]."?socid=".$soc->id;
 	$genallowed=$user->rights->societe->creer;
 	$delallowed=$user->rights->societe->supprimer;
@@ -1405,9 +1405,10 @@ else
 
 	$somethingshown=$formfile->show_documents('company','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,28,0,'',0,'',$soc->default_lang);
 
-	print '</td><td>';
-
-	print '</td></tr>';
+	print '</td>';
+	print '<td>';
+	print '</td>';
+	print '</tr>';
 	print '</table>';
 
 	print '<br>';

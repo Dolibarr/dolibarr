@@ -46,7 +46,7 @@ class ModeleThirdPartyDoc
 
 		$type='company';
 		$liste=array();
-		$dirtoscan=$conf->global->COMPANY_ADDON_PDF_ODTPATH;
+		$dirtoscan=preg_replace('/\r\n/',',',trim($conf->global->COMPANY_ADDON_PDF_ODTPATH));
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
 		$liste=getListOfModels($db,$type,$dirtoscan);

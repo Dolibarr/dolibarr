@@ -102,7 +102,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			else
 			{
 				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
-				$listoffiles=array_merge($listoffiles,$tmpfiles);
+				if (sizeof($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
 		$texte.= $form->textwithpicto($textbis,$langs->trans("ListOfDirectoriesForModelGenODT"),1,'help');

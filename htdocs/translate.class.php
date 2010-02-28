@@ -509,7 +509,7 @@ class Translate {
 	 * 	\param		langdir		Directory to scan
 	 *  \return     array     	List of languages
 	 */
-	function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
+	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)
 	{
 		// We scan directory langs to detect available languages
 		$handle=opendir($langdir."/langs");
@@ -520,7 +520,7 @@ class Translate {
 			{
 				$this->load("languages");
 
-				$langs_available[$dir] = $this->trans('Language_'.$dir).' - '.$dir;
+				$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
 			}
 		}
 		return $langs_available;

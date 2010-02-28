@@ -159,6 +159,7 @@ class FormFile
 
 		$filename = dol_sanitizeFileName($filename);
 		$headershown=0;
+		$showempty=0;
 		$i=0;
 
 		print "\n".'<!-- Start show_document -->'."\n";
@@ -170,6 +171,7 @@ class FormFile
 			$modellist=array();
 			if ($modulepart == 'company')
 			{
+				$showempty=1;
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
 				{
@@ -320,11 +322,13 @@ class FormFile
 			print '<table class="border" summary="listofdocumentstable" width="100%">';
 
 			print '<tr '.$bc[$var].'>';
+
+			// Model
 			if (! empty($modellist))
 			{
 				print '<td align="center">';
 				print $langs->trans('Model').' ';
-				print $html->selectarray('model',$modellist,$modelselected,0,0,1);
+				print $html->selectarray('model',$modellist,$modelselected,$showempty,0,0);
 				print '</td>';
 			}
 			else
@@ -333,8 +337,9 @@ class FormFile
 				print $langs->trans("Files");
 				print '</td>';
 			}
-			print '<td align="center">';
+
 			// Language code (if multilang)
+			print '<td align="center">';
 			if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/html.formadmin.class.php');
@@ -347,6 +352,8 @@ class FormFile
 				print '&nbsp;';
 			}
 			print '</td>';
+
+			// Button
 			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
 			print '<input class="button" ';
 			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
@@ -356,7 +363,9 @@ class FormFile
 				$langs->load("errors");
 				print ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));
 			}
-			print '</td></tr>';
+			print '</td>';
+
+			print '</tr>';
 		}
 
 		// Get list of files
@@ -364,10 +373,10 @@ class FormFile
 		$filter = '';
 		if ($iconPDF==1)
 		{
-			$png = '|\.png$';
+			$png = '\.png$';
 			$filter = $filename.'.pdf';
 		}
-		$file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.$png,'date',SORT_DESC);
+		$file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.($png?'|'.$png:''),'date',SORT_DESC);
 
 		// Affiche en-tete tableau si non deja affiche
 		if (sizeof($file_list) && ! $headershown && !$iconPDF)

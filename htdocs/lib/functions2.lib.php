@@ -1015,7 +1015,8 @@ function picto_from_langcode($codelang)
  * 	\brief		Return list of activated modules of doc generation
  * 	\param		$db			Database handler
  * 	\param		$type		Type of models (company, invoice, ...)
- * 	\param		$dirodts	List of directories to scan for templates
+ * 	\param		$dirodts	List of directories to scan for templates (dir1,dir2,dir3...)
+ * 	\return		array		array(key=>label)
  */
 function getListOfModels($db,$type,$dirtoscan='')
 {
@@ -1035,6 +1036,15 @@ function getListOfModels($db,$type,$dirtoscan='')
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
+
+			// We exclude from list generic modules that use directory scans.
+			// We will add them after.
+			if (preg_match('/_odt$/',$obj->id))
+			{
+				$i++;
+				continue;
+			}
+
 			$liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
 			$i++;
 		}
@@ -1043,6 +1053,30 @@ function getListOfModels($db,$type,$dirtoscan='')
 	{
 		$this->error=$db->error();
 		return -1;
+	}
+
+	// Now we add models found in directories scanned
+	if ($dirtoscan)
+	{
+		$listofdir=explode(',',$dirtoscan);
+		$listoffiles=array();
+		foreach($listofdir as $key=>$tmpdir)
+		{
+			$tmpdir=trim($tmpdir);
+			$tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
+			if (! $tmpdir) { unset($listofdir[$key]); continue; }
+			if (! is_dir($tmpdir)) $textbis.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
+			else
+			{
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				if (sizeof($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+			}
+		}
+
+		foreach($listoffiles as $record)
+		{
+			$liste[$record['fullname']]=dol_trunc($record['name'],24,'middle');
+		}
 	}
 
 	return $liste;

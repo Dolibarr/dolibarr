@@ -58,7 +58,7 @@ class FormAdmin
 	{
 		global $langs;
 
-		$langs_available=$langs->get_available_languages();
+		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
 
 		print '<select class="flat" name="'.$htmlname.'">';
 		if ($showempty)

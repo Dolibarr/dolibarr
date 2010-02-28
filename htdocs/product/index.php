@@ -160,22 +160,22 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  */
 $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente,";
-$sql.= " ".$db->pdate("tms")." as datem";
+$sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
 $sql.= " AND p.entity = ".$conf->entity;
-if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND COALESCE(c.visible,1)=1 ";
+/*if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+	$sql.= " AND COALESCE(c.visible,1)=1 ";
+}*/
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
-$sql.= " ORDER BY p.tms DESC ";
+$sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);
+//print $sql;
 $result = $db->query($sql) ;
-
 if ($result)
 {
 	$num = $db->num_rows($result);
@@ -196,41 +196,41 @@ if ($result)
 
 		while ($i < $num)
 		{
-	  $objp = $db->fetch_object($result);
+			$objp = $db->fetch_object($result);
 
-	  //Multilangs
-	  if ($conf->global->MAIN_MULTILANGS)
-	  {
-	  	$sql = "SELECT label";
-	  	$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-	  	$sql.= " WHERE fk_product=".$objp->rowid;
-	  	$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+			//Multilangs
+			if ($conf->global->MAIN_MULTILANGS)
+			{
+				$sql = "SELECT label";
+				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+				$sql.= " WHERE fk_product=".$objp->rowid;
+				$sql.= " AND lang='". $langs->getDefaultLang() ."'";
 
-	  	$resultd = $db->query($sql);
-	  	if ($resultd)
-	  	{
-	  		$objtp = $db->fetch_object($resultd);
-	  		if ($objtp && $objtp->label != '') $objp->label = $objtp->label;
-	  	}
-	  }
+				$resultd = $db->query($sql);
+				if ($resultd)
+				{
+					$objtp = $db->fetch_object($resultd);
+					if ($objtp && $objtp->label != '') $objp->label = $objtp->label;
+				}
+			}
 
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  print '<td nowrap="nowrap">';
-	  $product_static->id=$objp->rowid;
-	  $product_static->ref=$objp->ref;
-	  $product_static->type=$objp->fk_product_type;
-	  print $product_static->getNomUrl(1,'',16);
-	  print "</td>\n";
-	  print '<td>'.dol_trunc($objp->label,32).'</td>';
-	  print "<td>";
-	  print dol_print_date($objp->datem,'day');
-	  print "</td>";
-	  print '<td align="right" nowrap="nowrap">';
-	  print $product_static->LibStatut($objp->envente,5);
-	  print "</td>";
-	  print "</tr>\n";
-	  $i++;
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print '<td nowrap="nowrap">';
+			$product_static->id=$objp->rowid;
+			$product_static->ref=$objp->ref;
+			$product_static->type=$objp->fk_product_type;
+			print $product_static->getNomUrl(1,'',16);
+			print "</td>\n";
+			print '<td>'.dol_trunc($objp->label,32).'</td>';
+			print "<td>";
+			print dol_print_date($objp->datem,'day');
+			print "</td>";
+			print '<td align="right" nowrap="nowrap">';
+			print $product_static->LibStatut($objp->envente,5);
+			print "</td>";
+			print "</tr>\n";
+			$i++;
 		}
 
 		$db->free();
