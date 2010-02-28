@@ -548,7 +548,7 @@ class Task extends CommonObject
 		if ($projectid)
 		{
 			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
-			//if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
+			if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
 		}
 		if ($taskid)
 		{
