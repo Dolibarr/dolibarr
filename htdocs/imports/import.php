@@ -24,7 +24,7 @@
  *      \version    $Id$
  */
 
-require_once("./pre.inc.php");
+require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/import.class.php");

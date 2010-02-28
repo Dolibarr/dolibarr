@@ -23,7 +23,7 @@
  *       \version    $Id$
  */
 
-require_once("./pre.inc.php");
+require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
 
 $langs->load("exports");
