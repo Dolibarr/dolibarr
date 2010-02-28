@@ -105,7 +105,19 @@ if ($modulepart)
 {
 	// On fait une verification des droits et on definit le repertoire concerne
 
-	// Wrapping pour les factures
+	// Wrapping for third parties
+	if ($modulepart == 'company')
+	{
+		$user->getrights('companies');
+		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->societe->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='$refname'";
+	}
+
+	// Wrapping for invoices
 	if ($modulepart == 'facture')
 	{
 		$user->getrights('facture');

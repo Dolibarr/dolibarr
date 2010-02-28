@@ -123,7 +123,7 @@ class FormFile
 	/**
 	 *      \brief      Show the box with list of available documents for object
 	 *      \param      modulepart          propal=propal, facture=facture, ...
-	 *      \param      filename            Sub dir to scan (use '' if filedir already complete)
+	 *      \param      filename            Sub dir to scan (Example: '9/9', 'FA9999'). Use '' if filedir already complete)
 	 *      \param      filedir             Dir to scan
 	 *      \param      urlsource           Url of origin page (for return)
 	 *      \param      genallowed          Generation is allowed (1/0 or array of formats)
