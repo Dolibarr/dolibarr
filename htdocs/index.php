@@ -26,7 +26,7 @@
 
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
 
-require("./pre.inc.php");
+require("./main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 
@@ -40,6 +40,7 @@ $infobox=new InfoBox($db);
  */
 
 // No actions
+
 
 
 /*
@@ -125,7 +126,7 @@ if ($user->societe_id == 0)
 	! empty($conf->facture->enabled) && $user->rights->facture->lire,
 	! empty($conf->telephonie->enabled) && $user->rights->telephonie->lire,
 	! empty($conf->societe->enabled) && $user->rights->contrat->activer);
-	// Class file containing the method load_state_board for each line 
+	// Class file containing the method load_state_board for each line
 	$includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
 	DOL_DOCUMENT_ROOT."/prospect.class.php",
 	DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
@@ -161,7 +162,7 @@ if ($user->societe_id == 0)
 				'invoices',
                 'sign',
 				'Contracts');
-	// Dashboard Icon lines 
+	// Dashboard Icon lines
 	$icons=array('company',
                  'company',
                  'company',
@@ -185,7 +186,7 @@ if ($user->societe_id == 0)
                   "BillsCustomers",
                   "Lignes de telephonie suivis",
                   "Contracts");
-	// Dashboard Link lines 
+	// Dashboard Link lines
 	$links=array(DOL_URL_ROOT.'/comm/clients.php',
 	DOL_URL_ROOT.'/comm/prospect/prospects.php',
 	DOL_URL_ROOT.'/fourn/index.php',

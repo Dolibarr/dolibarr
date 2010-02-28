@@ -46,7 +46,7 @@ class MenuLeft {
 	 *    \param      db            Handler d'acces base de donnee
 	 *    \param      menu_array    Tableau des entree de menu defini dans les fichier pre.inc.php
 	 */
-	function MenuLeft($db,&$menu_array)
+	function MenuLeft($db,&$menu_array='')
 	{
 		$this->db=$db;
 		$this->menu_array=$menu_array;
@@ -914,7 +914,7 @@ class MenuLeft {
 
 		// Affichage du menu
 		$alt=0;
-		if (sizeof($this->menu_array))
+		if (is_array($this->menu_array))
 		{
 			$contenu = 0;
 			for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)

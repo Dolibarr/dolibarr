@@ -43,10 +43,10 @@ class MenuLeft {
 
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'acc�s base de donn�e
-     *    \param      menu_array    Tableau des entr�e de menu d�fini dans les fichier pre.inc.php
+     *    \param      db      Handler d'acces base de donnee
+     *    \param      menu_array    Tableau des entree de menu defini dans les fichier pre.inc.php
      */
-    function MenuLeft($db,&$menu_array)
+    function MenuLeft($db,&$menu_array='')
     {
       	$this->db=$db;
         $this->menu_array=$menu_array;

@@ -705,6 +705,131 @@ else
 }
 
 
+/**
+ *		\brief   	Show HTML header HTML + BODY + Top menu + left menu + DIV
+ * 		\param   	head
+ * 		\param   	title
+ * 		\param      help_url
+ * 		\param   	target
+ * 		\param   	disablejs
+ * 		\param   	disablehead
+ * 		\param   	arrayofjs
+ * 		\param   	arrayofcss
+ */
+if (! function_exists("llxHeader"))
+{
+	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+	{
+		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+		left_menu('', $help_url);
+	}
+}
+
+
+/**
+ *  \brief      Show an HTML header + a BODY + The top menu bar
+ *  \param      head    	Lines in the HEAD
+ *  \param      title   	Title of web page
+ *  \param      target  	Target to use in menu links
+ *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	\param		disablehead	Do not output head section
+ *	\param		arrayofjs	Array of js files to add in header
+ *	\param		arrayofcss	Array of css files to add in header
+ */
+function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+{
+	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
+
+	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
+	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
+
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
+
+	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
+
+	/*
+	 * Top menu
+	 */
+	print "\n".'<!-- Start top horizontal menu -->'."\n";
+	print '<div class="tmenu">'."\n";
+
+	// Load the top menu manager
+	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
+	if (! $result)	// If failed to include, we try with standard
+	{
+		$conf->top_menu='eldy_backoffice.php';
+		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
+	}
+	$menutop = new MenuTop($db);
+	$menutop->atarget=$target;
+
+	// Affiche le menu
+	$menutop->showmenu();
+
+	// Link to login card
+	print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+	print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	print '>'.$user->login.'</a>';
+
+	// Link info
+	$htmltext=''; $text='';
+	if ($_SESSION["dol_authmode"] != 'forceuser'
+	&& $_SESSION["dol_authmode"] != 'http')
+	{
+		$htmltext=$langs->trans("Logout").'<br>';
+		$htmltext.="<br>";
+
+		$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+		$text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+		$text.='>';
+		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
+		$text.='>';
+		$text.='</a>';
+	}
+	else
+	{
+		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
+		$text.='>';
+	}
+	$htmltext.='<u>'.$langs->trans("User").'</u>';
+	$htmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
+	$htmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+	$htmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
+	$htmltext.='<br>';
+	$htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
+	if ($conf->global->MAIN_MODULE_MULTICOMPANY) $htmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';
+	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
+	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
+	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
+	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
+	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
+	$htmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
+	if (! empty($conf->browser->phone)) $htmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
+
+	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',explode(',',$_SESSION["disablemodules"]));
+
+	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+	//        print ' alt="'.$title.'" title="'.$title.'"';
+	//        print '>';
+	$html=new Form($db);
+	print $html->textwithtooltip('',$htmltext,2,1,$text);
+
+	// Link to print main content area
+	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
+	{
+		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_blank">';
+		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
+		$text.=' title="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'" alt="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'">';
+		$text.='</a>';
+		print $text;
+	}
+
+	print "\n</div>\n<!-- End top horizontal menu -->\n";
+}
+
 
 /**
  *  \brief      Show HTML header
@@ -843,110 +968,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 		print "</head>\n\n";
 	}
-}
-
-/**
- *  \brief      Show an HTML header + a BODY + The top menu bar
- *  \param      head    	Lines in the HEAD
- *  \param      title   	Title of web page
- *  \param      target  	Target to use in menu links
- *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
- *	\param		disablehead	Do not output head section
- *	\param		arrayofjs	Array of js files to add in header
- *	\param		arrayofcss	Array of css files to add in header
- */
-function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
-{
-	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
-
-	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
-	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
-
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
-
-	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
-
-	/*
-	 * Top menu
-	 */
-	print "\n".'<!-- Start top horizontal menu -->'."\n";
-	print '<div class="tmenu">'."\n";
-
-	// Load the top menu manager
-	$result=@include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
-	if (! $result)	// If failed to include, we try with standard
-	{
-		$conf->top_menu='eldy_backoffice.php';
-		include_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
-	}
-	$menutop = new MenuTop($db);
-	$menutop->atarget=$target;
-
-	// Affiche le menu
-	$menutop->showmenu();
-
-	// Link to login card
-	print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
-	print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-	print '>'.$user->login.'</a>';
-
-	// Link info
-	$htmltext=''; $text='';
-	if ($_SESSION["dol_authmode"] != 'forceuser'
-	&& $_SESSION["dol_authmode"] != 'http')
-	{
-		$htmltext=$langs->trans("Logout").'<br>';
-		$htmltext.="<br>";
-
-		$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-		$text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-		$text.='>';
-		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-		$text.='>';
-		$text.='</a>';
-	}
-	else
-	{
-		$text.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-		$text.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-		$text.='>';
-	}
-	$htmltext.='<u>'.$langs->trans("User").'</u>';
-	$htmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
-	$htmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
-	$htmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
-	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
-	$htmltext.='<br>';
-	$htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
-	if ($conf->global->MAIN_MODULE_MULTICOMPANY) $htmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';
-	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
-	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
-	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
-	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
-	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
-	$htmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.' ('.$_SERVER['HTTP_USER_AGENT'].')';
-	if (! empty($conf->browser->phone)) $htmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
-
-	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',explode(',',$_SESSION["disablemodules"]));
-
-	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-	//        print ' alt="'.$title.'" title="'.$title.'"';
-	//        print '>';
-	$html=new Form($db);
-	print $html->textwithtooltip('',$htmltext,2,1,$text);
-
-	// Link to print main content area
-	if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
-	{
-		$text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'&optioncss=print" target="_blank">';
-		$text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
-		$text.=' title="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'" alt="'.dol_escape_htmltag($langs->trans("PrintContentArea")).'">';
-		$text.='</a>';
-		print $text;
-	}
-
-	print "\n</div>\n<!-- End top horizontal menu -->\n";
 }
 
 
