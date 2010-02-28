@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010      Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
@@ -80,12 +82,11 @@ $_POST["cancel"] != $langs->trans("Cancel") &&
 	if ( $product->setMultiLangs() > 0 )
 	{
 		$_GET["action"] = '';
-		$mesg = 'Fiche mise a jour';
 	}
 	else
 	{
 		$_GET["action"] = 'add';
-		$mesg = 'Fiche non mise a jour !' . "<br>" . $product->mesg_error;
+		$mesg = $product->mesg_error;
 	}
 }
 
@@ -165,9 +166,9 @@ if ($_GET["action"] == 'edit')
 
 	foreach ( $product->multilangs as $key => $value)
 	{
-		print "<br /><b><u>".$langs->trans('Language_'.$key)." :</u></b><br />";
+		print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
 		print '<table class="border" width="100%">';
-		print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
+		print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 		{
@@ -196,10 +197,10 @@ if ($_GET["action"] == 'edit')
 		print '</table>';
 	}
 
-	print '<br /><table class="noborder" width="100%">';
-	print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	print '</table>';
+	print '<br><center>';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
 	print '</form>';
 
 }
@@ -209,17 +210,19 @@ else
 	foreach ( $product->multilangs as $key => $value)
 	{
 		$cnt_trans++;
-		print "<br /><b><u>".$langs->trans('Language_'.$key)." :</u></b><br />";
+		$s=picto_from_langcode($key);
+		print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b><br>";
 		print '<table class="border" width="100%">';
 		print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$product->multilangs[$key]["libelle"].'</td></tr>';
 		print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$product->multilangs[$key]["description"].'</td></tr>';
 		print '<tr><td width="15%">'.$langs->trans('Note').'</td><td>'.$product->multilangs[$key]["note"].'</td></tr>';
 		print '</table>';
 	}
-	if ( !$cnt_trans ) print '<br />'. $langs->trans('NoTranslation');
+	if ( !$cnt_trans ) print '<br>'. $langs->trans('NoTranslation');
 }
 
 print "</div>\n";
+
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -232,16 +235,17 @@ print "\n<div class=\"tabsAction\">\n";
 if ($_GET["action"] == '')
 if ($user->rights->produit->creer || $user->rights->service->creer)
 {
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$product->id.'">'.$langs->trans("Update").'</a>';
 	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$product->id.'">'.$langs->trans("Add").'</a>';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$product->id.'">'.$langs->trans("Update").'</a>';
 }
 
 print "\n</div>\n";
 
 
 /*
- * Formulaire d'ajout de traduction
+ * Form to add a new translation
  */
+
 if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	print '<br>';
@@ -249,19 +253,43 @@ if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights-
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+
 	print '<table class="border" width="100%">';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Translation').'</td><td>';
+	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Translation').'</td><td>';
     $formadmin->select_lang('','lang',0,$product->multilangs);
 	print '</td></tr>';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc" rows="3" cols="80"></textarea></td></tr>';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note" rows="3" cols="80"></textarea></td></tr>';
+	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
+	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('desc','',160,'dolibarr_notes','',false);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea name="desc" rows="3" cols="80"></textarea>';
+	}
+	print '</td></tr>';
+	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note','',160,'dolibarr_notes','',false);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea name="note" rows="3" cols="80"></textarea>';
+	}
+	print '</td></tr>';
 	print '</tr>';
 	print '</table>';
-	print '<br /><table class="nobordernopadding" width="100%">';
-	print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	print '</table>';
+
+	print '<br><center>';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
 	print '</form>';
 
 
