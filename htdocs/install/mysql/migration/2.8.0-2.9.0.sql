@@ -43,5 +43,5 @@ alter table llx_facturedet_rec add column localtax2_tx double(6,3) DEFAULT 0 aft
 alter table llx_facturedet_rec add column total_localtax1 double(24,8) DEFAULT 0 after total_tva;
 alter table llx_facturedet_rec add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
 
-alter table llx_c_tva add column localtax1 double NOT NULL DEFAULT 0 after recuperableonly;
+alter table llx_c_tva add column localtax1 double NOT NULL DEFAULT 0 after taux;
 alter table llx_c_tva add column localtax2 double NOT NULL DEFAULT 0 after localtax1;
