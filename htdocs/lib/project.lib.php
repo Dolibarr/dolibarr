@@ -254,14 +254,14 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 			{
 				print "&nbsp;&nbsp;&nbsp;";
 			}
-
 			print $lines[$i]->label;
 			print "</td>\n";
 
-			$heure = intval($lines[$i]->duration);
-			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
-			$minutes = substr("00"."$minutes", -2);
-			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
+			// Time spent
+			print '<td align="right">';
+			if ($lines[$i]->duration) print ConvertSecondToTime($lines[$i]->duration,'all');
+			else print '--:--';
+			print "</td>\n";
 
 			$disabled=1;
 			//print "x".$lines[$i]->projectid;
@@ -272,7 +272,8 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 
 			print '<td nowrap="nowrap">';
 			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
-			print '&nbsp;<input size="4" type="text" class="flat"'.($disabled?' disabled="true"':'').' name="task'.$lines[$i]->id.'" value="">';
+			print '&nbsp;&nbsp;&nbsp;';
+			print $form->select_duree($lines[$i]->id,'',0,$disabled);
 			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
 			if ((! $lines[$i]->public) && $disabled) print '('.$langs->trans("YouAreNotContactOfProject").')';
 			print '</td>';
@@ -401,13 +402,12 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				else print '</a>';
 				print "</td>\n";
 
-				$heure = intval($lines[$i]->duration);
-				$minutes = round((($lines[$i]->duration - $heure) * 60),0);
-				$minutes = substr("00"."$minutes", -2);
+				// Time spent
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
 				else print '<a href="time.php?id='.$lines[$i]->id.'">';
-				print $heure."&nbsp;h&nbsp;".$minutes;
+				if ($lines[$i]->duration) print ConvertSecondToTime($lines[$i]->duration,'all');
+				else print '--:--';
 				if ($showlineingray) print '</i>';
 				else print '</a>';
 				print '</td>';

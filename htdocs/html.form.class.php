@@ -2552,7 +2552,7 @@ class Form
 	 *	\param		prefix   	prefix
 	 *	\param  	iSecond  	Nombre de secondes
 	 */
-	function select_duree($prefix,$iSecond='')
+	function select_duree($prefix,$iSecond='',$default=1,$disabled=0)
 	{
 		if ($iSecond)
 		{
@@ -2562,11 +2562,11 @@ class Form
 			$minSelected = ConvertSecondToTime($iSecond,'min');
 		}
 
-		print '<select class="flat" name="'.$prefix.'hour">';
+		print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="true"':'').'>';
 		for ($hour = 0; $hour < 24; $hour++)
 		{
 			print '<option value="'.$hour.'"';
-			if ($hourSelected == $hour || ($iSecond == '' && $hour == 1))
+			if ($hourSelected == $hour || ($iSecond == '' && $hour == $default))
 			{
 				print " selected=\"true\"";
 			}
@@ -2574,7 +2574,7 @@ class Form
 		}
 		print "</select>";
 		print "H &nbsp;";
-		print '<select class="flat" name="'.$prefix.'min">';
+		print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="true"':'').'>';
 		for ($min = 0; $min <= 55; $min=$min+5)
 		{
 			print '<option value="'.$min.'"';

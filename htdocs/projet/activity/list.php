@@ -29,6 +29,9 @@ require ("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+
+$langs->load('projects');
 
 $mode=$_REQUEST["mode"];
 
@@ -62,20 +65,23 @@ if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
+	// TODO probleme si que des minutes
 	foreach ($_POST as $key => $time)
 	{
-  		if (substr($key,0,4) == 'task')
+		if (substr($key,-4) == 'hour')
   		{
-		  	if ($time > 0)
+  			if ($time > 0)
 		  	{
-				$id = str_replace("task","",$key);
+				$id = str_replace("hour","",$key);
 
 				$task = new Task($db);
 				$task->fetch($id);
 
-		  		$task->timespent_duration = $time;
+		  		$task->timespent_fk_user = $user->id;
+				$task->timespent_duration = $_POST[$id."hour"]*60*60;	// We store duration in seconds
+		  		$task->timespent_duration+= $_POST[$id."min"]*60;		// We store duration in seconds
 				$task->timespent_date = dol_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-		  		
+	
 		  		$task->addTimeSpent($user);
 		  	}
 		  	else

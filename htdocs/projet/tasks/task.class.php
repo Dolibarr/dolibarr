@@ -741,7 +741,7 @@ class Task extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::addTimeSpent error -1 ".$this->error,LOG_ERR);
+			dol_syslog(get_class($this)."::updateTimeSpent error -1 ".$this->error,LOG_ERR);
 			$ret = -1;
 		}
 /*
