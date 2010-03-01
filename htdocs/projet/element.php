@@ -25,8 +25,10 @@
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+if ($conf->propal->enabled)      require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture-rec.class.php");
 if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
@@ -34,7 +36,6 @@ if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fourniss
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 if ($conf->agenda->enabled)      require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $langs->load("projects");
 $langs->load("companies");

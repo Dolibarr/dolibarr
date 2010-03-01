@@ -25,11 +25,11 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/project/modules_project.php");
 
 $langs->load("projects");
 $langs->load('companies');

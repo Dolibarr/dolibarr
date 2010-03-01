@@ -25,7 +25,9 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require ("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
