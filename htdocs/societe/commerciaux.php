@@ -18,13 +18,13 @@
  */
 
 /**
- \file       htdocs/societe/commerciaux.php
- \ingroup    societe
- \brief      Page d'affectations des commerciaux aux societes
- \version    $Id$
+ *  \file       htdocs/societe/commerciaux.php
+ *  \ingroup    societe
+ *  \brief      Page d'affectations des commerciaux aux societes
+ *  \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");

@@ -18,7 +18,7 @@
  * $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 
 require("./AtomeFactureValidee.class.php");
 require("./AtomePropaleValidee.class.php");

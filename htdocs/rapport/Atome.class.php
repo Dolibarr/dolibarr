@@ -18,17 +18,17 @@
  */
 
 /**
-        \file       htdocs/rapport/Atome.class.php
-        \brief      Fichier de la classe mère Atome de génération de rapports
-		\version	$Id$
-*/
+ *     \file       htdocs/rapport/Atome.class.php
+ *     \brief      Fichier de la classe mere Atome de generation de rapports
+ *     \version	$Id$
+ */
 
 include_once DOL_DOCUMENT_ROOT.'/core/dolgraph.class.php';
 
 
 /**
         \class      Atome
-        \brief      Classe mère des classes de génération des images de rapports
+        \brief      Classe mï¿½re des classes de gï¿½nï¿½ration des images de rapports
 */
 
 class Atome

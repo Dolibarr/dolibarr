@@ -17,13 +17,13 @@
  */
 
 /**
-        \file       htdocs/societe/info.php
-        \ingroup    societe
-		\brief      Page des informations d'une societe
-		\version    $Id$
-*/
+ *      \file       htdocs/societe/info.php
+ *      \ingroup    societe
+ *      \brief      Page des informations d'une societe
+ *      \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");

@@ -18,13 +18,13 @@
  */
 
 /**
- \file       htdocs/societe/lien.php
- \ingroup    societe
- \brief      Page of links to other third parties
- \version    $Id$
+ *  \file       htdocs/societe/lien.php
+ *  \ingroup    societe
+ *  \brief      Page of links to other third parties
+ *  \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");
