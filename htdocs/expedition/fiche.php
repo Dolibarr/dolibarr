@@ -937,7 +937,7 @@ else
 			//$genallowed=1;
 			//$delallowed=0;
 
-			$somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf,'',0,0,28,0,'','',$soc->default_lang);
+			$somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf,'',0,0,28,0,'','','',$soc->default_lang);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 		}
 
