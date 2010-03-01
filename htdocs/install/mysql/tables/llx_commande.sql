@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -43,6 +44,8 @@ create table llx_commande
   remise_absolue      	real      default 0,
   remise                real      default 0,
   tva                   double(24,8)      default 0,
+  localtax1             double(24,8)      default 0,   -- total localtax1 
+  localtax2             double(24,8)      default 0,   -- total localtax2
   total_ht              double(24,8)      default 0,
   total_ttc             double(24,8)      default 0,
   note                  text,
