@@ -25,12 +25,12 @@
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
+
 // C'est un wrapper, donc header vierge
 function llxHeader() { print '<html><title>Export cal</title><body>'; }
 function llxFooter() { print '</body></html>'; }
-
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
 
 // Security check
 if (! $conf->webcal->enabled)

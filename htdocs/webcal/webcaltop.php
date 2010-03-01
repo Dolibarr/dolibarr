@@ -18,10 +18,10 @@
  */
 
 /**
-		\file 		htdocs/webcal/webcaltop.php
-        \ingroup    webcalendar
-		\brief      Top frame to show calendar
-		\version    $Id$
+ *  	\file 		htdocs/webcal/webcaltop.php
+ *      \ingroup    webcalendar
+ *      \brief      Top frame to show calendar
+ *      \version    $Id$
 */
 
 require ("../main.inc.php");
