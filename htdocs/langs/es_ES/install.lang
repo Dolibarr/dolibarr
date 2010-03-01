@@ -201,3 +201,5 @@ MigrationDeliveryAddress = Actualización de las direcciones de envío en las no
 MigrationProjectTaskActors = Migración de la tabla llx_projet_task_actors
 # Migration project user resp = 
 MigrationProjectUserResp = Migración del campo fk_user_resp de llx_projet a llx_element_contact
+# Migration project task time = 
+MigrationProjectTaskTime = Actualización de tiempo dedicado en segundos
