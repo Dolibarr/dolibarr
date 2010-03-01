@@ -2071,7 +2071,7 @@ else
 							}
 							else
 							{
-								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
+								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
 							}
 						}
 						else
