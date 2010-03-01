@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Code identique a /expedition/commande.php
+// Code identique a /expedition/shipment.php
 
 /**
  *	\file       htdocs/expedition/fiche.php
@@ -27,7 +27,8 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -37,6 +38,7 @@ if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php"
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
+$langs->load("sendings");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');

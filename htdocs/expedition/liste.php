@@ -25,8 +25,10 @@
  *		\version	$Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 
+$langs->load("sendings");
 $langs->load('companies');
 
 // Security check

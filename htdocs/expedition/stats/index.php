@@ -19,14 +19,14 @@
  */
 
 /**
-	    \file       htdocs/expedition/stats/index.php
-        \ingroup    expedition
-		\brief      Page des stats expeditions
-		\version    $Id$
-*/
+ *     \file       htdocs/expedition/stats/index.php
+ *     \ingroup    expedition
+ *     \brief      Page des stats expeditions
+ *     \version    $Id$
+ */
 
-require("./pre.inc.php");
-require("../expedition.class.php");
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 
 $langs->load("sendings");
 

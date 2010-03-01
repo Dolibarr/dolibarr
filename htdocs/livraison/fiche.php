@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -582,32 +582,29 @@ else
 			if ($user->societe_id == 0)
 			{
 				print '<div class="tabsAction">';
+				
+				if ($delivery->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
+				{
+					print '<a class="butAction" href="fiche.php?id='.$delivery->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+				}
 
-//				if (! preg_match('/^(valid|delete)/i',$_REQUEST["action"]))
-//				{
-					if ($delivery->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
+				if ($user->rights->expedition->livraison->supprimer)
+				{
+					if ($conf->expedition_bon->enabled)
 					{
-						print '<a class="butAction" href="fiche.php?id='.$delivery->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->expedition_id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 					}
-
-					if ($user->rights->expedition->livraison->supprimer)
+					else
 					{
-						if ($conf->expedition_bon->enabled)
-						{
-							print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->expedition_id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-						}
-						else
-						{
-							print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-						}
+						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 					}
-//				}
+				}
 
 				print '</div>';
 			}
 			print "\n";
 
-			print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+			print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
 
 			/*
 		 	 * Documents generated

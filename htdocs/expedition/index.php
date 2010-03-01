@@ -25,10 +25,10 @@
  *       \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 
+$langs->load("orders");
 $langs->load("sendings");
-
 
 /*
  *	View
