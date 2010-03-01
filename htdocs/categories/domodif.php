@@ -23,7 +23,8 @@
 		\version    $Revision$
 */
 
-require "./pre.inc.php";
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 if (!isset ($_REQUEST["id"]) || !isset ($_REQUEST["nom"]) || !isset ($_REQUEST["description"]))
 	accessforbidden();
@@ -47,10 +48,10 @@ $cat->label       = $_REQUEST["nom"];
 $cat->description = $_REQUEST["description"];
 
 $new_cats_meres = isset ($_REQUEST['cats_meres']) ? $_REQUEST['cats_meres'] : array ();
-// tableau d'id de catégories
+// tableau d'id de categories
 
 $old_objs_meres = $cat->get_meres ();
-// tableau d'objets catégorie
+// tableau d'objets categorie
 
 $old_cats_meres = array ();
 foreach ($old_objs_meres as $old_obj_mere)
@@ -58,8 +59,8 @@ foreach ($old_objs_meres as $old_obj_mere)
   $old_cats_meres[] = $old_obj_mere->id;
 }
 
-$asupprimer = array ();	// tableaux des catégories mères
-$aajouter   = array ();	// à ajouter ou à supprimer
+$asupprimer = array ();	// tableaux des categories meres
+$aajouter   = array ();	// a ajouter ou a supprimer
 
 foreach ($old_cats_meres as $old_cat)
 {
@@ -80,22 +81,22 @@ foreach ($new_cats_meres as $new_cat)
 $res = $cat->update ();
 if ($res < 0)
 {
-  print "<p>Impossible de modifier la catégorie ".$cat->label.".</p>";
+  print "<p>Impossible de modifier la categorie ".$cat->label.".</p>";
 }
 else
 {
-  print "<p>La catégorie ".$cat->label." a été modifiée avec succès.</p>";
+  print "<p>La categorie ".$cat->label." a ete modifiee avec succes.</p>";
 
   foreach ($asupprimer as $old_mere)
     {
       $res = $old_mere->del_fille ($cat);
       if ($res < 0)
 	{
-	  print "<p>Impossible d'enlever la catégorie de \"".$old_mere->label."\" ($res).</p>\n";
+	  print "<p>Impossible d'enlever la categorie de \"".$old_mere->label."\" ($res).</p>\n";
 	}
       else
 	{
-	  print "<p>La catégorie ne fait plus partie de ".$old_mere->label.".</p>\n";
+	  print "<p>La categorie ne fait plus partie de ".$old_mere->label.".</p>\n";
 	}
     }
 
@@ -104,11 +105,11 @@ else
       $res = $new_mere->add_fille ($cat);
       if ($res < 0)
 	{
-	  print "<p>Impossible d'ajouter la catégorie à \"".$new_mere->label."\" ($res).</p>";
+	  print "<p>Impossible d'ajouter la categorie a \"".$new_mere->label."\" ($res).</p>";
 	}
       else
 	{
-	  print "<p>La catégorie fait maintenant partie de ".$new_mere->label.".</p>\n";
+	  print "<p>La categorie fait maintenant partie de ".$new_mere->label.".</p>\n";
 	}
     }
 }

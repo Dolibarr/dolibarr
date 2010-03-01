@@ -18,13 +18,14 @@
  */
 
 /**
-        \file       htdocs/categories/liste.php
-        \ingroup    category
-        \brief      Page liste des categories
-		\version	$Id$
-*/
+ *    \file       htdocs/categories/liste.php
+ *    \ingroup    category
+ *    \brief      Page liste des categories
+ *    \version	$Id$
+ */
 
-require "./pre.inc.php";
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 if (!$user->rights->categorie->lire) accessforbidden();
 

@@ -20,13 +20,14 @@
  */
 
 /**
-		\file       htdocs/categories/docreate.php
-		\ingroup    category
-		\brief      Page de creation categorie
-		\version    $Revision$
-*/
+ * 		\file       htdocs/categories/docreate.php
+ * 		\ingroup    category
+ * 		\brief      Page de creation categorie
+ * 		\version    $Revision$
+ */
 
-require "./pre.inc.php";
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("categories");
 
@@ -58,11 +59,11 @@ $res = $categorie->create();
 
   if ($res < 0)
 	{
-	  print "<p>Impossible d'ajouter la catégorie ".$categorie->label.".</p>";
+	  print "<p>Impossible d'ajouter la catï¿½gorie ".$categorie->label.".</p>";
 	}
   else
 	{
-	print "<p>La catégorie ".$categorie->label." a été ajoutée avec succès.</p>";
+	print "<p>La catï¿½gorie ".$categorie->label." a ï¿½tï¿½ ajoutï¿½e avec succï¿½s.</p>";
 
 	  foreach ($cats_meres as $id)
     {
@@ -71,7 +72,7 @@ $res = $categorie->create();
 		 
 		  if ($res < 0)
       {
-         print "<p>Impossible d'associer la catégorie à \"".$mere->label."\" ($res).</p>";
+         print "<p>Impossible d'associer la catï¿½gorie ï¿½ \"".$mere->label."\" ($res).</p>";
       }
     }
 	}
