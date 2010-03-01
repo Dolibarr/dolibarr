@@ -25,7 +25,7 @@
  */
 
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/bookmarks/bookmark.class.php");
 
 $langs->load("other");
