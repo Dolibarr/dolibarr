@@ -23,7 +23,7 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 
 if (! $user->rights->user->user->lire && !$user->admin)
 {
