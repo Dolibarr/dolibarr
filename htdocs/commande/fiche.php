@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2115,7 +2115,7 @@ else
 							}
 							else
 							{
-								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
+								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
 							}
 						}
 						else
