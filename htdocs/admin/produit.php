@@ -21,13 +21,13 @@
  */
 
 /**
- \file       htdocs/admin/produit.php
- \ingroup    produit
- \brief      Page d'administration/configuration du module Produit
- \version    $Id$
+ *  \file       htdocs/admin/produit.php
+ *  \ingroup    produit
+ *  \brief      Page d'administration/configuration du module Produit
+ *  \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 

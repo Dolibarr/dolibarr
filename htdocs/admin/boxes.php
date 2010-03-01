@@ -18,12 +18,12 @@
  */
 
 /**
-        \file       htdocs/admin/boxes.php
-        \brief      Page d'administration/configuration des boites
-        \version    $Id$
-*/
+ *   \file       htdocs/admin/boxes.php
+ *   \brief      Page d'administration/configuration des boites
+ *   \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 

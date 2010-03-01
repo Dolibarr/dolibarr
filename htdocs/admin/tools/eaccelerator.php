@@ -17,12 +17,12 @@
  */
 
 /**
-        \file       htdocs/admin/tools/eaccelerator.php
-		\brief      Page administration de eaccelerator
-		\version    $Id$
-*/
+ *     \file       htdocs/admin/tools/eaccelerator.php
+ *     \brief      Page administration de eaccelerator
+ *     \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $langs->load("admin");
 

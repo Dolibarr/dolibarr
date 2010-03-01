@@ -17,12 +17,12 @@
  */
 
 /**
-        \file       htdocs/admin/system/xdebug.php
-		\brief      Page administration XDebug
-		\version    $Id$
-*/
+ *     \file       htdocs/admin/system/xdebug.php
+ *     \brief      Page administration XDebug
+ *     \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $langs->load("admin");
 

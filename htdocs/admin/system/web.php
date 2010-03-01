@@ -18,11 +18,11 @@
 
 /**
  *	    \file       htdocs/admin/system/web.php
- *		\brief      Page des infos syst�me du serveur Web
+ *		\brief      Page des infos systeme du serveur Web
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $langs->load("admin");
 

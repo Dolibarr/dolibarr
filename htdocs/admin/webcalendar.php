@@ -21,13 +21,13 @@
  */
 
 /**
-	    \file       htdocs/admin/webcalendar.php
-        \ingroup    webcalendar
-        \brief      Page de configuration du module webcalendar
-		\version    $Id$
-*/
+ *    \file       htdocs/admin/webcalendar.php
+ *    \ingroup    webcalendar
+ *    \brief      Page de configuration du module webcalendar
+ *    \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
 

@@ -21,13 +21,13 @@
  */
 
 /**
-    	\file       htdocs/admin/ldap_contacts.php
-		\ingroup    ldap
-		\brief      Page d'administration/configuration du module Ldap
-		\version    $Id$
-*/
+ * 	\file       htdocs/admin/ldap_contacts.php
+ *  \ingroup    ldap
+ *  \brief      Page d'administration/configuration du module Ldap
+ *  \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");

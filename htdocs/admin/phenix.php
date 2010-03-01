@@ -18,13 +18,13 @@
  */
 
 /**
-	    \file       htdocs/admin/phenix.php
-        \ingroup    phenix
-        \brief      Page de configuration du module Phenix
-		\version    $Id$
-*/
+ *   \file       htdocs/admin/phenix.php
+ *   \ingroup    phenix
+ *   \brief      Page de configuration du module Phenix
+ *   \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/phenix/phenix.class.php');
 

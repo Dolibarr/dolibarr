@@ -19,13 +19,13 @@
  */
 
 /**
-	    \file       htdocs/admin/taxes.php
-        \ingroup    tax
-        \brief      Page de configuration du module tax
-		\version    $Id$
-*/
+ *     \file       htdocs/admin/taxes.php
+ *     \ingroup    tax
+ *     \brief      Page de configuration du module tax
+ *     \version    $Id$
+ */
 
-require('./pre.inc.php');
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load('admin');

@@ -20,13 +20,13 @@
  */
 
 /**
-	    \file       htdocs/admin/fckeditor.php
-		\ingroup    fckeditor
-		\brief      Page d'activation du module FCKeditor dans les autres modules
-		\version    $Revision$
-*/
+ *  \file       htdocs/admin/fckeditor.php
+ *  \ingroup    fckeditor
+ *  \brief      Page d'activation du module FCKeditor dans les autres modules
+ *  \version    $Revision$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");

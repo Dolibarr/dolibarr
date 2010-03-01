@@ -23,13 +23,13 @@
  */
 
 /**
-	    \file       htdocs/admin/mantis.php
-        \ingroup    mantis
-        \brief      Page de configuration du module mantis
-		\version    $Revision$
-*/
+ *   \file       htdocs/admin/mantis.php
+ *   \ingroup    mantis
+ *   \brief      Page de configuration du module mantis
+ *   \version    $Revision$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/mantis/mantis.class.php');
 

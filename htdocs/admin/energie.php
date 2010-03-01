@@ -19,13 +19,14 @@
  * $Id$
  */
  
-/**	    \file       htdocs/admin/energie.php
-	    \ingroup    energie
-	    \brief      Page d'administration/configuration du module de gestion de l'energie
-	    \version    $Revision$
-*/
+/**	
+ *  \file       htdocs/admin/energie.php
+ *  \ingroup    energie
+ *  \brief      Page d'administration/configuration du module de gestion de l'energie
+ *  \version    $Revision$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");

@@ -24,7 +24,7 @@
  *      \version    $Id$
  */
 
-require_once("./pre.inc.php");
+require("../../main.inc.php");
 
 if (! $user->admin)
   accessforbidden();

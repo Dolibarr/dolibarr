@@ -21,13 +21,13 @@
  */
 
 /**
- \file       htdocs/admin/fournisseur.php
- \ingroup    fournisseur
- \brief      Page d'administration-configuration du module Fournisseur
- \version    $Id$
+ *  \file       htdocs/admin/fournisseur.php
+ *  \ingroup    fournisseur
+ *  \brief      Page d'administration-configuration du module Fournisseur
+ *  \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');

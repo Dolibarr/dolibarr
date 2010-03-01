@@ -20,12 +20,12 @@
  */
 
 /**
- \file           htdocs/admin/system/dbtable.php
- \brief          Page d'info des contraintes d'une table
- \version        $Id$
+ *  \file           htdocs/admin/system/dbtable.php
+ *  \brief          Page d'info des contraintes d'une table
+ *  \version        $Id$
  */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
 
 $langs->load("admin");

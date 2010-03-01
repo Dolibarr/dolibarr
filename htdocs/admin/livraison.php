@@ -27,7 +27,7 @@
  *      \brief      Page d'administration/configuration du module Livraison
  *      \version    $Id$
  */
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 

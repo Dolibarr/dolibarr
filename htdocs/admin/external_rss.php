@@ -27,7 +27,7 @@
  *      \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 include_once(MAGPIERSS_PATH."rss_fetch.inc");
 

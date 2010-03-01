@@ -22,7 +22,7 @@
  *		\brief      Page d'administration/configuration du module Dons
  *		\version    $Id$
  */
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
