@@ -17,8 +17,8 @@
    height="7334.6455"
    sodipodi:docname="dolibarr_rollup_fr.svg"
    inkscape:export-filename="C:\Temp\dolibarr_rollup_fr.png"
-   inkscape:export-xdpi="150"
-   inkscape:export-ydpi="150">
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
   <title
      id="title3054">Rollkup</title>
   <sodipodi:namedview
@@ -36,15 +36,15 @@
      showgrid="false"
      inkscape:document-units="cm"
      units="cm"
-     inkscape:zoom="0.35467548"
-     inkscape:cx="1491.7384"
-     inkscape:cy="6691.906"
+     inkscape:zoom="0.11314291"
+     inkscape:cx="1002.9321"
+     inkscape:cy="1631.6428"
      inkscape:window-x="-4"
      inkscape:window-y="-4"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2816"
      inkscape:showpageshadow="false"
-     showborder="true"
+     showborder="false"
      borderlayer="false"
      inkscape:snap-page="false"
      inkscape:snap-grids="true"
@@ -112,7 +112,7 @@
          offset="0"
          id="stop7627" />
       <stop
-         style="stop-color:#000000;stop-opacity:0.47011954"
+         style="stop-color:#424242;stop-opacity:1"
          offset="1"
          id="stop7629" />
     </linearGradient>
@@ -124,7 +124,7 @@
          offset="0"
          id="stop7619" />
       <stop
-         style="stop-color:#000000;stop-opacity:0.38645419"
+         style="stop-color:#797979;stop-opacity:1"
          offset="1"
          id="stop7621" />
     </linearGradient>
@@ -434,7 +434,7 @@
      height="7333.189"
      width="3010.3542"
      id="rect2838"
-     style="fill:url(#linearGradient3618);fill-opacity:1;fill-rule:nonzero;stroke:#0000ff;stroke-width:1.45670629" />
+     style="fill:url(#linearGradient3618);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.45670629000000010" />
   <path
      style="opacity:0.1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:31.24587822;stroke-linecap:round;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4499)"
      id="path4485"
