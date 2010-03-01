@@ -25,7 +25,7 @@
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
 $langs->load("members");

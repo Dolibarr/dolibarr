@@ -24,7 +24,7 @@
  *	\brief      Page to output members business cards
  *	\version    $Id$
  */
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/member/cards/modules_cards.php");

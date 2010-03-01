@@ -21,11 +21,11 @@
 /**
  *       \file       htdocs/adherents/card_subscriptions.php
  *       \ingroup    member
- *       \brief      Onglet d'ajout, edition, suppression des adh�sions d'un adh�rent
+ *       \brief      Onglet d'ajout, edition, suppression des adhesions d'un adherent
  *       \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");

@@ -19,14 +19,14 @@
  */
 
 /**
-		\file 		htdocs/adherents/htpasswd.php
-        \ingroup    member
-		\brief      Page d'export htpasswd du fichier des adherents
-		\author     Rodolphe Quiedeville
-		\version    $Id$
-*/
+ *  	\file 		htdocs/adherents/htpasswd.php
+ *      \ingroup    member
+ *      \brief      Page d'export htpasswd du fichier des adherents
+ *      \author     Rodolphe Quiedeville
+ *      \version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 
 llxHeader();
