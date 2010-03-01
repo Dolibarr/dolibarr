@@ -194,25 +194,28 @@ MigrationReopenedContractsNumber=%s contrats modifiés
 MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à réouvrir.
 
 # Migration transfert
-MigrationBankTransfertsUpdate=Mise a jour des liens entre ecriture bancaire et un transfert entre compte
+MigrationBankTransfertsUpdate=Mise à jour des liens entre écriture bancaire et un transfert entre compte
 MigrationBankTransfertsNothingToUpdate=Aucun lien non à jour
 
 # Migration delivery
-MigrationShipmentOrderMatching=Mise a jour bon expedition
-MigrationDeliveryOrderMatching=Mise a jour bon reception
-MigrationDeliveryDetail=Mise a jour bon reception
+MigrationShipmentOrderMatching=Mise à jour bon expédition
+MigrationDeliveryOrderMatching=Mise à jour bon réception
+MigrationDeliveryDetail=Mise à jour bon réception
 
 # Migration stock
-MigrationStockDetail=Mise a jour valeur en stock des produits
+MigrationStockDetail=Mise à jour valeur en stock des produits
 
 # Migration menus
-MigrationMenusDetail=Mise a jour table des menus dynamiques
+MigrationMenusDetail=Mise à jour table des menus dynamiques
 
 # Migration delivery address
-MigrationDeliveryAddress=Mise a jour des adresses de livraison dans les bons d'expedition
+MigrationDeliveryAddress=Mise à jour des adresses de livraison dans les bons d'expédition
 
 # Migration project task actors
 MigrationProjectTaskActors=Migration de la table llx_projet_task_actors
 
 # Migration project user resp
 MigrationProjectUserResp=Migration du champ fk_user_resp de llx_projet vers llx_element_contact
+
+# Migration project task time
+MigrationProjectTaskTime=Mise à jour du temps consommé en secondes

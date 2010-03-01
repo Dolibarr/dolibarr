@@ -53,6 +53,7 @@ if ($_POST["action"] == 'addtimespent' && $user->rights->projet->creer)
 
 		$task->timespent_note = $_POST["timespent_note"];
 		$task->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
+		$task->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
 		$task->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 		$task->timespent_fk_user = $_POST["userid"];
 
@@ -74,7 +75,39 @@ if ($_POST["action"] == 'addtimespent' && $user->rights->projet->creer)
 
 if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
+	$error=0;
 
+	if (empty($_POST["timespent_duration_linehour"]) && empty($_POST["timespent_duration_linemin"]))
+	{
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		$error++;
+	}
+
+	if (! $error)
+	{
+		$task = new Task($db);
+
+		$task->timespent_id = $_POST["lineid"];
+		$task->timespent_note = $_POST["timespent_note_line"];
+		$task->timespent_duration = $_POST["timespent_duration_linehour"]*60*60;	// We store duration in seconds
+		$task->timespent_duration+= $_POST["timespent_duration_linemin"]*60;		// We store duration in seconds
+		$task->timespent_date = dol_mktime(12,0,0,$_POST["timelinemonth"],$_POST["timelineday"],$_POST["timelineyear"]);
+		$task->timespent_fk_user = $_POST["userid_line"];
+
+		$result=$task->updateTimeSpent($user);
+		if ($result >= 0)
+		{
+
+		}
+		else
+		{
+			$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
+		}
+	}
+	else
+	{
+		$_POST["action"]='';
+	}
 }
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->creer)
@@ -200,8 +233,7 @@ if ($_GET["id"] > 0)
 
 			// Duration
 			print '<td nowrap="nowrap" align="right">';
-			print $html->select_duree('timespent_duration');
-			//print '<input size="4" type="text" class="flat" name="timespent_duration" value="">';
+			print $html->select_duree('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
 			print '</td>';
 
 			print '<td align="center">';
@@ -276,16 +308,25 @@ if ($_GET["id"] > 0)
   		    print '</td>';
 
   		    // User
-			$user->id		= $task_time->fk_user;
-		    $user->nom		= $task_time->name;
-		    $user->prenom 	= $task_time->firstname;
-		    print '<td>'.$user->getNomUrl(1).'</td>';
+			$user->id = $task_time->fk_user;
+			print '<td>';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			{
+				print $html->select_users($user->id,'userid_line');
+			}
+			else
+			{
+				$user->nom		= $task_time->name;
+				$user->prenom 	= $task_time->firstname;
+				print $user->getNomUrl(1);
+			}
+		    print '</td>';
 
  		    // Note
   		    print '<td align="left">';
   		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
-  		    	print '<textarea name="timespent_note" cols="80" rows="4">'.$task_time->note.'</textarea>';
+  		    	print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_3.'">'.$task_time->note.'</textarea>';
   		    }
   		    else
   		    {
@@ -297,7 +338,8 @@ if ($_GET["id"] > 0)
   		    print '<td align="right">';
   		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
-  		    	print '<input size="4" type="text" class="flat" name="timespent_duration" value="'.$task_time->task_duration.'">';
+  		    	print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
+  		    	print $html->select_duree('new_duration',$task_time->task_duration);
   		    }
   		    else
   		    {
@@ -309,6 +351,7 @@ if ($_GET["id"] > 0)
 			print '<td align="center" valign="middle" width="80">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
+  		    	print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
   		    	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
   		    	print '<br>';
   		    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';

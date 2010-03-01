@@ -214,3 +214,6 @@ MigrationProjectTaskActors=Data migration for llx_projet_task_actors table
 
 # Migration project user resp
 MigrationProjectUserResp=Data migration field fk_user_resp of llx_projet to llx_element_contact
+
+# Migration project task time
+MigrationProjectTaskTime=Update time spent in seconds
