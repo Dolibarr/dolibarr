@@ -45,3 +45,11 @@ alter table llx_facturedet_rec add column total_localtax2 double(24,8) DEFAULT 0
 
 alter table llx_c_tva add column localtax1 double NOT NULL DEFAULT 0 after taux;
 alter table llx_c_tva add column localtax2 double NOT NULL DEFAULT 0 after localtax1;
+
+alter table llx_propal add column localtax1 double(24,8) DEFAULT 0 after tva;
+alter table llx_propal add column localtax2 double(24,8) DEFAULT 0 after localtax1;
+alter table llx_propaldet add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
+alter table llx_propaldet add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
+alter table llx_propaldet add column total_localtax1 double(24,8) DEFAULT 0 after total_tva;
+alter table llx_propaldet add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
+

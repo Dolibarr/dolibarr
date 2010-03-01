@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010 Juanjo Menent             <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -43,6 +44,8 @@ create table llx_propal
   remise          real         DEFAULT 0,      -- remise calculee (obsolete)
   total_ht        double(24,8) DEFAULT 0,      -- montant total ht apres remise globale
   tva             double(24,8) DEFAULT 0,      -- montant total tva apres remise globale
+  localtax1       double(24,8) DEFAULT 0,	   -- amount total localtax1
+  localtax2		  double(24,8) DEFAULT 0,      -- amount total localtax2
   total           double(24,8) DEFAULT 0,      -- montant total ttc apres remise globale
 
   fk_cond_reglement   integer,                 -- condition de reglement (30 jours, fin de mois ...)

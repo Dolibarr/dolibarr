@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2010 Juanjo Menent             <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,6 +27,8 @@ create table llx_propaldet
   description       text,
   fk_remise_except	integer      NULL,               -- Lien vers table des remises fixes
   tva_tx            double(6,3)  DEFAULT 0, 	       -- taux tva
+  localtax1_tx      double(6,3)  DEFAULT 0,          -- localtax1 tax
+  localtax2_tx      double(6,3)  DEFAULT 0,          -- localtax2 tax 
   qty               real,                            -- quantity
   remise_percent    real         DEFAULT 0,          -- pourcentage de remise
   remise            real         DEFAULT 0,          -- montant de la remise (obsolete)
@@ -33,6 +36,8 @@ create table llx_propaldet
   subprice          double(24,8) DEFAULT 0,          -- prix unitaire article
   total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva         double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
+  total_localtax1   double(24,8) DEFAULT 0,          -- Total localtax1
+  total_localtax2   double(24,8) DEFAULT 0,          -- Total localtax2
   total_ttc         double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type		  integer    DEFAULT 0,
   date_start          datetime   DEFAULT NULL,       -- date debut si service
