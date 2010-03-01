@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -55,5 +55,6 @@ create table llx_product
   pmp                double(24,8) DEFAULT 0 NOT NULL,
   canvas             varchar(15)  DEFAULT '',
   finished           tinyint      DEFAULT NULL,
+  hidden             tinyint      DEFAULT 0			-- Need permission see also hidden products
   import_key         varchar(14)					-- import key
 )type=innodb;

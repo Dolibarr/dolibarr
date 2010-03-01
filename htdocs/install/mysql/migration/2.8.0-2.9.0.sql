@@ -59,3 +59,5 @@ alter table llx_commandedet add column localtax1_tx double(6,3) DEFAULT 0 after 
 alter table llx_commandedet add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
 alter table llx_commandedet add column total_localtax1 double(24,8) DEFAULT 0 after total_tva;
 alter table llx_commandedet add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
+
+alter table llx_product add column   hidden             tinyint      DEFAULT 0;
