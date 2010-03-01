@@ -111,7 +111,7 @@ function expedition_pdf_create($db, $id, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($expedition, $langs) > 0)
+		if ($obj->write_file($expedition, $outputlangs) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview

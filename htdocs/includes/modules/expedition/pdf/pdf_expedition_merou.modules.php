@@ -86,6 +86,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$outputlangs->load("products");
 		$outputlangs->load("propal");
 		$outputlangs->load("sendings");
+		$outputlangs->load("deliveries");
 
 		//Generation de la fiche
 		$this->expe = $object;

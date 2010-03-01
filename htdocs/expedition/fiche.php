@@ -195,26 +195,26 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
 
 	// Sauvegarde le dernier modele choisi pour generer un document
-	$expedition = new Expedition($db, 0, $_REQUEST['id']);
-	$expedition->fetch($_REQUEST['id']);
-	$expedition->fetch_client();
+	$shipment = new Expedition($db, 0, $_REQUEST['id']);
+	$shipment->fetch($_REQUEST['id']);
+	$shipment->fetch_client();
 
 	if ($_REQUEST['model'])
 	{
-		$expedition->setDocModel($user, $_REQUEST['model']);
+		$shipment->setDocModel($user, $_REQUEST['model']);
 	}
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$expedition->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=expedition_pdf_create($db,$expedition->id,$expedition->modelpdf,$outputlangs);
+	$result=expedition_pdf_create($db,$_REQUEST['id'],$_REQUEST['model'],$outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);

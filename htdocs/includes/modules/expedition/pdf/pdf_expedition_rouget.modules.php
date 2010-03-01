@@ -236,6 +236,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("propal");
+		$outputlangs->load("deliveries");
 
 		if ($conf->expedition->dir_output."/sending")
 		{

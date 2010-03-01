@@ -20,11 +20,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/propale/modules_propale.php
- \ingroup    propale
- \brief      Fichier contenant la classe m�re de generation des propales en PDF
- et la classe m�re de num�rotation des propales
- \version    $Id$
+ *  \file       htdocs/includes/modules/propale/modules_propale.php
+ *  \ingroup    propale
+ *  \brief      Fichier contenant la classe mere de generation des propales en PDF 
+ *  			et la classe mere de numerotation des propales
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
