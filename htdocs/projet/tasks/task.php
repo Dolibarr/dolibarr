@@ -116,7 +116,6 @@ if ($taskid)
 {
 	$task = new Task($db);
 	$projectstatic = new Project($db);
-	$userstatic = new User($db);
 
 	if ($task->fetch($taskid) >= 0 )
 	{
