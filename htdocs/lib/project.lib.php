@@ -57,6 +57,15 @@ function project_prepare_head($object)
 	    $head[$h][2] = 'element';
 		$h++;
 	}
+	
+	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
+	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+	$listoffiles=dol_dir_list($filesdir,'files',1);
+	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
+	$head[$h][1] = $langs->trans('Documents');
+	$head[$h][2] = 'document';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Notes');
@@ -109,6 +118,15 @@ function task_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("TimeSpent");
 	$head[$h][2] = 'time';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id;
+	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+	$listoffiles=dol_dir_list($filesdir,'files',1);
+	$head[$h][1] = (sizeof($listoffiles)?$langs->trans('DocumentsNb',sizeof($listoffiles)):$langs->trans('Documents'));*/
+	$head[$h][1] = $langs->trans('Documents');
+	$head[$h][2] = 'document';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id;

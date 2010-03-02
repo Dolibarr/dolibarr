@@ -1,0 +1,195 @@
+<?php
+/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ *	\file       htdocs/projet/tasks/document.php
+ *	\ingroup    project
+ *	\brief      Page de gestion des documents attachees a une tache d'un projet
+ *	\version    $Id$
+ */
+
+require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+
+if (!$user->rights->projet->lire) accessforbidden();
+
+$langs->load('projects');
+$langs->load('other');
+
+$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
+$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
+
+// Security check
+$socid=0;
+$id = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+//$result=restrictedArea($user,'projet',$id,'');
+
+// Get parameters
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+
+$id = $_GET['id'];
+$ref= $_GET['ref'];
+$object = new Task($db);
+if (! $object->fetch($_GET['id'],$_GET['ref']) > 0)
+{
+	dol_print_error($db);
+}
+
+
+/*
+ * Actions
+ */
+
+// Envoi fichier
+if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+{
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+	if (is_dir($upload_dir))
+	{
+		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+    	if ($result > 0)
+        {
+            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+            //print_r($_FILES);
+        }
+        else if ($result == -99)
+        {
+        	// Files infected by a virus
+		    $langs->load("errors");
+            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+        }
+		else if ($result < 0)
+		{
+			// Echec transfert (fichier depassant la limite ?)
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			// print_r($_FILES);
+		}
+	}
+}
+
+// Delete
+if ($action=='delete')
+{
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	dol_delete_file($file);
+	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+}
+
+
+/*
+ * View
+ */
+
+llxHeader('',$langs->trans('Project'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+
+$form = new Form($db);
+
+if ($id > 0 || ! empty($ref))
+{
+	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+
+	$company = new Societe($db);
+	$company->fetch($object->socid);
+	
+	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
+	
+	// To verify role of users
+	$userAccess = $object->restrictedProjectArea($user);
+
+	$head = project_prepare_head($object);
+	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+
+	// Files list constructor
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+	$totalsize=0;
+	foreach($filearray as $key => $file)
+	{
+		$totalsize+=$file['size'];
+	}
+
+	print '<table class="border" width="100%">';
+	
+	// Ref
+	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	print $form->showrefnav($object,'ref','',1,'ref','ref');
+	print '</td></tr>';
+	
+	// Label
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+	
+	// Company
+	print '<tr><td>'.$langs->trans("Company").'</td><td>';
+	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	else print '&nbsp;';
+	print '</td></tr>';
+	
+	// Visibility
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) print $langs->trans('SharedProject');
+	else print $langs->trans('PrivateProject');
+	print '</td></tr>';
+	
+	// Statut
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+	
+	// Files infos
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	
+	print "</table>\n";
+	print "</div>\n";
+
+	if ($mesg) { print $mesg."<br>"; }
+
+
+	// Affiche formulaire upload
+	$formfile=new FormFile($db);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$object->id,'',0,0,$user->rights->projet->creer);
+
+
+	// List of document
+	$param='&id='.$object->id;
+	$formfile->list_of_documents($filearray,$object,'projet',$param);
+
+}
+else
+{
+	Header('Location: index.php');
+}
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>

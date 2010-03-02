@@ -34,8 +34,8 @@ $dolibarr_main_document_root="";
 # This parameter contains absolute file system directory of Dolibarr
 # directory used to store uploaded and generated physical files.
 # Examples:
-# $dolibarr_main_document_root="/var/www/dolibarr/documents";
-# $dolibarr_main_document_root="E:/My web sites/dolibarr/documents";
+# $dolibarr_main_data_root="/var/www/dolibarr/documents";
+# $dolibarr_main_data_root="E:/My web sites/dolibarr/documents";
 #
 $dolibarr_main_data_root="";
 

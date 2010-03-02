@@ -64,7 +64,7 @@ class modProjet extends DolibarrModules
 		$this->picto='project';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/project/temp");
+		$this->dirs = array("/projet/temp");
 
 		// Dependancies
 		$this->depends = array();
