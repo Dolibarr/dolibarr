@@ -59,6 +59,7 @@ class Task extends CommonObject
 
 	var $timespent_id;
 	var $timespent_duration;
+	var $timespent_old_duration;
 	var $timespent_date;
 	var $timespent_fk_user;
 	var $timespent_note;
@@ -597,8 +598,6 @@ class Task extends CommonObject
 		$ret = 0;
 
 		// Clean parameters
-		$this->timespent_duration = intval($this->timespent_duration)+(($this->timespent_duration-intval($this->timespent_duration))*(1+2/3));
-		$this->timespent_duration = price2num($this->timespent_duration);
 		if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
@@ -713,8 +712,6 @@ class Task extends CommonObject
 		$ret = 0;
 
 		// Clean parameters
-		$this->timespent_duration = intval($this->timespent_duration)+(($this->timespent_duration-intval($this->timespent_duration))*(1+2/3));
-		$this->timespent_duration = price2num($this->timespent_duration);
 		if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
@@ -744,14 +741,16 @@ class Task extends CommonObject
 			dol_syslog(get_class($this)."::updateTimeSpent error -1 ".$this->error,LOG_ERR);
 			$ret = -1;
 		}
-/*
-		if ($ret >= 0)
+
+		if ($ret == 1 && ($this->timespent_old_duration != $this->timespent_duration))
 		{
+			$newDuration = $this->timespent_duration - $this->timespent_old_duration;
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
+			$sql.= " SET duration_effective = duration_effective + '".$newDuration."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::updateTimeSpent sql=".$sql, LOG_DEBUG);
 			if (! $this->db->query($sql) )
 			{
 				$this->error=$this->db->lasterror();
@@ -759,7 +758,7 @@ class Task extends CommonObject
 				$ret = -2;
 			}
 		}
-*/
+
 		return $ret;
 	}
     
@@ -800,7 +799,7 @@ class Task extends CommonObject
 		if (! $error)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql.= " SET duration_effective = duration_effective - '".price2num($this->timespent_duration)."'";
+			$sql.= " SET duration_effective = duration_effective - '".$this->timespent_duration."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::delTimeSpent sql=".$sql, LOG_DEBUG);

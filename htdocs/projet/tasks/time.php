@@ -79,7 +79,7 @@ if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->pro
 {
 	$error=0;
 
-	if (empty($_POST["timespent_duration_linehour"]) && empty($_POST["timespent_duration_linemin"]))
+	if (empty($_POST["new_durationhour"]) && empty($_POST["new_durationmin"]))
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
 		$error++;
@@ -88,11 +88,13 @@ if ($_POST["action"] == 'updateline' && ! $_POST["cancel"] && $user->rights->pro
 	if (! $error)
 	{
 		$task = new Task($db);
+		$task->fetch($_POST["id"]);
 
 		$task->timespent_id = $_POST["lineid"];
 		$task->timespent_note = $_POST["timespent_note_line"];
-		$task->timespent_duration = $_POST["timespent_duration_linehour"]*60*60;	// We store duration in seconds
-		$task->timespent_duration+= $_POST["timespent_duration_linemin"]*60;		// We store duration in seconds
+		$task->timespent_old_duration = $_POST["old_duration"];
+		$task->timespent_duration = $_POST["new_durationhour"]*60*60;	// We store duration in seconds
+		$task->timespent_duration+= $_POST["new_durationmin"]*60;		// We store duration in seconds
 		$task->timespent_date = dol_mktime(12,0,0,$_POST["timelinemonth"],$_POST["timelineday"],$_POST["timelineyear"]);
 		$task->timespent_fk_user = $_POST["userid_line"];
 
