@@ -280,7 +280,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 			print '<td nowrap="nowrap">';
 			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
 			print '&nbsp;&nbsp;&nbsp;';
-			print $form->select_duree($lines[$i]->id,'',0,$disabled);
+			print $form->select_duration($lines[$i]->id,'',$disabled);
 			print '&nbsp;<input type="submit" class="button"'.($disabled?' disabled="true"':'').' value="'.$langs->trans("Add").'">';
 			if ((! $lines[$i]->public) && $disabled) print '('.$langs->trans("YouAreNotContactOfProject").')';
 			print '</td>';

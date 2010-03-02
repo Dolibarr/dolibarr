@@ -237,7 +237,7 @@ if ($_GET["id"] > 0)
 
 			// Duration
 			print '<td nowrap="nowrap" align="right">';
-			print $html->select_duree('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
+			print $html->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
 			print '</td>';
 
 			print '<td align="center">';
@@ -343,7 +343,7 @@ if ($_GET["id"] > 0)
   		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
   		    	print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
-  		    	print $html->select_duree('new_duration',$task_time->task_duration);
+  		    	print $html->select_duration('new_duration',$task_time->task_duration);
   		    }
   		    else
   		    {

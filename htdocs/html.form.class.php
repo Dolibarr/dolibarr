@@ -2548,11 +2548,12 @@ class Form
 	}
 
 	/**
-	 *	\brief  	Fonction servant a afficher une duree dans une liste deroulante
+	 *	\brief  	Function to show a form to select a duration on a page
 	 *	\param		prefix   	prefix
-	 *	\param  	iSecond  	Nombre de secondes
+	 *	\param  	iSecond  	Default preselected duration (number of seconds)
+	 * 	\param		disabled	Disable the combo box
 	 */
-	function select_duree($prefix,$iSecond='',$default=1,$disabled=0)
+	function select_duration($prefix,$iSecond='',$disabled=0)
 	{
 		if ($iSecond)
 		{
@@ -2566,7 +2567,7 @@ class Form
 		for ($hour = 0; $hour < 24; $hour++)
 		{
 			print '<option value="'.$hour.'"';
-			if ($hourSelected == $hour || ($iSecond == '' && $hour == $default))
+			if ($hourSelected == $hour)
 			{
 				print " selected=\"true\"";
 			}

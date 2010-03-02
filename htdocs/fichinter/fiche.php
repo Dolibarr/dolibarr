@@ -780,7 +780,7 @@ elseif ($fichinterid)
 
 				// Duration
 				print '<td align="right">';
-				$html->select_duree('duration',$objp->duree);
+				$html->select_duration('duration',$objp->duree);
 				print '</td>';
 
 				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -844,7 +844,7 @@ elseif ($fichinterid)
 
 			// Duration
 			print '<td align="right">';
-			$html->select_duree('duration');
+			$html->select_duration('duration',3600);
 			print '</td>';
 
 			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
