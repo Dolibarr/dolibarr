@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
@@ -64,13 +64,13 @@ if ($_POST["action"] == 'multiprix')
 			}
 		}
 		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6",'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
 	}
 	else
 	{
 		dol_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
 		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6",'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
 	}
 }
 else if ($_POST["action"] == 'sousproduits')
@@ -86,12 +86,12 @@ else if ($_POST["action"] == 'sousproduits')
 		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
 		if ($db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) < 0)
 		{
-	  dol_print_error($db);
-	  exit;
+			dol_print_error($db);
+			exit;
 		}
 		else
 		{
-	  dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
+			dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
 		}
 	}
 	else
@@ -248,20 +248,20 @@ print '</form>';
 
 // Confirmation de suppression d'un ligne produit dans les formulaires activation/desactivation
 /*
-$var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"confirmDeleteProdLineInForm\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
-print '<td width="60" align="right">';
-print $html->selectyesno("activate_confirmDeleteProdLineInForm",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
-print '</tr>';
-print '</form>';
-*/
+ $var=!$var;
+ print "<form method=\"post\" action=\"produit.php\">";
+ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+ print "<input type=\"hidden\" name=\"action\" value=\"confirmDeleteProdLineInForm\">";
+ print "<tr ".$bc[$var].">";
+ print '<td>'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
+ print '<td width="60" align="right">';
+ print $html->selectyesno("activate_confirmDeleteProdLineInForm",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
+ print '</td><td align="right">';
+ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+ print "</td>";
+ print '</tr>';
+ print '</form>';
+ */
 
 // Utilisation de l'ecotaxe
 $var=!$var;

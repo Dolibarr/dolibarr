@@ -77,7 +77,7 @@ function product_prepare_head($product, $user)
 	}
 
 	// Sub products
-	if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+	if($conf->global->PRODUIT_SOUSPRODUITS)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
@@ -121,7 +121,7 @@ function product_prepare_head($product, $user)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:MyModule:@mymodule:/mypage.php?id=__ID__');
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
 	if (is_array($conf->tabs_modules['product']))
 	{
 		$i=0;
