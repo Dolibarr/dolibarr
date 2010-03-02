@@ -215,6 +215,8 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 {
 	global $user, $bc, $langs;
 	global $form;
+	
+	$lastprojectid=0;
 
 	$projectstatic = new Project($db);
 	$taskstatic = new Task($db);
@@ -223,12 +225,17 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
-		if ($parent == 0)
-		$level = 0;
+		if ($parent == 0) $level = 0;
 
 		if ($lines[$i]->fk_parent == $parent)
 		{
-			$var = !$var;
+			// Break on a new project
+			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+			{
+				$var = !$var;
+				$lastprojectid=$lines[$i]->projectid;
+			}
+
 			print "<tr $bc[$var]>\n";
 
 			// Project

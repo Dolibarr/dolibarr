@@ -158,7 +158,7 @@ llxHeader('', $langs->trans("Task"));
 $html = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
-$project = new Project($db);
+$projectstatic = new Project($db);
 
 
 /* *************************************************************************** */
@@ -176,8 +176,11 @@ if ($id > 0 || ! empty($ref))
 
 	if ( $task->fetch($id,$ref) > 0)
 	{
-		$result=$project->fetch($task->fk_project);
-		if (! empty($project->socid)) $project->societe->fetch($project->socid);
+		$result=$projectstatic->fetch($task->fk_project);
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		
+		// To verify role of users
+		$userAccess = $projectstatic->restrictedProjectArea($user);
 
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'contact', $langs->trans("Task"), 0, 'projecttask');
@@ -200,13 +203,13 @@ if ($id > 0 || ! empty($ref))
 
 		// Project
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		print $project->getNomUrl(1);
+		print $projectstatic->getNomUrl(1);
 		print '</td></tr>';
 
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">';
-		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 
@@ -271,7 +274,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
 			// Line to add an external contact. Only if project linked to a third party.
-			if ($project->socid)
+			if ($projectstatic->socid)
 			{
 				$var=!$var;
 				print "<tr $bc[$var]>";
@@ -281,7 +284,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
-				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
+				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
 				$selectedCompany = $formcompany->selectCompaniesForNewContact($task, 'id', $selectedCompany, 'newcompany');
 				print '</td>';
 

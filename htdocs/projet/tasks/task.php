@@ -122,6 +122,9 @@ if ($taskid)
 	{
 		$result=$projectstatic->fetch($task->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		
+		// To verify role of users
+		$userAccess = $projectstatic->restrictedProjectArea($user);
 
 		if ($mesg) print $mesg;
 		
