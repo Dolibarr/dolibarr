@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -42,6 +43,8 @@ create table llx_commande_fournisseur
   remise_percent      real      default 0,
   remise              real      default 0,
   tva                 double(24,8)      default 0,
+  localtax1           double(24,8)      default 0,
+  localtax2           double(24,8)      default 0,
   total_ht            double(24,8)      default 0,
   total_ttc           double(24,8)      default 0,
   note                text,
