@@ -56,8 +56,8 @@ $pagenext = $page + 1;
 
 $id = $_GET['id'];
 $ref= $_GET['ref'];
-$object = new Project($db);
-if (! $object->fetch($_GET['id'],$_GET['ref']) > 0)
+$project = new Project($db);
+if (! $project->fetch($_GET['id'],$_GET['ref']) > 0)
 {
 	dol_print_error($db);
 }
@@ -70,7 +70,7 @@ if (! $object->fetch($_GET['id'],$_GET['ref']) > 0)
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 	if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
 	if (is_dir($upload_dir))
@@ -99,7 +99,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Delete
 if ($action=='delete')
 {
-	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
 	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -116,18 +116,18 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref);
 
 	$company = new Societe($db);
-	$company->fetch($object->socid);
+	$company->fetch($project->socid);
 	
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
+	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
 	
 	// To verify role of users
-	$userAccess = $object->restrictedProjectArea($user);
+	$userAccess = $project->restrictedProjectArea($user);
 
-	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+	$head = project_prepare_head($project);
+	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($project->public?'projectpub':'project'));
 
 	// Files list constructor
 	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
@@ -141,26 +141,26 @@ if ($id > 0 || ! empty($ref))
 	
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object,'ref','',1,'ref','ref');
+	print $form->showrefnav($project,'ref','',1,'ref','ref');
 	print '</td></tr>';
 	
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
 	
 	// Company
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
 	
 	// Visibility
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
+	if ($project->public) print $langs->trans('SharedProject');
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 	
 	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 	
 	// Files infos
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
@@ -174,12 +174,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$object->id,'',0,0,$user->rights->projet->creer);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,$user->rights->projet->creer);
 
 
 	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'projet',$param);
+	$param='&id='.$project->id;
+	$formfile->list_of_documents($filearray,$project,'projet',$param);
 
 }
 else
