@@ -22,9 +22,9 @@
 
 -- Type :
 --
--- 0 : entrée d'argent
+-- 0 : entree d'argent
 -- 1 : sortie d'argent
--- 2 : entrée ou sortie d'argent
+-- 2 : entree ou sortie d'argent
 
 create table llx_c_paiement
 (
