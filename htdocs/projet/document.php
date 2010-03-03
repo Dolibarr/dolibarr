@@ -33,7 +33,6 @@ $langs->load('projects');
 $langs->load('other');
 
 $id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 // Security check
 $socid=0;
@@ -97,7 +96,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Delete
-if ($action=='delete')
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->projet->supprimer)
 {
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -135,6 +134,12 @@ if ($id > 0 || ! empty($ref))
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
+	}
+	
+	if ($_GET["action"] == 'delete')
+	{
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"]."&urlfile=".$_GET['urlfile'],$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
+		if ($ret == 'html') print '<br>';
 	}
 
 	print '<table class="border" width="100%">';
