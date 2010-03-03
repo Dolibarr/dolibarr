@@ -511,6 +511,8 @@ class Translate {
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0)
 	{
+		global $conf;
+		
 		// We scan directory langs to detect available languages
 		$handle=opendir($langdir."/langs");
 		$langs_available=array();
@@ -520,7 +522,14 @@ class Translate {
 			{
 				$this->load("languages");
 
-				$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
+				if ($conf->global->MAIN_SHOW_LANGUAGE_CODE)
+				{
+					$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
+				}
+				else
+				{
+					$langs_available[$dir] = $this->trans('Language_'.$dir);
+				}
 			}
 		}
 		return $langs_available;
