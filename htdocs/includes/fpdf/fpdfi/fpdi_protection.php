@@ -1,8 +1,8 @@
 <?php
 /****************************************************************************
 * Software: FPDI_Protection                                                 *
-* Version:  1.0.2                                                             *
-* Date:     2006/11/20                                                      *
+* Version:  1.0.3                                                            *
+* Date:     2009/03/06                                                      *
 * Author:   Klemen VODOPIVEC, Jan Slabon                                    *
 * License:  Freeware                                                        *
 *                                                                           *
@@ -17,19 +17,21 @@
 *                                                                           *
 ****************************************************************************/
 
-require_once("fpdi.php");
+require_once('fpdi.php');
 
 class FPDI_Protection extends FPDI {
 	
-	var $encrypted;          //whether document is protected
-    var $Uvalue;             //U entry in pdf document
-    var $Ovalue;             //O entry in pdf document
-    var $Pvalue;             //P entry in pdf document
-    var $enc_obj_id;         //encryption object id
-    var $last_rc4_key;       //last RC4 key encrypted (cached for optimisation)
-    var $last_rc4_key_c;     //last RC4 computed key
-    var $padding = '';
+	var $encrypted = false;         //whether document is protected
+    var $Uvalue;                    //U entry in pdf document
+    var $Ovalue;                    //O entry in pdf document
+    var $Pvalue;                    //P entry in pdf document
+    var $enc_obj_id;                //encryption object id
+    var $last_rc4_key = '';         //last RC4 key encrypted (cached for optimisation)
+    var $last_rc4_key_c;            //last RC4 computed key
+    var $padding = "\x28\xBF\x4E\x5E\x4E\x75\x8A\x41\x64\x00\x4E\x56\xFF\xFA\x01\x08\x2E\x2E\x00\xB6\xD0\x68\x3E\x80\x2F\x0C\xA9\xFE\x64\x53\x69\x7A";
     
+	// DOL_CHANGE
+/*
     function FPDI_Protection($orientation='P',$unit='mm',$format='A4')
     {
         parent::FPDI($orientation,$unit,$format);
@@ -40,7 +42,8 @@ class FPDI_Protection extends FPDI {
         $this->padding = "\x28\xBF\x4E\x5E\x4E\x75\x8A\x41\x64\x00\x4E\x56\xFF\xFA\x01\x08".
                          "\x2E\x2E\x00\xB6\xD0\x68\x3E\x80\x2F\x0C\xA9\xFE\x64\x53\x69\x7A";
     }
-
+*/
+    
     /**
     * Function to set permissions as well as user and owner passwords
     *
@@ -52,8 +55,7 @@ class FPDI_Protection extends FPDI {
     * - If an owner password is set, document can be opened in privilege mode with no
     *   restriction if that password is entered
     */
-    function SetProtection($permissions=array(),$user_pass='',$owner_pass=null)
-    {
+    function SetProtection($permissions=array(), $user_pass='', $owner_pass=null) {
         $options = array('print' => 4, 'modify' => 8, 'copy' => 16, 'annot-forms' => 32 );
         $protection = 192;
         foreach($permissions as $permission){
@@ -62,14 +64,13 @@ class FPDI_Protection extends FPDI {
             $protection += $options[$permission];
         }
         if ($owner_pass === null)
-            $owner_pass = uniqid(mt_rand());
+            $owner_pass = uniqid(rand());
         $this->encrypted = true;
         $this->_generateencryptionkey($user_pass, $owner_pass, $protection);
     }
 
 
-    function _putstream($s)
-    {
+    function _putstream($s) {
         if ($this->encrypted) {
             $s = $this->_RC4($this->_objectkey($this->_current_obj_id), $s);
         }
@@ -77,8 +78,7 @@ class FPDI_Protection extends FPDI {
     }
 
 
-    function _textstring($s)
-    {
+    function _textstring($s) {
         if ($this->encrypted) {
             $s = $this->_RC4($this->_objectkey($this->_current_obj_id), $s);
         }
@@ -89,24 +89,21 @@ class FPDI_Protection extends FPDI {
     /**
     * Compute key depending on object number where the encrypted data is stored
     */
-    function _objectkey($n)
-    {
-        return substr($this->_md5_16($this->encryption_key.pack('VXxx',$n)),0,10);
+    function _objectkey($n) {
+        return substr($this->_md5_16($this->encryption_key.pack('VXxx', $n)), 0, 10);
     }
 
 
     /**
     * Escape special characters
     */
-    function _escape($s)
-    {
+    function _escape($s) {
         return str_replace(
-        	array('\\',')','(',"\r"),
-        	array('\\\\','\\)','\\(','\\r'),$s);
+        	array('\\',')','(',"\r", "\n", "\t"),
+        	array('\\\\','\\)','\\(','\\r', '\\n', '\\t'),$s);
     }
 
-    function _putresources()
-    {
+    function _putresources() {
         parent::_putresources();
         if ($this->encrypted) {
             $this->_newobj();
@@ -117,8 +114,7 @@ class FPDI_Protection extends FPDI {
         }
     }
 
-    function _putencryption()
-    {
+    function _putencryption() {
         $this->_out('/Filter /Standard');
         $this->_out('/V 1');
         $this->_out('/R 2');
@@ -128,13 +124,11 @@ class FPDI_Protection extends FPDI {
     }
 
 
-    function _puttrailer()
-    {
+    function _puttrailer() {
         parent::_puttrailer();
         if ($this->encrypted) {
             $this->_out('/Encrypt '.$this->enc_obj_id.' 0 R');
-            $id = isset($this->fileidentifier) ? $this->fileidentifier : '';
-            $this->_out('/ID [<'.$id.'><'.$id.'>]');
+            $this->_out('/ID [()()]');
         }
     }
 
@@ -142,8 +136,7 @@ class FPDI_Protection extends FPDI {
     /**
     * RC4 is the standard encryption algorithm used in PDF format
     */
-    function _RC4($key, $text)
-    {
+    function _RC4($key, $text) {
     	if ($this->last_rc4_key != $key) {
             $k = str_repeat($key, 256/strlen($key)+1);
             $rc4 = range(0,255);
@@ -181,16 +174,14 @@ class FPDI_Protection extends FPDI {
     /**
     * Get MD5 as binary string
     */
-    function _md5_16($string)
-    {
+    function _md5_16($string) {
         return pack('H*',md5($string));
     }
 
     /**
     * Compute O value
     */
-    function _Ovalue($user_pass, $owner_pass)
-    {
+    function _Ovalue($user_pass, $owner_pass) {
         $tmp = $this->_md5_16($owner_pass);
         $owner_RC4_key = substr($tmp,0,5);
         return $this->_RC4($owner_RC4_key, $user_pass);
@@ -200,8 +191,7 @@ class FPDI_Protection extends FPDI {
     /**
     * Compute U value
     */
-    function _Uvalue()
-    {
+    function _Uvalue() {
         return $this->_RC4($this->encryption_key, $this->padding);
     }
 
@@ -209,8 +199,7 @@ class FPDI_Protection extends FPDI {
     /**
     * Compute encryption key
     */
-    function _generateencryptionkey($user_pass, $owner_pass, $protection)
-    {
+    function _generateencryptionkey($user_pass, $owner_pass, $protection) {
         // Pad passwords
         $user_pass = substr($user_pass.$this->padding,0,32);
         $owner_pass = substr($owner_pass.$this->padding,0,32);
@@ -230,6 +219,7 @@ class FPDI_Protection extends FPDI {
     	switch ($value[0]) {
     		case PDF_TYPE_STRING :
 				if ($this->encrypted) {
+                    $value[1] = $this->_unescape($value[1]);
                     $value[1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[1]);
                  	$value[1] = $this->_escape($value[1]);
                 } 
@@ -258,12 +248,72 @@ class FPDI_Protection extends FPDI {
     
     
     function hex2str($hex) {
-    	return pack("H*", str_replace(array("\r","\n"," "),"", $hex));
+    	return pack('H*', str_replace(array("\r","\n",' '),'', $hex));
     }
     
     function str2hex($str) {
-        return current(unpack("H*",$str));
+        return current(unpack('H*',$str));
+    }
+    
+    /**
+     * Deescape special characters
+     */
+    function _unescape($s) {
+        $out = '';
+        for ($count = 0, $n = strlen($s); $count < $n; $count++) {
+            if ($s[$count] != '\\' || $count == $n-1) {
+                $out .= $s[$count];
+            } else {
+                switch ($s[++$count]) {
+                    case ')':
+                    case '(':
+                    case '\\':
+                        $out .= $s[$count];
+                        break;
+                    case 'f':
+                        $out .= chr(0x0C);
+                        break;
+                    case 'b':
+                        $out .= chr(0x08);
+                        break;
+                    case 't':
+                        $out .= chr(0x09);
+                        break;
+                    case 'r':
+                        $out .= chr(0x0D);
+                        break;
+                    case 'n':
+                        $out .= chr(0x0A);
+                        break;
+                    case "\r":
+                        if ($count != $n-1 && $s[$count+1] == "\n")
+                            $count++;
+                        break;
+                    case "\n":
+                        break;
+                    default:
+                        // Octal-Values
+                        if (ord($s[$count]) >= ord('0') &&
+                            ord($s[$count]) <= ord('9')) {
+                            $oct = ''. $s[$count];
+                                
+                            if (ord($s[$count+1]) >= ord('0') &&
+                                ord($s[$count+1]) <= ord('9')) {
+                                $oct .= $s[++$count];
+                                
+                                if (ord($s[$count+1]) >= ord('0') &&
+                                    ord($s[$count+1]) <= ord('9')) {
+                                    $oct .= $s[++$count];    
+                                }                            
+                            }
+                            
+                            $out .= chr(octdec($oct));
+                        } else {
+                            $out .= $s[$count];
+                        }
+                }
+            }
+        }
+        return $out;
     }
 }
-
-?>

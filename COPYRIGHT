@@ -14,10 +14,10 @@ ArtiChow          1.07     Public Domain               Yes              Graphics
 Php-barcode       0.3pl1   GPL 2.0                     Yes              Bar code generation
 EFC/XFSS		  1.0.1	   LGPL 3.0					   Yes				Enhanced File Crypt/Extended File Stealth System
 FCKEditor         2.6.4    LGPL 2.1 or Mozilla PL 1.0  Yes              Editor WYSIWYG
-FPDF              1.53     Public domain               Yes              PDF generation (original code is modified)
-FPDF_TPL          1.1.2    Apache Software License 2.0 No GPL3 only     PDF templates management
-FPDI              1.2.1    Apache Software License 2.0 No GPL3 only     PDF templates management
-FPDI_Protection   1.0.2    Apache Software License 2.0 No GPL3 only     PDF encryption (8 files)
+FPDF              1.6      Public domain               Yes              PDF generation (original code is modified)
+FPDF_TPL          1.1.4    Apache Software License 2.0 No GPL3 only     PDF templates management
+FPDI              1.3.2    Apache Software License 2.0 No GPL3 only     PDF templates management
+FPDI_Protection   1.0.3    Apache Software License 2.0 No GPL3 only     PDF encryption (8 files)
 GeoIP             x.x                                  Yes              GeoIP Maxmind conversion
 iWebkit			  4.6.2	   LGPL 3.0					   Yes				Iphone templates framework
 JCrop			  0.9.8	   MIT Licence				   Yes				JS library to crop images
