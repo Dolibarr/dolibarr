@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -67,7 +67,7 @@ if ($action == 'add_prod' &&
 $cancel <> $langs->trans("Cancel") &&
 ($user->rights->produit->creer || $user->rights->service->creer))
 {
-
+	$error=0;
 	for($i=0;$i<$_POST["max_prod"];$i++)
 	{
 		// print "<br> : ".$_POST["prod_id_chk".$i];
@@ -79,26 +79,33 @@ $cancel <> $langs->trans("Cancel") &&
 			}
 			else
 			{
+				$error++;
 				$action = 're-edit';
-				if($product->error == "isFatherOfThis")
-				$mesg = $langs->trans("ErrorAssociationIsFatherOfThis");
+				if ($product->error == "isFatherOfThis") $mesg = $langs->trans("ErrorAssociationIsFatherOfThis");
+				else $mesg=$product->error;
 			}
 		}
 		else
 		{
-			if($product->del_sousproduit($id, $_POST["prod_id_".$i]))
+			if ($product->del_sousproduit($id, $_POST["prod_id_".$i]) > 0)
 			{
 				$action = 'edit';
 			}
 			else
 			{
+				$error++;
 				$action = 're-edit';
+				$mesg=$product->error;
 			}
-
-
 		}
 	}
+	if (! $error)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$product->id);
+		exit;
+	}
 }
+
 // action recherche des produits par mot-cle et/ou par categorie
 if($action == 'search' )
 {
@@ -180,27 +187,32 @@ if ($id || $ref)
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 			print '</tr>';
 
+			// Number of subproducts
 			$product->get_sousproduits_arbo ();
 			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
 
-			// associations sousproduits
+			// List of subproducts
 			$prods_arbo = $product->get_arbo_each_prod();
 			if(sizeof($prods_arbo) > 0)
 			{
 				print '<tr><td colspan="2">';
 				print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
-				foreach($prods_arbo as $key => $value)
+				print '<table class="nobordernopadding">';
+				foreach($prods_arbo as $value)
 				{
-					$productstatic->id=$value[1];
-					$productstatic->type=0;
-					//$productstatic->ref=$value[0];
+					$productstatic->id=$value['id'];
+					$productstatic->type=$value['type'];
+					$productstatic->ref=$value['fullpath'];
 					//var_dump($value);
 					//print '<pre>'.$productstatic->ref.'</pre>';
 					//print $productstatic->getNomUrl(1).'<br>';
-					print $value[0];	// This contains a tr line.
+					//print $value[0];	// This contains a tr line.
+					print '<tr>';
+					print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].')</td>';
+					print '<td></td>';
+					print '</tr>';
 				}
-
-
+				print '</table>';
 				print '</td></tr>';
 			}
 
@@ -225,26 +237,44 @@ if ($id || $ref)
 			// Reference
 			print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
 			print $html->showrefnav($product,'ref','',1,'ref');
-			print '</td></tr>';
-
-		if ($product->is_photo_available($conf->produit->dir_output))
-		{
-			// Photo
-			print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
-			$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
 			print '</td>';
-		}
 
 		print '</tr>';
 
-		// Libelle
+		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
 
-		// Nombre de sousproduits associes
+		// Number of subproducts
 		$product->get_sousproduits_arbo ();
 		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
 		print '</tr>';
+
+		// List of subproducts
+		$prods_arbo = $product->get_arbo_each_prod();
+		//var_dump($prods_arbo);
+		if(sizeof($prods_arbo) > 0)
+		{
+			print '<tr><td colspan="2">';
+			print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
+			print '<table class="nobordernopadding">';
+			foreach($prods_arbo as $value)
+			{
+				$productstatic->id=$value['id'];
+				$productstatic->type=$value['type'];
+				$productstatic->ref=$value['fullpath'];
+				//var_dump($value);
+				//print '<pre>'.$productstatic->ref.'</pre>';
+				//print $productstatic->getNomUrl(1).'<br>';
+				//print $value[0];	// This contains a tr line.
+				print '<tr>';
+				print '<td>'.$productstatic->getNomUrl(1).' ('.$value['nb'].')</td>';
+				print '<td></td>';
+				print '</tr>';
+			}
+			print '</table>';
+			print '</td></tr>';
+		}
 
 		print '</table>';
 
@@ -253,6 +283,7 @@ if ($id || $ref)
 		print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
 		print '<table class="nobordernopadding">';
 		print '<tr><td><b>'.$langs->trans("ProductToAddSearch").'</b></td></tr>';
+
 		print '<tr><td>';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print $langs->trans("KeywordFilter");
@@ -299,14 +330,16 @@ if ($id || $ref)
 					if($objp->rowid != $id)
 					{
 						// check if a product is not already a parent product of this one
-						$prod_arbo=new Product($db,$objp->rowid);
+						$prod_arbo=new Product($db);
+						$prod_arbo->id=$objp->rowid;
 						if ($prod_arbo->type==2 || $prod_arbo->type==3)
 						{
 							$is_pere=0;
 							$prod_arbo->get_sousproduits_arbo ();
 							// associations sousproduits
 							$prods_arbo = $prod_arbo->get_arbo_each_prod();
-							if(sizeof($prods_arbo) > 0) {
+							if (sizeof($prods_arbo) > 0)
+							{
 								foreach($prods_arbo as $key => $value)
 								{
 									if ($value[1]==$id)
@@ -354,8 +387,15 @@ if ($id || $ref)
 				dol_print_error($db);
 			}
 			print '<input type="hidden" name="max_prod" value="'.$i.'">';
-			if($num > 0) print '<tr><td colspan="4" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'"></td></tr>';
 			print '</table>';
+
+			if($num > 0)
+			{
+				print '<br><center><input type="submit" class="button" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
+				print ' &nbsp; &nbsp; <input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+				print '</center>';
+			}
+
 			print '</form>';
 		}
 

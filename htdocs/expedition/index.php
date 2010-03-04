@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
  */
 
 require("../main.inc.php");
+require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("orders");
 $langs->load("sendings");
@@ -33,6 +34,9 @@ $langs->load("sendings");
 /*
  *	View
  */
+
+$orderstatic=new Commande($db);
+$companystatic=new Societe($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans("Sendings"),$helpurl);
@@ -126,13 +130,18 @@ if ( $db->query($sql) )
 		$var = True;
 		while ($i < $num)
 		{
-	  $var=!$var;
-	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]>";
-	  print '<td nowrap="nowrap">';
-	  print "<a href=\"commande.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,20).'</a></td></tr>';
-	  $i++;
+			$var=!$var;
+			$obj = $db->fetch_object();
+			print "<tr $bc[$var]>";
+			print '<td nowrap="nowrap">';
+			$orderstatic->id=$obj->rowid;
+			$orderstatic->ref=$obj->ref;
+			print $orderstatic->getNomUrl(1);
+			print '</td>';
+			print '<td>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.dol_trunc($obj->nom,20).'</a>';
+			print '</td></tr>';
+			$i++;
 		}
 		print "</table><br>";
 	}
@@ -173,12 +182,15 @@ if ( $resql )
 		$var = True;
 		while ($i < $num)
 		{
-	  $var=!$var;
-	  $obj = $db->fetch_object($resql);
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"commande.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' ';
-	  print $obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td></tr>';
-	  $i++;
+			$var=!$var;
+			$obj = $db->fetch_object($resql);
+			print "<tr $bc[$var]><td width=\"30%\">";
+			$orderstatic->id=$obj->rowid;
+			$orderstatic->ref=$obj->ref;
+			print $orderstatic->getNomUrl(1);
+			print '</td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td></tr>';
+			$i++;
 		}
 		print "</table><br>";
 	}
@@ -230,9 +242,11 @@ if ($resql)
 			print '<td>';
 			if ($obj->commande_id)
 			{
-				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">';
-				print img_object($langs->trans("ShowOrder"),"order").' '.$obj->commande_ref.'</a>';
-			} else print '&nbsp;';
+				$orderstatic->id=$obj->commande_id;
+				$orderstatic->ref=$obj->commande_ref;
+				print $orderstatic->getNomUrl(1);
+			}
+			else print '&nbsp;';
 			print '</td></tr>';
 			$i++;
 		}

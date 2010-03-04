@@ -528,7 +528,18 @@ if ($id > 0 || ! empty($ref))
 						foreach($prods_arbo as $key => $value)
 						{
 							print '<tr><td colspan="4">';
+
+							$img='';
+							if ($value['stock'] < $value['stock_alert'])
+							{
+								$img=img_warning($langs->trans("StockTooLow"));
+							}
+							print "<tr><td>&nbsp; &nbsp; &nbsp; ->
+                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
+                                </a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+                                <td align=\"center\">".$value['stock']." ".$img."</td></tr>";
 							print $value[0];
+
 							print '</td></tr>'."\n";
 						}
 					}

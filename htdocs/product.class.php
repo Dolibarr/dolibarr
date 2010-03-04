@@ -1478,7 +1478,7 @@ class Product extends CommonObject
 	 *    \brief      Lie un produit associe au produit/service
 	 *    \param      id_pere    Id du produit auquel sera lie le produit a lier
 	 *    \param      id_fils    Id du produit a lier
-	 *    \return     int        < 0 si erreur, > 0 si ok
+	 *    \return     int        < 0 if KO, > 0 if OK
 	 */
 	function add_sousproduit($id_pere, $id_fils,$qty)
 	{
@@ -1839,15 +1839,16 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  \brief 		fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
+	 *  \brief 		Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
 	 * 	\remarks	Define value of this->res
 	 *	\param		multiply	Because each sublevel must be multiplicated by parent nb
 	 *  \return 	void
 	 */
 	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1)
 	{
-		global $langs;
+		global $conf,$langs;
 
+		$product = new Product($this->db);
 		foreach($prod as $nom_pere => $desc_pere)
 		{
 			if (is_array($desc_pere))	// If this parent desc is an array, this is an array of childs
@@ -1856,8 +1857,6 @@ class Product extends CommonObject
 				{
 					//print "XXX ".$desc_pere[1]." multiply=".$multiply;
 					$img="";
-					$trueValue=$desc_pere[1]*$multiply;
-					$product = new Product($this->db);
 					$this->fetch($desc_pere[0]);
 					$this->load_stock();
 					if ($this->stock_entrepot[1] < $this->seuil_stock_alerte)
@@ -1865,18 +1864,35 @@ class Product extends CommonObject
 						$img=img_warning($langs->trans("StockTooLow"));
 					}
 					$this->res[]= array(
-								"<tr><td>&nbsp; &nbsp; &nbsp; ->
+/*								"<tr><td>&nbsp; &nbsp; &nbsp; ->
                                 <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$desc_pere[0]."\">".$compl_path.stripslashes($nom_pere)."
-                                </a> (".$desc_pere[1].")</td><td align=\"center\"> ".$trueValue."</td><td>&nbsp</td><td>&nbsp</td>
+                                </a> (".$desc_pere[1].")</td><td align=\"center\"> ".($desc_pere[1]*$multiply)."</td><td>&nbsp</td><td>&nbsp</td>
                                 <td align=\"center\">".$this->stock_entrepot[1]." ".$img."</td></tr>",
-					$desc_pere[0],
-								'fullpath' => $compl_path.$nom_pere);
+								$desc_pere[0],							// Id product
+*/								'id'=>$desc_pere[0],					// Id product
+								'nb'=>$desc_pere[1],					// Nb of units that compose parent product
+								'nb_total'=>$desc_pere[1]*$multiply,	// Nb of units for all nb of product
+								'stock'=>$this->stock_entrepot[1],		// Stock
+								'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
+								'fullpath' => $compl_path.$nom_pere,	// Label
+								'type'=>$desc_pere[2]					// Nb of units that compose parent product
+								);
 				}
 				else
 				{
-					$this->res[]= array($compl_path.$nom_pere." (".$desc_pere[1].")",
-					$desc_pere[0],
-										'fullpath' => $compl_path.$nom_pere);
+					$this->fetch($desc_pere[0]);
+					$this->load_stock();
+					$this->res[]= array(
+/*					$compl_path.$nom_pere." (".$desc_pere[1].")",
+					$desc_pere[0],							// Id product
+*/					'id'=>$desc_pere[0],					// Id product
+					'nb'=>$desc_pere[1],					// Nb of units that compose parent product
+					'nb_total'=>$desc_pere[1],				// Nb of units for all nb of product
+					'stock'=>$this->stock_entrepot[1],		// Stock
+					'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
+					'fullpath' => $compl_path.$nom_pere,	// Label
+					'type'=>$desc_pere[2]					// Nb of units that compose parent product
+					);
 				}
 			}
 			else if($nom_pere != "0" && $nom_pere != "1")
@@ -1952,15 +1968,15 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *   \brief 	Return all parent products
+	 *   \brief 	Return all parent products fo current product
 	 *   \return 	array prod
 	 */
 	function getParent()
 	{
 
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa";
-		$sql.= ", ".MAIN_DB_PREFIX."product as p";
+		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
+		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
 		$sql.= " AND p.rowid = ".$this->id;
 
@@ -1982,12 +1998,13 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  \brief 		Return childs
-	 *  \return     array        prod
+	 *  \brief 		Return childs of prodcut with if fk_parent
+	 * 	\param		fk_parent	Id of product to search childs of
+	 *  \return     array       Prod
 	 */
 	function getChildsArbo($fk_parent)
 	{
-		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id";
+		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
@@ -1999,10 +2016,15 @@ class Product extends CommonObject
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
+				//$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				$prods[addslashes($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
-				foreach($this->getChildsArbo($rec['id']) as $keyChild => $valueChild)
-				$prods[addslashes($rec['label'])][$keyChild] = $valueChild;
+				$listofchilds=$this->getChildsArbo($rec['id']);
+				foreach($listofchilds as $keyChild => $valueChild)
+				{
+					$prods[addslashes($rec['label'])][$keyChild] = $valueChild;
+				}
 			}
+			//var_dump($prods);
 			return $prods;
 		}
 		else
@@ -2027,6 +2049,7 @@ class Product extends CommonObject
 				$parent[$key][$keyChild] = $valueChild;
 			}
 		}
+		//var_dump($parent);
 		// concatenation
 		foreach($parent as $key => $value)
 		{
