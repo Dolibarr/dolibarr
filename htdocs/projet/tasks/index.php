@@ -80,6 +80,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td width="80">'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
+print '<td align="right">'.$langs->trans("Progress").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
 // Show all lines in taskarray (recursive function to go down on tree)

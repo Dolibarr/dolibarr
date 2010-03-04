@@ -451,7 +451,7 @@ class Task extends CommonObject
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public";
-		$sql.= ", t.rowid as taskid, t.label, t.fk_task_parent, t.duration_effective";
+		$sql.= ", t.rowid as taskid, t.label, t.fk_task_parent, t.duration_effective, t.progress";
 		if ($mode == 0)
 		{
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -503,6 +503,7 @@ class Task extends CommonObject
 					$tasks[$i]->description  = $obj->description;
 					$tasks[$i]->fk_parent    = $obj->fk_task_parent;
 					$tasks[$i]->duration     = $obj->duration_effective;
+					$tasks[$i]->progress     = $obj->progress;
 					$tasks[$i]->public       = $obj->public;
 				}
 

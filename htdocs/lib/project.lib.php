@@ -426,6 +426,11 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				if ($showlineingray) print '</i>';
 				else print '</a>';
 				print "</td>\n";
+				
+				// Progress
+				print '<td align="right">';
+				print $lines[$i]->progress.' %';
+				print '</td>';
 
 				// Time spent
 				print '<td align="right">';

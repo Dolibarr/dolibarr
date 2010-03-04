@@ -44,6 +44,7 @@ MyActivity=Mon activité
 MyActivities=Mes tâches/activités
 MyProjects=Mes projets
 DurationEffective=Durée effective
+Progress=Progression
 Time=Temps
 ListProposalsAssociatedProject=Liste des propositions commerciales associées au projet
 ListOrdersAssociatedProject=Liste des commandes clients associées au projet
