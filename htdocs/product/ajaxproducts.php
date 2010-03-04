@@ -40,7 +40,7 @@ top_htmlhead("", "", 1);
 print '<body class="nocellnopadd">'."\n";
 
 // Generation liste de produits
-if (! empty($_GET['keysearch']))
+if (! empty($_GET['keysearch']) || ! empty($_GET['term']))
 {
 	//var_dump($_GET); exit;
 	//print $_GET["price_level"]; exit;

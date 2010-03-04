@@ -894,7 +894,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
-
+		
+		if ($conf->global->MAIN_USE_JQUERY)
+		{
+			print '<!-- Includes for JQuery (Ajax library) -->'."\n";
+			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery-ui.css" type="text/css" />'."\n";
+			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery.ui.all.css" type="text/css" />'."\n";
+			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery.ui.autocomplete.css" type="text/css" />'."\n";
+		}
+		
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
@@ -911,13 +919,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) { $mini='_mini'; $ext='.jgz'; }	// mini='_mini', ext='.gz'
 
 			// This one is required for all Ajax features
-			if (! defined('DISABLE_PROTOTYPE'))
+			if (! defined('DISABLE_PROTOTYPE') && ! $conf->global->MAIN_USE_JQUERY)
 			{
 				print '<!-- Includes for Prototype (Used by Scriptaculous and PWC) -->'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype'.$mini.$ext.'"></script>'."\n";
 			}
 			// This one is required for boxes
-			if (! defined('DISABLE_SCRIPTACULOUS'))
+			if (! defined('DISABLE_SCRIPTACULOUS') && ! $conf->global->MAIN_USE_JQUERY)
 			{
 				print '<!-- Includes for Scriptaculous (Used by Drag and drop and PWC) -->'."\n";
 				//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
@@ -928,11 +936,18 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 
 			// Those ones are required only with option "confirm by ajax popup"
-			if (! defined('DISABLE_PWC') && $conf->global->MAIN_CONFIRM_AJAX)
+			if (! defined('DISABLE_PWC')  && ! $conf->global->MAIN_USE_JQUERY && $conf->global->MAIN_CONFIRM_AJAX)
 			{
 				print '<!-- Includes for PWC (Used for confirm popup) -->'."\n";
 				// PWC js
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.$ext.'"></script>'."\n";
+			}
+			
+			if ($conf->global->MAIN_USE_JQUERY)
+			{
+				print '<!-- Includes for JQuery (Ajax library) -->'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/jquery.min.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/ui/jquery-ui.min.js"></script>'."\n";
 			}
 		}
 

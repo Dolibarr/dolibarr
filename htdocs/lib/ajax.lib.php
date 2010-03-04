@@ -146,4 +146,29 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 	return $script;
 }
 
+/**
+ *	\brief     	Get value of field, do Ajax process and return result
+ *	\param	    htmlname            nom et id du champ
+ *	\param	    url                 chemin du fichier de reponse : /chemin/fichier.php
+ *	\return    	string              script complet
+ */
+function ajax_autocompleter2($selected='', $htmlname, $url, $option='')
+{
+	$script = '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
+
+	$script.= '<script type="text/javascript">';
+	$script.= '$(function() {
+					$("#birds").autocomplete({
+						source: "'.$url.'",
+						minLength: 2,
+						extraParams: {
+							'.$htmlname.': function() { return $("#birds").val(); }
+						}
+					});
+				});';
+	$script.= '</script>';
+
+	return $script;
+}
+
 ?>

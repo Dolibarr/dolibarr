@@ -797,19 +797,31 @@ class Form
 
 		if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
 		{
-			print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
-			print '<td class="nobordernopadding" nowrap="nowrap" width="80">';
-			print $langs->trans("RefOrLabel").':</td>';
-			print '<td class="nobordernopadding" width="16">';
-			print ajax_indicator($htmlname,'working');	// Indicator is et here
-			print '</td>';
-			print '<td><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"></td>';
-			print '</tr>';
-			print '<tr class="nocellnopadd">';
-			print '<td class="nobordernopadding" colspan="3">';
-			print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');	// Indicator is '' to disable it as it is alreay output
-			print '</td></tr>';
-			print '</table>';
+			if ($conf->global->MAIN_USE_JQUERY)
+			{
+				print ajax_autocompleter2('','keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
+				
+				print '<div class="ui-widget">';
+				print '<label for="birds">'.$langs->trans("RefOrLabel").':</label>';
+				print '<input id="birds" />';
+				print '</div>';
+			}
+			else
+			{
+				print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding" nowrap="nowrap" width="80">';
+				print $langs->trans("RefOrLabel").':</td>';
+				print '<td class="nobordernopadding" width="16">';
+				print ajax_indicator($htmlname,'working');	// Indicator is et here
+				print '</td>';
+				print '<td><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"></td>';
+				print '</tr>';
+				print '<tr class="nocellnopadd">';
+				print '<td class="nobordernopadding" colspan="3">';
+				print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');	// Indicator is '' to disable it as it is alreay output
+				print '</td></tr>';
+				print '</table>';
+			}	
 		}
 		else
 		{
