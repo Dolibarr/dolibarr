@@ -104,7 +104,8 @@ class Commande extends CommonObject
 	}
 
 
-	/**     \brief      Cree la commande depuis une propale existante
+	/**     
+	 * 		\brief      Cree la commande depuis une propale existante
 	 *		\param      user            Utilisateur qui cree
 	 *		\param      propale_id      id de la propale qui sert de modele
 	 */

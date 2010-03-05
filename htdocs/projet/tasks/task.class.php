@@ -115,7 +115,7 @@ class Task extends CommonObject
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_start!=''?$this->db->idate($this->date_start):'null');
 		$sql.= ", ".($this->date_end!=''?$this->db->idate($this->date_end):'null');
-		$sql.= ", ".$this->progress;
+		$sql.= ", ".($this->progress!=''?$this->progress:0);
 		$sql.= ")";
 
 		$this->db->begin();

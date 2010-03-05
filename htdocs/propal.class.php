@@ -519,7 +519,7 @@ class Propal extends CommonObject
 	 *      \return     int     <0 if KO, >=0 if OK
 	 * 		\remarks	this->ref can be set or empty. If empty, we will use "(PROV)"
 	 */
-	function create($user='')
+	function create($user='', $notrigger=0)
 	{
 		global $langs,$conf,$mysoc;
 		$error=0;
@@ -661,12 +661,15 @@ class Propal extends CommonObject
 					$resql=$this->update_price();
 					if ($resql)
 					{
-						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-						$interface=new Interfaces($this->db);
-						$result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
-						if ($result < 0) { $error++; $this->errors=$interface->errors; }
-						// Fin appel triggers
+						if (! $notrigger)
+						{
+							// Appel des triggers
+							include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+							$interface=new Interfaces($this->db);
+							$result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+							if ($result < 0) { $error++; $this->errors=$interface->errors; }
+							// Fin appel triggers
+						}
 
 						$this->db->commit();
 						dol_syslog("Propal::ass::Create done id=".$this->id);
@@ -949,7 +952,7 @@ class Propal extends CommonObject
 	 *      \param      user        Objet utilisateur qui valide
 	 *      \return     int         <0 si ko, >=0 si ok
 	 */
-	function valid($user)
+	function valid($user, $notrigger=0)
 	{
 		global $conf,$langs;
 
@@ -965,12 +968,15 @@ class Propal extends CommonObject
 			{
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_PROPALSTATUS=='always'?1:0);
 
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+				if (! $notrigger)
+				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
 
 				$this->db->commit();
 				return 1;
@@ -1562,7 +1568,7 @@ class Propal extends CommonObject
 	 *    \brief      Efface propal
 	 *    \param      user        Objet du user qui efface
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		global $conf;
 
@@ -1601,6 +1607,16 @@ class Propal extends CommonObject
 							return 0;
 						}
 					}
+				}
+				
+				if (! $notrigger)
+				{
+					// Call triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('PROPAL_DELETE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// End call triggers
 				}
 
 				dol_syslog("Suppression de la proposition $this->id par $user->id", LOG_DEBUG);

@@ -35,11 +35,6 @@ function project_prepare_head($object)
     $head[$h][2] = 'project';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("ProjectContact");
-    $head[$h][2] = 'contact';
-	$h++;
-
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Tasks");
     $head[$h][2] = 'tasks';
@@ -57,6 +52,11 @@ function project_prepare_head($object)
 	    $head[$h][2] = 'element';
 		$h++;
 	}
+	
+	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("ProjectContact");
+    $head[$h][2] = 'contact';
+	$h++;
 	
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);

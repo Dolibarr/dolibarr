@@ -49,7 +49,6 @@ class Project extends CommonObject
 	var $date_end;
 	var $socid;
 	var $user_author_id;				//!< Id of project creator. Not defined if shared project.
-	//var $user_resp_id;					//!< Id of project responsible. Not defined if shared project.
 	var $public;						//!< Tell if this is a public or private project
 	var $note_private;
 	var $note_public;
@@ -350,13 +349,45 @@ class Project extends CommonObject
 	 */
 	function delete($user, $notrigger=0)
 	{
+		global $conf;
+		
+		$this->db->begin();
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog("Project::delete sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			// We remove directory
+			$projectref = dol_sanitizeFileName($this->ref);
+			if ($conf->projet->dir_output)
+			{
+				$dir = $conf->projet->dir_output . "/" . $projectref ;
+				$file = $conf->projet->dir_output . "/" . $projectref . "/" . $projectref . ".pdf";
+				if (file_exists($file))
+				{
+					//project_delete_preview($this->db, $this->id, $this->ref);
+
+					if (!dol_delete_file($file))
+					{
+						$this->error='ErrorFailToDeleteFile';
+						$this->db->rollback();
+						return 0;
+					}
+				}
+				if (file_exists($dir))
+				{
+					$res=@dol_delete_dir($dir);
+					if (! $res)
+					{
+						$this->error='ErrorFailToDeleteDir';
+						$this->db->rollback();
+						return 0;
+					}
+				}
+			}
+			
 			if (! $notrigger)
 			{
 	            // Call triggers
@@ -366,13 +397,16 @@ class Project extends CommonObject
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // End call triggers
 			}
-
+			
+			dol_syslog("Project::delete sql=".$sql, LOG_DEBUG);
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
 			dol_syslog("Project::delete ".$this->error, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 	}

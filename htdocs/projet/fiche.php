@@ -211,9 +211,9 @@ if ($_REQUEST['action'] == 'confirm_reopen' && $_REQUEST['confirm'] == 'yes')
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->supprimer)
 {
 	$project = new Project($db);
-	$project->id = $_GET["id"];
+	$project->fetch($_GET["id"]);
 	$result=$project->delete($user);
-	if ($result >= 0)
+	if ($result > 0)
 	{
 		Header("Location: index.php");
 		exit;
@@ -483,7 +483,7 @@ else
 		}
 
 		// Close
-		if ($project->statut != 2 && $user->rights->projet->creer)
+		if ($project->statut == 1 && $user->rights->projet->creer)
 		{
 			if ($userAccess)
 			{
