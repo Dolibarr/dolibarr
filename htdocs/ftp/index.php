@@ -173,7 +173,7 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 
 		//print "x".$newremotefileiso;
 		dol_syslog("ftp/index.php ftp_delete ".$newremotefileiso);
-		$result=ftp_delete($conn_id, $newremotefileiso);
+		$result=@ftp_delete($conn_id, $newremotefileiso);
 		if ($result)
 		{
 			$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$file).'</div>';
