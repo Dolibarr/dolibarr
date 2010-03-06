@@ -141,7 +141,7 @@ if ($_GET["action"] == 'setdoc')
 $form=new Form($db);
 
 
-llxHeader();
+llxHeader('',$langs->trans("CompanySetup"),'EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
@@ -159,7 +159,7 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td align="center">'.$langs->trans("Status").'</td>';
-print '  <td align="center" width="30">'.$langs->trans("Infos").'</td>';
+print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -226,11 +226,11 @@ print_titre($langs->trans("AccountCodeManager"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
+print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="30">&nbsp;</td>';
+print '<td align="center" width="60">&nbsp;</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -252,7 +252,7 @@ if ($handle)
 			$var = !$var;
 
 			print '<tr '.$bc[$var].'>';
-			print '<td width="140">'.$modCodeCompta->nom."</td><td>\n";
+			print '<td>'.$modCodeCompta->nom."</td><td>\n";
 			print $modCodeCompta->info($langs);
 			print '</td>';
 			print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
@@ -310,11 +310,10 @@ else
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
+print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
+print '<td align="center">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="60" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -370,18 +369,6 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 						print "</td>";
 					}
-
-					// Defaut
-					print "<td align=\"center\">";
-					if ($conf->global->COMPANY_ADDON_PDF == "$name")
-					{
-						print img_picto($langs->trans("Default"),'on');
-					}
-					else
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-					}
-					print '</td>';
 
 					// Info
 					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;

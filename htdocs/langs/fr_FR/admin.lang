@@ -270,7 +270,8 @@ ListOfDirectories=Liste des répertoires de modèles OpenDocument
 ListOfDirectoriesForModelGenODT=Liste des répertoires contenant des documents modèles OpenDocument.<br><br>Indiquer les chemins complets de répertoire.<br>Ajouter un retour à la ligne entre chaque répertoire.<br>Pour indiquer un répertoire du module GED, indiquer<br><b>DOL_DATA_ROOT/ecm/nomdurepertoireged</b><br><br>Les fichiers modèles dans ces répertoires doivent se terminer par <b>.odt</b>.
 NumberOfModelFilesFound=Nombre de fichiers modèles ODT trouvés dans ce(s) répertoire(s) 
 ExampleOfDirectoriesForModelGen=Exemples de syntaxe:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-
+FollowingSubstitutionKeysCanBeUsed=En plaçant les tags suivant dans le modèle, vous obtiendrez une subsitution avec la valeur personnalisée lors de la génération du document: 
+FullListOnOnlineDocumentation=Liste complète des tags disponibles sur la documentation utilisateur du module Tiers sur le wiki http://wiki.dolibarr.org
 # Modules = undefined
 Module0Name = Utilisateurs & groupes
 Module0Desc = Gestion des utilisateurs et groupes

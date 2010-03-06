@@ -19,7 +19,7 @@
 
 /**
  *	\file       htdocs/includes/modules/societe/doc/doc_generic_odt.modules.php
- *	\ingroup    project
+ *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  *	\author	    Laurent Destailleur
  *	\version    $Id$
@@ -32,8 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 
 /**
- *	\class      doc_genericodt
- *	\brief      Classe permettant de generer les projets au modele Baleine
+ *	\class      doc_generic_odt
+ *	\brief      Class to build documents using ODF templates generator
  */
 class doc_generic_odt extends ModeleThirdPartyDoc
 {
@@ -70,6 +70,66 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
 	}
 
+
+	/**
+	 * Define array with couple subtitution key => subtitution value
+	 *
+	 * @param unknown_type $mysoc
+	 */
+	function get_substitutionarray_mysoc($mysoc)
+	{
+		return array(
+			'mycompany_name'=>$mysoc->name,
+			'mycompany_email'=>$mysoc->email,
+			'mycompany_phone'=>$mysoc->phone,
+			'mycompany_fax'=>$mysoc->fax,
+			'mycompany_address'=>$mysoc->address,
+			'mycompany_zip'=>$mysoc->zip,
+			'mycompany_town'=>$mysoc->town,
+			'mycompany_country'=>$mysoc->country,
+			'mycompany_url'=>$mysoc->url,
+			'mycompany_barcode'=>$mysoc->gencode,
+			'mycompany_vat'=>$mysoc->tva_intra,
+			'mycompany_idprof1'=>$mysoc->idprof1,
+			'mycompany_idprof2'=>$mysoc->idprof2,
+			'mycompany_idprof3'=>$mysoc->idprof3,
+			'mycompany_idprof4'=>$mysoc->idprof4,
+			'mycompany_note'=>$mysoc->note,
+		);
+	}
+
+
+	/**
+	 * Define array with couple subtitution key => subtitution value
+	 *
+	 * @param unknown_type $object
+	 */
+	function get_substitutionarray_object($object)
+	{
+		return array(
+			'company_name'=>$object->name,
+			'company_email'=>$object->email,
+			'company_phone'=>$object->phone,
+			'company_fax'=>$object->fax,
+			'company_address'=>$object->address,
+			'company_zip'=>$object->zip,
+			'company_town'=>$object->town,
+			'company_country'=>$object->country,
+			'company_url'=>$object->url,
+			'company_barcode'=>$object->gencode,
+			'company_vat'=>$object->tva_intra,
+			'company_customercode'=>$object->code_client,
+			'company_suppliercode'=>$object->code_fournisseur,
+			'company_customeraccountancycode'=>$object->code_compta,
+			'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
+			'company_idprof1'=>$object->idprof1,
+			'company_idprof2'=>$object->idprof2,
+			'company_idprof3'=>$object->idprof3,
+			'company_idprof4'=>$object->idprof4,
+			'company_note'=>$object->note,
+		);
+	}
+
 	/**		\brief      Return description of a module
 	 *      \return     string      Description
 	 */
@@ -91,7 +151,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		// List of directories area
 		$texte.= '<tr><td>';
-		$textbis=$langs->trans("ListOfDirectories");
+		$texttitle=$langs->trans("ListOfDirectories");
 		$listofdir=explode(',',preg_replace('/[\r\n]+/',',',trim($conf->global->COMPANY_ADDON_PDF_ODT_PATH)));
 		$listoffiles=array();
 		foreach($listofdir as $key=>$tmpdir)
@@ -99,14 +159,36 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$tmpdir=trim($tmpdir);
 			$tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
 			if (! $tmpdir) { unset($listofdir[$key]); continue; }
-			if (! is_dir($tmpdir)) $textbis.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
+			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
 				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
 				if (sizeof($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
-		$texte.= $form->textwithpicto($textbis,$langs->trans("ListOfDirectoriesForModelGenODT"),1,'help');
+		$texthelp=$langs->trans("ListOfDirectoriesForModelGenODT");
+		// Add list of substitution keys
+		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
+		$dummy=new Societe($db);
+		$tmparray=$this->get_substitutionarray_mysoc($dummy);
+		$nb=0;
+		foreach($tmparray as $key => $val)
+		{
+			$texthelp.='{'.$key.'}<br>';
+			$nb++;
+			if ($nb >= 5) { $texthelp.='...<br>'; break; }
+		}
+		$tmparray=$this->get_substitutionarray_object($dummy);
+		$nb=0;
+		foreach($tmparray as $key => $val)
+		{
+			$texthelp.='{'.$key.'}<br>';
+			$nb++;
+			if ($nb >= 5) { $texthelp.='...<br>'; break; }
+		}
+		$texthelp.=$langs->trans("FullListOnOnlineDocumentation");
+
+		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help');
 		//var_dump($listofdir);
 
 		$texte.= '<textarea class="flat" cols="80" name="value1">';
@@ -145,7 +227,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{
-		global $user,$langs,$conf;
+		global $user,$langs,$conf,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
@@ -197,20 +279,22 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				create_exdir($conf->societe->dir_temp);
 
-				// Define substitution array
-				$soc=array('societe'=>'bb','nom'=>'ee','name'=>'tt');
-
-				// Read template
+				// Open and load template
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
 						'PATH_TO_TMP'	=>		$conf->societe->dir_temp.'/',
 						'ZIP_PROXY'		=>		'PhpZipProxy'));
 
-				// Make substitution
-				foreach($soc as $socProperty=>$socPropertyValue){
-					try {
-						$odfHandler->setVars($socProperty, $socPropertyValue, true, 'UTF-8');
-					} catch(OdfException $e) {}
+				// Make substitutions
+				$tmparray=$this->get_substitutionarray_mysoc($mysoc);
+				foreach($tmparray as $key=>$value)
+				{
+					$odfHandler->setVars($key, $value, true, 'UTF-8');
+				}
+				$tmparray=$this->get_substitutionarray_object($object);
+				foreach($tmparray as $key=>$value)
+				{
+					$odfHandler->setVars($key, $value, true, 'UTF-8');
 				}
 
 				// Write new file

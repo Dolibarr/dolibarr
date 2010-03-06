@@ -64,9 +64,12 @@ class Societe extends CommonObject
 	var $gencod;
 
 	// 4 identifiants professionnels (leur utilisation depend du pays)
-	var $siren;		// IdProf1
-	var $siret;		// IdProf2
-	var $ape;		// IdProf3
+	var $siren;		// IdProf1 - Deprecated
+	var $siret;		// IdProf2 - Deprecated
+	var $ape;		// IdProf3 - Deprecated
+	var $idprof1;	// IdProf1
+	var $idprof2;	// IdProf2
+	var $idprof3;	// IdProf3
 	var $idprof4;	// IdProf4
 
 	var $prefix_comm;
