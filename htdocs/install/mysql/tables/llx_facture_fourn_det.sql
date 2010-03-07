@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2010 juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,8 +32,12 @@ create table llx_facture_fourn_det
   pu_ttc            double(24,8), -- unit price with tax
   qty               real,         -- quantity of product/service
   tva_tx            double(6,3),  -- TVA taux product/service
+  localtax1_tx      double(6,3)  DEFAULT 0, -- tax local tax 1
+  localtax2_tx	    double(6,3)  DEFAULT 0, -- tax local tax 2
   total_ht          double(24,8), -- Total line price of product excluding tax
   tva               double(24,8), -- Total TVA of line
+  total_localtax1   double(24,8) DEFAULT 0,	-- Total LocalTax1 for total quantity of line
+  total_localtax2   double(24,8) DEFAULT 0,	-- total LocalTax2 for total quantity of line
   total_ttc         double(24,8), -- Total line with tax
   product_type	    integer      DEFAULT 0,
   date_start        datetime   DEFAULT NULL,       -- date debut si service

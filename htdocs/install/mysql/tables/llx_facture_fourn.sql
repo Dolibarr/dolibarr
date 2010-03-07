@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -40,6 +41,8 @@ create table llx_facture_fourn
   close_note          varchar(128),		              -- Commentaire cloture sans paiement complet
 
   tva                 double(24,8)     DEFAULT 0,
+  localtax1           double(24,8)     DEFAULT 0,
+  localtax2           double(24,8)     DEFAULT 0,
   total               double(24,8)     DEFAULT 0,
   total_ht            double(24,8)     DEFAULT 0,
   total_tva           double(24,8)     DEFAULT 0,
