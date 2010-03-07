@@ -1,9 +1,40 @@
-***** Actions to do to release *****
+----- Dolibarr Makepack How To -----
+This documentation describe steps to build a BETA or RELREASE versions
+of Dolibarr. There is a chapter for BETA version and a chapter vor 
+RELEASE version.
+
+***** Actions to do a BETA *****
+This files describe steps made by Dolibarr packaging team to make a 
+beta version of Dolibarr, step by step.
+
+- Check all files are commited.
+- Update version/info in / directory (README*.txt, ChangeLog...)
+- Update version number in build/makepack-dolibarr.pl
+- Update version number in build/exe/doliwamp/doliwamp.iss
+- Update version number in htdocs/master.inc.php
+- Update version number in htdocs/install/inc.php
+- Commit all changes.
+- Add a CVS Tag (DOLIBARR_x_y_BETA)
+- If it's a new branch (Vx.y), create a branch (DOLIBARR_x_y_BRANCH).
+
+- Build Dolibarr and DoliWamp with makepack-dolibarr.pl
+- Check content of built packages.
+- Move build files (tgz+exe+deb), ChangeLog and PAD/DOAP files into the
+  Dolibarr web site repository /home/dolibarr/wwwroot/files.
+- Update and upload NLTechno web page with DoliWamp version.
+
+- Add/Update entries on joomla web site www.dolibarr.org with links
+  to files http://www.dolibarr.org/files/XXX.
+
+- Send mail on mailings-list
+
+
+***** Actions to do a RELEASE *****
 This files describe steps made by Dolibarr packaging team to make a 
 complete release of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update files in root directory (README*.txt, ChangeLog...)
+- Update version/info in / directory (README*.txt, ChangeLog...)
 - Update version number in build/makepack-dolibarr.pl
 - Update version number in build/doxygen/dolibarr-doxygen.doxyfile
 - Update version number in build/exe/doliwamp/doliwamp.iss
@@ -12,19 +43,18 @@ complete release of Dolibarr, step by step.
 - Update version number in htdocs/install/inc.php
 - Update PAD and DOAP files.
 - Commit all changes.
-- Add a CVS Tag
-- If it's a new branch (Vx.y), create a branch.
+- Add a CVS Tag (DOLIBARR_x_y)
 
 - Build Dolibarr and DoliWamp with makepack-dolibarr.pl
 - Check content of built packages.
-- Move build files (tgz+exe), ChangeLog and PAD/DOAP files into Dolibarr
-  web site repository /home/dolibarr/wwwroot/files.
-- Move links in directory "/home/dolibarr/wwwroot/files" on server to point
-  to new files.
-- Upload NLTechno web page with DoliWamp version.
+- Move build files (tgz+exe+deb), ChangeLog and PAD/DOAP files into the
+  Dolibarr web site repository /home/dolibarr/wwwroot/files.
+- Edit symbolic links in directory "/home/dolibarr/wwwroot/files" on server to
+  point to new files.
+- Pudate and upload NLTechno web page with DoliWamp version.
 
 - Upload files dolibarr.*.tgz and doliwamp.*.exe on sourceforge.
-- Update entries on joomla web site www.dolibarr.org with new sourceforge link.
+- Add/Update entries on joomla web site www.dolibarr.org with new sourceforge link.
 
 - Send mail on mailings-list
 - Send news on OpenSource web sites (if major beta or release)
