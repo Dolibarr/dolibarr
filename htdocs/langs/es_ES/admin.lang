@@ -270,6 +270,8 @@ ListOfDirectories = Listado de directorios de plantillas OpenDocument
 ListOfDirectoriesForModelGenODT = Listado de directorios con plantillas de documentos OpenDocument.<br><br>Indicar la ruta completa del directorio.<br>Añadir un retorno a la línea entre cada directorio.<b>Para indicar un directorio del módulo GED, indicar <b>DOL_DATA_ROOT/ecm/nombredeldirectorio</b>.<br><br>Los archivos de plantilla de estos directorios deben terminar con <b>.odt</b> 
 NumberOfModelFilesFound = Número de archivos de plantillas ODT encontrados en este/estos directorio(s)
 ExampleOfDirectoriesForModelGen = Ejemplos de sintaxis:<br>c:\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+FollowingSubstitutionKeysCanBeUsed = Colocando los siguientes tags en la plantilla, obtendrá una sustitución con el valor personalizado al generar el documento:
+FullListOnOnlineDocumentation = Listado completo de tags disponibles en la documentación de usuario del módulo Terceros del wiki http://wiki.dolibarr.org
 # Modules = undefined = 
 Module0Name = Usuarios y grupos
 Module0Desc = Gestión de usuarios y grupos
