@@ -767,7 +767,7 @@ class Form
 						print '<option value="'.$obj->rowid.'">';
 					}
 					print $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
-					print ' ('.$obj->login.')';
+					if ($conf->global->MAIN_SHOW_LOGIN) print ' ('.$obj->login.')';
 					print '</option>';
 					$i++;
 				}
