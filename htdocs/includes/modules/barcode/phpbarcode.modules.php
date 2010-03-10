@@ -55,8 +55,8 @@ class modPhpbarcode extends ModeleBarCode
 		return 'Php-barcode';
 	}
 
-	/**     \brief      Test si les num�ros d�j� en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette num�rotation de fonctionner.
+	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numerotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
