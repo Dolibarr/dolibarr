@@ -19,7 +19,7 @@ class PclZipProxyException extends Exception
  */
 class PclZipProxy implements ZipInterface
 {
-	const TMP_DIR = './tmp';
+	const TMP_DIR = '/tmp';
 	protected $openned = false;
 	protected $filename;
 	protected $pclzip;
