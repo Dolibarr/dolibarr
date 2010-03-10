@@ -414,7 +414,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='',$enc
  *								"%d/%m/%Y %H:%M",
  *								"%d/%m/%Y %H:%M:%S",
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- * 	\param		to_gmt			false=output string is for local server TZ users, true=output string is for GMT users
+ * 	\param		to_gmt			false=output string is for local server TZ usage, true=output string is for GMT usage
  *	\param		outputlangs		Object lang that contains language for text translation.
  * 	\return     string      	Formated date or '' if time is null
  */
