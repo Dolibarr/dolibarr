@@ -39,6 +39,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 {
 	var $emetteur;	// Objet societe qui emet
 
+	var $phpmin = array(5,2);	// Minimum version of PHP required by module
+
+
 	/**
 	 *		\brief  Constructor
 	 *		\param	db		Database handler
@@ -79,7 +82,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function get_substitutionarray_mysoc($mysoc)
 	{
 		return array(
-			'mycompany_name'=>$mysoc->name,
+			'mycompany_name'=>$mysoc->nom,
 			'mycompany_email'=>$mysoc->email,
 			'mycompany_phone'=>$mysoc->phone,
 			'mycompany_fax'=>$mysoc->fax,
@@ -107,7 +110,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function get_substitutionarray_object($object)
 	{
 		return array(
-			'company_name'=>$object->name,
+			'company_name'=>$object->nom,
 			'company_email'=>$object->email,
 			'company_phone'=>$object->phone,
 			'company_fax'=>$object->fax,
@@ -230,9 +233,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		global $user,$langs,$conf,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$sav_charset_output=$outputlangs->charset_output;
-		$outputlangs->charset_output='ISO-8859-1';
+		$outputlangs->charset_output='UTF-8';
 
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -273,28 +275,46 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
-				$file=$dir.'/'.$newfile;
+				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
+				$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now('tzserver'),'%Y%m%d%H%M%S').'.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
+				//print "file=".$file;
+				//exit;
 
 				create_exdir($conf->societe->dir_temp);
 
 				// Open and load template
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
-						'PATH_TO_TMP'	=>		$conf->societe->dir_temp.'/',
-						'ZIP_PROXY'		=>		'PhpZipProxy'));
+						'PATH_TO_TMP'	  => $conf->societe->dir_temp.'/',
+						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got bad compression method when using PhpZipProxy.
+						'DELIMITER_LEFT'  => '{',
+						'DELIMITER_RIGHT' => '}')
+				);
+
+				//print $odfHandler; exit;
 
 				// Make substitutions
 				$tmparray=$this->get_substitutionarray_mysoc($mysoc);
 				foreach($tmparray as $key=>$value)
 				{
-					$odfHandler->setVars($key, $value, true, 'UTF-8');
+					try {
+						$odfHandler->setVars($key, $value, true, 'UTF-8');
+					}
+					catch(OdfException $e)
+					{
+					}
 				}
 				$tmparray=$this->get_substitutionarray_object($object);
 				foreach($tmparray as $key=>$value)
 				{
-					$odfHandler->setVars($key, $value, true, 'UTF-8');
+					try {
+						$odfHandler->setVars($key, $value, true, 'UTF-8');
+					}
+					catch(OdfException $e)
+					{
+					}
 				}
 
 				// Write new file
