@@ -363,27 +363,36 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					else print $module->description;
 					print '</td>';
 
-					// Active
+					// Activate / Disable
 					if (in_array($name, $def))
 					{
 						print "<td align=\"center\">\n";
-						if ($conf->global->COMPANY_ADDON_PDF != "$name")
-						{
+						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
+						//{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"),'on');
 							print '</a>';
-						}
-						else
-						{
-							print img_picto($langs->trans("Enabled"),'on');
-						}
+						//}
+						//else
+						//{
+						//	print img_picto($langs->trans("Enabled"),'on');
+						//}
 						print "</td>";
 					}
 					else
 					{
-						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-						print "</td>";
+						if (versioncompare($module->phpmin,versionphparray()) > 0)
+						{
+							print "<td align=\"center\">\n";
+							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'off');
+							print "</td>";
+						}
+						else
+						{
+							print "<td align=\"center\">\n";
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+							print "</td>";
+						}
 					}
 
 					// Info

@@ -39,7 +39,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 {
 	var $emetteur;	// Objet societe qui emet
 
-	var $phpmin = array(5,2);	// Minimum version of PHP required by module
+	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
 
 
 	/**
