@@ -77,7 +77,7 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
 	}
 }
 
-// define constants for tigre model
+// define constants for models generator that need parameters
 if ($_POST["action"] == 'setModuleOptions')
 {
 	$param=$_POST["param1"];
@@ -85,11 +85,12 @@ if ($_POST["action"] == 'setModuleOptions')
 	if ($param) dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
 }
 
+// Activate a document generator module
 if ($_GET["action"] == 'set')
 {
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-	$sql.= " VALUES ('".$_GET["value"]."','".$type."',".$conf->entity.", ";
+	$sql.= " VALUES ('".addslashes($_GET["value"])."','".$type."',".$conf->entity.", ";
 	$sql.= ($_GET["label"]?"'".addslashes($_GET["label"])."'":'null').", ";
 	$sql.= (! empty($_GET["scandir"])?"'".$_GET["scandir"]."'":"null");
 	$sql.= ")";
@@ -97,8 +98,23 @@ if ($_GET["action"] == 'set')
 	{
 
 	}
+	else dol_print_error($db);
 }
 
+// Disable a document generator module
+if ($_GET["action"] == 'del')
+{
+	$type='company';
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql.= " WHERE nom='".addslashes($_GET["value"])."' AND type='".$type."' AND entity=".$conf->entity;
+	if ($db->query($sql))
+	{
+
+	}
+	else dol_print_error($db);
+}
+
+// Define default generator
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
