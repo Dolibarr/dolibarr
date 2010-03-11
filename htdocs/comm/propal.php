@@ -250,7 +250,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->remise_absolue = $_POST['remise_absolue'];
 			$propal->socid    = $_POST['socid'];
 			$propal->contactid = $_POST['contactidp'];
-			$propal->projetidp = $_POST['projetidp'];
+			$propal->projectid = $_POST['projectid'];
 			$propal->modelpdf  = $_POST['model'];
 			$propal->author    = $user->id;			// deprecated
 			$propal->note      = $_POST['note'];
@@ -276,7 +276,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->mode_reglement_id = $_POST['mode_reglement_id'];
 
 		$propal->contactid  = $_POST['contactidp'];
-		$propal->projetidp  = $_POST['projetidp'];
+		$propal->projectid  = $_POST['projectid'];
 		$propal->modelpdf   = $_POST['model'];
 		$propal->author     = $user->id;		// deprecated
 		$propal->note       = $_POST['note'];

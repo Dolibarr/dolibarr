@@ -49,12 +49,6 @@ print_fiche_titre($langs->trans("NewProp"));
 
 $html=new Form($db);
 
-// Recuperation de l'id de projet
-$projetid = 0;
-if ($_GET["projetid"])
-{
-	$projetid = $_GET["projetid"];
-}
 
 /*
  * Creation d'une nouvelle propale
@@ -102,9 +96,15 @@ if ($_GET["action"] == 'create')
 		}
 	}
 
-	print "<form name='addprop' action=\"propal.php?socid=".$soc->id."\" method=\"post\">";
+	print '<form name="addprop" action="propal.php?socid='.$soc->id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+	print '<input type="hidden" name="action" value="add">';
+	
+	if (isset($_GET["origin"]) && $_GET["origin"] != 'project' && isset($_GET["originid"]))
+	{
+		print '<input type="hidden" name="origin" value="'.$_GET["origin"].'">';
+		print '<input type="hidden" name="originid" value="'.$_GET["originid"].'">';
+	}
 
 	print '<table class="border" width="100%">';
 
@@ -200,10 +200,13 @@ if ($_GET["action"] == 'create')
 	// Project
 	if ($conf->projet->enabled)
 	{
+		$projectid = 0;
+		if (isset($_GET["origin"]) && $_GET["origin"] == 'project') $projectid = ($_GET["originid"]?$_GET["originid"]:0);
+		
 		print '<tr>';
 		print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
 
-		$numprojet=select_projects($soc->id,$projetid,'projetidp');
+		$numprojet=select_projects($soc->id,$projectid);
 		if ($numprojet==0)
 		{
 			print ' &nbsp; <a href="../projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
