@@ -597,7 +597,7 @@ function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$projectstatic->id = $objp->fk_project;
+			$projectstatic->id = $objp->projectid;
 			$projectstatic->user_author_id = $objp->fk_user_creat;
 			$projectstatic->public = $objp->public;
 
