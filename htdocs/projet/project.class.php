@@ -663,11 +663,11 @@ class Project extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$ligne=new Task($this->db);
-			$ligne->desc=$langs->trans("Description")." ".$xnbp;
-			$ligne->qty=1;
+			$line=new Task($this->db);
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->qty=1;
 			$prodid = rand(1, $num_prods);
-			$ligne->produit_id=$prodids[$prodid];
+			$line->fk_product=$prodids[$prodid];
 			$xnbp++;
 		}
 	}

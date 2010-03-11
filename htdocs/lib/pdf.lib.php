@@ -239,7 +239,7 @@ function pdf_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 {
 	global $db, $conf, $langs;
 
-	$idprod=$line->fk_product; if (empty($idprod)) $idprod=$line->produit_id;
+	$idprod=$line->fk_product;
 	$label=$line->label; if (empty($label))  $label=$line->libelle;
 	$desc=$line->desc; if (empty($desc))   $desc=$line->description;
 	$ref_supplier=$line->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$line->ref_fourn;	// TODO Not yeld saved for supplier invoices, only supplier orders

@@ -1445,7 +1445,7 @@ class CommandeFournisseur extends Commande
 			$ligne->tva_tx=19.6;
 			$ligne->ref_fourn='SUPPLIER_REF_'.$xnbp;
 			$prodid = rand(1, $num_prods);
-			$ligne->produit_id=$prodids[$prodid];
+			$ligne->fk_product=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}
@@ -1517,7 +1517,7 @@ class CommandeFournisseurLigne extends OrderLine
 			$this->tva_tx           = $objp->tva_tx;
 			$this->remise           = $objp->remise;
 			$this->remise_percent   = $objp->remise_percent;
-			$this->produit_id       = $objp->fk_product;
+			$this->fk_product       = $objp->fk_product;
 			$this->info_bits        = $objp->info_bits;
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;

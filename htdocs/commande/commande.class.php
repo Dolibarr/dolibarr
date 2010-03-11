@@ -2248,7 +2248,6 @@ class Commande extends CommonObject
 			$line->total_ht=100;
 			$line->total_ttc=119.6;
 			$line->total_tva=19.6;
-			$line->produit_id=$prodids[$prodid];
 			$line->fk_product=$prodids[$prodid];
 
 			$this->lignes[$xnbp]=$line; // TODO: deprecated
@@ -2388,7 +2387,6 @@ class OrderLine
 			$this->remise           = $objp->remise;
 			$this->remise_percent   = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->produit_id       = $objp->fk_product;
 			$this->fk_product       = $objp->fk_product;
 			$this->product_type     = $objp->product_type;
 			$this->info_bits        = $objp->info_bits;

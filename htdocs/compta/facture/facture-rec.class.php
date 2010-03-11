@@ -329,7 +329,6 @@ class FactureRec extends Facture
 				$faclig->tva_tx           = $objp->tva_tx;
 				$faclig->remise_percent   = $objp->remise_percent;
 				$faclig->fk_remise_except = $objp->fk_remise_except;
-				$faclig->produit_id       = $objp->fk_product;
 				$faclig->fk_product       = $objp->fk_product;
 				$faclig->date_start       = $objp->date_start;
 				$faclig->date_end         = $objp->date_end;

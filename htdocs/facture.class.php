@@ -305,10 +305,10 @@ class Facture extends CommonObject
 			{
 				foreach ($_facrec->lignes as $i => $val)
 				{
-					if ($_facrec->lignes[$i]->produit_id)
+					if ($_facrec->lignes[$i]->fk_product)
 					{
-						$prod = new Product($this->db, $_facrec->lignes[$i]->produit_id);
-						$res=$prod->fetch($_facrec->lignes[$i]->produit_id);
+						$prod = new Product($this->db, $_facrec->lignes[$i]->fk_product);
+						$res=$prod->fetch($_facrec->lignes[$i]->fk_product);
 					}
 					$tva_tx = get_default_tva($mysoc,$soc,($prod->tva_tx?$prod->tva_tx:0));
 
@@ -318,7 +318,7 @@ class Facture extends CommonObject
 					$_facrec->lignes[$i]->subprice,
 					$_facrec->lignes[$i]->qty,
 					$tva_tx,
-					$_facrec->lignes[$i]->produit_id,
+					$_facrec->lignes[$i]->fk_product,
 					$_facrec->lignes[$i]->remise_percent,
 					'','',0,0,'','HT',0,
 					$_facrec->lignes[$i]->product_type
@@ -697,7 +697,6 @@ class Facture extends CommonObject
 				$faclig->tva_tx           = $objp->tva_tx;
 				$faclig->remise_percent   = $objp->remise_percent;
 				$faclig->fk_remise_except = $objp->fk_remise_except;
-				$faclig->produit_id       = $objp->fk_product;
 				$faclig->fk_product       = $objp->fk_product;
 				$faclig->date_start       = $this->db->jdate($objp->date_start);
 				$faclig->date_end         = $this->db->jdate($objp->date_end);
@@ -2789,7 +2788,7 @@ class Facture extends CommonObject
 			$ligne->total_ttc=107.64;	// 90 * 1.196
 			$ligne->total_tva=17.64;
 			$prodid = rand(1, $num_prods);
-			$ligne->produit_id=$prodids[$prodid];
+			$ligne->fk_product=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}
@@ -2933,7 +2932,6 @@ class FactureLigne
 			$this->tva_tx         = $objp->tva_tx;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->produit_id     = $objp->fk_product;	// Ne plus utiliser
 			$this->fk_product     = $objp->fk_product;
 			$this->product_type   = $objp->product_type;
 			$this->date_start     = $this->db->jdate($objp->date_start);

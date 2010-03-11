@@ -756,7 +756,7 @@ class Fichinter extends CommonObject
 			$ligne->price=100;
 			$ligne->tva_tx=19.6;
 			$prodid = rand(1, $num_prods);
-			$ligne->produit_id=$prodids[$prodid];
+			$ligne->fk_product=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}

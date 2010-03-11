@@ -1958,7 +1958,7 @@ class Propal extends CommonObject
 			$ligne->total_ttc=119.6;
 			$ligne->total_tva=19.6;
 			$prodid = rand(1, $num_prods);
-			$ligne->produit_id=$prodids[$prodid];
+			$ligne->fk_product=$prodids[$prodid];
 			$this->lignes[$xnbp]=$ligne;
 			$xnbp++;
 		}
@@ -2197,7 +2197,7 @@ class PropaleLigne
 			$this->remise         = $objp->remise;
 			$this->remise_percent = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->produit_id     = $objp->fk_product;
+			$this->fk_product     = $objp->fk_product;
 			$this->info_bits      = $objp->info_bits;
 
 			$this->total_ht       = $objp->total_ht;
