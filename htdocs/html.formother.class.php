@@ -359,10 +359,10 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 			// Break on a new project
 			if ($parent == 0)
 			{
-				if ($lines[$i]->projectid != $lastprojectid)
+				if ($lines[$i]->fk_project != $lastprojectid)
 				{
 					if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="true">----------</option>';
-					print '<option value="'.$lines[$i]->projectid.'_0">';	// Project -> Task
+					print '<option value="'.$lines[$i]->fk_project.'_0">';	// Project -> Task
 					print $langs->trans("Project").' '.$lines[$i]->projectref;
 					if (empty($lines[$i]->public))
 					{
@@ -372,10 +372,10 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 					{
 						print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
 					}
-					//print '-'.$parent.'-'.$lines[$i]->projectid.'-'.$lastprojectid;
+					//print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
 					print "</option>\n";
 
-					$lastprojectid=$lines[$i]->projectid;
+					$lastprojectid=$lines[$i]->fk_project;
 					$inc++;
 				}
 			}
@@ -383,7 +383,7 @@ function PLineSelect(&$inc, $parent, $lines, $level=0, $selected=0)
 			// Print task
 			if ($lines[$i]->id > 0)
 			{
-				print '<option value="'.$lines[$i]->projectid.'_'.$lines[$i]->id.'"';
+				print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
 				if ($lines[$i]->id == $selected) print ' selected="true"';
 				print '>';
 				print $langs->trans("Project").' '.$lines[$i]->projectref;

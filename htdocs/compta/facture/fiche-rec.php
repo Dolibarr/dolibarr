@@ -144,11 +144,11 @@ if ($_GET["action"] == 'create')
 		if ($conf->projet->enabled)
 		{
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
-			if ($facture->projetid > 0)
+			if ($facture->fk_project > 0)
 			{
-				$proj = new Project($db);
-				$proj->fetch($facture->projetid);
-				print $proj->title;
+				$project = new Project($db);
+				$project->fetch($facture->fk_project);
+				print $project->title;
 			}
 			print "</td></tr>";
 		}

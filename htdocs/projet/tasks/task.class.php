@@ -496,7 +496,7 @@ class Task extends CommonObject
 				if (! $error)
 				{
 					$tasks[$i]->id           = $obj->taskid;
-					$tasks[$i]->projectid    = $obj->projectid;
+					$tasks[$i]->fk_project   = $obj->projectid;
 					$tasks[$i]->projectref   = $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
 					$tasks[$i]->label        = $obj->label;

@@ -64,7 +64,7 @@ if ($_POST['action'] == 'classin')
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->setProject($_POST['projetid']);
+	$commande->setProject($_POST['projectid']);
 }
 
 if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
@@ -349,11 +349,11 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'classer')
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'projetid');
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');
 			}
 			else
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'none');
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'none');
 			}
 			print '</td></tr>';
 		}

@@ -60,7 +60,7 @@ class FactureRec extends Facture
 	var $note;
 	var $db_table;
 	var $propalid;
-	var $projetid;
+	var $fk_project;
 
 
 	/**
@@ -123,7 +123,7 @@ class FactureRec extends Facture
 			$sql.= ", '".$facsrc->remise."'";
 			$sql.= ", '".addslashes($this->note)."'";
 			$sql.= ", '".$user->id."'";
-			$sql.= ", ".($facsrc->projetid?"'".$facsrc->projetid."'":"null");
+			$sql.= ", ".($facsrc->fk_project?"'".$facsrc->fk_project."'":"null");
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
 			$sql.= ")";
@@ -238,7 +238,7 @@ class FactureRec extends Facture
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-				$this->projetid               = $obj->fk_projet;
+				$this->fk_project             = $obj->fk_projet;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note                   = $obj->note;
 				$this->note_public            = $obj->note_public;

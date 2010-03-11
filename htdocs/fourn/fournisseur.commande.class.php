@@ -114,7 +114,6 @@ class CommandeFournisseur extends Commande
 			$this->source              = $obj->source;
 			$this->facturee            = $obj->facture;
 			$this->fk_project          = $obj->fk_project;
-			$this->projet_id           = $obj->fk_project;	// For compatibility with old code
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;

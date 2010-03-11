@@ -509,7 +509,7 @@ class Livraison extends CommonObject
 		$this->origin               = $expedition->origin;
 		$this->origin_id            = $expedition->origin_id;
 		$this->note                 = $expedition->note;
-		$this->projetid             = $expedition->projetidp;
+		$this->fk_project           = $expedition->fk_project;
 		$this->date_livraison       = $expedition->date_livraison;
 		$this->adresse_livraison_id = $expedition->adresse_livraison_id; // TODO obsolete
 		$this->fk_delivery_address  = $expedition->adresse_livraison_id;

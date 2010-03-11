@@ -365,14 +365,14 @@ class CommonObject
 	}
 
 	/**
-	 *		\brief      Charge le projet d'id $this->projet_id dans this->projet
+	 *		\brief      Charge le projet d'id $this->fk_project dans this->projet
 	 *		\return		int			<0 if KO, >0 if OK
 	 */
 	function fetch_projet()
 	{
-		$projet = new Project($this->db);
-		$result=$projet->fetch($this->projet_id);
-		$this->projet = $projet;
+		$project = new Project($this->db);
+		$result = $project->fetch($this->fk_project);
+		$this->projet = $project;
 		return $result;
 	}
 
@@ -508,7 +508,7 @@ class CommonObject
 	 *	\param     	projid		Project id to link element to
 	 *	\return		int			<0 if KO, >0 if OK
 	 */
-	function setProject($projid)
+	function setProject($projectid)
 	{
 		if (! $this->table_element)
 		{
@@ -517,16 +517,14 @@ class CommonObject
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($projid) $sql.= ' SET fk_projet = '.$projid;
+		if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
 		else $sql.= ' SET fk_projet = NULL';
 		$sql.= ' WHERE rowid = '.$this->id;
 
 		dol_syslog("CommonObject::setProject sql=".$sql);
 		if ($this->db->query($sql))
 		{
-			$this->project_id=$projid;
-			$this->projet_id=$projid;
-			$this->projetidp=$projid;
+			$this->fk_project = $projectid;
 			return 1;
 		}
 		else

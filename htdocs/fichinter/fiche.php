@@ -144,13 +144,13 @@ if ($_POST["action"] == 'add')
 {
 	$fichinter = new Fichinter($db);
 
-	$fichinter->socid = $_POST["socid"];
-	$fichinter->duree = $_POST["duree"];
-	$fichinter->project_id = $_POST["projectid"];
-	$fichinter->author = $user->id;
+	$fichinter->socid 		= $_POST["socid"];
+	$fichinter->duree 		= $_POST["duree"];
+	$fichinter->fk_project 	= $_POST["projectid"];
+	$fichinter->author 		= $user->id;
 	$fichinter->description = $_POST["description"];
-	$fichinter->ref = $_POST["ref"];
-	$fichinter->modelpdf = $_POST["model"];
+	$fichinter->ref 		= $_POST["ref"];
+	$fichinter->modelpdf 	= $_POST["model"];
 
 	if ($fichinter->socid > 0)
 	{
@@ -177,11 +177,11 @@ if ($_POST["action"] == 'update')
 {
 	$fichinter = new Fichinter($db);
 
-	$fichinter->socid = $_POST["socid"];
-	$fichinter->project_id = $_POST["projectid"];
-	$fichinter->author = $user->id;
+	$fichinter->socid 		= $_POST["socid"];
+	$fichinter->fk_project 	= $_POST["projectid"];
+	$fichinter->author 		= $user->id;
 	$fichinter->description = $_POST["description"];
-	$fichinter->ref = $_POST["ref"];
+	$fichinter->ref 		= $_POST["ref"];
 
 	$fichinter->update($_POST["id"]);
 	$_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre creee
@@ -615,11 +615,11 @@ elseif ($fichinterid)
 		print '</td><td colspan="3">';
 		if ($_GET['action'] == 'classin')
 		{
-			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->project_id,'projectid');
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project,'projectid');
 		}
 		else
 		{
-			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->project_id,'none');
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project,'none');
 		}
 		print '</td>';
 		print '</tr>';

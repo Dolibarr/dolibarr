@@ -49,7 +49,7 @@ $langs->load('main');
 
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
 $mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
-$projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
+$projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 
 // Security check
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
@@ -215,7 +215,7 @@ if ($_POST['action'] == 'classin')
 {
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
-	$facture->setProject($_POST['projetid']);
+	$facture->setProject($_POST['projectid']);
 }
 
 if ($_POST['action'] == 'setmode')
@@ -536,7 +536,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->note           = trim($_POST['note']);
 			$facture->ref_client     = $_POST['ref_client'];
 			$facture->modelpdf       = $_POST['model'];
-			$facture->projetid          = $_POST['projetid'];
+			$facture->fk_project        = $_POST['projectid'];
 			$facture->cond_reglement_id = $_POST['cond_reglement_id'];
 			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 			$facture->remise_absolue    = $_POST['remise_absolue'];
@@ -580,7 +580,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->note           = trim($_POST['note']);
 			$facture->ref_client     = $_POST['ref_client'];
 			$facture->modelpdf       = $_POST['model'];
-			$facture->projetid          = $_POST['projetid'];
+			$facture->fk_project        = $_POST['projectid'];
 			$facture->cond_reglement_id = 0;
 			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 			$facture->remise_absolue    = $_POST['remise_absolue'];
@@ -657,7 +657,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->note           = trim($_POST['note']);
 			$facture->ref_client     = $_POST['ref_client'];
 			$facture->modelpdf       = $_POST['model'];
-			$facture->projetid          = $_POST['projetid'];
+			$facture->fk_project        = $_POST['projectid'];
 			$facture->cond_reglement_id = ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
 			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 			$facture->amount            = $_POST['amount'];
@@ -1494,7 +1494,7 @@ if ($_GET['action'] == 'create')
 		$propal->fetch($_GET['propalid']);
 		$propal->fetch_client();
 
-		$projetid=$propal->projetidp;
+		$projectid=$propal->fk_project;
 		$ref_client=$propal->ref_client;
 
 		$soc=$propal->client;
@@ -1509,7 +1509,7 @@ if ($_GET['action'] == 'create')
 		$commande->fetch($_GET['commandeid']);
 		$commande->fetch_client();
 
-		$projetid=$commande->projet_id;
+		$projectid=$commande->fk_project;
 		$ref_client=$commande->ref_client;
 
 		$soc=$commande->client;
@@ -1524,7 +1524,7 @@ if ($_GET['action'] == 'create')
 		$contrat->fetch($_GET['contratid']);
 		$contrat->fetch_client();
 
-		$projetid=$contrat->fk_projet;
+		$projectid=$contrat->fk_project;
 
 		$soc=$contrat->client;
 		$cond_reglement_id = $soc->cond_reglement;
@@ -1760,7 +1760,7 @@ if ($_GET['action'] == 'create')
 	{
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		select_projects($soc->id, $projetid, 'projetid');
+		select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
 	}
 
@@ -2828,11 +2828,11 @@ else
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classin')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'projetid');
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projectid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'none');
 				}
 				print '</td>';
 				print '</tr>';

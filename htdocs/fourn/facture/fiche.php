@@ -396,7 +396,7 @@ if ($_POST['action'] == 'classin')
 {
 	$facture = new FactureFournisseur($db,'',$_GET['facid']);
 	$facture->fetch($_GET['facid']);
-	$facture->setProject($_POST['projetid']);
+	$facture->setProject($_POST['projectid']);
 }
 
 
@@ -897,7 +897,7 @@ else
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classer')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projetid');
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projectid');
 				}
 				else
 				{

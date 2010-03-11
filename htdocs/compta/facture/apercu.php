@@ -234,11 +234,11 @@ if ($_GET["facid"] > 0)
             $langs->load("projects");
 	        print '<tr>';
             print '<td>'.$langs->trans("Project").'</td><td colspan="3">';
-            if ($fac->projetid > 0)
+            if ($fac->fk_project > 0)
             {
-                $projet = New Project($db);
-                $projet->fetch($fac->projetid);
-                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
+                $project = New Project($db);
+                $project->fetch($fac->fk_project);
+                print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->fk_project.'">'.$project->title.'</a>';
             }
             else
             {

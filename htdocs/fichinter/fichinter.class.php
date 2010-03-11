@@ -54,7 +54,7 @@ class Fichinter extends CommonObject
 	var $description;
 	var $note_private;
 	var $note_public;
-	var $project_id;
+	var $fk_project;
 	var $modelpdf;
 
 	var $lignes = array();
@@ -69,7 +69,7 @@ class Fichinter extends CommonObject
 		$this->db = $DB ;
 		$this->socid = $socid;
 		$this->products = array();
-		$this->projet_id = 0;
+		$this->fk_project = 0;
 
 		// List of language codes for status
 		$this->statuts[0]='Draft';
@@ -122,7 +122,7 @@ class Fichinter extends CommonObject
 		$sql.= ", ".$this->author;
 		$sql.= ", '".addslashes($this->description)."'";
 		$sql.= ", '".$this->modelpdf."'";
-		$sql.= ", ".($this->project_id ? $this->project_id : 0);
+		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
 		$sql.= ")";
 
 		dol_syslog("Fichinter::create sql=".$sql);
@@ -152,10 +152,7 @@ class Fichinter extends CommonObject
 		global $conf;
 
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
-		if (! strlen($this->project_id))
-		{
-			$this->project_id = 0;
-		}
+		if (! strlen($this->fk_project)) { $this->fk_project = 0; }
 
 		/*
 		 *  Insertion dans la base
@@ -163,7 +160,7 @@ class Fichinter extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql.= ", description  = '".addslashes($this->description)."'";
 		$sql.= ", duree = ".$this->duree;
-		$sql.= ", fk_projet = ".$this->project_id;
+		$sql.= ", fk_projet = ".$this->fk_project;
 		$sql.= " WHERE rowid = ".$id;
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -211,7 +208,7 @@ class Fichinter extends CommonObject
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
-				$this->project_id   = $obj->fk_projet;
+				$this->fk_project   = $obj->fk_projet;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->modelpdf     = $obj->model_pdf;

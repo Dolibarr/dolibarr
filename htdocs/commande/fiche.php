@@ -58,7 +58,6 @@ $result=restrictedArea($user,'commande',$comid,'');
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $mesg=isset($_GET['mesg'])?$_GET['mesg']:'';
-$projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
 
 
 /******************************************************************************/
@@ -150,7 +149,7 @@ if ($_POST['action'] == 'classin')
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->setProject($_POST['projetid']);
+	$commande->setProject($_POST['projectid']);
 }
 
 // Add order
@@ -170,7 +169,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->note                 = $_POST['note'];
 	$commande->note_public          = $_POST['note_public'];
 	$commande->source               = $_POST['source_id'];
-	$commande->projetid             = $_POST['projetid'];
+	$commande->fk_project           = $_POST['projectid'];
 	$commande->ref_client           = $_POST['ref_client'];
 	$commande->modelpdf             = $_POST['model'];
 	$commande->cond_reglement_id    = $_POST['cond_reglement_id'];
@@ -1043,6 +1042,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
 			print '<input name="facnumber" type="hidden" value="provisoire">';
+			
+			if (isset($_GET["origin"]) && $_GET["origin"] != 'project' && isset($_GET["originid"]))
+			{
+				print '<input type="hidden" name="origin" value="'.$_GET["origin"].'">';
+				print '<input type="hidden" name="originid" value="'.$_GET["originid"].'">';
+			}
 
 			print '<table class="border" width="100%">';
 
@@ -1116,9 +1121,11 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// Projet
 			if ($conf->projet->enabled)
 			{
-				$projetid=$_POST["projetid"]?$_POST["projetid"]:$commande->projetid;
+				$projectid = 0;
+				if (isset($_GET["origin"]) && $_GET["origin"] == 'project') $projectid = ($_GET["originid"]?$_GET["originid"]:0);
+				
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-				$numprojet=select_projects($soc->id,$projetid,'projetid');
+				$numprojet=select_projects($soc->id,$projectid);
 				if ($numprojet==0)
 				{
 					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1603,11 +1610,11 @@ else
 				print '</td><td colspan="2">';
 				if ($_GET['action'] == 'classer')
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'projetid');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');
 				}
 				else
 				{
-					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'none');
 				}
 				print '</td></tr>';
 			}

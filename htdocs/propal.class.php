@@ -56,8 +56,7 @@ class Propal extends CommonObject
 	var $client;		// Objet societe client (a charger par fetch_client)
 
 	var $contactid;
-	var $projetidp;					// deprecated (for compatibility)
-	var $projectid;
+	var $fk_project;
 	var $author;
 	var $ref;
 	var $ref_client;
@@ -635,10 +634,10 @@ class Propal extends CommonObject
 				}
 
 				// Affectation au projet
-				if ($resql && $this->projectid)
+				if ($resql && $this->fk_project)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-					$sql.= " SET fk_projet=".$this->projectid;
+					$sql.= " SET fk_projet=".$this->fk_project;
 					$sql.= " WHERE ref='".$this->ref."'";
 					$sql.= " AND entity = ".$conf->entity;
 
@@ -838,8 +837,7 @@ class Propal extends CommonObject
 				$this->total_tva            = $obj->tva;
 				$this->total_ttc            = $obj->total;
 				$this->socid                = $obj->fk_soc;
-				$this->projectid            = $obj->fk_projet;
-				$this->projetidp            = $obj->fk_projet;				// TODO obsolete
+				$this->fk_project           = $obj->fk_projet;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->note                 = $obj->note;
 				$this->note_public          = $obj->note_public;

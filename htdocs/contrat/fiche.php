@@ -152,7 +152,7 @@ if ($_POST["action"] == 'add')
     $contrat->commercial_signature_id  = $_POST["commercial_signature_id"];
 
     $contrat->note           = trim($_POST["note"]);
-    $contrat->fk_projet      = trim($_POST["projetid"]);
+    $contrat->fk_project     = trim($_POST["projectid"]);
     $contrat->remise_percent = trim($_POST["remise_percent"]);
     $contrat->ref            = trim($_POST["ref"]);
 
@@ -174,7 +174,7 @@ if ($_POST["action"] == 'classin')
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $contrat->setProject($_POST["projetid"]);
+    $contrat->setProject($_POST["projectid"]);
 }
 
 if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
@@ -514,9 +514,9 @@ if ($_GET["action"] == 'create')
             if ($conf->projet->enabled)
             {
                 print '<tr><td>'.$langs->trans("Project").'</td><td>';
-                select_projects($soc->id,$_REQUEST["projetid"],"projetid");
-                //$proj = new Project($db);
-                //$form->select_array("projetid",$proj->liste_array($soc->id),$_REQUEST["projetid"],1);
+                select_projects($soc->id,$_REQUEST["projectid"],"projectid");
+                //$project = new Project($db);
+                //$form->select_array("projectid",$project->liste_array($soc->id),$_REQUEST["projectid"],1);
                 print "</td></tr>";
             }
 
@@ -750,11 +750,11 @@ else
             print '</td><td colspan="3">';
             if ($_GET["action"] == "classer")
             {
-                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"projetid");
+                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_project,"projectid");
             }
             else
             {
-                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"none");
+                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_project,"none");
             }
             print "</td></tr>";
         }

@@ -51,7 +51,7 @@ class Don extends CommonObject
 	var $pays;
 	var $email;
 	var $public;
-	var $projetid;
+	var $fk_project;
 	var $modepaiement;
 	var $modepaiementid;
 	var $note;
@@ -329,7 +329,7 @@ class Don extends CommonObject
 		$sql.= ", '".addslashes($this->ville)."'";
 		$sql.= ", '".addslashes($this->pays)."'"; // TODO use fk_pays
 		$sql.= ", ".$this->public;
-		$sql.= ", ".($this->projetid > 0?$this->projetid:"null");
+		$sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
 		$sql.= ", '".addslashes($this->note)."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", null";
@@ -371,7 +371,7 @@ class Don extends CommonObject
 		$sql .= ",ville='".addslashes($this->ville)."'";
 		$sql .= ",pays='".addslashes($this->pays)."'"; // TODO use fk_pays
 		$sql .= ",public=".$this->public;
-		$sql .= ",fk_don_projet=".($this->projetid>0?$this->projetid:'null');
+		$sql .= ",fk_don_projet=".($this->fk_project>0?$this->fk_project:'null');
 		$sql .= ",note='".addslashes($this->note)."'";
 		$sql .= ",datedon='".$this->date."'";
 		$sql .= ",email='".$this->email."'";
@@ -429,7 +429,7 @@ class Don extends CommonObject
 		$sql = "SELECT d.rowid, d.datec,";
 		$sql.= " d.datedon,";
 		$sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet,";
-		$sql.= " p.title as projet";
+		$sql.= " p.title as project_label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."don as d";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " ON p.rowid = d.fk_don_projet";
@@ -456,8 +456,8 @@ class Don extends CommonObject
 				$this->ville          = $obj->ville;
 				$this->email          = $obj->email;
 				$this->pays           = $obj->pays;
-				$this->projet         = $obj->projet;
-				$this->projetid       = $obj->fk_don_projet;
+				$this->projet         = $obj->project_label;
+				$this->fk_project     = $obj->fk_don_projet;
 				$this->public         = $obj->public;
 				$this->modepaiementid = $obj->fk_paiement;
 				$this->modepaiement   = $obj->libelle;

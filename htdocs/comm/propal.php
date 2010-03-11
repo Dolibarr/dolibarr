@@ -238,23 +238,23 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	{
 		if ($propal->fetch($_POST['copie_propal']) > 0)
 		{
-			$propal->ref       = $_POST['ref'];
-			$propal->datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-			$propal->date_livraison = dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-			$propal->fk_delivery_address = $_POST['adresse_livraison_id'];
-			$propal->adresse_livraison_id = $_POST['adresse_livraison_id']; // TODO obsolete
-			$propal->duree_validite = $_POST['duree_validite'];
-			$propal->cond_reglement_id = $_POST['cond_reglement_id'];
-			$propal->mode_reglement_id = $_POST['mode_reglement_id'];
-			$propal->remise_percent = $_POST['remise_percent'];
-			$propal->remise_absolue = $_POST['remise_absolue'];
-			$propal->socid    = $_POST['socid'];
-			$propal->contactid = $_POST['contactidp'];
-			$propal->projectid = $_POST['projectid'];
-			$propal->modelpdf  = $_POST['model'];
-			$propal->author    = $user->id;			// deprecated
-			$propal->note      = $_POST['note'];
-			$propal->statut    = 0;
+			$propal->ref       				= $_POST['ref'];
+			$propal->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$propal->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+			$propal->fk_delivery_address 	= $_POST['adresse_livraison_id'];
+			$propal->adresse_livraison_id 	= $_POST['adresse_livraison_id']; // TODO obsolete
+			$propal->duree_validite			= $_POST['duree_validite'];
+			$propal->cond_reglement_id 		= $_POST['cond_reglement_id'];
+			$propal->mode_reglement_id 		= $_POST['mode_reglement_id'];
+			$propal->remise_percent 		= $_POST['remise_percent'];
+			$propal->remise_absolue 		= $_POST['remise_absolue'];
+			$propal->socid    				= $_POST['socid'];
+			$propal->contactid 				= $_POST['contactidp'];
+			$propal->fk_project				= $_POST['projectid'];
+			$propal->modelpdf  				= $_POST['model'];
+			$propal->author    				= $user->id;			// deprecated
+			$propal->note      				= $_POST['note'];
+			$propal->statut    				= 0;
 
 			$id = $propal->create_from($user);
 		}
@@ -276,7 +276,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->mode_reglement_id = $_POST['mode_reglement_id'];
 
 		$propal->contactid  = $_POST['contactidp'];
-		$propal->projectid  = $_POST['projectid'];
+		$propal->fk_project = $_POST['projectid'];
 		$propal->modelpdf   = $_POST['model'];
 		$propal->author     = $user->id;		// deprecated
 		$propal->note       = $_POST['note'];
@@ -898,7 +898,7 @@ if ($_POST['action'] == 'classin')
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
-	$propal->setProject($_POST['projetidp']);
+	$propal->setProject($_POST['projectid']);
 }
 
 // Conditions de reglement
@@ -1325,23 +1325,23 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="3">';
 			if ($_GET['action'] == 'classer')
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'projetidp');
+				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->fk_project, 'projectid');
 			}
 			else
 			{
-				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'none');
+				$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->fk_project, 'none');
 			}
 			print '</td></tr>';
 		}
 		else
 		{
 			print '</td></tr></table>';
-			if (!empty($propal->projetidp))
+			if (!empty($propal->fk_project))
 			{
 				print '<td colspan="3">';
 				$proj = new Project($db);
-				$proj->fetch($propal->projetidp);
-				print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
+				$proj->fetch($propal->fk_project);
+				print '<a href="../projet/fiche.php?id='.$propal->fk_project.'" title="'.$langs->trans('ShowProject').'">';
 				print $proj->ref;
 				print '</a>';
 				print '</td>';

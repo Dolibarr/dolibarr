@@ -41,7 +41,7 @@ class Notify
     var $date;
     var $duree;
     var $note;
-    var $projet_id;
+    var $fk_project;
 
 	// Les codes actions sont definis dans la table llx_notify_def
 	// \todo utiliser des codes texte plutot que numerique

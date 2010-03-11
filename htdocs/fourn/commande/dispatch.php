@@ -45,9 +45,9 @@ $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
-// R�cup�ration	de l'id	de projet
-$projetid =	0;
-if ($_GET["projetid"]) $projetid = $_GET["projetid"];
+// Recuperation	de l'id	de projet
+$projectid =	0;
+if ($_GET["projectid"]) $projectid = $_GET["projectid"];
 
 $mesg='';
 

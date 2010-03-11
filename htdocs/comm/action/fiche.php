@@ -496,8 +496,8 @@ if ($_GET["action"] == 'create')
 		$langs->load("project");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-		$numprojet=select_projects($societe->id,$_REQUEST["projectid"]?$_REQUEST["projectid"]:$projetid,'projectid');
-		if ($numprojet==0)
+		$numproject=select_projects($societe->id,$_REQUEST["projectid"]?$_REQUEST["projectid"]:$projectid,'projectid');
+		if ($numproject==0)
 		{
 			print ' &nbsp; <a href="../../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 		}

@@ -80,7 +80,7 @@ if ($_POST["action"] == 'update')
 		$don->note        = $_POST["note"];
 		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
-		$don->projetid    = $_POST["projetid"];
+		$don->fk_project  = $_POST["projectid"];
 		$don->note        = $_POST["comment"];
 		$don->modepaiementid = $_POST["modepaiement"];
 
@@ -124,7 +124,7 @@ if ($_POST["action"] == 'add')
 		$don->note        = $_POST["note"];
 		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
-		$don->projetid    = $_POST["projetid"];
+		$don->fk_project  = $_POST["projectid"];
 		$don->note        = $_POST["comment"];
 		$don->modepaiementid = $_POST["modepaiement"];
 
@@ -256,7 +256,7 @@ if ($_GET["action"] == 'create')
 	{
 		// Si module projet actif
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
-		select_projects('',$_POST["projetid"],"projetid");
+		select_projects('',$_POST["projectid"],"projectid");
 		print "</td></tr>\n";
 	}
 
@@ -327,7 +327,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 	{
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		select_projects($soc->id, isset($_POST["projetid"])?$_POST["projetid"]:$don->projetid, 'projetid');
+		select_projects($soc->id, isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project, 'projectid');
 		print '</td></tr>';
 	}
 

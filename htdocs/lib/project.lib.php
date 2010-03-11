@@ -248,20 +248,20 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 		if ($lines[$i]->fk_parent == $parent)
 		{
 			// Break on a new project
-			if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+			if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
 			{
 				$var = !$var;
-				$lastprojectid=$lines[$i]->projectid;
+				$lastprojectid=$lines[$i]->fk_project;
 			}
 
 			print "<tr $bc[$var]>\n";
 
 			// Project
 			print "<td>";
-			$projectstatic->id=$lines[$i]->projectid;
+			$projectstatic->id=$lines[$i]->fk_project;
 			$projectstatic->ref=$lines[$i]->projectref;
 			$projectstatic->public=$lines[$i]->public;
-			$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->projectid];
+			$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
 			print $projectstatic->getNomUrl(1);
 			print "</td>";
 
@@ -289,11 +289,11 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 			print "</td>\n";
 
 			$disabled=1;
-			//print "x".$lines[$i]->projectid;
+			//print "x".$lines[$i]->fk_project;
 			//var_dump($lines[$i]);
-			//var_dump($projectsrole[$lines[$i]->projectid]);
+			//var_dump($projectsrole[$lines[$i]->fk_project]);
 			// If at least one role for project
-			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->projectid]) || $user->rights->projet->all->creer) $disabled=0;
+			if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) $disabled=0;
 
 			print '<td nowrap="nowrap">';
 			print $form->select_date('',$lines[$i]->id,'','','',"addtime");
@@ -345,7 +345,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 		if ($parent == 0) $level = 0;
 
 		// Process line
-		// print "i:".$i."-".$lines[$i]->projectid.'<br>';
+		// print "i:".$i."-".$lines[$i]->fk_project.'<br>';
 
 		if ($lines[$i]->fk_parent == $parent)
 		{
@@ -377,10 +377,10 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 			if ($showline)
 			{
 				// Break on a new project
-				if ($parent == 0 && $lines[$i]->projectid != $lastprojectid)
+				if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
 				{
 					$var = !$var;
-					$lastprojectid=$lines[$i]->projectid;
+					$lastprojectid=$lines[$i]->fk_project;
 				}
 
 				print "<tr ".$bc[$var].">\n";
@@ -391,7 +391,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 					print "<td>";
 					//var_dump($taskrole);
 					if ($showlineingray) print '<i>';
-					$projectstatic->id=$lines[$i]->projectid;
+					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
 					print $projectstatic->getNomUrl(1);
@@ -597,7 +597,7 @@ function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$projectstatic->id = $objp->projectid;
+			$projectstatic->id = $objp->fk_project;
 			$projectstatic->user_author_id = $objp->fk_user_creat;
 			$projectstatic->public = $objp->public;
 

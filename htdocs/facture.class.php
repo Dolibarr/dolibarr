@@ -89,7 +89,7 @@ class Facture extends CommonObject
 	//! Commentaire si mis a paye sans paiement complet
 	var $close_note;
 	var $propalid;
-	var $projetid;
+	var $fk_project;
 	var $date_lim_reglement;
 	var $cond_reglement_id;			// Id in llx_cond_reglement
 	var $cond_reglement_code;		// Code in llx_cond_reglement
@@ -125,7 +125,7 @@ class Facture extends CommonObject
 		$this->total_tva = 0;
 		$this->total_ttc = 0;
 		$this->propalid = 0;
-		$this->projetid = 0;
+		$this->fk_project = 0;
 		$this->remise_exceptionnelle = 0;
 	}
 
@@ -173,7 +173,7 @@ class Facture extends CommonObject
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
 
-			$this->projetid          = $_facrec->projetid;
+			$this->fk_project        = $_facrec->fk_project;
 			$this->cond_reglement    = $_facrec->cond_reglement_id;
 			$this->cond_reglement_id = $_facrec->cond_reglement_id;
 			$this->mode_reglement    = $_facrec->mode_reglement_id;
@@ -234,7 +234,7 @@ class Facture extends CommonObject
 		$sql.= ",".($this->ref_client?"'".addslashes($this->ref_client)."'":"null");
 		$sql.= ",".($this->fk_facture_source?"'".addslashes($this->fk_facture_source)."'":"null");
 		$sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
-		$sql.= ",".($this->projetid?$this->projetid:"null");
+		$sql.= ",".($this->fk_project?$this->fk_project:"null");
 		$sql.= ','.$this->cond_reglement_id;
 		$sql.= ",".$this->mode_reglement_id;
 		$sql.= ",".$this->db->idate($datelim).", '".$this->modelpdf."')";
@@ -390,7 +390,7 @@ class Facture extends CommonObject
 		$facture->note              = $this->note;
 		$facture->ref_client        = $this->ref_client;
 		$facture->modelpdf          = $this->modelpdf;
-		$facture->projetid          = $this->projetid;
+		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
 		$facture->amount            = $this->amount;
@@ -600,7 +600,7 @@ class Facture extends CommonObject
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-				$this->projetid               = $obj->fk_projet;
+				$this->fk_project             = $obj->fk_projet;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note                   = $obj->note;
 				$this->note_public            = $obj->note_public;
@@ -760,7 +760,7 @@ class Facture extends CommonObject
 		if (isset($this->user_author)) $this->user_author=trim($this->user_author);
 		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
 		if (isset($this->fk_facture_source)) $this->fk_facture_source=trim($this->fk_facture_source);
-		if (isset($this->projetid)) $this->projetid=trim($this->projetid);
+		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
 		if (isset($this->cond_reglement_id)) $this->cond_reglement_id=trim($this->cond_reglement_id);
 		if (isset($this->mode_reglement_id)) $this->mode_reglement_id=trim($this->mode_reglement_id);
 		if (isset($this->note)) $this->note=trim($this->note);
@@ -796,7 +796,7 @@ class Facture extends CommonObject
 		$sql.= " fk_user_author=".(isset($this->user_author)?$this->user_author:"null").",";
 		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
 		$sql.= " fk_facture_source=".(isset($this->fk_facture_source)?$this->fk_facture_source:"null").",";
-		$sql.= " fk_projet=".(isset($this->projetid)?$this->projetid:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
 		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
 		$sql.= " date_lim_reglement=".(strval($this->date_lim_reglement)!='' ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'null').",";

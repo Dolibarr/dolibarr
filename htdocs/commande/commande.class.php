@@ -52,7 +52,7 @@ class Commande extends CommonObject
 	var $ref;
 	var $ref_client;
 	var $contactid;
-	var $projet_id;
+	var $fk_project;
 	var $statut;		// -1=Annulee, 0=Brouillon, 1=Validee, 2=Acceptee, 3=Envoyee/Recue (facturee ou non)
 	var $facturee;		// Facturee ou non
 	var $brouillon;
@@ -139,7 +139,7 @@ class Commande extends CommonObject
 		}
 
 		$this->socid                = $propal->socid;
-		$this->projetid             = $propal->projetidp;
+		$this->fk_project           = $propal->fk_project;
 		$this->cond_reglement_id    = $propal->cond_reglement_id;
 		$this->mode_reglement_id    = $propal->mode_reglement_id;
 		$this->date_livraison       = $propal->date_livraison;
@@ -539,7 +539,7 @@ class Commande extends CommonObject
 			return -1;
 		}
 		if (! $remise) $remise=0;
-		if (! $this->projetid) $this->projetid = 0;
+		if (! $this->fk_project) $this->fk_project = 0;
 
 
 		$this->db->begin();
@@ -550,7 +550,7 @@ class Commande extends CommonObject
 		$sql.= ", remise_absolue, remise_percent";
 		$sql.= ", entity";
 		$sql.= ")";
-		$sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->projetid;
+		$sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->fk_project;
 		$sql.= ", ".$this->db->idate($this->date_commande);
 		$sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
 		$sql.= ", '".addslashes($this->note)."'";
@@ -979,7 +979,6 @@ class Commande extends CommonObject
 				$this->facturee               = $obj->facturee;
 				$this->note                   = $obj->note;
 				$this->note_public            = $obj->note_public;
-				$this->projet_id              = $obj->fk_projet; // TODO deprecated
 				$this->fk_project             = $obj->fk_projet;
 				$this->modelpdf               = $obj->model_pdf;
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;

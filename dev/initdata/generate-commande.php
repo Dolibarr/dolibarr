@@ -160,7 +160,7 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     $com->date_commande  = $dates[rand(1, sizeof($dates)-1)];
     $com->note           = $_POST["note"];
     $com->source         = 1;
-    $com->projetid       = 0;
+    $com->fk_project     = 0;
     $com->remise_percent = 0;
     
 	$nbp = rand(2, 5);
