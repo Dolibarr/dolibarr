@@ -71,21 +71,14 @@ class box_produits extends ModeleBoxes {
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			$clause = " WHERE";
-
 			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-			{
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-				$sql.= $clause." COALESCE(c.visible,1)=1";
-				$clause = " AND";
-			}
-			$sql.= $clause." p.entity = ".$conf->entity;
+			$sql.= " WHERE p.entity = ".$conf->entity;
+			if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+			if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
-			$sql.= " ORDER BY p.datec DESC";
+			$sql.= $db->order('p.datec', 'DESC');
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);

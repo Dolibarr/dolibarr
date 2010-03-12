@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -79,6 +79,14 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$_GET["type"] = $_POST["type"];
 		$error++;
 	}
+	if (empty($_POST["ref"]))
+	{
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
+		$_GET["action"] = "create";
+		$_GET["canvas"] = $product->canvas;
+		$_GET["type"] = $_POST["type"];
+		$error++;
+	}
 
 	if (! $error)
 	{
@@ -111,9 +119,14 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$product->canvas             = $_POST["canvas"];
 		$product->weight             = $_POST["weight"];
 		$product->weight_units       = $_POST["weight_units"];
+		$product->length             = $_POST["size"];
+		$product->length_units       = $_POST["size_units"];
+		$product->surface            = $_POST["surface"];
+		$product->surface_units      = $_POST["surface_units"];
 		$product->volume             = $_POST["volume"];
 		$product->volume_units       = $_POST["volume_units"];
 		$product->finished           = $_POST["finished"];
+		$product->hidden             = $_POST["hidden"]=='yes'?1:0;
 		// MultiPrix
 		if($conf->global->PRODUIT_MULTIPRICES)
 		{
@@ -133,9 +146,6 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 
 		if ( $value != $current_lang ) $e_product = $product;
 
-		// Specific product
-		// $_POST n'est pas utilise dans la classe Product
-		// mais dans des classes qui herite de Product
 		$id = $product->create($user);
 
 		if ($id > 0)
@@ -177,9 +187,14 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			$product->canvas             = $_POST["canvas"];
 			$product->weight             = $_POST["weight"];
 			$product->weight_units       = $_POST["weight_units"];
+			$product->length             = $_POST["size"];
+			$product->length_units       = $_POST["size_units"];
+			$product->surface            = $_POST["surface"];
+			$product->surface_units      = $_POST["surface_units"];
 			$product->volume             = $_POST["volume"];
 			$product->volume_units       = $_POST["volume_units"];
 			$product->finished           = $_POST["finished"];
+			$product->hidden             = $_POST["hidden"]=='yes'?1:0;
 
 			if ($product->check())
 			{
@@ -621,7 +636,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 		print '<table class="border" width="100%">';
 		print '<tr>';
-		print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$product->ref.'">';
+		print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$_POST["ref"].'">';
 		if ($_error == 1)
 		{
 			print $langs->trans("RefAlreadyExists");
@@ -629,7 +644,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$_POST["libelle"].'"></td></tr>';
 
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
@@ -641,7 +656,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		if ($_GET["type"] != 1 && $conf->stock->enabled)
 		{
 			print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
-			print '<input name="seuil_stock_alerte" size="4" value="0">';
+			print '<input name="seuil_stock_alerte" size="4" value="'.$_POST["seuil_stock_alerte"].'">';
 			print '</td></tr>';
 		}
 		else
@@ -655,12 +670,13 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('desc','',160,'dolibarr_notes','',false);
+			$doleditor=new DolEditor('desc',$_POST["desc"],160,'dolibarr_notes','',false);
 			$doleditor->Create();
 		}
 		else
 		{
 			print '<textarea name="desc" rows="4" cols="90">';
+			print $_POST["desc"];
 			print '</textarea>';
 		}
 
@@ -687,17 +703,36 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			print '</td></tr>';
 		}
 
-		// Weight - Volume
-		if ($_GET["type"] != 1)
+		if ($_GET["type"] != 1)	// Le poids et le volume ne concerne que les produits et pas les services
 		{
-			// Le poids et le volume ne concerne que les produits et pas les services
+			// Weight
 			print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-			print '<input name="weight" size="4" value="">';
+			print '<input name="weight" size="4" value="'.$_POST["weight"].'">';
 			print $formproduct->select_measuring_units("weight_units","weight");
 			print '</td></tr>';
+			// Length
+			print '<tr><td>'.$langs->trans("Length").'</td><td>';
+			print '<input name="size" size="4" value="'.$_POST["size"].'">';
+			print $formproduct->select_measuring_units("size_units","size");
+			print '</td></tr>';
+			// Surface
+			print '<tr><td>'.$langs->trans("Surface").'</td><td>';
+			print '<input name="surface" size="4" value="'.$_POST["surface"].'">';
+			print $formproduct->select_measuring_units("surface_units","surface");
+			print '</td></tr>';
+			// Volume
 			print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-			print '<input name="volume" size="4" value="">';
+			print '<input name="volume" size="4" value="'.$_POST["volume"].'">';
 			print $formproduct->select_measuring_units("volume_units","volume");
+			print '</td></tr>';
+		}
+
+		// Hidden
+		if (($_GET["type"] != 1 && $user->rights->produit->hidden)
+		|| ($_GET["type"] == 1 && $user->rights->service->hidden))
+		{
+			print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+			print $html->selectyesno($product->hidden);
 			print '</td></tr>';
 		}
 
@@ -706,12 +741,13 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
+			$doleditor=new DolEditor('note',$_POST["note"],180,'dolibarr_notes','',false);
 			$doleditor->Create();
 		}
 		else
 		{
 			print '<textarea name="note" rows="8" cols="70">';
+			print $_POST["note"];
 			print '</textarea>';
 		}
 		print "</td></tr>";
@@ -719,14 +755,15 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 		print '<br>';
 
-		print '<table class="border" width="100%">';
-		if($conf->global->PRODUIT_MULTIPRICES)
+		if ($conf->global->PRODUIT_MULTIPRICES)
 		{
 			// We do no show price array on create when multiprices enabled.
 			// We must set them on prices tab.
 		}
 		else
 		{
+			print '<table class="border" width="100%">';
+
 			// PRIX
 			print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
 			print '<td><input name="price" size="10" value="'.$product->price.'">';
@@ -742,11 +779,11 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
 			print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
 			print '</td></tr>';
+
+			print '</table>';
+
+			print '<br>';
 		}
-
-		print '</table>';
-
-		print '<br>';
 
 		print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
 
@@ -754,10 +791,8 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 	}
 	else
 	{
-		//RODO
 		// On assigne les valeurs meme en creation car elles sont definies si
 		// on revient en erreur
-		//
 		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/templates/'.$_GET["canvas"].'/';
 		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
 		$smarty->assign('tva_taux_value', $tvaarray['value']);
@@ -1016,7 +1051,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 			else
 			{
-				// Weight / Volume
+				// Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
 				if ($product->weight != '')
 				{
@@ -1027,7 +1062,29 @@ if ($_GET["id"] || $_GET["ref"])
 					print '&nbsp;';
 				}
 				print "</td></tr>\n";
-
+				// Length
+				print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
+				if ($product->length != '')
+				{
+					print $product->length." ".measuring_units_string($product->length_units,"size");
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
+				// Surface
+				print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
+				if ($product->surface != '')
+				{
+					print $product->surface." ".measuring_units_string($product->surface_units,"surface");
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
+				// Volume
 				print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
 				if ($product->volume != '')
 				{
@@ -1037,6 +1094,15 @@ if ($_GET["id"] || $_GET["ref"])
 				{
 					print '&nbsp;';
 				}
+				print "</td></tr>\n";
+			}
+
+			// Hidden
+			if ((! $product->isservice() && $user->rights->produit->hidden)
+			|| ($product->isservice() && $user->rights->service->hidden))
+			{
+				print '<tr><td>'.$langs->trans("Hidden").'</td><td colspan="2">';
+				print yn($product->hidden);
 				print "</td></tr>\n";
 			}
 
@@ -1148,15 +1214,34 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 			else
 			{
-				// Weight / Volume
+				// Weight
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 				print '<input name="weight" size="5" value="'.$product->weight.'"> ';
 				print $formproduct->select_measuring_units("weight_units", "weight", $product->weight_units);
 				print '</td></tr>';
-
+				// Length
+				print '<tr><td>'.$langs->trans("Length").'</td><td>';
+				print '<input name="size" size="5" value="'.$product->length.'"> ';
+				print $formproduct->select_measuring_units("size_units", "size", $product->length_units);
+				print '</td></tr>';
+				// Surface
+				print '<tr><td>'.$langs->trans("Surface").'</td><td>';
+				print '<input name="surface" size="5" value="'.$product->surface.'"> ';
+				print $formproduct->select_measuring_units("surface_units", "surface", $product->surface_units);
+				print '</td></tr>';
+				// Volume
 				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 				print '<input name="volume" size="5" value="'.$product->volume.'"> ';
 				print $formproduct->select_measuring_units("volume_units", "volume", $product->volume_units);
+				print '</td></tr>';
+			}
+
+			// Hidden
+			if ((! $product->isservice() && $user->rights->produit->hidden)
+			|| ($product->isservice() && $user->rights->service->hidden))
+			{
+				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+				print $html->selectyesno('hidden',$product->hidden);
 				print '</td></tr>';
 			}
 
@@ -1175,10 +1260,13 @@ if ($_GET["id"] || $_GET["ref"])
 				print "</textarea>";
 			}
 			print "</td></tr>";
-
-			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 			print '</table>';
+
+			print '<br>';
+
+			print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
 			print '</form>';
 			print "<!-- CUT HERE -->\n";
 		}
@@ -1232,22 +1320,6 @@ if ($_GET["action"] == '')
 		if ($product->no_button_copy <> 1)
 		print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
 	}
-
-	/*
-	 if ($product->isproduct() && $user->rights->commande->creer)
-	 {
-	 $langs->load('orders');
-	 print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-	 print $langs->trans("CreateCustomerOrder").'</a>';
-	 }
-
-	 if ($product->isproduct() && $user->rights->fournisseur->commande->creer)
-	 {
-	 $langs->load('orders');
-	 print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-	 print $langs->trans("CreateSupplierOrder").'</a>';
-	 }
-	 */
 
 	$product_is_used = $product->verif_prod_use($product->id);
 	if ($user->rights->produit->supprimer)

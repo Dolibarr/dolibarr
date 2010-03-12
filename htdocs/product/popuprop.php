@@ -73,7 +73,7 @@ if (isset($_GET['type']))
 	$param = '&amp;type='.$_GET['type'];
 	$title = $langs->trans("ListProductByPopularity");
 	if ($_GET['type'] == 1) $title = $langs->trans("ListServiceByPopularity");
-} 
+}
 
 print_barre_liste($title, $page, "popuprop.php",$param,"","","",$num);
 
@@ -90,21 +90,14 @@ print "</tr>\n";
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
 $sql.= " WHERE p.rowid = pd.fk_product";
 $sql.= " AND p.entity = ".$conf->entity;
+if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if (isset($_GET['type'])) $sql.= " AND fk_product_type = ".$_GET['type'];
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-  $sql.= ' AND COALESCE(c.visible,1)=1';
-}
 $sql.= " GROUP BY (p.rowid)";
-$sql.= " ORDER BY $sortfield $sortorder ";
-$sql.= $db->plimit( $limit ,$offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit ,$offset);
 
 $result=$db->query($sql) ;
 if ($result)
@@ -125,7 +118,7 @@ if ($result)
 		    $sql.= " WHERE fk_product=".$objp->rowid;
 		    $sql.= " AND lang='". $langs->getDefaultLang() ."'";
 		    $sql.= " LIMIT 1";
-		    
+
 		    $resultp = $db->query($sql);
 		    if ($resultp)
 		    {

@@ -141,7 +141,7 @@ if ($_GET["id"])
 		$sql .= " WHERE ue.fk_user = u.rowid ";
 		$sql .= " AND ue.fk_entrepot = ".$entrepot->id;
 
-		//$sql .=  " ORDER BY " . $sortfield . " " . $sortorder;
+		//$sql .= $db->order($sortfield,$sortorder);
 		//$sql .= $db->plimit($limit + 1 ,$offset);
 
 		$resql = $db->query($sql) ;

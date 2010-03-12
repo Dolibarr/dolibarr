@@ -3,17 +3,21 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:
+- New: Support products property length and area.
 - New: Add "payment due before" field in invoice exports
 - New: Add feature to resize or crop image files (for products photos)
 - New: task #10113 : Show list of emailing on clicking on "number of mass emailing received"
 - New: Add default language for third parties and use it when multilang is enabled
        to define default language for document generation.
 - New: Can reopen a closed supplier invoice.
+- New: Move permission "see hidden categories" into "see hidden products/services".
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.
 
 For developers:
-- More comments in code
+- More comments in code.
+- Uniformize some code. 
+- First delete of useless pre.inc.php files.
 
 
 ***** ChangeLog for 2.8 compared to 2.7 *****

@@ -98,7 +98,7 @@ $countries=array();
 $sql = "SELECT rowid, code, libelle, active";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 $sql.= " WHERE active = 1";
-$sql.= " ORDER BY code ASC;";
+$sql.= " ORDER BY code ASC";
 $resql=$db->query($sql);
 if ($resql)
 {

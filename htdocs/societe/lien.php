@@ -189,7 +189,8 @@ if($_GET["socid"])
 			{
 				$sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 			}
-			$sql .= " ORDER BY s.nom ASC " . $db->plimit($conf->liste_limit+1, $offset);
+			$sql.= $db->order("s.nom","ASC");
+			$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 			$resql = $db->query($sql);
 			if ($resql)

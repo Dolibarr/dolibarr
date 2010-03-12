@@ -65,7 +65,7 @@ if ($_POST["action"] == 'add' && $user->rights->stock->creer)
 
 	if ($entrepot->libelle) {
 		$id = $entrepot->create($user);
-		if ($id > 0) 
+		if ($id > 0)
 		{
 			header("Location: fiche.php?id=".$id);
 			exit;
@@ -89,7 +89,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 	if ($result > 0)
 	{
 		header("Location: ".DOL_URL_ROOT.'/product/stock/liste.php');
-		exit;	
+		exit;
 	}
 	else
 	{
@@ -241,7 +241,7 @@ else
 				$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$entrepot->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$entrepot->libelle),"confirm_delete",'',0,2);
 				if ($ret == 'html') print '<br>';
 			}
-			
+
 			print '<table class="border" width="100%">';
 
 			// Ref
@@ -355,18 +355,11 @@ else
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type,";
 			$sql.= " ps.pmp, ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p";
-			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-			{
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-			}
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
 			$sql .= " AND ps.fk_entrepot = ".$entrepot->id;
-			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-			{
-				$sql.= ' AND COALESCE(c.visible,1)=1';
-			}
+			if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+			if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 			$sql.= " ORDER BY " . $sortfield . " " . $sortorder;
 			//$sql .= $db->plimit($limit + 1 ,$offset);
 

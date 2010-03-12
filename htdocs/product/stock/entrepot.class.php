@@ -357,17 +357,10 @@ class Entrepot extends CommonObject
 		$ret=array();
 
 		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ps.pmp) as value";
-		$sql .= " FROM llx_product_stock as ps";
-		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-		}
-		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
-		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-		{
-			$sql.= ' AND COALESCE(c.visible,1)=1';
-		}
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
+		$sql .= " WHERE ps.fk_entrepot = ".$this->id." AND ps.fk_product=p.rowid";
+		if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+		if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 
 		//print $sql;
 		$result = $this->db->query($sql) ;

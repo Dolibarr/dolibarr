@@ -114,18 +114,11 @@ $sql.= " m.value, ".$db->pdate("m.datem")." as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s";
 $sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
 $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-	$sql.= " AND COALESCE(c.visible,1)=1";
-}
+if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 $sql.= " ORDER BY datem DESC";
 $sql.= $db->plimit($max,0);
 

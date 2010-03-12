@@ -138,19 +138,26 @@ class FormProduct
 			$measuring_units[-3] = $langs->trans("WeightUnitg");
 			$measuring_units[-6] = $langs->trans("WeightUnitmg");
 		}
-		else if ($measuring_style == 'volume')
-		{
-			$measuring_units[0] = $langs->trans("VolumeUnitm3");
-			$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
-			$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
-			$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-		}
 		else if ($measuring_style == 'size')
 		{
 			$measuring_units[0] = $langs->trans("SizeUnitm");
 			$measuring_units[-1] = $langs->trans("SizeUnitdm");
 			$measuring_units[-2] = $langs->trans("SizeUnitcm");
 			$measuring_units[-3] = $langs->trans("SizeUnitmm");
+		}
+		else if ($measuring_style == 'surface')
+		{
+			$measuring_units[0] = $langs->trans("SurfaceUnitm2");
+			$measuring_units[-2] = $langs->trans("SurfaceUnitdm2");
+			$measuring_units[-4] = $langs->trans("SurfaceUnitcm2");
+			$measuring_units[-6] = $langs->trans("SurfaceUnitmm2");
+		}
+		else if ($measuring_style == 'volume')
+		{
+			$measuring_units[0] = $langs->trans("VolumeUnitm3");
+			$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
+			$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
+			$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
 		}
 
 		print '<select class="flat" name="'.$name.'">';

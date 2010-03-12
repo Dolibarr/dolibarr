@@ -221,7 +221,7 @@ class Webcal {
 			$sql.= " cal_date, cal_time, cal_mod_date,";
 			$sql.= " cal_mod_time, cal_duration, cal_priority, cal_type, cal_access, cal_name, cal_description";
 			$sql.= " FROM webcal_entry";
-			$sql.= " order by cal_date";
+			$sql.= " ORDER BY cal_date";
 
 			dol_syslog("Webcal::build_vcal select events sql=".$sql);
 			$resql=$this->localdb->query($sql);

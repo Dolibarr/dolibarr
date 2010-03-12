@@ -357,7 +357,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	if ($search_nom)    $sql.= " AND mc.nom    like '%".addslashes($search_nom)."%'";
 	if ($search_prenom) $sql.= " AND mc.prenom like '%".addslashes($search_prenom)."%'";
 	if ($search_email)  $sql.= " AND mc.email  like '%".addslashes($search_email)."%'";
-	if ($sortfield) { $sql .= " ORDER BY $sortfield $sortorder"; }
+	$sql .= $db->order($sortfield,$sortorder);
 	$sql .= $db->plimit($conf->liste_limit+1, $offset);
 
 	$resql=$db->query($sql);

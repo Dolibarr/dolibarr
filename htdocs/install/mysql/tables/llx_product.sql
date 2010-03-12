@@ -49,6 +49,10 @@ create table llx_product
   partnumber         varchar(32),
   weight             float        DEFAULT NULL,
   weight_units       tinyint      DEFAULT NULL,
+  length             float        DEFAULT NULL,
+  length_units       tinyint      DEFAULT NULL,
+  surface            float        DEFAULT NULL,
+  surface_units      tinyint      DEFAULT NULL,
   volume             float        DEFAULT NULL,
   volume_units       tinyint      DEFAULT NULL,
   stock              integer,						-- physical stock

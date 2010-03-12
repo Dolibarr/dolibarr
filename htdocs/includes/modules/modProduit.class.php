@@ -41,7 +41,6 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
  */
 class modProduit extends DolibarrModules
 {
-
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
 	 *   \param      DB      handler d'acces base
@@ -50,8 +49,8 @@ class modProduit extends DolibarrModules
 	{
 		global $conf;
 
-		$this->db = $DB ;
-		$this->numero = 50 ;
+		$this->db = $DB;
+		$this->numero = 50;
 
 		$this->family = "products";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -117,6 +116,13 @@ class modProduit extends DolibarrModules
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
+
+		$this->rights[$r][0] = 36; // id de la permission
+		$this->rights[$r][1] = 'Voir/gérer les produits cachés'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'hidden';
+		$r++;
 
 		$r++;
 		$this->rights[$r][0] = 38;	// Must be same permission than in service module

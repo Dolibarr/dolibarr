@@ -557,6 +557,7 @@ ToTest=Test
 ValidateBefore=Card must be validated before using this feature
 Visibility=Visibility
 Private=Private
+Hidden=Hidden
 # Week day
 Day1=Monday
 Day2=Tuesday

@@ -75,3 +75,8 @@ alter table llx_facture_fourn_det add column total_localtax1 double(24,8) DEFAUL
 alter table llx_facture_fourn_det add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
 
 alter table llx_product add column   hidden             tinyint      DEFAULT 0;
+
+alter table llx_product add column   length             float        DEFAULT NULL after weight_units;
+alter table llx_product add column   length_units       tinyint      DEFAULT NULL after length;
+alter table llx_product add column   surface            float        DEFAULT NULL after length_units;
+alter table llx_product add column   surface_units      tinyint      DEFAULT NULL after surface;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /**
  *      \defgroup   category       Module categories
- *      \brief      Module pour g�rer les cat�gories
+ *      \brief      Module to manage categories
  *		\version	$Id$
  */
 
@@ -82,30 +82,23 @@ class modCategorie extends DolibarrModules
 
 		$this->rights[$r][0] = 241; // id de la permission
 		$this->rights[$r][1] = 'Lire les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
 		$this->rights[$r][0] = 242; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
 		$this->rights[$r][0] = 243; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les categories'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
-		$r++;
-
-		$this->rights[$r][0] = 244; // id de la permission
-		$this->rights[$r][1] = 'Voir le contenu des categories cachees'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
-		$this->rights[$r][4] = 'voir';
 		$r++;
 
 		// Exports

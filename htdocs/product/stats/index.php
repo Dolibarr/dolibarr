@@ -41,14 +41,10 @@ $mesg = '';
  */
 $sql = "SELECT count(*)";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
 $sql.= " WHERE p.fk_product_type <> 1";
+if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 $sql.= " AND p.entity = ".$conf->entity;
-if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
 if ($db->query($sql))
 {
@@ -60,15 +56,11 @@ $db->free();
 
 $sql = "SELECT count(*)";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
 $sql.= " WHERE p.envente = 0";
+if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 $sql.= " AND p.fk_product_type <> '1'";
 $sql.= " AND p.entity = ".$conf->entity;
-if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
 if ($db->query($sql))
 {
@@ -77,13 +69,17 @@ if ($db->query($sql))
 }
 $db->free();
 
-if ($conf->service->enabled)
+if ($conf->produit->enabled && $conf->service->enabled)
 {
 	print_fiche_titre($langs->trans("ProductsAndServicesStatistics"), $mesg);
 }
-else
+elseif ($conf->produit->enabled)
 {
 	print_fiche_titre($langs->trans("ProductsStatistics"), $mesg);
+}
+elseif ($conf->service->enabled)
+{
+	print_fiche_titre($langs->trans("ServicesStatistics"), $mesg);
 }
 
 print '<br>';
@@ -106,14 +102,10 @@ if ($conf->service->enabled)
 {
   $sql = "SELECT count(*)";
   $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-  if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-  {
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-  }
   $sql.= " WHERE p.fk_product_type = '1'";
+  if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+  if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
   $sql.= " AND p.entity = ".$conf->entity;
-  if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
   if ($db->query($sql))
   {
@@ -124,15 +116,11 @@ if ($conf->service->enabled)
 
   $sql = "SELECT count(*)";
   $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-  if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-  {
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-  }
   $sql.= " WHERE p.envente = 0";
+  if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+  if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
   $sql.= " AND p.fk_product_type = '1'";
   $sql.= " AND p.entity = ".$conf->entity;
-  if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= ' AND COALESCE(c.visible,1)=1';
 
   if ($db->query($sql))
   {

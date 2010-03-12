@@ -80,12 +80,18 @@ class Product extends CommonObject
 	var $duration_unit;
 	// Statut indique si le produit est en vente '1' ou non '0'
 	var $status;
-	// Statut indique si le produit est un produit finis '1' ou une matiere premiere '0'
+	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
+
+	var $hidden;
 
 	//! Unites de mesure
 	var $weight;
 	var $weight_units;
+	var $length;
+	var $length_units;
+	var $surface;
+	var $surface_units;
 	var $volume;
 	var $volume_units;
 
@@ -160,9 +166,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	\brief    Insert product in database
-	 *	\param    user     	Utilisateur qui effectue l'insertion
-	 *	\return   int     	id du produit ou numero d'erreur < 0
+	 *	\brief    Insert product into database
+	 *	\param    user     	User making insert
+	 *	\return   int     	id of product/service if OK or number of error < 0
 	 */
 	function create($user)
 	{
@@ -182,6 +188,7 @@ class Product extends CommonObject
 		if (empty($this->price_min)) $this->price_min = 0;
 		if (empty($this->status))    $this->status = 0;
 		if (empty($this->finished))  $this->finished = 0;
+		if (empty($this->hidden))    $this->hidden = 0;
 
 		$price_ht=0;
 		$price_ttc=0;
@@ -247,6 +254,7 @@ class Product extends CommonObject
 					$sql.= ", price_base_type";
 					$sql.= ", canvas";
 					$sql.= ", finished";
+					$sql.= ", hidden";
 					$sql.= ") VALUES (";
 					$sql.= $this->db->idate(mktime());
 					$sql.= ", ".$conf->entity;
@@ -261,6 +269,7 @@ class Product extends CommonObject
 					$sql.= ", '".$this->price_base_type."'";
 					$sql.= ", '".$this->canvas."'";
 					$sql.= ", ".$this->finished;
+					$sql.= ", ".$this->hidden;
 					$sql.= ")";
 
 					dol_syslog("Product::Create sql=".$sql);
@@ -392,10 +401,15 @@ class Product extends CommonObject
 		$this->stock_loc = trim($this->stock_loc);
 		$this->weight = price2num($this->weight);
 		$this->weight_units = trim($this->weight_units);
+		$this->length = price2num($this->length);
+		$this->length_units = trim($this->length_units);
+		$this->surface = price2num($this->surface);
+		$this->surface_units = trim($this->surface_units);
 		$this->volume = price2num($this->volume);
 		$this->volume_units = trim($this->volume_units);
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
 		if (empty($this->finished))  			$this->finished = 0;
+		if (empty($this->hidden))   			$this->hidden = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 		$sql .= " SET label = '" . addslashes($this->libelle) ."'";
@@ -403,8 +417,13 @@ class Product extends CommonObject
 		$sql .= ",tva_tx = " . $this->tva_tx;
 		$sql .= ",envente = " . $this->status;
 		$sql .= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
+		$sql .= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
 		$sql .= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql .= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
+		$sql .= ",length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
+		$sql .= ",length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
+		$sql .= ",surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
+		$sql .= ",surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
 		$sql .= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
 		$sql .= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 		$sql .= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
@@ -891,7 +910,7 @@ class Product extends CommonObject
 
 		dol_syslog("Product::fetch id=$id ref=$ref");
 
-		// Verification parametres
+		// Check parameters
 		if (! $id && ! $ref)
 		{
 			$this->error=$langs->trans('ErrorWrongParameters');
@@ -901,8 +920,8 @@ class Product extends CommonObject
 
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, envente,";
-		$sql.= " fk_product_type, duration, seuil_stock_alerte,canvas,";
-		$sql.= " stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type, finished,";
+		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
+		$sql.= " stock_loc, weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " stock, pmp,";
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -929,6 +948,7 @@ class Product extends CommonObject
 			$this->type               = $result["fk_product_type"];
 			$this->status             = $result["envente"];
 			$this->finished           = $result["finished"];
+			$this->hidden             = $result["hidden"];
 			$this->duration           = $result["duration"];
 			$this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
 			$this->duration_unit      = substr($result["duration"],-1);
@@ -937,6 +957,10 @@ class Product extends CommonObject
 			$this->stock_loc          = $result["stock_loc"];
 			$this->weight             = $result["weight"];
 			$this->weight_units       = $result["weight_units"];
+			$this->length             = $result["length"];
+			$this->length_units       = $result["length_units"];
+			$this->surface            = $result["surface"];
+			$this->surface_units      = $result["surface_units"];
 			$this->volume             = $result["volume"];
 			$this->volume_units       = $result["volume_units"];
 			$this->barcode            = $result["barcode"];
@@ -991,7 +1015,8 @@ class Product extends CommonObject
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 					$sql.= " where price_level=".$i." and";
 					$sql.= " fk_product = '".$this->id."'";
-					$sql.= " order by date_price DESC limit 1";
+					$sql.= " ORDER BY date_price DESC";
+					$sql.= " LIMIT 1";
 					$resql = $this->db->query($sql) ;
 					if ($resql)
 					{
@@ -2651,17 +2676,11 @@ class Product extends CommonObject
 
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-		}
 		$sql.= " WHERE p.fk_product_type <> 1";
+		if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+		if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 		$sql.= " AND p.entity = ".$conf->entity;
-		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-		{
-			$sql.= " AND COALESCE(c.visible,1)=1";
-		}
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

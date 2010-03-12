@@ -78,11 +78,6 @@ $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
 $sql.= ' SUM(s.reel) as stock_physique';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
 $sql.= ' '.MAIN_DB_PREFIX.'product as p';
-if ($catid || ($conf->categorie->enabled && ! $user->rights->categorie->voir))
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
 
 if ($_GET["fourn_id"] > 0)
 {
@@ -91,6 +86,8 @@ if ($_GET["fourn_id"] > 0)
 }
 $sql.= " WHERE p.rowid = s.fk_product";
 $sql.= " AND p.entity = ".$conf->entity;
+if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if ($sall)
 {
 	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
@@ -119,16 +116,12 @@ if($catid)
 {
 	$sql.= " AND cp.fk_categorie = ".$catid;
 }
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-	$sql.= ' AND COALESCE(c.visible,1)=1';
-}
 if ($fourn_id > 0)
 {
 	$sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
 $sql.= " GROUP BY p.rowid";
-$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
 $resql = $db->query($sql) ;
 
@@ -237,7 +230,7 @@ if ($resql)
 			$sql.= " WHERE fk_product=".$objp->rowid;
 			$sql.= " AND lang='". $langs->getDefaultLang() ."'";
 			$sql.= " LIMIT 1";
-			
+
 			$result = $db->query($sql);
 			if ($result)
 			{

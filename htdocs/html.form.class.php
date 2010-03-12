@@ -800,7 +800,7 @@ class Form
 			if ($conf->global->MAIN_USE_JQUERY)
 			{
 				print ajax_autocompleter2('','keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
-				
+
 				print '<div class="ui-widget">';
 				print '<label for="birds">'.$langs->trans("RefOrLabel").':</label>';
 				print '<input id="birds" />';
@@ -821,7 +821,7 @@ class Form
 				print ajax_updater($htmlname,'keysearch',DOL_URL_ROOT.'/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');	// Indicator is '' to disable it as it is alreay output
 				print '</td></tr>';
 				print '</table>';
-			}	
+			}
 		}
 		else
 		{
@@ -844,18 +844,11 @@ class Form
 		global $langs,$conf,$user;
 
 		$sql = "SELECT ";
-		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-		{
-			$sql.="DISTINCT";
-		}
 		$sql.= " p.rowid, p.label, p.ref, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
-		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-		}
 		$sql.= " WHERE p.entity = ".$conf->entity;
+		if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+		if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 
 		if($finished == 0)
 		{
@@ -869,11 +862,6 @@ class Form
 		elseif($status >= 0)
 		{
 			$sql.= " AND p.envente = ".$status;
-		}
-
-		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-		{
-			$sql.= ' AND COALESCE(c.visible,1)=1';
 		}
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";

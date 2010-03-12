@@ -53,8 +53,8 @@ class box_services_vendus extends ModeleBoxes {
 	}
 
 	/**
-	 *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-	 *      \param      $max        Nombre maximum d'enregistrements � charger
+	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
+	 *      \param      $max        Nombre maximum d'enregistrements a charger
 	 */
 	function loadBox($max=5)
 	{
@@ -79,22 +79,15 @@ class box_services_vendus extends ModeleBoxes {
 			$sql.= ", ".MAIN_DB_PREFIX."product as p";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ")";
-			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-			{
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as ca ON cp.fk_categorie = ca.rowid";
-			}
 			$sql.= " WHERE s.rowid = c.fk_soc";
 			$sql.= " AND s.entity = ".$conf->entity;
+			if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+			if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.fk_product = p.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-			{
-				$sql.= ' AND COALESCE(ca.visible,1)=1';
-			}
-			$sql.= " ORDER BY c.tms DESC ";
+			$sql.= $db->order("c.tms","DESC");
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);

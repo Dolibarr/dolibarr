@@ -165,15 +165,12 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
 $sql.= " AND p.entity = ".$conf->entity;
-/*if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-	$sql.= " AND COALESCE(c.visible,1)=1 ";
-}*/
+if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if ($type != '') $sql.= " AND p.fk_product_type = ".$type;
 $sql.= $db->order("p.tms","DESC");
 $sql.= $db->plimit($max,0);
+
 //print $sql;
 $result = $db->query($sql) ;
 if ($result)

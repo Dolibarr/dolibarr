@@ -104,11 +104,6 @@ $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-if ($conf->categorie->enabled && ($catid || !$user->rights->categorie->voir))
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-}
 
 if ($_GET["fourn_id"] > 0)
 {
@@ -116,6 +111,8 @@ if ($_GET["fourn_id"] > 0)
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 $sql.= " WHERE p.entity = ".$conf->entity;
+if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if ($sall)
 {
 	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
@@ -143,10 +140,6 @@ if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
 if($catid)
 {
 	$sql.= " AND cp.fk_categorie = ".$catid;
-}
-if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-{
-	$sql.= ' AND COALESCE(c.visible,1)=1';
 }
 if ($fourn_id > 0)
 {

@@ -77,7 +77,8 @@ $sql.= " u.login, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql.= " WHERE 1=1";
 if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit( $limit, $offset);
 
 $resql=$db->query($sql);
 if ($resql)

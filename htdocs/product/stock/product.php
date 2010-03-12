@@ -407,7 +407,7 @@ $sql.= " WHERE ps.reel != 0";
 $sql.= " AND ps.fk_entrepot = e.rowid";
 $sql.= " AND e.entity = ".$conf->entity;
 $sql.= " AND ps.fk_product = ".$product->id;
-$sql.= " ORDER BY lower(e.label)";
+$sql.= " ORDER BY e.label";
 
 $entrepotstatic=new Entrepot($db);
 $total=0;

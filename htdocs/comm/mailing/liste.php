@@ -72,7 +72,8 @@ if ($filteremail)
 	if ($sall) $sql.= " AND (m.titre like '%".$sall."%' OR m.sujet like '%".$sall."%' OR m.body like '%".$sall."%')";
 	if (! $sortorder) $sortorder="ASC";
 	if (! $sortfield) $sortfield="m.rowid";
-	$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
+	$sql.= $db->order($sortfield,$sortorder);
+	$sql.= $db->plimit($conf->liste_limit +1, $offset);
 }
 else
 {
@@ -83,7 +84,8 @@ else
 	if ($sall) $sql.= " AND (m.titre like '%".$sall."%' OR m.sujet like '%".$sall."%' OR m.body like '%".$sall."%')";
 	if (! $sortorder) $sortorder="ASC";
 	if (! $sortfield) $sortfield="m.rowid";
-	$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
+	$sql.= $db->order($sortfield,$sortorder);
+	$sql.= $db->plimit($conf->liste_limit +1, $offset);
 }
 
 dol_syslog("sql=".$sql);

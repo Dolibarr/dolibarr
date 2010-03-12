@@ -66,7 +66,8 @@ if ($socid > 0)
 {
 	$sql .= " AND s.rowid = " . $user->societe_id;
 }
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql .= $db->order($sortfield,$sortorder);
+$sql .= $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result)

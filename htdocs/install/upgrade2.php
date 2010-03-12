@@ -173,72 +173,72 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 
 		$versiontoarray=explode('.',$versionto);
-		
+
 		$afterversionarray=explode('.','2.0.0');
 		$beforeversionarray=explode('.','2.7.9');
 		if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
 		{
 			// Script pour V2 -> V2.1
 			migrate_paiements($db,$langs,$conf);
-			
+
 			migrate_contracts_det($db,$langs,$conf);
-			
+
 			migrate_contracts_date1($db,$langs,$conf);
-			
+
 			migrate_contracts_date2($db,$langs,$conf);
-			
+
 			migrate_contracts_date3($db,$langs,$conf);
-			
+
 			migrate_contracts_open($db,$langs,$conf);
-			
+
 			migrate_modeles($db,$langs,$conf);
-			
+
 			migrate_price_propal($db,$langs,$conf);
-			
+
 			migrate_price_commande($db,$langs,$conf);
-			
+
 			migrate_price_commande_fournisseur($db,$langs,$conf);
-			
+
 			migrate_price_facture($db,$langs,$conf);
-			
+
 			migrate_price_contrat($db,$langs,$conf);
-			
+
 			migrate_paiementfourn_facturefourn($db,$langs,$conf);
-			
-			
+
+
 			// Script pour V2.1 -> V2.2
 			migrate_paiements_orphelins_1($db,$langs,$conf);
-			
+
 			migrate_paiements_orphelins_2($db,$langs,$conf);
-			
+
 			migrate_links_transfert($db,$langs,$conf);
-			
+
 			migrate_delete_old_files($db,$langs,$conf);
-			
-			
+
+
 			// Script pour V2.2 -> V2.4
 			migrate_commande_expedition($db,$langs,$conf);
-			
+
 			migrate_commande_livraison($db,$langs,$conf);
-			
+
 			migrate_detail_livraison($db,$langs,$conf);
-			
+
 			migrate_module_menus($db,$langs,$conf);
-			
-			
+
+
 			// Script pour V2.5 -> V2.6
 			migrate_stocks($db,$langs,$conf);
-			
-			
+
+
 			// Script pour V2.6 -> V2.7
 			migrate_menus($db,$langs,$conf);
-			
+
 			migrate_commande_deliveryaddress($db,$langs,$conf);
-			
+
 			migrate_restore_missing_links($db,$langs,$conf);
-			
+
 			migrate_directories($db,$langs,$conf,'/compta','/banque');
-			
+
 			migrate_directories($db,$langs,$conf,'/societe','/mycompany');
 		}
 
@@ -266,7 +266,7 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 			migrate_project_task_actors($db,$langs,$conf);
 		}
-		
+
 		// Script for -> V2.9
 		$afterversionarray=explode('.','2.8.9');
 		$beforeversionarray=explode('.','2.9.9');
@@ -2728,7 +2728,7 @@ function migrate_project_task_time($db,$langs,$conf)
 
 	print '<br>';
 	print '<b>'.$langs->trans('MigrationProjectTaskTime')."</b><br>\n";
-	
+
 	$error = 0;
 
 	$db->begin();
@@ -2745,19 +2745,19 @@ function migrate_project_task_time($db,$langs,$conf)
 		{
 			$totaltime = array();
 			$oldtime = 0;
-			
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				
+
 				if ($obj->task_duration > 0 && strlen($obj->task_duration) < 3)
 				{
 					$newtime = $obj->task_duration*60*60;
-		
+
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
 					$sql2.= " task_duration = ".$newtime;
 					$sql2.= " WHERE rowid = ".$obj->rowid;
-					
+
 					$resql2=$db->query($sql2);
 					if (!$resql2)
 					{
@@ -2766,16 +2766,18 @@ function migrate_project_task_time($db,$langs,$conf)
 					}
 					print ". ";
 					$oldtime++;
-					$totaltime[$obj->fk_task] += $newtime;
+					if (! empty($totaltime[$obj->fk_task])) $totaltime[$obj->fk_task] += $newtime;
+					else $totaltime[$obj->fk_task] = $newtime;
 				}
 				else
 				{
-					$totaltime[$obj->fk_task] += $obj->task_duration;
+					if (! empty($totaltime[$obj->fk_task])) $totaltime[$obj->fk_task] += $obj->task_duration;
+					else $totaltime[$obj->fk_task] = $obj->task_duration;
 				}
-				
+
 				$i++;
 			}
-			
+
 			if ($error == 0)
 			{
 				if ($oldtime > 0)
@@ -2785,7 +2787,7 @@ function migrate_project_task_time($db,$langs,$conf)
 						$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
 						$sql.= " duration_effective = ".$total_duration;
 						$sql.= " WHERE rowid = ".$taskid;
-						
+
 						$resql=$db->query($sql);
 						if (!$resql)
 						{
@@ -2793,7 +2795,7 @@ function migrate_project_task_time($db,$langs,$conf)
 							dol_print_error($db);
 						}
 					}
-					
+
 					if ($error == 0)
 					{
 						$db->commit();
@@ -2823,7 +2825,7 @@ function migrate_project_task_time($db,$langs,$conf)
 	{
 		dol_print_error($db);
 	}
-	
+
 	print '</td></tr>';
 }
 

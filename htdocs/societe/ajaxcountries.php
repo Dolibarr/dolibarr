@@ -44,7 +44,7 @@ if(isset($_POST['pays']) && !empty($_POST['pays']))
 	$sql = "SELECT rowid, code, libelle, active";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 	$sql.= " WHERE active = 1 AND libelle LIKE '%" . utf8_decode($_POST['pays']) . "%'";
-	$sql.= " ORDER BY libelle ASC;";
+	$sql.= " ORDER BY libelle ASC";
 
 	$resql=$db->query($sql);
 	if ($resql)

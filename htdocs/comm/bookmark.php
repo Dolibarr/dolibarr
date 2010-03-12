@@ -92,7 +92,8 @@ $sql = "SELECT s.rowid, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bi
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE b.fk_soc = s.rowid AND b.fk_user=u.rowid";
 if (! $user->admin) $sql.= " AND b.fk_user = ".$user->id;
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit( $limit, $offset);
 
 $resql=$db->query($sql);
 if ($resql)

@@ -119,7 +119,8 @@ if ($_GET["contactname"]) // acces a partir du module de recherche
   $sortorder = "ASC";
 }
 
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($limit+1, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)

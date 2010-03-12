@@ -93,7 +93,8 @@ if ($_GET["search_societe"])
 {
 	$sql.= " AND s.nom LIKE '%".addslashes($_GET["search_societe"])."%'";
 }
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $var=true;
 $resql = $db->query($sql);

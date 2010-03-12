@@ -365,7 +365,7 @@ if ($_GET["id"] || $_GET["ref"])
 				$sql.= " WHERE pf.fk_soc = s.rowid";
 				$sql.= " AND s.entity = ".$conf->entity;
 				$sql.= " AND pf.fk_product = ".$product->id;
-				$sql.= " ORDER BY lower(s.nom), pfp.quantity";
+				$sql.= " ORDER BY s.nom, pfp.quantity";
 
 				$resql="";
 				$resql=$db->query($sql);
