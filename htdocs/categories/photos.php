@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -147,7 +147,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</td></tr>';
 
 		// Visibility
-		if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+/*		if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
 			if ($c->socid)
 			{
@@ -188,6 +188,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
 			print '</td></tr>';
 		}
+*/
 
 		print "</table>\n";
 

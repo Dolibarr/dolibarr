@@ -520,6 +520,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		print '</td></tr>';
 
+		// Category
 		if ($soc->fournisseur)
 		{
 			$load = $soc->LoadSupplierCateg();
@@ -529,12 +530,13 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-					$form->select_array("fournisseur_categorie",$soc->SupplierCategories);
+					$form->select_array("fournisseur_categorie",$soc->SupplierCategories,$_POST["fournisseur_categorie"],1);
 					print '</td></tr>';
 				}
 			}
 		}
 
+		// Barcode
 		if ($conf->global->MAIN_MODULE_BARCODE)
 		{
 			print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod">';
@@ -904,6 +906,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		print '</td></tr>';
 
+		// Category
 		if ($soc->fournisseur)
 		{
 			$load = $soc->LoadSupplierCateg();
@@ -913,7 +916,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-					$form->select_array("fournisseur_categorie",$soc->SupplierCategories);
+					$form->select_array("fournisseur_categorie",$soc->SupplierCategories,'',1);
 					print '</td></tr>';
 				}
 			}
@@ -1061,13 +1064,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			print '</tr>';
 		}
 
-		print '<tr><td align="center" colspan="4">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
-
 		print '</table>';
+		print '<br>';
+
+		print '<center>';
+		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; &nbsp; ';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</center>';
+
 		print '</form>';
 	}
 }

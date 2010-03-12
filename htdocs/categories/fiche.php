@@ -226,36 +226,11 @@ if ($user->rights->categorie->creer)
 		}
 
 		print '</td></tr>';
-		if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
-		{
-			if ($_REQUEST['catorigin'])
-			{
-				print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-				print $html->select_all_categories($_GET['type'],$_REQUEST['catorigin']);
-				print '</td></tr>';
-				print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
-				print $html->selectyesno("visible", 1,1);
-				print '</td></tr>';
-				print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
-			}
-			else
-			{
-				print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
-				print $html->select_societes($socid,'socid','s.client IN (1, 3) AND s.fournisseur = 0',1);
-				print '</td></tr>';
-				print '<input type="hidden" name="catMere" value="-1">';
-				print '<input type="hidden" name="visible" value="1">';
-			}
-		}
-		else
-		{
-			print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-			print $html->select_all_categories($_GET['type']);
-			print '</td></tr>';
-			print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
-			print $html->selectyesno("visible", 1,1);
-			print '</td></tr>';
-		}
+
+		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
+		print $html->select_all_categories($_GET['type'],$_REQUEST['catorigin']);
+		print '</td></tr>';
+
 		print '</table>';
 
 		print '<center><br>';

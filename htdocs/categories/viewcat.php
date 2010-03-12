@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin	  	  <regis@dolibarr.fr>
  *
@@ -134,6 +134,7 @@ print nl2br($c->description);
 print '</td></tr>';
 
 // Visibility
+/*
 if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 {
 	if ($c->socid)
@@ -175,6 +176,7 @@ else
 	print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
 	print '</td></tr>';
 }
+*/
 
 print '</table>';
 
@@ -226,6 +228,7 @@ else
 			print "</td>\n";
 			print "\t\t<td>".$cat->description."</td>\n";
 
+			/*
 			if ($cat->visible == 1)
 			{
 				print "\t\t<td>".$langs->trans("ContentsVisibleByAllShort")."</td>\n";
@@ -234,6 +237,7 @@ else
 			{
 				print "\t\t<td>".$langs->trans("ContentsNotVisibleByAllShort")."</td>\n";
 			}
+			*/
 
 			print "\t</tr>\n";
 		}
