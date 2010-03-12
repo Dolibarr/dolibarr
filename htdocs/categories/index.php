@@ -35,7 +35,7 @@ $type=isset($_GET['type'])?$_GET['type']:$_POST['type'];
 
 if (!$user->rights->categorie->lire) accessforbidden();
 
-
+$langs->load("categories");
 
 
 /*
