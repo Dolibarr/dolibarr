@@ -81,8 +81,8 @@ class box_services_vendus extends ModeleBoxes {
 			$sql.= ")";
 			$sql.= " WHERE s.rowid = c.fk_soc";
 			$sql.= " AND s.entity = ".$conf->entity;
-			if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-			if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+			if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+			if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.fk_product = p.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

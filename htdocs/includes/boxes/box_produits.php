@@ -74,8 +74,8 @@ class box_produits extends ModeleBoxes {
 			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE p.entity = ".$conf->entity;
-			if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-			if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+			if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+			if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
 			$sql.= $db->order('p.datec', 'DESC');

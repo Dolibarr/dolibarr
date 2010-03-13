@@ -111,8 +111,8 @@ if ($_GET["fourn_id"] > 0)
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 $sql.= " WHERE p.entity = ".$conf->entity;
-if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if ($sall)
 {
 	$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";

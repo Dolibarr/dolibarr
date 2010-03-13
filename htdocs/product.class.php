@@ -2677,8 +2677,8 @@ class Product extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.fk_product_type <> 1";
-		if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-		if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+		if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+		if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 		$sql.= " AND p.entity = ".$conf->entity;
 
 		$resql=$this->db->query($sql);

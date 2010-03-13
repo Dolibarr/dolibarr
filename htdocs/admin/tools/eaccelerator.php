@@ -27,19 +27,19 @@ require("../../main.inc.php");
 $langs->load("admin");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 /*
-* View
-*/
+ * View
+ */
 
 llxHeader();
 
 
 if (!function_exists('eaccelerator_info'))
 {
-    print 'eAccelerator is not installed.';
+	print 'eAccelerator is not installed.';
 	llxfooter('$Date$ - $Revision$');
 	exit;
 }
@@ -47,23 +47,23 @@ if (!function_exists('eaccelerator_info'))
 
 $info = eaccelerator_info();
 if (isset($_POST['caching'])) {
-    if ($info['cache']) {
-        eaccelerator_caching(false);
-    } else {
-        eaccelerator_caching(true);
-    }
+	if ($info['cache']) {
+		eaccelerator_caching(false);
+	} else {
+		eaccelerator_caching(true);
+	}
 } else if (isset($_POST['optimizer']) && function_exists('eaccelerator_optimizer')) {
-    if ($info['optimizer']) {
-        eaccelerator_optimizer(false);
-    } else {
-        eaccelerator_optimizer(true);
-    }
+	if ($info['optimizer']) {
+		eaccelerator_optimizer(false);
+	} else {
+		eaccelerator_optimizer(true);
+	}
 } else if (isset($_POST['clear'])) {
-    eaccelerator_clear();
+	eaccelerator_clear();
 } else if (isset($_POST['clean'])) {
-    eaccelerator_clean();
+	eaccelerator_clean();
 } else if (isset($_POST['purge'])) {
-    eaccelerator_purge();
+	eaccelerator_purge();
 }
 $info = eaccelerator_info();
 if (!is_array($info)) {
@@ -75,31 +75,31 @@ if (!is_array($info)) {
 
 function compare($x, $y)
 {
-  global $sortby;
+	global $sortby;
 
-  if ( $x[$sortby] == $y[$sortby] )
-    return 0;
-  else if ( $x[$sortby] < $y[$sortby] )
-    return -1;
-  else
-    return 1;
+	if ( $x[$sortby] == $y[$sortby] )
+	return 0;
+	else if ( $x[$sortby] < $y[$sortby] )
+	return -1;
+	else
+	return 1;
 }
 
 
 function revcompare($x, $y)
 {
-  global $sortby, $langs;
+	global $sortby, $langs;
 
-  if ( $x[$sortby] == $y[$sortby] )
-    return 0;
-  else if ( $x[$sortby] < $y[$sortby] )
-    return 1;
-  else
-    return -1;
+	if ( $x[$sortby] == $y[$sortby] )
+	return 0;
+	else if ( $x[$sortby] < $y[$sortby] )
+	return 1;
+	else
+	return -1;
 }
 
 
-   function create_script_table($list)
+function create_script_table($list)
 {
 	global $sortby,$bc,$langs;
 	$var=true;
@@ -112,54 +112,60 @@ function revcompare($x, $y)
 
 	if (isset($_GET['sort'])) {
 		switch ($_GET['sort']) {
-		case "mtime":
-		case "size":
-		case "reloads":
-		case "hits":
-			$sortby = $_GET['sort'];
-			($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
-			break;
-		default:
-			$sortby = "file";
-			($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
+			case "mtime":
+			case "size":
+			case "reloads":
+			case "hits":
+				$sortby = $_GET['sort'];
+				($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
+				break;
+			default:
+				$sortby = "file";
+				($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
 		}
 	}
 
 	?>
-    <table class="noborder">
-        <tr>
-            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=file&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Filename"); ?></a>&nbsp;<? if($sortby == "file") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=mtime&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Date"); ?></a>&nbsp;<? if($sortby == "mtime") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=size&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Size"); ?></a>&nbsp;<? if($sortby == "size") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=reloads&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Reloads"); ?></a>&nbsp;<? if($sortby == "reloads") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=hits&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Hits"); ?></a>&nbsp;<? if($sortby == "hits") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-        </tr>
-    <?php
-          switch ($sortby) {
-            case "mtime":
-            case "size":
-            case "reloads":
-            case "hits":
-              ($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
-              break;
-            case "file":
-            default:
-              $sortby = "file";
-              ($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
+<table class="noborder">
+	<tr>
+		<th><a
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=file&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Filename"); ?></a>&nbsp;<? if($sortby == "file") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+		<th><a
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=mtime&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Date"); ?></a>&nbsp;<? if($sortby == "mtime") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+		<th><a
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=size&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Size"); ?></a>&nbsp;<? if($sortby == "size") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+		<th><a
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=reloads&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Reloads"); ?></a>&nbsp;<? if($sortby == "reloads") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+		<th><a
+			href="<?php print $_SERVER['PHP_SELF']?>?sort=hits&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Hits"); ?></a>&nbsp;<? if($sortby == "hits") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+	</tr>
+	<?php
+	switch ($sortby) {
+		case "mtime":
+		case "size":
+		case "reloads":
+		case "hits":
+			($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
+			break;
+		case "file":
+		default:
+			$sortby = "file";
+			($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
 
-          }
+	}
 
-          foreach($list as $script) { ?>
-        <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td><?php print dol_trunc($script['file'],80,'left'); ?></td>
-            <td align="center" nowrap="nowrap"><?php print dol_print_date($script['mtime'],'dayhour'); ?></td>
-            <td align="right" nowrap="nowrap"><?php print number_format($script['size'] / 1024, 2); ?> KB</td>
-            <td align="right" nowrap="nowrap"><?php print $script['reloads']; ?> (<?php print $script['usecount']; ?>)</td>
-            <td align="right" nowrap="nowrap"><?php print $script['hits']; ?></td>
-        </tr>
-    <?php } ?>
-    </table>
-<?php
+	foreach($list as $script) { ?>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td><?php print dol_trunc($script['file'],80,'left'); ?></td>
+		<td align="center" nowrap="nowrap"><?php print dol_print_date($script['mtime'],'dayhour'); ?></td>
+		<td align="right" nowrap="nowrap"><?php print number_format($script['size'] / 1024, 2); ?>
+		KB</td>
+		<td align="right" nowrap="nowrap"><?php print $script['reloads']; ?> (<?php print $script['usecount']; ?>)</td>
+		<td align="right" nowrap="nowrap"><?php print $script['hits']; ?></td>
+	</tr>
+	<?php } ?>
+</table>
+	<?php
 }
 
 
@@ -168,36 +174,37 @@ function create_key_table($list)
 {
 	global $bc,$langs;
 	$var=true;
-?>
-    <table class="noborder">
-        <tr class="liste_titre">
-            <th>Name</th>
-            <th>Created</th>
-            <th><?php print $langs->trans("Size"); ?></th>
-            <th>ttl</th>
-        </tr>
-<?php
-    foreach($list as $key) {
-?>
-        <tr <?php $var = ! $var; print $bc[$var]; ?>>
-            <td><?php print dol_trunc($key['name'],80,'left'); ?></td>
-            <td align="center" nowrap="nowrap"><?php dol_print_date($key['created'],'dayhour'); ?></td>
-            <td align="right" nowrap="nowrap"><?php print number_format($key['size']/1024, 3); ?> KB</td>
-            <td align="right" nowrap="nowrap"><?php
-                if ($key['ttl'] == -1) {
-                    print 'expired';
-                } elseif ($key['ttl'] == 0) {
-                    print 'none';
-                } else {
-                    print dol_print_date($key['ttl'],'dayhour');
-                }
-            ?></td>
-        </tr>
-<?php
-    }
-?>
-    </table>
-<?php
+	?>
+<table class="noborder">
+	<tr class="liste_titre">
+		<th>Name</th>
+		<th>Created</th>
+		<th><?php print $langs->trans("Size"); ?></th>
+		<th>ttl</th>
+	</tr>
+	<?php
+	foreach($list as $key) {
+		?>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td><?php print dol_trunc($key['name'],80,'left'); ?></td>
+		<td align="center" nowrap="nowrap"><?php dol_print_date($key['created'],'dayhour'); ?></td>
+		<td align="right" nowrap="nowrap"><?php print number_format($key['size']/1024, 3); ?>
+		KB</td>
+		<td align="right" nowrap="nowrap"><?php
+		if ($key['ttl'] == -1) {
+			print 'expired';
+		} elseif ($key['ttl'] == 0) {
+			print 'none';
+		} else {
+			print dol_print_date($key['ttl'],'dayhour');
+		}
+		?></td>
+	</tr>
+	<?php
+	}
+	?>
+</table>
+	<?php
 }
 
 
@@ -211,37 +218,40 @@ $var=true;
 
 
 <table class="noborder">
-<tr class="liste_titre"><td colspan="2">Information</td></tr>
-<tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Caching enabled</td>
-    <td align="right"><?php print $info['cache'] ? 'yes':'no' ?></td>
-</tr>
-<tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Optimizer enabled</td>
-    <td align="right"><?php print $info['optimizer'] ? 'yes':'no' ?></td>
-</tr>
-<tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Memory usage</td>
-    <td align="right"><?php print number_format(100 * $info['memoryAllocated'] / $info['memorySize'], 2); ?>%
-        (<?php print number_format($info['memoryAllocated'] / (1024*1024), 2); ?> MB /
-        <?php print number_format($info['memorySize'] / (1024*1024), 2); ?> MB)</td>
-</tr>
-<tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Free memory in reserved cache</td>
-    <td align="right"><?php print number_format($info['memoryAvailable'] / (1024*1024), 2); ?>MB</td>
-</tr>
-<tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Cached scripts</td>
-    <td align="right"><?php print $info['cachedScripts']; ?></td>
-</tr>
-<tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Removed scripts</td>
-    <td align="right"><?php print $info['removedScripts']; ?></td>
-</tr>
-<tr <?php $var = ! $var; print $bc[$var]; ?>>
-    <td>Cached keys</td>
-    <td align="right"><?php print $info['cachedKeys']; ?></td>
-</tr>
+	<tr class="liste_titre">
+		<td colspan="2">Information</td>
+	</tr>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td>Caching enabled</td>
+		<td align="right"><?php print $info['cache'] ? 'yes':'no' ?></td>
+	</tr>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td>Optimizer enabled</td>
+		<td align="right"><?php print $info['optimizer'] ? 'yes':'no' ?></td>
+	</tr>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td>Memory usage</td>
+		<td align="right"><?php print number_format(100 * $info['memoryAllocated'] / $info['memorySize'], 2); ?>%
+		(<?php print number_format($info['memoryAllocated'] / (1024*1024), 2); ?>
+		MB / <?php print number_format($info['memorySize'] / (1024*1024), 2); ?>
+		MB)</td>
+	</tr>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td>Free memory in reserved cache</td>
+		<td align="right"><?php print number_format($info['memoryAvailable'] / (1024*1024), 2); ?>MB</td>
+	</tr>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td>Cached scripts</td>
+		<td align="right"><?php print $info['cachedScripts']; ?></td>
+	</tr>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td>Removed scripts</td>
+		<td align="right"><?php print $info['removedScripts']; ?></td>
+	</tr>
+	<tr <?php $var = ! $var; print $bc[$var]; ?>>
+		<td>Cached keys</td>
+		<td align="right"><?php print $info['cachedKeys']; ?></td>
+	</tr>
 </table>
 <?php
 
@@ -257,7 +267,7 @@ if (is_array($resCached) || is_array($resRemoved))
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre"><td colspan="2">Actions</td></tr>';
-	
+
 	if (is_array($resCached))
 	{
 		$var = ! $var;
@@ -271,7 +281,7 @@ if (is_array($resCached) || is_array($resRemoved))
 		print '<td align="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
 		print "</tr>";
 	}
-	
+
 	if (is_array($resRemoved))
 	{
 		$var = ! $var;
@@ -290,20 +300,20 @@ if (is_array($resCached) || is_array($resRemoved))
 		print '<td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';
 		print "</tr></table></form>";
 	}
-  
-  if (is_array($resCached))
-  {
-  	print "<br><br>";
-  	print "<b>Cached scripts</b><br>";
-  	create_script_table($resCached);
-  }
-  
-  if (is_array($resRemoved))
-  {
-  	print "<br><br>";
-  	print "<b>Removed scripts</b><br>";
-  	create_script_table($resRemoved);
-  }
+
+	if (is_array($resCached))
+	{
+		print "<br><br>";
+		print "<b>Cached scripts</b><br>";
+		create_script_table($resCached);
+	}
+
+	if (is_array($resRemoved))
+	{
+		print "<br><br>";
+		print "<b>Removed scripts</b><br>";
+		create_script_table($resRemoved);
+	}
 }
 else
 {
@@ -318,7 +328,7 @@ if (function_exists('eaccelerator_get'))
 {
 	print '<br><br>';
 	print '<b>Cached keys</b><br>';
-    $res=eaccelerator_list_keys();
+	$res=eaccelerator_list_keys();
 	create_key_table($res);
 }
 

@@ -127,6 +127,7 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$product->volume_units       = $_POST["volume_units"];
 		$product->finished           = $_POST["finished"];
 		$product->hidden             = $_POST["hidden"]=='yes'?1:0;
+
 		// MultiPrix
 		if($conf->global->PRODUIT_MULTIPRICES)
 		{
@@ -732,7 +733,13 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		|| ($_GET["type"] == 1 && $user->rights->service->hidden))
 		{
 			print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
-			print $html->selectyesno($product->hidden);
+			print $html->selectyesno('hidden',$product->hidden);
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+			print yn("No");
 			print '</td></tr>';
 		}
 
@@ -1105,6 +1112,12 @@ if ($_GET["id"] || $_GET["ref"])
 				print yn($product->hidden);
 				print "</td></tr>\n";
 			}
+			else
+			{
+				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+				print yn("No");
+				print '</td></tr>';
+			}
 
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.nl2br($product->note).'</td></tr>';
@@ -1242,6 +1255,12 @@ if ($_GET["id"] || $_GET["ref"])
 			{
 				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
 				print $html->selectyesno('hidden',$product->hidden);
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
+				print yn("No");
 				print '</td></tr>';
 			}
 

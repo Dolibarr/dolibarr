@@ -841,14 +841,14 @@ class Form
 	 */
 	function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1,$finished=2)
 	{
-		global $langs,$conf,$user;
+		global $langs,$conf,$user,$db;
 
 		$sql = "SELECT ";
 		$sql.= " p.rowid, p.label, p.ref, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-		if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+		if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+		if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 
 		if($finished == 0)
 		{
@@ -865,8 +865,8 @@ class Form
 		}
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
-		$sql.= " ORDER BY p.ref";
-		if ($limit) $sql.= " LIMIT $limit";
+		$sql.= $db->order("p.ref");
+		$sql.= $db->plimit($limit);
 
 		dol_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
