@@ -355,12 +355,12 @@ else
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type,";
 			$sql.= " ps.pmp, ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock ps, ".MAIN_DB_PREFIX."product p";
-			$sql .= " WHERE ps.fk_product = p.rowid";
-			$sql .= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
-			$sql .= " AND ps.fk_entrepot = ".$entrepot->id;
-			if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-			if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
-			$sql.= " ORDER BY " . $sortfield . " " . $sortorder;
+			$sql.= " WHERE ps.fk_product = p.rowid";
+			$sql.= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
+			$sql.= " AND ps.fk_entrepot = ".$entrepot->id;
+			if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+			if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+			$sql.= $db->order($sortfield,$sortorder);
 			//$sql .= $db->plimit($limit + 1 ,$offset);
 
 			dol_syslog('List products sql='.$sql);

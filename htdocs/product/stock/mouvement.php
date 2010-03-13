@@ -85,8 +85,8 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_author = u.rowid";
 $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if ($_GET["id"])
 {
 	$sql.= " AND s.rowid ='".$_GET["id"]."'";
@@ -122,7 +122,7 @@ if (! empty($_GET['idproduct']))
 {
 	$sql.= " AND p.rowid = '".$_GET['idproduct']."'";
 }
-$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
 
 //print $sql;
