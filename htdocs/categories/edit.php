@@ -149,30 +149,13 @@ else
 }
 
 print '</td></tr>';
+print '</table>';
+print '<br>';
 
-if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER && !$categorie->id_mere)
-{
-	print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
-	print $html->select_societes($categorie->socid,'socid','s.client IN (1, 3) AND s.fournisseur = 0',1);
-	print '</td></tr>';
-	print '<input type="hidden" name="catMere" value="-1">';
-	print '<input type="hidden" name="visible" value="1">';
-}
-else
-{
-	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $html->select_all_categories($categorie->type,$categorie->id_mere);
-	print '</td></tr>';
+print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</center>';
 
-	print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';
-	print $html->selectyesno("visible",$categorie->visible,1);
-	print '</td></tr>';
-	print '<input type="hidden" name="socid" value="'.$categorie->socid.'">';
-}
-
-print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</td></tr>';
-print '</table></form>';
+print '</form>';
 
 print '</td></tr></table>';
 
