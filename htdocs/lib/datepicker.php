@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) phpBSM
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -27,15 +27,20 @@
  *       \version    $Id$
  */
 
-if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))  define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
+//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
+//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-require_once("../master.inc.php");
+require_once("../main.inc.php");
+
+//var_dump($langs);
 
 if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
 $langs->load("main");
