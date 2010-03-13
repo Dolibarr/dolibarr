@@ -703,6 +703,11 @@ else
 			print '<tr><td>'.$langs->trans("Date").'</td>';
 			print '<td colspan="3">'.dol_print_date($expedition->date,"daytext")."</td>\n";
 			print '</tr>';
+			
+			// Date delivery planned
+			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<td colspan="3">'.dol_print_date($expedition->date_delivery,'daytext')."</td>\n";
+			print '</tr>';
 
 			// Delivery address
 			if (($origin == 'commande' && $conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)

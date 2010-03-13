@@ -101,6 +101,7 @@ class Livraison extends CommonObject
 		$sql.= ", ref_customer";
 		$sql.= ", date_creation";
 		$sql.= ", fk_user_author";
+		$sql.= ", date_delivery";
 		$sql.= ", fk_adresse_livraison";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
@@ -109,6 +110,7 @@ class Livraison extends CommonObject
 		$sql.= ", '".$this->ref_customer."'";
 		$sql.= ", ".$this->db->idate(mktime());
 		$sql.= ", ".$user->id;
+		$sql.= ", ".$this->db->idate($this->date_delivery);
 		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql.= ")";
 

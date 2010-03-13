@@ -271,11 +271,11 @@ if ($_GET["action"] == 'create')
 		 * Lignes de commandes
 		 *
 		 */
-		echo '<br><table class="noborder" width="100%">';
+		print '<br><table class="noborder" width="100%">';
 
 		$lignes = $commande->fetch_lines(1);
 
-		/* Lecture des livraisons deje effectuees */
+		// Lecture des livraisons deja effectuees
 		$commande->livraison_array();
 
 		$num = sizeof($commande->lignes);
@@ -471,7 +471,12 @@ else
 
 			// Date
 			print '<tr><td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="3">'.dol_print_date($delivery->date_creation,'dayhourtext')."</td>\n";
+			print '<td colspan="3">'.dol_print_date($delivery->date_creation,'daytext')."</td>\n";
+			print '</tr>';
+			
+			// Date delivery planned
+			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<td colspan="3">'.dol_print_date($delivery->date_delivery,'daytext')."</td>\n";
 			print '</tr>';
 
 			// Statut
