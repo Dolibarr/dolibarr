@@ -225,7 +225,7 @@ if ($_GET["action"] == 'create')
 	// Comment
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
-   // �diteur wysiwyg
+    // Editeur wysiwyg
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -239,7 +239,7 @@ if ($_GET["action"] == 'create')
 	}
 	print '</td></tr>';
 
-	// Solde
+	// Sold
 	print '<tr><td colspan="4"><b>'.$langs->trans("InitialBankBalance").'...</b></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("InitialBankBalance").'</td>';
