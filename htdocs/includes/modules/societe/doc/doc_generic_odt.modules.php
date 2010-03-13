@@ -280,19 +280,18 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
-				//exit;
+				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				create_exdir($conf->societe->dir_temp);
 
 				// Open and load template
 				require_once(DOL_DOCUMENT_ROOT.'/includes/odtphp/odf.php');
 				$odfHandler = new odf($srctemplatepath, array(
-						'PATH_TO_TMP'	  => $conf->societe->dir_temp.'/',
+						'PATH_TO_TMP'	  => $conf->societe->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got bad compression method when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}')
 				);
-
 				//print $odfHandler; exit;
 
 				// Make substitutions
@@ -323,6 +322,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+				$odfHandler=null;	// Destroy object
 
 				return 1;   // Success
 			}
