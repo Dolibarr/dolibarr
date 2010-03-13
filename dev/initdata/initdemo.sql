@@ -2874,7 +2874,6 @@ CREATE TABLE `llx_livraison` (
   `entity` int(11) NOT NULL DEFAULT '1',
   `ref_client` varchar(30) DEFAULT NULL,
   `fk_soc` int(11) NOT NULL,
-  `fk_expedition` int(11) DEFAULT NULL,
   `date_creation` datetime DEFAULT NULL,
   `fk_user_author` int(11) DEFAULT NULL,
   `date_valid` datetime DEFAULT NULL,

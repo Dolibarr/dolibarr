@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,19 @@
  */
 
 /** 
-    \file       htdocs/includes/modules/livraison/mod_livraison_jade.php
-    \ingroup    livraison
-    \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
-    \version    $Id$
-*/
+ *   \file       htdocs/includes/modules/livraison/mod_livraison_jade.php
+ *   \ingroup    delivery
+ *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
+ *   \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/modules_livraison.php");
 
 
 /**
-   \class      mod_livraison_jade
-   \brief      Classe du modele de numerotation de reference de bon de livraison Jade
-*/
+ *  \class      mod_livraison_jade
+ *  \brief      Classe du modele de numerotation de reference de bon de livraison Jade
+ */
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
@@ -41,16 +41,18 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	var $nom = "Jade";
 
 
-	/**     \brief      Renvoi la description du modele de numerotation
-	*      \return     string      Texte descripif
-	*/
+	/** 
+	 *     \brief      Renvoi la description du modele de numerotation
+	 *     \return     string      Texte descripif
+	 */
 	function info()
 	{
 		global $langs;
 		return $langs->trans("NumRefModelJade");
 	}
-  
-      /**     \brief      Renvoi un exemple de numerotation
+	
+	/**
+	 *      \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -58,12 +60,13 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         return "BL0600001";
     }
   
-	/**		\brief      Return next value
-	*      	\param      objsoc      Object third party
-	*      	\param      livraison	Object delivery
-	*      	\return     string      Value if OK, 0 if KO
-	*/
-    function getNextValue($objsoc=0,$livraison='')
+	/**
+	 * 		\brief      Return next value
+	 *    	\param      objsoc      Object third party
+	 *    	\param      delivery	Object delivery
+	 *    	\return     string      Value if OK, 0 if KO
+	 */
+    function getNextValue($objsoc=0,$delivery='')
     {
         global $db,$conf;
 
@@ -103,8 +106,8 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         {
             $max=0;
         }        
-        //$date=time();
-        $date=$livraison->date_livraison;
+
+        $date = $delivery->date_delivery;
         $yy = strftime("%y",$date);
         $num = sprintf("%05s",$max+1);
         
@@ -112,7 +115,8 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
   
-    /**     \brief      Renvoie la reference de commande suivante non utilisee
+    /**     
+     * 		\brief      Renvoie la reference de commande suivante non utilisee
      *      \param      objsoc      Objet societe
      *      \param      livraison	Objet livraison
      *      \return     string      Texte descripif

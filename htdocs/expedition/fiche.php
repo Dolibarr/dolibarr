@@ -593,7 +593,7 @@ else
 			{
 				print '<div class="error">'.$mesg.'</div>';
 			}
-
+			
 			$typeobject = $expedition->origin;
 			$origin = $expedition->origin;
 			$expedition->fetch_object();
@@ -606,20 +606,11 @@ else
 			$soc = new Societe($db);
 			$soc->fetch($expedition->socid);
 
-			$h=0;
-			$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$expedition->id;
-			$head[$h][1] = $langs->trans("SendingCard");
-			$hselected = $h;
-			$h++;
-
-			if ($conf->livraison_bon->enabled && $expedition->livraison_id)
-			{
-				$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$expedition->livraison_id;
-				$head[$h][1] = $langs->trans("DeliveryCard");
-				$h++;
-			}
-
-			dol_fiche_head($head, $hselected, $langs->trans("Sending"), 0, 'sending');
+			// delivery link
+			$expedition->load_object_linked($expedition->id,$expedition->element,-1,-1);
+			
+			$head=shipping_prepare_head($expedition);
+			dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
 
 			if ($mesg) print $mesg;
 
@@ -705,7 +696,7 @@ else
 
 			// Ref customer
 			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-			print '<td colspan="3">'.$expedition->ref_client."</a></td>\n";
+			print '<td colspan="3">'.$expedition->ref_customer."</a></td>\n";
 			print '</tr>';
 
 			// Date
@@ -914,7 +905,7 @@ else
 				}
 			}
 
-			if ($conf->livraison_bon->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && !$expedition->livraison_id)
+			if ($conf->livraison_bon->enabled && $expedition->statut == 1 && $user->rights->expedition->livraison->creer && empty($expedition->linked_object))
 			{
 				print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
 			}

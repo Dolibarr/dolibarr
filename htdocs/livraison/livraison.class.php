@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/livraison/livraison.class.php
- \ingroup    livraison
- \brief      Fichier de la classe de gestion des bons de livraison
- \version    $Id$
+ *  \file       htdocs/livraison/livraison.class.php
+ *  \ingroup    delivery
+ *  \brief      Fichier de la classe de gestion des bons de livraison
+ *  \version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -34,8 +34,8 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 
 
 /**
- \class      Livraison
- \brief      Classe de gestion des bons de livraison
+ *  \class      Livraison
+ *  \brief      Classe de gestion des bons de livraison
  */
 class Livraison extends CommonObject
 {
@@ -50,11 +50,11 @@ class Livraison extends CommonObject
 	var $origin;
 	var $origin_id;
 	var $socid;
-	var $ref_client;
+	var $ref_customer;
 
 	var $expedition_id;
 
-	var $date_livraison;
+	var $date_delivery;
 	var $date_creation;
 	var $date_valid;
 
@@ -98,21 +98,18 @@ class Livraison extends CommonObject
 		$sql.= "ref";
 		$sql.= ", entity";
 		$sql.= ", fk_soc";
-		$sql.= ", ref_client";
+		$sql.= ", ref_customer";
 		$sql.= ", date_creation";
 		$sql.= ", fk_user_author";
 		$sql.= ", fk_adresse_livraison";
-		$sql.= ", fk_expedition";
-		$sql.= ")";
-		$sql.= " VALUES (";
+		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->socid;
-		$sql.= ", '".$this->ref_client."'";
+		$sql.= ", '".$this->ref_customer."'";
 		$sql.= ", ".$this->db->idate(mktime());
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
-		$sql.= ", ".($this->expedition_id ? $this->expedition_id : "null");
 		$sql.= ")";
 
 		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
@@ -131,7 +128,7 @@ class Livraison extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				if (! $conf->expedition->enabled)
+				if (! $conf->expedition_bon->enabled)
 				{
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
@@ -163,15 +160,8 @@ class Livraison extends CommonObject
 
 					if (! $conf->expedition_bon->enabled)
 					{
-						if ($conf->commande->enabled)
-						{
-							$ret = $this->setStatut(2,$this->origin_id,$this->origin);
-						}
-						else
-						{
-							// TODO definir un statut
-							$ret = $this->setStatut(9,$this->origin_id,$this->origin);
-						}
+						// TODO uniformiser les statuts
+						$ret = $this->setStatut(2,$this->origin_id,$this->origin);
 						if (! $ret)
 						{
 							$error++;
@@ -248,12 +238,12 @@ class Livraison extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_client, l.fk_user_author,";
-		$sql.=" l.total_ht, l.fk_statut, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
-		$sql.= ", l.date_livraison as date_livraison, l.fk_adresse_livraison, l.model_pdf";
-		$sql.= ", el.fk_source as origin_id";
+		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
+		$sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note, l.note_public";
+		$sql.= ", l.date_delivery, l.fk_adresse_livraison, l.model_pdf";
+		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON l.rowid = el.fk_target";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE l.rowid = ".$id;
 
 		dol_syslog("Livraison::fetch sql=".$sql, LOG_DEBUG);
@@ -265,15 +255,13 @@ class Livraison extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                   = $obj->rowid;
-				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
+				$this->date_delivery        = $this->db->jdate($obj->date_delivery);
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid           = $this->db->jdate($obj->date_valid);
 				$this->ref                  = $obj->ref;
-				$this->ref_client           = $obj->ref_client;
+				$this->ref_customer         = $obj->ref_customer;
 				$this->socid                = $obj->fk_soc;
 				$this->statut               = $obj->fk_statut;
-				$this->origin_id            = $obj->origin_id;
-				$this->expedition_id        = $obj->fk_expedition;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->user_valid_id        = $obj->fk_user_valid;
 				$this->adresse_livraison_id = $obj->fk_adresse_livraison; // TODO obsolete
@@ -281,20 +269,10 @@ class Livraison extends CommonObject
 				$this->note                 = $obj->note;
 				$this->note_public          = $obj->note_public;
 				$this->modelpdf             = $obj->model_pdf;
+				$this->origin               = $obj->origin;
+				$this->origin_id            = $obj->origin_id;
 
 				$this->db->free($result);
-
-				if ($this->origin_id)
-				{
-					if ($conf->commande->enabled)
-					{
-						$this->origin = "commande";
-					}
-					else
-					{
-						$this->origin = "propal";
-					}
-				}
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
@@ -344,14 +322,14 @@ class Livraison extends CommonObject
 
 		if ($user->rights->expedition->livraison->valider)
 		{
-			if (defined('LIVRAISON_ADDON'))
+			if ($conf->global->LIVRAISON_ADDON)
 			{
-				if (is_readable(DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.LIVRAISON_ADDON.'.php'))
+				// Definition du nom de module de numerotation de commande
+				$modName = $conf->global->LIVRAISON_ADDON;
+					
+				if (is_readable(DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.$modName.'.php'))
 				{
-					require_once DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.LIVRAISON_ADDON.'.php';
-
-					// Definition du nom de module de numerotation de commande
-					$modName=LIVRAISON_ADDON;
+					require_once DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.$modName.'.php';
 
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);
@@ -367,7 +345,12 @@ class Livraison extends CommonObject
 
 					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
 					// de decrementer 2 fois le stock.
-					$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> 0";
+					$sql = "SELECT ref";
+					$sql.= " FROM ".MAIN_DB_PREFIX."livraison";
+					$sql.= " WHERE ref = '".$this->ref."'";
+					$sql.= " AND fk_statut <> 0";
+					$sql.= " AND entity = ".$conf->entity;
+					
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -378,9 +361,14 @@ class Livraison extends CommonObject
 						}
 					}
 
-					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
-					$sql.= " SET ref='".addslashes($this->ref)."', fk_statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
-					$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
+					$sql.= " ref='".addslashes($this->ref)."'";
+					$sql.= ", fk_statut = 1";
+					$sql.= ", date_valid = ".$this->db->idate(mktime());
+					$sql.= ", fk_user_valid = ".$user->id;
+					$sql.= " WHERE rowid = ".$this->id;
+					$sql.= " AND fk_statut = 0";
+					
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -389,7 +377,6 @@ class Livraison extends CommonObject
 						{
 
 							//Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
-
 
 							dol_syslog("livraison.class.php::valid enregistrement des mouvements");
 
@@ -491,8 +478,6 @@ class Livraison extends CommonObject
 		$result=$expedition->fetch($sending_id);
 
 		$this->lignes = array();
-		$this->date_livraison = time();
-		$this->expedition_id = $sending_id;
 
 		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
 		{
@@ -506,15 +491,15 @@ class Livraison extends CommonObject
 			$this->lignes[$i] = $LivraisonLigne;
 		}
 
-		$this->origin               = $expedition->origin;
-		$this->origin_id            = $expedition->origin_id;
+		$this->origin               = $expedition->element;
+		$this->origin_id            = $expedition->id;
 		$this->note                 = $expedition->note;
 		$this->fk_project           = $expedition->fk_project;
-		$this->date_livraison       = $expedition->date_livraison;
+		$this->date_delivery        = $expedition->date_delivery;
 		$this->adresse_livraison_id = $expedition->adresse_livraison_id; // TODO obsolete
 		$this->fk_delivery_address  = $expedition->adresse_livraison_id;
 		$this->socid                = $expedition->socid;
-		$this->ref_client			= $expedition->ref_client;
+		$this->ref_customer			= $expedition->ref_customer;
 
 		return $this->create($user);
 	}
@@ -571,46 +556,60 @@ class Livraison extends CommonObject
 		$sql.= " WHERE fk_livraison = ".$this->id;
 		if ( $this->db->query($sql) )
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
-			$sql.= " WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
+			$sql.= " WHERE fk_target = ".$this->id;
+			$sql.= " AND targettype = '".$this->element."'";
 			if ( $this->db->query($sql) )
 			{
-				$this->db->commit();
-
-				// On efface le repertoire de pdf provisoire
-				$livref = dol_sanitizeFileName($this->ref);
-				if ($conf->livraison->dir_output)
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
+				$sql.= " WHERE rowid = ".$this->id;
+				if ( $this->db->query($sql) )
 				{
-					$dir = $conf->livraison->dir_output . "/" . $livref ;
-					$file = $conf->livraison->dir_output . "/" . $livref . "/" . $livref . ".pdf";
-					if (file_exists($file))
+					$this->db->commit();
+					
+					// On efface le repertoire de pdf provisoire
+					$livref = dol_sanitizeFileName($this->ref);
+					if ($conf->livraison->dir_output)
 					{
-						if (!dol_delete_file($file))
+						$dir = $conf->livraison->dir_output . "/" . $livref ;
+						$file = $conf->livraison->dir_output . "/" . $livref . "/" . $livref . ".pdf";
+						if (file_exists($file))
 						{
-							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-							return 0;
+							if (!dol_delete_file($file))
+							{
+								$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+								return 0;
+							}
+						}
+						if (file_exists($dir))
+						{
+							if (!dol_delete_dir($dir))
+							{
+								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+								return 0;
+							}
 						}
 					}
-					if (file_exists($dir))
-					{
-						if (!dol_delete_dir($dir))
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-							return 0;
-						}
-					}
+					
+					return 1;
 				}
-
-				return 1;
+				else
+				{
+					$this->error=$this->db->lasterror()." - sql=$sql";
+					$this->db->rollback();
+					return -3;
+				}
 			}
 			else
 			{
+				$this->error=$this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
+			$this->error=$this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
 		}
@@ -765,7 +764,7 @@ class Livraison extends CommonObject
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
-		$this->date_livraison = time();
+		$this->date_delivery = time();
 		$this->note_public='SPECIMEN';
 
 		$i=0;

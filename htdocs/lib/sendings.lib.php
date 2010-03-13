@@ -25,6 +25,92 @@
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
+function shipping_prepare_head($object)
+{
+	global $langs, $conf, $user;
+	
+	$langs->load("sendings");
+	$langs->load("deliveries");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("SendingCard");
+	$head[$h][2] = 'shipping';
+	$h++;
+
+	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire && $object->linked_object[0]['linkid'])
+	{
+		$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linked_object[0]['linkid'];
+		$head[$h][1] = $langs->trans("DeliveryCard");
+		$head[$h][2] = 'delivery';
+		$h++;
+	}
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['delivery']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['delivery'] as $value)
+		{
+			$values=explode(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$commande->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+
+	return $head;
+}
+
+function delivery_prepare_head($object)
+{
+	global $langs, $conf, $user;
+	
+	$langs->load("sendings");
+	$langs->load("deliveries");
+
+	$h = 0;
+	$head = array();
+
+	if ($conf->expedition_bon->enabled && $user->rights->expedition->lire)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$object->origin_id;
+		$head[$h][1] = $langs->trans("SendingCard");
+		$head[$h][2] = 'shipping';
+		$h++;
+	}
+
+	$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("DeliveryCard");
+	$head[$h][2] = 'delivery';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:MyModule:@mymodule:/mymodule/mypage.php?id=__ID__');
+	if (is_array($conf->tabs_modules['delivery']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['delivery'] as $value)
+		{
+			$values=explode(':',$value);
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = DOL_URL_ROOT . preg_replace('/__ID__/i',$commande->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'tab'.$values[1];
+			$h++;
+		}
+	}
+
+	return $head;
+}
+
 /**
  * List sendings and receive receipts
  *
@@ -41,13 +127,13 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked";
 	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id";
 	$sql.= ", e.ref as exp_ref, ".$db->pdate("e.date_expedition")." as date_expedition,";
-	if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, ".$db->pdate("l.date_livraison")." as date_delivery, ld.qty as qty_received,";
+	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, ".$db->pdate("l.date_delivery")." as date_delivery, ld.qty as qty_received,";
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
 	$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
 	$sql.= " ".MAIN_DB_PREFIX.$origin."det as obj,";
 	$sql.= " ".MAIN_DB_PREFIX."expedition as e)";
-    if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
+    //if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
     $sql.= " WHERE obj.fk_".$origin." = ".$origin_id;
 	if ($filter) $sql.=$filter;

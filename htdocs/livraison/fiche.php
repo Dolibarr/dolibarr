@@ -128,7 +128,6 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 {
 	$delivery = new Livraison($db);
 	$delivery->fetch($_GET["id"]);
-	$expedition_id = $delivery->expedition_id;
 
 	$db->begin();
 	$result=$delivery->delete();
@@ -138,7 +137,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 		$db->commit();
 		if ($conf->expedition_bon->enabled)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$expedition_id);
+			Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id);
 		}
 		else
 		{
@@ -396,7 +395,6 @@ else
 
 		if ($delivery->origin_id)
 		{
-			$object = $delivery->origin;
 			$delivery->fetch_object();
 		}
 
@@ -405,20 +403,8 @@ else
 			$soc = new Societe($db);
 			$soc->fetch($delivery->socid);
 
-			$h=0;
-			if ($conf->expedition_bon->enabled)
-			{
-				$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$delivery->expedition_id;
-				$head[$h][1] = $langs->trans("SendingCard");
-				$h++;
-			}
-
-			$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$delivery->id;
-			$head[$h][1] = $langs->trans("DeliveryCard");
-			$hselected = $h;
-			$h++;
-
-			dol_fiche_head($head, $hselected, $langs->trans("Sending"), 0, 'sending');
+			$head=delivery_prepare_head($delivery);
+			dol_fiche_head($head, 'delivery', $langs->trans("Sending"), 0, 'sending');
 
 			/*
 			 * Confirmation de la suppression
@@ -480,7 +466,7 @@ else
 
 			// Ref client
 			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-			print '<td colspan="3">'.$delivery->ref_client."</a></td>\n";
+			print '<td colspan="3">'.$delivery->ref_customer."</a></td>\n";
 			print '</tr>';
 
 			// Date

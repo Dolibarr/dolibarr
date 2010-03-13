@@ -24,36 +24,36 @@ create table llx_propal
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc          integer,
-  fk_projet       integer     DEFAULT 0,       -- projet auquel est rattache la propale
-  ref             varchar(30) NOT NULL,        -- propal number
-  entity          integer DEFAULT 1 NOT NULL,	 -- multi company id
-  ref_client      varchar(30),                 -- customer order number
+  fk_projet       integer     DEFAULT 0,		-- projet auquel est rattache la propale
+  ref             varchar(30) NOT NULL,			-- propal number
+  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
+  ref_client      varchar(30),					-- customer order number
 
-  datec           datetime,                    -- date de creation 
-  datep           date,                        -- date de la propal
-  fin_validite    datetime,                    -- date de fin de validite
-  date_valid      datetime,                    -- date de validation
-  date_cloture    datetime,                    -- date de cloture
-  fk_user_author  integer,                     -- createur de la propale
-  fk_user_valid   integer,                     -- valideur de la propale
-  fk_user_cloture integer,                     -- cloture de la propale signee ou non signee
+  datec           datetime,						-- date de creation 
+  datep           date,							-- date de la propal
+  fin_validite    datetime,						-- date de fin de validite
+  date_valid      datetime,						-- date de validation
+  date_cloture    datetime,						-- date de cloture
+  fk_user_author  integer,						-- createur de la propale
+  fk_user_valid   integer,						-- valideur de la propale
+  fk_user_cloture integer,						-- cloture de la propale signee ou non signee
   fk_statut       smallint DEFAULT 0 NOT NULL,
-  price           real         DEFAULT 0,      -- (obsolete)
-  remise_percent  real         DEFAULT 0,      -- remise globale relative en pourcent (obsolete)
-  remise_absolue  real         DEFAULT 0,      -- remise globale absolue (obsolete)
-  remise          real         DEFAULT 0,      -- remise calculee (obsolete)
-  total_ht        double(24,8) DEFAULT 0,      -- montant total ht apres remise globale
-  tva             double(24,8) DEFAULT 0,      -- montant total tva apres remise globale
-  localtax1       double(24,8) DEFAULT 0,	   -- amount total localtax1
-  localtax2		  double(24,8) DEFAULT 0,      -- amount total localtax2
-  total           double(24,8) DEFAULT 0,      -- montant total ttc apres remise globale
+  price           real         DEFAULT 0,		-- (obsolete)
+  remise_percent  real         DEFAULT 0,		-- remise globale relative en pourcent (obsolete)
+  remise_absolue  real         DEFAULT 0,		-- remise globale absolue (obsolete)
+  remise          real         DEFAULT 0,		-- remise calculee (obsolete)
+  total_ht        double(24,8) DEFAULT 0,		-- montant total ht apres remise globale
+  tva             double(24,8) DEFAULT 0,		-- montant total tva apres remise globale
+  localtax1       double(24,8) DEFAULT 0,		-- amount total localtax1
+  localtax2		  double(24,8) DEFAULT 0,		-- amount total localtax2
+  total           double(24,8) DEFAULT 0,		-- montant total ttc apres remise globale
 
-  fk_cond_reglement   integer,                 -- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement   integer,                 -- mode de reglement (Virement, Prelevement)
+  fk_cond_reglement		integer,				-- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement		integer,				-- mode de reglement (Virement, Prelevement)
  
-  note            text,
-  note_public     text,
-  model_pdf       varchar(50),
-  date_livraison date default NULL,
-  fk_adresse_livraison  integer                -- adresse de livraison
+  note					text,
+  note_public			text,
+  model_pdf				varchar(50),
+  date_livraison 		date DEFAULT NULL,		-- delivery date
+  fk_adresse_livraison  integer					-- adresse de livraison
 )type=innodb;

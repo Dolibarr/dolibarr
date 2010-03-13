@@ -410,6 +410,11 @@ class CommonObject
 	function fetch_object()
 	{
 		$object = $this->origin;
+		
+		// TODO uniformise code
+		if ($object == 'shipping') $object = 'expedition';
+		if ($object == 'delivery') $object = 'livraison';
+		
 		$class = ucfirst($object);
 		$this->$object = new $class($this->db);
 		$this->$object->fetch($this->origin_id);
