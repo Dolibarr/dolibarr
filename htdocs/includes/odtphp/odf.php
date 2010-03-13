@@ -74,7 +74,7 @@ class Odf
 			if (! class_exists($this->config['ZIP_PROXY'])) {
 				throw new OdfException($this->config['ZIP_PROXY'] . ' class not found - check your php settings');
 			}
-			$this->file = new $zipHandler();
+			$this->file = new $zipHandler($this->tmpdir);
 
 			if ($this->file->open($filename) !== true) {	// This also create the tmpdir directory
 				throw new OdfException("Error while Opening the file '$filename' - Check your odt file");
