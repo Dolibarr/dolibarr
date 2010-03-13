@@ -248,18 +248,6 @@ else if ($_GET["id"] || $_GET["ref"])
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 	print '</tr>';
 
-	// Prix
-	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
-	if ($product->price_base_type == 'TTC')
-	{
-	  print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-	}
-	else
-	{
-	  print price($product->price).' '.$langs->trans($product->price_base_type);
-	}
-	print '</td></tr>';
-
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 	print $product->getLibStatut(2);
