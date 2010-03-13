@@ -80,3 +80,6 @@ alter table llx_product add column   length             float        DEFAULT NUL
 alter table llx_product add column   length_units       tinyint      DEFAULT NULL after length;
 alter table llx_product add column   surface            float        DEFAULT NULL after length_units;
 alter table llx_product add column   surface_units      tinyint      DEFAULT NULL after surface;
+
+alter table llx_product add column   accountancy_code_sell       varchar(15) after fk_barcode_type;
+alter table llx_product add column   accountancy_code_buy        varchar(15) after accountancy_code_sell;

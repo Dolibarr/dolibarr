@@ -46,6 +46,8 @@ create table llx_product
   stock_loc          varchar(10),               	-- emplacement dans le stock
   barcode            varchar(255) DEFAULT NULL,
   fk_barcode_type    integer      DEFAULT 0,
+  accountancy_code_sell       varchar(15),          -- code compta vente
+  accountancy_code_buy        varchar(15),          -- code compta achat
   partnumber         varchar(32),
   weight             float        DEFAULT NULL,
   weight_units       tinyint      DEFAULT NULL,
