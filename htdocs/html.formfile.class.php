@@ -137,7 +137,7 @@ class FormFile
 	 * 		\param		param				More param on http links
 	 * 		\param		title				Title to show on top of form
 	 * 		\param		buttonlabel			Label on submit button
-	 * 		\param		codelang			Defautl language code to use on lang combo box if multilang is enabled
+	 * 		\param		codelang			Default language code to use on lang combo box if multilang is enabled
 	 * 		\return		int					<0 si ko, nbre de fichiers affiches si ok
 	 */
 	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
