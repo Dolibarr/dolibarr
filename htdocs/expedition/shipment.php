@@ -75,14 +75,14 @@ if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
 }
 
 // Positionne ref commande client
-if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
+if ($_POST['action'] == 'setrefcustomer' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->set_ref_client($user, $_POST['ref_client']);
+	$commande->set_ref_client($user, $_POST['ref_customer']);
 }
 
-if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
+if ($_POST['action'] == 'setdatedelivery' && $user->rights->commande->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
@@ -96,11 +96,11 @@ if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 	}
 }
 
-if ($_POST['action'] == 'setdeliveryadress' && $user->rights->commande->creer)
+if ($_POST['action'] == 'setdeliveryaddress' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
-	$commande->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+	$commande->set_adresse_livraison($user,$_POST['delivery_address_id']);
 }
 
 if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
@@ -187,8 +187,8 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="set_ref_client">';
-			print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
+			print '<input type="hidden" name="action" value="setrefcustomer">';
+			print '<input type="text" class="flat" size="20" name="ref_customer" value="'.$commande->ref_client.'">';
 			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -261,8 +261,8 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="setdate_livraison">';
-			$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+			print '<input type="hidden" name="action" value="setdatedelivery">';
+			$html->select_date($commande->date_livraison,'liv_','','','',"setdatedelivery");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -290,7 +290,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'delivery_address_id','commande',$commande->id);
 			}
 			else
 			{
@@ -603,7 +603,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="action" value="create">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
-				print '<input type="hidden" name="object_id" value="'.$commande->id.'">';
+				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
 				print '<table class="border" width="100%">';
 
 				$entrepot = new Entrepot($db);

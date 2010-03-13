@@ -231,7 +231,7 @@ class Expedition extends CommonObject
 	 *		\brief		Lit une expedition
 	 *		\param		id
 	 */
-	function fetch ($id)
+	function fetch($id)
 	{
 		global $conf;
 

@@ -52,13 +52,12 @@ $origin_id = isset($_GET["id"])?$_GET["id"]:'';
 $id = $origin_id;
 
 $origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];				// Example: commande, propal
-$origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];	// Id of order or propal
+$origin_id  = $_GET["origin_id"]?$_GET["origin_id"]:$_POST["origin_id"];	// Id of order or propal
 
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,$origin,$origin_id,'');
-
 
 
 /*
@@ -72,16 +71,16 @@ if ($_POST["action"] == 'add')
 	// Creation de l'objet expedition
 	$expedition = new Expedition($db);
 
-	$expedition->date_expedition  = time();
-	$expedition->note             = $_POST["note"];
-	$expedition->origin           = $origin;
-	$expedition->origin_id        = $origin_id;
-	$expedition->weight			= $_POST["weight"]==""?"NULL":$_POST["weight"];
-	$expedition->sizeH			= $_POST["sizeH"]==""?"NULL":$_POST["sizeH"];
-	$expedition->sizeW			= $_POST["sizeW"]==""?"NULL":$_POST["sizeW"];
-	$expedition->sizeS			= $_POST["sizeS"]==""?"NULL":$_POST["sizeS"];
-	$expedition->size_units		= $_POST["size_units"];
-	$expedition->weight_units	= $_POST["weight_units"];
+	$expedition->date_expedition	= time();
+	$expedition->note				= $_POST["note"];
+	$expedition->origin				= $origin;
+	$expedition->origin_id			= $origin_id;
+	$expedition->weight				= $_POST["weight"]==""?"NULL":$_POST["weight"];
+	$expedition->sizeH				= $_POST["sizeH"]==""?"NULL":$_POST["sizeH"];
+	$expedition->sizeW				= $_POST["sizeW"]==""?"NULL":$_POST["sizeW"];
+	$expedition->sizeS				= $_POST["sizeS"]==""?"NULL":$_POST["sizeS"];
+	$expedition->size_units			= $_POST["size_units"];
+	$expedition->weight_units		= $_POST["weight_units"];
 
 	// On boucle sur chaque ligne du document d'origine pour completer objet expedition
 	// avec qte a livrer
@@ -90,10 +89,12 @@ if ($_POST["action"] == 'add')
 	$object->fetch($expedition->origin_id);
 	//$object->fetch_lines();
 
-	$expedition->socid  = $object->socid;
-	$expedition->fk_delivery_address = $object->fk_delivery_address;
-	$expedition->expedition_method_id = $_POST["expedition_method_id"];
-	$expedition->tracking_number = $_POST["tracking_number"];
+	$expedition->socid					= $object->socid;
+	$expedition->ref_customer			= $object->ref_client;
+	$expedition->date_delivery			= $object->date_livraison;
+	$expedition->fk_delivery_address	= $object->fk_delivery_address;
+	$expedition->expedition_method_id	= $_POST["expedition_method_id"];
+	$expedition->tracking_number		= $_POST["tracking_number"];
 
 	for ($i = 0 ; $i < sizeof($object->lignes) ; $i++)
 	{
@@ -278,7 +279,7 @@ if ($_GET["action"] == 'create')
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
-			print '<input type="hidden" name="object_id" value="'.$object->id.'">';
+			print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
 			if ($_GET["entrepot_id"])
 			{
 				print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
@@ -314,6 +315,11 @@ if ($_GET["action"] == 'create')
 			// Date
 			print "<tr><td>".$langs->trans("Date")."</td>";
 			print '<td colspan="3">'.dol_print_date($object->date,"day")."</td></tr>\n";
+			
+			// Date delivery planned
+			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<td colspan="3">'.dol_print_date($object->date_livraison,'day')."</td>\n";
+			print '</tr>';
 
 			// Delivery address
 			if (($origin == 'commande' && $conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
