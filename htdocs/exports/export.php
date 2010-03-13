@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -758,7 +758,7 @@ if ($step == 4 && $datatoexport)
     if (! is_dir($conf->export->dir_temp)) create_exdir($conf->export->dir_temp);
 
     // Affiche liste des documents
-    // NB: La fonction show_documents rescanne les modules qd genallowed=1
+    // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
     $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),'',1);
 
     print '</td><td width="50%">&nbsp;</td></tr>';

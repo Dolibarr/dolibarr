@@ -91,7 +91,7 @@ class ModeleExports
 			}
 		}
 
-		return array_keys($this->driverlabel);
+		return $this->driverlabel;
 	}
 
 
