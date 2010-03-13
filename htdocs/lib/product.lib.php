@@ -31,6 +31,8 @@
 function product_prepare_head($product, $user)
 {
 	global $langs, $conf;
+	$langs->load("products");
+
 	$h = 0;
 	$head = array();
 
@@ -40,9 +42,17 @@ function product_prepare_head($product, $user)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-	$head[$h][1] = $langs->trans("Price");
+	$head[$h][1] = $langs->trans("CustomerPrices");
 	$head[$h][2] = 'price';
 	$h++;
+
+	if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+		$head[$h][1] = $langs->trans("SuppliersPrices");
+		$head[$h][2] = 'suppliers';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
 	$head[$h][1] = $langs->trans("Photos");
@@ -82,14 +92,6 @@ function product_prepare_head($product, $user)
 		$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 		$head[$h][2] = 'subproduct';
-		$h++;
-	}
-
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
-	{
-		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-		$head[$h][1] = $langs->trans("Suppliers");
-		$head[$h][2] = 'suppliers';
 		$h++;
 	}
 

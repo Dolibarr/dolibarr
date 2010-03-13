@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,18 +99,6 @@ if ($_GET["id"] || $_GET["ref"])
 		// Libelle
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
 		print '</tr>';
-
-		// Price
-		print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">';
-		if ($product->price_base_type == 'TTC')
-		{
-			print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-		}
-		else
-		{
-			print price($product->price).' '.$langs->trans($product->price_base_type);
-		}
-		print '</td></tr>';
 
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';

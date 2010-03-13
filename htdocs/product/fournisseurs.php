@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -177,8 +177,9 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 
 /*
- * Affichage fiche
+ * view
  */
+
 $html = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
@@ -218,18 +219,6 @@ if ($_GET["id"] || $_GET["ref"])
 
 			// Libelle
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
-
-			// Prix
-			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
-			if ($product->price_base_type == 'TTC')
-			{
-				print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-			}
-			else
-			{
-				print price($product->price).' '.$langs->trans($product->price_base_type);
-			}
-			print '</td></tr>';
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';

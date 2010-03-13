@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -46,6 +46,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit&stock',$id,'product','','',$fieldid);
 
 $mesg = '';
+
 
 /*
  *	Actions
@@ -150,18 +151,6 @@ if ($_GET["id"] || $_GET["ref"])
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
-
-		// Price
-		print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
-		if ($product->price_base_type == 'TTC')
-		{
-			print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-		}
-		else
-		{
-			print price($product->price).' '.$langs->trans($product->price_base_type);
-		}
-		print '</td></tr>';
 
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';

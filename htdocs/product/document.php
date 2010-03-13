@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
@@ -107,7 +107,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 
 /*
- *
+ *	View
  */
 
 $html = new Form($db);
@@ -155,18 +155,6 @@ if ($product->id)
 
     // Libelle
     print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
-
-    // Prix
-    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
-	if ($product->price_base_type == 'TTC')
-	{
-		print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-	}
-	else
-	{
-		print price($product->price).' '.$langs->trans($product->price_base_type);
-	}
-	print '</td></tr>';
 
     // Statut
     print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';

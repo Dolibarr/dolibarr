@@ -155,3 +155,5 @@ CloneContentProduct=Clone all main informations of product/service
 ClonePricesProduct=Clone main informations and prices
 ProductIsUsed=This product is used
 NewRefForClone=Ref. of new product/service
+CustomerPrices=Customers prices
+SuppliersPrices=Suppliers prices
