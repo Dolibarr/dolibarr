@@ -1307,6 +1307,7 @@ else
 	// Default language
 	if ($conf->global->MAIN_MULTILANGS)
 	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 		print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
 		$s=picto_from_langcode($soc->default_lang);
 		print ($s?$s.' ':'');
