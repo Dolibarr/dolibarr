@@ -155,3 +155,5 @@ CloneContentProduct = Clonar solamente la información general del producto/serv
 ClonePricesProduct = Clonar la información general y los precios
 ProductIsUsed = Este producto es utilizado
 NewRefForClone = Ref. del nuevo producto/servicio
+CustomerPrices = Precios clientes
+SuppliersPrices = Precios proveedores
