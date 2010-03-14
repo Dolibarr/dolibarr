@@ -1,7 +1,7 @@
 # Dolibarr language file - fr_FR - ldap
 CHARSET=UTF-8
 DomainPassword=Mot de passe du domaine
-YouMustChangePassNextLogon=Le mot de passe de <b>%s</b> sur le domaine <b>%s</b> doit etre modifié.
+YouMustChangePassNextLogon=Le mot de passe de <b>%s</b> sur le domaine <b>%s</b> doit être modifié.
 UserMustChangePassNextLogon=L'utilisateur doit modifier son mot de passe sur le domaine %s
 LdapUacf_NORMAL_ACCOUNT=Compte utilisateur
 LdapUacf_DONT_EXPIRE_PASSWORD=Le mot de passe n'expire jamais

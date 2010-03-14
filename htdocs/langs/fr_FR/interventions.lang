@@ -41,7 +41,7 @@ TypeContact_fichinter_internal_INTERVENING=Intervenant
 TypeContact_fichinter_external_BILLING=Contact client facturation intervention
 TypeContact_fichinter_external_CUSTOMER=Contact client suivi de l'intervention
 # Modele numérotation
-ArcticNumRefModelDesc1=Modele de numérotation générique
+ArcticNumRefModelDesc1=Modèle de numérotation générique
 ArcticNumRefModelError=Activation impossible
 PacificNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
-PacificNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
+PacificNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimez la ou renommez la pour activer ce module.
