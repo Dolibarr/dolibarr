@@ -11,11 +11,11 @@ CreateDeliveryOrder=Générer bon de livraison
 QtyDelivered=Qté livrée 
 SetDeliveryDate=Définir la date de livraison
 ValidateDeliveryReceipt=Valider le bon de livraison
-ValidateDeliveryReceiptConfirm=Etes-vous sur de vouloir valider ce bon de livraison ?
+ValidateDeliveryReceiptConfirm=Etes-vous sûr de vouloir valider ce bon de livraison ?
 DeleteDeliveryReceipt=Supprimer le bon de livraison
-DeleteDeliveryReceiptConfirm=Etes-vous sur de vouloir supprimer ce bon de livraison ?
+DeleteDeliveryReceiptConfirm=Etes-vous sûr de vouloir supprimer ce bon de livraison ?
 DeliveryMethod=Méthode de livraison
-TrackingNumber=Numero de suivi
+TrackingNumber=Numéro de suivi
 
 # merou PDF model						   
 NameAndSignature=Nom et Signature : 
