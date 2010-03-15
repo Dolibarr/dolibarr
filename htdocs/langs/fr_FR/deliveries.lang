@@ -11,9 +11,9 @@ CreateDeliveryOrder=Générer bon de livraison
 QtyDelivered=Qté livrée 
 SetDeliveryDate=Définir la date de livraison
 ValidateDeliveryReceipt=Valider le bon de livraison
-ValidateDeliveryReceiptConfirm=Etes-vous sûr de vouloir valider ce bon de livraison ?
+ValidateDeliveryReceiptConfirm=Êtes-vous sûr de vouloir valider ce bon de livraison ?
 DeleteDeliveryReceipt=Supprimer le bon de livraison
-DeleteDeliveryReceiptConfirm=Etes-vous sûr de vouloir supprimer ce bon de livraison ?
+DeleteDeliveryReceiptConfirm=Êtes-vous sûr de vouloir supprimer ce bon de livraison ?
 DeliveryMethod=Méthode de livraison
 TrackingNumber=Numéro de suivi
 

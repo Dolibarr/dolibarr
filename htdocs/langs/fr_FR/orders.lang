@@ -82,7 +82,7 @@ ConfirmCloseOrderIfSending=Êtes-vous sûr de vouloir clôturer cette commande ?
 ConfirmDeleteOrder=Êtes-vous sûr de vouloir effacer cette commande ?
 ConfirmValidateOrder=Êtes-vous sûr de vouloir valider cette commande sous la référence <b>%s</b> ?
 ConfirmCancelOrder=Êtes-vous sûr de vouloir annuler cette commande ?
-ConfirmMakeOrder=Etes-vous sûr de vouloir confirmer cette commande en date du <b>%s</b> ?
+ConfirmMakeOrder=Êtes-vous sûr de vouloir confirmer cette commande en date du <b>%s</b> ?
 GenerateBill=Facturer
 ClassifyBilled=Classer "Facturée"
 ComptaCard=Fiche compta
@@ -103,7 +103,7 @@ RunningOrders=Commandes en cours
 UserWithApproveOrderGrant=Utilisateurs habilités à approuver les commandes
 PaymentOrderRef=Paiement commande %s
 CloneOrder=Cloner commande
-ConfirmCloneOrder=Etes-vous sûr de vouloir cloner cette commande <b>%s</b> ?
+ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b> ?
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Reponsable suivi commande client
 TypeContact_commande_internal_SHIPPING=Reponsable envoi commande client

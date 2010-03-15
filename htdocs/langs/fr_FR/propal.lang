@@ -69,16 +69,16 @@ ClassifyBilled=Classer facturée
 BuildBill=Créer facture
 RelatedBill=Facture associée
 RelatedBills=Factures associées
-ErrorPropalNotFound=Propal %s inexistante
+ErrorPropalNotFound=Propale %s inexistante
 Estimate=Devis :
 EstimateShort=Devis
 OtherPropals=Autres propositions
 CopyPropalFrom=Créer proposition/devis par recopie d'un proposition existante
 CreateEmptyPropal=Créer proposition/devis vierge
 DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
-UseCustomerContactAsPropalRecipientIfExist=Utiliser adresse contact suivi client si défini plutot que adresse tiers comme destinataire des propositions
+UseCustomerContactAsPropalRecipientIfExist=Utiliser adresse contact suivi client si défini plutôt que adresse tiers comme destinataire des propositions
 ClonePropal=Cloner proposition commerciale
-ConfirmClonePropal=Etes-vous sur de vouloir cloner cette proposition commerciale <b>%s</b> ?
+ConfirmClonePropal=Êtes-vous sûr de vouloir cloner cette proposition commerciale <b>%s</b> ?
 ProposalsAndProposalsLines=Propositions commerciales clientes et lignes de propositions
 ProposalLine=Ligne de proposition
 ##### Types de contacts #####
@@ -87,6 +87,6 @@ TypeContact_propal_external_BILLING=Contact client facturation propale
 TypeContact_propal_external_CUSTOMER=Contact client suivi propale
 # Documents models
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)
-DocModelJauneDescription=Modele de proposition Jaune
+DocModelJauneDescription=Modèle de proposition Jaune
 # NumRef Modules
-MarbreNumRefModelDesc=Renvoie le numero sous la forme PRyymm-nnnn où yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise à 0
+MarbreNumRefModelDesc=Renvoie le numéro sous la forme PRyymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
