@@ -464,7 +464,7 @@ begin
 	      browser := 'iexplore.exe';
 	      if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
 	      begin
-	        if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser with Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
+	        if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
 	        begin
 	          browser := pfPath+'/Mozilla Firefox/firefox.exe';
 	        end;
@@ -494,7 +494,7 @@ begin
 	    end
 
 
-      if MsgBox('DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation. Start to install or upgrade the web server and database server ?',mbConfirmation,MB_YESNO) = IDYES then
+      if MsgBox('DoliWamp installer will now start or restart Apache and Mysql, this may last from several seconds to one minute after this confirmation.' #13#13 'Start to install or upgrade the web server and database server required by Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
       begin
 
 		
