@@ -163,7 +163,7 @@ var value: String;
 //procedures lancees au debut de l'installation
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This assistant installs or upgrades Dolibarr ERP-CRM and required third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you have technical knowledge and plan to share your Apache, Mysql and PHP with other projects than Dolibarr, you should not use this assistant and make a manual installation of Dolibarr on an existing Apache, Mysql and PHP installation. If you don''t need a sophisticated manual setup, you''re on the good way...' #13#13 'Do you want to start installation/upgrade process ?', mbConfirmation, MB_YESNO) = IDYES;
+  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This assistant installs or upgrades Dolibarr ERP-CRM and all required third party softwares (Apache, Mysql and PHP) optimized for a Dolibarr usage.' #13#13 'If you have technical knowledge and plan to share your Apache, Mysql and PHP with other projects than Dolibarr, you should not use this assistant and make a manual installation of Dolibarr on your existing Apache, Mysql and PHP installation.' #13#13 'But if you look for an automatic setup, you''re on the good way...' #13#13 'Do you want to start installation/upgrade process ?', mbConfirmation, MB_YESNO) = IDYES;
 end;
 
 procedure InitializeWizard();
