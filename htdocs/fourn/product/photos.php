@@ -129,7 +129,7 @@ if ($_GET["id"])
 
 			print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 			print '</table>';
-			print '</form><br />';
+			print '</form><br>';
 		}
 
 

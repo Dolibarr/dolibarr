@@ -713,7 +713,7 @@ else
 					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$mil->id.'">'.$langs->trans("DeleteMailing").'</a>';
 				}
 
-				print '<br /><br /></div>';
+				print '<br><br></div>';
 			}
 
 			// Affichage formulaire de TEST

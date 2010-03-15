@@ -49,17 +49,17 @@ $dir = $conf->compta->dir_output."/export/".$year."/";
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == 'export')
 {
   $modulename='Poivre';
-  
+
   include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.class.php';
-  
+
   create_exdir($dir);
-  
+
   $exc = new ComptaExport($db, $user, $modulename);
-  
+
   if($_GET["id"] > 0)
     {
       $exc->Export($_GET["id"], $dir);
@@ -68,14 +68,14 @@ if ($_GET["action"] == 'export')
     {
       $exc->Export(0, $dir);
     }
-  
-  /* Génération du journal des Paiements */
-  
+
+  /* Gï¿½nï¿½ration du journal des Paiements */
+
   $jp= new ComptaJournalPaiement($db);
   $jp->GeneratePdf($user, $dir, $exc->id, $exc->ref);
-  
-  /* Génération du journal des Ventes */
-  
+
+  /* Gï¿½nï¿½ration du journal des Ventes */
+
   $jp= new ComptaJournalVente($db);
   $jp->GeneratePdf($user, $dir, $exc->id, $exc->ref);
 }
@@ -83,7 +83,7 @@ if ($_GET["action"] == 'export')
 /*
  * Affichage page
  */
- 
+
 llxHeader('','Compta - Export');
 
 print_fiche_titre($langs->trans("AccountancyExport"));
@@ -125,7 +125,7 @@ $var=false;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Invoices").'</td><td align="right">'.$nbfac.'</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Payments").'</td><td align="right">'.$nbp.'</td></tr>';
-print "</table><br />\n";
+print "</table><br>\n";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -164,7 +164,7 @@ if ($handle)
     {
       if (is_readable($dir.$file) && is_file($dir.$file))
 	{
-	  print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=export_compta&amp;file=export/'.$year.'/'.$file.'&amp;type=text/plain">'.$file.'</a><td>';  
+	  print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=export_compta&amp;file=export/'.$year.'/'.$file.'&amp;type=text/plain">'.$file.'</a><td>';
 	  print '</tr>';
 	}
     }

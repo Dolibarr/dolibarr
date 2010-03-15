@@ -168,8 +168,8 @@ if ($resql)
 		print "<div id='ways'>";
 		$c = new Categorie ($db, $catid);
 		$ways = $c->print_all_ways(' &gt; ','product/reassort.php');
-		print " &gt; ".$ways[0]."<br />\n";
-		print "</div><br />";
+		print " &gt; ".$ways[0]."<br>\n";
+		print "</div><br>";
 	}
 
 	print '<form action="reassort.php" method="post" name="formulaire">';

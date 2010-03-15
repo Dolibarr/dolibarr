@@ -95,8 +95,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
 	</div>
 	<div class="infos">
-		<p class="adresse"><?php echo $mysoc->nom; ?><br />
-		<?php echo $mysoc->adresse; ?><br />
+		<p class="adresse"><?php echo $mysoc->nom; ?><br>
+		<?php echo $mysoc->adresse; ?><br>
 		<?php echo $mysoc->cp.' '.$mysoc->ville; ?></p>
 
 		<?php

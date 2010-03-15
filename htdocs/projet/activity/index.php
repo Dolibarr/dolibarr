@@ -124,7 +124,7 @@ print "</tr>\n";
 print "</table>";
 
 /* Affichage de la liste des projets d'hier */
-print '<br /><table class="noborder" width="100%">';
+print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('Yesterday').'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';
@@ -223,7 +223,7 @@ print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
 print '<td align="right">'.$total.'</td>';
 print "</tr>\n";
-print "</table><br />";
+print "</table><br>";
 
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
@@ -269,7 +269,7 @@ else
 print "</table>";
 
 /* Affichage de la liste des projets de l'annee */
-print '<br /><table class="noborder" width="100%">';
+print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
 print '<td align="right">'.$langs->trans("Time").'</td>';

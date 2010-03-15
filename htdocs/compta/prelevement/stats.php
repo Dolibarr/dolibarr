@@ -135,7 +135,7 @@ else
  * Stats sur les rejets
  *
  */
-print '<br />';
+print '<br>';
 print_titre($langs->trans("WithdrawRejectStatistics"));
 
 

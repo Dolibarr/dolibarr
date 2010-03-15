@@ -20,7 +20,7 @@
 
 /**
  \file       htdocs/compta/prelevement/demandes.php
- \brief      Page de la liste des demandes de prélèvements
+ \brief      Page de la liste des demandes de prï¿½lï¿½vements
  \version    $Id$
  */
 
@@ -153,7 +153,7 @@ if ( $db->query($sql) )
 		$i++;
 	}
 
-	print "</table><br />";
+	print "</table><br>";
 
 }
 else

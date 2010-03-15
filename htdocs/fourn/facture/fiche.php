@@ -999,7 +999,7 @@ else
 					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
 
 					print '<td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Save').'">';
-					print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 
 					print '</tr>';
 					print '</form>';

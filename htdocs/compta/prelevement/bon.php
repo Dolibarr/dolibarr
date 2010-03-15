@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
         \file       htdocs/compta/prelevement/bon.php
         \ingroup    prelevement
-        \brief      Fiche aperçu du bon de prelevement
+        \brief      Fiche aperï¿½u du bon de prelevement
         \version    $Id$
 */
 
@@ -29,41 +29,41 @@ require("./pre.inc.php");
 $langs->load("bills");
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if (!$user->rights->prelevement->bons->lire) accessforbidden();
 
 
-llxHeader('','Bon de prélèvement');
+llxHeader('','Bon de prï¿½lï¿½vement');
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
-$h++;      
+$h++;
 
 if ($conf->use_preview_tabs)
 {
     $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("Preview");
     $hselected = $h;
-    $h++;  
+    $h++;
 }
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Lines");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Bills");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Rejets");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistics");
-$h++;  
+$h++;
 
 $prev_id = $_GET["id"];
 
@@ -75,7 +75,7 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dol_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
+      dol_fiche_head($head, $hselected, 'Prï¿½lï¿½vement : '. $bon->ref);
 
       print '<table class="border" width="100%">';
 
@@ -88,7 +88,7 @@ if ($_GET["id"])
       print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$bon->ref.'</a>';
 
       print '</td></tr>';
-      print '</table><br />';
+      print '</table><br>';
 
       $fileimage = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps.png.0';
       $fileps = $conf->prelevement->dir_output.'/receipts/'.$bon->ref.'.ps';
@@ -101,25 +101,25 @@ if ($_GET["id"])
 	    {
 
 	      $handle = imagick_readimage( $fileps ) ;
-	      
+
 	      if ( imagick_iserror( $handle ) )
 		{
 		  $reason      = imagick_failedreason( $handle ) ;
 		  $description = imagick_faileddescription( $handle ) ;
-		  
+
 		  print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
 		}
-	      
+
 	      imagick_convert( $handle, "PNG" ) ;
-	      
+
 	      if ( imagick_iserror( $handle ) )
 		{
 		  $reason      = imagick_failedreason( $handle ) ;
 		  $description = imagick_faileddescription( $handle ) ;
-		  
+
 		  print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
 		}
-	      
+
 	      imagick_writeimage( $handle, $fileps .".png");
 	    }
 	  else
@@ -131,7 +131,7 @@ if ($_GET["id"])
       if (file_exists($fileimage))
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=prelevement&file='.urlencode(basename($fileimage)).'">';
-	  
+
 	}
     }
   else

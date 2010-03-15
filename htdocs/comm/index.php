@@ -113,7 +113,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
 	print '</tr>';
 	print "</table></form>\n";
-	print "<br />\n";
+	print "<br>\n";
 }
 
 /*

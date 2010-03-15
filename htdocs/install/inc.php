@@ -312,7 +312,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
 
 	if (! $nonext)
 	{
-		print '<div class="barrebottom"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
+		print '<div class="nextbutton" id="nextbutton"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
 		if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
 		print '></div>';
 	}

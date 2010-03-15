@@ -122,7 +122,7 @@
 </tr>
 </table>
 
-<br />
+<br>
 
 <table class="border" width="100%">
  <tr>
@@ -137,7 +137,7 @@
  </tr>
 </table>
 
-<br />
+<br>
 
 <table class="border" width="100%">
  <tr>
@@ -167,7 +167,7 @@
  </tr>
 </table>
 
-<br />
+<br>
 
 <table class="border" width="100%">
 
@@ -235,7 +235,7 @@
 
 </table>
 
-<br />
+<br>
 
 <table class="border" width="100%">
 

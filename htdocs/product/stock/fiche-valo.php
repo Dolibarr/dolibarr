@@ -128,7 +128,7 @@ if ($_GET["id"])
 		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year-1).'.png'))
 		{
 			$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year-1).'.png';
-			print '<br /><img src="'.$url.'" alt="Valorisation du stock annee '.($year-1).'">';
+			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year-1).'">';
 		}
 	}
 	else

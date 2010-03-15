@@ -481,9 +481,12 @@ function jsinfo()
 {
 	ok=true;
 
+	document.getElementById('nextbutton').style.display='hidden';
 	alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
 
-	return ok;
+
+	//return ok;
+	return false;
 }
 </script>
 

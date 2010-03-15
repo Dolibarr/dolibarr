@@ -136,7 +136,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 		foreach ($ways as $way)
 		{
-			print $way."<br />\n";
+			print $way."<br>\n";
 		}
 		print '</td></tr>';
 

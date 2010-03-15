@@ -208,9 +208,9 @@ if (! file_exists($conffile))
 {
 	//print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",'conf.php');
-	print "<br /><br />";
+	print "<br><br>";
 	print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
-	print "<br /><br />";
+	print "<br><br>";
 
 	print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok');
 	$err++;
@@ -228,9 +228,9 @@ else
 		{
 			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
 		}
-		print "<br />";
+		print "<br>";
 		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
-		print "<br />\n";
+		print "<br>\n";
 
 		$allowinstall=0;
 	}
@@ -245,13 +245,13 @@ else
 		{
 			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
 		}
-		print "<br />";
+		print "<br>";
 		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",'conf.php');
-		print "<br />\n";
+		print "<br>\n";
 
 		$allowinstall=1;
 	}
-	print "<br />\n";
+	print "<br>\n";
 
 	// Si prerequis ok, on affiche le bouton pour passer a l'etape suivante
 	if ($checksok)
@@ -305,7 +305,7 @@ else
 			print '<br>';
 			print '<br>';
 		}
-		else print "<br />\n";
+		else print "<br>\n";
 
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");

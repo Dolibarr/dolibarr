@@ -181,7 +181,7 @@ if ($db->label == 'MySQL')
             {
 	            $fullpathofmysqldump=$conf->global->SYSTEMTOOLS_MYSQLDUMP;
             }
-        ?><br />
+        ?><br>
         <input type="text" name="mysqldump" size="80"
             value="<?php echo $fullpathofmysqldump; ?>" />
     </div>
@@ -240,7 +240,7 @@ if ($db->label == 'MySQL')
 
         <input type="checkbox" name="drop" value="1" id="checkbox_dump_drop"
              />
-        <label for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br />
+        <label for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br>
     </fieldset>
 
 	<br>
@@ -259,32 +259,32 @@ if ($db->label == 'MySQL')
             id="checkbox_dump_showcolumns"
              />
         <label for="checkbox_dump_showcolumns">
-            <?php echo $langs->trans("NameColumn"); ?></label><br />
+            <?php echo $langs->trans("NameColumn"); ?></label><br>
 
         <input type="checkbox" name="extended_ins" value="yes"
             id="checkbox_dump_extended_ins"
              />
         <label for="checkbox_dump_extended_ins">
-            <?php echo $langs->trans("ExtendedInsert"); ?></label><br />
+            <?php echo $langs->trans("ExtendedInsert"); ?></label><br>
 
         <input type="checkbox" name="delayed" value="yes"
             id="checkbox_dump_delayed"
              />
 
         <label for="checkbox_dump_delayed">
-            <?php echo $langs->trans("DelayedInsert"); ?></label><br />
+            <?php echo $langs->trans("DelayedInsert"); ?></label><br>
 
         <input type="checkbox" name="sql_ignore" value="yes"
             id="checkbox_dump_ignore"
              />
         <label for="checkbox_dump_ignore">
-            Ignorer les erreurs de doublons (INSERT IGNORE)</label><br />
+            Ignorer les erreurs de doublons (INSERT IGNORE)</label><br>
 
         <input type="checkbox" name="hexforbinary" value="yes"
             id="checkbox_hexforbinary"
              checked="checked" />
         <label for="checkbox_hexforbinary">
-            <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br />
+            <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br>
 
     </fieldset>
 </fieldset>
@@ -308,7 +308,7 @@ if ($db->label == 'PostgreSQL')
             {
 	            $fullpathofpgdump=$conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
             }
-        ?><br />
+        ?><br>
         <input type="text" name="postgresqldump" size="80"
             value="<?php echo $fullpathofpgdump; ?>" />
     </div>
@@ -359,7 +359,7 @@ if ($db->label == 'PostgreSQL')
             id="checkbox_dump_showcolumns"
              />
         <label for="checkbox_dump_showcolumns">
-            <?php echo $langs->trans("NameColumn"); ?></label><br />
+            <?php echo $langs->trans("NameColumn"); ?></label><br>
 
     </fieldset>
 </fieldset>
@@ -437,7 +437,7 @@ if ($db->label == 'PostgreSQL')
             id="ch_latex_showcolumns"
              checked="checked" />
         <label for="ch_latex_showcolumns">
-            Nom des colonnes</label><br />
+            Nom des colonnes</label><br>
         <table>
         <tr><td><label for="latex_data_caption">
                     Sous-titre de la table</label></td>

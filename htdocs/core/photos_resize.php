@@ -107,8 +107,8 @@ print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$_GET['id']
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px <br /> ';
-print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br />';
+print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px <br> ';
+print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br>';
 print '<input type="hidden" name="file" value="'.$_GET['file'].'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$_GET['id'].'" />';

@@ -870,7 +870,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td align="right"><input size="2" type="text" name="qty" value="'.$commandline->qty.'"></td>';
 				print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$commandline->remise_percent.'">%</td>';
 				print '<td align="center" colspan="3"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-				print '<br /><input	type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 				print '</tr>' .	"\n";
 				print "</form>\n";
 			}

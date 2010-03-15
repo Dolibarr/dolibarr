@@ -129,7 +129,7 @@ if ($_GET["id"])
 		}
 
 
-		print '</table><br />';
+		print '</table><br>';
 	}
 	else
 	{

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003-2005 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2003-2005 ï¿½ric Seigne <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ if ($_GET['id'])
 
       print "</table>";
 
-      print "<br />";
+      print "<br>";
 
       /*
        * Produits
@@ -108,7 +108,7 @@ if ($_GET['id'])
        *
        *
        */
-      print "<br />";
+      print "<br>";
 
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";

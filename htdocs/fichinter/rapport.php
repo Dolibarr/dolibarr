@@ -133,7 +133,7 @@ if ( $db->query($sql) )
 	}
 	print "</table>";
 	$db->free();
-	print "<br />".$langs->trans("Total")." $DureeTotal jour[s]";
+	print "<br>".$langs->trans("Total")." $DureeTotal jour[s]";
 }
 else
 {

@@ -138,7 +138,7 @@
 
 </table>
 
-<br />
+<br>
 
 <table class="border" width="100%">
 

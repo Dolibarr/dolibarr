@@ -332,10 +332,10 @@ if (function_exists('eaccelerator_get'))
 	create_key_table($res);
 }
 
-print "<br /><br />";
+print "<br><br>";
 print "<hr />";
 print '<table><tr><td class="center">';
-print '<strong>Eaccelerator is created by the eAccelerator team, <a href="http://eaccelerator.net">http://eaccelerator.net</a></strong><br /><br />';
+print '<strong>Eaccelerator is created by the eAccelerator team, <a href="http://eaccelerator.net">http://eaccelerator.net</a></strong><br><br>';
 print "</td></tr></table>";
 
 

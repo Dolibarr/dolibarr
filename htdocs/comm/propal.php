@@ -1687,7 +1687,7 @@ if ($id > 0 || ! empty($ref))
 				else print '&nbsp;';
 				print '</td>';
 				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-				print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+				print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 				print '</tr>' . "\n";
 				/*
 				 if ($conf->service->enabled)

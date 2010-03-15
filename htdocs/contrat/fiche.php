@@ -831,7 +831,7 @@ else
 						print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 						print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
 						print $objp->label?' - '.$objp->label:'';
-						if ($objp->description) print '<br />'.nl2br($objp->description);
+						if ($objp->description) print '<br>'.nl2br($objp->description);
 						print '</td>';
 					}
 					else
@@ -985,7 +985,6 @@ else
 			 */
 			if ($_REQUEST["action"] == 'move' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lignes[$cursorline-1]->id == $_GET["rowid"])
 			{
-				//print '<br />';
 				$arraycontractid=array();
 				foreach($arrayothercontracts as $contractcursor)
 				{
@@ -1006,7 +1005,6 @@ else
 			 */
 			if ($_REQUEST["action"] == 'active' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
 			{
-				//print '<br />';
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];
@@ -1019,7 +1017,6 @@ else
 			 */
 			if ($_REQUEST["action"] == 'closeline' && ! $_REQUEST["cancel"] && $user->rights->contrat->activer && $contrat->lignes[$cursorline-1]->id == $_GET["ligne"])
 			{
-				//print '<br />';
 				$dateactstart = dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dol_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$comment      = $_POST["comment"];

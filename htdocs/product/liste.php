@@ -182,7 +182,7 @@ if ($resql)
 	// Displays product removal confirmation
 	if (!empty($_GET['delprod']))
 	{
-		print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br />';
+		print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br>';
 	}
 
 	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$envente;
@@ -195,8 +195,8 @@ if ($resql)
 		print "<div id='ways'>";
 		$c = new Categorie ($db, $catid);
 		$ways = $c->print_all_ways(' &gt; ','product/liste.php');
-		print " &gt; ".$ways[0]."<br />\n";
-		print "</div><br />";
+		print " &gt; ".$ways[0]."<br>\n";
+		print "</div><br>";
 	}
 
 	if ($conf->droitpret->enabled && isset($_GET["canvas"]))

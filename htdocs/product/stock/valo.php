@@ -125,20 +125,20 @@ if ($result)
 	$db->free($result);
 	print "</table>";
 
-	print '<br />';
+	print '<br>';
 
 	$file='entrepot-'.$year.'.png';
 	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
-		print '<img src="'.$url.'" alt="Valorisation du stock ann�e '.($year).'">';
+		print '<img src="'.$url.'">';
 	}
 
 	$file='entrepot-'.($year-1).'.png';
 	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
-		print '<br /><img src="'.$url.'" alt="Valorisation du stock ann�e '.($year-1).'">';
+		print '<br><img src="'.$url.'">';
 	}
 
 }

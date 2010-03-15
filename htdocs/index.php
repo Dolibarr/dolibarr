@@ -78,7 +78,7 @@ if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 	print '<table class="noborder" width="100%">';
 	print '<tr><td colspan="3" style="text-align:center;">';
 	print '<img src="/logo.png"></td></tr>';
-	print "</table><br />\n";
+	print "</table><br>\n";
 }
 
 

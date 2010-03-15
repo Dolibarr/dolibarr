@@ -68,7 +68,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 		$obj_facturation->calculTotaux();
 		$total_ttc = $obj_facturation->prix_total_ttc();
-		echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price2num($total_ttc, 'MT').' '.$conf->monnaie.'<br /></p>'."\n");
+		echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price2num($total_ttc, 'MT').' '.$conf->monnaie.'<br></p>'."\n");
 
 	} else {
 

@@ -67,7 +67,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	<form id="frmValidation" class="formulaire2" method="post" action="validation_verif.php?action=valide_facture">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 
-		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br /><textarea class="textarea_note" name="txtaNotes"></textarea></p>
+		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br><textarea class="textarea_note" name="txtaNotes"></textarea></p>
 
 		<span><input class="bouton_validation" type="submit" name="btnValider" value="<?php echo $langs->trans("ValidateInvoice"); ?>" /></span>
 		<p><a class="lien1" href="affIndex.php?menu=facturation"><?php echo $langs->trans("RestartSelling"); ?></a></p>

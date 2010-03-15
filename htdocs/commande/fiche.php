@@ -1042,7 +1042,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
 			print '<input name="facnumber" type="hidden" value="provisoire">';
-			
+
 			if (isset($_GET["origin"]) && $_GET["origin"] != 'project' && isset($_GET["originid"]))
 			{
 				print '<input type="hidden" name="origin" value="'.$_GET["origin"].'">';
@@ -1123,7 +1123,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			{
 				$projectid = 0;
 				if (isset($_GET["origin"]) && $_GET["origin"] == 'project') $projectid = ($_GET["originid"]?$_GET["originid"]:0);
-				
+
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 				$numprojet=select_projects($soc->id,$projectid);
 				if ($numprojet==0)
@@ -1892,7 +1892,7 @@ else
 						else print '&nbsp;';
 						print '</td>';
 						print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+						print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>';
 
 						// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)

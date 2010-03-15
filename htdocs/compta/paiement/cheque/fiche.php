@@ -227,7 +227,7 @@ if ($_GET['action'] == 'new')
 
 	print '<table class="border" width="100%">';
 	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
-	print '</table><br />';
+	print '</table><br>';
 
 	$sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
 	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
@@ -303,7 +303,7 @@ if ($_GET['action'] == 'new')
 		{
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
 		}
-		print '</div><br />';
+		print '</div><br>';
 	}
 
 }
@@ -343,7 +343,7 @@ else
 	print $remisecheque->getLibStatut(4);
 	print '</td></tr>';
 
-	print '</table><br />';
+	print '</table><br>';
 
 
 	// Liste des cheques

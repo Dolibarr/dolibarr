@@ -57,7 +57,7 @@
 		<img src="{$dol_url_root}/theme/phones/iphone/theme/{$theme}/thumbs/dolibarr.png">
 	</div>
 	
-	<br />
+	<br>
 	
 	<span class="graytitle">{$langs->trans('Identification')}</span>
 	<ul class="pageitem">

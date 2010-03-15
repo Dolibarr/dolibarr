@@ -128,22 +128,22 @@ function donnefocus() {ldelim}
 </td></tr>
 </table>
 
-<br />
+<br>
 
 	{if $error_message}
 		<table width="90%"><tr><td align="center" style="font-size: 12px;>
 		{$error_message}
-		</td></tr></table><br />
+		</td></tr></table><br>
 	{/if}
 
-<br />
+<br>
 <a href="{$dol_url_root}/">
 	{$langs->trans('BackToLoginPage')}
 </a>
 </center>
 
-<br />
-<br />
+<br>
+<br>
 
 </body>
 </html>
