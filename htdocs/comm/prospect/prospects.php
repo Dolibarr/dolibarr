@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,12 +21,13 @@
 /**
  *	\file       htdocs/comm/prospect/prospects.php
  *	\ingroup    prospect
- *	\brief      Page de la liste des prospects
+ *	\brief      Page to list prospects
  *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
 $langs->load("propal");
 $langs->load("companies");
@@ -102,6 +103,7 @@ $sql = "SELECT code, label, sortorder, ".$sortwhere;
 $sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $sql.= " WHERE active > 0";
 $sql.= " ORDER BY sortorder";
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -156,7 +158,9 @@ if ($_GET["action"] == 'cstc')
  * View
  */
 
-$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,";
+$htmlother=new FormOther($db);
+
+$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 // Updated by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
@@ -166,7 +170,7 @@ if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -175,10 +179,8 @@ $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client in (2, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
 if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
-// Join for the needed table to filter by sale
-if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";
-// Join for the needed table to filter by categ
-if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";
+if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
 if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
 
 if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
@@ -188,20 +190,19 @@ if ($search_levels)
 {
 	$sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
 }
-// Insert salee filter
+// Insert sale filter
 if ($search_sale)
 {
-	$sql .= " AND sc.fk_user = ".$search_sale;
+	$sql .= " AND sc.fk_user = ".addslashes($search_sale);
 }
 // Insert categ filter
 if ($search_categ)
 {
-	$sql .= " AND cs.fk_categorie = ".$search_categ;
+	$sql .= " AND cs.fk_categorie = ".addslashes($search_categ);
 }
-
 if ($socname)
 {
-	$sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+	$sql .= " AND s.nom like '%".addslashes($socname)."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
@@ -214,8 +215,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC";
-$sql .= $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -246,25 +247,10 @@ if ($resql)
  				$param.='&amp;search_cstc['.((int) $key).']=false';
  		}
  	}
- 	// Store the potentiels filters in the URL
- 	if ($search_level_from != '')
- 	{
- 		$param.='&amp;search_level_from='.$search_level_from;
- 	}
- 	if ($search_level_to != '')
- 	{
- 		$param.='&amp;search_level_to='.$search_level_to;
- 	}
- 	// Store the categ filter in the URL
- 	if ($search_categ != '')
- 	{
- 		$param.='&amp;search_categ='.$search_categ;
- 	}
- 	// Store the sale filter in the URL
- 	if ($search_sale != '')
- 	{
- 		$param.='&amp;search_sale='.$search_sale;
- 	}
+ 	if ($search_level_from != '') $param.='&amp;search_level_from='.$search_level_from;
+ 	if ($search_level_to != '') $param.='&amp;search_level_to='.$search_level_to;
+ 	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
+ 	if ($search_sale != '') $param.='&amp;search_sale='.$search_sale;
  	// $param and $urladd should have the same value
  	$urladd = $param;
 
@@ -274,73 +260,30 @@ if ($resql)
  	// Print the search-by-sale and search-by-categ filters
  	print '<form method="get" action="prospects.php" id="formulaire_recherche">';
 
- 	$moreforfilter='';
+	print '<table class="liste" width="100%">';
 
+	// Filter on categories
+ 	$moreforfilter='';
+	if ($conf->categorie->enabled)
+	{
+	 	$moreforfilter.=$langs->trans('Categories'). ': ';
+		$moreforfilter.=$htmlother->select_categories(2,$search_categ,'search_categ');
+	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	}
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
- 		// Select each sales and print them in a select input
- 		$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
- 		$moreforfilter.='<select class="flat" name="search_sale">';
- 		$moreforfilter.='<option value="">'.$langs->trans('All').'</option>';
-
- 		$sql_usr = "SELECT u.rowid, u.name, u.firstname, u.login";
- 		$sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
- 		$sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
- 		$sql_usr.= " ORDER BY u.name ASC ";
-
- 		$resql_usr = $db->query($sql_usr);
- 		if ($resql_usr)
- 		{
- 			while ($obj_usr = $db->fetch_object($resql_usr))
- 			{
- 				$moreforfilter.='<option value="'.$obj_usr->rowid.'"';
-
- 				if ($obj_usr->rowid == $search_sale)
- 					$moreforfilter.=' selected="true"';
-
- 				$moreforfilter.='>';
- 				$moreforfilter.=stripslashes($obj_usr->firstname)." ".stripslashes($obj_usr->name)." (".$obj_usr->login.')';
- 				$moreforfilter.='</option>';
- 				$i++;
- 			}
- 			$db->free($resql_usr);
- 		}
- 		else
- 		{
- 			dol_print_error($db);
- 		}
- 		$moreforfilter.='</select> &nbsp;  &nbsp;  &nbsp; ';
+	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+		$moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale');
  	}
-
- 	// Include Categorie class
-	if ($conf->categorie->enabled)
+ 	if ($moreforfilter)
 	{
-	 	require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
-
-	 	// Load list of "categories"
-	 	$static_categs = new Categorie($db);
-	 	$tab_categs = $static_categs->get_full_arbo(2);
-
-	 	// Print a select with each of them
-	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-	 	$moreforfilter.='<select class="flat" name="search_categ">';
-	 	$moreforfilter.='<option value="">'.$langs->trans('All').'</option>';
-
-	 	if (is_array($tab_categs))
-	 	{
-	 		foreach ($tab_categs as $categ)
-	 		{
-	 			$moreforfilter.='<option value="'.$categ['id'].'"';
-	 			if ($categ['id'] == $search_categ)
-	 				$moreforfilter.=' selected="true"';
-	 			$moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
-	 		}
-	 	}
-	 	$moreforfilter.='</select><br/>';
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre" colspan="9">';
+	    print $moreforfilter;
+	    print '</td></tr>';
 	}
 
-	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,"valign=\"center\"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
@@ -404,12 +347,6 @@ if ($resql)
 
 	print "</tr>\n";
 
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" colspan="9">';
-    print $moreforfilter;
-    print '</td></tr>';
-
-
 	$i = 0;
 	$var=true;
 
@@ -431,7 +368,7 @@ if ($resql)
 		print "<td>".$obj->ville."&nbsp;</td>";
 		print "<td align=\"center\">$obj->departement</td>";
 		// Creation date
-		print "<td align=\"center\">".dol_print_date($obj->datec)."</td>";
+		print "<td align=\"center\">".dol_print_date($db->jdate($obj->datec))."</td>";
 		// Level
 		print "<td align=\"center\">";
 		print $prospectstatic->LibLevel($obj->fk_prospectlevel);

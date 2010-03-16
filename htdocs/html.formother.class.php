@@ -233,6 +233,85 @@ class FormOther
 	}
 
 	/**
+	 *  \brief     	Return select list for categories (to use in form search selectors)
+	 *	\param    	type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
+	 *  \param     	selected     	Preselected value
+	 *  \param     	htmlname      	Name of combo list
+	 *  \return    	return        	Html combo list code
+	 */
+	function select_categories($type,$selected=0,$htmlname='search_categ')
+	{
+		global $langs;
+	 	require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+
+	 	// Load list of "categories"
+	 	$static_categs = new Categorie($this->db);
+	 	$tab_categs = $static_categs->get_full_arbo($type);
+
+	 	// Print a select with each of them
+	 	$moreforfilter ='<select class="flat" name="'.$htmlname.'">';
+	 	$moreforfilter.='<option value="">&nbsp;</option>';
+
+	 	if (is_array($tab_categs))
+	 	{
+	 		foreach ($tab_categs as $categ)
+	 		{
+	 			$moreforfilter.='<option value="'.$categ['id'].'"';
+	 			if ($categ['id'] == $selected) $moreforfilter.=' selected="true"';
+	 			$moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
+	 		}
+	 	}
+	 	$moreforfilter.='</select>';
+
+		return $moreforfilter;
+	}
+
+
+	/**
+	 *  \brief     	Return select list for categories (to use in form search selectors)
+	 *  \param     	selected     	Preselected value
+	 *  \param     	htmlname      	Name of combo list
+	 *  \return    	return        	Html combo list code
+	 */
+	function select_salesrepresentatives($selected=0,$htmlname='search_sale')
+	{
+		global $conf;
+
+	 	// Select each sales and print them in a select input
+ 		$moreforfilter ='<select class="flat" name="'.$htmlname.'">';
+ 		$moreforfilter.='<option value="">&nbsp;</option>';
+
+ 		$sql_usr = "SELECT u.rowid, u.name, u.firstname, u.login";
+ 		$sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
+ 		$sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
+ 		$sql_usr.= " ORDER BY u.name ASC";
+
+ 		$resql_usr = $this->db->query($sql_usr);
+ 		if ($resql_usr)
+ 		{
+ 			while ($obj_usr = $this->db->fetch_object($resql_usr))
+ 			{
+ 				$moreforfilter.='<option value="'.$obj_usr->rowid.'"';
+
+ 				if ($obj_usr->rowid == $selected) $moreforfilter.=' selected="true"';
+
+ 				$moreforfilter.='>';
+ 				$moreforfilter.=$obj_usr->firstname." ".$obj_usr->name." (".$obj_usr->login.')';
+ 				$moreforfilter.='</option>';
+ 				$i++;
+ 			}
+ 			$this->db->free($resql_usr);
+ 		}
+ 		else
+ 		{
+ 			dol_print_error($db);
+ 		}
+ 		$moreforfilter.='</select>';
+
+ 		return $moreforfilter;
+	}
+
+	/**
 	 *	\brief     	Retourn list of project and tasks
 	 *	\param     	selected    	Pre-selected value
 	 *  \param      projectid       Project id

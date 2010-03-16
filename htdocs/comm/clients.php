@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -46,29 +47,53 @@ $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
 $search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_code"];
 
+// Load sale and categ filters
+$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
+$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+
 
 /*
  * view
  */
 
+$htmlother=new FormOther($db);
+
 llxHeader();
 
 
 $sql = "SELECT s.rowid, s.nom, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client";
-$sql.= ", ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
+$sql.= ",s.datec, s.datea";
+// We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
+if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
+// We'll need these fields in order to filter by categ
+if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need this table joined to the select in order to filter by categ
+if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= " AND s.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
+if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
 
 if ($search_nom)   $sql.= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
 if ($search_ville) $sql.= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
 if ($search_code)  $sql.= " AND s.code_client like '%".addslashes(strtolower($search_code))."%'";
-
+// Insert sale filter
+if ($search_sale)
+{
+	$sql .= " AND sc.fk_user = ".$search_sale;
+}
+// Insert categ filter
+if ($search_categ)
+{
+	$sql .= " AND cs.fk_categorie = ".$search_categ;
+}
 if ($socname)
 {
 	$sql.= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
@@ -93,6 +118,8 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
+ 	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
+ 	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
@@ -100,6 +127,29 @@ if ($result)
 
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<table class="liste">'."\n";
+
+	// Filter on categories
+ 	$moreforfilter='';
+	if ($conf->categorie->enabled)
+	{
+	 	$moreforfilter.=$langs->trans('Categories'). ': ';
+		$moreforfilter.=$htmlother->select_categories(2,$search_categ,'search_categ');
+	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	}
+ 	// If the user can view prospects other than his'
+ 	if ($user->rights->societe->client->voir || $socid)
+ 	{
+	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+		$moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale');
+ 	}
+ 	if ($moreforfilter)
+	{
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre" colspan="9">';
+	    print $moreforfilter;
+	    print '</td></tr>';
+	}
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","",$param,"",$sortfield,$sortorder);
@@ -132,7 +182,7 @@ if ($result)
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">'.stripslashes($obj->nom).'</a></td>';
 		print '<td>'.$obj->ville.'</td>';
 		print '<td>'.$obj->code_client.'</td>';
-		print '<td align="right">'.dol_print_date($obj->datec).'</td>';
+		print '<td align="right">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		print "</tr>\n";
 		$i++;
 	}

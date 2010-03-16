@@ -245,7 +245,7 @@ if ($resql)
 		print "<tr class=\"liste_titre\">";
 		print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
-		if ($conf->barcode->enabled) print_liste_field_titre($langs->trans("BarCode"),"liste.php", "p.barcode",$param,"",'align="right"',$sortfield,$sortorder);
+		if ($conf->barcode->enabled) print_liste_field_titre($langs->trans("BarCode"),"liste.php", "p.barcode",$param,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
 		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
@@ -263,7 +263,7 @@ if ($resql)
 		print '</td>';
 		if ($conf->barcode->enabled)
 		{
-			print '<td class="liste_titre" align="right">';
+			print '<td class="liste_titre">';
 			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
 			print '</td>';
 		}

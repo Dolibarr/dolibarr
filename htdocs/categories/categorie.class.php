@@ -529,8 +529,8 @@ class Categorie
 	 *				label = nom de la categorie
 	 *				fulllabel = nom avec chemin complet de la categorie
 	 *				fullpath = chemin complet compose des id
-	 *	\param    	type		Type de categories (0=produit, 1=fournisseur, 2=client)
-	 *	\return		array		Tableau de array
+	 *	\param    	type		Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
+	 *	\return		array		Array of categories
 	 */
 	function get_full_arbo($type)
 	{
