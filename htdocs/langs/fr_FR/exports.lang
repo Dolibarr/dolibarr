@@ -65,7 +65,7 @@ ChooseFileToImport=Ajoutez le fichier à importer puis cliquez sur le picto %s p
 DownloadEmptyExample=Télécharger fichier vierge exemple
 SourceFileFormat=Format du fichier source
 FieldsInSourceFile=Champs dans le fichier source
-FieldsInTargetDatabase=Champs cibles dans la base Dolibarr (*=obligatoire)
+FieldsInTargetDatabase=Champs cibles dans la base Dolibarr
 Field=Champ
 NoFields=Aucun champ
 MoveField=Déplacer champ colonne numéro %s
