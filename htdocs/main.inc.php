@@ -894,7 +894,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'?lang='.$langs->defaultlang.(! empty($_GET["optioncss"])?'&optioncss='.$_GET["optioncss"]:'').'">'."\n";
 			}
 		}
-		
+
 		if ($conf->global->MAIN_USE_JQUERY)
 		{
 			print '<!-- Includes for JQuery (Ajax library) -->'."\n";
@@ -902,7 +902,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery.ui.all.css" type="text/css" />'."\n";
 			print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/themes/base/jquery.ui.autocomplete.css" type="text/css" />'."\n";
 		}
-		
+
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
@@ -942,7 +942,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				// PWC js
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window'.$mini.$ext.'"></script>'."\n";
 			}
-			
+
 			if ($conf->global->MAIN_USE_JQUERY)
 			{
 				print '<!-- Includes for JQuery (Ajax library) -->'."\n";
@@ -1227,65 +1227,68 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
  *		\remarks	Close 2 div
  * 		\param   	foot    		A text to add in HTML generated page
  */
-function llxFooter($foot='')
+if (! function_exists("llxFooter"))
 {
-	global $conf, $dolibarr_auto_user, $micro_start_time;
-
-	print "\n\n".'</div> <!-- end div class="fiche" -->'."\n";
-
-	//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
-	print "\n".'</td></tr></table> <!-- end right area -->'."\n";
-
-	if (! empty($_SERVER['DOL_TUNING']))
+	function llxFooter($foot='')
 	{
-		$micro_end_time=dol_microtime_float(true);
-		print "\n".'<script type="text/javascript">window.status="MAIN_OPTIMIZE_SPEED '.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off').' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
-		if (function_exists("memory_get_usage"))
-		{
-			print ' - Mem: '.memory_get_usage();
-		}
-		if (function_exists("xdebug_memory_usage"))
-		{
-			print ' - XDebug time: '.ceil(1000*xdebug_time_index()).' ms';
-			print ' - XDebug mem: '.xdebug_memory_usage();
-			print ' - XDebug mem peak: '.xdebug_peak_memory_usage();
-		}
-		if (function_exists("zend_loader_file_encoded"))
-		{
-			print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
-		}
-		print '"</script>'."\n";
+		global $conf, $dolibarr_auto_user, $micro_start_time;
 
-		// Add Xdebug coverage of code
-		if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
-	}
+		print "\n\n".'</div> <!-- end div class="fiche" -->'."\n";
 
-	if ($conf->use_javascript_ajax)
-	{
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>'."\n";
-	}
+		//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
+		print "\n".'</td></tr></table> <!-- end right area -->'."\n";
 
-	// If there is some logs in buffer to show
-	if (sizeof($conf->logbuffer))
-	{
+		if (! empty($_SERVER['DOL_TUNING']))
+		{
+			$micro_end_time=dol_microtime_float(true);
+			print "\n".'<script type="text/javascript">window.status="MAIN_OPTIMIZE_SPEED '.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off').' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+			if (function_exists("memory_get_usage"))
+			{
+				print ' - Mem: '.memory_get_usage();
+			}
+			if (function_exists("xdebug_memory_usage"))
+			{
+				print ' - XDebug time: '.ceil(1000*xdebug_time_index()).' ms';
+				print ' - XDebug mem: '.xdebug_memory_usage();
+				print ' - XDebug mem peak: '.xdebug_peak_memory_usage();
+			}
+			if (function_exists("zend_loader_file_encoded"))
+			{
+				print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
+			}
+			print '"</script>'."\n";
+
+			// Add Xdebug coverage of code
+			if (defined('XDEBUGCOVERAGE')) { var_dump(xdebug_get_code_coverage()); }
+		}
+
+		if ($conf->use_javascript_ajax)
+		{
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>'."\n";
+		}
+
+		// If there is some logs in buffer to show
+		if (sizeof($conf->logbuffer))
+		{
+			print "\n";
+			print "<!-- Start of log output\n";
+			//print '<div class="hidden">'."\n";
+			foreach($conf->logbuffer as $logline)
+			{
+				print $logline."<br>\n";
+			}
+			//print '</div>'."\n";
+			print "End of log output -->\n";
+		}
+
 		print "\n";
-		print "<!-- Start of log output\n";
-		//print '<div class="hidden">'."\n";
-		foreach($conf->logbuffer as $logline)
-		{
-			print $logline."<br>\n";
-		}
-		//print '</div>'."\n";
-		print "End of log output -->\n";
+		if ($foot) print '<!-- '.$foot.' -->'."\n";
+
+		if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
+
+		print "</body>\n";
+		print "</html>\n";
 	}
-
-	print "\n";
-	if ($foot) print '<!-- '.$foot.' -->'."\n";
-
-	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
-
-	print "</body>\n";
-	print "</html>\n";
 }
 
 ?>
