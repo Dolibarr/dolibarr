@@ -51,7 +51,7 @@ complete release of Dolibarr, step by step.
   Dolibarr web site repository /home/dolibarr/wwwroot/files.
 - Edit symbolic links in directory "/home/dolibarr/wwwroot/files" on server to
   point to new files.
-- Pudate and upload NLTechno web page with DoliWamp version.
+- Update and upload NLTechno web page with DoliWamp version.
 
 - Upload files dolibarr.*.tgz and doliwamp.*.exe on sourceforge.
 - Add/Update entries on joomla web site www.dolibarr.org with new sourceforge link.
