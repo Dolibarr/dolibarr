@@ -209,14 +209,13 @@ class MenuLeft {
 
 				if ($conf->societe->enabled && $conf->fournisseur->enabled)
 				{
-					$newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+					$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("Suppliers"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 
-					// S�curit� acc�s client
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 					}
-					$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+					//$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 					//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
 					$newmenu->add(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 				}

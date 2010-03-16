@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 For users:
 - New: Can filter third parties lists on categories.
+- New: Can filter products and services lists on categories.
 - New: Can build documents for third parties (Use ODT templates, need PHP 5.2+). 
 - New: Support products property length and area.
 - New: Add "payment due before" field in invoice exports
