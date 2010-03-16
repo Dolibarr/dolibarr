@@ -1,0 +1,28 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Trip=Gezinti
+Trips=Gezileri
+TripsAndExpenses=Geziler ve harcamalar
+TripCard=Trip kartı
+AddTrip=Trip ekle
+ListOfTrips=Gezi listesi
+ListOfFees=Ücretleri listesi
+NewTrip=Yeni trip
+CompanyVisited=Şirket / kuruluş ziyaret
+Kilometers=Kilometre
+FeesKilometersOrAmout=Miktarı veya kilometre
+DeleteTrip=Sil trip
+ConfirmDeleteTrip=Sen bu yolculuğa silmek istediğinizden emin misiniz?
+TF_OTHER=Diğer
+TF_LUNCH=Öğle yemeği
+TF_TRIP=Gezinti
+ListTripsAndExpenses=Geziler ve harcamalar listesi
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

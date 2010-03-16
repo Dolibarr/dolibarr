@@ -1,0 +1,68 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Error=Hata
+Errors=Hatalar
+MenuManager=Menü yöneticisi
+ErrorLoginAlreadyExists=Giriş% s zaten var.
+ErrorGroupAlreadyExists=Grup% s zaten var.
+ErrorRecordNotFound=Kayıt bulunamadı.
+ErrorFailToDeleteFile=Dosya <b>&#39;%</b> kaldırılamadı <b>s&#39;.</b>
+ErrorFailToCreateFile=Dosya <b>&#39;%</b> oluşturulamadı <b>s&#39;.</b>
+ErrorFailToRenameDir=Dizini <b>&#39;%</b> adlandırmak Başarısız&#39; içine <b>s% s</b> &#39;.
+ErrorFailToCreateDir=Dizini <b>&#39;%</b> oluşturulamadı <b>s&#39;.</b>
+ErrorFailToDeleteDir=Dizini <b>&#39;%</b> silinemedi <b>s&#39;.</b>
+ErrorFailedToDeleteJoinedFiles=Çünkü bazı katıldı dosyaları bir varlık silinemiyor. Dosyaları katılmak kaldırın.
+ErrorThisContactIsAlreadyDefinedAsThisType=Bu kişi zaten bu tür iletişim olarak tanımlanır.
+ErrorCashAccountAcceptsOnlyCashMoney=Bu banka hesabı kasa hesabı, bu yüzden nakit tek tip ödemeleri kabul eder.
+ErrorFromToAccountsMustDiffers=Kaynak ve hedef banka hesapları farklı olmalıdır.
+ErrorBadThirdPartyName=Üçüncü isim hatalı değer
+ErrorBadCustomerCodeSyntax=Müşteri kodu Kötü sözdizimi
+ErrorCustomerCodeRequired=Müşteri kodu gereklidir
+ErrorCustomerCodeAlreadyUsed=Müşteri kodu zaten kullanılmaktadır
+ErrorPrefixRequired=Öneki gerekli
+ErrorUrlNotValid=Web sitesi adresi yanlış
+ErrorBadSupplierCodeSyntax=Tedarikçi kodu Kötü sözdizimi
+ErrorSupplierCodeRequired=Tedarikçi kodu gereklidir
+ErrorSupplierCodeAlreadyUsed=Tedarikçi kodu zaten kullanılmaktadır
+ErrorBadParameters=Kötü parametreleri
+ErrorFailedToWriteInDir=Dizini% yazmak Başarısız s
+ErrorFoundBadEmailInFile=% Found hatalı e-posta sözdizimi (örneğin satır% dosyasındaki satırları s e-posta ile =% s) s
+ErrorUserCannotBeDelete=Kullanıcı silinemez. Olabilirsiniz Dolibarr varlıklar üzerinde ilişkili olabilir.
+ErrorFieldsRequired=Bazı gerekli alanlar dolu değildi.
+ErrorFailedToCreateDir=Dizin oluşturulamadı. Kontrol Web sunucusu kullanıcı Dolibarr belgeleri dizine yazma izinleri vardır. Eğer bu parametre <b>Guvenlik</b> PHP, kontrol edin Dolibarr PHP dosyaları web sunucusu kullanıcı (veya grup) için sahibi etkindir.
+ErrorNoMailDefinedForThisUser=No mail Bu kullanıcı için tanımlı
+ErrorFeatureNeedJavascript=Bu özelliğin çalışması için etkinleştirilmesi için JavaScript. Kurulum bu Change - ekran.
+ErrorTopMenuMustHaveAParentWithId0=Top &#39;bir üst menü tipi menü&#39; olamaz. Ana menüde 0 koy veya yazın bir menü menüden &#39;Sol&#39;.
+ErrorLeftMenuMustHaveAParentId=Tipi Sol &#39;bir üst olmalıdır menü id&#39;.
+ErrorFileNotFound=<b>File%</b> (Kötü yol, yanlış veya erişim izinleri PHP openbasedir veya safe_mode parametresi tarafından reddedildi) bulunamadı <b>değil</b>
+ErrorFunctionNotAvailableInPHP=<b>Fonksiyonu% s</b> bu özellik ama bu sürüm için geçerli değildir / PHP kurulumu gereklidir.
+ErrorDirAlreadyExists=Bu isimli bir dizin zaten var.
+ErrorFieldCanNotContainSpecialCharacters=<b>Alan% s</b> olmamalıdır özel karakterler içerir.
+WarningAllowUrlFopenMustBeOn=Parametre <b>allow_url_fopen</b> için filer <b>php.ini Bu</b> modülü tamamen çalışma olması için ayarlanmış olmalıdır. Bu dosyayı el ile değiştirmeniz gerekir.
+WarningBuildScriptNotRunned=<b>Script% s</b> henüz, veya grafik oluşturmak için orada göstermek için veri yok koştu değildi.
+WarningBookmarkAlreadyExists=Bu başlık veya bu hedef (URL) bir favori zaten var.
+WarningPassIsEmpty=Uyarı, veritabanı şifre boş. Bu bir güvenlik açığı olduğunu. Size veritabanına bir şifre gerekir ve bu yansıtacak şekilde dosya conf.php değiştirin.
+ErrorNoAccountancyModuleLoaded=No muhasebe modülü aktive
+ErrorExportDuplicateProfil=Bu profil adı zaten bu ihracat için var ayarlayın.
+ErrorLDAPSetupNotComplete=Dolibarr-eşleme LDAP tamamlanmış değil.
+ErrorLDAPMakeManualTest=A. Ldif dosya dizini% s oluşturuldu Try elle komut satırından hataları hakkında daha fazla bilgi için yüklemek için.
+ErrorCantSaveADoneUserWithZeroPercentage=Eğer alan &quot;tarafından&quot; da dolu yapılır &quot;ile bir eylem kaydedilemiyor&quot; başlatılmadı Statut.
+ErrorBillRefAlreadyExists=Ref oluşturulması için kullanılan zaten var.
+ErrorPleaseTypeBankTransactionReportName=Lütfen banka dekontunun adı Burada işlem (Biçim YYYYAA veya YYYYAAGG) bildirilmektedir
+ErrorRecordHasChildren=Çünkü bazı oğul olan kayıtları silinemedi.
+WarningConfFileMustBeReadOnly=Uyarı için yapılandırma dosyası <b>(htdocs / conf</b> web sunucusu tarafından üzerine olabilir <b>/ conf.php).</b> Bu ciddi bir güvenlik açığı olduğunu. Dosya izinlerini değiştirin işletim sistemi kullanıcı Web sunucusu tarafından kullanılan sadece okuma modu olmak. Windows ve disk için FAT biçimini kullanıyorsanız, bu dosya sistemi dosya izinleri eklemek izin vermez, bu nedenle tamamen güvenli olamaz bilmeniz gerekir.
+ErrorModuleRequireJavascript=Javascript bu özelliği çalışma için devre dışı olmamalıdır. Etkinleştirmek / devre dışı bırakmak için Javascript menüsü Go Home-&gt; Kur-&gt; Ekran.
+ErrorPasswordsMustMatch=Her iki yazdığınız şifreler birbiriyle eşleşmesi gerekir
+ErrorContactEMail=Teknik bir hata oluştu. Lütfen, en hata <b>kodu% email%</b> folowwing sağlamak için iletişim yöneticisi mesajınızı, hatta bu sayfanın bir ekran kopyasını ekleyerek daha iyi <b>s.</b>
+ErrorWrongValueForField=Alan <b>numarası%</b> için yanlış değer <b>&#39;ler)</b> regex <b>kural%</b> uymuyor <b>s (değeri&#39;% s</b>
+ErrorsOnXLines=<b>%</b> Doğum Hatalar kaynak hatları <b>var</b>
+WarningsOnXLines=<b>%</b> Uyarıları kaynak hatları <b>var</b>
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

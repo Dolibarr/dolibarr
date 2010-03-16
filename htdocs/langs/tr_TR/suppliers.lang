@@ -1,0 +1,45 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Suppliers=Tedarikçiler
+Supplier=Tedarikçi
+AddSupplier=Tedarikçisi ekle
+SupplierRemoved=Tedarikçi kaldırıldı
+SuppliersInvoice=Tedarikçiler fatura
+SuppliersInvoices=Tedarikçiler faturalar
+NewSupplier=Yeni ticaret
+History=Tarih
+ListOfSuppliers=Tedarikçiler listesi
+ShowSupplier=Show ticaret
+OrderDate=Sipariş Tarihi
+BuyingPrice=Fiyat Alış
+AddSupplierPrice=Ticaret Fiyatımız
+ChangeSupplierPrice=Değişim ticaret fiyat
+ErrorQtyTooLowForThisSupplier=Bu miktar çok tedarikçi veya fiyat bu ürün bu ticaret için tanımlanan düşük
+ErrorSupplierCountryIsNotDefined=Ülke bu ticaret için tanımlanmış değildir. Bu ilk düzeltin.
+ProductHasAlreadyReferenceInThisSupplier=Bu ürün zaten bu tedarikçi bir referans var
+NoRecordedSuppliers=No tedarikçiler kaydedildi
+SupplierPayment=Tedarikçi ödeme
+SuppliersArea=Tedarikçiler alanı
+RefSupplierShort=Ref. tedarikçi
+ExportDataset_fournisseur_1=Tedarikçi faturaları listesi ve faturalar &#39;hattı
+ExportDataset_fournisseur_2=Tedarikçi fatura ve ödemeler
+ApproveThisOrder=Bu siparişi onayla
+ConfirmApproveThisOrder=Bunu sipariş onaylamak istediğinizden emin misiniz?
+DenyingThisOrder=Bu siparişi Denying
+ConfirmDenyingThisOrder=Sen bu düzenin inkar etmek istediğinizden emin misiniz?
+ConfirmCancelThisOrder=Sen bu siparişi iptal etmek istediğinizden emin misiniz?
+AddCustomerOrder=Müşteri siparişi yarat
+AddCustomerInvoice=Müşteri fatura oluşturma
+AddSupplierOrder=Ticaret düzeni oluşturun
+AddSupplierInvoice=Tedarikçi faturası oluşturun
+ListOfSupplierProductForSupplier=Ürünler ve fiyatlar tedarikçi listesi <b>için% s</b>
+NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>iş%</b> son koştu <b>değil</b>
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

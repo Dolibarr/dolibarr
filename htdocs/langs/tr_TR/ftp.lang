@@ -1,0 +1,21 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+FTPClientSetup=FTP İstemcisi modülü kurulumu
+NewFTPClient=Yeni bir FTP bağlantısı kurulumu
+FTPArea=FTP Alanı
+FTPAreaDesc=Bu ekranda bir FTP sunucusu görünümünün içeriği gösterir
+SetupOfFTPClientModuleNotComplete=Kur FTP istemcisi modülünün tam değil gibi görünüyor
+FTPFeatureNotSupportedByYourPHP=PHP FTP fonksiyonları desteklemez
+FailedToConnectToFTPServer=FTP sunucusu, port% s) (% sunucuya bağlanamadı
+FailedToConnectToFTPServerWithCredentials=Tanımlı giriş ile FTP sunucusuna giriş yapılamadı / şifre
+FTPFailedToRemoveFile=<b>Dosya%</b> kaldırılamadı <b>var.</b>
+FTPFailedToRemoveDir=<b>Dizini%</b> kaldırılamadı (izinleri kontrol edin ve dizin boş <b>s).</b>
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

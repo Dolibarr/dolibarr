@@ -1,0 +1,100 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=Sözleşmeler alanı
+ListOfContracts=Sözleşmelerin Listesi
+LastContracts=Son% sözleşmeler olarak s
+AllContracts=Bütün sözleşmeler
+ContractCard=Sözleşme kartı
+ContractStatus=Sözleşme durumu
+ContractStatusNotRunning=Çalışıyor
+ContractStatusRunning=Koşu
+ContractStatusDraft=Taslak
+ContractStatusValidated=Validated
+ContractStatusClosed=Kapalı
+ServiceStatusInitial=Çalışıyor
+ServiceStatusRunning=Koşu
+ServiceStatusNotLate=Çalıştıran değil, süresi dolmuş
+ServiceStatusNotLateShort=Değil süresi doldu
+ServiceStatusLate=Çalışan, süresi doldu
+ServiceStatusLateShort=Süresi doldu
+ServiceStatusClosed=Kapalı
+ServicesLegend=Hizmetler efsanesi
+Contracts=Sözleşmeler
+Contract=Sözleşme
+ContractContacts=Sözleşme rehber
+NoContracts=No sözleşmeleri
+MenuServices=Hizmetler
+MenuInactiveServices=Hizmetleri etkin değil
+MenuRunningServices=Çalıştırmak
+MenuExpiredServices=Geçilmek hizmetleri
+MenuClosedServices=Kapalı hizmetleri
+NewContract=Yeni sözleşme
+AddContract=Sözleşme ekle
+SearchAContract=Bir sözleşme Arama
+DeleteAContract=Silmek bir sözleşme
+CloseAContract=Yakın bir sözleşme
+ConfirmDeleteAContract=Size ve tüm hizmetleri bu sözleşme silmek istediğinizden emin misiniz?
+ConfirmValidateContract=Bunu sözleşme doğrulamak istediğinizden emin misiniz?
+ConfirmCloseContract=Bu (veya) aktif tüm hizmet kapatılacak. Bunu sözleşme kapatmak istediğinizden emin misiniz?
+ConfirmCloseService=Size <b>tarih%</b> bu servisi kapatmak istediğiniz emin <b>misiniz?</b>
+ValidateAContract=Validate bir sözleşme
+ActivateService=Etkinleştirmek servisi
+ConfirmActivateService=Size <b>tarih%</b> bu servisi etkinleştirmek istediğiniz emin <b>misiniz?</b>
+DateContract=Sözleşme Tarihi
+DateServiceActivate=Hizmet Etkinleştirme Tarihi
+DateServiceUnactivate=Hizmet devre dışı bırakma tarihinden
+DateServiceStart=Hizmet başlaması için tarih
+DateServiceEnd=Hizmet sonu için tarih
+ShowContract=Show sözleşme
+ListOfServices=Hizmet listesi
+ListOfInactiveServices=Aktif değil hizmet listesi
+ListOfExpiredServices=Süresi dolmuş etkin hizmetlerin listesi
+ListOfClosedServices=Kapalı hizmet listesi
+ListOfRunningContractsLines=Sözleşme hatları çalışan listesi
+ListOfRunningServices=Çalışan servis listesi
+NotActivatedServices=Inaktif hizmetleri (arasında) sözleşmeleri onaylanmış
+BoardNotActivatedServices=Hizmetleri arasında etkinleştirmek sözleşmeleri onaylanmış
+LastContracts=Son% sözleşmeleri
+LastActivatedServices=Son% Hizmetler etkinleştirildiğinde s
+LastModifiedServices=Son% hizmetler olarak s
+EditServiceLine=Değiştir hizmet hattı
+ContractStartDate=Başlangıç tarihi
+ContractEndDate=Bitiş tarihi
+DateStartPlanned=Planlanan başlangıç tarihi
+DateStartPlannedShort=Planlanan başlangıç tarihi
+DateEndPlanned=Planlanan bitiş tarihi
+DateEndPlannedShort=Planlanan bitiş tarihi
+DateStartReal=Gerçek başlangıç tarihinden
+DateStartRealShort=Gerçek başlangıç tarihinden
+DateEndReal=Gerçek bitiş tarihi
+DateEndRealShort=Gerçek bitiş tarihi
+NbOfServices=Nb hizmetleri
+CloseService=Yakın hizmet
+ServicesNomberShort=% s servis (ler)
+RunningServices=Çalıştırmak
+BoardRunningServices=Geçilmek çalışan servisler
+ServiceStatus=Hizmet Durumu
+DraftContracts=Taslaklar sözleşmeleri
+CloseRefusedBecauseOneServiceActive=Sözleşme en az bir açık hizmet üzerinde olarak kapalı olamaz
+CloseAllContracts=Yakın bütün sözleşmeler
+DeleteContractLine=Silmek bir sözleşme hattı
+ConfirmDeleteContractLine=Bunu sözleşme satırı silmek istediğinizden emin misiniz?
+MoveToAnotherContract=Başka bir sözleşme içine hizmet taşıyın.
+ConfirmMoveToAnotherContract=Ben yeni hedef seçilen sözleşme ve bu sözleşmenin içine bu hizmeti taşımak istediğiniz onaylayın.
+ConfirmMoveToAnotherContractQuestion=Olan mevcut sözleşme aynı üçüncü parti (), sen bu hizmeti taşımak istediğiniz seç?
+PaymentRenewContractId=Sözleşme yenilemek satır (sayı% s)
+ExpiredSince=Son kullanma tarihi
+TypeContact_contrat_internal_SALESREPSIGN=Satış temsilcisi sözleşme imzalama
+TypeContact_contrat_internal_SALESREPFOLL=Aşağıdaki Satış temsilcisi sözleşme kadar
+TypeContact_contrat_external_BILLING=Fatura müşteri temas
+TypeContact_contrat_external_CUSTOMER=Takip müşteri UP
+TypeContact_contrat_external_SALESREPSIGN=Sözleşme imzalama müşteri temas
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

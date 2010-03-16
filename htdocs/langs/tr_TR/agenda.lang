@@ -1,0 +1,57 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=Eylemler
+ActionsArea=Eylem alanı (Olaylar ve görevler)
+Agenda=Gündem
+Agendas=Gündemler
+Calendar=Takvim
+Calendars=Takvimler
+AffectedTo=Etkilenen
+DoneBy=Yapıldı
+Events=Etkinlikler
+ListOfActions=Liste olaylar
+Location=Yer
+SearchAnAction=Bir eylem Search / görev
+MenuToDoActions=Tüm tamamlanmamış eylemler
+MenuDoneActions=Tüm sonlandırıldı eylemler
+MenuToDoMyActions=Eksik eylemler
+MenuDoneMyActions=My sona eylemler
+ListOfEvents=Dolibarr olaylar listesi
+ActionsAskedBy=Eylemler tarafından kaydedilen
+ActionsToDoBy=Eylemler etkilenen
+ActionsDoneBy=Eylemler tarafından yapılan
+AllMyActions=Tüm eylemler / görevleri
+AllActions=Her türlü eylem / görevleri
+ViewList=Profili listesi
+ViewCal=Takvim
+ViewWithPredefinedFilters=Profili önceden tanımlanmış filtreler ile
+AutoActions=Otomatik gündemi doldurma
+AgendaAutoActionDesc=Burada kendisi için Dolibarr otomatik gündeminde bir eylem oluşturmak istediğiniz olayları tanımlayın. Eğer hiçbir şey (varsayılan), sadece manuel eylemleri gündeme dahil edilecek kontrol edilir.
+AgendaSetupOtherDesc=Bu sayfayı yapılandırmak için gündeme modülü diğer parametreleri sağlar.
+ActionsEvents=Olaylar için hangi Dolibarr otomatik gündeminde bir hareket yaratacak
+PropalValidatedInDolibarr=Önerisi validated
+InvoiceValidatedInDolibarr=Fatura validated
+OrderValidatedInDolibarr=Sipariş validated
+NewCompanyToDolibarr=Üçüncü parti hazırlandı
+DateActionPlannedStart=Planlanan başlangıç tarihi
+DateActionPlannedEnd=Planlanan bitiş tarihi
+DateActionDoneStart=Gerçek başlangıç tarihinden
+DateActionDoneEnd=Gerçek bitiş tarihi
+DateActionStart=Başlangıç tarihi
+DateActionEnd=Bitiş tarihi
+AgendaUrlOptions1=Ayrıca filtre çıkış parametreler aşağıdaki ekleyebilirsiniz:
+AgendaUrlOptions2=<b>login =%</b> eylemler tarafından oluşturulan veya <b>kullanıcı%</b> tarafından yapılması için etkilenen çıkışı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions3=<b>logina =%%</b> eylemler kullanıcı tarafından oluşturulan çıktı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions4=<b>logint =%</b> eylemleri kullanıcı <b>için%</b> etkilenen çıkışı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions5=<b>logind =%</b> eylemler <b>kullanıcı%</b> tarafından yapılan çıktı kısıtlamak için <b>değil.</b>
+AgendaShowBirthdayEvents=Show doğum rehber
+AgendaHideBirthdayEvents=Sakla doğum rehber
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

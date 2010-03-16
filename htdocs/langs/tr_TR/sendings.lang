@@ -1,0 +1,61 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=Ref. gönderi
+Sending=Gönderi
+Sendings=Gönderiler
+Receivings=Receivings
+SendingsArea=Gönderiler alanı
+ListOfSendings=Sendings Listesi
+SendingMethod=Nakliye yöntemi
+SendingReceipt=Nakliye makbuz
+LastSendings=Son% s gönderiler
+SearchASending=Gönderi ara
+StatisticsOfSendings=Gönderiler için İstatistik
+NbOfSendings=Sayı gönderilerin
+SendingCard=Nakliye kartı
+NewSending=Yeni gönderi
+CreateASending=Bir gönderi oluşturun
+CreateSending=Gönderi oluşturun
+QtyOrdered=Adet sipariş
+QtyShipped=Adet sevk
+QtyToShip=Adet gemiye
+QtyReceived=Adet aldı
+KeepToShip=Gemi tutun
+OtherSendingsForSameOrder=Bu sipariş için diğer gönderiler
+DateSending=Tarih gönderme sipariş
+DateSendingShort=Tarih gönderme sipariş
+SendingsForSameOrder=Bu sipariş için Sevkiyatlar
+SendingsAndReceivingForSameOrder=Gönderiler ve receivings bu sipariş için
+SendingsToValidate=Doğrulamak için gönderme
+StatusSendingDraft=Taslak
+StatusSendingValidated=Validated (ürünler veya gemi zaten sevk)
+StatusSendingDraftShort=Taslak
+StatusSendingValidatedShort=Validated
+SendingSheet=Levha gönderme
+Carriers=Taşıyıcıları
+Carrier=Taşıyıcı
+CarriersArea=Taşıyıcıları alanı
+NewCarrier=Yeni taşıyıcı
+ConfirmDeleteSending=Sen bu gönderiyi silmek istediğinizden emin misiniz?
+ConfirmValidateSending=Sen bu gönderiyi valdate istediğinizden emin misiniz?
+ConfirmCancelSending=Sen bu gönderiyi iptal etmek istediğinizden emin misiniz?
+GenericTransport=Genel ulaşım
+Enlevement=Gotten müşteri tarafından
+DocumentModelSimple=Basit belge modeli
+WarningNoQtyLeftToSend=Uyarı, herhangi bir ürün bekleyen sevk gerekir.
+StatsOnShipmentsOnlyValidated=İstatistikler gönderiler sadece onaylanmış olarak yürütülen
+SendingMethodCATCH=Catch müşteri tarafından
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+NumRefModelJade=Return biçimi BLYY00001, bir referans numarası ... burada YY yıldır. Sonunda sayısı sıfır sıfırlanır asla.
+DocumentModelSirocco=Teslimat makbuzlarını için basit belge modeli
+DocumentModelTyphon=Teslimat makbuzlarını için daha fazla dokümanın modeli (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

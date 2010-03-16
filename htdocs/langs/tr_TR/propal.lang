@@ -1,0 +1,95 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=Ticari öneriler
+Proposal=Ticari önerisi
+ProposalShort=Öneri
+ProposalsDraft=Taslak ticari öneriler
+ProposalDraft=Taslak ticari önerisi
+ProposalsOpened=Açılış ticari öneriler
+Prop=Ticari öneriler
+CommercialProposal=Ticari önerisi
+CommercialProposals=Ticari öneriler
+ProposalContact=Öneri iletişim
+NewProp=Yeni ticari önerisi
+NewProposal=Yeni ticari önerisi
+NewPropal=Yeni öneri
+Prospect=Prospect
+ProspectList=Prospect listesi
+DeleteProp=Sil ticari önerisi
+ValidateProp=Validate ticari önerisi
+AddProp=Öneri ekle
+ConfirmDeleteProp=Bunu ticari öneriyi silmek istediğinizden emin misiniz?
+ConfirmValidateProp=Bunu ticari önerisini doğrulamak istediğinizden emin misiniz?
+LastPropals=Son% s önerileri
+LastClosedProposals=Son% s kapalı teklif
+LastModifiedProposals=Son% önerileri olarak s
+AllPropals=Tüm önerileri
+LastProposals=Son öneriler
+SearchAProposal=Bir öneri Arama
+ProposalsStatistics=Ticari öneriler &#39;istatistiklerine
+NumberOfProposalsByMonth=Numarasını aya göre
+AmountOfProposalsByMonthHT=Miktarı ayına göre (vergi net)
+NbOfProposals=Sayıda ticari öneriler
+ShowPropal=Show önerisi
+PropalsDraft=Taslaklar
+PropalsOpened=Açılış
+PropalsNotBilled=Kapalı değil gagalı
+PropalStatusDraft=Taslak (ihtiyaç doğrulama)
+PropalStatusValidated=Onaylı (teklif) açık
+PropalStatusOpened=Onaylı (teklif) açık
+PropalStatusClosed=Kapalı
+PropalStatusSigned=(Ihtiyaçlar fatura) olma
+PropalStatusNotSigned=Değil imzaladı (kapalı)
+PropalStatusBilled=Fatura
+PropalStatusDraftShort=Taslak
+PropalStatusValidatedShort=Validated
+PropalStatusOpenedShort=Açılış
+PropalStatusClosedShort=Kapalı
+PropalStatusSignedShort=Imzalı
+PropalStatusNotSignedShort=Değil imzaladı
+PropalStatusBilledShort=Fatura
+PropalsToClose=Ticari teklifleri yakın
+PropalsToBill=Tasarıyı imzaladı ticari öneriler
+ListOfProposals=Ticari öneriler listesi
+ActionsOnPropal=Önerisi üzerine Eylemler
+NoOpenedPropals=Ticari teklifler açıldı
+NoOtherOpenedPropals=Başka hiçbir ticari teklifler açıldı
+RefProposal=Ticari önerisi ref
+SendPropalByMail=Posta ticari önerisi gönder
+FileNotUploaded=Dosya yüklendiğinde değildi
+FileUploaded=Dosya başarıyla yüklenmedi
+AssociatedDocuments=Belgeleri teklifi ile ilişkili:
+ErrorCantOpenDir=Dizini açılamıyor
+DatePropal=Öneri Tarihi
+DateEndPropal=Tarih son geçerlilik
+DateEndPropalShort=Tarih sonu
+ValidityDuration=Geçerlilik süresi
+CloseAs=Durum yakın
+ClassifyBilled=Sınıflandırmak gagalı
+BuildBill=Build fatura
+RelatedBill=Ilgili fatura
+RelatedBills=Ilgili faturalar
+ErrorPropalNotFound=Propal% bulunamadı değil
+Estimate=Tahmini:
+EstimateShort=Tahmin
+OtherPropals=Diğer öneriler
+CopyPropalFrom=Mevcut öneri kopyalayarak ticari teklif oluşturma
+CreateEmptyPropal=Boş ticari teklifleri vierge veya ürün listesi Oluştur / hizmet
+DefaultProposalDurationValidity=Varsayılan ticari teklif geçerlilik süresi (gün olarak)
+UseCustomerContactAsPropalRecipientIfExist=Kullanım müşteri iletişim adresi yerine öneri olarak üçüncü adresi alıcı adresi tanımlı
+ClonePropal=Clone ticari önerisi
+ConfirmClonePropal=Bunu ticari <b>önerisi%</b> clone istediğinizden emin <b>misiniz?</b>
+ProposalsAndProposalsLines=Ticari önerisi ve hatları
+ProposalLine=Önerisi doğrultusunda
+DocModelAzurDescription=Tam bir öneri modeli (logo. ..)
+DocModelJauneDescription=Jaune modeli önerisi
+MarbreNumRefModelDesc=Format% syymm uyan numero-teklif nnnn nereye YY yılı, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

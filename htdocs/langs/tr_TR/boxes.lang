@@ -1,0 +1,64 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+BoxLastRssInfos=Rss bilgileri
+BoxLastProducts=Son% s ürün / hizmet
+BoxLastProductsInContract=Son% ürünleri sözleşmeli s / hizmet
+BoxLastSupplierBills=Son tedarikçinin faturaları
+BoxLastCustomerBills=Son müşteri faturaları
+BoxOldestUnpaidCustomerBills=Eski ödenmemiş faturaların müşteri
+BoxOldestUnpaidSupplierBills=Eski ödenmemiş faturalar tedarikçinin
+BoxLastProposals=Son ticari öneriler
+BoxLastProspects=Son umutları
+BoxLastCustomers=Son müşteriler
+BoxLastCustomerOrders=Son müşteri siparişleri
+BoxLastSuppliers=Son tedarikçiler
+BoxLastBooks=Son kitaplar
+BoxLastActions=Son eylemler
+BoxCurrentAccounts=Cari hesap dengesi
+BoxSalesTurnover=Satış cirosu
+BoxTotalUnpaidCustomerBills=Toplam ödenmemiş faturaların müşteri
+BoxTotalUnpaidSuppliersBills=Toplam ödenmemiş faturalar tedarikçinin
+BoxTitleLastBooks=Son% s kaydedildi kitaplar
+BoxTitleNbOfCustomers=Nombre de istemci
+BoxTitleLastRssInfos=Son%% haberleri s
+BoxTitleLastProducts=Son% s olarak ürün / hizmet
+BoxTitleLastCustomerOrders=Son% müşteri siparişlerini olarak s
+BoxTitleLastSuppliers=Son% tedarikçiler kaydedildi s
+BoxTitleLastCustomers=Son% müşterilerinin kaydedildi s
+BoxTitleLastCustomersOrProspects=Son% müşteriler veya potansiyel olarak var
+BoxTitleLastPropals=Son% önerileri kaydedildi s
+BoxTitleLastCustomerBills=Son% müşteri faturaları var
+BoxTitleLastSupplierBills=Son% tedarikçinin faturalar var
+BoxTitleLastProspects=Son% umutları kaydedildi s
+BoxTitleLastProductsInContract=Son% s ürün / hizmet bir sözleşmede
+BoxTitleOldestUnpaidCustomerBills=Eski% s ödenmemiş faturaların müşteri
+BoxTitleOldestUnpaidSupplierBills=Eski% s ödenmemiş faturalar tedarikçinin
+BoxTitleCurrentAccounts=Cari&#39;s dengeleri
+BoxTitleSalesTurnover=Satış cirosu
+BoxTitleTotalUnpaidCustomerBills=Ücretsiz müşteri faturaları
+BoxTitleTotalUnpaidSuppliersBills=Ücretsiz tedarikçinin faturaları
+BoxMyLastBookmarks=En son% s bookmarks
+FailedToRefreshDataInfoNotUpToDate=RSS akı yenileme yapılamadı. Son başarılı yenileme tarihi:% s
+LastRefreshDate=Son yenileme tarihi
+NoRecordedBookmarks=Favori yok tanımlanır. Tıkırtı <a href="%s">burada</a> yer imleri ekleyin.
+NoRecordedCustomers=No kayıtlı müşteriler
+BoxTitleLastActionsToDo=Son% yapmak eylemler var
+NoActionsToDo=Herhangi bir işlem yapmak
+NoRecordedOrders=No kayıtlı müşteri siparişleri
+NoRecordedProposals=No kaydedilen öneriler
+NoRecordedInvoices=No kayıtlı müşteri faturaları
+NoUnpaidCustomerBills=No ödenmemiş faturaların müşteri
+NoRecordedSupplierInvoices=No kaydedildi tedarikçinin faturaları
+NoUnpaidSupplierBills=No ödenmemiş faturalar tedarikçinin
+NoRecordedProducts=No kayıtlı ürün / hizmet
+NoRecordedProspects=No kaydedildi umutları
+NoContractedProducts=Herhangi bir ürün / hizmet sözleşmeli
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

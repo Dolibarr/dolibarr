@@ -1,0 +1,62 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+MenuECM=Belgeler
+DocsMine=Belgelerimi
+DocsGenerated=Oluşturulan belgeleri
+DocsElements=Elemanları belgeler
+DocsThirdParties=Belgeleri üçüncü şahıslara
+DocsContracts=Belgeler sözleşmeleri
+DocsProposals=Belgeleri teklifleri
+DocsOrders=Belgeleri siparişlerin
+DocsInvoices=Belgeler faturalar
+ECMNbOfDocs=Nb rehberinde belgelerin
+ECMNbOfDocsSmall=Nb DOC.
+ECMSection=Dizin
+ECMSectionManual=Manuel dizini
+ECMSectionAuto=Otomatik dizin
+ECMSectionsManual=Manuel ağacı
+ECMSectionsAuto=Otomatik ağacı
+ECMSections=Dizinler
+ECMRoot=Root
+ECMNewSection=Yeni dizin
+ECMAddSection=Manuel dizini ekle
+ECMNewSection=Yeni kılavuzu dizini
+ECMNewDocument=Yeni belge
+ECMCreationDate=Oluşturma tarihi
+ECMNbOfFilesInDir=Numarası dosya dizinde
+ECMNbOfSubDir=Sayıda alt-dizinleri
+ECMNbOfFilesInSubDir=Nunber alt iles of dizinleri
+ECMCreationUser=Creator
+ECMArea=ECM alanı
+ECMAreaDesc=ECM (Elektronik İçerik Yönetimi) alanında size, paylaşmak ve arama Dolibarr belgeleri hızlı bir şekilde her türlü tasarruf sağlar.
+ECMAreaDesc2=* Otomatik dizinleri otomatik olarak bir elemanın karttan belgeleri ekleyerek doldurulur. <br> * Manuel dizinleri belgeleri belirli bir eleman bağlı değil kaydetmek için kullanılabilir.
+ECMSectionWasRemoved=<b>Dizini% s</b> silindi.
+ECMDocumentsSection=Belge dizini
+ECMSearchByKeywords=Anahtar kelimelere göre ara
+ECMSearchByEntity=Nesneye göre ara
+ECMSectionOfDocuments=Belgelerin Dizinler
+ECMTypeManual=Kılavuzu
+ECMTypeAuto=Otomatik
+ECMDocsByThirdParties=Belgeleri üçüncü kişilere bağlı
+ECMDocsByProposals=Belgeleri teklifleri ile bağlantılı
+ECMDocsByOrders=Belgeleri müşterilerine sipariş bağlantılı
+ECMDocsByContracts=Belgeler sözleşmelere bağlı
+ECMDocsByInvoices=Belgeler müşterilerinin faturalarının bağlı
+ECMDocsByProducts=Belgeler ürünlere bağlı
+ECMNoDirecotyYet=No dizine
+ShowECMSection=Show dizini
+DeleteSection=Kaldır dizini
+ConfirmDeleteSection=Size <b>dizini%</b> silmek istediğinizi onaylamak mi <b>var?</b>
+ECMDirectoryForFiles=Dosyalar için Bağıl listesi
+CannotRemoveDirectoryContainsFiles=Çünkü bazı dosyaları içerir mümkün değildir Kaldırıldı
+ECMFileManager=Dosya yöneticisi
+ECMSelectASection=Seçin sol ağaç bir dizin ...
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

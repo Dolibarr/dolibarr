@@ -1,0 +1,44 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=Emir alan Standing
+CustomersStandingOrdersArea=Müşteriler ayakta siparişleri alan
+StandingOrders=Siparişler var
+StandingOrder=Siparişler var
+NewStandingOrder=Yeni ayakta sipariş
+Withdrawals=Para çekme
+Withdrawal=Çekilme
+WithdrawalsReceipts=Çekilme fişleri
+WithdrawalReceipt=Çekilme makbuz
+WithdrawalReceiptShort=Makbuz
+LastWithdrawalReceipts=Son% çekilme fişleri s
+WithdrawedBills=Geri faturalar
+WithdrawalsLines=Geri çekilme hattı
+RequestStandingOrderToTreat=Istek sipariş ayakta tedavi etmek için
+RequestStandingOrderTreated=Istek sipariş ayakta tedavi
+CustomersStandingOrders=Müşteri yönetmelik
+CustomerStandingOrder=Müşteri ayakta sipariş
+NbOfInvoiceToWithdraw=Nb fatura ile talep geri
+InvoiceWaitingWithdraw=Fatura geri bekliyor
+AmountToWithdraw=Miktar geri çekme
+WithdrawsRefused=Çekilmesi reddetti
+NoInvoiceToWithdraw=Ödeme yok müşteri fatura modu &quot;çekilme&quot; bekliyor. Çekilme &#39;sekmesinde&#39; Doğum fatura kartı Hadi bir istek yapmak.
+ResponsibleUser=Sorumlu kullanıcı
+WithdrawalsSetup=Çekilme kurulum
+WithdrawStatistics=Çekilmesi &#39;istatistiklerine
+WithdrawRejectStatistics=Çekilme &#39;istatistiklerine reddetti
+LastWithdrawalReceipt=Son% fişleri geri çekilme var
+MakeWithdrawRequest=Bir isteği geri olun
+ThirdPartyBankCode=Üçüncü taraf banka kodu
+ThirdPartyDeskCode=Üçüncü parti büro kodu
+NoInvoiceCouldBeWithdrawed=No fatura başarı ile withdrawed. Fatura kontrol şirketleri geçerli bir yasağı vardır.
+ClassCredited=Sınıflandırmak yatırıldı
+ClassCreditedConfirm=Size banka hesabına alacak olarak çekilmesi makbuz sınıflandırmak istediğinizden emin misiniz?
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

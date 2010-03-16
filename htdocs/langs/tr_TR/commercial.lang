@@ -1,0 +1,86 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=Ticari
+CommercialArea=Ticari alan
+CommercialCard=Ticari Kart
+CustomerArea=Customers Area
+Customer=Müşteri
+Customers=Müşteriler
+Prospect=Prospect
+Prospects=Prospects
+DeleteAction=Sil bir eylem / görev
+NewAction=Yeni bir eylem / görev
+AddAction=Eylem Ekle / görev
+AddAnAction=Bir eylem Ekle / görev
+AddActionRendezVous=Bir Rendezvous Görev ekle
+Rendez-Vous=Rendezvous
+ConfirmDeleteAction=Size bu görevi silmek istediğinizden emin misiniz?
+CardAction=Eylem kartı
+PercentDone=Yüzde tamamlamak
+ActionOnCompany=Görev firma hakkında
+ActionOnContact=Görev İletişim
+TaskRDV=Toplantılar
+TaskRDVWith=% S ile Toplantı
+ShowTask=Show görev
+ShowAction=Show eylem
+ActionsReport=Eylem raporu
+SalesRepresentative=Satış temsilcisi
+SalesRepresentatives=Satış temsilcileri
+SalesRepresentativeFollowUp=Satış temsilcisi (takip)
+SalesRepresentativeSignature=Satış temsilcisi (imza)
+CommercialInterlocutor=Ticari muhatap
+ErrorWrongCode=Yanlış kod
+NoSalesRepresentativeAffected=Özel bir satış temsilcisi etkilenen
+ShowCustomer=Show müşteri
+ShowProspect=Show umudu
+ListOfProspects=Potansiyel Listesi
+ListOfCustomers=Müşteri listesi
+LastDoneTasks=Son% görevleri tamamlanmış s
+LastRecordedTasks=Son kaydedilen görevleri
+LastActionsToDo=Son% eski işlemler tamamlandığında değil
+DoneAndToDoActionsFor=Tamamlanmış ve% görevleri yapmak için s
+DoneAndToDoActions=Tamamlanmış ve görevleri yapmak için
+DoneActions=Tamamlanan eylemler
+DoneActionsFor=% Için Tamamlanan eylemler var
+ToDoActions=Tamamlanmamış eylemler
+ToDoActionsFor=% Için eksik eylemler var
+SendPropalRef=Göndermek ticari önerisi% s
+SendOrderRef=Göndermek amacıyla% s
+StatusActionToDo=Yapmak için
+StatusActionDone=Tamamlamak
+MyActionsAsked=Ben kaydettik Eylemler
+MyActionsToDo=Ben yapmak zorunda Eylemler
+MyActionsDone=Eylemler bana etkilenen
+StatusActionInProcess=Süreçte
+TasksHistoryForThisContact=Bu iletişim Aksiyonlar
+LastProspectDoNotContact=Temas etmeyin
+LastProspectNeverContacted=Asla temas
+LastProspectToContact=Iletişim için
+LastProspectContactInProcess=Sürecinde İletişim
+LastProspectContactDone=İletişim done
+DateActionPlanned=Tarih eylem için planlanan
+DateActionDone=Tarih eylem yapıldı
+ActionAskedBy=Eylem tarafından sorulan
+ActionAffectedTo=Eyleme etkilenen
+ActionDoneBy=Eylem tarafından yapılan
+ActionUserAsk=Seslendiren
+ErrorStatusCantBeZeroIfStarted=Eğer alan <b>&#39;Tarih&#39; done</b> doldurulur, (veya) bitmiş, böylece alan <b>&#39;Durum&#39;</b> 0%% edilemez başlatılır eylem.
+ActionAC_TEL=Telefon
+ActionAC_FAX=Faks gönderme
+ActionAC_PROP=Öneri gönder
+ActionAC_EMAIL=Email
+ActionAC_RDV=Toplantılar
+ActionAC_FAC=Fatura gönder
+ActionAC_REL=Fatura (hatırlatma) Gönder
+ActionAC_CLO=Kapatmak
+ActionAC_EMAILING=Toplu e-posta gönder
+ActionAC_COM=Posta tarafindan gönder
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

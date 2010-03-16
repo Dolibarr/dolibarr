@@ -1,0 +1,34 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Donation=Bağış
+Donations=Bağış
+Donor=Donör
+Donors=Bağış
+AddDonation=Bağış ekle
+NewDonation=Yeni bağış
+DonationPromise=Hediye söz
+PromisesNotValid=Değil söz validated
+PromisesValid=Validated söz
+DonationsPaid=Bağış ödenmiş
+DonationsReceived=Alınan bağış
+PublicDonation=Kamu bağış
+DonationsNumber=Bağış sayısı
+DonationsArea=Bağış alan
+DonationStatusPromiseNotValidated=Taslak söz
+DonationStatusPromiseValidated=Validated söz
+DonationStatusPaid=Bağış aldı
+DonationStatusPromiseNotValidatedShort=Taslak
+DonationStatusPromiseValidatedShort=Validated
+DonationStatusPaidShort=Alınan
+ValidPromise=Validate söz
+BuildDonationReceipt=Build makbuz
+DonationsModels=Bağış makbuzları için Belgeler modelleri
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

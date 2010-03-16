@@ -1,0 +1,95 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Category=Kategori
+Categories=Kategoriler
+Rubrique=Kategori
+Rubriques=Kategoriler
+categories=kategoriler
+TheCategorie=Kategori
+NoCategoryYet=Bu tür oluşturulan Kategori yok
+In=Içinde
+AddIn=Ekleyin
+modify=değiştirmek
+Classify=Sınıflandırmak
+CategoriesArea=Kategoriler alanı
+ProductsCategoriesArea=Ürünler / Hizmetler &#39;kategorileri alanı
+SuppliersCategoriesArea=Tedarikçilerin kategoriler alanı
+CustomersCategoriesArea=Müşteri kategoriler alanı
+ThirdPartyCategoriesArea=Üçüncü tarafların kategoriler alanı
+MainCats=Ana kategoriler
+SubCats=Alt
+CatStatistics=İstatistikler
+CatList=Kategorilerin Listesi
+AllCats=Tüm kategoriler
+ViewCat=Kategorideki
+NewCat=Kategori ekle
+NewCategory=Yeni kategori
+ModifCat=Değiştirmek kategori
+CatCreated=Kategori hazırlandı
+CreateCat=Kategori yarat
+CreateThisCat=Bu kategori yarat
+ValidateFields=Doğrulamak alanları
+NoSubCat=Hayır alt.
+SubCatOf=Alt kategori
+FoundCats=Bulundu kategoriler
+FoundCatsForName=Kategoriler ad bulundu:
+FoundSubCatsIn=Alt kategori bulundu
+ErrSameCatSelected=Birkaç kez aynı kategoride seçilen
+ErrForgotCat=Bu kategori seçmek unuttum
+ErrForgotField=Bu alanlar bilgilendirmek unuttum
+ErrCatAlreadyExists=Bu ad zaten kullanılıyor
+AddProductToCat=Bir kategoriye Bu ürün ekle?
+ImpossibleAddCat=Imkansız kategori eklemek
+ImpossibleAssociateCategory=Kategoriye ilişkilendirmek imkansız
+WasAddedSuccessfully=<b>% s</b> başarıyla eklendi.
+ObjectAlreadyLinkedToCategory=Eleman zaten bu kategoriye bağlıdır.
+CategorySuccessfullyCreated=Bu kategoride% s başarı ile eklendi.
+ProductIsInCategories=Ürün / hizmet sınıflandırması aşağıdaki sahibi
+SupplierIsInCategories=Üçüncü parti kategoriler tedarikçiler aşağıdaki sahibi
+CompanyIsInCustomersCategories=Bu üçüncü parti müşteri / potansiyel sınıflandırması aşağıdaki sahibi
+CompanyIsInSuppliersCategories=Bu üçüncü parti kategoriler tedarikçiler aşağıdaki sahibi
+ProductHasNoCategory=Bu ürün / hizmet herhangi bir kategoride değil
+SupplierHasNoCategory=Bu ticaret herhangi bir kategoride değil
+CompanyHasNoCategory=Firmanın herhangi bir kategoride değil
+ClassifyInCategory=Sınıflandırmak kategoride
+NoneCategory=Hiçbiri
+CategoryExistsAtSameLevel=Bu kategoride zaten bu Ref var
+ReturnInProduct=Geri ürün / hizmet kartı
+ReturnInSupplier=Ticaret kartı geri dön
+ReturnInCompany=Geri müşteriye / Prospect kartı
+ContentsVisibleByAll=Içeriği herkes tarafından görülebilir
+ContentsVisibleByAllShort=Içeriği herkes tarafından görülebilir
+ContentsNotVisibleByAllShort=Içeriği herkes tarafından görünür değil
+CategoriesTree=Kategoriler ağacı
+DeleteCategory=Kategori Sil
+ConfirmDeleteCategory=Bu kategoriyi silmek istediğinizden emin misiniz?
+RemoveFromCategory=Kategoride ile Kaldır bağlantısını
+RemoveFromCategoryConfirm=Size işlem ve kategori arasındaki bağlantıyı kaldırmak istediğinizden emin misiniz?
+NoCategoriesDefined=Kategori yok tanımlı
+SuppliersCategoryShort=Tedarikçiler kategori
+CustomersCategoryShort=Müşteriler kategori
+ProductsCategoryShort=Ürün kategorisi
+SuppliersCategoriesShort=Tedarikçiler kategoriler
+CustomersCategoriesShort=Müşteriler kategoriler
+CustomersProspectsCategoriesShort=Custo. / prosp. kategoriler
+ProductsCategoriesShort=Ürün kategorileri
+ThisCategoryHasNoProduct=Bu kategoride herhangi bir ürün içermez.
+ThisCategoryHasNoSupplier=Bu kategoride herhangi bir tedarikçi içermez.
+ThisCategoryHasNoCustomer=Bu kategoride herhangi bir müşteri içermez.
+AssignedToCustomer=Müşteri Assigned
+AssignedToTheCustomer=Müşteri Assigned
+InternalCategory=İç kategori
+CategoryContents=Kategori içeriği
+CategId=Kategori id
+CatSupList=Tedarikçi kategoriler listesi
+CatCusList=Müşteri listesi / umudu kategoriler
+CatProdList=Ürün kategorileri Listesi
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

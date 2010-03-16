@@ -1,0 +1,42 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Intervention=Müdahale
+Interventions=Müdahaleler
+InterventionCard=Müdahale kartı
+NewIntervention=Yeni müdahale
+AddIntervention=Müdahale ekle
+ListOfInterventions=Müdahaleler listesi
+EditIntervention=Değiştir müdahale
+LastInterventions=Son% müdahaleler s
+AllInterventions=Tüm müdahaleler
+CreateDraftIntervention=Taslak oluşturma
+CustomerDoesNotHavePrefix=Müşteri bir önek yok
+InterventionContact=Müdahale iletişim
+DeleteIntervention=Sil müdahale
+ValidateIntervention=Validate müdahale
+ModifyIntervention=Değiştirmek müdahale
+DeleteInterventionLine=Sil müdahale hattı
+ConfirmDeleteIntervention=Bunu müdahale silmek istediğinizden emin misiniz?
+ConfirmValidateIntervention=Bunu müdahale doğrulamak istediğinizden emin misiniz?
+ConfirmModifyIntervention=Bunu müdahale değiştirmek istediğinizden emin misiniz?
+ConfirmDeleteInterventionLine=Bunu müdahale satırı silmek istediğinizden emin misiniz?
+NameAndSignatureOfInternalContact=Adı ve müdahalede imza:
+NameAndSignatureOfExternalContact=Adı ve müşteri imzası:
+DocumentModelStandard=Müdahaleler için standart belge modeli
+TypeContact_fichinter_internal_INTERREPFOLL=Temsilcisi aşağıdaki müdahale kadar
+TypeContact_fichinter_internal_INTERVENING=Müdahalede
+TypeContact_fichinter_external_BILLING=Fatura müşteri temas
+TypeContact_fichinter_external_CUSTOMER=Aşağıdaki müşteri UP
+ArcticNumRefModelDesc1=Generic numarası modeli
+ArcticNumRefModelError=Başarısız etkinleştirmek
+PacificNumRefModelDesc1=Format% syymm uyan numero-nnnn nereye yy yıl, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
+PacificNumRefModelError=Bir müdahale kart $ syymm başlayarak zaten var ve sıra bu model ile uyumlu değildir. Kaldırın ya da yeniden adlandırın bu modül etkinleştirin.
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

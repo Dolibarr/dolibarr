@@ -1,0 +1,31 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Delivery=Teslimat
+Deliveries=Teslimatları
+DeliveryCard=Teslimat kartı
+DeliveryOrder=Ordino
+DeliveryOrders=Teslimat sipariş
+DeliveryDate=Teslim tarihi
+DeliveryDateShort=Deliv. tarih
+CreateDeliveryOrder=Oluşturmak teslim sipariş
+QtyDelivered=Adet teslim
+SetDeliveryDate=Set nakliye Tarih
+ValidateDeliveryReceipt=Doğrulamak teslim edildi
+ValidateDeliveryReceiptConfirm=Bunu teslim edildi bilgisi doğrulamak istediğinizden emin misiniz?
+DeliveryMethod=Dağıtım yöntemi
+TrackingNumber=Takip numarası
+NameAndSignature=Adı ve İmza:
+ToAndDate=____ / Doğum To___________________________________ _____ / __________
+GoodStatusDeclaration=Si iyi durumda, yukarıda alınan mallar
+Deliverer=Kurtarıcı:
+Sender=Gönderenin
+Recipient=Alıcı
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

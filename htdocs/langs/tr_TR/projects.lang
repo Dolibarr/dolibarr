@@ -1,0 +1,63 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+Project=Proje
+Projects=Projeler
+SharedProject=Paylaşılan proje
+Myprojects=My projeler
+ProjectsArea=Projeler alanı
+NewProject=Yeni proje
+AddProject=Proje Ekle
+DeleteAProject=Silmek bir proje
+DeleteATask=Silmek bir görev
+ConfirmDeleteAProject=Sen bu projeyi silmek istediğinizden emin misiniz?
+ConfirmDeleteATask=Size bu görevi silmek istediğinizden emin misiniz?
+OfficerProject=Memur proje
+LastProjects=Son% s projeler
+AllProjects=Tüm projeler
+ProjectsList=Proje listesi
+ShowProject=Show proje
+SetProject=Set proje
+NoProject=Hiçbir proje tanımlı ya da ait
+NbOpenTasks=Nb açıldı görev
+NbOfProjects=Nb projeleri
+TimeSpent=Time Spent
+RefTask=Ref. görev
+LabelTask=Etiket görev
+NewTimeSpent=Yeni bir zaman geçirdim
+MyTimeSpent=My time geçirdi
+MyTasks=My görevleri
+Tasks=Görevler
+Task=Görev
+NewTask=Yeni görev
+AddTask=Görev ekle
+AddDuration=Süresi Ekle
+Activity=Etkinlik
+Activities=Görevleri / faaliyetleri
+MyActivity=My etkinliği
+MyActivities=My görevleri / faaliyetleri
+DurationEffective=Etkili süresi
+MyProjects=My projeler
+Time=Zaman
+ListProposalsAssociatedProject=Ticari teklifleri proje ile ilgili Listesi
+ListOrdersAssociatedProject=Müşteri siparişleri proje ile ilgili Listesi
+ListInvoicesAssociatedProject=Müşterilerin faturalarının proje ile ilgili Listesi
+ListPredefinedInvoicesAssociatedProject=Müşterilerin önceden tanımlanmış faturalar proje ile ilişkili Listesi
+ListSupplierOrdersAssociatedProject=Tedarikçilerin siparişleri proje ile ilgili Listesi
+ListSupplierInvoicesAssociatedProject=Tedarikçilerin faturaların proje ile ilgili Listesi
+ListContractAssociatedProject=Sözleşme proje ile ilişkili Listesi
+ActivityOnProjectThisWeek=Proje Faaliyet bu hafta
+ActivityOnProjectThisMonth=Proje Etkinlik bu ay
+ActivityOnProjectThisYear=Proje Etkinlik bu yıl
+ChildOfTaks=Proje Çocuk / görev
+NotOwnerOfProject=Bu özel projenin sahibi değil
+AffectedTo=Etkilenen
+CantRemoveProject=Gibi diğer bazı nesneler tarafından (fatura, sipariş veya başvurulan Bu proje kaldırılamaz diğer). Işaret sekmesine bakın.
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

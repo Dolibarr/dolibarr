@@ -1,0 +1,78 @@
+/*
+ * Language code: tr_TR
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-03-15 19:05:26
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=Depo kartı
+Warehouse=Depo
+NewWarehouse=Yeni depo / Stok alanı
+MenuNewWarehouse=Yeni depo
+WarehouseOpened=Depo açıldı
+WarehouseClosed=Depo kapalı
+WarehouseSource=Kaynak deposu
+WarehouseTarget=Hedef depo
+ValidateSending=Sil gönderme
+CancelSending=Iptal gönderme
+DeleteSending=Sil gönderme
+Stock=Stok
+Stocks=Stokları
+Movement=Hareket
+Movements=Hareketleri
+ErrorWarehouseRefRequired=Depo referans adı gereklidir
+ErrorWarehouseLabelRequired=Depo etiketi gereklidir
+CorrectStock=Doğru stok
+ListOfWarehouses=Depolar listesi
+ListOfStockMovements=Stok hareketleri listesi
+StocksArea=Hisse senedi alan
+Location=Yer
+LocationSummary=Kısa adı yer
+NumberOfProducts=Ürünlerin toplam sayısı
+LastMovement=Son hareket
+LastMovements=Son hareketler
+Units=Birimler
+Unit=Birim
+StockCorrection=Doğru stok
+StockMovement=Transfer
+StockMovements=Stock transfer
+NumberOfUnit=Sayı birimlerinin
+TotalStock=Stock Toplam
+StockTooLow=Stok çok düşük
+EnhancedValue=Fiyat
+PMPValue=Ağırlıklı ortalama fiyat
+PMPValueShort=WAP
+EnhancedValueOfWarehouses=Depolar değeri
+UserWarehouseAutoCreate=Otomatik olarak bir kullanıcı oluştururken bir stok oluşturma
+QtyDispatched=Miktar gönderdi
+OrderDispatch=Stok sevketme
+RuleForStockManagementDecrease=Stok yönetimi azaltmak için Kural
+RuleForStockManagementIncrease=Stok yönetimi artış Kural
+DeStockOnBill=Faturaların gerçek stokları azaltın / kredi notları doğrulama (uyarı, bu sürümde, bu hisse senedi olarak bir depo sayısı 1 sadece)&#39;s
+DeStockOnValidateOrder=Emir notları doğrulama (uyarısı, bu sürüm gerçek stokları azaltın, bu hisse senedi olarak bir depo sayısı 1 sadece)&#39;s
+DeStockOnShipment=Gönderi doğrulama gerçek stokları azaltın (önerilir)
+ReStockOnBill=Faturaların gerçek hisse arttır / kredi notları doğrulama (uyarı, bu sürümde, bu hisse senedi olarak bir depo sayısı 1 sadece)&#39;s
+ReStockOnValidateOrder=Emir notları doğrulama (uyarısı, bu sürüm gerçek stokları artış, bu hisse senedi olarak bir depo sayısı 1 sadece)&#39;s
+StockDiffPhysicTeoric=Nedenle fark stok fiziksel ve teorik için
+StockLimitShort=Limit
+StockLimit=Için borsa sınırı uyarıları
+PhysicalStock=Mevcut stok
+RealStock=Gerçek Stok
+TheoreticalStock=Therocial stok
+VirtualStock=Sanal stok
+MininumStock=Minimum stok
+StockUp=Stok
+MininumStockShort=Stok dk
+StockUpShort=Stok
+IdWarehouse=Id depo
+DescWareHouse=Açıklamasına depo
+LieuWareHouse=Localisation depo
+WarehousesAndProducts=Depolar ve ürünler
+AverageUnitPricePMPShort=Ortalama giriş fiyat
+AverageUnitPricePMP=Ortalama giriş fiyat
+EstimatedStockValueShort=Stokunun Tahmini değeri
+EstimatedStockValue=Stokunun Tahmini değeri
+// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
