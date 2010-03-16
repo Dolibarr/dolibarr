@@ -68,7 +68,7 @@ To upgrade Dolibarr from an old version to this one:
   http://yourdolibarrhost/something/install/
   
   Then choose the "update" option according to your case.
-  Note: Migrate process can ben runned safely several times.
+  Note: Migrate process can be ran safely several times.
   
 
 III - WHAT'S NEW
@@ -97,7 +97,7 @@ Main modules/features:
 - ECM (Electronic Content Management)
 - EMailings
 - Agenda with ical,vcal export for third tools integration
-- Management of fundation members
+- Management of foundation members
 - Donation management
 
 Other modules:
