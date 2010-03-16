@@ -190,3 +190,11 @@ font-size: 12px;
 border: 1px solid #8CACBB;
 padding: 4px 4px 4px 4px;
 }
+
+div.visible {
+    display: block;
+}
+
+div.hidden {
+    display: none;
+}

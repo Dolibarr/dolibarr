@@ -140,7 +140,7 @@ IfAlreadyExistsCheckOption=Si ce nom est correct et que cette base n'existe pas 
 OpenBaseDir=Paramètre php openbasedir
 YouAskToCreateDatabaseSoRootRequired=Vous avez coché la case "Créer la base de données". Pour cela, le login/mot de passe du super utilisateur (en bas de formulaire) sont obligatoire.
 YouAskToCreateDatabaseUserSoRootRequired=Vous avez coché la case "Créer l'utilisateur propriétaire" de la base. Pour cela, le login/mot de passe du super utilisateur (en bas de formulaire) sont obligatoire.
-NextStepMightLastALongTime=L'étape suivante peut durer quelques minutes. Après avoir validé, merci d'attendre l'affichage complet de la page suivante pour poursuivre.
+NextStepMightLastALongTime=L'étape en cours peut durer quelques minutes. Merci d'attendre l'affichage complet de la page suivante pour poursuivre.
 
 #########
 # upgrade

@@ -481,12 +481,12 @@ function jsinfo()
 {
 	ok=true;
 
-	document.getElementById('nextbutton').style.display='hidden';
-	alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
+	//alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
 
+	document.getElementById('nextbutton').style.visibility="hidden";
+	document.getElementById('pleasewait').style.visibility="visible";
 
-	//return ok;
-	return false;
+	return ok;
 }
 </script>
 
