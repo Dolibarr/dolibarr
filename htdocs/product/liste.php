@@ -27,6 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
+require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("products");
@@ -55,6 +56,10 @@ if ($type=='0') $result=restrictedArea($user,'produit',$id,'product','','',$fiel
 else if ($type=='1') $result=restrictedArea($user,'service',$id,'service','','',$fieldid);
 else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid);
 
+// Load sale and categ filters
+$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
+$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+
 
 
 /*
@@ -78,6 +83,8 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 /*
  * View
  */
+
+$htmlother=new FormOther($db);
 
 if ($_GET["canvas"] <> '' && file_exists('templates/product.'.$_GET["canvas"].'.class.php') )
 {
@@ -104,13 +111,15 @@ $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-
+// We'll need this table joined to the select in order to filter by categ
+if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 if ($_GET["fourn_id"] > 0)
 {
 	$fourn_id = $_GET["fourn_id"];
 	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 $sql.= " WHERE p.entity = ".$conf->entity;
+if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
 if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
 if ($sall)
@@ -131,11 +140,11 @@ if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
 if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
 if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
-	$sql.= " AND p.envente = ".$_GET["envente"];
+	$sql.= " AND p.envente = ".addslashes($_GET["envente"]);
 }
 if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
 {
-	$sql.= " AND p.canvas = '".$_GET["canvas"]."'";
+	$sql.= " AND p.canvas = '".addslashes($_GET["canvas"])."'";
 }
 if($catid)
 {
@@ -145,7 +154,12 @@ if ($fourn_id > 0)
 {
 	$sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
-$sql.= " ORDER BY $sortfield $sortorder ";
+// Insert categ filter
+if ($search_categ)
+{
+	$sql .= " AND cp.fk_categorie = ".addslashes($search_categ);
+}
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1 ,$offset);
 $resql = $db->query($sql) ;
 
@@ -240,6 +254,22 @@ if ($resql)
 		print '<input type="hidden" name="type" value="'.$type.'">';
 
 		print '<table class="liste" width="100%">';
+
+		// Filter on categories
+	 	$moreforfilter='';
+		if ($conf->categorie->enabled)
+		{
+		 	$moreforfilter.=$langs->trans('Categories'). ': ';
+			$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
+		 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		}
+	 	if ($moreforfilter)
+		{
+			print '<tr class="liste_titre">';
+			print '<td class="liste_titre" colspan="9">';
+		    print $moreforfilter;
+		    print '</td></tr>';
+		}
 
 		// Lignes des titres
 		print "<tr class=\"liste_titre\">";
