@@ -26,8 +26,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
-$path=preg_replace('@[\\\/]+$@','',$path).'/';
+$path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {

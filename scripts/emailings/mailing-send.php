@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,9 @@
  *		\version	$Id$
  */
 
-
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
-$path=preg_replace('@[\\\/]+$@','',$path).'/';
+$path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
