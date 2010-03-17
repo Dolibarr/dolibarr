@@ -124,12 +124,12 @@ if (! defined('NOCSRFCHECK') && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-// Add real path in session
+// Add real path in session name
 $realpath='';
 if (preg_match('/\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"]))
 {
 	$result = preg_match('/^([^.]+)\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"],$regs);
-	$realpath = $regs[1];
+	$realpath = isset($regs[1])?$regs[1]:'';
 }
 
 // Init session. Name of session is specific to Dolibarr instance.
