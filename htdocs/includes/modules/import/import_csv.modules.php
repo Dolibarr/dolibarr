@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -330,7 +330,7 @@ class ImportCsv extends ModeleImports
 						else if ($arrayrecord[($key-1)]['type'] > 0)
 						{
 							$newval=$arrayrecord[($key-1)]['val'];
-							$listvalues.="'".$arrayrecord[($key-1)]['val']."'";
+							$listvalues.="'".addslashes($arrayrecord[($key-1)]['val'])."'";
 						}
 
 						// Make some tests
