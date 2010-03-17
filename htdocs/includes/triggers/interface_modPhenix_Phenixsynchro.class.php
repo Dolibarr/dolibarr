@@ -52,7 +52,7 @@ class InterfacePhenixsynchro
 
         $this->name = preg_replace('/^Interface/i','',get_class($this));
         $this->family = "phenix";
-        $this->description = "Triggers of this module allows to add an event inside Phenix calenar for each Dolibarr business event.";
+        $this->description = "Triggers of this module allows to add an event inside Phenix calendar for each Dolibarr business event.";
         $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
     }
 
