@@ -90,7 +90,7 @@ if ($year > 0)
 	$sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
 	$sql .= ")";
 }
-$sql.= " GROUP BY c.id, c.libelle, s.rowid, s.fk_type, s.periode, s.date_ech";
+$sql.= " GROUP BY c.id, c.libelle, s.rowid, s.fk_type, s.periode, s.date_ech, pc.rowid, pc.datep, pc.amount";
 $sql.= " ORDER BY c.libelle ASC";
 
 dol_syslog("compta/charges/index.php: select payment sql=".$sql);
