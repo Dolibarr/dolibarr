@@ -189,31 +189,28 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 /*
  * Spip
  */
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+$var=!$var;
+if ($conf->global->ADHERENT_USE_SPIP)
 {
-	$var=!$var;
-	if ($conf->global->ADHERENT_USE_SPIP)
-	{
-		$lien=img_tick().' ';
-		$lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
-		// Edition des varibales globales rattache au theme Mailman
-		$constantes=array('ADHERENT_USE_SPIP_AUTO',
-			    'ADHERENT_SPIP_SERVEUR',
-			    'ADHERENT_SPIP_DB',
-			    'ADHERENT_SPIP_USER',
-			    'ADHERENT_SPIP_PASS'
-			    );
-			    print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
-			    form_constantes($constantes);
-	}
-	else
-	{
-		$lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
-		print_fiche_titre("SPIP - Systeme de publication en ligne",$lien,'');
-	}
-
-	print "<hr>\n";
+	$lien=img_tick().' ';
+	$lien.='<a href="'.DOL_URL_ROOT.'/admin/adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
+	// Edition des varibales globales rattache au theme Mailman
+	$constantes=array('ADHERENT_USE_SPIP_AUTO',
+		    'ADHERENT_SPIP_SERVEUR',
+		    'ADHERENT_SPIP_DB',
+		    'ADHERENT_SPIP_USER',
+		    'ADHERENT_SPIP_PASS'
+		    );
+		    print_fiche_titre("SPIP CMS",$lien,'');
+		    form_constantes($constantes);
 }
+else
+{
+	$lien='<a href="'.DOL_URL_ROOT.'/admin/adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
+	print_fiche_titre("SPIP - CMS",$lien,'');
+}
+
+print "<hr>\n";
 
 /*
  * Edition info modele document
