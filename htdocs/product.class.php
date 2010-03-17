@@ -398,7 +398,6 @@ class Product extends CommonObject
 		$this->libelle = trim($this->libelle);
 		$this->description = trim($this->description);
 		$this->note = trim($this->note);
-		$this->stock_loc = trim($this->stock_loc);
 		$this->weight = price2num($this->weight);
 		$this->weight_units = trim($this->weight_units);
 		$this->length = price2num($this->length);
@@ -428,7 +427,6 @@ class Product extends CommonObject
 		$sql .= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 		$sql .= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 		$sql .= ",description = '" . addslashes($this->description) ."'";
-		$sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
 		$sql .= ",note = '" .        addslashes($this->note) ."'";
 		$sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 		$sql .= " WHERE rowid = " . $id;
@@ -921,7 +919,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " stock_loc, weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
+		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " stock, pmp,";
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -954,7 +952,6 @@ class Product extends CommonObject
 			$this->duration_unit      = substr($result["duration"],-1);
 			$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
 			$this->canvas             = $result["canvas"];
-			$this->stock_loc          = $result["stock_loc"];
 			$this->weight             = $result["weight"];
 			$this->weight_units       = $result["weight_units"];
 			$this->length             = $result["length"];

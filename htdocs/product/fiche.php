@@ -182,7 +182,6 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			$product->note               = dol_htmlcleanlastbr($_POST["note"]);
 			$product->status             = $_POST["statut"];
 			$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-			$product->stock_loc          = $_POST["stock_loc"];
 			$product->duration_value     = $_POST["duration_value"];
 			$product->duration_unit      = $_POST["duration_unit"];
 			$product->canvas             = $_POST["canvas"];

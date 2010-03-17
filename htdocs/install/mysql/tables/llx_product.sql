@@ -43,7 +43,6 @@ create table llx_product
   fk_product_type    integer      DEFAULT 0,		-- Type 0 for regular product, 1 for service
   duration           varchar(6),
   seuil_stock_alerte integer      DEFAULT 0,
-  stock_loc          varchar(10),               	-- emplacement dans le stock
   barcode            varchar(255) DEFAULT NULL,
   fk_barcode_type    integer      DEFAULT 0,
   accountancy_code_sell       varchar(15),          -- code compta vente
