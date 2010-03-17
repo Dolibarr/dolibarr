@@ -83,3 +83,5 @@ alter table llx_product add column   surface_units      tinyint      DEFAULT NUL
 
 alter table llx_product add column   accountancy_code_sell       varchar(15) after fk_barcode_type;
 alter table llx_product add column   accountancy_code_buy        varchar(15) after accountancy_code_sell;
+
+ALTER TABLE llx_product drop column stock_loc;
