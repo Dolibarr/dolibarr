@@ -85,4 +85,4 @@ alter table llx_product add column   accountancy_code_sell       varchar(15) aft
 alter table llx_product add column   accountancy_code_buy        varchar(15) after accountancy_code_sell;
 
 ALTER TABLE llx_product drop column stock_loc;
-ALTER TABLE llx_product add column location        varchar(32);
+ALTER TABLE llx_product_stock add column location        varchar(32);
