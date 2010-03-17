@@ -136,20 +136,24 @@ if ($conf->service->enabled)
 	$statServices.= '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
 	$statServices.= "</tr>";
 }
+$total=0;
 if ($type == '0')
 {
 	print $statProducts;
+	$total=round($prodser[0][0])+round($prodser[0][1]);
 }
 else if ($type == '1')
 {
 	print $statServices;
+	$total=round($prodser[1][0])+round($prodser[1][1]);
 }
 else
 {
 	print $statProducts.$statServices;
+	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[0][0])+round($prodser[0][1]);
 }
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
-print round($prodser[1][0])+round($prodser[1][1])+round($prodser[0][0])+round($prodser[0][1]);
+print $total;
 print '</td></tr>';
 print '</table>';
 
