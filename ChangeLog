@@ -21,7 +21,8 @@ For developers:
 - More comments in code.
 - Uniformize some code. 
 - First delete of useless pre.inc.php files.
-- Fix W3C errors in page forging. 
+- Fix W3C errors in page forging.
+- Qual: Mutualize code of menu managers.
 
 
 ***** ChangeLog for 2.8 compared to 2.7 *****
