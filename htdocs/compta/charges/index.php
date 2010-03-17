@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/compta/charges/index.php
  *      \ingroup    compta
- *		\brief      Page to list social contributions
+ *		\brief      Page to list payments of social contributions and vat
  *		\version    $Id$
  */
 
@@ -39,7 +39,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
-if (! $year) { $year=date("Y", time()); }
+if (! $year && $_GET["mode"] != 'sconly') { $year=date("Y", time()); }
 
 
 
@@ -53,15 +53,23 @@ $payment_sc_static=new PaiementCharge($db);
 
 llxHeader('',$langs->trans("TaxAndDividendsArea"));
 
-print_fiche_titre($langs->trans("TaxAndDividendsArea"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
+$title=$langs->trans("TaxAndDividendsArea");
+if ($_GET["mode"] == 'sconly') $title=$langs->trans("SocialContributionsPayments");
 
-print $langs->trans("DescTaxAndDividendsArea").'<br>';
-print "<br>";
+print_fiche_titre($title,($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
+
+if ($_GET["mode"] != 'sconly')
+{
+	print $langs->trans("DescTaxAndDividendsArea").'<br>';
+	print "<br>";
+}
 
 
 // Social contributions
-
-print_titre($langs->trans("SocialContributions"));
+if ($_GET["mode"] != 'sconly')
+{
+	print_titre($langs->trans("SocialContributionsPayments"));
+}
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td width="120">'.$langs->trans("PeriodEndDate").'</td>';
@@ -90,7 +98,7 @@ if ($year > 0)
 	$sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
 	$sql .= ")";
 }
-$sql.= " GROUP BY c.id, c.libelle, s.rowid, s.fk_type, s.periode, s.date_ech";
+$sql.= " GROUP BY c.id, c.libelle, s.rowid, s.fk_type, s.periode, s.date_ech, pc.rowid, pc.datep, pc.amount";
 $sql.= " ORDER BY c.libelle ASC";
 
 dol_syslog("compta/charges/index.php: select payment sql=".$sql);

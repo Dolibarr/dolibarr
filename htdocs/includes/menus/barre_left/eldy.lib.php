@@ -458,15 +458,15 @@ function print_left_eldy_menu($db,$menu_array)
 			if ($conf->tax->enabled)
 			{
 				$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax&amp;mainmenu=accountancy",$langs->trans("MenuTaxAndDividends"), 0, $user->rights->tax->charges->lire);
-				if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
+				if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
 				if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
-				if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"), 2, $user->rights->tax->charges->lire);
+				if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
 				// VAT
 				if ($conf->compta->tva)
 				{
 					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=tax_vat&amp;mainmenu=accountancy",$langs->trans("VAT"),1,$user->rights->tax->charges->lire);
 					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/fiche.php?leftmenu=tax_vat&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
-					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/reglement.php?leftmenu=tax_vat",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/reglement.php?leftmenu=tax_vat",$langs->trans("Payments"),2,$user->rights->tax->charges->lire);
 					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
 					if (preg_match('/^tax/i',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
 				}

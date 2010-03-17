@@ -178,11 +178,15 @@ if ($_GET["action"] == 'create')
 	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
 	    $html->select_types_paiements($_POST["paiementtype"], "paiementtype");
 	    print "</td>\n";
+	    print "</tr>";
 	}
-
-	print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
     print '</table>';
+
+	print "<br>";
+
+	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
     print '</form>';
 }
 

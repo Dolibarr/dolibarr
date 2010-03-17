@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if (! $sortfield) $sortfield="c.id";
+if (! $sortfield) $sortfield="s.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
 $year=$_GET["year"];
@@ -71,13 +71,14 @@ else
  *	View
  */
 
+
 llxHeader();
 
 $html = new Form($db);
 
 
 $sql = "SELECT s.rowid as id, s.fk_type as type, ";
-$sql.= " s.amount,".$db->pdate("s.date_ech")." as de, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,";
+$sql.= " s.amount, s.date_ech, s.libelle, s.paye, s.periode,";
 $sql.= " c.libelle as type_lib";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 $sql.= ", ".MAIN_DB_PREFIX."chargesociales as s";
@@ -99,19 +100,8 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND s.fk_type=".$typeid;
 }
-if ($_GET["sortfield"]) {
-    $sql .= " ORDER BY ".$_GET["sortfield"];
-}
-else {
-    $sql .= " ORDER BY lower(s.date_ech)";
-}
-if ($_GET["sortorder"]) {
-    $sql .= " ".$_GET["sortorder"];
-}
-else {
-    $sql .= " DESC";
-}
-$sql .= $db->plimit($limit+1,$offset);
+$sql.=$db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit+1,$offset);
 
 
 $chargesociale_static=new ChargeSociales($db);
@@ -180,7 +170,10 @@ if ($resql)
 
 		// Ref
 		print '<td width="60">';
-		print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
+		$chargesociale_static->id=$obj->id;
+		$chargesociale_static->lib=$obj->id;
+		$chargesociale_static->ref=$obj->id;
+		print $chargesociale_static->getNomUrl(1,'20');
 		print '</td>';
 
 		// Label
@@ -193,7 +186,7 @@ if ($resql)
 		print '<td align="center">';
 		if ($obj->periode)
 		{
-			print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.dol_print_date($obj->periode,'day').'</a>';
+			print '<a href="index.php?year='.strftime("%Y",$db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode),'day').'</a>';
 		}
 		else
 		{
@@ -204,7 +197,7 @@ if ($resql)
 		print '<td align="right" width="100">'.price($obj->amount).'</td>';
 
 		// Due date
-		print '<td width="110" align="center">'.dol_print_date($obj->de, 'day').'</td>';
+		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->de), 'day').'</td>';
 
 		print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
 

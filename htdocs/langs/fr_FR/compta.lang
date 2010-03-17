@@ -63,6 +63,7 @@ DatePayment=Date de règlement
 NewVATPayment=Nouveau règlement de TVA
 VATPayment=Règlement TVA
 VATPayments=Règlements TVA
+SocialContributionsPayments=Règlements charges sociales
 ShowVatPayment=Affiche paiement TVA
 TotalToPay=Total à payer
 TotalVATReceived=Total TVA perçue

@@ -63,6 +63,7 @@ DatePayment=Payment date
 NewVATPayment=New VAT payment
 VATPayment=VAT Payment
 VATPayments=VAT Payments
+SocialContributionsPayments=Social contributions payments
 ShowVatPayment=Show VAT payment
 TotalToPay=Total to pay
 TotalVATReceived=Total VAT received
