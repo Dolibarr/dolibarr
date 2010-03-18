@@ -44,11 +44,11 @@ create table llx_facture
   close_code          varchar(16),		              -- Code motif cloture sans paiement complet
   close_note          varchar(128),		              -- Commentaire cloture sans paiement complet
 
-  tva                 real     DEFAULT 0,           -- montant tva apres remise totale
+  tva                 double(24,8)     DEFAULT 0,           -- montant tva apres remise totale
   localtax1			  double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2           double(24,8)     DEFAULT 0,           -- amount localtax2	
-  total               real     DEFAULT 0,           -- montant total ht apres remise totale
-  total_ttc           real     DEFAULT 0,           -- montant total ttc apres remise totale
+  total               double(24,8)     DEFAULT 0,           -- montant total ht apres remise totale
+  total_ttc           double(24,8)     DEFAULT 0,           -- montant total ttc apres remise totale
 
   fk_statut           smallint DEFAULT 0 NOT NULL,
 

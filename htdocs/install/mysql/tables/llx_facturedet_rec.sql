@@ -27,17 +27,17 @@ create table llx_facturedet_rec
   fk_product      integer,
   product_type    integer DEFAULT 0,
   description     text,
-  tva_tx          real DEFAULT 19.6, -- taux tva
+  tva_tx          double(6,3) DEFAULT 19.6, -- taux tva
   localtax1_tx    double(6,3) DEFAULT 0,    -- tax local tax 1
   localtax2_tx	  double(6,3) DEFAULT 0,    -- tax local tax 2
   qty             real,              -- quantity
   remise_percent  real DEFAULT 0,    -- pourcentage de remise
   remise          real DEFAULT 0,    -- montant de la remise
-  subprice        real,              -- prix avant remise
-  price           real,               -- prix final
-  total_ht        real,	             	-- Total HT de la ligne toute quantity et incluant remise ligne et globale
-  total_tva       real,	             	-- Total TVA de la ligne toute quantity et incluant remise ligne et globale
+  subprice        double(24,8),              -- prix avant remise
+  price           double(24,8),               -- prix final
+  total_ht        double(24,8),	             	-- Total HT de la ligne toute quantity et incluant remise ligne et globale
+  total_tva       double(24,8),	             	-- Total TVA de la ligne toute quantity et incluant remise ligne et globale
   total_localtax1 double(24,8) DEFAULT 0,		-- Total LocalTax1 for total quantity of line
   total_localtax2 double(24,8) DEFAULT 0,		-- total LocalTax2 for total quantity of line
-  total_ttc       real	             	-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
+  total_ttc       double(24,8)	             	-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
 )type=innodb;

@@ -28,20 +28,20 @@ create table llx_facturedet
   fk_facture          integer    NOT NULL,
   fk_product          integer    NULL,					-- Doit pouvoir etre nul pour ligne detail sans produits
   description         text,
-  tva_tx              real,								-- Taux tva produit/service (exemple 19.6)
+  tva_tx              double(6,3),								-- Taux tva produit/service (exemple 19.6)
   localtax1_tx        double(6,3) 		 DEFAULT 0,    			-- tax local tax 1
   localtax2_tx	      double(6,3) 		 DEFAULT 0,    			-- tax local tax 2
   qty                 real,								-- Quantity (exemple 2)
   remise_percent      real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise              real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)
   fk_remise_except    integer    NULL,					-- Lien vers table des remises fixes
-  subprice            real,								-- P.U. HT (exemple 100)
-  price               real,								-- P.U. HT apres remise % de ligne
-  total_ht            real,								-- Total HT de la ligne toute quantite et incluant remise ligne et globale
-  total_tva           real,								-- Total TVA de la ligne toute quantite et incluant remise ligne et globale
+  subprice            double(24,8),								-- P.U. HT (exemple 100)
+  price               double(24,8),								-- P.U. HT apres remise % de ligne
+  total_ht            double(24,8),								-- Total HT de la ligne toute quantite et incluant remise ligne et globale
+  total_tva           double(24,8),								-- Total TVA de la ligne toute quantite et incluant remise ligne et globale
   total_localtax1     double(24,8)  	 DEFAULT 0,				-- Total LocalTax1 for total quantity of line
   total_localtax2     double(24,8)		 DEFAULT 0,				-- total LocalTax2 for total quantity of line
-  total_ttc           real,								-- Total TTC de la ligne toute quantite et incluant remise ligne et globale
+  total_ttc           double(24,8),								-- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type		  integer    DEFAULT 0,
   date_start          datetime   DEFAULT NULL,			-- date debut si service
   date_end            datetime   DEFAULT NULL,			-- date fin si service
