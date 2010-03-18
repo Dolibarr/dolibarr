@@ -496,6 +496,7 @@ class Task extends CommonObject
 				if (! $error)
 				{
 					$tasks[$i]->id           = $obj->taskid;
+					$tasks[$i]->ref          = $obj->taskid;
 					$tasks[$i]->fk_project   = $obj->projectid;
 					$tasks[$i]->projectref   = $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
@@ -762,7 +763,7 @@ class Task extends CommonObject
 
 		return $ret;
 	}
-    
+
 	/**
 	 *    \brief      Delete time spent
 	 *    \param      user        	User that delete

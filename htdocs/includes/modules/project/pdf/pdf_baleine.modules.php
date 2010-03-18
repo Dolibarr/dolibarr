@@ -116,7 +116,7 @@ class pdf_baleine extends ModelePDFProjects
 				}
 			}
 
-			$nblignes = sizeof($object->lignes);
+			$nblignes = sizeof($object->lines);
 
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->projet->dir_output;
@@ -152,6 +152,9 @@ class pdf_baleine extends ModelePDFProjects
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
+				$object->lines=$tasksarray;
+				$nblignes=sizeof($object->lines);
+
 				$pdf->Open();
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
@@ -174,13 +177,13 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->MultiCell(0, 3, '', 0, 'J');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
-				$tab_top = 90;
-				$tab_height = 150;
+				$tab_top = 50;
+				$tab_height = 210;
 
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
-					$tab_top = 88;
+					$tab_top = 48;
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
@@ -209,19 +212,17 @@ class pdf_baleine extends ModelePDFProjects
 				{
 					$curY = $nexY;
 
-					// Description de la ligne produit
-					$libelleproduitservice=pdf_getlinedesc($object->lignes[$i],$outputlangs);
+					// Description of ligne
+					$ref=$object->lines[$i]->ref;
+					$libelleline=$object->lines[$i]->label;
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
-					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
+					$pdf->writeHTMLCell(108, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($ref), 0, 1);
+					$pdf->writeHTMLCell(108, 3, $this->posxdesc+10, $curY, $outputlangs->convToOutputCharset($libelleline), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
-
-					// Quantity
-					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(30, 3, $object->lignes[$i]->qty_shipped, 0, 'R');
 
 					$nexY+=2;    // Passe espace entre les lignes
 
@@ -229,7 +230,7 @@ class pdf_baleine extends ModelePDFProjects
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
 						//on recupere la description du produit suivant
-						$follow_descproduitservice = $object->lignes[$i+1]->desc;
+						$follow_descproduitservice = $object->lines[$i+1]->label;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4);
 					}
@@ -310,7 +311,7 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetFont('Arial','',10);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Task"),'','L');
+		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Tasks"),'','L');
 
 	}
 
@@ -395,7 +396,7 @@ class pdf_baleine extends ModelePDFProjects
 		if ($showadress)
 		{
 			// Emetteur
-			$posy=42;
+/*			$posy=42;
 			$hautcadre=40;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
@@ -477,7 +478,7 @@ class pdf_baleine extends ModelePDFProjects
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY(102,$posy+8);
 			$pdf->MultiCell(86,4, $carac_client);
-		}
+*/		}
 
 	}
 
