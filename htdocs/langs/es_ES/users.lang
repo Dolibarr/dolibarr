@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - users
+# Dolibarr language file - es_ES - users 
 CHARSET = UTF-8
 UserCard = Ficha usuario
 ContactCard = Ficha contacto
@@ -106,3 +106,4 @@ ConfirmCreateLogin = ¿Está seguro de que desea crear una cuenta Dolibarr para 
 ConfirmCreateThirdParty = ¿Está seguro de querer crear un tercero para este miembro?
 LoginToCreate = Login a crear
 NameToCreate = nombre del tercero a crear
+YourRole = Sus roles
