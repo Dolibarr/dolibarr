@@ -90,6 +90,7 @@ ALTER TABLE llx_product_stock add column location        varchar(32);
 ALTER TABLE llx_facture MODIFY tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture MODIFY total double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture MODIFY total_ttc double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture MODIFY amount double(24,8) DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_facturedet MODIFY tva_tx double(6,3);
 ALTER TABLE llx_facturedet MODIFY subprice double(24,8);
@@ -101,6 +102,7 @@ ALTER TABLE llx_facturedet MODIFY total_ttc double(24,8);
 ALTER TABLE llx_facture_rec MODIFY tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture_rec MODIFY total double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture_rec MODIFY total_ttc double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_rec MODIFY amount double(24,8) DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_facturedet_rec MODIFY tva_tx double(6,3);
 ALTER TABLE llx_facturedet_rec MODIFY subprice double(24,8);

@@ -29,15 +29,15 @@ create table llx_facture_rec
   fk_soc             integer NOT NULL,
   datec              datetime,  -- date de creation
 
-  amount             real     DEFAULT 0 NOT NULL,
+  amount             double(24,8)     DEFAULT 0 NOT NULL,
   remise             real     DEFAULT 0,
   remise_percent     real     DEFAULT 0,
   remise_absolue     real     DEFAULT 0,
-  tva                real     DEFAULT 0,
+  tva                double(24,8)     DEFAULT 0,
   localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2
-  total              real     DEFAULT 0,
-  total_ttc          real     DEFAULT 0,
+  total              double(24,8)     DEFAULT 0,
+  total_ttc          double(24,8)     DEFAULT 0,
 
   fk_user_author     integer,             -- createur
   fk_projet          integer,             -- projet auquel est associe la facture
