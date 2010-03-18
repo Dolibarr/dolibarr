@@ -107,3 +107,4 @@ ConfirmCreateLogin=Êtes-vous sûr de vouloir créer un compte Dolibarr pour cet
 ConfirmCreateThirdParty=Êtes-vous sûr de vouloir créer un tiers pour cet adhérent ?
 LoginToCreate=Login à créer
 NameToCreate=Nom du tiers à créer
+YourRole=Vos rôles

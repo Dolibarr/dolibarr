@@ -107,3 +107,4 @@ ConfirmCreateLogin=Are you sure you want to create a Dolibarr account for this m
 ConfirmCreateThirdParty=Are you sure you want to create a third party for this member ?
 LoginToCreate=Login to create
 NameToCreate=Name of third party to create
+YourRole=Your roles

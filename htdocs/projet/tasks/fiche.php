@@ -41,6 +41,8 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 $userAccess=0;
 
+$langs->load("users");
+
 
 /*
  * Actions

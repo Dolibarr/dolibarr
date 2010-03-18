@@ -52,12 +52,12 @@ function project_prepare_head($object)
 	    $head[$h][2] = 'element';
 		$h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ProjectContact");
     $head[$h][2] = 'contact';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
 	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -119,7 +119,7 @@ function task_prepare_head($object)
 	$head[$h][1] = $langs->trans("TimeSpent");
 	$head[$h][2] = 'time';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id;
 	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -233,7 +233,7 @@ function PLinesb(&$inc, $parent, $lines, &$level, &$projectsrole)
 {
 	global $user, $bc, $langs;
 	global $form;
-	
+
 	$lastprojectid=0;
 
 	$projectstatic = new Project($db);
@@ -403,7 +403,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				print '<td>';
 				if ($showlineingray)
 				{
-					print '<i>'.$lines[$i]->id.'</i>';
+					print '<i>'.img_object('','projecttask').' '.$lines[$i]->id.'</i>';
 				}
 				else
 				{
@@ -426,7 +426,7 @@ function PLines(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole
 				if ($showlineingray) print '</i>';
 				else print '</a>';
 				print "</td>\n";
-				
+
 				// Progress
 				print '<td align="right">';
 				print $lines[$i]->progress.' %';
