@@ -16,6 +16,7 @@ For users:
 - New: Move permission "see hidden categories" into "see hidden products/services".
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.
+- Fix: Project PDF document show the tasks.
 
 For developers:
 - More comments in code.
