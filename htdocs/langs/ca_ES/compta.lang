@@ -63,6 +63,7 @@ DatePayment = Data de pagament
 NewVATPayment = Nou pagament d'IVA
 VATPayment = Pagament IVA
 VATPayments = Pagaments IVA
+SocialContributionsPayments = Pagaments càrregues socials
 ShowVatPayment = Veure pagaments IVA
 TotalToPay = Total a pagar
 TotalVATReceived = Total IVA percebut
