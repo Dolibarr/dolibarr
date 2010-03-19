@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Matteli
  *
  * This program is free software; you can redistribute it and/or modify
@@ -252,6 +252,10 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
+	
+	// Create directory if not exist
+	if (! is_dir($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
+	if (! is_dir($dolibarr_smarty_cache))	create_exdir($dolibarr_smarty_cache);
 
 	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
 	if (@include_once($smarty_libs))
