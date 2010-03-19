@@ -2996,7 +2996,8 @@ function migrate_shipping_delivery($db,$langs,$conf)
 			if ($error == 0)
 			{
 				$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."livraison DROP COLUMN fk_expedition";
-				if ($db->query($sqlDrop))
+				$sqlDelete = "DELETE FROM ".MAIN_DB_PREFIX."element_element WHERE sourcetype = 'commande' AND targettype = 'delivery'";
+				if ($db->query($sqlDrop) && $db->query($sqlDelete))
 				{
 					$db->commit();
 				}
