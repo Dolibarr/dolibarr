@@ -2,6 +2,7 @@
 -- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010 juanjo Menent             <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -38,6 +39,8 @@ create table llx_product
   price_min_ttc      double(24,8) DEFAULT 0,
   price_base_type    varchar(3)   DEFAULT 'HT',
   tva_tx             double(6,3),
+  localtax1_tx       double(6,3)  DEFAULT 0,
+  localtax2_tx       double(6,3)  DEFAULT 0,
   fk_user_author     integer,
   envente            tinyint      DEFAULT 1,
   fk_product_type    integer      DEFAULT 0,		-- Type 0 for regular product, 1 for service

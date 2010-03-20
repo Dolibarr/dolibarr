@@ -74,6 +74,11 @@ alter table llx_facture_fourn_det add column localtax2_tx double(6,3) DEFAULT 0 
 alter table llx_facture_fourn_det add column total_localtax1 double(24,8) DEFAULT 0 after tva;
 alter table llx_facture_fourn_det add column total_localtax2 double(24,8) DEFAULT 0 after total_localtax1;
 
+alter table llx_product add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
+alter table llx_product add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
+alter table llx_product_price add column localtax1_tx double(6,3) DEFAULT 0 after tva_tx;
+alter table llx_product_price add column localtax2_tx double(6,3) DEFAULT 0 after localtax1_tx;
+
 alter table llx_product add column   hidden             tinyint      DEFAULT 0;
 
 alter table llx_product add column   length             float        DEFAULT NULL after weight_units;
