@@ -145,10 +145,10 @@ NextStepMightLastALongTime=Current step may last several minutes. Please wait un
 # upgrade
 #########
 MigrationFixData=Fix for denormalized data
-MigrationOrder=Data migration for customers' orders
-MigrationSupplierOrder=Data migration for suppliers' orders
+MigrationOrder=Data migration for customer's orders
+MigrationSupplierOrder=Data migration for supplier's orders
 MigrationProposal=Data migration for commercial proposals
-MigrationInvoice=Data migration for customers' invoices
+MigrationInvoice=Data migration for customer's invoices
 MigrationContract=Data migration for contracts
 MigrationSuccessfullUpdate=Upgrade successful
 MigrationUpdateFailed=Failed upgrade process
