@@ -266,50 +266,101 @@ if ($_GET["socid"])
 }
 else if ($_GET["id"] || $_GET["ref"])
 {
-   /*
-	* Fiche categorie de produit
-	*/
-	require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-	require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+	if ($_GET["type"] == 0)
+	{
+	   /*
+		* Fiche categorie de produit
+		*/
+		require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
-	// Produit
-	$product = new Product($db);
-	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+		// Produit
+		$product = new Product($db);
+		if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+		if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
-
-
-	$head=product_prepare_head($product, $user);
-	$titre=$langs->trans("CardProduct".$product->type);
-	$picto=($product->type==1?'service':'product');
-	dol_fiche_head($head, 'category', $titre,0,$picto);
+		llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
-	print '<table class="border" width="100%">';
-	print "<tr>";
-	// Reference
-	print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-	print $html->showrefnav($product,'ref','',1,'ref');
-	print '</td>';
-	print '</tr>';
+		$head=product_prepare_head($product, $user);
+		$titre=$langs->trans("CardProduct".$product->type);
+		$picto=($product->type==1?'service':'product');
+		dol_fiche_head($head, 'category', $titre,0,$picto);
 
-	// Libelle
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-	print '</tr>';
 
-	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-	print $product->getLibStatut(2);
-	print '</td></tr>';
+		print '<table class="border" width="100%">';
+		print "<tr>";
+		// Reference
+		print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+		print $html->showrefnav($product,'ref','',1,'ref');
+		print '</td>';
+		print '</tr>';
 
-	print '</table>';
+		// Libelle
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '</tr>';
 
-	print '</div>';
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+		print $product->getLibStatut(2);
+		print '</td></tr>';
 
-	if ($mesg) print($mesg);
+		print '</table>';
 
-	formCategory($db,$product,0);
+		print '</div>';
+
+		if ($mesg) print($mesg);
+
+		formCategory($db,$product,0);
+	}
+
+	if ($_GET["type"] == 3)
+	{
+	   /*
+		* Fiche categorie d'adherent
+		*/
+		require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
+		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+
+		// Produit
+		$member = new Adherent($db);
+		if ($_GET["ref"]) $result = $member->fetch('',$_GET["ref"]);
+		if ($_GET["id"]) $result = $member->fetch($_GET["id"]);
+
+		llxHeader("","",$langs->trans("CardMember"));
+
+
+		$head=member_prepare_head($product, $user);
+		$titre=$langs->trans("CardMember");
+		$picto='member';
+		dol_fiche_head($head, 'category', $titre,0,$picto);
+
+
+		print '<table class="border" width="100%">';
+		print "<tr>";
+		// Reference
+		print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+		print $html->showrefnav($member,'ref','',1,'ref');
+		print '</td>';
+		print '</tr>';
+
+		// Libelle
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$member->libelle.'</td>';
+		print '</tr>';
+
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+		print $member->getLibStatut(2);
+		print '</td></tr>';
+
+		print '</table>';
+
+		print '</div>';
+
+		if ($mesg) print($mesg);
+
+		formCategory($db,$member,3);
+	}
 }
 
 

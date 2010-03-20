@@ -19,7 +19,7 @@
 
 /**
  *	    \file       htdocs/lib/member.lib.php
- *		\brief      Ensemble de fonctions de base pour les adh�rents
+ *		\brief      Ensemble de fonctions de base pour les adherents
  *		\version    $Id$
  *
  *		Ensemble de fonctions de base de dolibarr sous forme d'include
