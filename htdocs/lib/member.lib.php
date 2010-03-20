@@ -55,6 +55,15 @@ function member_prepare_head($member)
 		$h++;
 	}
 
+	// Show category tab
+	if ($conf->categorie->enabled && $user->rights->categorie->lire)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$member->id.'&type=3';
+		$head[$h][1] = $langs->trans('Categories');
+		$head[$h][2] = 'category';
+		$h++;
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$member->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';

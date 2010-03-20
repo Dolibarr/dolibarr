@@ -52,6 +52,7 @@ CompanyIsInSuppliersCategories=Cette société est dans les catégories fourniss
 ProductHasNoCategory=Ce produit/service n'est dans aucune catégorie en particulier
 SupplierHasNoCategory=Ce fournisseur n'est dans aucune catégorie en particulier
 CompanyHasNoCategory=Cette société n'est dans aucune catégorie en particulier
+MemberHasNoCategory=Cet adhérent n'est dans aucune catégorie en particulier
 ClassifyInCategory=Classer dans la catégorie
 NoneCategory=Aucune
 CategoryExistsAtSameLevel=Cette catégorie existe déjà pour cette référence

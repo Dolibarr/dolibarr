@@ -52,6 +52,7 @@ CompanyIsInSuppliersCategories=This third party owns to following suppliers cate
 ProductHasNoCategory=This product/service is not in any categories
 SupplierHasNoCategory=This supplier is not in any categories
 CompanyHasNoCategory=This company is not in any categories
+MemberHasNoCategory=This member is not in any categories
 ClassifyInCategory=Classify in category
 NoneCategory=None
 CategoryExistsAtSameLevel=This category already exists with this ref

@@ -89,6 +89,7 @@ if ($_REQUEST["removecat"])
 {
 	if ($_REQUEST["typeid"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
+		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 		$object = new Product($db);
 		if ($_REQUEST["ref"]) $result = $object->fetch('',$_REQUEST["ref"]);
 		if ($_REQUEST["id"])  $result = $object->fetch($_REQUEST["id"]);
@@ -106,6 +107,7 @@ if ($_REQUEST["removecat"])
 	}
 	if ($_REQUEST["typeid"] == 3 && $user->rights->adherent->creer)
 	{
+		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 		$object = new Adherent($db);
 		$result = $object->fetch($objectid);
 	}
@@ -119,9 +121,11 @@ if ($_REQUEST["removecat"])
 if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 {
 	$_GET["id"]=$_REQUEST["id"];
+	$_GET["type"]=$_REQUEST["type"];
 
 	if ($_REQUEST["typeid"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
+		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 		$object = new Product($db);
 		if ($_REQUEST["ref"]) $result = $object->fetch('',$_REQUEST["ref"]);
 		if ($_REQUEST["id"])  $result = $object->fetch($_REQUEST["id"]);
@@ -141,6 +145,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	}
 	if ($_REQUEST["typeid"]==3 && $user->rights->adherent->creer)
 	{
+		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 		$object = new Adherent($db);
 		$result = $object->fetch($objectid);
 		$type = 'member';
@@ -181,14 +186,14 @@ if ($_GET["socid"])
 	/*
 	 * Creation de l'objet client/fournisseur correspondant au socid
 	 */
-	 $soc = new Societe($db);
-	 $result = $soc->fetch($_GET["socid"]);
-	 llxHeader("","",$langs->trans("Category"));
+	$soc = new Societe($db);
+	$result = $soc->fetch($_GET["socid"]);
+	llxHeader("","",$langs->trans("Category"));
 
 
-   /*
-	* Affichage onglets
-	*/
+	/*
+	 * Affichage onglets
+	 */
 	$head = societe_prepare_head($soc);
 
 	dol_fiche_head($head, 'category', $langs->trans("ThirdParty"),0,'company');
@@ -268,9 +273,11 @@ else if ($_GET["id"] || $_GET["ref"])
 {
 	if ($_GET["type"] == 0)
 	{
-	   /*
-		* Fiche categorie de produit
-		*/
+		$langs->load("products");
+
+		/*
+		 * Fiche categorie de produit
+		 */
 		require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
@@ -316,42 +323,56 @@ else if ($_GET["id"] || $_GET["ref"])
 
 	if ($_GET["type"] == 3)
 	{
-	   /*
-		* Fiche categorie d'adherent
-		*/
+		$langs->load("members");
+
+		/*
+		 * Fiche categorie d'adherent
+		 */
 		require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 		// Produit
 		$member = new Adherent($db);
 		if ($_GET["ref"]) $result = $member->fetch('',$_GET["ref"]);
 		if ($_GET["id"]) $result = $member->fetch($_GET["id"]);
 
-		llxHeader("","",$langs->trans("CardMember"));
+		$adht = new AdherentType($db);
+		$adht->fetch($member->typeid);
+
+		llxHeader("","",$langs->trans("Member"));
 
 
-		$head=member_prepare_head($product, $user);
-		$titre=$langs->trans("CardMember");
-		$picto='member';
+		$head=member_prepare_head($member, $user);
+		$titre=$langs->trans("Member");
+		$picto='user';
 		dol_fiche_head($head, 'category', $titre,0,$picto);
 
 
 		print '<table class="border" width="100%">';
-		print "<tr>";
-		// Reference
-		print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-		print $html->showrefnav($member,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
 
-		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$member->libelle.'</td>';
-		print '</tr>';
-
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-		print $member->getLibStatut(2);
+		// Ref
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+		print '<td class="valeur">';
+		print $html->showrefnav($member,'rowid');
 		print '</td></tr>';
+
+		// Nom
+		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$member->nom.'&nbsp;</td>';
+		print '</tr>';
+
+		// Prenom
+		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$member->prenom.'&nbsp;</td>';
+		print '</tr>';
+
+		// Login
+		print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
+
+		// Type
+		print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+
+		// Status
+		print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$member->getLibStatut(4).'</td></tr>';
 
 		print '</table>';
 
@@ -382,6 +403,7 @@ function formCategory($db,$object,$typeid)
 	print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+	print '<input type="hidden" name="type" value="'.$typeid.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>';
@@ -438,7 +460,7 @@ function formCategory($db,$object,$typeid)
 				if ($typeid == 3) $permission=$user->rights->adherent->creer;
 				if ($permission)
 				{
-					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".(empty($_REQUEST["socid"])?'id':'socid')."=".$object->id.(empty($_REQUEST["socid"])?"&amp;typeid=".$typeid:'')."&amp;removecat=".$cat->id."'>";
+					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".(empty($_REQUEST["socid"])?'id':'socid')."=".$object->id.(empty($_REQUEST["socid"])?"&amp;type=".$typeid."&amp;typeid=".$typeid:'')."&amp;removecat=".$cat->id."'>";
 					print img_delete($langs->trans("DeleteFromCat")).' ';
 					print $langs->trans("DeleteFromCat")."</a>";
 				}
