@@ -143,6 +143,19 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_product as cp, '.MAIN_DB_PREFIX.'product as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_product = p.rowid';
 		$this->export_sql_end[$r] .=' AND u.type = 0';	// Supplier categories
+
+		$r++;
+		$this->export_code[$r]='category_'.$r;
+		$this->export_label[$r]='CatMemberList';
+		$this->export_icon[$r]='category';
+		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'MemberId','p.nom'=>'Name','p.prenom'=>'Firstname');
+		$this->export_entities_array[$r]=array('p.rowid'=>'member','p.nom'=>'member','p.prenom'=>'member');	// We define here only fields that use another picto
+		$this->export_alias_array[$r]=array('u.rowid'=>"idcateg",'u.label'=>"label",'u.description'=>"description",'p.rowid'=>'idprod','p.nom'=>'name','p.prenom'=>'firstname');
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cp, '.MAIN_DB_PREFIX.'adherent as p';
+		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
+		$this->export_sql_end[$r] .=' AND u.type = 3';	// Supplier categories
 	}
 
 

@@ -49,6 +49,7 @@ ProductIsInCategories=Ce produit/service est dans les catégories suivantes
 SupplierIsInCategories=Ce fournisseur est dans les catégories suivantes
 CompanyIsInCustomersCategories=Cette société est dans les catégories clients/prospects suivantes
 CompanyIsInSuppliersCategories=Cette société est dans les catégories fournisseurs suivantes
+MemberIsInCategories=Cet adhérent est dans les catégories adhérent suivantes
 ProductHasNoCategory=Ce produit/service n'est dans aucune catégorie en particulier
 SupplierHasNoCategory=Ce fournisseur n'est dans aucune catégorie en particulier
 CompanyHasNoCategory=Cette société n'est dans aucune catégorie en particulier

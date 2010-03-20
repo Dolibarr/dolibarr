@@ -47,6 +47,7 @@ class Adherent extends CommonObject
 
 	var $id;
 	var $ref;
+	var $civilite_id;
 	var $prenom;
 	var $nom;
 	var $fullname;
@@ -148,6 +149,7 @@ class Adherent extends CommonObject
 		}
 
 		$infos='';
+		if ($this->civilite_id) $infos.= $langs->trans("UserTitle").": ".$this->getCivilityLabel()."\n";
 		$infos.= $langs->trans("Lastname").": $this->nom\n";
 		$infos.= $langs->trans("Firstname").": $this->prenom\n";
 		$infos.= $langs->trans("Company").": $this->societe\n";
@@ -165,7 +167,8 @@ class Adherent extends CommonObject
 
 		// Substitutions
 		$patterns = array (
-		       '/%PRENOM%/',
+		       	'/%CIVILITE%/',
+				'/%PRENOM%/',
 		       '/%NOM%/',
 		       '/%INFOS%/',
 		       '/%DOL_MAIN_URL_ROOT%/',
@@ -181,6 +184,7 @@ class Adherent extends CommonObject
 		       '/%PASSWORD%/'
 		       );
 		       $replace = array (
+		       $this->getCivilityLabel(),
 		       $this->prenom,
 		       $this->nom,
 		       $infos,
@@ -388,7 +392,8 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql.= " prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
+		$sql.= " civilite = ".($this->civilite_id?"'".$this->civilite_id."'":"null");
+		$sql.= ", prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
 		$sql.= ", nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
 		$sql.= ", login="   .($this->login?"'".addslashes($this->login)."'":"null");
 		$sql.= ", societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
@@ -504,6 +509,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0)
 					{
+						$luser->civilite_id=$this->civilite_id;
 						$luser->prenom=$this->prenom;
 						$luser->nom=$this->nom;
 						$luser->login=$this->user_login;
@@ -926,7 +932,7 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs;
 
-		$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.fk_soc, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
+		$sql = "SELECT d.rowid, d.civilite, d.prenom, d.nom, d.societe, d.fk_soc, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
 		$sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy,";
 		$sql.= " d.datec as datec,";
@@ -957,6 +963,7 @@ class Adherent extends CommonObject
 
 				$this->ref            = $obj->rowid;
 				$this->id             = $obj->rowid;
+				$this->civilite_id    = $obj->civilite;
 				$this->prenom         = $obj->prenom;
 				$this->nom            = $obj->nom;
 				$this->fullname       = trim($obj->nom.' '.$obj->prenom);
@@ -1699,6 +1706,18 @@ class Adherent extends CommonObject
 		return '';
 	}
 
+	/**
+	 *    \brief      Retourne le libelle de civilite du contact
+	 *    \return     string      Nom traduit de la civilite
+	 */
+	function getCivilityLabel()
+	{
+		global $langs;
+		$langs->load("dict");
+
+		$code=$this->civilite_id;
+		return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;
+	}
 
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
@@ -1907,6 +1926,7 @@ class Adherent extends CommonObject
 		// Initialise parametres
 		$this->id=0;
 		$this->specimen=1;
+		$this->civilite_id = 0;
 		$this->nom = 'DOLIBARR';
 		$this->prenom = 'SPECIMEN';
 		$this->fullname=trim($this->nom.' '.$this->prenom);

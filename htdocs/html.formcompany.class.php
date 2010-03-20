@@ -321,29 +321,31 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Retourne la liste deroulante des civilite actives
-	 *    \param      selected    civilite pre-selectionnee
+	 *    	\brief      Retourne la liste deroulante des civilite actives
+	 *    	\param      selected    civilite pre-selectionnee
+	 * 		\param		htmlname	Name of HTML select combo field
 	 */
-	function select_civilite($selected='')
+	function select_civilite($selected='',$htmlname='civilite_id')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
 		$sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
-		$sql .= " WHERE active = 1";
+		$sql.= " WHERE active = 1";
 
 		dol_syslog("Form::select_civilite sql=".$sql);
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			print '<select class="flat" name="civilite_id">';
+			print '<select class="flat" name="'.$htmlname.'">';
 			print '<option value="">&nbsp;</option>';
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 					if ($selected == $obj->code)
 					{
 						print '<option value="'.$obj->code.'" selected="true">';
@@ -352,7 +354,7 @@ class FormCompany
 					{
 						print '<option value="'.$obj->code.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libell� par d�faut
+					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 					print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
 					print '</option>';
 					$i++;

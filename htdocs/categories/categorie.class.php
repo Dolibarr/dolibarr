@@ -422,7 +422,7 @@ class Categorie
 	}
 
 	/**
-	 * 	\brief	Retourne les produits de la categorie
+	 * 	\brief	Return list of contents of a category
 	 * 	\param	field	Field name for select in table. Full field name will be fk_field.
 	 * 	\param	class	PHP Class of object to store entity
 	 * 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
@@ -434,18 +434,17 @@ class Categorie
 		// Clean parameters
 		if (empty($table)) $table=$field;
 
-
-		$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
-		$sql .= " WHERE fk_categorie = ".$this->id;
+		$sql = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
+		$sql.= " WHERE fk_categorie = ".$this->id;
 
 		dol_syslog("Categorie::get_type sql=".$sql);
-		$res  = $this->db->query($sql);
-		if ($res)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			while ($rec = $this->db->fetch_array ($res))
+			while ($rec = $this->db->fetch_array($resql))
 			{
-				$obj = new $class ($this->db, $rec['fk_'.$field]);
-				$obj->fetch ($obj->id);
+				$obj = new $class($this->db);
+				$obj->fetch($rec['fk_'.$field]);
 				$objs[] = $obj;
 			}
 			return $objs;
@@ -457,8 +456,6 @@ class Categorie
 			return -1;
 		}
 	}
-
-
 
 
 	/**

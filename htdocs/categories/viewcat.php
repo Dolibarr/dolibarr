@@ -218,7 +218,7 @@ else
 if ($c->type == 0)
 {
 
-	$prods = $c->get_type ("product","Product");
+	$prods = $c->get_type("product","Product");
 	if ($prods < 0)
 	{
 		dol_print_error();
@@ -227,7 +227,7 @@ if ($c->type == 0)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
+		print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
 
 		if (sizeof ($prods) > 0)
 		{
@@ -243,7 +243,6 @@ if ($c->type == 0)
 				else print img_object($langs->trans("ShowProduct"),"product");
 				print " <a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
 				print '<td valign="top">'.$prod->libelle."</td>\n";
-				print '<td valign="top">'.$prod->description."</td>\n";
 				print "</tr>\n";
 			}
 		}
@@ -257,7 +256,7 @@ if ($c->type == 0)
 
 if ($c->type == 1)
 {
-	$socs = $c->get_type ("societe","Fournisseur","fournisseur");
+	$socs = $c->get_type("societe","Fournisseur","fournisseur");
 	if ($socs < 0)
 	{
 		dol_print_error();
@@ -277,9 +276,10 @@ if ($c->type == 1)
 				$i++;
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
+
 				print '<td nowrap="nowrap" valign="top">';
-				print img_object($langs->trans("ShowSuppliers"),"company");
-				print " <a href='".DOL_URL_ROOT."/categories/categorie.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
+				print $soc->getNomUrl(1);
+				print "</td>\n";
 
 				print "</tr>\n";
 			}
@@ -294,7 +294,7 @@ if ($c->type == 1)
 
 if($c->type == 2)
 {
-	$socs = $c->get_type ("societe","Societe");
+	$socs = $c->get_type("societe","Societe");
 	if ($socs < 0)
 	{
 		dol_print_error();
@@ -309,14 +309,14 @@ if($c->type == 2)
 		{
 			$i = 0;
 			$var=true;
-			foreach ($socs as $soc)
+			foreach ($socs as $key => $soc)
 			{
 				$i++;
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
-				print img_object($langs->trans("ShowCompany"),"company");
-				print " <a href='".DOL_URL_ROOT."/categories/categorie.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
+				print $soc->getNomUrl(1);
+				print "</td>\n";
 
 				print "</tr>\n";
 			}
@@ -332,8 +332,9 @@ if($c->type == 2)
 // List of members
 if ($c->type == 3)
 {
+	require_once(DOL_DOCUMENT_ROOT."/adherents/Adherent.class.php");
 
-	$prods = $c->get_type ("member","Member");
+	$prods = $c->get_type("member","Adherent");
 	if ($prods < 0)
 	{
 		dol_print_error($db,$c->error);
@@ -348,16 +349,16 @@ if ($c->type == 3)
 		{
 			$i = 0;
 			$var=true;
-			foreach ($prods as $prod)
+			foreach ($prods as $key => $member)
 			{
 				$i++;
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
-				print img_object($langs->trans("ShowMember"),"member");
-				print " <a href='".DOL_URL_ROOT."/adherent/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
-				print '<td valign="top">'.$prod->libelle."</td>\n";
-				print '<td valign="top">'.$prod->description."</td>\n";
+				print $member->getNomUrl(1);
+				print "</td>\n";
+				print '<td valign="top">'.$member->nom."</td>\n";
+				print '<td valign="top">'.$member->prenom."</td>\n";
 				print "</tr>\n";
 			}
 		}

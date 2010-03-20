@@ -725,7 +725,7 @@ if ($step == 4 && $datatoexport)
     print '</tr>'."\n";
 
     $liste=$objmodelexport->liste_modeles($db);
-    foreach($liste as $key)
+    foreach($liste as $key => $val)
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';

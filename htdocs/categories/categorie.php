@@ -431,7 +431,7 @@ function formCategory($db,$object,$typeid)
 		if ($typeid == 0) $title=$langs->trans("ProductIsInCategories");
 		if ($typeid == 1) $title=$langs->trans("CompanyIsInSuppliersCategories");
 		if ($typeid == 2) $title=$langs->trans("CompanyIsInCustomersCategories");
-		if ($typeid == 3) $title=$langs->trans("MemberIsInCustomersCategories");
+		if ($typeid == 3) $title=$langs->trans("MemberIsInCategories");
 		print "\n";
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$title.':</td></tr>';

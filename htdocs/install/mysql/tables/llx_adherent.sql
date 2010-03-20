@@ -30,6 +30,7 @@ create table llx_adherent
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   entity           integer DEFAULT 1 NOT NULL,	-- multi company id
+  civilite         varchar(6),
   nom              varchar(50),
   prenom           varchar(50),
   login            varchar(50) NOT NULL, -- login

@@ -49,6 +49,7 @@ ProductIsInCategories=Product/service owns to following categories
 SupplierIsInCategories=Third party owns to following suppliers categories
 CompanyIsInCustomersCategories=This third party owns to following customers/prospects categories
 CompanyIsInSuppliersCategories=This third party owns to following suppliers categories
+MemberIsInCategories=This member owns to following members categories 
 ProductHasNoCategory=This product/service is not in any categories
 SupplierHasNoCategory=This supplier is not in any categories
 CompanyHasNoCategory=This company is not in any categories

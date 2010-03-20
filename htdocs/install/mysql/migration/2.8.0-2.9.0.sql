@@ -120,3 +120,5 @@ ALTER TABLE llx_facturedet_rec MODIFY total_ht double(24,8);
 ALTER TABLE llx_facturedet_rec MODIFY total_tva double(24,8);
 ALTER TABLE llx_facturedet_rec MODIFY total_ttc double(24,8);
 
+
+ALTER TABLE llx_adherent ADD COLUMN   civilite       varchar(6) after entity;

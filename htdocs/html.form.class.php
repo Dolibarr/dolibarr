@@ -1542,8 +1542,6 @@ class Form
 					{
 						print '<option value="'.$obj->id.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-					//print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
 					print $obj->label;
 					print '</option>';
 					$i++;

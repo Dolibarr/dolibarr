@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/exports/index.php
  *       \ingroup    export
- *       \brief      Page accueil de la zone export
+ *       \brief      Home page of export tools
  *       \version    $Id$
  */
 
@@ -57,7 +57,7 @@ print '<table class="notopnoleftnoright" width="100%">';
 print '<tr><td valign="top" width="40%" class="notopnoleft">';
 
 
-// Liste des formats d'exports disponibles
+// List of available export format
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -70,9 +70,8 @@ include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 $model=new ModeleExports();
 $liste=$model->liste_modeles($db);
 
-foreach($liste as $key)
+foreach($liste as $key => $val)
 {
-    $var=!$var;
     print '<tr '.$bc[$var].'>';
     print '<td width="16">'.img_picto_common($model->getDriverLabel($key),$model->getPicto($key)).'</td>';
     $text=$model->getDriverDesc($key);

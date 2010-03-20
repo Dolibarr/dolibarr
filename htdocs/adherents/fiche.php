@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/adherents/fiche.php
  *       \ingroup    member
- *       \brief      Page d'ajout, edition, suppression d'une fiche adherent
+ *       \brief      Page of member
  *       \version    $Id$
  */
 
@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
@@ -218,14 +219,14 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 	{
 		$datenaiss=dol_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
 	}
-	//print $_POST["naissmonth"].", ".$_POST["naissday"].", ".$_POST["naissyear"]." ".$datenaiss." ".adodb_strftime('%Y-%m-%d %H:%M:%S',$datenaiss);
 
 	// Create new object
 	if ($result > 0)
 	{
 		$adh->oldcopy=dol_clone($adh);
 
-		// Modifie valeures
+		// Change values
+		$adh->civilite_id = trim($_POST["civilite_id"]);
 		$adh->prenom      = trim($_POST["prenom"]);
 		$adh->nom         = trim($_POST["nom"]);
 		$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
@@ -347,6 +348,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
 	}
 
     $typeid=$_POST["typeid"];
+	$civilite_id=$_POST["civilite_id"];
     $nom=$_POST["nom"];
     $prenom=$_POST["prenom"];
     $societe=$_POST["societe"];
@@ -370,6 +372,7 @@ if ($_POST["action"] == 'add' && $user->rights->adherent->creer)
     $userid=$_POST["userid"];
     $socid=$_POST["socid"];
 
+    $adh->civilite_id = $civilite_id;
     $adh->prenom      = $prenom;
     $adh->nom         = $nom;
     $adh->societe     = $societe;
@@ -650,6 +653,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && 
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $html = new Form($db);
+$htmlcompany = new FormCompany($db);
 
 // fetch optionals attributes and labels
 $adho->fetch_name_optionals_label();
@@ -715,8 +719,10 @@ if ($action == 'edit')
 	// Societe
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2"><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
-	// Nom
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+	// Civilite
+	print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
+	print $htmlcompany->select_civilite($adh->civilite_id);
+	print '</td>';
 
 	// Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
@@ -731,8 +737,12 @@ if ($action == 'edit')
 	print '</td>';
 	print '</tr>';
 
+	// Nom
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+	print '</tr>';
+
 	// Prenom
-	print '<tr><td width="20%"><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
+	print '<tr><td width="20%"><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	print '</tr>';
 
 	// Login
@@ -866,6 +876,11 @@ if ($action == 'create')
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
+
+    // Civility
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+    print $htmlcompany->select_civilite($adh->civilite_id,'civilite_id').'</td>';
+    print '</tr>';
 
     // Nom
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
@@ -1112,7 +1127,11 @@ if ($rowid && $action != 'edit')
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur" colspan="2">'.$adh->societe.'</td></tr>';
 
-	// Nom
+	// Civility
+    print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur" colspan="2">'.$adh->getCivilityLabel().'&nbsp;</td>';
+	print '</tr>';
+
+    // Nom
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="2">'.$adh->nom.'&nbsp;</td>';
 	print '</tr>';
 
