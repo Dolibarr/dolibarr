@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -46,9 +46,10 @@ $categstatic = new Categorie($db);
 $html = new Form($db);
 
 if ($type == 0) $title=$langs->trans("ProductsCategoriesArea");
-if ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
-if ($type == 2) $title=$langs->trans("CustomersCategoriesArea");
-
+elseif ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
+elseif ($type == 2) $title=$langs->trans("CustomersCategoriesArea");
+elseif ($type == 3) $title=$langs->trans("MembersCategoriesArea");
+else $title=$langs->trans("CategoriesArea");
 
 llxHeader("","",$title);
 
@@ -101,7 +102,13 @@ if($_POST['catname'] || $_REQUEST['id'])
 	{
 		$var = ! $var;
 		print "\t<tr ".$bc[$var].">\n";
-		print "\t\t<td><a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a></td>\n";
+		print "\t\t<td>";
+		$categstatic->id=$cat->id;
+		$categstatic->ref=$cat->label;
+		$categstatic->label=$cat->label;
+		$categstatic->type=$cat->type;
+		print $categstatic->getNomUrl(1,'');
+		print "</td>\n";
 		print "\t\t<td>".$cat->description."</td>\n";
 		print "\t</tr>\n";
 	}

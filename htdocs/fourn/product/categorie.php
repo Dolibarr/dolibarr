@@ -120,7 +120,7 @@ if ($_GET["id"])
       print "</table><br>\n";
 
       $c = new Categorie($db);
-      $cats = $c->containing($_REQUEST['id'],"product");
+      $cats = $c->containing($_REQUEST['id'],0);
 
       if (sizeof($cats) > 0)
 	{

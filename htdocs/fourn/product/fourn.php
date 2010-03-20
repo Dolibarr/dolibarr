@@ -87,10 +87,10 @@ if ($_GET["id"])
 	  print '<tr id="ways">';
 	  print '<td colspan="3">';
 	  $cat = new Categorie ($db);
-	  $way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php');
+	  $way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php', 1);
 	  if ($way == "")
 	  {
-	  	print "Ce produit n'appartient � aucune cat�gorie";
+	  	print "Ce produit n'appartient a aucune categorie";
 	  }
 	  else
 	  {

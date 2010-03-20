@@ -55,13 +55,14 @@ if ($_REQUEST['origin'])
 	if ($_GET['type'] == 0) $idProdOrigin = $_REQUEST['origin'];
 	if ($_GET['type'] == 1) $idSupplierOrigin = $_REQUEST['origin'];
 	if ($_GET['type'] == 2) $idCompanyOrigin = $_REQUEST['origin'];
+	if ($_GET['type'] == 3) $idMemberOrigin = $_REQUEST['origin'];
 }
 
 if ($_REQUEST['catorigin'])
 {
 	if ($_GET['type'] == 0) $idCatOrigin = $_REQUEST['catorigin'];
 }
-
+$urlfrom=isset($_REQUEST["urlfrom"])?$_REQUEST["urlfrom"]:'';
 
 
 /*
@@ -73,7 +74,12 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	// Action ajout d'une categorie
 	if ($_POST["cancel"])
 	{
-		if ($idProdOrigin)
+		if ($urlfrom)
+		{
+			header("Location: ".$urlfrom);
+			exit;
+		}
+		else if ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&type='.$_GET["type"]);
 			exit;
@@ -86,6 +92,11 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		else if ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&type='.$_GET["type"]);
+			exit;
+		}
+		else if ($idMemberOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$_GET["type"]);
 			exit;
 		}
 		else if ($idCatOrigin)
@@ -139,22 +150,32 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	// Action confirmation de creation categorie
 	if ($_GET["action"] == 'confirmed')
 	{
-		if ($idProdOrigin)
+		if ($urlfrom)
+		{
+			header("Location: ".$urlfrom);
+			exit;
+		}
+		else if ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		if ($idCompanyOrigin)
+		else if ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		if ($idSupplierOrigin)
+		else if ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		if ($idCatOrigin)
+		else if ($idMemberOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$_GET["type"]);
+			exit;
+		}
+		else if ($idCatOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
@@ -182,10 +203,10 @@ if ($user->rights->categorie->creer)
 	{
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$_GET['type'].'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		//print '<input type="hidden" name="id" value="'.$_GET['id'].'">';			Mis dans origin
-		//print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';	Mis dans origin
+		print '<input type="hidden" name="id" value="'.$_REQUEST['origin'].'">';
 		print '<input type="hidden" name="type" value="'.$_GET['type'].'">';
 		if ($_REQUEST['origin'])
 		{
@@ -195,7 +216,7 @@ if ($user->rights->categorie->creer)
 		{
 			print '<input type="hidden" name="catorigin" value="'.$_REQUEST['catorigin'].'">';
 		}
-		print '<input type="hidden" name="nom" value="'.$nom.'">';
+		print '<input type="hidden" name="nom" value="'.dol_escape_htmltag($nom).'">';
 
 		print_fiche_titre($langs->trans("CreateCat"));
 

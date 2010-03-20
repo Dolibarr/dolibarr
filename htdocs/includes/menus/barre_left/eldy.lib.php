@@ -821,6 +821,18 @@ function print_left_eldy_menu($db,$menu_array)
 				$newmenu->add(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
 				$newmenu->add(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->cotisation->lire);
 
+
+				if ($conf->categorie->enabled)
+				{
+					$langs->load("categories");
+					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=3", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
+					if ($user->societe_id == 0)
+					{
+						$newmenu->add(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=3", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+					}
+					//if ($leftmenu=="cat") $newmenu->add(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+				}
+
 				if ($conf->banque->enabled)
 				{
 					$langs->load("bills");
@@ -846,6 +858,8 @@ function print_left_eldy_menu($db,$menu_array)
 				$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=setup&amp;mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
 				$newmenu->add(DOL_URL_ROOT."/adherents/type.php?leftmenu=setup&amp;",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
 				$newmenu->add(DOL_URL_ROOT."/adherents/options.php?leftmenu=setup&amp;",$langs->trans("MembersAttributes"),1,$user->rights->adherent->configurer);
+
+
 			}
 
 		}

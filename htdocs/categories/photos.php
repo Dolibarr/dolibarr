@@ -111,8 +111,9 @@ if ($_GET["id"] || $_GET["ref"])
 
 		$title=$langs->trans("ProductsCategoryShort");
 		if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
-		if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
-		if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
+		elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
+		elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
+		elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
 
 		dol_fiche_head($head, 'photos', $title, 0, 'category');
 

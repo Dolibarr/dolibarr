@@ -449,7 +449,7 @@ a.help:hover        { font-size:<?php print $fontsizesmaller ?>px; font-family: 
 
 div.blockvmenupair
 {
-    width:160px;
+    width:164px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font-family: helvetica, verdana, arial, sans-serif;
@@ -469,7 +469,7 @@ div.blockvmenupair
 
 div.blockvmenuimpair
 {
-    width:160px;
+    width:164px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font-family: helvetica, verdana, arial, sans-serif;
@@ -489,7 +489,7 @@ div.blockvmenuimpair
 
 div.help
 {
-    width:160px;
+    width:164px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;

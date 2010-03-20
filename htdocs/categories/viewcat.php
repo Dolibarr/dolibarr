@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/categories/viewcat.php
  *       \ingroup    category
- *       \brief      Page de visualisation de categorie produit
+ *       \brief      Page to show a category card
  *       \version    $Revision$
  */
 
@@ -99,8 +99,10 @@ $head[$h][2] = 'photos';
 $h++;
 
 if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
-if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
-if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
+elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
+elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
+elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
+else $title=$langs->trans("Category");
 
 dol_fiche_head($head, 'card', $title, 0, 'category');
 
@@ -132,51 +134,6 @@ print '<tr><td width="20%" class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print nl2br($c->description);
 print '</td></tr>';
-
-// Visibility
-/*
-if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
-{
-	if ($c->socid)
-	{
-		$soc = new Societe($db);
-		$soc->fetch($c->socid);
-
-		print '<tr><td width="20%" class="notopnoleft">';
-		print $langs->trans("AssignedToTheCustomer").'</td><td>';
-		print $soc->getNomUrl(1);
-		print '</td></tr>';
-
-		$catsMeres = $c->get_meres ();
-
-		if ($catsMeres < 0)
-		{
-			dol_print_error();
-		}
-		else if (count($catsMeres) > 0)
-		{
-			print '<tr><td width="20%" class="notopnoleft">';
-			print $langs->trans("CategoryContents").'</td><td>';
-			print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-			print '</td></tr>';
-		}
-	}
-	else
-	{
-		print '<tr><td width="20%" class="notopnoleft">';
-		print $langs->trans("CategoryContents").'</td><td>';
-		print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-		print '</td></tr>';
-	}
-}
-else
-{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-}
-*/
 
 print '</table>';
 
@@ -214,7 +171,15 @@ else
 {
 	print "<br>";
 	print "<table class='noborder' width='100%'>\n";
-	print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("SubCats")."</td></tr>\n";
+	print "<tr class='liste_titre'><td colspan='2'>".$langs->trans("SubCats").'</td><td align="right">';
+	if ($user->rights->categorie->creer)
+	{
+		print "<a href='".DOL_URL_ROOT."/categories/fiche.php?action=create&amp;catorigin=".$c->id."&amp;socid=".$c->socid."&amp;type=".$type."&amp;urlfrom=".urlencode($_SERVER["PHP_SELF"].'?id='.$c->id.'&type='.$type)."'>";
+		print img_picto($langs->trans("Create"),'filenew');
+		print "</a>";
+	}
+	print "</td>";
+	print "</tr>\n";
 	if (sizeof ($cats) > 0)
 	{
 		$var=true;
@@ -226,7 +191,7 @@ else
 			print "\t\t<td nowrap=\"nowrap\">";
 			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
 			print "</td>\n";
-			print "\t\t<td>".$cat->description."</td>\n";
+			print "\t\t".'<td colspan="2">'.$cat->description."</td>\n";
 
 			/*
 			if ($cat->visible == 1)
@@ -247,24 +212,9 @@ else
 		print "<tr><td>".$langs->trans("NoSubCat")."</td></tr>";
 	}
 	print "</table>\n";
-
-	/*
-	 * Boutons actions
-	 */
-	if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
-	{
-		print "<div class='tabsAction'>\n";
-
-		if ($user->rights->categorie->creer)
-		{
-			print "<a class='butAction' href='fiche.php?action=create&amp;catorigin=".$c->id."&amp;socid=".$c->socid."&amp;type=".$type."'>".$langs->trans("Create")."</a>";
-		}
-
-		print "</div>";
-	}
 }
 
-
+// List of products
 if ($c->type == 0)
 {
 
@@ -374,6 +324,46 @@ if($c->type == 2)
 		else
 		{
 			print "<tr><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
+		}
+		print "</table>\n";
+	}
+}
+
+// List of members
+if ($c->type == 3)
+{
+
+	$prods = $c->get_type ("member","Member");
+	if ($prods < 0)
+	{
+		dol_print_error($db,$c->error);
+	}
+	else
+	{
+		print "<br>";
+		print "<table class='noborder' width='100%'>\n";
+		print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("Member")."</td></tr>\n";
+
+		if (sizeof ($prods) > 0)
+		{
+			$i = 0;
+			$var=true;
+			foreach ($prods as $prod)
+			{
+				$i++;
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td nowrap="nowrap" valign="top">';
+				print img_object($langs->trans("ShowMember"),"member");
+				print " <a href='".DOL_URL_ROOT."/adherent/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
+				print '<td valign="top">'.$prod->libelle."</td>\n";
+				print '<td valign="top">'.$prod->description."</td>\n";
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print "<tr><td>".$langs->trans("ThisCategoryHasNoMember")."</td></tr>";
 		}
 		print "</table>\n";
 	}

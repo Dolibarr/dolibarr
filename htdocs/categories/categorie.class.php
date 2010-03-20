@@ -47,7 +47,7 @@ class Categorie
 	var $description;
 	var $socid;
 	var $statut;
-	var $type;					// 0=Produit, 1=Tiers fournisseur, 2=Tiers client/prospect
+	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere
@@ -904,18 +904,23 @@ class Categorie
 	/**
 	 * 		Return list of categories linked to element of type $type with id $typeid
 	 * 		@param		id			Id of element
-	 * 		@param		type		Type of link ('customer','fournisseur','societe'...)
-	 * 		@param		typeid		Type id of link (0,1,2...)
+	 * 		@param		typeid		Type id of link (0,1,2,3...)
 	 * 		@return		array		List of category objects
 	 */
-	function containing ($id,$type,$typeid)
+	function containing($id,$typeid)
 	{
 		$cats = array ();
+
+		$table=''; $type='';
+		if ($typeid == 0)  { $table='product'; $type='product'; }
+		if ($typeid == 1)  { $table='societe'; $type='fournisseur'; }
+		if ($typeid == 2)  { $table='societe'; $type='societe'; }
+		if ($typeid == 3)  { $table='member'; $type='member'; }
 
 		$sql = "SELECT ct.fk_categorie";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
-		$sql.= " WHERE  ct.fk_".($type=='fournisseur'?'societe':$type)." = ".$id." AND c.type = ".$typeid;
+		$sql.= " WHERE  ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
 
 		$res = $this->db->query ($sql);
 		if ($res)

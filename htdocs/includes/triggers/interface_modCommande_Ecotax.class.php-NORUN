@@ -277,7 +277,7 @@ class InterfaceEcotax
 	}
 	$c = new Categorie($this->db);
 	$cats = array();
-        $cats = $c->containing($product_id);
+        $cats = $c->containing($product_id,0);
 	$found=0;
 	if (count($cats)==0) {
 	   return 0;
