@@ -56,6 +56,36 @@ $mesg = '';
  * Actions
  */
 
+if ($_POST['action'] == 'setproductaccountancycodebuy')
+{
+	$product = new Product($db);
+	$result=$product->fetch($_POST['id']);
+	$product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
+	$result=$product->update($product->id,$user,1,0,1);
+	if ($result < 0)
+	{
+		$mesg=join(',',$product->errors);
+	}
+	$POST["action"]="";
+	$id=$_POST["id"];
+	$_GET["id"]=$_POST["id"];
+}
+
+if ($_POST['action'] == 'setproductaccountancycodesell')
+{
+	$product = new Product($db);
+	$result=$product->fetch($_POST['id']);
+	$product->accountancy_code_sell=$_POST["productaccountancycodesell"];
+	$result=$product->update($product->id,$user,1,0,1);
+	if ($result < 0)
+	{
+		$mesg=join(',',$product->errors);
+	}
+	$POST["action"]="";
+	$id=$_POST["id"];
+	$_GET["id"]=$_POST["id"];
+}
+
 if ($_GET["action"] == 'fastappro')
 {
 	$product = new Product($db);
@@ -886,142 +916,35 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<table class="border" width="100%"><tr>';
 
 			// Ref
-			print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
 			print $html->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 
-			$nblignes=3;
-			if (! empty($conf->global->PRODUIT_MULTIPRICES_LIMIT) && empty($socid)) $nblignes+=$conf->global->PRODUIT_MULTIPRICES_LIMIT;
-			else $nblignes+=3;
+			print '</tr>';
 
+			// Label
+			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+
+			$nblignes=4;
 			if ($product->is_photo_available($conf->produit->dir_output))
 			{
 				// Photo
 				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-				$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
+				$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
 				print '</td>';
 			}
+
 			print '</tr>';
 
-			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
+			// Accountancy buy code
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td>';
+			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer);
+			print '</td></tr>';
 
-			// MultiPrix
-			if($conf->global->PRODUIT_MULTIPRICES)
-			{
-				if ($socid)
-				{
-					$soc = new Societe($db);
-					$soc->id = $socid;
-					$soc->fetch($socid);
-
-					print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
-
-					if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
-					{
-						print '<td>'.price($product->multiprices_ttc["$soc->price_level"]);
-					}
-					else
-					{
-						print '<td>'.price($product->multiprices["$soc->price_level"]);
-					}
-
-					if ($product->multiprices_base_type["$soc->price_level"])
-					{
-						print ' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
-					}
-					else
-					{
-						print ' '.$langs->trans($product->price_base_type);
-					}
-					print '</td></tr>';
-
-					// Prix mini
-					print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-					if ($product->multiprices_base_type["$soc->price_level"] == 'TTC')
-					{
-						print price($product->multiprices_min_ttc["$soc->price_level"]).' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
-					}
-					else
-					{
-						print price($product->multiprices_min["$soc->price_level"]).' '.$langs->trans($product->multiprices_base_type["$soc->price_level"]);
-					}
-					print '</td></tr>';
-
-					// TVA
-					print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->multiprices_tva_tx["$soc->price_level"],true).'</td></tr>';
-				}
-				else
-				{
-					for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
-					{
-						print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
-
-						if ($product->multiprices_base_type["$i"] == 'TTC')
-						{
-							print '<td>'.price($product->multiprices_ttc["$i"]);
-						}
-						else
-						{
-							print '<td>'.price($product->multiprices["$i"]);
-						}
-
-						if ($product->multiprices_base_type["$i"])
-						{
-							print ' '.$langs->trans($product->multiprices_base_type["$i"]);
-						}
-						else
-						{
-							print ' '.$langs->trans($product->price_base_type);
-						}
-						print '</td></tr>';
-
-						// Prix mini
-						print '<tr><td>'.$langs->trans("MinPrice").' '.$i.'</td><td>';
-						if ($product->multiprices_base_type["$i"] == 'TTC')
-						{
-							print price($product->multiprices_min_ttc["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
-						}
-						else
-						{
-							print price($product->multiprices_min["$i"]).' '.$langs->trans($product->multiprices_base_type["$i"]);
-						}
-						print '</td></tr>';
-
-						// TVA
-						print '<tr><td>'.$langs->trans("VATRate").' '.$i.'</td><td>'.vatrate($product->multiprices_tva_tx["$i"],true).'</td></tr>';
-					}
-				}
-			}
-			else
-			{
-				// Prix
-				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-				if ($product->price_base_type == 'TTC')
-				{
-					print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-				}
-				else
-				{
-					print price($product->price).' '.$langs->trans($product->price_base_type);
-				}
-				print '</td></tr>';
-
-				// Prix mini
-				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-				if ($product->price_base_type == 'TTC')
-				{
-					print price($product->price_min_ttc).' '.$langs->trans($product->price_base_type);
-				}
-				else
-				{
-					print price($product->price_min).' '.$langs->trans($product->price_base_type);
-				}
-				print '</td></tr>';
-
-				// TVA
-				print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
-			}
+			// Accountancy sell code
+			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td>';
+			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
+			print '</td></tr>';
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';

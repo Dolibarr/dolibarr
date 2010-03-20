@@ -151,31 +151,12 @@ if ($socid > 0)
 		print '</tr>';
 
 		print '<tr>';
-		// TODO Use a html->editfield function
-		print '<td><table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-		print $langs->trans("CustomerAccountancyCode");
-		print '</td>';
-		if ($_GET['action'] != 'editcustomeraccountancycode' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcustomeraccountancycode&amp;socid='.$societe->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-		print '</tr></table>';
+		print '<td>';
+		print $form->editfieldkey("CustomerAccountancyCode",'customeraccountancycode',$societe->code_compta,'socid',$societe->id,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
-		if ($_GET['action'] == 'editcustomeraccountancycode')
-		{
-			print "\n".'<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="action" value="setcustomeraccountancycode">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="socid" value="'.$societe->id.'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-			print '<tr><td>';
-			print '<input type="text" name="customeraccountancycode" value="'.$societe->code_compta.'">';
-			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table></form>'."\n";
-		}
-		else print $societe->code_compta;
+		print $form->editfieldval("CustomerAccountancyCode",'customeraccountancycode',$societe->code_compta,'socid',$societe->id,$user->rights->societe->creer);
 		print '</td>';
-		// End editfield
 		print '</tr>';
-
 	}
 
 	if ($societe->fournisseur)
@@ -188,29 +169,11 @@ if ($socid > 0)
 		print '</tr>';
 
 		print '<tr>';
-		// TODO Use a html->editfield function
-		print '<td><table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-		print $langs->trans("SupplierAccountancyCode");
-		print '</td>';
-		if ($_GET['action'] != 'editsupplieraccountancycode' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editsupplieraccountancycode&amp;socid='.$societe->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-		print '</tr></table>';
+		print '<td>';
+		print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$societe->code_compta_fournisseur,'socid',$societe->id,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
-		if ($_GET['action'] == 'editsupplieraccountancycode')
-		{
-			print "\n".'<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="action" value="setsupplieraccountancycode">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="socid" value="'.$societe->id.'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-			print '<tr><td>';
-			print '<input type="text" name="supplieraccountancycode" value="'.$societe->code_compta_fournisseur.'">';
-			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table></form>'."\n";
-		}
-		else print $societe->code_compta_fournisseur;
+		print $form->editfieldval("SupplierAccountancyCode",'supplieraccountancycode',$societe->code_compta_fournisseur,'socid',$societe->id,$user->rights->societe->creer);
 		print '</td>';
-		// End editfield
 		print '</tr>';
 	}
 
@@ -407,35 +370,35 @@ if ($socid > 0)
 			if ($num > 0)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
-				
+
 				$projectstatic = new Project($db);
-				
+
 				print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
 				print '</tr>';
-				
+
 				$var=true;
 				$i = 0 ;
 				while ($i < $num && $i < $MAXLIST)
 				{
 					$obj = $db->fetch_object($result);
 					$projectstatic->fetch($obj->rowid);
-					
+
 					// To verify role of users
 					$userAccess = $projectstatic->restrictedProjectArea($user,1);
-				
+
 					if ($user->rights->projet->lire && $userAccess > 0)
 					{
 						$var = !$var;
 						print "<tr $bc[$var]>";
-						
+
 						// Ref
 						print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
 						// Label
 						print '<td>'.$obj->title.'</td>';
 						// Date
 						print '<td align="right">'.dol_print_date($obj->do,"day").'</td>';
-						
+
 						print '</tr>';
 					}
 					$i++;

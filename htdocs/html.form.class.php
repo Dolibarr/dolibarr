@@ -61,6 +61,46 @@ class Form
 		return 1;
 	}
 
+	/**
+	 *	\brief	Output key field for an editable field
+	 */
+	function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm)
+	{
+		global $langs;
+		$ret='';
+		$ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+		$ret.=$langs->trans($text);
+		$ret.='</td>';
+		if ($_GET['action'] != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramkey.'='.$paramvalue.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+		$ret.='</tr></table>';
+		return $ret;
+	}
+
+	/**
+	 *	\brief	Output val field for an editable field
+	 */
+	function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm)
+	{
+		global $langs;
+		$ret='';
+		if ($_GET['action'] == 'edit'.$htmlname)
+		{
+			$ret.="\n";
+			$ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			$ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
+			$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$ret.='<input type="hidden" name="'.$paramkey.'" value="'.$paramvalue.'">';
+			$ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			$ret.='<tr><td>';
+			$ret.='<input type="text" name="'.$htmlname.'" value="'.$preselected.'">';
+			$ret.='</td>';
+			$ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			$ret.='</tr></table>'."\n";
+			$ret.='</form>'."\n";
+		}
+		else $ret.=$preselected;
+		return $ret;
+	}
 
 	/**
 	 *	\brief	Old version of textwithtooltip. Kept for backward compatibility with modules for 2.6.
@@ -68,7 +108,6 @@ class Form
 	 */
 	function textwithhelp($text,$htmltext,$tooltipon=1)
 	{
-		global $conf;
 		return $this->textwithtooltip($text,$htmltext,$tooltipon);
 	}
 

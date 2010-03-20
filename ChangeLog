@@ -3,8 +3,10 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:
+- New: Can set accountancy code for product (buy and sell).
 - New: Can filter third parties lists on categories.
 - New: Can filter products and services lists on categories.
+- New: Can use categories for members.
 - New: Can build documents for third parties (Use ODT templates, need PHP 5.2+). 
 - New: Support products property length and area.
 - New: Add "payment due before" field in invoice exports

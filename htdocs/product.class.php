@@ -95,6 +95,9 @@ class Product extends CommonObject
 	var $volume;
 	var $volume_units;
 
+	var $accountancy_code_buy;
+	var $accountancy_code_sell;
+
 	//! Codes barres
 	var $barcode;
 	var $barcode_type;
@@ -409,27 +412,31 @@ class Product extends CommonObject
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
 		if (empty($this->finished))  			$this->finished = 0;
 		if (empty($this->hidden))   			$this->hidden = 0;
+		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-		$sql .= " SET label = '" . addslashes($this->libelle) ."'";
-		$sql .= ",ref = '" . $this->ref ."'";
-		$sql .= ",tva_tx = " . $this->tva_tx;
-		$sql .= ",envente = " . $this->status;
-		$sql .= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
-		$sql .= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
-		$sql .= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
-		$sql .= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
-		$sql .= ",length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
-		$sql .= ",length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
-		$sql .= ",surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
-		$sql .= ",surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
-		$sql .= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
-		$sql .= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
-		$sql .= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
-		$sql .= ",description = '" . addslashes($this->description) ."'";
-		$sql .= ",note = '" .        addslashes($this->note) ."'";
-		$sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
-		$sql .= " WHERE rowid = " . $id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
+		$sql.= " SET label = '" . addslashes($this->libelle) ."'";
+		$sql.= ",ref = '" . $this->ref ."'";
+		$sql.= ",tva_tx = " . $this->tva_tx;
+		$sql.= ",envente = " . $this->status;
+		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
+		$sql.= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
+		$sql.= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
+		$sql.= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
+		$sql.= ",length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
+		$sql.= ",length_units = " . ($this->length_units!='' ? "'".$this->length_units."'" : 'null');
+		$sql.= ",surface = " . ($this->surface!='' ? "'".$this->surface."'" : 'null');
+		$sql.= ",surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
+		$sql.= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
+		$sql.= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
+		$sql.= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
+		$sql.= ",description = '" . addslashes($this->description) ."'";
+		$sql.= ",note = '" .        addslashes($this->note) ."'";
+		$sql.= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
+		$sql.= ",accountancy_code_buy = '" . $this->accountancy_code_buy."'";
+		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
+		$sql.= " WHERE rowid = " . $id;
 
 		dol_syslog("Product::update sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -920,7 +927,7 @@ class Product extends CommonObject
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
-		$sql.= " stock, pmp,";
+		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
@@ -962,6 +969,9 @@ class Product extends CommonObject
 			$this->volume_units       = $result["volume_units"];
 			$this->barcode            = $result["barcode"];
 			$this->barcode_type       = $result["fk_barcode_type"];
+
+			$this->accountancy_code_buy = $result["accountancy_code_buy"];
+			$this->accountancy_code_sell= $result["accountancy_code_sell"];
 
 			$this->stock_reel         = $result["stock"];
 			$this->pmp                = $result["pmp"];
@@ -2434,14 +2444,17 @@ class Product extends CommonObject
 
 
 	/**
-	 *    \brief      Affiche toutes les photos du produit (nbmax maximum)
-	 *    \param      sdir        Directory to scan
-	 *    \param      size        0=taille origine, 1 taille vignette
-	 *    \param      nbmax       Nombre maximum de photos (0=pas de max)
-	 *    \param      nbbyrow     Nombre vignettes par ligne (si mode vignette)
-	 *    \return     int         Nombre de photos affichees
+	 *    	\brief      Show photos of a product (nbmax maximum)
+	 *    	\param      sdir        	Directory to scan
+	 *    	\param      size        	0=original size, 1 use thumbnail if possible
+	 *    	\param      nbmax       	Nombre maximum de photos (0=pas de max)
+	 *    	\param      nbbyrow     	Nombre vignettes par ligne (si mode vignette)
+	 * 		\param		showfilename	1=Show filename
+	 * 		\param		showaction		1=Show icon with action links (resize, delete)
+	 * 		\param		maxheight		Max height of image when size=1
+	 *    	\return     int         	Number of photos shown
 	 */
-	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0)
+	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxheight=120)
 	{
 		global $conf,$user,$langs;
 
@@ -2490,17 +2503,17 @@ class Product extends CommonObject
 						print "\n";
 						print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" target="_blank">';
 
-						// Show image (width height=120)
+						// Show image (width height=$maxheight)
 						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
 						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
 						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-						if ($photo_vignette && $imgarray['height'] > 120) {
+						if ($photo_vignette && $imgarray['height'] > $maxheight) {
 							print '<!-- Show thumb -->';
-							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+							print '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 						}
 						else {
 							print '<!-- Show original file -->';
-							print '<img class="photo" border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+							print '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 						}
 
 						print '</a>';

@@ -1165,7 +1165,7 @@ function migrate_price_facture($db,$langs,$conf)
 				$facligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
-				print ".";
+				print ". ";
 				$facligne->update_total();
 
 
@@ -2992,7 +2992,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
 							$error++;
 							dol_print_error($db);
 						}
-						print ".";
+						print ". ";
 					}
 					else
 					{
