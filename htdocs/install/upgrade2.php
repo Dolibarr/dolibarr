@@ -3050,21 +3050,10 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 
 	$error = 0;
 
-	/*	$result1 = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","ref_customer");
-	 $result2 = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","date_delivery");
-	 $obj1 = $db->fetch_object($result1);
-	 $obj2 = $db->fetch_object($result2);
-	 if (!$obj1 && !$obj2)
-	 {*/
 	dolibarr_install_syslog("upgrade2::migrate_shipping_delivery2");
 
 	$db->begin();
 
-	/*		$sqlAdd1 = "ALTER TABLE ".MAIN_DB_PREFIX."livraison CHANGE ref_client ref_customer varchar(30)";
-		$sqlAdd2 = "ALTER TABLE ".MAIN_DB_PREFIX."livraison CHANGE date_livraison date_delivery date DEFAULT NULL";
-
-		if ($db->query($sqlAdd1) && $db->query($sqlAdd2))
-		{*/
 	$sqlSelect = "SELECT l.rowid as delivery_id, e.ref_customer, e.date_delivery";
 	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."livraison as l,";
 	$sqlSelect.= " ".MAIN_DB_PREFIX."element_element as el,";
@@ -3123,18 +3112,6 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 		dol_print_error($db);
 		$db->rollback();
 	}
-	/*		}
-		else
-		{
-		dol_print_error($db);
-		$db->rollback();
-		}*/
-	/*	}
-	 else
-	 {
-		print $langs->trans('AlreadyDone')."<br>\n";
-		}
-		*/
 
 	print '</td></tr>';
 }
