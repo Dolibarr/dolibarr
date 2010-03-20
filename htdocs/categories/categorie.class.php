@@ -164,14 +164,14 @@ class Categorie
 						return -1;
 					}
 				}
-				
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-				
+
 				return $id;
 			}
 			else
@@ -244,14 +244,14 @@ class Categorie
 		if ($this->db->query($sql))
 		{
 			$this->db->commit();
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CATEGORY_UPDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else
@@ -305,7 +305,7 @@ class Categorie
 			$result=$interface->run_triggers('CATEGORY_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 
@@ -444,8 +444,8 @@ class Categorie
 		{
 			while ($rec = $this->db->fetch_array ($res))
 			{
-				$obj = new $class ($this->db, $rec['fk_'.$field]);
-				$obj->fetch ($obj->id);
+				$obj = new $class ($this->db);
+				$obj->fetch ($rec['fk_'.$field]);
 				$objs[] = $obj;
 			}
 			return $objs;
