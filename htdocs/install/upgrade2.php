@@ -273,11 +273,11 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 		if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
 		{
 			migrate_project_task_time($db,$langs,$conf);
-			
+
 			migrate_customerorder_shipping($db,$langs,$conf);
-			
+
 			migrate_shipping_delivery($db,$langs,$conf);
-			
+
 			migrate_shipping_delivery2($db,$langs,$conf);
 		}
 
@@ -411,6 +411,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 		$sql.= " WHERE pf.rowid IS NULL AND (p.rowid=bu.url_id AND bu.type='payment') AND bu.fk_bank = b.rowid";
 		$sql.= " AND b.rappro = 1";
 		$sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
+
 		$resql = $db->query($sql);
 
 		dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_1 sql=".$sql);
@@ -1513,14 +1514,14 @@ function migrate_price_commande($db,$langs,$conf)
 		$db->free($resql);
 
 		/*
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-		$sql.= " WHERE price = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0 AND remise_percent = 0";
-		$resql=$db->query($sql);
-		if (! $resql)
-		{
+		 $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
+		 $sql.= " WHERE price = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0 AND remise_percent = 0";
+		 $resql=$db->query($sql);
+		 if (! $resql)
+		 {
 			dol_print_error($db);
-		}
-		*/
+			}
+			*/
 
 		$db->commit();
 	}
@@ -1625,14 +1626,14 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 		$db->free($resql);
 
 		/*
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet";
-		$sql.= " WHERE subprice = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
-		$resql=$db->query($sql);
-		if (! $resql)
-		{
+		 $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet";
+		 $sql.= " WHERE subprice = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
+		 $resql=$db->query($sql);
+		 if (! $resql)
+		 {
 			dol_print_error($db);
-		}
-		*/
+			}
+			*/
 
 		$db->commit();
 	}
@@ -2856,10 +2857,10 @@ function migrate_customerorder_shipping($db,$langs,$conf)
 		dolibarr_install_syslog("upgrade2::migrate_customerorder_shipping");
 
 		$db->begin();
-		
+
 		$sqlAdd1 = "ALTER TABLE ".MAIN_DB_PREFIX."expedition ADD COLUMN ref_customer varchar(30) AFTER entity";
 		$sqlAdd2 = "ALTER TABLE ".MAIN_DB_PREFIX."expedition ADD COLUMN date_delivery date DEFAULT NULL AFTER date_expedition";
-		
+
 		if ($db->query($sqlAdd1) && $db->query($sqlAdd2))
 		{
 			$sqlSelect = "SELECT e.rowid as shipping_id, c.ref_client, c.date_livraison";
@@ -2868,13 +2869,13 @@ function migrate_customerorder_shipping($db,$langs,$conf)
 			$sqlSelect.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON c.rowid = el.fk_source AND el.sourcetype = 'commande'";
 			$sqlSelect.= " WHERE e.rowid = el.fk_target";
 			$sqlSelect.= " AND el.targettype = 'shipping'";
-			
+
 			$resql = $db->query($sqlSelect);
 			if ($resql)
 			{
 				$i = 0;
 				$num = $db->num_rows($resql);
-				
+
 				if ($num)
 				{
 					while ($i < $num)
@@ -2885,7 +2886,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
 						$sqlUpdate.= " ref_customer = '".$obj->ref_client."'";
 						$sqlUpdate.= ", date_delivery = '".($obj->date_livraison?$obj->date_livraison:'null')."'";
 						$sqlUpdate.= " WHERE rowid = ".$obj->shipping_id;
-						
+
 						$result=$db->query($sqlUpdate);
 						if (! $result)
 						{
@@ -2900,7 +2901,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
 				{
 					print $langs->trans('AlreadyDone')."<br>\n";
 				}
-				
+
 				if ($error == 0)
 				{
 					$db->commit();
@@ -2932,7 +2933,7 @@ function migrate_customerorder_shipping($db,$langs,$conf)
 }
 
 /*
- * Migrate fk_expedition to llx_element_element
+ * Migrate link stored into fk_expedition into llx_element_element
  */
 function migrate_shipping_delivery($db,$langs,$conf)
 {
@@ -2953,6 +2954,7 @@ function migrate_shipping_delivery($db,$langs,$conf)
 
 		$sqlSelect = "SELECT rowid, fk_expedition";
 		$sqlSelect.= " FROM ".MAIN_DB_PREFIX."livraison";
+		$sqlSelect.= " WHERE fk_expedition is not null";
 
 		$resql = $db->query($sqlSelect);
 		if ($resql)
@@ -2979,12 +2981,24 @@ function migrate_shipping_delivery($db,$langs,$conf)
 					$sqlInsert.= ")";
 
 					$result=$db->query($sqlInsert);
-					if (! $result)
+					if ($result)
+					{
+						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET fk_expedition = NULL";
+						$sqlUpdate.= " WHERE rowid = ".$obj->rowid;
+
+						$result=$db->query($sqlUpdate);
+						if (! $result)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+						print ".";
+					}
+					else
 					{
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
 					$i++;
 				}
 			}
@@ -2995,17 +3009,14 @@ function migrate_shipping_delivery($db,$langs,$conf)
 
 			if ($error == 0)
 			{
-				$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."livraison DROP COLUMN fk_expedition";
 				$sqlDelete = "DELETE FROM ".MAIN_DB_PREFIX."element_element WHERE sourcetype = 'commande' AND targettype = 'delivery'";
-				if ($db->query($sqlDrop) && $db->query($sqlDelete))
-				{
-					$db->commit();
-				}
-				else
-				{
-					dol_print_error($db);
-					$db->rollback();
-				}
+				$db->query($sqlDelete);
+
+				$db->commit();
+
+				// DDL commands must not be inside a transaction
+				$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."livraison DROP COLUMN fk_expedition";
+				$db->query($sqlDrop);
 			}
 			else
 			{
@@ -3039,75 +3050,67 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 
 	$error = 0;
 
-	$result1 = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","ref_customer");
-	$result2 = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","date_delivery");
-	$obj1 = $db->fetch_object($result1);
-	$obj2 = $db->fetch_object($result2);
-	if (!$obj1 && !$obj2)
-	{
-		dolibarr_install_syslog("upgrade2::migrate_shipping_delivery2");
+	/*	$result1 = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","ref_customer");
+	 $result2 = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","date_delivery");
+	 $obj1 = $db->fetch_object($result1);
+	 $obj2 = $db->fetch_object($result2);
+	 if (!$obj1 && !$obj2)
+	 {*/
+	dolibarr_install_syslog("upgrade2::migrate_shipping_delivery2");
 
-		$db->begin();
-		
-		$sqlAdd1 = "ALTER TABLE ".MAIN_DB_PREFIX."livraison CHANGE ref_client ref_customer varchar(30)";
+	$db->begin();
+
+	/*		$sqlAdd1 = "ALTER TABLE ".MAIN_DB_PREFIX."livraison CHANGE ref_client ref_customer varchar(30)";
 		$sqlAdd2 = "ALTER TABLE ".MAIN_DB_PREFIX."livraison CHANGE date_livraison date_delivery date DEFAULT NULL";
-		
-		if ($db->query($sqlAdd1) && $db->query($sqlAdd2))
-		{
-			$sqlSelect = "SELECT l.rowid as delivery_id, e.ref_customer, e.date_delivery";
-			$sqlSelect.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-			$sqlSelect.= ", ".MAIN_DB_PREFIX."element_element as el";
-			$sqlSelect.= " LEFT JOIN ".MAIN_DB_PREFIX."expedition as e ON e.rowid = el.fk_source AND el.sourcetype = 'shipping'";
-			$sqlSelect.= " WHERE l.rowid = el.fk_target";
-			$sqlSelect.= " AND el.targettype = 'delivery'";
-			
-			$resql = $db->query($sqlSelect);
-			if ($resql)
-			{
-				$i = 0;
-				$num = $db->num_rows($resql);
-				
-				if ($num)
-				{
-					while ($i < $num)
-					{
-						$obj = $db->fetch_object($resql);
 
-						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-						$sqlUpdate.= " ref_customer = '".$obj->ref_customer."'";
-						$sqlUpdate.= ", date_delivery = '".($obj->date_delivery?$obj->date_delivery:'null')."'";
-						$sqlUpdate.= " WHERE rowid = ".$obj->delivery_id;
-						
-						$result=$db->query($sqlUpdate);
-						if (! $result)
-						{
-							$error++;
-							dol_print_error($db);
-						}
-						print ". ";
-						$i++;
-					}
-				}
-				else
-				{
-					print $langs->trans('AlreadyDone')."<br>\n";
-				}
-				
-				if ($error == 0)
-				{
-					$db->commit();
-				}
-				else
-				{
-					dol_print_error($db);
-					$db->rollback();
-				}
-			}
-			else
+		if ($db->query($sqlAdd1) && $db->query($sqlAdd2))
+		{*/
+	$sqlSelect = "SELECT l.rowid as delivery_id, e.ref_customer, e.date_delivery";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."livraison as l,";
+	$sqlSelect.= " ".MAIN_DB_PREFIX."element_element as el,";
+	$sqlSelect.= " ".MAIN_DB_PREFIX."expedition as e";
+	$sqlSelect.= " WHERE l.rowid = el.fk_target";
+	$sqlSelect.= " AND el.targettype = 'delivery'";
+	$sqlSelect.= " AND e.rowid = el.fk_source AND el.sourcetype = 'shipping'";
+	// Add condition to know if we never migrate this record
+	$sqlSelect.= " AND (l.ref_customer IS NULL or l.ref_customer = '')";
+	$sqlSelect.= " AND (l.date_delivery IS NULL or l.date_delivery = '')";
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
 			{
-				dol_print_error($db);
-				$db->rollback();
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
+				$sqlUpdate.= " ref_customer = '".$obj->ref_customer."',";
+				$sqlUpdate.= " date_delivery = '".($obj->date_delivery?$obj->date_delivery:'null')."'";
+				$sqlUpdate.= " WHERE rowid = ".$obj->delivery_id;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				print ". ";
+				$i++;
 			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if ($error == 0)
+		{
+			$db->commit();
 		}
 		else
 		{
@@ -3117,11 +3120,25 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 	}
 	else
 	{
-		print $langs->trans('AlreadyDone')."<br>\n";
+		dol_print_error($db);
+		$db->rollback();
 	}
+	/*		}
+		else
+		{
+		dol_print_error($db);
+		$db->rollback();
+		}*/
+	/*	}
+	 else
+	 {
+		print $langs->trans('AlreadyDone')."<br>\n";
+		}
+		*/
 
 	print '</td></tr>';
 }
+
 
 /*
  * Migration directory

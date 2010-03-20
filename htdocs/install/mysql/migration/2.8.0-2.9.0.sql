@@ -6,6 +6,7 @@
 -- when current version is 2.8.0 or higher. 
 --
 
+
 -- rename llx_product_det
 ALTER TABLE llx_product_det RENAME TO llx_product_lang;
 ALTER TABLE llx_product_lang ADD UNIQUE INDEX uk_product_lang (fk_product, lang);
@@ -91,6 +92,9 @@ alter table llx_product add column   accountancy_code_buy        varchar(15) aft
 
 ALTER TABLE llx_product drop column stock_loc;
 ALTER TABLE llx_product_stock add column location        varchar(32);
+
+ALTER TABLE llx_expedition ADD COLUMN ref_customer varchar(30) AFTER entity;
+ALTER TABLE llx_expedition ADD COLUMN date_delivery date DEFAULT NULL AFTER date_expedition;
 
 ALTER TABLE llx_facture MODIFY tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture MODIFY total double(24,8) DEFAULT 0;
