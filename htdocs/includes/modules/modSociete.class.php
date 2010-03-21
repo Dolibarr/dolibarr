@@ -264,11 +264,15 @@ class modSociete extends DolibarrModules
 	 */
 	function init($options='')
 	{
+		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 		// Prevent pb of modules not correctly disabled
 		//$this->remove($options);
 
 		$sql = array();
+
+		create_exdir(DOL_DATA_ROOT.'/odttemplates/thirdparties');
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',DOL_DATA_ROOT.'/odttemplates/thirdparties/template_thirdparty.odt',0,0);
 
 		return $this->_init($sql,$options);
 	}
