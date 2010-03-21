@@ -21,11 +21,11 @@
  *
  * Link dialog window.
 -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
 	<title></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta content="noindex, nofollow" name="robots" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+	<meta content="noindex, nofollow" name="robots" >
 	<script src="common/fck_dialog_common.js" type="text/javascript"></script>
 	<script type="text/javascript">
 
@@ -395,6 +395,7 @@ function SetUrl( url )
 
 	</script>
 </head>
+
 <body style="overflow: hidden">
 	<table cellspacing="0" cellpadding="0" width="100%" border="0" style="height: 100%">
 		<tr>
@@ -458,22 +459,22 @@ function SetUrl( url )
 								<span fcklang="DlgDocDocType">Document Type Heading</span><br />
 								<select id="selDocType" onchange="CheckOther( this, 'txtDocType' );">
 									<option value="" selected="selected"></option>
-									<option value='<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'>HTML
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;'>HTML 
 										4.01 Transitional</option>
-									<option value='<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">'>
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;'> 
 										HTML 4.01 Strict</option>
-									<option value='<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">'>
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"&gt;'> 
 										HTML 4.01 Frameset</option>
-									<option value='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'>
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;'> 
 										XHTML 1.0 Transitional</option>
-									<option value='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'>
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;'> 
 										XHTML 1.0 Strict</option>
-									<option value='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'>
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"&gt;'> 
 										XHTML 1.0 Frameset</option>
-									<option value='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'>
+									<option value='&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;'> 
 										XHTML 1.1</option>
-									<option value='<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'>HTML 3.2</option>
-									<option value='<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">'>HTML 2.0</option>
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"&gt;'>HTML 3.2</option> 
+									<option value='&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"&gt;'>HTML 2.0</option>
 									<option value="..." fcklang="DlgOpOther">&lt;Other&gt;</option>
 								</select>
 							</td>
