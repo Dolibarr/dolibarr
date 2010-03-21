@@ -101,8 +101,8 @@ class Deplacement extends CommonObject
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
 		$sql.= ", '".$this->type."'";
-		$sql.= ", note = ".($this->note?"'".addslashes($this->note)."'":"null");
-		$sql.= ", note_public = ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql.= ", ".($this->note?"'".addslashes($this->note)."'":"null");
+		$sql.= ", ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql.= ")";
 
 		dol_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
