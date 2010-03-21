@@ -3,6 +3,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:
+- New: Can link trips and fees to a project.
+- New: Add civility title in foundation module.
 - New: Can set accountancy code for product (buy and sell).
 - New: Can filter third parties lists on categories.
 - New: Can filter products and services lists on categories.

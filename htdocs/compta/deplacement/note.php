@@ -131,7 +131,16 @@ if ($id > 0 || ! empty($ref))
 	print $html->showrefnav($trip,'ref','',1,'ref','ref',$morehtmlref);
 	print '</td></tr>';
 
+	// Type
 	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($trip->type).'</td></tr>';
+
+	// Who
+	print "<tr>";
+	print '<td>'.$langs->trans("Person").'</td><td>';
+	$userfee=new User($db,$trip->fk_user);
+	$userfee->fetch();
+	print $userfee->getNomUrl(1);
+	print '</td></tr>';
 
 	print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td>';
 	print '<td>';

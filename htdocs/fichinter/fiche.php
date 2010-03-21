@@ -483,12 +483,13 @@ if ($_GET["action"] == 'create')
 
 		print '<input type="hidden" name="action" value="add">';
 
+		// Ref
 		print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
 		print '<td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
 
+		// Project
 		if ($conf->projet->enabled)
 		{
-			// Projet associe
 			$langs->load("project");
 
 			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
@@ -595,36 +596,6 @@ elseif ($fichinterid)
 	// Third party
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$fichinter->client->getNomUrl(1)."</td></tr>";
 
-	// Project
-	if ($conf->projet->enabled)
-	{
-		$langs->load('projects');
-		print '<tr>';
-		print '<td>';
-
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Project');
-		print '</td>';
-		if ($_GET['action'] != 'classin')
-		{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;id='.$fichinter->id.'">';
-			print img_edit($langs->trans('SetProject'),1);
-			print '</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($_GET['action'] == 'classin')
-		{
-			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project,'projectid');
-		}
-		else
-		{
-			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project,'none');
-		}
-		print '</td>';
-		print '</tr>';
-	}
-
 	// Duration
 	print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 	//print $fichinter->duree.'-'.$conf->global->MAIN_DURATION_OF_WORKDAY;
@@ -655,6 +626,36 @@ elseif ($fichinterid)
 	}
 	print '</td>';
 	print '</tr>';
+
+	// Project
+	if ($conf->projet->enabled)
+	{
+		$langs->load('projects');
+		print '<tr>';
+		print '<td>';
+
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Project');
+		print '</td>';
+		if ($_GET['action'] != 'classin')
+		{
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;id='.$fichinter->id.'">';
+			print img_edit($langs->trans('SetProject'),1);
+			print '</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($_GET['action'] == 'classin')
+		{
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project,'projectid');
+		}
+		else
+		{
+			$html->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project,'none');
+		}
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fichinter->getLibStatut(4).'</td></tr>';

@@ -32,6 +32,7 @@ create table llx_deplacement
   type				varchar(12) NOT NULL,
   km				real,
   fk_soc			integer,
+  fk_projet         integer DEFAULT 0,
   note				text,
   note_public       text
 )type=innodb;

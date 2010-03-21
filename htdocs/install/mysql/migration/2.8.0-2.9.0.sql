@@ -125,4 +125,6 @@ ALTER TABLE llx_facturedet_rec MODIFY total_tva double(24,8);
 ALTER TABLE llx_facturedet_rec MODIFY total_ttc double(24,8);
 
 
-ALTER TABLE llx_adherent ADD COLUMN   civilite       varchar(6) after entity;
+ALTER TABLE llx_adherent ADD COLUMN civilite varchar(6) after entity;
+
+ALTER TABLE llx_deplacement ADD COLUMN fk_projet integer DEFAULT 0 after fk_soc;

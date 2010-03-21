@@ -312,6 +312,8 @@ class Project extends CommonObject
 		if ($type == 'order_supplier')     $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE fk_projet=".$this->id;
 		if ($type == 'invoice_supplier')   $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE fk_projet=".$this->id;
 		if ($type == 'contract')           $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."contrat WHERE fk_projet=".$this->id;
+		if ($type == 'intervention')       $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."fichinter WHERE fk_projet=".$this->id;
+		if ($type == 'trip')               $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."deplacement WHERE fk_projet=".$this->id;
 		if ($type == 'agenda')             $sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project=".$this->id;
 		if (! $sql) return -1;
 
@@ -350,9 +352,9 @@ class Project extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf;
-		
+
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -387,7 +389,7 @@ class Project extends CommonObject
 					}
 				}
 			}
-			
+
 			if (! $notrigger)
 			{
 	            // Call triggers
@@ -397,7 +399,7 @@ class Project extends CommonObject
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // End call triggers
 			}
-			
+
 			dol_syslog("Project::delete sql=".$sql, LOG_DEBUG);
 			$this->db->commit();
 			return 1;

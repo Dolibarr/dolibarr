@@ -48,7 +48,8 @@ class Deplacement extends CommonObject
 	var $note;
 	var $note_public;
 	var $socid;
-
+	var $statut=1;		// 0=draft, 1=validated
+	var $fk_project;
 
    /**
 	*  \brief  Constructeur de la classe
@@ -95,14 +96,18 @@ class Deplacement extends CommonObject
 		$sql.= ", type";
 		$sql.= ", note";
 		$sql.= ", note_public";
+		$sql.= ", fk_projet";
+		$sql.= ", fk_soc";
 		$sql.= ") VALUES (";
 		$sql.= $this->db->idate(mktime());
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
 		$sql.= ", '".$this->type."'";
-		$sql.= ", note = ".($this->note?"'".addslashes($this->note)."'":"null");
-		$sql.= ", note_public = ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql.= ", ".($this->note?"'".addslashes($this->note)."'":"null");
+		$sql.= ", ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
+		$sql.= ", ".($this->fk_soc > 0? $this->fk_soc : "null");
 		$sql.= ")";
 
 		dol_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
@@ -154,6 +159,8 @@ class Deplacement extends CommonObject
 			return -1;
 		}
 
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
 		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
@@ -162,17 +169,20 @@ class Deplacement extends CommonObject
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
 		$sql .= " , note = ".($this->note?"'".addslashes($this->note)."'":"null");
 		$sql .= " , note_public = ".($this->note_public?"'".addslashes($this->note_public)."'":"null");
+		$sql .= " , fk_projet = ".($this->fk_project>0?$this->fk_project:0);
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Deplacement::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -182,7 +192,7 @@ class Deplacement extends CommonObject
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, fk_user, type, km, fk_soc, dated, note, note_public";
+		$sql = "SELECT rowid, fk_user, type, km, fk_soc, dated, note, note_public, fk_projet";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -192,15 +202,16 @@ class Deplacement extends CommonObject
 		{
 			$obj = $this->db->fetch_object($result);
 
-			$this->id       = $obj->rowid;
-			$this->ref      = $obj->rowid;
-			$this->date     = $this->db->jdate($obj->dated);
-			$this->fk_user  = $obj->fk_user;
-			$this->socid    = $obj->fk_soc;
-			$this->km       = $obj->km;
-			$this->type     = $obj->type;
-			$this->note     = $obj->note;
+			$this->id          = $obj->rowid;
+			$this->ref         = $obj->rowid;
+			$this->date        = $this->db->jdate($obj->dated);
+			$this->fk_user     = $obj->fk_user;
+			$this->socid       = $obj->fk_soc;
+			$this->km          = $obj->km;
+			$this->type        = $obj->type;
+			$this->note        = $obj->note;
 			$this->note_public = $obj->note_public;
+			$this->fk_project  = $obj->fk_projet;
 
 			return 1;
 		}
@@ -229,6 +240,81 @@ class Deplacement extends CommonObject
 			$this->error=$this->db->error();
 			return -1;
 		}
+	}
+
+
+	/**
+	 *    \brief      Retourne le libelle du statut
+	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * 	  \return     string      Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    \brief      Renvoi le libelle d'un statut donne
+	 *    \param      statut      id statut
+	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *    \return     string      Libelle
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 5)
+		{
+			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+		}
+	}
+
+	/**
+	 *	\brief      Return clicable name (with picto eventually)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/deplacement/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		$picto='trip';
+
+		$label=$langs->trans("Show").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
 	}
 
 }

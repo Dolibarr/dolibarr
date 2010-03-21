@@ -35,6 +35,8 @@ if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/comma
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->fichinter->enabled)   require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
+if ($conf->deplacement->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/deplacement.class.php");
 if ($conf->agenda->enabled)      require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $langs->load("projects");
@@ -137,6 +139,16 @@ $listofreferent=array(
 	'title'=>"ListContractAssociatedProject",
 	'class'=>'Contrat',
 	'test'=>$conf->contrat->enabled),
+'intervention'=>array(
+	'title'=>"ListFichinterAssociatedProject",
+	'class'=>'Fichinter',
+	'disableamount'=>1,
+	'test'=>$conf->ficheinter->enabled),
+'trip'=>array(
+	'title'=>"ListTripAssociatedProject",
+	'class'=>'Deplacement',
+	'disableamount'=>1,
+	'test'=>$conf->deplacement->enabled),
 'agenda'=>array(
 	'title'=>"ListActionsAssociatedProject",
 	'class'=>'ActionComm',
@@ -209,7 +221,7 @@ foreach ($listofreferent as $key => $value)
 		 * Barre d'action
 		 */
 		print '<div class="tabsAction">';
-		
+
 		if ($project->statut > 0)
 		{
 			if ($project->societe->prospect || $project->societe->client)
@@ -239,7 +251,7 @@ foreach ($listofreferent as $key => $value)
 				}
 			}
 		}
-		
+
 		print '</div>';
 	}
 }

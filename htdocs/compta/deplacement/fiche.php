@@ -24,6 +24,12 @@
  *  \version		$Id$
  */
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+if ($conf->projet->enabled)
+{
+	require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+}
 
 $langs->load("trips");
 
@@ -152,6 +158,16 @@ if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 	}
 }
 
+// Set into a project
+if ($_POST['action'] == 'classin')
+{
+	$trip = new Deplacement($db);
+	$trip->fetch($_GET['id']);
+	$result=$trip->setProject($_POST['projectid']);
+	if ($result < 0) dol_print_error($db,$trip->error);
+}
+
+
 
 /*
  * View
@@ -170,6 +186,11 @@ if ($_GET["action"] == 'create')
 
 	if ($mesg) print $mesg."<br>";
 
+	$datec = dol_mktime(12, 0, 0,
+	$_POST["remonth"],
+	$_POST["reday"],
+	$_POST["reyear"]);
+
 	print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -178,25 +199,25 @@ if ($_GET["action"] == 'create')
 
 	print "<tr>";
 	print '<td width="25%" class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-	print $html->select_type_fees($_GET["type"],'type',1);
+	print $html->select_type_fees($_POST["type"]?$_POST["type"]:$_GET["type"],'type',1);
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-	print $html->select_users($_GET["fk_user"],'fk_user',1);
+	print $html->select_users($_POST["fk_user"]?$_POST["fk_user"]:$_GET["fk_user"],'fk_user',1);
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	print $html->select_date('','','','','','add');
+	print $html->select_date($datec,'','','','','add');
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-	print $html->select_societes($_GET["socid"],'socid','',1);
+	print $html->select_societes($_POST["socid"]?$_POST["socid"]:$_GET["socid"],'socid','',1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value=""></td></tr>';
+	print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value="'.($_POST["km"]?$_POST["km"]:'').'"></td></tr>';
 	print '</table>';
 
 	print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
@@ -210,9 +231,8 @@ else
 	{
 		$deplacement = new Deplacement($db);
 		$result = $deplacement->fetch($id);
-		if ($result)
+		if ($result > 0)
 		{
-
 			if ($mesg) print $mesg."<br>";
 
 			$h=0;
@@ -232,8 +252,10 @@ else
 			if ($_GET["action"] == 'edit')
 			{
 				$soc = new Societe($db);
-				$soc->fetch($deplacement->socid);
-
+				if ($deplacement->socid)
+				{
+					$soc->fetch($deplacement->socid);
+				}
 
 				print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -242,30 +264,35 @@ else
 
 				print '<table class="border" width="100%">';
 
+				// Ref
 				print "<tr>";
 				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
 				print $deplacement->ref;
 				print '</td></tr>';
 
+				// Type
 				print "<tr>";
 				print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-				print $html->select_type_fees($deplacement->type,'type',0);
+				print $html->select_type_fees($_POST["type"]?$_POST["type"]:$deplacement->type,'type',0);
 				print '</td></tr>';
 
+				// Who
 				print "<tr>";
 				print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-				print $html->select_users($deplacement->fk_user,'fk_user',0);
+				print $html->select_users($_POST["fk_user"]?$_POST["fk_user"]:$deplacement->fk_user,'fk_user',0);
 				print '</td></tr>';
 
-				print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-				print $html->select_date($deplacement->date,'','','','','update');
-				print '</td></tr>';
-				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
-
+				// Where
 				print "<tr>";
 				print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
 				print $html->select_societes($soc->id,'socid','',1);
 				print '</td></tr>';
+
+				// Date
+				print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+				print $html->select_date($deplacement->date,'','','','','update');
+				print '</td></tr>';
+				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
 
 				print '</table>';
 
@@ -293,29 +320,68 @@ else
 
 				print '<table class="border" width="100%">';
 
+				// Ref
 				print "<tr>";
 				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
 				print $deplacement->ref;
 				print '</td></tr>';
 
+				// Type
 				print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
 
+				// Who
 				print '<tr><td>'.$langs->trans("Person").'</td><td>';
 				$userfee=new User($db,$deplacement->fk_user);
 				$userfee->fetch();
 				print $userfee->getNomUrl(1);
 				print '</td></tr>';
 
-				print '<tr><td>'.$langs->trans("Date").'</td><td>';
-				print dol_print_date($deplacement->date);
-				print '</td></tr>';
-
+				// Where
 				print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
 				print '<td>';
 				if ($soc->id) print $soc->getNomUrl(1);
 				print '</td></tr>';
 
+				// Date
+				print '<tr><td>'.$langs->trans("Date").'</td><td>';
+				print dol_print_date($deplacement->date);
+				print '</td></tr>';
+
+				// Km/Price
 				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$deplacement->km.'</td></tr>';
+
+				// Project
+				if ($conf->projet->enabled)
+				{
+					$langs->load('projects');
+					print '<tr>';
+					print '<td>';
+
+					print '<table class="nobordernopadding" width="100%"><tr><td>';
+					print $langs->trans('Project');
+					print '</td>';
+					if ($_GET['action'] != 'classin')
+					{
+						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classin&amp;id='.$deplacement->id.'">';
+						print img_edit($langs->trans('SetProject'),1);
+						print '</a></td>';
+					}
+					print '</tr></table>';
+					print '</td><td colspan="3">';
+					if ($_GET['action'] == 'classin')
+					{
+						$html->form_project($_SERVER['PHP_SELF'].'?id='.$deplacement->id, $deplacement->socid, $deplacement->fk_project,'projectid');
+					}
+					else
+					{
+						$html->form_project($_SERVER['PHP_SELF'].'?id='.$deplacement->id, $deplacement->socid, $deplacement->fk_project,'none');
+					}
+					print '</td>';
+					print '</tr>';
+				}
+
+				// Statut
+				print '<tr><td>'.$langs->trans("Status").'</td><td>'.$deplacement->getLibStatut(4).'</td></tr>';
 
 				print "</table>";
 
