@@ -39,6 +39,7 @@ else $result=restrictedArea($user,'produit|service',$id,'service','','',$fieldid
 
 $product_static = new Product($db);
 
+$langs->load("products");
 
 
 /*
