@@ -63,7 +63,7 @@ body {
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background: #f9f9f9 url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg.jpg' ?>) 0 0 no-repeat;
+	background: #fefefe url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/headbg2.jpg' ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -179,6 +179,13 @@ div.fiche
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
+<?php
+$minwidthtmenu=0;
+$heightmenu=19;
+//$minwidthtmenu=70;
+//$heightmenu=47;
+?>
+
 div.tmenu
 {
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
@@ -187,19 +194,35 @@ div.tmenu
     position: relative;
     display: block;
     white-space: nowrap;
-    border-top: 1px solid #D3E5EC;
+    border-top: 0px solid #D3E5EC;
     border-<?php print $left; ?>: 0px;
     border-<?php print $right; ?>: 0px solid #555555;
-    border-bottom: 1px solid #8B9999;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 4px 0px;
+    border-bottom: 1px solid #ABB9B9;
+    padding: 0px 0px 0px 0px;	/* t r b l */
+    margin: 0px 0px 3px 0px;	/* t r b l */
     font-weight: normal;
-    height: 19px;
-    background: #b3c5cc;
+    height: <?php print $heightmenu; ?>px;
+/*    background: #b3c5cc; */
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
+/*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu3.png' ?>);*/
+/*    background-position: center bottom; */
     color: #000000;
     text-decoration: none;
 <?php } ?>
+}
+
+table.tmenu
+{
+    padding: 0px 0px 10px 0px;	/* t r b l */
+    margin: 0px 0px 0px 0px;	/* t r b l */
+	text-align: center;
+}
+td.tmenu
+{
+	<?php print $minwidthtmenu?'width: '.$minwidthtmenu.'px;':''; ?>
+	text-align: center;
+	vertical-align: bottom;
+	white-space: nowrap;
 }
 
 a.tmenudisabled:link
@@ -210,6 +233,7 @@ a.tmenudisabled:link
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
     font-weight: normal;
+	white-space: nowrap;
 }
 a.tmenudisabled:visited
 {
@@ -219,6 +243,7 @@ a.tmenudisabled:visited
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
     font-weight: normal;
+	white-space: nowrap;
 }
 a.tmenudisabled:hover
 {
@@ -228,6 +253,7 @@ a.tmenudisabled:hover
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
     font-weight: normal;
+	white-space: nowrap;
 }
 a.tmenudisabled:active
 {
@@ -237,58 +263,64 @@ a.tmenudisabled:active
 	margin: 0px 1px 2px 1px;
 	cursor: not-allowed;
     font-weight: normal;
+	white-space: nowrap;
 }
 
 a.tmenu:link
 {
-  color: #234046;
-  padding: 0px 5px 0px 5px;
-  margin: 0px 1px 2px 1px;
-  font-weight: normal;
+	color: #234046;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 1px 2px 1px;
+	font-weight: normal;
+	white-space: nowrap;
 }
 a.tmenu:visited
 {
-  color: #234046;
-  padding: 0px 5px 0px 5px;
-  margin: 0px 1px 2px 1px;
-  font-weight: normal;
+	color: #234046;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 1px 2px 1px;
+	font-weight: normal;
+	white-space: nowrap;
 }
 a.tmenu:hover
 {
-  color: #234046;
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
-  font-weight: normal;
-  background: #dee7ec;
-  border-<?php print $right; ?>: 1px solid #555555;
-  border-<?php print $left; ?>: 1px solid #D8D8D8;
-  border-top: 1px solid #D8D8D8;
-  border-bottom: 2px solid #dee7ec;
+	color: #234046;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 0px 0px 0px;
+	font-weight: normal;
+	background: #dee7ec;
+	border-<?php print $right; ?>: 1px solid #555555;
+	border-<?php print $left; ?>: 1px solid #D8D8D8;
+	border-top: 1px solid #D8D8D8;
+	border-bottom: 2px solid #dee7ec;
+	white-space: nowrap;
 }
 a.tmenu:active
 {
-  color: #234046;
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
-  font-weight: normal;
-  background: #F4F4F4;
-  border-<?php print $right; ?>: 1px solid #555555;
-  border-<?php print $left; ?>: 1px solid #D8D8D8;
-  border-top: 1px solid #D8D8D8;
-  border-bottom: 2px solid #dee7ec;
+	color: #234046;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 0px 0px 0px;
+	font-weight: normal;
+	background: #F4F4F4;
+	border-<?php print $right; ?>: 1px solid #555555;
+	border-<?php print $left; ?>: 1px solid #D8D8D8;
+	border-top: 1px solid #D8D8D8;
+	border-bottom: 2px solid #dee7ec;
+	white-space: nowrap;
 }
 
 a.tmenusel:link
 {
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
-  font-weight: normal;
-  color: #234046;
-  background: #F4F4F4;
-  border-<?php print $right; ?>: 1px solid #555555;
-  border-top: 1px solid #D8D8D8;
-  border-<?php print $left; ?>: 1px solid #D8D8D8;
-  border-bottom: 2px solid #F4F4F4;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 0px 0px 0px;
+	font-weight: normal;
+	color: #234046;
+	background: #F4F4F4;
+	border-<?php print $right; ?>: 1px solid #555555;
+	border-top: 1px solid #D8D8D8;
+	border-<?php print $left; ?>: 1px solid #D8D8D8;
+	border-bottom: 2px solid #F4F4F4;
+	white-space: nowrap;
 }
 a.tmenusel:visited
 {
@@ -301,6 +333,7 @@ a.tmenusel:visited
   border-top: 1px solid #D8D8D8;
   border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #F4F4F4;
+	white-space: nowrap;
 }
 a.tmenusel:hover
 {
@@ -313,24 +346,20 @@ a.tmenusel:hover
   border-top: 1px solid #D8D8D8;
   border-<?php print $left; ?>: 1px solid #D8D8D8;
   border-bottom: 2px solid #F4F4F4;
+	white-space: nowrap;
 }
 a.tmenusel:active
 {
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
-  font-weight: normal;
-  color: #234046;
-  background: #F4F4F4;
-  border-<?php print $right; ?>: 1px solid #555555;
-  border-top: 1px solid #D8D8D8;
-  border-<?php print $left; ?>: 1px solid #D8D8D8;
-  border-bottom: 2px solid #F4F4F4;
-}
-
-table.tmenu
-{
-    padding: 0px 0px 10px 0px;	/* t r b l */
-    margin: 0px 0px 0px 6px;	/* t r b l */
+	padding: 0px 5px 0px 5px;
+	margin: 0px 0px 0px 0px;
+	font-weight: normal;
+	color: #234046;
+	background: #F4F4F4;
+	border-<?php print $right; ?>: 1px solid #555555;
+	border-top: 1px solid #D8D8D8;
+	border-<?php print $left; ?>: 1px solid #D8D8D8;
+	border-bottom: 2px solid #F4F4F4;
+	white-space: nowrap;
 }
 
 * html li.tmenu a
@@ -358,26 +387,115 @@ li.tmenu {
 
 /*
 div.mainmenu_home {
-	position : absolute;
+	position : relative;
 	color: white;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/calc.png' ?>);
-	width:22px;
-	height:22px;
-	top: 10px;
-	margin-left: 10px;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/home.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
 }
 
 div.mainmenu_companies {
-	position : absolute;
+	position : relative;
 	color: white;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/calc.png' ?>);
-	width:22px;
-	height:22px;
-	top: 10px;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/company.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_products {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/products.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
 	margin-left: 10px;
 }
-*/
 
+div.mainmenu_commercial {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/commercial.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_accountancy {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/accountancy.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_project {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_members {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_cashdesk {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_tools {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_agenda {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/agenda.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_ecm {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/ecm.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+*/
 
 /* Login */
 
