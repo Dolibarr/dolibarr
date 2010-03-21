@@ -181,26 +181,21 @@ CSS file -- modification of the program itself is not necessary.</p>
 files.</p>
 <p>
 </p>
-<ul><p>
-</p>
+<ul>
 <li><p>the main program file (<tt>calendar.js</tt>).  This defines all the logic
-behind the calendar widget.</p>
-<p>
-</p>
+behind the calendar widget.</p></li>
+
 <li><p>the CSS files (<tt>calendar-*.css</tt>).  Loading one of them is
-necessary in order to see the calendar as intended.</p>
-<p>
-</p>
+necessary in order to see the calendar as intended.</p></li>
+
 <li><p>the language definition files (<tt>lang/calendar-*.js</tt>).  They are
 plain JavaScript files that contain all texts that are displayed by the
-calendar.  Loading one of them is necessary.</p>
-<p>
-</p>
+calendar.  Loading one of them is necessary.</p></li>
+
 <li><p>helper functions for quick setup of the calendar
 (<tt>calendar-setup.js</tt>).  You can do fine without it, but starting with
-version 0.9.3 this is the recommended way to setup a calendar.</p>
-<p>
-</p>
+version 0.9.3 this is the recommended way to setup a calendar.</p></li>
+
 </ul><p></p>
 <p>
 </p>
@@ -911,54 +906,43 @@ same).  While you can skip optional (marked ``opt'') steps if you're happy with
 the defaults, please respect the order below.</p>
 <p>
 </p>
-<ol><p>
-</p>
+<ol>
 <li><p><em>Instantiate</em> a <tt>Calendar</tt> object.  Details about this in
-section <a href="#node_sec_5.1">5.1</a>.</p>
-<p>
-</p>
+section <a href="#node_sec_5.1">5.1</a>.</p></li>
+
 <li><p><b>opt</b>&nbsp;&nbsp; Set the <tt>weekNumbers</tt> property to <tt>false</tt> if you don't want
-the calendar to display week numbers.</p>
-<p>
-</p>
+the calendar to display week numbers.</p></li>
+
 <li><p><b>opt</b>&nbsp;&nbsp; Set the <tt>showsTime</tt> property to <tt>true</tt> if you
-want the calendar to also provide a time selector.</p>
-<p>
-</p>
+want the calendar to also provide a time selector.</p></li>
+
 <li><p><b>opt</b>&nbsp;&nbsp; Set the <tt>time24</tt> property to <tt>false</tt> if you want
 the time selector to be in 12-hour format.  Default is 24-hour format.  This
 property only has effect if you also set <tt>showsTime</tt> to
-<tt>true</tt>.</p>
-<p>
-</p>
+<tt>true</tt>.</p></li>
+
 <li><p><b>opt</b>&nbsp;&nbsp; Set the range of years available for selection (see section
-<a href="#node_sec_5.3.15">5.3.15</a>).  The default range is [1970..2050].</p>
-<p>
-</p>
+<a href="#node_sec_5.3.15">5.3.15</a>).  The default range is [1970..2050].</p></li>
+
 <li><p><b>opt</b>&nbsp;&nbsp; Set the <tt>getDateStatus</tt> property.  You should pass
 here a function that receives a JavaScript <tt>Date</tt> object and returns
 <tt>true</tt> if the given date should be disabled, false otherwise (details in
-section <a href="#node_sec_5.3.7">5.3.7</a>).</p>
-<p>
-</p>
+section <a href="#node_sec_5.3.7">5.3.7</a>).</p></li>
+
 <li><p><b>opt</b>&nbsp;&nbsp; Set a date format.  Your handler function, passed to the
 calendar constructor, will be called when a date is selected with a reference
-to the calendar and a date string in this format.</p>
-<p>
-</p>
+to the calendar and a date string in this format.</p></li>
+
 <li><p><em>Create</em> the HTML elements related to the calendar.  This step
 practically puts the calendar in your HTML page.  You simply call
 <tt>Calendar.create()</tt>.  You can give an optional parameter if you wanna
-create a flat calendar (details in section <a href="#node_sec_5.3.1">5.3.1</a>).</p>
-<p>
-</p>
+create a flat calendar (details in section <a href="#node_sec_5.3.1">5.3.1</a>).</p></li>
+
 <li><p><b>opt</b>&nbsp;&nbsp; Initialize the calendar to a certain date, for instance from
-the input field.</p>
-<p>
-</p>
-<li><p>Show the calendar (details in section <a href="#node_sec_5.3.9">5.3.9</a>).</p>
-<p>
-</p>
+the input field.</p></li>
+
+<li><p>Show the calendar (details in section <a href="#node_sec_5.3.9">5.3.9</a>).</p></li>
+
 </ol><p></p>
 <p>
 </p>
@@ -1012,17 +996,13 @@ up the calendar again to create another one.  This approach is bad for more
 reasons:</p>
 <p>
 </p>
-<ul><p>
-</p>
-<li><p>creating the JavaScript object and HTML elements is time-consuming</p>
-<p>
-</p>
+<ul>
+<li><p>creating the JavaScript object and HTML elements is time-consuming</p></li>
+
 <li><p>we may loose some end-user preferences (i.e. he might prefer to have
 Monday for the first day of week and probably already clicked it the first time
-when the calendar was opened, but now he has to do it again)</p>
-<p>
-</p>
-</ul><p></p>
+when the calendar was opened, but now he has to do it again)</p></li>
+</ul>
 <p>
 The second approach, implemented by the <tt>Calendar.setup</tt> function, is to
 cache the JavaScript object.  It does this by checking the global variable
@@ -1056,17 +1036,14 @@ making a truly reusable thing.</p>
 The calendar supports the following user callbacks:</p>
 <p>
 </p>
-<ul><p>
-</p>
+<ul>
 <li><p><b>onSelect</b>&nbsp;&nbsp;  --  this gets called when the end-user changes the date in the
-calendar.  Documented in section <a href="#node_sec_5.1">5.1</a>.</p>
-<p>
-</p>
+calendar.  Documented in section <a href="#node_sec_5.1">5.1</a>.</p></li>
+
 <li><p><b>onClose</b>&nbsp;&nbsp;  --  this gets called when the calendar should close.  It's
 user's responsibility to close the calendar.  Details in section
-<a href="#node_sec_5.1">5.1</a>.</p>
-<p>
-</p>
+<a href="#node_sec_5.1">5.1</a>.</p></li>
+
 <li><p><b>getDateStatus</b>&nbsp;&nbsp;  --  this function gets called for any day in a month,
 just before displaying the month.  It is called with a JavaScript <tt>Date</tt>
 object and should return <tt>true</tt> if that date should be disabled, false
@@ -1074,10 +1051,8 @@ if it's an ordinary date and no action should be taken, or it can return a
 string in which case the returned value will be appended to the element's CSS
 class (this way it provides a powerful way to make some dates ``special'',
 i.e. highlight them differently).  Details in section
-<a href="#node_sec_5.3.8">5.3.8</a>.</p>
-<p>
-</p>
-</ul><p></p>
+<a href="#node_sec_5.3.8">5.3.8</a>.</p></li>
+</ul>
 <p>
 </p>
 <a name="node_sec_5"></a>
@@ -1098,27 +1073,20 @@ Synopsis:</p>
 Parameters are as follows:</p>
 <p>
 </p>
-<ul><p>
-</p>
+<ul>
 <li><p><b>firstDayOfWeek</b>&nbsp;&nbsp;  --  specifies which day is to be displayed as the first
 day of week.  Possible values are 0 to 6; 0 means Sunday, 1 means Monday,
-..., 6 means Saturday.</p>
-<p>
-</p>
+..., 6 means Saturday.</p></li>
+
 <li><p><b>date</b>&nbsp;&nbsp;  --  a JavaScript Date object or <tt>null</tt>.  If <tt>null</tt>
 is passed then the calendar will default to today date.  Otherwise it will
-initialize on the given date.</p>
-<p>
-</p>
-<li><p><b>onSelect</b>&nbsp;&nbsp;  --  your callback for the ``onChange'' event.  See above.</p>
-<p>
-</p>
-<li><p><b>onClose</b>&nbsp;&nbsp;  --  your callback for the ``onClose'' event.  See above.</p>
-<p>
-</p>
-</ul><p></p>
-<p>
-</p>
+initialize on the given date.</p></li>
+
+<li><p><b>onSelect</b>&nbsp;&nbsp;  --  your callback for the ``onChange'' event.  See above.</p></li>
+
+<li><p><b>onClose</b>&nbsp;&nbsp;  --  your callback for the ``onClose'' event.  See above.</p></li>
+</ul>
+
 <a name="node_sec_Temp_6"></a>
 <h3><a href="#node_toc_node_sec_Temp_6">The <tt>onSelect</tt> event</a></h3>
 <p></p>
@@ -1180,45 +1148,37 @@ A typical implementation of this function is the following:</p>
 After creating the Calendar object you can access the following properties:</p>
 <p>
 </p>
-<ul><p>
-</p>
+<ul>
 <li><p><tt>date</tt>  --  is a JavaScript <tt>Date</tt> object.  It will always
-reflect the date shown in the calendar (yes, even if the calendar is hidden).</p>
-<p>
-</p>
+reflect the date shown in the calendar (yes, even if the calendar is hidden).</p></li>
+
 <li><p><tt>isPopup</tt>  --  if this is true then the current Calendar object is
 a popup calendar.  Otherwise (false) we have a flat calendar.  This variable is
 set from <tt>Calendar.create</tt> and has no meaning before this function was
-called.</p>
-<p>
-</p>
+called.</p></li>
+
 <li><p><tt>dateClicked</tt>  --  particularly useful in the <tt>onSelect</tt>
 handler, this variable tells us if a date was really clicked.  That's because
 the <tt>onSelect</tt> handler is called even if the end-user only changed the
 month/year but did not select a date.  We don't want to close the calendar in
-that case.</p>
-<p>
-</p>
+that case.</p></li>
+
 <li><p><tt>weekNumbers</tt>  --  if <tt>true</tt> (default) then the calendar
 displays week numbers.  If you don't want week numbers you have to set this
-variable to <tt>false</tt> <em>before</em> calling <tt>Calendar.create</tt>.</p>
-<p>
-</p>
+variable to <tt>false</tt> <em>before</em> calling <tt>Calendar.create</tt>.</p></li>
+
 <li><p><tt>showsTime</tt> - if you set this to <tt>true</tt> (it is
-<tt>false</tt> by default) then the calendar will also include a time selector.</p>
-<p>
-</p>
+<tt>false</tt> by default) then the calendar will also include a time selector.</p></li>
+
 <li><p><tt>time24</tt> - if you set this to <tt>false</tt> then the time
-selector will be in 12-hour format.  It is in 24-hour format by default.</p>
-<p>
-</p>
+selector will be in 12-hour format.  It is in 24-hour format by default.</p></li>
+
 <li><p><tt>firstDayOfWeek</tt>  --  specifies the first day of week (0 to 6, pass
 0 for Sunday, 1 for Monday, ..., 6 for Saturday).  This variable is set from
 constructor, but you still have a chance to modify it <em>before</em> calling
-<tt>Calendar.create</tt>.</p>
-<p>
-</p>
-</ul><p></p>
+<tt>Calendar.create</tt>.</p></li>
+
+</ul>
 <p>
 There are lots of other member variables, but one should access them only
 through member functions so I won't document them here.</p>
@@ -1504,61 +1464,44 @@ the position it uses <tt>Calendar.showAt</tt> to display the calendar there.</p>
 <p>The first character in ``<tt>align</tt>'' can take one of the following values:</p>
 <p>
 </p>
-<ul><p>
-</p>
+<ul>
 <li><p><tt>T</tt>  --  completely above the reference element (bottom margin of
-the calendar aligned to the top margin of the element).</p>
-<p>
-</p>
+the calendar aligned to the top margin of the element).</p></li>
+
 <li><p><tt>t</tt>  --  above the element but may overlap it (bottom margin of the calendar aligned to
-the bottom margin of the element).</p>
-<p>
-</p>
+the bottom margin of the element).</p></li>
+
 <li><p><tt>c</tt>  --  the calendar displays vertically centered to the reference
-element.  It might overlap it (that depends on the horizontal alignment).</p>
-<p>
-</p>
+element.  It might overlap it (that depends on the horizontal alignment).</p></li>
+
 <li><p><tt>b</tt>  --  below the element but may overlap it (top margin of the calendar aligned to
-the top margin of the element).</p>
-<p>
-</p>
+the top margin of the element).</p></li>
+
 <li><p><tt>B</tt>  --  completely below the element (top margin of the calendar
-aligned to the bottom margin of the element).</p>
-<p>
-</p>
-</ul><p></p>
-<p>
-</p>
+aligned to the bottom margin of the element).</p></li>
+</ul>
 <a name="node_sec_Temp_9"></a>
 <h4><a href="#node_toc_node_sec_Temp_9">Horizontal alignment</a></h4>
 <p>The second character in ``<tt>align</tt>'' can take one of the following values:</p>
 <p>
 </p>
-<ul><p>
-</p>
+<ul>
 <li><p><tt>L</tt>  --  completely to the left of the reference element (right
-margin of the calendar aligned to the left margin of the element).</p>
-<p>
-</p>
+margin of the calendar aligned to the left margin of the element).</p></li>
+
 <li><p><tt>l</tt>  --  to the left of the element but may overlap it (left margin
-of the calendar aligned to the left margin of the element).</p>
-<p>
-</p>
+of the calendar aligned to the left margin of the element).</p></li>
+
 <li><p><tt>c</tt>  --  horizontally centered to the element.  Might overlap it,
-depending on the vertical alignment.</p>
-<p>
-</p>
+depending on the vertical alignment.</p></li>
+
 <li><p><tt>r</tt>  --  to the right of the element but may overlap it (right
-margin of the calendar aligned to the right margin of the element).</p>
-<p>
-</p>
+margin of the calendar aligned to the right margin of the element).</p></li>
+
 <li><p><tt>R</tt>  --  completely to the right of the element (left margin of the
-calendar aligned to the right margin of the element).</p>
-<p>
-</p>
-</ul><p></p>
-<p>
-</p>
+calendar aligned to the right margin of the element).</p></li>
+</ul>
+
 <a name="node_sec_Temp_10"></a>
 <h4><a href="#node_toc_node_sec_Temp_10">Default values</a></h4>
 <p>If the ``<tt>align</tt>'' parameter is missing the calendar will choose
@@ -1622,59 +1565,47 @@ Sets the range of years that are allowed in the calendar.  Synopsis:</p>
 less as possible side effects.  However, there are some -- not harmful, after
 all.  Here is a list of side effects; you can count they already happened after
 <tt>calendar.js</tt> was loaded.</p>
-<p>
-</p>
-<ol><p>
-</p>
+
+<ol>
 <li><p>The global variable <tt>window.calendar</tt> will be set to null.  This
 variable is used by the calendar code, especially when doing drag &amp; drop for
 moving the calendar.  In the future I might get rid of it, but for now it
-didn't harm anyone.</p>
-<p>
-</p>
+didn't harm anyone.</p></li>
+
 <li><p>The JavaScript <tt>Date</tt> object is modified.  We add some properties
 and functions that are very useful to our calendar.  It made more sense to add
 them directly to the <tt>Date</tt> object than to the calendar itself.
-Complete list:</p>
-<p>
-</p>
-<ol><p>
-</p>
+Complete list:</p></li>
+
+<ol>
 <li><p><tt>Date._MD    = new Array(31,28,31,30,31,30,31,31,30,31,30,31);</tt>
-</p>
+</p></li>
 <li><p><tt>Date.SECOND = 1000 /* milliseconds */;</tt>
-</p>
+</p></li>
 <li><p><tt>Date.MINUTE = 60 * Date.SECOND;</tt>
-</p>
+</p></li>
 <li><p><tt>Date.HOUR   = 60 * Date.MINUTE;</tt>
-</p>
+</p></li>
 <li><p><tt>Date.DAY    = 24 * Date.HOUR;</tt>
-</p>
-<li><p><tt>Date.WEEK   =  7 * Date.DAY;</tt></p>
-<p>
-</p>
+</p></li>
+<li><p><tt>Date.WEEK   =  7 * Date.DAY;</tt></p></li>
+
 <li><p><tt>Date.prototype.getMonthDays</tt>(month)  --  returns the number of days
-of the given month, or of the current date object if no month was given.</p>
-<p>
-</p>
+of the given month, or of the current date object if no month was given.</p></li>
+
 <li><p><tt>Date.prototype.getWeekNumber</tt>()  --  returns the week number of the
-date in the current object.</p>
-<p>
-</p>
+date in the current object.</p></li>
+
 <li><p><tt>Date.prototype.equalsTo</tt>(other_date)  --  compare the current date
 object with <tt>other_date</tt> and returns <tt>true</tt> if the dates are
-equal.  <em>It ignores time</em>.</p>
-<p>
-</p>
+equal.  <em>It ignores time</em>.</p></li>
+
 <li><p><tt>Date.prototype.print</tt>(format)  --  returns a string with the
 current date object represented in the given format.  It implements the format
-specified in section <a href="#node_sec_5.3.5">5.3.5</a>.</p>
-<p>
-</p>
-</ol><p></p>
-<p>
-</p>
-</ol><p></p>
+specified in section <a href="#node_sec_5.3.5">5.3.5</a>.</p></li>
+
+</ol>
+</ol>
 <p>
 </p>
 <a name="node_sec_7"></a>
@@ -1686,24 +1617,18 @@ feature and pay me for implementing it) or donate some money please
 <em>please</em> contact me at <tt><a href="mailto:mihai\_bazon@yahoo.com">mihai_bazon@yahoo.com</a></tt>.</p>
 <p>
 </p>
-<ul><p>
-</p>
-<li><p>Sunny Chowdhury (<a href="http://www.ex3.com">www.ex3.com</a>)</p>
-<p>
-</p>
-<li><p>Ian Barrack (<a href="http://www.simban.com">www.simban.com</a>)</p>
-<p>
-</p>
-<li><p>Himanshukumar Shah</p>
-<p>
-</p>
-<li><p>Seyhan Ersoy (<a href="http://www.oocgi.com">www.oocgi.com</a>)</p>
-<p>
-</p>
-<li><p>Jon Stokkeland (<a href="http://www.sauen.com">www.sauen.com</a>)</p>
-<p>
-</p>
-</ul><p></p>
+<ul>
+<li><p>Sunny Chowdhury (<a href="http://www.ex3.com">www.ex3.com</a>)</p></li>
+
+<li><p>Ian Barrack (<a href="http://www.simban.com">www.simban.com</a>)</p></li>
+
+<li><p>Himanshukumar Shah</p></li>
+
+<li><p>Seyhan Ersoy (<a href="http://www.oocgi.com">www.oocgi.com</a>)</p></li>
+
+<li><p>Jon Stokkeland (<a href="http://www.sauen.com">www.sauen.com</a>)</p></li>
+
+</ul>
 <p>
 </p>
 <div align=right><table><tr><td>
