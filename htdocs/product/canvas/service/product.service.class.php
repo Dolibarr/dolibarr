@@ -50,7 +50,7 @@ class ProductService extends Product
 		$this->next_prev_filter = "canvas='service'";
 	}
 	
-	function GetListeTitre()
+	function getTitle()
 	{
 		return 'Services';
 	}

@@ -50,7 +50,7 @@ class ProductDefault extends Product
 		$this->next_prev_filter = "canvas='default'";
 	}
 	
-	function GetListeTitre()
+	function getTitle()
 	{
 		return 'Produits';
 	}
@@ -125,6 +125,7 @@ class ProductDefault extends Product
 				$datas["label"]     = $obj->label;
 				$datas["barcode"]   = $obj->barcode;
 				$datas["statut"]    = $obj->statut;
+				$datas["datem"]		= dol_print_date($this->db->jdate($obj->datem),'day');
 
 				array_push($this->list_datas,$datas);
 

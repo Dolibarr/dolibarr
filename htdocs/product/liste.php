@@ -230,6 +230,7 @@ if ($resql)
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$smarty->assign('title_picto', img_picto('',$picto));
+		$smarty->assign('title_text', $object->getTitle());
 
 		// Check if a custom template is present
 		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/liste.tpl'))
@@ -249,8 +250,14 @@ if ($resql)
 			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/core/templates/';
 			$template = 'error.tpl';
 		}
+		
+		// Enable caching
+		$smarty->caching = true;
 
-		$smarty->display($template);
+		$smarty->display($template, $_GET["canvas"]);
+		
+		// Suppression de la version compilee
+		$smarty->clear_compiled_tpl($template);
 	}
 	else
 	{
