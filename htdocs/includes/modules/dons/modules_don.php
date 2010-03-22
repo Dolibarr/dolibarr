@@ -29,7 +29,7 @@
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
-require_once(DOL_DOCUMENT_ROOT."/don.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/dons/don.class.php");
 
 
 

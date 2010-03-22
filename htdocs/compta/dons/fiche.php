@@ -27,7 +27,7 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/don.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/dons/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 

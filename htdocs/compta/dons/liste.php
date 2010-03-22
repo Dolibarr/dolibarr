@@ -25,7 +25,7 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/dons/don.class.php");
 
 $langs->load("companies");
 $langs->load("donations");
