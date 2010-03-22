@@ -94,8 +94,6 @@ class Product extends CommonObject
 	var $surface_units;
 	var $volume;
 	var $volume_units;
-	var $volume_liquide;
-	var $volume_l_units;
 
 	var $accountancy_code_buy;
 	var $accountancy_code_sell;
@@ -411,8 +409,6 @@ class Product extends CommonObject
 		$this->surface_units = trim($this->surface_units);
 		$this->volume = price2num($this->volume);
 		$this->volume_units = trim($this->volume_units);
-		$this->volume_liquide = price2num($this->volume_liquide);
-		$this->volume_l_units = trim($this->volume_l_units);
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
 		if (empty($this->finished))  			$this->finished = 0;
 		if (empty($this->hidden))   			$this->hidden = 0;
@@ -434,8 +430,6 @@ class Product extends CommonObject
 		$sql.= ",surface_units = " . ($this->surface_units!='' ? "'".$this->surface_units."'" : 'null');
 		$sql.= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
 		$sql.= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
-		$sql .= ",volume_liquide = " . ($this->volume_liquide!='' ? "'".$this->volume_liquide."'" : 'null');
-		$sql .= ",volume_l_units = " . ($this->volume_l_units!='' ? "'".$this->volume_l_units."'" : 'null');
 		$sql.= ",seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 		$sql.= ",description = '" . addslashes($this->description) ."'";
 		$sql.= ",note = '" .        addslashes($this->note) ."'";
@@ -932,7 +926,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
-		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, volume_liquide, volume_l_units, barcode, fk_barcode_type, finished, hidden,";
+		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
 		$sql.= " import_key";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -973,8 +967,6 @@ class Product extends CommonObject
 			$this->surface_units      = $result["surface_units"];
 			$this->volume             = $result["volume"];
 			$this->volume_units       = $result["volume_units"];
-			$this->volume_liquide     = $result["volume_liquide"];
-			$this->volume_l_units     = $result["volume_l_units"];
 			$this->barcode            = $result["barcode"];
 			$this->barcode_type       = $result["fk_barcode_type"];
 

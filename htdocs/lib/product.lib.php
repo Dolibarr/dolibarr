@@ -315,13 +315,6 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
 		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
 	}
-	else if ($measuring_style == 'volume_liquide')
-	{
-		$measuring_units[0] = $langs->trans("VolumeUnitm3");
-		$measuring_units[-3] = $langs->trans("VolumeUnitl");
-		$measuring_units[-4] = $langs->trans("VolumeUnitdl");
-		$measuring_units[-6] = $langs->trans("VolumeUnitml");
-	}
 
 	return $measuring_units[$unit];
 }
