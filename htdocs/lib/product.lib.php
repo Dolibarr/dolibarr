@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ function product_prepare_head($product, $user)
 	// Sub products
 	if($conf->global->PRODUIT_SOUSPRODUITS)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/composition/fiche.php?id=".$product->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 		$head[$h][2] = 'subproduct';
 		$h++;
