@@ -100,9 +100,17 @@ else
 
 	if (isset($_GET["type"]) || isset($_POST["type"]))
 	{
-		if ($type==1) { $texte = $langs->trans("Services"); }
-		else { $texte = $langs->trans("Products"); }
-	} else {
+		if ($type==1)
+		{
+			$texte = $langs->trans("Services");
+		}
+		else 
+		{
+			$texte = $langs->trans("Products");
+		}
+	}
+	else
+	{
 		$texte = $langs->trans("ProductsAndServices");
 	}
 }
