@@ -26,7 +26,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 

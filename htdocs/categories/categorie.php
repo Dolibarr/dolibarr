@@ -89,7 +89,7 @@ if ($_REQUEST["removecat"])
 {
 	if ($_REQUEST["typeid"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 		$object = new Product($db);
 		if ($_REQUEST["ref"]) $result = $object->fetch('',$_REQUEST["ref"]);
 		if ($_REQUEST["id"])  $result = $object->fetch($_REQUEST["id"]);
@@ -125,7 +125,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 
 	if ($_REQUEST["typeid"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 		$object = new Product($db);
 		if ($_REQUEST["ref"]) $result = $object->fetch('',$_REQUEST["ref"]);
 		if ($_REQUEST["id"])  $result = $object->fetch($_REQUEST["id"]);
@@ -279,7 +279,7 @@ else if ($_GET["id"] || $_GET["ref"])
 		 * Fiche categorie de produit
 		 */
 		require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-		require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 
 		// Produit
 		$product = new Product($db);

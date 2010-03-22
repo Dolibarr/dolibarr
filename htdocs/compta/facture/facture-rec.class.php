@@ -26,7 +26,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/notify.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 

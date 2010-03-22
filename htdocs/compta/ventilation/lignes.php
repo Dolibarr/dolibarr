@@ -21,15 +21,15 @@
  */
 
 /**
-		\file       htdocs/compta/ventilation/lignes.php
-		\ingroup    facture
-		\brief      Page de detail des lignes de ventilation d'une facture
-		\version    $Revision$
-*/
+ * 		\file       htdocs/compta/ventilation/lignes.php
+ * 		\ingroup    facture
+ * 		\brief      Page de detail des lignes de ventilation d'une facture
+ * 		\version    $Revision$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 
 $langs->load("bills");
 $langs->load("compta");
@@ -37,7 +37,7 @@ $langs->load("compta");
 if (!$user->rights->facture->lire) accessforbidden();
 if (!$user->rights->compta->ventilation->creer) accessforbidden();
 
-// S�curit� acc�s client
+// Securite acces client
 if ($user->societe_id > 0) accessforbidden();
 
 

@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
-if ($conf->produit->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+if ($conf->produit->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");

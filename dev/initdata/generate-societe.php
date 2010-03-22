@@ -38,7 +38,7 @@ require ($path."../htdocs/master.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-include_once(DOL_DOCUMENT_ROOT."/product.class.php");
+include_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 include_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 

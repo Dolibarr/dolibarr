@@ -21,14 +21,14 @@
  */
 
 /**
- \file       htdocs/includes/modules/facture/pdf_oursin.modules.php
- \ingroup    facture
- \brief      Fichier de la classe permettant de g�n�rer les factures au mod�le oursin
- \author	    Sylvain SCATTOLINI bas� sur un mod�le de Laurent Destailleur
- \version    $Id$
+ * 		\file       htdocs/includes/modules/facture/pdf_oursin.modules.php
+ * 		\ingroup    facture
+ * 		\brief      Fichier de la classe permettant de generer les factures au modele oursin
+ * 		\author	    Sylvain SCATTOLINI base sur un modele de Laurent Destailleur
+ * 		\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 

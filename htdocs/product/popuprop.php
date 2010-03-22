@@ -26,7 +26,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/product/product.class.php');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

@@ -28,7 +28,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 

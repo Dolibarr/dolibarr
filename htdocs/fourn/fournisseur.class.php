@@ -103,9 +103,9 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *      \brief      Cr�� la commande au statut brouillon
-	 *      \param      user        Utilisateur qui cr�e
-	 *      \return     int         <0 si ko, id de la commande cr��e si ok
+	 *      \brief      Cree la commande au statut brouillon
+	 *      \param      user        Utilisateur qui cree
+	 *      \return     int         <0 si ko, id de la commande creee si ok
 	 */
 	function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -116,9 +116,9 @@ class Fournisseur extends Societe
 	}
 
 	/**
-	 *      \brief      Cr�� la commande au statut brouillon
-	 *      \param      user        Utilisateur qui cr�e
-	 *      \return     int         <0 si ko, id de la commande cr��e si ok
+	 *      \brief      Cree la commande au statut brouillon
+	 *      \param      user        Utilisateur qui cree
+	 *      \return     int         <0 si ko, id de la commande creee si ok
 	 */
 	function create_commande($user)
 	{
@@ -143,7 +143,7 @@ class Fournisseur extends Societe
 	function ProductCommande($user, $fk_product)
 	{
 		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
-		include_once(DOL_DOCUMENT_ROOT."/product.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 
 		$commf = new CommandeFournisseur($this->db);
 

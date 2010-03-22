@@ -27,7 +27,7 @@
  *	\version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 

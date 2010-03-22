@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");

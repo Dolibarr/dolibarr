@@ -22,7 +22,7 @@
  *	\brief      Library for expedition module
  *	\version    $Id$
  */
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 
 
 function shipping_prepare_head($object)

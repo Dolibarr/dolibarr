@@ -287,7 +287,7 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	
 	if (is_dir($dir))
 	{
-		require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
+		require_once(DOL_DOCUMENT_ROOT . "/product/product.class.php");
 		
 		$handle=opendir($dir);
 		
