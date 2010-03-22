@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +86,10 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 
 $htmlother=new FormOther($db);
 
-if ($_GET["canvas"] <> '' && file_exists('templates/product.'.$_GET["canvas"].'.class.php') )
+if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php') )
 {
 	$class = 'Product'.ucfirst($_GET["canvas"]);
-	include_once('templates/product.'.$_GET["canvas"].'.class.php');
+	include_once('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php');
 
 	$object = new $class($db);
 	$object->LoadListDatas($limit, $offset, $sortfield, $sortorder);
@@ -213,7 +213,7 @@ if ($resql)
 		print "</div><br>";
 	}
 
-	if ($conf->droitpret->enabled && isset($_GET["canvas"]))
+	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
 		$smarty->assign('datas', $object->list_datas);
 		$smarty->assign('url_root', $dolibarr_main_url_root);
@@ -226,14 +226,14 @@ if ($resql)
 		// Check if a custom template is present
 		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/liste.tpl'))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/';
-			$template = $_GET["canvas"].'/liste.tpl';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/';
+			$template = 'liste.tpl';
 		}
 		// Check if a default template is present
-		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/templates/'.$_GET["canvas"].'/liste.tpl'))
+		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/liste.tpl'))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/templates/';
-			$template = $_GET["canvas"].'/liste.tpl';
+			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/';
+			$template = 'liste.tpl';
 		}
 		// Error template
 		else

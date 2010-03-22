@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  *
@@ -120,10 +120,10 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 
 	if (! $error)
 	{
-		if ($_POST["canvas"] <> '' && file_exists('templates/product.'.$_POST["canvas"].'.class.php') )
+		if ($_POST["canvas"] <> '' && file_exists('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php') )
 		{
 			$class = 'Product'.ucfirst($_POST["canvas"]);
-			include_once('templates/product.'.$_POST["canvas"].'.class.php');
+			include_once('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php');
 			$product = new $class($db);
 		}
 		else
@@ -248,10 +248,10 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			}
 
 			// Specific product
-			if ($product->canvas <> '' && file_exists('templates/product.'.$product->canvas.'.class.php') )
+			if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
 			{
 				$class = 'Product'.ucfirst($product->canvas);
-				include_once('templates/product.'.$product->canvas.'.class.php');
+				include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
 
 				$product = new $class($db);
 				if ($product->FetchCanvas($_POST["id"]))
@@ -613,22 +613,16 @@ $formproduct = new FormProduct($db);
  */
 if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	if ($conf->droitpret->enabled)
+	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
 		if (! isset($product))
 		{
-			$filecanvas=DOL_DOCUMENT_ROOT.'/product/templates/product.'.$_GET["canvas"].'.class.php';
-			if ($_GET["canvas"] && file_exists($filecanvas) )
-			{
-				$class = 'Product'.ucfirst($_GET["canvas"]);
-				include_once($filecanvas);
-
-				$product = new $class($db,0,$user);
-			}
-			else
-			{
-				$product = new Product($db);
-			}
+			$filecanvas = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php';
+			$class = 'Product'.ucfirst($_GET["canvas"]);
+			
+			include_once($filecanvas);
+			
+			$product = new $class($db,0,$user);
 		}
 
 		$product->assign_smarty_values($smarty, 'create');
@@ -653,7 +647,17 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 	if ($mesg) print $mesg."\n";
 
-	if (empty($conf->droitpret->enabled) || empty($_GET["canvas"]))
+	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	{
+		// On assigne les valeurs meme en creation car elles sont definies si
+		// on revient en erreur
+		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/templates/';
+		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
+		$smarty->assign('tva_taux_value', $tvaarray['value']);
+		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
+		$smarty->display($_GET["canvas"].'-create.tpl');
+	}
+	else
 	{
 		print '<form action="fiche.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -825,16 +829,6 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 		print '</form>';
 	}
-	else
-	{
-		// On assigne les valeurs meme en creation car elles sont definies si
-		// on revient en erreur
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/templates/'.$_GET["canvas"].'/';
-		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
-		$smarty->assign('tva_taux_value', $tvaarray['value']);
-		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
-		$smarty->display($_GET["canvas"].'-create.tpl');
-	}
 }
 
 /**
@@ -857,20 +851,17 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	// Gestion des produits specifiques
-	if ($conf->droitpret->enabled)
+	if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
 	{
-		if ($product->canvas <> '' && file_exists('templates/product.'.$product->canvas.'.class.php') )
-		{
-			$class = 'Product'.ucfirst($product->canvas);
-			include_once('templates/product.'.$product->canvas.'.class.php');
-			$product = new $class($db);
+		$class = 'Product'.ucfirst($product->canvas);
+		include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
+		$product = new $class($db);
 
-			$result = $product->FetchCanvas($_GET["id"],'',$_GET["action"]);
+		$result = $product->FetchCanvas($_GET["id"],'',$_GET["action"]);
 
-			$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/templates/'.$product->canvas.'/';
+		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/templates/';
 
-			$product->assign_smarty_values($smarty,$_GET["action"]);
-		}
+		$product->assign_smarty_values($smarty,$_GET["action"]);
 	}
 
 

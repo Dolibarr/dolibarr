@@ -3,7 +3,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,11 +110,7 @@ else if ($_POST["action"] == 'usesearchtoselectproduct')
 }
 else if ($_GET["action"] == 'set')
 {
-	// Create temp directory for smarty
-	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
-	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
-
-	$const = "PRODUIT_SPECIAL_".strtoupper($_GET["spe"]);
+	$const = "PRODUCT_SPECIAL_".strtoupper($_GET["spe"]);
 	if ($_GET["value"]) dolibarr_set_const($db, $const, $_GET["value"],'chaine',0,'',$conf->entity);
 	else dolibarr_del_const($db, $const,$conf->entity);
 }
@@ -278,64 +274,70 @@ print "</td>";
 print '</tr>';
 print '</form>';
 
-
-// Add droitpret feature
-if ($conf->droitpret->enabled)
+if ($conf->global->PRODUCT_CANVAS_ABILITY)
 {
-	// Propose utilisation de canvas.
-	// Ces derniers ne sont geres que par le menu default
+	// Add canvas feature
+	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
 	$var = false;
-
+	
 	print '<tr class="liste_titre">';
-	print "  <td>".$langs->trans("ProductSpecial")."</td>\n";
-	print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
-	print "  <td width=\"80\">&nbsp;</td></tr>\n";
-
-	require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
-	$dir = DOL_DOCUMENT_ROOT . "/product/templates/";
-
-	if (is_dir($dir) )
+	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
+	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+	print '<td width="80">&nbsp;</td></tr>'."\n";
+	
+	if (is_dir($dir))
 	{
+		require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
+		
 		$handle=opendir($dir);
-
+		
 		while (($file = readdir($handle))!==false)
 		{
-			if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
+			if (file_exists($dir.$file.'/product.'.$file.'.class.php'))
 			{
-				$parts = explode('.',$file);
-				$classname = 'Product'.ucfirst($parts[1]);
-				require_once($dir.$file);
-				$module = new $classname();
-
-				$var=!$var;
-				print "<tr $bc[$var]><td>";
-
-				print $module->description;
-
-				print '</td><td align="right">';
-
-				$const = "PRODUIT_SPECIAL_".strtoupper($parts[1]);
-				if ($conf->global->$const)
+				$classfile = $dir.$file.'/product.'.$file.'.class.php';
+				$classname = 'Product'.ucfirst($file);
+				
+				require_once($classfile);
+				$object = new $classname();
+				
+				$module = $object->module;
+				
+				if ($conf->$module->enabled)
 				{
-					print img_tick();
+					$var=!$var;
+					print "<tr $bc[$var]><td>";
+					
+					print $object->description;
+					
 					print '</td><td align="right">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';
+					
+					$const = "PRODUCT_SPECIAL_".strtoupper($file);
+					
+					if ($conf->global->$const)
+					{
+						print img_tick();
+						print '</td><td align="right">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=0">'.$langs->trans("Disable").'</a>';
+					}
+					else
+					{
+						print '&nbsp;</td><td align="right">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=1">'.$langs->trans("Activate").'</a>';
+					}
+					
+					print '</td></tr>';
 				}
-				else
-				{
-					print '&nbsp;</td><td align="right">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
-				}
-
-				print '</td></tr>';
 			}
 		}
+		
 		closedir($handle);
 	}
 	else
 	{
 		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 	}
+	
 	print '</table>';
 }
 
