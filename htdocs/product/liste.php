@@ -93,6 +93,7 @@ if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$
 
 	$object = new $class($db);
 	$object->LoadListDatas($limit, $offset, $sortfield, $sortorder);
+	$title = $object->getTitle();
 }
 else
 {
@@ -199,7 +200,7 @@ if ($resql)
 		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader("",$helpurl,$texte);
+	llxHeader("",$title,$helpurl,$texte);
 
 	// Displays product removal confirmation
 	if (!empty($_GET['delprod']))
@@ -230,7 +231,7 @@ if ($resql)
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$smarty->assign('title_picto', img_picto('',$picto));
-		$smarty->assign('title_text', $object->getTitle());
+		$smarty->assign('title_text', $title);
 
 		// Check if a custom template is present
 		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/liste.tpl'))
