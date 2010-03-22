@@ -26,7 +26,8 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/stock.lib.php");
 
 

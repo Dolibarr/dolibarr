@@ -19,14 +19,14 @@
  */
 
 /**
-        \file       htdocs/product/stock/liste.php
-        \ingroup    stock
-        \brief      Page liste des stocks
-        \version    $Id$
-*/
+ *      \file       htdocs/product/stock/liste.php
+ *      \ingroup    stock
+ *      \brief      Page liste des stocks
+ *      \version    $Id$
+ */
 
-require("./pre.inc.php");
-require_once("./entrepot.class.php");
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("stocks");
 

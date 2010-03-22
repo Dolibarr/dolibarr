@@ -19,12 +19,12 @@
  */
 
 /**
-        \file       htdocs/product/stats/index.php
-        \brief      Page accueil statistiques produits
-        \version    $Id$
-*/
+ *      \file       htdocs/product/stats/index.php
+ *      \brief      Page accueil statistiques produits
+ *      \version    $Id$
+ s*/
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 // Security check
@@ -117,8 +117,8 @@ if ($conf->service->enabled)
   $sql = "SELECT count(*)";
   $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
   $sql.= " WHERE p.envente = 0";
-  if (!$user->rights->produit->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
-  if (!$user->rights->service->voir) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
+  if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+  if (!$user->rights->service->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 1)';
   $sql.= " AND p.fk_product_type = '1'";
   $sql.= " AND p.entity = ".$conf->entity;
 
