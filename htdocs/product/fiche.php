@@ -155,6 +155,8 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$product->surface_units      = $_POST["surface_units"];
 		$product->volume             = $_POST["volume"];
 		$product->volume_units       = $_POST["volume_units"];
+		$product->volume_liquide     = $_POST["volume_liquide"];
+		$product->volume_l_units     = $_POST["volume_l_units"];
 		$product->finished           = $_POST["finished"];
 		$product->hidden             = $_POST["hidden"]=='yes'?1:0;
 
@@ -223,6 +225,8 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			$product->surface_units      = $_POST["surface_units"];
 			$product->volume             = $_POST["volume"];
 			$product->volume_units       = $_POST["volume_units"];
+			$product->volume_liquide     = $_POST["volume_liquide"];
+			$product->volume_l_units     = $_POST["volume_l_units"];
 			$product->finished           = $_POST["finished"];
 			$product->hidden             = $_POST["hidden"]=='yes'?1:0;
 
@@ -759,6 +763,11 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			print '<input name="volume" size="4" value="'.$_POST["volume"].'">';
 			print $formproduct->select_measuring_units("volume_units","volume");
 			print '</td></tr>';
+			// Volume liquide
+			print '<tr><td>'.$langs->trans("Volume_liquide").'</td><td>';
+			print '<input name="volume_liquide" size="4" value="'.$_POST["volume_liquide"].'">'; 
+			print $formproduct->select_measuring_units("volume_l_units","volume_liquide");
+			print '</td></tr>';
 		}
 
 		// Hidden
@@ -1015,6 +1024,17 @@ if ($_GET["id"] || $_GET["ref"])
 					print '&nbsp;';
 				}
 				print "</td></tr>\n";
+				// Volume liquide
+				print '<tr><td>'.$langs->trans("Volume_liquide").'</td><td colspan="2">';
+				if ($product->volume_liquide != '')
+				{
+					print $product->volume_liquide." ".measuring_units_string($product->volume_l_units,"volume_liquide");
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
 			}
 
 			// Hidden
@@ -1159,6 +1179,11 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 				print '<input name="volume" size="5" value="'.$product->volume.'"> ';
 				print $formproduct->select_measuring_units("volume_units", "volume", $product->volume_units);
+				print '</td></tr>';
+				// Volume liquide
+				print '<tr><td>'.$langs->trans("Volume_liquide").'</td><td>';
+				print '<input name="volume_liquide" size="5" value="'.$product->volume_liquide.'"> ';
+				print $formproduct->select_measuring_units("volume_l_units", "volume_liquide", $product->volume_l_units);
 				print '</td></tr>';
 			}
 
