@@ -30,36 +30,36 @@
 </tr>
 </table>
 
-<form action="liste.php?canvas=default" method="post" name="formulaire">
+<form action="liste.php?canvas=service" method="post" name="formulaire">
 
 <table class="liste" width="100%">
  <tr class="liste_titre">
 
   <td class="liste_titre">Référence
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  </a>
+  	<a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
+  	</a>
+  	<a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
+  	</a>
   </td>
 
   <td class="liste_titre">Libellé
-  <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  </a>
+  	<a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
+  	</a>
+  	<a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
+  	</a>
   </td>
   
   <td class="liste_titre">Code barre
-  <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  </a>
+  	<a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
+  	</a>
+  	<a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
+  	</a>
   </td>
 
   <td class="liste_titre" align="center">Date de modification</td>
@@ -79,7 +79,7 @@
  <td class="liste_titre" align="right">
  	<input type="image" class="liste_titre" name="button_search" src="{$url_root}/theme/{$theme}/img/search.png" alt="Rechercher">
  	<input type="image" class="liste_titre" name="button_removefilter" src="{$url_root}/theme/{$theme}/img/searchclear.png" alt="Supprimer filtre">
- 	</td>
+ </td>
 </tr>
 
 {section name=mysec loop=$datas}
