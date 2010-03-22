@@ -281,7 +281,7 @@ if ($id || $ref)
 
 		print '<br>';
 
-		print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
+		print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
 		print '<table class="nobordernopadding">';
 		print '<tr><td><b>'.$langs->trans("ProductToAddSearch").'</b></td></tr>';
 
@@ -306,7 +306,7 @@ if ($id || $ref)
 		if($action == 'search')
 		{
 			print '<br>';
-			print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
+			print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="add_prod"';
 			print '<input type="hidden" name="id" value="'.$id.'"';
@@ -418,7 +418,7 @@ if ($action == '')
 {
 	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$productid.'">'.$langs->trans("EditAssociate").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/composition/fiche.php?action=edit&amp;id='.$productid.'">'.$langs->trans("EditAssociate").'</a>';
 	}
 }
 
