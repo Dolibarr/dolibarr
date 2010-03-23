@@ -49,6 +49,7 @@ ProductIsInCategories = Este producto/servicio se encuentra en las siguientes ca
 SupplierIsInCategories = Este proveedor se encuentra en las siguientes categorías
 CompanyIsInCustomersCategories = Esta empresa se encuentra en las siguientes categorías
 CompanyIsInSuppliersCategories = Esta empresa se encuentra en las siguentes caterogrías de proveedores
+MemberIsInCategories = Este miembro se encuentra en las siguientes categorías de miembros
 ProductHasNoCategory = Este producto/servicio no se encuentra en ninguna categoría en particular
 SupplierHasNoCategory = Este proveedor no se encuentra en ninguna categoría en particular
 CompanyHasNoCategory = Esta empresa no se encuentra en ninguna categoría en particular

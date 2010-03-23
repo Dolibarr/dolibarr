@@ -49,6 +49,7 @@ ProductIsInCategories = Aquest producte/servei es troba en les següents categor
 SupplierIsInCategories = Aquest proveïdor es troba en les següents categories
 CompanyIsInCustomersCategories = Aquesta empresa es troba en les següents categories
 CompanyIsInSuppliersCategories = Aquesta empresa es troba en les següents categories de proveïdors
+MemberIsInCategories = Aquest membre es troba en les següents categories de membres
 ProductHasNoCategory = Aquest producte/servei no es troba en cap categoria en particular
 SupplierHasNoCategory = Aquest proveïdor no es troba en cap categoria en particular
 CompanyHasNoCategory = Aquesta empresa no es troba en cap categoria en particular
