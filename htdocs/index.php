@@ -347,7 +347,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
 
-	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 	$board=new Propal($db);
 	$board->load_board($user,"signed");
 

@@ -110,7 +110,7 @@ class InterfaceExportsynchro
     
     function _create_csv_files($action,$object,$user,$langs,$conf)
     {
-    	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+    	include_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
     	include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
     	
     	$propal_filename = $conf->propale->dir_temp.'/propal_exportsynchro.csv';
