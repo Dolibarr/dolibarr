@@ -92,6 +92,7 @@ if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$
 	include_once('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php');
 
 	$object = new $class($db);
+	$object->getFieldList();
 	$object->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 	$title = $object->getTitle();
 }
