@@ -107,6 +107,43 @@ class ProductDefault extends Product
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);
 		
+		$this->list_title = array();
+		
+		$titlelist["title"]		= $langs->trans("Ref");
+		$titlelist["sortfield"]	= 'p.ref';
+		$titlelist["align"]		= 'left';
+		array_push($this->list_title,$titlelist);
+		
+		$titlelist["title"]		= $langs->trans("Label");
+		$titlelist["sortfield"]	= 'p.label';
+		$titlelist["align"]		= 'left';
+		array_push($this->list_title,$titlelist);
+		
+		$titlelist["title"]		= $langs->trans("BarCode");
+		$titlelist["sortfield"]	= 'p.barcode';
+		$titlelist["align"]		= 'center';
+		array_push($this->list_title,$titlelist);
+		
+		$titlelist["title"]		= $langs->trans("DateModification");
+		$titlelist["sortfield"]	= 'p.tms';
+		$titlelist["align"]		= 'center';
+		array_push($this->list_title,$titlelist);
+		
+		$titlelist["title"]		= $langs->trans("SellingPrice");
+		$titlelist["sortfield"]	= 'p.price';
+		$titlelist["align"]		= 'right';
+		array_push($this->list_title,$titlelist);
+		
+		$titlelist["title"]		= $langs->trans("Stock");
+		$titlelist["sortfield"]	= '';
+		$titlelist["align"]		= 'right';
+		array_push($this->list_title,$titlelist);
+		
+		$titlelist["title"]		= $langs->trans("Status");
+		$titlelist["sortfield"]	= 'p.envente';
+		$titlelist["align"]		= 'right';
+		array_push($this->list_title,$titlelist);
+
 		$this->list_datas = array();
 
 		$resql = $this->db->query($sql);
@@ -117,28 +154,36 @@ class ProductDefault extends Product
 			$i = 0;
 			while ($i < min($num,$limit))
 			{
+				$titlelist = array();
 				$datas = array();
+				
 				$obj = $this->db->fetch_object($resql);
 
 				$datas["id"]        = $obj->rowid;
-				$datas["label"]     = $obj->label;
-				$datas["barcode"]   = $obj->barcode;
-				$datas["datem"]		= dol_print_date($this->db->jdate($obj->datem),'day');
 				
 				// Ref
-				$this->id 			= $obj->rowid;
-				$this->ref 			= $obj->ref;
-				$this->type 		= $obj->fk_product_type;
-				$datas["ref"]       = $this->getNomUrl(1,'',24);
+				$this->id 				= $obj->rowid;
+				$this->ref 				= $obj->ref;
+				$this->type 			= $obj->fk_product_type;
+				$datas["ref"]       	= $this->getNomUrl(1,'',24);
 				
-				// Stock
-				$this->load_stock();
-				if ($this->stock_reel < $obj->seuil_stock_alerte) $datas["stock"] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
-				else $datas["stock"] = $this->stock_reel;
+				// Label
+				$datas["label"]     	= $obj->label;
+				
+				// Barcode
+				$datas["barcode"]   	= $obj->barcode;
+				
+				// Date modification
+				$datas["datem"]			= dol_print_date($this->db->jdate($obj->datem),'day');
 				
 				// Selling price
 				if ($obj->price_base_type == 'TTC') $datas["sellingprice"] = price($obj->price_ttc).' '.$langs->trans("TTC");
 				else $datas["sellingprice"] = price($obj->price).' '.$langs->trans("HT");
+				
+				// Stock
+				$this->load_stock();
+				if ($this->stock_reel < $obj->seuil_stock_alerte) $datas["stock"] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
+				else $datas["stock"] 	= $this->stock_reel;
 				
 				// Status
 				$datas["status"]    = $this->LibStatut($obj->statut,5);

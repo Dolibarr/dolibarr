@@ -34,38 +34,25 @@
 
 <table class="liste" width="100%">
  <tr class="liste_titre">
-
-  <td class="liste_titre">{$langs->trans('Ref')}
-  	<a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
-  		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  	</a>
-  	<a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
-  		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  	</a>
-  </td>
-
-  <td class="liste_titre">{$langs->trans('Label')}
-  	<a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
-  		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  	</a>
-  	<a href="liste.php?sortfield=p.label&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
-  		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  	</a>
-  </td>
-  
-  <td class="liste_titre">{$langs->trans('BarCode')}
-  	<a href="liste.php?sortfield=p.barcode&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
-  		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  	</a>
-  	<a href="liste.php?sortfield=p.barcode&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
-  		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  	</a>
-  </td>
-
-  <td class="liste_titre" align="center">{$langs->trans('DateModification')}</td>
-  <td class="liste_titre" align="right">{$langs->trans('SellingPrice')}</td>
-  <td class="liste_titre" align="right">{$langs->trans('Stock')}</td>
-  <td class="liste_titre" align="right">{$langs->trans('Status')}</td>
+ 	
+ 	{section name=mysec loop=$titlelist}
+ 	{strip}
+ 	
+ 	{if $titlelist[mysec].sortfield}
+ 		<td class="liste_titre" align="{$titlelist[mysec].align}">{$titlelist[mysec].title}
+ 			<a href="liste.php?sortfield={$titlelist[mysec].sortfield}&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+ 				<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
+ 			</a>
+  			<a href="liste.php?sortfield={$titlelist[mysec].sortfield}&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  				<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
+  			</a>
+  		</td>
+  	{else}
+  		<td class="liste_titre" align="{$titlelist[mysec].align}">{$titlelist[mysec].title}</td>
+  	{/if}
+  	
+  	{/strip}
+  	{/section}
 
 </tr>
 
