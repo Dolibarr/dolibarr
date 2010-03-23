@@ -28,7 +28,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
 
 $langs->load("products");

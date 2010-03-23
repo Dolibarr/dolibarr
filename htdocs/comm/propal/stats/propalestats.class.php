@@ -26,7 +26,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT . "/stats.class.php";
-include_once DOL_DOCUMENT_ROOT . "/propal.class.php";
+include_once DOL_DOCUMENT_ROOT . "/comm/propal/propal.class.php";
 
 
 /**
@@ -76,7 +76,7 @@ class PropaleStats extends Stats
 
 
 	/**
-	 * Renvoie le nombre de proposition par mois pour une année donnée
+	 * Renvoie le nombre de proposition par mois pour une annï¿½e donnï¿½e
 	 *
 	 */
 	function getNbByMonth($year)
@@ -94,7 +94,7 @@ class PropaleStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de propale par année
+	 * Renvoie le nombre de propale par annï¿½e
 	 *
 	 */
 	function getNbByYear()
@@ -110,7 +110,7 @@ class PropaleStats extends Stats
 		return $this->_getNbByYear($sql);
 	}
 	/**
-	 * Renvoie le nombre de propale par mois pour une année donnée
+	 * Renvoie le nombre de propale par mois pour une annï¿½e donnï¿½e
 	 *
 	 */
 	function getAmountByMonth($year)

@@ -31,7 +31,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 
 $langs->load("admin");
 $langs->load("bills");

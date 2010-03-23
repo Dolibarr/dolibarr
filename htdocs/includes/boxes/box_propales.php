@@ -63,7 +63,7 @@ class box_propales extends ModeleBoxes {
 
     	$this->max=$max;
 
-    	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+    	include_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
       $propalstatic=new Propal($db);
 
       $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));

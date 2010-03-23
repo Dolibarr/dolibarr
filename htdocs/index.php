@@ -133,7 +133,7 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/adherents/adherent.class.php",
 	DOL_DOCUMENT_ROOT."/product/product.class.php",
 	DOL_DOCUMENT_ROOT."/service.class.php",
-	DOL_DOCUMENT_ROOT."/propal.class.php",
+	DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php",
 	DOL_DOCUMENT_ROOT."/commande/commande.class.php",
 	DOL_DOCUMENT_ROOT."/facture.class.php",
 	DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
@@ -322,7 +322,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
 
-	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 	$board=new Propal($db);
 	$board->load_board($user,"opened");
 
