@@ -31,7 +31,7 @@ function bank_prepare_head($obj)
 	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/fiche.php?id='.$obj->id;
 	$head[$h][1] = $langs->trans("AccountCard");
 	$head[$h][2] = 'bankname';
@@ -49,7 +49,7 @@ function bank_prepare_head($obj)
     $head[$h][1] = $langs->trans("Transactions");
     $head[$h][2] = 'journal';
     $h++;
-    
+
 //    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 //	{
 		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
@@ -57,7 +57,7 @@ function bank_prepare_head($obj)
 		$head[$h][2] = 'cash';
 		$h++;
 //	}
-	
+
     $head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$obj->id;
     $head[$h][1] = $langs->trans("IOMonthlyReporting");
     $head[$h][2] = 'annual';
@@ -67,15 +67,15 @@ function bank_prepare_head($obj)
     $head[$h][1] = $langs->trans("Graph");
     $head[$h][2] = 'graph';
     $h++;
-    
-    if ($obj->courant != 2) 
+
+    if ($obj->courant != 2)
     {
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$obj->id;
-	    $head[$h][1] = $langs->trans("AccountStatement");
+	    $head[$h][1] = $langs->trans("AccountStatements");
 	    $head[$h][2] = 'statement';
 	    $h++;
 	}
-	
+
 	return $head;
 }
 
@@ -92,15 +92,15 @@ function bank_prepare_head($obj)
 function checkBanForAccount($account)
 {
 	$country_code=$account->getCountryCode();
-	
-	// For compatibility between 	
+
+	// For compatibility between
 	// account of type CompanyBankAccount class (we use number, cle_rib)
 	// account of type Account class (we use num_compte, cle)
 	if (empty($account->number)) $account->number=$account->num_compte;
 	if (empty($account->cle))    $account->cle=$account->cle_rib;
-	
+
 	dol_syslog("Bank.lib::checkBanForAccount account->code_banque=".$account->code_banque." account->code_guichet=".$account->code_guichet." account->number=".$account->number." account->cle=".$account->cle." account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
-	
+
 	if ($country_code == 'FR')	// France rules
 	{
 		$coef = array(62, 34, 3) ;
@@ -124,7 +124,7 @@ function checkBanForAccount($account)
 		}
 		return false;
 	}
-	
+
 	if ($country_code == 'BE')	// Belgium rules
 	{
 	}
@@ -134,15 +134,15 @@ function checkBanForAccount($account)
 		$CCC = strtolower(trim($account->number));
 
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet));
-    	
+
     	$cle_rib=strtolower(CheckES($rib,$CCC));
-    	
+
 		if ($cle_rib == strtolower($account->cle))
     	{
     		return true;
-		}   
-		return false; 
-    }	
+		}
+		return false;
+    }
 
 	// No particular rule
 	// If account is CompanyBankAccount class, we use number
@@ -156,10 +156,10 @@ function checkBanForAccount($account)
 }
 
 
-/** 
- * 	Returns the key for Spanish Banks Accounts  
+/**
+ * 	Returns the key for Spanish Banks Accounts
  *  @return		string		Key
- */ 
+ */
 Function CheckES($IentOfi,$InumCta)
 {
 	$APesos = Array(1,2,4,8,5,10,9,7,3,6); // Array de "pesos"
