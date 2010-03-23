@@ -253,7 +253,7 @@ if ($resql)
 		}
 		
 		// Enable caching
-		$smarty->caching = true;
+		//$smarty->caching = true;
 
 		$smarty->display($template, $_GET["canvas"]);
 		

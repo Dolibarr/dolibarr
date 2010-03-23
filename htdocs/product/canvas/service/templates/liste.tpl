@@ -45,19 +45,19 @@
   </td>
 
   <td class="liste_titre">Libellé
-  	<a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  	<a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
   		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   	</a>
-  	<a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  	<a href="liste.php?sortfield=p.label&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
   		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   	</a>
   </td>
   
   <td class="liste_titre">Code barre
-  	<a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  	<a href="liste.php?sortfield=p.barcode&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
   		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   	</a>
-  	<a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
+  	<a href="liste.php?sortfield=p.barcode&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=service&amp;fourn_id=&amp;snom=&amp;sref=">
   		<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   	</a>
   </td>
