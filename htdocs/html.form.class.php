@@ -1924,7 +1924,7 @@ class Form
 		{
 			if ($selected)
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
+				require_once(DOL_DOCUMENT_ROOT ."/user/user.class.php");
 				//$this->load_cache_contacts();
 				//print $this->cache_contacts[$selected];
 				$theuser=new User($this->db);

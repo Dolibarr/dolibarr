@@ -215,7 +215,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 }
 
 // Chargement des includes principaux de librairies communes
-if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user.class.php");		// Need 500ko memory
+if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user/user.class.php");		// Need 500ko memory
 if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");

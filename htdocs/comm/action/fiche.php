@@ -29,7 +29,7 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formactions.class.php");

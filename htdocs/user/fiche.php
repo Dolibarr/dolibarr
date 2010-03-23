@@ -28,7 +28,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
