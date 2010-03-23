@@ -69,19 +69,19 @@
  </td>
 </tr>
 
-{section name=mysec loop=$datas}
+{foreach name=prodline item=line from=$datas}
 {strip}
    <tr class="{cycle values="pair,impair"}">
-      <td>{$datas[mysec].ref}</td>
-      <td>{$datas[mysec].label}</td>
-      <td align="center">{$datas[mysec].barcode}</td>
-      <td align="center">{$datas[mysec].datem}</td>
-      <td align="right">{$datas[mysec].sellingprice}</td>
-      <td align="right">{$datas[mysec].stock}</td>
-      <td align="right">{$datas[mysec].status}</td>
+   		{foreach name=valueline key=key item=value from=$line}
+   			{foreach name=fieldline item=field from=$titlelist}
+   				{if $field.name == $key}
+   					<td align="{$field.align}">{$value}</td>
+   				{/if}
+   			{/foreach}
+   		{/foreach}
    </tr>
 {/strip}
-{/section}
+{/foreach}
 
 </table>
 </form>

@@ -109,36 +109,43 @@ class ProductDefault extends Product
 		
 		$this->list_title = array();
 		
+		$titlelist["name"]		= 'ref';
 		$titlelist["title"]		= $langs->trans("Ref");
 		$titlelist["sortfield"]	= 'p.ref';
 		$titlelist["align"]		= 'left';
 		array_push($this->list_title,$titlelist);
 		
+		$titlelist["name"]		= 'label';
 		$titlelist["title"]		= $langs->trans("Label");
 		$titlelist["sortfield"]	= 'p.label';
 		$titlelist["align"]		= 'left';
 		array_push($this->list_title,$titlelist);
 		
+		$titlelist["name"]		= 'barcode';
 		$titlelist["title"]		= $langs->trans("BarCode");
 		$titlelist["sortfield"]	= 'p.barcode';
 		$titlelist["align"]		= 'center';
 		array_push($this->list_title,$titlelist);
 		
+		$titlelist["name"]		= 'datem';
 		$titlelist["title"]		= $langs->trans("DateModification");
 		$titlelist["sortfield"]	= 'p.tms';
 		$titlelist["align"]		= 'center';
 		array_push($this->list_title,$titlelist);
 		
+		$titlelist["name"]		= 'sellingprice';
 		$titlelist["title"]		= $langs->trans("SellingPrice");
 		$titlelist["sortfield"]	= 'p.price';
 		$titlelist["align"]		= 'right';
 		array_push($this->list_title,$titlelist);
 		
+		$titlelist["name"]		= 'stock';
 		$titlelist["title"]		= $langs->trans("Stock");
 		$titlelist["sortfield"]	= '';
 		$titlelist["align"]		= 'right';
 		array_push($this->list_title,$titlelist);
 		
+		$titlelist["name"]		= 'status';
 		$titlelist["title"]		= $langs->trans("Status");
 		$titlelist["sortfield"]	= 'p.envente';
 		$titlelist["align"]		= 'right';
