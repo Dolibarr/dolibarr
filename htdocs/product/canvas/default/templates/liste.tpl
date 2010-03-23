@@ -35,7 +35,7 @@
 <table class="liste" width="100%">
  <tr class="liste_titre">
 
-  <td class="liste_titre">Référence
+  <td class="liste_titre">{$langs->trans('Ref')}
   	<a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   	</a>
@@ -44,7 +44,7 @@
   	</a>
   </td>
 
-  <td class="liste_titre">Libellé
+  <td class="liste_titre">{$langs->trans('Label')}
   	<a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   	</a>
@@ -53,7 +53,7 @@
   	</a>
   </td>
   
-  <td class="liste_titre">Code barre
+  <td class="liste_titre">{$langs->trans('BarCode')}
   	<a href="liste.php?sortfield=p.barcode&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   		<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   	</a>
@@ -62,10 +62,10 @@
   	</a>
   </td>
 
-  <td class="liste_titre" align="center">Date de modification</td>
-  <td class="liste_titre" align="right">Prix de vente</td>
-  <td class="liste_titre" align="right">Stock</td>
-  <td class="liste_titre" align="right">Etat</td>
+  <td class="liste_titre" align="center">{$langs->trans('DateModification')}</td>
+  <td class="liste_titre" align="right">{$langs->trans('SellingPrice')}</td>
+  <td class="liste_titre" align="right">{$langs->trans('Stock')}</td>
+  <td class="liste_titre" align="right">{$langs->trans('Status')}</td>
 
 </tr>
 
@@ -77,15 +77,15 @@
  <td class="liste_titre">&nbsp;</td>
  <td class="liste_titre">&nbsp;</td>
  <td class="liste_titre" align="right">
- 	<input type="image" class="liste_titre" name="button_search" src="{$url_root}/theme/{$theme}/img/search.png" alt="Rechercher">
- 	<input type="image" class="liste_titre" name="button_removefilter" src="{$url_root}/theme/{$theme}/img/searchclear.png" alt="Supprimer filtre">
+ 	<input type="image" class="liste_titre" name="button_search" src="{$url_root}/theme/{$theme}/img/search.png" alt="{$langs->trans('Search')}">
+ 	<input type="image" class="liste_titre" name="button_removefilter" src="{$url_root}/theme/{$theme}/img/searchclear.png" alt="{$langs->trans('RemoveFilter')}">
  </td>
 </tr>
 
 {section name=mysec loop=$datas}
 {strip}
    <tr class="{cycle values="pair,impair"}">
-      <td><a href="fiche.php?id={$datas[mysec].id}">{$datas[mysec].ref}</a></td>
+      <td>{$datas[mysec].ref}</td>
       <td>{$datas[mysec].label}</td>
       <td align="center">{$datas[mysec].barcode}</td>
       <td align="center">{$datas[mysec].datem}</td>

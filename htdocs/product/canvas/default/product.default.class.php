@@ -121,11 +121,15 @@ class ProductDefault extends Product
 				$obj = $this->db->fetch_object($resql);
 
 				$datas["id"]        = $obj->rowid;
-				$datas["ref"]       = $obj->ref;
 				$datas["label"]     = $obj->label;
 				$datas["barcode"]   = $obj->barcode;
 				$datas["statut"]    = $obj->statut;
 				$datas["datem"]		= dol_print_date($this->db->jdate($obj->datem),'day');
+				
+				$this->id 			= $obj->rowid;
+				$this->ref 			= $obj->ref;
+				$this->type 		= $obj->fk_product_type;
+				$datas["ref"]       = $this->getNomUrl(1,'',24);
 
 				array_push($this->list_datas,$datas);
 
