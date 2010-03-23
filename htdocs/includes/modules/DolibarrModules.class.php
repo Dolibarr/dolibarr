@@ -112,11 +112,22 @@ class DolibarrModules
 			{
 				if (! $err)
 				{
-					$sql=$array_sql[$i];
+					$val=$array_sql[$i];
+					$sql='';
+					$ignoreerror=0;
+					if (is_array($val))
+					{
+						$sql=$val['sql'];
+						$ignoreerror=$val['ignoreerror'];
+					}
+					else
+					{
+						$sql=$val;
+					}
 
-					dol_syslog("DolibarrModules::_init sql=".$sql, LOG_DEBUG);
+					dol_syslog("DolibarrModules::_init ignoreerror=".$ignoreerror." sql=".$sql, LOG_DEBUG);
 					$result=$this->db->query($sql);
-					if (! $result)
+					if (! $result && ! $ignoreerror)
 					{
 						$this->error=$this->db->error();
 						dol_syslog("DolibarrModules::_init Error ".$this->error, LOG_ERR);

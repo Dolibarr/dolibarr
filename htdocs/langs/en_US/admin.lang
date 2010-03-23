@@ -787,7 +787,7 @@ ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The cod
 UseNotifications=Use notifications
 NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events, to third parties (customers or suppliers) that are configured to. Choice of active notification and targets contacts is made one third party at time.
 ModelModules=Documents templates
-DocumentModelOdt=Generate documents from .ODT file format templates (OpenOffice...)
+DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT files for OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=Watermark on draft document
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup

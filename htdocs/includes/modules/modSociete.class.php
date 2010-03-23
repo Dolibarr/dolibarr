@@ -269,10 +269,13 @@ class modSociete extends DolibarrModules
 		// Prevent pb of modules not correctly disabled
 		//$this->remove($options);
 
-		$sql = array();
+		$dirodt=DOL_DATA_ROOT.'/odttemplates/thirdparties';
+		create_exdir($dirodt);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',$dirodt,0,0);
 
-		create_exdir(DOL_DATA_ROOT.'/odttemplates/thirdparties');
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',DOL_DATA_ROOT.'/odttemplates/thirdparties/template_thirdparty.odt',0,0);
+		$sql = array(
+			array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."const set name='COMPANY_ADDON_PDF_ODT_PATH', value='DOL_DATA_ROOT/odttemplates/thirdparties'",'ignoreerror'=>1)
+		);
 
 		return $this->_init($sql,$options);
 	}
