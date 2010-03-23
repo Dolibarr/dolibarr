@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/menu.class.php
+ *  \file       htdocs/core/menu.class.php
  *  \brief      Fichier de la classe de gestion du menu gauche
  *  \version    $Id$
  */
