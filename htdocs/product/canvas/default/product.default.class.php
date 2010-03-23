@@ -60,7 +60,7 @@ class ProductDefault extends Product
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
-		global $conf;
+		global $conf, $langs;
 		
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 		$sql.= ' p.fk_product_type, p.tms as datem,';
@@ -123,13 +123,25 @@ class ProductDefault extends Product
 				$datas["id"]        = $obj->rowid;
 				$datas["label"]     = $obj->label;
 				$datas["barcode"]   = $obj->barcode;
-				$datas["statut"]    = $obj->statut;
 				$datas["datem"]		= dol_print_date($this->db->jdate($obj->datem),'day');
 				
+				// Ref
 				$this->id 			= $obj->rowid;
 				$this->ref 			= $obj->ref;
 				$this->type 		= $obj->fk_product_type;
 				$datas["ref"]       = $this->getNomUrl(1,'',24);
+				
+				// Stock
+				$this->load_stock();
+				if ($this->stock_reel < $obj->seuil_stock_alerte) $datas["stock"] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
+				else $datas["stock"] = $this->stock_reel;
+				
+				// Selling price
+				if ($obj->price_base_type == 'TTC') $datas["sellingprice"] = price($obj->price_ttc).' '.$langs->trans("TTC");
+				else $datas["sellingprice"] = price($obj->price).' '.$langs->trans("HT");
+				
+				// Status
+				$datas["status"]    = $this->LibStatut($obj->statut,5);
 
 				array_push($this->list_datas,$datas);
 
