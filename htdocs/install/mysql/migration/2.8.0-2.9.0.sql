@@ -100,6 +100,9 @@ ALTER TABLE llx_product_stock add column location        varchar(32);
 ALTER TABLE llx_expedition ADD COLUMN ref_customer varchar(30) AFTER entity;
 ALTER TABLE llx_expedition ADD COLUMN date_delivery date DEFAULT NULL AFTER date_expedition;
 
+ALTER TABLE llx_livraison change ref_client ref_customer varchar(30);
+ALTER TABLE llx_livraison change date_livraison date_delivery date		DEFAULT NULL;
+
 ALTER TABLE llx_facture MODIFY tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture MODIFY total double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture MODIFY total_ttc double(24,8) DEFAULT 0;
