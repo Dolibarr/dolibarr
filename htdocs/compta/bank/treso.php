@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/compta/bank/treso.php
  *	\ingroup    banque
- *	\brief      Page de d�tail du budget de tr�sorerie
+ *	\brief      Page de detail du budget de tresorerie
  *	\version    $Id$
  */
 
@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/chargesociales.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/chargesociales.class.php');
 
 $langs->load("banks");
 $langs->load("bills");
@@ -119,7 +119,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$solde = $acct->solde(0);
 
 	/*
-	 * Affiche tableau des echeances � venir
+	 * Affiche tableau des echeances a venir
 	 */
 	print '<table class="notopnoleftnoright" width="100% border="1">';
 

@@ -28,7 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
-require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
 
 $langs->load("banks");
 

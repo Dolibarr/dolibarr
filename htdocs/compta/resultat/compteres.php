@@ -19,7 +19,7 @@
  
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
-require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
 
 
 if (!$user->rights->compta->resultat->lire)
@@ -35,13 +35,13 @@ $month=$_GET["month"];
 if (! $year) { $year = strftime("%Y", time()); }
 
 
-/* Le compte de résultat est un document officiel requis par l'administration selon le status ou activité */
+/* Le compte de rï¿½sultat est un document officiel requis par l'administration selon le status ou activitï¿½ */
 
-print_titre("Compte de résultat".($year?" année $year":""));
+print_titre("Compte de rï¿½sultat".($year?" annï¿½e $year":""));
 
 print '<br>';
 
-print "Cet état n'est pas disponible.";
+print "Cet ï¿½tat n'est pas disponible.";
 
 
 $db->close();
