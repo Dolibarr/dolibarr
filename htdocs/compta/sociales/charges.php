@@ -25,7 +25,7 @@
  */
 
 require("./pre.inc.php");
-require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+require(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
 
 $langs->load("compta");
 $langs->load("bills");
