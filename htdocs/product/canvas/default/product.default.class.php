@@ -129,7 +129,7 @@ class ProductDefault extends Product
 		$sql = 'SELECT DISTINCT ';
 		
 		// Fields requiered
-		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte';
+		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.price_ttc';
 		
 		// Fields not requiered
 		foreach($this->field_list as $field)
@@ -179,7 +179,7 @@ class ProductDefault extends Product
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);
-//print $sql;
+		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -194,32 +194,35 @@ class ProductDefault extends Product
 
 				$datas["id"]        = $obj->rowid;
 				
-				// Ref
-				$this->id 				= $obj->rowid;
-				$this->ref 				= $obj->ref;
-				$this->type 			= $obj->fk_product_type;
-				$datas["ref"]       	= $this->getNomUrl(1,'',24);
-				
-				// Label
-				$datas["label"]     	= $obj->label;
-				
-				// Barcode
-				$datas["barcode"]   	= $obj->barcode;
-				
-				// Date modification
-				$datas["datem"]			= dol_print_date($this->db->jdate($obj->datem),'day');
-				
-				// Selling price
-				if ($obj->price_base_type == 'TTC') $datas["sellingprice"] = price($obj->price_ttc).' '.$langs->trans("TTC");
-				else $datas["sellingprice"] = price($obj->price).' '.$langs->trans("HT");
-				
-				// Stock
-				$this->load_stock();
-				if ($this->stock_reel < $obj->seuil_stock_alerte) $datas["stock"] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
-				else $datas["stock"] 	= $this->stock_reel;
-				
-				// Status
-				$datas["status"]    = $this->LibStatut($obj->statut,5);
+				foreach($this->field_list as $field)
+				{
+					if ($field['enabled'])
+					{
+						$alias = $field['alias'];
+						
+						if ($alias == 'ref')
+						{
+							$this->id 		= $obj->rowid;
+							$this->ref 		= $obj->$alias;
+							$this->type 	= $obj->fk_product_type;
+							$datas[$alias] 	= $this->getNomUrl(1,'',24);
+						}
+						else if ($alias == 'sellingprice')
+						{
+							if ($obj->price_base_type == 'TTC') $datas[$alias] = price($obj->price_ttc).' '.$langs->trans("TTC");
+							else $datas[$alias] = price($obj->$alias).' '.$langs->trans("HT");
+						}
+						else if ($alias == 'stock')
+						{
+							$this->load_stock();
+							if ($this->stock_reel < $obj->seuil_stock_alerte) $datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
+							else $datas[$alias] = $this->stock_reel;
+						}
+						else if ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias),'day');
+						else if ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias,5);
+						else $datas[$alias] = $obj->$alias;
+					}
+				}
 
 				array_push($this->list_datas,$datas);
 
