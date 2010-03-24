@@ -127,11 +127,18 @@ class DolibarrModules
 
 					dol_syslog("DolibarrModules::_init ignoreerror=".$ignoreerror." sql=".$sql, LOG_DEBUG);
 					$result=$this->db->query($sql);
-					if (! $result && ! $ignoreerror)
+					if (! $result)
 					{
-						$this->error=$this->db->error();
-						dol_syslog("DolibarrModules::_init Error ".$this->error, LOG_ERR);
-						$err++;
+						if (! $ignoreerror)
+						{
+							$this->error=$this->db->lasterror();
+							dol_syslog("DolibarrModules::_init Error ".$this->error, LOG_ERR);
+							$err++;
+						}
+						else
+						{
+							dol_syslog("DolibarrModules::_init Warning ".$this->db->lasterror(), LOG_WARNING);
+						}
 					}
 				}
 			}
@@ -590,14 +597,21 @@ class DolibarrModules
 				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
 
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
-				$this->db->query($sql);
+				$resql=$this->db->query($sql);
+				if (! $resql)
+				{
+					$this->error=$this->db->lasterror();
+					dol_syslog("DolibarrModules::delete_boxes ".$this->error, LOG_ERR);
+					$err++;
+				}
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE file = '".addslashes($file)."'";
 				$sql.= " AND entity = ".$conf->entity;
 
 				dol_syslog("DolibarrModules::delete_boxes sql=".$sql);
-				if (! $this->db->query($sql))
+				$resql=$this->db->query($sql);
+				if (! $resql)
 				{
 					$this->error=$this->db->lasterror();
 					dol_syslog("DolibarrModules::delete_boxes ".$this->error, LOG_ERR);
