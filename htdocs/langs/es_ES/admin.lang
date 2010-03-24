@@ -787,7 +787,7 @@ ModuleCompanyCodeDigitaria = Devuelve un código contable compuesto siguiendo el
 UseNotifications = Usar notificaciones
 NotificationsDesc = La función de las notificaciones permite enviar automáticamente un correo electrónico para un determinado evento Dolibarr en las empresas configuradas para ello
 ModelModules = Modelos de documentos
-DocumentModelOdt = Generación desde los documentos con formato .ODT (OpenOffice...)
+DocumentModelOdt = Generación desde los documentos OpenDocument (Archivo .ODT OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft = Marca de agua en los documentos borrador
 ##### Webcal setup ##### = undefined = 
 WebCalSetup = Configuración de enlace con el calendario Webcalendar
