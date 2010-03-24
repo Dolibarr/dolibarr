@@ -33,41 +33,52 @@
 <form action="liste.php?canvas=default" method="post" name="formulaire">
 
 <table class="liste" width="100%">
+
+<!-- FIELDS TITLE -->
+
  <tr class="liste_titre">
- 	
- 	{section name=mysec loop=$titlelist}
+ 	{section name=field loop=$fieldlist}
  	{strip}
  	
- 	{if $titlelist[mysec].sortfield}
- 		<td class="liste_titre" align="{$titlelist[mysec].align}">{$titlelist[mysec].title}
- 			<a href="liste.php?sortfield={$titlelist[mysec].sortfield}&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+ 	{if $fieldlist[field].sortfield}
+ 		<td class="liste_titre" align="{$fieldlist[field].align}">{$fieldlist[field].title}
+ 			<a href="liste.php?sortfield={$fieldlist[field].sortfield}&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
  				<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
  			</a>
-  			<a href="liste.php?sortfield={$titlelist[mysec].sortfield}&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  			<a href="liste.php?sortfield={$fieldlist[field].sortfield}&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   				<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   			</a>
   		</td>
   	{else}
-  		<td class="liste_titre" align="{$titlelist[mysec].align}">{$titlelist[mysec].title}</td>
+  		<td class="liste_titre" align="{$fieldlist[field].align}">{$fieldlist[field].title}</td>
   	{/if}
   	
   	{/strip}
   	{/section}
+ </tr>
+ 
+ <!-- FIELDS SEARCH -->
+ 
+ <tr class="liste_titre">
+ 	{section name=searchfield loop=$fieldlist}
+ 	{strip}
+ 	
+   	{if $fieldlist[searchfield].search}
+  		<td class="liste_titre" align="{$fieldlist[searchfield].align}"><input class="flat" type="text" name="s{$fieldlist[searchfield].name}" value=""></td>
+  	{elseif $smarty.section.search.last}
+  		<td class="liste_titre" align="right">
+  			<input type="image" class="liste_titre" name="button_search" src="{$url_root}/theme/{$theme}/img/search.png" alt="{$langs->trans('Search')}">
+  			<input type="image" class="liste_titre" name="button_removefilter" src="{$url_root}/theme/{$theme}/img/searchclear.png" alt="{$langs->trans('RemoveFilter')}">
+  		</td>
+  	{else}
+  		<td class="liste_titre">&nbsp;</td>
+  	{/if}
+  	
+  	{/strip}
+  	{/section}
+ </tr>
 
-</tr>
-
-<tr class="liste_titre">
- <td class="liste_titre"><input class="flat" type="text" name="sref" value=""></td>
- <td class="liste_titre"><input class="flat" type="text" name="snom" value=""></td>
- <td class="liste_titre"><input class="flat" type="text" name="sbarcode" value=""></td>
- <td class="liste_titre">&nbsp;</td>
- <td class="liste_titre">&nbsp;</td>
- <td class="liste_titre">&nbsp;</td>
- <td class="liste_titre" align="right">
- 	<input type="image" class="liste_titre" name="button_search" src="{$url_root}/theme/{$theme}/img/search.png" alt="{$langs->trans('Search')}">
- 	<input type="image" class="liste_titre" name="button_removefilter" src="{$url_root}/theme/{$theme}/img/searchclear.png" alt="{$langs->trans('RemoveFilter')}">
- </td>
-</tr>
+<!-- FIELDS DATA -->
 
 {foreach name=prodline item=line from=$datas}
 {strip}

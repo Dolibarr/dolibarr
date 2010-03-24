@@ -69,6 +69,7 @@ class ProductDefault extends Product
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql.= " WHERE element = '".$this->list."'";
 		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " ORDER BY rang ASC";
 		
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -84,8 +85,8 @@ class ProductDefault extends Product
 				
 				$fieldlist["id"]		= $obj->rowid;
 				$fieldlist["name"]		= $obj->name;
-				$fieldlist["alias"]		= $obj->alias;
-				$fieldlist["title"]		= $obj->title;
+				$fieldlist["alias"]		= ($obj->alias?$obj->alias:$obj->name);
+				$fieldlist["title"]		= $langs->trans($obj->title);
 				$fieldlist["align"]		= $obj->align;
 				$fieldlist["search"]	= $obj->search;
 				$fieldlist["enabled"]	= $obj->enabled;
