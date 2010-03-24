@@ -73,7 +73,7 @@
 {strip}
    <tr class="{cycle values="pair,impair"}">
    		{foreach name=valueline key=key item=value from=$line}
-   			{foreach name=fieldline item=field from=$titlelist}
+   			{foreach name=fieldline item=field from=$fieldlist}
    				{if $field.name == $key}
    					<td align="{$field.align}">{$value}</td>
    				{/if}

@@ -39,13 +39,14 @@ class ProductDefault extends Product
 	 */
 	function ProductDefault($DB=0, $id=0, $user=0)
 	{
-		$this->db = $DB;
-		$this->id = $id ;
-		$this->user = $user;
-		$this->module = "produit";
-		$this->canvas = "default";
-		$this->name = "default";
-		$this->description = "Canvas par défaut";
+		$this->db 			= $DB;
+		$this->id 			= $id ;
+		$this->user 		= $user;
+		$this->module 		= "produit";
+		$this->canvas 		= "default";
+		$this->name 		= "default";
+		$this->list			= "product_default";
+		$this->description 	= "Canvas par défaut";
 
 		$this->next_prev_filter = "canvas='default'";
 	}
@@ -60,51 +61,46 @@ class ProductDefault extends Product
 	 */
 	function getFieldList()
 	{
-		global $langs;
+		global $conf, $langs;
 		
-		$this->list_title = array();
+		$this->field_list = array();
 		
-		$titlelist["name"]		= 'ref';
-		$titlelist["title"]		= $langs->trans("Ref");
-		$titlelist["sortfield"]	= 'p.ref';
-		$titlelist["align"]		= 'left';
-		array_push($this->list_title,$titlelist);
+		$sql = "SELECT rowid, name, alias, title, align, search, enabled, rang";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
+		$sql.= " WHERE element = '".$this->list."'";
+		$sql.= " AND entity = ".$conf->entity;
 		
-		$titlelist["name"]		= 'label';
-		$titlelist["title"]		= $langs->trans("Label");
-		$titlelist["sortfield"]	= 'p.label';
-		$titlelist["align"]		= 'left';
-		array_push($this->list_title,$titlelist);
-		
-		$titlelist["name"]		= 'barcode';
-		$titlelist["title"]		= $langs->trans("BarCode");
-		$titlelist["sortfield"]	= 'p.barcode';
-		$titlelist["align"]		= 'center';
-		array_push($this->list_title,$titlelist);
-		
-		$titlelist["name"]		= 'datem';
-		$titlelist["title"]		= $langs->trans("DateModification");
-		$titlelist["sortfield"]	= 'p.tms';
-		$titlelist["align"]		= 'center';
-		array_push($this->list_title,$titlelist);
-		
-		$titlelist["name"]		= 'sellingprice';
-		$titlelist["title"]		= $langs->trans("SellingPrice");
-		$titlelist["sortfield"]	= 'p.price';
-		$titlelist["align"]		= 'right';
-		array_push($this->list_title,$titlelist);
-		
-		$titlelist["name"]		= 'stock';
-		$titlelist["title"]		= $langs->trans("Stock");
-		$titlelist["sortfield"]	= '';
-		$titlelist["align"]		= 'right';
-		array_push($this->list_title,$titlelist);
-		
-		$titlelist["name"]		= 'status';
-		$titlelist["title"]		= $langs->trans("Status");
-		$titlelist["sortfield"]	= 'p.envente';
-		$titlelist["align"]		= 'right';
-		array_push($this->list_title,$titlelist);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num)
+			{
+				$fieldlist = array();
+				
+				$obj = $this->db->fetch_object($resql);
+				
+				$fieldlist["id"]		= $obj->rowid;
+				$fieldlist["name"]		= $obj->name;
+				$fieldlist["alias"]		= $obj->alias;
+				$fieldlist["title"]		= $obj->title;
+				$fieldlist["align"]		= $obj->align;
+				$fieldlist["search"]	= $obj->search;
+				$fieldlist["enabled"]	= $obj->enabled;
+				$fieldlist["order"]		= $obj->rang;
+				
+				array_push($this->field_list,$fieldlist);
+				
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			print $sql;
+		}
 	}
 	
 	/**
@@ -169,7 +165,6 @@ class ProductDefault extends Product
 			$i = 0;
 			while ($i < min($num,$limit))
 			{
-				$titlelist = array();
 				$datas = array();
 				
 				$obj = $this->db->fetch_object($resql);

@@ -225,7 +225,7 @@ if ($resql)
 
 	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
-		$smarty->assign('titlelist', $object->list_title);
+		$smarty->assign('fieldlist', $object->field_list);
 		$smarty->assign('datas', $object->list_datas);
 		$smarty->assign('url_root', $dolibarr_main_url_root);
 		$smarty->assign('theme', $conf->theme);
