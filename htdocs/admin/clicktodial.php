@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
-/**	
+
+/**
  *   \file       htdocs/admin/clicktodial.php
  *   \ingroup    clicktodial
  *   \brief      Page d'administration/configuration du module clicktodial
@@ -52,7 +52,8 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
  *
  */
 
-llxHeader();
+$wikihelp='EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
+llxHeader($langs->trans("ClickToDialSetup"),'',$wikihelp);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ClickToDialSetup"),$linkback,'setup');
