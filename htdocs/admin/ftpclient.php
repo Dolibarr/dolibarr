@@ -35,7 +35,7 @@ $def = array();
 $lastftpentry=0;
 
 // Positionne la variable pour le nombre de rss externes
-$sql ="select MAX(name) name from ".MAIN_DB_PREFIX."const";
+$sql ="select MAX(name) as name from ".MAIN_DB_PREFIX."const";
 $sql.=" WHERE name like 'FTP_SERVER_%'";
 $result=$db->query($sql);
 if ($result)
@@ -56,19 +56,19 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 
 	$error=0;
 	$mesg='';
-	
+
 	if (empty($_POST[$ftp_name]))
 	{
 		$error=1;
 		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
 	}
-	
+
 	if (empty($_POST[$ftp_server]))
 	{
 		$error=1;
 		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server")).'</div>';
 	}
-	
+
     if (! $error)
     {
     	$ftp_port = "FTP_PORT_" . $_POST["numero_entry"];
@@ -143,7 +143,7 @@ if (! function_exists('ftp_connect'))
 else
 {
 	if ($mesg) print $mesg;
-	
+
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

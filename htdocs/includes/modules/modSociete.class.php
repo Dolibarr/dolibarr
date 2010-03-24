@@ -264,6 +264,8 @@ class modSociete extends DolibarrModules
 	 */
 	function init($options='')
 	{
+		global $conf;
+
 		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 		// Prevent pb of modules not correctly disabled
@@ -273,9 +275,13 @@ class modSociete extends DolibarrModules
 		create_exdir($dirodt);
 		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',$dirodt,0,0);
 
-		$sql = array(
-			array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."const set name='COMPANY_ADDON_PDF_ODT_PATH', value='DOL_DATA_ROOT/odttemplates/thirdparties'",'ignoreerror'=>1)
-		);
+		$sql = array();
+		if ($this->db->type != 'pgsql')	// TODO For the moment, we can't execute SQL that may fail with Postgres
+		{
+			$sql=array(
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES ('COMPANY_ADDON_PDF_ODT_PATH', 'DOL_DATA_ROOT/odttemplates/thirdparties', 0, '".$conf->entity."')",'ignoreerror'=>1)
+			);
+		}
 
 		return $this->_init($sql,$options);
 	}

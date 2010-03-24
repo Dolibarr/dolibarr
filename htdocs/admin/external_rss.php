@@ -40,7 +40,7 @@ $def = array();
 $lastexternalrss=0;
 
 // positionne la variable pour le nombre de rss externes
-$sql ="select MAX(name) name from ".MAIN_DB_PREFIX."const";
+$sql ="select MAX(name) as name from ".MAIN_DB_PREFIX."const";
 $sql.=" WHERE name like 'EXTERNAL_RSS_URLRSS_%'";
 $result=$db->query($sql);
 if ($result)
