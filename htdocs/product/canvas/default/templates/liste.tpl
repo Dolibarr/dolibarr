@@ -40,12 +40,12 @@
  	{section name=field loop=$fieldlist}
  	{strip}
  	
- 	{if $fieldlist[field].sortfield}
+ 	{if $fieldlist[field].name}
  		<td class="liste_titre" align="{$fieldlist[field].align}">{$fieldlist[field].title}
- 			<a href="liste.php?sortfield={$fieldlist[field].sortfield}&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+ 			<a href="liste.php?sortfield=p.{$fieldlist[field].name}&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
  				<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
  			</a>
-  			<a href="liste.php?sortfield={$fieldlist[field].sortfield}&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  			<a href="liste.php?sortfield=p.{$fieldlist[field].name}&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   				<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   			</a>
   		</td>
