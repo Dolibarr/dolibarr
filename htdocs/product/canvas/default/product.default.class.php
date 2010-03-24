@@ -113,7 +113,7 @@ class ProductDefault extends Product
 		
 		$this->list_datas = array();
 		
-		//$_GET["sref"] = 'LL';
+		//$_GET["sall"] = 'LL';
 		// Clean parameters
 		$sall=trim(isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"]);
 		
@@ -126,19 +126,40 @@ class ProductDefault extends Product
 			}
 		}
 		
-		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
-		$sql.= ' p.fk_product_type, p.tms as datem,';
-		$sql.= ' p.envente as statut, p.seuil_stock_alerte';
+		$sql = 'SELECT DISTINCT ';
+		
+		// Fields requiered
+		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte';
+		
+		// Fields not requiered
+		foreach($this->field_list as $field)
+		{
+			if ($field['enabled'])
+			{
+				$sql.= ", p.".$field['name']." as ".$field['alias'];
+			}
+		}
+
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+		
 		if ($sall)
 		{
-			$sql.= " AND (p.ref LIKE '%".addslashes($sall)."%'";
-			$sql.= " OR p.label LIKE '%".addslashes($sall)."%'";
-			$sql.= " OR p.description LIKE '%".addslashes($sall)."%'";
-			$sql.= " OR p.note LIKE '%".addslashes($sall)."%')";
+			$clause = '';
+			$sql.= " AND (";
+			foreach($this->field_list as $field)
+			{
+				if ($field['enabled'])
+				{
+					$sql.= $clause." p.".$field['name']." LIKE '%".addslashes($sall)."%'";
+					if ($clause=='') $clause = ' OR';
+				}
+			}
+			$sql.= ")";
 		}
+		
+		// Search fields
 		foreach($this->field_list as $field)
 		{
 			if ($field['enabled'])
@@ -147,6 +168,7 @@ class ProductDefault extends Product
 				if (${$fieldname}) $sql.= " AND p.".$field['name']." LIKE '%".addslashes(${$fieldname})."%'";
 			}
 		}
+		
 		if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 		{
 			$sql.= " AND p.envente = ".addslashes($_GET["envente"]);
