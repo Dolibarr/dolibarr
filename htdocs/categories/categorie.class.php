@@ -127,6 +127,9 @@ class Categorie
 		global $conf,$langs;
 		$langs->load('categories');
 
+		// Clean parameters
+		if (empty($this->visible)) $this->visible=0;
+
 		if ($this->already_exists())
 		{
 			$this->error=$langs->trans("ImpossibleAddCat");
