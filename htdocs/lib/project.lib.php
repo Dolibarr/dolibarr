@@ -170,7 +170,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 	// On recherche les projets
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-	$sql.= " WHERE (p.fk_soc='".$socid."' OR p.fk_soc IS NULL)";
+	$sql.= " WHERE (p.fk_soc=".($socid?$socid:'0')." OR p.fk_soc IS NULL)";
 	$sql.= " AND p.entity = ".$conf->entity;
 	$sql.= " ORDER BY p.title ASC";
 
@@ -213,7 +213,7 @@ function select_projects($socid, $selected='', $htmlname='projectid')
 	}
 	else
 	{
-		dol_print_error($this->db);
+		dol_print_error($db);
 		return -1;
 	}
 }
