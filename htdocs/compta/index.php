@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -405,7 +405,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, s.nom, s.rowid";
+	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
 	$sql.= " ORDER BY ff.tms DESC ";
 	$sql.= $db->plimit($max, 0);
 
@@ -588,7 +588,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
 		$sql.= " cc.libelle,";
-		$sql.= " sum(pc.amount) as sumpaid";
+		$sql.= " SUM(pc.amount) as sumpaid";
 		$sql.= " FROM (".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON c.rowid = pc.fk_charge";
 		$sql.= " WHERE c.fk_type = cc.id";

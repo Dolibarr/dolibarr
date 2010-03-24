@@ -578,13 +578,13 @@ function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, count(t.rowid) as nb";
+	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, COUNT(t.rowid) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	if ($mine) $sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-	$sql.= " GROUP BY p.ref";
+	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
 
 	$var=true;
 	$resql = $db->query($sql);

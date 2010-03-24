@@ -249,9 +249,12 @@ class DoliDb
 			//print $line;
 
 			// Remove () in the tables in FROM if two table
-			//$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*,\s*([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
+			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2',$line);
 			//print $line;
 
+			// Remove () in the tables in FROM if two table
+			$line=preg_replace('/FROM\s*\(([a-z_]+\s+as\s+[a-z_]+)\s*,\s*([a-z_]+\s+as\s+[a-z_]+\s*),\s*([a-z_]+\s+as\s+[a-z_]+\s*)\)/i','FROM \\1, \\2, \\3',$line);
+			//print $line;
 		} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
 		else {	# not inside create table
 			#---- fix data in inserted data: (from MS world)
