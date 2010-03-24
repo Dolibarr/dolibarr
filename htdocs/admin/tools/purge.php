@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice
 		// Delete temporary files
 		if ($dolibarr_main_data_root)
 		{
-			$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'temp');
+			$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'\/temp$');
 		}
 	}
 
