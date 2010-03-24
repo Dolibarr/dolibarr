@@ -32,16 +32,7 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/categ
 
 $langs->load("products");
 
-$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
-$sbarcode=isset($_GET["sbarcode"])?$_GET["sbarcode"]:$_POST["sbarcode"];
-$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-$type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-$sref=trim($sref);
-$sbarcode=trim($sbarcode);
-$snom=trim($snom);
-$sall=trim($sall);
-$type=trim($type);
+$type=trim(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];

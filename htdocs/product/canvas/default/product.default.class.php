@@ -111,27 +111,42 @@ class ProductDefault extends Product
 	{
 		global $conf, $langs;
 		
+		$this->list_datas = array();
+		
+		//$_GET["sref"] = 'LL';
+		// Clean parameters
+		$sall=trim(isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"]);
+		
+		foreach($this->field_list as $field)
+		{
+			if ($field['enabled'])
+			{
+				$fieldname = "s".$field['name'];
+				$$fieldname = trim(isset($_GET[$fieldname])?$_GET[$fieldname]:$_POST[$fieldname]);
+			}
+		}
+		
 		$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 		$sql.= ' p.fk_product_type, p.tms as datem,';
 		$sql.= ' p.envente as statut, p.seuil_stock_alerte';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		// We'll need this table joined to the select in order to filter by categ
-		if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
-		if ($_GET["fourn_id"] > 0)
-		{
-			$fourn_id = $_GET["fourn_id"];
-			$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
-		}
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 		if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
 		if ($sall)
 		{
-			$sql.= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
+			$sql.= " AND (p.ref LIKE '%".addslashes($sall)."%'";
+			$sql.= " OR p.label LIKE '%".addslashes($sall)."%'";
+			$sql.= " OR p.description LIKE '%".addslashes($sall)."%'";
+			$sql.= " OR p.note LIKE '%".addslashes($sall)."%')";
 		}
-		if ($sref)     $sql.= " AND p.ref like '%".$sref."%'";
-		if ($sbarcode) $sql.= " AND p.barcode like '%".$sbarcode."%'";
-		if ($snom)     $sql.= " AND p.label like '%".addslashes($snom)."%'";
+		foreach($this->field_list as $field)
+		{
+			if ($field['enabled'])
+			{
+				$fieldname = "s".$field['name'];
+				if (${$fieldname}) $sql.= " AND p.".$field['name']." LIKE '%".addslashes(${$fieldname})."%'";
+			}
+		}
 		if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 		{
 			$sql.= " AND p.envente = ".addslashes($_GET["envente"]);
@@ -140,24 +155,9 @@ class ProductDefault extends Product
 		{
 			$sql.= " AND p.canvas = '".addslashes($_GET["canvas"])."'";
 		}
-		if($catid)
-		{
-			$sql.= " AND cp.fk_categorie = ".$catid;
-		}
-		if ($fourn_id > 0)
-		{
-			$sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
-		}
-		// Insert categ filter
-		if ($search_categ)
-		{
-			$sql .= " AND cp.fk_categorie = ".addslashes($search_categ);
-		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit + 1 ,$offset);
-
-		$this->list_datas = array();
-
+//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
