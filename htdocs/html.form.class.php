@@ -2054,7 +2054,7 @@ class Form
 		{
 			if ($selected)
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/contact.class.php");
+				require_once(DOL_DOCUMENT_ROOT ."/contact/contact.class.php");
 				//$this->load_cache_contacts();
 				//print $this->cache_contacts[$selected];
 				$contact=new Contact($this->db);

@@ -21,7 +21,7 @@
  */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

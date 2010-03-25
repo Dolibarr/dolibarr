@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/contact.class.php
+ *	\file       htdocs/contact/contact.class.php
  *	\ingroup    societe
  *	\brief      File of contacts class
  *	\version    $Id$

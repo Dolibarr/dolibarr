@@ -339,7 +339,7 @@ class CommonObject
 	 */
 	function fetch_contact($contactid)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 		$contact = new Contact($this->db);
 		$result=$contact->fetch($contactid);
 		$this->contact = $contact;

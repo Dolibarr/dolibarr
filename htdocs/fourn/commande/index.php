@@ -26,7 +26,7 @@
  */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
