@@ -64,7 +64,7 @@
  	foreach($fieldlist as $key => $searchfield)	{
  		if ($searchfield['enabled']) {
  			if ($searchfield['search'])	{ ?>
-  				<td class="liste_titre" align="<?php echo $field['align']; ?>"><input class="flat" type="text" name="s<?php echo $field['name']; ?>" value=""></td>
+  				<td class="liste_titre" align="<?php echo $searchfield['align']; ?>"><input class="flat" type="text" name="s<?php echo $searchfield['name']; ?>" value=""></td>
 	<?php } else if ($key == $num) { ?>
   			<td class="liste_titre" align="right">
   				<input type="image" class="liste_titre" name="button_search" src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/search.png" alt="<?php echo $langs->trans('Search'); ?>">
