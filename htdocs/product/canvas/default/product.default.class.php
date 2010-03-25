@@ -69,55 +69,6 @@ class ProductDefault extends Product
 	}
 	
 	/**
-	 * 	\brief	Fetch field list
-	 */
-	function getFieldList()
-	{
-		global $conf, $langs;
-		
-		$this->field_list = array();
-		
-		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->list."'";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " ORDER BY rang ASC";
-		
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-
-			$i = 0;
-			while ($i < $num)
-			{
-				$fieldlist = array();
-				
-				$obj = $this->db->fetch_object($resql);
-				
-				$fieldlist["id"]		= $obj->rowid;
-				$fieldlist["name"]		= $obj->name;
-				$fieldlist["alias"]		= ($obj->alias?$obj->alias:$obj->name);
-				$fieldlist["title"]		= $langs->trans($obj->title);
-				$fieldlist["align"]		= $obj->align;
-				$fieldlist["sort"]		= $obj->sort;
-				$fieldlist["search"]	= $obj->search;
-				$fieldlist["enabled"]	= verifCond($obj->enabled);
-				$fieldlist["order"]		= $obj->rang;
-				
-				array_push($this->field_list,$fieldlist);
-				
-				$i++;
-			}
-			$this->db->free($resql);
-		}
-		else
-		{
-			print $sql;
-		}
-	}
-	
-	/**
 	 * 	\brief	Fetch datas list
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
