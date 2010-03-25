@@ -102,7 +102,7 @@ class ProductDefault extends Product
 				$fieldlist["align"]		= $obj->align;
 				$fieldlist["sort"]		= $obj->sort;
 				$fieldlist["search"]	= $obj->search;
-				$fieldlist["enabled"]	= $obj->enabled;
+				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
 				
 				array_push($this->field_list,$fieldlist);

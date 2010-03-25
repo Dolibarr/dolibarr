@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
  */
 
 /**
- \file       htdocs/core/menubase.class.php
- \ingroup    core
- \version	$Id$
- \brief      File of class to manage dynamic menu entries
- \remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
+ *  \file       htdocs/core/menubase.class.php
+ *  \ingroup    core
+ *  \version	$Id$
+ *  \brief      File of class to manage dynamic menu entries
+ *  \remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
  */
 
 
 /**
- \class      Menubase
- \brief      Class to manage menu entries
+ *  \class      Menubase
+ *  \brief      Class to manage menu entries
  */
 class Menubase
 {
@@ -406,7 +406,7 @@ class Menubase
 				$perms = true;
 				if ($menu['perms'])
 				{
-					$perms = $this->verifCond($menu['perms']);
+					$perms = verifCond($menu['perms']);
 					//print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
 				}
 
@@ -414,7 +414,7 @@ class Menubase
 				$enabled = true;
 				if ($menu['enabled'])
 				{
-					$enabled = $this->verifCond($menu['enabled']);
+					$enabled = verifCond($menu['enabled']);
 					//print "verifCond rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
 				}
 
@@ -493,7 +493,7 @@ class Menubase
 					$leftmenuConstraint = true;
 					if ($tab[$x][6])
 					{
-						$leftmenuConstraint = $this->verifCond($tab[$x][6]);
+						$leftmenuConstraint = verifCond($tab[$x][6]);
 					}
 
 					if ($leftmenuConstraint)
@@ -506,37 +506,6 @@ class Menubase
 				}
 			}
 		}
-	}
-
-	/**
-	 * Verify if condition in string is ok or not
-	 *
-	 * @param 	string 		$strRights
-	 * @return 	boolean		true or false
-	 */
-	function verifCond($strRights)
-	{
-		global $user,$conf,$lang,$leftmenu;
-		global $rights;	// To export to dol_eval function
-
-		//print $strRights."<br>\n";
-		if ($strRights != "")
-		{
-			$rights = true;
-			$tab_rights = explode("||", $strRights);
-			$i = 0;
-			while (($i < count($tab_rights)) && ($rights == true)) {
-				$str = 'if(!(' . $strRights . ')) { $rights = false; }';
-				dol_eval ($str);
-				$i++;
-			}
-		}
-		else
-		{
-			$rights = true;
-		}
-
-		return $rights;
 	}
 
 	/**
@@ -642,14 +611,14 @@ class Menubase
 				$perms = true;
 				if ($objm->perms)
 				{
-					$perms = $this->verifCond($objm->perms);
+					$perms = verifCond($objm->perms);
 				}
 
 				// Define $enabled
 				$enabled = true;
 				if ($objm->enabled)
 				{
-					$enabled = $this->verifCond($objm->enabled);
+					$enabled = verifCond($objm->enabled);
 				}
 
 				if ($objm->rowid != $oldrowid && $oldrowid) $b++;	// Break on new entry
@@ -677,28 +646,6 @@ class Menubase
 		return $tabMenu;
 	}
 
-}
-
-/**
- * Replace eval function to add more security
- *
- * @param 	string	$s
- * @return 	int		1
- */
-function dol_eval($s)
-{
-	// Only global variables can be changed by eval function and returned to caller
-	global $langs, $user, $conf;
-	global $rights;
-	global $leftmenu;
-
-	// \todo
-	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
-
-	//print $s."<br>\n";
-	eval($s);
-
-	return 1;
 }
 
 ?>

@@ -3252,4 +3252,58 @@ function addHelpMessage($inputId,$message)
 	return $helpMessage;
 }
 
+/**
+ * Verify if condition in string is ok or not
+ *
+ * @param 	string 		$strRights
+ * @return 	boolean		true or false
+ */
+function verifCond($strRights)
+{
+	global $user,$conf,$langs,$leftmenu;
+	global $rights;	// To export to dol_eval function
+
+	//print $strRights."<br>\n";
+	if ($strRights != "")
+	{
+		$rights = true;
+		$tab_rights = explode("||", $strRights);
+		$i = 0;
+		while (($i < count($tab_rights)) && ($rights == true)) {
+			$str = 'if(!(' . $strRights . ')) { $rights = false; }';
+			dol_eval($str);
+			$i++;
+		}
+	}
+	else
+	{
+		$rights = true;
+	}
+
+	return $rights;
+}
+
+/**
+ * Replace eval function to add more security
+ *
+ * @param 	string	$s
+ * @return 	int		1
+ */
+function dol_eval($s)
+{
+	// Only global variables can be changed by eval function and returned to caller
+	global $langs, $user, $conf;
+	global $rights;
+	global $leftmenu;
+
+	// \todo
+	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
+
+	//print $s."<br>\n";
+	eval($s);
+
+	return 1;
+}
+
+
 ?>
