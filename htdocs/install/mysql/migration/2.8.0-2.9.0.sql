@@ -133,6 +133,7 @@ ALTER TABLE llx_adherent ADD COLUMN civilite varchar(6) after entity;
 ALTER TABLE llx_deplacement ADD COLUMN fk_projet integer DEFAULT 0 after fk_soc;
 
 -- custom list
+DROP TABLE llx_c_field_list;
 create table llx_c_field_list
 (
   rowid			integer  AUTO_INCREMENT PRIMARY KEY,
@@ -154,6 +155,8 @@ INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `
 (2, 'product_default', 1, 'label', NULL, 'Label', 'left', 1, 1, '1', 2),
 (3, 'product_default', 1, 'barcode', NULL, 'BarCode', 'center', 1, 1, '$conf->barcode->enabled', 3),
 (4, 'product_default', 1, 'tms', 'datem', 'DateModification', 'center', 1, 0, '1', 4),
-(5, 'product_default', 1, 'price', 'sellingprice', 'SellingPrice', 'right', 1, 0, '1', 5),
-(6, 'product_default', 1, 'stock', NULL, 'Stock', 'right', 0, 0, '$conf->stock->enabled', 6),
-(7, 'product_default', 1, 'envente', 'status', 'Status', 'right', 1, 0, '1', 7);
+(5, 'product_default', 1, 'price', NULL, 'SellingPriceHT', 'right', 1, 0, '1', 5),
+(6, 'product_default', 1, 'price_ttc', NULL, 'SellingPriceTTC', 'right', 1, 0, '1', 6),
+(7, 'product_default', 1, 'stock', NULL, 'Stock', 'right', 0, 0, '$conf->stock->enabled', 7),
+(8, 'product_default', 1, 'envente', 'status', 'Status', 'right', 1, 0, '1', 8);
+

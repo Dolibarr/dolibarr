@@ -171,17 +171,14 @@ class ProductDefault extends Product
 							$this->type 	= $obj->fk_product_type;
 							$datas[$alias] 	= $this->getNomUrl(1,'',24);
 						}
-						else if ($alias == 'sellingprice')
-						{
-							if ($obj->price_base_type == 'TTC') $datas[$alias] = price($obj->price_ttc).' '.$langs->trans("TTC");
-							else $datas[$alias] = price($obj->$alias).' '.$langs->trans("HT");
-						}
 						else if ($alias == 'stock')
 						{
 							$this->load_stock();
 							if ($this->stock_reel < $obj->seuil_stock_alerte) $datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
 							else $datas[$alias] = $this->stock_reel;
 						}
+						else if ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias,40);
+						else if (preg_match('/price/i',$alias))	$datas[$alias] = price($obj->$alias);
 						else if ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias),'day');
 						else if ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias,5);
 						else $datas[$alias] = $obj->$alias;
