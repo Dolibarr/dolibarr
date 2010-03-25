@@ -1,0 +1,97 @@
+<?php
+/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ */
+?>
+
+<!-- BEGIN PHP TEMPLATE -->
+
+<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;">
+<tr>
+	<td class="nobordernopadding" width="40" align="left" valign="middle">
+		<?php echo $title_picto; ?>
+	</td>
+	<td class="nobordernopadding" valign="middle">
+    	<div class="titre"><?php echo $title_text; ?></div>
+	</td>
+</tr>
+</table>
+
+<form action="<?php echo $_SERVER["PHP_SELF"];?>?canvas=default" method="post" name="formulaire">
+
+<table class="liste" width="100%">
+
+<!-- FIELDS TITLE -->
+
+<tr class="liste_titre">
+	<?php
+ 	foreach($fieldlist as $field) {
+ 		if ($field['enabled']) {
+ 			if ($field['sort'])	{ ?>
+ 				<td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?>
+ 					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=p.<?php echo $field['name']; ?>&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+ 						<img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
+ 					</a>
+  					<a href="<?php echo $_SERVER["PHP_SELF"];?>?sortfield=p.<?php echo $field['name']; ?>&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  						<img src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
+  					</a>
+  				</td>
+  		<?php } else { ?>
+  				<td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?></td>
+	<?php } } } ?>
+</tr>
+ 
+ <!-- FIELDS SEARCH -->
+ 
+<tr class="liste_titre">
+	<?php
+ 	$num = count($fieldlist);
+ 	foreach($fieldlist as $key => $searchfield)	{
+ 		if ($searchfield['enabled']) {
+ 			if ($searchfield['search'])	{ ?>
+  				<td class="liste_titre" align="<?php echo $field['align']; ?>"><input class="flat" type="text" name="s<?php echo $field['name']; ?>" value=""></td>
+	<?php } else if ($key == $num) { ?>
+  			<td class="liste_titre" align="right">
+  				<input type="image" class="liste_titre" name="button_search" src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/search.png" alt="<?php echo $langs->trans('Search'); ?>">
+  				<input type="image" class="liste_titre" name="button_removefilter" src="<?php echo DOL_URL_ROOT; ?>/theme/<?php echo $conf->theme; ?>/img/searchclear.png" alt="<?php echo $langs->trans('RemoveFilter'); ?>">
+  			</td>
+  	<?php } else { ?>
+  			<td class="liste_titre">&nbsp;</td>
+ 	<?php } } } ?>
+</tr>
+
+<!-- FIELDS DATA -->
+
+<?php
+$var=True;
+foreach($datas as $line) { 
+	$var=!$var;	?>
+	<tr class="<?php echo $bc[$var];?>">
+   		<?php
+   		foreach($line as $key => $value) {
+   			foreach($fieldlist as $field) {
+   				if ($field['alias'] == $key) { ?>
+   					<td align="<?php echo $field['align']; ?>"><?php echo $value; ?></td>
+   		<?php } } } ?>
+   	</tr>
+<?php } ?>
+
+</table>
+</form>
+
+<!-- END PHP TEMPLATE -->

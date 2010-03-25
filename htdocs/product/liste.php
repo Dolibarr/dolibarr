@@ -230,44 +230,59 @@ if ($resql)
 
 	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
-		$smarty->assign('fieldlist', $object->field_list);
-		$smarty->assign('datas', $object->list_datas);
-		$smarty->assign('url_root', $dolibarr_main_url_root);
-		$smarty->assign('theme', $conf->theme);
-		$smarty->assign('langs', $langs);
+		$fieldlist = $object->field_list;
+		$datas = $object->list_datas;
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
-		$smarty->assign('title_picto', img_picto('',$picto));
-		$smarty->assign('title_text', $title);
-
+		$title_picto = img_picto('',$picto);
+		$title_text = $title;
+		
 		// Check if a custom template is present
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/liste.tpl'))
+		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/list.tpl'))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/';
-			$template = 'liste.tpl';
+			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/';
+			$template = 'list.tpl';
 		}
 		// Check if a default template is present
-		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/liste.tpl'))
+		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/list.tpl'))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/';
-			$template = 'liste.tpl';
+			$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/';
+			$template = 'list.tpl';
 		}
 		// Error template
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT . '/core/templates/';
+			$template_dir = DOL_DOCUMENT_ROOT . '/core/templates/';
 			$template = 'error.tpl';
 		}
 		
-		// Enable caching
-		//$smarty->caching = true;
-		
-		//$smarty->debugging = true;
-
-		$smarty->display($template, $_GET["canvas"]);
-		
-		// Suppression de la version compilee
-		$smarty->clear_compiled_tpl($template);
+		// START SMARTY
+		if ($conf->global->MAIN_SMARTY)
+		{
+			$smarty->template_dir = $template_dir;
+			
+			$smarty->assign('fieldlist', $fieldlist);
+			$smarty->assign('datas', $datas);
+			$smarty->assign('url_root', $dolibarr_main_url_root);
+			$smarty->assign('theme', $conf->theme);
+			$smarty->assign('langs', $langs);
+			$smarty->assign('title_picto', $title_picto);
+			$smarty->assign('title_text', $title_text);
+			
+			// Enable caching
+			//$smarty->caching = true;
+			
+			//$smarty->debugging = true;
+			
+			$smarty->display($template, $_GET["canvas"]);
+			
+			// Suppression de la version compilee
+			$smarty->clear_compiled_tpl($template);
+		}
+		else
+		{
+			include($template_dir.'list.tpl.php');	// To use native PHP
+		}
 	}
 	else
 	{

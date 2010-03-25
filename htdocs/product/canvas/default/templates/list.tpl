@@ -30,7 +30,7 @@
 </tr>
 </table>
 
-<form action="liste.php?canvas=default" method="post" name="formulaire">
+<form action="{$smarty.server.PHP_SELF}?canvas=default" method="post" name="formulaire">
 
 <table class="liste" width="100%">
 
