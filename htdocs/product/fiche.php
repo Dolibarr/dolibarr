@@ -857,7 +857,7 @@ if ($_GET["id"] || $_GET["ref"])
 		include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
 		$product = new $class($db);
 
-		$result = $product->FetchCanvas($_GET["id"],'',$_GET["action"]);
+		$result = $product->fetchCanvas($_GET["id"],'',$_GET["action"]);
 
 		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/templates/';
 

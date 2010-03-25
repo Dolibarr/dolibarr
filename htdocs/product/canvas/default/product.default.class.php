@@ -57,6 +57,18 @@ class ProductDefault extends Product
 	}
 	
 	/**
+	 *    \brief      Lecture des donnees dans la base
+	 *    \param      id          Product id
+	 *    \param      ref         Product ref
+	 */
+	function fetchCanvas($id='', $ref='', $action='')
+	{
+		$result = $this->fetch($id,$ref);
+
+		return $result;
+	}
+	
+	/**
 	 * 	\brief	Fetch field list
 	 */
 	function getFieldList()

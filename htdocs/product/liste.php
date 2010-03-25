@@ -34,6 +34,20 @@ $langs->load("products");
 
 $type=trim(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
 
+// TODO for compatibility
+if (!isset($_GET["canvas"]))
+{
+	$sbarcode=isset($_GET["sbarcode"])?$_GET["sbarcode"]:$_POST["sbarcode"];
+	$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
+	$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+	$type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+	$sref=trim($sref);
+	$sbarcode=trim($sbarcode);
+	$snom=trim($snom);
+	$sall=trim($sall);
+	$type=trim($type);
+}
+
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 if (! $sortfield) $sortfield="p.ref";
