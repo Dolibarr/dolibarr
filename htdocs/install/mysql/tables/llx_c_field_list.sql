@@ -28,6 +28,7 @@ create table llx_c_field_list
   alias			varchar(32)		DEFAULT 	NULL,			-- alias of field (ex: prodref)
   title			varchar(32)        			NOT NULL,		-- title (translation) of field (ex: Ref)
   align			varchar(6)		DEFAULT 'left',				-- align (left,center,right)
+  sort			tinyint 		DEFAULT 1  	NOT NULL,		-- add sort field
   search		tinyint 		DEFAULT 0  	NOT NULL,		-- add search field
   enabled       varchar(255)	DEFAULT 1,					-- Condition to show or hide
   rang      	integer 		DEFAULT 0

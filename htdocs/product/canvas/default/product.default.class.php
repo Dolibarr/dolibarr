@@ -77,7 +77,7 @@ class ProductDefault extends Product
 		
 		$this->field_list = array();
 		
-		$sql = "SELECT rowid, name, alias, title, align, search, enabled, rang";
+		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql.= " WHERE element = '".$this->list."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -100,6 +100,7 @@ class ProductDefault extends Product
 				$fieldlist["alias"]		= ($obj->alias?$obj->alias:$obj->name);
 				$fieldlist["title"]		= $langs->trans($obj->title);
 				$fieldlist["align"]		= $obj->align;
+				$fieldlist["sort"]		= $obj->sort;
 				$fieldlist["search"]	= $obj->search;
 				$fieldlist["enabled"]	= $obj->enabled;
 				$fieldlist["order"]		= $obj->rang;
