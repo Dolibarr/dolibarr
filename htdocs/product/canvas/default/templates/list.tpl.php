@@ -86,7 +86,7 @@
 $var=True;
 foreach($datas as $line) { 
 	$var=!$var;	?>
-	<tr class="<?php echo $bc[$var];?>">
+	<tr <?php echo $bc[$var]; ?>>
    		<?php
    		foreach($line as $key => $value) {
    			foreach($fieldlist as $field) {
