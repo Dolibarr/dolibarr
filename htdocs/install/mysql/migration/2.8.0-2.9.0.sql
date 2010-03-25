@@ -131,3 +131,29 @@ ALTER TABLE llx_facturedet_rec MODIFY total_ttc double(24,8);
 ALTER TABLE llx_adherent ADD COLUMN civilite varchar(6) after entity;
 
 ALTER TABLE llx_deplacement ADD COLUMN fk_projet integer DEFAULT 0 after fk_soc;
+
+-- custom list
+create table llx_c_field_list
+(
+  rowid			integer  AUTO_INCREMENT PRIMARY KEY,
+  tms			timestamp,
+  element		varchar(64)        			NOT NULL,
+  entity		integer			DEFAULT 1 	NOT NULL,
+  name			varchar(32)        			NOT NULL,
+  alias			varchar(32)		DEFAULT 	NULL,
+  title			varchar(32)        			NOT NULL,
+  align			varchar(6)		DEFAULT 'left',
+  sort			tinyint 		DEFAULT 1  	NOT NULL,
+  search		tinyint 		DEFAULT 0  	NOT NULL,
+  enabled       varchar(255)	DEFAULT 1,
+  rang      	integer 		DEFAULT 0
+)type=innodb;
+
+INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `title`, `align`, `sort`, `search`, `enabled`, `rang`) VALUES
+(1, 'product_default', 1, 'ref', NULL, 'Ref', 'left', 1, 1, '1', 1),
+(2, 'product_default', 1, 'label', NULL, 'Label', 'left', 1, 1, '1', 2),
+(3, 'product_default', 1, 'barcode', NULL, 'BarCode', 'center', 1, 1, '$conf->barcode->enabled', 3),
+(4, 'product_default', 1, 'tms', 'datem', 'DateModification', 'center', 1, 0, '1', 4),
+(5, 'product_default', 1, 'price', 'sellingprice', 'SellingPrice', 'right', 1, 0, '1', 5),
+(6, 'product_default', 1, 'stock', NULL, 'Stock', 'right', 0, 0, '$conf->stock->enabled', 6),
+(7, 'product_default', 1, 'envente', 'status', 'Status', 'right', 1, 0, '1', 7);
