@@ -32,7 +32,12 @@
 </tr>
 </table>
 
-<form action="<?php echo $_SERVER["PHP_SELF"];?>?canvas=default" method="post" name="formulaire">
+<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?canvas=default" method="post" name="formulaire">
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="action" value="list">
+<input type="hidden" name="sortfield" value="<?php echo $sortfield; ?>">
+<input type="hidden" name="sortorder" value="<?php echo $sortorder; ?>">
+<input type="hidden" name="type" value="<?php echo $type; ?>">
 
 <table class="liste" width="100%">
 
