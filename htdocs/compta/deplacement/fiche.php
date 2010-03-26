@@ -209,7 +209,7 @@ if ($_GET["action"] == 'create')
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	print $html->select_date($datec,'','','','','add');
+	print $html->select_date($datec?$datec:-1,'','','','','add',1,1);
 	print '</td></tr>';
 
 	print "<tr>";
