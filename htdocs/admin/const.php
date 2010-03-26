@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,9 +43,25 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_POST["action"] == 'add')
 {
-	if (dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]) < 0)
+	$error=0;
+
+	if (empty($_POST["constname"]))
 	{
-		print $db->error();
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
+		$error++;
+	}
+	if (empty($_POST["constvalue"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
+		$error++;
+	}
+
+	if (! $error)
+	{
+		if (dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]) < 0)
+		{
+			dolibarr_print_error($db);
+		}
 	}
 }
 
@@ -57,7 +73,7 @@ if (($_POST["const"] && isset($_POST["update"]) && $_POST["update"] == $langs->t
 		{
 			if (dolibarr_set_const($db, $const["name"],$const["value"],$const["type"],1,$const["note"],$const["entity"]) < 0)
 			{
-				print $db->error();
+				dolibarr_print_error($db);
 			}
 		}
 	}
@@ -72,7 +88,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 		{
 			if (dolibarr_del_const($db, $const["rowid"], -1) < 0)
 			{
-				print $db->error();
+				dolibarr_print_error($db);
 			}
 		}
 	}
@@ -83,7 +99,7 @@ if ($_GET["action"] == 'delete')
 {
 	if (dolibarr_del_const($db, $_GET["rowid"],$_GET["entity"]) < 0)
 	{
-		print $db->error();
+		dolibarr_print_error($db);
 	}
 }
 
@@ -92,13 +108,14 @@ if ($_GET["action"] == 'delete')
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("OtherSetup"));
 
 print_fiche_titre($langs->trans("OtherSetup"),'','setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
 
+if ($mesg) print $mesg;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -207,7 +224,7 @@ if ($result)
 		}
 
 		print '<td align="center">';
-		if ($conf->use_javascript_ajax) 
+		if ($conf->use_javascript_ajax)
 		{
 			print '<input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
 			print ' &nbsp; ';
