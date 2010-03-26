@@ -527,14 +527,14 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
+	$sql = "SELECT s.nom, s.rowid, s.datec as dc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
 	$sql.= " AND s.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY s.datec DESC";
+	$sql.= $db->order("s.datec","DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
@@ -561,7 +561,7 @@ if ($conf->fournisseur->enabled && $user->rights->societe->lire)
 				$customerstatic->nom=$objp->nom;
 				print '<tr '.$bc[$var].'>';
 				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
-				print '<td align="right">'.dol_print_date($objp->dc,'day').'</td>';
+				print '<td align="right">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;
@@ -589,8 +589,8 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
 		$sql.= " cc.libelle,";
 		$sql.= " SUM(pc.amount) as sumpaid";
-		$sql.= " FROM (".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON c.rowid = pc.fk_charge";
+		$sql.= " FROM (".MAIN_DB_PREFIX."c_chargesociales as cc, ".MAIN_DB_PREFIX."chargesociales as c)";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = c.rowid";
 		$sql.= " WHERE c.fk_type = cc.id";
 		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " AND c.paye = 0";
@@ -751,7 +751,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 }
 
 /*
- * Unpaid customers bills
+ * Unpaid customers invoices
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
@@ -850,7 +850,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 }
 
 /*
- * Factures fournisseurs impayees
+ * Unpayed supplier invoices
  */
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {
