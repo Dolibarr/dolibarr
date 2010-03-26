@@ -311,7 +311,7 @@ if ($_REQUEST["amount"] == 'invoice')
 	$found=true;
 	$langs->load("bills");
 
-	require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 
 	$invoice=new Facture($db);
 	$result=$invoice->fetch('',$_REQUEST["ref"]);

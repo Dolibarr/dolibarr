@@ -28,7 +28,7 @@
 
 include_once('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load('companies');

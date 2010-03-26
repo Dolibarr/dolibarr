@@ -29,7 +29,7 @@
 
 require('./pre.inc.php');
 include_once(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 

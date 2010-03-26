@@ -32,7 +32,7 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");

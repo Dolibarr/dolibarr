@@ -620,7 +620,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 		$actionstatic=new ActionComm($db);
 		$userstatic=new User($db);
 		$contactstatic = new Contact($db);

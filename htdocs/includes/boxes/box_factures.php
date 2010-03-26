@@ -61,7 +61,7 @@ class box_factures extends ModeleBoxes {
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 		$facturestatic=new Facture($db);
 
 		$text = $langs->trans("BoxTitleLastCustomerBills",$max);

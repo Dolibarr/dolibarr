@@ -28,7 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/chargesociales.class.php');
 

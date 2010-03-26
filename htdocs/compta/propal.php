@@ -560,7 +560,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td align="right">'.$langs->trans("Status").'</td>';
 		print "</tr>\n";
 
-		require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
 		$staticfacture=new Facture($db);
 
 		$var=True;

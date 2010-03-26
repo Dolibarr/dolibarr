@@ -135,7 +135,7 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/service.class.php",
 	DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php",
 	DOL_DOCUMENT_ROOT."/commande/commande.class.php",
-	DOL_DOCUMENT_ROOT."/facture.class.php",
+	DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php",
 	DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
 	DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 	// Name class containing the method load_state_board for each line
@@ -451,7 +451,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	$langs->load("bills");
 
-	include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 	$board=new Facture($db);
 	$board->load_board($user);
 

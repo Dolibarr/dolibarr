@@ -25,7 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php");
-require_once DOL_DOCUMENT_ROOT."/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe.class.php";
 
 $langs->load("widthdrawals");
@@ -179,7 +179,7 @@ else
 
 
 /*
- * Factures en attente de prélèvement
+ * Factures en attente de prï¿½lï¿½vement
  *
  */
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";

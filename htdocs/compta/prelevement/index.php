@@ -26,7 +26,7 @@
 
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
-require_once DOL_DOCUMENT_ROOT."/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe.class.php";
 
 $langs->load("withdrawals");
@@ -130,7 +130,7 @@ else
 
 
 /*
- * Bon de prélèvement
+ * Bon de prï¿½lï¿½vement
  *
  */
 $limit=5;

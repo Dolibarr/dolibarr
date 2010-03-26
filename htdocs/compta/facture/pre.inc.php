@@ -29,7 +29,7 @@
 */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 
 $langs->load('bills');
 

@@ -27,7 +27,7 @@
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/discount.class.php");
 
 $langs->load("orders");

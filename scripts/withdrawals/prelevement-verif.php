@@ -38,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 $version='$Revision$';
 
 require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 $error = 0;

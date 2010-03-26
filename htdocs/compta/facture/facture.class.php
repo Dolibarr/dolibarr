@@ -24,7 +24,7 @@
  */
 
 /**
- *	\file       htdocs/facture.class.php
+ *	\file       htdocs/compta/facture/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
  *	\version    $Id$

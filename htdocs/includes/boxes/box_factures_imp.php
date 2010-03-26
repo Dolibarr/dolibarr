@@ -26,7 +26,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
-require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
 
 
 class box_factures_imp extends ModeleBoxes {
@@ -64,7 +64,7 @@ class box_factures_imp extends ModeleBoxes {
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 		$facturestatic=new Facture($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills",$max));

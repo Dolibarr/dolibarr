@@ -37,7 +37,7 @@ $path=preg_replace('/generate-produit.php/i','',$_SERVER["PHP_SELF"]);
 require ($path."../htdocs/master.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+include_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 include_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 include_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
