@@ -141,7 +141,7 @@ create table llx_c_field_list
   element		varchar(64)        			NOT NULL,
   entity		integer			DEFAULT 1 	NOT NULL,
   name			varchar(32)        			NOT NULL,
-  alias			varchar(32)		DEFAULT 	NULL,
+  alias			varchar(32)					NOT NULL,
   title			varchar(32)        			NOT NULL,
   align			varchar(6)		DEFAULT 'left',
   sort			tinyint 		DEFAULT 1  	NOT NULL,

@@ -973,7 +973,7 @@ class CommonObject
 		
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->list."'";
+		$sql.= " WHERE element = '".$this->fieldListName."'";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY rang ASC";
 		
@@ -991,7 +991,7 @@ class CommonObject
 				
 				$fieldlist["id"]		= $obj->rowid;
 				$fieldlist["name"]		= $obj->name;
-				$fieldlist["alias"]		= ($obj->alias?$obj->alias:$obj->name);
+				$fieldlist["alias"]		= $obj->alias;
 				$fieldlist["title"]		= $langs->trans($obj->title);
 				$fieldlist["align"]		= $obj->align;
 				$fieldlist["sort"]		= $obj->sort;

@@ -39,21 +39,23 @@ class ProductDefault extends Product
 	 */
 	function ProductDefault($DB=0, $id=0, $user=0)
 	{
-		$this->db 			= $DB;
-		$this->id 			= $id ;
-		$this->user 		= $user;
-		$this->module 		= "produit";
-		$this->canvas 		= "default";
-		$this->name 		= "default";
-		$this->list			= "product_default";
-		$this->description 	= "Canvas par défaut";
+		$this->db 				= $DB;
+		$this->id 				= $id ;
+		$this->user 			= $user;
+		$this->module 			= "produit";
+		$this->canvas 			= "default";
+		$this->name 			= "default";
+		$this->description 		= "Canvas des produits (défaut)";
+		$this->fieldListName    = "product_default";
 
 		$this->next_prev_filter = "canvas='default'";
 	}
 	
 	function getTitle()
 	{
-		return 'Produits';
+		global $langs;
+		
+		return $langs->trans("Products");
 	}
 	
 	/**
@@ -106,7 +108,7 @@ class ProductDefault extends Product
 
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 		$sql.= " WHERE p.entity = ".$conf->entity;
-		if (!$user->rights->produit->hidden) $sql.=' AND (p.hidden=0 OR p.fk_product_type != 0)';
+		if (!$user->rights->produit->hidden) $sql.=' AND p.hidden = 0';
 		
 		if ($sall)
 		{

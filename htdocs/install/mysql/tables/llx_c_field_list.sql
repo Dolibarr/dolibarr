@@ -24,8 +24,8 @@ create table llx_c_field_list
   tms			timestamp,
   element		varchar(64)        			NOT NULL,		-- name of element list
   entity		integer			DEFAULT 1 	NOT NULL,		-- entity id
-  name			varchar(32)        			NOT NULL,		-- name of field (ex: ref)
-  alias			varchar(32)		DEFAULT 	NULL,			-- alias of field (ex: prodref)
+  name			varchar(32)        			NOT NULL,		-- name of field with table alias (ex: p.ref)
+  alias			varchar(32)					NOT NULL,		-- alias of field (ex: ref)
   title			varchar(32)        			NOT NULL,		-- title (translation) of field (ex: Ref)
   align			varchar(6)		DEFAULT 'left',				-- align (left,center,right)
   sort			tinyint 		DEFAULT 1  	NOT NULL,		-- add sort field
