@@ -232,6 +232,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	{
 		global $user,$langs,$conf,$mysoc;
 
+		if (empty($srctemplatepath))
+		{
+			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
+			return -1;
+		}
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
