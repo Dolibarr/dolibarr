@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,11 +128,8 @@ llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_
 
 $form=new Form($db);
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Liste des types d'adh�rents                                                */
-/*                                                                            */
-/* ************************************************************************** */
+
+// Liste of members type
 
 if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 {
@@ -217,7 +214,7 @@ if ($_GET["action"] == 'create')
 
 	print '<input type="hidden" name="action" value="add">';
 
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $htmls->selectyesno("cotisation",1,1);
@@ -245,11 +242,13 @@ if ($_GET["action"] == 'create')
 	}
 	print '</td></tr>';
 
-	print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp;';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+	print "</table>\n";
+
+	print '<br>';
+	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
 
 	print "</form>\n";
-	print "</table>\n";
 }
 
 /* ************************************************************************** */

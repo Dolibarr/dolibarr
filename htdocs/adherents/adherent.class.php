@@ -952,8 +952,8 @@ class Adherent extends CommonObject
 		if ($ref) $sql.= " AND d.rowid='".$ref."'";
 		elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
 		else $sql.= " AND d.rowid=".$rowid;
-		dol_syslog("Adherent::fetch sql=".$sql);
 
+		dol_syslog("Adherent::fetch sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1016,7 +1016,8 @@ class Adherent extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Adherent::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

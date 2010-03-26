@@ -992,11 +992,14 @@ if ($rowid && $action != 'edit')
 
     $adh = new Adherent($db);
     $adh->id = $rowid;
-    $adh->fetch($rowid);
-    $adh->fetch_optionals($rowid);
+    $res=$adh->fetch($rowid);
+    if ($res < 0) dol_print_error($db);
+    $res=$adh->fetch_optionals($rowid);
+	if ($res < 0) dol_print_error($db);
 
     $adht = new AdherentType($db);
-    $adht->fetch($adh->typeid);
+    $res=$adht->fetch($adh->typeid);
+	if ($res < 0) dol_print_error($db);
 
     $html = new Form($db);
 

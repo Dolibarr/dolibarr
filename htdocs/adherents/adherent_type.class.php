@@ -82,7 +82,7 @@ class AdherentType extends CommonObject
 	function create($userid)
 	{
 		global $conf;
-		
+
 		$this->statut=trim($this->statut);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
@@ -177,7 +177,7 @@ class AdherentType extends CommonObject
 		$sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".$rowid;
-		
+
 		dol_syslog("Adherent_type::fetch sql=".$sql);
 
 		$resql=$this->db->query($sql);
@@ -200,7 +200,8 @@ class AdherentType extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			dol_syslog("Adherent_type::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -212,7 +213,7 @@ class AdherentType extends CommonObject
 	function liste_array()
 	{
 		global $conf;
-		
+
 		$projets = array();
 
 		$sql = "SELECT rowid, libelle";
