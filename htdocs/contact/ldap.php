@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  *       \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,13 +18,13 @@
  */
 
 /**
-        \file       htdocs/contact/exportimport.php
-        \ingroup    societe
-        \brief      Onglet exports-imports d'un contact
-        \version    $Id$
-*/
+ *	\file       htdocs/contact/exportimport.php
+ *	\ingroup    societe
+ *	\brief      Onglet exports-imports d'un contact
+ *	\version    $Id$
+ */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
@@ -37,10 +37,10 @@ $result = restrictedArea($user, 'contact', $contactid, 'socpeople');
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
-llxHeader();
+llxHeader('',$langs->trans("Contact"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 
@@ -70,16 +70,16 @@ print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$con
 // Company
 if ($contact->socid > 0)
 {
-    $objsoc = new Societe($db);
-    $objsoc->fetch($contact->socid);
+	$objsoc = new Societe($db);
+	$objsoc->fetch($contact->socid);
 
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
 }
 else
 {
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
-    print $langs->trans("ContactNotLinkedToCompany");
-    print '</td></tr>';
+	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
+	print $langs->trans("ContactNotLinkedToCompany");
+	print '</td></tr>';
 }
 
 // Civility
