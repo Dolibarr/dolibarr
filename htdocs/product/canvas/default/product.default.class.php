@@ -85,7 +85,7 @@ class ProductDefault extends Product
 		{
 			if ($field['enabled'])
 			{
-				$fieldname = "s".$field['name'];
+				$fieldname = "s".$field['alias'];
 				$$fieldname = trim(isset($_GET[$fieldname])?$_GET[$fieldname]:$_POST[$fieldname]);
 			}
 		}
@@ -93,14 +93,14 @@ class ProductDefault extends Product
 		$sql = 'SELECT DISTINCT ';
 		
 		// Fields requiered
-		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.price_ttc';
+		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte';
 		
 		// Fields not requiered
 		foreach($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
-				$sql.= ", p.".$field['name']." as ".$field['alias'];
+				$sql.= ", ".$field['name']." as ".$field['alias'];
 			}
 		}
 
@@ -116,7 +116,7 @@ class ProductDefault extends Product
 			{
 				if ($field['enabled'])
 				{
-					$sql.= $clause." p.".$field['name']." LIKE '%".addslashes($sall)."%'";
+					$sql.= $clause." ".$field['name']." LIKE '%".addslashes($sall)."%'";
 					if ($clause=='') $clause = ' OR';
 				}
 			}
@@ -128,8 +128,8 @@ class ProductDefault extends Product
 		{
 			if ($field['enabled'])
 			{
-				$fieldname = "s".$field['name'];
-				if (${$fieldname}) $sql.= " AND p.".$field['name']." LIKE '%".addslashes(${$fieldname})."%'";
+				$fieldname = "s".$field['alias'];
+				if (${$fieldname}) $sql.= " AND ".$field['name']." LIKE '%".addslashes(${$fieldname})."%'";
 			}
 		}
 		

@@ -19,16 +19,16 @@
 # $Source$
 #
 # **********************************************************************
-# Ce makefile permet d'initialiser la base de donnée de dolibarr en manuel.
+# Ce makefile permet d'initialiser la base de donnÃ©e de dolibarr en manuel.
 # Il n'est utile que si vous n'utilisez pas l'installateur automatique
-# accessible à http://localhost/dolibarr/install/
+# accessible Ã  http://localhost/dolibarr/install/
 #
-# Pour une installation manuelle, créer la base dolibarr puis faire:
+# Pour une installation manuelle, crÃ©er la base dolibarr puis faire:
 # make mysql.sql
 # mysql dolibarr < mysql.sql
 #
-# Le script mysql.sql cotient tous le ordres sql pour créer la base
-# Tables + Index et Clés + Données
+# Le script mysql.sql cotient tous le ordres sql pour crÃ©er la base
+# Tables + Index et ClÃ©s + DonnÃ©es
 #
 # **********************************************************************
 
@@ -87,8 +87,8 @@ createpriv:
 
 
 mysql.sql: $(TABLES) data/data.sql Makefile
-	echo "-- Fichier généré par make mysql.sql" > mysql.sql
-	echo "-- Contient les ordres de creation des tables + les clés + les données" >> mysql.sql
+	echo "-- Fichier gÃ©nÃ©rÃ© par make mysql.sql" > mysql.sql
+	echo "-- Contient les ordres de creation des tables + les clÃ©s + les donnÃ©es" >> mysql.sql
 	echo "-- ;" >> mysql.sql
 	$(FIND) tables/ -name "*sql" | grep -v "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> mysql.sql
 	$(FIND) tables/ -name "*sql" | grep "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> mysql.sql

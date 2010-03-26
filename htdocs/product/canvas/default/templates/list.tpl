@@ -43,10 +43,10 @@
  	{if $fieldlist[field].enabled}
  		{if $fieldlist[field].sort}
  			<td class="liste_titre" align="{$fieldlist[field].align}">{$fieldlist[field].title}
- 				<a href="liste.php?sortfield=p.{$fieldlist[field].name}&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+ 				<a href="liste.php?sortfield={$fieldlist[field].name}&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
  					<img src="{$url_root}/theme/{$theme}/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
  				</a>
-  				<a href="liste.php?sortfield=p.{$fieldlist[field].name}&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
+  				<a href="liste.php?sortfield={$fieldlist[field].name}&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=default&amp;fourn_id=&amp;snom=&amp;sref=">
   					<img src="{$url_root}/theme/{$theme}/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   				</a>
   			</td>
@@ -67,7 +67,7 @@
  	
    	{if $fieldlist[searchfield].enabled}
    		{if $fieldlist[searchfield].search}
-  			<td class="liste_titre" align="{$fieldlist[searchfield].align}"><input class="flat" type="text" name="s{$fieldlist[searchfield].name}" value=""></td>
+  			<td class="liste_titre" align="{$fieldlist[searchfield].align}"><input class="flat" type="text" name="s{$fieldlist[searchfield].alias}" value=""></td>
   		{elseif $smarty.section.search.last}
   			<td class="liste_titre" align="right">
   				<input type="image" class="liste_titre" name="button_search" src="{$url_root}/theme/{$theme}/img/search.png" alt="{$langs->trans('Search')}">

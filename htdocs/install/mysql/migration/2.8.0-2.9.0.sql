@@ -151,12 +151,12 @@ create table llx_c_field_list
 )type=innodb;
 
 INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `title`, `align`, `sort`, `search`, `enabled`, `rang`) VALUES
-(1, 'product_default', 1, 'ref', NULL, 'Ref', 'left', 1, 1, '1', 1),
-(2, 'product_default', 1, 'label', NULL, 'Label', 'left', 1, 1, '1', 2),
-(3, 'product_default', 1, 'barcode', NULL, 'BarCode', 'center', 1, 1, '$conf->barcode->enabled', 3),
-(4, 'product_default', 1, 'tms', 'datem', 'DateModification', 'center', 1, 0, '1', 4),
-(5, 'product_default', 1, 'price', NULL, 'SellingPriceHT', 'right', 1, 0, '1', 5),
-(6, 'product_default', 1, 'price_ttc', NULL, 'SellingPriceTTC', 'right', 1, 0, '1', 6),
-(7, 'product_default', 1, 'stock', NULL, 'Stock', 'right', 0, 0, '$conf->stock->enabled', 7),
-(8, 'product_default', 1, 'envente', 'status', 'Status', 'right', 1, 0, '1', 8);
+(1, 'product_default', 1, 'p.ref', 'ref', 'Ref', 'left', 1, 1, '1', 1),
+(2, 'product_default', 1, 'p.label', 'label', 'Label', 'left', 1, 1, '1', 2),
+(3, 'product_default', 1, 'p.barcode', 'barcode', 'BarCode', 'center', 1, 1, '$conf->barcode->enabled', 3),
+(4, 'product_default', 1, 'p.tms', 'datem', 'DateModification', 'center', 1, 0, '1', 4),
+(5, 'product_default', 1, 'p.price', 'price', 'SellingPriceHT', 'right', 1, 0, '1', 5),
+(6, 'product_default', 1, 'p.price_ttc', 'price_ttc', 'SellingPriceTTC', 'right', 1, 0, '1', 6),
+(7, 'product_default', 1, 'p.stock', 'stock', 'Stock', 'right', 0, 0, '$conf->stock->enabled', 7),
+(8, 'product_default', 1, 'p.envente', 'status', 'Status', 'right', 1, 0, '1', 8);
 
