@@ -27,7 +27,7 @@
 /**
 		\class 		CommonObjectLine
         \brief 		Superclass for class inheritance lines of business objects
-* /
+*/
 
 class CommonObjectLine
 {
