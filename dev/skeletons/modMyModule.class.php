@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   mymodule     Module MyModule
+/**     
+ * 		\defgroup   mymodule     Module MyModule
  *      \brief      Example of a module descriptor.
  *					Such a file must be copied into htdocs/includes/module directory.
  */
@@ -31,7 +33,8 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modMyModule
+/**     
+ * 		\class      modMyModule
  *      \brief      Description and activation class for module MyModule
  */
 class modMyModule extends DolibarrModules
@@ -65,7 +68,7 @@ class modMyModule extends DolibarrModules
 		$this->special = 0;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
-		// If file is in module/images directory, use this->picto=DOL_URL_ROOT.'/module/images/file.png'
+		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
 
 		// Data directories to create when module is enabled.
