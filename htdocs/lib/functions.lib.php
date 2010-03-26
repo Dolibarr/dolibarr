@@ -1044,11 +1044,18 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
  *	\brief      Show a picto according to module/object (generic function)
  *	\param      alt         Text of alt on image
  *	\param      object      Objet pour lequel il faut afficher le logo (example: user, group, action, bill, contract, propal, product, ...)
+ *							Pour les modules externe utiliser nomimage@mymodule pour rechercher dans le repertoire "img" du module
  *	\return     string      Retourne tag img
  */
 function img_object($alt, $object)
 {
 	global $conf,$langs;
+	
+	if (preg_match('/^([^@]+)@([^@]+)$/i',$object,$regs))
+	{
+		return '<img src="'.DOL_URL_ROOT.'/'.$regs[2].'/img/object_'.$regs[1].'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+	}
+	
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 }
 
