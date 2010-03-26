@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 $langs->load("products");
 $langs->load("orders");
 $langs->load("bills");
+$langs->load("stocks");
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
