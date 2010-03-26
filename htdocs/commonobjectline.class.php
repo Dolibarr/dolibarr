@@ -19,15 +19,15 @@
 /**
         \file       htdocs/commonobjectline.class.php
         \ingroup    core
-        \brief      Fichier de la classe mere des classes de lignes d'objets metiers (facture, contrat, propal, commande, etc...)
+        \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
         \version    $Id$
 */
 
 
 /**
 		\class 		CommonObjectLine
-        \brief 		Classe mere pour héritage des classes de lignes d'objets metiers
-*/
+        \brief 		Superclass for class inheritance lines of business objects
+* /
 
 class CommonObjectLine
 {
