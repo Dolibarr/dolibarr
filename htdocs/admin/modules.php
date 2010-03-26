@@ -471,15 +471,18 @@ foreach ($orders as $key => $value)
                     }
                     print "</td>\n";
                 }
+                else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
+                {
+                   	print '<td align="center" valign="top"><a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                }
                 else
                 {
-                    //print '  <td align="center"><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
-                    print '  <td align="center" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+                    print '<td align="center" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
                 }
             }
             else
             {
-                print "  <td>&nbsp;</td>";
+                print "<td>&nbsp;</td>";
             }
 
         }
