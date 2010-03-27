@@ -54,7 +54,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "Generic ODT";
+		$this->name = "ODT templates";
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'COMPANY_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 

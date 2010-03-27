@@ -1019,7 +1019,7 @@ function picto_from_langcode($codelang)
  */
 function getListOfModels($db,$type)
 {
-	global $conf;
+	global $conf,$langs;
 	$liste=array();
 	$found=0;
 
@@ -1041,9 +1041,9 @@ function getListOfModels($db,$type)
 
 			$obj = $db->fetch_object($resql);
 
-			// If this generation module needs a directory scan, then description field is filled
+			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan.
-			if (! empty($obj->description))
+			if (! empty($obj->description))	// List of directories to scan is defined
 			{
 				$const=$obj->description;
 				$dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
@@ -1064,9 +1064,16 @@ function getListOfModels($db,$type)
 					}
 				}
 
-				foreach($listoffiles as $record)
+				if (sizeof($listoffiles))
 				{
-					$liste[$obj->id.':'.$record['fullname']]=dol_trunc($record['name'],24,'middle');
+					foreach($listoffiles as $record)
+					{
+						$liste[$obj->id.':'.$record['fullname']]=dol_trunc($record['name'],24,'middle');
+					}
+				}
+				else
+				{
+					$liste[0]=$obj->label.': '.$langs->trans("None");
 				}
 			}
 			else
