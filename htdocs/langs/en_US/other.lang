@@ -184,3 +184,5 @@ ExportableDatas=Exportable data
 NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
 ToExport=Export
 NewExport=New export
+##### External sites #####
+ExternalSites=External sites
