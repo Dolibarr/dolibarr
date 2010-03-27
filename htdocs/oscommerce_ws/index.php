@@ -18,13 +18,13 @@
  */
 
 /**
- \file       htdocs/oscommerce_ws/index.php
- \ingroup    oscommerce2
- \brief      Page accueil zone boutique
- \version    $Id$
+ *	\file       htdocs/oscommerce_ws/index.php
+ *	\ingroup    oscommerce2
+ *	\brief      Page accueil zone boutique
+ *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("./pre.inc.php");	// Use pre.inc.php as menus not defined in module
 
 $langs->load("shop");
 $langs->load("orders");
@@ -44,9 +44,6 @@ if (! @ini_get('allow_url_fopen'))
 print '<table width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="40%" class="notopnoleft">';
-
-// initialisation des webservices
-set_magic_quotes_runtime(0);
 
 //WebService Client.
 require_once(NUSOAP_PATH."nusoap.php");

@@ -18,12 +18,12 @@
 
 /**	    \file       htdocs/phenix/phenix.php
         \ingroup    phenix
-		\brief      Page générant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
+		\brief      Page generant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
 		\author	    Laurent Destailleur
 		\version    $Id$
 */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 
 if (empty($conf->global->PHPPHENIX_URL))
 {
@@ -55,7 +55,7 @@ print "
 <body>
 	<br><center>
 	Malheureusement, votre navigateur est trop vieux pour visualiser cette zone.<br>
-	Il vous faut un navigateur gérant les frames.<br>
+	Il vous faut un navigateur gï¿½rant les frames.<br>
 	</center>
 </body>
 </noframes>
