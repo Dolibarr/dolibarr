@@ -24,7 +24,7 @@
 		\version    $Id$
 */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 
 $langs->load("boutique");
 $langs->load("orders");
@@ -120,7 +120,7 @@ print '</td><td valign="top" width="60%" class="notopnoleftnoright">';
 print_titre($langs->trans("Orders"));
 
 /*
- * 5 dernières commandes reçues
+ * 5 derniï¿½res commandes reï¿½ues
  select o.orders_id, o.customers_id, o.customers_name, o.date_purchased, o.payement_method, o.status, t.value
 from orders_total as t
 join orders as o on o.orders_id = t.orders_id where t.class = 'ot_subtotal' order by o.date_purchased desc
@@ -157,7 +157,7 @@ else
 }
 
 /*
- * 5 dernières commandes en attente
+ * 5 derniï¿½res commandes en attente
 */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
@@ -191,7 +191,7 @@ else
 }
 
 /*
- * Commandes à traiter
+ * Commandes ï¿½ traiter
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
@@ -227,7 +227,7 @@ else
 
 print '</td></tr><tr>';
 /*
-* Derniers clients qui ont commandé
+* Derniers clients qui ont commandï¿½
 */
 $sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";

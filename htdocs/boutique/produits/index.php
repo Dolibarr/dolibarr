@@ -26,9 +26,11 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $langs->load("companies");
+
+
 
 llxHeader();
 
@@ -50,7 +52,7 @@ $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, c.cu
 $sql .= " FROM ".DB_NAME_OSC.".customers as c";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit( $limit ,$offset);
- 
+
 if ( $dbosc->query($sql) )
 {
   $num = $dbosc->num_rows();

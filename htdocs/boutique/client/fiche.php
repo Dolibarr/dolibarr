@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003-2005 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2003-2005 ï¿½ric Seigne <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -28,7 +27,9 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
+
+
 
 llxHeader();
 

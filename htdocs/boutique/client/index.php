@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -27,9 +26,11 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $langs->load("companies");
+
+
 
 llxHeader();
 

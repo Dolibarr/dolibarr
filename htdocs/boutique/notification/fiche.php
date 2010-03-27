@@ -24,7 +24,9 @@
 		\version    $Id$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
+
+
 
 llxHeader();
 
@@ -63,14 +65,14 @@ if ($action == 'create')
   print '<input type="hidden" name="action" value="add">';
 
   print '<div class="titre">Nouvel Editeur</div><br>';
-      
+
   print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
   print '<td>Nom</td><td><input name="nom" size="40" value=""></td></tr>';
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="Crï¿½er"></td></tr>';
   print '</table>';
   print '</form>';
-      
+
 
 }
 else
@@ -82,27 +84,27 @@ else
       $result = $editeur->fetch($id);
 
       if ( $result )
-	{ 
+	{
 	  if ($action == 'edit')
 	    {
 	      print '<div class="titre">Edition de la fiche Editeur : '.$editeur->titre.'</div><br>';
-	      
+
 	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	      print '<input type="hidden" name="action" value="update">';
-	      
+
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Nom</td><td><input name="nom" size="40" value="'.$editeur->nom.'"></td>';
 
 
 	      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;<input type="submit" value="'.$langs->trans("Cancel").'" name="cancel"></td></tr>';
-	      
+
 	      print '</form>';
 
 	      print '</table><hr>';
-	      
-	    }    
+
+	    }
 
 	  print '<div class="titre">Fiche Editeur : '.$editeur->titre.'</div><br>';
 
@@ -118,7 +120,7 @@ else
 	{
 	  print "Fetch failed";
 	}
-    
+
 
     }
   else
@@ -128,9 +130,9 @@ else
 }
 
 /* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
 /* ************************************************************************** */
 
 

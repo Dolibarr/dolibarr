@@ -26,7 +26,9 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
+
+
 
 llxHeader();
 

@@ -27,9 +27,10 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $id=$_GET["id"];
+
 
 
 llxHeader();
@@ -39,19 +40,19 @@ if ($id)
 
   $critique = new Critique($dbosc);
   $result = $critique->fetch($id);
-  
+
   if ( $result )
-    { 
+    {
 
       print '<div class="titre">Fiche Critique</div><br>';
-      
+
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
       print '<td width="20%">Produit</td><td width="80%">'.$critique->product_name.'</td></tr>';
 
       print '<tr><td width="20%">Texte</td><td width="80%">'.nl2br($critique->text).'</td></tr>';
       print "</table>";
-      
+
 
 
     }
@@ -59,13 +60,13 @@ if ($id)
     {
       print "Fetch failed";
     }
-  
+
 }
 
 /* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
 /* ************************************************************************** */
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
@@ -73,7 +74,7 @@ print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';    
+print '<td width="20%" align="center">-</td>';
 print '</table><br>';
 
 
