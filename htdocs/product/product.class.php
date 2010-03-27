@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007      Jean Heimburger      <jean@tiaris.info>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,9 @@ class Product extends CommonObject
 	var $multiprices_tva_tx=array();
 	//! Taux de TVA
 	var $tva_tx;
+	// Local taxes
+	var $localtax1_tx;
+	var $localtax2_tx;
 	//! Type 0 for regular product, 1 for service, 2 for assembly kit, 3 for stock kit
 	var $type;
 	var $typestring;
@@ -186,12 +190,16 @@ class Product extends CommonObject
 		$this->price=price2num($this->price);
 		$this->price_min_ttc=price2num($this->price_min_ttc);
 		$this->price_min=price2num($this->price_min);
-		if (empty($this->tva_tx))    $this->tva_tx = 0;
-		if (empty($this->price))     $this->price = 0;
-		if (empty($this->price_min)) $this->price_min = 0;
-		if (empty($this->status))    $this->status = 0;
-		if (empty($this->finished))  $this->finished = 0;
-		if (empty($this->hidden))    $this->hidden = 0;
+		if (empty($this->tva_tx))    	$this->tva_tx = 0;
+		//Local taxes
+		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
+		
+		if (empty($this->price))     	$this->price = 0;
+		if (empty($this->price_min)) 	$this->price_min = 0;
+		if (empty($this->status))    	$this->status = 0;
+		if (empty($this->finished))  	$this->finished = 0;
+		if (empty($this->hidden))    	$this->hidden = 0;
 
 		$price_ht=0;
 		$price_ttc=0;
@@ -410,6 +418,10 @@ class Product extends CommonObject
 		$this->volume = price2num($this->volume);
 		$this->volume_units = trim($this->volume_units);
 		if (empty($this->tva_tx))    			$this->tva_tx = 0;
+		//Local taxes
+		if (empty($this->localtax1_tx))			$this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
+		
 		if (empty($this->finished))  			$this->finished = 0;
 		if (empty($this->hidden))   			$this->hidden = 0;
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -419,6 +431,11 @@ class Product extends CommonObject
 		$sql.= " SET label = '" . addslashes($this->libelle) ."'";
 		$sql.= ",ref = '" . $this->ref ."'";
 		$sql.= ",tva_tx = " . $this->tva_tx;
+		
+		//Local taxes
+		$sql.= ",localtax1_tx = " . $this->localtax1_tx;
+		$sql.= ",localtax2_tx = " . $this->localtax2_tx;
+		
 		$sql.= ",envente = " . $this->status;
 		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
 		$sql.= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
@@ -677,9 +694,9 @@ class Product extends CommonObject
 	{
 		// Add new price
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,";
-		$sql.= " price_min,price_min_ttc) ";
+		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc) ";
 		$sql.= " VALUES(".($level?$level:1).", ".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",";
-		$sql.= " ".$this->price_min.",".$this->price_min_ttc;
+		$sql.= " ".$this->localtax1_tx.",".$this->localtax1_tx.",".$this->price_min.",".$this->price_min_ttc;
 		$sql.= ")";
 
 		dol_syslog("Product::_log_price sql=".$sql);
@@ -924,7 +941,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
-		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, envente,";
+		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, localtax1_tx, localtax2_tx envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
@@ -950,6 +967,10 @@ class Product extends CommonObject
 			$this->price_min_ttc      = $result["price_min_ttc"];
 			$this->price_base_type    = $result["price_base_type"];
 			$this->tva_tx             = $result["tva_tx"];
+			//Local taxes
+			$this->localtax1_tx       = $result["localtax1_tx"];
+			$this->localtax2_tx       = $result["localtax2_tx"];
+			
 			$this->type               = $result["fk_product_type"];
 			$this->status             = $result["envente"];
 			$this->finished           = $result["finished"];
@@ -1817,8 +1838,8 @@ class Product extends CommonObject
 
 		// les prix
 		$sql = "INSERT ".MAIN_DB_PREFIX."product_price ("
-		. " fk_product, date_price, price, tva_tx, fk_user_author, envente )"
-		. " SELECT ".$toId . ", date_price, price, tva_tx, fk_user_author, envente "
+		. " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, envente )"
+		. " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, envente "
 		. " FROM ".MAIN_DB_PREFIX."product_price "
 		. " WHERE fk_product = ". $fromId;
 
