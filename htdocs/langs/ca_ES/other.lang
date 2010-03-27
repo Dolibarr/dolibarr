@@ -183,3 +183,5 @@ ExportableDatas = Dades exportables
 NoExportableData = No hi ha dades exportables (sense mòduls amb dades exportables carregats, o no tenen permisos)
 ToExport = Exportar
 NewExport = Nova exportació
+##### External sites #####
+ExternalSites = Llocs externs

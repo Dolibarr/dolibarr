@@ -183,3 +183,5 @@ ExportableDatas = Datos exportables
 NoExportableData = No hay datos exportables (sin módulos con datos exportables cargados, o carecen de permisos)
 ToExport = Exportar
 NewExport = Nueva exportación
+##### External sites #####
+ExternalSites = Sitios externos
