@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -27,15 +26,15 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../../main.inc.php");
 
 $langs->load("compta");
 $langs->load("bills");
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -77,6 +76,6 @@ print '</td></tr>';
 print '</table>';
 
 $db->close();
- 
+
 llxFooter('$Date$ - $Revision$');
 ?>

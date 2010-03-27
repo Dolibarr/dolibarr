@@ -25,14 +25,14 @@
 		\version    $Id$
 */
 
-require("./pre.inc.php");
+require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/stats/propalestats.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $WIDTH=500;
 $HEIGHT=200;
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -46,7 +46,7 @@ $endyear=$year;
 /*
  * View
  */
- 
+
 llxHeader();
 
 print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
@@ -157,7 +157,7 @@ print '<td align="center">'.$langs->trans("NbOfProposals").'</td>';
 print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
-  
+
 $oldyear=0;
 foreach ($data as $val)
 {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 
@@ -36,7 +36,7 @@ $langs->load("bills");
 $langs->load("banks");
 $langs->load("withdrawals");
 
-// S�curit� acc�s client
+// Security check
 if ($user->societe_id > 0)
 {
 	$action = '';

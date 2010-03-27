@@ -23,11 +23,11 @@
 /**
 	    \file       htdocs/compta/facture/apercu.php
 		\ingroup    facture
-		\brief      Page de l'onglet aper�u d'une facture
+		\brief      Page de l'onglet apercu d'une facture
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,10 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
-/**   
+/**
       \file   	    htdocs/compta/charges/pre.inc.php
       \ingroup      tax
       \brief  	    Fichier gestionnaire du menu charges
@@ -34,15 +33,15 @@ function llxHeader($head = '', $title='', $help_url='')
     global $user, $conf, $langs;
     $langs->load("compta");
     $langs->load("propal");
-    
+
     top_menu($head, $title, $target);
-    
+
     $menu = new Menu();
-    
+
     $menu->add("index.php",$langs->trans("Contributions"));
-    
+
     $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"));
-    
+
     left_menu($menu->liste);
 }
 

@@ -25,7 +25,7 @@
  \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/order.lib.php');
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	print "</td></tr>";
 
-	// Note privée
+	// Note privï¿½e
 	if (! $user->societe_id)
 	{
 		print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';

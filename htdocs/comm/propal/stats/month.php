@@ -24,7 +24,7 @@
 		\version    $Id$
 */
 
-require("./pre.inc.php");
+require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/stats/propalestats.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
@@ -32,7 +32,7 @@ $GRAPHWIDTH=500;
 $GRAPHHEIGHT=200;
 
 // Check security access
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -44,7 +44,7 @@ $year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
 /*
  * View
  */
- 
+
 llxHeader();
 
 $dir=$conf->propale->dir_temp;

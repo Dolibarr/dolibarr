@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 
@@ -28,7 +27,7 @@
         \version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../../main.inc.php");
 
 $mesg = '';
 
@@ -67,7 +66,7 @@ if ($_POST["action"] == 'add' && $user->rights->compta->ventilation->parametrer)
 llxHeader("","Nouveau compte");
 
 /*
- * Création d'un compte
+ * Crï¿½ation d'un compte
  *
  */
 if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametrer)
@@ -87,7 +86,7 @@ if ($_GET["action"] == 'create' && $user->rights->compta->ventilation->parametre
     print '<td>'.$langs->trans("AccountNumber").'</td><td><input name="numero" size="20" value="'.$compte->numero.'">';
     if ($_error == 1)
     {
-        print "Ce numéro de compte existe déjà";
+        print "Ce numï¿½ro de compte existe dï¿½jï¿½";
     }
     if ($_error == 2)
     {

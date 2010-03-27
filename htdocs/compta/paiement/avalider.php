@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
         \file       htdocs/compta/paiement/avalider.php
         \ingroup    compta
@@ -24,16 +24,16 @@
         \version    $Id$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $langs->load("bills");
 
-// Sécurité accés client
+// Security check
 if (! $user->rights->facture->lire)
   accessforbidden();
 
 $socid=0;
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
     $action = '';
     $socid = $user->societe_id;
@@ -54,7 +54,7 @@ if (! $sortfield) $sortfield="p.rowid";
 if ($page == -1) $page = 0 ;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-  
+
 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
 $sql .=", c.libelle as paiement_type, p.num_paiement";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";

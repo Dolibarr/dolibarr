@@ -24,7 +24,7 @@
  *		\version    $Id$
  */
 
-require_once("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/don.class.php");

@@ -22,11 +22,11 @@
 /**
  *       \file       htdocs/comm/propal/document.php
  *       \ingroup    propale
- *       \brief      Page de gestion des documents attach�es � une proposition commerciale
+ *       \brief      Page de gestion des documents attaches a une proposition commerciale
  *       \version    $Id$
  */
 
-require('./pre.inc.php');
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");

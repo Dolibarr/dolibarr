@@ -24,7 +24,7 @@
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");

@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -26,7 +25,8 @@
         \brief      Onglet de gestion de parametrages des ventilations
         \version    $Revision$
 */
-require("./pre.inc.php");
+
+require("../../../main.inc.php");
 
 
 llxHeader('','Compta - Liste des comptes');
@@ -52,14 +52,14 @@ $sql .= " FROM ".MAIN_DB_PREFIX."compta_compte_generaux as cg";
 
 if (strlen(trim($_GET["search_numero"])) )
 {
-  
+
   $sql .= " WHERE cg.numero LIKE '%".$_GET["search_numero"]."%'";
-  
+
   if ( strlen(trim($_GET["search_intitule"])))
-    {     
+    {
       $sql .= " AND cg.intitule LIKE '%".$_GET["search_intitule"]."%'";
     }
-  
+
 }
 else
 {
@@ -77,8 +77,8 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  
-  print_barre_liste("Comptes généraux", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+
+  print_barre_liste("Comptes gï¿½nï¿½raux", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
 
   print '<table class="liste">';
   print '<tr class="liste_titre">';
@@ -101,7 +101,7 @@ if ($resql)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($resql);	
+      $obj = $db->fetch_object($resql);
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -118,7 +118,7 @@ if ($resql)
   print "</table>";
   $db->free($resql);
 }
-else 
+else
 {
   dol_print_error($db);
 }

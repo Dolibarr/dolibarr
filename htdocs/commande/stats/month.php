@@ -24,7 +24,7 @@
  *		\brief      Page des stats commandes par mois
  *		\version    $Id$
  */
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/stats/commandestats.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
@@ -33,7 +33,7 @@ $GRAPHWIDTH=500;
 $GRAPHHEIGHT=200;
 
 // Check security access
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;
@@ -52,12 +52,12 @@ if (isset($_GET["mode"])) $mode=$_GET["mode"];
 
 llxHeader();
 
-if ($mode == 'customer') 
+if ($mode == 'customer')
 {
 	$title=$langs->trans("OrdersStatistics");
 	$dir=$conf->commande->dir_temp;
 }
-if ($mode == 'supplier') 
+if ($mode == 'supplier')
 {
 	$title=$langs->trans("OrdersStatisticsSuppliers");
 	$dir=$conf->fournisseur->dir_output.'/commande/temp';

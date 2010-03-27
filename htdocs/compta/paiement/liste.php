@@ -25,7 +25,7 @@
  *  \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
@@ -91,7 +91,7 @@ if ($_GET["search_montant"])
 
 if ($_GET["orphelins"])     // Option for debugging purpose only
 {
-  // Paiements liés à aucune facture (pour aide au diagnostic)
+  // Paiements liï¿½s ï¿½ aucune facture (pour aide au diagnostic)
   $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
   $sql.= " p.statut, p.num_paiement,";
   //$sql.= " c.libelle as paiement_type";

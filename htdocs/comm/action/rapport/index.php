@@ -26,7 +26,7 @@
  *		\version    $Id$
  */
 
-require_once("./pre.inc.php");
+require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");

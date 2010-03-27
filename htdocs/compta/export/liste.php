@@ -16,9 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
- 
+
 /**
 		\file       htdocs/compta/export/liste.php
 		\ingroup    compta
@@ -26,15 +25,15 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
 $langs->load("compta");
 
 $dir = $conf->compta->dir_output."/export/";
 
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
+// Security check
+if ($user->societe_id > 0)
 {
   $action = '';
   $socid = $user->societe_id;

@@ -26,7 +26,7 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
@@ -99,7 +99,7 @@ if ($_GET["action"] == 'create')
 	print '<form name="addprop" action="propal.php?socid='.$soc->id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
-	
+
 	if (isset($_GET["origin"]) && $_GET["origin"] != 'project' && isset($_GET["originid"]))
 	{
 		print '<input type="hidden" name="origin" value="'.$_GET["origin"].'">';
@@ -202,7 +202,7 @@ if ($_GET["action"] == 'create')
 	{
 		$projectid = 0;
 		if (isset($_GET["origin"]) && $_GET["origin"] == 'project') $projectid = ($_GET["originid"]?$_GET["originid"]:0);
-		
+
 		print '<tr>';
 		print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
 

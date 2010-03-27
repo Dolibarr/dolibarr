@@ -29,7 +29,7 @@
  *       \version    $Id$
  */
 
-require_once("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
@@ -594,35 +594,35 @@ if ($socid > 0)
 			if ($num > 0)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
-				
+
 				$projectstatic = new Project($db);
-				
+
 				print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$objsoc->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
 				print '</tr>';
-				
+
 				$var=true;
 				$i = 0 ;
 				while ($i < $num && $i < $MAXLIST)
 				{
 					$obj = $db->fetch_object($result);
 					$projectstatic->fetch($obj->rowid);
-					
+
 					// To verify role of users
 					$userAccess = $projectstatic->restrictedProjectArea($user,1);
-				
+
 					if ($user->rights->projet->lire && $userAccess > 0)
 					{
 						$var = !$var;
 						print "<tr $bc[$var]>";
-						
+
 						// Ref
 						print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
 						// Label
 						print '<td>'.$obj->title.'</td>';
 						// Date
 						print '<td align="right">'.dol_print_date($obj->do,"day").'</td>';
-						
+
 						print '</tr>';
 					}
 					$i++;

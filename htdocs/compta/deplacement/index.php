@@ -25,7 +25,7 @@
 		\version	$Id$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $langs->load("companies");
@@ -61,7 +61,7 @@ $sql.= " d.rowid, d.type, ".$db->pdate("d.dated")." as dd, d.km, ";		// Comment
 $sql.= " u.name, u.firstname";											// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on d.fk_soc = s.rowid"; 
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on d.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
@@ -95,7 +95,7 @@ if ($resql)
 
       $soc = new Societe($db);
       if ($objp->socid) $soc->fetch($objp->socid);
-      
+
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
@@ -106,10 +106,10 @@ if ($resql)
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
       print '<td align="right">'.$objp->km.'</td>';
       print "</tr>\n";
-      
+
       $i++;
     }
-  
+
   print "</table>";
   $db->free($resql);
 }

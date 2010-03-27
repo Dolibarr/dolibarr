@@ -24,7 +24,7 @@
  *  \version    $Id$
  */
 
-require("./pre.inc.php");
+require("../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $WIDTH=500;
@@ -51,12 +51,12 @@ if (isset($_GET["mode"])) $mode=$_GET["mode"];
 
 llxHeader();
 
-if ($mode == 'customer') 
+if ($mode == 'customer')
 {
 	$title=$langs->trans("BillsStatistics");
 	$dir=$conf->facture->dir_temp;
 }
-if ($mode == 'supplier') 
+if ($mode == 'supplier')
 {
 	$title=$langs->trans("BillsStatisticsSuppliers");
 	$dir=$conf->fournisseur->dir_output.'/facture/temp';
@@ -177,7 +177,7 @@ foreach ($data as $val)
 	print '</tr>';
 	$oldyear=$year;
 }
-	
+
 print '</table>';
 
 
