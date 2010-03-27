@@ -79,10 +79,10 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 				else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $class='class="tmenusel"';
 				else $class='class="tmenu"';
 
-				if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="li_'.$idsel.'">';
-				else print '<td class="tmenu" id="td_'.$idsel.'">';
+				if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="mainmenuli_'.$idsel.'">';
+				else print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
 
-				print '<a '.$class.' id="mainmenu_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
+				print '<a '.$class.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
 				print $tabMenu[$i]['titre'];
 				print '</a>';
 
@@ -93,10 +93,10 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 			{
 				if (! $hideifnotallowed)
 				{
-					if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="li_'.$idsel.'">';
-					else print '<td class="tmenu" id="td_'.$idsel.'">';
+					if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="mainmenuli_'.$idsel.'">';
+					else print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
 
-					print '<a class="tmenudisabled" id="mainmenu_'.$idsel.'" href="#">'.$tabMenu[$i]['titre'].'</a>';
+					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$tabMenu[$i]['titre'].'</a>';
 
 					if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '</li>'."\n";
 					else print '</td>'."\n";
