@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,63 +18,63 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   mantis     Module mantis
-        \brief      Module to include Mantis into Dolibarr
+/**     \defgroup   externalsite     Module externalsite
+        \brief      Module to include an external web site/tools into Dolibarr menu and into a frame page.
+		\version	$Id$
 */
 
 /**
-        \file       htdocs/includes/modules/modMantis.class.php
-        \ingroup    mantis
-        \brief      Description and activation file for module Mantis
-		\version	$Id$
+        \file       htdocs/includes/modules/modExternalSite.class.php
+        \ingroup    externalsite
+        \brief      Description and activation file for module ExternalSite
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modMantis
-        \brief      Description and activation class for module Mantis
+/**     \class      modExternalSite
+        \brief      Description and activation class for module ExternalSite
 */
 
-class modMantis extends DolibarrModules
+class modExternalSite extends DolibarrModules
 {
 
    /**
     *   \brief      Constructor. Define names, constants, directories, boxes, permissions
     *   \param      DB      Database handler
     */
-	function modMantis($DB)
+	function modExternalSite($DB)
 	{
 		$this->db = $DB;
 
 		// Id for module (must be unique).
 		// Use here a free id.
-		$this->numero = 1200;
+		$this->numero = 100;
 
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
 		// It is used to sort modules in module setup page
-		$this->family = "projects";
+		$this->family = "other";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		// Module description used translation string 'ModuleXXXDesc' not found (XXX is id value)
-		$this->description = "Interfacage avec le bug tracking Mantis";
-		// Possible values for version are: 'experimental' or 'dolibarr' or version
-		$this->version = 'experimental';
-		// Id used in llx_const table to manage module status (enabled/disabled)
+		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
+		$this->description = "Include any external web site into Dolibarr menus and view it into a Dolibarr frame.";
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'dolibarr';
+		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 1;
 		// Name of png file (without png) used for this module
-		$this->picto='calendar';
+		$this->picto='bookmark';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
 
-		// Config pages
-		$this->config_page_url = array("mantis.php");
+		// Config pages. Put here list of php page names stored in admmin directory used to setup module
+		$this->config_page_url = array("externalsite.php");
 
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled
+		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 
 		// Constants
@@ -81,23 +82,43 @@ class modMantis extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
+		$r=0;
+
+		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
+		// Example:
+        //$this->boxes[$r][1] = "myboxa.php";
+    	//$r++;
+        //$this->boxes[$r][1] = "myboxb.php";
+    	//$r++;
 
 		// Permissions
-		$this->rights_class = 'mantis';	// Permission key
+		$this->rights_class = 'externalsite';	// Permission key
 		$this->rights = array();		// Permission array used by this module
 
         // Menus
 		//------
 		$r=0;
 
-		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'BugTracker','mainmenu'=>'mantis','leftmenu'=>'1','url'=>'/mantis/mantis.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
+		$this->menu[$r]=array('fk_menu'=>0,
+													'type'=>'top',
+													'titre'=>'ExternalSites',
+													'mainmenu'=>'externalsite',
+													'leftmenu'=>'1',
+													'url'=>'/externalsite/frames.php',
+													'langs'=>'other',
+													'position'=>100,
+													'perms'=>'',
+													'enabled'=>'$conf->externalsite->enabled',
+													'target'=>'',
+													'user'=>0
+													);
 		$r++;
 
 	}
 
 	/**
      *		\brief      Function called when module is enabled.
-     *					Add constants, boxes and permissions into Dolibarr database.
+     *					The init function add previous constants, boxes and permissions into Dolibarr database.
      *					It also creates data directories.
      */
 	function init()

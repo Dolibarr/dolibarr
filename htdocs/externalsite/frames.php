@@ -18,7 +18,7 @@
  * $Id$
  */
 
-/**	    \file       htdocs/frames/frames.php
+/**	    \file       htdocs/externalsite/frames.php
         \ingroup    externalsite
 		\brief      Page that build two frames: One for menu, the other for the target page to show
 		\author	    Laurent Destailleur
@@ -27,10 +27,10 @@
 
 require("../main.inc.php");
 
-if (empty($conf->global->PHPMANTIS_URL))
+if (empty($conf->global->EXTERNALSITE_URL))
 {
 	llxHeader();
-	print '<div class="error">Module Mantis was not configured properly.</div>';
+	print '<div class="error">Module ExternalSite was not configured properly.</div>';
 	llxFooter('$Date$ - $Revision$');
 }
 
@@ -40,12 +40,12 @@ $leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
 print "
 <html>
 <head>
-<title>Dolibarr frame for Mantis</title>
+<title>Dolibarr frame for external web site</title>
 </head>
 
 <frameset rows=\"28,*\" border=0 framespacing=0 frameborder=0>
-    <frame name=\"barre\" src=\"mantistop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."\" noresize scrolling=\"NO\" noborder>
-    <frame name=\"main\" src=\"".$conf->global->PHPMANTIS_URL."\">
+    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."\" noresize scrolling=\"NO\" noborder>
+    <frame name=\"main\" src=\"".$conf->global->EXTERNALSITE_URL."\">
     <noframes>
     <body>
 
@@ -56,8 +56,8 @@ print "
 <noframes>
 <body>
 	<br><center>
-	Malheureusement, votre navigateur est trop vieux pour visualiser cette zone.<br>
-	Il vous faut un navigateur g�rant les frames.<br>
+	Sorry, your browser is too old or not correctly configured to view this area.<br>
+	Your browser must support frames.<br>
 	</center>
 </body>
 </noframes>

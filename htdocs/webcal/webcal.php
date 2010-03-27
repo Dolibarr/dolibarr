@@ -54,8 +54,8 @@ print "
 <noframes>
 <body>
 	<br><center>
-	Malheureusement, votre navigateur est trop vieux pour visualiser cette zone.<br>
-	Il vous faut un navigateur gerant les frames.<br>
+	Sorry, your browser is too old or not correctly configured to view this area.<br>
+	Your browser must support frames.<br>
 	</center>
 </body>
 </noframes>
