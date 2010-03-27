@@ -24,8 +24,9 @@
   \version    $Id$
 */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 
+// Security check
 if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
 

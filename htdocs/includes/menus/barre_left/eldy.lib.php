@@ -550,7 +550,6 @@ function print_left_eldy_menu($db,$menu_array)
 				 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Pr�visionnel",2,$user->rights->compta->resultat->lire);
 				 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transform�",2,$user->rights->compta->resultat->lire);
 				 }
-				 if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2,$user->rights->compta->resultat->lire);
 				 */
 				if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 				if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);

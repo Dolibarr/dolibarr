@@ -25,14 +25,19 @@
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 
 $langs->load("companies");
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0)
 {

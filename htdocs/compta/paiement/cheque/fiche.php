@@ -25,7 +25,7 @@
  *	\version    $Id$
  */
 
-require('./pre.inc.php');
+require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/remisecheque.class.php');

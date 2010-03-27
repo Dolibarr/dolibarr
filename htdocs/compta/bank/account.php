@@ -27,7 +27,7 @@
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
+require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");

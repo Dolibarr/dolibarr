@@ -25,7 +25,7 @@
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
@@ -58,7 +58,7 @@ llxHeader('',$langs->trans("BillsSuppliersUnpaid"));
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
 
-		
+
 /***************************************************************************
 *                                                                         *
 *                      Mode Liste                                         *

@@ -27,7 +27,7 @@
  *	\version    $Id$
  */
 
-require_once('./pre.inc.php');
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');

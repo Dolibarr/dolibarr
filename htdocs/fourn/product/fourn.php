@@ -23,9 +23,9 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
-
+require("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
+
 
 if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 

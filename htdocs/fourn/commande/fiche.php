@@ -26,7 +26,7 @@
  *	\version	$Id$
  */
 
-require('./pre.inc.php');
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');

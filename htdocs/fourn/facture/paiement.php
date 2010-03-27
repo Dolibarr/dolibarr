@@ -27,7 +27,7 @@
  *	\version    $Id$
  */
 
-require('./pre.inc.php');
+require("../../main.inc.php");
 require(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 
 $langs->load('companies');

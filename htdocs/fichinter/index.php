@@ -25,7 +25,7 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");

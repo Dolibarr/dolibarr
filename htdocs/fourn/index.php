@@ -25,7 +25,7 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/categories/categorie.class.php');
@@ -104,7 +104,7 @@ else
 if ($conf->fournisseur->enabled)
 {
 	$langs->load("orders");
-	
+
 	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc";
 	$sql.= ", s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
