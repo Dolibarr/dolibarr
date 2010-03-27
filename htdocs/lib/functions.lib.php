@@ -2541,6 +2541,19 @@ function get_product_vat_for_country($idprod, $countrycode)
 	return $product->tva_tx;
 }
 
+/**
+ *	\brief	Return localtax rate of a product in a particular selling country
+ */
+function get_product_localtax_for_country($idprod, $local, $countrycode)
+{
+	global $db;
+
+	$product=new Product($db);
+	$product->fetch($idprod);
+
+	if ($local=='1') return $product->localtax1_tx;
+	elseif ($local=='2') return $product->localtax2_tx;
+}
 
 /**
  *	\brief      	Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
@@ -2618,6 +2631,40 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	return 0;
 }
 
+/**
+ *	\brief      	Fonction qui renvoie la localtax d'une ligne (en fonction du vendeur, acheteur et taux du produit)
+ *	\param      	societe_vendeuse    	Objet societe vendeuse
+ *	\param      	societe_acheteuse   	Objet societe acheteuse
+ *  \param			local					Localtax a traiter
+ *	\param      	idprod					Id product (way to get product localtax1 rate)
+ *	\return     	float               	Taux de localtax appliquer, -1 si ne peut etre determine
+ */
+function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $idprod=0)
+{
+	if (!is_object($societe_vendeuse)) return -1;
+	if (!is_object($societe_acheteuse)) return -1;
+	
+	if($societe_vendouse->pays_id=='ES')
+	{
+		if ($local=='1') //RE
+		{
+			// Si achatteur non assujeti a RE, localtax1 par default=0
+			if (is_numeric($societe_acheteuse->localtax1_assuj) && ! $societe_acheteuse->localtax1_assuj) return 0;
+			if (! is_numeric($societe_acheteuse->localtax1_assuj) && $societe_acheteuse->localtax1_assuj=='localtax1off') return 0;
+		} 
+		elseif ($local=='2') //IRPF
+		{
+			// Si vendeur non assujeti a IRPF, localtax2 par default=0
+			if (is_numeric($societe_vendeuse->localtax2_assuj) && ! $societe_vendeuse->localtax2_assuj) return 0;
+			if (! is_numeric($societe_vendeuse->localtax2_assuj) && $societe_vendeuse->localtax2_assuj=='localtax2off') return 0;
+		} else return -1;
+		
+		if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->pays_code);
+		if (strlen($taux_produit) == 0) return -1;	
+		return $taux_produit;	
+	}
+	return 0;
+}
 
 /**
  *	\brief  Return yes or no in current language
