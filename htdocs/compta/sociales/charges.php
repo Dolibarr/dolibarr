@@ -24,7 +24,7 @@
  *		\version    $Id$
  */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
 
 $langs->load("compta");

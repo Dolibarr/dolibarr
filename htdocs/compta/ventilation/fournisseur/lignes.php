@@ -25,7 +25,7 @@
    \version    $Revision$
 */
 
-require("./pre.inc.php");
+require('../../../main.inc.php');
 
 $langs->load("bills");
 
@@ -68,8 +68,8 @@ $result = $db->query($sql);
 if ($result)
 {
   $num_lignes = $db->num_rows($result);
-  $i = 0; 
-  
+  $i = 0;
+
   print_barre_liste("Lignes de facture ventil�es",$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
 
   print '<form method="GET" action="lignes.php">';
@@ -79,7 +79,7 @@ if ($result)
   print '<td align="right">'.$langs->trans("Montant").'</td>';
   print '<td colspan="2" align="center">'.$langs->trans("Compte").'</td>';
   print "</tr>\n";
-  
+
   print '<tr class="liste_titre"><td><input name="search_facture" size="8" value="'.$_GET["search_facture"].'"></td>';
   print '<td><input type="submit"></td>';
   print '<td align="right">&nbsp;</td>';
@@ -93,11 +93,11 @@ if ($result)
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
-      
+
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
 
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';
-      print '<td align="right">'.price($objp->price).'</td>';   
+      print '<td align="right">'.price($objp->price).'</td>';
       print '<td align="right">'.$objp->numero.'</td>';
       print '<td align="left">'.stripslashes($objp->intitule).'</td>';
 

@@ -20,11 +20,11 @@
 /**
         \file       htdocs/compta/prelevement/bon.php
         \ingroup    prelevement
-        \brief      Fiche aper�u du bon de prelevement
+        \brief      Fiche apercu du bon de prelevement
         \version    $Id$
 */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 
 $langs->load("bills");
 

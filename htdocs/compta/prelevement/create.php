@@ -18,12 +18,12 @@
  */
 
 /**
- \file       htdocs/compta/prelevement/create.php
- \brief      Prelevement
- \version    $Id$
+ *	\file       htdocs/compta/prelevement/create.php
+ *	\brief      Prelevement
+ *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php");
 require_once DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe.class.php";

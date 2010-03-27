@@ -23,7 +23,8 @@
  *      \ingroup    commercial
  *  	\version	$Id$
  */
-require("./pre.inc.php");
+
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/accountancy.lib.php");
 
 // Security check
@@ -34,10 +35,10 @@ if ($user->societe_id > 0)
 
 
 
-function propals ($db, $year, $month) 
+function propals ($db, $year, $month)
 {
 	global $bc,$langs,$conf;
-	
+
 	$sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
@@ -140,7 +141,7 @@ function factures ($db, $year, $month, $paye)
 	  print "<td>Num</td>";
 	  print "<td align=\"right\">Date</td>";
 	  print "<td align=\"right\">Montant</td>";
-	  print "<td align=\"right\">Payé</td>";
+	  print "<td align=\"right\">Payï¿½</td>";
 	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num)
@@ -158,17 +159,17 @@ function factures ($db, $year, $month, $paye)
 	  	{
 	  		print "<td align=\"right\"><b>!!!</b></td>\n";
 	  	}
-	  	 
+
 	  	print "<td align=\"right\">".price($objp->total)."</td>\n";
-	  	 
+
 	  	$payes[1] = "oui";
 	  	$payes[0] = "<b>non</b>";
 
 	  	print "<td align=\"right\">".$payes[$objp->paye]."</td>\n";
 	  	print "</tr>\n";
-	  	 
+
 	  	$total = $total + $objp->total;
-	  	 
+
 	  	$i++;
 	  }
 	  print "<tr><td colspan=\"4\" align=\"right\">";
@@ -184,7 +185,7 @@ function factures ($db, $year, $month, $paye)
 }
 
 
-function pt ($db, $sql, $year) 
+function pt ($db, $sql, $year)
 {
 	global $bc, $langs;
 
@@ -261,9 +262,9 @@ function ppt ($db, $year, $socid)
 	print "<table width=\"100%\">";
 
 	print '<tr class="liste_titre"><td align="center" valign="top" width="30%">';
-	print "CA Prévisionnel basé sur les propal $year";
+	print "CA Prï¿½visionnel basï¿½ sur les propal $year";
 
-	print "</td><td align=\"center\" valign=\"top\">CA Réalisé $year</td>";
+	print "</td><td align=\"center\" valign=\"top\">CA Rï¿½alisï¿½ $year</td>";
 	print "<td align=\"center\" valign=\"top\">Delta $year</td></tr>";
 
 	print '<tr><td valign="top" align="center" width="30%">';
@@ -336,7 +337,7 @@ llxHeader();
 $cyear = isset($_GET["year"])?$_GET["year"]:0;
 if (! $cyear) { $cyear = strftime ("%Y", time()); }
 
-print_fiche_titre("Chiffre d'Affaire transformé (prévu-réalisé)",($cyear?"<a href='comp.php?year=".($cyear-1)."'>".img_previous()."</a> Année $cyear <a href='comp.php?year=".($cyear+1)."'>".img_next()."</a>":""));
+print_fiche_titre("Chiffre d'Affaire transformï¿½ (prï¿½vu-rï¿½alisï¿½)",($cyear?"<a href='comp.php?year=".($cyear-1)."'>".img_previous()."</a> Annï¿½e $cyear <a href='comp.php?year=".($cyear+1)."'>".img_next()."</a>":""));
 
 ppt($db, $cyear, $socid);
 

@@ -20,14 +20,14 @@
 
 /**
 	    \file       htdocs/compta/stats/cumul.php
-		\brief      Page reporting compta chiffre affaire cumulé
+		\brief      Page reporting compta chiffre affaire cumule
 		\version    $Id$
 */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
+// Security check
+if ($user->societe_id > 0)
 {
   $socid = $user->societe_id;
 }
@@ -41,7 +41,7 @@ if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 llxHeader();
 
 
-print_titre("Chiffre d'affaire cumulé (".$langs->trans("Currency".$conf->monnaie)." HT)");
+print_titre("Chiffre d'affaire cumulï¿½ (".$langs->trans("Currency".$conf->monnaie)." HT)");
 
 print '<table width="100%"><tr><td valign="top">';
 
@@ -66,7 +66,7 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY dm";
 
 
-pt($db, $sql,"Suivi cumul par année");
+pt($db, $sql,"Suivi cumul par annï¿½e");
 
 print "</td></tr></table>";
 
@@ -84,7 +84,7 @@ llxFooter('$Date$ - $Revision$');
 function pt ($db, $sql, $date)
 {
     global $langs;
-    
+
   $bc[0]="class=\"pair\"";
   $bc[1]="class=\"impair\"";
 
@@ -100,7 +100,7 @@ function pt ($db, $sql, $date)
       print "<td align=\"right\">".$langs->trans("Total")."</td>\n";
       print "</tr>\n";
       $var=True;
-      while ($i < $num) 
+      while ($i < $num)
 	{
 	  $obj = $db->fetch_object($resql);
 	  $var=!$var;
@@ -109,11 +109,11 @@ function pt ($db, $sql, $date)
 	  print "<td>$obj->dm</td>\n";
 	  print "<td align=\"right\">".price($obj->amount)."</td><td align=\"right\">".price($total)."</td>\n";
 	  print "</tr>\n";
-	  
+
 	  $i++;
 	}
       print "<tr class=\"liste_total\"><td  align=\"right\">".$langs->trans("Total")."</td><td align=\"right\">&nbsp;</b></td><td align=\"right\"><b>".price($total)."</b></td></tr>\n";
-      
+
       print "</table>\n";
       $db->free($resql);
     }

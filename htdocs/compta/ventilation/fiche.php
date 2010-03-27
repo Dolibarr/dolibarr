@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -27,7 +26,7 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 
 $langs->load("bills");
@@ -69,8 +68,8 @@ $result = $db->query($sql);
 if ($result)
 {
   $num = $db->num_rows($result);
-  $i = 0; 
-  
+  $i = 0;
+
   while ($i < $num)
     {
       $row = $db->fetch_row($result);

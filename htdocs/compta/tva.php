@@ -17,12 +17,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /*	\deprecated	Ce fichier semble ne plus servir. A virer */
- 
-require("./pre.inc.php");
+
+require('../main.inc.php');
 
 
 /*
@@ -31,7 +30,7 @@ require("./pre.inc.php");
  */
 
 function pt ($db, $sql, $date) {
-  global $bc; 
+  global $bc;
 
   $result = $db->query($sql);
   if ($result) {
@@ -51,13 +50,13 @@ function pt ($db, $sql, $date) {
       print "<TD>$obj->dm</TD>\n";
       print "<TD align=\"right\">".price($obj->amount)."</TD><td>&nbsp;</td>\n";
       print "</TR>\n";
-      
+
       $total = $total + $obj->amount;
-      
+
       $i++;
     }
     print "<tr><td align=\"right\">".$langs->trans("TotalHT").":</td><td align=\"right\"><b>".price($total)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>";
-    
+
     print "</table>";
     $db->free();
   }
@@ -74,7 +73,7 @@ $yearc = strftime("%Y",time());
 
 echo '<table width="100%"><tr><td width="50%" valign="top">';
 
-print "<b>TVA collectée</b>";
+print "<b>TVA collectï¿½e</b>";
 
 for ($y = $yearc ; $y >= $conf->years ; $y=$y-1 ) {
 
@@ -84,14 +83,14 @@ for ($y = $yearc ; $y >= $conf->years ; $y=$y-1 ) {
   $sql = "SELECT sum(f.tva) as amount , date_format(f.datef,'%Y-%m') as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND f.datef >= '$y-01-01' AND f.datef <= '$y-12-31' ";
   $sql .= " GROUP BY dm DESC";
-  
-  pt($db, $sql,"Année $y");
-  
+
+  pt($db, $sql,"Annï¿½e $y");
+
   print "</td></tr></table>";
 }
 
 echo '</td><td valign="top" width="50%">';
-echo 'Tva Payée<br>';
+echo 'Tva Payï¿½e<br>';
 echo '</td></tr></table>';
 
 

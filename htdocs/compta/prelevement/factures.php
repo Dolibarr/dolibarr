@@ -21,17 +21,17 @@
 /**
         \file       htdocs/compta/prelevement/factures.php
         \ingroup    prelevement
-        \brief      Page liste des factures prélevées
+        \brief      Page liste des factures prelevees
         \version    $Id$
 */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
 $langs->load("companies");
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0) accessforbidden();
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
@@ -39,31 +39,31 @@ llxHeader('',$langs->trans("WithdrawalReceipt"));
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
-$h++;      
+$h++;
 
 if ($conf->use_preview_tabs)
 {
     $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("Preview");
-    $h++;  
+    $h++;
 }
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Lines");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Bills");
 $hselected = $h;
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Rejects");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistics");
-$h++;  
+$h++;
 
 
 if ($_GET["id"])
@@ -79,7 +79,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
       print '</table>';
-      
+
       print '</div>';
     }
   else
@@ -121,7 +121,7 @@ if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  
+
   $urladd = "&amp;id=".$_GET["id"];
 
   print_barre_liste("", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
@@ -140,7 +140,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($result);
 
       print "<tr $bc[$var]><td>";
 
@@ -193,7 +193,7 @@ if ($result)
   print "</table>";
   $db->free($result);
 }
-else 
+else
 {
   dol_print_error($db);
 }

@@ -21,7 +21,7 @@
  * 	\version	$Id$
  */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
@@ -43,20 +43,20 @@ llxHeader('',$langs->trans("WithdrawsRefused"));
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
-$h++;      
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Bills");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/rejets.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Rejects");
 $hselected = $h;
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistics");
-$h++;  
+$h++;
 
 $prev_id = $_GET["id"];
 
@@ -95,7 +95,7 @@ if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  
+
   print_barre_liste($langs->trans("WithdrawsRefused"), $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -111,7 +111,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($result);
 
       print "<tr $bc[$var]><td>";
       print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
@@ -130,7 +130,7 @@ if ($result)
   print "</table>";
   $db->free($result);
 }
-else 
+else
 {
   dol_print_error($db);
 }

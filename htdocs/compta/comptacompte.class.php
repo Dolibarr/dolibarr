@@ -24,9 +24,9 @@
  */
 
 
-/*! \class ComptaCompte
-    \brief Classe permettant la gestion des comptes generaux de compta
-*/
+/** 	\class ComptaCompte
+ *    	\brief Classe permettant la gestion des comptes generaux de compta
+ */
 
 class ComptaCompte
 {
@@ -41,28 +41,28 @@ class ComptaCompte
    *    \param  DB          handler acces base de donnees
    *    \param  id          id compte (0 par defaut)
    */
-	 
+
   function ComptaCompte($DB, $id=0)
     {
       $this->db = $DB;
       $this->id   = $id ;
-    }  
+    }
 
   /**
    *    \brief  Insere le produit en base
    *    \param  user utilisateur qui effectue l'insertion
    */
-	 
-  function create($user) 
+
+  function create($user)
     {
       if (strlen(trim($this->numero)) && strlen(trim($this->intitule)))
 	{
 	  $sql = "SELECT count(*)";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."compta_compte_generaux ";
 	  $sql .= " WHERE numero = '" .trim($this->numero)."'";
-	  
+
 	  $resql = $this->db->query($sql) ;
-	  
+
 	  if ( $resql )
 	    {
 	      $row = $this->db->fetch_array($resql);
@@ -70,12 +70,12 @@ class ComptaCompte
 		{
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."compta_compte_generaux (date_creation, fk_user_author, numero,intitule)";
 		  $sql .= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".$this->numero."','".$this->intitule."')";
-		  
+
 		  $resql = $this->db->query($sql);
 		  if ( $resql )
 		    {
 		      $id = $this->db->last_insert_id(MAIN_DB_PREFIX."compta_compte_generaux");
-		      
+
 		      if ($id > 0)
 			{
 			  $this->id = $id;

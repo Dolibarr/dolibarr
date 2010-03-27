@@ -25,7 +25,7 @@
         \version    $Id$
 */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 
 $langs->load("widthdrawals");
 
@@ -66,7 +66,7 @@ if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  
+
   $urladd= "&amp;statut=".$_GET["statut"];
 
   print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
@@ -79,10 +79,10 @@ if ($result)
   print_liste_field_titre($langs->trans("Date"),"bons.php","p.datec","","",'class="liste_titre" align="center"');
   print '<td class="liste_titre" align="right">'.$langs->trans("Amount").'</td>';
   print '</tr>';
-  
+
   print '<tr class="liste_titre">';
   print '<form action="bons.php" method="GET">';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
+  print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print '</form>';
@@ -110,7 +110,7 @@ if ($result)
   print "</table>";
   $db->free($result);
 }
-else 
+else
 {
   dol_print_error($db);
 }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -28,7 +28,7 @@
 		\todo 		Deal with recurrent invoices as well
 */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $year=$_GET["year"];
@@ -49,10 +49,10 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 /**
  * Gets VAT to collect for the given month of the given year
- * 
+ *
  * The function gets the VAT in split results, as the VAT declaration asks
  * to report the amounts for different VAT rates as different lines.
- * This function also accounts recurrent invoices 
+ * This function also accounts recurrent invoices
  * @param		object		Database handler object
  * @param		integer		Year
  * @param		integer		Year quarter (1-4)
@@ -75,7 +75,7 @@ function tva_coll($db,$y,$q)
         $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
         $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid";
-        
+
     }
     else
     {
@@ -94,7 +94,7 @@ function tva_coll($db,$y,$q)
     			$list[$assoc['rate']]['totalht'] = $assoc['totalht'];
     			$list[$assoc['rate']]['vat'] = $assoc['amount'];
     			$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];    			
+    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
     		}else{
     			$list[$assoc['rate']]['totalht'] += $assoc['totalht'];
     			$list[$assoc['rate']]['vat'] += $assoc['amount'];
@@ -116,9 +116,9 @@ function tva_coll($db,$y,$q)
 
 /**
  * Gets VAT to pay for the given month of the given year
- * 
+ *
  * The function gets the VAT in split results, as the VAT declaration asks
- * to report the amounts for different VAT rates as different lines. 
+ * to report the amounts for different VAT rates as different lines.
  * @param		object		Database handler object
  * @param		integer		Year
  * @param		integer		Year quarter (1-4)
@@ -159,7 +159,7 @@ function tva_paye($db, $y,$q)
     			$list[$assoc['rate']]['totalht'] = $assoc['totalht'];
     			$list[$assoc['rate']]['vat'] = $assoc['amount'];
     			$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];    			
+    			$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];
     		}else{
     			$list[$assoc['rate']]['totalht'] += $assoc['totalht'];
     			$list[$assoc['rate']]['vat'] += $assoc['amount'];
@@ -214,8 +214,8 @@ print "</tr>\n";
 if ($conf->compta->mode == "CREANCES-DETTES")
 {
 	$y = $year_current ;
-	
-	
+
+
 	$total = 0;  $subtotal = 0;
 	$i=0;
 	$subtot_coll_total = 0;
@@ -226,7 +226,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 	{
 		print "<tr class=\"liste_titre\"><td colspan=\"8\">".$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(0,0,0,(($q-1)*3)+1,1,$y),"%b %Y").' - '.dol_print_date(dol_mktime(0,0,0,($q*3),1,$y),"%b %Y").")</td></tr>";
 		$var=true;
-	
+
 		$x_coll = tva_coll($db, $y, $q);
 		$x_paye = tva_paye($db, $y, $q);
 		$x_both = array();
@@ -245,8 +245,8 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 			$x_both[$my_paye_rate]['paye']['totalht'] = $x_paye[$my_paye_rate]['totalht'];
 			$x_both[$my_paye_rate]['paye']['vat'] = $x_paye[$my_paye_rate]['vat'];
 			if(!isset($x_both[$my_paye_rate]['coll']['totalht'])){
-				$x_both[$my_paye_rate]['coll']['total_ht'] = 0;		
-				$x_both[$my_paye_rate]['coll']['vat'] = 0;		
+				$x_both[$my_paye_rate]['coll']['total_ht'] = 0;
+				$x_both[$my_paye_rate]['coll']['vat'] = 0;
 			}
 			$x_both[$my_paye_rate]['paye']['links'] = '';
 			foreach($x_paye[$my_paye_rate]['facid'] as $id=>$dummy){
@@ -254,7 +254,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 			}
 		}
 		//now we have an array (x_both) indexed by rates for coll and paye
-		
+
 		$x_coll_sum = 0;
 		$x_coll_ht = 0;
 		$x_paye_sum = 0;
@@ -282,7 +282,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 		$diff = $x_coll_sum - $x_paye_sum;
 		$total = $total + $diff;
 		$subtotal = $subtotal + $diff;
-	
+
 		$var=!$var;
 		print "<tr $bc[$var]>";
 		print '<td colspan="7"></td>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,21 +21,21 @@
  */
 
 
-/**   
+/**
   \file       htdocs/compta/ventilation/liste.php
   \ingroup    compta
   \brief      Page de ventilation des lignes de facture
   \version    $Revision$
 */
 
-require("./pre.inc.php");
+require('../../../main.inc.php');
 
 $langs->load("bills");
 
 if (!$user->rights->facture->lire) accessforbidden();
 if (!$user->rights->compta->ventilation->creer) accessforbidden();
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) accessforbidden();
 
@@ -61,9 +61,9 @@ $result = $db->query($sql);
 if ($result)
 {
   $num_lignes = $db->num_rows($result);
-  $i = 0; 
-  
-  print_barre_liste("Lignes de facture à ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
+  $i = 0;
+
+  print_barre_liste("Lignes de facture ï¿½ ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>Facture</td>';
@@ -78,9 +78,9 @@ if ($result)
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
-      
+
       print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
-      print '<td>'.stripslashes(nl2br($objp->description)).'</td>';                       
+      print '<td>'.stripslashes(nl2br($objp->description)).'</td>';
 
       print '<td align="right">';
       print price($objp->price);
@@ -93,11 +93,11 @@ if ($result)
       print "</tr>";
       $i++;
     }
-    
+
 print "</table>";
-  
-  
-  
+
+
+
 }
 else
 {

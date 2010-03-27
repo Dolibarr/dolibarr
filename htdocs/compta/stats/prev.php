@@ -18,15 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
-require("./pre.inc.php");
 
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
+require('../../main.inc.php');
+
+// Security check
+if ($user->societe_id > 0)
 {
   $socid = $user->societe_id;
 }
@@ -41,37 +38,37 @@ function pt ($db, $sql, $title) {
   print "<td>$title</td>";
   print "<td align=\"right\">Montant</td>";
   print "</tr>\n";
-  
+
   $result = $db->query($sql);
-  if ($result) 
+  if ($result)
     {
       $num = $db->num_rows();
       $i = 0; $total = 0 ;
-    
+
       $var=True;
-      while ($i < $num) 
+      while ($i < $num)
 	{
 	  $obj = $db->fetch_object($result);
 	  $var=!$var;
 	  print '<tr '.$bc[$var].'>';
 	  print '<td>'.$obj->dm.'</td>';
 	  print '<td align="right">'.price($obj->amount).'</td>';
-	  
+
 	  print "</tr>\n";
 	  $total = $total + $obj->amount;
 	  $i++;
 	}
       print "<tr class=\"total\"><td colspan=\"2\" align=\"right\"><b>".$langs->trans("TotalHT").": ".price($total)."</b> ".$langs->trans("Currency".$conf->monnaie)."</td></tr>";
-    
+
       $db->free();
-    } 
-  else 
+    }
+  else
     {
       dol_print_error($db);
 
     }
   print "</table>";
-      
+
 }
 /*
  *
@@ -91,7 +88,7 @@ if ($sortorder == "")
 
 $in = "(1,2,4)";
 
-print_titre ("CA Prévisionnel basé sur les propositions <b>ouvertes</b> et <b>signées</b>");
+print_titre ("CA Prï¿½visionnel basï¿½ sur les propositions <b>ouvertes</b> et <b>signï¿½es</b>");
 
 print '<table width="100%">';
 
@@ -115,7 +112,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 if ($socid) $sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY dm DESC";
 
-pt($db, $sql, "Année");
+pt($db, $sql, "Annï¿½e");
 
 print "<br>";
 
@@ -126,7 +123,7 @@ $sql.= " AND p.entity = ".$conf->entity;
 if ($socid) $sql.= " AND p.fk_soc = ".$socid;
 $sql.= " GROUP BY dm";
 
-pt($db, $sql, "Mois cumulés");
+pt($db, $sql, "Mois cumulï¿½s");
 
 print "</td></tr></table>";
 

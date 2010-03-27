@@ -21,11 +21,11 @@
 /**
         \file       htdocs/compta/prelevement/liste_factures.php
         \ingroup    prelevement
-        \brief      Page liste des factures prélevées
+        \brief      Page liste des factures prelevees
         \version    $Id$
 */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
@@ -88,7 +88,7 @@ if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  
+
   $urladd = "&amp;socid=".$_GET["socid"];
 
   print_barre_liste($langs->trans("WithdrawedBills"), $page, "liste_factures.php", $urladd, $sortfield, $sortorder, '', $num);
@@ -120,7 +120,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($result);
 
       print "<tr $bc[$var]><td>";
 
@@ -155,7 +155,7 @@ if ($result)
   print "</table>";
   $db->free($result);
 }
-else 
+else
 {
   dol_print_error($db);
 }

@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -27,7 +26,7 @@
  * 		\version    $Revision$
  */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 

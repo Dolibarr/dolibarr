@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 /**
@@ -28,7 +26,7 @@
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
+require('../../../main.inc.php');
 
 $mesg = '';
 
@@ -62,8 +60,8 @@ $result = $db->query($sql);
 if ($result)
 {
   $num = $db->num_rows($result);
-  $i = 0; 
-  
+  $i = 0;
+
   while ($i < $num)
     {
       $row = $db->fetch_row($result);
@@ -84,17 +82,17 @@ if($_GET["id"])
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as l";
   $sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
   $sql .= " WHERE f.rowid = l.fk_facture_fourn AND f.fk_statut = 1 AND l.rowid = ".$_GET["id"];
-   
+
   $result = $db->query($sql);
 
   if ($result)
     {
       $num_lignes = $db->num_rows($result);
-      $i = 0; 
-      
+      $i = 0;
+
       if ($num_lignes)
 	{
-	  
+
 	  $objp = $db->fetch_object($result);
 
 
@@ -105,9 +103,9 @@ if($_GET["id"])
 	      print '<input type="hidden" name="action" value="ventil">';
 	    }
 
-	  
+
 	  print_titre("Ventilation");
-	  
+
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td>Facture</td>';
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td></tr>';
@@ -126,7 +124,7 @@ if($_GET["id"])
 	    }
 
 	  print '</td></tr>';
-	  
+
 	  if($objp->fk_code_ventilation == 0)
 	    {
 	      print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Ventiler").'"></td></tr>';

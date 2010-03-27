@@ -17,17 +17,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  *
  */
-require("./pre.inc.php");
 
+require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
 require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
 
 
 /*
- * Sécurite acces client
+ * Security check
  */
 if ($user->societe_id > 0) accessforbidden();
 
@@ -36,21 +35,21 @@ llxHeader('',$langs->trans("WithdrawalReceipt"));
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Fiche");
-$h++;      
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Factures");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/rejets.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Rejets");
 $hselected = $h;
-$h++;  
+$h++;
 
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistiques");
-$h++;  
+$h++;
 
 $prev_id = $_GET["id"];
 
@@ -97,12 +96,12 @@ if ($result)
 {
   $num = $db->num_rows($result);
   $i = 0;
-  
-  print_barre_liste("Prélèvements rejetés", $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
+
+  print_barre_liste("Prï¿½lï¿½vements rejetï¿½s", $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Bon N°","rejets.php","p.ref",'',$urladd);
+  print_liste_field_titre("Bon Nï¿½","rejets.php","p.ref",'',$urladd);
   print_liste_field_titre($langs->trans("Invoice"),"rejets.php","p.facnumber",'',$urladd);
   print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
   print_liste_field_titre($langs->trans("Amount"),"rejets.php","f.total_ttc","",$urladd,'align="center"');
@@ -114,7 +113,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($result);
 
       print "<tr $bc[$var]><td>";
 
@@ -123,7 +122,7 @@ if ($result)
       print "<td>";
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
-      print img_file();      
+      print img_file();
       print '</a>&nbsp;';
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
@@ -133,7 +132,7 @@ if ($result)
 
       print '<td align="center">'.price($obj->total_ttc)."</td>\n";
 
-      print '<td><b>Rejeté</b></td><td>';
+      print '<td><b>Rejetï¿½</b></td><td>';
 
       print '</td>';
 
@@ -147,7 +146,7 @@ if ($result)
   print "</table>";
   $db->free($result);
 }
-else 
+else
 {
   dol_print_error($db);
 }

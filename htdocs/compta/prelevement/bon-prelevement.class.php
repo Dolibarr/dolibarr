@@ -24,7 +24,7 @@
         \version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 

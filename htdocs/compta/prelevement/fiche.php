@@ -24,7 +24,7 @@
  *	\version    $Id$
  */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();

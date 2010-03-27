@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 /*
@@ -40,8 +38,8 @@ class LignePrelevement
   var $db;
 
   var $statuts = array();
-  
-  
+
+
   /**
    *    \brief      Constructeur de la classe
    *    \param      DB          Handler acces base de donnees
@@ -65,9 +63,9 @@ class LignePrelevement
   function fetch($rowid)
   {
   	global $conf;
-  	
+
     $result = 0;
-    
+
     $sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
     $sql.= ", pl.statut, pl.fk_soc";
     $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -75,13 +73,13 @@ class LignePrelevement
     $sql.= " WHERE pl.rowid=".$rowid;
     $sql.= " AND p.rowid = pl.fk_prelevement_bons";
     $sql.= " AND p.entity = ".$conf->entity;
-       
+
     if ($this->db->query($sql))
       {
 	if ($this->db->num_rows())
 	  {
 	    $obj = $this->db->fetch_object();
-	    
+
 	    $this->id              = $obj->rowid;
 	    $this->amount          = $obj->amount;
 	    $this->socid           = $obj->fk_soc;
@@ -106,7 +104,7 @@ class LignePrelevement
 
     return $result;
 
-  }   
+  }
 }
 
 ?>

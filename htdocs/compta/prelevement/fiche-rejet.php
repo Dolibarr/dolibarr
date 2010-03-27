@@ -22,11 +22,11 @@
  * \version	$Id$
  */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-// Sécurité accés client
+// Securite acces client
 if ($user->societe_id > 0) accessforbidden();
 
 llxHeader('',$langs->trans("WithdrawalReceipt"));
@@ -34,31 +34,31 @@ llxHeader('',$langs->trans("WithdrawalReceipt"));
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
-$h++;      
+$h++;
 
 if ($conf->use_preview_tabs)
 {
     $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("Preview");
-    $h++;  
+    $h++;
 }
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Lines");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Bills");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Rejects");
 $hselected = $h;
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistics");
-$h++;  
+$h++;
 
 $prev_id = $_GET["id"];
 
@@ -73,7 +73,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
       print '</table>';
-      
+
       print '</div>';
     }
   else
@@ -110,7 +110,7 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
-  
+
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
@@ -122,7 +122,7 @@ if ($resql)
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object($resql);	
+      $obj = $db->fetch_object($resql);
 
       print "<tr $bc[$var]><td>";
       print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
@@ -151,7 +151,7 @@ if ($resql)
   print "</tr>\n</table>\n";
   $db->free($resql);
 }
-else 
+else
 {
   dol_print_error($db);
 }

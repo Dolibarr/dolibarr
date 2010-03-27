@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /*
@@ -53,7 +52,7 @@ class RejetPrelevement
     $this->motifs[0] = "Non renseigne";
     $this->motifs[1] = "Provision insuffisante";
     $this->motifs[2] = "Tirage conteste";
-    $this->motifs[3] = "Pas de bon à payer";
+    $this->motifs[3] = "Pas de bon ï¿½ payer";
     $this->motifs[4] = "Opposition sur compte";
     $this->motifs[5] = "RIB inexploitable";
     $this->motifs[6] = "Compte solde";
@@ -66,16 +65,16 @@ class RejetPrelevement
     $error = 0;
     $this->id = $id;
     $this->bon_id = $bonid;
-    
+
     dol_syslog("RejetPrelevement::Create id $id");
-    
+
     $facs = $this->_get_list_factures();
-    
+
     $this->db->begin();
 
 
     /* Insert la ligne de rejet dans la base */
-    
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet (";
     $sql.= "fk_prelevement_lignes";
     $sql.= ", date_rejet";
@@ -91,34 +90,34 @@ class RejetPrelevement
     $sql.= ", ".$this->db->idate(mktime());
     $sql.= ", ".$facturation;
     $sql.= ")";
-    
+
     $result=$this->db->query($sql);
-    
+
     if (!$result)
       {
 	dol_syslog("RejetPrelevement::create Erreur 4");
 	dol_syslog("RejetPrelevement::create Erreur 4 $sql");
 	$error++;
       }
-    
+
     /* Tag la ligne de prev comme rejetee */
-    
+
     $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
     $sql.= " SET statut = 3";
     $sql.= " WHERE rowid = ".$id;
-    
+
     if (! $this->db->query($sql))
       {
 	dol_syslog("RejetPrelevement::create Erreur 5");
 	$error++;
       }
-    
-    
+
+
     for ($i = 0 ; $i < sizeof($facs) ; $i++)
-      {	  
+      {
 	$fac = new Facture($this->db);
 	$fac->fetch($facs[$i]);
-	
+
 	/* Emet un paiement negatif */
 
 	$pai = new Paiement($this->db);
@@ -137,8 +136,8 @@ class RejetPrelevement
 	  {
 	    $error++;
 	    dol_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
-	  }       
-  
+	  }
+
 	/* Valide le paiement */
 
 	if ($pai->valide() < 0)
@@ -151,7 +150,7 @@ class RejetPrelevement
 	dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
 	$fac->set_unpaid($fac->id, $user);
 
-	/* Envoi un email à l'emetteur de la demande de prev */
+	/* Envoi un email ï¿½ l'emetteur de la demande de prev */
 	$this->_send_email($fac);
       }
 
@@ -175,12 +174,12 @@ class RejetPrelevement
     function _send_email($fac)
     {
         $userid = 0;
-    
+
         $sql = "SELECT fk_user_demande";
         $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
         $sql.= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
         $sql.= " AND pfd.fk_facture = ".$fac->id;
-    
+
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -195,34 +194,34 @@ class RejetPrelevement
         {
             dol_syslog("RejetPrelevement::_send_email Erreur lecture user");
         }
-    
+
         if ($userid > 0)
         {
             $emuser = new User($this->db, $userid);
             $emuser->fetch();
-    
+
             $soc = new Societe($this->db);
             $soc->fetch($fac->socid);
-    
+
             require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-    
+
             $subject = "Prelevement rejete";
             $sendto = $emuser->fullname." <".$emuser->email.">";
             $from = $this->user->fullname." <".$this->user->email.">";
     		$msgishtml=0;
-    		
+
             $arr_file = array();
             $arr_mime = array();
             $arr_name = array();
-    
+
             $message = "Bonjour,\n";
             $message .= "\nLe prelevement de la facture ".$fac->ref." pour le compte de la societe ".$soc->nom." d'un montant de ".price($fac->total_ttc)." a ete rejete par la banque.";
             $message .= "\n\n--\n".$this->user->fullname;
-    
+
             $mailfile = new CMailFile($subject,$sendto,$from,$message,
                                       $arr_file,$arr_mime,$arr_name,
                                       '', '', 0, $msgishtml,$this->user->email);
-    
+
             $result=$mailfile->sendfile();
             if ($result)
             {
@@ -246,13 +245,13 @@ class RejetPrelevement
   function _get_list_factures()
   {
   	global $conf;
-  	
+
     $arr = array();
     /*
-     * Renvoie toutes les factures associée à un prélèvement
+     * Renvoie toutes les factures associï¿½e ï¿½ un prï¿½lï¿½vement
      *
      */
-      
+
     $sql = "SELECT f.rowid as facid";
     $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
     $sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -286,7 +285,7 @@ class RejetPrelevement
 
   }
 
-  
+
 
   /**
    *    \brief      Recupere l'objet prelevement
@@ -299,20 +298,20 @@ class RejetPrelevement
     $sql.= ", motif";
     $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
     $sql.= " WHERE pr.fk_prelevement_lignes =".$rowid;
-      
+
 
     if ($this->db->query($sql))
       {
 	if ($this->db->num_rows())
 	  {
 	    $obj = $this->db->fetch_object();
-	      
+
 	    $this->id             = $rowid;
 	    $this->date_rejet     = $obj->dr;
 	    $this->motif          = $this->motifs[$obj->motif];
 
 	    $this->db->free();
-	    
+
 	    return 0;
 	  }
 	else

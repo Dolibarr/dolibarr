@@ -23,16 +23,15 @@
         \brief       Page ???
         \version     $Id$
 */
- 
-require("./pre.inc.php");
-require("./lib.inc.php");
+
+require('../../main.inc.php');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
+// Sï¿½curitï¿½ accï¿½s client
+if ($user->societe_id > 0)
 {
   $socid = $user->societe_id;
 }
@@ -41,7 +40,7 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-print_titre("Comparatif CA année en cours avec année précédente (".$langs->trans("Currency".$conf->monnaie)." HT, ".$modecompta.")");
+print_titre("Comparatif CA annï¿½e en cours avec annï¿½e prï¿½cï¿½dente (".$langs->trans("Currency".$conf->monnaie)." HT, ".$modecompta.")");
 print "<br>\n";
 
 
@@ -71,7 +70,7 @@ function factures ($db, $year, $month, $paye)
       print "<TD>Num</TD>";
       print "<TD align=\"right\">Date</TD>";
       print "<TD align=\"right\">Montant</TD>";
-      print "<TD align=\"right\">Payé</TD>";
+      print "<TD align=\"right\">Payï¿½</TD>";
       print "</TR>\n";
       $var=True;
       while ($i < $num) {
@@ -85,18 +84,18 @@ function factures ($db, $year, $month, $paye)
 	} else {
 	  print "<TD align=\"right\"><b>!!!</b></TD>\n";
 	}
-	
+
 	print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-	
+
 	$payes[1] = "oui";
 	$payes[0] = "<b>non</b>";
-	
-	
+
+
 	print "<TD align=\"right\">".$payes[$objp->paye]."</TD>\n";
 	print "</TR>\n";
-	
+
 	$total = $total + $objp->amount;
-	
+
 	$i++;
       }
       print "<tr><td  align=\"right\"><b>".$langs->trans("Total")." : ".price($total)."</b></td><td></td></tr>";
@@ -129,7 +128,7 @@ function pt ($db, $sql, $year) {
         	for ($b = $month ; $b < $obj->dm ; $b++) {
         	  print "<tr $bc[$var]>";
         	  print "<td>".dol_print_date(dol_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
-        	  print "<td align=\"right\">0</td>\n";	  
+        	  print "<td align=\"right\">0</td>\n";
         	  print "</tr>\n";
         	  $var=!$var;
         	  $ca[$b] = 0;
@@ -141,7 +140,7 @@ function pt ($db, $sql, $year) {
 	print "<td>";
 	print dol_print_date(dol_mktime(12,0,0,$obj->dm, 1, $year),"%b")."</td>\n";
 	print "<td align=\"right\">".price($obj->sum)."</td>\n";
-	
+
 	print "</tr>\n";
 	$month = $obj->dm + 1;
 	$ca[$obj->dm] = $obj->sum;
@@ -161,13 +160,13 @@ function pt ($db, $sql, $year) {
 	$var=!$var;
 	print "<tr $bc[$var]>";
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
-	print "<td align=\"right\">0</td>\n";	  
+	print "<td align=\"right\">0</td>\n";
 	print "</tr>\n";
 	$ca[$b] = 0;
       }
     }
 
-    print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td></tr>";    
+    print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td></tr>";
     print "</table>";
 
     $db->free();
@@ -184,11 +183,11 @@ function ppt ($db, $year, $socid)
 
   print "<tr class=\"liste_titre\"><td align=\"center\" width=\"30%\">";
   print "CA ".($year - 1);
-  
+
   print "</td><td align=\"center\">CA $year</td>";
   print '<td align="center">Delta</td></tr>';
   print "<tr><td valign=\"top\" width=\"30%\">";
-  
+
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
   $sql.= " WHERE f.fk_statut in (1,2)";
@@ -197,11 +196,11 @@ function ppt ($db, $year, $socid)
   if ($conf->compta->mode != 'CREANCES-DETTES') $sql.= " AND f.paye = 1";
   if ($socid) $sql.= " AND f.fk_soc = ".$socid;
   $sql.= " GROUP BY dm";
-  
+
   $prev = pt($db, $sql, $year - 1);
-  
+
   print "</td><td valign=\"top\" width=\"30%\">";
-  
+
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
   $sql.= " WHERE f.fk_statut in (1,2)";
@@ -210,11 +209,11 @@ function ppt ($db, $year, $socid)
   if ($conf->compta->mode != 'CREANCES-DETTES') $sql.= " AND f.paye = 1";
   if ($socid) $sql.= " AND f.fk_soc = ".$socid;
   $sql.= " GROUP BY dm";
-  
+
   $ca = pt($db, $sql, $year);
-  
+
   print "</td><td valign=\"top\" width=\"30%\">";
-  
+
   print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print "<tr class=\"liste_titre\">";
   print '<td>'.$langs->trans("Month").'</td>';

@@ -21,11 +21,12 @@
 /*
  * \version	$Id$
  */
-require("./pre.inc.php");
+
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) accessforbidden();
 
 
@@ -81,7 +82,7 @@ if ($_GET["id"])
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 
 		print '</table>';
-		
+
 		print '</div>';
 	}
 	else
@@ -164,7 +165,7 @@ if ($result)
 
 		if ($obj->statut == 3)
 		{
-	  		print '<b>Rejeté</b>';
+	  		print '<b>Rejetï¿½</b>';
 		}
 		else
 		{

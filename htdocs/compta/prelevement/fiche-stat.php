@@ -21,9 +21,9 @@
  * 	\version	$Id$
  */
 
-require("./pre.inc.php");
+require('../../main.inc.php');
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) accessforbidden();
 
 
@@ -36,13 +36,13 @@ llxHeader('',$langs->trans("WithdrawalReceipt"));
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
-$h++;      
+$h++;
 
 if ($conf->use_preview_tabs)
 {
     $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
     $head[$h][1] = $langs->trans("Preview");
-    $h++;  
+    $h++;
 }
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
@@ -51,16 +51,16 @@ $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Bills");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Rejects");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistics");
 $hselected = $h;
-$h++;  
+$h++;
 
 $prev_id = $_GET["id"];
 
@@ -77,7 +77,7 @@ if ($prev_id)
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 
       print '</table>';
-      
+
       print '</div>';
     }
   else
@@ -93,25 +93,25 @@ if ($prev_id)
   $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
   $sql.= " WHERE pl.fk_prelevement_bons = ".$prev_id;
   $sql.= " GROUP BY pl.statut";
-  
+
   if ($db->query($sql))
     {
       $num = $db->num_rows();
       $i = 0;
-      
+
       print"\n<!-- debut table -->\n";
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
       print '<td>Statut</td><td align="right">Montant</td><td align="right">%</td></tr>';
-      
+
       $var=false;
-      
+
       while ($i < $num)
 	{
-	  $row = $db->fetch_row();	
-	  
+	  $row = $db->fetch_row();
+
 	  print "<tr $bc[$var]><td>";
-	  
+
 	  if ($row[1] == 2)
 	    {
 	      print 'Credite';
@@ -124,28 +124,28 @@ if ($prev_id)
 	    {
 	      print 'En attente';
 	    }
-	    else print 'Unknown';	  
+	    else print 'Unknown';
 
-	  print '</td><td align="right">';	  
-	  print price($row[0]);	  
+	  print '</td><td align="right">';
+	  print price($row[0]);
 
-	  print '</td><td align="right">';	  
-	  print round($row[0]/$bon->amount*100,2)." %";	  
+	  print '</td><td align="right">';
+	  print round($row[0]/$bon->amount*100,2)." %";
 	  print '</td>';
 
 	  print "</tr>\n";
-	  
+
 	  $var=!$var;
 	  $i++;
 	}
-      
+
       print "</table>";
       $db->free();
     }
-  else 
+  else
     {
       print $db->error() . ' ' . $sql;
-    }  
+    }
 }
 
 $db->close();
