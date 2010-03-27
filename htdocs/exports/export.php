@@ -759,7 +759,7 @@ if ($step == 4 && $datatoexport)
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),'',1);
+    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
 
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';

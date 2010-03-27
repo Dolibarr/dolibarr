@@ -1013,14 +1013,15 @@ function picto_from_langcode($codelang)
 
 /**
  * 	\brief		Return list of activated modules usable for document generation.
- * 	\param		$db			Database handler
- * 	\param		$type		Type of models (company, invoice, ...)
- * 	\return		array		array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	\param		$db				Database handler
+ * 	\param		$type			Type of models (company, invoice, ...)
+ * 	\return		int or array	0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
  */
 function getListOfModels($db,$type)
 {
 	global $conf;
 	$liste=array();
+	$found=0;
 
 	$dirtoscan='';
 
@@ -1036,10 +1037,12 @@ function getListOfModels($db,$type)
 		$i = 0;
 		while ($i < $num)
 		{
+			$found=1;
+
 			$obj = $db->fetch_object($resql);
 
 			// If this generation module needs a directory scan, then description field is filled
-			// with constant that constains list of directories.
+			// with the constant that contains list of directories to scan.
 			if (! empty($obj->description))
 			{
 				$const=$obj->description;
@@ -1079,5 +1082,6 @@ function getListOfModels($db,$type)
 		return -1;
 	}
 
-	return $liste;
+	if ($found) return $liste;
+	else return 0;
 }

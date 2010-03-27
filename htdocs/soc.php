@@ -1451,7 +1451,7 @@ else
 
 	$var=true;
 
-	$somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,28,0,'',0,'',$soc->default_lang);
+	$somethingshown=$formfile->show_documents('company',$soc->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$soc->default_lang);
 
 	print '</td>';
 	print '<td>';

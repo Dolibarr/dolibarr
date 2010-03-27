@@ -315,7 +315,7 @@ if ($_GET["action"] == 'create')
 			// Date
 			print "<tr><td>".$langs->trans("Date")."</td>";
 			print '<td colspan="3">'.dol_print_date($object->date,"day")."</td></tr>\n";
-			
+
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">'.dol_print_date($object->date_livraison,'day')."</td>\n";
@@ -599,7 +599,7 @@ else
 			{
 				print '<div class="error">'.$mesg.'</div>';
 			}
-			
+
 			$typeobject = $expedition->origin;
 			$origin = $expedition->origin;
 			$expedition->fetch_object();
@@ -614,7 +614,7 @@ else
 
 			// delivery link
 			$expedition->load_object_linked($expedition->id,$expedition->element,-1,-1);
-			
+
 			$head=shipping_prepare_head($expedition);
 			dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
 
@@ -709,7 +709,7 @@ else
 			print '<tr><td>'.$langs->trans("Date").'</td>';
 			print '<td colspan="3">'.dol_print_date($expedition->date,"daytext")."</td>\n";
 			print '</tr>';
-			
+
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">'.dol_print_date($expedition->date_delivery,'daytext')."</td>\n";
@@ -948,7 +948,7 @@ else
 			//$genallowed=1;
 			//$delallowed=0;
 
-			$somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf,'',0,0,28,0,'','','',$soc->default_lang);
+			$somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 		}
 

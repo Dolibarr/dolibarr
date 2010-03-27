@@ -319,7 +319,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';
 
 			print '</td>';
@@ -579,7 +579,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$obj->propalid;
-				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print "</td>";

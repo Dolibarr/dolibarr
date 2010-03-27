@@ -1955,7 +1955,7 @@ if ($id > 0 || ! empty($ref))
 
 		$var=true;
 
-		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf,'',0,0,28,0,'',0,'',$societe->default_lang);
+		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf,1,0,0,28,0,'',0,'',$societe->default_lang);
 
 
 		/*
@@ -2215,7 +2215,7 @@ else
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';
 
 			if ($objp->client == 1)

@@ -664,7 +664,7 @@ if (window.parent.frames[1]) {
 <?php
 
 
-$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'','',0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
+$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',1,0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
 //if ($result) print '<br><br>';
 
 

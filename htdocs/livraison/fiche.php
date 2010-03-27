@@ -473,7 +473,7 @@ else
 			print '<tr><td>'.$langs->trans("Date").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_creation,'daytext')."</td>\n";
 			print '</tr>';
-			
+
 			// Date delivery planned
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_delivery,'daytext')."</td>\n";
@@ -573,7 +573,7 @@ else
 			if ($user->societe_id == 0)
 			{
 				print '<div class="tabsAction">';
-				
+
 				if ($delivery->statut == 0 && $user->rights->expedition->livraison->valider && $num_prod > 0)
 				{
 					print '<a class="butAction" href="fiche.php?id='.$delivery->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
@@ -608,7 +608,7 @@ else
 			$genallowed=$user->rights->expedition->livraison->creer;
 			$delallowed=$user->rights->expedition->livraison->supprimer;
 
-			$somethingshown=$formfile->show_documents('livraison',$deliveryref,$filedir,$urlsource,$genallowed,$delallowed,$delivery->modelpdf,'',0,0,28,0,'','','',$soc->default_lang);
+			$somethingshown=$formfile->show_documents('livraison',$deliveryref,$filedir,$urlsource,$genallowed,$delallowed,$delivery->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 
 			print '</td><td valign="top" width="50%">';

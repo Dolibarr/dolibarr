@@ -296,7 +296,7 @@ if ($what)
 	}
 }
 
-$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',array(),0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
+$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',1,0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
 
 if ($result == 0)
 {

@@ -354,7 +354,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$filename=dol_sanitizeFileName($obj->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
-				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -714,7 +714,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -809,7 +809,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$filename=dol_sanitizeFileName($obj->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
-				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print '</td>';

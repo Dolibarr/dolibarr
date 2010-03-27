@@ -724,7 +724,7 @@ else
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 
 			print '</td></tr></table>';
 

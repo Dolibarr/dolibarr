@@ -205,7 +205,7 @@ if ($resql)
 		$filename=dol_sanitizeFileName($objp->ref);
 		$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
-		$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+		$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
 		print '</td></tr></table>';
 
 		print '</td>';

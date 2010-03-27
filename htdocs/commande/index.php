@@ -173,7 +173,7 @@ if ($resql)
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';
 
 			print '</td>';
@@ -240,7 +240,7 @@ if ($conf->commande->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -309,7 +309,7 @@ if ($conf->commande->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print '</td>';

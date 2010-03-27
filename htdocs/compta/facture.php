@@ -3502,7 +3502,7 @@ else
 				$var=true;
 
 				print '<br>';
-				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf,'',0,0,28,0,'','','',$soc->default_lang);
+				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 				/*
 				 *   Propales rattachees
@@ -3961,7 +3961,7 @@ else
 					$filename=dol_sanitizeFileName($objp->facnumber);
 					$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 					$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
-					$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+					$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
 					print '</td>';
 					print '</tr></table>';
 

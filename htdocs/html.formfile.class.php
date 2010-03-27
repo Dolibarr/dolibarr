@@ -129,7 +129,7 @@ class FormFile
 	 *      \param      genallowed          Generation is allowed (1/0 or array of formats)
 	 *      \param      delallowed          Remove is allowed (1/0)
 	 *      \param      modelselected       Model to preselect by default
-	 *      \param      modelliste			Array of possible models. Use '' to hide this combo select list.
+	 *      \param      showwarning			Show warning if no model activated
 	 *      \param      forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
 	 *      \param      iconPDF             Show only PDF icon with link (1/0)
 	 * 		\param		maxfilenamelength	Max length for filename shown
@@ -140,7 +140,7 @@ class FormFile
 	 * 		\param		codelang			Default language code to use on lang combo box if multilang is enabled
 	 * 		\return		int					<0 if KO, number of shown files if OK
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$showwarning=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -153,7 +153,6 @@ class FormFile
 			$genallowed = '';
 			$delallowed = 0;
 			$modelselected = '';
-			$modelliste = '';
 			$forcenomultilang=0;
 		}
 
@@ -340,7 +339,7 @@ class FormFile
 
 			// Language code (if multilang)
 			print '<td align="center">';
-			if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
+			if (($showwarning || (is_array($modellist) && sizeof($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/html.formadmin.class.php');
 				$formadmin=new FormAdmin($this->db);
@@ -357,8 +356,10 @@ class FormFile
 			print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
 			print '<input class="button" ';
 			//print ((is_array($modellist) && sizeof($modellist))?'':' disabled="true"') // Always allow button "Generate" (even if no model activated)
-			print ' type="submit" value="'.$buttonlabel.'">';
-			if (is_array($modellist) && ! sizeof($modellist))
+			print ' type="submit" value="'.$buttonlabel.'"';
+			if (! $showwarning && ! is_array($modellist) && empty($modellist)) print ' disabled="true"';
+			print '>';
+			if ($showwarning && ! is_array($modellist) && empty($modellist))
 			{
 				$langs->load("errors");
 				print ' '.img_warning($langs->trans("WarningNoDocumentModelActivated"));

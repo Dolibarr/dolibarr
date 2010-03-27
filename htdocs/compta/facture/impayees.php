@@ -341,7 +341,7 @@ if ($result)
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
-			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1,$param);
+			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1,$param);
 			print '</td>';
 
 			print '</tr></table>';
@@ -403,7 +403,7 @@ if ($result)
 
 	print '<br>';
 	print '<input type="hidden" name="option" value="'.$option.'">';
-	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'','',0,0,48,1,$param,'',$langs->trans("PDFMerge"));
+	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,0,0,48,1,$param,'',$langs->trans("PDFMerge"));
 	print '</form>';
 
 	$db->free();
