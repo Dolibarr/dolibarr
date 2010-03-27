@@ -10,7 +10,7 @@
  \author		Laurent Destailleur
  */
 
-require("./pre.inc.php");
+require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 // Load traductions files

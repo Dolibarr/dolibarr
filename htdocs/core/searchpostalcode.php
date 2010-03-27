@@ -37,7 +37,8 @@
  *       \brief      Search the city corresponding to the ZIP code entered. 1st round is sought in the company table, if we have two customers in the same city that is direct. If the search never does anything then we start looking in the table of postcodes.
  *       \version    $Id$
  */
-require("pre.inc.php");
+
+require("../main.inc.php");
 
 $langs->load("companies");
 
@@ -210,7 +211,7 @@ function run_request($table)
     }
     else $sql.= " cp != '' AND cp IS NOT NULL";
 	$sql.= " ORDER by fk_pays, ville, cp";
-	$sql.= ' '.$db->plimit(50);	// Avoid pb with bad criteria
+	$sql.= $db->plimit(50);	// Avoid pb with bad criteria
 
     //print $sql.'<br>';
 	$result=$db->query($sql);

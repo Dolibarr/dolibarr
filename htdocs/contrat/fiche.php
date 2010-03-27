@@ -26,7 +26,7 @@
  *       \version    $Id$
  */
 
-require("./pre.inc.php");
+require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
  *      \file       htdocs/compta/stats/comp.php
  *      \ingroup    commercial
  *  	\version	$Id$
+ * 		TODO	Remove or add page in menus
  */
 
 require('../../main.inc.php');
@@ -262,9 +263,9 @@ function ppt ($db, $year, $socid)
 	print "<table width=\"100%\">";
 
 	print '<tr class="liste_titre"><td align="center" valign="top" width="30%">';
-	print "CA Pr�visionnel bas� sur les propal $year";
+	print "CA Previsionnel base sur les propal $year";
 
-	print "</td><td align=\"center\" valign=\"top\">CA R�alis� $year</td>";
+	print "</td><td align=\"center\" valign=\"top\">CA Realise $year</td>";
 	print "<td align=\"center\" valign=\"top\">Delta $year</td></tr>";
 
 	print '<tr><td valign="top" align="center" width="30%">';

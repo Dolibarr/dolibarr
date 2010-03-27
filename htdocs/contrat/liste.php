@@ -25,7 +25,7 @@
  *       \version    $Id$
  */
 
-require("./pre.inc.php");
+require ("../main.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
