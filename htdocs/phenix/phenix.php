@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ if (empty($conf->global->PHPPHENIX_URL))
 
 $mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
 $leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
+$idmenu=isset($_GET["idmenu"])?$_GET["idmenu"]:"";
 
 print "
 <html>
@@ -42,7 +43,7 @@ print "
 </head>
 
 <frameset rows=\"28,*\" border=0 framespacing=0 frameborder=0>
-    <frame name=\"barre\" src=\"phenixtop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."\" noresize scrolling=\"NO\" noborder>
+    <frame name=\"barre\" src=\"phenixtop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu."&nobackground=1\" noresize scrolling=\"NO\" noborder>
     <frame name=\"main\" src=\"".$conf->global->PHPPHENIX_URL."\">
     <noframes>
     <body>

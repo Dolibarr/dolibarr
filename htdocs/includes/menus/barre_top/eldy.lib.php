@@ -40,7 +40,6 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
 	$_SESSION["leftmenuopened"]="";
 
-
 	print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
 
 	// Home
