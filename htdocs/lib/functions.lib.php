@@ -2525,6 +2525,32 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	return $amount;
 }
 
+/**
+ *	\brief	Return localtaxe rate for a particular tva
+ * 	\param      	tva			Vat taxe
+ * 	\param      	local		Local taxe to search and return
+ */
+function get_localtax($tva, $local=0)
+{
+	global $db, $conf, $mysoc;
+
+	$code_pays=$mysoc->pays_code;
+	
+	// Search local taxes
+	$sql  = "SELECT t.localtax1, t.localtax2";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
+	$sql .= " AND t.taux =".$tva." AND t.active = 1";
+	$sql .= " ORDER BY t.localtax1 ASC, t.localtax2 ASC";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($local==1) return $obj->localtax1;
+		elseif ($local==2) return $obj->localtax2;
+	}
+}
 
 /**
  *	\brief	Return vat rate of a product in a particular selling country

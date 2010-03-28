@@ -696,7 +696,7 @@ class Product extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,";
 		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc) ";
 		$sql.= " VALUES(".($level?$level:1).", ".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",";
-		$sql.= " ".$this->localtax1_tx.",".$this->localtax1_tx.",".$this->price_min.",".$this->price_min_ttc;
+		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc;
 		$sql.= ")";
 
 		dol_syslog("Product::_log_price sql=".$sql);
@@ -884,7 +884,11 @@ class Product extends CommonObject
 				}
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
-
+			
+			//Local taxes
+			$localtax1=get_localtax($newvat,1);
+			$localtax2=get_localtax($newvat,2);
+			
 			// Ne pas mettre de quote sur le numeriques decimaux.
 			// Ceci provoque des stockage avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
@@ -893,6 +897,8 @@ class Product extends CommonObject
 			$sql.= " price_ttc=".$price_ttc.",";
 			$sql.= " price_min=".$price_min.",";
 			$sql.= " price_min_ttc=".$price_min_ttc.",";
+			$sql.= " localtax1_tx=".$localtax1.",";
+			$sql.= " localtax2_tx=".$localtax2.",";
 			$sql.= " tva_tx='".price2num($newvat)."'";
 			$sql.= " WHERE rowid = " . $id;
 
@@ -906,7 +912,10 @@ class Product extends CommonObject
 				$this->price_min_ttc = $price_min_ttc;
 				$this->price_base_type = $newpricebase;
 				$this->tva_tx = $newvat;
-
+				//Local taxes
+				$this->localtax1_tx = $localtax1;
+				$this->localtax2_tx = $localtax2;	
+				
 				$this->_log_price($user,$level);
 			}
 			else

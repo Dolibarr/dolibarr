@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,6 +140,11 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		if ($product->price_base_type == 'TTC') $product->price_min_ttc = $_POST["price_min"];
 		else $product->price_min = $_POST["price_min"];
 		$product->tva_tx             = $_POST["tva_tx"];
+		
+		// local taxes.
+		$product->localtax1_tx = get_localtax($product->tva_tx,1);
+		$product->localtax2_tx = get_localtax($product->tva_tx,2);
+		
 		$product->type               = $_POST["type"];
 		$product->status             = $_POST["statut"];
 		$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
