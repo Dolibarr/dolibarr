@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,7 +89,7 @@ if ($socid > 0)
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $societe->code_client;
-        if ($societe->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+        if ($societe->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
         print '</td></tr>';
     }
 
@@ -98,7 +98,7 @@ if ($socid > 0)
         print '<tr><td>';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $societe->code_fournisseur;
-        if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td></tr>';
     }
 

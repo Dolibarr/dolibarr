@@ -211,7 +211,7 @@ if ($_GET["socid"])
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $soc->code_client;
-		if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+		if ($soc->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		print '</td></tr>';
 	}
 
@@ -220,7 +220,7 @@ if ($_GET["socid"])
 		print '<tr><td>';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print $soc->code_fournisseur;
-		if ($soc->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+		if ($soc->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		print '</td></tr>';
 	}
 
