@@ -1051,12 +1051,12 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='')
 function img_object($alt, $object)
 {
 	global $conf,$langs;
-	
+
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$object,$regs))
 	{
 		return '<img src="'.DOL_URL_ROOT.'/'.$regs[2].'/img/object_'.$regs[1].'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 	}
-	
+
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_'.$object.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
 }
 
@@ -2526,16 +2526,17 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 }
 
 /**
- *	\brief	Return localtaxe rate for a particular tva
- * 	\param      	tva			Vat taxe
- * 	\param      	local		Local taxe to search and return
+ *	\brief		Return localtaxe rate for a particular tva
+ * 	\param      tva			Vat taxe
+ * 	\param      local		Local taxe to search and return
+ * 	\return		int			<0 if KO, localtax if found
  */
-function get_localtax($tva, $local=0)
+function get_localtax($tva, $local)
 {
 	global $db, $conf, $mysoc;
 
 	$code_pays=$mysoc->pays_code;
-	
+
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
@@ -2550,6 +2551,8 @@ function get_localtax($tva, $local=0)
 		if ($local==1) return $obj->localtax1;
 		elseif ($local==2) return $obj->localtax2;
 	}
+
+	return -1;
 }
 
 /**
@@ -2670,7 +2673,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 {
 	if (!is_object($societe_vendeuse)) return -1;
 	if (!is_object($societe_acheteuse)) return -1;
-	
+
 	if($societe_vendouse->pays_id=='ES')
 	{
 		if ($local=='1') //RE
@@ -2678,17 +2681,17 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 			// Si achatteur non assujeti a RE, localtax1 par default=0
 			if (is_numeric($societe_acheteuse->localtax1_assuj) && ! $societe_acheteuse->localtax1_assuj) return 0;
 			if (! is_numeric($societe_acheteuse->localtax1_assuj) && $societe_acheteuse->localtax1_assuj=='localtax1off') return 0;
-		} 
+		}
 		elseif ($local=='2') //IRPF
 		{
 			// Si vendeur non assujeti a IRPF, localtax2 par default=0
 			if (is_numeric($societe_vendeuse->localtax2_assuj) && ! $societe_vendeuse->localtax2_assuj) return 0;
 			if (! is_numeric($societe_vendeuse->localtax2_assuj) && $societe_vendeuse->localtax2_assuj=='localtax2off') return 0;
 		} else return -1;
-		
+
 		if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	
-		return $taux_produit;	
+		if (strlen($taux_produit) == 0) return -1;
+		return $taux_produit;
 	}
 	return 0;
 }

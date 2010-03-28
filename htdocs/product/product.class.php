@@ -194,7 +194,7 @@ class Product extends CommonObject
 		//Local taxes
 		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
-		
+
 		if (empty($this->price))     	$this->price = 0;
 		if (empty($this->price_min)) 	$this->price_min = 0;
 		if (empty($this->status))    	$this->status = 0;
@@ -421,7 +421,7 @@ class Product extends CommonObject
 		//Local taxes
 		if (empty($this->localtax1_tx))			$this->localtax1_tx = 0;
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
-		
+
 		if (empty($this->finished))  			$this->finished = 0;
 		if (empty($this->hidden))   			$this->hidden = 0;
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -431,11 +431,11 @@ class Product extends CommonObject
 		$sql.= " SET label = '" . addslashes($this->libelle) ."'";
 		$sql.= ",ref = '" . $this->ref ."'";
 		$sql.= ",tva_tx = " . $this->tva_tx;
-		
+
 		//Local taxes
 		$sql.= ",localtax1_tx = " . $this->localtax1_tx;
 		$sql.= ",localtax2_tx = " . $this->localtax2_tx;
-		
+
 		$sql.= ",envente = " . $this->status;
 		$sql.= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
 		$sql.= ",hidden = " . ($this->hidden<0 ? "null" : $this->hidden);
@@ -884,11 +884,13 @@ class Product extends CommonObject
 				}
 			}
 			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
-			
+
 			//Local taxes
 			$localtax1=get_localtax($newvat,1);
 			$localtax2=get_localtax($newvat,2);
-			
+			if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
+			if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
+
 			// Ne pas mettre de quote sur le numeriques decimaux.
 			// Ceci provoque des stockage avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
@@ -897,8 +899,8 @@ class Product extends CommonObject
 			$sql.= " price_ttc=".$price_ttc.",";
 			$sql.= " price_min=".$price_min.",";
 			$sql.= " price_min_ttc=".$price_min_ttc.",";
-			$sql.= " localtax1_tx=".$localtax1.",";
-			$sql.= " localtax2_tx=".$localtax2.",";
+			$sql.= " localtax1_tx=".($localtax1>=0?$localtax1:'NULL').",";
+			$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
 			$sql.= " tva_tx='".price2num($newvat)."'";
 			$sql.= " WHERE rowid = " . $id;
 
@@ -914,8 +916,8 @@ class Product extends CommonObject
 				$this->tva_tx = $newvat;
 				//Local taxes
 				$this->localtax1_tx = $localtax1;
-				$this->localtax2_tx = $localtax2;	
-				
+				$this->localtax2_tx = $localtax2;
+
 				$this->_log_price($user,$level);
 			}
 			else
@@ -979,7 +981,7 @@ class Product extends CommonObject
 			//Local taxes
 			$this->localtax1_tx       = $result["localtax1_tx"];
 			$this->localtax2_tx       = $result["localtax2_tx"];
-			
+
 			$this->type               = $result["fk_product_type"];
 			$this->status             = $result["envente"];
 			$this->finished           = $result["finished"];
