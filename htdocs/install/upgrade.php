@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -335,6 +335,6 @@ if (empty($actiondone))
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
-pFooter(! $ok,$setuplang);
+pFooter(! $ok && empty($_GET["ignoreerrors"]),$setuplang);
 
 ?>
