@@ -2557,6 +2557,7 @@ function get_localtax($tva, $local)
 
 /**
  *	\brief	Return vat rate of a product in a particular selling country
+ *	TODO May be this should be better as a method of product class
  */
 function get_product_vat_for_country($idprod, $countrycode)
 {
@@ -2565,7 +2566,7 @@ function get_product_vat_for_country($idprod, $countrycode)
 	$product=new Product($db);
 	$product->fetch($idprod);
 
-	// \TODO Read rate according to countrycode
+	// \TODO Read default product vat according to countrycode
 	// For the moment only one rate supported
 
 	return $product->tva_tx;
@@ -2573,6 +2574,7 @@ function get_product_vat_for_country($idprod, $countrycode)
 
 /**
  *	\brief	Return localtax rate of a product in a particular selling country
+ *	TODO May be this should be better as a method of product class
  */
 function get_product_localtax_for_country($idprod, $local, $countrycode)
 {
@@ -2583,10 +2585,12 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
 
 	if ($local=='1') return $product->localtax1_tx;
 	elseif ($local=='2') return $product->localtax2_tx;
+
+	return -1;
 }
 
 /**
- *	\brief      	Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
+ *	\brief      	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
  *	\remarks    	Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
  *					Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
  *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -2662,7 +2666,7 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
 }
 
 /**
- *	\brief      	Fonction qui renvoie la localtax d'une ligne (en fonction du vendeur, acheteur et taux du produit)
+ *	\brief      	Function that return localtax of a product line (according to seller, buyer and product vat rate)
  *	\param      	societe_vendeuse    	Objet societe vendeuse
  *	\param      	societe_acheteuse   	Objet societe acheteuse
  *  \param			local					Localtax a traiter
@@ -2674,7 +2678,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 	if (!is_object($societe_vendeuse)) return -1;
 	if (!is_object($societe_acheteuse)) return -1;
 
-	if($societe_vendouse->pays_id=='ES')
+	if($societe_vendeuse->pays_id=='ES')
 	{
 		if ($local=='1') //RE
 		{
