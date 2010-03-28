@@ -950,7 +950,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc,";
-		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, localtax1_tx, localtax2_tx envente,";
+		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, localtax1_tx, localtax2_tx, envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
