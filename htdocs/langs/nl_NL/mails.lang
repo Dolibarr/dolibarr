@@ -14,7 +14,7 @@ MailFrom=Afzender
 MailErrorsTo=Fouten
 MailReply=Antwoord op
 MailTo=Ontvanger(s)
-MailCC=Kopiëren naar
+MailCC=KopiÃ«ren naar
 MailCCC=Cached kopie aan
 MailTopic=EMail onderwerp
 MailText=Bericht
@@ -67,6 +67,8 @@ ConfirmCloneEMailing=Weet u zeker dat u wilt kloon deze e-mail te sturen?
 CloneContent=Clone bericht
 CloneReceivers=Cloner ontvangers
 DateLastSend=Datum van de laatse verzenden
+DateSending=Datum verzonden
+SentTo=Verzonden aan <b>%s</b>
 
 # vrije modules mailing lijst van ontvangers
 MailingModuleDescContactCompanies=Contacten van alle derden (klant, prospect, leverancier, ...)
