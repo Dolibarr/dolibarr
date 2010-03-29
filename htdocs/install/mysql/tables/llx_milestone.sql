@@ -1,4 +1,4 @@
--- ============================================================================
+-- ===========================================================================
 -- Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -16,12 +16,18 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
---
--- ============================================================================
+-- ===========================================================================
 
-
-ALTER TABLE llx_projet_milestone ADD INDEX idx_projet_milestone_fk_projet (fk_projet);
-ALTER TABLE llx_projet_milestone ADD INDEX idx_projet_milestone_fk_user_creat (fk_user_creat);
-
-ALTER TABLE llx_projet_milestone ADD CONSTRAINT fk_projet_milestone_fk_projet 	  FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
-ALTER TABLE llx_projet_milestone ADD CONSTRAINT fk_projet_milestone_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
+create table llx_milestone
+(
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  label					varchar(255) NOT NULL,
+  description			text,
+  datec					datetime,						-- date creation
+  tms					timestamp,						-- date creation/modification
+  dateo					datetime,						-- date start milestone
+  datee					datetime,						-- date end milestone
+  priority				integer	DEFAULT 0,				-- priority
+  fk_user_creat			integer,						-- user who created the milestone
+  rang					integer	DEFAULT 0
+)type=innodb;

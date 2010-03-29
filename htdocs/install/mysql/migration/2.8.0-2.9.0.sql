@@ -163,3 +163,34 @@ INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `
 
 UPDATE llx_adherent SET pays = null where pays <= 0 and pays != '0';
 ALTER table llx_adherent MODIFY pays integer;
+
+-- add milestone module
+DROP TABLE llx_projet_milestone;
+create table llx_milestone
+(
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  label					varchar(255) NOT NULL,
+  description			text,
+  datec					datetime,
+  tms					timestamp,
+  dateo					datetime,
+  datee					datetime,
+  priority				integer	DEFAULT 0,
+  fk_user_creat			integer,
+  rang					integer	DEFAULT 0
+)type=innodb;
+
+ALTER TABLE llx_milestone ADD INDEX idx_milestone_fk_user_creat (fk_user_creat);
+ALTER TABLE llx_milestone ADD CONSTRAINT fk_milestone_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
+
+create table llx_element_milestone
+(
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  fk_element		integer NOT NULL,
+  elementtype		varchar(16) NOT NULL,
+  fk_milestone		integer NOT NULL
+) type=innodb;
+
+ALTER TABLE llx_element_milestone ADD UNIQUE INDEX idx_element_milestone_idx1 (fk_element, elementtype, fk_milestone);
+ALTER TABLE llx_element_milestone ADD INDEX idx_element_milestone_fk_milestone (fk_milestone);
+ALTER TABLE llx_element_milestone ADD CONSTRAINT fk_element_milestone_fk_milestone FOREIGN KEY (fk_milestone) REFERENCES llx_milestone(rowid);

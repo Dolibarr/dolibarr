@@ -169,28 +169,6 @@ ALTER TABLE llx_projet ADD COLUMN note_public text AFTER note_private;
 ALTER TABLE llx_projet MODIFY fk_statut smallint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_projet MODIFY fk_user_creat integer NOT NULL;
 
--- Add project milestone
-create table llx_projet_milestone
-(
-  rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  fk_projet				integer NOT NULL,
-  label					varchar(255) NOT NULL,
-  description			text,
-  datec					datetime,
-  tms					timestamp,
-  dateo					datetime,
-  datee					datetime,
-  priority				integer	DEFAULT 0,
-  fk_user_creat			integer,
-  rang					integer	DEFAULT 0
-)type=innodb;
-
-ALTER TABLE llx_projet_milestone ADD INDEX idx_projet_milestone_fk_projet (fk_projet);
-ALTER TABLE llx_projet_milestone ADD INDEX idx_projet_milestone_fk_user_creat (fk_user_creat);
-
-ALTER TABLE llx_projet_milestone ADD CONSTRAINT fk_projet_milestone_fk_projet 	  FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
-ALTER TABLE llx_projet_milestone ADD CONSTRAINT fk_projet_milestone_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
-
 -- Uniformize code: change tva_taux to tva_tx
 ALTER TABLE llx_facturedet CHANGE tva_taux tva_tx real;
 ALTER TABLE llx_facture_fourn_det CHANGE tva_taux tva_tx double(6,3);
