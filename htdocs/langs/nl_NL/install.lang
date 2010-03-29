@@ -93,7 +93,7 @@ LoginAlreadyExists=Bestaat al
 DolibarrAdminLogin=Dolibarr admin login
 FailedToCreateAdminLogin=Maken van het Dolibarr administrator account is mislukt.
 AdminLoginAlreadyExists=Dolibarr administrator account <b>'%s'</b> bestaat reeds.
-WarningRemoveInstallDir=Waarschuwing, om veiligheidsredenen, nadat de installatie of upgrade is voltooid, moet u de <b>install map</b> verwijderen of hernoemen naar install.lock om misbruik te voorkomen.
+WarningRemoveInstallDir=Waarschuwing: om veiligheidsredenen, nadat de installatie of upgrade is voltooid, moet u de <b>install map</b> verwijderen of hernoemen naar install.lock om misbruik te voorkomen.
 ThisPHPDoesNotSupportTypeBase=Dit PHP-systeem biedt geen ondersteuning voor enig interface om toegang te krijgen tot database type %s
 FunctionNotAvailableInThisPHP=Niet beschikbaar met deze PHP
 MigrateScript=Migreer script
@@ -109,12 +109,12 @@ UpgradeDesc=Gebruik deze modus als u oudere Dolibarr bestanden hebt vervangen do
 Start=Start
 InstallNotAllowed=Setup niet toegestaan door <b>conf.php</b> machtigingen
 NotAvailable=Niet beschikbaar
-YouMustCreateWithPermission=U moet bestand %s creÃ«ren en zet schrijf permissies op voor de web-server tijdens het installatieproces.
+YouMustCreateWithPermission=U dient bestand %s te maken en zet schrijf permissies op voor de webserver, tijdens het installatieproces.
 CorrectProblemAndReloadPage=Gelieve het probleem op te lossen en herlaad pagina.
 AlreadyDone=Al gemigreerd
 DatabaseVersion=Database versie
 ServerVersion=Database server versie
-YouMustCreateItAndAllowServerToWrite=Moet u deze map creÃ«ren en de web server dient schrijfrechten hiervoor te hebben.
+YouMustCreateItAndAllowServerToWrite=U dient deze map te maken en daarvoor dient de webserver schrijfrechten te hebben.
 CharsetChoice=Tekenset keuze
 CharacterSetClient=Tekenset gebruikt voor gegenereerde HTML-webpagina's
 CharacterSetClientComment=Kies tekenset voor web beeld. <br/> Standaard voorgesteld karakter set is die van uw database.
@@ -122,8 +122,8 @@ CollationConnection=Teken sorteer volgorde
 CollationConnectionComment=Kies pagina code die defineert de karakter sorteer volgorde zoals gebruikt door de database. Deze parameter wordt ook wel door sommige databanken 'collation' (verzamelen) genoemd. <br/> Deze parameter kan niet worden gedefinieerd als de database al bestaat.
 CharacterSetDatabase=Tekenset voor database
 CharacterSetDatabaseComment=Kies de gewilde tekenset om de database te maken. <br/> Deze parameter kan niet worden gedefinieerd als database al bestaat.
-YouAskDatabaseCreationSoDolibarrNeedToConnect=U vraagt om database <b>%s</b> te maken, maar hiervoor heeft Dolibarr een verbinding nodig met server <b>%s</b> met superuser <b>%s</b> machtigingen.
-YouAskLoginCreationSoDolibarrNeedToConnect=U vraagt om database login <b>%s</b> te maken, maar hiervoor heeft Dolibarr een verbinding nodig met server <b>%s</b> met superuser <b>%s</b> machtigingen.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=U vraagt om de database <b>%s</b> te maken, maar hiervoor heeft Dolibarr een verbinding nodig met server <b>%s</b> met superuser <b>%s</b> machtigingen.
+YouAskLoginCreationSoDolibarrNeedToConnect=U vraagt om de database login <b>%s</b> te maken, maar hiervoor heeft Dolibarr een verbinding nodig met server <b>%s</b> met superuser <b>%s</b> machtigingen.
 BecauseConnectionFailedParametersMayBeWrong=Als de verbinding mislukt, uw host of superuser gegevens kunnen verkeerd zijn.
 OrphelinsPaymentsDetectedByMethod=Wezen betaling gedetecteerd door methode %s
 RemoveItManuallyAndPressF5ToContinue=Verwijder het handmatig en herlaad de pagina om verder te gaan.
@@ -131,7 +131,7 @@ KeepDefaultValuesWamp=U gebruikt de Dolibarr wizard voor het instellen van DoliW
 KeepDefaultValuesDeb=U gebruikt de Dolibarr wizard van een Ubuntu of Debian achtig package, dus de hier voorgestelde waarden zijn al geoptimaliseerd. Verander ze alleen als u weet wat u doet.
 KeepDefaultValuesMamp=U gebruikt de Dolibarr wizard voor het instellen van DoliMamp, dus de hier voorgestelde waarden zijn al geoptimaliseerd. Verander ze alleen als u weet wat u doet.
 FieldRenamed=Veld naam
-IfLoginDoesNotExistsCheckCreateUser=Als de login nog niet bestaat, moet u de optie 'CreÃ«er gebruiker' aanvinken
+IfLoginDoesNotExistsCheckCreateUser=Als de login nog niet bestaat, moet u de optie 'Maak gebruiker' aanvinken
 ErrorConnection=Server <b>'%s'</b>, database naam <b>'%s'</b>, login <b>'%s'</b> of database wachtwoord kan verkeerd zijn of PHP client versie kan te oud zijn in vergelijking met de database versie.
 InstallChoiceRecommanded=Aanbevolen keuze te installeren versie <b>%s</b> van uw huidige versie <b>%s</b>
 InstallChoiceSuggested=<b>Installeer voorgestelde keuze.</b>
@@ -140,7 +140,7 @@ IfAlreadyExistsCheckOption=Als de naam juist is, maar de database bestaat niet, 
 OpenBaseDir=Parameter php openbasedir
 YouAskToCreateDatabaseSoRootRequired=U hebt het selectievak "Maak Database" geselecteerd. Hiervoor zijn de inlognaam en wachtwoord van de root (standaard inlog) verplicht.
 YouAskToCreateDatabaseUserSoRootRequired=U hebt het selectievak "Maak gebruiker-eigenaar" geselecteerd. Hiervoor zijn de inlognaam en wachtwoord van de root (standaard inlog) verplicht.
-NextStepMightLastALongTime=De volgende stap kan enkele minuten duren. Na het verzenden, dank u voor het wachten op de volledige weergave van de volgende pagina.
+NextStepMightLastALongTime=De volgende stap kan enkele minuten duren. Wacht na het verzenden, dank u voor het wachten op de <b>volledige weergave</b> van de volgende pagina.
 
 #########
 # upgrade
@@ -184,8 +184,8 @@ MigrationContractsInvalidDatesNothingToUpdate=Geen datum met onjuiste waarde te 
 
 # Contracts Incoherent Dates Update
 MigrationContractsIncoherentCreationDateUpdate=Onjuiste waarde contract aanmaakdatum correctie
-MigrationContractsIncoherentCreationDateUpdateSuccess=Onjuiste waarde contract aanmaakdatum correctie gedaan succes
-MigrationContractsIncoherentCreationDateNothingToUpdate=Geen onjuiste waarde voor de totstandkoming van contracten datum te corrigeren
+MigrationContractsIncoherentCreationDateUpdateSuccess=Onjuiste waarde contract aanmaakdatum correctie succesvol gedaan
+MigrationContractsIncoherentCreationDateNothingToUpdate=Juiste waarde contract aanmaakdatum niets te corrigeren
 
 # Reopening Contracts
 MigrationReopeningContracts=Open contract gesloten door fout
