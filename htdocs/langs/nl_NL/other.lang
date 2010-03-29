@@ -184,3 +184,5 @@ ExportableDatas=Exporteerbare gegevens
 NoExportableData=Nr. exporteerbare gegevens (geen modules met exporteerbare gegevens geladen, of ontbrekende machtigingen)
 ToExport=Export
 NewExport=Nieuwe exportmogelijkheden
+##### External sites #####
+ExternalSites=Externe sites
