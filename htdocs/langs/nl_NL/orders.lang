@@ -133,7 +133,7 @@ QtyOrdered=Aantal besteld
 AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhangen van het gewicht van de bestelling
 
 # Document models
-PDFEinsteinDescription=Een complete zakelijk voorstel model (logo. ..)
+PDFEinsteinDescription=Model van een complete zakelijk voorstel model (incl. logo, ..)
 
 # NumRef Modules
 MarbreNumRefDesc=Geeft het aantal als %syymm-nnnn waar yy het jaar is, mm de maand en nnnn een sequencieel oplopende waarde zonder 0 vervanging
