@@ -2,14 +2,14 @@
 CHARSET=UTF-8
 Trip=Reis
 Trips=Reizen
-TripsAndExpenses=Reiskosten
-TripId=Id reis / kosten nota
+TripsAndExpenses=Onkostendeclaratie
+TripId=Id reis/kosten nota
 TripCard=Verplaatsingskaart
 AddTrip=Reis toevoegen
 ListOfTrips=Lijst van reizen
 ListOfFees=Lijst van de vergoedingen
 NewTrip=Nieuwe reis
-CompanyVisited=Bedrijf / particulier bezocht
+CompanyVisited=Bedrijf/particulier bezocht
 Kilometers=Kilometers
 FeesKilometersOrAmout=Kilometerskosten
 DeleteTrip=Verwijder reis
