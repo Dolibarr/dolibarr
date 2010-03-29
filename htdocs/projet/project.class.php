@@ -24,7 +24,7 @@
  *		\brief      Fichier de la classe de gestion des projets
  *		\version    $Id$
  */
-require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
 
 /**
  *		\class      Project

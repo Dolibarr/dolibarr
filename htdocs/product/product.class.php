@@ -27,7 +27,7 @@
  *	\brief      Fichier de la classe des produits predefinis
  *	\version    $Id$
  */
-require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
 
 
 /**

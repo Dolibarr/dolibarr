@@ -25,7 +25,7 @@
  *  \version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/commonobject.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 

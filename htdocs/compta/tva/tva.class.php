@@ -25,7 +25,7 @@
 */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
 
 
 /**
@@ -381,7 +381,7 @@ class Tva extends CommonObject
     }
 
     /*
-     *      \brief      Tva payée
+     *      \brief      Tva payï¿½e
      *
      */
 
@@ -421,8 +421,8 @@ class Tva extends CommonObject
 
 
     /*
-     *      \brief      Tva réglée
-     *                  Total de la TVA réglee aupres de qui de droit
+     *      \brief      Tva rï¿½glï¿½e
+     *                  Total de la TVA rï¿½glee aupres de qui de droit
      *
      */
 
@@ -528,7 +528,7 @@ class Tva extends CommonObject
 									
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
             	  
-                    // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a généré l'écriture bancaire
+                    // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a gï¿½nï¿½rï¿½ l'ï¿½criture bancaire
                     if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);
@@ -575,7 +575,7 @@ class Tva extends CommonObject
     }
 	
     /**
-     *      \brief      Mise a jour du lien entre le paiement tva et la ligne générée dans llx_bank
+     *      \brief      Mise a jour du lien entre le paiement tva et la ligne gï¿½nï¿½rï¿½e dans llx_bank
      *      \param      id_bank     Id compte bancaire
 	 *		\return		int			<0 if KO, >0 if OK
      */

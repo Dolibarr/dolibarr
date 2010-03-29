@@ -28,7 +28,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
