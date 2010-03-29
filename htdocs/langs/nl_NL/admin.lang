@@ -270,7 +270,8 @@ ListOfDirectories=Lijst van OpenDocument sjablonen mappen
 ListOfDirectoriesForModelGenODT=Lijst van mappen met sjablonen in OpenDocument-formaat.<br><br>Zet hier het volledige pad naar de mappen.<br>Voeg een harde return tussen elke map.<br> Om een map van de GED-module toe te voegen, voeg hier <b>DOL_DATA_ROOT/ECM/uwmappennaam</b>.<br><br>Bestanden in deze mappen dienen te eindigen op <b>.odt</b>.
 NumberOfModelFilesFound=Aantal ODT sjablonen gevonden in deze mappen
 ExampleOfDirectoriesForModelGen=Voorbeelden van de syntaxis: <br>c:\mijndir<br>/home/mijndir<br>DOL_DATA_ROOT/ECM/ecmdir
-
+FollowingSubstitutionKeysCanBeUsed=Door het plaatsen van de volgende velden in het sjabloon krijgt u een vervanging met de aangepaste waarde bij het genereren van het document:
+FullListOnOnlineDocumentation=De complete lijst van beschikbare velden is bij de module gebruiker documentatie op de wiki http://wiki.dolibarr.org beschikbaar.
 # Modules = undefined
 Module0Name = Gebruikers & groepen
 Module0Desc = Beheer gebruikers en groepen
@@ -865,6 +866,7 @@ ClickToDialUrlDesc=Url aangeroepen wanneer een klik op een telefoon picto wordt 
 Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####
 InterventionsSetup=Interventies module setup
+FreeLegalTextOnInterventions=Aanvullende verklaring over de vormen van interventie
 ##### Members #####
 MembersSetup=Leden module setup
 MemberMainOptions=Belangrijkste opties
