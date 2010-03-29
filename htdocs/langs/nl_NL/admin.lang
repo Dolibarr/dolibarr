@@ -52,6 +52,7 @@ JavascriptDisabled=JavaScript uitgeschakeld
 UsePopupCalendar=Gebruik popup voor data input
 UsePreviewTabs=Gebruik preview tabbladen
 ShowPreview=Toon preview
+PreviewNotAvailable=Preview niet beschikbaar
 ThemeCurrentlyActive=Thema momenteel actief
 CurrentTimeZone=Huidige TijdsZone
 Space=Ruimte
@@ -265,6 +266,10 @@ ConfirmPurge=Weet u zeker dat u nu wilt purgen?<br>Dit verwijderd permanent uw d
 MinLength=Minimale lengte
 LanguageFilesCachedIntoShmopSharedMemory=Bestanden .lang gedeeld geheugen
 ExamplesWithCurrentSetup=Voorbeelden met de huidige actieve configuratie
+ListOfDirectories=Lijst van OpenDocument sjablonen mappen
+ListOfDirectoriesForModelGenODT=Lijst van mappen met sjablonen in OpenDocument-formaat.<br><br>Zet hier het volledige pad naar de mappen.<br>Voeg een harde return tussen elke map.<br> Om een map van de GED-module toe te voegen, voeg hier <b>DOL_DATA_ROOT/ECM/uwmappennaam</b>.<br><br>Bestanden in deze mappen dienen te eindigen op <b>.odt</b>.
+NumberOfModelFilesFound=Aantal ODT sjablonen gevonden in deze mappen
+ExampleOfDirectoriesForModelGen=Voorbeelden van de syntaxis: <br>c:\mijndir<br>/home/mijndir<br>DOL_DATA_ROOT/ECM/ecmdir
 
 # Modules = undefined
 Module0Name = Gebruikers & groepen
@@ -634,6 +639,8 @@ Database=Databank
 DatabaseServer=Database host
 DatabaseName=Database naam
 DatabasePort=Databank poort
+DatabaseUser=Database gebruiker
+DatabasePassword=Database wachwoord
 DatabaseConfiguration=Database setup
 Tables=Tabellen
 TableName=Tabel naam
@@ -779,6 +786,9 @@ ModuleCompanyCodePanicum=Terugkeer een lege boekhoudkundige code.
 ModuleCompanyCodeDigitaria=Boekhoudkundige-code is afhankelijk van derden code. De code bestaat uit het teken "C" in de eerste positie, gevolgd door de eerste 5 tekens van de derden code.
 UseNotifications=Gebruik notificaties
 NotificationsDesc=E-mail notificaties feature stelt u in staat om vooraf ingestelde automatisch mail naar derden te versturen. 
+ModelModules=Documenten sjablonen
+DocumentModelOdt=Maak documenten met OpenDocuments sjablonen (. ODT bestanden voor OpenOffice, KOffice, TextEdit ,...)
+WatermarkOnDraft=Watermerk op draft documenten
 ##### Webcal setup #####
 WebCalSetup=Webkalender link setup
 WebCalSyncro=Toevoegen Dolibarr evenementen Webkalenear
@@ -803,7 +813,7 @@ WebCalAddEventOnStatusBill=Voeg kalender evenement toe bij het veranderen van de
 WebCalAddEventOnStatusMember=Voeg kalender evenement toe bij het veranderen van de status van een lid
 WebCalUrlForVCalExport=Een export link naar het <b>%s</b> formaat is beschikbaar onder de volgende link: %s
 WebCalCheckWebcalSetup=Misschien is de Webcal module setup correct.
-##### Invoices ##### = undefined
+##### Invoices #####
 BillsSetup=Facturen module setup
 BillsDate=Facturen datum
 BillsNumberingModule=Facturen en creditnota's nummering module
@@ -820,7 +830,7 @@ SuggestPaymentByRIBOnAccount=Suggestie betaling bij terugboeking van een rekenin
 SuggestPaymentByChequeToAddress=Suggesteer betaling door middel van cheque aan
 FreeLegalTextOnFacturen=Eigen tekst op Facturen
 WatermarkOnDraftFacturen=Watermerk op voorbeeld Facturen (elke als leeg)
-##### Proposals ##### = undefined
+##### Proposals #####
 PropalSetup=Offertes module setup
 CreateForm=Maak formulieren
 NumberOfProductLines=Aantal produkt regels
@@ -844,19 +854,18 @@ HideTreadedOrders=Verberg de behandelde of geannuleerde order in de lijst
 ValidOrderAfterPropalClosed=Validering van de order na afsluiting offerte,
 FreeLegalTextOnOrders=Eigen tekst op orders
 WatermarkOnDraftOrders=Watermerk over de ontwerp-beschikkingen (elke indien leeg)
-##### Fiche inter ##### = undefined
+##### Fiche inter #####
 FicheinterNumberingModules=Interventie nummering modules
 TemplatePDFInterventions=Interventie kaart documenten modellen
 WatermarkOnDraftInterventionCards=Watermerk op voorbeeld Interventie kaarten (elke als leeg)
-##### Clicktodial ##### = undefined
+##### Clicktodial #####
 ClickToDialSetup=Click to Dial module setup
 ClickToDialUrlDesc=Url aangeroepen wanneer een klik op een telefoon picto wordt gedaan.  Dans l'url, vous pouvez utiliser les balises<br><b>%%1$s</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelÃ©<br><b>%%2$s</b> qui sera remplacÃ© par le tÃ©lÃ©phone de l'appelant (le votre)<br><b>%%3$s</b> qui sera remplacÃ© par votre login clicktodial (dÃ©fini sur votre fiche utilisateur)<br><b>%%4$s</b> qui sera remplacÃ© par votre mot de passe clicktodial (dÃ©fini sur votre fiche utilisateur).
-##### Bookmark4u ##### = undefined
+##### Bookmark4u #####
 Bookmark4uSetup=Bookmark4u module setup
-##### Interventions ##### = undefined
+##### Interventions #####
 InterventionsSetup=Interventies module setup
-FreeLegalTextOnInterventions = Aanvullende verklaring over de vormen van interventie
-##### Members ##### = undefined
+##### Members #####
 MembersSetup=Leden module setup
 MemberMainOptions=Belangrijkste opties
 AddSubscriptionIntoAccount=Voeg abonnementen in bank of contantrekening of bank-module toe
