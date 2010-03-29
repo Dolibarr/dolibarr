@@ -55,7 +55,7 @@ class modMilestone extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
-		$this->picto = 'category';
+		$this->picto = 'milestone';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
