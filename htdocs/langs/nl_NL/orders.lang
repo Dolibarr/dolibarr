@@ -53,7 +53,7 @@ Sending=Zending
 Sendings=Verzendingen
 ShipProduct=Verstuur product
 Discount=Korting
-CreateOrder=Creëer bestelling
+CreateOrder=CreÃ«er bestelling
 RefuseOrder=Bestelling wijgeren
 ApproveOrder=Accepteer bestelling
 ValidateOrder=Valideer bestelling
@@ -134,3 +134,7 @@ AddDeliveryCostLine=Voeg een regel toe die aangeeft dat de leveringskosten afhan
 
 # Document models
 PDFEinsteinDescription=Een complete zakelijk voorstel model (logo. ..)
+
+# NumRef Modules
+MarbreNumRefDesc=Geeft het aantal als %syymm-nnnn waar yy het jaar is, mm de maand en nnnn een sequencieel oplopende waarde zonder 0 vervanging
+
