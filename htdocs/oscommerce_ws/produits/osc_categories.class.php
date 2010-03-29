@@ -27,7 +27,7 @@
 */
 
 // Put here all includes required by your script
-//require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+//require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 

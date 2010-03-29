@@ -20,7 +20,7 @@
  */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 require_once("../includes/configure.php");
 
 

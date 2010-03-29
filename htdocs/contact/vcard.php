@@ -26,7 +26,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/vcard/vcard.class.php");
 
 

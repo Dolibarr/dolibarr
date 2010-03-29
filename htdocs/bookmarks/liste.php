@@ -126,7 +126,7 @@ if ($resql)
             if (! $obj->title)
             {
                 // For compatibility with old Dolibarr bookmarks
-                require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+                require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
                 $societe=new Societe($db);
                 $societe->fetch($obj->rowid);
                 $obj->title=$societe->nom;

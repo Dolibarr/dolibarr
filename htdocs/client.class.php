@@ -23,7 +23,7 @@
  *		\brief      File for class of customers
  *		\version    $Id$
  */
-include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+include_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 
 
 /**
