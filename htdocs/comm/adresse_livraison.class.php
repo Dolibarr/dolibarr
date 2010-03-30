@@ -80,7 +80,7 @@ class AdresseLivraison
         $this->nom=trim($this->nom);
         $this->label=trim($this->label);
 
-        dol_syslog("societe.class.php::create delivery adress ".$this->label);
+        dol_syslog("AdresseLivraison::create label=".$this->label);
 
         $this->db->begin();
 
@@ -100,13 +100,13 @@ class AdresseLivraison
 
                 if ($ret >= 0)
                 {
-                    dol_syslog("Societe::Create delivery adress success id=".$this->id);
+                    dol_syslog("AdresseLivraison::create success id=".$this->id);
                     $this->db->commit();
 		            return 0;
                 }
                 else
                 {
-                    dol_syslog("Societe::Create delivery adress echec update");
+                    dol_syslog("AdresseLivraison::create echec update");
                     $this->db->rollback();
                     return -3;
                 }
@@ -121,7 +121,7 @@ class AdresseLivraison
                 }
                 else
                 {
-                    dol_syslog("Societe::Create echec insert sql=$sql");
+                    dol_syslog("AdresseLivraison::create echec insert sql=$sql");
                 }
                 $this->db->rollback();
                 return -2;
@@ -131,7 +131,7 @@ class AdresseLivraison
         else
         {
             $this->db->rollback();
-            dol_syslog("Societe::Create echec verify sql=$sql");
+            dol_syslog("AdresseLivraison::create echec verify sql=$sql");
             return -1;
         }
     }
@@ -165,7 +165,7 @@ class AdresseLivraison
     {
         global $langs;
 
-        dol_syslog("Societe::Update");
+        dol_syslog("AdresseLivraison::Update");
 
 		// Nettoyage des parametres
 
@@ -189,7 +189,7 @@ class AdresseLivraison
 
         if ($result >= 0)
         {
-            dol_syslog("Societe::Update delivery adress verify ok");
+            dol_syslog("AdresseLivraison::Update verify ok");
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe_adresse_livraison";
             $sql.= " SET label = '" . addslashes($this->label) ."'"; // Champ obligatoire
@@ -231,7 +231,7 @@ class AdresseLivraison
                 {
 
                     $this->error = $langs->trans("Error sql=$sql");
-                    dol_syslog("Societe::Update delivery adress echec sql=$sql");
+                    dol_syslog("AdresseLivraison::Update echec sql=$sql");
                     $result =  -2;
                 }
             }
@@ -415,7 +415,7 @@ class AdresseLivraison
      */
     function delete($id,$socid)
     {
-      dol_syslog("Societe::Delete delivery adress");
+      dol_syslog("AdresseLivraison::Delete");
 
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
       $sql .= " WHERE rowid=".$id." AND fk_societe = ".$socid;
