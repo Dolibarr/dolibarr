@@ -83,7 +83,7 @@ class Conf
 		dol_syslog("Conf::setValues");
 		
 		// Add root path
-		$this->include_path[] = DOL_DOCUMENT_ROOT;
+		$this->include_path[] = DOL_DOCUMENT_ROOT."/";
 		// Add library path
 		$this->include_path[] = DOL_DOCUMENT_ROOT."/lib/";
 
