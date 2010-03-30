@@ -9,6 +9,7 @@
 # $Id$
 
 
+
 # dolibarr_main_url_root
 # This parameter defines the root URL of your Dolibarr index.php page.
 # It must link to the directory htdocs.
@@ -121,6 +122,12 @@ $dolibarr_main_db_character_set="latin1";
 $dolibarr_main_db_collation="latin1_swedish_ci";
 
 
+
+
+##################
+# Login          #
+##################
+
 # dolibarr_main_authentication
 # This parameter contains the way authentication is done.
 # If value "ldap" is used, you must also set parameters dolibarr_main_auth_ldap_*
@@ -133,18 +140,6 @@ $dolibarr_main_db_collation="latin1_swedish_ci";
 # $dolibarr_main_authentication="ldap";
 #
 $dolibarr_main_authentication="dolibarr";
-
-
-# dolibarr_main_force_https
-# This parameter allows to force the HTTPS mode.
-# Warning: If you enable this parameter, your web server must be configured
-# to respond URL with https protocol.
-# Default value: 0
-# Possible values: 0 or 1
-# Examples:
-# $dolibarr_main_force_https=0;
-#
-$dolibarr_main_force_https="0";
 
 
 # Parameters used to setup LDAP authentication.
@@ -169,11 +164,45 @@ $dolibarr_main_force_https="0";
 # $dolibarr_main_demo="autologin,autopass"
 
 
+
+##################
+# Security       #
+##################
+
+
+# dolibarr_main_force_https
+# This parameter allows to force the HTTPS mode.
+# Warning: If you enable this parameter, your web server must be configured
+# to respond URL with https protocol.
+# Default value: 0
+# Possible values: 0 or 1
+# Examples:
+# $dolibarr_main_force_https=0;
+#
+$dolibarr_main_force_https="0";
+
+
+
+##################
+# Other          #
+##################
+
+
 # When this parameter is defined, all errors messages are not reported.
 # This feature exists for production usage to avoid to give any information to hackers.
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
 # $dolibarr_main_prod=1
+
+
+# This is an experimental feature to allow external components to overwrite
+# some Dolibarr kernel files to be overwritten by versions provided by
+# third parties modules.
+# !! Using this feature is done at your own risk and will break Dolibarr stability !!
+# Default value: 0
+# Possible values: 0 or 1
+# Examples:
+# $dolibarr_allow_overwritekernel=1
 
 ?>
