@@ -17,15 +17,15 @@
  */
 
 /**
- *	\file       htdocs/html.formproduct.class.php
- *	\brief      Fichier de la classe des fonctions pr�d�finie de composants html
+ *	\file       htdocs/product/html.formproduct.class.php
+ *	\brief      Fichier de la classe des fonctions predefinie de composants html
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormProduct
- *	\brief      Class with static methods for buildinf HTML components related to products
+ *	\brief      Class with static methods for building HTML components related to products
  *	\remarks	Only common components must be here.
  */
 class FormProduct
@@ -91,7 +91,7 @@ class FormProduct
 
 	/**
 	 *      \brief      Retourne la liste des modes de paiements possibles
-	 *      \param      selected        Id du mode de paiement pr�-s�lectionn�
+	 *      \param      selected        Id du mode de paiement pre-selectionne
 	 *      \param      htmlname        Nom de la zone select
 	 *      \param      filtertype      Pour filtre
 	 *      \param      empty			1=peut etre vide, 0 sinon
@@ -123,7 +123,7 @@ class FormProduct
 	 *  \brief      Selection des unites de mesure
 	 *  \param      name                Nom champ html
 	 *  \param      measuring_style     Le style de mesure : weight, volume,...
-	 *  \param      default             For�age de l'unite
+	 *  \param      default             Forcage de l'unite
 	 *  \remarks pour l'instant on ne definit pas les unites dans la base
 	 */
 	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)

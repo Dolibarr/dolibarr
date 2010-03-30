@@ -30,7 +30,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->produit->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
