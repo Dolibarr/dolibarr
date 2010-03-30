@@ -68,7 +68,7 @@ class modMultiCompany extends DolibarrModules
 		$this->picto='globe';
 
 		// Data directories to create when module is enabled.
-		$this->dirs = array('/smarty/cache/temp','/smarty/templates/temp');
+		$this->dirs = array();
 
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';

@@ -26,7 +26,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
 
 $langs->load("admin");
 
