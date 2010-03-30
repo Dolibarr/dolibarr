@@ -651,18 +651,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell(80, 4, $carac_emetteur_name, 0, 'L');
 
 			// Sender properties
-			$carac_emetteur = '';
-			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->address);
-			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
-			$carac_emetteur .= "\n";
-			// Tel
-			if ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($mysoc->tel);
-			// Fax
-			if ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($mysoc->fax);
-			// EMail
-			if ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($mysoc->email);
-			// Web
-			if ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($mysoc->url);
+			$carac_emetteur = pdf_build_address($outputlangs,$mysoc);
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);

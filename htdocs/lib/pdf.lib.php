@@ -28,6 +28,33 @@
 
 
 /**
+ *   	\brief      Mutualize code to build address for PDF generation
+ * 		\param		outputlangs		Output langs object
+ *   	\param      sourcecompany	Source company object
+ *   	\param      targetcompany	Target company object (not used yet)
+ *      \param      targetcontact	Target contact object (not used yet)
+ * 		\return		string			Source of file
+ */
+function pdf_build_address($outputlangs,$sourcecompany,$targetcompany,$targetcontact)
+{
+	$carac_emetteur = '';
+	$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->address);
+	$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->cp).' '.$outputlangs->convToOutputCharset($sourcecompany->ville);
+	$carac_emetteur .= "\n";
+	// Tel
+	if ($sourcecompany->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
+	// Fax
+	if ($sourcecompany->fax) $carac_emetteur .= ($carac_emetteur ? ($sourcecompany->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
+	// EMail
+	if ($sourcecompany->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($sourcecompany->email);
+	// Web
+	if ($sourcecompany->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($sourcecompany->url);
+
+	return $carac_emetteur;
+}
+
+
+/**
  *   	\brief      Show header of page for PDF generation
  *   	\param      pdf     		Object PDF
  *      \param      outputlang		Object lang for output

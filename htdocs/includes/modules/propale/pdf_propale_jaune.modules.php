@@ -513,10 +513,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		// Sender properties
-		$carac_emetteur = '';
-		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
-		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
-		$carac_emetteur .= "\n";
+		$carac_emetteur='';
 	 	// Add internal contact of proposal if defined
 		$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
 	 	if (sizeof($arrayidcontact) > 0)
@@ -524,14 +521,8 @@ class pdf_propale_jaune extends ModelePDFPropales
 	 		$object->fetch_user($arrayidcontact[0]);
 	 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->fullname);
 	 	}
-		// Tel
-		if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
-		// Fax
-		if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
-		// EMail
-		if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
-		// Web
-		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
+
+	 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
 
 		$pdf->SetFont('Arial','',9);
 		$pdf->SetXY($this->marge_gauche+2,$posy+4);
