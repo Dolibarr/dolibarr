@@ -57,7 +57,6 @@ class Conf
 	var $tabs_modules	= array();
 	var $need_smarty	= array();
 	var $modules		= array();
-	var $include_path	= array();
 
 	var $logbuffer		= array();
 
@@ -81,13 +80,6 @@ class Conf
 	function setValues($db)
 	{
 		dol_syslog("Conf::setValues");
-		
-		// Add root path
-		$this->include_path[] = DOL_DOCUMENT_ROOT."/";
-		// Add core path
-		$this->include_path[] = DOL_DOCUMENT_ROOT."/core/";
-		// Add library path
-		$this->include_path[] = DOL_DOCUMENT_ROOT."/lib/";
 
 		// Avoid warning if not defined
 		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
@@ -167,25 +159,12 @@ class Conf
 						$this->$module->enabled=true;
 						// Add this module in list of enabled modules
 						$this->modules[]=$module;
-						// Add class path
-						if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/class/'))
-						{
-							$this->include_path[] = DOL_DOCUMENT_ROOT.'/'.$module.'/class/';
-						}
-						// Add library path
-						if (file_exists(DOL_DOCUMENT_ROOT.'/'.$module.'/lib/'))
-						{
-							$this->include_path[] = DOL_DOCUMENT_ROOT.'/'.$module.'/lib/';
-						}
 					}
 				}
 				$i++;
 			}
 		}
 		$db->free($result);
-		
-		// Set include_path
-		set_include_path(implode(PATH_SEPARATOR, $this->include_path));
 
 		// Clean some variables
 		// conf->menu_top et conf->menu_left are defined in main.inc.php (according to user choice)

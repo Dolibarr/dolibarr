@@ -26,24 +26,12 @@
  */
 
 require("../main.inc.php");
-if (! empty($dolibarr_allow_overwritekernel))
-{
-	require_once("html.formfile.class.php");
-	require_once("client.class.php");
-	require_once("actioncomm.class.php");
-	require_once("agenda.lib.php");
-	if ($conf->contrat->enabled) require_once("contrat/contrat.class.php");
-	if ($conf->propal->enabled)  require_once("comm/propal/propal.class.php");
-}
-else
-{
-	require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/client.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/agenda.lib.php");
-	if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
-	if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
-}
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/client.class.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/agenda.lib.php");
+if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 
 if (!$user->rights->societe->lire)
 accessforbidden();
