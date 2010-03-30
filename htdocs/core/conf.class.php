@@ -84,6 +84,8 @@ class Conf
 		
 		// Add root path
 		$this->include_path[] = DOL_DOCUMENT_ROOT."/";
+		// Add core path
+		$this->include_path[] = DOL_DOCUMENT_ROOT."/core/";
 		// Add library path
 		$this->include_path[] = DOL_DOCUMENT_ROOT."/lib/";
 
