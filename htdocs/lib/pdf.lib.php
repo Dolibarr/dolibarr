@@ -35,9 +35,10 @@
  *      \param      targetcontact	Target contact object (not used yet)
  * 		\return		string			Source of file
  */
-function pdf_build_address($outputlangs,$sourcecompany,$targetcompany,$targetcontact)
+function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='')
 {
 	$stringaddress = '';
+
 	if (is_object($sourcecompany))
 	{
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->address);
