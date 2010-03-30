@@ -114,7 +114,7 @@ CorrectProblemAndReloadPage = Corrija el problema y <a href="%s">recarge la pág
 AlreadyDone = Ya migrada
 DatabaseVersion = Versión de la base de datos
 ServerVersion = Versión del servidor de la base de datos
-YouMustCreateItAndAllowServerToWrite = Debe crear este expediente y permitir al servidor web escribir en él.
+YouMustCreateItAndAllowServerToWrite = Debe crear este directorio y permitir al servidor web escribir en él.
 CharsetChoice = Elección del juego de caracteres
 CharacterSetClient = Codificación utilizada para la visualización de las páginas
 CharacterSetClientComment = Puede elegir la codificación que desea para la visualización de las páginas.<br/>La codificación propuesta por defecto es la de su base de datos.
