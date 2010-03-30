@@ -387,7 +387,7 @@ while (($file = readdir($handle))!==false)
 <script type="text/javascript" language="javascript">
 
 function checkDatabaseName(databasename) {
-	if (databasename.match(/[-;_\.]/)) { return false; }
+	if (databasename.match(/[-;\.]/)) { return false; }
 	return true;
 }
 
