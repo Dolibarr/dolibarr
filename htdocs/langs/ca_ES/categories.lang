@@ -90,3 +90,5 @@ CategId = Id categoria
 CatSupList = Llista de categories de proveïdors
 CatCusList = Llista de categories de clients/potencials
 CatProdList = Llista de categories de productes
+CatMemberList = Llista de categories de membres
+
