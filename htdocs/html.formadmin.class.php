@@ -175,6 +175,7 @@ class FormAdmin
                 $filelib=preg_replace('/(_backoffice|_frontoffice)?\.php$/i','',$file);
 				if (preg_match('/^default/i',$filelib)) continue;
 				if (preg_match('/^empty/i',$filelib)) continue;
+				if (preg_match('/lib/i',$filelib)) continue;
 
 				$menuarray[$filelib]=1;
             }
