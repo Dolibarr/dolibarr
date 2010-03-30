@@ -425,12 +425,12 @@ class Societe extends CommonObject
 			$sql .= ",ape     = '". addslashes($this->ape)     ."'";
 			$sql .= ",idprof4 = '". addslashes($this->idprof4) ."'";
 
-			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
+			$sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->tva_assuj."'":"null");
 			$sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
 
 			// Local taxes
-			$sql .= ",localtax1_assuj = ".($this->localtax1_assuj>=0?"'".$this->localtax1_assuj."'":"null");
-			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj>=0?"'".$this->localtax2_assuj."'":"null");
+			$sql .= ",localtax1_assuj = ".($this->localtax1_assuj!=''?"'".$this->localtax1_assuj."'":"null");
+			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj!=''?"'".$this->localtax2_assuj."'":"null");
 
 			$sql .= ",capital = '" .   addslashes($this->capital) ."'";
 
