@@ -465,8 +465,14 @@ foreach ($orders as $key => $value)
                         }
                         else
                         {
-                            //print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;';
-                            print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                        	if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
+                        	{
+                        		print '<a href="'.DOL_URL_ROOT.'/'.$regs[2].'/admin/'.$regs[1].'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                        	}
+                        	else
+                        	{
+                        		print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                        	}
                         }
                     }
                     print "</td>\n";

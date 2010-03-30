@@ -23,10 +23,10 @@
  *	\version    $Id$
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
+require("../../main.inc.php");
+require_once("multicompany.class.php");
+require_once("admin.lib.php");
+require_once("company.lib.php");
 
 $langs->load("admin");
 
