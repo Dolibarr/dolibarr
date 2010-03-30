@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jï¿½rï¿½mie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 	unset ($_SESSION['serObjFacturation']);
 
 
-		require ('templates/ticket.tpl.php');
+		require ('tpl/ticket.tpl.php');
 
 
 	$_SESSION['serObjFacturation'] = serialize ($obj_facturation);

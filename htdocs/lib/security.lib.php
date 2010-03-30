@@ -53,23 +53,23 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/templates/";
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
 		}
 		else
 		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/templates/";
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
 		}
 	}
 	else
 	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/login.tpl")
-			|| file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/login.tpl.php"))
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl")
+			|| file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl.php"))
 		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/";
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 		}
 		else
 		{
-			$template_dir=DOL_DOCUMENT_ROOT.'/core/templates/';
+			$template_dir=DOL_DOCUMENT_ROOT.'/core/tpl/';
 		}
 
 		$conf->css = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
@@ -253,7 +253,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$smarty->assign('main_google_ad_width', $conf->global->MAIN_GOOGLE_AD_WIDTH);
 			$smarty->assign('main_google_ad_height', $conf->global->MAIN_GOOGLE_AD_HEIGHT);
 
-			$google_ad_template = DOL_DOCUMENT_ROOT."/core/templates/google_ad.tpl";
+			$google_ad_template = DOL_DOCUMENT_ROOT."/core/tpl/google_ad.tpl";
 			$smarty->assign('google_ad_tpl', $google_ad_template);
 		}
 

@@ -58,7 +58,7 @@ print_fiche_titre($langs->trans("MultiCompanySetup"),$linkback,'setup');
 
 print '<br>';
 
-$smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/templates/';
+$smarty->template_dir = DOL_DOCUMENT_ROOT.'/multicompany/tpl/';
 
 /*
  * Create

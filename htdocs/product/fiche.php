@@ -657,7 +657,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 	{
 		// On assigne les valeurs meme en creation car elles sont definies si
 		// on revient en erreur
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/templates/';
+		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
 		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
 		$smarty->assign('tva_taux_value', $tvaarray['value']);
 		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
@@ -865,7 +865,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		$result = $product->fetchCanvas($_GET["id"],'',$_GET["action"]);
 
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/templates/';
+		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
 
 		$product->assign_smarty_values($smarty,$_GET["action"]);
 	}

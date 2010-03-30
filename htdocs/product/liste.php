@@ -238,21 +238,21 @@ if ($resql)
 		$title_text = $title;
 		
 		// Check if a custom template is present
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/list.tpl'))
+		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl'))
 		{
-			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/templates/product/'.$_GET["canvas"].'/';
+			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/';
 			$template = 'list.tpl';
 		}
 		// Check if a default template is present
-		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/list.tpl'))
+		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/list.tpl'))
 		{
-			$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/templates/';
+			$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/';
 			$template = 'list.tpl';
 		}
 		// Error template
 		else
 		{
-			$template_dir = DOL_DOCUMENT_ROOT . '/core/templates/';
+			$template_dir = DOL_DOCUMENT_ROOT . '/core/tpl/';
 			$template = 'error.tpl';
 		}
 		

@@ -157,23 +157,23 @@ if ($conf->global->MAIN_SMARTY)
 	{
 		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/templates/user/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/user/";
 			$smarty->assign('theme', 'default');
 		}
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/templates/user/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/user/";
 		}
 	}
 	else
 	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/core/templates/passwordforgotten.tpl"))
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/core/tpl/passwordforgotten.tpl"))
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/templates/core/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/core/";
 		}
 		else
 		{
-			$smarty->template_dir = DOL_DOCUMENT_ROOT."/core/templates/";
+			$smarty->template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
 		$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;

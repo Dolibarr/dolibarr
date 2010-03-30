@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-require ('templates/liste_articles.tpl.php');
+require ('tpl/liste_articles.tpl.php');
 
 $obj_facturation->prix_total_ht ($lst_total_ht);
 $obj_facturation->prix_total_ttc ($lst_total_ttc);
