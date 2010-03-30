@@ -890,15 +890,13 @@ class pdf_propale_azur extends ModelePDFPropales
 
 			// If CUSTOMER contact defined, we use it
 			$usecontact=false;
-			//if ($conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
-			//{
-				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
-				if (sizeof($arrayidcontact) > 0)
-				{
-					$usecontact=true;
-					$result=$object->fetch_contact($arrayidcontact[0]);
-				}
-			//}
+			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+			if (sizeof($arrayidcontact) > 0)
+			{
+				$usecontact=true;
+				$result=$object->fetch_contact($arrayidcontact[0]);
+			}
+
 			if ($usecontact)
 			{
 				// On peut utiliser le nom de la societe du contact
@@ -916,22 +914,10 @@ class pdf_propale_azur extends ModelePDFPropales
 			}
 			else
 			{
-				// Nom client
+				// Recipient name
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 
-				// Nom du contact suivi propal si c'est une societe
-				$arrayidcontact = $object->getIdContact('external','CUSTOMER');
-				if (sizeof($arrayidcontact) > 0)
-				{
-					$object->fetch_contact($arrayidcontact[0]);
-					// On verifie si c'est une societe ou un particulier
-					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
-					{
-						$carac_client .= "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-					}
-				}
-
-				// Caracteristiques client
+				// Recipient properties
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
 				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
 				if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";

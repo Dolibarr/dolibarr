@@ -37,20 +37,24 @@
  */
 function pdf_build_address($outputlangs,$sourcecompany,$targetcompany,$targetcontact)
 {
-	$carac_emetteur = '';
-	$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->address);
-	$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->cp).' '.$outputlangs->convToOutputCharset($sourcecompany->ville);
-	$carac_emetteur .= "\n";
-	// Tel
-	if ($sourcecompany->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
-	// Fax
-	if ($sourcecompany->fax) $carac_emetteur .= ($carac_emetteur ? ($sourcecompany->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
-	// EMail
-	if ($sourcecompany->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($sourcecompany->email);
-	// Web
-	if ($sourcecompany->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($sourcecompany->url);
+	$stringaddress = '';
+	if (is_object($sourcecompany))
+	{
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->address);
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->cp).' '.$outputlangs->convToOutputCharset($sourcecompany->ville);
+		$stringaddress .= "\n";
+		// Tel
+		if ($sourcecompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);
+		// Fax
+		if ($sourcecompany->fax) $stringaddress .= ($stringaddress ? ($sourcecompany->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
+		// EMail
+		if ($sourcecompany->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($sourcecompany->email);
+		// Web
+		if ($sourcecompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($sourcecompany->url);
+	}
 
-	return $carac_emetteur;
+
+	return $stringaddress;
 }
 
 
