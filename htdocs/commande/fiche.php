@@ -89,6 +89,26 @@ if ($_REQUEST["action"] == 'confirm_clone' && $_REQUEST['confirm'] == 'yes')
 	}
 }
 
+// Reopen a closed order
+if ($_GET['action'] == 'reopen' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	if ($commande->statut == 3)
+	{
+		$result = $commande->set_reopen($user);
+		if ($result > 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$fac->error.'</div>';
+		}
+	}
+}
+
 // Suppression de la commande
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
@@ -2131,7 +2151,7 @@ else
 						}
 					}
 
-					// Cloturer
+					// Close
 					if ($commande->statut == 1 || $commande->statut == 2)
 					{
 						if ($user->rights->commande->cloturer)
@@ -2139,6 +2159,12 @@ else
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=close"';
 							print '>'.$langs->trans('Close').'</a>';
 						}
+					}
+
+					// Reopen a close order
+					if ($commande->statut == 3)
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$commande->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
 					}
 
 					// Clone

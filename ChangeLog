@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 2.9 compared to 2.8 *****
 
 For users:
+- New: Can reopen a closed customer order.
 - New: Add module externalsite to add a web site/tools inside 
        menu and a Dolibarr frame.
 - New: Can link trips and fees to a project.

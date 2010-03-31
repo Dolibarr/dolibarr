@@ -53,7 +53,7 @@ class Commande extends CommonObject
 	var $ref_client;
 	var $contactid;
 	var $fk_project;
-	var $statut;		// -1=Annulee, 0=Brouillon, 1=Validee, 2=Acceptee, 3=Envoyee/Recue (facturee ou non)
+	var $statut;		// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted, 3=Closed (Envoyee/Recue facturee ou non)
 	var $facturee;		// Facturee ou non
 	var $brouillon;
 	var $cond_reglement_id;
@@ -420,6 +420,63 @@ class Commande extends CommonObject
 			$this->db->rollback();
 			dol_syslog($this->error, LOG_ERR);
 			return -1;
+		}
+	}
+
+
+	/**
+	 *      \brief      Tag the order as opened
+	 *				   	Function used when order is reopend after being closed.
+	 *      \param      user        Object user that change status
+	 *      \return     int         <0 if KO, 0 if nothing is done, >0 if OK
+	 */
+	function set_reopen($user)
+	{
+		global $conf,$langs;
+		$error=0;
+
+		if ($this->statut == 3)
+		{
+			$this->db->begin();
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql.= ' SET fk_statut=2';
+			$sql.= ' WHERE rowid = '.$this->id;
+
+			dol_syslog("Commande::set_reopen sql=".$sql);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_REOPEN',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
+			else
+			{
+				$error++;
+				$this->error=$this->db->error();
+				dol_print_error($this->db);
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			return 0;
 		}
 	}
 
