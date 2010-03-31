@@ -104,7 +104,7 @@ class Commande extends CommonObject
 	}
 
 
-	/**     
+	/**
 	 * 		\brief      Cree la commande depuis une propale existante
 	 *		\param      user            Utilisateur qui cree
 	 *		\param      propale_id      id de la propale qui sert de modele
@@ -2368,7 +2368,7 @@ class OrderLine
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
-		$sql.= ' '.$this->db->pdate('cd.date_start').' as date_start,'.$this->db->pdate('cd.date_end').' as date_end';
+		$sql.= ' cd.date_start, cd.date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql.= ' WHERE cd.rowid = '.$rowid;
@@ -2400,10 +2400,8 @@ class OrderLine
 			$this->product_libelle  = $objp->product_libelle;
 			$this->product_desc     = $objp->product_desc;
 
-			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-			// Save the start and end dates of the line in the object
-			$this->date_start     = $objp->date_start;
-			$this->date_end       = $objp->date_end;
+			$this->date_start       = $this->db->jdate($objp->date_start);
+			$this->date_end         = $this->db->jdate($objp->date_end);
 
 			$this->db->free($result);
 		}
@@ -2446,15 +2444,18 @@ class OrderLine
 	}
 
 	/**
-	 *   	\brief     	Insere l'objet ligne de commande en base
-	 *   	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *		\return		int				<0 si ko, >0 si ok
+	 *   	\brief     	Insert line into database
+	 *   	\param      notrigger		1 = disable triggers
+	 *		\return		int				<0 if KO, >0 if OK
 	 */
 	function insert($notrigger=0)
 	{
 		global $langs, $conf, $user;
 
 		dol_syslog("OrderLine::insert rang=".$this->rang);
+
+		// Clean parameters
+		if (empty($this->tva_tx)) $this->tva_tx=0;
 
 		$this->db->begin();
 
