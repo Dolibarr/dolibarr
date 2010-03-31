@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -127,7 +127,7 @@ if ($_GET["id"] || $_GET["ref"])
 		// Generation des graphs
 		$WIDTH=380;
 		$HEIGHT=160;
-		$dir = $conf->produit->dir_temp;
+		$dir = (!empty($conf->produit->dir_temp)?$conf->produit->dir_temp:$conf->service->dir_temp);
 		if (! file_exists($dir.'/'.$product->id))
 		{
 			if (create_exdir($dir.'/'.$product->id) < 0)
