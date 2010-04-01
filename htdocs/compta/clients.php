@@ -27,7 +27,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 
 // Secrutiy check
 if ($user->societe_id > 0)

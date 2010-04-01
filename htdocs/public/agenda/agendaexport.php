@@ -31,7 +31,7 @@ function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>
 function llxFooterVierge() { print '</body></html>'; }
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
 
 // Security check
 if (! $conf->agenda->enabled) accessforbidden('',1,1,1);

@@ -28,7 +28,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");

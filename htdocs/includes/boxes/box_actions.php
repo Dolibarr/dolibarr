@@ -63,7 +63,7 @@ class box_actions extends ModeleBoxes {
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 		$actionstatic=new ActionComm($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));

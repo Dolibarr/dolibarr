@@ -270,7 +270,7 @@ $var=true;
 // Number actions to do (late)
 if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
-	include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 	$board=new ActionComm($db);
 	$board->load_board($user);
 	$board->warning_delay=$conf->actions->warning_delay/60/60/24;
