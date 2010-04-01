@@ -176,7 +176,7 @@ function print_left_eldy_menu($db,$menu_array)
 
 			if ($conf->societe->enabled && $conf->fournisseur->enabled)
 			{
-				$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("Suppliers"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+				$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 
 				if ($user->societe_id == 0)
 				{
@@ -191,7 +191,7 @@ function print_left_eldy_menu($db,$menu_array)
 			if ($conf->societe->enabled)
 			{
 				$langs->load("commercial");
-				$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("Prospects"), 1, $user->rights->societe->lire);
+				$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("ListProspectsShort"), 1, $user->rights->societe->lire);
 
 				$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
 				//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
@@ -201,7 +201,7 @@ function print_left_eldy_menu($db,$menu_array)
 			if ($conf->societe->enabled)
 			{
 				$langs->load("commercial");
-				$newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("Customers"), 1, $user->rights->societe->lire);
+				$newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire);
 
 				$newmenu->add(DOL_URL_ROOT."/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
 				//$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);

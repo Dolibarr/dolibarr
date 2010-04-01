@@ -281,6 +281,9 @@ AutomaticallyGenerated=Automatically generated
 FiscalYearInformation=Information on the fiscal year
 FiscalMonthStart=Starting month of the fiscal year
 YouMustCreateContactFirst=You must create emails contacts for third party first to be able to add emails notifications.
+ListSuppliersShort=List of suppliers
+ListProspectsShort=List of prospects
+ListCustomersShort=List of customers
 
 # Monkey
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for supplier code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
