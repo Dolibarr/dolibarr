@@ -182,8 +182,8 @@ div.fiche
 <?php
 $minwidthtmenu=0;
 $heightmenu=19;
-//$minwidthtmenu=70;
-//$heightmenu=47;
+$minwidthtmenu=70;
+$heightmenu=47;
 ?>
 
 div.tmenu
@@ -385,7 +385,8 @@ li.tmenu {
 	font-weight: normal;
 }
 
-/*
+<?php $i=2; ?>
+
 div.mainmenu_home {
 	position : relative;
 	color: white;
@@ -429,40 +430,10 @@ div.mainmenu_commercial {
 div.mainmenu_accountancy {
 	position : relative;
 	color: white;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/accountancy.png' ?>);
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/money.png' ?>);
 	background-repeat:no-repeat;
 	background-position:center top;
-	height:28px;
-	margin-left: 0px;
-}
-
-div.mainmenu_project {
-	position : relative;
-	color: white;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic.png' ?>);
-	background-repeat:no-repeat;
-	background-position:center top;
-	height:28px;
-	margin-left: 0px;
-}
-
-div.mainmenu_members {
-	position : relative;
-	color: white;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic.png' ?>);
-	background-repeat:no-repeat;
-	background-position:center top;
-	height:28px;
-	margin-left: 0px;
-}
-
-div.mainmenu_cashdesk {
-	position : relative;
-	color: white;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic.png' ?>);
-	background-repeat:no-repeat;
-	background-position:center top;
-	height:28px;
+	height:24px;
 	margin-left: 0px;
 }
 
@@ -495,7 +466,47 @@ div.mainmenu_ecm {
 	height:28px;
 	margin-left: 0px;
 }
-*/
+
+div.mainmenu_generic1 {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic1.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:26px;
+	margin-left: 0px;
+}
+
+div.mainmenu_generic2 {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic2.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:26px;
+	margin-left: 0px;
+}
+
+div.mainmenu_generic3 {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic3.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:26px;
+	margin-left: 0px;
+}
+
+div.mainmenu_generic4 {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic4.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:26px;
+	margin-left: 0px;
+}
+
 
 /* Login */
 
