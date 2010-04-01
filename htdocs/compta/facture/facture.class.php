@@ -32,7 +32,7 @@
 
 require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/product.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/client.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/societe/client.class.php");
 
 
 /**

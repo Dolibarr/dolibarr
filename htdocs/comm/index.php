@@ -21,13 +21,13 @@
 /**
  *	\file       htdocs/comm/index.php
  *	\ingroup    commercial
- *	\brief      Page acceuil de la zone commercial cliente
+ *	\brief      Page accueil de la zone commerciale cliente
  *	\version    $Id$
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/client.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/client.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");

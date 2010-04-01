@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       htdocs/client.class.php
+ *   	\file       htdocs/societe/client.class.php
  *		\ingroup    societe
  *		\brief      File for class of customers
  *		\version    $Id$
@@ -79,7 +79,7 @@ class Client extends Societe
 
 
     /**
-     *      \brief      Charge indicateurs this->nb de tableau de bord
+     *      \brief      Charge indicateurs this->nb de tableaux de bord
      *      \return     int         <0 si ko, >0 si ok
      */
     function load_state_board()
