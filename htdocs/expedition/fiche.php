@@ -600,9 +600,12 @@ else
 				print '<div class="error">'.$mesg.'</div>';
 			}
 
-			$typeobject = $expedition->origin;
-			$origin = $expedition->origin;
-			$expedition->fetch_object();
+			if (!empty($expedition->origin))
+			{
+				$typeobject = $expedition->origin;
+				$origin = $expedition->origin;
+				$expedition->fetch_object();
+			}
 
 			if (strlen($expedition->tracking_number))
 			{
@@ -958,7 +961,7 @@ else
 
 		print '</td></tr></table>';
 
-		if ($expedition->$origin->id)
+		if (!empty($origin) && $expedition->$origin->id)
 		{
 			print '<br>';
 			//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
