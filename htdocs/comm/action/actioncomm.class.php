@@ -24,7 +24,7 @@
  *       \brief      Fichier de la classe des actions commerciales
  *       \version    $Id$
  */
-require_once(DOL_DOCUMENT_ROOT.'/cactioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/comm/action/cactioncomm.class.php');
 
 
 /**     \class      ActionComm

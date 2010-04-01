@@ -30,7 +30,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
-require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/action/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formactions.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
