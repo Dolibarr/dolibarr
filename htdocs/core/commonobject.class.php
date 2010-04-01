@@ -296,21 +296,24 @@ class CommonObject
 	 *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
 	 *		\param		source		'external' or 'internal'
 	 *		\param		code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
+	 **		\param		status		limited to a certain status
 	 *      \return     array       Liste des id contacts
 	 */
-	function getIdContact($source,$code)
+	function getIdContact($source,$code,$status=0)
 	{
 		$result=array();
 		$i=0;
 
 		$sql = "SELECT ec.fk_socpeople";
-		$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
+		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$this->id;
-		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
+		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$this->element."'";
 		$sql.= " AND tc.source = '".$source."'";
 		$sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
+		if ($status) $sql.= " AND ec.statut = ".$status;
 
 		dol_syslog("CommonObject::getIdContact sql=".$sql);
 		$resql=$this->db->query($sql);
