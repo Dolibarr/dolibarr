@@ -63,76 +63,87 @@ class Interfaces
    			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}
 
-		$handle=opendir($this->dir);
-		$modules = array();
-		$nbfile = $nbtotal = $nbok = $nbko = 0;
-
-		while (($file = readdir($handle))!==false)
+		// Load all directory
+		$this->getModulesTriggers();
+		
+		foreach($this->dir as $dir)
 		{
-			if (is_readable($this->dir."/".$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
+			// Check if directory exists
+			if (!is_dir($dir)) continue;
+
+			$handle=opendir($dir);
+			$modules = array();
+			$nbfile = $nbtotal = $nbok = $nbko = 0;
+			
+			while (($file = readdir($handle))!==false)
 			{
-				$nbfile++;
-
-				$modName = "Interface".ucfirst($reg[2]);
-				//print "file=$file"; print "modName=$modName"; exit;
-				if (in_array($modName,$modules))
+				if (is_readable($dir."/".$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
 				{
-					$langs->load("errors");
-					dol_syslog("Interface::run_triggers ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
-					continue;
-				}
-
-				// Check if trigger file is disabled by name
-				if (preg_match('/NORUN$/i',$file))
-				{
-					continue;
-				}
-				// Check if trigger file is for a particular module
-				$qualified=true;
-				if (strtolower($reg[1]) != 'all')
-				{
-					$module=preg_replace('/^mod/i','',$reg[1]);
-					$constparam='MAIN_MODULE_'.strtoupper($module);
-					if (empty($conf->global->$constparam)) $qualified=false;
-				}
-
-				if (! $qualified)
-				{
-					dol_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
-					continue;
-				}
-
-				dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
-				include_once($this->dir."/".$file);
-				$objMod = new $modName($this->db);
-				$i=0;
-				if ($objMod)
-				{
-					$modules[$i] = $modName;
-					//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
-					$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
-					if ($result > 0)
+					$nbfile++;
+					
+					$modName = "Interface".ucfirst($reg[2]);
+					//print "file=$file"; print "modName=$modName"; exit;
+					if (in_array($modName,$modules))
 					{
-						// Action OK
-						$nbtotal++;
-						$nbok++;
+						$langs->load("errors");
+						dol_syslog("Interface::run_triggers ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
+						continue;
 					}
-					if ($result == 0)
+					
+					// Check if trigger file is disabled by name
+					if (preg_match('/NORUN$/i',$file))
 					{
-						// Aucune action faite
-						$nbtotal++;
+						continue;
 					}
-					if ($result < 0)
+					// Check if trigger file is for a particular module
+					$qualified=true;
+					if (strtolower($reg[1]) != 'all')
 					{
-						// Action KO
-						$nbtotal++;
-						$nbko++;
-						$this->errors[]=$objMod->error;
+						$module=preg_replace('/^mod/i','',$reg[1]);
+						$constparam='MAIN_MODULE_'.strtoupper($module);
+						if (empty($conf->global->$constparam)) $qualified=false;
 					}
-					$i++;
+					
+					if (! $qualified)
+					{
+						dol_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
+						continue;
+					}
+					
+					dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+					include_once($dir."/".$file);
+					$objMod = new $modName($this->db);
+					$i=0;
+					if ($objMod)
+					{
+						$modules[$i] = $modName;
+						//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+						$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
+						if ($result > 0)
+						{
+							// Action OK
+							$nbtotal++;
+							$nbok++;
+						}
+						if ($result == 0)
+						{
+							// Aucune action faite
+							$nbtotal++;
+						}
+						if ($result < 0)
+						{
+							// Action KO
+							$nbtotal++;
+							$nbko++;
+							$this->errors[]=$objMod->error;
+						}
+						$i++;
+					}
 				}
 			}
+			closedir($handle);
 		}
+		
 		if ($nbko)
 		{
 			dol_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
