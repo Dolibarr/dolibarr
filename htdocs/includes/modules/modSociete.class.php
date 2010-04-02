@@ -101,6 +101,13 @@ class modSociete extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$this->const[$r][5] = 0;
 		$r++;
+		
+		$this->const[$r][0] = "COMPANY_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/odttemplates/thirdparties";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array();
@@ -276,12 +283,6 @@ class modSociete extends DolibarrModules
 		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',$dirodt,0,0);
 
 		$sql = array();
-		if ($this->db->type != 'pgsql')	// TODO For the moment, we can't execute SQL that may fail with Postgres
-		{
-			$sql=array(
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,entity) VALUES ('COMPANY_ADDON_PDF_ODT_PATH', 'DOL_DATA_ROOT/odttemplates/thirdparties', 0, '".$conf->entity."')",'ignoreerror'=>1)
-			);
-		}
 
 		return $this->_init($sql,$options);
 	}
