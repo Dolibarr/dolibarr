@@ -197,7 +197,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->produit->dir_temp.'/'.$original_file;
+		$original_file=(!empty($conf->produit->dir_temp)?$conf->produit->dir_temp:$conf->service->dir_temp).'/'.$original_file;
 	}
 
 	// Wrapping for products or services
@@ -208,7 +208,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->produit->dir_output.'/'.$original_file;
+		$original_file=(!empty($conf->produit->dir_temp)?$conf->produit->dir_temp:$conf->service->dir_temp).'/'.$original_file;
 	}
 
 	// Wrapping for categories
