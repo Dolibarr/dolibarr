@@ -28,81 +28,10 @@ include_once(DOL_DOCUMENT_ROOT ."/interfaces.class.php");
 if (!$user->admin)
     accessforbidden();
 
-
-
-if ($_GET["action"] == 'set' && $user->admin)
-{
-    Activate($_GET["value"]);
-
-    Header("Location: modules.php?spe=".$_GET["spe"]);
-	exit;
-}
-
-if ($_GET["action"] == 'reset' && $user->admin)
-{
-    UnActivate($_GET["value"]);
-
-    Header("Location: modules.php?spe=".$_GET["spe"]);
-	exit;
-}
-
-
-/**
- *  \brief      Active un module
- *  \param      value   Nom du module a activer
+/*
+ * Action
  */
-function Activate($value)
-{
-    global $db, $modules;
 
-    $modName = $value;
-
-    // Activation du module
-    if ($modName)
-    {
-        $file = $modName . ".class.php";
-        include_once("../includes/modules/".$file);
-        $objMod = new $modName($db);
-        $objMod->init();
-    }
-
-    // Activation des modules dont le module depend
-    for ($i = 0; $i < sizeof($objMod->depends); $i++)
-    {
-        Activate($objMod->depends[$i]);
-    }
-
-}
-
-
-/**
- *  \brief      Desactive un module
- *  \param      value   Nom du module a desactiver
- */
-function UnActivate($value)
-{
-    global $db, $modules;
-
-    $modName = $value;
-
-    // Desactivation du module
-    if ($modName)
-    {
-        $file = $modName . ".class.php";
-        include_once("../includes/modules/".$file);
-        $objMod = new $modName($db);
-        $objMod->remove();
-    }
-
-    // Desactivation des modules qui dependent de lui
-    for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
-    {
-        UnActivate($objMod->requiredby[$i]);
-    }
-
-    Header("Location: modules.php");
-	exit;
-}
 
 
 /*
@@ -164,6 +93,45 @@ while (($file = readdir($handle))!==false)
 			$i++;
 		}
     }
+}
+closedir($handle);
+
+// Find external module triggers
+$interfaces->getModulesTriggers();
+foreach($interfaces->pathoftriggers as $dir)
+{
+	$handle=opendir($dir);
+	
+	while (($file = readdir($handle))!==false)
+	{
+		if (is_readable($dir.'/'.$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php/',$file,$reg))
+		{
+			$modName = 'Interface'.ucfirst($reg[2]);
+			//print "file=$file"; print "modName=$modName"; exit;
+			if (in_array($modName,$modules))
+			{
+				$langs->load("errors");
+				print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
+				$objMod = new $modName($db);
+				
+				$modules[$i] = $modName;
+				$files[$i] = $file;
+				$orders[$i] = $objMod->family;   // Tri par famille
+				$i++;
+			}
+			else
+			{
+				include_once($dir.'/'.$file);
+				$objMod = new $modName($db);
+				
+				$modules[$i] = $modName;
+				$files[$i] = $file;
+				$orders[$i] = $objMod->family;   // Tri par famille
+				$i++;
+			}
+		}
+	}
+	closedir($handle);
 }
 
 asort($orders);

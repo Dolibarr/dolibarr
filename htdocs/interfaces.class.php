@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +19,25 @@
  */
 
 /**
-   \file		htdocs/interfaces.class.php
-   \ingroup		core
-   \brief		Fichier de la classe de gestion des triggers
-   \version		$Id$
-*/
+ *   \file		htdocs/interfaces.class.php
+ *   \ingroup		core
+ *   \brief			Fichier de la classe de gestion des triggers
+ *   \version		$Id$
+ */
 
 
 /**
-   \class      Interfaces
-   \brief      Classe de la gestion des triggers
-*/
+ *    \class      Interfaces
+ *    \brief      Classe de la gestion des triggers
+ */
 
 class Interfaces
 {
-	var $dir;				// Directory with all trigger files
-	var $errors=array();	// Array for errors
+	var $dir;						// Directory with all core trigger files
+	var $errors			= array();	// Array for errors
+	var $pathoftriggers	= array();	// Array for path of triggers
 
-	/**
+   /**
 	*   \brief      Constructeur.
 	*   \param      DB      handler d'acces base
 	*/
@@ -45,7 +47,7 @@ class Interfaces
 		$this->dir = DOL_DOCUMENT_ROOT . "/includes/triggers";
 	}
 
-	/**
+   /**
 	*   \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
 	*               Cette fonction declenche tous les triggers trouves actifs.
 	*   \param      action      Code de l'evenement
@@ -144,5 +146,31 @@ class Interfaces
 			return $nbok;
 		}
 	}
+	
+   /**
+	*   \brief      Return list of modules contains triggers.
+	*   \return     array         List of module name.
+	*/
+	function getModulesTriggers()
+	{
+		global $conf;
+		
+		foreach($conf->global as $key => $value)
+		{
+			if (preg_match('/^MAIN_TRIGGER_/',$key)) 
+			{
+				if ($value)
+				{
+					if (preg_match('/^MAIN_TRIGGER_([[:alnum:]]*)$/',$key,$regs))
+					{
+						$modulename = strtolower($regs[1]);
+						$pathoftrigger = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
+						$this->pathoftriggers[] = $pathoftrigger;
+					}
+				}
+			}
+		}
+	}
+
 }
 ?>
