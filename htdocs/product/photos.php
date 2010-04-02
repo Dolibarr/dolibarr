@@ -44,7 +44,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 $mesg = '';
-
+$dir = (!empty($conf->produit->dir_output)?$conf->produit->dir_output:$conf->service->dir_output);
 
 /*
  * Actions
@@ -57,20 +57,20 @@ if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global
 		$product = new Product($db);
 		$result = $product->fetch($_GET["id"]);
 
-		$result = $product->add_photo($conf->produit->dir_output, $_FILES['userfile']);
+		$result = $product->add_photo($dir, $_FILES['userfile']);
 	}
 }
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confirm'] == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$product = new Product($db);
-	$product->delete_photo($conf->produit->dir_output."/".$_GET["file"]);
+	$product->delete_photo($dir."/".$_GET["file"]);
 }
 
 if ($_GET["action"] == 'addthumb' && $_GET["file"])
 {
 	$product = new Product($db);
-	$product->add_thumb($conf->produit->dir_output."/".$_GET["file"]);
+	$product->add_thumb($dir."/".$_GET["file"]);
 }
 
 
@@ -177,7 +177,7 @@ if ($_GET["id"] || $_GET["ref"])
 			$maxWidth = 160;
 			$maxHeight = 120;
 
-			$nbphoto=$product->show_photos($conf->produit->dir_output,1,1000,$nbbyrow,1,1);
+			$nbphoto=$product->show_photos($dir,1,1000,$nbbyrow,1,1);
 
 			if ($nbphoto < 1)
 			{
