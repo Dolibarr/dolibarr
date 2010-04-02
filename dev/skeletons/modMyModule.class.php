@@ -70,13 +70,16 @@ class modMyModule extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
+		
+		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
+		$this->triggers = 0;
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
 		$r=0;
 
-		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
+		// Relative path to module style sheet if exists. Example: '/mymodule/css/mycss.css'.
 		$this->style_sheet = '';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.

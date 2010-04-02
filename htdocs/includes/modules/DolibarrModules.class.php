@@ -89,6 +89,9 @@ class DolibarrModules
 
 		// Insert new pages for tabs into llx_const
 		if (! $err) $err+=$this->insert_tabs();
+		
+		// Insert activation triggers
+		if (! $err) $err+=$this->insert_triggers();
 
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_const();
@@ -181,6 +184,9 @@ class DolibarrModules
 
 		// Remove activation of module's new tabs
 		if (! $err) $err+=$this->delete_tabs();
+		
+		// Remove activation of module's triggers
+		if (! $err) $err+=$this->delete_triggers();
 
 		// Remove list of module's available boxes
 		if (! $err && $options != 'noboxes') $err+=$this->delete_boxes();
@@ -1194,6 +1200,66 @@ class DolibarrModules
 		{
 			$this->error=$this->db->lasterror();
 			dol_syslog("DolibarrModules::delete_dirs ".$this->error, LOG_ERR);
+			$err++;
+		}
+
+		return $err;
+	}
+	
+	/**
+	 *	\brief      Insert activation triggers from modules in llx_const
+	 *	\return     int     Number of errors (0 if ok)
+	 */
+	function insert_triggers()
+	{
+		global $conf;
+
+		$err=0;
+
+		if (! empty($this->triggers))
+		{
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+			$sql.= "name";
+			$sql.= ", type";
+			$sql.= ", value";
+			$sql.= ", note";
+			$sql.= ", visible";
+			$sql.= ", entity";
+			$sql.= ")";
+			$sql.= " VALUES (";
+			$sql.= $this->db->encrypt($this->const_name."_TRIGGERS",1);
+			$sql.= ", 'chaine'";
+			$sql.= ", ".$this->db->encrypt($this->triggers,1);
+			$sql.= ", null";
+			$sql.= ", '0'";
+			$sql.= ", ".$conf->entity;
+			$sql.= ")";
+
+			dol_syslog("DolibarrModules::insert_triggers sql=".$sql);
+			$resql=$this->db->query($sql);
+		}
+		return $err;
+	}
+	
+	/**
+	 *	\brief      Remove activation triggers from modules in llx_const
+	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function delete_triggers()
+	{
+		global $conf;
+
+		$err=0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_TRIGGERS'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		dol_syslog("DolibarrModules::delete_triggers sql=".$sql);
+		if (! $this->db->query($sql))
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("DolibarrModules::delete_triggers ".$this->error, LOG_ERR);
 			$err++;
 		}
 

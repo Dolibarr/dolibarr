@@ -53,12 +53,13 @@ class Conf
 	//! Used to store entity for multi-company (default 1)
 	var $entity=1;
 
-	var $css_modules	= array();
-	var $tabs_modules	= array();
-	var $need_smarty	= array();
-	var $modules		= array();
+	var $css_modules		= array();
+	var $tabs_modules		= array();
+	var $triggers_modules	= array();
+	var $need_smarty		= array();
+	var $modules			= array();
 
-	var $logbuffer		= array();
+	var $logbuffer			= array();
 
 	/**
 	 * Constructor
@@ -80,6 +81,9 @@ class Conf
 	function setValues($db)
 	{
 		dol_syslog("Conf::setValues");
+		
+		// Directory of core triggers
+		$this->triggers_modules[] = DOL_DOCUMENT_ROOT . "/includes/triggers";
 
 		// Avoid warning if not defined
 		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
@@ -123,6 +127,13 @@ class Conf
 						$params=explode(':',$value,2);
 						$this->tabs_modules[$params[0]][]=$value;
 						//print 'xxx'.$params[0].'-'.$value;
+					}
+					// If this is constant for triggers activated by a module
+					if (preg_match('/^MAIN_MODULE_([A-Z]+)_TRIGGERS$/i',$key,$regs) && $value)
+					{
+						$modulename = strtolower($regs[1]);
+						$pathoftrigger = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
+						$this->triggers_modules[] = $pathoftrigger;
 					}
 					// If this is constant to force a module directories (used to manage some exceptions)
 					// Should not be used by modules

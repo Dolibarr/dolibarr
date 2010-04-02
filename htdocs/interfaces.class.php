@@ -62,11 +62,8 @@ class Interfaces
 		{
    			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}
-
-		// Load the list of directories containing triggers
-		$this->getModulesTriggers();
 		
-		foreach($this->dir as $dir)
+		foreach($conf->triggers_modules as $dir)
 		{
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
@@ -153,34 +150,6 @@ class Interfaces
 		{
 			//dol_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
 			return $nbok;
-		}
-	}
-	
-   /**
-	*   \brief      Returns the list of directories containing triggers.
-	*   \return     array         List of directories.
-	*/
-	function getModulesTriggers()
-	{
-		global $conf;
-		
-		// Directory of core triggers
-		$this->dir[] = DOL_DOCUMENT_ROOT . "/includes/triggers";
-		
-		foreach($conf->global as $key => $value)
-		{
-			if (preg_match('/^MAIN_TRIGGER_/',$key)) 
-			{
-				if ($value)
-				{
-					if (preg_match('/^MAIN_TRIGGER_([[:alnum:]]*)$/',$key,$regs))
-					{
-						$modulename = strtolower($regs[1]);
-						$pathoftrigger = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
-						$this->dir[] = $pathoftrigger;
-					}
-				}
-			}
 		}
 	}
 

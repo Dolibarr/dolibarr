@@ -23,7 +23,6 @@
  */
 
 require("../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT ."/interfaces.class.php");
 
 if (!$user->admin)
     accessforbidden();
@@ -56,17 +55,13 @@ print "  <td align=\"center\">".$langs->trans("Active")."</td>\n";
 print "  <td align=\"center\">&nbsp;</td>\n";
 print "</tr>\n";
 
-// Define dir directory
-$interfaces=new Interfaces($db);
-$interfaces->getModulesTriggers();
 
-$handle=opendir($dir);
 $files = array();
 $modules = array();
 $orders = array();
 $i = 0;
 
-foreach($interfaces->dir as $dir)
+foreach($conf->triggers_modules as $dir)
 {
 	// Check if directory exists
 	if (!is_dir($dir)) continue;
