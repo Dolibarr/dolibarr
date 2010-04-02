@@ -58,47 +58,15 @@ print "</tr>\n";
 
 // Define dir directory
 $interfaces=new Interfaces($db);
-$dir = $interfaces->dir;
+$interfaces->getModulesTriggers();
 
 $handle=opendir($dir);
 $files = array();
 $modules = array();
 $orders = array();
 $i = 0;
-while (($file = readdir($handle))!==false)
-{
-    if (is_readable($dir.'/'.$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php/',$file,$reg))
-    {
-        $modName = 'Interface'.ucfirst($reg[2]);
-		//print "file=$file"; print "modName=$modName"; exit;
-		if (in_array($modName,$modules))
-		{
-			$langs->load("errors");
-			print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
-			$objMod = new $modName($db);
 
-			$modules[$i] = $modName;
-			$files[$i] = $file;
-			$orders[$i] = $objMod->family;   // Tri par famille
-			$i++;
-		}
-		else
-		{
-			include_once($dir.'/'.$file);
-			$objMod = new $modName($db);
-
-			$modules[$i] = $modName;
-			$files[$i] = $file;
-			$orders[$i] = $objMod->family;   // Tri par famille
-			$i++;
-		}
-    }
-}
-closedir($handle);
-
-// Find external module triggers
-$interfaces->getModulesTriggers();
-foreach($interfaces->pathoftriggers as $dir)
+foreach($interfaces->dir as $dir)
 {
 	$handle=opendir($dir);
 	

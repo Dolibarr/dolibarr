@@ -33,9 +33,8 @@
 
 class Interfaces
 {
-	var $dir;						// Directory with all core trigger files
-	var $errors			= array();	// Array for errors
-	var $pathoftriggers	= array();	// Array for path of triggers
+	var $dir;				// Directory with all core and external triggers files
+	var $errors	= array();	// Array for errors
 
    /**
 	*   \brief      Constructeur.
@@ -44,7 +43,6 @@ class Interfaces
 	function Interfaces($DB)
 	{
 		$this->db = $DB ;
-		$this->dir = DOL_DOCUMENT_ROOT . "/includes/triggers";
 	}
 
    /**
@@ -155,6 +153,9 @@ class Interfaces
 	{
 		global $conf;
 		
+		// Directory of core triggers
+		$this->dir[] = DOL_DOCUMENT_ROOT . "/includes/triggers";
+		
 		foreach($conf->global as $key => $value)
 		{
 			if (preg_match('/^MAIN_TRIGGER_/',$key)) 
@@ -165,7 +166,7 @@ class Interfaces
 					{
 						$modulename = strtolower($regs[1]);
 						$pathoftrigger = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
-						$this->pathoftriggers[] = $pathoftrigger;
+						$this->dir[] = $pathoftrigger;
 					}
 				}
 			}
