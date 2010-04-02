@@ -68,6 +68,9 @@ $i = 0;
 
 foreach($interfaces->dir as $dir)
 {
+	// Check if directory exists
+	if (!is_dir($dir)) continue;
+	
 	$handle=opendir($dir);
 	
 	while (($file = readdir($handle))!==false)

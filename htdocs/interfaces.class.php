@@ -63,7 +63,7 @@ class Interfaces
    			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}
 
-		// Load all directory
+		// Load the list of directories containing triggers
 		$this->getModulesTriggers();
 		
 		foreach($this->dir as $dir)
@@ -157,8 +157,8 @@ class Interfaces
 	}
 	
    /**
-	*   \brief      Return list of modules contains triggers.
-	*   \return     array         List of module name.
+	*   \brief      Returns the list of directories containing triggers.
+	*   \return     array         List of directories.
 	*/
 	function getModulesTriggers()
 	{
