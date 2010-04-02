@@ -132,8 +132,7 @@ class Conf
 					if (preg_match('/^MAIN_MODULE_([A-Z]+)_TRIGGERS$/i',$key,$regs) && $value)
 					{
 						$modulename = strtolower($regs[1]);
-						$pathoftrigger = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
-						$this->triggers_modules[] = $pathoftrigger;
+						$this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
 					}
 					// If this is constant to force a module directories (used to manage some exceptions)
 					// Should not be used by modules
