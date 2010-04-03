@@ -34,7 +34,7 @@ ErrorSupplierCodeRequired=Tedarikçi kodu gereklidir
 ErrorSupplierCodeAlreadyUsed=Tedarikçi kodu zaten kullanılmaktadır
 ErrorBadParameters=Kötü parametreleri
 ErrorFailedToWriteInDir=Dizini% yazmak Başarısız s
-ErrorFoundBadEmailInFile=% Found hatalı e-posta sözdizimi (örneğin satır% dosyasındaki satırları s e-posta ile =% s) s
+ErrorFoundBadEmailInFile=% Found hatalı e-posta sözdizimi (örneğin satır% dosyasındaki satırları s e-posta ile=% s) s
 ErrorUserCannotBeDelete=Kullanıcı silinemez. Olabilirsiniz Dolibarr varlıklar üzerinde ilişkili olabilir.
 ErrorFieldsRequired=Bazı gerekli alanlar dolu değildi.
 ErrorFailedToCreateDir=Dizin oluşturulamadı. Kontrol Web sunucusu kullanıcı Dolibarr belgeleri dizine yazma izinleri vardır. Eğer bu parametre <b>Guvenlik</b> PHP, kontrol edin Dolibarr PHP dosyaları web sunucusu kullanıcı (veya grup) için sahibi etkindir.

@@ -67,7 +67,7 @@ LineQty=Menge für die Haushaltslinie
 LineTotalHT=Betrag nach Abzug der Steuern für die Haushaltslinie
 LineTotalTTC=Betrag mit der Steuer für die Haushaltslinie
 LineTotalVAT=Betrag der Mehrwertsteuer für die Haushaltslinie
-TypeOfLineServiceOrProduct=Art der Linie (0 = Produkt-, 1 = Service)
+TypeOfLineServiceOrProduct=Art der Linie (0= Produkt-, 1= Service)
 FileWithDataToImport=Datei mit Daten zu importieren
 FileToImport=Source-Datei zu importieren
 FileMustHaveOneOfFollowingFormat=Zu importierende Datei muss eine der folgenden Format

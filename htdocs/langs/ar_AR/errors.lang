@@ -32,7 +32,7 @@ ErrorSupplierCodeRequired=رمز المورد المطلوب
 ErrorSupplierCodeAlreadyUsed=الشفرة المستخدمة بالفعل مورد
 ErrorBadParameters=بارامترات سيئة
 ErrorFailedToWriteInDir=لم يكتب في دليل ٪ ق
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق = ٪ مع البريد الإلكتروني)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق= ٪ مع البريد الإلكتروني)
 ErrorUserCannotBeDelete=المستخدم لا يمكن حذفها. قد يكون ذلك مرتبطا Dolibarr على الكيانات.
 ErrorFieldsRequired=تتطلب بعض المجالات لم تملأ.
 ErrorFailedToCreateDir=فشل إنشاء دليل. تأكد من أن خادم الويب المستخدم أذونات لكتابة وثائق Dolibarr في الدليل. إذا تم تمكين المعلم <b>safe_mode</b> على هذا PHP ، تحقق من أن ملفات Dolibarr php تملك لخدمة الويب المستخدم (أو مجموعة).

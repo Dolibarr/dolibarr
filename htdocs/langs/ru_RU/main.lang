@@ -32,7 +32,7 @@ ErrorSQL=SQL ошибка
 ErrorLogoFileNotFound=Logo файл &#39; %s&#39; не найден
 ErrorGoToGlobalSetup=Перейти к компании / фонда &#39;настройки, чтобы устранить эту
 ErrorGoToModuleSetup=Перейти в модуле настройки, чтобы устранить эту
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Не удается отправить почту (Sender = %s, приемник = %s)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Не удается отправить почту (Sender= %s, приемник= %s)
 ErrorAttachedFilesDisabled=Прикрепление файлов функция отключена по этому serveur
 ErrorFileNotUploaded=Файл не был загружен. Убедитесь, что размер не превышает максимально допустимую, что свободного места имеется на диске, и что там еще не файл с тем же именем в этом каталоге.
 ErrorInternalErrorDetected=Ошибка обнаружена

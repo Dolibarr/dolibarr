@@ -156,7 +156,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Sopimus emtpy päivämäärä korjaus 
 MigrationContractsEmptyDatesNothingToUpdate=Mitään sopimusta ei tyhjä päivämäärä korjata
 MigrationContractsEmptyCreationDatesNothingToUpdate=Mitään sopimusta ei luontipäivämäärä korjata
 MigrationContractsInvalidDatesUpdate=Bad arvopäivä sopimuksen korjaus
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Oikea sopimuksen %s (Sopimussuhteiset date = %s, Lähtölista palvelun päivämäärä min = %s)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Oikea sopimuksen %s (Sopimussuhteiset date= %s, Lähtölista palvelun päivämäärä min= %s)
 MigrationContractsInvalidDatesNumber= %s sopimusten muuntamattomat
 MigrationContractsInvalidDatesNothingToUpdate=N: o päivämäärän mukaisessa huono arvo korjata
 MigrationContractsIncoherentCreationDateUpdate=Bad arvo sopimuksen luontipäivämäärä korjaus

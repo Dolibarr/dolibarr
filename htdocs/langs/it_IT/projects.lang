@@ -1,31 +1,31 @@
 # Dolibarr language file - it_IT - projects 
 CHARSET=UTF-8
-Project					    =Progetto 
-Projects				    =Progetti 
-Myprojects				    =I miei progetti 
-ProjectsArea				    =Sezione progetti 
-NewProject				    =Nuovo progetto 
-AddProject				    =Aggiungi il progetto 
-DeleteAProject				    =Supprimer un progetto 
-OfficerProject				    =Ufficiale di progetto 
-ConfirmDeleteAProject			    =Sei sicuro di voler eliminare questo progetto? 
-LastProjects				    =Ultimi %s progetti 
-AllProjects				    =Tutti i progetti 
-ShowProject				    =Visualizza progetto 
-SetProject				    =Impostare progetto 
-NoProject				    =Nessun progetto definito 
-NbOpenTasks				    =Numeri aperto compiti 
-MyTasks					    =I miei compiti 
-Tasks					    =Compiti 
-Task					    =Attività 
-NewTask					    =Nuova attività 
-AddDuration				    =Aggiungi durata 
-Activity				    =Attività 
-MyActivity				    =La mia attività 
-DurationEffective			    =Durata effettiva 
-ListProposalsAssociatedProject		    =L'elenco delle proposte commerciali associati al progetto 
-ListOrdersAssociatedProject		    =Gli elenchi degli ordini associati al progetto 
-ListInvoicesAssociatedProject		    =L'elenco delle fatture connesse con il progetto
+Project=Progetto 
+Projects=Progetti 
+Myprojects=I miei progetti 
+ProjectsArea=Sezione progetti 
+NewProject=Nuovo progetto 
+AddProject=Aggiungi il progetto 
+DeleteAProject=Supprimer un progetto 
+OfficerProject=Ufficiale di progetto 
+ConfirmDeleteAProject=Sei sicuro di voler eliminare questo progetto? 
+LastProjects=Ultimi %s progetti 
+AllProjects=Tutti i progetti 
+ShowProject=Visualizza progetto 
+SetProject=Impostare progetto 
+NoProject=Nessun progetto definito 
+NbOpenTasks=Numeri aperto compiti 
+MyTasks=I miei compiti 
+Tasks=Compiti 
+Task=Attività 
+NewTask=Nuova attività 
+AddDuration=Aggiungi durata 
+Activity=Attività 
+MyActivity=La mia attività 
+DurationEffective=Durata effettiva 
+ListProposalsAssociatedProject=L'elenco delle proposte commerciali associati al progetto 
+ListOrdersAssociatedProject=Gli elenchi degli ordini associati al progetto 
+ListInvoicesAssociatedProject=L'elenco delle fatture connesse con il progetto
 
 
 // Date 2009-01-18 19:41:54

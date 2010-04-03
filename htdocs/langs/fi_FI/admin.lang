@@ -484,7 +484,7 @@ BackToModuleList=Palaa moduulien luetteloon
 BackToDictionnaryList=Palaa sanakirjat luettelo
 VATReceivedOnly=Erityistä verokantaa ei veloiteta
 VATManagement=Alv Management
-VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Alv oletuksena, kun luot näkymiä, laskuja, tilauksia etc seurata aktiivisesti noudattaa sääntöä: <br> Jos myyjä joutuu arvonlisäveroa, sitten arvonlisäveron default = 0. End of sääntö. <br> Jos (myynti country = ostavat maa), sitten arvonlisäveron default = arvonlisäveroa tuotteen myynti maassa. End of sääntö. <br> Jos myyjän ja ostajan Euroopan yhteisön ja tavarat myydään uudet kuljetusvälineet (auto, laiva, lentokone), oletus alv = 0 (ALV olisi maksettava ostajalle että customoffice omasta maastaan eikä myyjä ). End of sääntö. <br> Jos myyjän ja ostajan Euroopan yhteisön ja myytyjen tavaroiden muilla keinoin kuin uusia kulkuneuvoja, sitten arvonlisäveron default = alv tuotetta myydään. End of sääntö. <br> Else ehdotettu oletus alv = 1. End of sääntö.
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Alv oletuksena, kun luot näkymiä, laskuja, tilauksia etc seurata aktiivisesti noudattaa sääntöä: <br> Jos myyjä joutuu arvonlisäveroa, sitten arvonlisäveron default= 0. End of sääntö. <br> Jos (myynti country= ostavat maa), sitten arvonlisäveron default= arvonlisäveroa tuotteen myynti maassa. End of sääntö. <br> Jos myyjän ja ostajan Euroopan yhteisön ja tavarat myydään uudet kuljetusvälineet (auto, laiva, lentokone), oletus alv= 0 (ALV olisi maksettava ostajalle että customoffice omasta maastaan eikä myyjä ). End of sääntö. <br> Jos myyjän ja ostajan Euroopan yhteisön ja myytyjen tavaroiden muilla keinoin kuin uusia kulkuneuvoja, sitten arvonlisäveron default= alv tuotetta myydään. End of sääntö. <br> Else ehdotettu oletus alv= 1. End of sääntö.
 VATIsNotUsedDesc=Oletusarvon ehdotettu alv on 0, jota voidaan käyttää tapauksissa, kuten yhdistysten, yksityishenkilöiden tai pieniä yrityksiä.
 VATIsUsedExampleFR=Ranskassa, se tarkoittaa sitä, että yritykset tai järjestöt, joilla on todellista verotusjärjestelmän (yksinkertaistettu todellinen tai normaali todellinen). Järjestelmää, jossa arvonlisävero on ilmoitettu.
 VATIsNotUsedExampleFR=Ranskassa, se tarkoittaa sitä, yhdistyksiä, jotka eivät ole alv julistettu tai yritysten, organisaatioiden tai vapaiden ammattien harjoittajia, jotka ovat valinneet mikro yritys verotusjärjestelmän (alv franchising) ja maksetaan franchising alv ilman alv julkilausumaan. Tämä valinta näkyy maininta &quot;Ei sovelleta alv - art-293B CGI&quot; laskuissa.
@@ -727,14 +727,14 @@ LDAPServerUseTLS=TLS
 LDAPServerUseTLSExample=Sinun LDAP-palvelimen käyttö TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Täydellinen DN (ex: cn = adminldap, dc = yhteiskunta, dc = com)
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Täydellinen DN (ex: cn= adminldap, dc= yhteiskunta, dc= com)
 LDAPPassword=Järjestelmänvalvojan salasana
 LDAPUserDn=Käyttäjien DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Täydellinen DN (ex: ou = users, dc = yhteiskunta, dc = com)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Täydellinen DN (ex: ou= users, dc= yhteiskunta, dc= com)
 LDAPGroupDn=Ryhmien DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Täydellinen DN (ex: ou = ryhmien, dc = yhteiskunta, dc = com)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Täydellinen DN (ex: ou= ryhmien, dc= yhteiskunta, dc= com)
 LDAPServerExample=Palvelimen osoite (esim. localhost, 192.168.0.2, ldaps: / / ldap.example.com /)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=Täydellinen DN (ex: dc = yritys, dc = com)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=Täydellinen DN (ex: dc= yritys, dc= com)
 LDAPPasswordExample=Admin salasana
 LDAPDnSynchroActive=Käyttäjät ja ryhmät synkronointi
 LDAPDnSynchroActiveExample=LDAP-Dolibarr tai Dolibarr on LDAP-synkronointi
@@ -744,9 +744,9 @@ LDAPDnContactActiveExample=Aktiivihiili / Unactivated synkronointi
 LDAPDnMemberActive=Jäsenten synkronointi
 LDAPDnMemberActiveExample=Aktiivihiili / Unactivated synkronointi
 LDAPContactDn=Dolibarr yhteystietosi DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Täydellinen DN (ex: ou = yhteystietoja, dc = yhteiskunta, dc = com)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Täydellinen DN (ex: ou= yhteystietoja, dc= yhteiskunta, dc= com)
 LDAPMemberDn=Dolibarr jäsenten DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Täydellinen DN (ex: ou = jäsentä, dc = yhteiskunta, dc = com)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Täydellinen DN (ex: ou= jäsentä, dc= yhteiskunta, dc= com)
 LDAPMemberObjectClassList=Luettelo objectClass
 LDAPMemberObjectClassListExample=Luettelo objectClass määritellään tallentaa attribuutteja (ex: top, inetOrgPerson tai alkuun, käyttäjän Active Directory)
 LDAPUserObjectClassList=Luettelo objectClass
@@ -756,7 +756,7 @@ LDAPGroupObjectClassListExample=Luettelo objectClass määritellään tallentaa 
 LDAPContactObjectClassList=Luettelo objectClass
 LDAPContactObjectClassListExample=Luettelo objectClass määritellään tallentaa attribuutteja (ex: top, inetOrgPerson tai alkuun, käyttäjän Active Directory)
 LDAPMemberTypeDn=Dolibarr jäsenen tyyppi DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Täydellinen DN (ex: ou = type_members, dc = yhteiskunta, dc = com)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Täydellinen DN (ex: ou= type_members, dc= yhteiskunta, dc= com)
 LDAPTestConnect=Testaa LDAP-yhteys
 LDAPTestSynchroContact=Test yhteystiedon synkronointi
 LDAPTestSynchroUser=Test käyttäjän synkronointi
@@ -765,10 +765,10 @@ LDAPTestSynchroMember=Test jäsenen synkronointi
 LDAPSynchroOK=Synkronointi testi onnistunut
 LDAPSynchroKO=Epäonnistui synkronointi testi
 LDAPSynchroKOMayBePermissions=Epäonnistui synkronointi testi. Tarkista, että connexion palvelimelle on määritetty oikein ja mahdollistaa LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP yhteyden LDAP-palvelin onnistunut (Server = %s, Port = %s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP yhteyden LDAP-palvelimeen ei onnistunut (Server = %s, Port = %s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Yhdistä / Authentificate on LDAP-palvelin onnistunut (Server = %s, Port = %s, Admin = %s, salasana = %s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Yhdistä / Authentificate on LDAP-palvelimeen ei onnistunut (Server = %s, Port = %s, Admin = %s, salasana = %s)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP yhteyden LDAP-palvelin onnistunut (Server= %s, Port= %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP yhteyden LDAP-palvelimeen ei onnistunut (Server= %s, Port= %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Yhdistä / Authentificate on LDAP-palvelin onnistunut (Server= %s, Port= %s, Admin= %s, salasana= %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Yhdistä / Authentificate on LDAP-palvelimeen ei onnistunut (Server= %s, Port= %s, Admin= %s, salasana= %s)
 LDAPUnbindSuccessfull=Katkaise onnistunut
 LDAPUnbindFailed=Katkaise epäonnistui
 LDAPConnectToDNSuccessfull=Yhteys au DN ( %s) Russie
@@ -832,7 +832,7 @@ LDAPDescMembers=Tällä sivulla voit määritellä LDAP attributes nimi LDAP puu
 LDAPDescValues=Esimerkki arvot on suunniteltu <b>OpenLDAP</b> kanssa seuraavat ladattu kaavat: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Jos käytät thoose arvot ja OpenLDAP, muokata LDAP config file <b>slapd.conf</b> on kaikki thoose kaavat ladattu.
 ForANonAnonymousAccess=Jotta autentikoitu acces (for a kirjoitusoikeuksia esimerkiksi)
 ProductSetup=Tuotteet Moduuli setup
-NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max numero tuotteiden yhdistelmät valitse listat (0 = ei ylärajaa)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max numero tuotteiden yhdistelmät valitse listat (0= ei ylärajaa)
 ConfirmDeleteProductLineAbility=Vahvistus poisto linja tuottaa lomakkeet
 ModifyProductDescAbility=Mukauttaminen kuvausten tuotettu lomakkeet
 ViewProductDescInFormAbility=Visualisointi tuotteen kuvaukset lomakkeiden (toisin kuin popup tooltip)

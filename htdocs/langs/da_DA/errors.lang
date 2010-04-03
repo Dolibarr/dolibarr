@@ -32,7 +32,7 @@ ErrorSupplierCodeRequired=Leverandør kode kræves
 ErrorSupplierCodeAlreadyUsed=Leverandør koden allerede anvendes
 ErrorBadParameters=Bad parametre
 ErrorFailedToWriteInDir=Det lykkedes ikke at skrive i mappen %s
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Fundet forkerte e-mail-syntaks for %s linjer i filen (f.eks line %s med email = %s)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Fundet forkerte e-mail-syntaks for %s linjer i filen (f.eks line %s med email= %s)
 ErrorUserCannotBeDelete=Bruger kan ikke slettes. Kan det er knyttet til den Dolibarr enheder.
 ErrorFieldsRequired=Nogle krævede felter ikke var fyldt.
 ErrorFailedToCreateDir=Det lykkedes ikke at oprette en mappe. Kontroller, at web-serveren bruger har tilladelse til at skrive i Dolibarr dokumenter bibliotek. Hvis parameter <b>safe_mode</b> er aktiveret på dette PHP, kontrollere, at Dolibarr php filer ejer til web-serveren bruger (eller gruppe).

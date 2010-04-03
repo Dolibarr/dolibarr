@@ -124,6 +124,6 @@ AddDeliveryCostLine=Adicionar uma linha de despesas de fretes indicando o peso d
 PDFEinsteinDescription=Modelo de orçamento completo (logo...)
 
 # NumRef Modules
-MarbreNumRefDesc=Devolve o número baixo o formato %syymm-nnnn onde yy é o ano, mm o mês e nnnn um contador seq�êncial sem ruptura e sem Voltar a 0
+MarbreNumRefDesc=Devolve o número baixo o formato %syymm-nnnn onde yy é o ano, mm o mês e nnnn um contador seq�êncial sem ruptura e sem Voltar a 0
 
 

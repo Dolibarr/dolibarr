@@ -48,10 +48,10 @@ DateActionDoneEnd=Real lopetuspäivämäärää
 DateActionStart=Aloituspäivämäärä
 DateActionEnd=Lopetuspäivä
 AgendaUrlOptions1=Voit myös lisätä seuraavat parametrit suodattaa output:
-AgendaUrlOptions2=<b>login=<b>login = %s</b> rajoittaa tuotannon toimiin luotu, vaikuttaa tavalla tai tehdä <b>käyttäjä %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina = %s</b> rajoittaa tuotannon toimiin luotu <b>käyttäjän %s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint = %s</b> rajoittaa tuotannon toimet vaikuttavat <b>käyttäjän %s.</b>
-AgendaUrlOptions5=<b>logind=<b>sisäänkirj = %s</b> rajoittaa tuotannon toimet tehdään <b>käyttäjän %s.</b>
+AgendaUrlOptions2=<b>login=<b>login= %s</b> rajoittaa tuotannon toimiin luotu, vaikuttaa tavalla tai tehdä <b>käyttäjä %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina= %s</b> rajoittaa tuotannon toimiin luotu <b>käyttäjän %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint= %s</b> rajoittaa tuotannon toimet vaikuttavat <b>käyttäjän %s.</b>
+AgendaUrlOptions5=<b>logind=<b>sisäänkirj= %s</b> rajoittaa tuotannon toimet tehdään <b>käyttäjän %s.</b>
 AgendaShowBirthdayEvents=Näytä syntymäpäivä yhteyksiä
 AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
 // Date 2009-01-19 22:07:11

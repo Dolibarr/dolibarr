@@ -160,7 +160,7 @@ MigrationContractsEmptyDatesUpdateSuccess=تصحيح تاريخ العقد emtpy
 MigrationContractsEmptyDatesNothingToUpdate=أي عقد حتى الآن لتصحيح فارغة
 MigrationContractsEmptyCreationDatesNothingToUpdate=إنشاء أي عقد لتصحيح التاريخ
 MigrationContractsInvalidDatesUpdate=سوء قيمة العقد تصحيح التاريخ
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=تصحيح العقد ٪ ق (تاريخ العقد ق = ٪ ، اعتبارا من تاريخ الخدمة دقيقة = ٪)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=تصحيح العقد ٪ ق (تاريخ العقد ق= ٪ ، اعتبارا من تاريخ الخدمة دقيقة= ٪)
 MigrationContractsInvalidDatesNumber=ق ٪ العقود المعدلة
 MigrationContractsInvalidDatesNothingToUpdate=اي موعد مع سوء قيمة تصحيح
 MigrationContractsIncoherentCreationDateUpdate=سوء خلق قيمة العقد تصحيح التاريخ

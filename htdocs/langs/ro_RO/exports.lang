@@ -67,7 +67,7 @@ LineQty=Cantitate de linie
 LineTotalHT=Valoarea netă a taxei de linie
 LineTotalTTC=Suma cu taxa de linie
 LineTotalVAT=Suma TVA pentru linia
-TypeOfLineServiceOrProduct=Tip de linie (0 = produs, 1 = serviciu)
+TypeOfLineServiceOrProduct=Tip de linie (0= produs, 1= serviciu)
 FileWithDataToImport=Fişiere cu date de import
 FileToImport=Fişierul sursă de import
 FileMustHaveOneOfFollowingFormat=Fişier pentru import trebuie să aibă una dintre următoarele format

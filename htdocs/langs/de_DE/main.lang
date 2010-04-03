@@ -34,7 +34,7 @@ ErrorSQL=SQL-Fehler
 ErrorLogoFileNotFound=Logo-Datei &#39; %s&#39; wurde nicht gefunden
 ErrorGoToGlobalSetup=Gehen Sie nach &#39;Firma / Stiftung &quot;Setup, das Problem zu beheben
 ErrorGoToModuleSetup=Gehen Sie zu Setup-Modul, das Problem zu beheben
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Fehler beim E-Mail (Absender = %s, %s = Empfänger)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Fehler beim E-Mail (Absender= %s, %s= Empfänger)
 ErrorAttachedFilesDisabled=Dateien anhängen-Funktion deaktiviert ist, auf diesem serveur
 ErrorFileNotUploaded=Datei wurde nicht hochgeladen. Vergewissern Sie sich, dass Größe nicht mehr als maximal erlaubt, dass der freie Speicherplatz auf der Festplatte und, dass es nicht bereits eine Datei mit dem gleichen Namen in dieses Verzeichnis.
 ErrorInternalErrorDetected=Fehler entdeckt

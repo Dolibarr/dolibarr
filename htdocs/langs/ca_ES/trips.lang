@@ -1,5 +1,5 @@
 # Dolibarr language file - ca_ES - trips
-CHARSET = UTF-8
+CHARSET= UTF-8
 Trip=Desplaçament
 Trips=Desplaçaments
 TripsAndExpenses=Honoraris

@@ -48,10 +48,10 @@ DateActionDoneEnd=Gerçek bitiş tarihi
 DateActionStart=Başlangıç tarihi
 DateActionEnd=Bitiş tarihi
 AgendaUrlOptions1=Ayrıca filtre çıkış parametreler aşağıdaki ekleyebilirsiniz:
-AgendaUrlOptions2=<b>login =%</b> eylemler tarafından oluşturulan veya <b>kullanıcı%</b> tarafından yapılması için etkilenen çıkışı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions3=<b>logina =%%</b> eylemler kullanıcı tarafından oluşturulan çıktı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions4=<b>logint =%</b> eylemleri kullanıcı <b>için%</b> etkilenen çıkışı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions5=<b>logind =%</b> eylemler <b>kullanıcı%</b> tarafından yapılan çıktı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions2=<b>login=%</b> eylemler tarafından oluşturulan veya <b>kullanıcı%</b> tarafından yapılması için etkilenen çıkışı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions3=<b>logina=%%</b> eylemler kullanıcı tarafından oluşturulan çıktı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions4=<b>logint=%</b> eylemleri kullanıcı <b>için%</b> etkilenen çıkışı kısıtlamak için <b>değil.</b>
+AgendaUrlOptions5=<b>logind=%</b> eylemler <b>kullanıcı%</b> tarafından yapılan çıktı kısıtlamak için <b>değil.</b>
 AgendaShowBirthdayEvents=Show doğum rehber
 AgendaHideBirthdayEvents=Sakla doğum rehber
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).

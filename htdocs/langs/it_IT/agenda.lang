@@ -1,42 +1,42 @@
 # Dolibarr language file - it_IT - agenda 
 CHARSET=UTF-8
-Actions                               =Azioni
-ActionsArea 			      =Sezione azioni (eventi e compiti)
-Agenda 				      =Ordine del giorno
-Agendas 			      =Ordini del giorno
-Calendar 			      =Calendario
-Calendars 			      =Calendari
-AffectedTo 			      =Azione assegnata a
-DoneBy 				      =Realizzato da
-Events 				      =Eventi
-SearchAnAction 			      =Cerca un'azione / compito
-MenuToDoActions 		      =Tutte le azioni incomplete
-MenuDoneActions 		      =Tutte le azioni archiviate
-MenuToDoMyActions 		      =Le mie azioni incomplete 
-MenuDoneMyActions 		      =Le mie azioni completate
-ListOfEvents 			      =Elenco degli eventi Dolibarr
-ActionsAskedBy 			      =Azioni richieste da
-ActionsToDoBy 			      =Azioni assegnate a
-ActionsDoneBy 			      =Azioni fatte da
-AllMyActions 			      =Tutte le mie azioni / compiti
-AllActions 			      =Tutte le azioni / compiti
-ViewList 			      =Visualizza l'elenco
-ViewCal 			      =Visualizza il calendario
-ViewWithPredefinedFilters 	      =Vedere con i filtri predefiniti
-AutoActions 			      =Riempimento automatico di ordine del giorno
-AgendaAutoActionDesc 		      =Definire qui gli eventi di cui si desidera Dolibarr per creare automaticamente un 'azione in giorno. Se non è selezionata (impostazione predefinita), solo manuale azioni saranno incluse nel programma.
-AgendaSetupOtherDesc 		      =Questa pagina consente di configurare gli altri parametri del modulo di ordine del giorno.
-ActionsEvents 			      =Eventi per il quale creare un azione
-PropalValidatedInDolibarr 	      =Proposta convalidata
-InvoiceValidatedInDolibarr 	      =Fattura convalidata
-OrderValidatedInDolibarr 	      =Ordine convalidato
-NewCompanyToDolibarr 		      =Da parte di terzi creato
-DateActionPlannedStart 		      =Pianificato per data di inizio
-DateActionPlannedEnd 		      =Pianificato per data di fine
-DateActionDoneStart 		      =Data effettiva di inizio
-DateActionDoneEnd 		      =Data effettiva di fine
-DateActionStart 		      =Data di inizio
-DateActionEnd 			      =Data di fine
+Actions=Azioni
+ActionsArea=Sezione azioni (eventi e compiti)
+Agenda=Ordine del giorno
+Agendas=Ordini del giorno
+Calendar=Calendario
+Calendars=Calendari
+AffectedTo=Azione assegnata a
+DoneBy=Realizzato da
+Events=Eventi
+SearchAnAction=Cerca un'azione / compito
+MenuToDoActions=Tutte le azioni incomplete
+MenuDoneActions=Tutte le azioni archiviate
+MenuToDoMyActions=Le mie azioni incomplete 
+MenuDoneMyActions=Le mie azioni completate
+ListOfEvents=Elenco degli eventi Dolibarr
+ActionsAskedBy=Azioni richieste da
+ActionsToDoBy=Azioni assegnate a
+ActionsDoneBy=Azioni fatte da
+AllMyActions=Tutte le mie azioni / compiti
+AllActions=Tutte le azioni / compiti
+ViewList=Visualizza l'elenco
+ViewCal=Visualizza il calendario
+ViewWithPredefinedFilters=Vedere con i filtri predefiniti
+AutoActions=Riempimento automatico di ordine del giorno
+AgendaAutoActionDesc=Definire qui gli eventi di cui si desidera Dolibarr per creare automaticamente un 'azione in giorno. Se non è selezionata (impostazione predefinita), solo manuale azioni saranno incluse nel programma.
+AgendaSetupOtherDesc=Questa pagina consente di configurare gli altri parametri del modulo di ordine del giorno.
+ActionsEvents=Eventi per il quale creare un azione
+PropalValidatedInDolibarr=Proposta convalidata
+InvoiceValidatedInDolibarr=Fattura convalidata
+OrderValidatedInDolibarr=Ordine convalidato
+NewCompanyToDolibarr=Da parte di terzi creato
+DateActionPlannedStart=Pianificato per data di inizio
+DateActionPlannedEnd=Pianificato per data di fine
+DateActionDoneStart=Data effettiva di inizio
+DateActionDoneEnd=Data effettiva di fine
+DateActionStart=Data di inizio
+DateActionEnd=Data di fine
 
 // Date 2009-01-18 19:41:54
 // START - Lines generated via parser
@@ -44,10 +44,10 @@ DateActionEnd 			      =Data di fine
 ListOfActions=Lista degli eventi
 Location=Località
 AgendaUrlOptions1=È inoltre possibile aggiungere seguenti parametri di filtro in uscita:
-AgendaUrlOptions2=<b>login=<b>login = %s</b> per limitare la produzione di azioni creato da, o interessati a fare da <b>utente %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina = %s</b> per limitare la produzione di azioni creato da <b>utente %s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint = %s</b> per limitare la produzione di azioni <b>compromesso %s</b> utente.
-AgendaUrlOptions5=<b>logind=<b>logind = %s</b> per limitare la produzione di azioni fatto da <b>utente %s.</b>
+AgendaUrlOptions2=<b>login=<b>login= %s</b> per limitare la produzione di azioni creato da, o interessati a fare da <b>utente %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina= %s</b> per limitare la produzione di azioni creato da <b>utente %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint= %s</b> per limitare la produzione di azioni <b>compromesso %s</b> utente.
+AgendaUrlOptions5=<b>logind=<b>logind= %s</b> per limitare la produzione di azioni fatto da <b>utente %s.</b>
 AgendaShowBirthdayEvents=Visualizza i contatti di compleanno
 AgendaHideBirthdayEvents=Nascondi i contatti di compleanno
 // Date 2009-01-18 19:41:54

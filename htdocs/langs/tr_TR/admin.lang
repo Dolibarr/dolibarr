@@ -185,8 +185,8 @@ Security=Güvenlik
 Passwords=Şifreler
 DoNotStoreClearPassword=Hayır (Aktif veritabanı ancak mağazası yalnızca şifrelenmiş değeri net şifreleri saklamak mı önerilir)
 MainDbPasswordFileConfEncrypted=Veritabanı conf.php içinde (Aktif şifreli parola önerilir)
-InstrucToEncodePass=<b>Conf.php</b> dosyası içerisinde, çizgi yerine kodlanmış şifre sahip olmak <br> <b>$ dolibarr_main_db_pass =&quot;...&quot;</b> <br> tarafından <br> <b>$ = &quot;dolibarr_main_db_pass kriptolanmis:% s&quot;</b>
-InstrucToClearPass=Çözümlenmiş (net) <b>conf.php</b> dosyası içerisinde, çizgi yerine şifre sahip olmak <br> <b>$ = dolibarr_main_db_pass &quot;:...&quot; kriptolanmis</b> <br> tarafından <br> <b>$ dolibarr_main_db_pass = &quot;% s&quot;</b>
+InstrucToEncodePass=<b>Conf.php</b> dosyası içerisinde, çizgi yerine kodlanmış şifre sahip olmak <br> <b>$ dolibarr_main_db_pass=&quot;...&quot;</b> <br> tarafından <br> <b>$= &quot;dolibarr_main_db_pass kriptolanmis:% s&quot;</b>
+InstrucToClearPass=Çözümlenmiş (net) <b>conf.php</b> dosyası içerisinde, çizgi yerine şifre sahip olmak <br> <b>$= dolibarr_main_db_pass &quot;:...&quot; kriptolanmis</b> <br> tarafından <br> <b>$ dolibarr_main_db_pass= &quot;% s&quot;</b>
 ProtectAndEncryptPdfFiles=Koruma oluşturulan PDF dosyaları (aktifleştirmediniz tavsiye kitle PDF Generation sonları)
 ProtectAndEncryptPdfFilesDesc=Koruma PDF belgesinin okumak için ve herhangi bir PDF tarayıcı ile baskı mevcut tutar. Ancak, düzenleme ve kopyalama artık mümkün değildir. Bu özelliği kullanarak küresel kümülatif pdf ödenmemiş faturalar () gibi çalışmıyor bina olun.
 Feature=Özellik
@@ -586,7 +586,7 @@ BackToModuleList=Geri modüllerine listesi
 BackToDictionnaryList=Geri sözlüklere listesi
 VATReceivedOnly=Özel oranı ücret değil
 VATManagement=KDV Yönetimi
-VATIsUsedDesc=Varsayılan potansiyel oluşturarak KDV oranı, fatura, sipariş vb etkin standart kural: <br> Eğer satıcı KDV, sonra varsayılan = 0 tarafından KDV tabi tutulur. Kural sonu. <br> (Satan ülke = satın ülke) Eğer, o zaman varsayılan KDV = KDV satan ülkede ürün. Kural sonu. <br> Eğer satıcı ve Avrupa Topluluğu ve mal alıcı (araba, gemi, uçak) ulaşım yeni anlamı olan satılmaktadır, = 0 (KDV ülkesinin customoffice de alıcı tarafından değil, satıcı olarak ödenmelidir KDV varsayılan ). Kural sonu. <br> Eğer satıcı ve Avrupa Topluluğu ve eşya taşımacılığı yeni anlamı yerine başka yollarla satılan, sonra varsayılan KDV = KDV ürün olarak alıcı sattı. Kural sonu. <br> = 1 KDV Else önerilen varsayılan. Kural sonu.
+VATIsUsedDesc=Varsayılan potansiyel oluşturarak KDV oranı, fatura, sipariş vb etkin standart kural: <br> Eğer satıcı KDV, sonra varsayılan= 0 tarafından KDV tabi tutulur. Kural sonu. <br> (Satan ülke= satın ülke) Eğer, o zaman varsayılan KDV= KDV satan ülkede ürün. Kural sonu. <br> Eğer satıcı ve Avrupa Topluluğu ve mal alıcı (araba, gemi, uçak) ulaşım yeni anlamı olan satılmaktadır,= 0 (KDV ülkesinin customoffice de alıcı tarafından değil, satıcı olarak ödenmelidir KDV varsayılan ). Kural sonu. <br> Eğer satıcı ve Avrupa Topluluğu ve eşya taşımacılığı yeni anlamı yerine başka yollarla satılan, sonra varsayılan KDV= KDV ürün olarak alıcı sattı. Kural sonu. <br>= 1 KDV Else önerilen varsayılan. Kural sonu.
 VATIsNotUsedDesc=Varsayılan olarak önerilen KDV 0 olan dernekler gibi durumlarda, bireyler yapın küçük şirketlerin kullanılmış olabilir.
 VATIsUsedExampleFR=Fransa&#39;da, o (Basitleştirilmiş gerçek ya da gerçek normal) şirketler veya kuruluşlar, gerçek mali sistemine sahip olmak anlamına gelir. Olan KDV ilan edilir bir sistem.
 VATIsNotUsedExampleFR=Fransa&#39;da, bu dernekler olmayan KDV demektir ilan veya şirketler, kuruluşlar ya da franchise olarak (KDV mali sistemi mikro işletme seçtiniz, liberal meslekler) ve herhangi bir KDV beyan olmadan franchise KDV ödedi. Bu seçimi &quot;faturada referans&quot; Sigara uygulanan KDV - sanat-293B CGI gösterecektir.
@@ -852,14 +852,14 @@ LDAPServerUseTLS=TLS
 LDAPServerUseTLSExample=LDAP sunucusu TLS
 LDAPServerDn=Sunucu DN
 LDAPAdminDn=Yönetici DN
-LDAPAdminDnExample=Komple DN (örn: cn = adminldap, dc = toplum, DC = com)
+LDAPAdminDnExample=Komple DN (örn: cn= adminldap, dc= toplum, DC= com)
 LDAPPassword=Yönetici parolası
 LDAPUserDn=Users &#39;DN
-LDAPUserDnExample=Komple DN (örn: ou = Users, DC = toplum, DC = com)
+LDAPUserDnExample=Komple DN (örn: ou= Users, DC= toplum, DC= com)
 LDAPGroupDn=Groups &#39;DN
-LDAPGroupDnExample=Komple DN (örn: ou = groups, dc = toplum, DC = com)
+LDAPGroupDnExample=Komple DN (örn: ou= groups, dc= toplum, DC= com)
 LDAPServerExample=Sunucu adresi (ör: localhost, 192.168.0.2, LDAPS: / / ldap.example.com /)
-LDAPServerDnExample=Komple DN (örn: DC = company, DC = com)
+LDAPServerDnExample=Komple DN (örn: DC= company, DC= com)
 LDAPPasswordExample=Admin şifre
 LDAPDnSynchroActive=Kullanıcılar ve gruplar senkronizasyon
 LDAPDnSynchroActiveExample=LDAP Dolibarr veya Dolibarr LDAP ile senkronizasyon
@@ -869,9 +869,9 @@ LDAPDnContactActiveExample=Aktif / Unactivated senkronizasyon
 LDAPDnMemberActive=Üye &#39;senkronizasyon
 LDAPDnMemberActiveExample=Aktif / Unactivated senkronizasyon
 LDAPContactDn=Dolibarr rehber &#39;DN
-LDAPContactDnExample=Komple DN (örn: ou = rehber, dc = toplum, DC = com)
+LDAPContactDnExample=Komple DN (örn: ou= rehber, dc= toplum, DC= com)
 LDAPMemberDn=Dolibarr üye &#39;DN
-LDAPMemberDnExample=Komple DN (örn: ou = üye, dc = toplum, DC = com)
+LDAPMemberDnExample=Komple DN (örn: ou= üye, dc= toplum, DC= com)
 LDAPMemberObjectClassList=ObjectClass Listesi
 LDAPMemberObjectClassListExample=Active Directory için objectClass tanımlayarak kayıt öznitelikler listesi (örn: InetOrgPerson, üst veya üst, kullanıcı)
 LDAPUserObjectClassList=ObjectClass Listesi
@@ -881,7 +881,7 @@ LDAPGroupObjectClassListExample=ObjectClass tanımlayarak kayıt özellikleri (�
 LDAPContactObjectClassList=ObjectClass Listesi
 LDAPContactObjectClassListExample=Active Directory için objectClass tanımlayarak kayıt öznitelikler listesi (örn: InetOrgPerson, üst veya üst, kullanıcı)
 LDAPMemberTypeDn=Dolibarr üyenin tipi DN
-LDAPMemberTypeDnExample=Komple DN (örn: = type_members yapın, dc = toplum, DC = com)
+LDAPMemberTypeDnExample=Komple DN (örn:= type_members yapın, dc= toplum, DC= com)
 LDAPTestConnect=Test LDAP bağlantısı
 LDAPTestSynchroContact=Test kişinin senkronizasyon
 LDAPTestSynchroUser=Test kullanıcının senkronizasyon
@@ -890,10 +890,10 @@ LDAPTestSynchroMember=Test üyenin senkronizasyon
 LDAPSynchroOK=Senkronizasyon testi başarılı
 LDAPSynchroKO=Başarısız senkronizasyon testi
 LDAPSynchroKOMayBePermissions=Başarısız senkronizasyon testi. Bu sunucuya connexion düzgün yapılandırılmış olduğunu kontrol edin ve LDAP udpates sağlar
-LDAPTCPConnectOK=TCP LDAP sunucusu için başarılı (Sunucu =%, Port =% s) bağlamak
-LDAPTCPConnectKO=TCP LDAP sunucusuna (Server =% başarısız, Port =% s) bağlamak
-LDAPBindOK=Bağlamak / Authentificate LDAP sunucusu başarılı (Server =% s, Port =%, Yönetici =%, Şifre =% s) s
-LDAPBindKO=Bağlan / Authentificate LDAP sunucusuna, Port =%, Yönetici =%, Şifre =% s) s s (Sunucu =% başarısız
+LDAPTCPConnectOK=TCP LDAP sunucusu için başarılı (Sunucu=%, Port=% s) bağlamak
+LDAPTCPConnectKO=TCP LDAP sunucusuna (Server=% başarısız, Port=% s) bağlamak
+LDAPBindOK=Bağlamak / Authentificate LDAP sunucusu başarılı (Server=% s, Port=%, Yönetici=%, Şifre=% s) s
+LDAPBindKO=Bağlan / Authentificate LDAP sunucusuna, Port=%, Yönetici=%, Şifre=% s) s s (Sunucu=% başarısız
 LDAPUnbindSuccessfull=Kesmek başarılı
 LDAPUnbindFailed=Kesmek başarısız
 LDAPConnectToDNSuccessfull=Bağlantı au DN (%) ¿½ ussie ri s
@@ -905,7 +905,7 @@ LDAPLdapMapping=LDAP Haritalama
 LDAPFieldLoginUnix=Giriş (Unix)
 LDAPFieldLoginExample=Örnek: uid
 LDAPFilterConnection=Arama filtresi
-LDAPFilterConnectionExample=Örnek: &amp; (objectClass = InetOrgPerson)
+LDAPFilterConnectionExample=Örnek: &amp; (objectClass= InetOrgPerson)
 LDAPFieldLoginSamba=Giriş (samba, activedirectory)
 LDAPFieldLoginSambaExample=Örnek: sAMAccountName
 LDAPFieldFullname=Firstname Adı
@@ -957,7 +957,7 @@ LDAPDescMembers=Bu sayfa, LDAP LDAP ağacındaki her veri Dolibarr üye modülü
 LDAPDescValues=Örneğin değerleri <b>OpenLDAP</b> yüklenmiş şemaları aşağıdaki ile tasarlanmıştır: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Eğer LDAP yapılandırma <b>slapd.conf</b> tüm thoose için dosya değiştirmek thoose değerler ve OpenLDAP kullanmak yüklü şemaları.
 ForANonAnonymousAccess=Örneğin bir yazı yazması kimliği doğrulanmış bir acces (için)
 ProductSetup=Ürünler modülü kurulumu
-NumberOfProductShowInSelect=Combos ürün Max sayısını seçmek listeleri (0 = no limit)
+NumberOfProductShowInSelect=Combos ürün Max sayısını seçmek listeleri (0= no limit)
 ConfirmDeleteProductLineAbility=Onay ne zaman form ürün çizgileri izale
 ModifyProductDescAbility=Kişiselleştirme ürün tanımlarından formları
 ViewProductDescInFormAbility=Görselleştirme formlarda ürün tanımlarından (aksi halde açılan araç ipucu olarak)

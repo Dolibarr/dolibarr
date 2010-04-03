@@ -30,7 +30,7 @@ ErrorSupplierCodeRequired=Supplier Code erforderlich
 ErrorSupplierCodeAlreadyUsed=Supplier Code bereits
 ErrorBadParameters=Bad Parameter
 ErrorFailedToWriteInDir=Fehler beim Schreiben in das Verzeichnis %s
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Gefunden falsche E-Mail-Syntax für %s Zeilen in der Datei (zB Zeile %s mit E-Mail = %s)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Gefunden falsche E-Mail-Syntax für %s Zeilen in der Datei (zB Zeile %s mit E-Mail= %s)
 ErrorUserCannotBeDelete=Der Benutzer kann nicht gelöscht werden. Kann es ist auf Dolibarr Einrichtungen.
 ErrorFieldsRequired=Einige Felder müssen ausgefüllt wurden nicht besetzt.
 ErrorFailedToCreateDir=Fehler beim Erstellen eines Verzeichnis. Vergewissern Sie sich, dass Web-Server-Benutzer-Berechtigungen zu schreiben, in Dolibarr Dokumenten-Verzeichnis. Ist der Parameter <b>safe_mode</b> aktiviert ist, für die dieser PHP, prüfen Sie, ob Dolibarr PHP-Dateien besitzt, um Web-Server-Benutzer (oder Gruppe).

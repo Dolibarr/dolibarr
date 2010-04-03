@@ -27,6 +27,6 @@ ToOfferALinkForOnlinePaymentOnOrder=URL om een online betaling %s user interface
 ToOfferALinkForOnlinePaymentOnInvoice=URL om een online betaling %s user interface voor een factuur
 ToOfferALinkForOnlinePaymentOnContractLine=URL om een online betaling %s user interface voor een contract lijn
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL om een online betaling %s user interface voor een gratis bedrag
-YouCanAddTagOnUrl=U kunt ook url parameter <b>&amp; tag = <i>waarde</i></b> voor een van deze URL (enkel vereist voor de vrije betaling) om uw eigen commentaar betaling tag.
+YouCanAddTagOnUrl=U kunt ook url parameter <b>&amp; tag= <i>waarde</i></b> voor een van deze URL (enkel vereist voor de vrije betaling) om uw eigen commentaar betaling tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Uw PayBox met <b>url %s</b> om de betaling automatisch gemaakt wanneer gevalideerd door paybox.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 20:37:40).

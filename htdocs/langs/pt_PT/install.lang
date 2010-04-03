@@ -156,7 +156,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Contrato emtpy data correção feita c
 MigrationContractsEmptyDatesNothingToUpdate=Nenhum contrato vazio data para corrigir
 MigrationContractsEmptyCreationDatesNothingToUpdate=Nenhum contrato data de criação para corrigir
 MigrationContractsInvalidDatesUpdate=Bad data valor contrato correcção
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Corrigir contrato %s (Contrato data = %s, a partir de serviço data min = %s)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Corrigir contrato %s (Contrato data= %s, a partir de serviço data min= %s)
 MigrationContractsInvalidDatesNumber= %s contratos modificados
 MigrationContractsInvalidDatesNothingToUpdate=Não data com valor negativo para corrigir
 MigrationContractsIncoherentCreationDateUpdate=Bad valor contrato data de criação correcção

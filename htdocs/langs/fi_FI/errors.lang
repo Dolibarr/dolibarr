@@ -30,7 +30,7 @@ ErrorSupplierCodeRequired=Toimittaja-koodi tarvitaan
 ErrorSupplierCodeAlreadyUsed=Toimittaja koodi jo käytössä
 ErrorBadParameters=Bad parametrit
 ErrorFailedToWriteInDir=Epäonnistui kirjoittaa hakemistoon %s
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Löytyi virheellinen sähköposti syntaksi %s rivit tiedoston (esimerkiksi rivi %s email = %s)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Löytyi virheellinen sähköposti syntaksi %s rivit tiedoston (esimerkiksi rivi %s email= %s)
 ErrorUserCannotBeDelete=Käyttäjä ei voi poistaa. Voi olla se liittyy annetun Dolibarr yhteisöjä.
 ErrorFieldsRequired=Jotkin vaaditut kentät eivät ole täytetty.
 ErrorFailedToCreateDir=Luominen epäonnistui hakemiston. Tarkista, että Web-palvelin käyttäjällä on oikeudet kirjoittaa Dolibarr asiakirjat hakemistoon. Jos parametri <b>safe_mode</b> on käytössä tämän PHP, tarkista, että Dolibarr php tiedostot omistaa web-palvelimen käyttäjä (tai ryhmä).

@@ -485,7 +485,7 @@ BackToModuleList=Tilbage til moduler liste
 BackToDictionnaryList=Tilbage til ordbøger liste
 VATReceivedOnly=Særlige sats ikke afholdes
 VATManagement=Moms Management
-VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Momssatsen som standard, når du opretter udsigter, fakturaer, ordrer etc følge aktive standard regel: <br> Hvis sælgeren er udsat for moms, så momsen som standard = 0. Udgangen af reglen. <br> Hvis (sælge land = opkøb land), så den moms, som standard = moms af produktet i at sælge landet. Udgangen af reglen. <br> Hvis sælger og køber i Det Europæiske Fællesskab og varer sælges med nye transportmidler (bil, skib, fly), standardnavnet moms = 0 (momsen skal betales af køber på customoffice af sit land og ikke på sælgerens ). Udgangen af reglen. <br> Hvis sælger og køber i Det Europæiske Fællesskab og varer, der sælges af andre midler end nye transportmidler, så er den moms, som standard = moms af solgte vare. Udgangen af reglen. <br> Else den foreslåede standard moms = 1. Udgangen af reglen.
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Momssatsen som standard, når du opretter udsigter, fakturaer, ordrer etc følge aktive standard regel: <br> Hvis sælgeren er udsat for moms, så momsen som standard= 0. Udgangen af reglen. <br> Hvis (sælge land= opkøb land), så den moms, som standard= moms af produktet i at sælge landet. Udgangen af reglen. <br> Hvis sælger og køber i Det Europæiske Fællesskab og varer sælges med nye transportmidler (bil, skib, fly), standardnavnet moms= 0 (momsen skal betales af køber på customoffice af sit land og ikke på sælgerens ). Udgangen af reglen. <br> Hvis sælger og køber i Det Europæiske Fællesskab og varer, der sælges af andre midler end nye transportmidler, så er den moms, som standard= moms af solgte vare. Udgangen af reglen. <br> Else den foreslåede standard moms= 1. Udgangen af reglen.
 VATIsNotUsedDesc=Som standard er den foreslåede moms er 0, der kan anvendes til sager, som foreninger, enkeltpersoner eller små virksomheder.
 VATIsUsedExampleFR=I Frankrig, betyder det, virksomheder eller organisationer, der har en reel skattesystem (Simplified reelle eller normale reelle). Et system, hvor momsen er erklæret.
 VATIsNotUsedExampleFR=I Frankrig, betyder det, at foreninger, der ikke moms erklæret eller selskaber, organisationer eller liberale erhverv, der har valgt den mikrovirksomhed skattesystem (moms i franchiseaftaler) og betalt en franchiseaftale moms uden moms erklæring. Dette valg vil vise reference &quot;Ikke relevant moms - kunst-293B af CGI&quot; på fakturaer.
@@ -732,14 +732,14 @@ LDAPServerUseTLS=Brug TLS
 LDAPServerUseTLSExample=Din LDAP server brug TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Komplet DN (ex: cn = adminldap, dc = samfundet, dc = dk)
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Komplet DN (ex: cn= adminldap, dc= samfundet, dc= dk)
 LDAPPassword=Administrator adgangskode
 LDAPUserDn=Brugernes DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Komplet DN (ex: ou = brugere, DC = samfund, dc = dk)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Komplet DN (ex: ou= brugere, DC= samfund, dc= dk)
 LDAPGroupDn=Grupper »DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Komplet DN (ex: ou = grupper, dc = samfundet, dc = dk)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Komplet DN (ex: ou= grupper, dc= samfundet, dc= dk)
 LDAPServerExample=Serveradresse (ex: localhost, 192.168.0.2, ldaps: / / ldap.example.com /)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=Komplet DN (ex: dc = firma, DC = com)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=Komplet DN (ex: dc= firma, DC= com)
 LDAPPasswordExample=Admin password
 LDAPDnSynchroActive=Brugere og grupper synkronisering
 LDAPDnSynchroActiveExample=LDAP til Dolibarr eller Dolibarr til LDAP synkronisering
@@ -749,9 +749,9 @@ LDAPDnContactActiveExample=Aktiveret / Unactivated synkronisering
 LDAPDnMemberActive=Medlemmernes synkronisering
 LDAPDnMemberActiveExample=Aktiveret / Unactivated synkronisering
 LDAPContactDn=Dolibarr kontakter &quot;DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Komplet DN (ex: ou = kontakter, dc = samfundet, dc = dk)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Komplet DN (ex: ou= kontakter, dc= samfundet, dc= dk)
 LDAPMemberDn=Dolibarr medlemmernes DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Komplet DN (ex: ou = medlemmer, dc = samfundet, dc = dk)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Komplet DN (ex: ou= medlemmer, dc= samfundet, dc= dk)
 LDAPMemberObjectClassList=Liste over objectClass
 LDAPMemberObjectClassListExample=Liste over objectClass definere record attributter (ex: top, inetOrgPerson eller toppen, bruger Active Directory)
 LDAPUserObjectClassList=Liste over objectClass
@@ -761,7 +761,7 @@ LDAPGroupObjectClassListExample=Liste over objectClass definere record attributt
 LDAPContactObjectClassList=Liste over objectClass
 LDAPContactObjectClassListExample=Liste over objectClass definere record attributter (ex: top, inetOrgPerson eller toppen, bruger Active Directory)
 LDAPMemberTypeDn=Dolibarr medlem type DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Komplet DN (ex: ou = type_members, dc = samfundet, dc = dk)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Komplet DN (ex: ou= type_members, dc= samfundet, dc= dk)
 LDAPTestConnect=Test LDAP-forbindelse
 LDAPTestSynchroContact=Test kontaktens synkronisering
 LDAPTestSynchroUser=Test brugerens synkronisering
@@ -770,10 +770,10 @@ LDAPTestSynchroMember=Test medlem synkronisering
 LDAPSynchroOK=Synkronisering test vellykket
 LDAPSynchroKO=Mislykket synkronisering test
 LDAPSynchroKOMayBePermissions=Mislykket synkronisering test. Kontroller, at forbindelse til serveren er konfigureret korrekt og tillader LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP forbindelse til LDAP-serveren vellykket (Server = %s, Port = %s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP forbindelse til LDAP-serveren mislykkedes (Server = %s, Port = %s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Slut / Authentificate til LDAP server vellykket (Server = %s, Port = %s, Admin = %s, Password = %s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Slut / Authentificate til LDAP-serveren mislykkedes (Server = %s, Port = %s, Admin = %s, Password = %s)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP forbindelse til LDAP-serveren vellykket (Server= %s, Port= %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP forbindelse til LDAP-serveren mislykkedes (Server= %s, Port= %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Slut / Authentificate til LDAP server vellykket (Server= %s, Port= %s, Admin= %s, Password= %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Slut / Authentificate til LDAP-serveren mislykkedes (Server= %s, Port= %s, Admin= %s, Password= %s)
 LDAPUnbindSuccessfull=Afbryd vellykket
 LDAPUnbindFailed=Afbryd mislykkedes
 LDAPConnectToDNSuccessfull=Forbindelsesstyring au DN ( %s) Russie
@@ -837,7 +837,7 @@ LDAPDescMembers=Denne side giver dig mulighed for at definere LDAP attributter n
 LDAPDescValues=Eksempel værdier er konstrueret til <b>OpenLDAP</b> med følgende lastes skemaer: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Hvis du bruger thoose værdier og OpenLDAP, ændre din LDAP konfigurationsfil <b>slapd.conf</b> at få alle thoose skemaer indlæses.
 ForANonAnonymousAccess=For en autentificeret adgang (for en skriveadgangen for eksempel)
 ProductSetup=Produkter modul opsætning
-NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max antal produkter i combos vælge lister (0 = ingen grænse)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max antal produkter i combos vælge lister (0= ingen grænse)
 ConfirmDeleteProductLineAbility=Bekræftelse af fjernelse af en linje producerer i former
 ModifyProductDescAbility=Tilpasning af beskrivelser produceret i former
 ViewProductDescInFormAbility=Visualisering af Varebeskrivelserne i de former (ellers som popup tooltip)

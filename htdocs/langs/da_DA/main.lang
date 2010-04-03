@@ -34,7 +34,7 @@ ErrorUnknown=Ukendt fejl
 ErrorSQL=SQL Fejl
 ErrorLogoFileNotFound=Logo fil &#39; %s&#39; blev ikke fundet
 ErrorGoToModuleSetup=Gå til Modul setup at rette dette
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Det lykkedes ikke at sende e-mails (afsender = %s, receiver = %s)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Det lykkedes ikke at sende e-mails (afsender= %s, receiver= %s)
 ErrorAttachedFilesDisabled=Vedhæftning af filer funktionen er slået fra på denne serveur
 ErrorFileNotUploaded=Filen blev ikke uploadet. Kontroller, at størrelse ikke overstiger den maksimalt tilladte, at den frie plads der er til rådighed på disken, og at der ikke allerede en fil med samme navn i denne mappe.
 ErrorInternalErrorDetected=Fejl opdaget

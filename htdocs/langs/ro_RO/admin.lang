@@ -485,7 +485,7 @@ BackToModuleList=Inapoi la lista de module
 BackToDictionnaryList=Inapoi la lista de dicţionare
 VATReceivedOnly=Special rata nu taxat
 VATManagement=TVA-ul de management
-VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Ratei TVA, în mod implicit atunci când se creează perspective, facturi, comenzi etc urmaţi activă standard regulă: <br> În cazul în care vânzătorul este supusă la TVA, TVA-ul, atunci în mod implicit = 0. Sfârşitul regulă. <br> În cazul în care (= ţara de vânzare cumpărare ţară), iar apoi a TVA-ului, în mod implicit = TVA a produsului în ţara de vânzare. Sfârşitul regulă. <br> Dacă vânzătorul şi cumpărătorul, în Comunitatea Europeană şi mărfurile sunt vândute cu noile mijloace de transport (auto, nava, avion), implicit TVA = 0 (de TVA ar trebui să fie plătite de către cumpărător la customoffice din ţara sa, şi nu de la vanzator ). Sfârşitul regulă. <br> Dacă vânzătorul şi cumpărătorul, în Comunitatea Europeană şi bunurilor vândute prin alte mijloace, mai degrabă decât mijloace de transport noi, atunci TVA-ul, în mod implicit = TVA de produse vândute. Sfârşitul regulă. <br> Altfel, propuse implicit TVA = 1. Sfârşitul regulă.
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Ratei TVA, în mod implicit atunci când se creează perspective, facturi, comenzi etc urmaţi activă standard regulă: <br> În cazul în care vânzătorul este supusă la TVA, TVA-ul, atunci în mod implicit= 0. Sfârşitul regulă. <br> În cazul în care (= ţara de vânzare cumpărare ţară), iar apoi a TVA-ului, în mod implicit= TVA a produsului în ţara de vânzare. Sfârşitul regulă. <br> Dacă vânzătorul şi cumpărătorul, în Comunitatea Europeană şi mărfurile sunt vândute cu noile mijloace de transport (auto, nava, avion), implicit TVA= 0 (de TVA ar trebui să fie plătite de către cumpărător la customoffice din ţara sa, şi nu de la vanzator ). Sfârşitul regulă. <br> Dacă vânzătorul şi cumpărătorul, în Comunitatea Europeană şi bunurilor vândute prin alte mijloace, mai degrabă decât mijloace de transport noi, atunci TVA-ul, în mod implicit= TVA de produse vândute. Sfârşitul regulă. <br> Altfel, propuse implicit TVA= 1. Sfârşitul regulă.
 VATIsNotUsedDesc=În mod implicit propuse de TVA este 0, care poate fi utilizat pentru cazuri ca asociaţiile, persoane fizice ou firme mici.
 VATIsUsedExampleFR=În Franţa, aceasta înseamnă societăţilor sau organizaţiilor care au un real sistemului fiscal (Simplified reale sau normale de real). Un sistem în care TVA-ul este declarat.
 VATIsNotUsedExampleFR=În Franţa, înseamnă că asociaţiile care nu sunt declarate de TVA sau de companii, organizaţii sau profesiilor liberale care au ales de micro-întreprindere sistemului fiscal (TVA în franciză) şi a plătit o franciza de TVA, fără nici o declaraţie de TVA. Această opţiune va afişa de referinţă &quot;nu se aplică TVA - art-293B din CGI&quot; pe facturi.
@@ -732,14 +732,14 @@ LDAPServerUseTLS=Utilizaţi TLS
 LDAPServerUseTLSExample=Parerea LDAP server utilizează TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Finalizarea DN (ex: cn = adminldap, dc = societate, dc = com)
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Finalizarea DN (ex: cn= adminldap, dc= societate, dc= com)
 LDAPPassword=Parolă de administrator
 LDAPUserDn=Users&#39; DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Finalizarea DN (ex: ou = users, dc = societate, dc = com)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Finalizarea DN (ex: ou= users, dc= societate, dc= com)
 LDAPGroupDn=Grupuri &#39;DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Finalizarea DN (ex: ou = grupuri, dc = societate, dc = com)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Finalizarea DN (ex: ou= grupuri, dc= societate, dc= com)
 LDAPServerExample=Adresa serverului (ex: localhost, 192.168.0.2, ldaps: / / ldap.example.com /)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=Finalizarea DN (ex: dc = companie, dc = com)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=Finalizarea DN (ex: dc= companie, dc= com)
 LDAPPasswordExample=Admin parola
 LDAPDnSynchroActive=Utilizatori şi grupuri de sincronizare
 LDAPDnSynchroActiveExample=LDAP a Dolibarr sau Dolibarr la LDAP de sincronizare
@@ -749,9 +749,9 @@ LDAPDnContactActiveExample=Activat / Unactivated de sincronizare
 LDAPDnMemberActive=Membrilor de sincronizare
 LDAPDnMemberActiveExample=Activat / Unactivated de sincronizare
 LDAPContactDn=Dolibarr contacte &#39;DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Finalizarea DN (ex: ou = contacte, dc = societate, dc = com)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Finalizarea DN (ex: ou= contacte, dc= societate, dc= com)
 LDAPMemberDn=Dolibarr membrilor DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Finalizarea DN (ex: ou = membri, dc = societate, dc = com)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Finalizarea DN (ex: ou= membri, dc= societate, dc= com)
 LDAPMemberObjectClassList=Lista de objectClass
 LDAPMemberObjectClassListExample=Lista de objectClass definirea record atributele (ex: top, inetOrgPerson sau de sus, utilizatorul pentru Active Directory)
 LDAPUserObjectClassList=Lista de objectClass
@@ -761,7 +761,7 @@ LDAPGroupObjectClassListExample=Lista de objectClass definirea record atributele
 LDAPContactObjectClassList=Lista de objectClass
 LDAPContactObjectClassListExample=Lista de objectClass definirea record atributele (ex: top, inetOrgPerson sau de sus, utilizatorul pentru Active Directory)
 LDAPMemberTypeDn=Dolibarr membru de tip DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Finalizarea DN (ex: ou = type_members, dc = societate, dc = com)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Finalizarea DN (ex: ou= type_members, dc= societate, dc= com)
 LDAPTestConnect=Test conexiune LDAP
 LDAPTestSynchroContact=Test de contact de sincronizare
 LDAPTestSynchroUser=Test de utilizator de sincronizare
@@ -770,10 +770,10 @@ LDAPTestSynchroMember=Test membru de sincronizare
 LDAPSynchroOK=Sincronizare încercare reuşită
 LDAPSynchroKO=Eşuare încercare de sincronizare
 LDAPSynchroKOMayBePermissions=Eşuare încercare de sincronizare. Verificaţi dacă conexiune la serverul este configurat corect şi permite LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP se conecteze la serverul LDAP de succes (Server = %s, port = %s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP se conecteze la serverul LDAP a eşuat (Server = %s, port = %s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Conectare / Authentificate la server LDAP de succes (Server = %s, port = %s, %s = admin, parola = %s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Conectare / Authentificate la serverul LDAP a eşuat (Server = %s, port = %s, %s = admin, parola = %s)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP se conecteze la serverul LDAP de succes (Server= %s, port= %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP se conecteze la serverul LDAP a eşuat (Server= %s, port= %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Conectare / Authentificate la server LDAP de succes (Server= %s, port= %s, %s= admin, parola= %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Conectare / Authentificate la serverul LDAP a eşuat (Server= %s, port= %s, %s= admin, parola= %s)
 LDAPUnbindSuccessfull=Deconectaţi de succes
 LDAPUnbindFailed=Deconectaţi eşuat
 LDAPConnectToDNSuccessfull=Conexiune au DN ( %s) Russie
@@ -837,7 +837,7 @@ LDAPDescMembers=Această pagină vă permite să definiţi numele atribute LDAP 
 LDAPDescValues=Exemplu de valori sunt proiectate pentru <b>OpenLDAP</b> încărcate cu următoarele scheme: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Dacă utilizaţi thoose valori şi OpenLDAP, vă modifica LDAP fişier de configurare <b>slapd.conf</b> de a avea toate thoose scheme încărcate.
 ForANonAnonymousAccess=Pentru un acces autentificat (pentru o scriere de exemplu)
 ProductSetup=Produse modul de configurare
-NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max număr de produse din combos selectaţi liste (0 = nici o limită)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max număr de produse din combos selectaţi liste (0= nici o limită)
 ConfirmDeleteProductLineAbility=Confirmarea de îndepărtare a produce o linie în forme
 ModifyProductDescAbility=Personalizare de descrieri produse în forme
 ViewProductDescInFormAbility=Vizualizare descrierile de produs, în forme (de altfel ca popup tooltip)

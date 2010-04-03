@@ -15,7 +15,7 @@ ValidateDeliveryReceiptConfirm=? Tem certeza de que deseja confirmar esta entreg
 DeleteDeliveryReceipt=Apagar Recibo de Entrega
 DeleteDeliveryReceiptConfirm=? Tem certeza de que deseja apagar o recibo de entrega?
 DeliveryMethod=MÃ©todo de Envio
-TrackingNumber=Nº de Tracking
+TrackingNumber=Nï¿½ de Tracking
 
 # merou PDF model=
 NameAndSignature=Nome e assinatura:

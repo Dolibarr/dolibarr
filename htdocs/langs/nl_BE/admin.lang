@@ -480,7 +480,7 @@ BackToModuleList=Terug naar de lijst van modules
 BackToDictionnaryList=Terug naar de lijst woordenboeken
 VATReceivedOnly=Speciaal tarief niet ten laste
 VATManagement=BTW management
-VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT =1. End of rule.
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=1. End of rule.
 VATIsNotUsedDesc=By default the proposed VAT is 0 which can be used for cases like associations, individuals ou small companies.
 VATIsUsedExampleFR=In België is dit voor bedrijven of organisaties die BTW-plichtig zijn, dus een systeem waarbij de BTW wordt aangegeven.
 VATIsNotUsedExampleFR=In België is dit voor bedrijven of organisaties die NIET BTW-plichtig zijn, zoals organisaties of vrije beroepen.Bij deze keuze zal de volgende vermelding op de facturen komen: "BTW niet van toepassing - art-293B van CGI".
@@ -726,14 +726,14 @@ LDAPServerUseTLS=Gebruik TLS
 LDAPServerUseTLSExample=Uw LDAP-server gebruiken TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Complete DN (ex: cn = adminldap, dc = samenleving, dc = com)
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Complete DN (ex: cn= adminldap, dc= samenleving, dc= com)
 LDAPPassword=Administrator wachtwoord
 LDAPUserDn=Gebruikers &quot;DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Complete DN (ex: ou = Users, DC = samenleving, dc = com)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Complete DN (ex: ou= Users, DC= samenleving, dc= com)
 LDAPGroupDn=Groepen &quot;DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Complete DN (ex: ou = groepen, dc = samenleving, dc = com)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Complete DN (ex: ou= groepen, dc= samenleving, dc= com)
 LDAPServerExample=Serveradres (ex: localhost, 192.168.0.2, LDAPS: / / ldap.example.com /)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=Complete DN (ex: DC = bedrijf, DC = com)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=Complete DN (ex: DC= bedrijf, DC= com)
 LDAPPasswordExample=Admin wachtwoord
 LDAPDnSynchroActive=Gebruikers en groepen synchronisatie
 LDAPDnSynchroActiveExample=LDAP Dolibarr of Dolibarr LDAP synchronisatie
@@ -743,9 +743,9 @@ LDAPDnContactActiveExample=Geactiveerd / Unactivated synchronisatie
 LDAPDnMemberActive=Leden synchronisatie
 LDAPDnMemberActiveExample=Geactiveerd / Unactivated synchronisatie
 LDAPContactDn=Dolibarr contacten &quot;DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Complete DN (ex: ou = contacten, dc = samenleving, dc = com)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Complete DN (ex: ou= contacten, dc= samenleving, dc= com)
 LDAPMemberDn=Dolibarr leden DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Complete DN (ex: ou = leden, dc = samenleving, dc = com)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Complete DN (ex: ou= leden, dc= samenleving, dc= com)
 LDAPMemberObjectClassList=Lijst van objectClass
 LDAPMemberObjectClassListExample=Lijst van objectClass definiëren attributen (ex: top, inetOrgPerson of boven, door de gebruiker voor Active Directory)
 LDAPUserObjectClassList=Lijst van objectClass
@@ -755,7 +755,7 @@ LDAPGroupObjectClassListExample=Lijst van objectClass definiëren attributen (ex
 LDAPContactObjectClassList=Lijst van objectClass
 LDAPContactObjectClassListExample=Lijst van objectClass definiëren attributen (ex: top, inetOrgPerson of boven, door de gebruiker voor Active Directory)
 LDAPMemberTypeDn=Dolibarr lid van het type DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Complete DN (ex: ou = type_members, dc = samenleving, dc = com)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Complete DN (ex: ou= type_members, dc= samenleving, dc= com)
 LDAPTestConnect=Test LDAP-verbinding
 LDAPTestSynchroContact=Test contact synchronisatie
 LDAPTestSynchroUser=Test gebruiker synchronisatie
@@ -764,10 +764,10 @@ LDAPTestSynchroMember=Test lid synchronisatie
 LDAPSynchroOK=Synchronisatie test succesvol
 LDAPSynchroKO=Mislukt synchronisatie test
 LDAPSynchroKOMayBePermissions=Mislukt synchronisatie test. Controleer of de verbinding met de server correct is geconfigureerd en kunt LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP-verbinding te maken met LDAP-server succesvolle (Server = %s, Port = %s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP-verbinding te maken met LDAP-server mislukt (Server = %s, Port = %s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Sluit / Authentificate LDAP-server succesvolle (Server = %s, Port = %s, Admin = %s, Password = %s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Sluit / Authentificate LDAP-server mislukt (Server = %s, Port = %s, Admin = %s, Password = %s)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP-verbinding te maken met LDAP-server succesvolle (Server= %s, Port= %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP-verbinding te maken met LDAP-server mislukt (Server= %s, Port= %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Sluit / Authentificate LDAP-server succesvolle (Server= %s, Port= %s, Admin= %s, Password= %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Sluit / Authentificate LDAP-server mislukt (Server= %s, Port= %s, Admin= %s, Password= %s)
 LDAPUnbindSuccessfull=Koppel succesvol
 LDAPUnbindFailed=Koppel mislukt
 LDAPConnectToDNSuccessfull=Connection au DN ( %s) Russie
@@ -830,7 +830,7 @@ LDAPDescMembers=Op deze pagina kunt u bij het definiëren van LDAP attributen na
 LDAPDescValues=Voorbeeld waarden zijn ontworpen voor <b>OpenLDAP</b> geladen met de volgende schema&#39;s: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Als u gebruik thoose waarden en OpenLDAP, wijzigen uw LDAP config bestand <b>slapd.conf</b> om alle thoose schema&#39;s geladen.
 ForANonAnonymousAccess=Voor een gewaarmerkte toegang (voor een schrijf toegang bijvoorbeeld)
 ProductSetup=Producten module setup
-NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max aantal producten in combo selecteer lijsten (0 = geen limiet)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max aantal producten in combo selecteer lijsten (0= geen limiet)
 ConfirmDeleteProductLineAbility=Bevestiging van de uitslag van een lijn produceert in de vorm
 ModifyProductDescAbility=Aanpassen van de beschrijvingen die in de formulieren
 ViewProductDescInFormAbility=Visualisatie van de product-beschrijvingen van de formulieren (anders als popup tooltip)

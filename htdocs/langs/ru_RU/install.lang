@@ -156,7 +156,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Контракт emtpy дата кор
 MigrationContractsEmptyDatesNothingToUpdate=Ни один контракт не пустой даты исправить
 MigrationContractsEmptyCreationDatesNothingToUpdate=Нет контракта дата создания исправить
 MigrationContractsInvalidDatesUpdate=Плохо стоимости контракта дата коррекции
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Правильно% с контракта (контракт даты = %s, начиная службу дата мин = %s)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Правильно% с контракта (контракт даты= %s, начиная службу дата мин= %s)
 MigrationContractsInvalidDatesNumber= %s контрактов измененные
 MigrationContractsInvalidDatesNothingToUpdate=Нет даты с плохим значение для исправления
 MigrationContractsIncoherentCreationDateUpdate=Плохо стоимость контракта дата создания коррекции

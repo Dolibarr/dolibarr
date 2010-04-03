@@ -157,7 +157,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Vertrag leer Datum Korrektur erfolgrei
 MigrationContractsEmptyDatesNothingToUpdate=Kein Vertrag leer Datum zu korrigieren
 MigrationContractsEmptyCreationDatesNothingToUpdate=Kein Vertrag Erstellungsdatum zu korrigieren
 MigrationContractsInvalidDatesUpdate=Bad Valutadatum Vertrag Korrektur
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Korrigieren Vertrag %s (Contract Date = %s, ab Service Tag min = %s)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Korrigieren Vertrag %s (Contract Date= %s, ab Service Tag min= %s)
 MigrationContractsInvalidDatesNumber= %s Verträge geändert
 MigrationContractsInvalidDatesNothingToUpdate=Kein Termin mit schlechten Wert auf korrekte
 MigrationContractsIncoherentCreationDateUpdate=Bad Wertkontrakt Erstellungsdatum Korrektur

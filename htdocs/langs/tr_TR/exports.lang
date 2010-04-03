@@ -64,7 +64,7 @@ LineQty=Miktar hat için
 LineTotalHT=Hat için vergi miktarı net
 LineTotalTTC=Miktar çizgi için vergi ile
 LineTotalVAT=Miktar KDV hattı için
-TypeOfLineServiceOrProduct=Tipi hattı (0 = ürün, 1 = servisi)
+TypeOfLineServiceOrProduct=Tipi hattı (0= ürün, 1= servisi)
 FileWithDataToImport=Dosya verileri aktarmak
 FileToImport=Kaynak aktarmak için dosya
 FileMustHaveOneOfFollowingFormat=Gereken bir dosya biçimi aşağıdakilerden biri varsa almak

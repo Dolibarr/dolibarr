@@ -61,7 +61,7 @@ LineQty=خط للكمية
 LineTotalHT=المبلغ الصافي بعد خصم الضرائب عن الخط
 LineTotalTTC=المبلغ تمشيا مع ضريبة
 LineTotalVAT=مبلغ الضريبة على القيمة المضافة لخط
-TypeOfLineServiceOrProduct=Type of line (0=product, 1=نوع الخط (0 = منتج الخدمة = 1)
+TypeOfLineServiceOrProduct=Type of line (0=product, 1=نوع الخط (0= منتج الخدمة= 1)
 FileWithDataToImport=ملف استيراد البيانات
 FileToImport=مصدر لاستيراد ملف
 FileMustHaveOneOfFollowingFormat=ملف لاستيراد ويجب أن يكون واحدا من الشكل التالي

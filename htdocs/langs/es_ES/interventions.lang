@@ -1,5 +1,5 @@
 # Dolibarr language file - es_ES - interventions
-CHARSET = UTF-8
+CHARSET= UTF-8
 Intervention=Intervención
 Interventions=Intervenciones
 InterventionCard=Ficha intervención

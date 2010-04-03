@@ -32,7 +32,7 @@ ErrorSQL=SQL Error
 ErrorLogoFileNotFound=Logo fişierul &quot; %s&quot; nu a fost găsit
 ErrorGoToGlobalSetup=Mergeţi la &quot;Compania / Fundaţia&quot; de configurare pentru a rezolva această
 ErrorGoToModuleSetup=Du-te la Modulul de configurare pentru a rezolva această
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Nu a reuşit să trimiteţi mail (expeditor = %s, receptor = %s)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Nu a reuşit să trimiteţi mail (expeditor= %s, receptor= %s)
 ErrorAttachedFilesDisabled=Ataşarea fişierelor caracteristică este dezactivată pe acest serveur
 ErrorFileNotUploaded=Fişier nu a fost încărcat. Verificaţi dacă nu depăşeşte mărimea maximă admisă, ca spaţiu liber este disponibil pe disc şi că nu există deja un fisier cu acelasi nume din acest director.
 ErrorInternalErrorDetected=Eroare detectat

@@ -1,5 +1,5 @@
 # Dolibarr language file - ca_ES - withdrawals
-CHARSET = UTF-8
+CHARSET= UTF-8
 StandingOrdersArea=Àrea domiciliacions
 CustomersStandingOrdersArea=Àrea domiciliacions de clients
 StandingOrders=Domiciliacions

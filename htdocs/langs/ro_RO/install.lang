@@ -156,7 +156,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Contractul emtpy data de corecţie a t
 MigrationContractsEmptyDatesNothingToUpdate=Nr contract gol data pentru a corecta
 MigrationContractsEmptyCreationDatesNothingToUpdate=Nr contract data de creare a corecta
 MigrationContractsInvalidDatesUpdate=Bad data valoarea contractului de corecţie
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Corect contract %s (Contract data = %s, începând de serviciu data min = %s)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Corect contract %s (Contract data= %s, începând de serviciu data min= %s)
 MigrationContractsInvalidDatesNumber= %s contracte modificate
 MigrationContractsInvalidDatesNothingToUpdate=Nu data cu valoare de rău pentru a corecta
 MigrationContractsIncoherentCreationDateUpdate=Bad valoarea contractului data de creare de corecţie

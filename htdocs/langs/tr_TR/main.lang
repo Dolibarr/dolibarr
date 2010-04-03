@@ -33,7 +33,7 @@ ErrorSQL=SQL Hata
 ErrorLogoFileNotFound=Logo dosyası &#39;% s bulunamadı
 ErrorGoToGlobalSetup=&#39;Şirket için gidin / Vakfı&#39; kur bu düzeltmek için
 ErrorGoToModuleSetup=Bu düzeltmek için kurulum Modülü git
-ErrorFailedToSendMail=, Alıcı =% s) s (Sender =% posta gönderilemedi
+ErrorFailedToSendMail=, Alıcı=% s) s (Sender=% posta gönderilemedi
 ErrorAttachedFilesDisabled=Dosya bu sunucuda devre dışı bağlama
 ErrorFileNotUploaded=Dosya yükledi değildi. Izin verilen maksimum, bu boş geçmeyen bu boyutunu kontrol edin diskte ve mevcuttur ki, bu dizine aynı isimde zaten bir dosya değil.
 ErrorInternalErrorDetected=Hata algılandı

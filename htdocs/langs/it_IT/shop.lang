@@ -1,11 +1,11 @@
 # Dolibarr language file - it_IT - shop
 CHARSET=UTF-8
-Shop				       =Negozio 
-ShopWeb				       =Web Shop 
-LastOrders			       =Ultimi ordini 
-OnStandBy			       =In stand-by 
-TreatmentInProgress		       =Trattamento in corso 
-LastCustomers			       =Ultimo clienti 
-OSCommerceShop			       =OsCommerce negozio 
-OSCommerce			       =OsCommerce 
-AddProd				       =Vendere online
+Shop=Negozio 
+ShopWeb=Web Shop 
+LastOrders=Ultimi ordini 
+OnStandBy=In stand-by 
+TreatmentInProgress=Trattamento in corso 
+LastCustomers=Ultimo clienti 
+OSCommerceShop=OsCommerce negozio 
+OSCommerce=OsCommerce 
+AddProd=Vendere online

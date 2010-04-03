@@ -56,7 +56,7 @@ LineQty=Hoeveelheid voor lijn
 LineTotalHT=Bedrag na aftrek van belastingen voor de lijn
 LineTotalTTC=Bedrag met de belasting voor de lijn
 LineTotalVAT=Bedrag van de BTW voor de lijn
-TypeOfLineServiceOrProduct=Type lijn (0 = product, 1 = dienst)
+TypeOfLineServiceOrProduct=Type lijn (0= product, 1= dienst)
 FileWithDataToImport=Bestand met de gegevens te importeren
 FileToImport=Bron bestand te importeren
 FileMustHaveOneOfFollowingFormat=Bestand te importeren moet een van de volgende indeling

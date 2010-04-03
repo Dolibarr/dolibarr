@@ -56,7 +56,7 @@ LineQty=Quantidade de linha
 LineTotalHT=Montante líquido de impostos para a linha
 LineTotalTTC=Montante do imposto para a linha
 LineTotalVAT=Montante do IVA para a linha
-TypeOfLineServiceOrProduct=Tipo de linha (0 = produto, serviço de 1 =)
+TypeOfLineServiceOrProduct=Tipo de linha (0= produto, serviço de 1=)
 FileWithDataToImport=Arquivo com os dados de importação
 FileToImport=Fonte ficheiro a importar
 FileMustHaveOneOfFollowingFormat=Arquivo a ser importado deve ter um dos seguintes formatos

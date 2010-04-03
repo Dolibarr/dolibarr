@@ -32,7 +32,7 @@ ErrorSQL=SQL Error
 ErrorLogoFileNotFound=Logo-tiedoston &#39; %s&#39; ei löytynyt
 ErrorGoToGlobalSetup=Siirry &quot;Yritys / Fundation&quot; setup vahvistaa tämän
 ErrorGoToModuleSetup=Siirry Moduuli setup vahvistaa tämän
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Failed to send mail (lähettäjä = %s, vastaanotin = %s)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Failed to send mail (lähettäjä= %s, vastaanotin= %s)
 ErrorAttachedFilesDisabled=Kiinnitys-tiedostot-ominaisuus on poistettu tämän serveur
 ErrorFileNotUploaded=Tiedosto ei ole ladattu. Tarkista, että koko ei ylitä suurinta sallittua, että vapaata tilaa on käytettävissä levyllä ja että siellä ei ole jo tiedoston samalla nimellä tähän hakemistoon.
 ErrorInternalErrorDetected=Virhe havaittu

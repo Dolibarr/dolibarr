@@ -42,7 +42,7 @@ TypeContact_fichinter_external_CUSTOMER=Contato do cliente do seguimento da inte
 # Modele numérotation
 ArcticNumRefModelDesc1=Modelo de numeração genérico
 ArcticNumRefModelError=Ativação Impossível
-PacificNumRefModelDesc1=Devolve o número com o formato %syymm-nnnn onde yy é o ano, mm. O mês e nnnn um contador seq�êncial sem ruptura e sem ficar a 0
+PacificNumRefModelDesc1=Devolve o número com o formato %syymm-nnnn onde yy é o ano, mm. O mês e nnnn um contador seq�êncial sem ruptura e sem ficar a 0
 PacificNumRefModelError=Uma fatura que começa por # $$syymm existe na base e é incompativel com esta numeração. Eliminia  ou renomea-la para ativar este módulo.
 
 

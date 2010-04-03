@@ -1,28 +1,28 @@
 # Dolibarr language file - it_IT - donations     	
 CHARSET=UTF-8
-Donation					 =Donazione
-Donationss					 =Donazioni
-Donor						 =Donatore
-Donors						 =I donatori
-AddDonation					 =Aggiungi una donazione
-NewDonation					 =Nuova donazione
-DonationPromise					 =Dono promessa
-PromisesNotValid				 =Promesse non convalidato
-PromisesValid					 =Convalidato promesse
-DonationsPaid					 =Donazioni pagato
-DonationsReceived				 =Donazioni ricevute
-PublicDonation					 =Pubblico donazione
-DonationsNumber					 =Donazione numero
-DonationsArea					 =Sezione donazioni
-DonationStatusPromiseNotValidated		 =Progetto promessa
-DonationStatusPromiseValidated			 =Promessa di validato
-DonationStatusPaid				 =Donazione ricevuta
-DonationStatusPromiseNotValidatedShort		 =Bozza
-DonationStatusPromiseValidatedShort		 =Convalidato
-DonationStatusPaidShort			 =Ricevuto
-ValidPromise					 =Valida promessa
-BuildDonationReceipt				 =Costruire ricevimento
-DonationsModels					 =Documenti modelli di donazione ricevute
+Donation=Donazione
+Donationss=Donazioni
+Donor=Donatore
+Donors=I donatori
+AddDonation=Aggiungi una donazione
+NewDonation=Nuova donazione
+DonationPromise=Dono promessa
+PromisesNotValid=Promesse non convalidato
+PromisesValid=Convalidato promesse
+DonationsPaid=Donazioni pagato
+DonationsReceived=Donazioni ricevute
+PublicDonation=Pubblico donazione
+DonationsNumber=Donazione numero
+DonationsArea=Sezione donazioni
+DonationStatusPromiseNotValidated=Progetto promessa
+DonationStatusPromiseValidated=Promessa di validato
+DonationStatusPaid=Donazione ricevuta
+DonationStatusPromiseNotValidatedShort=Bozza
+DonationStatusPromiseValidatedShort=Convalidato
+DonationStatusPaidShort=Ricevuto
+ValidPromise=Valida promessa
+BuildDonationReceipt=Costruire ricevimento
+DonationsModels=Documenti modelli di donazione ricevute
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).

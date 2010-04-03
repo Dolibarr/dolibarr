@@ -1,4 +1,4 @@
 # Dolibarr language file - es_ES - domains
-CHARSET = UTF-8
+CHARSET= UTF-8
 DomainNames=Nombres de dominios
 NewDomain=Nuevo dominio

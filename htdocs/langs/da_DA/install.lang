@@ -159,7 +159,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Kontrakt emtpy dato korrektion gjort s
 MigrationContractsEmptyDatesNothingToUpdate=Ingen kontrakt tomme tidspunkt til at korrigere
 MigrationContractsEmptyCreationDatesNothingToUpdate=Ingen kontrakt oprettelsesdato at korrigere
 MigrationContractsInvalidDatesUpdate=Bad valørdato kontrakt korrektion
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Korrekt kontrakt %s (Kontrakt dato = %s, Startperiode service dato min = %s)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Korrekt kontrakt %s (Kontrakt dato= %s, Startperiode service dato min= %s)
 MigrationContractsInvalidDatesNumber= %s kontrakter modificerede
 MigrationContractsInvalidDatesNothingToUpdate=Nr. dato med dårlig værdi til at korrigere
 MigrationContractsIncoherentCreationDateUpdate=Bad værdi kontrakt oprettelsesdato korrektion

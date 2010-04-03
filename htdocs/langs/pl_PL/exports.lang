@@ -69,7 +69,7 @@ LineQty=Ilość dla linii
 LineTotalHT=Kwota netto podatku dla linii
 LineTotalTTC=Kwota z podatku na linii
 LineTotalVAT=Kwota podatku VAT dla linii
-TypeOfLineServiceOrProduct=Rodzaj linii (0 = produkt, usługa 1 =)
+TypeOfLineServiceOrProduct=Rodzaj linii (0= produkt, usługa 1=)
 FileWithDataToImport=Plik z danymi do importu
 FileToImport=Źródło plik do zaimportowania
 FileMustHaveOneOfFollowingFormat=Plik do importu musi mieć jeden z następującego formatu

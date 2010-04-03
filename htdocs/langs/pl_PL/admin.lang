@@ -486,7 +486,7 @@ BackToModuleList=Powrót do listy modułów
 BackToDictionnaryList=Powrót do listy słowników
 VATReceivedOnly=Specjalne stawki nie obciążają
 VATManagement=Zarządzanie VAT
-VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Stawki VAT domyślnie podczas tworzenia perspektyw, faktury, zamówienia itp. następujące aktywnych standardowe zasady: <br> Jeśli sprzedający jest narażony na podatek VAT, wówczas podatek domyślnie = 0. Koniec rządów. <br> Jeśli (sprzedaż kraju = skupu kraju), a następnie VAT domyślnie = VAT produktu w sprzedaży kraju. Koniec rządów. <br> Jeżeli sprzedający i kupujący we Wspólnocie Europejskiej i towary są sprzedawane mając nowych środków transportu (samochód, statek, samolot), domyślne VAT = 0 (VAT powinna być zapłacona przez kupującego na customoffice swojego kraju, a nie sprzedającego ). Koniec rządów. <br> Jeżeli sprzedający i kupujący we Wspólnocie Europejskiej i towary sprzedawane za pomocą innych środków niż nowe środki transportu, a następnie VAT domyślnie = VAT produktu sprzedawanego. Koniec rządów. <br> Inne proponowane domyślne VAT = 1. Koniec rządów.
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Stawki VAT domyślnie podczas tworzenia perspektyw, faktury, zamówienia itp. następujące aktywnych standardowe zasady: <br> Jeśli sprzedający jest narażony na podatek VAT, wówczas podatek domyślnie= 0. Koniec rządów. <br> Jeśli (sprzedaż kraju= skupu kraju), a następnie VAT domyślnie= VAT produktu w sprzedaży kraju. Koniec rządów. <br> Jeżeli sprzedający i kupujący we Wspólnocie Europejskiej i towary są sprzedawane mając nowych środków transportu (samochód, statek, samolot), domyślne VAT= 0 (VAT powinna być zapłacona przez kupującego na customoffice swojego kraju, a nie sprzedającego ). Koniec rządów. <br> Jeżeli sprzedający i kupujący we Wspólnocie Europejskiej i towary sprzedawane za pomocą innych środków niż nowe środki transportu, a następnie VAT domyślnie= VAT produktu sprzedawanego. Koniec rządów. <br> Inne proponowane domyślne VAT= 1. Koniec rządów.
 VATIsNotUsedDesc=Domyślnie proponowany VAT wynosi 0, które mogą być wykorzystane w przypadkach takich jak stowarzyszeń, osób fizycznych lub małych firm.
 VATIsUsedExampleFR=We Francji, oznacza to, że firmy i organizacje o rzeczywistym systemu fiskalnego (uproszczony rzeczywistym lub normalnej rzeczywistym). A system, w którym VAT jest deklarowana.
 VATIsNotUsedExampleFR=We Francji, oznacza to stowarzyszenia, które nie są zgłoszone VAT lub firm, organizacji i wolnych zawodów, które wybrały mikro przedsiębiorstw systemu fiskalnego (VAT w franczyzy) i wypłaciła franszyzowej VAT bez deklaracji VAT. Ten wybór będzie wyświetlany odniesienie &quot;Nie dotyczy podatku VAT - art-293B z CGI&quot; na fakturach.
@@ -733,14 +733,14 @@ LDAPServerUseTLS=Użyj TLS
 LDAPServerUseTLSExample=Twoja użyć serwera LDAP TLS
 LDAPServerDn=Serwer DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Kompletny DN (dawniej: cn = adminldap, dc = społeczeństwa, dc = com)
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Kompletny DN (dawniej: cn= adminldap, dc= społeczeństwa, dc= com)
 LDAPPassword=Hasło administratora
 LDAPUserDn=Użytkowników DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Kompletny DN (dawniej: ou = users, dc = społeczeństwa, dc = com)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Kompletny DN (dawniej: ou= users, dc= społeczeństwa, dc= com)
 LDAPGroupDn=Grupy DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Kompletny DN (dawniej: ou = Grupy, dc = społeczeństwa, dc = com)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Kompletny DN (dawniej: ou= Grupy, dc= społeczeństwa, dc= com)
 LDAPServerExample=Adres serwera (np. localhost, 192.168.0.2, LDAPS: / / ldap.example.com /)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=Kompletny DN (dawniej: dc = firma, dc = com)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=Kompletny DN (dawniej: dc= firma, dc= com)
 LDAPPasswordExample=Administrator hasło
 LDAPDnSynchroActive=Użytkownicy i grupy synchronizacji
 LDAPDnSynchroActiveExample=LDAP do Dolibarr lub Dolibarr do synchronizacji LDAP
@@ -750,9 +750,9 @@ LDAPDnContactActiveExample=Aktywowany / Unactivated synchronizacji
 LDAPDnMemberActive=Posłów synchronizacji
 LDAPDnMemberActiveExample=Aktywowany / Unactivated synchronizacji
 LDAPContactDn=Dolibarr kontaktów &quot;DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Kompletny DN (dawniej: ou = Kontakty, DC = społeczeństwa, dc = com)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Kompletny DN (dawniej: ou= Kontakty, DC= społeczeństwa, dc= com)
 LDAPMemberDn=Dolibarr członków DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Kompletny DN (dawniej: ou = użytkowników, dc = społeczeństwa, dc = com)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Kompletny DN (dawniej: ou= użytkowników, dc= społeczeństwa, dc= com)
 LDAPMemberObjectClassList=Lista objectClass
 LDAPMemberObjectClassListExample=Lista objectClass definiowania rekordu atrybutów (np. top, InetOrgPerson górę lub użytkowników do usługi Active Directory)
 LDAPUserObjectClassList=Lista objectClass
@@ -762,7 +762,7 @@ LDAPGroupObjectClassListExample=Lista objectClass definiowania rekordu atrybutó
 LDAPContactObjectClassList=Lista objectClass
 LDAPContactObjectClassListExample=Lista objectClass definiowania rekordu atrybutów (np. top, InetOrgPerson górę lub użytkowników do usługi Active Directory)
 LDAPMemberTypeDn=Dolibarr członka typu DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Kompletny DN (dawniej: ou = type_members, dc = społeczeństwa, dc = com)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Kompletny DN (dawniej: ou= type_members, dc= społeczeństwa, dc= com)
 LDAPTestConnect=Test połączenia LDAP
 LDAPTestSynchroContact=Test kontaktu synchronizacji
 LDAPTestSynchroUser=Test użytkownika synchronizacji
@@ -771,10 +771,10 @@ LDAPTestSynchroMember=Test członka synchronizacji
 LDAPSynchroOK=Synchronizacja udany test
 LDAPSynchroKO=Niepowodzenie testu synchronizacji
 LDAPSynchroKOMayBePermissions=Niepowodzenie testu synchronizacji. Upewnij się, że łączenie się z serwerem jest poprawnie skonfigurowany i pozwala LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP podłączyć do serwera LDAP powiodło się (Server = %s, port = %s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP podłączyć do serwera LDAP nie powiodło się (Server = %s, port = %s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Kontakt / Authentificate do serwera LDAP udane (Server = %s, port = %s, %s = Administrator, Password = %s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Kontakt / Authentificate do serwera LDAP nie powiodło się (Server = %s, port = %s, %s = Administrator, Password = %s)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP podłączyć do serwera LDAP powiodło się (Server= %s, port= %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP podłączyć do serwera LDAP nie powiodło się (Server= %s, port= %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Kontakt / Authentificate do serwera LDAP udane (Server= %s, port= %s, %s= Administrator, Password= %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Kontakt / Authentificate do serwera LDAP nie powiodło się (Server= %s, port= %s, %s= Administrator, Password= %s)
 LDAPUnbindSuccessfull=Odłącz udane
 LDAPUnbindFailed=Odłącz nie
 LDAPConnectToDNSuccessfull=Połączenie au DN ( %s) Russie
@@ -838,7 +838,7 @@ LDAPDescMembers=Ta strona pozwala na zdefiniowanie atrybutów LDAP nazwę LDAP d
 LDAPDescValues=Przykład wartości są dla <b>OpenLDAP</b> ładowane z następujących schematów: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Jeśli używasz thoose wartości i OpenLDAP, zmodyfikować plik konfiguracyjny LDAP <b>slapd.conf</b> do wszystkich thoose schemas załadowany.
 ForANonAnonymousAccess=Dla uwierzytelniane dostęp (do zapisu na przykład)
 ProductSetup=Produkty konfiguracji modułu
-NumberOfProductShowInSelect=Max number of products in combos select lists (0=Maksymalna liczba produktów combo wybrać list (0 = bez limitu)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=Maksymalna liczba produktów combo wybrać list (0= bez limitu)
 ConfirmDeleteProductLineAbility=Potwierdzenie usunięcia linii produkuje w formach
 ModifyProductDescAbility=Personalizacja opisy produkowanych w formach
 ViewProductDescInFormAbility=Wizualizacja opisy produktów w formach (inaczej jak popup tooltip)

@@ -810,14 +810,14 @@ LDAPServerUseTLS=استخدام TLS
 LDAPServerUseTLSExample=خادم LDAP الخاص بك استخدام TLS
 LDAPServerDn=خادم DN
 LDAPAdminDn=مدير DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=DN الكامل (مثلا : cn = adminldap العاصمة = المجتمع ، العاصمة = كوم)
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=DN الكامل (مثلا : cn= adminldap العاصمة= المجتمع ، العاصمة= كوم)
 LDAPPassword=مدير البرنامج كلمة السر
 LDAPUserDn=المستخدمين DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=DN الكامل (مثلا : où = المستخدمين ، العاصمة = المجتمع ، العاصمة = كوم)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=DN الكامل (مثلا : où= المستخدمين ، العاصمة= المجتمع ، العاصمة= كوم)
 LDAPGroupDn=الجماعات DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=DN الكامل (مثلا : où = المجموعات العاصمة = المجتمع ، العاصمة = كوم)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=DN الكامل (مثلا : où= المجموعات العاصمة= المجتمع ، العاصمة= كوم)
 LDAPServerExample=خادم معالجة (مثلا : localhost ، 192.168.0.2 ، ldaps : / / ldap.example.com /)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=DN الكامل (مثلا : العاصمة = شركة العاصمة = كوم)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=DN الكامل (مثلا : العاصمة= شركة العاصمة= كوم)
 LDAPPasswordExample=كلمة السر الادارية
 LDAPDnSynchroActive=مستخدمين والمجموعات التزامن
 LDAPDnSynchroActiveExample=LDAP لDolibarr أو Dolibarr لتزامن LDAP
@@ -827,9 +827,9 @@ LDAPDnContactActiveExample=تفعيل / Unactivated التزامن
 LDAPDnMemberActive=أعضاء تزامن
 LDAPDnMemberActiveExample=تفعيل / Unactivated التزامن
 LDAPContactDn=Dolibarr اتصالات &#39;DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=DN الكامل (مثلا : où = اتصالات العاصمة = المجتمع ، العاصمة = كوم)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=DN الكامل (مثلا : où= اتصالات العاصمة= المجتمع ، العاصمة= كوم)
 LDAPMemberDn=Dolibarr الأعضاء DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=DN الكامل (مثلا : où = أعضاء العاصمة = المجتمع ، العاصمة = كوم)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=DN الكامل (مثلا : où= أعضاء العاصمة= المجتمع ، العاصمة= كوم)
 LDAPMemberObjectClassList=قائمة objectClass
 LDAPMemberObjectClassListExample=قائمة objectClass سجل تحديد السمات (مثلا : قمة inetOrgPerson أو أعلى ، لالنشط دليل المستخدم)
 LDAPUserObjectClassList=قائمة objectClass
@@ -839,7 +839,7 @@ LDAPGroupObjectClassListExample=قائمة objectClass سجل تحديد الس�
 LDAPContactObjectClassList=قائمة objectClass
 LDAPContactObjectClassListExample=قائمة objectClass سجل تحديد السمات (مثلا : قمة inetOrgPerson أو أعلى ، لالنشط دليل المستخدم)
 LDAPMemberTypeDn=Dolibarr عضو نوع DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=DN الكامل (مثلا : où = type_members العاصمة = المجتمع ، العاصمة = كوم)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=DN الكامل (مثلا : où= type_members العاصمة= المجتمع ، العاصمة= كوم)
 LDAPTestConnect=اختبار LDAP الصدد
 LDAPTestSynchroContact=اختبار الاتصال &#39;sالتزامن
 LDAPTestSynchroUser=تجربة المستخدم التزامن
@@ -848,10 +848,10 @@ LDAPTestSynchroMember=اختبار العضو التزامن
 LDAPSynchroOK=تزامن اختبار ناجح
 LDAPSynchroKO=فشل تزامن الاختبار
 LDAPSynchroKOMayBePermissions=تزامن فشل الاختبار. تأكد من أن ارتباط لخادم تهيئتها بشكل صحيح ، ويسمح LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=ربط برنامج التعاون الفني لخادم LDAP ناجحة (٪ ق = خادم بورت = ٪)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=ربط برنامج التعاون الفني لخادم LDAP فشل (خادم ق = ٪ بورت = ٪)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=ربط / Authentificate ناجحة لخادم LDAP (خادم ق = ٪ بورت = ٪ ق ، ق = ٪ الادارية ، كلمة المرور = ٪)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=ربط / Authentificate لخادم LDAP فشل (خادم ق = ٪ بورت = ٪ ق ، ق = ٪ الادارية ، كلمة المرور = ٪)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=ربط برنامج التعاون الفني لخادم LDAP ناجحة (٪ ق= خادم بورت= ٪)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=ربط برنامج التعاون الفني لخادم LDAP فشل (خادم ق= ٪ بورت= ٪)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=ربط / Authentificate ناجحة لخادم LDAP (خادم ق= ٪ بورت= ٪ ق ، ق= ٪ الادارية ، كلمة المرور= ٪)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=ربط / Authentificate لخادم LDAP فشل (خادم ق= ٪ بورت= ٪ ق ، ق= ٪ الادارية ، كلمة المرور= ٪)
 LDAPUnbindSuccessfull=فصل ناجحة
 LDAPUnbindFailed=قطع فشل
 LDAPConnectToDNSuccessfull=الاتحاد الافريقي بصدد DN (٪) ري ¿½ ussie
@@ -863,7 +863,7 @@ LDAPLdapMapping=LDAP الخرائط
 LDAPFieldLoginUnix=ادخل (يونكس)
 LDAPFieldLoginExample=على سبيل المثال : رمز المستخدم
 LDAPFilterConnection=البحث عن مرشح
-LDAPFilterConnectionExample=Example : &(objectClass=مثال ذلك : &amp; (objectClass = inetOrgPerson)
+LDAPFilterConnectionExample=Example : &(objectClass=مثال ذلك : &amp; (objectClass= inetOrgPerson)
 LDAPFieldLoginSamba=ادخل (سامبا ، activedirectory)
 LDAPFieldLoginSambaExample=مثال ذلك : samaccountname
 LDAPFieldFullname=Firstname الاسم
@@ -915,7 +915,7 @@ LDAPDescMembers=تسمح لك هذه الصفحة لتحديد اسم LDAP ال�
 LDAPDescValues=مثال قيم تهدف <b>لOpenLDAP</b> مع مخططات بعد تحميلها : <b>core.schema ، cosine.schema ، inetorgperson.schema).</b> إذا كنت تستخدم thoose القيم وOpenLDAP تعديل LDAP الخاص بك ملف <b>slapd.conf</b> لجميع مخططات thoose تحميله.
 ForANonAnonymousAccess=لصحتها accès (لكتابة الحصول على سبيل المثال)
 ProductSetup=المنتجات وحدة الإعداد
-NumberOfProductShowInSelect=Max number of products in combos select lists (0=الحد الأقصى لعدد من المنتجات في اختيار قوائم المجموعات (0 = لا حدود)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=الحد الأقصى لعدد من المنتجات في اختيار قوائم المجموعات (0= لا حدود)
 ConfirmDeleteProductLineAbility=تأكيد عندما إزالة خطوط الإنتاج في الأشكال
 ModifyProductDescAbility=الشخصي من الأشكال في وصف المنتج
 ViewProductDescInFormAbility=تصور وصف المنتج في أشكال (ما المنبثقة tooltip)
@@ -1051,7 +1051,7 @@ MultiCompanySetup=نموذج متعدد شركة الإعداد
 // Reference language: en_US
 UseSearchToSelectCompany=استخدام نموذج البحث لاختيار شركة (بدلا من استخدام قائمة الإطار)
 ProtectAndEncryptPdfFilesDesc=حماية وجود وثيقة من وثائق وتبقي الشعبي توفيرها لقراءة وطباعة أي متصفح الشعبي. ومع ذلك ، وتحريرها ونسخها وليس من الممكن بعد الآن. علما أن استخدام هذه الميزة تجعل بناء عالمي لا يعمل المتراكمة الشعبي (مثل الفواتير غير المدفوعة).
-VATIsUsedDesc=معدل ضريبة القيمة المضافة بشكل افتراضي عند إنشاء الآفاق ، والفواتير ، وما يتبع أوامر النشطة القياسية للمادة : <br> إذا كان البائع هو تعرض لضريبة القيمة المضافة ، وضريبة القيمة المضافة بعد ذلك تلقائيا = 0. نهاية المادة. <br> إذا كان (بيع وشراء = بلد في البلد) ، فإن ضريبة القيمة المضافة بشكل افتراضي = ضريبة القيمة المضافة من بيع المنتج في البلد. نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية ، وبيعت البضاعة الجديدة بعد أن وسائل النقل (السيارات ، والسفن ، والطائرات) ، الافتراضي = 0 ضريبة القيمة المضافة (ضريبة القيمة المضافة وينبغي أن تدفع من قبل المشتري في customoffice بلاده وليس على البائع . نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية والسلع التي تباع عن طريق وسائل أخرى جديدة بدلا من وسائل النقل ، فإن ضريبة القيمة المضافة بشكل افتراضي = ضريبة القيمة المضافة للمنتجات المباعة. نهاية المادة. <br> وإلا فإن ضريبة القيمة المضافة المقترحة الافتراضي = 1. نهاية المادة.
+VATIsUsedDesc=معدل ضريبة القيمة المضافة بشكل افتراضي عند إنشاء الآفاق ، والفواتير ، وما يتبع أوامر النشطة القياسية للمادة : <br> إذا كان البائع هو تعرض لضريبة القيمة المضافة ، وضريبة القيمة المضافة بعد ذلك تلقائيا= 0. نهاية المادة. <br> إذا كان (بيع وشراء= بلد في البلد) ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة من بيع المنتج في البلد. نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية ، وبيعت البضاعة الجديدة بعد أن وسائل النقل (السيارات ، والسفن ، والطائرات) ، الافتراضي= 0 ضريبة القيمة المضافة (ضريبة القيمة المضافة وينبغي أن تدفع من قبل المشتري في customoffice بلاده وليس على البائع . نهاية المادة. <br> إذا كان البائع والمشتري في الجماعة الأوروبية والسلع التي تباع عن طريق وسائل أخرى جديدة بدلا من وسائل النقل ، فإن ضريبة القيمة المضافة بشكل افتراضي= ضريبة القيمة المضافة للمنتجات المباعة. نهاية المادة. <br> وإلا فإن ضريبة القيمة المضافة المقترحة الافتراضي= 1. نهاية المادة.
 UseSearchToSelectProduct=استخدام نموذج البحث لاختيار المنتج (بدلا من استخدام قائمة الإطار)
 OnPayment=عن الدفع
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).

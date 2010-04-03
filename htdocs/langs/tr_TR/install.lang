@@ -166,7 +166,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Sözleşme emtpy tarih düzeltme başa
 MigrationContractsEmptyDatesNothingToUpdate=Sözleşme boş tarih düzeltmek için
 MigrationContractsEmptyCreationDatesNothingToUpdate=No sözleşme oluşturma tarihi düzeltmek için
 MigrationContractsInvalidDatesUpdate=Kötü değer tarih sözleşme düzeltme
-MigrationContractsInvalidDateFix=Doğru sözleşme% =% (Sözleşme Tarihi s) =% s servis tarihi min Başlangıç
+MigrationContractsInvalidDateFix=Doğru sözleşme%=% (Sözleşme Tarihi s)=% s servis tarihi min Başlangıç
 MigrationContractsInvalidDatesNumber=% s sözleşmeleri olarak
 MigrationContractsInvalidDatesNothingToUpdate=Kötü değeri yok tarih düzeltmek için
 MigrationContractsIncoherentCreationDateUpdate=Kötü değer sözleşme oluşturma tarih düzeltme

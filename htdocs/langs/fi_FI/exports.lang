@@ -67,7 +67,7 @@ LineQty=Määrä rivin
 LineTotalHT=Määrä verottomia rivin
 LineTotalTTC=Määrä vero rivin
 LineTotalVAT=Arvonlisäveron määrästä linja
-TypeOfLineServiceOrProduct=Type of line (0 = tuotteen, 1 = palvelu)
+TypeOfLineServiceOrProduct=Type of line (0= tuotteen, 1= palvelu)
 FileWithDataToImport=Tiedoston tiedot tuoda
 FileToImport=Lähdetiedostoa tuoda
 FileMustHaveOneOfFollowingFormat=Tiedoston tuonti on oltava yksi seuraavassa muodossa

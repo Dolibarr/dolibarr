@@ -34,7 +34,7 @@ ErrorSQL=Błąd SQL
 ErrorLogoFileNotFound=Logo file &#39; %s&#39; nie został odnaleziony
 ErrorGoToGlobalSetup=Idź do &quot;Firma / Fundacja&quot; Aby rozwiązać ten problem z konfiguracją
 ErrorGoToModuleSetup=Przejdź do modułu konfiguracji Aby rozwiązać ten
-ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Nie można wysłać mail (nadawcy = %s, odbiornik = %s)
+ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=Nie można wysłać mail (nadawcy= %s, odbiornik= %s)
 ErrorAttachedFilesDisabled=Podłączanie plików funkcja jest wyłączona na tym serveur
 ErrorFileNotUploaded=Plik nie został załadowany. Sprawdź, czy rozmiar nie przekracza maksymalnej dopuszczalnej, że wolnego miejsca jest dostępna na dysku i że nie ma już plik o takiej samej nazwie w tym katalogu.
 ErrorInternalErrorDetected=Wykryto błąd

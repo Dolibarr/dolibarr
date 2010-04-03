@@ -158,7 +158,7 @@ MigrationContractsEmptyCreationDatesNothingToUpdate=Brak dat utworzenia kontrakt
 
 # Contracts Invalid Dates Update
 MigrationContractsInvalidDatesUpdate=Nieprawidłowa wartość przy korekcie daty kontraktu
-MigrationContractsInvalidDateFix=Korekta kontraktu %s (Data kontraktu =%s, Minimalna data rozpoczęcia usługi=%s)
+MigrationContractsInvalidDateFix=Korekta kontraktu %s (Data kontraktu=%s, Minimalna data rozpoczęcia usługi=%s)
 MigrationContractsInvalidDatesNumber=%s kontraktów zmodyfikowano
 MigrationContractsInvalidDatesNothingToUpdate=Brak dat z nieprawidłową wartością do korekty
 
@@ -192,7 +192,7 @@ ErrorPHPDoesNotSupportGD=Twoja instalacji PHP nie obsługuje funkcji graficznych
 ErrorPHPDoesNotSupportUTF8=Twoja instalacji PHP nie obsługuje UTF8 funkcji. Dolibarr może nie działać poprawnie. Rozwiązać ten problem przed instalacją Dolibarr.
 IfLoginDoesNotExistsCheckCreateUser=Jeśli logowania jeszcze nie istnieje, należy sprawdzić opcję &quot;Utwórz użytkownika&quot;
 ErrorConnection=Serwer <b>&quot; %s&quot;,</b> nazwa bazy danych <b>&quot; %s&quot;</b> login <b>&quot; %s&quot;</b> lub hasło bazy danych mogą być złe lub PHP wersji klienckiej może być zbyt stare porównaniu do wersji bazy danych.
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Poprawna umowa %s (Kontrakt data = %s, daty rozpoczęcia usługi min = %s)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Poprawna umowa %s (Kontrakt data= %s, daty rozpoczęcia usługi min= %s)
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
 

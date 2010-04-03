@@ -483,7 +483,7 @@ BackToModuleList=Zurück zur Liste Module
 BackToDictionnaryList=Zurück zur Liste Wörterbücher
 VATReceivedOnly=Spezielle Rate nicht zahlen
 VATManagement=MwSt-Management
-VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Die MwSt-Satz von Standard bei der Erstellung von Perspektiven, Rechnungen, Bestellungen etc. folgen die aktive Standard-Regel: <br> Wenn der Verkäufer unterliegt der Mehrwertsteuer, dann durch die MwSt-Standard = 0. Ende der Regel. <br> Wenn die (= Kauf Verkauf Land Land), dann die Mehrwertsteuer von Standard = Mehrwertsteuer des Produkts in den Verkauf von Land. Ende der Regel. <br> Wenn Verkäufer und Käufer in der Europäischen Gemeinschaft und Waren verkauft werden, die neuen Transportmittel (Auto, Schiff, Flugzeug), die Standard-MwSt = 0 (Die Mehrwertsteuer ist zu zahlen, die der Käufer an der customoffice von seinem Land und nicht an den Verkäufer ). Ende der Regel. <br> Wenn Verkäufer und Käufer in der Europäischen Gemeinschaft und verkauften Waren durch andere Mittel als neuen Transportmittel, dann die Mehrwertsteuer von Standard = Mehrwertsteuer des verkauften Produkts. Ende der Regel. <br> Else die vorgeschlagenen Standard-MwSt = 1. Ende der Regel.
+VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country= buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT=Die MwSt-Satz von Standard bei der Erstellung von Perspektiven, Rechnungen, Bestellungen etc. folgen die aktive Standard-Regel: <br> Wenn der Verkäufer unterliegt der Mehrwertsteuer, dann durch die MwSt-Standard= 0. Ende der Regel. <br> Wenn die (= Kauf Verkauf Land Land), dann die Mehrwertsteuer von Standard= Mehrwertsteuer des Produkts in den Verkauf von Land. Ende der Regel. <br> Wenn Verkäufer und Käufer in der Europäischen Gemeinschaft und Waren verkauft werden, die neuen Transportmittel (Auto, Schiff, Flugzeug), die Standard-MwSt= 0 (Die Mehrwertsteuer ist zu zahlen, die der Käufer an der customoffice von seinem Land und nicht an den Verkäufer ). Ende der Regel. <br> Wenn Verkäufer und Käufer in der Europäischen Gemeinschaft und verkauften Waren durch andere Mittel als neuen Transportmittel, dann die Mehrwertsteuer von Standard= Mehrwertsteuer des verkauften Produkts. Ende der Regel. <br> Else die vorgeschlagenen Standard-MwSt= 1. Ende der Regel.
 VATIsNotUsedDesc=Standardmäßig ist der vorgeschlagene Mehrwertsteuer ist 0, die benutzt werden können für die Fälle, wie Vereine, Einzelpersonen oder kleinen Unternehmen.
 VATIsUsedExampleFR=In Frankreich, bedeutet dies, dass Unternehmen oder Organisationen, die eine echte Steuersystem (Taiwan echte normalen oder real). Ein System, in dem die Mehrwertsteuer erklärt.
 VATIsNotUsedExampleFR=In Frankreich, bedeutet dies, dass Verbände, die Mehrwertsteuer nicht erklärt oder Firmen, Organisationen und freien Berufen, die sich für die Kleinstunternehmen Steuersystem (MwSt in Franchise) und bezahlt eine Franchise MwSt. ohne MwSt.-Erklärung. Diese Wahl wird die Angabe &quot;Nicht zutreffend Mehrwertsteuer - Kunst-293B von CGI&quot; auf Rechnungen.
@@ -729,14 +729,14 @@ LDAPServerUseTLS=TLS
 LDAPServerUseTLSExample=Ihr LDAP-Server TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Vollständige DN (ex: cn = adminldap, dc = Gesellschaft, dc = com)
+LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=Vollständige DN (ex: cn= adminldap, dc= Gesellschaft, dc= com)
 LDAPPassword=Administrator Passwort
 LDAPUserDn=Users&#39; DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Vollständige DN (ex: ou = users, dc = Gesellschaft, dc = com)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=Vollständige DN (ex: ou= users, dc= Gesellschaft, dc= com)
 LDAPGroupDn=Gruppen &quot;DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Vollständige DN (ex: ou = Gruppen, dc = Gesellschaft, dc = com)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=Vollständige DN (ex: ou= Gruppen, dc= Gesellschaft, dc= com)
 LDAPServerExample=Server-Adresse (zB: localhost, 192.168.0.2, LDAPS: / / ldap.example.com /)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=Vollständige DN (ex: dc = company, dc = com)
+LDAPServerDnExample=Complete DN (ex: dc=company,dc=Vollständige DN (ex: dc= company, dc= com)
 LDAPPasswordExample=Admin Passwort
 LDAPDnSynchroActive=Benutzer und Gruppen-Synchronisation
 LDAPDnSynchroActiveExample=LDAP für die Dolibarr oder Dolibarr auf LDAP-Synchronisation
@@ -746,9 +746,9 @@ LDAPDnContactActiveExample=Aktivkohle / Unactivated Synchronisation
 LDAPDnMemberActive=Mitglieder Synchronisation
 LDAPDnMemberActiveExample=Aktivkohle / Unactivated Synchronisation
 LDAPContactDn=Dolibarr Kontakte &quot;DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Vollständige DN (ex: ou = Kontakte, dc = Gesellschaft, dc = com)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=Vollständige DN (ex: ou= Kontakte, dc= Gesellschaft, dc= com)
 LDAPMemberDn=Dolibarr Mitglieder DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Vollständige DN (ex: ou = Mitglieder, dc = Gesellschaft, dc = com)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=Vollständige DN (ex: ou= Mitglieder, dc= Gesellschaft, dc= com)
 LDAPMemberObjectClassList=Liste der objectClass
 LDAPMemberObjectClassListExample=Liste der objectClass Definition Datensatz Attribute (z. B.: oben, InetOrgPerson oder nach oben, für die Active Directory-Benutzer)
 LDAPUserObjectClassList=Liste der objectClass
@@ -758,7 +758,7 @@ LDAPGroupObjectClassListExample=Liste der objectClass Definition Datensatz Attri
 LDAPContactObjectClassList=Liste der objectClass
 LDAPContactObjectClassListExample=Liste der objectClass Definition Datensatz Attribute (z. B.: oben, InetOrgPerson oder nach oben, für die Active Directory-Benutzer)
 LDAPMemberTypeDn=Dolibarr Mitglied der Typ DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Vollständige DN (ex: ou = type_members, dc = Gesellschaft, dc = com)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=Vollständige DN (ex: ou= type_members, dc= Gesellschaft, dc= com)
 LDAPTestConnect=Test LDAP-Verbindung
 LDAPTestSynchroContact=Test der Kontakt-Synchronisation
 LDAPTestSynchroUser=Test-Benutzer-Synchronisation
@@ -767,10 +767,10 @@ LDAPTestSynchroMember=Test Mitglied der Synchronisation
 LDAPSynchroOK=Synchronisation Test erfolgreich
 LDAPSynchroKO=Fehler Synchronisation Test
 LDAPSynchroKOMayBePermissions=Fehler Synchronisation testen. Prüfen Sie, ob Verbindung zum Server ist richtig konfiguriert und erlaubt LDAP udpates
-LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP-Verbindung zum LDAP-Server erfolgreich (Server = %s, Port = %s)
-LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP-Verbindung zum LDAP-Server fehlgeschlagen (Server = %s, Port = %s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Verbinden / Authentifizierung auf LDAP-Server erfolgreich (Server = %s, Port = %s, %s = Admin, Password = %s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Verbinden / Authentifizierung auf LDAP-Server fehlgeschlagen (Server = %s, Port = %s, %s = Admin, Password = %s)
+LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=TCP-Verbindung zum LDAP-Server erfolgreich (Server= %s, Port= %s)
+LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=TCP-Verbindung zum LDAP-Server fehlgeschlagen (Server= %s, Port= %s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=Verbinden / Authentifizierung auf LDAP-Server erfolgreich (Server= %s, Port= %s, %s= Admin, Password= %s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=Verbinden / Authentifizierung auf LDAP-Server fehlgeschlagen (Server= %s, Port= %s, %s= Admin, Password= %s)
 LDAPUnbindSuccessfull=Trennen Sie erfolgreich
 LDAPUnbindFailed=Trennen Sie nicht
 LDAPConnectToDNSuccessfull=Anschluss DN au ( %s) Russie
@@ -834,7 +834,7 @@ LDAPDescMembers=Auf dieser Seite können Sie LDAP-Attribute definieren Namen in 
 LDAPDescValues=Beispiel Werte sind für <b>OpenLDAP</b> mit folgenden Schemata geladen: <b>core.schema, cosine.schema, inetorgperson.schema).</b> Wenn Sie thoose Werte und OpenLDAP, ändern Sie die LDAP-Konfigurationsdatei <b>slapd.conf,</b> dass alle thoose Schemata geladen.
 ForANonAnonymousAccess=Für einen authentifizierten Zugang (für einen Zugang zum Beispiel)
 ProductSetup=Produkte Modul Setup
-NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max Anzahl von Produkten in Combos Auswahllisten (0 = kein Limit)
+NumberOfProductShowInSelect=Max number of products in combos select lists (0=Max Anzahl von Produkten in Combos Auswahllisten (0= kein Limit)
 ConfirmDeleteProductLineAbility=Bestätigung für die Entfernung von einer Linie produziert in den Formularen
 ModifyProductDescAbility=Personalisierung der Beschreibungen in den Formen
 ViewProductDescInFormAbility=Visualisierung von Produkt-Beschreibungen in den Formularen (anders als popup tooltip)

@@ -69,7 +69,7 @@ LineQty=Mængde for linje
 LineTotalHT=Beløb efter skat for linje
 LineTotalTTC=Beløb med fradrag af skat for linje
 LineTotalVAT=Momsbeløb for linje
-TypeOfLineServiceOrProduct=Strækningstype (0 = produkt, 1 = tjeneste)
+TypeOfLineServiceOrProduct=Strækningstype (0= produkt, 1= tjeneste)
 FileWithDataToImport=Fil med data til at importere
 FileToImport=Kildefilen til at importere
 FileMustHaveOneOfFollowingFormat=Fil til at importere, skal have en af følgende format

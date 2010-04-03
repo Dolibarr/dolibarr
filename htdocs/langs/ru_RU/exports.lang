@@ -67,7 +67,7 @@ LineQty=Кол-во в строке
 LineTotalHT=Сумма за вычетом налога на линию
 LineTotalTTC=Сумма налога с на линию
 LineTotalVAT=Сумма налога на добавленную стоимость по строке
-TypeOfLineServiceOrProduct=Тип линии (0 = продукт, услуга 1 =)
+TypeOfLineServiceOrProduct=Тип линии (0= продукт, услуга 1=)
 FileWithDataToImport=Файл с данными для импорта
 FileToImport=Исходный файл для импорта
 FileMustHaveOneOfFollowingFormat=Файл для импорта должны иметь один из следующих форматах

@@ -30,7 +30,7 @@ ErrorSupplierCodeRequired=Поставщик код необходимо
 ErrorSupplierCodeAlreadyUsed=Поставщик код уже используется
 ErrorBadParameters=Плохо параметры
 ErrorFailedToWriteInDir=Не удалось записать в каталог %s
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Найдено неверный электронный синтаксис% с линии в файл (например, строка %s с электронной почтой = %s)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Найдено неверный электронный синтаксис% с линии в файл (например, строка %s с электронной почтой= %s)
 ErrorUserCannotBeDelete=Пользователь не может быть удален. Может быть, это связано в Dolibarr образований.
 ErrorFieldsRequired=Некоторые обязательные поля не были заполнены.
 ErrorFailedToCreateDir=Не удалось создать каталог. Убедитесь, что веб-сервер пользователь имеет разрешения на запись в каталог Dolibarr документы. Если параметр <b>safe_mode</b> включен по этому PHP, проверьте, что Dolibarr PHP файлы принадлежат к веб-серверу пользователей (или группы).

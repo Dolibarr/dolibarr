@@ -149,4 +149,4 @@ ShowTypeCard=Voir type '%s'
 HTPasswordExport=Génération fichier htpassword
 NoThirdPartyAssociatedToMember=Pas de tiers associé à cet adhérent
 ThirdPartyDolibarr=Tiers Dolibarr
-MembersAndSubscriptions = Adhérents et Adhésions
+MembersAndSubscriptions= Adhérents et Adhésions
