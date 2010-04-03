@@ -774,8 +774,8 @@ class DolibarrModules
 	}
 
 	/**
-	 *	\brief      Insere les constantes associees au module dans llx_const
-	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Insert constants defined into $this->const array into table llx_const
+	 *	\return     int     Number of errors (0 if OK)
 	 */
 	function insert_const()
 	{
@@ -792,6 +792,10 @@ class DolibarrModules
 			$visible= $this->const[$key][4];
 			$entity = ! empty($this->const[$key][5])?0:$conf->entity;
 
+			// Clean
+			if (empty($visible)) $visible='0';
+			if (empty($val)) $val='';
+
 			$sql = "SELECT count(*)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."const";
 			$sql.= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
@@ -804,40 +808,16 @@ class DolibarrModules
 
 				if ($row[0] == 0)	// If not found
 				{
-					if (! $visible) $visible='0';
-					if (strlen($note))
-					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
-						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt($name,1);
-						$sql.= ",'".$type."'";
-						$sql.= ",".$this->db->encrypt($val,1);
-						$sql.= ",'".addslashes($note)."'";
-						$sql.= ",'".$visible."'";
-						$sql.= ",".$entity;
-						$sql.= ")";
-					}
-					elseif (strlen($val))
-					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible,entity)";
-						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt($name,1);
-						$sql.= ",'".$type."'";
-						$sql.= ",".$this->db->encrypt($val,1);
-						$sql.= ",'".$visible."'";
-						$sql.= ",".$entity;
-						$sql.= ")";
-					}
-					else
-					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible,entity)";
-						$sql.= " VALUES (";
-						$sql.= $this->db->encrypt($name,1);
-						$sql.= ",'".$type."'";
-						$sql.= ",'".$visible."'";
-						$sql.= ",".$entity;
-						$sql.= ")";
-					}
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
+					$sql.= " VALUES (";
+					$sql.= $this->db->encrypt($name,1);
+					$sql.= ",'".$type."'";
+					$sql.= ",".($val?$this->db->encrypt($val,1):"''");
+					$sql.= ",".($note?"'".addslashes($note)."'":"null");
+					$sql.= ",'".$visible."'";
+					$sql.= ",".$entity;
+					$sql.= ")";
+
 
 					dol_syslog("DolibarrModules::insert_const sql=".$sql);
 					if (! $this->db->query($sql) )
@@ -848,7 +828,7 @@ class DolibarrModules
 				}
 				else
 				{
-					dol_syslog("DolibarrModules::insert_const constant '".$name."' already exists");
+					dol_syslog("DolibarrModules::insert_const constant '".$name."' already exists", LOG_WARNING);
 				}
 			}
 			else
