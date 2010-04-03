@@ -107,7 +107,6 @@ class modSociete extends DolibarrModules
 		$this->const[$r][2] = "DOL_DATA_ROOT/odttemplates/thirdparties";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
-		$this->const[$r][6] = '$this->db->type != \'pgsql\'';	// Condition
 		$r++;
 
 		// Boxes

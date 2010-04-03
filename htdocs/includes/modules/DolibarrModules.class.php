@@ -785,12 +785,12 @@ class DolibarrModules
 
 		foreach ($this->const as $key => $value)
 		{
-			$name   = $this->const[$key][0];
-			$type   = $this->const[$key][1];
-			$val    = $this->const[$key][2];
-			$note   = $this->const[$key][3];
-			$visible= $this->const[$key][4];
-			$entity = ! empty($this->const[$key][5])?0:$conf->entity;
+			$name      = $this->const[$key][0];
+			$type      = $this->const[$key][1];
+			$val       = $this->const[$key][2];
+			$note      = $this->const[$key][3];
+			$visible   = $this->const[$key][4];
+			$entity    = ! empty($this->const[$key][5])?0:$conf->entity;
 
 			// Clean
 			if (empty($visible)) $visible='0';
