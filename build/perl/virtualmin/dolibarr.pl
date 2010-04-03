@@ -179,10 +179,10 @@ local $olddocdir = &transname();
 local $url;
 $path = &script_path_url($d, $opts);
 if ($path =~ /^https:/) {
-        $url = "https://www.$d->{'dom'}";
+        $url = "https://$d->{'dom'}";
 }
 else {
-        $url = "http://www.$d->{'dom'}";
+        $url = "http://$d->{'dom'}";
 }
 if ($opts->{'path'} =~ /\w/) {
 	$url .= $opts->{'path'};
