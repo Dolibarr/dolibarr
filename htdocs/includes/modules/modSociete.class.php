@@ -91,7 +91,7 @@ class modSociete extends DolibarrModules
 		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "Affichage formulaire de recherche des Societes dans la barre de gauche";
 		$this->const[$r][4] = 0;
-		$this->const[$r][5] = 0;
+		$this->const[$r][5] = 'allentities';
 		$r++;
 
 		$this->const[$r][0] = "MAIN_SEARCHFORM_CONTACT";
@@ -99,14 +99,15 @@ class modSociete extends DolibarrModules
 		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "Affichage formulaire de recherche des Contacts dans la barre de gauche";
 		$this->const[$r][4] = 0;
-		$this->const[$r][5] = 0;
+		$this->const[$r][5] = 'allentities';
 		$r++;
-		
+
 		$this->const[$r][0] = "COMPANY_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/odttemplates/thirdparties";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
+		$this->const[$r][6] = '$this->db->type != \'pgsql\'';	// Condition
 		$r++;
 
 		// Boxes

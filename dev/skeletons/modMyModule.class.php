@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     
+/**
  * 		\defgroup   mymodule     Module MyModule
  *      \brief      Example of a module descriptor.
  *					Such a file must be copied into htdocs/includes/module directory.
@@ -33,7 +33,7 @@
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     
+/**
  * 		\class      modMyModule
  *      \brief      Description and activation class for module MyModule
  */
@@ -70,7 +70,7 @@ class modMyModule extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='generic';
-		
+
 		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
 		$this->triggers = 0;
 
@@ -93,7 +93,7 @@ class modMyModule extends DolibarrModules
 		$this->langfiles = array("mymodule");
 
 		// Constants
-		$this->const = array();			// List of particular constants to add when module is enabled
+		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities', condition)
 		//Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                            1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 

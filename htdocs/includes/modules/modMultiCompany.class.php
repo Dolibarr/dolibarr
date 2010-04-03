@@ -87,7 +87,7 @@ class modMultiCompany extends DolibarrModules
 		// List of particular constants to add when module is enabled
 		//Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
 		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
-		$this->const=array(1=>array('MAIN_MODULE_MULTICOMPANY_NEEDSMARTY',"chaine",1,'Need smarty',0,0));
+		$this->const=array(1=>array('MAIN_MODULE_MULTICOMPANY_NEEDSMARTY',"chaine",1,'Need smarty',0,'allentities'));
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

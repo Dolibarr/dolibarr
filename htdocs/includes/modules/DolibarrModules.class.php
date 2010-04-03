@@ -89,7 +89,7 @@ class DolibarrModules
 
 		// Insert new pages for tabs into llx_const
 		if (! $err) $err+=$this->insert_tabs();
-		
+
 		// Insert activation triggers
 		if (! $err) $err+=$this->insert_triggers();
 
@@ -184,7 +184,7 @@ class DolibarrModules
 
 		// Remove activation of module's new tabs
 		if (! $err) $err+=$this->delete_tabs();
-		
+
 		// Remove activation of module's triggers
 		if (! $err) $err+=$this->delete_triggers();
 
@@ -790,7 +790,7 @@ class DolibarrModules
 			$val    = $this->const[$key][2];
 			$note   = $this->const[$key][3];
 			$visible= $this->const[$key][4];
-			$entity = isset($this->const[$key][5])?$this->const[$key][5]:$conf->entity;
+			$entity = ! empty($this->const[$key][5])?0:$conf->entity;
 
 			$sql = "SELECT count(*)";
 			$sql.= " FROM ".MAIN_DB_PREFIX."const";
@@ -1205,7 +1205,7 @@ class DolibarrModules
 
 		return $err;
 	}
-	
+
 	/**
 	 *	\brief      Insert activation triggers from modules in llx_const
 	 *	\return     int     Number of errors (0 if ok)
@@ -1240,7 +1240,7 @@ class DolibarrModules
 		}
 		return $err;
 	}
-	
+
 	/**
 	 *	\brief      Remove activation triggers from modules in llx_const
 	 *	\return     int     Nombre d'erreurs (0 si ok)
