@@ -252,7 +252,7 @@ if (sizeof($conf->need_smarty) > 0 || $conf->global->MAIN_SMARTY)
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DOCUMENT_ROOT.'/includes/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
-	
+
 	// Create directory if not exist
 	if (! is_dir($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
 	if (! is_dir($dolibarr_smarty_cache))	create_exdir($dolibarr_smarty_cache);
@@ -682,10 +682,6 @@ if (! defined('NOREQUIRETRAN'))
 // Define some constants used for style of arrays
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
-
-// Used only in telephony module
-$yesno[0]="no";
-$yesno[1]="yes";
 
 // Constants used to defined number of lines in textarea
 if (empty($conf->browser->firefox))
