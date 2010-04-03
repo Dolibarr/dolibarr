@@ -26,7 +26,7 @@ return "Dolibarr ERP/CRM is a powerful Open Source software to manage a professi
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "2.7.0", "2.7.1", "2.8.0" );
+return ( "2.7.1", "2.8.0" );
 }
 
 sub script_dolibarr_category
@@ -36,7 +36,7 @@ return "ERP/CRM";
 
 sub script_dolibarr_php_vers
 {
-return ( 4, 5 );
+return ( 5 );
 }
 
 sub script_dolibarr_php_vars
@@ -216,7 +216,10 @@ if ($upgrade) {
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Second page (Migrate some data)
-	local @params = ( [ "action", "upgrade" ] );
+	local @params = ( [ "action", "upgrade" ],
+			  [ "versionfrom", $ver ],
+			  [ "versionto", $upgrade->{'version'} ],
+			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
@@ -321,7 +324,7 @@ sub script_dolibarr_latest
 {
 local ($ver) = @_;
 return ( "http://www.dolibarr.fr/files/stable/",
-	 "dolibarr\-(2\.[0-9\.][0-9])" );
+	 "dolibarr\\-(2\\.[0-9\\.]+)" );
 }
 
 sub script_dolibarr_site
