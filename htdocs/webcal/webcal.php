@@ -42,7 +42,7 @@ print "
 <title>Dolibarr frame for Webcalendar</title>
 </head>
 
-<frameset rows=\"28,*\" border=0 framespacing=0 frameborder=0>
+<frameset rows=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
     <frame name=\"barre\" src=\"webcaltop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu."&nobackground=1\" noresize scrolling=\"NO\" noborder>
     <frame name=\"main\" src=\"".$conf->global->PHPWEBCALENDAR_URL."\">
     <noframes>

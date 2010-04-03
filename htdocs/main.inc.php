@@ -709,6 +709,11 @@ else
 	define('ROWS_9',8);
 }
 
+$heightforframes=48;
+
+
+// Functions
+
 
 /**
  *		\brief   	Show HTML header HTML + BODY + Top menu + left menu + DIV
@@ -725,6 +730,7 @@ if (! function_exists("llxHeader"))
 {
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 	{
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 		left_menu('', $help_url);
 	}
@@ -747,8 +753,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
-
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 
 	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 

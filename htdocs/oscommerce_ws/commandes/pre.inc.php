@@ -27,7 +27,7 @@
 */
 
 require("../../main.inc.php");
-require("./osc_order.class.php");
+require(DOL_DOCUMENT_ROOT."/oscommerce_ws/osc_order.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {

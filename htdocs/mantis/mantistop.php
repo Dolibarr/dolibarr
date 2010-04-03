@@ -25,6 +25,7 @@
 
 require ("../main.inc.php");
 
+top_htmlhead("","");
 top_menu("","","_top");
 
 ?>

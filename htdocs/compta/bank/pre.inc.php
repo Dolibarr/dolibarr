@@ -31,11 +31,12 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $langs->load("banks");
 
-function llxHeader($head = "")
+function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $db, $user, $conf, $langs;
 
-	top_menu($head);
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
+	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 
 	$menu = new Menu();
 	if ($user->rights->banque->lire)

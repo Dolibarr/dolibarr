@@ -89,7 +89,6 @@ print '<body>';
 
 print $javascript;
 
-print '<table summary="" width="100%"><tr><td>';
 print "<div><br>";    // Ouvre div a la place de top_menu car le llxFooter en ferme un
 
 print "<form method=\"post\" action=\"javascript:MAJ(".$_GET['targettown'].",".$_GET['targetcountry'].",".$_GET['targetstate'].");\" name=\"searchform\" enctype=\"application/x-www-form-urlencoded\">";

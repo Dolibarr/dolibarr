@@ -31,11 +31,12 @@ $langs->load("bills");
 $langs->load("compta");
 $langs->load("banks");
 
-function llxHeader($head = "", $title="")
+function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $db, $user, $conf, $langs;
 
-	top_menu($head);
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
+	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 
 	$menu = new Menu();
 	if ($user->rights->banque->lire)

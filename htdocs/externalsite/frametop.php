@@ -17,14 +17,15 @@
  */
 
 /**
-		\file 		htdocs/mantis/mantistop.php
+		\file 		htdocs/externalsite/frametop.php
         \ingroup    externalsite
-		\brief      Top frame to show mantis application
+		\brief      Top frame to show external web application
 		\version    $Id$
 */
 
 require ("../main.inc.php");
 
+top_htmlhead("","");
 top_menu("","","_top");
 
 ?>

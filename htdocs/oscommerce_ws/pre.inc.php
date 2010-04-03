@@ -33,6 +33,7 @@ function llxHeader($head = '', $title='', $help_url='')
 	global $user, $conf, $langs;
 	$langs->load("shop");
 
+	top_htmlhead($head);
 	top_menu($head);
 
 	$menu = new Menu();

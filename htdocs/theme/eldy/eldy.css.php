@@ -437,10 +437,30 @@ div.mainmenu_accountancy {
 	margin-left: 0px;
 }
 
+div.mainmenu_project {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/project.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:27px;
+	margin-left: 0px;
+}
+
 div.mainmenu_tools {
 	position : relative;
 	color: white;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/tools.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_members {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/members.png' ?>);
 	background-repeat:no-repeat;
 	background-position:center top;
 	height:28px;
@@ -461,6 +481,16 @@ div.mainmenu_ecm {
 	position : relative;
 	color: white;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/ecm.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
+div.mainmenu_cashdesk {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/pointofsale.png' ?>);
 	background-repeat:no-repeat;
 	background-position:center top;
 	height:28px;

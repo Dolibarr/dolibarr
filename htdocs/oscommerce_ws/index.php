@@ -30,6 +30,10 @@ $langs->load("shop");
 $langs->load("orders");
 
 
+/*
+ * View
+ */
+
 llxHeader("",$langs->trans("OSCommerceShop"));
 
 print_fiche_titre($langs->trans("OSCommerceShop"));
