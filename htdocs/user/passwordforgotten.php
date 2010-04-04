@@ -200,7 +200,7 @@ if ($conf->global->MAIN_SMARTY)
 
 	// Send password button enabled ?
 	$disabled='disabled';
-	if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
+	if ($mode == 'dolibarr') $disabled='';
 	if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';	 // To force button enabled
 	$smarty->assign('disabled', $disabled);
 
@@ -325,7 +325,7 @@ else
 
 	// Send password button enabled ?
 	$disabled='disabled';
-	if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
+	if ($mode == 'dolibarr') $disabled='';
 	if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';				// To force button enabled
 
 	// Table 2
@@ -388,7 +388,7 @@ else
 
 	print '<center>'."\n";
 	print '<table width="90%"><tr><td align="center">';
-	if (($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled))
+	if (($mode == 'dolibarr') || (! $disabled))
 	{
 		print '<font style="font-size: 12px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
 	}

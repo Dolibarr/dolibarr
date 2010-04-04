@@ -557,14 +557,7 @@ function write_conf_file($conffile)
 		fputs($fp,"\n");
 
 		/* Authentication */
-		if ($_POST["db_type"] == 'mssql')
-		{
-			fputs($fp, '$dolibarr_main_authentication=\'dolibarr_mdb2\';');
-		}
-		else
-		{
-			fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
-		}
+		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
 		fputs($fp,"\n");
 
 		fputs($fp, '?>');

@@ -100,7 +100,7 @@
 <ul class="pageitem">
 	<li class="textbox">
 	<span class="header">{$langs->trans('Infos')}</span>
-		{if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled)}
+		{if ($mode == 'dolibarr') || (! $disabled)}
 			{$langs->trans('SendNewPasswordDesc')}
 		{else}
 			{$langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode)}

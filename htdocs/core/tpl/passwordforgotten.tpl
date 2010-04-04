@@ -115,7 +115,7 @@ function donnefocus() {ldelim}
 <center>
 <table width="90%"><tr><td align="center">
 
-	{if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled)}
+	{if ($mode == 'dolibarr') || (! $disabled)}
 		<font style="font-size: 12px;">
 			{$langs->trans('SendNewPasswordDesc')}
 		</font>
