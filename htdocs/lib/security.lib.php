@@ -155,7 +155,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$select_entity='';
 	if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY))
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/multicompany/multicompany.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/multicompany/class/multicompany.class.php');
 
 		$mc = new Multicompany($db);
 		$mc->getEntities(0,1);
