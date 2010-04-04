@@ -209,18 +209,26 @@ if ($upgrade) {
 	
 	# First page (Update database schema)
 	local @params = ( [ "action", "upgrade" ],
-			  [ "versionfrom", $ver ],
-			  [ "versionto", $upgrade->{'version'} ],
+			  [ "versionfrom", $upgrade->{'version'} ],
+			  [ "versionto", $ver ],
 	 		 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Second page (Migrate some data)
 	local @params = ( [ "action", "upgrade" ],
-			  [ "versionfrom", $ver ],
-			  [ "versionto", $upgrade->{'version'} ],
+			  [ "versionfrom", $upgrade->{'version'} ],
+			  [ "versionto", $ver ],
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade2", $d, $opts);
+	return (-1, "Dolibarr wizard failed : $err") if ($err);
+	
+	# Third page (Update version number)
+	local @params = ( [ "action", "upgrade" ],
+			  [ "versionfrom", $upgrade->{'version'} ],
+			  [ "versionto", $ver ],
+			 );
+	local $err = &call_dolibarr_wizard_page(\@params, "etape5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Remove the installation directory.
