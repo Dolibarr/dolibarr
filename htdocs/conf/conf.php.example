@@ -13,81 +13,81 @@
 # This parameter defines the root URL of your Dolibarr index.php page.
 # It must link to the directory htdocs.
 # Examples:
-# $dolibarr_main_url_root="http://localhost";
-# $dolibarr_main_url_root="http://mydolibarrvirtualhost";
-# $dolibarr_main_url_root="http://myserver/dolibarr/htdocs";
+# $dolibarr_main_url_root='http://localhost';
+# $dolibarr_main_url_root='http://mydolibarrvirtualhost';
+# $dolibarr_main_url_root='http://myserver/dolibarr/htdocs';
 #
-$dolibarr_main_url_root="";
+$dolibarr_main_url_root='';
 
 
 # dolibarr_main_document_root
 # This parameter contains absolute file system directory of Dolibarr
 # htdocs directory
 # Examples:
-# $dolibarr_main_document_root="/var/www/dolibarr/htdocs";
-# $dolibarr_main_document_root="C:/My web sites/dolibarr/htdocs";
+# $dolibarr_main_document_root='/var/www/dolibarr/htdocs';
+# $dolibarr_main_document_root='C:/My web sites/dolibarr/htdocs';
 #
-$dolibarr_main_document_root="";
+$dolibarr_main_document_root='';
 
 
 # dolibarr_main_data_root
 # This parameter contains absolute file system directory of Dolibarr
 # directory used to store uploaded and generated physical files.
 # Examples:
-# $dolibarr_main_document_root="/var/www/dolibarr/documents";
-# $dolibarr_main_document_root="E:/My web sites/dolibarr/documents";
+# $dolibarr_main_data_root='/var/www/dolibarr/documents';
+# $dolibarr_main_data_root='E:/My web sites/dolibarr/documents';
 #
-$dolibarr_main_data_root="";
+$dolibarr_main_data_root='';
 
 
 # dolibarr_main_db_host
 # This parameter contains host name or ip address of Dolibarr database
 # server.
 # Examples:
-# $dolibarr_main_db_host="localhost";
-# $dolibarr_main_db_host="127.0.0.1";
-# $dolibarr_main_db_host="192.168.0.10";
-# $dolibarr_main_db_host="mysql.myserver.com";
+# $dolibarr_main_db_host='localhost';
+# $dolibarr_main_db_host='127.0.0.1';
+# $dolibarr_main_db_host='192.168.0.10';
+# $dolibarr_main_db_host='mysql.myserver.com';
 #
-$dolibarr_main_db_host="";
+$dolibarr_main_db_host='';
 
 
 # dolibarr_main_db_port
 # This parameter contains the port of the Dolibarr database.
 # Default value: none
 # Examples:
-# $dolibarr_main_db_host="3306;
+# $dolibarr_main_db_host='3306';
 #
-$dolibarr_main_db_port="";
+$dolibarr_main_db_port='';
 
 
 # dolibarr_main_db_name
 # This parameter contains name of Dolibarr database.
 # Examples:
-# $dolibarr_main_db_name="dolibarr";
-# $dolibarr_main_db_name="mydatabase";
+# $dolibarr_main_db_name='dolibarr';
+# $dolibarr_main_db_name='mydatabase';
 #
-$dolibarr_main_db_name="";
+$dolibarr_main_db_name='';
 
 
 # dolibarr_main_db_user
 # This parameter contains user name used to read and write into
 # Dolibarr database.
 # Examples:
-# $dolibarr_main_db_user="admin";
-# $dolibarr_main_db_user="dolibarruser";
+# $dolibarr_main_db_user='admin';
+# $dolibarr_main_db_user='dolibarruser';
 #
-$dolibarr_main_db_user="";
+$dolibarr_main_db_user='';
 
 
 # dolibarr_main_db_pass
 # This parameter contains password used to read and write into
 # Dolibarr database.
 # Examples:
-# $dolibarr_main_db_pass="myadminpass";
-# $dolibarr_main_db_pass="myuserpassword";
+# $dolibarr_main_db_pass='myadminpass';
+# $dolibarr_main_db_pass='myuserpassword';
 #
-$dolibarr_main_db_pass="";
+$dolibarr_main_db_pass='';
 
 
 # dolibarr_main_db_type
@@ -96,30 +96,36 @@ $dolibarr_main_db_pass="";
 # Default value: none
 # Possible values: mysql, mysqli, pgsql
 # Examples:
-# $dolibarr_main_db_type="mysql;
-# $dolibarr_main_db_type="mysqli";
-# $dolibarr_main_db_type="pgsql";
+# $dolibarr_main_db_type='mysql';
+# $dolibarr_main_db_type='mysqli';
+# $dolibarr_main_db_type='pgsql';
 #
-$dolibarr_main_db_type="";
+$dolibarr_main_db_type='';
 
 
 # dolibarr_main_db_character_set
 # Database character set used to store data (forced during database creation).
 # Default value: depends on database driver
 # Examples:
-# dolibarr_main_db_character_set="latin1";
+# dolibarr_main_db_character_set='latin1';
 #
-$dolibarr_main_db_character_set="latin1";
+$dolibarr_main_db_character_set='latin1';
 
 
 # dolibarr_main_db_collation
 # Database character set used to sort data (forced during database creation).
 # Default value: depends on database driver
 # Examples:
-# dolibarr_main_db_collation="latin1_swedish_ci";
+# dolibarr_main_db_collation='latin1_swedish_ci';
 #
-$dolibarr_main_db_collation="latin1_swedish_ci";
+$dolibarr_main_db_collation='latin1_swedish_ci';
 
+
+
+
+##################
+# Login          #
+##################
 
 # dolibarr_main_authentication
 # This parameter contains the way authentication is done.
@@ -128,46 +134,57 @@ $dolibarr_main_db_collation="latin1_swedish_ci";
 # Possible values: Any values found in files in htdocs/includes/login directory after
 # the "function_" string and before the ".php" string.
 # Examples:
-# $dolibarr_main_authentication="http";
-# $dolibarr_main_authentication="dolibarr";
-# $dolibarr_main_authentication="ldap";
+# $dolibarr_main_authentication='http';
+# $dolibarr_main_authentication='dolibarr';
+# $dolibarr_main_authentication='ldap';
 #
-$dolibarr_main_authentication="dolibarr";
-
-
-# dolibarr_main_force_https
-# This parameter allows to force the HTTPS mode.
-# Warning: If you enable this parameter, your dolibarr_main_url_root parameter
-# must contains an URL with https and web server must be configured to respond
-# to such an URL.
-# Default value: 0
-# Possible values: 0 or 1
-# Examples:
-# $dolibarr_main_force_https=0;
-#
-$dolibarr_main_force_https="0";
+$dolibarr_main_authentication='dolibarr';
 
 
 # Parameters used to setup LDAP authentication.
-# Uncomment them if dolibarr_main_authentication = "ldap"
+# Uncomment them if dolibarr_main_authentication = 'ldap'
 #
-# $dolibarr_main_auth_ldap_host="127.0.0.1";
-# $dolibarr_main_auth_ldap_port="389";
-# $dolibarr_main_auth_ldap_version="3";
-# $dolibarr_main_auth_ldap_servertype="openldap";			# openldap, activedirectory or egroupware
-# $dolibarr_main_auth_ldap_login_attribute="loginfield";	# uid or samaccountname for active directory
-# $dolibarr_main_auth_ldap_dn="";							# Ex: ou=users,dc=my-domain,dc=com
-# $dolibarr_main_auth_ldap_admin_login="";					# Required only if anonymous bind disabled
-# $dolibarr_main_auth_ldap_admin_pass="";					# Required only if anonymous bind disabled
+# $dolibarr_main_auth_ldap_host='127.0.0.1';
+# $dolibarr_main_auth_ldap_port='389';
+# $dolibarr_main_auth_ldap_version='3';
+# $dolibarr_main_auth_ldap_servertype='openldap';			# openldap, activedirectory or egroupware
+# $dolibarr_main_auth_ldap_login_attribute='loginfield';	# uid or samaccountname for active directory
+# $dolibarr_main_auth_ldap_dn='';							# Ex: ou=users,dc=my-domain,dc=com
+# $dolibarr_main_auth_ldap_admin_login='';					# Required only if anonymous bind disabled
+# $dolibarr_main_auth_ldap_admin_pass='';					# Required only if anonymous bind disabled
 #
-# $dolibarr_main_auth_ldap_debug="false";
+# $dolibarr_main_auth_ldap_debug='false';
 
 
 # Login and pass to use in a demo mode
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
-# $dolibarr_main_demo="autologin,autopass"
+# $dolibarr_main_demo='autologin,autopass'
+
+
+
+##################
+# Security       #
+##################
+
+
+# dolibarr_main_force_https
+# This parameter allows to force the HTTPS mode.
+# Warning: If you enable this parameter, your web server must be configured
+# to respond URL with https protocol.
+# Default value: 0
+# Possible values: 0 or 1
+# Examples:
+# $dolibarr_main_force_https='0';
+#
+$dolibarr_main_force_https='0';
+
+
+
+##################
+# Other          #
+##################
 
 
 # When this parameter is defined, all errors messages are not reported.
@@ -175,6 +192,6 @@ $dolibarr_main_force_https="0";
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
-# $dolibarr_main_prod=1
+# $dolibarr_main_prod='1';
 
 ?>
