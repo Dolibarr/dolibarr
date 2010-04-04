@@ -196,13 +196,13 @@ $dolibarr_main_force_https='0';
 # $dolibarr_main_prod='1';
 
 
-# This is an experimental feature to allow external components to overwrite
+# This is an development feature to allow external components to overwrite
 # some Dolibarr kernel files to be overwritten by versions provided by
 # third parties modules.
-# !! Using this feature is done at your own risk and will break Dolibarr stability !!
+# !! This feature is not working yet and breaks Dolibarr stability !!
 # Default value: 0
 # Possible values: 0 or 1
 # Examples:
-# $dolibarr_allow_overwritekernel='1';
+# $dolibarr_allow_overwritekernel='0';
 
 ?>
