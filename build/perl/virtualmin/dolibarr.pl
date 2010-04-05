@@ -23,15 +23,29 @@ sub script_dolibarr_longdesc
 return "Dolibarr ERP/CRM is a powerful Open Source software to manage a professional or foundation activity (small and medium enterprises, freelancers).";
 }
 
+sub script_dolibarr_author
+{
+return "Regis Houssin";
+}
+
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "2.7.1", "2.8.0" );
+return ( "2.8.0", "2.7.1" );
+}
+
+sub script_dolibarr_can_upgrade
+{
+local ($sinfo, $newver) = @_;
+if ($newver >= 2.8 && $sinfo->{'version'} < 2.8) {
+	return 0;
+	}
+return 1;
 }
 
 sub script_dolibarr_category
 {
-return "ERP/CRM";
+return "Commerce";
 }
 
 sub script_dolibarr_php_vers
@@ -179,10 +193,10 @@ local $olddocdir = &transname();
 local $url;
 $path = &script_path_url($d, $opts);
 if ($path =~ /^https:/) {
-        $url = "https://$d->{'dom'}";
+        $url = "https://www.$d->{'dom'}";
 }
 else {
-        $url = "http://$d->{'dom'}";
+        $url = "http://www.$d->{'dom'}";
 }
 if ($opts->{'path'} =~ /\w/) {
 	$url .= $opts->{'path'};
@@ -331,8 +345,11 @@ return (1, "Dolibarr directory and tables deleted.");
 sub script_dolibarr_latest
 {
 local ($ver) = @_;
-return ( "http://www.dolibarr.fr/files/stable/",
-	 "dolibarr\\-(2\\.[0-9\\.]+)" );
+if ($ver >= 2.8) {
+	return ( "http://www.dolibarr.fr/files/stable/",
+		 "dolibarr\\-(2\\.[0-9\\.]+)" );
+	}
+return ( );
 }
 
 sub script_dolibarr_site
