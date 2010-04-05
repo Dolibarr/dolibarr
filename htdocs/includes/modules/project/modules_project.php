@@ -157,8 +157,9 @@ function project_pdf_create($db, $comid, $modele,$outputlangs)
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_PROJECT_ADDON_PDF_NotDefined");
-			return 0;
+			$modele='baleine';
+			//print $langs->trans("Error")." ".$langs->trans("Error_PROJECT_ADDON_PDF_NotDefined");
+			//return 0;
 		}
 	}
 
