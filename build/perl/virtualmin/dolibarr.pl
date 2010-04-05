@@ -34,15 +34,6 @@ sub script_dolibarr_versions
 return ( "2.8.0", "2.7.1" );
 }
 
-sub script_dolibarr_can_upgrade
-{
-local ($sinfo, $newver) = @_;
-if ($newver >= 2.8 && $sinfo->{'version'} < 2.8) {
-	return 0;
-	}
-return 1;
-}
-
 sub script_dolibarr_category
 {
 return "Commerce";
@@ -193,10 +184,10 @@ local $olddocdir = &transname();
 local $url;
 $path = &script_path_url($d, $opts);
 if ($path =~ /^https:/) {
-        $url = "https://www.$d->{'dom'}";
+        $url = "https://$d->{'dom'}";
 }
 else {
-        $url = "http://www.$d->{'dom'}";
+        $url = "http://$d->{'dom'}";
 }
 if ($opts->{'path'} =~ /\w/) {
 	$url .= $opts->{'path'};
@@ -220,7 +211,7 @@ if ($upgrade) {
 	# Put back original config file and documents directory
 	&copy_source_dest_as_domain_user($d, $oldcfile, $cfile);
 	&copy_source_dest_as_domain_user($d, $olddocdir, $docdir);
-	
+
 	# First page (Update database schema)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -228,7 +219,7 @@ if ($upgrade) {
 	 		 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-	
+
 	# Second page (Migrate some data)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -236,7 +227,7 @@ if ($upgrade) {
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "upgrade2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-	
+
 	# Third page (Update version number)
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
@@ -244,13 +235,13 @@ if ($upgrade) {
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-	
+
 	# Remove the installation directory.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
 	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall )."/* ");
 	$out = &run_as_domain_user($d, "rmdir ".quotemeta($dinstall ));
-	
+
 	}
 else {
 	# First page (Db connection and config file creation)
@@ -266,12 +257,12 @@ else {
 			 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape1", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-	
+
 	# Second page (Populate database)
 	local @params = ( [ "action", "set" ] );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-	
+
 	# Third page (Add administrator account)
 	local @params = ( [ "action", "set" ],
 			  [ "login", "admin" ],
@@ -280,7 +271,7 @@ else {
 	 		 );
 	local $err = &call_dolibarr_wizard_page(\@params, "etape5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
-	
+
 	# Remove the installation directory and protect config file.
 	local $dinstall = "$opts->{'dir'}/install";
 	$dinstall  =~ s/\/$//;
@@ -288,7 +279,7 @@ else {
 	$out = &run_as_domain_user($d, "rmdir ".quotemeta($dinstall ));
 	&set_ownership_permissions(undef, undef, 0644, $cfile);
 	&set_ownership_permissions(undef, undef, 0755, $cfiledir);
-	
+
 	}
  
 # Return a URL for the user
