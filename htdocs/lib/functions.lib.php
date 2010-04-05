@@ -1788,7 +1788,13 @@ function restrictedArea($user, $features='societe', $objectid=0, $dbtablename=''
  */
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
-	global $user, $langs;
+	global $conf, $db, $user, $langs;
+	if (! is_object($langs))
+	{
+		include_once(DOL_DOCUMENT_ROOT.'/translate.class.php');
+		$langs=new Translate('',$conf);
+	}
+
 	$langs->load("other");
 
 	if ($printheader)

@@ -194,3 +194,5 @@ create table llx_element_milestone
 ALTER TABLE llx_element_milestone ADD UNIQUE INDEX idx_element_milestone_idx1 (fk_element, elementtype, fk_milestone);
 ALTER TABLE llx_element_milestone ADD INDEX idx_element_milestone_fk_milestone (fk_milestone);
 ALTER TABLE llx_element_milestone ADD CONSTRAINT fk_element_milestone_fk_milestone FOREIGN KEY (fk_milestone) REFERENCES llx_milestone(rowid);
+
+ALTER TABLE llx_deplacement ADD COLUMN fk_statut INTEGER DEFAULT 1  NOT NULL after type;

@@ -37,9 +37,6 @@ if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
-
 require_once("../main.inc.php");
 
 //var_dump($langs);

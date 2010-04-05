@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ create table llx_deplacement
   fk_user			integer NOT NULL,
   fk_user_author	integer,
   type				varchar(12) NOT NULL,
+  fk_statut         integer DEFAULT 1 NOT NULL,
   km				real,
   fk_soc			integer,
   fk_projet         integer DEFAULT 0,

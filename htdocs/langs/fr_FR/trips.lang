@@ -3,6 +3,7 @@ CHARSET=UTF-8
 Trip=Déplacement
 Trips=Déplacements
 TripsAndExpenses=Note de frais
+TripsAndExpensesStatistics=Statistiques notes de frais
 TripId=Id note frais
 TripCard=Fiche frais
 AddTrip=Ajouter frais

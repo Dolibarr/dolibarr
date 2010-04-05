@@ -23,7 +23,9 @@
  *  \brief      	Page to show a trip card
  *  \version		$Id$
  */
+
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/deplacement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 if ($conf->projet->enabled)
 {

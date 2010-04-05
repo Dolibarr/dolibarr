@@ -3,6 +3,7 @@ CHARSET=UTF-8
 Trip=Trip
 Trips=Trips
 TripsAndExpenses=Trips and expenses
+TripsAndExpensesStatistics=Trips and expenses statistics
 TripCard=Trip card
 AddTrip=Add trip
 ListOfTrips=List of trips

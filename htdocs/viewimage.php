@@ -26,23 +26,28 @@
  *		\version    $Id$
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
-
 // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 $action = isset($_GET["action"])?$_GET["action"]:'';
 $original_file = isset($_GET["file"])?$_GET["file"]:'';
 $modulepart = isset($_GET["modulepart"])?$_GET["modulepart"]:'';
 $urlsource = isset($_GET["urlsource"])?$_GET["urlsource"]:'';
 
+//if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
+if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAXL','1');
 // Pour autre que companylogo, on charge environnement + info issus de logon comme le user
-if (($modulepart == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",1);
+if (($modulepart == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
 
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
+
 
 require("./main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -84,7 +89,6 @@ if ($modulepart)
 	// Wrapping pour les apercu factures
 	elseif ($modulepart == 'apercufacture')
 	{
-		$user->getrights('facture');
 		if ($user->rights->facture->lire)
 		{
 			$accessallowed=1;
@@ -95,7 +99,6 @@ if ($modulepart)
 	// Wrapping pour les apercu propal
 	elseif ($modulepart == 'apercupropal')
 	{
-		$user->getrights('propale');
 		if ($user->rights->propale->lire)
 		{
 			$accessallowed=1;
@@ -106,7 +109,6 @@ if ($modulepart)
 	// Wrapping pour les apercu commande
 	elseif ($modulepart == 'apercucommande')
 	{
-		$user->getrights('commande');
 		if ($user->rights->commande->lire)
 		{
 			$accessallowed=1;
@@ -117,7 +119,6 @@ if ($modulepart)
 	// Wrapping pour les apercu intervention
 	elseif ($modulepart == 'apercufichinter')
 	{
-		$user->getrights('ficheinter');
 		if ($user->rights->ficheinter->lire)
 		{
 			$accessallowed=1;
@@ -128,7 +129,6 @@ if ($modulepart)
 	// Wrapping pour les images des stats propales
 	elseif ($modulepart == 'propalstats')
 	{
-		$user->getrights('propale');
 		if ($user->rights->propale->lire)
 		{
 			$accessallowed=1;
@@ -139,7 +139,6 @@ if ($modulepart)
 	// Wrapping pour les images des stats commandes
 	elseif ($modulepart == 'orderstats')
 	{
-		$user->getrights('commande');
 		if ($user->rights->commande->lire)
 		{
 			$accessallowed=1;
@@ -148,7 +147,6 @@ if ($modulepart)
 	}
 	elseif ($modulepart == 'orderstatssupplier')
 	{
-		$user->getrights('fournisseur');
 		if ($user->rights->fournisseur->commande->lire)
 		{
 			$accessallowed=1;
@@ -159,7 +157,6 @@ if ($modulepart)
 	// Wrapping pour les images des stats factures
 	elseif ($modulepart == 'billstats')
 	{
-		$user->getrights('facture');
 		if ($user->rights->facture->lire)
 		{
 			$accessallowed=1;
@@ -168,7 +165,6 @@ if ($modulepart)
 	}
 	elseif ($modulepart == 'billstatssupplier')
 	{
-		$user->getrights('fourn');
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$accessallowed=1;
@@ -179,7 +175,6 @@ if ($modulepart)
 	// Wrapping pour les images des stats expeditions
 	elseif ($modulepart == 'expeditionstats')
 	{
-		$user->getrights('expedition');
 		if ($user->rights->expedition->lire)
 		{
 			$accessallowed=1;
@@ -187,10 +182,19 @@ if ($modulepart)
 		$original_file=$conf->expedition->dir_temp.'/'.$original_file;
 	}
 
+	// Wrapping pour les images des stats expeditions
+	elseif ($modulepart == 'tripsexpensesstats')
+	{
+		if ($user->rights->deplacement->lire)
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->deplacement->dir_temp.'/'.$original_file;
+	}
+
 	// Wrapping pour les images des stats produits
 	elseif (preg_match('/^productstats_/i',$modulepart))
 	{
-		$user->getrights('produit');
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
 			$accessallowed=1;
@@ -201,7 +205,6 @@ if ($modulepart)
 	// Wrapping for products or services
 	elseif ($modulepart == 'product')
 	{
-		$user->getrights('produit');
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
 			$accessallowed=1;
@@ -212,7 +215,6 @@ if ($modulepart)
 	// Wrapping for categories
 	elseif ($modulepart == 'category')
 	{
-		$user->getrights('categorie');
 		if ($user->rights->categorie->lire)
 		{
 			$accessallowed=1;
@@ -223,7 +225,6 @@ if ($modulepart)
 	// Wrapping pour les prelevements
 	elseif ($modulepart == 'prelevement')
 	{
-		$user->getrights('prelevement');
 		if ($user->rights->prelevement->bons->lire) $accessallowed=1;
 
 		$original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;

@@ -48,7 +48,7 @@ class Deplacement extends CommonObject
 	var $note;
 	var $note_public;
 	var $socid;
-	var $statut=1;		// 0=draft, 1=validated
+	var $statut;		// 0=draft, 1=validated
 	var $fk_project;
 
    /**
@@ -192,7 +192,7 @@ class Deplacement extends CommonObject
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, fk_user, type, km, fk_soc, dated, note, note_public, fk_projet";
+		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note, note_public, fk_projet";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -209,6 +209,7 @@ class Deplacement extends CommonObject
 			$this->socid       = $obj->fk_soc;
 			$this->km          = $obj->km;
 			$this->type        = $obj->type;
+			$this->fk_statut   = $obj->fk_statut;
 			$this->note        = $obj->note;
 			$this->note_public = $obj->note_public;
 			$this->fk_project  = $obj->fk_projet;
