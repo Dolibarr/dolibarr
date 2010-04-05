@@ -395,28 +395,22 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		{
 			$socname = $object->client->nom;
 			$carac_client_name=$outputlangs->convToOutputCharset($socname);
-
-			// Customer name
-			$carac_client = $outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-
-			// Customer properties
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-			if ($object->contact->pays_code && $object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
 		}
 		else
 		{
 			// Recipient name
 			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-
-			// Recipient properties
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
-			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 		}
-		// Numero TVA intracom
-		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
 
+		$carac_client='';
+		// Recipient name
+		if ($usecontact) $carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
+		// Recipient properties
+		$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
+		$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
+		if ($object->contact->pays_code && $object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
+		// Intra VAT
+		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
 
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','B',12);
