@@ -47,6 +47,12 @@ $donation_date=dol_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST[
 
 if ($_POST["action"] == 'update')
 {
+	if (! empty($_POST['cancel']))
+	{
+		Header("Location: fiche.php?rowid=".$_POST["rowid"]);
+		exit;
+	}
+
 	$error=0;
 
 	if (! $_POST["amount"] > 0)
@@ -94,6 +100,12 @@ if ($_POST["action"] == 'update')
 
 if ($_POST["action"] == 'add')
 {
+	if (! empty($_POST['cancel']))
+	{
+		Header("Location: index.php");
+		exit;
+	}
+
 	$error=0;
 
 	if (! $_POST["amount"] > 0)
@@ -273,8 +285,8 @@ if ($_GET["action"] == 'create')
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" value="'.$_POST["pays"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.$_POST["email"].'" size="40"></td></tr>';
 	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.$_POST["amount"].'" size="10"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	print "<tr>".'<td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 	print "</table>\n";
+	print '<br><center><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 	print "</form>\n";
 }
 
@@ -292,11 +304,11 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 
 	$h=0;
 	$head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
-	$head[$h][1] = $langs->trans("Donation");
+	$head[$h][1] = $langs->trans("Card");
 	$hselected=$h;
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Ref"));
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
 
 	print '<form name="update" action="fiche.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -353,9 +365,10 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
 
-	print "<tr>".'<td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-
 	print "</table>\n";
+
+	print '<br><center><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
 	print "</form>\n";
 
 	print "</div>\n";
@@ -380,7 +393,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	$hselected=$h;
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"));
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
 
 	print "<form action=\"fiche.php\" method=\"post\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

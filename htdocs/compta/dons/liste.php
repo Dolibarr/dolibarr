@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/compta/dons/liste.php
-        \ingroup    don
-		\brief      Page de liste des dons
-		\version    $Id$
-*/
+ \file       htdocs/compta/dons/liste.php
+ \ingroup    don
+ \brief      Page de liste des dons
+ \version    $Id$
+ */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/don.class.php");
@@ -50,7 +50,7 @@ $pagenext = $page + 1;
 
 llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
 
-$donstatic=new Don($db);
+$donationstatic=new Don($db);
 
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe,";
@@ -60,66 +60,69 @@ $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p
 $sql.= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
 if ($statut >= 0)
 {
-  $sql .= " AND d.fk_statut = ".$statut;
+	$sql .= " AND d.fk_statut = ".$statut;
 }
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
 
-  if ($statut >= 0)
-    {
-      print_barre_liste($libelle[$statut], $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
-    }
-  else
-    {
-      print_barre_liste($langs->trans("Donation"), $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
-    }
-  print "<table class=\"noborder\" width=\"100%\">";
+	if ($statut >= 0)
+	{
+		print_barre_liste($libelle[$statut], $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+	}
+	else
+	{
+		print_barre_liste($langs->trans("Donation"), $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+	}
+	print "<table class=\"noborder\" width=\"100%\">";
 
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
-  if ($conf->projet->enabled)
-  {
-    $langs->load("projects");
-    print_liste_field_titre($langs->trans("Project"),"liste.php","projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-  }
-  print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
-  print "</tr>\n";
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
+	if ($conf->projet->enabled)
+	{
+		$langs->load("projects");
+		print_liste_field_titre($langs->trans("Project"),"liste.php","projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	}
+	print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
 
-  $var=True;
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".$objp->rowid."</a></td>\n";
-      print "<td>".stripslashes($objp->prenom)."</td>\n";
-      print "<td>".stripslashes($objp->nom)."</td>\n";
-      print "<td>".stripslashes($objp->societe)."</td>\n";
-      print '<td align="center">'.dol_print_date($objp->datedon).'</td>';
-      if ($conf->projet->enabled) {
-          print "<td>$objp->projet</td>\n";
-      }
-      print '<td align="right">'.price($objp->amount).'</td>';
-      print '<td align="right">'.$donstatic->LibStatut($objp->statut,5).'</td>';
+	$var=True;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		$donationstatic->id=$objp->rowid;
+		$donationstatic->ref=$objp->rowid;
+		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
+		print "<td>".stripslashes($objp->prenom)."</td>\n";
+		print "<td>".stripslashes($objp->nom)."</td>\n";
+		print "<td>".stripslashes($objp->societe)."</td>\n";
+		print '<td align="center">'.dol_print_date($objp->datedon).'</td>';
+		if ($conf->projet->enabled) {
+			print "<td>$objp->projet</td>\n";
+		}
+		print '<td align="right">'.price($objp->amount).'</td>';
+		print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
 
-      print "</tr>";
-      $i++;
-    }
-  print "</table>";
+		print "</tr>";
+		$i++;
+	}
+	print "</table>";
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 
 
