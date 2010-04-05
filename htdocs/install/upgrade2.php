@@ -242,7 +242,7 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_directories($db,$langs,$conf,'/societe','/mycompany');
 		}
 
-		// Script for -> V2.8
+		// Script for VX (X<2.8) -> V2.8
 		$afterversionarray=explode('.','2.7.9');
 		$beforeversionarray=explode('.','2.8.9');
 		//print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
@@ -267,7 +267,7 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_project_task_actors($db,$langs,$conf);
 		}
 
-		// Script for -> V2.9
+		// Script for VX (X<2.9) -> V2.9
 		$afterversionarray=explode('.','2.8.9');
 		$beforeversionarray=explode('.','2.9.9');
 		if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -279,6 +279,8 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_shipping_delivery($db,$langs,$conf);
 
 			migrate_shipping_delivery2($db,$langs,$conf);
+
+			migrate_module_menus($db,$langs,$conf);
 		}
 
 		// On commit dans tous les cas.
