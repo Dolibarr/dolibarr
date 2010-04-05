@@ -467,6 +467,16 @@ div.mainmenu_members {
 	margin-left: 0px;
 }
 
+div.mainmenu_shop {
+	position : relative;
+	color: white;
+	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/shop.png' ?>);
+	background-repeat:no-repeat;
+	background-position:center top;
+	height:28px;
+	margin-left: 0px;
+}
+
 div.mainmenu_agenda {
 	position : relative;
 	color: white;
