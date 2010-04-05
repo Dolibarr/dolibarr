@@ -82,6 +82,7 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 				if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="mainmenuli_'.$idsel.'">';
 				else print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
 
+				print '<div class="mainmenu_'.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a '.$class.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
 				print $tabMenu[$i]['titre'];
 				print '</a>';
