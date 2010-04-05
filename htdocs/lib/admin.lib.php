@@ -186,7 +186,7 @@ function run_sql($sqlfile,$silent=1,$entity='')
 				$from='__+MAX_'.$table.'__';
 				$to='+'.$listofmaxrowid[$table];
 				$newsql=str_replace($from,$to,$newsql);
-				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
 
 				$arraysql[$i]=$newsql;
 			}
@@ -200,17 +200,11 @@ function run_sql($sqlfile,$silent=1,$entity='')
 	{
 		if ($sql)
 		{
-			$newsql=$sql;
+			$newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
 
-			// Ajout trace sur requete (eventuellement ? commenter si beaucoup de requetes)
+			// Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
 			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
 			dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
-
-			if (preg_match('/insert into ([^\s]+)/i',$newsql,$reg))
-			{
-				// It's an insert
-				$cursorinsert++;
-			}
 
 			// Replace __x__ with rowid of insert nb x
 			while (preg_match('/__([0-9]+)__/',$newsql,$reg))
@@ -227,23 +221,16 @@ function run_sql($sqlfile,$silent=1,$entity='')
 				$from='__'.$cursor.'__';
 				$to=$listofinsertedrowid[$cursor];
 				$newsql=str_replace($from,$to,$newsql);
-				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
-			}
-
-			// Replace __ENTITY__ with current entity id
-			while (preg_match('/(__ENTITY__)/i',$newsql,$reg))
-			{
-				$from   = $reg[1];
-				$to     = (!empty($entity)?$entity:$conf->entity);
-				$newsql = str_replace($from,$to,$newsql);
-				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
 			}
 
 			$result=$db->query($newsql);
 			if ($result)
 			{
-				if (preg_match('/insert into ([^\s]+)/i',$newsql,$reg))
+				if (preg_replace('/insert into ([^\s]+)/i',$newsql,$reg))
 				{
+					$cursorinsert++;
+
 					// It's an insert
 					$table=preg_replace('/([^a-zA-Z_]+)/i','',$reg[1]);
 					$insertedrowid=$db->last_insert_id($table);
