@@ -906,7 +906,8 @@ class DolibarrModules
 					$resql=$this->db->query($sql);
 					if (! $resql)
 					{
-						if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
+						if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+						{
 							$this->error=$this->db->lasterror();
 							dol_syslog("DolibarrModules::insert_permissions error ".$this->error, LOG_ERR);
 							$err++;

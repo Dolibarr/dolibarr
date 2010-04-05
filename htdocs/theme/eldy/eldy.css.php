@@ -367,20 +367,20 @@ a.tmenusel:active
 	width:40px;
 }
 
-ul.tmenu {
+ul.tmenu {	/* t r b l */
     padding: 0px 0px 10px 0px;
-    margin: 3px 0px 0px 6px;
+    margin: 0px 0px 0px 6px;
 	list-style: none;
 }
 li.tmenu {
+	<?php print $minwidthtmenu?'width: '.$minwidthtmenu.'px;':''; ?>
+	text-align: center;
+	vertical-align: bottom;
 	float: <?php print $left; ?>;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 18px;
+    height: <?php print $heightmenu; ?>px;
 	position:relative;
 	display: block;
-	padding: 0px 0px 0px 0px;
+	padding: 2px 5px 0px 5px;
     margin: 0px 0px 0px 0px;
 	font-weight: normal;
 }
