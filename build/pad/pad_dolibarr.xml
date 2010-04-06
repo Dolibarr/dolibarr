@@ -6,26 +6,26 @@
 		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
 	</MASTER_PAD_VERSION_INFO>
 	<Company_Info>
-		<Company_Name>Dolibarr team</Company_Name>
+		<Company_Name>NLTechno</Company_Name>
 		<Address_1>61 Boulevard Vauban</Address_1>
 		<Address_2 />
 		<City_Town>Montigny-le-Bretonneux</City_Town>
 		<State_Province />
 		<Zip_Postal_Code>78180</Zip_Postal_Code>
 		<Country>FRANCE</Country>
-		<Company_WebSite_URL>http://www.dolibarr.org</Company_WebSite_URL>
+		<Company_WebSite_URL>http://www.nltechno.com</Company_WebSite_URL>
 		<Contact_Info>
-			<Author_First_Name>Dolibarr team</Author_First_Name>
-			<Author_Last_Name>Dolibarr team</Author_Last_Name>
-			<Author_Email>dolibarr-dev@nongnu.org</Author_Email>
-			<Contact_First_Name>Dolibarr team</Contact_First_Name>
-			<Contact_Last_Name>Dolibarr team</Contact_Last_Name>
-			<Contact_Email>dolibarr-dev@nongnu.org</Contact_Email>
+			<Author_First_Name>NLTechno</Author_First_Name>
+			<Author_Last_Name>NLTechno</Author_Last_Name>
+			<Author_Email>dolibarr@nltechno.com</Author_Email>
+			<Contact_First_Name>NLTechno</Contact_First_Name>
+			<Contact_Last_Name>NLTechno</Contact_Last_Name>
+			<Contact_Email>dolibarr@nltechno.com</Contact_Email>
 		</Contact_Info>
 		<Support_Info>
-			<Sales_Email>dolibarr-dev@nongnu.org</Sales_Email>
-			<Support_Email>dolibarr-dev@nongnu.org</Support_Email>
-			<General_Email>dolibarr-dev@nongnu.org</General_Email>
+			<Sales_Email>dolibarr@nltechno.com</Sales_Email>
+			<Support_Email>dolibarr@nltechno.com</Support_Email>
+			<General_Email>dolibarr@nltechno.com</General_Email>
 			<Sales_Phone />
 			<Support_Phone />
 			<General_Phone />
@@ -34,8 +34,8 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>2.8.0</Program_Version>
-		<Program_Release_Month>02</Program_Release_Month>
+		<Program_Version>2.9.0</Program_Version>
+		<Program_Release_Month>04</Program_Release_Month>
 		<Program_Release_Day>13</Program_Release_Day>
 		<Program_Release_Year>2010</Program_Release_Year>
 		<Program_Cost_Dollars />
@@ -45,8 +45,8 @@
 		<Program_Release_Status>Major Update</Program_Release_Status>
 		<Program_Install_Support>No Install Support</Program_Install_Support>
 		<Program_OS_Support>Linux,Mac OS X,Mac Other,Unix,Win2000,Win7 x32,Win7 x64,Win98,WinOther,WinServer,WinVista,WinVista x64,WinXP,Other</Program_OS_Support>
-		<Program_Language>English,Catalan,Dutch,French,German,Italian,Norwegian,Portuguese,Spanish</Program_Language>
-		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
+		<Program_Language>English,Catalan,Danish,Dutch,French,German,Italian,Norwegian,Portuguese,Romanian,Russian,Spanish</Program_Language>
+		<Program_Change_Info>http://www.dolibarr.org/files/ChangeLog</Program_Change_Info>
 		<Program_Specific_Category>Business</Program_Specific_Category>
 		<Program_Category_Class>Business::Accounting &amp; Finance</Program_Category_Class>
 		<Program_System_Requirements>None</Program_System_Requirements>

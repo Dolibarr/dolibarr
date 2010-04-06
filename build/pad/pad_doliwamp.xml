@@ -34,8 +34,8 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>DoliWamp</Program_Name>
-		<Program_Version>2.8.0</Program_Version>
-		<Program_Release_Month>02</Program_Release_Month>
+		<Program_Version>2.9.0</Program_Version>
+		<Program_Release_Month>04</Program_Release_Month>
 		<Program_Release_Day>13</Program_Release_Day>
 		<Program_Release_Year>2010</Program_Release_Year>
 		<Program_Cost_Dollars />
@@ -45,8 +45,8 @@
 		<Program_Release_Status>Major Update</Program_Release_Status>
 		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
 		<Program_OS_Support>Win2000,Win7 x32,Win7 x64,Win98,WinOther,WinServer,WinVista,WinVista x64,WinXP,Other</Program_OS_Support>
-		<Program_Language>English,Catalan,Dutch,French,German,Italian,Norwegian,Portuguese,Spanish</Program_Language>
-		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
+		<Program_Language>English,Catalan,Danish,Dutch,French,German,Italian,Norwegian,Portuguese,Romanian,Russian,Spanish</Program_Language>
+		<Program_Change_Info>http://www.dolibarr.org/files/ChangeLog</Program_Change_Info>
 		<Program_Specific_Category>Business</Program_Specific_Category>
 		<Program_Category_Class>Business::Accounting &amp; Finance</Program_Category_Class>
 		<Program_System_Requirements>None</Program_System_Requirements>
