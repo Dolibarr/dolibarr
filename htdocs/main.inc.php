@@ -759,7 +759,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
 	print "\n";
 	print "<html>\n";
-	if ($disablehead == 0)
+	if (empty($disablehead))
 	{
 		print "<head>\n";
 
@@ -890,6 +890,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 		print "</head>\n\n";
 	}
+
+	$conf->headerdone=1;	// To tell header was output
 }
 
 
@@ -909,6 +911,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
+
+
+	// For backward compatibility with old modules
+	if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
 
 	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
