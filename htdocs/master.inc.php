@@ -337,11 +337,14 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc=new Societe($db);
 
 	$mysoc->id=0;
-	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
+	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM; // TODO obsolete
+	$mysoc->name=$conf->global->MAIN_INFO_SOCIETE_NOM;
 	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE; // TODO obsolete
 	$mysoc->address=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
-	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP;
-	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE;
+	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP; // TODO obsolete
+	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
+	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; // TODO obsolete
+	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
 	// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
 	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
 	{
@@ -363,7 +366,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	{
 		$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
 	}
-	$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL;
+	$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL; // TODO obsolete
+	$mysoc->phone=$conf->global->MAIN_INFO_SOCIETE_TEL;
 	$mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
 	$mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
 	// Anciens id prof

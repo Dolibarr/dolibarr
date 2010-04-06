@@ -604,20 +604,24 @@ class Societe extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->date_update = $this->db->jdate($obj->date_update);
 
-				$this->nom = $obj->nom;
-				$this->address = $obj->address;
-				$this->adresse = $obj->address; // TODO obsolete
-				$this->cp = $obj->cp;
-				$this->ville = $obj->ville;
+				$this->nom 			= $obj->nom; // TODO obsolete
+				$this->name 		= $obj->nom;
+				$this->address 		= $obj->address;
+				$this->adresse 		= $obj->address; // TODO obsolete
+				$this->cp 			= $obj->cp;	// TODO obsolete
+				$this->zip 			= $obj->cp;
+				$this->ville 		= $obj->ville;// TODO obsolete
+				$this->town 		= $obj->ville;
 				$this->adresse_full = $obj->address . "\n". $obj->cp . ' '. $obj->ville; // TODO obsolete
 				$this->full_address = $obj->address . "\n". $obj->cp . ' '. $obj->ville;
 
-				$this->pays_id = $obj->fk_pays;
-				$this->pays_code = $obj->fk_pays?$obj->pays_code:'';
-				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
+				$this->pays_id 		= $obj->fk_pays;
+				$this->pays_code 	= $obj->fk_pays?$obj->pays_code:'';
+				$this->pays 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):''; // TODO obsolete
+				$this->country 		= $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
 
 				$this->departement_id = $obj->fk_departement;
-				$this->departement= $obj->fk_departement?$obj->departement:'';
+				$this->departement	= $obj->fk_departement?$obj->departement:'';
 
 				$transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
 				$libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
@@ -626,15 +630,19 @@ class Societe extends CommonObject
 
 				$this->email = $obj->email;
 				$this->url = $obj->url;
-				$this->tel = $obj->tel;
+				$this->tel = $obj->tel; // TODO obsolete
+				$this->phone = $obj->tel;
 				$this->fax = $obj->fax;
 
 				$this->parent    = $obj->parent;
 
-				$this->siren     = $obj->siren;
-				$this->siret     = $obj->siret;
-				$this->ape       = $obj->ape;
-				$this->idprof4   = $obj->idprof4;
+				$this->siren		= $obj->siren; // TODO obsolete
+				$this->idprof1		= $obj->siren;
+				$this->siret		= $obj->siret; // TODO obsolete
+				$this->idprof2		= $obj->siret;
+				$this->ape			= $obj->ape; // TODO obsolete
+				$this->idprof3		= $obj->ape;
+				$this->idprof4		= $obj->idprof4;
 
 				$this->capital   = $obj->capital;
 

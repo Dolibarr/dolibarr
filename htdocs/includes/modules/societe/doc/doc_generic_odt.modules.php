@@ -70,7 +70,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
 
@@ -82,7 +82,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function get_substitutionarray_mysoc($mysoc)
 	{
 		return array(
-			'mycompany_name'=>$mysoc->nom,
+			'mycompany_name'=>$mysoc->name,
 			'mycompany_email'=>$mysoc->email,
 			'mycompany_phone'=>$mysoc->phone,
 			'mycompany_fax'=>$mysoc->fax,
@@ -110,7 +110,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function get_substitutionarray_object($object)
 	{
 		return array(
-			'company_name'=>$object->nom,
+			'company_name'=>$object->name,
 			'company_email'=>$object->email,
 			'company_phone'=>$object->phone,
 			'company_fax'=>$object->fax,
