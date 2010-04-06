@@ -596,18 +596,18 @@ BackToModuleList= Retour liste des modules
 BackToDictionnaryList= Retour liste des dictionnaires
 VATReceivedOnly= Taux spécial non facturé
 VATManagement= Gestion TVA
-VATIsUsedDesc= Le taux de TVA proposé par défaut lors de la création de propale, facture, commande, etc... répond à la règle standard suivante:<br>Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur= pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu= moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payée par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.<br>Sinon TVA proposée par défaut=0. Fin de règle.<br>
+VATIsUsedDesc= Le taux de TVA proposé par défaut lors de la création de propale, facture, commande, etc... répond à la règle standard suivante:<br>Si vendeur non assujetti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur= pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu= moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payée par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.<br>Sinon TVA proposée par défaut=0. Fin de règle.<br>
 VATIsNotUsedDesc= Le taux de TVA proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.
 VATIsUsedExampleFR= En France, il s'agit des sociétés ou organismes ayant choisi un régime fiscale réel (Réel simplifié ou Réel normal), régime dans lequel la TVA est déclarée.
 VATIsNotUsedExampleFR= En France, il s'agit des associations ne déclarant pas de TVA ou sociétés, organismes ou professions libérales ayant choisi le régime fiscal micro entreprise (TVA en franchise) et payant une TVA en franchise sans faire de déclaration de TVA. Ce choix fait de plus apparaitre la mention "TVA non applicable - art-293B du CGI" sur les factures.
 ##### Local Taxes #####
 LocalTax1ManagementES= Gestion RE
-LocalTax1IsUsedDescES= Le taux de RE proposé par défaut lors de la création de propale, facture, commande, etc... répond à la règle standard suivante:<br>Si acheteur non assujeti à RE, RE par défaut=0. Fin de règle.<br>Si acheteur non assujeti à RE alors RE par défaut. Fin de règle.<br>
+LocalTax1IsUsedDescES= Le taux de RE proposé par défaut lors de la création de propale, facture, commande, etc... répond à la règle standard suivante:<br>Si acheteur non assujetti à RE, RE par défaut=0. Fin de règle.<br>Si acheteur non assujetti à RE alors RE par défaut. Fin de règle.<br>
 LocalTax1IsNotUsedDescES= Le taux de RE proposé par défaut est 0. Fin de règle.
 LocalTax1IsUsedExampleES= En Espagne, ce sont des professionnels sous réserve de certaines sections spécifiques de l'IAE Espagnol.
 LocalTax1IsNotUsedExampleES= En Espagne, ce sont des sociétés en commandite, les sociétés anonymes, etc... et les individus (autonomes) sous réserve de certaines sections de l'IAE Espagnol.
 LocalTax2ManagementES= Gestion IRPF
-LocalTax2IsUsedDescES= Le IRPF proposé par défaut lors de la création de propale, facture, commande, etc... répond à la règle standard suivante:<br>Si vendeur non assujeti à IRPF, IRPF par défaut=0. Fin de règle.<br>Si vendeur non assujeti à IRPF alors IRPF par défaut. Fin de règle.<br>
+LocalTax2IsUsedDescES= Le IRPF proposé par défaut lors de la création de propale, facture, commande, etc... répond à la règle standard suivante:<br>Si vendeur non assujetti à IRPF, IRPF par défaut=0. Fin de règle.<br>Si vendeur non assujetti à IRPF alors IRPF par défaut. Fin de règle.<br>
 LocalTax2IsNotUsedDescES= Le IRPF proposé par défaut est 0. Fin de règle.
 LocalTax2IsUsedExampleES= En Espagne, ce sont des professionels autonomes et indépendants qui offrent des services, et des sociétés qui ont choisi le système fiscal du modules. 
 LocalTax2IsNotUsedExampleES= En Espagne, ce sont des sociétés qui ne sont pas soumises au système fiscal du module.
@@ -1135,7 +1135,7 @@ SupposedToBePaymentDate=Date de paiement utilisé
 Buy=Achat
 Sell=Vente
 InvoiceValidateDateUsed=Date de validation utilisée
-YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujetie à la TVA (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.  
+YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie à la TVA (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.  
 ##### Agenda #####= undefined
 AgendaSetup= Configuration du module actions et agenda
 PasswordTogetVCalExport= Clé pour autoriser lien export
