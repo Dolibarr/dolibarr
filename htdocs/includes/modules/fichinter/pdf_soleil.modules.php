@@ -218,16 +218,32 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetXY($this->marge_gauche+2,$posy+9);
 				$pdf->MultiCell(80, 4, $carac_emetteur);
 
+				$object=$fichinter;
+
+				// Recipient name
+				if (! empty($usecontact))
+				{
+					// On peut utiliser le nom de la societe du contact
+					if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+					else $socname = $object->client->nom;
+					$carac_client_name=$outputlangs->convToOutputCharset($socname);
+				}
+				else
+				{
+					$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				}
+
+				$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 				// Client destinataire
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('Arial','B',12);
 				$fichinter->fetch_client();
 				$pdf->SetXY(102,42);
-				$pdf->MultiCell(86,5, $outputlangs->convToOutputCharset($fichinter->client->nom));
+				$pdf->MultiCell(86,5, $outputlangs->convToOutputCharset($carac_client_name));
 				$pdf->SetFont('Arial','B',11);
 				$pdf->SetXY(102,$pdf->GetY());
-				$pdf->MultiCell(66,5, $outputlangs->convToOutputCharset($fichinter->client->address) . "\n" . $outputlangs->convToOutputCharset($fichinter->client->cp) . " " . $outputlangs->convToOutputCharset($fichinter->client->ville));
+				$pdf->MultiCell(66,5, $outputlangs->convToOutputCharset($carac_client));
 				$pdf->rect(100, 40, 100, 40);
 
 

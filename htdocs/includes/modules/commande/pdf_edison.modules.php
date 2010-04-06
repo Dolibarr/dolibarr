@@ -567,40 +567,29 @@ class pdf_edison extends ModelePDFCommandes
 			$result=$object->fetch_contact($arrayidcontact[0]);
 		}
 
-		if ($usecontact)
+		// Recipient name
+		if (! empty($usecontact))
 		{
-			// Recipient name
-			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-
-			// Customer name
-			$carac_client = "\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-
-			// Customer properties
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-			if ($object->contact->pays_code && $object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
+			// On peut utiliser le nom de la societe du contact
+			if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+			else $socname = $object->client->nom;
+			$carac_client_name=$outputlangs->convToOutputCharset($socname);
 		}
 		else
 		{
-			// Recipient name
 			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
-
-			// Recipient properties
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->address);
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
-			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
 		}
-		// Numero TVA intracom
-		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
+
+		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 		// Show customer/recipient
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96, 5, $carac_client_name);
-		$pdf->SetFont('Arial','',11);
+		$pdf->MultiCell(96, 4, $carac_client_name);
+		$pdf->SetFont('Arial','',9);
 		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96, 5, $carac_client);
+		$pdf->MultiCell(96, 4, $carac_client);
 
 		$pdf->rect(100, 40, 100, 40);
 

@@ -897,7 +897,8 @@ class pdf_propale_azur extends ModelePDFPropales
 				$result=$object->fetch_contact($arrayidcontact[0]);
 			}
 
-			if ($usecontact)
+			// Recipient name
+			if (! empty($usecontact))
 			{
 				// On peut utiliser le nom de la societe du contact
 				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
@@ -906,19 +907,10 @@ class pdf_propale_azur extends ModelePDFPropales
 			}
 			else
 			{
-				// Recipient name
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client='';
-			// Recipient name
-			if ($usecontact) $carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-			// Recipient properties
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-			if ($object->contact->pays_code && $object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
-			// Intra VAT
-			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 			// Show recipient
 			$posy=42;

@@ -628,13 +628,13 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		if ($showadress)
 		{
-			// Emetteur
+			// Receive email
 			$posy=42;
 			$hautcadre=40;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillTo").":");
 
 
 			$pdf->SetXY($this->marge_gauche,$posy);
@@ -672,14 +672,20 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
 
-			$carac_client_name = $outputlangs->convToOutputCharset($object->client->nom);
+			// Recipient name
+			if (! empty($usecontact))
+			{
+				// On peut utiliser le nom de la societe du contact
+				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				else $socname = $object->client->nom;
+				$carac_client_name=$outputlangs->convToOutputCharset($socname);
+			}
+			else
+			{
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+			}
 
-			$carac_client=$outputlangs->convToOutputCharset($object->client->address);
-			$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
-			if ($object->client->pays_code && $object->client->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->client->pays_code))."\n";
-
-			// Numero TVA intracom
-			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 			// Show customer/recipient
 			$pdf->SetXY(102,$posy+3);

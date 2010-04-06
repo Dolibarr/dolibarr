@@ -437,7 +437,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
 		$pdf->SetFont('Arial','',7);
-		$pdf->SetXY($blSocX,$blSocY+4);
+		$pdf->SetXY($blSocX,$blSocY+3);
 		$pdf->MultiCell(80, 2, $carac_emetteur);
 
 		//Date Expedition
@@ -504,26 +504,20 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$result=$object->fetch_contact($arrayidcontact[0]);
 		}
 
-		if ($usecontact)
+		// Recipient name
+		if (! empty($usecontact))
 		{
-			$socname = $object->client->nom;
+			// On peut utiliser le nom de la societe du contact
+			if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+			else $socname = $object->client->nom;
 			$carac_client_name=$outputlangs->convToOutputCharset($socname);
 		}
 		else
 		{
-			// Recipient name
 			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 		}
 
-		$carac_client='';
-		// Recipient name
-		if ($usecontact) $carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->getFullName($outputlangs,1,1));
-		// Recipient properties
-		$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->address);
-		$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
-		if ($object->contact->pays_code && $object->contact->pays_code != $this->emetteur->pays_code) $carac_client.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->contact->pays_code))."\n";
-		// Intra VAT
-		if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
+		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 
 		$blDestX=$blExpX+55;
@@ -544,8 +538,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		$pdf->SetFont('Arial','',7);
 		//$posy=$pdf->GetY(); //Auto Y coord readjust for multiline name
-		$pdf->SetXY($blDestX,$Yoff+3);
-		$pdf->MultiCell($blW,3, $carac_client);
+		$pdf->SetXY($blDestX,$pdf->GetY());
+		$pdf->MultiCell($blW,2, $carac_client);
 	}
 }
 ?>

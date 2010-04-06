@@ -31,15 +31,21 @@
  *   	\brief      Mutualize code to build address for PDF generation
  * 		\param		outputlangs		Output langs object
  *   	\param      sourcecompany	Source company object
- *   	\param      targetcompany	Target company object (not used yet)
- *      \param      targetcontact	Target contact object (not used yet)
+ *   	\param      targetcompany	Target company object
+ *      \param      targetcontact	Target contact object
+ * 		\param		usecontact		Use contact instead of company
  * 		\return		string			Source of file
  */
-function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='')
+function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source')
 {
+	global $conf;
+
 	$stringaddress = '';
 
-	if (is_object($sourcecompany))
+	if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
+	if ($mode == 'target' && ! is_object($targetcompany)) return -1;
+
+	if ($mode == 'source')
 	{
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->address);
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($sourcecompany->cp).' '.$outputlangs->convToOutputCharset($sourcecompany->ville);
@@ -54,6 +60,28 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if ($sourcecompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($sourcecompany->url);
 	}
 
+	if ($mode == 'target')
+	{
+		if ($usecontact)
+		{
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1,1));
+			// Recipient properties
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->address);
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->cp) . " " . $outputlangs->convToOutputCharset($targetcontact->ville)."\n";
+			if ($targetcontact->pays_code && $targetcontact->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
+			// Intra VAT
+			if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+		}
+		else
+		{
+			// Recipient properties
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->address);
+			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->cp) . " " . $outputlangs->convToOutputCharset($targetcompany->ville)."\n";
+			if ($targetcompany->pays_code && $targetcompany->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
+			// Intra VAT
+			if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+		}
+	}
 
 	return $stringaddress;
 }
