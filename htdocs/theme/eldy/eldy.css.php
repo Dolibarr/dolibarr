@@ -75,12 +75,9 @@ body {
     <?php print 'direction: '.$langs->direction.";\n"; ?>
 }
 
-a:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-input
-{
+a:link, a:visited, a:hover, a:active { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+
+input {
 	font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
@@ -88,8 +85,7 @@ input
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-input.flat
-{
+input.flat {
 	font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
@@ -105,8 +101,7 @@ textarea  {
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-textarea.flat
-{
+textarea.flat {
 	font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
@@ -114,8 +109,7 @@ textarea.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-select.flat
-{
+select.flat {
     font-size: <?php print $fontsize ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;
@@ -123,8 +117,7 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-.button
-{
+.button {
     font-family: helvetica, verdana, arial, sans-serif;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
@@ -141,8 +134,7 @@ select.flat
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
-.buttonajax
-{
+.buttonajax {
     font-family: helvetica, verdana, arial, sans-serif;
 	border: 0px;
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/button_bg.png' ?>);
@@ -150,8 +142,7 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-form
-{
+form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
@@ -161,16 +152,14 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-td.vmenu
-{
+td.vmenu {
     margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
     width: 164px;
 }
 
-div.fiche
-{
+div.fiche {
 	margin-<?php print $left; ?>: 4px;
 	margin-<?php print $right; ?>: 2px;
 }
@@ -186,8 +175,7 @@ $minwidthtmenu=70;
 $heightmenu=47;
 ?>
 
-div.tmenu
-{
+div.tmenu {
 <?php if (! empty($_GET["optioncss"]) && $_GET["optioncss"] == 'print') {  ?>
 	display:none;
 <?php } else { ?>
@@ -211,14 +199,12 @@ div.tmenu
 <?php } ?>
 }
 
-table.tmenu
-{
+table.tmenu {
     padding: 0px 0px 10px 0px;	/* t r b l */
     margin: 0px 0px 0px 0px;	/* t r b l */
 	text-align: center;
 }
-td.tmenu
-{
+td.tmenu {
 	<?php print $minwidthtmenu?'width: '.$minwidthtmenu.'px;':''; ?>
 	text-align: center;
 	vertical-align: bottom;
@@ -268,8 +254,7 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 }
 
 
-* html li.tmenu a
-{
+* html li.tmenu a {
 	width:40px;
 }
 
