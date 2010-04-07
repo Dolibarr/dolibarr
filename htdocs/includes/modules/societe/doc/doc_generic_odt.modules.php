@@ -93,10 +93,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			'mycompany_url'=>$mysoc->url,
 			'mycompany_barcode'=>$mysoc->gencode,
 			'mycompany_vat'=>$mysoc->tva_intra,
-			'mycompany_idprof1'=>$mysoc->idprof1,
-			'mycompany_idprof2'=>$mysoc->idprof2,
-			'mycompany_idprof3'=>$mysoc->idprof3,
-			'mycompany_idprof4'=>$mysoc->idprof4,
+			'mycompany_idprof1'=>$mysoc->profid1,
+			'mycompany_idprof2'=>$mysoc->profid2,
+			'mycompany_idprof3'=>$mysoc->profid3,
+			'mycompany_idprof4'=>$mysoc->profid4,
 			'mycompany_note'=>$mysoc->note
 		);
 	}
