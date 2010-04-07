@@ -486,25 +486,16 @@ a.login:hover
   color: black;
 }
 
-img.login
-{
+img.login, img.printer {
   position: absolute;
   <?php print $right; ?>: 20px;
   top: 3px;
-
   text-decoration: none;
   color: white;
   font-weight: bold;
 }
-img.printer
-{
-  position: absolute;
+img.printer {
   <?php print $right; ?>: 4px;
-  top: 3px;
-
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
 }
 
 
@@ -518,26 +509,16 @@ img.printer
 }
 <?php } ?>
 
-a.vmenu:link        { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:visited     { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:active      { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
-a.vmenu:hover       { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link       { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:visited    { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:active     { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-a.vsmenu:hover      { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
 
-a.help:link         { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:visited      { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:active       { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
-a.help:hover        { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
+a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: helvetica, verdana, arial, sans-serif; text-align: <?php print $left; ?>; font-weight: normal; }
 
 
-div.blockvmenupair
-{
+div.blockvmenupair, div.blockvmenuimpair {
     width:164px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
@@ -556,28 +537,7 @@ div.blockvmenupair
     background-repeat:repeat-x;
 }
 
-div.blockvmenuimpair
-{
-    width:164px;
-    border-right: 1px solid #555555;
-    border-bottom: 1px solid #555555;
-	font-family: helvetica, verdana, arial, sans-serif;
-	color: #000000;
-	text-align: <?php print $left; ?>;
-	text-decoration: none;
-    padding-left: 3px;
-    padding-right: 1px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    margin: 1px 0px 0px 0px;
-	background: #A3BCC6;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
-    background-position:top;
-    background-repeat:repeat-x;
-}
-
-div.help
-{
+div.help {
     width:164px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
