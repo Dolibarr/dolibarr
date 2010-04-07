@@ -69,8 +69,6 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->address);
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcontact->cp) . " " . $outputlangs->convToOutputCharset($targetcontact->ville)."\n";
 			if ($targetcontact->pays_code && $targetcontact->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
-			// Intra VAT
-			if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 		}
 		else
 		{
@@ -78,9 +76,13 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->address);
 			$stringaddress.="\n".$outputlangs->convToOutputCharset($targetcompany->cp) . " " . $outputlangs->convToOutputCharset($targetcompany->ville)."\n";
 			if ($targetcompany->pays_code && $targetcompany->pays_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
-			// Intra VAT
-			if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 		}
+		// Intra VAT
+		if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+		if ($conf->global->MAIN_PROFID1_IN_ADDRESS) $stringaddress.="\n".$outputlangs->transcountrynoentities("ProfId1",$targetcompany->pays_code).': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
+		if ($conf->global->MAIN_PROFID2_IN_ADDRESS) $stringaddress.="\n".$outputlangs->transcountrynoentities("ProfId2",$targetcompany->pays_code).': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
+		if ($conf->global->MAIN_PROFID3_IN_ADDRESS) $stringaddress.="\n".$outputlangs->transcountrynoentities("ProfId3",$targetcompany->pays_code).': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
+		if ($conf->global->MAIN_PROFID4_IN_ADDRESS) $stringaddress.="\n".$outputlangs->transcountrynoentities("ProfId4",$targetcompany->pays_code).': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
 	}
 
 	return $stringaddress;
