@@ -997,7 +997,7 @@ class DolibarrModules
 			$menu->type=$this->menu[$key]['type'];
 			$menu->mainmenu=$this->menu[$key]['mainmenu'];
 			$menu->titre=$this->menu[$key]['titre'];
-			$menu->leftmenu=$this->menu[$key]['leftmenu'];
+			$menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:0;
 			$menu->url=$this->menu[$key]['url'];
 			$menu->langs=$this->menu[$key]['langs'];
 			$menu->position=$this->menu[$key]['position'];
