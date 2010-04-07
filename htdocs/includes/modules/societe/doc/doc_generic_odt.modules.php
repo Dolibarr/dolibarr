@@ -125,10 +125,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			'company_suppliercode'=>$object->code_fournisseur,
 			'company_customeraccountancycode'=>$object->code_compta,
 			'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
-			'company_idprof1'=>$object->profid1,
-			'company_idprof2'=>$object->profid2,
-			'company_idprof3'=>$object->profid3,
-			'company_idprof4'=>$object->profid4,
+			'company_idprof1'=>$object->idprof1,
+			'company_idprof2'=>$object->idprof2,
+			'company_idprof3'=>$object->idprof3,
+			'company_idprof4'=>$object->idprof4,
 			'company_note'=>$object->note
 		);
 	}
