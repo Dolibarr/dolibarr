@@ -225,38 +225,7 @@ td.tmenu
 	white-space: nowrap;
 }
 
-a.tmenudisabled:link
-{
-	color: #757575;
-    font-weight: normal;
-	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
-	cursor: not-allowed;
-    font-weight: normal;
-	white-space: nowrap;
-}
-a.tmenudisabled:visited
-{
-	color: #757575;
-    font-weight: normal;
-	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
-	cursor: not-allowed;
-    font-weight: normal;
-	white-space: nowrap;
-}
-a.tmenudisabled:hover
-{
-	color: #757575;
-    font-weight: normal;
-	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
-	cursor: not-allowed;
-    font-weight: normal;
-	white-space: nowrap;
-}
-a.tmenudisabled:active
-{
+a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
 	color: #757575;
     font-weight: normal;
 	padding: 0px 5px 0px 5px;
@@ -266,101 +235,38 @@ a.tmenudisabled:active
 	white-space: nowrap;
 }
 
-a.tmenu:link
-{
+a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	color: #234046;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 1px 2px 1px;
 	font-weight: normal;
 	white-space: nowrap;
 }
-a.tmenu:visited
-{
-	color: #234046;
-	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
-	font-weight: normal;
-	white-space: nowrap;
-}
-a.tmenu:hover
-{
-	color: #234046;
-	padding: 0px 5px 0px 5px;
+a.tmenu:hover, a.tmenu:active {
 	margin: 0px 0px 0px 0px;
-	font-weight: normal;
 	background: #dee7ec;
 	border-<?php print $right; ?>: 1px solid #555555;
 	border-<?php print $left; ?>: 1px solid #D8D8D8;
 	border-top: 1px solid #D8D8D8;
 	border-bottom: 2px solid #dee7ec;
-	white-space: nowrap;
 }
-a.tmenu:active
-{
-	color: #234046;
+a.tmenu:active {
+	background: #F4F4F4;
+}
+
+a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	padding: 0px 5px 0px 5px;
 	margin: 0px 0px 0px 0px;
 	font-weight: normal;
+	color: #234046;
 	background: #F4F4F4;
 	border-<?php print $right; ?>: 1px solid #555555;
-	border-<?php print $left; ?>: 1px solid #D8D8D8;
 	border-top: 1px solid #D8D8D8;
-	border-bottom: 2px solid #dee7ec;
+	border-<?php print $left; ?>: 1px solid #D8D8D8;
+	border-bottom: 2px solid #F4F4F4;
 	white-space: nowrap;
 }
 
-a.tmenusel:link
-{
-	padding: 0px 5px 0px 5px;
-	margin: 0px 0px 0px 0px;
-	font-weight: normal;
-	color: #234046;
-	background: #F4F4F4;
-	border-<?php print $right; ?>: 1px solid #555555;
-	border-top: 1px solid #D8D8D8;
-	border-<?php print $left; ?>: 1px solid #D8D8D8;
-	border-bottom: 2px solid #F4F4F4;
-	white-space: nowrap;
-}
-a.tmenusel:visited
-{
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
-  font-weight: normal;
-  color: #234046;
-  background: #F4F4F4;
-  border-<?php print $right; ?>: 1px solid #555555;
-  border-top: 1px solid #D8D8D8;
-  border-<?php print $left; ?>: 1px solid #D8D8D8;
-  border-bottom: 2px solid #F4F4F4;
-	white-space: nowrap;
-}
-a.tmenusel:hover
-{
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
-  font-weight: normal;
-  color: #234046;
-  background: #F4F4F4;
-  border-<?php print $right; ?>: 1px solid #555555;
-  border-top: 1px solid #D8D8D8;
-  border-<?php print $left; ?>: 1px solid #D8D8D8;
-  border-bottom: 2px solid #F4F4F4;
-	white-space: nowrap;
-}
-a.tmenusel:active
-{
-	padding: 0px 5px 0px 5px;
-	margin: 0px 0px 0px 0px;
-	font-weight: normal;
-	color: #234046;
-	background: #F4F4F4;
-	border-<?php print $right; ?>: 1px solid #555555;
-	border-top: 1px solid #D8D8D8;
-	border-<?php print $left; ?>: 1px solid #D8D8D8;
-	border-bottom: 2px solid #F4F4F4;
-	white-space: nowrap;
-}
 
 * html li.tmenu a
 {
