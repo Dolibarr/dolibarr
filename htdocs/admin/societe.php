@@ -34,7 +34,6 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
-
 /*
  * Actions
  */
@@ -80,9 +79,15 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
 // define constants for models generator that need parameters
 if ($_POST["action"] == 'setModuleOptions')
 {
-	$param=$_POST["param1"];
-	$value=$_POST["value1"];
-	if ($param) dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+	for($i=0;$i < count($_POST);$i++)
+    {
+    	if (array_key_exists('param'.$i,$_POST))
+    	{
+    		$param=$_POST["param".$i];
+    		$value=$_POST["value".$i];
+    		if ($param) dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+    	}
+    }
 }
 
 // Activate a document generator module
