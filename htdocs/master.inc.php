@@ -349,13 +349,14 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
 	{
 		$mysoc->pays_id=$conf->global->MAIN_INFO_SOCIETE_PAYS;
-		$sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+		$sql  = "SELECT code, libelle as label from ".MAIN_DB_PREFIX."c_pays";
 		$sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
 		$result=$db->query($sql);
 		if ($result)
 		{
 			$obj = $db->fetch_object();
 			$mysoc->pays_code=$obj->code;
+			$mysoc->country=$obj->code?($langs->trans('Country'.$obj->code)!='Country'.$obj->code?$langs->trans('Country'.$obj->code):$obj->label):'';
 		}
 		else {
 			dol_print_error($db);
@@ -365,6 +366,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	else
 	{
 		$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+		$mysoc->country=$conf->global->MAIN_INFO_SOCIETE_PAYS?$langs->trans('Country'.$conf->global->MAIN_INFO_SOCIETE_PAYS):'';
 	}
 	$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL; // TODO obsolete
 	$mysoc->phone=$conf->global->MAIN_INFO_SOCIETE_TEL;
