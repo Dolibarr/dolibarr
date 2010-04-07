@@ -46,9 +46,6 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 	$menuArbo = new Menubase($db,'auguria','top');
 	$tabMenu = $menuArbo->menuTopCharger($hideifnotallowed,$_SESSION['mainmenu'], 'auguria');
 
-
-	//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<ul class="tmenu">'."\n";
-	//else
 	print '<table class="tmenu" summary="topmenu"><tr class="tmenu">'."\n";
 
 	for($i=0; $i<count($tabMenu); $i++)
@@ -80,39 +77,28 @@ function print_auguria_menu($db,$atarget,$hideifnotallowed)
 				else if (! empty($_SESSION['mainmenu']) && $tabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $class='class="tmenusel"';
 				else $class='class="tmenu"';
 
-				//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="mainmenuli_'.$idsel.'">';
-				//else
 				print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
 
-				print '<div class="mainmenu_'.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+				print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a '.$class.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($tabMenu[$i]['atarget']?" target='".$tabMenu[$i]['atarget']."'":($atarget?" target=$atarget":"")).'>';
 				print $tabMenu[$i]['titre'];
 				print '</a>';
 
-				//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '</li>'."\n";
-				//else
 				print '</td>'."\n";
 			}
 			else
 			{
 				if (! $hideifnotallowed)
 				{
-					//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<li class="tmenu" id="mainmenuli_'.$idsel.'">';
-					//else
 					print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
-
+					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#">'.$tabMenu[$i]['titre'].'</a>';
-
-					//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '</li>'."\n";
-					//else
 					print '</td>'."\n";
 				}
 			}
 		}
 	}
-
-	//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '</ul>'."\n";
-	//else
+	
 	print '</tr></table>'."\n";
 }
 
