@@ -345,6 +345,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->zip=$conf->global->MAIN_INFO_SOCIETE_CP;
 	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE; // TODO obsolete
 	$mysoc->town=$conf->global->MAIN_INFO_SOCIETE_VILLE;
+	$mysoc->note=$conf->global->MAIN_INFO_SOCIETE_NOTE;
 	// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
 	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
 	{
