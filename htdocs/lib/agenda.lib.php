@@ -179,7 +179,7 @@ function show_array_actions_to_do($max=5)
 	            print '<td>'.$customerstatic->getNomUrl(1,'',16).'</td>';
 
 				// Date
-				print '<td width="100" alig="right">'.dol_print_date($obj->dp,'day').'&nbsp;';
+				print '<td width="100" align="right">'.dol_print_date($obj->dp,'day').'&nbsp;';
 				$late=0;
 				if ($obj->percent == 0 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
 				if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && date("U",$obj->dp) < time()) $late=1;
