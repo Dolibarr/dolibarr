@@ -97,7 +97,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			'mycompany_idprof2'=>$mysoc->idprof2,
 			'mycompany_idprof3'=>$mysoc->idprof3,
 			'mycompany_idprof4'=>$mysoc->idprof4,
-			'mycompany_note'=>$mysoc->note,
+			'mycompany_note'=>$mysoc->note
 		);
 	}
 
@@ -129,7 +129,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			'company_idprof2'=>$object->idprof2,
 			'company_idprof3'=>$object->idprof3,
 			'company_idprof4'=>$object->idprof4,
-			'company_note'=>$object->note,
+			'company_note'=>$object->note
 		);
 	}
 
