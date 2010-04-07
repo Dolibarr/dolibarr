@@ -194,7 +194,9 @@ function dol_escape_js($stringtoescape)
 function dol_escape_htmltag($stringtoescape)
 {
 	// escape quotes and backslashes, newlines, etc.
-	return strtr($stringtoescape, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
+	$tmp=@html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
+	$tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
+	return @htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
 
