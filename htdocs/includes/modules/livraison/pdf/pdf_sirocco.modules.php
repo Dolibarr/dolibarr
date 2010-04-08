@@ -425,6 +425,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','B',9);
 
 		// Add list of linked orders
+		// TODO mutualiser 
 	    $object->load_object_linked();
 
 	    if ($conf->commande->enabled)
@@ -432,18 +433,21 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($val['type'] == 'commande')
+				if ($key == 'commande')
 				{
-					$newobject=new Commande($this->db);
-					$result=$newobject->fetch($val['linkid']);
-					if ($result >= 0)
+					for ($i = 0; $i<sizeof($val);$i++)
 					{
-						$posy+=4;
-						$pdf->SetXY(102,$posy);
-						$pdf->SetFont('Arial','',9);
-						$text=$newobject->ref;
-						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-						$pdf->Text(11, 94, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+						$newobject=new Commande($this->db);
+						$result=$newobject->fetch($val[$i]);
+						if ($result >= 0)
+						{
+							$posy+=4;
+							$pdf->SetXY(102,$posy);
+							$pdf->SetFont('Arial','',9);
+							$text=$newobject->ref;
+							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+							$pdf->Text(11, 94, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+						}
 					}
 				}
 			}

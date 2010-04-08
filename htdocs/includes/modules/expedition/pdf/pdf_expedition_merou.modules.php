@@ -402,18 +402,21 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($val['type'] == 'commande')
+				if ($key == 'commande')
 				{
-					$newobject=new Commande($this->db);
-					$result=$newobject->fetch($val['linkid']);
-					if ($result >= 0)
+					for ($i = 0; $i<sizeof($val);$i++)
 					{
-						$Yoff = $Yoff+4;
-						$pdf->SetXY($Xoff,$Yoff);
-						$pdf->SetFont('Arial','',8);
-						$text=$newobject->ref;
-						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-						$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+						$newobject=new Commande($this->db);
+						$result=$newobject->fetch($val[$i]);
+						if ($result >= 0)
+						{
+							$Yoff = $Yoff+4;
+							$pdf->SetXY($Xoff,$Yoff);
+							$pdf->SetFont('Arial','',8);
+							$text=$newobject->ref;
+							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+							$pdf->MultiCell(0, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+						}
 					}
 				}
 			}

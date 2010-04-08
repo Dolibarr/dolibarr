@@ -195,19 +195,22 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($val['type'] == 'order')
+				if ($key == 'commande')
 				{
-					$newobject=new Commande($this->db);
-					$result=$newobject->fetch($val['linkid']);
-					if ($result >= 0)
+					for ($i = 0; $i<sizeof($val);$i++)
 					{
-						$Yoff = $Yoff+8;
-						$pdf->SetXY($Xoff,$Yoff);
-						$pdf->SetFont('Arial','',8);
-						$text=$newobject->ref;
-						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-						$pdf->Text($posx, $Yoff, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text));
-						$pdf->Text($posx, $Yoff+4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true));
+						$newobject=new Commande($this->db);
+						$result=$newobject->fetch($val[$i]);
+						if ($result >= 0)
+						{
+							$Yoff = $Yoff+8;
+							$pdf->SetXY($Xoff,$Yoff);
+							$pdf->SetFont('Arial','',8);
+							$text=$newobject->ref;
+							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+							$pdf->Text($posx, $Yoff, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text));
+							$pdf->Text($posx, $Yoff+4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"%d %b %Y",false,$outputlangs,true));
+						}
 					}
 				}
 			}

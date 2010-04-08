@@ -1959,8 +1959,19 @@ if ($id > 0 || ! empty($ref))
 
 
 		/*
-		 * Commandes rattachees
+		 * Linked object block
 		 */
+		$propal->load_object_linked($propal->id,$propal->element);
+
+		foreach($propal->linked_object as $object => $objectid)
+		{
+			// TODO en attendant que tout soit correct
+			if($conf->$object->enabled && $object == 'commande')
+			{
+				$propal->showLinkedObjectBlock($object,$objectid,$somethingshown);
+			}
+		}
+/*		
 		if($conf->commande->enabled)
 		{
 			$propal->loadOrders();
@@ -1990,7 +2001,7 @@ if ($id > 0 || ! empty($ref))
 				print '</table>';
 			}
 		}
-
+*/
 		print '</td><td valign="top" width="50%">';
 
 		// List of actions on element

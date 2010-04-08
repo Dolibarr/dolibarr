@@ -977,43 +977,51 @@ class pdf_oursin extends ModelePDFFactures
 		// Add list of linked orders and proposals
 	    $object->load_object_linked();
 
+	    // TODO mutualiser
 	    if ($conf->propal->enabled)
 		{
 			$outputlangs->load('propal');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($val['type'] == 'propal')
+				if ($key == 'propal')
 				{
-					$newobject=new Propal($this->db);
-					$result=$newobject->fetch($val['linkid']);
-					if ($result >= 0)
+					for ($i = 0; $i<sizeof($val);$i++)
 					{
-						$posy+=4;
-						$pdf->SetXY($this->marges['g'],$posy);
-						$pdf->SetFont('Arial','',9);
-						$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($newobject->ref));
+						$newobject=new Propal($this->db);
+						$result=$newobject->fetch($val['linkid']);
+						if ($result >= 0)
+						{
+							$posy+=4;
+							$pdf->SetXY($this->marges['g'],$posy);
+							$pdf->SetFont('Arial','',9);
+							$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($newobject->ref));
+						}
 					}
 				}
 			}
 		}
 
-	    if ($conf->commande->enabled)
+	    // TODO mutualiser
+		if ($conf->commande->enabled)
 		{
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
-				if ($val['type'] == 'commande')
+				if ($key == 'commande')
 				{
-					$newobject=new Propal($this->db);
-					$result=$newobject->fetch($val['linkid']);
-					if ($result >= 0)
+					for ($i = 0; $i<sizeof($val);$i++)
 					{
-						$posy+=4;
-						$pdf->SetXY($this->marges['g'],$posy);
-						$pdf->SetFont('Arial','',9);
-						$text=$newobject->ref;
-						if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
-						$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text));
+						$newobject=new Propal($this->db);
+						$result=$newobject->fetch($val[$i]);
+						if ($result >= 0)
+						{
+							$posy+=4;
+							$pdf->SetXY($this->marges['g'],$posy);
+							$pdf->SetFont('Arial','',9);
+							$text=$newobject->ref;
+							if ($newobject->ref_client) $text.=' ('.$newobject->ref_client.')';
+							$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text));
+						}
 					}
 				}
 			}

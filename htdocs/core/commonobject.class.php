@@ -922,11 +922,11 @@ class CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if ($obj->fk_source == $sourceid)
 				{
-					$this->linked_object[]=array('linkid'=>$obj->fk_target, 'type'=>$obj->targettype);
+					$this->linked_object[$obj->targettype][]=$obj->fk_target;
 				}
 				if ($obj->fk_target == $targetid)
 				{
-					$this->linked_object[]=array('linkid'=>$obj->fk_source, 'type'=>$obj->sourcetype);
+					$this->linked_object[$obj->sourcetype][]=$obj->fk_source;
 				}
 				$i++;
 			}
@@ -1012,6 +1012,17 @@ class CommonObject
 		{
 			print $sql;
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
+	{
+		$class = ucfirst($object);
+		if(!class_exists($class)) require(DOL_DOCUMENT_ROOT."/".$object."/class/".$object.".class.php");
+		$linkedObjectBlock = new $class($this->db);
+		$linkedObjectBlock->getLinkedObjectBlock($object,$objectid,$somethingshown);
 	}
 
 }

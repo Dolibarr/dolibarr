@@ -40,9 +40,9 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire && $object->linked_object[0]['linkid'])
+	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire && $object->linked_object['delivery'][0])
 	{
-		$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linked_object[0]['linkid'];
+		$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linked_object['delivery'][0];
 		$head[$h][1] = $langs->trans("DeliveryCard");
 		$head[$h][2] = 'delivery';
 		$h++;
