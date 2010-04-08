@@ -585,7 +585,7 @@ if ($id > 0 || ! empty($ref))
 					print "<tr $bc[$var]>";
 					print '<td><a href="../facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
 					print '<td align="center">'.dol_print_date($objp->df).'</td>';
-					print '<td align="right">'.$objp->total_ttc.'</td></tr>';
+					print '<td align="right">'.price($objp->total_ttc).'</td></tr>';
 					$i++;
 				}
 				print "</table>";
