@@ -24,7 +24,7 @@
  *       \brief      Fichier de la classe de gestion des stats des deplacement et notes de frais
  *       \version    $Id$
  */
-include_once DOL_DOCUMENT_ROOT . "/stats.class.php";
+include_once DOL_DOCUMENT_ROOT . "/core/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/deplacement.class.php";
 
 /**

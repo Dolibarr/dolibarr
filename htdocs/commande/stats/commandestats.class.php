@@ -24,7 +24,7 @@
  *       \brief      Fichier de la classe de gestion des stats des commandes
  *       \version    $Id$
  */
-include_once DOL_DOCUMENT_ROOT . "/stats.class.php";
+include_once DOL_DOCUMENT_ROOT . "/core/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
 include_once DOL_DOCUMENT_ROOT . "/fourn/fournisseur.commande.class.php";
 
@@ -87,7 +87,7 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 *    \brief      Renvoie le nombre de commande par mois pour une année donnée
+	 *    \brief      Renvoie le nombre de commande par mois pour une annï¿½e donnï¿½e
 	 *
 	 */
 	function getNbByMonth($year)
@@ -106,7 +106,7 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de commande par année
+	 * Renvoie le nombre de commande par annï¿½e
 	 *
 	 */
 	function getNbByYear()
@@ -124,7 +124,7 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de commande par mois pour une année donnée
+	 * Renvoie le nombre de commande par mois pour une annï¿½e donnï¿½e
 	 *
 	 */
 	function getAmountByMonth($year)
@@ -143,7 +143,7 @@ class CommandeStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de commande par mois pour une année donnée
+	 * Renvoie le nombre de commande par mois pour une annï¿½e donnï¿½e
 	 *
 	 */
 	function getAverageByMonth($year)
