@@ -131,7 +131,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('TASK_CREATE',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -270,7 +270,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('TASK_MODIFY',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -331,7 +331,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 		        // Call triggers
-		        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		        include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 		        $interface=new Interfaces($this->db);
 		        $result=$interface->run_triggers('TASK_DELETE',$this,$user,$langs,$conf);
 		        if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -625,7 +625,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('TASK_TIMESPENT_CREATE',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -729,7 +729,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('TASK_TIMESPENT_MODIFY',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -790,7 +790,7 @@ class Task extends CommonObject
 			if (! $notrigger)
 			{
 		        // Call triggers
-		        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		        include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 		        $interface=new Interfaces($this->db);
 		        $result=$interface->run_triggers('TASK_TIMESPENT_DELETE',$this,$user,$langs,$conf);
 		        if ($result < 0) { $error++; $this->errors=$interface->errors; }

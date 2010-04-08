@@ -447,7 +447,7 @@ class Expedition extends CommonObject
 		if (! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('ORDER_SHIPPING',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }

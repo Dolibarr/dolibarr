@@ -328,7 +328,7 @@ if (! defined('NOLOGIN'))
 				$test=false;
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($db);
 				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 				if ($result < 0) { $error++; }
@@ -386,7 +386,7 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($db);
 				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 				if ($result < 0) { $error++; }
@@ -426,7 +426,7 @@ if (! defined('NOLOGIN'))
 			}
 
 			// Call triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
 			if ($result < 0) { $error++; }
@@ -467,7 +467,7 @@ if (! defined('NOLOGIN'))
 			}
 
 			// Call triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
 			if ($result < 0) { $error++; }
@@ -495,7 +495,7 @@ if (! defined('NOLOGIN'))
 		$user->update_last_login_date();
 
 		// Call triggers
-		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 		$interface=new Interfaces($db);
 		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,$_POST["entity"]);
 		if ($result < 0) { $error++; }

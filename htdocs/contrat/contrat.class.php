@@ -114,7 +114,7 @@ class Contrat extends CommonObject
 		if ($resql)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -159,7 +159,7 @@ class Contrat extends CommonObject
 		if ($resql)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACT_SERVICE_CLOSE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -245,7 +245,7 @@ class Contrat extends CommonObject
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_CONTRACTSTATUS=='always'?1:0);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -568,7 +568,7 @@ class Contrat extends CommonObject
 			if (! $error)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('CONTRACT_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -745,7 +745,7 @@ class Contrat extends CommonObject
 		if (! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -992,7 +992,7 @@ class Contrat extends CommonObject
 			}
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACTLINE_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1693,7 +1693,7 @@ class ContratLigne
 		if (! $notrigger)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }

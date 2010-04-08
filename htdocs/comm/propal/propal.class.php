@@ -458,7 +458,7 @@ class Propal extends CommonObject
 				if (! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result = $interface->run_triggers('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -664,7 +664,7 @@ class Propal extends CommonObject
 						if (! $notrigger)
 						{
 							// Appel des triggers
-							include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+							include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 							$interface=new Interfaces($this->db);
 							$result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
 							if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -971,7 +971,7 @@ class Propal extends CommonObject
 				if (! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1244,7 +1244,7 @@ class Propal extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_PROPALSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('PROPAL_CLOSE_SIGNED',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1255,7 +1255,7 @@ class Propal extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_PROPALSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1612,7 +1612,7 @@ class Propal extends CommonObject
 				if (! $notrigger)
 				{
 					// Call triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('PROPAL_DELETE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -2296,7 +2296,7 @@ class PropaleLigne
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEPROPAL_INSERT',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }

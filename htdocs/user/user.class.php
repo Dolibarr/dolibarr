@@ -614,7 +614,7 @@ class User extends CommonObject
 		if ($result)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -670,7 +670,7 @@ class User extends CommonObject
 		if ($result)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('USER_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -771,7 +771,7 @@ class User extends CommonObject
 					if (! $notrigger)
 					{
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+						include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 						$interface = new Interfaces($this->db);
 						$result = $interface->run_triggers('USER_CREATE',$this,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1109,7 +1109,7 @@ class User extends CommonObject
 				if (! $error && ! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('USER_MODIFY',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1254,7 +1254,7 @@ class User extends CommonObject
 					if (! $error && ! $notrigger)
 					{
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+						include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 						$interface=new Interfaces($this->db);
 						$result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$langs,$conf);
 						if ($result < 0) $this->errors=$interface->errors;
