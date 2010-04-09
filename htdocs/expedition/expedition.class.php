@@ -848,9 +848,9 @@ class Expedition extends CommonObject
 		}
 
 		if ($code) {
-			$classe = "methode_expedition_".strtolower($code);
+			$classname = "methode_expedition_".strtolower($code);
 			require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
-			$obj = new $classe;
+			$obj = new $classname();
 			$url = $obj->provider_url_status($this->tracking_number);
 			if ($url)
 			{

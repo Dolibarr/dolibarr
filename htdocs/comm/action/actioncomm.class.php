@@ -544,13 +544,13 @@ class ActionComm
 	 *		\return		string			Chaine avec URL
 	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
-	function getNomUrl($withpicto=0,$maxlength=0,$class='',$option='')
+	function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='')
 	{
 		global $langs;
 
 		$result='';
-		if ($option=='birthday') $lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
-		else $lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
+		if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
+		else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
         if ($langs->trans("Action".$this->type_code) != "Action".$this->type_code || ! $this->libelle)

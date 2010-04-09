@@ -38,7 +38,7 @@ class Document
 
 
   /**
-     \brief G�n�re le document
+     \brief Genere le document
      \return int 0= ok, <> 0 = ko
   */
   function Generate ($id)
@@ -47,11 +47,11 @@ class Document
 
     dol_syslog("Document::Generate id=$id", LOG_DEBUG );
     $this->id = $id;
-    $class = $id;
-    $classfile = 'docs/class/'.$class.'.class.php';
+    $classname = $id;
+    $classfile = 'docs/class/'.$classname.'.class.php';
 
     require DOL_DOCUMENT_ROOT.'/'.$classfile;
-    $obj = new $class($this->db);
+    $obj = new $classname($this->db);
 
     $this->db->begin();
 

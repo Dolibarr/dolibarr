@@ -123,9 +123,9 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 	{
 		if ($_POST["canvas"] <> '' && file_exists('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php') )
 		{
-			$class = 'Product'.ucfirst($_POST["canvas"]);
+			$classname = 'Product'.ucfirst($_POST["canvas"]);
 			include_once('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php');
-			$product = new $class($db);
+			$product = new $classname($db);
 		}
 		else
 		{
@@ -256,10 +256,10 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 			// Specific product
 			if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
 			{
-				$class = 'Product'.ucfirst($product->canvas);
+				$classname = 'Product'.ucfirst($product->canvas);
 				include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
 
-				$product = new $class($db);
+				$product = new $classname($db);
 				if ($product->FetchCanvas($_POST["id"]))
 				{
 					$product->UpdateCanvas($_POST);
@@ -624,11 +624,11 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		if (! isset($product))
 		{
 			$filecanvas = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php';
-			$class = 'Product'.ucfirst($_GET["canvas"]);
+			$classname = 'Product'.ucfirst($_GET["canvas"]);
 			
 			include_once($filecanvas);
 			
-			$product = new $class($db,0,$user);
+			$product = new $classname($db,0,$user);
 		}
 
 		$product->assign_smarty_values($smarty, 'create');
@@ -859,9 +859,9 @@ if ($_GET["id"] || $_GET["ref"])
 	// Gestion des produits specifiques
 	if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
 	{
-		$class = 'Product'.ucfirst($product->canvas);
+		$classname = 'Product'.ucfirst($product->canvas);
 		include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
-		$product = new $class($db);
+		$product = new $classname($db);
 
 		$result = $product->fetchCanvas($_GET["id"],'',$_GET["action"]);
 

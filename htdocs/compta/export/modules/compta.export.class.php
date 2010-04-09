@@ -41,11 +41,11 @@ class ComptaExport
 	 \param      USER        Object utilisateur
 	 \param      classe      Nom de la classe utilis�e pour formater les rapports
 	 */
-	function ComptaExport ($DB, $USER, $classe)
+	function ComptaExport ($DB, $USER, $classname)
 	{
 		$this->db = $DB;
 		$this->user = $USER;
-		$this->classe_export = $classe;
+		$this->classe_export = $classname;
 		$this->error_message = '';
 	}
 

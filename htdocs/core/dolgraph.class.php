@@ -421,10 +421,10 @@ class DolGraph
 		if (! defined('LEGEND_LINE'))       define('LEGEND_LINE',1);
 
 		// Create graph
-		$class='';
-		if ($this->type == 'bars')  $class='BarPlot';
-		if ($this->type == 'lines') $class='LinePlot';
-		include_once DOL_DOCUMENT_ROOT."/includes/artichow/".$class.".class.php";
+		$classname='';
+		if ($this->type == 'bars')  $classname='BarPlot';
+		if ($this->type == 'lines') $classname='LinePlot';
+		include_once DOL_DOCUMENT_ROOT."/includes/artichow/".$classname.".class.php";
 
 		// Definition de couleurs
 		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);

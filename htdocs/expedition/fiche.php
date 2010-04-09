@@ -84,8 +84,8 @@ if ($_POST["action"] == 'add')
 
 	// On boucle sur chaque ligne du document d'origine pour completer objet expedition
 	// avec qte a livrer
-	$class = ucfirst($expedition->origin);
-	$object = new $class($db);
+	$classname = ucfirst($expedition->origin);
+	$object = new $classname($db);
 	$object->fetch($expedition->origin_id);
 	//$object->fetch_lines();
 
@@ -257,9 +257,9 @@ if ($_GET["action"] == 'create')
 
 	if ($origin)
 	{
-		$class = ucfirst($origin);
+		$classname = ucfirst($origin);
 
-		$object = new $class($db);
+		$object = new $classname($db);
 
 		if ($object->fetch($origin_id))
 		{

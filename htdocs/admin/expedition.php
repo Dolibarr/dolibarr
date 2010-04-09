@@ -141,8 +141,8 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 
 	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_$module.modules.php");
 
-	$class = "methode_expedition_$module";
-	$expem = new $class($db);
+	$classname = "methode_expedition_$module";
+	$expem = new $classname($db);
 
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode";
 	$sql.= " WHERE rowid = ".$moduleid;

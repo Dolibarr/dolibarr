@@ -62,10 +62,10 @@ class MenuTop {
 	    // ***** START *****
 
 		// print '<td class="tmenu">';
-		// print '<a '.$class.' href="'.DOL_URL_ROOT.'/thepage1.php>My menu entry 1</a>';
+		// print '<a '.$classname.' href="'.DOL_URL_ROOT.'/thepage1.php>My menu entry 1</a>';
 		// print '</td>';
 		// print '<td class="tmenu">';
-		// print '<a '.$class.' href="'.DOL_URL_ROOT.'/thepage2.php>My menu entry 2</a>';
+		// print '<a '.$classname.' href="'.DOL_URL_ROOT.'/thepage2.php>My menu entry 2</a>';
 		// print '</td>';
 	    // ...
 
@@ -90,10 +90,10 @@ class MenuTop {
 					else $url.='&';
 					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
 					$url.="&idmenu=".$tabMenu[$i]['rowid'];
-					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
-					else $class='class="tmenu"';
+					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
+					else $classname='class="tmenu"';
 					print '<td class="tmenu">';
-					print '<a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":($this->atarget?" target=$this->atarget":"")).'>';
+					print '<a '.$classname.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":($this->atarget?" target=$this->atarget":"")).'>';
 					print $tabMenu[$i]['titre'];
 					print '</a>';
 					print '</td>';

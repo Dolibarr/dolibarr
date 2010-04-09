@@ -93,10 +93,10 @@ $htmlother=new FormOther($db);
 
 if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php') )
 {
-	$class = 'Product'.ucfirst($_GET["canvas"]);
+	$classname = 'Product'.ucfirst($_GET["canvas"]);
 	include_once('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php');
 
-	$object = new $class($db);
+	$object = new $classname($db);
 	$object->getFieldList();
 	$object->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 	$title = $object->getTitle();

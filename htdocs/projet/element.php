@@ -159,7 +159,7 @@ $listofreferent=array(
 foreach ($listofreferent as $key => $value)
 {
 	$title=$value['title'];
-	$class=$value['class'];
+	$classname=$value['class'];
 	$qualified=$value['test'];
 	if ($qualified)
 	{
@@ -181,7 +181,7 @@ foreach ($listofreferent as $key => $value)
 			$total = 0;
 			for ($i = 0; $i<sizeof($elementarray);$i++)
 			{
-				$element = new $class($db);
+				$element = new $classname($db);
 				$element->fetch($elementarray[$i]);
 
 				$var=!$var;

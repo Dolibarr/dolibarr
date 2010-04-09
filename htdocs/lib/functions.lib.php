@@ -2721,15 +2721,15 @@ function yn($yesno, $case=1, $color=0)
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') 	// A mettre avant test sur no a cause du == 0
 	{
 		$result=($case?$langs->trans("Yes"):$langs->trans("yes"));
-		$class='ok';
+		$classname='ok';
 	}
 	elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false')
 	{
 		$result=($case?$langs->trans("No"):$langs->trans("no"));
-		if ($color == 2) $class='ok';
-		else $class='error';
+		if ($color == 2) $classname='ok';
+		else $classname='error';
 	}
-	if ($color) return '<font class="'.$class.'">'.$result.'</font>';
+	if ($color) return '<font class="'.$classname.'">'.$result.'</font>';
 	return $result;
 }
 

@@ -418,8 +418,8 @@ class CommonObject
 		if ($object == 'shipping') $object = 'expedition';
 		if ($object == 'delivery') $object = 'livraison';
 
-		$class = ucfirst($object);
-		$this->$object = new $class($this->db);
+		$classname = ucfirst($object);
+		$this->$object = new $classname($this->db);
 		$this->$object->fetch($this->origin_id);
 	}
 
@@ -1027,9 +1027,9 @@ class CommonObject
 			// TODO uniformiser emplacement classe
 			require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 			require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
-			$class = ucfirst($object);
-			if(!class_exists($class)) require(DOL_DOCUMENT_ROOT."/".$object."/class/".$object.".class.php");
-			$linkedObjectBlock = new $class($this->db);
+			$classname = ucfirst($object);
+			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$object."/class/".$object.".class.php");
+			$linkedObjectBlock = new $classname($this->db);
 			if ($object == 'facture') $object = 'compta/'.$object;
 			if ($object == 'propal') $object = 'comm/'.$object;
 			include(DOL_DOCUMENT_ROOT.'/'.$object.'/tpl/linkedobjectblock.tpl.php');

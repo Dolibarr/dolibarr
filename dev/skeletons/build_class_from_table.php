@@ -122,8 +122,8 @@ else
 // Define working variables
 $table=strtolower($table);
 $tablenollx=preg_replace('/llx_/i','',$table);
-$class=ucfirst($tablenollx);
-$classmin=strtolower($class);
+$classname=ucfirst($tablenollx);
+$classmin=strtolower($classname);
 
 
 // Read skeleton_class.class.php file
@@ -145,7 +145,7 @@ $targetcontent=$sourcecontent;
 $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
 $targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
 $targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/Skeleton_class/', $class, $targetcontent);
+$targetcontent=preg_replace('/Skeleton_class/', $classname, $targetcontent);
 
 // Substitute comments
 $targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
@@ -376,7 +376,7 @@ $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.ph
 $targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
 $targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
 $targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/Skeleton_class/', $class, $targetcontent);
+$targetcontent=preg_replace('/Skeleton_class/', $classname, $targetcontent);
 
 // Substitute comments
 $targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);

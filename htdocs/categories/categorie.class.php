@@ -430,7 +430,7 @@ class Categorie
 	 * 	\param	class	PHP Class of object to store entity
 	 * 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
 	 */
-	function get_type($field,$class,$table='')
+	function get_type($field,$classname,$table='')
 	{
 		$objs = array();
 
@@ -446,7 +446,7 @@ class Categorie
 		{
 			while ($rec = $this->db->fetch_array($resql))
 			{
-				$obj = new $class($this->db);
+				$obj = new $classname($this->db);
 				$obj->fetch($rec['fk_'.$field]);
 				$objs[] = $obj;
 			}

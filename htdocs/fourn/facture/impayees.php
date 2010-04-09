@@ -202,7 +202,7 @@ if ($user->rights->fournisseur->facture->lire)
 				$var=!$var;
 
 				print "<tr $bc[$var]>";
-				$class = "impayee";
+				$classname = "impayee";
 
 				print '<td nowrap>';
 				$facturestatic->id=$objp->facid;

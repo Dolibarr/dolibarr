@@ -317,7 +317,7 @@ if ($result)
 			$var=!$var;
 
 			print "<tr $bc[$var]>";
-			$class = "impayee";
+			$classname = "impayee";
 
 			print '<td nowrap="nowrap">';
 
