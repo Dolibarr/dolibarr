@@ -98,6 +98,21 @@ $form=new Form($db);
 // ...
 
 
+/***************************************************
+* LINKED OBJECT BLOCK
+*
+* Put here code to view linked object
+****************************************************/
+$myobject->load_object_linked($myobject->id,$myobject->element);
+				
+foreach($myobject->linked_object as $object => $objectid)
+{
+	if($conf->$object->enabled)
+	{
+		$somethingshown=$myobject->showLinkedObjectBlock($object,$objectid,$somethingshown);
+	}
+}
+
 // End of page
 $db->close();
 llxFooter('$Date$ - $Revision$');
