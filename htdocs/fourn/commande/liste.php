@@ -26,6 +26,7 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 
 $langs->load("orders");
 
