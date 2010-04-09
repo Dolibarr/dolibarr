@@ -355,6 +355,10 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 			Header("Location: fiche.php?id=".$id);
 			exit;
 		}
+		else if($result == -3)
+		{
+			$mesg='<div class="error">'.$langs->trans("NotAuthorized").'</div>';
+		}
 		else
 		{
 			dol_print_error($db,$commande->error);

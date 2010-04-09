@@ -1158,6 +1158,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			dol_syslog("CommandeFournisseur::Livraison Not Authorized");
+			$result = -3;
 		}
 		return $result ;
 	}
