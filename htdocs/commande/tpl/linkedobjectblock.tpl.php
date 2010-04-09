@@ -22,7 +22,7 @@
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php 
-if ($somethingshown) { echo '<br>'; $somethingshown=1; }
+if ($somethingshown) { echo '<br>'; }
 print_titre($langs->trans('RelatedOrders'));
 ?>
 <table class="noborder" width="100%">

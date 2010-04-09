@@ -512,8 +512,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		if($conf->$object->enabled)
 		{
-			$propal->showLinkedObjectBlock($object,$objectid,$somethingshown);
-			$somethingshown = 1;
+			$somethingshown=$propal->showLinkedObjectBlock($object,$objectid,$somethingshown);
 		}
 	}
 

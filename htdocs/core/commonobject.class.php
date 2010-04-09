@@ -1032,6 +1032,7 @@ class CommonObject
 			$linkedObjectBlock = new $class($this->db);
 			if ($object == 'facture') $object = 'compta/'.$object;
 			include(DOL_DOCUMENT_ROOT.'/'.$object.'/tpl/linkedobjectblock.tpl.php');
+			return $num;
 		}
 	}
 

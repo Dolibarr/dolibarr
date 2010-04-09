@@ -22,7 +22,7 @@
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php 
-if ($somethingshown) { echo '<br>'; $somethingshown=1; }
+if ($somethingshown) { echo '<br>'; }
 if ($num > 1) print_titre($langs->trans("RelatedBills"));
 else print_titre($langs->trans("RelatedBill"));
 ?>
