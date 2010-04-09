@@ -2357,44 +2357,6 @@ class Commande extends CommonObject
 			return -1;
 		}
 	}
-	
-	/**
-	 * 
-	 * 
-	 */
-	function getLinkedObjectBlock($object,$objectid,$somethingshown=0)
-	{
-		global $langs;
-		
-		$num = sizeof($objectid);
-		
-		if ($num > 0)
-		{	
-			if ($somethingshown) { print '<br>'; $somethingshown=1; }
-			print_titre($langs->trans('RelatedOrders'));
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Ref").'</td>';
-			print '<td align="center">'.$langs->trans("Date").'</td>';
-			print '<td align="right">'.$langs->trans("Price").'</td>';
-			print '<td align="right">'.$langs->trans("Status").'</td>';
-			print '</tr>';
-			$var=true;
-			for ($i = 0 ; $i < $num ; $i++)
-			{
-				$this->fetch($objectid[$i]);
-				
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
-				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$this->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$this->ref."</a></td>\n";
-				print '<td align="center">'.dol_print_date($this->date,'day').'</td>';
-				print '<td align="right">'.price($this->total_ttc).'</td>';
-				print '<td align="right">'.$this->getLibStatut(3).'</td>';
-				print "</tr>\n";
-			}
-			print '</table>';
-		}
-	}
 
 }
 

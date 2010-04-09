@@ -42,7 +42,6 @@ $langs->load('orders');
 $langs->load('products');
 
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
 
@@ -1965,43 +1964,12 @@ if ($id > 0 || ! empty($ref))
 
 		foreach($propal->linked_object as $object => $objectid)
 		{
-			// TODO en attendant que tout soit correct
-			if($conf->$object->enabled && $object == 'commande')
+			if($conf->$object->enabled)
 			{
 				$propal->showLinkedObjectBlock($object,$objectid,$somethingshown);
 			}
 		}
-/*		
-		if($conf->commande->enabled)
-		{
-			$propal->loadOrders();
-			$coms = $propal->commandes;
-			if (sizeof($coms) > 0)
-			{
-				if ($somethingshown) { print '<br>'; $somethingshown=1; }
-				print_titre($langs->trans('RelatedOrders'));
-				print '<table class="noborder" width="100%">';
-				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans("Ref").'</td>';
-				print '<td align="center">'.$langs->trans("Date").'</td>';
-				print '<td align="right">'.$langs->trans("Price").'</td>';
-				print '<td align="right">'.$langs->trans("Status").'</td>';
-				print '</tr>';
-				$var=true;
-				for ($i = 0 ; $i < sizeof($coms) ; $i++)
-				{
-					$var=!$var;
-					print '<tr '.$bc[$var].'><td>';
-					print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-					print '<td align="center">'.dol_print_date($coms[$i]->date,'day').'</td>';
-					print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
-					print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
-					print "</tr>\n";
-				}
-				print '</table>';
-			}
-		}
-*/
+
 		print '</td><td valign="top" width="50%">';
 
 		// List of actions on element
