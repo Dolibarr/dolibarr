@@ -504,84 +504,18 @@ if ($id > 0 || ! empty($ref))
 
 
 	/*
-	 * Commandes rattachees
+	 * Linked object block
 	 */
-	if($conf->commande->enabled)
+	$propal->load_object_linked($propal->id,$propal->element);
+
+	foreach($propal->linked_object as $object => $objectid)
 	{
-		$propal->loadOrders();
-		$coms = $propal->commandes;
-		if (sizeof($coms) > 0)
+		if($conf->$object->enabled)
 		{
-			$total=0;
-			if ($somethingshown) { print '<br>'; $somethingshown=1; }
-			print_titre($langs->trans('RelatedOrders'));
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Ref").'</td>';
-			print '<td align="center">'.$langs->trans("Date").'</td>';
-			print '<td align="right">'.$langs->trans("Price").'</td>';
-			print '<td align="right">'.$langs->trans("Status").'</td>';
-			print '</tr>';
-			$var=true;
-			for ($i = 0 ; $i < sizeof($coms) ; $i++)
-			{
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
-				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-				print '<td align="center">'.dol_print_date($coms[$i]->date,'day').'</td>';
-				print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
-				print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
-				print "</tr>\n";
-				$total = $total + $objp->total;
-			}
-			print '</table>';
+			$propal->showLinkedObjectBlock($object,$objectid,$somethingshown);
+			$somethingshown = 1;
 		}
 	}
-
-
-	/*
-	 * Factures associees
-	 */
-	$linkedInvoices = $propal->getInvoiceArrayList();
-
-	if (is_array($linkedInvoices))
-	{
-		$num_fac_asso = sizeOf($linkedInvoices);
-
-		$i = 0; $total = 0;
-		if ($somethingshown) { print '<br>'; $somethingshown=1; }
-		if ($num_fac_asso > 1) print_titre($langs->trans("RelatedBills"));
-		else print_titre($langs->trans("RelatedBill"));
-		print '<table class="noborder" width="100%">';
-		print "<tr class=\"liste_titre\">";
-		print '<td>'.$langs->trans("Ref").'</td>';
-		print '<td align="center">'.$langs->trans("Date").'</td>';
-		print '<td align="right">'.$langs->trans("Price").'</td>';
-		print '<td align="right">'.$langs->trans("Status").'</td>';
-		print "</tr>\n";
-
-		require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
-		$staticfacture=new Facture($db);
-
-		$var=True;
-		foreach($linkedInvoices as $key => $invoice)
-		{
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print '<td><a href="../compta/facture.php?facid='.$invoice->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$invoice->facnumber.'</a></td>';
-			print '<td align="center">'.dol_print_date($invoice->df,'day').'</td>';
-			print '<td align="right">'.price($invoice->total).'</td>';
-			print '<td align="right">'.$staticfacture->LibStatut($invoice->paye,$invoice->fk_statut,3).'</td>';
-			print "</tr>";
-			$total = $total + $invoice->total;
-			$i++;
-		}
-		print "<tr class=\"liste_total\"><td align=\"right\" colspan=\"2\">".$langs->trans("TotalHT")."</td>";
-		print "<td align=\"right\">".price($total)."</td>";
-		print "<td>&nbsp;</td></tr>\n";
-		print "</table>";
-	}
-
 
 	print '</td><td valign="top" width="50%">';
 
