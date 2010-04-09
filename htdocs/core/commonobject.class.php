@@ -1019,20 +1019,22 @@ class CommonObject
 	 */
 	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
 	{
-		global $langs;
+		global $langs,$bc;
 		
 		$num = sizeof($objectid);
 		if ($num)
 		{
 			// TODO uniformiser emplacement classe
-			require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-			require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
+			$classpath = $object.'/class';
+			$tplpath = $object;
+			if ($object == 'facture') $tplpath = $classpath = 'compta/'.$object;
+			if ($object == 'propal') $tplpath = $classpath = 'comm/'.$object;
+			if ($object == 'commande') $tplpath = $classpath = $object;
+			
 			$classname = ucfirst($object);
-			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$object."/class/".$object.".class.php");
+			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$object.".class.php");
 			$linkedObjectBlock = new $classname($this->db);
-			if ($object == 'facture') $object = 'compta/'.$object;
-			if ($object == 'propal') $object = 'comm/'.$object;
-			include(DOL_DOCUMENT_ROOT.'/'.$object.'/tpl/linkedobjectblock.tpl.php');
+			include(DOL_DOCUMENT_ROOT.'/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
 			return $num;
 		}
 	}
