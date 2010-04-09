@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 
-$langs->load("facture");
+$langs->load("bills");
 $langs->load("companies");
 
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
