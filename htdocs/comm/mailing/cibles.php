@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@uers.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/comm/mailing/mailing.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/emailing.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
