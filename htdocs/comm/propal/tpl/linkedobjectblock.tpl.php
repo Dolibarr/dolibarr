@@ -23,11 +23,12 @@
 
 <?php 
 if ($somethingshown) { echo '<br>'; }
-print_titre($langs->trans('RelatedOrders'));
+print_titre($langs->trans('RelatedCommercialProposals'));
 ?>
 <table class="noborder" width="100%">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
+	<td><?php echo $langs->trans('RefCustomer'); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
@@ -40,7 +41,8 @@ for ($i = 0 ; $i < $num ; $i++)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/commande/fiche.php?id='.$linkedObjectBlock->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$linkedObjectBlock->ref; ?></a></td>
+	<a href="<?php echo DOL_URL_ROOT.'/compta/propal.php?propalid='.$linkedObjectBlock->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$linkedObjectBlock->ref; ?></a></td>
+	<td><?php echo $linkedObjectBlock->ref_client; ?></td>
 	<td align="center"><?php echo dol_print_date($linkedObjectBlock->date,'day'); ?></td>
 	<td align="right"><?php echo price($linkedObjectBlock->total_ht); ?></td>
 	<td align="right"><?php echo $linkedObjectBlock->getLibStatut(3); ?></td>
@@ -51,7 +53,7 @@ $total = $total + $linkedObjectBlock->total_ht;
 
 ?>
 <tr class="liste_total">
-	<td align="left" colspan="2"><?php echo $langs->trans('TotalHT'); ?></td>
+	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
 	<td align="right"><?php echo price($total); ?></td>
 	<td>&nbsp;</td>
 </tr>

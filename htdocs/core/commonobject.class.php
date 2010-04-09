@@ -1031,6 +1031,7 @@ class CommonObject
 			if(!class_exists($class)) require(DOL_DOCUMENT_ROOT."/".$object."/class/".$object.".class.php");
 			$linkedObjectBlock = new $class($this->db);
 			if ($object == 'facture') $object = 'compta/'.$object;
+			if ($object == 'propal') $object = 'comm/'.$object;
 			include(DOL_DOCUMENT_ROOT.'/'.$object.'/tpl/linkedobjectblock.tpl.php');
 			return $num;
 		}

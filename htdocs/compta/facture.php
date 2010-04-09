@@ -3505,119 +3505,15 @@ else
 				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 				/*
-				 *   Propales rattachees
+				 * Linked object block
 				 */
-				$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.ref_client, p.rowid as propalid';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'propal as p';
-				$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
-				$sql.= " WHERE el.fk_source = p.rowid";
-				$sql.= " AND el.sourcetype = 'propal'";
-				$sql.= " AND el.fk_target = ".$fac->id;
-				$sql.= " AND el.targettype = '".$fac->element."'";
-
-				dol_syslog("facture.php: sql=".$sql);
-				$resql = $db->query($sql);
-				if ($resql)
+				$fac->load_object_linked($fac->id,$fac->element);
+				
+				foreach($fac->linked_object as $object => $objectid)
 				{
-					$num = $db->num_rows($resql);
-					if ($num)
+					if($conf->$object->enabled)
 					{
-						$i = 0; $total = 0;
-						if ($somethingshown) print '<br>';
-						$somethingshown=1;
-						print_titre($langs->trans('RelatedCommercialProposals'));
-						print '<table class="noborder" width="100%">';
-						print '<tr class="liste_titre">';
-						print '<td width="150">'.$langs->trans('Ref').'</td>';
-						print '<td>'.$langs->trans('RefCustomer').'</td>';
-						print '<td align="center">'.$langs->trans('Date').'</td>';
-						print '<td align="right">'.$langs->trans('AmountHTShort').'</td>';
-						print '</tr>';
-
-						$var=True;
-						while ($i < $num)
-						{
-							$objp = $db->fetch_object($resql);
-							$var=!$var;
-							print '<tr '.$bc[$var].'>';
-							print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
-							print '<td>'.$objp->ref_client.'</td>';
-							print '<td align="center">'.dol_print_date($objp->dp,'day').'</td>';
-							print '<td align="right">'.price($objp->total_ht).'</td>';
-							print '</tr>';
-							$total = $total + $objp->total_ht;
-							$i++;
-						}
-						print '<tr class="liste_total">';
-						print '<td align="left">'.$langs->trans('TotalHT').'</td>';
-						print '<td>&nbsp;</td>';
-						print '<td>&nbsp;</td>';
-						print '<td align="right">'.price($total).'</td></tr>';
-						print '</table>';
-					}
-				}
-				else
-				{
-					dol_print_error($db);
-				}
-
-				/*
-				 * Commandes rattachees
-				 */
-				if($conf->commande->enabled)
-				{
-					$sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
-					$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-					$sql.= ', '.MAIN_DB_PREFIX.'element_element as el';
-					$sql.= ' WHERE el.fk_source = c.rowid';
-					$sql.= " AND el.sourcetype = 'commande'";
-					$sql.= " AND el.fk_target = ".$fac->id;
-					$sql.= " AND el.targettype = '".$fac->element."'";
-
-					$resql = $db->query($sql);
-					if ($resql)
-					{
-						$num = $db->num_rows($resql);
-						if ($num)
-						{
-							$langs->load("orders");
-
-							$i = 0; $total = 0;
-							if ($somethingshown) print '<br>';
-							$somethingshown=1;
-							print_titre($langs->trans('RelatedOrders'));
-							print '<table class="noborder" width="100%">';
-							print '<tr class="liste_titre">';
-							print '<td width="150">'.$langs->trans('Ref').'</td>';
-							print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
-							print '<td align="center">'.$langs->trans('Date').'</td>';
-							print '<td align="right">'.$langs->trans('AmountHTShort').'</td>';
-							print '</tr>';
-							$var=true;
-							while ($i < $num)
-							{
-								$objp = $db->fetch_object($resql);
-								$var=!$var;
-								print '<tr '.$bc[$var].'><td>';
-								print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
-								print '<td>'.$objp->ref_client.'</td>';
-								print '<td align="center">'.dol_print_date($objp->date_commande,'day').'</td>';
-								print '<td align="right">'.price($objp->total_ht).'</td>';
-								print "</tr>\n";
-								$total = $total + $objp->total_ht;
-								$i++;
-							}
-							print '<tr class="liste_total">';
-							print '<td align="left">'.$langs->trans('TotalHT').'</td>';
-							print '<td>&nbsp;</td>';
-							print '<td>&nbsp;</td>';
-							print '<td align="right">'.price($total).'</td></tr>';
-							print '</table>';
-						}
-					}
-					else
-					{
-						dol_print_error($db);
+						$somethingshown=$fac->showLinkedObjectBlock($object,$objectid,$somethingshown);
 					}
 				}
 

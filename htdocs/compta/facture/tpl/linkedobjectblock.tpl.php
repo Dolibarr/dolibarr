@@ -30,7 +30,7 @@ else print_titre($langs->trans("RelatedBill"));
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("Price"); ?></td>
+	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>
 <?php 
@@ -51,7 +51,8 @@ $total = $total + $linkedObjectBlock->total_ht;
 $i++;
 } 
 ?>
-<tr class="liste_total"><td align="right" colspan="2"><?php echo $langs->trans("TotalHT"); ?></td>
+<tr class="liste_total">
+	<td align="left" colspan="2"><?php echo $langs->trans("TotalHT"); ?></td>
 	<td align="right"><?php echo price($total); ?></td>
 	<td>&nbsp;</td>
 </tr>
