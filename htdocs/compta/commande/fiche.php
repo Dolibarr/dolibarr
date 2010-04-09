@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -552,48 +552,16 @@ if ($id > 0 || ! empty($ref))
 		$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
 		/*
-		 * Liste des factures
+		 * Linked object block
 		 */
-		$sql = "SELECT f.rowid,f.facnumber, f.total_ttc, ".$db->pdate("f.datef")." as df";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql.= ", ".MAIN_DB_PREFIX."element_element as el";
-		$sql.= " WHERE f.rowid = el.fk_target";
-		$sql.= " AND el.targettype = 'facture'";
-		$sql.= " AND el.fk_source = ". $commande->id;
-		$sql.= " AND el.sourcetype = '".$commande->element."'";
-
-		$result = $db->query($sql);
-		if ($result)
+		$commande->load_object_linked($commande->id,$commande->element);
+				
+		foreach($commande->linked_object as $object => $objectid)
 		{
-			$num = $db->num_rows($result);
-			if ($num)
+			if($conf->$object->enabled)
 			{
-				if ($somethingshown) print '<br>';
-				print_titre($langs->trans("RelatedBills"));
-				$i = 0; $total = 0;
-				print '<table class="noborder" width="100%">';
-				print '<tr class="liste_titre"><td>'.$langs->trans("Ref")."</td>";
-				print '<td align="center">'.$langs->trans("Date").'</td>';
-				print '<td align="right">'.$langs->trans("Price").'</td>';
-				print "</tr>\n";
-
-				$var=True;
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$var=!$var;
-					print "<tr $bc[$var]>";
-					print '<td><a href="../facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
-					print '<td align="center">'.dol_print_date($objp->df).'</td>';
-					print '<td align="right">'.price($objp->total_ttc).'</td></tr>';
-					$i++;
-				}
-				print "</table>";
+				$somethingshown=$commande->showLinkedObjectBlock($object,$objectid,$somethingshown);
 			}
-		}
-		else
-		{
-			dol_print_error($db);
 		}
 
 		print '</td><td valign="top" width="50%">';
