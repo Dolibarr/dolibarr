@@ -25,12 +25,11 @@
 
 
 /**
- *		\brief 	Permet de calculer les parts total HT, TVA et TTC d'une ligne de
- *				facture, propale, commande ou autre depuis:
- *				quantity, unit price, remise_percent_ligne, txtva, remise_percent_global, price_base_type, info_bits *		\param 	qty							Quantity
- *		\param 	pu							Prix unitaire (HT ou TTC selon price_base_type)
- *		\param 	remise_percent_ligne		Remise ligne
- *		\param 	txtva						Taux tva
+ *		\brief 	Calculate totals (net, vat, ...) of a line.
+ *		\param	qty							Quantity
+ * 		\param 	pu							Unit price (HT or TTC selon price_base_type)
+ *		\param 	remise_percent_ligne		Discount for line
+ *		\param 	txtva						Vat rate
  *		\param 	remise_percent_global		0
  *		\param	price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
  *		\param	info_bits					Miscellanous informations on line
