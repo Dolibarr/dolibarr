@@ -1,5 +1,6 @@
 <?php
 $langs->load("main");
+header("Content-type: text/html; charset=".$conf->file->character_set_client);
 ?>
 <!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
@@ -18,7 +19,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 <html>
-<head><title>Print ticket</title>
+<head>
+<title>Print ticket</title>
 
 <style type="text/css">
 

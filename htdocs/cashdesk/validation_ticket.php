@@ -15,18 +15,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-	require ('../master.inc.php');
-	require ('include/environnement.php');
-	require ('classes/Facturation.class.php');
 
-	$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
-	unset ($_SESSION['serObjFacturation']);
+require ('../master.inc.php');
+require ('include/environnement.php');
+require ('classes/Facturation.class.php');
 
-
-		require ('tpl/ticket.tpl.php');
+$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
+unset ($_SESSION['serObjFacturation']);
 
 
-	$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
+require ('tpl/ticket.tpl.php');
+
+
+$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
 
 ?>
 
