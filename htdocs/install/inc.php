@@ -25,7 +25,7 @@
  *		\version    $Id$
  */
 
-define('DOL_VERSION','2.8.0');	// Also defined in htdocs/master.inc.php
+define('DOL_VERSION','2.8.1');	// Also defined in htdocs/master.inc.php
 
 require_once('../translate.class.php');
 require_once('../lib/functions.lib.php');
