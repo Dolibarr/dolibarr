@@ -28,6 +28,8 @@
  */
 
 require("../../main.inc.php");
+require(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.class.php');
+require(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 require(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 
 $langs->load('companies');

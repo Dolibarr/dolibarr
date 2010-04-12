@@ -1373,101 +1373,108 @@ class Facture extends CommonObject
 			$num = $this->ref;
 		}
 
-		$this->update_price();
-
-		// Validate
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-		$sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
-		if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
+		if ($num)
 		{
-			$sql.= ', datef='.$this->db->idate($this->date);
-			$sql.= ', date_lim_reglement='.$this->db->idate($this->date_lim_reglement);
+			$this->update_price();
+
+			// Validate
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+			$sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
+			if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
+			{
+				$sql.= ', datef='.$this->db->idate($this->date);
+				$sql.= ', date_lim_reglement='.$this->db->idate($this->date_lim_reglement);
+			}
+			$sql.= ' WHERE rowid = '.$this->id;
+
+			dol_syslog("Facture::set_valid sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				dol_syslog("Facture::set_valid Echec update - 10 - sql=".$sql, LOG_ERR);
+				dol_print_error($this->db);
+				$error++;
+			}
+
+			// On verifie si la facture etait une provisoire
+			if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+			{
+				// La verif qu'une remise n'est pas utilisee 2 fois est faite au moment de l'insertion de ligne
+			}
+
+			if (! $error)
+			{
+				// Define third party as a customer
+				$result=$this->client->set_as_client();
+
+				// Si active on decremente le produit principal et ses composants a la validation de facture
+				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+					// Loop on each line
+					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					{
+						if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
+						{
+							$mouvP = new MouvementStock($this->db);
+							// We decrease stock for product
+							$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
+							$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
+							if ($result < 0) { $error++; }
+						}
+					}
+				}
+			}
+
+			if (! $error)
+			{
+				// Rename directory if dir was a temporary ref
+				if (preg_match('/^[\(]?PROV/i', $this->ref))
+				{
+					// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
+					// afin de ne pas perdre les fichiers attaches
+					$facref = dol_sanitizeFileName($this->ref);
+					$snumfa = dol_sanitizeFileName($num);
+					$dirsource = $conf->facture->dir_output.'/'.$facref;
+					$dirdest = $conf->facture->dir_output.'/'.$snumfa;
+					if (file_exists($dirsource))
+					{
+						dol_syslog("Facture::set_valid rename dir ".$dirsource." into ".$dirdest);
+
+						if (@rename($dirsource, $dirdest))
+						{
+							dol_syslog("Rename ok");
+							// Suppression ancien fichier PDF dans nouveau rep
+							dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
+						}
+					}
+				}
+			}
+
+			// Set new ref
+			if (! $error)
+			{
+				$this->ref = $num;
+				$this->facnumber=$num;
+			}
+
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+
+			// Trigger calls
+			if (! $error)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
 		}
-		$sql.= ' WHERE rowid = '.$this->id;
-
-		dol_syslog("Facture::set_valid sql=".$sql);
-		$resql=$this->db->query($sql);
-		if (! $resql)
+		else
 		{
-			dol_syslog("Facture::set_valid Echec update - 10 - sql=".$sql, LOG_ERR);
-			dol_print_error($this->db);
 			$error++;
-		}
-
-		// On verifie si la facture etait une provisoire
-		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
-		{
-			// La verif qu'une remise n'est pas utilisee 2 fois est faite au moment de l'insertion de ligne
-		}
-
-		if (! $error)
-		{
-			// Define third party as a customer
-			$result=$this->client->set_as_client();
-
-			// Si active on decremente le produit principal et ses composants a la validation de facture
-			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
-			{
-				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-
-				// Loop on each line
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-				{
-					if ($this->lignes[$i]->fk_product > 0 && $this->lignes[$i]->product_type == 0)
-					{
-						$mouvP = new MouvementStock($this->db);
-						// We decrease stock for product
-						$entrepot_id = "1"; // TODO ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty, $this->lignes[$i]->subprice);
-						if ($result < 0) { $error++; }
-					}
-				}
-			}
-		}
-
-		if (! $error)
-		{
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref))
-			{
-				// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
-				// afin de ne pas perdre les fichiers attaches
-				$facref = dol_sanitizeFileName($this->ref);
-				$snumfa = dol_sanitizeFileName($num);
-				$dirsource = $conf->facture->dir_output.'/'.$facref;
-				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
-				if (file_exists($dirsource))
-				{
-					dol_syslog("Facture::set_valid rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest))
-					{
-						dol_syslog("Rename ok");
-						// Suppression ancien fichier PDF dans nouveau rep
-						dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
-					}
-				}
-			}
-		}
-
-		// Set new ref
-		if (! $error)
-		{
-			$this->ref = $num;
-			$this->facnumber=$num;
-		}
-
-		$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
-		// Trigger calls
-		if (! $error)
-		{
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
 		}
 
 		if (! $error)
@@ -2219,39 +2226,36 @@ class Facture extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("bills");
 
-		if (! empty($conf->global->FACTURE_ADDON))
+		if (empty($conf->global->FACTURE_ADDON))
 		{
-			$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
-			$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
+			$conf->global->FACTURE_ADDON='terre';
+		}
 
-			// Include file with class
-			$mybool=false;
-			foreach ($conf->file->dol_document_root as $dirroot)
-			{
-				$dir = $dirroot."/includes/modules/facture/";
-				// Load file with numbering class (if found)
-				$mybool|=@include_once($dir.$file);
-			}
-			if (! $mybool) dol_print_error('',"Failed to include file ".$file);
+		$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
+		$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
 
-			$obj = new $classname();
+		// Include file with class
+		$mybool=false;
+		foreach ($conf->file->dol_document_root as $dirroot)
+		{
+			$dir = $dirroot."/includes/modules/facture/";
+			// Load file with numbering class (if found)
+			$mybool|=@include_once($dir.$file);
+		}
+		if (! $mybool) dol_print_error('',"Failed to include file ".$file);
 
-			$numref = "";
-			$numref = $obj->getNumRef($soc,$this);
+		$obj = new $classname();
 
-			if ( $numref != "")
-			{
-				return $numref;
-			}
-			else
-			{
-				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
-				return "";
-			}
+		$numref = "";
+		$numref = $obj->getNumRef($soc,$this);
+
+		if ( $numref != "")
+		{
+			return $numref;
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
+			dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
 			return "";
 		}
 	}

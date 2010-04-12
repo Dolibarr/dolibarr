@@ -49,31 +49,32 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 
 	// Select templates
-	if ($conf->browser->phone)
+	$template_dir=DOL_DOCUMENT_ROOT.'/core/tpl/';	// Common case
+	if (! empty($conf->global->MAIN_USE_THEME_TEMPLATES))	// Disabled by default because make useless filsesystem calls that reduce speed.
 	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
+		if ($conf->browser->phone && ! empty($conf->global->MAIN_SMARTY))
 		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
+			// Special cases
+			if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
+			{
+				$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
+			}
+			else
+			{
+				$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
+			}
 		}
 		else
 		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
+			if ((! empty($conf->global->MAIN_SMARTY) && file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl"))
+			||  (empty($conf->global->MAIN_SMARTY) && file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl.php")))
+			{
+				$template_dir=DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
+			}
 		}
 	}
-	else
-	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl")
-			|| file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl.php"))
-		{
-			$template_dir=DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
-		}
-		else
-		{
-			$template_dir=DOL_DOCUMENT_ROOT.'/core/tpl/';
-		}
 
-		$conf->css = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
-	}
+	$conf->css = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
 
 	// Set cookie for timeout management
 	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);

@@ -21,15 +21,15 @@
 /**
  *	\file       htdocs/fourn/paiement/fiche.php
  *	\ingroup    facture, fournisseur
- *	\brief      Onglet paiement d'un paiement fournisseur
+ *	\brief      Tab to show a payment of a supplier invoice
  *	\remarks	Fichier presque identique a compta/paiement/fiche.php
  *	\version    $Id$
  */
 
-
 require("../../main.inc.php");
 require(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
-
+require(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.class.php');
+require(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 
 $langs->load('bills');
 $langs->load('banks');
