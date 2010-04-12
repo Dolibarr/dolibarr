@@ -44,33 +44,25 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$main_authentication=$conf->file->main_authentication;
 	$session_name=session_name();
+	
+	$dol_url_root = DOL_URL_ROOT;
 
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 
 	// Select templates
 	$template_dir=DOL_DOCUMENT_ROOT.'/core/tpl/';	// Common case
-	if (! empty($conf->global->MAIN_USE_THEME_TEMPLATES))	// Disabled by default because make useless filsesystem calls that reduce speed.
+	if ($conf->browser->phone)
 	{
-		if ($conf->browser->phone && ! empty($conf->global->MAIN_SMARTY))
+		// Special cases
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
 		{
-			// Special cases
-			if (file_exists(DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone))
-			{
-				$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
-			}
-			else
-			{
-				$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
-			}
+			$theme = 'default';
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/".$conf->browser->phone."/tpl/";
 		}
 		else
 		{
-			if ((! empty($conf->global->MAIN_SMARTY) && file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl"))
-			||  (empty($conf->global->MAIN_SMARTY) && file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl.php")))
-			{
-				$template_dir=DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
-			}
+			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
 		}
 	}
 
@@ -202,83 +194,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$main_home=nl2br($conf->global->MAIN_HOME);
 
 	$conf_css=DOL_URL_ROOT.$conf->css;
-
-
-	// START SMARTY
-	if ($conf->global->MAIN_SMARTY)
-	{
-		global $smarty;
-
-		$smarty->template_dir=$template_dir;
-
-		$smarty->assign('conf_css', $conf_css);
-		$smarty->assign('langs', $langs);
-
-		if (! empty($conf->global->MAIN_HTML_HEADER)) $smarty->assign('main_html_header', $conf->global->MAIN_HTML_HEADER);
-
-		$smarty->assign('php_self', $php_self);
-		$smarty->assign('character_set_client',$conf->file->character_set_client);
-
-		$smarty->assign('theme', 'default');
-
-		$smarty->assign('dol_url_root', DOL_URL_ROOT);
-
-		$smarty->assign('focus_element', $focus_element);
-
-		$smarty->assign('login_background', $login_background);
-
-		$smarty->assign('title', $title);
-
-		$smarty->assign('login', $login);
-		$smarty->assign('password', $password);
-
-		$smarty->assign('logo', $urllogo);
-		$smarty->assign('logo_width', $width);
-		$smarty->assign('logo_rowspan', $rowspan);
-
-		$smarty->assign('select_entity', $select_entity);
-		$smarty->assign('captcha', $captcha);
-		$smarty->assign('captcha_refresh', $captcha_refresh);
-
-		$smarty->assign('forgetpasslink', $forgetpasslink);
-		$smarty->assign('helpcenterlink', $helpcenterlink);
-
-		$smarty->assign('main_home', $main_home);
-
-	    // Google Adsense (ex: demo mode)
-		if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
-		{
-			$smarty->assign('main_google_ad_client', $conf->global->MAIN_GOOGLE_AD_CLIENT);
-			$smarty->assign('main_google_ad_name', $conf->global->MAIN_GOOGLE_AD_NAME);
-			$smarty->assign('main_google_ad_slot', $conf->global->MAIN_GOOGLE_AD_SLOT);
-			$smarty->assign('main_google_ad_width', $conf->global->MAIN_GOOGLE_AD_WIDTH);
-			$smarty->assign('main_google_ad_height', $conf->global->MAIN_GOOGLE_AD_HEIGHT);
-
-			$google_ad_template = DOL_DOCUMENT_ROOT."/core/tpl/google_ad.tpl";
-			$smarty->assign('google_ad_tpl', $google_ad_template);
-		}
-
-		if (! empty($conf->global->MAIN_HTML_FOOTER)) $smarty->assign('main_html_footer', $conf->global->MAIN_HTML_FOOTER);
-		$smarty->assign('main_authentication', $main_authentication);
-		$smarty->assign('session_name', $session_name);
-
-		// Message
-		if (! empty($_SESSION["dol_loginmesg"]))
-		{
-			$smarty->assign('dol_loginmesg', $_SESSION["dol_loginmesg"]);
-		}
-
-		// Creation du template
-		$smarty->display('login.tpl');	// To use Smarty
-		// Suppression de la version compilee
-		$smarty->clear_compiled_tpl('login.tpl');
-
-		// END SMARTY
-	}
-	else
-	{
-		include($template_dir.'login.tpl.php');	// To use native PHP
-	}
+	
+	include($template_dir.'login.tpl.php');	// To use native PHP
 
 	$_SESSION["dol_loginmesg"] = '';
 }
