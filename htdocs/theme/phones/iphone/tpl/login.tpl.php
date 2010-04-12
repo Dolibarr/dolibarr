@@ -120,8 +120,9 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 				<span class="arrow"></span>
 			</a>
 		</li>
+		<?php } ?>
 	</ul>
-<?php } } ?>
+<?php } ?>
 
 <?php if ($dol_loginmesg) { ?>
 	<script type="text/javascript" language="javascript">
