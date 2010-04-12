@@ -100,9 +100,8 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 <?php if ($forgetpasslink || $helpcenterlink) { ?>
 	<span class="graytitle"><?php echo $langs->trans('Tools'); ?></span>
-	
-	<?php if ($forgetpasslink) { ?>
 	<ul class="pageitem">
+	<?php if ($forgetpasslink) { ?>
 		<li class="menu">
 			<a href="<?php echo $dol_url_root.'/user/passwordforgotten.php'; ?>">
 				<img alt="tools" src="<?php echo $dol_url_root.'/theme/phones/iphone/theme/'.$theme.'/thumbs/tools.png'; ?>" />
@@ -120,7 +119,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 				<span class="arrow"></span>
 			</a>
 		</li>
-		<?php } ?>
+	<?php } ?>
 	</ul>
 <?php } ?>
 
