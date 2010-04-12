@@ -25,10 +25,11 @@
 
 define('NOLOGIN',1);
 
-if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
-if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
-if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
-if (! defined('NOREQUIRESOC'))  define('NOREQUIRESOC','1');
+if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER',1);
+if (! defined('NOREQUIREDB'))     define('NOREQUIREDB',1);
+if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN',1);
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC',1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 
 require_once("../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/includes/artichow/Artichow.cfg.php';

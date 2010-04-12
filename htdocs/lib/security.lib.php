@@ -51,7 +51,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 
 	// Select templates
-	$template_dir=DOL_DOCUMENT_ROOT.'/core/tpl/';	// Common case
 	if ($conf->browser->phone)
 	{
 		// Special cases
@@ -65,8 +64,21 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$template_dir=DOL_DOCUMENT_ROOT."/theme/phones/others/tpl/";
 		}
 	}
+	else
+	{
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl"))
+		{
+			$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
+		}
+		else
+		{
+			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
+		}
 
-	$conf->css = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
+		$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
+
+		$conf_css = DOL_URL_ROOT.$conf->css;
+	}
 
 	// Set cookie for timeout management
 	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
@@ -192,8 +204,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 	$main_home=nl2br($conf->global->MAIN_HOME);
-
-	$conf_css=DOL_URL_ROOT.$conf->css;
+	
+	$dol_loginmesg = $_SESSION["dol_loginmesg"];
 	
 	include($template_dir.'login.tpl.php');	// To use native PHP
 
