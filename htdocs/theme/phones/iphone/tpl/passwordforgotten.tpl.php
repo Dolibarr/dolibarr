@@ -61,7 +61,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	
 	<span class="graytitle"><?php echo $langs->trans('Identification'); ?></span>
 	<ul class="pageitem">
-		<li class="form">
+		<li class="bigfield">
 			<input placeholder="<?php echo $langs->trans('Login'); ?>" type="text" <?php echo $disabled; ?> id="username" name="username" value="<?php echo $login; ?>" />
 		</li>
 	</ul>
@@ -69,7 +69,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	<?php if ($select_entity) { ?>
 	<span class="graytitle"><?php echo $langs->trans('Entity'); ?></span>
 	<ul class="pageitem">
-		<li class="form">
+		<li class="select">
 			<?php echo $select_entity; ?>
 			<span class="arrow"></span>
         </li>
@@ -79,17 +79,15 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	<?php if ($captcha) { ?>
 	<span class="graytitle"><?php echo $langs->trans('SecurityCode'); ?></span>
 	<ul class="pageitem">
-		<li class="form">
-			<span class="narrow">
-				<input type="text" id="securitycode" name="code" />
-				<img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" />
-			</span>
+		<li class="smallfield">
+			<input placeholder="<?php echo $langs->trans('SecurityCode'); ?>" type="text" id="securitycode" name="code" />
+			<img src="<?php echo $dol_url_root.'/lib/antispamimage.php'; ?>" border="0" width="128" height="36" />
 		</li>
 	</ul>
 	<?php } ?>
 	
 	<ul class="pageitem">
-		<li class="form">
+		<li class="button">
 			<input name="input Button" <?php echo $disabled; ?> type="submit" value="<?php echo $langs->trans('SendByMail'); ?>" />
 		</li>
 	</ul>
