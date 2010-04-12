@@ -735,7 +735,7 @@ else
 
 			// Third party
 			print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="4">'.$societe->getNomUrl(1);
-			print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
+			print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php?socid='.$fac->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
 			print '</tr>';
 
 			// Type
