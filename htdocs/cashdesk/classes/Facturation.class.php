@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * Copyright (C) 2010      Juanjo Menent    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,7 @@ class Facturation {
 		
 
 		// Define part of HT, VAT, TTC
-		$resultarray=calcul_price_total($this->qte,$this->prix(),$this->remise_percent(),$vat_rate,0,'HT',0);
+		$resultarray=calcul_price_total($this->qte,$this->prix(),$this->remise_percent(),$vat_rate,0,0,0,'HT',0);
 
 		// Calcul du total ht sans remise
 		$total_ht = $resultarray[0];

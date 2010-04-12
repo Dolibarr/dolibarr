@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1157,7 +1158,7 @@ function migrate_price_facture($db,$langs,$conf)
 				$facligne= new FactureLigne($db);
 				$facligne->fetch($rowid);
 
-				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT',$info_bits);
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva, 0, 0,$remise_percent_global,'HT',$info_bits);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -1264,7 +1265,7 @@ function migrate_price_propal($db,$langs,$conf)
 				$propalligne= new PropaleLigne($db);
 				$propalligne->fetch($rowid);
 
-				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT',$info_bits);
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -1368,7 +1369,7 @@ function migrate_price_contrat($db,$langs,$conf)
 				//$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
 				$contratligne->rowid=$rowid;
 
-				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT',$info_bits);
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -1471,7 +1472,7 @@ function migrate_price_commande($db,$langs,$conf)
 				$commandeligne= new OrderLine($db);
 				$commandeligne->fetch($rowid);
 
-				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT',$info_bits);
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -1583,7 +1584,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 				$commandeligne= new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
-				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT',$info_bits);
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];

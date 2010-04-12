@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,35 +174,35 @@ else
 print '<b>'.$langs->trans("ExamplesWithCurrentSetup").":</b><br>\n";
 
 $s=2/7;$qty=1;$vat=0;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=1;$vat=0;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=2;$vat=0;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=1;$vat=10;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
 print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=2;$vat=10;
-$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,'HT',0);
+$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
