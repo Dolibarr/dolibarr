@@ -198,3 +198,5 @@ ALTER TABLE llx_element_milestone ADD CONSTRAINT fk_element_milestone_fk_milesto
 ALTER TABLE llx_deplacement ADD COLUMN fk_statut INTEGER DEFAULT 1  NOT NULL after type;
 
 drop table llx_appro;
+
+ALTER TABLE llx_events MODIFY COLUMN user_agent     varchar(255) NULL;

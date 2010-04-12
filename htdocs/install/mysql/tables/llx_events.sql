@@ -33,7 +33,7 @@ create table llx_events
   fk_user        integer,                     -- id user
   description    varchar(250) NOT NULL,       -- full description of action
   ip             varchar(32) NOT NULL,        -- ip
-  user_agent     varchar(128) NULL,           -- user agent
+  user_agent     varchar(255) NULL,           -- user agent
   fk_object      integer                      -- id of related object
 ) type=innodb;
 

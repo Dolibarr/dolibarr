@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,7 +95,7 @@ class Events // extends CommonObject
 		$sql.= " '".$this->type."',";
 		$sql.= " ".$conf->entity.",";
 		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
-		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".$_SERVER['HTTP_USER_AGENT']."'":'NULL').",";
+		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
 		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
 		$sql.= " '".addslashes($this->description)."'";

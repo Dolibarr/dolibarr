@@ -40,6 +40,7 @@ For users:
 - Fix: Broken feature in trips and expense module.
 - Fix: Can use $ in database and login/pass values.
 - Fix: No error on upgrade if there is orphelins tasks.
+- Fix: Failed to login when user agent string was longer than 128.
 
 
 ***** ChangeLog for 2.8 compared to 2.7 *****
