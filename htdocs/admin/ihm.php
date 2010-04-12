@@ -379,7 +379,7 @@ else	// Show
     print '<br>';
 
 
-    // Liste des zone de recherche permanantes support�es
+    // Liste des zone de recherches permanentes supportees
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td><td>&nbsp;</td></tr>';
     $var=true;
