@@ -90,7 +90,7 @@ class Propal extends CommonObject
 	var $adresse;
 
 	var $products=array();
-	
+
 	var $lines = array();
 
 	var $labelstatut=array();
@@ -733,6 +733,10 @@ class Propal extends CommonObject
 		$object->id=0;
 		$object->statut=0;
 
+		require_once(DOL_DOCUMENT_ROOT ."/societe/societe.class.php");
+		$objsoc=new Societe($this->db);
+		$objsoc->fetch($object->socid);
+
 		if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 		{
 			$this->error='ErrorSetupNotComplete';
@@ -742,7 +746,7 @@ class Propal extends CommonObject
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
 		$modPropale = new $obj;
-		$numpr = $modPropale->getNextValue($soc,$object);
+		$numpr = $modPropale->getNextValue($objsoc,$object);
 
 		// Clear fields
 		$object->ref                = $numpr;
@@ -1615,7 +1619,7 @@ class Propal extends CommonObject
 						}
 					}
 				}
-				
+
 				if (! $notrigger)
 				{
 					// Call triggers

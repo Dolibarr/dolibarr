@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
@@ -23,7 +23,7 @@
 /**
 	\file       htdocs/includes/modules/propale/mod_propale_saphir.php
 	\ingroup    propale
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Saphir
+	\brief      File that contains the numbering module rules Saphir
 	\version    $Id$
 */
 
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 /**
 	\class      mod_propale_saphir
-	\brief      Classe du modèle de numérotation de référence de propale Saphir
+	\brief      Class of file that contains the numbering module rules Saphir
 */
 class mod_propale_saphir extends ModeleNumRefPropales
 {
@@ -41,7 +41,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	var $nom = 'Saphir';
 
 
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Return description of module
      *      \return     string      Texte descripif
      */
 	function info()
@@ -79,7 +79,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -109,7 +109,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
 
-		// On défini critere recherche compteur
+		// On dï¿½fini critere recherche compteur
 		$mask=$conf->global->PROPALE_SAPHIR_MASK;
 
 		if (! $mask)
