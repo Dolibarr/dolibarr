@@ -26,6 +26,7 @@ For users:
 - Fix: Can change password if has only permission change password.
 - Fix: Project PDF document show the tasks.
 - Fix: bug #29278 : SMTP fails with IP
+- Fix: Default language on login page.
 
 For developers:
 - More comments in code.

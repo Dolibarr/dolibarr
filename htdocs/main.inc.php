@@ -338,7 +338,7 @@ if (! defined('NOLOGIN'))
 
 		// Validation tests user / password
 		// If ok, the variable will be initialized login
-		// If error, we will put error message in session under the name dol_loginmesg		$goontestloop=false;
+		// If error, we will put error message in session under the name dol_loginmesg
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
 		if (isset($_POST["username"])) $goontestloop=true;
@@ -438,8 +438,7 @@ if (! defined('NOLOGIN'))
 	}
 	else
 	{
-		// It is already in a backup session login
-		// Remarks: We do not save user object poses for bp in some cases misidentified
+		// It is already in a session
 		$login=$_SESSION["dol_login"];
 		$resultFetchUser=$user->fetch($login);
 		dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);

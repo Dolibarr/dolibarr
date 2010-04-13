@@ -35,7 +35,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
 
-	$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
+	$langcode=(empty($_GET["lang"])?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):$_GET["lang"]);
 	$langs->setDefaultLang($langcode);
 
 	$langs->load("main");
@@ -44,7 +44,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$main_authentication=$conf->file->main_authentication;
 	$session_name=session_name();
-	
+
 	$dol_url_root = DOL_URL_ROOT;
 
 	$php_self = $_SERVER['PHP_SELF'];
@@ -204,9 +204,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 	$main_home=nl2br($conf->global->MAIN_HOME);
-	
+
 	$dol_loginmesg = $_SESSION["dol_loginmesg"];
-	
+
 	include($template_dir.'login.tpl.php');	// To use native PHP
 
 	$_SESSION["dol_loginmesg"] = '';
