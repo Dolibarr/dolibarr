@@ -23,29 +23,31 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 ***************************************************************************
 2007	v3.0	Laurent Destailleur		eldy@users.sourceforge.net
-		Added functions (as in http://www.ietf.org/rfc/rfc2426.txt):
-		setTitle  setOrg setProdId	setUID
+Added functions (as in http://www.ietf.org/rfc/rfc2426.txt):
+setTitle  setOrg setProdId	setUID
 ***************************************************************************/
 
 /**
-        \file       htdocs/includes/vcard/vcard.class.php
-		\brief      Classe permettant de creer un fichier vcard.
-		\author     Kai Blankenhorn.
-		\version    2.0
-
-		Ensemble des fonctions permettant de creer un fichier vcard.
-*/
-
+ *	\file       htdocs/includes/vcard/vcard.class.php
+ *	\brief      Classe permettant de creer un fichier vcard.
+ *	\author     Kai Blankenhorn.
+ *	\version    2.0
+ *
+ *  Ensemble des fonctions permettant de creer un fichier vcard.
+ */
 
 function encode($string) {
-	return escape(dol_quoted_printable_encode($string));
+	//return escape($string);
+	return escape(dol_quoted_printable_encode(utf8_decode($string)));
 }
 
 function escape($string) {
 	return str_replace(";","\;",$string);
 }
 
-// taken from php documentation comments
+/** \brief	Taken from php documentation comments
+ *  No more used
+ */
 function dol_quoted_printable_encode($input, $line_max = 76) {
 	$hex = array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
 	$lines = preg_split("/(\?:\r\n|\r|\n)/", $input);
@@ -62,10 +64,10 @@ function dol_quoted_printable_encode($input, $line_max = 76) {
 			$c = substr($line, $i, 1);
 			$dec = ord($c);
 			if ( ($dec == 32) && ($i == ($linlen - 1)) ) { // convert space at eol only
-				$c = "=20"; 
+				$c = "=20";
 			} elseif ( ($dec == 61) || ($dec < 32 ) || ($dec > 126) ) { // always encode "\t", which is *not* required
-				$h2 = floor($dec/16); $h1 = floor($dec%16); 
-				$c = $escape.$hex["$h2"].$hex["$h1"]; 
+				$h2 = floor($dec/16); $h1 = floor($dec%16);
+				$c = $escape.$hex["$h2"].$hex["$h1"];
 			}
 			if ( (strlen($newline) + strlen($c)) >= $line_max ) { // CRLF is not counted
 				$output .= $newline.$escape.$eol; // soft line break; " =\r\n" is okay
@@ -80,75 +82,78 @@ function dol_quoted_printable_encode($input, $line_max = 76) {
 }
 
 /** \class vCard
-		\brief Classe permettant de cr�er un fichier vcard
+ \brief Classe permettant de creer un fichier vcard
 
-		Ensemble des fonctions permettant de cr�er un fichier vcard
-*/
+ Ensemble des fonctions permettant de creer un fichier vcard
+ */
 
 class vCard {
 	var $properties;
 	var $filename;
 
-/**
-		\brief mise en forme du num�ro de t�lephone
-		\param	number		num�ro de t�l�phone
+	//var $encoding="UTF-8";
+	var $encoding="ISO-8859-1;ENCODING=QUOTED-PRINTABLE";
+
+	/**
+		\brief mise en forme du numero de telephone
+		\param	number		numero de telephone
 		\param	type
-*/
+		*/
 
 	function setPhoneNumber($number, $type="") {
-	// type may be PREF | WORK | HOME | VOICE | FAX | MSG | CELL | PAGER | BBS | CAR | MODEM | ISDN | VIDEO or any senseful combination, e.g. "PREF;WORK;VOICE"
+		// type may be PREF | WORK | HOME | VOICE | FAX | MSG | CELL | PAGER | BBS | CAR | MODEM | ISDN | VIDEO or any senseful combination, e.g. "PREF;WORK;VOICE"
 		$key = "TEL";
 		if ($type!="") $key .= ";".$type;
-		$key.= ";ENCODING=QUOTED-PRINTABLE";
-		$this->properties[$key] = dol_quoted_printable_encode($number);
+		$key.= ";CHARSET=".$this->encoding;
+		$this->properties[$key] = encode($number);
 	}
 
-/**
+	/**
 		\brief mise en forme de la photo
 		\param	type
 		\param	photo
 		\warning NON TESTE !
-*/
+		*/
 
 	// UNTESTED !!!
 	function setPhoto($type, $photo) { // $type = "GIF" | "JPEG"
 		$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
 	}
 
-/**
+	/**
 		\brief mise en forme du nom formate
 		\param	name
-*/
+		*/
 
 	function setFormattedName($name) {
-		$this->properties["FN"] = dol_quoted_printable_encode($name);
+		$this->properties["FN;CHARSET=".$this->encoding] = encode($name);
 	}
 
-/**
+	/**
 		\brief mise en forme du nom complet
 		\param	family
 		\param	first
 		\param	additional
 		\param	prefix
 		\param	suffix
-*/
+		*/
 
 	function setName($family="", $first="", $additional="", $prefix="", $suffix="") {
-		$this->properties["N"] = "$family;$first;$additional;$prefix;$suffix";
+		$this->properties["N;CHARSET=".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 		$this->filename = "$first%20$family.vcf";
 		if ($this->properties["FN"]=="") $this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
 	}
 
-/**
+	/**
 		\brief mise en forme de l'anniversaire
 		\param	date
-*/
+		*/
 
 	function setBirthday($date) { // $date format is YYYY-MM-DD
 		$this->properties["BDAY"] = $date;
 	}
 
-/**
+	/**
 		\brief mise en forme de l'adresse
 		\param	postoffice
 		\param	extended
@@ -158,21 +163,21 @@ class vCard {
 		\param	zip
 		\param	country
 		\param	type
-*/
+		*/
 
 	function setAddress($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL") {
-	// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
+		// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
 		$key = "ADR";
 		if ($type!="") $key.= ";$type";
-		$key.= ";ENCODING=QUOTED-PRINTABLE";
+		$key.= ";CHARSET=".$this->encoding;
 		$this->properties[$key] = encode($name).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
-		if ($this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] == "") {
+		if ($this->properties["LABEL;$type;CHARSET=".$this->encoding] == "") {
 			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
 		}
 	}
 
-/**
+	/**
 		\brief mise en forme du label
 		\param	postoffice
 		\param	extended
@@ -182,7 +187,7 @@ class vCard {
 		\param	zip
 		\param	country
 		\param	type
-*/
+		*/
 
 	function setLabel($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL") {
 		$label = "";
@@ -194,82 +199,83 @@ class vCard {
 		if ($region!="") $label.= "$region\r\n";
 		if ($country!="") $country.= "$country\r\n";
 
-		$this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($label);
+		$this->properties["LABEL;$type;CHARSET=".$this->encoding] = encode($label);
 	}
 
 	/**
 		\brief 	Mise en forme de l'email
 		\param	address		EMail
 		\param	type		Vcard type
-	*/
+		*/
 	function setEmail($address,$type="internet,pref") {
 		$this->properties["EMAIL;TYPE=".$type] = $address;
 	}
 
-/**
+	/**
 		\brief mise en forme de la note
 		\param	note
-*/
+		*/
 
 	function setNote($note) {
-		$this->properties["NOTE;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($note);
+		$this->properties["NOTE;CHARSET=".$this->encoding] = encode($note);
 	}
 
 	/**
 		\brief 	mise en forme de la fonction
 		\param	title
-	*/
+		*/
 	function setTitle($title) {
-		$this->properties["TITLE;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($title);
+		$this->properties["TITLE;CHARSET=".$this->encoding] = encode($title);
 	}
-	
+
 
 	/**
 		\brief 	mise en forme de la societe
 		\param	org
-	*/
+		*/
 	function setOrg($org) {
-		$this->properties["ORG;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($org);
+		$this->properties["ORG;CHARSET=".$this->encoding] = encode($org);
 	}
 
 
 	/**
 		\brief 	mise en forme du logiciel generateur
 		\param	prodid
-	*/
+		*/
 	function setProdId($prodid) {
-		$this->properties["PRODID;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($prodid);
+		$this->properties["PRODID;CHARSET=".$this->encoding] = encode($prodid);
 	}
 
 
 	/**
 		\brief 	mise en forme du logiciel generateur
 		\param	uid
-	*/
+		*/
 	function setUID($uid) {
-		$this->properties["UID;ENCODING=QUOTED-PRINTABLE"] = dol_quoted_printable_encode($uid);
+		$this->properties["UID;CHARSET=".$this->encoding] = encode($uid);
 	}
-	
-	
+
+
 	/**
-			\brief mise en forme de l'url
-			\param	url
-			\param	type
-	*/
+	 \brief mise en forme de l'url
+	 \param	url
+	 \param	type
+	 */
 	function setURL($url, $type="") {
-	// $type may be WORK | HOME
+		// $type may be WORK | HOME
 		$key = "URL";
 		if ($type!="") $key.= ";$type";
 		$this->properties[$key] = $url;
 	}
 
-/**
+	/**
 		\brief permet d'obtenir une vcard
-*/
+		*/
 
 	function getVCard() {
 		$text = "BEGIN:VCARD\r\n";
-		$text.= "VERSION:3.0\r\n";
+		//$text.= "VERSION:3.0\r\n";
+		$text.= "VERSION:2.1\r\n";
 		foreach($this->properties as $key => $value) {
 			$text.= "$key:$value\r\n";
 		}
@@ -279,9 +285,9 @@ class vCard {
 		return $text;
 	}
 
-/**
+	/**
 		\brief permet d'obtenir le nom de fichier
-*/
+		*/
 
 	function getFileName() {
 		return $this->filename;
