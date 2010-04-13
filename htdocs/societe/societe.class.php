@@ -1155,7 +1155,7 @@ class Societe extends CommonObject
 
 		if ($this->id)
 		{
-			require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+			require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
@@ -1187,7 +1187,7 @@ class Societe extends CommonObject
 	 */
 	function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 
 		$discountstatic=new DiscountAbsolute($this->db);
 		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue);

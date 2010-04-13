@@ -32,7 +32,7 @@ require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
@@ -283,7 +283,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 	}
 	if (! empty($_POST["remise_id_for_payment"]))
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 		$discount = new DiscountAbsolute($db);
 		$discount->fetch($_POST["remise_id_for_payment"]);
 

@@ -27,7 +27,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
 

@@ -860,7 +860,7 @@ class Facture extends CommonObject
 		global $langs;
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 
 		$this->db->begin();
 
@@ -1958,7 +1958,7 @@ class Facture extends CommonObject
 	 */
 	function getSumCreditNotesUsed()
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 
 		$discountstatic=new DiscountAbsolute($this->db);
 		$result=$discountstatic->getSumCreditNotesUsed($this);
@@ -1979,7 +1979,7 @@ class Facture extends CommonObject
 	 */
 	function getSumDepositsUsed()
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 
 		$discountstatic=new DiscountAbsolute($this->db);
 		$result=$discountstatic->getSumDepositsUsed($this);

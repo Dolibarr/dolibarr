@@ -1108,7 +1108,7 @@ class Commande extends CommonObject
 		global $langs;
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
 
 		$this->db->begin();
 
