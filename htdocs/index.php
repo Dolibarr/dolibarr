@@ -33,7 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 // If not defined, we select menu "home"
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
-$infobox=new InfoBox($db);
 
 /*
  * Actions
@@ -566,6 +565,7 @@ print '</td></tr></table>';
 /*
  * Show boxes
  */
+$infobox=new InfoBox($db);
 $boxarray=$infobox->listboxes("0",$user);       // 0=value for home page
 
 //$boxid_left = array();
