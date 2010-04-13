@@ -31,14 +31,14 @@
  * 		\param 	pu							Unit price (HT or TTC selon price_base_type)
  *		\param 	remise_percent_ligne		Discount for line
  *		\param 	txtva						Vat rate
- *		\param  txlocaltax1					Localtax1 rate
- *		\param  txlocaltax2					Localtax2 rate
+ *		\param  txlocaltax1					Localtax1 rate (used for some countries only, like spain)
+ *		\param  txlocaltax2					Localtax2 rate (used for some countries only, like spain)
  *		\param 	remise_percent_global		0
  *		\param	price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
  *		\param	info_bits					Miscellanous informations on line
  *		\return result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocaltax1, $txlocaltax2, $remise_percent_global=0, $price_base_type='HT', $info_bits=0)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocaltax1=0, $txlocaltax2=0, $remise_percent_global=0, $price_base_type='HT', $info_bits=0)
 {
 	global $conf;
 
@@ -47,7 +47,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 	//dol_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
 	if ($price_base_type == 'HT')
 	{
-		// On travaille par defaut en partant du prix HT
+		// We work to define prices using the price without tax
 		$tot_sans_remise = $pu * $qty;
 		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
 		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
@@ -75,7 +75,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 	}
 	else
 	{
-		// On calcule à l'envers en partant du prix TTC
+		// We work to define prices using the price with tax
 		$tot_sans_remise = $pu * $qty;
 		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
 		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
