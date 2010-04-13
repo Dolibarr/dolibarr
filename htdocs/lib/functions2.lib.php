@@ -1092,3 +1092,21 @@ function getListOfModels($db,$type)
 	if ($found) return $liste;
 	else return 0;
 }
+
+/**
+ * \brief	This function evaluates a string that should be a valid IPv4
+ * \return	It returns 0 if $ip is not a valid IPv4
+ * 			It returns 1 if $ip is a valid IPv4 and is a public IP
+ * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
+ */
+function is_ip($ip)
+{
+	if (!ereg("^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$", $ip)) return 0;
+	if (sprintf("%u",ip2long($ip)) == sprintf("%u",ip2long('255.255.255.255'))) return 0;
+	if (sprintf("%u",ip2long('10.0.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('10.255.255.255'))) return 2;
+	if (sprintf("%u",ip2long('172.16.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('172.31.255.255'))) return 2;
+	if (sprintf("%u",ip2long('192.168.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('192.168.255.255'))) return 2;
+	if (sprintf("%u",ip2long('169.254.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('169.254.255.255'))) return 2;
+	return 1;
+}
+
