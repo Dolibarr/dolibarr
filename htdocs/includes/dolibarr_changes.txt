@@ -7,6 +7,15 @@ ALL:
 Replace "& new" by "new"
 
 
+NUSOAP:
+-------
+* In file nusoap.php, to avoid a warning,
+Replace
+	if (isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
+By
+	if (! is_array($this->methodreturn) && isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
+
+
 FPDF:
 -----
 * All changes were added in fpdf.php file and marked with tag DOLCHANGE or DOL_CHANGE

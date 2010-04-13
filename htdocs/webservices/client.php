@@ -56,13 +56,15 @@ echo '</head>'."\n";
 
 echo '<body>'."\n";
 
-echo "<h2>Request</h2>";
+echo "<h2>Request:</h2>";
 echo '<h4>Function</h4>';
 echo $WS_METHOD;
 echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient->request, ENT_QUOTES) . '</pre>';
 
-echo "<h2>Response</h2>";
+echo '<hr>';
+
+echo "<h2>Response:</h2>";
 echo '<h4>Result</h4>';
 echo '<pre>';
 print_r($result);
