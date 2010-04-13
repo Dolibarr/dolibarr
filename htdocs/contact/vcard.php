@@ -88,10 +88,11 @@ $filename =trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
 $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 
-Header("Content-Disposition: attachment; filename=\"$filename\"");
+
+Header("Content-Disposition: attachment; filename=\"".$filename."\"");
 Header("Content-Length: ".strlen($output));
 Header("Connection: close");
-Header("Content-Type: text/x-vCard; name=\"$filename\"");
+Header("Content-Type: text/x-vcard; name=\"".$filename."\"");
 
 print $output;
 
