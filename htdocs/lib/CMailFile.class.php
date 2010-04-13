@@ -401,17 +401,18 @@ class CMailFile
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
 					$result=$this->smtps->sendMsg();
-					if (! $result)
-					{
-						$this->error=$this->smtps->getErrors();
-					}
+					//print $result;
 				}
 
 				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
 				$result=$this->smtps->getErrors();
 				if (empty($this->error) && empty($result)) $res=true;
-				else $res=false;
+				else
+				{
+					if (empty($this->error)) $this->error=$result;
+					$res=false;
+				}
 
 			}
 			else

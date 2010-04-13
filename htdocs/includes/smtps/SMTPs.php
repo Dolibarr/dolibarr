@@ -658,7 +658,9 @@ class SMTPs
             // This connection attempt failed.
             else
             {
-                $this->_setErr ( $this->errno, $this->errstr );
+            	// DOL_CHANGE LDR
+            	if (empty($this->errstr)) $this->errstr='Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
+        		$this->_setErr ( $this->errno, $this->errstr );
                 $_retVal = false;
             }
         }
@@ -2517,6 +2519,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.13  2010/04/13 20:58:37  eldy
+  * Fix: Can provide ip address on smtps. Better error reporting.
+  *
   * Revision 1.12  2010/04/13 20:30:25  eldy
   * Fix: Can provide ip address on smtps. Better error reporting.
   *
