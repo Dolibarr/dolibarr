@@ -576,7 +576,7 @@ if ($id > 0 || ! empty($ref))
 			$text=$langs->trans('ConfirmValidateOrder',$newref);
 			if ($conf->notification->enabled)
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+				require_once(DOL_DOCUMENT_ROOT ."/core/notify.class.php");
 				$notify=new	Notify($db);
 				$text.='<br>';
 				$text.=$notify->confirmMessage(3,$commande->socid);
