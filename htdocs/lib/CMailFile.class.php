@@ -401,7 +401,10 @@ class CMailFile
 				{
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->smtps->setDebug(true);
 					$result=$this->smtps->sendMsg();
-					//print $resultvalue;
+					if (! $result)
+					{
+						$this->error=$this->smtps->getErrors();
+					}
 				}
 
 				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();

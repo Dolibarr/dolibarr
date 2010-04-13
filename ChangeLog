@@ -25,6 +25,7 @@ For users:
 - Fix: Format number was wrong for ar_AR language.
 - Fix: Can change password if has only permission change password.
 - Fix: Project PDF document show the tasks.
+- Fix: bug #29278 : SMTP fails with IP
 
 For developers:
 - More comments in code.

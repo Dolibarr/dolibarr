@@ -627,7 +627,11 @@ class SMTPs
         $host=$this->getHost();
         $host=preg_replace('@tcp://@i','',$host);	// Remove prefix
         $host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-        if ( (gethostbyname ( $host )) == $host )
+
+        // DOL_CHANGE LDR
+        include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
+
+        if ( (! is_ip($host)) && ((gethostbyname ( $host )) == $host) )
         {
             $this->_setErr ( 99, $host . ' is either offline or is an invalid host name.' );
             $_retVal = false;
@@ -1996,7 +2000,7 @@ class SMTPs
             */
             //$content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
             $content = 'Content-Type: multipart/mixed; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
-            
+
 // TODO Restore
 //                     . "\r\n"
 //                     . 'This is a multi-part message in MIME format.' . "\r\n";
@@ -2513,6 +2517,9 @@ class SMTPs
 
  /**
   * $Log$
+  * Revision 1.12  2010/04/13 20:30:25  eldy
+  * Fix: Can provide ip address on smtps. Better error reporting.
+  *
   * Revision 1.11  2010/01/12 13:02:07  hregis
   * Fix: missing attach-files
   *

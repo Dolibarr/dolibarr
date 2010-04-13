@@ -1101,7 +1101,7 @@ function getListOfModels($db,$type)
  */
 function is_ip($ip)
 {
-	if (!ereg("^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$", $ip)) return 0;
+	if (!preg_match("/^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/", $ip)) return 0;
 	if (sprintf("%u",ip2long($ip)) == sprintf("%u",ip2long('255.255.255.255'))) return 0;
 	if (sprintf("%u",ip2long('10.0.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('10.255.255.255'))) return 2;
 	if (sprintf("%u",ip2long('172.16.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('172.31.255.255'))) return 2;
