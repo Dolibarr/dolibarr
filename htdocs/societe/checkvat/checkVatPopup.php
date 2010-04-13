@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/nusoap/lib/nusoap.php");
 
 $langs->load("companies");
 
-$WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/api/checkVatPort';
+$WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/services/checkVatService';
 $WS_METHOD ='checkVat';
 
 
@@ -66,10 +66,12 @@ else
 	dol_syslog("Call method ".$WS_METHOD);
 	$result = $soapclient->call($WS_METHOD,$parameters);
 
-	//	print "x".is_array($result)."i";
-	//	print_r($result);
-	//	print $soapclient->request.'<br>';
-	//	print $soapclient->response.'<br>';
+	//var_dump($parameters);
+	//var_dump($soapclient);
+	//print "x".is_array($result)."i";
+	//var_dump($result);
+	//print $soapclient->request.'<br>';
+	//print $soapclient->response.'<br>';
 
 	$messagetoshow='';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
