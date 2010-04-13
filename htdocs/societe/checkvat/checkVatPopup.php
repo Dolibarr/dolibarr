@@ -59,8 +59,8 @@ else
 						"vatNumber" => $vatNumber);
 
 	// Set the WebService URL
-	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL);
-	$soapclient = new nusoap_client($WS_DOL_URL);
+	dol_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
+	$soapclient = new soapclient_nusoap($WS_DOL_URL);
 
 	// Call the WebService and store its result in $result.
 	dol_syslog("Call method ".$WS_METHOD);
