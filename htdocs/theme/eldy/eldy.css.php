@@ -46,13 +46,13 @@ header('Content-type: text/css');
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
-
 if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If language was forced on URL by the main.inc.php
 $langs->load("main",0,1);
 $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
 $fontsize=empty($conf->browser->phone)?'12':'9';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'9';
+
 ?>
 
 /* ============================================================================== */
@@ -338,25 +338,60 @@ div.mainmenu.cashdesk {
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/pointofsale.png' ?>);
 }
 
-div.mainmenu.generic1 {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic1.png' ?>);
-	height:26px;
-}
+<?php
+// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-div.mainmenu.generic2 {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic2.png' ?>);
-	height:26px;
+$moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
+	'produit'=>'products','service'=>'products','stock'=>'products',
+	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
+	'contrat'=>'commercial','ficheinter'=>'commercial','deplacement'=>'commercial',
+	'fournisseur'=>'companies',
+	'barcode'=>'','fckeditor'=>'','categorie'=>'',
+);
+$mainmenuused='home';
+foreach($conf->modules as $key => $val)
+{
+	$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
 }
+//var_dump($mainmenuused);
+$mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
-div.mainmenu.generic3 {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic3.png' ?>);
-	height:26px;
-}
+$generic=1;
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
+foreach($mainmenuusedarray as $key => $val)
+{
+	if (empty($val) || in_array($val,$divalreadydefined)) continue;
+	//print "XXX".$val;
 
-div.mainmenu.generic4 {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/generic4.png' ?>);
-	height:26px;
+	// Search img file in module dir
+	$found=0; $url='';
+	foreach($conf->file->dol_document_root as $dirroot)
+	{
+		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
+		{
+			$url=DOL_URL_ROOT.'/'.$val.'/img/'.$val.'.png';
+			$found=1;
+			break;
+		}
+	}
+	// Img file not found
+	if (! $found && $generic <= 4)
+	{
+		$url=DOL_URL_ROOT."/theme/eldy/img/menus/generic".$generic.".png";
+		$found=1;
+		$generic++;
+	}
+	if ($found)
+	{
+		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
+		print "div.mainmenu.".$val." {\n";
+		print "	background-image: url(".$url.");\n";
+		print "	height:26px;\n";
+		print "}\n";
+	}
 }
+// End of part to add more div class css
+?>
 
 
 /* Login */
