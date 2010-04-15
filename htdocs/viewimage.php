@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,7 +208,7 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=(!empty($conf->produit->dir_temp)?$conf->produit->dir_temp:$conf->service->dir_temp).'/'.$original_file;
+		$original_file=(!empty($conf->produit->dir_output)?$conf->produit->dir_output:$conf->service->dir_output).'/'.$original_file;
 	}
 
 	// Wrapping for categories
