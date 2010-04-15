@@ -140,6 +140,9 @@ OpenBaseDir=PHP openbasedir parameter
 YouAskToCreateDatabaseSoRootRequired=You checked the box "Create database". For this, you need to provide login/password of superuser (bottom of form).
 YouAskToCreateDatabaseUserSoRootRequired=You checked the box "Create database owner". For this, you need to provide login/password of superuser (bottom of form).
 NextStepMightLastALongTime=Current step may last several minutes. Please wait until the next screen is shown completely before continuing.
+MigrationCustomerOrderShipping=Migrate shipping for customer orders storage 
+MigrationShippingDelivery=Upgrade storage of shipping 
+MigrationShippingDelivery2=Upgrade storage of shipping 2 
 
 #########
 # upgrade
