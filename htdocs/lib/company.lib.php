@@ -83,7 +83,9 @@ function societe_prepare_head($objsoc)
 	//show categorie tab
 	if ($conf->categorie->enabled)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id;
+		$type = 2;
+		if ($objsoc->fournisseur) $type = 1;
+		$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id."&type=".$type;
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;

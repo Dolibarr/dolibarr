@@ -200,3 +200,16 @@ ALTER TABLE llx_deplacement ADD COLUMN fk_statut INTEGER DEFAULT 1  NOT NULL aft
 drop table llx_appro;
 
 ALTER TABLE llx_events MODIFY COLUMN user_agent     varchar(255) NULL;
+
+create table llx_categorie_member
+(
+  fk_categorie  integer NOT NULL,
+  fk_member     integer NOT NULL
+)type=innodb;
+
+ALTER TABLE llx_categorie_member ADD PRIMARY KEY (fk_categorie, fk_member);
+ALTER TABLE llx_categorie_member ADD INDEX idx_categorie_member_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_member ADD INDEX idx_categorie_member_fk_member (fk_member);
+
+ALTER TABLE llx_categorie_member ADD CONSTRAINT fk_categorie_member_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_member ADD CONSTRAINT fk_categorie_member_member_rowid   FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);

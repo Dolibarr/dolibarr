@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  *
@@ -41,36 +41,36 @@ $dbtablename = '';
 if (! empty($_REQUEST["socid"])) {
 	$_REQUEST["id"]=$_REQUEST["socid"];
 }
-if (! isset($_REQUEST["typeid"])) $_REQUEST["typeid"]=0;
-if ($_REQUEST["typeid"] == 1) $_GET["socid"]=$_REQUEST["id"];
-if ($_REQUEST["typeid"] == 2) $_GET["socid"]=$_REQUEST["id"];
+if (! isset($_REQUEST["type"])) $_REQUEST["type"]=0;
+if ($_REQUEST["type"] == 1) $_GET["socid"]=$_REQUEST["id"];
+if ($_REQUEST["type"] == 2) $_GET["socid"]=$_REQUEST["id"];
 
 if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
-	if ($_REQUEST["typeid"] == 0) {
-		$type = 'member';
-		$objecttype = 'adherent&categorie';
+	if ($_REQUEST["type"] == 0) {
+		$type = 'product';
+		$objecttype = 'produit|service&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["ref"])?$_REQUEST["ref"]:'');
-		$dbtablename = 'adherent';
+		$dbtablename = 'product';
 		$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
 	}
-	if ($_REQUEST["typeid"] == 1) {
+	if ($_REQUEST["type"] == 1) {
 		$type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["socid"])?$_REQUEST["socid"]:'');
 		$fieldid = 'rowid';
 	}
-	if ($_REQUEST["typeid"] == 2) {
+	if ($_REQUEST["type"] == 2) {
 		$type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["socid"])?$_REQUEST["socid"]:'');
 		$fieldid = 'rowid';
 	}
-	if ($_REQUEST["typeid"] == 3) {
+	if ($_REQUEST["type"] == 3) {
 		$type = 'member';
-		$objecttype = 'produit|service&categorie';
+		$objecttype = 'adherent&categorie';
 		$objectid = isset($_REQUEST["id"])?$_REQUEST["id"]:(isset($_REQUEST["ref"])?$_REQUEST["ref"]:'');
-		$dbtablename = 'product';
+		$dbtablename = 'adherent';
 		$fieldid = isset($_REQUEST["ref"])?'ref':'rowid';
 	}
 }
@@ -87,7 +87,7 @@ $result = restrictedArea($user,$objecttype,$objectid,$dbtablename,'','',$fieldid
 //Suppression d'un objet d'une categorie
 if ($_REQUEST["removecat"])
 {
-	if ($_REQUEST["typeid"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
+	if ($_REQUEST["type"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 		$object = new Product($db);
@@ -95,17 +95,17 @@ if ($_REQUEST["removecat"])
 		if ($_REQUEST["id"])  $result = $object->fetch($_REQUEST["id"]);
 		$type = 'product';
 	}
-	if ($_REQUEST["typeid"]==1 && $user->rights->societe->creer)
+	if ($_REQUEST["type"]==1 && $user->rights->societe->creer)
 	{
 		$object = new Societe($db);
 		$result = $object->fetch($objectid);
 	}
-	if ($_REQUEST["typeid"]==2 && $user->rights->societe->creer)
+	if ($_REQUEST["type"]==2 && $user->rights->societe->creer)
 	{
 		$object = new Societe($db);
 		$result = $object->fetch($objectid);
 	}
-	if ($_REQUEST["typeid"] == 3 && $user->rights->adherent->creer)
+	if ($_REQUEST["type"] == 3 && $user->rights->adherent->creer)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 		$object = new Adherent($db);
@@ -123,7 +123,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	$_GET["id"]=$_REQUEST["id"];
 	$_GET["type"]=$_REQUEST["type"];
 
-	if ($_REQUEST["typeid"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
+	if ($_REQUEST["type"]==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 		$object = new Product($db);
@@ -131,19 +131,19 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 		if ($_REQUEST["id"])  $result = $object->fetch($_REQUEST["id"]);
 		$type = 'product';
 	}
-	if ($_REQUEST["typeid"]==1 && $user->rights->societe->creer)
+	if ($_REQUEST["type"]==1 && $user->rights->societe->creer)
 	{
 		$object = new Societe($db);
 		$result = $object->fetch($objectid);
 		$type = 'fournisseur';
 	}
-	if ($_REQUEST["typeid"]==2 && $user->rights->societe->creer)
+	if ($_REQUEST["type"]==2 && $user->rights->societe->creer)
 	{
 		$object = new Societe($db);
 		$result = $object->fetch($objectid);
 		$type = 'societe';
 	}
-	if ($_REQUEST["typeid"]==3 && $user->rights->adherent->creer)
+	if ($_REQUEST["type"]==3 && $user->rights->adherent->creer)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 		$object = new Adherent($db);
