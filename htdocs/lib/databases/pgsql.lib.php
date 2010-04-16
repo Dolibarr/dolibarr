@@ -316,6 +316,9 @@ class DoliDb
 		if (!$name){
 			$name="postgres";
 		}
+		if (!$port){
+			$port=5432;
+		}
 		$con_string = "host=$host port=$port dbname=$name user=$login password=$passwd";
 		$this->db = pg_connect($con_string);
 		if ($this->db)
@@ -1056,15 +1059,16 @@ class DoliDb
 	/**
 	 *	\brief		Return full path of dump program
 	 *	\return		string		Full path of dump program
+	 *  TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
 	 */
 	function getPathOfDump()
 	{
 		$fullpathofdump='/pathtopgdump/pg_dump';
 
-		$resql=$db->query('SHOW data_directory');
+		$resql=$this->query('SHOW data_directory');
 		if ($resql)
 		{
-			$liste=$db->fetch_array($resql);
+			$liste=$this->fetch_array($resql);
 			$basedir=$liste['data_directory'];
 			$fullpathofdump=preg_replace('/data$/','bin',$basedir).'/pg_dump';
 		}
