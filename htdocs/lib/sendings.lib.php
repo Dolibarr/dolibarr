@@ -130,9 +130,9 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, ".$db->pdate("l.date_delivery")." as date_delivery, ld.qty as qty_received,";
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
-	$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
-	$sql.= " ".MAIN_DB_PREFIX.$origin."det as obj,";
-	$sql.= " ".MAIN_DB_PREFIX."expedition as e)";
+	$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+	$sql.= ", ".MAIN_DB_PREFIX."expedition as e";
+	$sql.= ", ".MAIN_DB_PREFIX.$origin."det as obj";
     //if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
     $sql.= " WHERE obj.fk_".$origin." = ".$origin_id;

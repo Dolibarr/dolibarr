@@ -284,7 +284,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 		}
 
-		// Conditions et modes de r�glement
+		// Conditions et modes de reglement
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
