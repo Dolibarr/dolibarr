@@ -99,7 +99,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
     	
     	// D'abord on recupere la valeur max (reponse immediate car champ indexe)
       $posindice=8;
-      $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
+      $sql = "SELECT MAX(SUBSTRING(ref,".$posindice.")) as max";
     	$sql.= " FROM ".MAIN_DB_PREFIX."commande";
     	$sql.= " WHERE ref like '".$this->prefix."%'";
     	$sql.= " AND entity = ".$conf->entity;
@@ -108,7 +108,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
       if ($resql)
       {
       	$obj = $db->fetch_object($resql);
-        if ($obj) $max = $obj->max;
+        if ($obj) $max = intval($obj->max);
         else $max=0;
       }
       else

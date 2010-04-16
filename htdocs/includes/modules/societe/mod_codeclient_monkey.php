@@ -105,9 +105,9 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($type == 0) $prefix=$this->prefixcustomer;
 		if ($type == 1) $prefix=$this->prefixsupplier;
 
-		// D'abord on r�cup�re la valeur max (r�ponse imm�diate car champ ind�x�)
+		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
 		$posindice=8;
-		$sql = "SELECT MAX(0+SUBSTRING(".$field.",".$posindice.")) as max";
+		$sql = "SELECT MAX(SUBSTRING(".$field.",".$posindice.")) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."%'";
 
@@ -115,7 +115,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = $obj->max;
+			if ($obj) $max = intval($obj->max);
 			else $max=0;
 		}
 		else

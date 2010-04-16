@@ -90,7 +90,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
             // Recherche rapide car restreint par un like sur champ indexe
             $posindice=5;
             
-            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql = "SELECT MAX(SUBSTRING(ref,$posindice)) as max";
             $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
             $sql.= " WHERE ref like '".$blyy."%'";
             $sql.= " AND entity = ".$conf->entity;
@@ -98,8 +98,9 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
             $resql=$db->query($sql);
             if ($resql)
             {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
+                $obj = $db->fetch_object($resql);
+                if ($obj) $max = intval($obj->max);
+                else $max=0;
             }
         }
         else

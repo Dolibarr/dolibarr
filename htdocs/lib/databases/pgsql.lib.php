@@ -479,6 +479,7 @@ class DoliDb
 		}
 
 		$ret = @pg_query($this->db, $query);
+		//print $query;
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
