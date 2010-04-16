@@ -2000,6 +2000,8 @@ class Propal extends CommonObject
 	 */
 	function verifyNumRef($soc)
 	{
+		global $conf;
+		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql.= " WHERE ref = '".$this->ref."'";
