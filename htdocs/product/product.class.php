@@ -1454,7 +1454,8 @@ class Product extends CommonObject
 		$sql.= " AND s.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND f.fk_soc = $socid";
-		$sql.= " GROUP BY date_format(f.datef,'%Y%m') DESC";
+		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
+		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
 		return $this->_get_stats($sql,$mode);
 	}
@@ -1481,7 +1482,8 @@ class Product extends CommonObject
 		$sql.= " AND s.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND f.fk_soc = $socid";
-		$sql.= " GROUP BY date_format(f.datef,'%Y%m') DESC";
+		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
+		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
 		$resarray=$this->_get_stats($sql,$mode);
 		return $resarray;
@@ -1508,7 +1510,8 @@ class Product extends CommonObject
 		$sql.= " AND s.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
-		$sql.= " GROUP BY date_format(p.datep,'%Y%m') DESC";
+		$sql.= " GROUP BY date_format(p.datep,'%Y%m')";
+		$sql.= " ORDER BY date_format(p.datep,'%Y%m') DESC";
 
 		return $this->_get_stats($sql,$mode);
 	}
@@ -1533,7 +1536,8 @@ class Product extends CommonObject
 		$sql.= " AND s.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
-		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m') DESC";
+		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
+		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
 		return $this->_get_stats($sql,$mode);
 	}
