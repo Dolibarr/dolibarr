@@ -580,18 +580,18 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->remise_absolue?$this->remise_absolue:'null');
 		$sql.= ", 0";
 		$sql.= ", 0";
-		$sql.= ", ".$this->db->idate($this->datep);
-		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", '".$this->db->idate($this->datep)."'";
+		$sql.= ", '".$this->db->idate(mktime())."'";
 		$sql.= ", '(PROV)'";
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ", '".addslashes($this->note)."'";
 		$sql.= ", '".addslashes($this->note_public)."'";
 		$sql.= ", '".$this->modelpdf."'";
-		$sql.= ", ".$this->db->idate($this->fin_validite);
+		$sql.= ", '".$this->db->idate($this->fin_validite)."'";
 		$sql.= ", ".$this->cond_reglement_id;
 		$sql.= ", ".$this->mode_reglement_id;
 		$sql.= ", '".addslashes($this->ref_client)."'";
-		$sql.= ", ".($this->date_livraison!=''?$this->db->idate($this->date_livraison):'null');
+		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":'null');
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -2023,6 +2023,8 @@ class Propal extends CommonObject
 	 */
 	function verifyNumRef($soc)
 	{
+		global $conf;
+		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql.= " WHERE ref = '".$this->ref."'";
