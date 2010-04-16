@@ -2088,8 +2088,6 @@ else
 	{
 		if ($mesg) print $mesg.'<br>';
 
-		$facstatic = new Facture($db);
-
 		$fac = new Facture($db);
 		$result=$fac->fetch($id,$ref);
 		if ($result > 0)
@@ -3710,7 +3708,7 @@ else
 		if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
 		$sql.= ' WHERE f.fk_soc = s.rowid';
-		$sql.= " AND s.entity = ".$conf->entity;
+		$sql.= " AND f.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid) $sql.= ' AND s.rowid = '.$socid;
 		if ($_GET['filtre'])
@@ -3724,11 +3722,11 @@ else
 		}
 		if ($_GET['search_ref'])
 		{
-			$sql.= ' AND f.facnumber like \'%'.addslashes(trim($_GET['search_ref'])).'%\'';
+			$sql.= ' AND f.facnumber LIKE \'%'.addslashes(trim($_GET['search_ref'])).'%\'';
 		}
 		if ($_GET['search_societe'])
 		{
-			$sql.= ' AND s.nom like \'%'.addslashes(trim($_GET['search_societe'])).'%\'';
+			$sql.= ' AND s.nom LIKE \'%'.addslashes(trim($_GET['search_societe'])).'%\'';
 		}
 		if ($_GET['search_montant_ht'])
 		{
@@ -3751,11 +3749,11 @@ else
 		}
 		if ($_POST['sf_ref'])
 		{
-			$sql.= ' AND f.facnumber like \'%'.addslashes(trim($_POST['sf_ref'])) . '%\'';
+			$sql.= ' AND f.facnumber LIKE \'%'.addslashes(trim($_POST['sf_ref'])) . '%\'';
 		}
 		if ($sall)
 		{
-			$sql.= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
+			$sql.= ' AND (s.nom LIKE \'%'.addslashes($sall).'%\' OR f.facnumber LIKE \'%'.addslashes($sall).'%\' OR f.note LIKE \'%'.addslashes($sall).'%\' OR fd.description LIKE \'%'.addslashes($sall).'%\')';
 		}
 		$sql.= ' GROUP BY f.rowid';
 
