@@ -26,6 +26,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/emailing.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/mailing.class.php");
@@ -104,6 +105,8 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 	{
 		$mil=new Mailing($db);
 		$result=$mil->fetch($_REQUEST['id']);
+
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
 
 		if ($mil->statut == 0)
 		{
@@ -186,10 +189,26 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					$newsubject=make_substitutions($subject,$substitutionarray,$langs);
 					$newmessage=make_substitutions($message,$substitutionarray,$langs);
 
+					$arr_file = array();
+					$arr_mime = array();
+					$arr_name = array();
+					$arr_css  = array();
+
+					$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+					if (sizeof($listofpaths))
+					{
+						foreach($listofpaths as $key => $val)
+						{
+							$arr_file[]=$listofpaths[$key]['fullname'];
+							$arr_mime[]=dol_mimetype($listofpaths[$key]['name']);
+							$arr_name[]=$listofpaths[$key]['name'];
+						}
+					}
+
 					// Fabrication du mail
 					$mail = new CMailFile($newsubject, $sendto, $from, $newmessage,
-											array(), array(), array(),
-		            						'', '', 0, $msgishtml, $errorsto);
+											$arr_file, $arr_mime, $arr_name,
+		            						'', '', 0, $msgishtml, $errorsto, $arr_css);
 
 					if ($mail->error)
 					{
@@ -278,6 +297,8 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 	$mil = new Mailing($db);
 	$result=$mil->fetch($_POST["mailid"]);
 
+	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
+
 	$mil->sendto       = $_POST["sendto"];
 	if (! $mil->sendto)
 	{
@@ -285,11 +306,6 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 	}
 	if ($mil->sendto)
 	{
-		$arr_file = array();
-		$arr_mime = array();
-		$arr_name = array();
-		$arr_css  = array();
-
 		// Ajout CSS
 		if (!empty($mil->bgcolor)) $arr_css['bgcolor'] = $mil->bgcolor;
 		if (!empty($mil->bgimage)) $arr_css['bgimage'] = $mil->bgimage;
@@ -301,6 +317,23 @@ if ($_POST["action"] == 'send' && empty($_POST["cancel"]))
 		// Pratique les substitutions sur le sujet et message
 		$mil->sujet=make_substitutions($mil->sujet,$substitutionarrayfortest,$langs);
 		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest,$langs);
+
+		$arr_file = array();
+		$arr_mime = array();
+		$arr_name = array();
+		$arr_css  = array();
+
+		// Attached files
+		$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+		if (sizeof($listofpaths))
+		{
+			foreach($listofpaths as $key => $val)
+			{
+				$arr_file[]=$listofpaths[$key]['fullname'];
+				$arr_mime[]=dol_mimetype($listofpaths[$key]['name']);
+				$arr_name[]=$listofpaths[$key]['name'];
+			}
+		}
 
 		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
 		$arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$mil->email_errorsto,$arr_css);
@@ -360,6 +393,8 @@ if ($_REQUEST["action"] == 'setdesc' || $_REQUEST["action"] == 'setfrom' || $_RE
 	$mil = new Mailing($db);
 	$mil->fetch($_POST["id"]);
 
+	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
+
 	if ($_REQUEST["action"] == 'setdesc')     $mil->titre          = trim($_REQUEST["desc"]);
 	if ($_REQUEST["action"] == 'setfrom')     $mil->email_from     = trim($_REQUEST["from"]);
 	if ($_REQUEST["action"] == 'setreplyto')  $mil->email_replyto  = trim($_REQUEST["replyto"]);
@@ -384,32 +419,101 @@ if ($_REQUEST["action"] == 'setdesc' || $_REQUEST["action"] == 'setfrom' || $_RE
 }
 
 // Action update emailing
-if ($_POST["action"] == 'update' && empty($_POST["cancel"]))
+if (! empty($_POST["removedfile"]))
 {
 	$mil = new Mailing($db);
 	$mil->fetch($_POST["id"]);
 
-	$mil->sujet          = trim($_POST["sujet"]);
-	$mil->body           = trim($_POST["body"]);
-	$mil->bgcolor        = trim($_POST["bgcolor"]);
-	$mil->bgimage        = trim($_POST["bgimage"]);
+	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
 
-	if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
-	if (! $mil->body)  $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
+	$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
 
-	if (! $message)
+	// Remove file
+	$filenb=($_POST["removedfile"]-1);
+	if (isset($listofpaths[$filenb]))
 	{
-		if ($mil->update($user) >= 0)
-		{
-			Header("Location: fiche.php?id=".$mil->id);
-			exit;
-		}
-		$message=$mil->error;
+		$result=dol_delete_file($listofpaths[$filenb]['fullname'],1);
 	}
 
-	$message='<div class="error">'.$message.'</div>';
 	$_GET["action"]="edit";
 	$_GET["id"]=$_POST["id"];
+}
+
+// Action update emailing
+if ($_POST["action"] == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"]))
+{
+	$mil = new Mailing($db);
+	$mil->fetch($_POST["id"]);
+
+	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
+
+	$isupload=0;
+
+	// If upload file
+	$i='';
+	//$i=0;
+	//while ($i < 4)
+	//{
+		if (! empty($_POST["addfile".$i]) && ! empty($conf->global->MAIN_UPLOAD_DOC))
+		{
+			$isupload=1;
+
+			if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+			if (is_dir($upload_dir))
+			{
+				$result = dol_move_uploaded_file($_FILES['addedfile'.$i]['tmp_name'], $upload_dir . "/" . $_FILES['addedfile'.$i]['name'],1);
+		    	if ($result > 0)
+		        {
+		            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+		            //print_r($_FILES);
+		        }
+		        else if ($result == -99)
+		        {
+		        	// Files infected by a virus
+				    $langs->load("errors");
+		            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+		        }
+				else if ($result < 0)
+				{
+					// Echec transfert (fichier depassant la limite ?)
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+					// print_r($_FILES);
+				}
+			}
+		}
+	//	$i++;
+	//}
+
+	if (! $isupload)
+	{
+		$mil->sujet          = trim($_POST["sujet"]);
+		$mil->body           = trim($_POST["body"]);
+		$mil->bgcolor        = trim($_POST["bgcolor"]);
+		$mil->bgimage        = trim($_POST["bgimage"]);
+
+		if (! $mil->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
+		if (! $mil->body)  $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
+
+		if (! $message)
+		{
+			if ($mil->update($user) >= 0)
+			{
+				Header("Location: fiche.php?id=".$mil->id);
+				exit;
+			}
+			$message=$mil->error;
+		}
+
+		$message='<div class="error">'.$message.'</div>';
+		$_GET["action"]="edit";
+		$_GET["id"]=$_POST["id"];
+	}
+	else
+	{
+		$_GET["action"]="edit";
+		$_GET["id"]=$_POST["id"];
+	}
 }
 
 // Action confirmation validation
@@ -568,6 +672,8 @@ else
 {
 	if ($mil->fetch($_GET["id"]) >= 0)
 	{
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($mil->id,2,0,1);
+
 		$head = emailing_prepare_head($mil);
 
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
@@ -787,15 +893,30 @@ else
 			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$mil->sujet.'</td></tr>';
 
 			// Mails
-/*
-			$i=0;
-			while ($i < 4)
-			{
-				$i++;
-				$property='joined_file'.$i;
-				print '<tr><td>'.$langs->trans("MailFile").' '.$i.'</td><td colspan="3">'.$mil->$property.'</td></tr>';
-			}
-*/
+			$i='';
+			//$i=0;
+			//while ($i < 4)
+			//{
+			//	$i++;
+				//$property='joined_file'.$i;
+				print '<tr><td>'.$langs->trans("MailFile").' '.$i.'</td><td colspan="3">';
+				// List of files
+				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+				if (sizeof($listofpaths))
+				{
+					foreach($listofpaths as $key => $val)
+					{
+						print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
+						//print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" name="removedfile">';
+						print '<br>';
+					}
+				}
+				else
+				{
+					print $langs->trans("NoAttachedFiles").'<br>';
+				}
+				print '</td></tr>';
+			//}
 
 			// Message
 			print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
@@ -819,8 +940,8 @@ else
 
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
 			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
-			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($mil->email_from,0,0,1).'</td></tr>';
-			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($mil->email_errorsto,0,0,1).'</td></tr>';
+			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($mil->email_from,0,0,0,0,1).'</td></tr>';
+			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($mil->email_errorsto,0,0,0,0,1).'</td></tr>';
 
 			// Status
 			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
@@ -844,8 +965,8 @@ else
 			print '</table>';
 			print "</div>";
 
-
-			print '<form name="edit_mailing" action="fiche.php" method="post">'."\n";
+			print "\n";
+			print '<form name="edit_mailing" action="fiche.php" method="post" enctype="multipart/form-data">'."\n";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$mil->id.'">';
@@ -857,20 +978,38 @@ else
 			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$mil->sujet.'"></td></tr>';
 
 			// Add joined files
-/*			$i=0;
-			while ($i < 4)
-			{
-				$i++;
-				$property='joined_file'.$i;
+			$i='';
+			//$i=0;
+			//while ($i < 4)
+			//{
+			//	$i++;
+				//$property='joined_file'.$i;
 				print '<tr><td>'.$langs->trans("MailFile").' '.$i.'</td>';
 				print '<td colspan="3">';
-				print '<input type="file" class="flat" name="addedfile" value="'.$langs->trans("Upload").'"/>';
+				// List of files
+				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,1);
+				if (sizeof($listofpaths))
+				{
+					foreach($listofpaths as $key => $val)
+					{
+						print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
+						print ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" name="removedfile">';
+						print '<br>';
+					}
+				}
+				else
+				{
+					print $langs->trans("NoAttachedFiles").'<br>';
+				}
+				// Add link to add file
+				print '<input type="file" class="flat" name="addedfile'.$i.'" value="'.$langs->trans("Upload").'"/>';
 				print ' ';
-				print '<input type="submit" class="button" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'">';
-				print $mil->$property?'<br>'.$mil->$property:'';
+				print '<input type="submit" class="button" name="addfile'.$i.'" value="'.$langs->trans("MailingAddFile").'">';
+				//print $mil->$property?'<br>'.$mil->$property:'';
+
+
 				print '</td></tr>';
-			}
-*/
+			//}
 
 			print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 			$htmlother->select_color($mil->bgcolor,'bgcolor','edit_mailing');
