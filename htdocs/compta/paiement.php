@@ -137,7 +137,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 
 	if (! $error)
 	{
-		$db->begin();
+		//$db->begin(); TODO probleme d'imbrication de begin/commit
 
 		// Creation de la ligne paiement
 		$paiement = new Paiement($db);
@@ -172,7 +172,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 				if ($bank_line_id > 0)
 				{
 					$paiement->update_fk_bank($bank_line_id);
-					// Mise a jour liens (pour chaque facture concern�es par le paiement)
+					// Mise a jour liens (pour chaque facture concernees par le paiement)
 					foreach ($paiement->amounts as $key => $value)
 					{
 						$facid = $key;
@@ -205,7 +205,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 		if ($error == 0)
 		{
 			$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-			$db->commit();
+			//$db->commit(); TODO probleme d'imbrication de begin/commit
 			Header('Location: '.$loc);
 			exit;
 		}
