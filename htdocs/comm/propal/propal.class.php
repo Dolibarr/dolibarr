@@ -1518,17 +1518,17 @@ class Propal extends CommonObject
 				// Cas des factures liees directement
 				if ($object == 'facture')
 				{
-					$linkedInvoices[] = $object[$i];
+					$linkedInvoices[] = $objectid[$i];
 				}
 				// Cas des factures liees via la commande
 				else
 				{
-					$this->load_object_linked($object[$i],$object);
+					$this->load_object_linked($objectid[$i],$object,-1,-1);
 					foreach($this->linked_object as $object => $objectid)
 					{
 						for ($j = 0; $j<sizeof($objectid);$j++)
 						{
-							$linkedInvoices[] = $object[$j];
+							$linkedInvoices[] = $objectid[$j];
 						}
 					}
 				}

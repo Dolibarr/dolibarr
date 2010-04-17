@@ -1964,7 +1964,7 @@ if ($id > 0 || ! empty($ref))
 
 		foreach($propal->linked_object as $object => $objectid)
 		{
-			if($conf->$object->enabled)
+			if($conf->$object->enabled && $object != $propal->element)
 			{
 				$somethingshown=$propal->showLinkedObjectBlock($object,$objectid,$somethingshown);
 			}

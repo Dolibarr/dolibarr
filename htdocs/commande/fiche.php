@@ -2223,7 +2223,7 @@ else
 				
 				foreach($commande->linked_object as $object => $objectid)
 				{
-					if($conf->$object->enabled)
+					if($conf->$object->enabled && $object != $commande->element)
 					{
 						$somethingshown=$commande->showLinkedObjectBlock($object,$objectid,$somethingshown);
 					}

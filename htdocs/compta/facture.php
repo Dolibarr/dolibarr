@@ -3505,11 +3505,11 @@ else
 				/*
 				 * Linked object block
 				 */
-				$fac->load_object_linked(-1,-1,$fac->id,$fac->element);
+				$fac->load_object_linked($fac->id,$fac->element);
 				
 				foreach($fac->linked_object as $object => $objectid)
 				{
-					if($conf->$object->enabled)
+					if($conf->$object->enabled && $object != $fac->element)
 					{
 						$somethingshown=$fac->showLinkedObjectBlock($object,$objectid,$somethingshown);
 					}
