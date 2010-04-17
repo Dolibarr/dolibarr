@@ -218,7 +218,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
  *	\param      level           	Log level
  *	\remarks	This function works only if syslog module is enabled.
  * 	\remarks	This must must not use any call to other function calling dol_syslog (avoid infinite loop).
- *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si syslog, 7 si dolibarr
+ *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  */
 function dol_syslog($message, $level=LOG_INFO)
