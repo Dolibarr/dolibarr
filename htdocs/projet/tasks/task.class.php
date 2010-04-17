@@ -25,6 +25,8 @@
  *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
 
+require_once(DOL_DOCUMENT_ROOT."/core/commonobject.class.php");
+
 
 /**
  *      \class      Task
