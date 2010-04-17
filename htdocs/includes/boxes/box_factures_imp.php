@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/includes/boxes/box_factures_imp.php
- \ingroup    factures
- \brief      Module de generation de l'affichage de la box factures impayees
- \version	$Id$
+ *	\file       htdocs/includes/boxes/box_factures_imp.php
+ *	\ingroup    factures
+ *	\brief      Module de generation de l'affichage de la box factures impayees
+ *	\version	$Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
