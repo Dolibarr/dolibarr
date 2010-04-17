@@ -3505,7 +3505,7 @@ else
 				/*
 				 * Linked object block
 				 */
-				$fac->load_object_linked($fac->id,$fac->element);
+				$fac->load_object_linked(-1,-1,$fac->id,$fac->element);
 				
 				foreach($fac->linked_object as $object => $objectid)
 				{
