@@ -137,7 +137,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 
 	if (! $error)
 	{
-		//$db->begin(); TODO probleme d'imbrication de begin/commit
+		$db->begin();
 
 		// Creation de la ligne paiement
 		$paiement = new Paiement($db);
@@ -204,8 +204,8 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 
 		if ($error == 0)
 		{
+			$db->commit();
 			$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-			//$db->commit(); TODO probleme d'imbrication de begin/commit
 			Header('Location: '.$loc);
 			exit;
 		}
@@ -341,7 +341,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		{
 			$sql .= ' AND type = 2';		// If paying back a credit note, we show all credit notes
 		}
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
