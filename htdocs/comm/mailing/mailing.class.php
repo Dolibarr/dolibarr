@@ -52,6 +52,11 @@ class Mailing extends CommonObject
 	var $email_replyto;
 	var $email_errorsto;
 
+	var $joined_file1;
+	var $joined_file2;
+	var $joined_file3;
+	var $joined_file4;
+
 	var $user_creat;
 	var $user_valid;
 

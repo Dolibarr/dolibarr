@@ -62,9 +62,15 @@ class Form
 	}
 
 	/**
-	 *	\brief	Output key field for an editable field
+	 *	\brief		Output key field for an editable field
+	 * 	\param		text			Text of label
+	 * 	\param		htmlname		Name of select field
+	 * 	\param		preselected		Preselected value for parameter
+	 * 	\param		paramkey		Key of parameter (unique if there is several parameter to show)
+	 * 	\param		perm			Permission to allow button to edit parameter
+	 * 	\param		typeofdata		Type of data (string by default, email, ...)
 	 */
-	function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm)
+	function editfieldkey($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
 	{
 		global $langs;
 		$ret='';
@@ -77,9 +83,15 @@ class Form
 	}
 
 	/**
-	 *	\brief	Output val field for an editable field
+	 *	\brief		Output val field for an editable field
+	 * 	\param		text			Text of label (not used in this function)
+	 * 	\param		htmlname		Name of select field
+	 * 	\param		preselected		Preselected value for parameter
+	 * 	\param		paramkey		Key of parameter (unique if there is several parameter to show)
+	 * 	\param		perm			Permission to allow button to edit parameter
+	 * 	\param		typeofdata		Type of data (string by default, email, ...)
 	 */
-	function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm)
+	function editfieldval($text,$htmlname,$preselected,$paramkey,$paramvalue,$perm,$typeofdata='string')
 	{
 		global $langs;
 		$ret='';
@@ -98,7 +110,11 @@ class Form
 			$ret.='</tr></table>'."\n";
 			$ret.='</form>'."\n";
 		}
-		else $ret.=$preselected;
+		else
+		{
+			if ($typeofdata == 'email') $ret.=dol_print_email($preselected,0,0,0,0,1);
+			else $ret.=$preselected;
+		}
 		return $ret;
 	}
 

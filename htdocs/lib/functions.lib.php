@@ -757,11 +757,12 @@ function dol_print_url($url,$target='_blank',$max=32)
 
 /**
  * \brief		Show EMail link
- * \param		email		EMail to show (only email without <Name of recipient>)
+ * \param		email		EMail to show (only email, without <Name of recipient>)
  * \param 		cid 		Id of contact if known
  * \param 		socid 		Id of third party if known
  * \param 		addlink		0=no link to create action
  * \param		max			Max number of characters to show
+ * \param		showinvalid	Show warning if syntax email is wrong
  * \return		string		HTML Link
  */
 function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1)
@@ -793,7 +794,14 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 			$newemail='<table class="nobordernopadding"><tr><td>'.$newemail.' </td><td>&nbsp;'.$link.'</td></tr></table>';
 		}
 	}
-
+	else
+	{
+		if ($showinvalid && ! isValidEmail($email))
+		{
+			$langs->load("errors");
+			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
+		}
+	}
 	return $newemail;
 }
 

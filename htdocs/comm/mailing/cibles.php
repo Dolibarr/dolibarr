@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -177,11 +177,10 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
 	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($mil->email_from,0,0,0,0,1).'</td></tr>';
 
 	// Errors to
-	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.htmlentities($mil->email_errorsto);
-	if (! empty($mil->email_errorsto) && ! isValidEMail($mil->email_errorsto)) print img_warning($langs->trans("BadEMail"));
+	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($mil->email_errorsto,0,0,0,0,1);
 	print '</td></tr>';
 
 	// Status
