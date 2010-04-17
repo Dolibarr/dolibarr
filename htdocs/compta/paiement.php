@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -327,10 +328,8 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		 * List of unpaid invoices
 		 */
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
-		$sql.= $db->pdate('f.datef').' as df, ';
-		$sql.= ' sum(pf.amount) as am';
+		$sql.= $db->pdate('f.datef').' as df';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$sql.= ' WHERE f.fk_soc = '.$facture->socid;
 		$sql.= ' AND f.paye = 0';
 		$sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
@@ -342,7 +341,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		{
 			$sql .= ' AND type = 2';		// If paying back a credit note, we show all credit notes
 		}
-		$sql .= ' GROUP BY f.facnumber';
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -395,13 +394,14 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
 
 					// Recu
-					print '<td align="right">'.price($objp->am);
+					$paiement = $facturestatic->getSommePaiement();
+					print '<td align="right">'.price($paiement);
 					if ($creditnotes) print '+'.price($creditnotes);
 					if ($deposits) print '+'.price($deposits);
 					print '</td>';
 
 					// Reste a payer
-					print '<td align="right">'.price(price2num($objp->total_ttc - $objp->am - $creditnotes - $deposits,'MT')).'</td>';
+					print '<td align="right">'.price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits,'MT')).'</td>';
 
 					// Montant
 					print '<td align="right">';
@@ -422,7 +422,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 					$total+=$objp->total;
 					$total_ttc+=$objp->total_ttc;
-					$totalrecu+=$objp->am;
+					$totalrecu+=$paiement;
 					$totalrecucreditnote+=$creditnotes;
 					$totalrecudeposits+=$deposits;
 					$i++;

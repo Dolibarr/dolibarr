@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copytight (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,10 +76,11 @@ $sql = "SELECT b.rowid, b.dateo as do, b.amount, b.label, b.rappro, b.num_releve
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.label as labelurl, bu.url_id";
-$sql.= " FROM (";
+$sql.= " FROM ";
 if (! empty($_REQUEST["bid"])) $sql.= MAIN_DB_PREFIX."bank_class as l, ";
-$sql.= MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba)";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu on (bu.fk_bank = b.rowid AND type = 'company')";
+$sql.= MAIN_DB_PREFIX."bank_account as ba, ";
+$sql.= MAIN_DB_PREFIX."bank as b";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
 if (! empty($_REQUEST["bid"]))

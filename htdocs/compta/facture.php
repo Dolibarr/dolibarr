@@ -3701,11 +3701,9 @@ else
 		$sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 		$sql.= ' f.paye as paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid as socid';
-		if (! $sall) $sql.= ' ,sum(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= ', '.MAIN_DB_PREFIX.'facture as f';
-		if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
 		$sql.= ' WHERE f.fk_soc = s.rowid';
 		$sql.= " AND f.entity = ".$conf->entity;
@@ -3755,7 +3753,6 @@ else
 		{
 			$sql.= ' AND (s.nom LIKE \'%'.addslashes($sall).'%\' OR f.facnumber LIKE \'%'.addslashes($sall).'%\' OR f.note LIKE \'%'.addslashes($sall).'%\' OR fd.description LIKE \'%'.addslashes($sall).'%\')';
 		}
-		$sql.= ' GROUP BY f.rowid';
 
 		$sql.= ' ORDER BY ';
 		$listfield=explode(',',$sortfield);
@@ -3843,6 +3840,7 @@ else
 					$facturestatic->id=$objp->facid;
 					$facturestatic->ref=$objp->facnumber;
 					$facturestatic->type=$objp->type;
+					$paiement = $facturestatic->getSommePaiement();
 
 					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
@@ -3882,7 +3880,7 @@ else
 
 					// Date limit
 					print '<td align="center" nowrap="1">'.dol_print_date($datelimit,'day');
-					if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am)
+					if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
 					{
 						print img_warning($langs->trans('Late'));
 					}
@@ -3894,17 +3892,17 @@ else
 
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
 
-					print '<td align="right">'.price($objp->am).'</td>';
+					print '<td align="right">'.price($paiement).'</td>';
 
 					// Affiche statut de la facture
 					print '<td align="right" nowrap="nowrap">';
-					print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am,$objp->type);
+					print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$paiement,$objp->type);
 					print "</td>";
 					//print "<td>&nbsp;</td>";
 					print "</tr>\n";
 					$total+=$objp->total;
 					$total_ttc+=$objp->total_ttc;
-					$totalrecu+=$objp->am;
+					$totalrecu+=$paiement;
 					$i++;
 				}
 
