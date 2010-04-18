@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin      	<regis@dolibarr.fr>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin      	<regis@dolibarr.fr>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ class Conf
 						//print 'xxx'.$params[0].'-'.$value;
 					}
 					// If this is constant for triggers activated by a module
-					if (preg_match('/^MAIN_MODULE_([A-Z]+)_TRIGGERS$/i',$key,$regs) && $value)
+					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$regs) && $value)
 					{
 						$modulename = strtolower($regs[1]);
 						$this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
@@ -162,7 +162,7 @@ class Conf
 						$this->need_smarty[]=$module;
 					}
 					// If this is a module constant
-					if (preg_match('/^MAIN_MODULE_([A-Z]+)$/i',$key,$reg) && $value)
+					if (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);
 						//print "Module ".$module." is enabled<br>\n";
