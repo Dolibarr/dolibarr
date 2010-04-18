@@ -2696,13 +2696,13 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 
 	if($societe_vendeuse->pays_id=='ES')
 	{
-		if ($local=='1') //RE
+		if ($local==1) //RE
 		{
 			// Si achatteur non assujeti a RE, localtax1 par default=0
 			if (is_numeric($societe_acheteuse->localtax1_assuj) && ! $societe_acheteuse->localtax1_assuj) return 0;
 			if (! is_numeric($societe_acheteuse->localtax1_assuj) && $societe_acheteuse->localtax1_assuj=='localtax1off') return 0;
 		}
-		elseif ($local=='2') //IRPF
+		elseif ($local==2) //IRPF
 		{
 			// Si vendeur non assujeti a IRPF, localtax2 par default=0
 			if (is_numeric($societe_vendeuse->localtax2_assuj) && ! $societe_vendeuse->localtax2_assuj) return 0;
