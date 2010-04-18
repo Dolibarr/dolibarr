@@ -65,8 +65,9 @@ $font_loc = DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf'
 
 /* Automatic-Detection of Font if running Windows
  * kick this lines if you don't need them! */
-if (isset($_SERVER['WINDIR']) && file_exists($_SERVER['WINDIR'])){
-    $font_loc=$_SERVER['WINDIR']."\Fonts\arialbd.ttf";
+// DOL_CHANGE LDR
+if (isset($_SERVER['WINDIR']) && @file_exists($_SERVER['WINDIR'])){
+	$font_loc=$_SERVER['WINDIR']."\Fonts\arialbd.ttf";
 }
 
 /* ******************************************************************** */
@@ -76,13 +77,13 @@ if (isset($_SERVER['WINDIR']) && file_exists($_SERVER['WINDIR'])){
  * leave blank if you don't have them :(
  * genbarcode is needed to render encodings other than EAN-12/EAN-13/ISBN
  */
-if (isset($_SERVER['WINDIR']) && file_exists($_SERVER['WINDIR']))
+// DOL_CHANGE LDR
+if (isset($_SERVER['WINDIR']) && @file_exists($_SERVER['WINDIR']))
 {
 	$genbarcode_loc = DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/genbarcode/genbarcode.exe';
 }
 else
 {
-	//$genbarcode_loc = "/usr/local/bin/genbarcode";
 	$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 }
 //dol_syslog("genbarcode_loc=".$genbarcode_loc." - env_windows=".$_SERVER['WINDIR']);
