@@ -178,35 +178,35 @@ $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=1;$vat=0;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=2;$vat=0;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=1;$vat=10;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 $s=10/3;$qty=2;$vat=10;
 $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0);
 print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 print " x ".$langs->trans("Quantity").": ".$qty;
 print " - ".$langs->trans("VAT").": ".$vat.'%';
-print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[2]."<br>\n";
+print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 $db->close();
 
