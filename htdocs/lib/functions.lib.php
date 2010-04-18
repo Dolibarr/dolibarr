@@ -2599,8 +2599,8 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
 	$product=new Product($db);
 	$product->fetch($idprod);
 
-	if ($local=='1') return $product->localtax1_tx;
-	elseif ($local=='2') return $product->localtax2_tx;
+	if ($local==1) return $product->localtax1_tx;
+	elseif ($local==2) return $product->localtax2_tx;
 
 	return -1;
 }
@@ -2710,8 +2710,7 @@ function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $id
 		} else return -1;
 
 		if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;
-		return $taux_produit;
+		else return -1;
 	}
 	return 0;
 }
