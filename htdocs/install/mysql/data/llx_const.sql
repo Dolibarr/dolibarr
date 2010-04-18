@@ -180,12 +180,6 @@ insert into llx_const (name, value, type, note, visible) VALUES ('PROPALE_VALIDI
 
 
 --
--- Barcode
---
-insert into llx_const (name, value, type, note, visible, entity) values ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0,0);
-
-
---
 -- Action sur agenda
 --
 insert into llx_const (name, value, type, note, visible) values ('MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE','1','chaine','',0);

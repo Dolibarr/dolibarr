@@ -78,7 +78,7 @@ if (isset($_SERVER['WINDIR']) && @file_exists($_SERVER['WINDIR'])){
  * genbarcode is needed to render encodings other than EAN-12/EAN-13/ISBN
  */
 // DOL_CHANGE LDR
-if (isset($_SERVER['WINDIR']) && @file_exists($_SERVER['WINDIR']))
+if (isset($_SERVER['WINDIR']) && empty($conf->global->GENBARCODE_LOCATION))
 {
 	$genbarcode_loc = DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/genbarcode/genbarcode.exe';
 }
