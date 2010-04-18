@@ -93,9 +93,9 @@ class modMyModule extends DolibarrModules
 		$this->langfiles = array("mymodule");
 
 		// Constants
+		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
+		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		//Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-		//                            1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 
 		// Array to add new pages in new tabs
 		$this->tabs = array('entity:Title:@mymodule:/mymodule/mynewtab.php?id=__ID__');
