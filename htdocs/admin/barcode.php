@@ -226,7 +226,7 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 // Chemin du binaire genbarcode sous linux
-if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
+if (! isset($_SERVER['WINDIR']))
 {
 	$var=!$var;
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -236,7 +236,7 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" align="center">';
 	print '<input type="text" size="40" name="genbarcodelocation" value="'.$conf->global->GENBARCODE_LOCATION.'">';
-	if (! empty($conf->global->GENBARCODE_LOCATION) && ! file_exists($conf->global->GENBARCODE_LOCATION))
+	if (! empty($conf->global->GENBARCODE_LOCATION) && ! @file_exists($conf->global->GENBARCODE_LOCATION))
 	{
 		$langs->load("errors");
 		print '<br><font class="error">'.$langs->trans("ErrorFileNotFound",$conf->global->GENBARCODE_LOCATION).'</font>';
