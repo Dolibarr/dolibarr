@@ -194,6 +194,57 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 	}
 }
 
+// Delete several lines at once
+if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("Delete"))
+{
+	// set up a connection or die
+	if (! $conn_id)
+	{
+		$newsectioniso=utf8_decode($section);
+		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso);
+		$conn_id=$resultarray['conn_id'];
+		$ok=$resultarray['ok'];
+		$mesg=$resultarray['mesg'];
+	}
+
+	if ($conn_id && $ok && ! $mesg)
+	{
+		foreach($_POST["const"] as $const)
+		{
+			if ($const["check"])	// Is checkbox checked
+			{
+				// Remote file
+				$file=$const["file"];
+				$section=$const["section"];
+				$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
+				$newremotefileiso=utf8_decode($remotefile);
+
+				//print "x".$newremotefileiso;
+				dol_syslog("ftp/index.php ftp_delete ".$newremotefileiso);
+				$result=@ftp_delete($conn_id, $newremotefileiso);
+				if ($result)
+				{
+					$mesg .= '<div class="ok">'.$langs->trans("FileWasRemoved",$file).'</div>';
+				}
+				else
+				{
+					dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
+					$mesg .= '<div class="error">'.$langs->trans("FTPFailedToRemoveFile",$file).'</div>';
+				}
+
+				//ftp_close($conn_id);	Close later
+
+				$action='';
+			}
+		}
+
+	}
+	else
+	{
+		dol_print_error('',$mesg);
+	}
+}
+
 // Remove directory
 if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'yes')
 {
@@ -234,7 +285,7 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 	}
 }
 
-// Remove directory
+// Download directory
 if ($_REQUEST['action'] == 'download')
 {
 	// set up a connection or die
@@ -351,10 +402,38 @@ else
 		print $langs->trans("Port").': <b>'.$ftp_port.'</b><br>';
 		print $langs->trans("User").': <b>'.$ftp_user.'</b><br>';
 
-		print $langs->trans("Directory").': <b>'.$section.'</b><br>';
+		print $langs->trans("Directory").': ';
+		$sectionarray=preg_split('|[\/]|',$section);
+		// For /
+		$newsection='/';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($newsection?'&section='.urlencode($newsection):'').'">';
+		print '/';
+		print '</a> ';
+		// For other directories
+		$i=0;
+		foreach($sectionarray as $val)
+		{
+			if (empty($val)) continue;	// Discard first and last entry that should be empty as section start/end with /
+			if ($i > 0)
+			{
+				print ' / ';
+				$newsection.='/';
+			}
+			$newsection.=$val;
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual&numero_ftp='.$numero_ftp.($newsection?'&section='.urlencode($newsection):'').'">';
+			print $val;
+			print '</a>';
+			$i++;
+		}
+		print '<br>';
 		print "<br>\n";
 
 		if ($mesg) { print $mesg."<br>"; }
+
+
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
 
 		// Construit liste des repertoires
 		print '<table width="100%" class="nobordernopadding">'."\n";
@@ -484,6 +563,13 @@ else
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_file().'</a>';
 					print ' &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
+					print '<input type="hidden" name="const['.$i.'][section]" value="'.$section.'">';
+					print '<input type="hidden" name="const['.$i.'][file]" value="'.$file.'">';
+					if ($conf->use_javascript_ajax)
+					{
+						print ' &nbsp; <input type="checkbox" id="check_'.$i.'" name="const['.$i.'][check]" value="1" onClick="displayElement(\'delconst\');">';
+						print ' &nbsp; ';
+					}
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -496,6 +582,7 @@ else
 
 		print "</table>";
 
+
 		if (! $ok && $mesg) print $mesg;
 
 		// Actions
@@ -506,6 +593,19 @@ else
 		}
 		else print '&nbsp;';
 		*/
+
+		if ($conf->use_javascript_ajax)
+		{
+			print '<br>';
+			print '<div id="updateconst" align="right" style="visibility:hidden;">';
+			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+			print '</div>';
+			print '<div id="delconst" align="right" style="visibility:hidden;">';
+			print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+			print '</div>';
+		}
+
+		print "</form>";
 	}
 	else
 	{
