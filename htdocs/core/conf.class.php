@@ -81,7 +81,7 @@ class Conf
 	function setValues($db)
 	{
 		dol_syslog("Conf::setValues");
-		
+
 		// Directory of core triggers
 		$this->triggers_modules[] = DOL_DOCUMENT_ROOT . "/includes/triggers";
 
@@ -116,65 +116,69 @@ class Conf
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
 					$this->global->$key=$value;
 
-					// If this is constant for a css file activated by a module
-					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key) && $value)
+					if ($value)
 					{
-						$this->css_modules[]=$value;
-					}
-					// If this is constant for a new tab page activated by a module
-					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key) && $value)
-					{
-						$params=explode(':',$value,2);
-						$this->tabs_modules[$params[0]][]=$value;
-						//print 'xxx'.$params[0].'-'.$value;
-					}
-					// If this is constant for triggers activated by a module
-					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$regs) && $value)
-					{
-						$modulename = strtolower($regs[1]);
-						$this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
-					}
-					// If this is constant to force a module directories (used to manage some exceptions)
-					// Should not be used by modules
-					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_DIR_/i',$key,$reg) && $value)
-					{
-						$module=strtolower($reg[1]);
-						// If with submodule name
-						if (preg_match('/_DIR_([A-Z_]+)?_([A-Z]+)$/i',$key,$reg))
+						// If this is constant for a css file activated by a module
+						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_CSS$/i',$key))
 						{
-							$dir_name  = "dir_".strtolower($reg[2]);
-							$submodule = strtolower($reg[1]);
-							$this->$module->$submodule->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
-							//print '->'.$module.'->'.$submodule.'->'.$dir_name.' = '.$this->$module->$submodule->$dir_name.'<br>';
+							$this->css_modules[]=$value;
 						}
-						else if (preg_match('/_DIR_([A-Z]+)$/i',$key,$reg))
+						// If this is constant for a new tab page activated by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key))
 						{
-							$dir_name  = "dir_".strtolower($reg[1]);
-							$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
-							//print '->'.$module.'->'.$dir_name.' = '.$this->$module->$dir_name.'<br>';
+							$params=explode(':',$value,2);
+							$this->tabs_modules[$params[0]][]=$value;
+							//print 'xxx'.$params[0].'-'.$value;
 						}
-					}
-					// If this is constant for a smarty need by a module
-					if (preg_match('/^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$/i',$key) && $value)
-					{
-						$module=strtolower($reg[1]);
-						// Add this module in list of modules that need smarty
-						$this->need_smarty[]=$module;
-					}
-					// If this is a module constant
-					if (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg) && $value)
-					{
-						$module=strtolower($reg[1]);
-						//print "Module ".$module." is enabled<br>\n";
-						$this->$module->enabled=true;
-						// Add this module in list of enabled modules
-						$this->modules[]=$module;
+						// If this is constant for triggers activated by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_TRIGGERS$/i',$key,$regs))
+						{
+							$modulename = strtolower($regs[1]);
+							$this->triggers_modules[] = DOL_DOCUMENT_ROOT.'/'.$modulename.'/inc/triggers/';
+						}
+						// If this is constant to force a module directories (used to manage some exceptions)
+						// Should not be used by modules
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_DIR_/i',$key,$reg))
+						{
+							$module=strtolower($reg[1]);
+							// If with submodule name
+							if (preg_match('/_DIR_([A-Z_]+)?_([A-Z]+)$/i',$key,$reg))
+							{
+								$dir_name  = "dir_".strtolower($reg[2]);
+								$submodule = strtolower($reg[1]);
+								$this->$module->$submodule->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
+								//print '->'.$module.'->'.$submodule.'->'.$dir_name.' = '.$this->$module->$submodule->$dir_name.'<br>';
+							}
+							elseif (preg_match('/_DIR_([A-Z]+)$/i',$key,$reg))
+							{
+								$dir_name  = "dir_".strtolower($reg[1]);
+								$this->$module->$dir_name = $value;		// We put only dir name. We will add DOL_DATA_ROOT later
+								//print '->'.$module.'->'.$dir_name.' = '.$this->$module->$dir_name.'<br>';
+							}
+						}
+						// If this is constant for a smarty need by a module
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_NEEDSMARTY$/i',$key))
+						{
+							$module=strtolower($reg[1]);
+							// Add this module in list of modules that need smarty
+							$this->need_smarty[]=$module;
+						}
+						// If this is a module constant
+						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
+						{
+							$module=strtolower($reg[1]);
+							//print "Module ".$module." is enabled<br>\n";
+							$this->$module->enabled=true;
+							// Add this module in list of enabled modules
+							$this->modules[]=$module;
+						}
 					}
 				}
 				$i++;
 			}
 		}
 		$db->free($result);
+		//var_dump($this->modules);
 
 		// Clean some variables
 		// conf->menu_top et conf->menu_left are defined in main.inc.php (according to user choice)
