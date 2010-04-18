@@ -486,7 +486,7 @@ class DoliDb
 	/**
 	 *	\brief      Defini le tri de la requete.
 	 *	\param	    sortfield   liste des champ de tri
-	 *	\param	    sortorder   ordre du tri
+	 *	\param	    sortorder   ordre du tri ('ASC' or 'DESC')
 	 *	\return	    string      chaine exprimant la syntax sql de l'ordre de tri
 	 *	\TODO		A mutualiser dans classe mere
 	 */

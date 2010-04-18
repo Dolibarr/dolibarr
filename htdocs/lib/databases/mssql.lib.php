@@ -492,12 +492,12 @@ class DoliDb
 
 
 	/**
-	 \brief      Defini le tri de la requete.
-	 \param	    sortfield   liste des champ de tri
-	 \param	    sortorder   ordre du tri
-	 \return	    string      chaine exprimant la syntax sql de l'ordre de tri
-		\TODO		A mutualiser dans classe mere
-		*/
+	 *	\brief      Defini le tri de la requete.
+	 *	\param	    sortfield   liste des champ de tri
+	 *	\param	    sortorder   ordre du tri ('ASC' or 'DESC')
+	 *	\return	    string      chaine exprimant la syntax sql de l'ordre de tri
+	 *	\TODO		A mutualiser dans classe mere
+	 */
 	function order($sortfield=0,$sortorder=0)
 	{
 		if ($sortfield)
