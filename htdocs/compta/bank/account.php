@@ -461,7 +461,7 @@ if ($account || $_GET["ref"])
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= $sql_rech;
-	$sql.= " ORDER BY b.datev ASC";
+	$sql.= $db->order("b.datev", "ASC");
 	$sql.= $db->plimit($limitsql, 0);
 
 	dol_syslog("account.php get transactions - sql=".$sql);
@@ -469,7 +469,7 @@ if ($account || $_GET["ref"])
 	if ($result)
 	{
 		$total = 0;
-		$time = time();
+		$time = dol_now('tzserver');
 
 		$var=true;
 
@@ -485,7 +485,7 @@ if ($account || $_GET["ref"])
 				$var=!$var;
 
 				// Is it a transaction in future ?
-				if ($objp->do > $time && !$sep)		// Yes, we show a subtotal
+				if ($db->jdate($objp->do) > $time && !$sep)		// Yes, we show a subtotal
 				{
 					$sep = 1 ;
 					print '<tr class="liste_total"><td colspan="7">';
@@ -498,9 +498,9 @@ if ($account || $_GET["ref"])
 
 				print "<tr $bc[$var]>";
 
-				print "<td nowrap>".dol_print_date($objp->do,"day")."</td>\n";
+				print "<td nowrap>".dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
-				print "<td nowrap>".dol_print_date($objp->dv,"day")."</td>\n";
+				print "<td nowrap>".dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
 
 				print "<td nowrap>".$langs->trans($objp->fk_type)."</td>\n";
 				print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
