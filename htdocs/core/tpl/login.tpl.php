@@ -26,7 +26,7 @@ header("Content-type: text/html; charset=".$conf->file->character_set_client);
 <!-- Ce DTD est KO car inhibe document.body.scrollTop ->
 <!-- print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'; -->
 
-<!-- BEGIN TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE -->
 
 <html>
 <head>
@@ -187,4 +187,4 @@ function donnefocus() {
 </body>
 </html>
 
-<!-- END TEMPLATE -->
+<!-- END PHP TEMPLATE -->
