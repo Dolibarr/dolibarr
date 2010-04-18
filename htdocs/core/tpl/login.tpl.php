@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2009-2010 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ function donnefocus() {
 		<div align="center">
 			<script type="text/javascript"><!--
 				google_ad_client = <?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>;
-				/* {$conf->global->MAIN_GOOGLE_AD_WIDTH}x{$conf->global->MAIN_GOOGLE_AD_HEIGHT}, {$conf->global->MAIN_GOOGLE_AD_NAME} */
+				/* <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH.'x'.$conf->global->MAIN_GOOGLE_AD_HEIGHT.', '.$conf->global->MAIN_GOOGLE_AD_NAME; ?> */
 				google_ad_slot = <?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>;
 				google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
 				google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
