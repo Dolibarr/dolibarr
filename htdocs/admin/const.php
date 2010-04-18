@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/admin/const.php
  *	\ingroup    setup
- *	\brief      Admin page to defined miscellaneous constants
+ *	\brief      Admin page to define miscellaneous constants
  *	\version    $Id$
  */
 
@@ -84,7 +84,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 {
 	foreach($_POST["const"] as $const)
 	{
-		if ($const["check"])
+		if ($const["check"])	// Is checkbox checked
 		{
 			if (dolibarr_del_const($db, $const["rowid"], -1) < 0)
 			{
@@ -162,7 +162,7 @@ print '</tr>';
 print '</form>';
 print "\n";
 
-print '<form action="'.DOL_URL_ROOT.'/admin/const.php" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 # Affiche lignes des constantes
