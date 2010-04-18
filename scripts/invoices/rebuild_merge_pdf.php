@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?PHP
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -331,10 +331,10 @@ function usage()
 
     print "Rebuild PDF files for some invoices and merge PDF files into one.\n";
 	print "\n";
+	print "To build/merge PDF for invoices in a date range:\n";
+	print "Usage:   ".$script_file." filter=date dateafter datebefore [lang=langcode]\n";
 	print "To build/merge PDF for invoices with at least one payment in a date range:\n";
 	print "Usage:   ".$script_file." filter=payments dateafter datebefore [lang=langcode]\n";
-	print "To build/merge PDF for invoices ina date range:\n";
-	print "Usage:   ".$script_file." filter=date dateafter datebefore [lang=langcode]\n";
 	print "To build/merge PDF for all invoices, use filter=all\n";
 	print "Usage:   ".$script_file." filter=all\n";
 	print "To build/merge PDF for invoices with no payments, use filter=nopayment\n";
@@ -342,5 +342,7 @@ function usage()
 	print "\n";
 	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR\n";
 	print "Example: ".$script_file." filter=all lang=it_IT\n";
+	print "\n";
+	print "Note that some filters can be cumulated.\n";
 }
 ?>
