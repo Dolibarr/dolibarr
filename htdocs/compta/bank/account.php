@@ -182,6 +182,12 @@ if ($account || $_GET["ref"])
 	$param='';
 	$sql_rech='';
 	$mode_search = 0;
+	if ($_REQUEST["req_nb"])
+	{
+		$sql_rech.= " AND b.num_chq like '%".addslashes($_REQUEST["req_nb"])."%'";
+		$param.='&amp;req_nb='.urlencode($_REQUEST["req_nb"]);
+		$mode_search = 1;
+	}
 	if ($_REQUEST["req_desc"])
 	{
 		$sql_rech.= " AND b.label like '%".addslashes($_REQUEST["req_desc"])."%'";
@@ -295,6 +301,7 @@ if ($account || $_GET["ref"])
 	}
 	$navig.= ' Page ';
 	$navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($nbpage-$page).'">';
+	$navig.='<input type="hidden" name="req_nb"     value="'.$_REQUEST["req_nb"].'">';
 	$navig.='<input type="hidden" name="req_desc"   value="'.$_REQUEST["req_desc"].'">';
 	$navig.='<input type="hidden" name="req_debit"  value="'.$_REQUEST["req_debit"].'">';
 	$navig.='<input type="hidden" name="req_credit" value="'.$_REQUEST["req_credit"].'">';
@@ -385,6 +392,7 @@ if ($account || $_GET["ref"])
 	print '<td>'.$langs->trans("Date").'</td>';
 	print '<td>'.$langs->trans("Value").'</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td>'.$langs->trans("Numero").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td align="right">'.$langs->trans("Debit").'</td>';
@@ -402,6 +410,7 @@ if ($account || $_GET["ref"])
 
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">&nbsp;</td>';
+	print '<td><input type="text" class="flat" name="req_nb" value="'.$_REQUEST["req_nb"].'" size="2"></td>';
 	print '<td><input type="text" class="flat" name="req_desc" value="'.$_REQUEST["req_desc"].'" size="24"></td>';
 	print '<td><input type="text" class="flat" name="thirdparty" value="'.$_REQUEST["thirdparty"].'" size="14"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_REQUEST["req_debit"].'" size="4"></td>';
@@ -416,7 +425,7 @@ if ($account || $_GET["ref"])
 	 * select sum(amount) from solde ;
 	 */
 
-	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv,";
+	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 	if ($mode_search)
 	{
@@ -491,9 +500,10 @@ if ($account || $_GET["ref"])
 
 				print "<td nowrap>".dol_print_date($objp->do,"day")."</td>\n";
 
-				print "<td nowrap>&nbsp;".dol_print_date($objp->dv,"day")."</td>\n";
+				print "<td nowrap>".dol_print_date($objp->dv,"day")."</td>\n";
 
-				print "<td nowrap>&nbsp;".$langs->trans($objp->fk_type)." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
+				print "<td nowrap>".$langs->trans($objp->fk_type)."</td>\n";
+				print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
 				// Description
 				print '<td>';
