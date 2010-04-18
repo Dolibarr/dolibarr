@@ -226,7 +226,7 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 // Chemin du binaire genbarcode sous linux
-if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
+if (! isset($_SERVER['WINDIR']))
 {
 	$var=!$var;
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';

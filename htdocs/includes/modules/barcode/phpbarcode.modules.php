@@ -93,7 +93,7 @@ class modPhpbarcode extends ModeleBarCode
      */
 	function buildBarCode($code,$encoding,$readable='Y')
 	{
-		global $_GET,$_ENV,$_SERVER;
+		global $_GET,$_SERVER;
 		global $conf;
 		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
 
