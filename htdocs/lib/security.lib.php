@@ -206,7 +206,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$main_home=nl2br($conf->global->MAIN_HOME);
 	
 	// Google AD
-	$main_google_ad_client = (!empty($conf->global->MAIN_GOOGLE_AD_CLIENT)?1:0);
+	$main_google_ad_client = ((! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))?1:0);
 
 	$dol_loginmesg = $_SESSION["dol_loginmesg"];
 

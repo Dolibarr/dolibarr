@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +270,7 @@ if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN
 	print '<div align="center">'."\n";
 	print '<script type="text/javascript"><!--'."\n";
 	print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
-	print '/* '.$conf->global->MAIN_GOOGLE_AD_WIDTH.'x'.$conf->global->MAIN_GOOGLE_AD_HEIGHT.', '.$conf->global->MAIN_GOOGLE_AD_NAME.' */'."\n";
+	print '/* '.$conf->global->MAIN_GOOGLE_AD_NAME.' */'."\n";
 	print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
 	print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
 	print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
