@@ -66,12 +66,14 @@ class modExternalSite extends DolibarrModules
 		$this->special = 1;
 		// Name of png file (without png) used for this module
 		$this->picto='bookmark';
+		// Call to inside lang's file
+		$this->langfiles = array("@externalsite");
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array("externalsite.php");
+		$this->config_page_url = array("externalsite.php@externalsite");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled

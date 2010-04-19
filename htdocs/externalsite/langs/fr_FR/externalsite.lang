@@ -1,0 +1,4 @@
+# Dolibarr language file - fr_FR - externalsite
+CHARSET=UTF-8
+ExternalSiteSetup=Configuration du lien vers le site externe
+ExternalSiteURL=URL du site externe

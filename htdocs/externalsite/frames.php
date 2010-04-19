@@ -27,6 +27,8 @@
 
 require("../main.inc.php");
 
+$langs->load("@externalsite");
+
 if (empty($conf->global->EXTERNALSITE_URL))
 {
 	llxHeader();
