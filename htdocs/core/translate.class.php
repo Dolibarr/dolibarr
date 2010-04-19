@@ -1,7 +1,7 @@
 <?php
-/* ***************************************************************************
- * Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2009 Destailleur Laurent <eldy@users.sourceforge.net>
+/* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
+ * Copyright (C) 2004-2010 Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin       <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- * ************************************************************************* */
+ */
 
 /**
  *   	\file       htdocs/translate.class.php
@@ -148,7 +148,18 @@ class Translate {
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
-		$newdomain=str_replace('@','',$domain);	// Remove the @ if present
+		$modulename = '';
+		
+		// Search if module directory name is different of lang file name
+		if (preg_match('/^([^@]+)?@([^@]+)$/i',$domain,$regs))
+		{
+			$newdomain = (!empty($regs[1])?$regs[1]:$regs[2]);
+			$modulename = (!empty($regs[1])?$regs[2]:'');
+		}
+		else
+		{
+			$newdomain=$domain;
+		}
 
 		// Check cache
 		if (! empty($this->tab_loaded[$newdomain]))	// File already loaded for this domain
@@ -170,7 +181,7 @@ class Translate {
 		{
 			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang
 			// instead of global lang file htdocs/langs/code_CODE/xxx.lang
-			if (preg_match('/@/',$domain))	$searchdir=$searchdir ."/".$newdomain."/langs";
+			if (preg_match('/@/',$domain))	$searchdir = $searchdir."/".(!empty($modulename)?$modulename:$newdomain)."/langs";
 			else $searchdir=$searchdir."/langs";
 
 			// Directory of translation files
