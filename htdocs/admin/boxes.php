@@ -50,7 +50,10 @@ if ($_POST["action"] == 'add')
 {
 	$sql = "SELECT rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."boxes";
-	$sql.= " WHERE fk_user=0 AND box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
+	$sql.= " WHERE fk_user = 0";
+	$sql.= " AND box_id = ".$_POST["boxid"];
+	$sql.= " AND position = ".$_POST["pos"];
+	
 	$resql = $db->query($sql);
 	dol_syslog("boxes.php::search if box active sql=".$sql);
 	if ($resql)
@@ -61,13 +64,24 @@ if ($_POST["action"] == 'add')
 			$db->begin();
 			
 			// Si la boite n'est pas deja active, insert with box_order=''
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", '', 0)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
+			$sql.= "box_id";
+			$sql.= ", position";
+			$sql.= ", box_order";
+			$sql.= ", fk_user";
+			$sql.= ") values (";
+			$sql.= $_POST["boxid"];
+			$sql.= ", ".$_POST["pos"];
+			$sql.= ", ''";
+			$sql.= ", 0";
+			$sql.= ")";
+			
 			dol_syslog("boxes.php activate box sql=".$sql);
 			$resql = $db->query($sql);
 			
 			// Remove all personalized setup when a box is activated or disabled
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-			$sql.= " WHERE param like 'MAIN_BOXES_%'";
+			$sql.= " WHERE param LIKE 'MAIN_BOXES_%'";
 			dol_syslog("boxes.php delete user_param sql=".$sql);
 			$resql = $db->query($sql);
 
@@ -93,7 +107,7 @@ if ($_GET["action"] == 'delete')
 	
 	// Remove all personalized setup when a box is activated or disabled
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-	$sql.= " WHERE param like 'MAIN_BOXES_%'";
+	$sql.= " WHERE param LIKE 'MAIN_BOXES_%'";
 	$resql = $db->query($sql);
 
 	$db->commit();
@@ -260,10 +274,19 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-	
-		$module=preg_replace('/.php$/i','',$obj->file);
-		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
-	
+		
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
+		{
+			$module = $regs[1];
+			$sourcefile = "/".$regs[2]."/inc/boxes/".$module.".php";
+		}
+		else
+		{
+			$module=preg_replace('/.php$/i','',$obj->file);
+			$sourcefile = "/includes/boxes/".$module.".php";
+		}
+		
+		include_once(DOL_DOCUMENT_ROOT.$sourcefile);
 		$box=new $module($db,$obj->note);
 	
 //		if (in_array($obj->rowid, $actives) && $box->box_multiple <> 1)
@@ -274,14 +297,22 @@ if ($resql)
 		else
 		{
 			$var = ! $var;
+			
+			if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+			{
+				$logo = $box->boximg;
+			}
+			else
+			{
+				$logo=preg_replace("/^object_/i","",$box->boximg);
+			}
 	
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			$logo=preg_replace("/^object_/i","",$box->boximg);
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
 			print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';
-			print '<td>' . $obj->file . '</td>';
+			print '<td>' . $sourcefile . '</td>';
 	
 			// Pour chaque position possible, on affiche un lien
 			// d'activation si boite non deja active pour cette position
@@ -346,11 +377,29 @@ if ($resql)
 		$var = ! $var;
 		$objnext = $db->fetch_object($resql);
 	
-		$module=preg_replace('/.php$/i','',$obj->file);
-		include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
+		{
+			$module = $regs[1];
+			$sourcefile = "/".$regs[2]."/inc/boxes/".$module.".php";
+		}
+		else
+		{
+			$module=preg_replace('/.php$/i','',$obj->file);
+			$sourcefile = "/includes/boxes/".$module.".php";
+		}
+		
+		include_once(DOL_DOCUMENT_ROOT.$sourcefile);
 		$box=new $module($db,$obj->note);
-	
-		$logo=preg_replace("/^object_/i","",$box->boximg);
+		
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
+		{
+			$logo = $box->boximg;
+		}
+		else
+		{
+			$logo=preg_replace("/^object_/i","",$box->boximg);
+		}
+		
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
 		print '<td>' . ($obj->note?$obj->note:'&nbsp;') . '</td>';

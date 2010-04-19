@@ -80,9 +80,21 @@ class InfoBox
 				while ($j < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					$boxname=preg_replace('/\.php$/i','',$obj->file);
-					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
-					$box=new $boxname($this->db,$obj->note);
+					
+					if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
+					{
+						$module = $regs[1];
+						$sourcefile = "/".$regs[2]."/inc/boxes/".$module.".php";
+					}
+					else
+					{
+						$module=preg_replace('/.php$/i','',$obj->file);
+						$sourcefile = "/includes/boxes/".$module.".php";
+					}
+					
+					include_once(DOL_DOCUMENT_ROOT.$sourcefile);
+					$box=new $module($db,$obj->note);
+					
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
 					$box->position=$obj->position;
@@ -128,9 +140,21 @@ class InfoBox
 				while ($j < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					$boxname=preg_replace('/\.php$/i','',$obj->file);
-					include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxname.".php");
-					$box=new $boxname($this->db,$obj->note);
+					
+					if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
+					{
+						$module = $regs[1];
+						$sourcefile = "/".$regs[2]."/inc/boxes/".$module.".php";
+					}
+					else
+					{
+						$module=preg_replace('/.php$/i','',$obj->file);
+						$sourcefile = "/includes/boxes/".$module.".php";
+					}
+					
+					include_once(DOL_DOCUMENT_ROOT.$sourcefile);
+					$box=new $module($db,$obj->note);
+					
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
 					$box->position=$obj->position;
