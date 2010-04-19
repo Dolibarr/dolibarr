@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +72,9 @@ class modContrat extends DolibarrModules
 		// Constantes
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
+		$this->boxes[0][1] = "box_contracts.php";
 
 		// Permissions
 		$this->rights = array();

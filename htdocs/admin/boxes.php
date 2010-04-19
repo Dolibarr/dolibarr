@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
-// D�finition des positions possibles pour les boites
+// Definition des positions possibles pour les boites
 $pos_array = array(0);                             // Positions possibles pour une boite (0,1,2,...)
 $pos_name = array(0=>$langs->trans("Home"));       // Nom des positions 0=Homepage, 1=...
 $boxes = array();
@@ -48,33 +49,33 @@ if ((isset($_POST["action"]) && $_POST["action"] == 'addconst'))
 if ($_POST["action"] == 'add')
 {
 	$sql = "SELECT rowid";
-  $sql.= " FROM ".MAIN_DB_PREFIX."boxes";
-  $sql.= " WHERE fk_user=0 AND box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
-  $resql = $db->query($sql);
-  dol_syslog("boxes.php::search if box active sql=".$sql);
+	$sql.= " FROM ".MAIN_DB_PREFIX."boxes";
+	$sql.= " WHERE fk_user=0 AND box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
+	$resql = $db->query($sql);
+	dol_syslog("boxes.php::search if box active sql=".$sql);
 	if ($resql)
-  {
-  	$num = $db->num_rows($resql);
-	  if ($num == 0)
-	  {
-	  	$db->begin();
-
+	{
+		$num = $db->num_rows($resql);
+		if ($num == 0)
+		{
+			$db->begin();
+			
 			// Si la boite n'est pas deja active, insert with box_order=''
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", '', 0)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", '', 0)";
 			dol_syslog("boxes.php activate box sql=".$sql);
-	    $resql = $db->query($sql);
-
-		  // Remove all personalized setup when a box is activated or disabled
+			$resql = $db->query($sql);
+			
+			// Remove all personalized setup when a box is activated or disabled
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-		  $sql.= " WHERE param like 'MAIN_BOXES_%'";
+			$sql.= " WHERE param like 'MAIN_BOXES_%'";
 			dol_syslog("boxes.php delete user_param sql=".$sql);
-		  $resql = $db->query($sql);
+			$resql = $db->query($sql);
 
 			$db->commit();
 		}
 		
 		Header("Location: boxes.php");
-	  exit;
+		exit;
 	}
 	else
 	{
@@ -86,14 +87,14 @@ if ($_GET["action"] == 'delete')
 {
 	$db->begin();
 	
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-  $sql.= " WHERE rowid=".$_GET["rowid"];
-  $resql = $db->query($sql);
-
-  // Remove all personalized setup when a box is activated or disabled
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-  $sql.= " WHERE param like 'MAIN_BOXES_%'";
-  $resql = $db->query($sql);
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
+	$sql.= " WHERE rowid=".$_GET["rowid"];
+	$resql = $db->query($sql);
+	
+	// Remove all personalized setup when a box is activated or disabled
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
+	$sql.= " WHERE param like 'MAIN_BOXES_%'";
+	$resql = $db->query($sql);
 
 	$db->commit();
 }
@@ -101,35 +102,34 @@ if ($_GET["action"] == 'delete')
 if ($_GET["action"] == 'switch')
 {
 	// On permute les valeur du champ box_order des 2 lignes de la table boxes
-  $db->begin();
-
-  $objfrom=new ModeleBoxes($db);
-  $objfrom->fetch($_GET["switchfrom"]);
-  
-  $objto=new ModeleBoxes($db);
-  $objto->fetch($_GET["switchto"]);
-    
-  if (is_object($objfrom) && is_object($objto))
-  {
-  	$sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objto->box_order."' WHERE rowid=".$objfrom->rowid;
+	$db->begin();
+	
+	$objfrom=new ModeleBoxes($db);
+	$objfrom->fetch($_GET["switchfrom"]);
+	
+	$objto=new ModeleBoxes($db);
+	$objto->fetch($_GET["switchto"]);
+	
+	if (is_object($objfrom) && is_object($objto))
+	{
+		$sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objto->box_order."' WHERE rowid=".$objfrom->rowid;
 		//print "xx".$sql;
-    $resultupdatefrom = $db->query($sql);
-    if (! $resultupdatefrom) { dol_print_error($db); }
-    $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objfrom->box_order."' WHERE rowid=".$objto->rowid;
+		$resultupdatefrom = $db->query($sql);
+		if (! $resultupdatefrom) { dol_print_error($db); }
+		$sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objfrom->box_order."' WHERE rowid=".$objto->rowid;
 		//print "xx".$sql;
-    $resultupdateto = $db->query($sql);
-    if (! $resultupdateto) { dol_print_error($db); }
-   }
-
-   if ($resultupdatefrom && $resultupdateto)
-   {
-   	 $db->commit();
-   }
-   else
-   {
-   	 $db->rollback();
-   }
-
+		$resultupdateto = $db->query($sql);
+		if (! $resultupdateto) { dol_print_error($db); }
+	}
+	
+	if ($resultupdatefrom && $resultupdateto)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 
@@ -170,7 +170,7 @@ if ($resql)
 		array_push($actives,$obj->box_id);
 
 		if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
-		// On renum�rote l'ordre des boites si l'une d'elle est � ''
+		// On renumerote l'ordre des boites si l'une d'elle est a ''
 		// This occurs just after an insert.
 		if ($decalage)
 		{
@@ -303,7 +303,7 @@ if ($resql)
 print '</table>';
 
 /*
- * Boites activ�es
+ * Boites activees
  *
  */
 

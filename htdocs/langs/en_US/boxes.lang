@@ -14,6 +14,7 @@ BoxLastCustomerOrders=Last customer orders
 BoxLastSuppliers=Last suppliers
 BoxLastBooks=Last books
 BoxLastActions=Last actions
+BoxLastContracts=Last contracts
 BoxCurrentAccounts=Current accounts balance
 BoxSalesTurnover=Sales turnover
 BoxTotalUnpaidCustomerBills=Total unpaid customer's invoices
@@ -43,6 +44,7 @@ LastRefreshDate=Last refresh date
 NoRecordedBookmarks=No bookmarks defined. Click <a href="%s">here</a> to add bookmarks.
 NoRecordedCustomers=No recorded customers
 BoxTitleLastActionsToDo=Last %s actions to do
+BoxTitleLastContracts=Last %s contracts
 NoActionsToDo=No actions to do
 NoRecordedOrders=No recorded customer's orders
 NoRecordedProposals=No recorded proposals
