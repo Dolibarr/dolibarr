@@ -148,6 +148,7 @@ class Translate {
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
+		$newdomain = $domain;
 		$modulename = '';
 		
 		// Search if module directory name is different of lang file name
@@ -155,10 +156,6 @@ class Translate {
 		{
 			$newdomain = (!empty($regs[1])?$regs[1]:$regs[2]);
 			$modulename = (!empty($regs[1])?$regs[2]:'');
-		}
-		else
-		{
-			$newdomain=$domain;
 		}
 
 		// Check cache
