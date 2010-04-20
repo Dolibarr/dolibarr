@@ -61,11 +61,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'reset' && $user->admin)
 }
 
 /**
-   	\brief      Enable a module
-   	\param      value       Nom du module a activer
-   	\param      withdeps    Active/desactive aussi les dependances
-	\return		string		Error message or '';
-*/
+ * 	\brief      Enable a module
+ * 	\param      value       Nom du module a activer
+ * 	\param      withdeps    Active/desactive aussi les dependances
+ * 	\return		string		Error message or '';
+ */
 function Activate($value,$withdeps=1)
 {
 	global $db, $modules, $langs, $conf;
@@ -114,19 +114,31 @@ function Activate($value,$withdeps=1)
 		$result=$objMod->init();
 		if ($result <= 0) $ret=$objMod->error;
 	}
-
+	
 	if ($withdeps)
 	{
-		// Activation des modules dont le module depend
-		for ($i = 0; $i < sizeof($objMod->depends); $i++)
+		if (is_array($objMod->depends) && !empty($objMod->depends))
 		{
-			Activate($objMod->depends[$i]);
+			// Activation des modules dont le module depend
+			for ($i = 0; $i < sizeof($objMod->depends); $i++)
+			{
+				if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->depends[$i].".class.php"))
+				{
+					Activate($objMod->depends[$i]);
+				}
+			}
 		}
-
-		// Desactivation des modules qui entrent en conflit
-		for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+		
+		if (is_array($objMod->conflictwith) && !empty($objMod->conflictwith))
 		{
-			UnActivate($objMod->conflictwith[$i],0);
+			// Desactivation des modules qui entrent en conflit
+			for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+			{
+				if (file_exists(DOL_DOCUMENT_ROOT."/includes/modules/".$objMod->conflictwith[$i].".class.php"))
+				{
+					UnActivate($objMod->conflictwith[$i],0);
+				}
+			}
 		}
 	}
 
@@ -135,10 +147,10 @@ function Activate($value,$withdeps=1)
 
 
 /**
-   \brief      Disable a module
-   \param      value               Nom du module a desactiver
-   \param      requiredby          1=Desactive aussi modules dependants
-*/
+ *  \brief      Disable a module
+ *  \param      value               Nom du module a desactiver
+ *  \param      requiredby          1=Desactive aussi modules dependants
+ */
 function UnActivate($value,$requiredby=1)
 {
 	global $db, $modules, $conf;
