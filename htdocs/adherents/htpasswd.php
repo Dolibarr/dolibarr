@@ -46,14 +46,14 @@ if (! isset($cotis))
 
 
 
-$sql = "SELECT d.login, d.pass, ".$db->pdate("d.datefin")." as datefin";
+$sql = "SELECT d.login, d.pass, d.datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = $statut ";
 if ($cotis==1)
 {
 	$sql .= " AND datefin > ".$db->idate(mktime());
 }
-$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->order($sortfield,$sortorder);
 //$sql.=$db->plimit($conf->liste_limit, $offset);
 
 $resql = $db->query($sql);

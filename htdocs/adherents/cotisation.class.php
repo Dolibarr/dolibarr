@@ -280,8 +280,8 @@ class Cotisation extends CommonObject
      */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, '.$this->db->pdate('c.datec').' as datec,';
-		$sql.= ' '.$this->db->pdate('c.tms').' as datem';
+		$sql = 'SELECT c.rowid, c.datec,';
+		$sql.= ' c.tms as datem';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'cotisation as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -293,8 +293,8 @@ class Cotisation extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-				$this->date_creation     = $obj->datec;
-				$this->date_modification = $obj->datem;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);

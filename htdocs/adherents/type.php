@@ -333,7 +333,7 @@ if ($rowid > 0)
 		$membertypestatic=new AdherentType($db);
 
 		$sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe, ";
-		$sql.= " ".$db->pdate("d.datefin")." as datefin,";
+		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 		$sql.= " t.libelle as type, t.cotisation";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
@@ -484,6 +484,8 @@ if ($rowid > 0)
 		    {
 		        $objp = $db->fetch_object($resql);
 
+		        $datefin=$db->jdate($objp->datefin);
+
 		        $adh=new Adherent($db);
 
 		        // Nom
@@ -517,20 +519,20 @@ if ($rowid > 0)
 
 		        // Statut
 		        print '<td nowrap="nowrap">';
-		        print $adh->LibStatut($objp->statut,$objp->cotisation,$objp->datefin,2);
+		        print $adh->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
 		        print "</td>";
 
 		        // Date fin cotisation
-		        if ($objp->datefin)
+		        if ($datefin)
 		        {
 			        print '<td align="center" nowrap="nowrap">';
-		            if ($objp->datefin < time() && $objp->statut > 0)
+		            if ($datefin < time() && $objp->statut > 0)
 		            {
-		                print dol_print_date($objp->datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
+		                print dol_print_date($datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
 		            }
 		            else
 		            {
-		                print dol_print_date($objp->datefin,'day');
+		                print dol_print_date($datefin,'day');
 		            }
 		            print '</td>';
 		        }

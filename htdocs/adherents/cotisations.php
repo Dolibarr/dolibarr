@@ -146,8 +146,8 @@ if ($msg)	print $msg.'<br>';
 // Liste des cotisations
 $sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
-$sql.= " ".$db->pdate("c.dateadh")." as dateadh,";
-$sql.= " ".$db->pdate("c.datef")." as datef,";
+$sql.= " c.dateadh,";
+$sql.= " c.datef,";
 $sql.= " c.fk_bank as bank, c.note,";
 $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
@@ -157,7 +157,7 @@ if (isset($date_select) && $date_select != '')
 {
   $sql.= " AND dateadh LIKE '$date_select%'";
 }
-$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
@@ -229,7 +229,7 @@ if ($result)
 		print '<td>';
         if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
-			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.dol_print_date($objp->dateadh,"%Y")."\" >\n";
+			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.dol_print_date($db->jdate($objp->dateadh),"%Y")."\" >\n";
 	                //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 	                //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -272,10 +272,10 @@ if ($result)
         }
 
 		// Date start
-		print '<td align="center">'.dol_print_date($objp->dateadh,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
 
 		// Date end
-		print '<td align="center">'.dol_print_date($objp->datef,'day')."</td>\n";
+		print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
 
 		// Price
 		print '<td align="right">'.price($objp->cotisation).'</td>';

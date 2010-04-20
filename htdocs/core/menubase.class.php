@@ -243,7 +243,7 @@ class Menubase
 		$sql.= " t.perms,";
 		$sql.= " t.enabled,";
 		$sql.= " t.usertype as user,";
-		$sql.= " ".$this->db->pdate('t.tms')."";
+		$sql.= " t.tms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
 		$sql.= " WHERE t.rowid = ".$id;
 
@@ -273,7 +273,7 @@ class Menubase
 				$this->perms = $obj->perms;
 				$this->enabled = $obj->enabled;
 				$this->user = $obj->user;
-				$this->tms = $obj->tms;
+				$this->tms = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($resql);
 

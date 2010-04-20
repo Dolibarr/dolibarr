@@ -189,11 +189,11 @@ print "<br>\n";
 $max=5;
 
 $sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
-$sql.= " ".$db->pdate("a.tms")." as datem,  ".$db->pdate("datefin")." as date_end_subscription,";
+$sql.= " a.tms as datem, datefin as date_end_subscription,";
 $sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
 $sql.= " WHERE a.fk_adherent_type = ta.rowid";
-$sql.= " ORDER BY a.tms DESC";
+$sql.= $db->order("a.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
@@ -219,8 +219,8 @@ if ($resql)
 			$statictype->libelle=$obj->libelle;
 			print '<td>'.$staticmember->getNomUrl(1,24).'</td>';
 			print '<td>'.$statictype->getNomUrl(1,16).'</td>';
-			print '<td>'.dol_print_date($obj->datem,'dayhour').'</td>';
-			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$obj->date_end_subscription,5).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
+			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -240,7 +240,7 @@ $Number=array();
 $tot=0;
 $numb=0;
 
-$sql = "SELECT c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+$sql = "SELECT c.cotisation, c.dateadh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " WHERE d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != '')
@@ -255,7 +255,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$year=dol_print_date($objp->dateadh,"%Y");
+		$year=dol_print_date($db->jdate($objp->dateadh),"%Y");
 		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
 		$Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
 		$tot+=$objp->cotisation;
@@ -296,10 +296,6 @@ print "</table><br>\n";
 
 print '</td></tr>';
 print '</table>';
-
-
-
-
 
 
 $db->close();

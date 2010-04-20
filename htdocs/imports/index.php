@@ -133,42 +133,6 @@ if (sizeof($import->array_import_code))
 }
 print '</center>';
 
-/*
-// Affiche les profils d'exports
-$sql  = "SELECT rowid, label, public, fk_user, ".$db->pdate("datec");
-$sql .= " FROM ".MAIN_DB_PREFIX."export as e";
-$result=$db->query($sql);
-if ($result)
-{
-    print '<br>';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("ExportProfiles").'</td>';
-    print '<td align="right">'.$langs->trans("Public").'</td></tr>';
-
-    $num = $db->num_rows($result);
-    if ($num > 0)
-    {
-        $var = true;
-        $i = 0;
-
-        while ($i < $num )
-        {
-            $obj = $db->fetch_object($result);
-            $var=!$var;
-
-            print "<tr $bc[$var]>";
-            print '<td>'.$obj->label.'</td>';
-            print '<td align="center">'.$yn($obj->public).'</td>';
-            print '</tr>';
-            $i++;
-        }
-    }
-
-    print "</table>";
-}
-*/
-
 print '</td></tr>';
 print '</table>';
 
