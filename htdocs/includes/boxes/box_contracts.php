@@ -80,18 +80,17 @@ class box_contracts extends ModeleBoxes {
     		$sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
     		$sql.= $db->plimit($max, 0);
 
-    		$result = $db->query($sql);
-
-    		if ($result)
+    		$resql = $db->query($sql);
+    		if ($resql)
     		{
-    			$num = $db->num_rows($result);
+    			$num = $db->num_rows($resql);
     			$now=gmmktime();
 
     			$i = 0;
 
     			while ($i < $num)
     			{
-    				$objp = $db->fetch_object($result);
+    				$objp = $db->fetch_object($resql);
     				$datec=$db->jdate($objp->datec);
     				$dateterm=$db->jdate($objp->fin_validite);
     				$dateclose=$db->jdate($objp->date_cloture);
