@@ -82,7 +82,7 @@ WrongCustomerCode=Code client incorrect
 WrongSupplierCode=Code fournisseur incorrect
 CustomerCodeModel=Modèle de code client
 SupplierCodeModel=Modèle de code fournisseur
-Gencod=Code barre
+Gencod=Code-barres
 ##### Professionnal ID #####
 ProfId1Short=Id prof. 1
 ProfId2Short=Id prof. 2

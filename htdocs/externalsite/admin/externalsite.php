@@ -21,9 +21,9 @@
  */
 
 /**
- *    \file       htdocs/admin/webcalendar.php
- *    \ingroup    webcalendar
- *    \brief      Page de configuration du module webcalendar
+ *    \file       htdocs/externalsite/admin/externalsite.php
+ *    \ingroup    externalsite
+ *    \brief      Page de configuration du module externalsite
  *    \version    $Id$
  */
 
@@ -35,7 +35,7 @@ if (!$user->admin)
     accessforbidden();
 
 
-//$langs->load("admin");
+$langs->load("admin");
 $langs->load("other");
 $langs->load("@externalsite");
 
