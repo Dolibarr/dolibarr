@@ -29,6 +29,149 @@
 
 
 /**
+ * 		\brief	Show a HTML Tab with boxes of a particular area including personalized choices of user
+ * 		\param	user		User
+ * 		\param	areacode	Code of area for pages (0=value for Home page)
+ * 		\return	int			<0 if KO, Nb of boxes shown of OK (0 to n)
+ */
+function printBoxesArea($user,$areacode)
+{
+	global $conf,$langs,$db;
+
+	$infobox=new InfoBox($db);
+	$boxarray=$infobox->listboxes($areacode,$user);
+
+	//$boxid_left = array();
+	//$boxid_right = array();
+	if (sizeof($boxarray))
+	{
+		print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','','','otherboxes');
+		print '<table width="100%" class="notopnoleftnoright">';
+		print '<tr><td class="notopnoleftnoright">'."\n";
+
+		print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
+
+		// Affichage colonne gauche
+		print '<td width="50%" valign="top">'."\n";
+
+		print "\n<!-- Box left container -->\n";
+		print '<div id="left">'."\n";
+
+		$ii=0;
+		foreach ($boxarray as $key => $box)
+		{
+			if (preg_match('/^A/i',$box->box_order)) // column A
+			{
+				$ii++;
+				//print 'box_id '.$boxarray[$ii]->box_id.' ';
+				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+				//$boxid_left[$key] = $box->box_id;
+				// Affichage boite key
+				$box->loadBox($conf->box_max_lines);
+				$box->showBox();
+			}
+		}
+
+		// If no box on left, we add an invisible empty box
+		if ($ii==0)
+		{
+			$emptybox=new ModeleBoxes($db);
+			$emptybox->box_id='A';
+			$emptybox->info_box_head=array();
+			$emptybox->info_box_contents=array();
+			$emptybox->showBox(array(),array());
+		}
+
+		print "</div>\n";
+		print "<!-- End box container -->\n";
+
+		print "</td>\n";
+		// Affichage colonne droite
+		print '<td width="50%" valign="top">';
+
+		print "\n<!-- Box right container -->\n";
+		print '<div id="right">'."\n";
+
+		$ii=0;
+		foreach ($boxarray as $key => $box)
+		{
+			if (preg_match('/^B/i',$box->box_order)) // colonne B
+			{
+				$ii++;
+				//print 'box_id '.$boxarray[$ii]->box_id.' ';
+				//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+				//$boxid_right[$key] = $boxarray[$key]->box_id;
+				// Affichage boite key
+				$box->loadBox($conf->box_max_lines);
+				$box->showBox();
+			}
+		}
+
+		// If no box on right, we show add an invisible empty box
+		if ($ii==0)
+		{
+			$emptybox=new ModeleBoxes($db);
+			$emptybox->box_id='B';
+			$emptybox->info_box_head=array();
+			$emptybox->info_box_contents=array();
+			$emptybox->showBox(array(),array());
+		}
+
+		print "</div>\n";
+		print "<!-- End box container -->\n";
+		print "</td>";
+		print "</tr></table>\n";
+		print "\n";
+
+		print "</td></tr>";
+		print "</table>";
+
+		if ($conf->use_javascript_ajax)
+		{
+			print "\n";
+			print '<script type="text/javascript" language="javascript">';
+			print 'function updateOrder(){';
+		    print 'var left_list = cleanSerialize(Sortable.serialize(\'left\'));';
+		    print 'var right_list = cleanSerialize(Sortable.serialize(\'right\'));';
+		    print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;';
+		    //alert( \'boxorder=\' + boxorder );
+		    print 'var userid = \''.$user->id.'\';';
+		    print 'var url = "ajaxbox.php";';
+		    print 'o_options = new Object();';
+		    print 'o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};';
+		    print 'var myAjax = new Ajax.Request(url, o_options);';
+		  	print '}';
+		  	print "\n";
+
+		  	print '// <![CDATA['."\n";
+
+		  	print 'Sortable.create(\'left\', {'."\n";
+			print ' tag:\'div\', '."\n";
+			print ' containment:["left","right"], '."\n";
+			print ' constraint:false, '."\n";
+			print " handle: 'boxhandle',"."\n";
+			print ' onUpdate:updateOrder';
+			print " });\n";
+
+			print 'Sortable.create(\'right\', {'."\n";
+			print ' tag:\'div\', '."\n";
+			print ' containment:["right","left"], '."\n";
+			print ' constraint:false, '."\n";
+			print " handle: 'boxhandle',"."\n";
+			print ' onUpdate:updateOrder';
+			print " });\n";
+
+			print '// ]]>'."\n";
+			print '</script>'."\n";
+		}
+	}
+
+	return sizeof($boxarray);
+}
+
+
+
+/**
  *	\class      InfoBox
  *	\brief      Classe permettant la gestion des boxes sur une page
  */
@@ -80,7 +223,7 @@ class InfoBox
 				while ($j < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					
+
 					if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
 					{
 						$module = $regs[1];
@@ -91,10 +234,10 @@ class InfoBox
 						$module=preg_replace('/.php$/i','',$obj->file);
 						$sourcefile = "/includes/boxes/".$module.".php";
 					}
-					
+
 					include_once(DOL_DOCUMENT_ROOT.$sourcefile);
 					$box=new $module($db,$obj->note);
-					
+
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
 					$box->position=$obj->position;
@@ -140,7 +283,7 @@ class InfoBox
 				while ($j < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					
+
 					if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
 					{
 						$module = $regs[1];
@@ -151,10 +294,10 @@ class InfoBox
 						$module=preg_replace('/.php$/i','',$obj->file);
 						$sourcefile = "/includes/boxes/".$module.".php";
 					}
-					
+
 					include_once(DOL_DOCUMENT_ROOT.$sourcefile);
 					$box=new $module($db,$obj->note);
-					
+
 					$box->rowid=$obj->rowid;
 					$box->box_id=$obj->box_id;
 					$box->position=$obj->position;
@@ -287,5 +430,10 @@ class InfoBox
 			return -1;
 		}
 	}
+
 }
+
+
+
+
 ?>

@@ -90,7 +90,7 @@ class ModeleBoxes
 
 
 	/**
-	 *	\brief      Methode standard d'affichage des boites
+	 *	\brief      Standard method to show a box (usage by boxes not mandatory, a box can still use its own function)
 	 *	\param      $head       tableau des caracteristiques du titre
 	 *	\param      $contents   tableau des lignes de contenu
 	 */
@@ -186,7 +186,8 @@ class ModeleBoxes
 						print '<td'.$tdparam.'>';
 
 						// Url
-						if (! empty($contents[$i][$j]['url'])) {
+						if (! empty($contents[$i][$j]['url']))
+						{
 							print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
 							//print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
 							print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
@@ -204,13 +205,13 @@ class ModeleBoxes
 						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
 						if ($maxlength) $textewithnotags=dol_trunc($textewithnotags,$maxlength);
-						if (preg_match('/^<img/i',$texte)) print $texte;	// show text with no html cleaning
+						if (preg_match('/^<img/i',$texte) || $contents[$i][$j]['asis']) print $texte;	// show text with no html cleaning
 						else print $textewithnotags;				// show text with html cleaning
 
 						// End Url
 						if (! empty($contents[$i][$j]['url'])) print '</a>';
 
-						if (preg_match('/^<img/i',$texte2)) print $texte2;	// show text with no html cleaning
+						if (preg_match('/^<img/i',$texte2 || $contents[$i][$j]['asis2'])) print $texte2;	// show text with no html cleaning
 						else print $texte2withnotags;				// show text with html cleaning
 
 						print "</td>";

@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -1075,12 +1075,16 @@ class Contrat extends CommonObject
 			if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
 			if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
 		}
-		if ($mode == 4)
+		if ($mode == 4 || $mode == 6)
 		{
 			$line=new ContratLigne($this->db);
-			$text=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesexpired+$this->nbofservicesclosed);
-			$text.=' '.$langs->trans("Services");
-			$text.=': &nbsp; &nbsp; ';
+			$text='';
+			if ($mode == 4)
+			{
+				$text=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesexpired+$this->nbofservicesclosed);
+				$text.=' '.$langs->trans("Services");
+				$text.=': &nbsp; &nbsp; ';
+			}
 			$text.=$this->nbofserviceswait.' '.$line->LibStatut(0,3).' &nbsp; ';
 			$text.=$this->nbofservicesopened.' '.$line->LibStatut(4,3,0).' &nbsp; ';
 			$text.=$this->nbofservicesexpired.' '.$line->LibStatut(4,3,1).' &nbsp; ';
