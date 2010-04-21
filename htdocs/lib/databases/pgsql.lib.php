@@ -499,9 +499,9 @@ class DoliDb
 	}
 
 	/**
-	 * \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
-	 * \param      resultset   Curseur de la requete voulue
-	 * \return	    resource
+	 *	\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return	    object 		Object result line or false if KO or end of cursor
 	 */
 	function fetch_object($resultset=0)
 	{
