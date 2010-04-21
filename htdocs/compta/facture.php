@@ -3526,12 +3526,26 @@ else
 
 				print '</td></tr></table>';
 			}
-
-			/*
-			 * Affiche formulaire mail
-			 */
-			if ($_GET['action'] == 'presend')
+			else
 			{
+				/*
+				 * Affiche formulaire mail
+				 */
+
+				// By default if $_GET['action']=='presend'
+				$titreform='SendBillByMail';
+				$topicmail='SendBillRef';
+				$action='send';
+				$modelmail='facture_send';
+
+				if ($_GET['action'] == 'prerelance')	// For backward compatibility
+				{
+					$titrefrom='SendReminderBillByMail';
+					$topicmail='SendReminderBillRef';
+					$action='relance';
+					$modelmail='facture_relance';
+				}
+
 				$ref = dol_sanitizeFileName($fac->ref);
 				$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
@@ -3557,7 +3571,7 @@ else
 				}
 
 				print '<br>';
-				print_titre($langs->trans('SendBillByMail'));
+				print_titre($langs->trans($titre));
 
 				// Cree l'objet formulaire mail
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
@@ -3573,7 +3587,7 @@ else
 				$formmail->withtoccsocid=0;
 				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 				$formmail->withtocccsocid=0;
-				$formmail->withtopic=$langs->transnoentities('SendBillRef','__FACREF__');
+				$formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
 				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
@@ -3581,77 +3595,8 @@ else
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
 				// Tableau des parametres complementaires du post
-				$formmail->param['action']='send';
-				$formmail->param['models']='facture_send';
-				$formmail->param['facid']=$fac->id;
-				$formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-
-				// Init list of files
-				if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
-				{
-					$formmail->clear_attached_files();
-					$formmail->add_attached_files($file,$ref.'.pdf','application/pdf');
-				}
-
-				$formmail->show_form();
-
-				print '<br>';
-			}
-
-			// Deprecated
-			if ($_GET['action'] == 'prerelance')
-			{
-				$ref = dol_sanitizeFileName($fac->ref);
-				$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-
-				// Construit PDF si non existant
-				if (! is_readable($file))
-				{
-					// Define output language
-					$outputlangs = $langs;
-					$newlang='';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$fac->client->default_lang;
-					if (! empty($newlang))
-					{
-						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
-					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
-					if ($result <= 0)
-					{
-						dol_print_error($db,$result);
-						exit;
-					}
-				}
-
-				print '<br>';
-				print_titre($langs->trans('SendReminderBillByMail'));
-
-				$liste[0]='&nbsp;';
-				foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
-				{
-					$liste[$key]=$value;
-				}
-
-				// Cree l'objet formulaire mail
-				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
-				$formmail = new FormMail($db);
-				$formmail->fromname = $user->fullname;
-				$formmail->frommail = $user->email;
-				$formmail->withfrom=1;
-				$formmail->withto=$liste;
-				$formmail->withtocc=1;
-				$formmail->withtopic=$langs->transnoentities('SendReminderBillRef','__FACREF__');
-				$formmail->withfile=2;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				$formmail->withcancel=1;
-				// Tableau des substitutions
-				$formmail->substit['__FACREF__']=$fac->ref;
-				// Tableau des parametres complementaires
-				$formmail->param['action']='relance';
-				$formmail->param['models']='facture_relance';
+				$formmail->param['action']=$action;
+				$formmail->param['models']=$modelmail;
 				$formmail->param['facid']=$fac->id;
 				$formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
 
