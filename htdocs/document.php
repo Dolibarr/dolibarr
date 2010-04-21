@@ -51,7 +51,7 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
-require("./main.inc.php");
+require("./main.inc.php");	// Load $user and permissions
 require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 // Define mime type
@@ -109,7 +109,6 @@ if ($modulepart)
 	// Wrapping for third parties
 	if ($modulepart == 'company')
 	{
-		$user->getrights('companies');
 		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -121,7 +120,6 @@ if ($modulepart)
 	// Wrapping for invoices
 	else if ($modulepart == 'facture')
 	{
-		$user->getrights('facture');
 		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -132,7 +130,6 @@ if ($modulepart)
 
 	else if ($modulepart == 'unpaid')
 	{
-		$user->getrights('facture');
 		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -143,7 +140,6 @@ if ($modulepart)
 	// Wrapping pour les fiches intervention
 	else if ($modulepart == 'ficheinter')
 	{
-		$user->getrights('ficheinter');
 		if ($user->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -155,19 +151,16 @@ if ($modulepart)
 	// Wrapping pour les prelevements
 	else if ($modulepart == 'prelevement')
 	{
-		$user->getrights('prelevement');
 		if ($user->rights->prelevement->bons->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		$original_file=$conf->prelevement->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."$modulepart WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les propales
 	else if ($modulepart == 'propal')
 	{
-		$user->getrights('propale');
 		if ($user->rights->propale->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -180,7 +173,6 @@ if ($modulepart)
 	// Wrapping pour les commandes
 	else if ($modulepart == 'commande')
 	{
-		$user->getrights('commande');
 		if ($user->rights->commande->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -192,7 +184,6 @@ if ($modulepart)
 	// Wrapping pour les projets
 	else if ($modulepart == 'project')
 	{
-		$user->getrights('projet');
 		if ($user->rights->projet->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -204,7 +195,6 @@ if ($modulepart)
 	// Wrapping pour les commandes fournisseurs
 	else if ($modulepart == 'commande_fournisseur')
 	{
-		$user->getrights('fournisseur');
 		if ($user->rights->fournisseur->commande->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -216,32 +206,28 @@ if ($modulepart)
 	// Wrapping pour les factures fournisseurs
 	else if ($modulepart == 'facture_fournisseur')
 	{
-		$user->getrights('fournisseur');
 		if ($user->rights->fournisseur->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->dir_output.'/facture/'.get_exdir(dirname($original_file),2,1).$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les rapport de paiements
 	else if ($modulepart == 'facture_paiement')
 	{
-		$user->getrights('facture');
 		if ($user->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		if ($user->societe_id > 0) $original_file=$conf->facture->dir_output.'/payments/private/'.$user->id.'/'.$original_file;
 		else $original_file=$conf->facture->dir_output.'/payments/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les exports de compta
 	else if ($modulepart == 'export_compta')
 	{
-		$user->getrights('compta');
 		if ($user->rights->compta->ventilation->creer || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -252,7 +238,6 @@ if ($modulepart)
 	// Wrapping pour les societe
 	else if ($modulepart == 'societe')
 	{
-		$user->getrights('societe');
 		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -264,93 +249,67 @@ if ($modulepart)
 	// Wrapping pour les expedition
 	else if ($modulepart == 'expedition')
 	{
-		$user->getrights('expedition');
 		if ($user->rights->expedition->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		$original_file=$conf->expedition->dir_output."/sending/".$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les bons de livraison
 	else if ($modulepart == 'livraison')
 	{
-		$user->getrights('expedition');
 		if ($user->rights->expedition->livraison->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		$original_file=$conf->expedition->dir_output."/receipt/".$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
-	}
-
-	// Wrapping pour la telephonie
-	else if ($modulepart == 'telephonie')
-	{
-		$user->getrights('telephonie');
-		if ($user->rights->telephonie->lire || preg_match('/^specimen/i',$original_file))
-		{
-			$accessallowed=1;
-		}
-		$original_file=$conf->telephonie->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les actions
 	else if ($modulepart == 'actions')
 	{
-		$user->getrights('agenda');
 		if ($user->rights->agenda->myactions->read || preg_match('/^specimen/i',$original_file))
 		{
 		$accessallowed=1;
 		}
 		$original_file=$conf->agenda->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les actions
 	else if ($modulepart == 'actionsreport')
 	{
-		$user->getrights('agenda');
 		if ($user->rights->agenda->allactions->read || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les produits et services
 	else if ($modulepart == 'produit' || $modulepart == 'service')
 	{
-		$user->getrights('produit');
-		$user->getrights('service');
 		if (($user->rights->produit->lire || $user->rights->service->lire) || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		if ($conf->produit->enabled) $original_file=$conf->produit->dir_output.'/'.$original_file;
 		elseif ($conf->service->enabled) $original_file=$conf->service->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping pour les contrats
 	else if ($modulepart == 'contract')
 	{
-		$user->getrights('contrat');
 		if ($user->rights->contrat->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		$original_file=$conf->contrat->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping pour les documents generaux
 	else if ($modulepart == 'ged')
 	{
-		$user->getrights('document');
 		if ($user->rights->document->lire)
 		{
 			$accessallowed=1;
@@ -358,60 +317,43 @@ if ($modulepart)
 		$original_file= $conf->ged->dir_output.'/'.$original_file;
 	}
 
-	// Wrapping pour les documents generaux
-	else if ($modulepart == 'ecm')
-	{
-		$user->getrights('ecm');
-		if ($user->rights->ecm->download)
-		{
-			$accessallowed=1;
-		}
-		$original_file= $conf->ecm->dir_output.'/'.$original_file;
-	}
-
 	// Wrapping pour les dons
 	else if ($modulepart == 'donation')
 	{
-		$user->getrights('don');
 		if ($user->rights->don->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 		$original_file=$conf->don->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping pour les remises de cheques
 	else if ($modulepart == 'remisecheque')
 	{
-		$user->getrights('banque');
 		if ($user->rights->banque->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
 
 		$original_file=$conf->banque->dir_output.'/bordereau/'.get_exdir(basename($original_file,".pdf"),2,1).$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping for export module
 	else if ($modulepart == 'export')
 	{
-		// Aucun test necessaire car on force le rep de doanwload sur
+		// Aucun test necessaire car on force le rep de download sur
 		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping for import module
 	else if ($modulepart == 'import')
 	{
-		// Aucun test necessaire car on force le rep de doanwload sur
+		// Aucun test necessaire car on force le rep de download sur
 		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->import->dir_temp.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping pour l'editeur wysiwyg
@@ -421,7 +363,6 @@ if ($modulepart)
 		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping pour les backups
@@ -432,7 +373,6 @@ if ($modulepart)
 			$accessallowed=1;
 		}
 		$original_file=$conf->admin->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
 
 	// Wrapping pour BitTorrent
@@ -442,25 +382,36 @@ if ($modulepart)
 		$dir='files';
 		if ($type == 'application/x-bittorrent') $dir='torrents';
 		$original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
-		$sqlprotectagainstexternals = '';
 	}
-	
+
 	// Generic wrapping
 	else
 	{
-		$user->getrights($modulepart);
+		// Define $accessallowed
 		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
-		if(isset($conf->global->$subPermCategoryConstName)) $subPermCategory = $conf->global->$subPermCategoryConstName;
-		if ( ((isset($subPermCategory)==false) && (($user->rights->$modulepart->lire) || ($user->rights->$modulepart->read) || ($user->rights->$modulepart->download))) || (isset($subPermCategory) && (($user->rights->$modulepart->$subPermCategory->lire) || ($user->rights->$modulepart->$subPermCategory->read) || ($user->rights->$modulepart->$subPermCategory->download))) || preg_match('/^specimen/i',$original_file) )
+		if (! empty($conf->global->$subPermCategoryConstName)) $subPermCategory = $conf->global->$subPermCategoryConstName;
+		if (empty($subPermCategory) && (($user->rights->$modulepart->lire) || ($user->rights->$modulepart->read) || ($user->rights->$modulepart->download)))
 		{
-			$accessallowed=1;
+			$accessallowed=1;	// No subpermission, we have checked on main permission
 		}
-		$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
-		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
-		if(isset($conf->global->$sqlProtectConstName)) eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
-		//less generic/modular than the 2 lines upper :
-		//$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$refname."' AND entity=".$conf->entity;
-	}	
+		elseif (! empty($subPermCategory) && (($user->rights->$modulepart->$subPermCategory->lire) || ($user->rights->$modulepart->$subPermCategory->read) || ($user->rights->$modulepart->$subPermCategory->download)))
+		{
+			$accessallowed=1;	// There is subpermission supported, we have checked on them
+		}
+ 		elseif (preg_match('/^specimen/i',$original_file))	// If link to a specimen
+ 		{
+			$accessallowed=1;
+ 		}
+ 		// Define $original_file
+ 		$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
+ 		// Define $sqlprotectagainstexternals
+ 		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
+		if (! empty($conf->global->$sqlProtectConstName))	// If module want to define its own $sqlprotectagainstexternals
+		{
+			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$refname."' AND entity=".$conf->entity;
+			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
+		}
+	}
 }
 
 // Basic protection (against external users only)
@@ -471,10 +422,18 @@ if ($user->societe_id > 0)
 		$resql = $db->query($sqlprotectagainstexternals);
 		if ($resql)
 		{
-			$obj = $db->fetch_object($resql);
 			$num=$db->num_rows($resql);
-			if ($num>0 && $user->societe_id != $obj->fk_soc)
-			$accessallowed=0;
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				if ($user->societe_id != $obj->fk_soc)
+				{
+					$accessallowed=0;
+					break;
+				}
+				$i++;
+			}
 		}
 	}
 }

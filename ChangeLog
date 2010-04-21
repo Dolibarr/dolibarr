@@ -34,9 +34,10 @@ For users:
 For developers:
 - More comments in code.
 - Uniformize some code. 
-- First delete of useless pre.inc.php files.
+- Delete all useless pre.inc.php files.
 - Fix W3C errors in page forging.
 - Qual: Mutualize code of menu managers.
+- Better isolation of modules files and dolibarr core files. 
 
 
 ***** ChangeLog for 2.8.1 compared to 2.8 *****
