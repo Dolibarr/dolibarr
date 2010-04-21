@@ -147,9 +147,9 @@ class EcmDirectory // extends CommonObject
 				$result=create_exdir($dir);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->call_workflow('MYECMDIR_CREATE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('MYECMDIR_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
@@ -215,9 +215,9 @@ class EcmDirectory // extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('MYECMDIR_MODIFY',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('MYECMDIR_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -361,9 +361,9 @@ class EcmDirectory // extends CommonObject
 		if (! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('MYECMDIR_DELETE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('MYECMDIR_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}

@@ -340,9 +340,9 @@ class Facture extends CommonObject
 				if ($resql)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result=$interface->call_workflow('BILL_CREATE',$this,$user,$langs,$conf);
+					$result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
@@ -823,9 +823,9 @@ class Facture extends CommonObject
 				// want this action call a trigger.
 
 				//// Call triggers
-				//include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				//include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				//$interface=new Interfaces($this->db);
-				//$result=$interface->call_workflow('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
 			}
@@ -1014,9 +1014,9 @@ class Facture extends CommonObject
 				if ($resql)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result=$interface->call_workflow('BILL_DELETE',$this,$user,$langs,$conf);
+					$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
@@ -1140,9 +1140,9 @@ class Facture extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->call_workflow('BILL_PAYED',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
@@ -1196,9 +1196,9 @@ class Facture extends CommonObject
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('BILL_UNPAYED',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -1258,9 +1258,9 @@ class Facture extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->call_workflow('BILL_CANCEL',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
@@ -1466,9 +1466,9 @@ class Facture extends CommonObject
 			if (! $error)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->call_workflow('BILL_VALIDATE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
@@ -1839,9 +1839,9 @@ class Facture extends CommonObject
 		$result=$this->update_price();
 
 		// Appel des triggers
-		include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+		include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 		$interface=new Interfaces($this->db);
-		$result = $interface->call_workflow('LINEBILL_DELETE',$this,$user,$langs,$conf);
+		$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
 		if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		// Fin appel triggers
 
@@ -3097,9 +3097,9 @@ class FactureLigne
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result = $interface->call_workflow('LINEBILL_INSERT',$this,$user,$langs,$conf);
+				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
@@ -3166,9 +3166,9 @@ class FactureLigne
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result = $interface->call_workflow('LINEBILL_UPDATE',$this,$user,$langs,$conf);
+				$result = $interface->run_triggers('LINEBILL_UPDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}

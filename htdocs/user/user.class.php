@@ -614,9 +614,9 @@ class User extends CommonObject
 		if ($result)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -670,9 +670,9 @@ class User extends CommonObject
 		if ($result)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('USER_DELETE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('USER_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
@@ -771,9 +771,9 @@ class User extends CommonObject
 					if (! $notrigger)
 					{
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+						include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 						$interface = new Interfaces($this->db);
-						$result = $interface->call_workflow('USER_CREATE',$this,$user,$langs,$conf);
+						$result = $interface->run_triggers('USER_CREATE',$this,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 					}
@@ -1109,9 +1109,9 @@ class User extends CommonObject
 				if (! $error && ! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result=$interface->call_workflow('USER_MODIFY',$this,$user,$langs,$conf);
+					$result=$interface->run_triggers('USER_MODIFY',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 				}
@@ -1254,9 +1254,9 @@ class User extends CommonObject
 					if (! $error && ! $notrigger)
 					{
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+						include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 						$interface=new Interfaces($this->db);
-						$result=$interface->call_workflow('USER_NEW_PASSWORD',$this,$user,$langs,$conf);
+						$result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$langs,$conf);
 						if ($result < 0) $this->errors=$interface->errors;
 						// Fin appel triggers
 					}

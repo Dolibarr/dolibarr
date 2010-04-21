@@ -169,9 +169,9 @@ class Categorie
 				}
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->call_workflow('CATEGORY_CREATE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
@@ -249,9 +249,9 @@ class Categorie
 			$this->db->commit();
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('CATEGORY_MODIFY',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('CATEGORY_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
@@ -303,9 +303,9 @@ class Categorie
 		else
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('CATEGORY_DELETE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('CATEGORY_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 

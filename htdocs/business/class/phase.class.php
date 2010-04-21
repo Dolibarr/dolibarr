@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +17,31 @@
  */
 
 /**
- *      \file       htdocs/projet/tasks/task.class.php
- *      \ingroup    project
- *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
+ *      \file       htdocs/business/class/phase.class.php
+ *      \ingroup    business
+ *      \brief      This file is a class to manage phases of business
  *		\version    $Id$
- *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
-
-require_once(DOL_DOCUMENT_ROOT."/core/commonobject.class.php");
 
 
 /**
- *      \class      Task
- *      \brief      Class to manage tasks
- *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
+ *      \class      Phase
+ *      \brief      Class to manage phases of business
  */
-class Task extends CommonObject
+class Phase extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
-	var $element='project_task';		//!< Id that identify managed objects
-	var $table_element='projet_task';	//!< Name of table without prefix where object is stored
+	var $db;								//!< To store db handler
+	var $error;								//!< To return error code (or message)
+	var $errors=array();					//!< To return several error codes (or messages)
+	var $element='business_phase';			//!< Id that identify managed objects
+	var $table_element='business_phase';	//!< Name of table without prefix where object is stored
 
     var $id;
 
-	var $fk_project;
-	var $fk_task_parent;
+	var $fk_business;
+	var $fk_milestone;
 	var $label;
 	var $description;
-	var $duration_effective;
 	var $date_c;
 	var $date_start;
 	var $date_end;
@@ -58,23 +52,22 @@ class Task extends CommonObject
 	var $statut;
 	var $note_private;
 	var $note_public;
-
-	var $timespent_id;
-	var $timespent_duration;
-	var $timespent_old_duration;
-	var $timespent_date;
-	var $timespent_fk_user;
-	var $timespent_note;
-
+	
+	var $total_ht;					// Total net of tax
+	var $total_tva;					// Total VAT
+	var $total_ttc;					// Total with tax
+	var $tva_tx;
 
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
      */
-    function Task($DB)
+    function Phase($DB)
     {
         $this->db = $DB;
-        return 1;
+        
+        $this->statuts_short=array(0=>'Draft',1=>'Validated',2=>'ActionRunningShort',5=>'ToBill');
+		$this->statuts=array(0=>'Draft',1=>'Validated',2=>'ActionRunningShort',5=>'ToBill');
     }
 
 
@@ -87,36 +80,54 @@ class Task extends CommonObject
     function create($user, $notrigger=0)
     {
     	global $conf, $langs;
+    	
+    	include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		$error=0;
 
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
+		
+		$total_ht	= price2num($this->total_ht);
+		$tva_tx 	= price2num($this->tva_tx);
+		
+		$tabprice=calcul_price_total(1, $total_ht, 0, $tva_tx);
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (";
-		$sql.= "fk_projet";
-		$sql.= ", fk_task_parent";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."business_phase (";
+		$sql.= "fk_business";
+		//$sql.= ", fk_milestone";
 		$sql.= ", label";
 		$sql.= ", description";
 		$sql.= ", datec";
 		$sql.= ", fk_user_creat";
 		$sql.= ", dateo";
 		$sql.= ", datee";
+		$sql.= ", total_ht";
+		$sql.= ", total_tva";
+		$sql.= ", total_ttc";
+		$sql.= ", tva_tx";
 		$sql.= ", progress";
         $sql.= ") VALUES (";
-		$sql.= $this->fk_project;
-		$sql.= ", ".$this->fk_task_parent;
+		$sql.= $this->fk_business;
+		//$sql.= ", ".$this->fk_milestone;
 		$sql.= ", '".addslashes($this->label)."'";
 		$sql.= ", '".addslashes($this->description)."'";
 		$sql.= ", ".$this->db->idate($this->date_c);
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_start!=''?$this->db->idate($this->date_start):'null');
 		$sql.= ", ".($this->date_end!=''?$this->db->idate($this->date_end):'null');
+		$sql.= ", '".$total_ht."'";
+		$sql.= ", '".$total_tva."'";
+		$sql.= ", '".$total_ttc."'";
+		$sql.= ", '".$tva_tx."'";
 		$sql.= ", ".($this->progress!=''?$this->progress:0);
 		$sql.= ")";
 
@@ -128,14 +139,14 @@ class Task extends CommonObject
 
 		if (! $error)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."business_phase");
 
 			if (! $notrigger)
 			{
 	            // Call triggers
 	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('TASK_CREATE',$this,$user,$langs,$conf);
+	            $result=$interface->run_triggers('PHASE_CREATE',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // End call triggers
 			}
@@ -169,24 +180,27 @@ class Task extends CommonObject
     {
     	global $langs;
 
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_projet,";
-		$sql.= " t.fk_task_parent,";
-		$sql.= " t.label,";
-		$sql.= " t.description,";
-		$sql.= " t.duration_effective,";
-		$sql.= " t.dateo,";
-		$sql.= " t.datee,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_valid,";
-		$sql.= " t.fk_statut,";
-		$sql.= " t.progress,";
-		$sql.= " t.priority,";
-		$sql.= " t.note_private,";
-		$sql.= " t.note_public";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
-        $sql.= " WHERE t.rowid = ".$id;
+        $sql = "SELECT ";
+		$sql.= "p.rowid";
+		$sql.= ", p.fk_business";
+		$sql.= ", p.label";
+		$sql.= ", p.description";
+		//$sql.= ", p.duration_effective";
+		$sql.= ", p.dateo";
+		$sql.= ", p.datee";
+		$sql.= ", p.fk_user_creat";
+		$sql.= ", p.fk_user_valid";
+		$sql.= ", p.fk_statut";
+		$sql.= ", p.progress";
+		$sql.= ", p.priority";
+		$sql.= ", p.note_private";
+		$sql.= ", p.note_public";
+		$sql.= ", p.total_ht";
+		$sql.= ", p.total_tva";
+		$sql.= ", p.total_ttc";
+		$sql.= ", p.tva_tx";
+        $sql.= " FROM ".MAIN_DB_PREFIX."business_phase as p";
+        $sql.= " WHERE p.rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -198,21 +212,25 @@ class Task extends CommonObject
 
                 $this->id					= $obj->rowid;
                 $this->ref					= $obj->rowid;
-				$this->fk_project			= $obj->fk_projet;
-				$this->fk_task_parent		= $obj->fk_task_parent;
+				$this->fk_business			= $obj->fk_business;
+				//$this->fk_milestone			= $obj->fk_milestone;
 				$this->label				= $obj->label;
 				$this->description			= $obj->description;
-				$this->duration_effective	= $obj->duration_effective;
+				//$this->duration_effective	= $obj->duration_effective;
 				$this->date_c				= $this->db->jdate($obj->datec);
 				$this->date_start			= $this->db->jdate($obj->dateo);
 				$this->date_end				= $this->db->jdate($obj->datee);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
-				$this->fk_statut			= $obj->fk_statut;
+				$this->statut				= $obj->fk_statut;
 				$this->progress				= $obj->progress;
 				$this->priority				= $obj->priority;
 				$this->note_private			= $obj->note_private;
 				$this->note_public			= $obj->note_public;
+				$this->total_ht				= $obj->total_ht;
+				$this->total_tva			= $obj->total_tva;
+				$this->total_ttc			= $obj->total_ttc;
+				$this->tva_tx				= $obj->tva_tx;
             }
 
             $this->db->free($resql);
@@ -237,27 +255,36 @@ class Task extends CommonObject
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
+    	
+    	include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+    	
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
-		if (isset($this->fk_task_parent)) $this->fk_task_parent=trim($this->fk_task_parent);
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->description)) $this->description=trim($this->description);
-		if (isset($this->duration_effective)) $this->duration_effective=trim($this->duration_effective);
+		//if (isset($this->duration_effective)) $this->duration_effective=trim($this->duration_effective);
 
 		// Check parameters
-		// Put here code to add control on parameters values
+		$total_ht	= price2num($this->total_ht);
+		$tva_tx 	= price2num($this->tva_tx);
+		
+		$tabprice=calcul_price_total(1, $total_ht, 0, $tva_tx);
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
 
         // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
-		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
-		$sql.= " fk_task_parent=".(isset($this->fk_task_parent)?$this->fk_task_parent:"null").",";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."business_phase SET";
 		$sql.= " label=".(isset($this->label)?"'".addslashes($this->label)."'":"null").",";
 		$sql.= " description=".(isset($this->description)?"'".addslashes($this->description)."'":"null").",";
-		$sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
+		//$sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
 		$sql.= " dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null').",";
 		$sql.= " datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null').",";
+		$sql.= " total_ht='".$total_ht."',";
+		$sql.= " total_tva='".$total_tva."',";
+		$sql.= " total_ttc='".$total_ttc."',";
+		$sql.= " tva_tx='".$tva_tx."',";
 		$sql.= " progress=".$this->progress;
         $sql.= " WHERE rowid=".$this->id;
 
@@ -274,7 +301,7 @@ class Task extends CommonObject
 	            // Call triggers
 	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('TASK_MODIFY',$this,$user,$langs,$conf);
+	            $result=$interface->run_triggers('PHASE_MODIFY',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // End call triggers
 	    	}
@@ -403,12 +430,12 @@ class Task extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/business/phases/phase.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$picto='projecttask';
 
-		$label=$langs->trans("ShowTask").': '.$this->ref.($this->label?' - '.$this->label:'');
+		$label=$langs->trans("ShowPhase").': '.$this->ref.($this->label?' - '.$this->label:'');
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -434,47 +461,31 @@ class Task extends CommonObject
 	}
 
 	/**
-	 * Return list of task for all projects or for one particular project
-	 * Sort order is on project, TODO then of position of task, and last on title of first level task
-	 * @param	usert		Object user to limit task affected to a particular user
-	 * @param	userp		Object user to limit projects of a particular user and public projects
-	 * @param	projectid	Project id
+	 * Return list of phases for a business
+	 * Sort order is on business
+	 * @param	user		Object user to limit phase affected to a particular user
+	 * @param	businessid	Business id
 	 * @param	socid		Third party id
-	 * @param	mode		0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 * @return 	array		Array of tasks
 	 */
-	function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0)
+	function getPhasesArray($user=0, $businessid=0, $socid=0)
 	{
 		global $conf;
 
-		$tasks = array();
+		$phases = array();
 
-		//print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
-
-		// List of tasks (does not care about permissions. Filtering will be done later)
-		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public";
-		$sql.= ", t.rowid as taskid, t.label, t.fk_task_parent, t.duration_effective, t.progress";
-		if ($mode == 0)
-		{
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-			$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-			$sql.= " WHERE t.fk_projet = p.rowid";
-			$sql.= " AND p.entity = ".$conf->entity;
-			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-			if ($projectid) $sql.= " AND p.rowid =".$projectid;
-		}
-		if ($mode == 1)
-		{
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
-			$sql.= " WHERE p.entity = ".$conf->entity;
-			if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-			if ($projectid) $sql.= " AND p.rowid =".$projectid;
-		}
-		$sql.= " ORDER BY p.ref, t.label";
-
+		$sql = "SELECT b.rowid as businessid, b.ref, b.label as business_label, b.public";
+		$sql.= ", p.rowid as phaseid, p.label as phase_label, p.progress, p.total_ht, p.total_ttc, p.fk_statut";
+		$sql.= " FROM ".MAIN_DB_PREFIX."business as b";
+		$sql.= " RIGHT JOIN ".MAIN_DB_PREFIX."business_phase as p on p.fk_business = b.rowid";
+		$sql.= " WHERE b.entity = ".$conf->entity;
+		if ($socid)	$sql.= " AND b.fk_soc = ".$socid;
+		if ($businessid) $sql.= " AND b.rowid =".$businessid;
+		$sql.= " ORDER BY p.rang ASC, p.rowid";
+		
 		//print $sql;
-		dol_syslog("Task::getTasksArray sql=".$sql, LOG_DEBUG);
+
+		dol_syslog("Phase::getPhasesArray sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -487,27 +498,30 @@ class Task extends CommonObject
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((! $obj->public) && (is_object($userp) || is_object($usert)))	// If not public and we ask a filter on user
+				if ((! $obj->public) && is_object($user))	// If not public and we ask a filter on user
 				{
-					if (! $this->getUserRolesForProjectsOrTasks($userp, $usert, $obj->projectid, $obj->taskid))
+					if (! $this->getUserRolesForPhase($user, $obj->phaseid) && ! $user->rights->business->all->read)
 					{
 						$error++;
+						//print '<br>error<br>';
 					}
 				}
 
 				if (! $error)
 				{
-					$tasks[$i]->id           = $obj->taskid;
-					$tasks[$i]->ref          = $obj->taskid;
-					$tasks[$i]->fk_project   = $obj->projectid;
-					$tasks[$i]->projectref   = $obj->ref;
-					$tasks[$i]->projectlabel = $obj->plabel;
-					$tasks[$i]->label        = $obj->label;
-					$tasks[$i]->description  = $obj->description;
-					$tasks[$i]->fk_parent    = $obj->fk_task_parent;
-					$tasks[$i]->duration     = $obj->duration_effective;
-					$tasks[$i]->progress     = $obj->progress;
-					$tasks[$i]->public       = $obj->public;
+					$phases[$i]->id           	= $obj->phaseid;
+					$phases[$i]->businessid   	= $obj->businessid;
+					$phases[$i]->businessref  	= $obj->ref;
+					$phases[$i]->businesslabel	= $obj->business_label;
+					$phases[$i]->label        	= $obj->phase_label;
+					$phases[$i]->description  	= $obj->description;
+					$phases[$i]->total_ht		= $obj->total_ht;
+					$phases[$i]->total_ttc		= $obj->total_ttc;
+					//$phases[$i]->fk_milestone 	= $obj->fk_milestone;
+					//$phases[$i]->duration     	= $obj->duration_effective;
+					$phases[$i]->statut     	= $obj->fk_statut;
+					$phases[$i]->progress     	= $obj->progress;
+					$phases[$i]->public       	= $obj->public;
 				}
 
 				$i++;
@@ -519,57 +533,34 @@ class Task extends CommonObject
 			dol_print_error($this->db);
 		}
 
-		return $tasks;
+		return $phases;
 	}
 
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or task)
-	 * @param 	userp
-	 * @param	usert			Deprecated. Permissions are on project.
-	 * @param 	projectid		Project id to filter on a project
-	 * @param 	taskid			Task id to filter on a task
-	 * @return 	array			Array (projectid => 'list of roles for project')
+	 * @param 	user
+	 * @param 	businessid		Business id to filter on a business
+	 * @return 	array			Array (businessid => 'list of roles for business')
 	 */
-	function getUserRolesForProjectsOrTasks($userp,$usert,$projectid=0,$taskid=0)
+	function getUserRolesForPhase($user,$phaseid=0)
 	{
-		$projectsrole = array();
-		$tasksrole = array();
+		$phaserole = array();
 
-		dol_syslog("Task::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
+		dol_syslog("Phase::getUserRolesForPhase user=".is_object($user)." phaseid=".$phaseid);
 
-		// We want role of user for projet or role of user for task. Both are not possible.
-		if (empty($userp) && empty($usert))
-		{
-			$this->error="CallWithWrongParameters";
-			return -1;
-		}
-
-		/* Liste des taches et role sur les projets ou taches */
-		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code";
-		if ($userp) $sql.= " FROM ".MAIN_DB_PREFIX."projet as pt";
-		if ($usert) $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql = "SELECT p.rowid as phaseid, ec.element_id, ctc.code";
+		$sql.= " FROM ".MAIN_DB_PREFIX."business_phase as p";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
-		$sql.= " WHERE pt.rowid = ec.element_id";
-		if ($userp) $sql.= " AND ctc.element = 'project'";
-		if ($usert) $sql.= " AND ctc.element = 'project_task'";
+		$sql.= " WHERE p.rowid = ec.element_id";
+		$sql.= " AND ctc.element = 'business_phase'";
 		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
-		if ($userp) $sql.= " AND ec.fk_socpeople = ".$userp->id;
-		if ($usert) $sql.= " AND ec.fk_socpeople = ".$usert->id;
+		if (is_object($user)) $sql.= " AND ec.fk_socpeople = ".$user->id;
 		$sql.= " AND ec.statut = 4";
-		if ($projectid)
-		{
-			if ($userp) $sql.= " AND pt.rowid = ".$projectid;
-			if ($usert) $sql.= " AND pt.fk_projet = ".$projectid;
-		}
-		if ($taskid)
-		{
-			if ($userp) $sql.= " ERROR SHOULD NOT HAPPEN ";
-			if ($usert) $sql.= " AND pt.rowid = ".$taskid;
-		}
+		if ($phaseid) $sql.= " AND p.rowid = ".$phaseid;
 
-		//print $sql;
-		dol_syslog("Task::getUserRolesForProjectsOrTasks sql=".$sql);
+		//print $sql.'<br>';
+		dol_syslog("Phase::getUserRolesForPhase sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -578,8 +569,8 @@ class Task extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				if (empty($projectsrole[$obj->pid])) $projectsrole[$obj->pid] = $obj->code;
-				else $projectsrole[$obj->pid].=','.$obj->code;
+				if (empty($phaserole[$obj->phaseid])) $phaserole[$obj->phaseid] = $obj->code;
+				else $phaserole[$obj->phaseid].=','.$obj->code;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -589,7 +580,7 @@ class Task extends CommonObject
 			dol_print_error($this->db);
 		}
 
-		return $projectsrole;
+		return $phaserole;
 	}
 
 	/**
@@ -765,7 +756,7 @@ class Task extends CommonObject
 
 		return $ret;
 	}
-
+    
 	/**
 	 *    \brief      Delete time spent
 	 *    \param      user        	User that delete
@@ -834,6 +825,64 @@ class Task extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
+		}
+	}
+	
+	/**
+	 *    \brief      Return status label of object
+	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * 	  \return     string      Label
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 *    \brief      Return status label of object
+	 *    \param      statut      id statut
+	 *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * 	  \return     string      Label
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 5)
+		{
+			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			if ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			if ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
 		}
 	}
 

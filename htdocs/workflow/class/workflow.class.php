@@ -42,15 +42,5 @@ class Workflow
 		$this->db = $DB ;
 	}
 
-   /**
-	*   \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
-	*               Cette fonction declenche la gestion du workflow.
-	*   TODO under construction
-	*/
-	function call_workflow($action,$object,$user,$langs,$conf)
-	{
-		$this->run_triggers($action,$object,$user,$langs,$conf);
-	}
-
 }
 ?>

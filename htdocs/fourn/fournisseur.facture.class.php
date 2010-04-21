@@ -465,9 +465,9 @@ class FactureFournisseur extends Facture
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('BILL_SUPPLIER_PAYED',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('BILL_SUPPLIER_PAYED',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -517,9 +517,9 @@ class FactureFournisseur extends Facture
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->call_workflow('BILL_SUPPLIER_UNPAYED',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('BILL_SUPPLIER_UNPAYED',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -591,9 +591,9 @@ class FactureFournisseur extends Facture
 			if ($error == 0)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->call_workflow('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}

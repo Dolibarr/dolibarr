@@ -287,9 +287,9 @@ class Fichinter extends CommonObject
 			if ($resql)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->call_workflow('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
