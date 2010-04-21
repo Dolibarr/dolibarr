@@ -3308,24 +3308,9 @@ else
 					}
 
 					// Reopen a standard paid invoice
-					if ($fac->type == 1 && $fac->statut == 2)				// A paid invoice (partially or completely)
+					if (($fac->type == 0 || $fac->type == 1) && ($fac->statut == 2 || $fac->statut == 3))				// A paid invoice (partially or completely)
 					{
-						if (! $facidnext)
-						{
-							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
-						}
-						else
-						{
-							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
-						}
-					}
-
-					// Reopen a classified invoice
-					if (($fac->statut == 2 || $fac->statut == 3) &&				// Closed invoice
-					$fac->getIdReplacingInvoice() == 0 &&	// Not replaced by another invoice
-					$fac->close_code != 'replaced')			// Not replaced by another invoice
-					{
-						if (! $facidnext)
+						if (! $facidnext && $fac->close_code != 'replaced')	// Not replaced by another invoice
 						{
 							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
 						}
