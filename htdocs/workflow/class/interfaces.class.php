@@ -19,11 +19,13 @@
  */
 
 /**
- *   \file		htdocs/interfaces.class.php
- *   \ingroup		core
+ *   \file		htdocs/workflow/class/interfaces.class.php
+ *   \ingroup		workflow
  *   \brief			Fichier de la classe de gestion des triggers
  *   \version		$Id$
  */
+
+require_once(DOL_DOCUMENT_ROOT ."/workflow/class/workflow.class.php");
 
 
 /**
@@ -31,7 +33,7 @@
  *    \brief      Classe de la gestion des triggers
  */
 
-class Interfaces
+class Interfaces extends Workflow
 {
 	var $dir;				// Directory with all core and external triggers files
 	var $errors	= array();	// Array for errors

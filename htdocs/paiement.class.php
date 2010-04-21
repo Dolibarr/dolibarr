@@ -180,9 +180,9 @@ class Paiement
 				if (! $error)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
+					$result=$interface->call_workflow('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 				}

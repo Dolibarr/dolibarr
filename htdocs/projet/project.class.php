@@ -118,9 +118,9 @@ class Project extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('PROJECT_CREATE',$this,$user,$langs,$conf);
+	            $result=$interface->call_workflow('PROJECT_CREATE',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // End call triggers
 			}
@@ -168,9 +168,9 @@ class Project extends CommonObject
 				if (! $notrigger)
 				{
 					// Call triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PROJECT_MODIFY',$this,$user,$langs,$conf);
+					$result=$interface->call_workflow('PROJECT_MODIFY',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// End call triggers
 				}
@@ -393,9 +393,9 @@ class Project extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('PROJECT_DELETE',$this,$user,$langs,$conf);
+	            $result=$interface->call_workflow('PROJECT_DELETE',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // End call triggers
 			}
@@ -436,9 +436,9 @@ class Project extends CommonObject
 			if ($resql)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PROJECT_VALIDATE',$this,$user,$langs,$conf);
+				$result=$interface->call_workflow('PROJECT_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
@@ -489,9 +489,9 @@ class Project extends CommonObject
 			if ($resql)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PROJECT_CLOSE',$this,$user,$langs,$conf);
+				$result=$interface->call_workflow('PROJECT_CLOSE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 

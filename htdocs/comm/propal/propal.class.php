@@ -459,9 +459,9 @@ class Propal extends CommonObject
 				if (! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result = $interface->run_triggers('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
+					$result = $interface->call_workflow('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 				}
@@ -665,9 +665,9 @@ class Propal extends CommonObject
 						if (! $notrigger)
 						{
 							// Appel des triggers
-							include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+							include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 							$interface=new Interfaces($this->db);
-							$result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+							$result=$interface->call_workflow('PROPAL_CREATE',$this,$user,$langs,$conf);
 							if ($result < 0) { $error++; $this->errors=$interface->errors; }
 							// Fin appel triggers
 						}
@@ -976,9 +976,9 @@ class Propal extends CommonObject
 				if (! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
+					$result=$interface->call_workflow('PROPAL_VALIDATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 				}
@@ -1249,9 +1249,9 @@ class Propal extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_PROPALSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PROPAL_CLOSE_SIGNED',$this,$user,$langs,$conf);
+				$result=$interface->call_workflow('PROPAL_CLOSE_SIGNED',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
@@ -1260,9 +1260,9 @@ class Propal extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_PROPALSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
+				$result=$interface->call_workflow('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
@@ -1623,9 +1623,9 @@ class Propal extends CommonObject
 				if (! $notrigger)
 				{
 					// Call triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PROPAL_DELETE',$this,$user,$langs,$conf);
+					$result=$interface->call_workflow('PROPAL_DELETE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// End call triggers
 				}
@@ -2309,9 +2309,9 @@ class PropaleLigne
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/workflow/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
-				$result = $interface->run_triggers('LINEPROPAL_INSERT',$this,$user,$langs,$conf);
+				$result = $interface->call_workflow('LINEPROPAL_INSERT',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}

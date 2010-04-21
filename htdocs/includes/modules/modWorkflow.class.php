@@ -57,8 +57,8 @@ class modWorkflow extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Workflow management";
-		// Can be enabled / disabled only in the main company with superadmin account
-		$this->core_enabled = 0;
+		// Can't be disabled
+		$this->always_enabled = 1;
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
