@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/expedition/liste.php
  *      \ingroup    expedition
- *      \brief      Page de la liste des expeditions/livraisons
+ *      \brief      Page to list all shipments
  *		\version	$Id$
  */
 
@@ -39,7 +39,7 @@ $result = restrictedArea($user, 'expedition',$expeditionid,'');
 
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:"";
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:"";
-if (! $sortfield) $sortfield="e.rowid";
+if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
 
 $limit = $conf->liste_limit;
@@ -50,28 +50,19 @@ $offset = $limit * $_GET["page"] ;
  * View
  */
 
+$companystatic=new Societe($db);
+
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
 $sql = "SELECT e.rowid, e.ref, e.date_expedition, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
-$sql.= ", ori.ref as origin_ref, ori.rowid as origin_id";
 $sql.= " FROM (".MAIN_DB_PREFIX."expedition as e";
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
 	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql.= ") LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
-if ($conf->commande->enabled)
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as ori ON el.fk_source = ori.rowid";
-	$sql.= " AND el.sourcetype = 'commande'";
-}
-else
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as ori ON el.fk_source = ori.rowid";
-	$sql.= " AND el.sourcetype = 'propal'";
-}
+$sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
@@ -81,101 +72,78 @@ if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no p
 }
 if ($socid)
 {
-  $sql.= " AND e.fk_soc = ".$socid;
+	$sql.= " AND e.fk_soc = ".$socid;
 }
 if ($_POST["sf_ref"])
 {
-  $sql.= " AND e.ref like '%".addslashes($_POST["sf_ref"])."%'";
+	$sql.= " AND e.ref like '%".addslashes($_POST["sf_ref"])."%'";
 }
 
-$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
 
 $resql=$db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
-  $expedition = new Expedition($db);
+	$expedition = new Expedition($db);
 
-  print_barre_liste($langs->trans('ListOfSendings'), $_GET["page"], "liste.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
+	$param="&amp;socid=$socid";
 
-  $i = 0;
-  print '<table class="noborder" width="100%">';
+	print_barre_liste($langs->trans('ListOfSendings'), $_GET["page"], "liste.php",$param,$sortfield,$sortorder,'',$num);
 
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","","&amp;socid=$socid",'width="15%"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", "&amp;socid=$socid",'width="25%" align="left"',$sortfield,$sortorder);
-  if ($conf->commande->enabled)
-  {
-  	print_liste_field_titre($langs->trans("Order"),"liste.php","ori.ref", "", "&amp;socid=$socid",'width="25%" align="left"',$sortfield,$sortorder);
-  }
-  else
-  {
-  	print_liste_field_titre($langs->trans("Proposal"),"liste.php","ori.ref", "", "&amp;socid=$socid",'width="25%" align="left"',$sortfield,$sortorder);
-  }
-  print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","","&amp;socid=$socid", 'width="25%" align="right" colspan="2"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socid=$socid",'width="10%" align="right"',$sortfield,$sortorder);
-  print "</tr>\n";
-  $var=True;
 
-  while ($i < min($num,$limit))
-  {
-  	$objp = $db->fetch_object($resql);
+	$i = 0;
+	print '<table class="noborder" width="100%">';
 
-    $var=!$var;
-    print "<tr $bc[$var]>";
-    print "<td><a href=\"fiche.php?id=".$objp->rowid."\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
-    print "<a href=\"fiche.php?id=".$objp->rowid."\">".$objp->ref."</a></td>\n";
-    print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.$objp->socname.'</a></td>';
-    if ($conf->commande->enabled)
-    {
-    	print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$objp->origin_id.'">'.$objp->origin_ref.'</a></td>';
-    }
-    else
-    {
-    	print '<td><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$objp->origin_id.'">'.$objp->origin_ref.'</a></td>';
-    }
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","",$param,'width="15%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", $param,'width="25%" align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","",$param, 'width="25%" align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","",$param,'width="10%" align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
+	$var=True;
 
-    $now = time();
-    $lim = 3600 * 24 * 15 ;
+	while ($i < min($num,$limit))
+	{
+		$objp = $db->fetch_object($resql);
 
-    if ( ($now - $db->jdate($objp->date_expedition)) > $lim && $objp->statutid == 1 )
-    {
-    	print "<td><b> &gt; 15 jours</b></td>";
-    }
-    else
-    {
-    	print "<td>&nbsp;</td>";
-    }
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print "<td><a href=\"fiche.php?id=".$objp->rowid."\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
+		print "<a href=\"fiche.php?id=".$objp->rowid."\">".$objp->ref."</a></td>\n";
+		// Third party
+		print '<td>';
+		$companystatic->id=$objp->id;
+		$companystatic->ref=$objp->id;
+		$companystatic->nom=$objp->socname;
+		print $companystatic->getNomUrl(1);
+		print '</td>';
+		// Date
+		print "<td align=\"center\">";
+		print dol_print_date($db->jdate($objp->date_expedition),"day");
+		/*$now = time();
+		if ( ($now - $db->jdate($objp->date_expedition)) > $conf->warnings->lim && $objp->statutid == 1 )
+		{
+		}*/
+		print "</td>\n";
 
-    print "<td align=\"right\">";
-    $y = dol_print_date($db->jdate($objp->date_expedition),"%Y");
-    $m = dol_print_date($db->jdate($objp->date_expedition),"%m");
-    $mt = dol_print_date($db->jdate($objp->date_expedition),"%b");
-    $d = dol_print_date($db->jdate($objp->date_expedition),"%d");
-    print $d."\n";
-    print " <a href=\"propal.php?year=$y&amp;month=$m\">";
-    print $b."</a>\n";
-    print " <a href=\"propal.php?year=$y\">";
-    print $y."</a></TD>\n";
+		print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
+		print "</tr>\n";
 
-    print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
-    print "</tr>\n";
+		$i++;
+	}
 
-    $i++;
-  }
-
-  print "</table>";
-  $db->free($resql);
+	print "</table>";
+	$db->free($resql);
 }
 else
 {
-  dol_print_error($db);
+	dol_print_error($db);
 }
 
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
