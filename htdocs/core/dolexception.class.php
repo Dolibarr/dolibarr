@@ -17,18 +17,18 @@
  */
 
 /**
- *   \file		htdocs/core/exception.class.php
+ *   \file			htdocs/core/DolException.class.php
  *   \ingroup		core
- *   \brief			Fichier de la classe de gestion des exceptions
+ *   \brief			File of class for exceptions
  *   \version		$Id$
  */
 
 
 /**
- *    \class      Dolibarr_Exception
+ *    \class      DolException
  *    \brief      Classe de la gestion des exceptions
  */
-class Dolibarr_Exception extends Exception
+class DolException extends Exception
 {
-    
+
 }
