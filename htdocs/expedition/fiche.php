@@ -29,6 +29,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
