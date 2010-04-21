@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -448,12 +449,17 @@ if ($modulepart)
 	else
 	{
 		$user->getrights($modulepart);
-		if ($user->rights->$modulepart->lire || $user->rights->$modulepart->read || preg_match('/^specimen/i',$original_file))
+		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
+		if(isset($conf->global->$subPermCategoryConstName)) $subPermCategory = $conf->global->$subPermCategoryConstName;
+		if ( ((isset($subPermCategory)==false) && (($user->rights->$modulepart->lire) || ($user->rights->$modulepart->read) || ($user->rights->$modulepart->download))) || (isset($subPermCategory) && (($user->rights->$modulepart->$subPermCategory->lire) || ($user->rights->$modulepart->$subPermCategory->read) || ($user->rights->$modulepart->$subPermCategory->download))) || preg_match('/^specimen/i',$original_file) )
 		{
 			$accessallowed=1;
 		}
 		$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
+		if(isset($conf->global->$sqlProtectConstName)) eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
+		//less generic/modular than the 2 lines upper :
+		//$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}	
 }
 
