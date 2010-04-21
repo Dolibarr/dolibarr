@@ -69,7 +69,7 @@ class modWorkflow extends DolibarrModules
 		$this->picto='workflow@workflow';
 		
 		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		$this->triggers = 0;
+		$this->triggers = 1;
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/workflow/temp");
