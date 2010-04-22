@@ -23,6 +23,7 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/interfaces.class.php");
 
 if (!$user->admin)
     accessforbidden();
@@ -46,136 +47,12 @@ print_fiche_titre($langs->trans("TriggersAvailable"),'','setup');
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td colspan=\"2\">".$langs->trans("File")."</td>\n";
-//print "  <td>".$langs->trans("Description")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Active")."</td>\n";
-print "  <td align=\"center\">&nbsp;</td>\n";
-print "</tr>\n";
+$template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 
+$interfaces = new Interfaces($db);
+$triggers = $interfaces->getTriggersList(0);
 
-$files = array();
-$modules = array();
-$orders = array();
-$i = 0;
-
-foreach($conf->triggers_modules as $dir)
-{
-	// Check if directory exists
-	if (!is_dir($dir)) continue;
-	
-	$handle=opendir($dir);
-	
-	while (($file = readdir($handle))!==false)
-	{
-		if (is_readable($dir.'/'.$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php/',$file,$reg))
-		{
-			$modName = 'Interface'.ucfirst($reg[2]);
-			//print "file=$file"; print "modName=$modName"; exit;
-			if (in_array($modName,$modules))
-			{
-				$langs->load("errors");
-				print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
-				$objMod = new $modName($db);
-				
-				$modules[$i] = $modName;
-				$files[$i] = $file;
-				$orders[$i] = $objMod->family;   // Tri par famille
-				$i++;
-			}
-			else
-			{
-				include_once($dir.'/'.$file);
-				$objMod = new $modName($db);
-				
-				$modules[$i] = $modName;
-				$files[$i] = $file;
-				$orders[$i] = $objMod->family;   // Tri par famille
-				$i++;
-			}
-		}
-	}
-	closedir($handle);
-}
-
-asort($orders);
-$var=True;
-
-// Loop on each trigger
-foreach ($orders as $key => $value)
-{
-    $tab=explode('_',$value);
-    $family=$tab[0]; $numero=$tab[1];
-
-    $modName = $modules[$key];
-    if ($modName)
-    {
-        $objMod = new $modName($db);
-    }
-
-    $var=!$var;
-
-	// Define disabledbyname and disabledbymodule
-    $disabledbyname=0;
-    $disabledbymodule=1;
-	$module='';
-    if (preg_match('/NORUN$/i',$files[$key])) $disabledbyname=1;
-    if (preg_match('/^interface_([^_]+)_(.+)\.class\.php/i',$files[$key],$reg))
-	{
-		// Check if trigger file is for a particular module
-		$module=preg_replace('/^mod/i','',$reg[1]);
-		$constparam='MAIN_MODULE_'.strtoupper($module);
-		if (strtolower($reg[1]) == 'all') $disabledbymodule=0;
-		else if (empty($conf->global->$constparam)) $disabledbymodule=2;
-	}
-
-	// Show line for trigger file
-    print "<tr $bc[$var]>\n";
-
-    print '<td valign="top" width="14" align="center">';
-    print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
-    print '</td>';
-    print '<td valign="top">'.$files[$key]."</td>\n";
-    //print '<td valign="top">'.$objMod->getDesc()."</td>\n";
-    print "<td valign=\"top\" align=\"center\">".$objMod->getVersion()."</td>\n";
-
-    // Etat trigger
-    print "<td valign=\"top\" align=\"center\">";
-    if ($disabledbyname > 0 || $disabledbymodule > 1)
-    {
-        print "&nbsp;";
-    }
-    else
-    {
-        print img_tick();
-    }
-    print "</td>\n";
-
-    print '<td valign="top">';
-	$text ='<b>'.$langs->trans("Description").':</b><br>';
-	$text.=$objMod->getDesc().'<br>';
-	$text.='<br><b>'.$langs->trans("Status").':</b><br>';
-	if ($disabledbyname == 1)
-	{
-		$text.=$langs->trans("TriggerDisabledByName").'<br>';
-		if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
-	}
-	else
-	{
-		if ($disabledbymodule == 0) $text.=$langs->trans("TriggerAlwaysActive").'<br>';
-		if ($disabledbymodule == 1) $text.=$langs->trans("TriggerActiveAsModuleActive",$module).'<br>';
-		if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
-	}
-	print $html->textwithpicto('',$text);
-	print "</td>\n";
-
-    print "</tr>\n";
-
-}
-print "</table>\n";
-
+include($template_dir.'triggers.tpl.php');
 
 llxFooter('$Date$ - $Revision$');
 ?>

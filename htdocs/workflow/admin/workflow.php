@@ -25,12 +25,11 @@
 
 require("../../main.inc.php");
 //require_once(DOL_DOCUMENT_ROOT."/workflow/class/workflow.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/interfaces.class.php");
 
 $langs->load("admin");
 
-if (!$user->admin || $user->entity)
+if (!$user->admin)
 accessforbidden();
 
 //$wf = new Workflow($db);
@@ -50,10 +49,15 @@ llxHeader('',$langs->trans("WorkflowSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'setup');
 
-print '<br>';
+print $langs->trans("TriggersDesc")."<br>";
+print "<br>\n";
 
-$template_dir = DOL_DOCUMENT_ROOT.'/workflow/tpl/';
+$template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 
+$interfaces = new Interfaces($db);
+$triggers = $interfaces->getTriggersList(1);
+
+include($template_dir.'triggers.tpl.php');
 
 llxFooter('$Date$ - $Revision$');
 ?>
