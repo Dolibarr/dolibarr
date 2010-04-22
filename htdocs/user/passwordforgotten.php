@@ -165,11 +165,10 @@ else
 	{
 		$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 	}
-
-	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
-
-	$conf_css = DOL_URL_ROOT.$conf->css;
 }
+
+$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
+$conf_css = DOL_URL_ROOT.$conf->css;
 
 if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 {

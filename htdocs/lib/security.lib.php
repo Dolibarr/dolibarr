@@ -74,11 +74,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		{
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
-
-		$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
-
-		$conf_css = DOL_URL_ROOT.$conf->css;
 	}
+
+	$conf->css  = "/theme/".$conf->theme."/".$conf->theme.".css.php?lang=".$langs->defaultlang;
+	$conf_css = DOL_URL_ROOT.$conf->css;
 
 	// Set cookie for timeout management
 	$sessiontimeout='DOLSESSTIMEOUT_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
@@ -204,7 +203,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 	$main_home=nl2br($conf->global->MAIN_HOME);
-	
+
 	// Google AD
 	$main_google_ad_client = ((! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))?1:0);
 
