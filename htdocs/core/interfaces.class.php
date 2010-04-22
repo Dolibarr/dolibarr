@@ -62,7 +62,7 @@ class Interfaces
 		{
    			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}
-		
+
 		foreach($conf->triggers_modules as $dir)
 		{
 			// Check if directory exists
@@ -71,13 +71,13 @@ class Interfaces
 			$handle=opendir($dir);
 			$modules = array();
 			$nbfile = $nbtotal = $nbok = $nbko = 0;
-			
+
 			while (($file = readdir($handle))!==false)
 			{
 				if (is_readable($dir."/".$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php$/i',$file,$reg))
 				{
 					$nbfile++;
-					
+
 					$modName = "Interface".ucfirst($reg[2]);
 					//print "file=$file"; print "modName=$modName"; exit;
 					if (in_array($modName,$modules))
@@ -86,7 +86,7 @@ class Interfaces
 						dol_syslog("Interface::run_triggers ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
 						continue;
 					}
-					
+
 					// Check if trigger file is disabled by name
 					if (preg_match('/NORUN$/i',$file))
 					{
@@ -100,22 +100,27 @@ class Interfaces
 						$constparam='MAIN_MODULE_'.strtoupper($module);
 						if (empty($conf->global->$constparam)) $qualified=false;
 					}
-					
+
 					if (! $qualified)
 					{
 						dol_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
 						continue;
 					}
-					
-					dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+
 					include_once($dir."/".$file);
 					$objMod = new $modName($this->db);
 					$i=0;
 					if ($objMod)
 					{
-						// Bypass if workflow module is enabled and if the trigger is compatible 
-						if ($conf->workflow->enabled && $objMod->workflow) continue;
-						
+						// Bypass if workflow module is enabled and if the trigger asked to be disable in such case
+						if ($conf->workflow->enabled && ! empty($objMod->disabled_if_workflow))
+						{
+							dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+							continue;
+						}
+
+						dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+
 						$modules[$i] = $modName;
 						//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
 						$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
@@ -139,11 +144,15 @@ class Interfaces
 						}
 						$i++;
 					}
+					else
+					{
+						dol_syslog("Interfaces::run_triggers Failed to instantiate trigger for file '".$file."'",LOG_ERROR);
+					}
 				}
 			}
 			closedir($handle);
 		}
-		
+
 		if ($nbko)
 		{
 			dol_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
@@ -155,28 +164,28 @@ class Interfaces
 			return $nbok;
 		}
 	}
-	
+
    /**
 	*   \brief      Return list of triggers.
 	*/
 	function getTriggersList($workflow=0)
 	{
 		global $conf, $langs;
-		
+
 		$html = new Form($db);
-		
+
 		$files = array();
 		$modules = array();
 		$orders = array();
 		$i = 0;
-		
+
 		foreach($conf->triggers_modules as $dir)
 		{
 			// Check if directory exists
 			if (!is_dir($dir)) continue;
-			
+
 			$handle=opendir($dir);
-			
+
 			while (($file = readdir($handle))!==false)
 			{
 				if (is_readable($dir.'/'.$file) && preg_match('/^interface_([^_]+)_(.+)\.class\.php/',$file,$reg))
@@ -188,7 +197,7 @@ class Interfaces
 						$langs->load("errors");
 						print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
 						$objMod = new $modName($db);
-						
+
 						$modules[$i] = $modName;
 						$files[$i] = $file;
 						$orders[$i] = $objMod->family;   // Tri par famille
@@ -198,7 +207,7 @@ class Interfaces
 					{
 						include_once($dir.'/'.$file);
 						$objMod = new $modName($db);
-						
+
 						$modules[$i] = $modName;
 						$files[$i] = $file;
 						$orders[$i] = $objMod->family;   // Tri par famille
@@ -208,12 +217,12 @@ class Interfaces
 			}
 			closedir($handle);
 		}
-		
+
 		asort($orders);
-		
+
 		$triggers = array();
 		$j = 0;
-		
+
 		// Loop on each trigger
 		foreach ($orders as $key => $value)
 		{
@@ -224,7 +233,7 @@ class Interfaces
 				// Bypass if workflow module is enabled and if the trigger is compatible
 				if ($workflow && !$objMod->workflow) continue;
 			}
-			
+
 			// Define disabledbyname and disabledbymodule
 			$disabledbyname=0;
 			$disabledbymodule=1;
@@ -238,13 +247,13 @@ class Interfaces
 				if (strtolower($reg[1]) == 'all') $disabledbymodule=0;
 				else if (empty($conf->global->$constparam)) $disabledbymodule=2;
 			}
-			
+
 			$triggers[$j]['picto'] = $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
 			$triggers[$j]['file'] = $files[$key];
 			$triggers[$j]['version'] = $objMod->getVersion();
 			$triggers[$j]['status'] = img_tick();
 			if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = "&nbsp;";
-			
+
 			$text ='<b>'.$langs->trans("Description").':</b><br>';
 			$text.=$objMod->getDesc().'<br>';
 			$text.='<br><b>'.$langs->trans("Status").':</b><br>';
@@ -259,7 +268,7 @@ class Interfaces
 				if ($disabledbymodule == 1) $text.=$langs->trans("TriggerActiveAsModuleActive",$module).'<br>';
 				if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
 			}
-			
+
 			$triggers[$j]['info'] = $html->textwithpicto('',$text);
 			$j++;
 		}
