@@ -113,6 +113,9 @@ class Interfaces
 					$i=0;
 					if ($objMod)
 					{
+						// Bypass if workflow module is enabled and if the trigger is compatible 
+						if ($conf->workflow->enabled && $objMod->workflow) continue;
+						
 						$modules[$i] = $modName;
 						//dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
 						$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
