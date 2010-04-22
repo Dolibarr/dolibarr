@@ -3,7 +3,7 @@ Directory content
 This directory contains all available Dolibarr triggers.
 
 Trigger file name syntax is:
-> interface_modModule_mytrigger.php[-NORUN]
+> interface_modModule_Mytrigger.php[-NORUN]
 
 where:
 > modModule is part of module descriptor file name found in includes/modules

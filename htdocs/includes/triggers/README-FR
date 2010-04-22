@@ -1,18 +1,18 @@
-Directory content
+Contenu du répertoire
 --------------------------------------------------------
-Ce r�pertoire contient tous les triggers Dolibarr.
+Ce répertoire contient tous les triggers Dolibarr.
 
 La syntaxe d'un fichier Trigger est:
-> interface_modModule_mytrigger.php[-NORUN]
+> interface_modModule_Mytrigger.php[-NORUN]
 
-where:
-> modModule est la partie du nom du descripteur de module trouve dans le
-            repertoire includes/modules pour lequel le trigger doit etre.
-            actif ou la valeur 'all' si ne doit pas etre actif pour un
+où:
+> modModule est la partie du nom du descripteur de module trouvé dans le
+            répertoire includes/modules pour lequel le trigger doit être.
+            actif ou la valeur 'all' si ne doit pas être actif pour un
 			module particulier.
 > Mytrigger est le nom du trigger. La classe PHP dans le fichier trigger
             aura pour nom InterfaceMytrigger.
-> -NORUN est optionnel et desactive le fichier trigger si defini. Pour 
+> -NORUN est optionnel et désactive le fichier trigger si défini. Pour 
             utiliser un tel fichier trigger, renommer le fichier afin 
 			d'enlever la partie -NORUN.
 
