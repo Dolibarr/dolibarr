@@ -50,8 +50,8 @@ if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If languag
 $langs->load("main",0,1);
 $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'9';
-$fontsizesmaller=empty($conf->browser->phone)?'11':'9';
+$fontsize=empty($conf->browser->phone)?'12':'10';
+$fontsizesmaller=empty($conf->browser->phone)?'11':'10';
 
 ?>
 
