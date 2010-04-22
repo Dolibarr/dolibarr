@@ -192,7 +192,8 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			'__FROM_EMAIL__' => $fromcompany->email,
 			'__TOTAL_TTC__' => $object->total_ttc,
 			'__TOTAL_HT__' => $object->total_ht,
-			'__TOTAL_VAT__' => $object->total_vat
+			'__TOTAL_VAT__' => $object->total_vat,
+			'€' => chr(128)
 		);
 
 		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray,$outputlangs,$object);
