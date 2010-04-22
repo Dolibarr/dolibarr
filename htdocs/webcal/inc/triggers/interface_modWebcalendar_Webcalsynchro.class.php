@@ -23,7 +23,7 @@
 		\version	$Id$
 */
 
-include_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/webcal/class/webcal.class.php');
 
 
 /**

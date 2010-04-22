@@ -72,7 +72,7 @@ class modWebcalendar extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array("webcalendar.php");
+		$this->config_page_url = array("webcalendar.php@webcal");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled

@@ -26,7 +26,7 @@
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/webcal/class/webcal.class.php');
 
 // C'est un wrapper, donc header vierge
 function llxHeader() { print '<html><title>Export cal</title><body>'; }
