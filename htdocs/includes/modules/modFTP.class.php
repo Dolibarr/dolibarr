@@ -67,9 +67,12 @@ class modFTP extends DolibarrModules
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/ftp/temp");
+		
+		// Langs file within the module
+		$this->langfiles = array("@ftp");
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array('ftpclient.php');
+		$this->config_page_url = array('ftpclient.php@ftp');
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
