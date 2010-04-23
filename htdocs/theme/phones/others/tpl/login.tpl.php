@@ -89,14 +89,16 @@ function donnefocus(element) {
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2">
 </td></tr>
 
-	<?php if ($entity) { ?>
+	<?php if ($select_entity) { ?>
+		<tr><td colspan="3">&nbsp;</td></tr>
 		<tr><td valign="top" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('Entity'); ?></b> &nbsp; </td>
 		<td valign="top" nowrap="nowrap">
-		<?php echo $entity; ?>
+		<?php echo $select_entity; ?>
 		</td></tr>
 	<?php } ?>
 
 	<?php if ($captcha) { ?>
+		<tr><td colspan="3">&nbsp;</td></tr>
 		<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
 		<td valign="top" nowrap="nowrap" align="left" class="none">
 
