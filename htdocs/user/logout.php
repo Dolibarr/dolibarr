@@ -57,11 +57,7 @@ unset($_SESSION['dol_entity']);
 
 // Add real path in session
 $realpath='';
-if (preg_match('/\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"]))
-{
-	$result = preg_match('/^([^.]+)\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"],$regs);
-	$realpath = $regs[1];
-}
+if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
 
 // Destroy session
 $sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);

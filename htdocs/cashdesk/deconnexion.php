@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 J�r�mie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,7 @@
 
 // Add real path in session
 $realpath='';
-if (preg_match('/\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"]))
-{
-	$result = preg_match('/^([^.]+)\/htdocs\//i',$_SERVER["SCRIPT_FILENAME"],$regs);
-	$realpath = $regs[1];
-}
+if ( preg_match('/^([^.]+)\/htdocs\//i', realpath($_SERVER["SCRIPT_FILENAME"]), $regs))	$realpath = isset($regs[1])?$regs[1]:'';
 
 // Init session. Name of session is specific to Dolibarr instance.
 $sessionname='DOLSESSID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].$realpath);
