@@ -107,6 +107,9 @@ class mailing_peche extends MailingTargets
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		global $conf,$langs,$_FILES;
+		
+		// For compatibility with Unix, MS-Dos or Macintosh
+		ini_set('auto_detect_line_endings', true);
 
 		$cibles = array();
 
@@ -198,6 +201,8 @@ class mailing_peche extends MailingTargets
 				return -1;
 			}
 		}
+		
+		ini_set('auto_detect_line_endings', false);
 
 		return parent::add_to_target($mailing_id, $cibles);
 	}

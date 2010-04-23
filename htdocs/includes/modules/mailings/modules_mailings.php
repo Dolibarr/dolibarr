@@ -22,7 +22,7 @@
 /**
 	    \file       htdocs/includes/modules/mailings/modules_mailings.php
 		\ingroup    mailing
-		\brief      Fichier contenant la classe mère des classes de liste de destinataires mailing
+		\brief      Fichier contenant la classe mï¿½re des classes de liste de destinataires mailing
 		\version    $Id$
 */
 
@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 
 /**
 	    \class      MailingTargets
-		\brief      Classe mère des classes de liste de destinataires mailing
+		\brief      Classe mï¿½re des classes de liste de destinataires mailing
 */
 
 class MailingTargets
@@ -44,8 +44,8 @@ class MailingTargets
         $this->db=$DB;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
-     *      \return     string      Retourne la traduction de la clé MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouvé
+    /**     \brief      Renvoi un exemple de numerotation
+     *      \return     string      Retourne la traduction de la cle MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouve
      */
     function getDesc()
     {
@@ -56,7 +56,7 @@ class MailingTargets
         else return $this->desc;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getNbOfRecords()
@@ -96,7 +96,7 @@ class MailingTargets
 
     /**
      *      \brief      Met a jour nombre de destinataires
-     *      \param      mailing_id          Id du mailing concerné
+     *      \param      mailing_id          Id du mailing concernï¿½
      *      \return     int                 < 0 si erreur, nb destinataires si ok
      */
     function update_nb($mailing_id)
@@ -127,7 +127,7 @@ class MailingTargets
 
     /**
      *    \brief      Ajoute destinataires dans table des cibles
-     *    \param      mailing_id    Id du mailing concerné
+     *    \param      mailing_id    Id du mailing concernï¿½
      *    \param      sql           Requete sql de selection des destinataires
      *    \return     int           < 0 si erreur, nb ajout si ok
      */
@@ -180,7 +180,7 @@ class MailingTargets
 
     /**
      *    \brief      Supprime tous les destinataires de la table des cibles
-     *    \param      mailing_id        Id du mailing concerné
+     *    \param      mailing_id        Id du mailing concernï¿½
      */
     function clear_target($mailing_id)
     {
