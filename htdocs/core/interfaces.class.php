@@ -167,6 +167,7 @@ class Interfaces
 
    /**
 	*   \brief      Return list of triggers.
+	* 	\param		workflow		0=Return all triggers, 1=Return only triggers not disabled if workflow module activated
 	*/
 	function getTriggersList($workflow=0)
 	{
@@ -231,7 +232,7 @@ class Interfaces
 			{
 				$objMod = new $modName($db);
 				// Bypass if workflow module is enabled and if the trigger is compatible
-				if ($workflow && empty($objMod->disabled_if_workflow)) continue;
+				if ($workflow && ! empty($objMod->disabled_if_workflow)) continue;
 			}
 
 			// Define disabledbyname and disabledbymodule
