@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   webcalendar     Module webcalendar
-        \brief      Module to include Webcalendar GUI into Dolibarr menu and
-                    add Dolibarr events directly inside a Webcalendar database.
-		\version	$Id$
-*/
+/**
+ *      \defgroup   webcalendar     Module webcalendar
+ *      \brief      Module to include Webcalendar GUI into Dolibarr menu and
+ *                  add Dolibarr events directly inside a Webcalendar database.
+ *      \version	$Id$
+ */
 
 /**
-        \file       htdocs/includes/modules/modWebcalendar.class.php
-        \ingroup    webcalendar
-        \brief      Description and activation file for module Webcalendar
-*/
+ *      \file       htdocs/includes/modules/modWebcalendar.class.php
+ *      \ingroup    webcalendar
+ *      \brief      Description and activation file for module Webcalendar
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modWebcalendar
-        \brief      Description and activation class for module Webcalendar
-*/
+/**     
+ * 		\class      modWebcalendar
+ *      \brief      Description and activation class for module Webcalendar
+ */
 
 class modWebcalendar extends DolibarrModules
 {
@@ -67,6 +69,9 @@ class modWebcalendar extends DolibarrModules
 		$this->special = 1;
 		// Name of png file (without png) used for this module
 		$this->picto='calendar';
+		
+		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
+		$this->triggers = 1;
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();

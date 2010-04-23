@@ -115,7 +115,7 @@ class Interfaces
 						// Bypass if workflow module is enabled and if the trigger asked to be disable in such case
 						if ($conf->workflow->enabled && ! empty($objMod->disabled_if_workflow))
 						{
-							dol_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+							dol_syslog("Interfaces::run_triggers Bypass triggers for file '".$file."'",LOG_INFO);
 							continue;
 						}
 
@@ -231,7 +231,7 @@ class Interfaces
 			{
 				$objMod = new $modName($db);
 				// Bypass if workflow module is enabled and if the trigger is compatible
-				if ($workflow && !$objMod->workflow) continue;
+				if ($workflow && empty($objMod->disabled_if_workflow)) continue;
 			}
 
 			// Define disabledbyname and disabledbymodule
