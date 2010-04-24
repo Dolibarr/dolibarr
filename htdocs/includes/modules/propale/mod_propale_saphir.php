@@ -109,7 +109,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
 
-		// On d�fini critere recherche compteur
+		// On defini critere recherche compteur
 		$mask=$conf->global->PROPALE_SAPHIR_MASK;
 
 		if (! $mask)
@@ -118,7 +118,9 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc->code_client,$propal->date);
+		$date=$propal->datep;
+		$customercode=$objsoc->code_client;
+		$numFinal=get_next_value($db,$mask,'propal','ref','',$customercode,$date);
 
 		return  $numFinal;
 	}

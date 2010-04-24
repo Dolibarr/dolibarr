@@ -23,7 +23,7 @@
 /**
  *	\file       htdocs/includes/modules/facture/mercure/mercure.modules.php
  *	\ingroup    facture
- *	\brief      Class filte of Mercure numbering module for invoice
+ *	\brief      File containing class for numbering module Mercure
  *	\version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");

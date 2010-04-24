@@ -743,20 +743,22 @@ class Propal extends CommonObject
 			return -1;
 		}
 
+		// Clear fields
+		$object->user_author        = $user->id;
+		$object->user_valid         = '';
+		$object->date               = '';
+		$object->datep = dol_now('gmt');
+		$object->fin_validite       = '';
+		$object->ref_client         = '';
+		$object->products = $object->lignes;	// Tant que products encore utilise
+
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$conf->global->PROPALE_ADDON.".php");
 		$obj = $conf->global->PROPALE_ADDON;
 		$modPropale = new $obj;
 		$numpr = $modPropale->getNextValue($objsoc,$object);
 
-		// Clear fields
+		// Set ref
 		$object->ref                = $numpr;
-		$object->user_author        = $user->id;
-		$object->user_valid         = '';
-		$object->date               = '';
-		$object->datep              = dol_now('gmt');
-		$object->fin_validite       = '';
-		$object->ref_client         = '';
-		$object->products = $object->lignes;	// Tant que products encore utilise
 
 		// Create clone
 		$result=$object->create($user);
@@ -2024,7 +2026,7 @@ class Propal extends CommonObject
 	function verifyNumRef($soc)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql.= " WHERE ref = '".$this->ref."'";

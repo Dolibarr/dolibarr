@@ -118,7 +118,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 			return -1;
 		}
 
-		$date=$propal->date;
+		$date=$propal->datep;
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m",$date);
 		$num = sprintf("%04s",$max+1);

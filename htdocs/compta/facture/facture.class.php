@@ -60,9 +60,9 @@ class Facture extends CommonObject
 	var $number;
 	var $author;
 	//! Invoice date
-	var $date;
-	var $date_creation;
-	var $date_validation;
+	var $date;				// Invoice date
+	var $date_creation;		// Creation date
+	var $date_validation;	// Validation date
 	var $datem;
 	var $ref;
 	var $ref_client;

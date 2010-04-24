@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/includes/modules/facture/terre/terre.modules.php
  *	\ingroup    facture
- *	\brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de facture Terre
+ *	\brief      File containing class for numbering module Terre
  *	\version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
@@ -143,8 +143,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 			return -1;
 		}
 
-		//$date=time();
-		$date=$facture->date;
+		$date=$facture->date;	// This is invoice date (not creation date)
 		$yymm = strftime("%y%m",$date);
 		$num = sprintf("%04s",$max+1);
 
