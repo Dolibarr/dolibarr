@@ -66,9 +66,9 @@ if ($task->fetch($id,$ref) > 0)
 {
 	$projectstatic = new Project($db);
 	$projectstatic->fetch($task->fk_project);
-	
+
 	if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-	
+
 	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($task->ref);
 }
 else
@@ -122,12 +122,12 @@ if ($action=='delete')
  * View
  */
 
-llxHeader('',$langs->trans('Project'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('',$langs->trans('Project'));
 
 $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
-{		
+{
 	// To verify role of users
 	$userAccess = $projectstatic->restrictedProjectArea($user);
 
@@ -143,7 +143,7 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	print '<table class="border" width="100%">';
-	
+
 	// Ref
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
@@ -165,11 +165,11 @@ if ($id > 0 || ! empty($ref))
 	if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
-	
+
 	// Files infos
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	
+
 	print "</table>\n";
 	print "</div>\n";
 

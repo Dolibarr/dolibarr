@@ -226,8 +226,8 @@ if ($_GET["id"] > 0)
 
 			// Contributor
 			print '<td nowrap="nowrap">';
-			// TODO We should use here a combo list with contacts affected to task only
-			print $html->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid');
+			$contactoftask=$task->getListContactId('thirdparty');
+			print $html->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
 			print '</td>';
 
 			// Note

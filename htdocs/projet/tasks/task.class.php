@@ -592,6 +592,27 @@ class Task extends CommonObject
 		return $projectsrole;
 	}
 
+
+	/**
+	 *      \brief      Return list of id of contacts of task
+	 *      \return     array		Array of id of contacts
+	 */
+	function getListContactId()
+	{
+		$contactAlreadySelected = array();
+		$tab = $this->liste_contact(-1,'internal');
+		$num=sizeof($tab);
+		$i = 0;
+		while ($i < $num)
+		{
+			if ($source == 'thirdparty') $contactAlreadySelected[$i] = $tab[$i]['socid'];
+			else  $contactAlreadySelected[$i] = $tab[$i]['id'];
+			$i++;
+		}
+		return $contactAlreadySelected;
+	}
+
+
 	/**
 	 *    \brief     Add time spent
 	 *    \param     user           user id

@@ -158,7 +158,7 @@ llxHeader('', $langs->trans("Task"));
 $html = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
-$projectstatic = new Project($db);
+$project = new Project($db);
 
 
 /* *************************************************************************** */
@@ -176,11 +176,11 @@ if ($id > 0 || ! empty($ref))
 
 	if ( $task->fetch($id,$ref) > 0)
 	{
-		$result=$projectstatic->fetch($task->fk_project);
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-		
+		$result=$project->fetch($task->fk_project);
+		if (! empty($project->socid)) $project->societe->fetch($project->socid);
+
 		// To verify role of users
-		$userAccess = $projectstatic->restrictedProjectArea($user);
+		$userAccess = $project->restrictedProjectArea($user);
 
 		$head = task_prepare_head($task);
 		dol_fiche_head($head, 'contact', $langs->trans("Task"), 0, 'projecttask');
@@ -203,13 +203,13 @@ if ($id > 0 || ! empty($ref))
 
 		// Project
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		print $projectstatic->getNomUrl(1);
+		print $project->getNomUrl(1);
 		print '</td></tr>';
 
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">';
-		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
+		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 
@@ -231,7 +231,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
 			print '<td>'.$langs->trans("Company").'</td>';
-			print '<td>'.$langs->trans("Contacts").'</td>';
+			print '<td>'.$langs->trans("ProjectContact").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
@@ -257,7 +257,8 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
-			$html->select_users($user->id,'contactid',0);
+			$contactsofproject=$project->getListContactId('internal');
+			$html->select_users($user->id,'contactid',0,'',0,'',$contactsofproject);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($task, '', 'type','internal','rowid');
@@ -274,7 +275,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
 			// Line to add an external contact. Only if project linked to a third party.
-			if ($projectstatic->socid)
+			if ($project->socid)
 			{
 				$var=!$var;
 				print "<tr $bc[$var]>";
@@ -284,12 +285,14 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
+				$thirdpartyofproject=$project->getListContactId('thirdparty');
 				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($task, 'id', $selectedCompany, 'newcompany');
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($task, 'id', $selectedCompany, 'newcompany',$thirdpartyofproject);
 				print '</td>';
 
 				print '<td colspan="1">';
-				$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0);
+				$contactofproject=$project->getListContactId('external');
+				$nbofcontacts=$html->select_contacts($selectedCompany,'','contactid',0,'',$contactofproject);
 				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';
@@ -310,7 +313,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("Company").'</td>';
-		print '<td>'.$langs->trans("Contacts").'</td>';
+		print '<td>'.$langs->trans("ProjectContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
 		print '<td align="center">'.$langs->trans("Status").'</td>';
 		print '<td colspan="2">&nbsp;</td>';

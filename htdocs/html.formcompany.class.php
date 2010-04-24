@@ -444,22 +444,33 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Return list of third parties
-	 *    \param      object          Object we try to find contacts
-	 *    \param      var_id          Name of id field
-	 *    \param      selected        Pre-selected third party
-	 *    \param      htmlname        Name of HTML form
+	 *    	\brief      Return list of third parties
+	 *    	\param      object          Object we try to find contacts
+	 *    	\param      var_id          Name of id field
+	 *    	\param      selected        Pre-selected third party
+	 *    	\param      htmlname        Name of HTML form
+	 * 		\param		limitto			Disable answers that are not id in this array list
 	 */
-	function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany')
+	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='')
 	{
 		global $conf, $langs;
 
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom FROM";
-		$sql .= " ".MAIN_DB_PREFIX."societe as s";
+		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) $sql.= " WHERE rowid = ".$selected;
+		else
+		{
+			// For ajax search we limit here. For combo list, we limit later
+			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
+			&& is_array($limitto) && sizeof($limitto))
+			{
+				$sql.= " WHERE rowid in (".join(',',$limitto).")";
+			}
+		}
 		$sql .= " ORDER BY nom ASC";
 
+		//print $sql;
 		$resql = $object->db->query($sql);
 		if ($resql)
 		{
@@ -510,14 +521,20 @@ class FormCompany
 					{
 						$obj = $object->db->fetch_object($resql);
 						if ($i == 0) $firstCompany = $obj->rowid;
+						$disabled=0;
+						if (is_array($limitto) && sizeof($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
-							print '<option value="'.$obj->rowid.'" selected="true">'.dol_trunc($obj->nom,24).'</option>';
+							print '<option value="'.$obj->rowid.'"';
+							if ($disabled) print ' disabled="true"';
+							print ' selected="true">'.dol_trunc($obj->nom,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
-							print '<option value="'.$obj->rowid.'">'.dol_trunc($obj->nom,24).'</option>';
+							print '<option value="'.$obj->rowid.'"';
+							if ($disabled) print ' disabled="true"';
+							print '>'.dol_trunc($obj->nom,24).'</option>';
 						}
 						$i ++;
 					}

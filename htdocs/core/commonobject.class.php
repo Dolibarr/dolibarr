@@ -162,10 +162,10 @@ class CommonObject
 	}
 
 	/**
-	 *    \brief      Recupere les lignes de contact de l'objet
-	 *    \param      statut        Statut des lignes detail a recuperer
-	 *    \param      source        Source du contact external (llx_socpeople) ou internal (llx_user)
-	 *    \return     array         Tableau des rowid des contacts
+	 *    \brief      Get array of all contacts for an object
+	 *    \param      statut        Status of lines to get (-1=all)
+	 *    \param      source        Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+	 *    \return     array			Array of id of contacts
 	 */
 	function liste_contact($statut=-1,$source='external')
 	{
@@ -175,18 +175,18 @@ class CommonObject
 
 		$sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";
 		if ($source == 'internal') $sql.=", '-1' as socid";
-		if ($source == 'external') $sql.=", t.fk_soc as socid";
+		if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
 		$sql.= ", t.name as nom, t.firstname";
 		$sql.= ", tc.source, tc.element, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
 		if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
-		if ($source == 'external') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
+		if ($source == 'external'|| $source == 'thirdparty') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
 		$sql.= " WHERE ec.element_id =".$this->id;
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql.= " AND tc.element='".$this->element."'";
 		if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
-		if ($source == 'external') $sql.= " AND tc.source = 'external'";
+		if ($source == 'external' || $source == 'thirdparty') $sql.= " AND tc.source = 'external'";
 		$sql.= " AND tc.active=1";
 		if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
 		$sql.=" ORDER BY t.name ASC";
@@ -413,7 +413,7 @@ class CommonObject
 	function fetch_object()
 	{
 		$object = $this->origin;
-		
+
 		// TODO uniformise code
 		if ($object == 'shipping') $object = 'expedition';
 		if ($object == 'delivery') $object = 'livraison';
@@ -492,9 +492,10 @@ class CommonObject
 
 
 	/**
-	 *      \brief      On recupere les id de liste_contact
-	 *      \param      source      Source du contact external (llx_socpeople) ou internal (llx_user)
-	 *      \return     array
+	 *      \brief      Return list of id of contacts of project
+	 *      \param      source      Source of contact: external (llx_socpeople) or internal (llx_user) or thirdparty (llx_societe)
+	 *      \return     array		Array of id of contacts (if source=external or internal)
+	 * 								Array of id of third parties with at least one contact on project (if source=thirdparty)
 	 */
 	function getListContactId($source='external')
 	{
@@ -504,7 +505,8 @@ class CommonObject
 		$i = 0;
 		while ($i < $num)
 		{
-			$contactAlreadySelected[$i] = $tab[$i]['id'];
+			if ($source == 'thirdparty') $contactAlreadySelected[$i] = $tab[$i]['socid'];
+			else  $contactAlreadySelected[$i] = $tab[$i]['id'];
 			$i++;
 		}
 		return $contactAlreadySelected;
@@ -964,22 +966,22 @@ class CommonObject
 
 		return 1;
 	}
-	
+
 	/**
 	 * 	\brief	Fetch field list
 	 */
 	function getFieldList()
 	{
 		global $conf, $langs;
-		
+
 		$this->field_list = array();
-		
+
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql.= " WHERE element = '".$this->fieldListName."'";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY rang ASC";
-		
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -989,9 +991,9 @@ class CommonObject
 			while ($i < $num)
 			{
 				$fieldlist = array();
-				
+
 				$obj = $this->db->fetch_object($resql);
-				
+
 				$fieldlist["id"]		= $obj->rowid;
 				$fieldlist["name"]		= $obj->name;
 				$fieldlist["alias"]		= $obj->alias;
@@ -1001,9 +1003,9 @@ class CommonObject
 				$fieldlist["search"]	= $obj->search;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
-				
+
 				array_push($this->field_list,$fieldlist);
-				
+
 				$i++;
 			}
 			$this->db->free($resql);
@@ -1013,14 +1015,14 @@ class CommonObject
 			print $sql;
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	function showLinkedObjectBlock($object,$objectid,$somethingshown=0)
 	{
 		global $langs,$bc;
-		
+
 		$num = sizeof($objectid);
 		if ($num)
 		{
@@ -1030,7 +1032,7 @@ class CommonObject
 			if ($object == 'facture') $tplpath = $classpath = 'compta/'.$object;
 			if ($object == 'propal') $tplpath = $classpath = 'comm/'.$object;
 			if ($object == 'commande') $tplpath = $classpath = $object;
-			
+
 			$classname = ucfirst($object);
 			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$object.".class.php");
 			$linkedObjectBlock = new $classname($this->db);

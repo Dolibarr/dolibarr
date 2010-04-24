@@ -144,6 +144,8 @@ class Project extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
+		global $langs,$conf;
+
 		// Clean parameters
 		$this->title = trim($this->title);
 		$this->description = trim($this->description);

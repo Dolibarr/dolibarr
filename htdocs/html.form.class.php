@@ -708,9 +708,10 @@ class Form
 	 *    	\param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
 	 *      \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 *      \param      exclude         Liste des id contacts a exclure
+	 * 		\param		limitto			Disable answers that are not id in this array list
 	 *		\return		int				<0 if KO, Nb of contact in list if OK
 	 */
-	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='')
+	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='')
 	{
 		// Permettre l'exclusion de contacts
 		if (is_array($exclude))
@@ -743,13 +744,19 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					if ($htmlname != 'none')
 					{
+						$disabled=0;
+						if (is_array($limitto) && sizeof($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
 						if ($selected && $selected == $obj->rowid)
 						{
-							print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+							print '<option value="'.$obj->rowid.'"';
+							if ($disabled) print ' disabled="true"';
+							print ' selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
 						}
 						else
 						{
-							print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
+							print '<option value="'.$obj->rowid.'"';
+							if ($disabled) print ' disabled="true"';
+							print '>'.$obj->name.' '.$obj->firstname.'</option>';
 						}
 					}
 					else
@@ -778,11 +785,12 @@ class Form
 	 *  \param      selected        Id user preselected
 	 *  \param      htmlname        Field name in form
 	 *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  \param      exclude         List of users id to exclude
+	 *  \param      exclude         Array list of users id to exclude
 	 * 	\param		disabled		If select list must be disabled
-	 *  \param      include         List of users id to include
+	 *  \param      include         Array list of users id to include
+	 * 	\param		enableonly		Array list of users id to be enabled. All other must be disabled
 	 */
-	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='')
+	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='')
 	{
 		global $conf;
 
@@ -812,14 +820,20 @@ class Form
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
+					$disableline=0;
+					if (is_array($enableonly) && sizeof($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
 
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
 					{
-						print '<option value="'.$obj->rowid.'" selected="true">';
+						print '<option value="'.$obj->rowid.'"';
+						if ($disableline) print ' disabled="true"';
+						print ' selected="true">';
 					}
 					else
 					{
-						print '<option value="'.$obj->rowid.'">';
+						print '<option value="'.$obj->rowid.'"';
+						if ($disableline) print ' disabled="true"';
+						print '>';
 					}
 					print $obj->name.($obj->name && $obj->firstname?' ':'').$obj->firstname;
 					if ($conf->global->MAIN_SHOW_LOGIN) print ' ('.$obj->login.')';
