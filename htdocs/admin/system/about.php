@@ -21,12 +21,12 @@
  */
 
 /**
- *        \file       htdocs/about.php
+ *       \file       htdocs/admin/system/about.php
  *       \brief      About Dolibarr File page
  *       \version    $Id$
  */
 
-require("./main.inc.php");
+require("../../main.inc.php");
 
 $langs->load("admin");
 
