@@ -620,6 +620,8 @@ class Task extends CommonObject
 	 */
 	function addTimeSpent($user, $notrigger=0)
 	{
+		global $conf,$langs;
+
 		$ret = 0;
 
 		// Clean parameters
