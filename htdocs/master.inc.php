@@ -397,8 +397,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);
 
 	// Define if company use local taxes
-	$mysoc->localtax1_assuj=($conf->global->FACTURE_LOCAL_TAX1_OPTION?1:0);
-	$mysoc->localtax2_assuj=($conf->global->FACTURE_LOCAL_TAX2_OPTION?1:0);
+	$mysoc->localtax1_assuj=((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')?1:0);
+	$mysoc->localtax2_assuj=((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')?1:0);
 }
 
 
