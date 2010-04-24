@@ -685,17 +685,29 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		}
 
 		// Local Taxes
-		if($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		if($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
-			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
-			print '<td>';
-			print $html->selectyesno('localtax1assuj_value',0,1);
-			print '</td>';
-			print '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
-			print '<td>';
-			print $html->selectyesno('localtax2assuj_value',0,1);
-			print '</td>';
-			print '</tr>';
+			if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+			{
+				print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+				print $html->selectyesno('localtax1assuj_value',0,1);
+				print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+				print $html->selectyesno('localtax2assuj_value',0,1);
+				print '</td></tr>';
+				
+			}
+			elseif($mysoc->localtax1_assuj=="1")
+			{
+				print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+				print $html->selectyesno('localtax1assuj_value',0,1);
+				print '</td><tr>';
+			}
+			elseif($mysoc->localtax2_assuj=="1")
+			{
+				print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+				print $html->selectyesno('localtax2assuj_value',0,1);
+				print '</td><tr>';
+			}
 		}
 
 		if ($user->rights->societe->client->voir)
@@ -1027,18 +1039,30 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '</tr>';
 
 		// Local Taxes
-		if($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+		if($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
-			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
-			print '<td>';
-			print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
-			print '</td>';
-
-			print '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
-			print '<td>';
-			print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
-			print '</td>';
-			print '</tr>';
+			if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+			{
+				print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+				print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
+				print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+				print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
+				print '</td></tr>';
+				
+			}
+			elseif($mysoc->localtax1_assuj=="1")
+			{
+				print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+				print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
+				print '</td></tr>';
+				
+			}
+			elseif($mysoc->localtax2_assuj=="1")
+			{
+				print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+				print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
+				print '</td></tr>';
+			}
 		}
 
 		print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
@@ -1273,22 +1297,30 @@ else
 	print '</tr>';
 
 	// Local Taxes
-	if($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
-		print '<tr><td>';
-		print $langs->trans('LocalTax1IsUsedES');
-		print '</td><td>';
-		print yn($soc->localtax1_assuj);
-		print '</td>';
-
-		print '<td>';
-		print $langs->trans('LocalTax2IsUsedES');
-		print '</td><td>';
-		print yn($soc->localtax2_assuj);
-		print '</td>';
-		print '</tr>';
+		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+		{
+			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+			print yn($soc->localtax1_assuj);
+			print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+			print yn($soc->localtax2_assuj);
+			print '</td></tr>';
+			
+		}
+		elseif($mysoc->localtax1_assuj=="1")
+		{
+			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+			print yn($soc->localtax1_assuj);
+			print '</td><tr>';
+		}
+		elseif($mysoc->localtax2_assuj=="1")
+		{
+			print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+			print yn($soc->localtax2_assuj);
+			print '</td><tr>';
+		}
 	}
-
 
 	// Capital
 	print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';

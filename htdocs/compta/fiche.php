@@ -208,18 +208,29 @@ if ($socid > 0)
 	print '</tr>';
 
 	// Local Taxes
-	if ($obj->code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
-		print '<tr>';
-		print '<td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
-		print yn($societe->localtax1_assuj);
-		print '</td>';
-		print '</tr>';
-		print '<tr>';
-		print '<td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
-		print yn($societe->localtax2_assuj);
-		print '</td>';
-		print '</tr>';
+		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
+		{
+			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+			print yn($societe->localtax1_assuj);
+			print '</td></tr>';
+			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+			print yn($societe->localtax2_assuj);
+			print '</td></tr>';
+		}
+		elseif($mysoc->localtax1_assuj=="1")
+		{
+			print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+			print yn($societe->localtax1_assuj);
+			print '</td></tr>';
+		}
+		elseif($mysoc->localtax2_assuj=="1")
+		{
+			print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+			print yn($societe->localtax2_assuj);
+			print '</td></tr>';
+		}
 	}
 
 	// TVA Intra
