@@ -120,7 +120,7 @@ function print_left_eldy_menu($db,$menu_array)
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"),2);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/modules.php", $langs->trans("Modules"),2);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"),2);
-				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/about.php", $langs->trans("About"),2);
+				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/about.php", $langs->trans("About"),2);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/os.php", $langs->trans("OS"),1);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/web.php", $langs->trans("WebServer"),1);
 				if ($leftmenu=="system") $newmenu->add(DOL_URL_ROOT."/admin/system/phpinfo.php", $langs->trans("Php"),1);
