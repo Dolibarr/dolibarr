@@ -5,6 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
+ * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1186,7 +1187,14 @@ if ($id > 0 || ! empty($ref))
 
 	if ($conf->projet->enabled) $rowspan++;
 	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
-
+	
+	//Local taxes
+	if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		if($mysoc->localtax1_assuj=="1") $rowspan++;
+		if($mysoc->localtax2_assuj=="1") $rowspan++;
+	}
+	
 	// Notes
 	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
 	print '</tr>';
@@ -1361,7 +1369,24 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($propal->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
+	
+	// Amount Local Taxes
+	if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+		{
+			print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
+			print '<td align="right" colspan="2" nowrap>'.price($propal->total_localtax1).'</td>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		}
+		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+		{
+			print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
+			print '<td align="right" colspan="2" nowrap>'.price($propal->total_localtax2).'</td>';
+			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		}
+	}
+	
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($propal->total_ttc).'</td>';

@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2010      Juanjo Menent		 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -788,6 +789,13 @@ else
 			 */
 			$nbrows=7;
 			if ($conf->projet->enabled) $nbrows++;
+		
+			// Local taxes
+			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+			{
+				if($mysoc->localtax1_assuj=="1") $nbrow++;
+				if($mysoc->localtax2_assuj=="1") $nbrow++;
+			}
 
 			print '<td rowspan="'.$nbrows.'" valign="top">';
 			$sql  = 'SELECT datep as dp, pf.amount,';
@@ -874,9 +882,26 @@ else
 			$alreadypaid=$fac->getSommePaiement();
 			print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$fac->getLibStatut(4,$alreadypaid).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans('AmountHT').'</td><td><b>'.price($fac->total_ht).'</b></td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($fac->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountHT').'</td><td align="right">'.price($fac->total_ht).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		
+			// Amount Local Taxes
+			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+			{
+				if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+				{
+					print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
+					print '<td align="right">'.price($propal->total_localtax1).'</td>';
+					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+				}
+				if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+				{
+					print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
+					print '<td align="right">'.price($propal->total_localtax2).'</td>';
+					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+				}
+			}
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($fac->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
 			// Project
 			if ($conf->projet->enabled)
