@@ -35,16 +35,6 @@ function project_prepare_head($object)
     $head[$h][2] = 'project';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Tasks");
-    $head[$h][2] = 'tasks';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id.'&mode=mine';
-	$head[$h][1] = $langs->trans("MyTasks");
-    $head[$h][2] = 'mytasks';
-	$h++;
-
 	if ($conf->propal->enabled || $conf->commande->enabled || $conf->facture->enabled)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
@@ -89,7 +79,18 @@ function project_prepare_head($object)
         }
     }
 
-	return $head;
+    // Then tab for sub level of projet, i mean tasks
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Tasks");
+    $head[$h][2] = 'tasks';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$object->id.'&mode=mine';
+	$head[$h][1] = $langs->trans("MyTasks");
+    $head[$h][2] = 'mytasks';
+	$h++;
+
+    return $head;
 }
 
 

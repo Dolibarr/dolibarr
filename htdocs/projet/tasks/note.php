@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/projet/tasks/note.php
  *	\ingroup    project
- *	\brief      Fiche d'information sur une tache
+ *	\brief      Page to show information on a task
  *	\version    $Id$
  */
 
@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Note publique
-		print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+		print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
 		print '<td valign="top" colspan="3">';
 		if ($_GET["action"] == 'edit')
 		{
@@ -157,7 +157,7 @@ if ($id > 0 || ! empty($ref))
 		// Note privee
 		if (! $user->societe_id)
 		{
-			print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+			print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
 			print '<td valign="top" colspan="3">';
 			if ($_GET["action"] == 'edit')
 			{
@@ -183,7 +183,7 @@ if ($id > 0 || ! empty($ref))
 		 * Actions
 		 */
 		print '<div class="tabsAction">';
-		
+
 		if ((($user->rights->projet->creer && $userAccess) || $user->rights->projet->all->creer) && $_GET['action'] <> 'edit')
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
@@ -192,7 +192,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 		}
-		
+
 		print '</div>';
 	}
 }

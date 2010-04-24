@@ -286,7 +286,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td colspan="1">';
 				$thirdpartyofproject=$project->getListContactId('thirdparty');
-				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
+				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
 				$selectedCompany = $formcompany->selectCompaniesForNewContact($task, 'id', $selectedCompany, 'newcompany',$thirdpartyofproject);
 				print '</td>';
 
