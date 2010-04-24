@@ -282,6 +282,8 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 			migrate_shipping_delivery2($db,$langs,$conf);
 
 			migrate_module_menus($db,$langs,$conf);
+
+			migrate_reload_menu($db,$langs,$conf);
 		}
 
 		// On commit dans tous les cas.
@@ -3120,7 +3122,7 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 }
 
 
-/*
+/**
  * Migration directory
  */
 function migrate_directories($db,$langs,$conf,$oldname,$newname)
@@ -3133,6 +3135,36 @@ function migrate_directories($db,$langs,$conf,$oldname,$newname)
 		@rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
 	}
 }
+
+
+
+/**
+ * Reload menu if dynamic menus
+ */
+function migrate_reload_menu($db,$langs,$conf)
+{
+	dolibarr_install_syslog("upgrade2::migrate_reload_menu");
+
+	// Define list of menu handlers to initialize
+	/*$listofmenuhandler=array();
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menu_barretop)]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menufront_barretop)]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menu_barreleft)]=1;
+	$listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$main_menufront_barreleft)]=1;
+	foreach ($listofmenuhandler as $key => $val)
+	{
+		//print "x".$key;
+
+		// Load sql ini_menu_handler.sql file
+		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
+		$file='init_menu_'.$key.'.sql';
+		if (file_exists($dir.$file))
+		{
+			$result=run_sql($dir.$file,1);
+		}
+	}*/
+}
+
 
 
 /* A faire egalement: Modif statut paye et fk_facture des factures payes completement
