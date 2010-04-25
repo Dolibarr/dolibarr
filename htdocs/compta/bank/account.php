@@ -31,7 +31,7 @@ require("./pre.inc.php");	// We use pre.inc.php to have a dynamic menu
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
