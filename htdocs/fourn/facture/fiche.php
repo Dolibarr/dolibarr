@@ -515,7 +515,7 @@ if ($_GET['action'] == 'create')
 	}
 	else
 	{
-		$html->select_societes((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1');
+		$html->select_societes((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
 	}
 	print '</td>';
 	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
@@ -789,7 +789,7 @@ else
 			 */
 			$nbrows=7;
 			if ($conf->projet->enabled) $nbrows++;
-		
+
 			// Local taxes
 			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 			{
@@ -884,7 +884,7 @@ else
 
 			print '<tr><td>'.$langs->trans('AmountHT').'</td><td align="right">'.price($fac->total_ht).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-		
+
 			// Amount Local Taxes
 			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 			{

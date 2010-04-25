@@ -541,7 +541,7 @@ class Form
 	 *		\param      htmlname        Name of field in form
 	 *    	\param      filter          Optionnal filters criteras
 	 *		\param		showempty		Add an empty field
-	 * 		\param		showtype		Show if third party is customer, prospect or supplier
+	 * 		\param		showtype		Show third party type in combolist (customer, prospect or supplier)
 	 * 		\param		forcecombo		Force to use combo box
 	 */
 	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
