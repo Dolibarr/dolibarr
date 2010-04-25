@@ -336,8 +336,8 @@ class Facture extends CommonObject
 
 			if (! $error)
 			{
-				$resql=$this->update_price();
-				if ($resql)
+				$result=$this->update_price();
+				if ($result > 0)
 				{
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
@@ -346,11 +346,20 @@ class Facture extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
-					$this->db->commit();
-					return $this->id;
+					if (! $error)
+					{
+						$this->db->commit();
+						return $this->id;
+					}
+					else
+					{
+						$this->db->rollback();
+						return -4;
+					}
 				}
 				else
 				{
+					$this->error=$langs->trans('FailedToUpdatePrice');
 					$this->db->rollback();
 					return -3;
 				}
@@ -1223,7 +1232,7 @@ class Facture extends CommonObject
 
 
 	/**
-	 *	\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
+	 *	\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCELED
 	 *	\param      user        Objet utilisateur qui modifie
 	 *	\param		close_code	Code de fermeture
 	 *	\param		close_note	Commentaire de fermeture

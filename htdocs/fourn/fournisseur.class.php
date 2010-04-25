@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/fourn/fournisseur.class.php
- \ingroup    fournisseur,societe
- \brief      Fichier de la classe des fournisseurs
- \version    $Id$
+ *	\file       htdocs/fourn/fournisseur.class.php
+ *	\ingroup    fournisseur,societe
+ *	\brief      Fichier de la classe des fournisseurs
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
@@ -31,8 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php");
 
 
 /**
- \class Fournisseur
- \brief Classe permettant la gestion des fournisseur
+ *	\class Fournisseur
+ *	\brief Classe permettant la gestion des fournisseur
  */
 
 class Fournisseur extends Societe
@@ -41,7 +41,7 @@ class Fournisseur extends Societe
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB     handler acc�s base de donn�es
+	 *    \param  DB     handler acces base de donnees
 	 *    \param  id     id societe (0 par defaut)
 	 */
 
@@ -196,7 +196,7 @@ class Fournisseur extends Societe
 		}
 		$sql.= " ".$clause." s.fournisseur = 1";
 		$sql.= " AND s.entity = ".$conf->entity;
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -251,7 +251,7 @@ class Fournisseur extends Societe
 	function ListArray()
 	{
 		global $conf;
-		
+
 		$arr = array();
 
 		$sql = "SELECT s.rowid, s.nom";

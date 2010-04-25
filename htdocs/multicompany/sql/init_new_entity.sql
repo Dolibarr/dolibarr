@@ -150,7 +150,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_A
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_SENTBYMAIL','1','chaine','',0,__ENTITY__);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_BILL_VALIDATE','1','chaine','',0,__ENTITY__);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_BILL_PAYED','1','chaine','',0,__ENTITY__);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_BILL_CANCELED','1','chaine','',0,__ENTITY__);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_BILL_CANCEL','1','chaine','',0,__ENTITY__);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL','1','chaine','',0,__ENTITY__);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE','1','chaine','',0,__ENTITY__);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE','1','chaine','',0,__ENTITY__);

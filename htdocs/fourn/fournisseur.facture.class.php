@@ -179,10 +179,26 @@ class FactureFournisseur extends Facture
 				}
 			}
 			// Update total price
-			if ($this->update_price() > 0)
+			$result=$this->update_price();
+			if ($result > 0)
 			{
-				$this->db->commit();
-				return $this->id;
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+
+				if (! $error)
+				{
+					$this->db->commit();
+					return $this->id;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -4;
+				}
 			}
 			else
 			{

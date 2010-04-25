@@ -276,7 +276,7 @@ class InterfaceActionsAuto
 			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
-		elseif ($action == 'BILL_CANCELED')
+		elseif ($action == 'BILL_CANCEL')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
@@ -338,6 +338,40 @@ class InterfaceActionsAuto
 
 			$object->sendtoid=0;
 			$object->facid=0;	// Supplier invoice not yet supported
+			$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+		}
+    	elseif ($action == 'BILL_SUPPLIER_PAYED')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("bills");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=0;
+			$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+		}
+		elseif ($action == 'BILL_SUPPLIER_CANCELED')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("bills");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=0;
 			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}

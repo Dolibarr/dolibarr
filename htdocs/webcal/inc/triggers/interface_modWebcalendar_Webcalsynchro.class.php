@@ -224,7 +224,7 @@ class InterfaceWebcalsynchro
             $this->desc=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
-        elseif ($action == 'BILL_CANCELED')
+        elseif ($action == 'BILL_CANCEL')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
