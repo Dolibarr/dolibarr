@@ -1,0 +1,11 @@
+README (English)
+--------------------------------
+This directory contains unit tests of Dolibarr code.
+To use them, you must:
+* Install PHPUnit
+* Add an entry in eclipse as external tool for phpunit programm with:
+-Name:      PHPUnit
+-Location:  /usr/bin/php
+-Workspace: ${workspace_loc}
+-Arguments: /usr/bin/phpunit ${resource_path}
+* To run a test, select it and click on menu "Run external tools and choose PHPUnit"
