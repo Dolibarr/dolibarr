@@ -21,7 +21,8 @@
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
- *		\remarks	To run this script:  phpunit filename.php
+ *		\remarks	To run this script as CLI:  phpunit filename.php
+ *                  Fails if launched from Eclipse
  */
 require_once 'PHPUnit/Framework.php';
 
