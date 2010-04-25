@@ -27,7 +27,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $langs->load("banks");

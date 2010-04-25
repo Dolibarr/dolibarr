@@ -25,7 +25,7 @@
 
 require('../main.inc.php');
 include_once(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
-include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+include_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("bills");
 

@@ -19,7 +19,7 @@
  */
 
 include_once(DOL_DOCUMENT_ROOT.'/societe/societe.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/product/stock/entrepot.class.php');
 
 if (!empty($conf->global->CASHDESK_ID_THIRDPARTY))

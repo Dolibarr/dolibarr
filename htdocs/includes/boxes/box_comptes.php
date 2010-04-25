@@ -25,7 +25,7 @@
  *		\version	$Id$
  */
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
-include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+include_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 
 class box_comptes extends ModeleBoxes {

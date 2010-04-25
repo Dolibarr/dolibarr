@@ -194,7 +194,7 @@ class Cotisation extends CommonObject
 		// It subscription is linked to a bank transaction, we get it
 		if ($this->fk_bank)
 		{
-			require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+			require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 			$accountline=new AccountLine($this->db);
 			$result=$accountline->fetch($this->fk_bank);
 		}

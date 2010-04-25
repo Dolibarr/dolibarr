@@ -21,7 +21,7 @@ require ('../master.inc.php');
 require (DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
 require (DOL_DOCUMENT_ROOT.'/cashdesk/classes/Facturation.class.php');
 require (DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
-require (DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
+require (DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 require (DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 
 $obj_facturation = unserialize ($_SESSION['serObjFacturation']);

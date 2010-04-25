@@ -68,7 +68,7 @@ if ($_POST["action"] == 'add')
 	}
 	if (! $error)
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
 		$accountfrom=new Account($db);
 		$accountfrom->fetch($_POST["account_from"]);
