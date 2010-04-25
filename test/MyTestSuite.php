@@ -25,11 +25,10 @@
  */
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/FactureTest.php';
 
 
-class FactureTestSuite extends PHPUnit_Framework_TestSuite
+class MyTestSuite extends PHPUnit_Framework_TestSuite
 {
 	protected $savconf;
 	protected $savuser;
@@ -68,7 +67,7 @@ class FactureTestSuite extends PHPUnit_Framework_TestSuite
 
  	public static function suite()
     {
-        return new FactureTestSuite('FactureTest');
+        return new MyTestSuite('FactureTest');
     }
 
 }
