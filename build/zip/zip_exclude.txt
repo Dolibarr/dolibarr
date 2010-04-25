@@ -59,6 +59,7 @@
 */scripts/addons/*
 */scripts/courrier/*
 */scripts/lolix/*
+*/test/*
 */CVS/*
 *~
 *.#*
