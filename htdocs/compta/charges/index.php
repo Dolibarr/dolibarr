@@ -40,6 +40,16 @@ $year=$_GET["year"];
 $filtre=$_GET["filtre"];
 if (! $year && $_GET["mode"] != 'sconly') { $year=date("Y", time()); }
 
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = $_GET["page"];
+if ($page < 0) $page = 0;
+
+//$limit = $conf->liste_limit;
+//$offset = $limit * $page ;
+
+if (! $sortfield) $sortfield="s.date_ech";
+if (! $sortorder) $sortorder="DESC";
 
 
 /*
@@ -69,15 +79,21 @@ if ($_GET["mode"] != 'sconly')
 {
 	print_titre($langs->trans("SocialContributionsPayments"));
 }
+
+if ($_GET["mode"] == 'sconly')
+{
+	$param='&mode=sconly';
+}
+
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print '<td width="120">'.$langs->trans("PeriodEndDate").'</td>';
-print '<td>'.$langs->trans("Label").'</td>';
-print "<td>".$langs->trans("Type")."</td>";
-print '<td align="right" width="10%">'.$langs->trans("ExpectedToPay")."</td>";
-print '<td align="right" width="10%">'.$langs->trans("RefPayment")."</td>";
-print '<td align="center" width="15%">'.$langs->trans("DatePayment")."</td>";
-print '<td align="right" width="10%">'.$langs->trans("PayedByThisPayment")."</td>";
+print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.date_ech","",$param,'width="120"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"s.fk_type","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"datep","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql = "SELECT c.id, c.libelle as lib,";
@@ -97,8 +113,8 @@ if ($year > 0)
 	$sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
 	$sql .= ")";
 }
-$sql.= " GROUP BY c.id, c.libelle, s.rowid, s.fk_type, s.periode, s.date_ech, pc.rowid, pc.datep, pc.amount";
-$sql.= " ORDER BY c.libelle ASC";
+$sql.= $db->order($sortfield,$sortorder);
+//$sql.= $db->plimit($limit+1,$offset);
 
 dol_syslog("compta/charges/index.php: select payment sql=".$sql);
 $resql=$db->query($sql);
@@ -116,21 +132,28 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var = !$var;
 		print "<tr $bc[$var]>";
+		// Date
 		$date=$obj->periode;
 		if (empty($date)) $date=$obj->date_ech;
 		print '<td>'.dol_print_date($date,'day').'</td>';
-		print '<td align="left">';
+		// Label
+		print '<td>';
 		$socialcontrib->id=$obj->rowid;
+		$socialcontrib->ref=$obj->libelle;
 		$socialcontrib->lib=$obj->libelle;
 		print $socialcontrib->getNomUrl(1,'20');
 		print '</td>';
+		// Type
 		print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+		// Expected to pay
 		print '<td align="right">'.price($obj->total).'</td>';
-
+		// Ref payment
 		$payment_sc_static->id=$obj->pid;
 		$payment_sc_static->ref=$obj->pid;
-		print '<td align="right">'.$payment_sc_static->getNomUrl(1)."</td>\n";
+		print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
+		// Date payment
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day').'</td>';
+		// Paid
 		print '<td align="right">'.price($obj->totalpaye).'</td>';
 		print '</tr>';
 		$total = $total + $obj->total;

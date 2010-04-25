@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -680,7 +680,7 @@ if ($account || $_GET["ref"])
 		// Show total
 		if ($page == 0 && ! $mode_search)
 		{
-			print '<tr class="liste_total"><td align="left" colspan="7">';
+			print '<tr class="liste_total"><td align="left" colspan="8">';
 			if ($sep) print '&nbsp;';
 			else print $langs->trans("CurrentBalance");
 			print '</td>';

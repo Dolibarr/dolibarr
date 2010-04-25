@@ -71,7 +71,6 @@ else
  *	View
  */
 
-
 llxHeader();
 
 $html = new Form($db);
@@ -100,7 +99,7 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND s.fk_type=".$typeid;
 }
-$sql.=$db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
 
