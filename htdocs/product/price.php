@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -127,25 +127,25 @@ dol_fiche_head($head, 'price', $titre, 0, $picto);
 print '<table class="border" width="100%">';
 
 // Ref
-print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+print '<tr>';
+print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
 print $html->showrefnav($product,'ref','',1,'ref');
 print '</td>';
+print '</tr>';
 
-$nblignes=3;
-if (! empty($conf->global->PRODUIT_MULTIPRICES_LIMIT) && empty($socid)) $nblignes+=$conf->global->PRODUIT_MULTIPRICES_LIMIT;
-else $nblignes+=3;
+// Label
+print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 
+$nblignes=4;
 if ($product->is_photo_available($conf->produit->dir_output))
 {
 	// Photo
 	print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-	$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
+	$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
 	print '</td>';
 }
-print '</tr>';
 
-// Label
-print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
+print '</tr>';
 
 // MultiPrix
 if($conf->global->PRODUIT_MULTIPRICES)
