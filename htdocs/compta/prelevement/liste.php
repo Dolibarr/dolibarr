@@ -129,12 +129,12 @@ if ($result)
 
       print "<tr $bc[$var]><td>";
 
-      print '<img border="0" src="./statut'.$obj->statut_ligne.'.png"></a>&nbsp;';
+      print '<img border="0" src="./img/statut'.$obj->statut_ligne.'.png"></a>&nbsp;';
       print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
       print substr('000000'.$obj->rowid_ligne, -6);
       print '</a></td>';
 
-      print '<td><img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
+      print '<td><img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
       print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";

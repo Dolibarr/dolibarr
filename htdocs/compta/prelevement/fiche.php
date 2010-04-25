@@ -168,7 +168,7 @@ if ($_GET["id"])
 		print '</td></tr>';
 
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td><td>';
-		print '<img src="./statut'.$bon->statut.'.png"> ';
+		print '<img src="./img/statut'.$bon->statut.'.png"> ';
 		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';
 
 		if($bon->date_trans <> 0)

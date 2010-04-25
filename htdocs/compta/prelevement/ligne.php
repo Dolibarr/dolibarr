@@ -26,8 +26,8 @@
  */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/ligne-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 // Security check
@@ -100,7 +100,7 @@ if ($_GET["id"])
 		print '<a href="fiche.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
-		print '<img src="./statut'.$lipre->statut.'.png"> ';
+		print '<img src="./img/statut'.$lipre->statut.'.png"> ';
 		print $langs->trans($lipre->statuts[$lipre->statut]).'</td></tr>';
 
 		if ($lipre->statut == 3)

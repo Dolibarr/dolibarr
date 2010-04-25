@@ -23,7 +23,7 @@
  */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 // Securite acces client
@@ -125,7 +125,7 @@ if ($resql)
       $obj = $db->fetch_object($resql);
 
       print "<tr $bc[$var]><td>";
-      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
+      print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
       print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
       print substr('000000'.$obj->rowid, -6);

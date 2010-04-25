@@ -186,7 +186,7 @@ if ($db->query($sql))
 
   $var=True;
 
-  require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
+  require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php";
   $Rejet = new RejetPrelevement($db, $user);
 
   while ($i < $num)

@@ -96,7 +96,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
-      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
+      print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
