@@ -2775,7 +2775,9 @@ class Facture extends CommonObject
 		$this->socid = $socids[$socid];
 		$this->date = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
+		$this->cond_reglement_id   = 1;
 		$this->cond_reglement_code = 'RECEP';
+		$this->mode_reglement_id   = 7;
 		$this->mode_reglement_code = 'CHQ';
 		$this->note_public='SPECIMEN';
 		$nbp = 5;
