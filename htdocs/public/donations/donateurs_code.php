@@ -34,7 +34,7 @@ function llxHeaderVierge() {
 function llxFooterVierge() { print '</body></html>'; }
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/compta/dons/class/class/don.class.php");
 
 // Security check
 if (empty($conf->don->enabled)) accessforbidden('',1,1,1);
