@@ -10,6 +10,10 @@ If using Eclipse, you must also add an entry as external tool for phpunit progra
 -Workspace: ${workspace_loc}
 -Arguments: /usr/bin/phpunit ${resource_path}
 
-* Run test by 
-Running > phpunit testfile.php
+* Run unit tests: 
+Run > phpunit TestFile.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
+
+* List code coverage by unit tests:
+Run > phpunit --coverage-html ./report TestFile.php
+Note that xdebug must be installed for this feature to work.
