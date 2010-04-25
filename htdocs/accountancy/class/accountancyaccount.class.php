@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/accountancy/accountancyaccount.class.php
+ *	\file       htdocs/accountancy/class/accountancyaccount.class.php
  * 	\ingroup    accounting
  * 	\brief      Fichier de la classe des comptes comptables
  * 	\version    $Id$
@@ -43,7 +43,7 @@ class AccountancyAccount
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler accès base de données
+	 *    \param  DB          handler acces base de donnees
 	 *    \param  id          id compte (0 par defaut)
 	 */
 	function AccountancyAccount($DB, $id=0)
@@ -54,9 +54,9 @@ class AccountancyAccount
 
 
 	/**
-	 *    \brief  	Insère le compte en base
+	 *    \brief  	Insï¿½re le compte en base
 	 *    \param  	user 	Utilisateur qui effectue l'insertion
-	 *    \return	int		<0 si ko, Id ligne ajoutée si ok
+	 *    \return	int		<0 si ko, Id ligne ajoutï¿½e si ok
 	 */
 	function create($user)
 	{
