@@ -39,7 +39,7 @@ include_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 include_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
-include_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+include_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 

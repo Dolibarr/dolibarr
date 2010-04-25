@@ -41,7 +41,7 @@ require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 $error = 0;
 

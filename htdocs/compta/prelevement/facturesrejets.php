@@ -22,7 +22,7 @@
 
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
-require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 
 
 /*
