@@ -332,7 +332,7 @@ if($c->type == 2)
 // List of members
 if ($c->type == 3)
 {
-	require_once(DOL_DOCUMENT_ROOT."/adherents/Adherent.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/adherents/class/Adherent.class.php");
 
 	$prods = $c->get_type("member","Adherent");
 	if ($prods < 0)

@@ -43,8 +43,8 @@ $forcecommit=0;
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 
 
 $langs->load("main");

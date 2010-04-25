@@ -107,7 +107,7 @@ if ($_REQUEST["removecat"])
 	}
 	if ($_REQUEST["type"] == 3 && $user->rights->adherent->creer)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 		$object = new Adherent($db);
 		$result = $object->fetch($objectid);
 	}
@@ -145,7 +145,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	}
 	if ($_REQUEST["type"]==3 && $user->rights->adherent->creer)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 		$object = new Adherent($db);
 		$result = $object->fetch($objectid);
 		$type = 'member';
@@ -329,8 +329,8 @@ else if ($_GET["id"] || $_GET["ref"])
 		 * Fiche categorie d'adherent
 		 */
 		require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
-		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
 		// Produit
 		$member = new Adherent($db);

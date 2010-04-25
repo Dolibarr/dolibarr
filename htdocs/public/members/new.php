@@ -29,9 +29,9 @@ define("NOLOGIN",1);		// This means this output page does not require to be logg
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
 
 // Security check

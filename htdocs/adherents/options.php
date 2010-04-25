@@ -26,7 +26,7 @@
  */
 
 require("../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
 
 $langs->load("members");
 

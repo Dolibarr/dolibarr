@@ -209,7 +209,7 @@ class Cotisation extends CommonObject
 			$num=$this->db->affected_rows($resql);
 			if ($num)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+				require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 				$member=new Adherent($this->db);
 				$result=$member->fetch($this->fk_adherent);
 				$result=$member->update_end_date($user);

@@ -28,8 +28,8 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
 $langs->load("companies");
 $langs->load("members");

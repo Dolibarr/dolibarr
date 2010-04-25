@@ -27,10 +27,10 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $langs->load("companies");

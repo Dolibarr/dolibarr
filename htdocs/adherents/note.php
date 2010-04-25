@@ -26,7 +26,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/member.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/adherents/adherent.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
 
 $action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
 $id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");

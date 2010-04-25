@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
-if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");

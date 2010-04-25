@@ -549,8 +549,8 @@ if ($_REQUEST["amount"] == 'membersubscription')
 	$found=true;
 	$langs->load("members");
 
-	require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 
 	$member=new Adherent($db);
 	$result=$member->fetch('',$_REQUEST["ref"]);

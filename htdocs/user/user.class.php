@@ -1065,7 +1065,7 @@ class User extends CommonObject
 			{
 				if ($this->fk_member > 0 && ! $nosyncmember)
 				{
-					require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+					require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
 					// This user is linked with a member, so we also update members informations
 					// if this is an update.
@@ -1227,7 +1227,7 @@ class User extends CommonObject
 
 					if ($this->fk_member && ! $nosyncmember)
 					{
-						require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+						require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
 						// This user is linked with a member, so we also update members informations
 						// if this is an update.
