@@ -280,7 +280,7 @@ if ($result)
 		else
 		{
 			print '<td colspan="4">';
-			print dol_print_date($db->jdate($objp->do));
+			print dol_print_date($db->jdate($objp->do),"day");
 		}
 		print '</td></tr>';
 
