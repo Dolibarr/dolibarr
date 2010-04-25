@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/compta/chargesociales.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php');
 
 $langs->load("banks");
 $langs->load("bills");

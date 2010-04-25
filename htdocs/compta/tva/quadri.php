@@ -29,7 +29,7 @@
 */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
 
 $year=$_GET["year"];
 if ($year == 0 )

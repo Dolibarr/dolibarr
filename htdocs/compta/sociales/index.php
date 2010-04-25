@@ -26,7 +26,7 @@
  */
 
 require('../../main.inc.php');
-require(DOL_DOCUMENT_ROOT."/compta/chargesociales.class.php");
+require(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
