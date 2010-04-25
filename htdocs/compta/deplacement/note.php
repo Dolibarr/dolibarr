@@ -25,7 +25,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/deplacement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 

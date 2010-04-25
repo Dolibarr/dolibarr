@@ -25,7 +25,7 @@
  *       \version    $Id$
  */
 include_once DOL_DOCUMENT_ROOT . "/core/stats.class.php";
-include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/deplacement.class.php";
+include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/class/deplacement.class.php";
 
 /**
  *       \class      DeplacementStats

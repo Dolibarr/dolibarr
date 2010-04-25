@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/compta/deplacement/deplacement.class.php
+ *      \file       htdocs/compta/deplacement/class/deplacement.class.php
  *      \ingroup    deplacement
  *      \brief      Fichier de la classe des deplacements
  *      \version    $Id$

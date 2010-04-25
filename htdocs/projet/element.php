@@ -36,7 +36,7 @@ if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fourniss
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 if ($conf->fichinter->enabled)   require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
-if ($conf->deplacement->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/deplacement.class.php");
+if ($conf->deplacement->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
 if ($conf->agenda->enabled)      require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 
 $langs->load("projects");
