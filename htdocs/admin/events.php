@@ -61,7 +61,7 @@ $eventstolog=array(
 	array('id'=>'ORDER_SENTBYMAIL',       'test'=>$conf->commande->enabled),
 	array('id'=>'BILL_VALIDATE',          'test'=>$conf->facture->enabled),
 	array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
-	array('id'=>'BILL_CANCELED',          'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_CANCEL',            'test'=>$conf->facture->enabled),
 	array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
 	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
 	array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),

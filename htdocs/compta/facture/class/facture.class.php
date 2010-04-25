@@ -1232,7 +1232,7 @@ class Facture extends CommonObject
 
 
 	/**
-	 *	\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCELED
+	 *	\brief      Tag la facture comme abandonnee, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
 	 *	\param      user        Objet utilisateur qui modifie
 	 *	\param		close_code	Code de fermeture
 	 *	\param		close_note	Commentaire de fermeture
