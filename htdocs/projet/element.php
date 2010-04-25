@@ -29,7 +29,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 if ($conf->propal->enabled)      require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
-if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
+if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture-rec.class.php");
 if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
