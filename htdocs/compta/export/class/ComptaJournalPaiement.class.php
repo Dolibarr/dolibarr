@@ -28,7 +28,7 @@
   *    \version    $Revision$
   */
 
-require_once(DOL_DOCUMENT_ROOT.'/compta/export/ComptaJournalPdf.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/export/class/ComptaJournalPdf.class.php');
 
 
 /**

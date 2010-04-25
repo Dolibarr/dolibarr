@@ -28,8 +28,8 @@
 */
 
 require("../../main.inc.php");
-require_once("./ComptaJournalPaiement.class.php");
-require_once("./ComptaJournalVente.class.php");
+require_once("./class/ComptaJournalPaiement.class.php");
+require_once("./class/ComptaJournalVente.class.php");
 
 $langs->load("compta");
 
