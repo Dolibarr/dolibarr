@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/compta/facture/class/facture.class.php
+ *	\file       htdocs/compta/facture/facture.class.php
  *	\ingroup    facture
  *	\brief      Fichier de la classe des factures clients
  *	\version    $Id$
@@ -170,7 +170,7 @@ class Facture extends CommonObject
 		// Create invoice from a predefined invoice
 		if ($this->fac_rec > 0)
 		{
-			require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture-rec.class.php');
+			require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php');
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
 
@@ -2775,7 +2775,9 @@ class Facture extends CommonObject
 		$this->socid = $socids[$socid];
 		$this->date = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
+		$this->cond_reglement_id   = 1;
 		$this->cond_reglement_code = 'RECEP';
+		$this->mode_reglement_id   = 7;
 		$this->mode_reglement_code = 'CHQ';
 		$this->note_public='SPECIMEN';
 		$nbp = 5;

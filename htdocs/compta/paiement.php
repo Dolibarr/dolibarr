@@ -29,7 +29,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
 $langs->load('companies');

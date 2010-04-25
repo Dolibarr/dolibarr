@@ -26,7 +26,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");

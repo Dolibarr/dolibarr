@@ -27,7 +27,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');

@@ -28,7 +28,7 @@
 */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 

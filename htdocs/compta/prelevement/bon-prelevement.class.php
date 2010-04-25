@@ -25,7 +25,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/core/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 
 
@@ -682,7 +682,7 @@ class BonPrelevement extends CommonObject
         dol_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
 
         require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
-        require_once (DOL_DOCUMENT_ROOT."/compta/facture/facture.class.php");
+        require_once (DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
         require_once (DOL_DOCUMENT_ROOT."/societe/societe.class.php");
         require_once (DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
