@@ -665,8 +665,179 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->remise_absolue    = $_POST['remise_absolue'];
 			$facture->remise_percent    = $_POST['remise_percent'];
 
+			// If creation from proposal
+			if ($_POST['propalid'])
+			{
+				$facture->propalid = $_POST['propalid'];
+				$facid = $facture->create($user);
+
+				if ($facid > 0)
+				{
+					$prop = new Propal($db);
+					if ( $prop->fetch($_POST['propalid']) )
+					{
+						for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
+						{
+							$desc=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
+							
+							// Dates
+							$date_start=$prop->lignes[$i]->date_debut_prevue;
+							if ($prop->lignes[$i]->date_debut_reel) $date_start=$prop->lignes[$i]->date_debut_reel;
+							$date_end=$prop->lignes[$i]->date_fin_prevue;
+							if ($prop->lignes[$i]->date_fin_reel) $date_end=$prop->lignes[$i]->date_fin_reel;
+
+							$result = $facture->addline(
+							$facid,
+							$desc,
+							$prop->lignes[$i]->subprice,
+							$prop->lignes[$i]->qty,
+							$prop->lignes[$i]->tva_tx,
+							$prop->lignes[$i]->fk_product,
+							$prop->lignes[$i]->remise_percent,
+							$date_start,
+							$date_end,
+							0,
+							$prop->lignes[$i]->info_bits,
+							$prop->lignes[$i]->fk_remise_except,
+							'HT',
+							0,
+							$prop->lignes[$i]->product_type
+							);
+							
+							if ($result < 0)
+							{
+								$error++;
+								break;
+							}
+						}
+					}
+					else
+					{
+						$error++;
+					}
+				}
+				else
+				{
+					$error++;
+				}
+			}
+			
+			// If creation from order
+			else if ($_POST['commandeid'])
+			{
+				$facture->commandeid = $_POST['commandeid'];
+				$facid = $facture->create($user);
+				
+				if ($facid > 0)
+				{
+					$comm = new Commande($db);
+					if ( $comm->fetch($_POST['commandeid']) )
+					{
+						$comm->fetch_lines();
+						$lines = $comm->lignes;
+						for ($i = 0 ; $i < sizeof($lines) ; $i++)
+						{
+							$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+							
+							// Dates
+							$date_start=$comm->lignes[$i]->date_start;
+							$date_end=$comm->lignes[$i]->date_end;
+							
+							// Should use a function using total_ht, total_ttc and total_vat
+							$result = $facture->addline(
+							$facid,
+							$desc,
+							$lines[$i]->subprice,
+							$lines[$i]->qty,
+							$lines[$i]->tva_tx,
+							$lines[$i]->fk_product,
+							$lines[$i]->remise_percent,
+							$date_start,
+							$date_end,
+							0,
+							$lines[$i]->info_bits,
+							$lines[$i]->fk_remise_except,
+							'HT',
+							0,
+							$lines[$i]->product_type
+							);
+
+							if ($result < 0)
+							{
+								$error++;
+								break;
+							}
+						}
+					}
+					else
+					{
+						$error++;
+					}
+				}
+				else
+				{
+					$error++;
+				}
+			}
+
+			// If creation from contract
+			else if ($_POST['contratid'])
+			{
+				$facture->contratid = $_POST['contratid'];
+				$facid = $facture->create($user);
+
+				if ($facid > 0)
+				{
+					$contrat = New Contrat($db);
+					if ($contrat->fetch($_POST['contratid']) > 0)
+					{
+						$lines = $contrat->fetch_lignes();
+
+						for ($i = 0 ; $i < sizeof($lines) ; $i++)
+						{
+							$desc=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
+
+							// Dates
+							$date_start=$contrat->lignes[$i]->date_debut_prevue;
+							if ($contrat->lignes[$i]->date_debut_reel) $date_start=$contrat->lignes[$i]->date_debut_reel;
+							$date_end=$contrat->lignes[$i]->date_fin_prevue;
+							if ($contrat->lignes[$i]->date_fin_reel) $date_end=$contrat->lignes[$i]->date_fin_reel;
+							
+							$result = $facture->addline(
+							$facid,
+							$desc,
+							$lines[$i]->subprice,
+							$lines[$i]->qty,
+							$lines[$i]->tva_tx,
+							$lines[$i]->fk_product,
+							$lines[$i]->remise_percent,
+							$date_start,
+							$date_end,
+							0,
+							$lines[$i]->info_bits,
+							$lines[$i]->fk_remise_except
+							);
+
+							if ($result < 0)
+							{
+								$error++;
+								break;
+							}
+						}
+					}
+					else
+					{
+						$error++;
+					}
+				}
+				else
+				{
+					$error++;
+				}
+			}
+			
 			// If some invoice's lines already known
-			if (! $_POST['propalid'] && ! $_POST['commandeid'] && ! $_POST['contratid'])
+			else
 			{
 				$facid = $facture->create($user);
 
@@ -679,179 +850,6 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						$startday=dol_mktime(12, 0 , 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
 						$endday=dol_mktime(12, 0 , 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
 						$result=$facture->addline($facid,$product->description,$product->price, $_POST['qty'.$i], $product->tva_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
-					}
-				}
-			}
-			else
-			{
-				// If creation from proposal
-				if ($_POST['propalid'])
-				{
-					$facture->propalid = $_POST['propalid'];
-					$facid = $facture->create($user);
-
-					if ($facid > 0)
-					{
-						$prop = new Propal($db);
-						if ( $prop->fetch($_POST['propalid']) )
-						{
-							for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
-							{
-								$desc=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
-
-								// Dates
-								$date_start=$prop->lignes[$i]->date_debut_prevue;
-								if ($prop->lignes[$i]->date_debut_reel) $date_start=$prop->lignes[$i]->date_debut_reel;
-								$date_end=$prop->lignes[$i]->date_fin_prevue;
-								if ($prop->lignes[$i]->date_fin_reel) $date_end=$prop->lignes[$i]->date_fin_reel;
-
-								$result = $facture->addline(
-								$facid,
-								$desc,
-								$prop->lignes[$i]->subprice,
-								$prop->lignes[$i]->qty,
-								$prop->lignes[$i]->tva_tx,
-								$prop->lignes[$i]->fk_product,
-								$prop->lignes[$i]->remise_percent,
-								$date_start,
-								$date_end,
-								0,
-								$prop->lignes[$i]->info_bits,
-								$prop->lignes[$i]->fk_remise_except,
-								'HT',
-								0,
-								$prop->lignes[$i]->product_type
-								);
-
-								if ($result < 0)
-								{
-									$error++;
-									break;
-								}
-							}
-						}
-						else
-						{
-							$error++;
-						}
-					}
-					else
-					{
-						$error++;
-					}
-				}
-
-				// If creation from order
-				if ($_POST['commandeid'])
-				{
-					$facture->commandeid = $_POST['commandeid'];
-					$facid = $facture->create($user);
-
-					if ($facid > 0)
-					{
-						$comm = new Commande($db);
-						if ( $comm->fetch($_POST['commandeid']) )
-						{
-							$comm->fetch_lines();
-							$lines = $comm->lignes;
-							for ($i = 0 ; $i < sizeof($lines) ; $i++)
-							{
-								$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
-
-								// Dates
-								$date_start=$comm->lignes[$i]->date_start;
-								$date_end=$comm->lignes[$i]->date_end;
-
-								// Should use a function using total_ht, total_ttc and total_vat
-								$result = $facture->addline(
-								$facid,
-								$desc,
-								$lines[$i]->subprice,
-								$lines[$i]->qty,
-								$lines[$i]->tva_tx,
-								$lines[$i]->fk_product,
-								$lines[$i]->remise_percent,
-								$date_start,
-								$date_end,
-								0,
-								$lines[$i]->info_bits,
-								$lines[$i]->fk_remise_except,
-								'HT',
-								0,
-								$lines[$i]->product_type
-								);
-
-								if ($result < 0)
-								{
-									$error++;
-									break;
-								}
-							}
-						}
-						else
-						{
-							$error++;
-						}
-					}
-					else
-					{
-						$error++;
-					}
-				}
-
-				// If creation from contract
-				if ($_POST['contratid'])
-				{
-					$facture->contratid = $_POST['contratid'];
-					$facid = $facture->create($user);
-
-					if ($facid > 0)
-					{
-						$contrat = New Contrat($db);
-						if ($contrat->fetch($_POST['contratid']) > 0)
-						{
-							$lines = $contrat->fetch_lignes();
-
-							for ($i = 0 ; $i < sizeof($lines) ; $i++)
-							{
-								$desc=($contrat->lignes[$i]->desc?$contrat->lignes[$i]->desc:$contrat->lignes[$i]->libelle);
-
-								// Dates
-								$date_start=$contrat->lignes[$i]->date_debut_prevue;
-								if ($contrat->lignes[$i]->date_debut_reel) $date_start=$contrat->lignes[$i]->date_debut_reel;
-								$date_end=$contrat->lignes[$i]->date_fin_prevue;
-								if ($contrat->lignes[$i]->date_fin_reel) $date_end=$contrat->lignes[$i]->date_fin_reel;
-
-								$result = $facture->addline(
-								$facid,
-								$desc,
-								$lines[$i]->subprice,
-								$lines[$i]->qty,
-								$lines[$i]->tva_tx,
-								$lines[$i]->fk_product,
-								$lines[$i]->remise_percent,
-								$date_start,
-								$date_end,
-								0,
-								$lines[$i]->info_bits,
-								$lines[$i]->fk_remise_except
-								);
-
-								if ($result < 0)
-								{
-									$error++;
-									break;
-								}
-							}
-						}
-						else
-						{
-							$error++;
-						}
-					}
-					else
-					{
-						$error++;
 					}
 				}
 			}
