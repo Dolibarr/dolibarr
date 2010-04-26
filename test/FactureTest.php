@@ -29,17 +29,21 @@ require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../htdocs/compta/facture/class/facture.class.php';
 
-print "Load permissions for admin user with login 'admin'\n";
-$user->fetch('admin');
-$user->getrights();
+if (empty($user->id))
+{
+	print "Load permissions for admin user with login 'admin'\n";
+	$user->fetch('admin');
+	$user->getrights();
+}
 
 
 /**
- * @backupGlobals enabled
+ * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @covers DoliDb
  * @covers User
  * @covers Translate
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureTest extends PHPUnit_Framework_TestCase
 {
@@ -72,20 +76,19 @@ class FactureTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
+		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
-		if (! $db->transaction_opened) $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
     }
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
+		$db->rollback();
 
 		print __METHOD__."\n";
     }
 
 	/**
-	 * @backupGlobals enabled
-	 * @backupStaticAttributes enabled
 	 */
     protected function setUp()
     {
@@ -98,8 +101,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
     }
 	/**
-	 * @backupGlobals enabled
-	 * @backupStaticAttributes enabled
 	 */
     protected function tearDown()
     {
@@ -107,8 +108,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @backupGlobals enabled
- 	 * @backupStaticAttributes enabled
      * @covers Facture::create
      */
     public function testFactureCreate()
@@ -129,8 +128,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @backupGlobals enabled
-     * @backupStaticAttributes enabled
      * @depends	testFactureCreate
      * @covers Facture::fetch
      * The depends says test is run only if previous is ok
@@ -145,14 +142,13 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Facture($this->savdb);
     	$result=$localobject->fetch($id);
+
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
     	return $localobject;
     }
 
     /**
-     * @backupGlobals enabled
-     * @backupStaticAttributes enabled
      * @depends	testFactureFetch
      * @covers Facture::update
      * The depends says test is run only if previous is ok
@@ -167,14 +163,13 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
 		$localobject->note='New note after update';
     	$result=$localobject->update($user);
+
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $localobject;
     }
 
     /**
-     * @backupGlobals enabled
-     * @backupStaticAttributes enabled
      * @depends	testFactureUpdate
      * @covers Facture::set_valid
      * The depends says test is run only if previous is ok
@@ -189,13 +184,12 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
     	$result=$localobject->set_valid($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
     	$this->assertLessThan($result, 0);
     	return $localobject->id;
     }
 
-/**
-     * @backupGlobals enabled
-     * @backupStaticAttributes enabled
+	/**
      * @depends	testFactureValid
      * @covers Facture::delete
      * The depends says test is run only if previous is ok
@@ -211,7 +205,8 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$localobject=new Facture($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
-    	print __METHOD__." id=".$id." result=".$result."\n";
+
+		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $result;
     }
