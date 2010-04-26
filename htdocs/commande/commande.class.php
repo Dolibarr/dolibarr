@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 
 /**
  *  \class      Commande
- *  \brief      Class to manage orders
+ *  \brief      Class to manage customers orders
  */
 class Commande extends CommonObject
 {
@@ -2305,6 +2305,7 @@ class Commande extends CommonObject
 			$line->total_ht=100;
 			$line->total_ttc=119.6;
 			$line->total_tva=19.6;
+			$line->remise_percent=0;
 			$line->fk_product=$prodids[$prodid];
 
 			$this->lignes[$xnbp]=$line; // TODO: deprecated
