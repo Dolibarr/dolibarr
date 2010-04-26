@@ -209,9 +209,9 @@ class FormOther
 	 *    \param     end           end value
 	 *    \return    return        combo
 	 */
-	function select_percent($selected=0,$htmlname='percent',$increment=5,$start=0,$end=100)
+	function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
 	{
-		$return = '<select class="flat" name="'.$htmlname.'">';
+		$return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled="true"':'').'>';
 
 		for ($i = $start ; $i <= $end ; $i += $increment)
 		{
