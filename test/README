@@ -6,14 +6,17 @@ To use them, you must:
 * Install PHPUnit
 If using Eclipse, you must also add an entry as external tool for phpunit programm with:
 -Name:      PHPUnit
--Location:  /usr/bin/php
+-Location:  Linux:   /usr/bin/php
+            Windows: C:\Program Files (x86)\wamp\bin\php\php5.2.8\php.exe
 -Workspace: ${workspace_loc}
--Arguments: /usr/bin/phpunit ${resource_path}
+-Arguments: Linux:   /usr/bin/phpunit ${resource_path}
+            Windows: "C:\Program Files (x86)\PHPUnit-3.4.9\phpunit.php" ${resource_path}
 
-* Run unit tests: 
+* Run Unit tests: 
 Run > phpunit TestFile.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
 
-* List code coverage by unit tests:
-Run > phpunit --coverage-html ./report TestFile.php
+* Generate a report of Unit tests code coverage:
+Run > phpunit --coverage-html ./report MyTestSuite.php
 Note that xdebug must be installed for this feature to work.
+

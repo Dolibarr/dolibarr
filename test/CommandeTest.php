@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/FactureTest.php
+ *      \file       test/CommandeTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../htdocs/commande/commande.class.php';
 
 print "Load permissions for admin user with login 'admin'\n";
 $user->fetch('admin');
@@ -37,11 +37,8 @@ $user->getrights();
 /**
  * @backupGlobals enabled
  * @backupStaticAttributes enabled
- * @covers DoliDb
- * @covers User
- * @covers Translate
  */
-class FactureTest extends PHPUnit_Framework_TestCase
+class CommandeTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -52,9 +49,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return FactureTest
+	 * @return CommandeTest
 	 */
-	function FactureTest()
+	function CommandeTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -96,6 +93,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
+		//print $db->getVersion()."\n";
     }
 	/**
 	 * @backupGlobals enabled
@@ -109,9 +107,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * @backupGlobals enabled
  	 * @backupStaticAttributes enabled
-     * @covers Facture::create
+     * @covers Commande::create
      */
-    public function testFactureCreate()
+    public function testCommandeCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -119,7 +117,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Commande($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -131,11 +129,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * @backupGlobals enabled
      * @backupStaticAttributes enabled
-     * @depends	testFactureCreate
-     * @covers Facture::fetch
+     * @depends	testCommandeCreate
+     * @covers Commande::fetch
      * The depends says test is run only if previous is ok
      */
-    public function testFactureFetch($id)
+    public function testCommandeFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -143,7 +141,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Commande($this->savdb);
     	$result=$localobject->fetch($id);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
@@ -153,11 +151,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * @backupGlobals enabled
      * @backupStaticAttributes enabled
-     * @depends	testFactureFetch
-     * @covers Facture::update
+     * @depends	testCommandeFetch
+     * @covers Commande::update
      * The depends says test is run only if previous is ok
      */
-    public function testFactureUpdate($localobject)
+/*    public function testCommandeUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -169,17 +167,17 @@ class FactureTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->update($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	return $localobject;
+    	return $localobject->id;
     }
-
+*/
     /**
      * @backupGlobals enabled
      * @backupStaticAttributes enabled
-     * @depends	testFactureUpdate
-     * @covers Facture::set_valid
+     * @depends	testCommandeFetch
+     * @covers Commande::valid
      * The depends says test is run only if previous is ok
      */
-    public function testFactureValid($localobject)
+    public function testCommandeValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -187,20 +185,20 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->set_valid($user);
+    	$result=$localobject->valid($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $localobject->id;
     }
 
-/**
+    /**
      * @backupGlobals enabled
      * @backupStaticAttributes enabled
-     * @depends	testFactureValid
-     * @covers Facture::delete
+     * @depends	testCommandeValid
+     * @covers Commande::delete
      * The depends says test is run only if previous is ok
      */
-    public function testFactureDelete($id)
+    public function testCommandeDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -208,9 +206,9 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Commande($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
+		$result=$localobject->delete($user);
     	print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $result;
