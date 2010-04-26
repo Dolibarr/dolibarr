@@ -1532,6 +1532,29 @@ if ($_GET['action'] == 'create')
 		$remise_absolue = 0;
 		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
+	// TODO a mutualiser
+	elseif ($_GET['origin'] && $_GET['originid'])
+	{
+		// Parse element/subelement (ex: project_task)
+		$element = $subelement = $_GET['origin'];
+		if (preg_match('/^([^_]+)_([^_]+)/i',$_GET['origin'],$regs))
+		{
+			$element = $regs[1];
+			$subelement = $regs[2];
+		}
+		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
+		$classname = ucfirst($subelement);
+		$object = new $classname($db);
+		$object->fetch($_GET['originid']);
+		$object->fetch_client();
+		
+		$soc = $object->client;
+		$cond_reglement_id = $soc->cond_reglement;
+		$mode_reglement_id = $soc->mode_reglement;
+		$remise_percent = $soc->remise_client;
+		$remise_absolue = 0;
+		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+	}
 	else
 	{
 		$res=$soc->fetch($socid);
@@ -1570,7 +1593,7 @@ if ($_GET['action'] == 'create')
 	}
 
 	// Factures predefinies
-	if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
+	if (empty($_GET['propalid']) && empty($_GET['commandeid']) && empty($_GET['contratid']) && empty($_GET['originid']))
 	{
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc FROM '.MAIN_DB_PREFIX.'facture_rec as r';
 		$sql.= ' WHERE r.fk_soc = '.$soc->id;
@@ -1863,6 +1886,20 @@ if ($_GET['action'] == 'create')
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($contrat->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($contrat->total_tva)."</td></tr>";
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($contrat->total_ttc)."</td></tr>";
+	}
+	elseif ($_GET['originid'] > 0)
+	{
+		print "\n<!-- ".$classname." info -->";
+		print "\n";
+		print '<input type="hidden" name="amount"         value="'.$object->total_ht.'">'."\n";
+		print '<input type="hidden" name="total"          value="'.$object->total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$object->total_tva.'">'."\n";
+		print '<input type="hidden" name="originid"       value="'.$object->id.'">';
+
+		print '<tr><td>'.$langs->trans($classname).'</td><td colspan="2">'.$object->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($object->total_ht).'</td></tr>';
+		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($object->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($object->total_ttc)."</td></tr>";
 	}
 	else
 	{
