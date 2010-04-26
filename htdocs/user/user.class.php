@@ -471,8 +471,8 @@ class User extends CommonObject
 
 
 	/**
-	 *	\brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
-	 *	\param      moduletag    nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
+	 *	\brief      Load permissions granted to user into object user
+	 *	\param      moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 */
 	function getrights($moduletag='')
 	{
