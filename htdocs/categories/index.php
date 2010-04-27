@@ -28,7 +28,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 
 $type=isset($_GET['type'])?$_GET['type']:$_POST['type'];

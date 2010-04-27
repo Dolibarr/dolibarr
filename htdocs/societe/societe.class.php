@@ -806,7 +806,7 @@ class Societe extends CommonObject
 		{
 			// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-third-party-deleting.html)
 			// Removing every "categorie" link with this company
-			require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+			require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
 			$static_cat = new Categorie($this->db);
 			$toute_categs = array();

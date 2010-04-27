@@ -31,7 +31,7 @@ require("../../main.inc.php");
 
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
 $langs->load("bills");
 $langs->load("products");

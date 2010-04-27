@@ -304,7 +304,7 @@ class Product extends CommonObject
 								{
 									if ($this->catid > 0)
 									{
-										require_once(DOL_DOCUMENT_ROOT ."/categories/categorie.class.php");
+										require_once(DOL_DOCUMENT_ROOT ."/categories/class/categorie.class.php");
 										$cat = new Categorie($this->db, $this->catid);
 										$cat->add_type($this,"product");
 									}

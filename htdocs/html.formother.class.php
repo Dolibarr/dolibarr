@@ -242,7 +242,7 @@ class FormOther
 	function select_categories($type,$selected=0,$htmlname='search_categ')
 	{
 		global $langs;
-	 	require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+	 	require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
 	 	// Load list of "categories"
 	 	$static_categs = new Categorie($this->db);
