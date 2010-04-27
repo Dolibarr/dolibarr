@@ -1,0 +1,7 @@
+<phpunit>
+<filter>
+  <blacklist>
+    <directory suffix=".php">../test/</directory>
+  </blacklist>
+</filter>
+</phpunit>

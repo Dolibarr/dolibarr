@@ -17,6 +17,6 @@ Run > phpunit TestFile.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
 
 * Generate a report of Unit tests code coverage:
-Run > phpunit --coverage-html ./report MyTestSuite.php
+Run > phpunit [--configuration ./phpunittestok.xml] --coverage-html ./report MyTestSuite.php
 Note that xdebug must be installed for this feature to work.
 
