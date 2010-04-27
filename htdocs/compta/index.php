@@ -466,6 +466,8 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 // Last customers
 if ($conf->societe->enabled && $user->rights->societe->lire)
 {
+	include_once(DOL_DOCUMENT_ROOT.'/societe/client.class.php');
+
 	$langs->load("boxes");
 
 	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
