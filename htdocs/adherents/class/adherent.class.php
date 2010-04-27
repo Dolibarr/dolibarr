@@ -1949,7 +1949,7 @@ class Adherent extends CommonObject
 		$this->naiss=time();
 		$this->photo='';
 		$this->public=1;
-		$this->statut=1;
+		$this->statut=0;
 
 		$this->datefin=time();
 		$this->datevalid=time();

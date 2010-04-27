@@ -2234,37 +2234,12 @@ class Commande extends CommonObject
 
 		dol_syslog("Commande::initAsSpecimen");
 
-		// Charge tableau des id de societe socids
-		$socids = array();
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE client IN (1, 3)";
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " LIMIT 10";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_socs = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_socs)
-			{
-				$i++;
-
-				$row = $this->db->fetch_row($resql);
-				$socids[$i] = $row[0];
-			}
-		}
-
 		// Charge tableau des produits prodids
 		$prodids = array();
-
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE envente = 1";
 		$sql.= " AND entity = ".$conf->entity;
-
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2282,13 +2257,14 @@ class Commande extends CommonObject
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
-		$socid = rand(1, $num_socs);
-		$this->socid = $socids[$socid];
+		$this->socid = 1;
 		$this->date = time();
 		$this->date_lim_reglement=$this->date+3600*24*30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
-		$this->note_public='SPECIMEN';
+		$this->note_public='This is a comment (public)';
+		$this->note='This is a comment (private)';
+		// Lines
 		$nbp = rand(1, 9);
 		$xnbp = 0;
 		while ($xnbp < $nbp)

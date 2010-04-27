@@ -37,8 +37,8 @@ class Interfaces
 	var $errors	= array();	// Array for errors
 
    /**
-	*   \brief      Constructeur.
-	*   \param      DB      handler d'acces base
+	*   \brief      Constructor.
+	*   \param      DB      Database handler
 	*/
 	function Interfaces($DB)
 	{
@@ -48,17 +48,22 @@ class Interfaces
    /**
 	*   \brief      Fonction appelee lors du declenchement d'un evenement Dolibarr.
 	*               Cette fonction declenche tous les triggers trouves actifs.
-	*   \param      action      Code de l'evenement
+	*   \param      action      Trigger event code
 	*   \param      object      Objet concern
 	*   \param      user        Objet user
 	*   \param      lang        Objet lang
 	*   \param      conf        Objet conf
-	*   \return     int         Nb triggers ayant agit si pas d'erreurs, -Nb en erreur sinon.
+	*   \return     int         Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
 	*/
 	function run_triggers($action,$object,$user,$langs,$conf)
 	{
 		// Check parameters
-		if (! is_object($object) || ! is_object($user) || ! is_object($langs) || ! is_object($conf))
+		if (! is_object($object) || ! is_object($conf))	// Error
+		{
+   			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_ERROR);
+   			return -1;
+		}
+		if (! is_object($user) || ! is_object($langs))	// Warning
 		{
    			dol_syslog('interface::run_triggers was called with wrong parameters object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 		}

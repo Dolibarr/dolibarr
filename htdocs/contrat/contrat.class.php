@@ -503,7 +503,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			dol_syslog("Contrat::Fetch Erreur lecture des lignes de contrat non li�es aux produits");
+			dol_syslog("Contrat::Fetch Erreur lecture des lignes de contrat non liees aux produits");
 			$this->error=$this->db->error();
 			return -2;
 		}
@@ -516,12 +516,12 @@ class Contrat extends CommonObject
 	/**
 	 *      \brief      Create a contract into database
 	 *      \param      user        User that create
-	 *      \param      langs       Environnement langue de l'utilisateur
-	 *      \param      conf        Environnement de configuration lors de l'operation
-	 *      \return     int         <0 si erreur, id contrat cre sinon
+	 *      \return     int         <0 if KO, id of contract if OK
 	 */
-	function create($user,$langs='',$conf='')
+	function create($user)
 	{
+		global $conf,$langs,$mysoc;
+
 		// Check parameters
 		$paramsok=1;
 		if ($this->commercial_signature_id <= 0)
@@ -559,11 +559,11 @@ class Contrat extends CommonObject
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
-			// Ins�re contacts commerciaux ('SALESREPSIGN','contrat')
+			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
 			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
 			if ($result < 0) $error++;
 
-			// Ins�re contacts commerciaux ('SALESREPFOLL','contrat')
+			// Insert contacts commerciaux ('SALESREPFOLL','contrat')
 			$result=$this->add_contact($this->commercial_suivi_id,'SALESREPFOLL','internal');
 			if ($result < 0) $error++;
 
@@ -783,7 +783,7 @@ class Contrat extends CommonObject
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
 	{
-		global $langs, $conf;
+		global $user, $langs, $conf;
 
 		dol_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
@@ -857,7 +857,7 @@ class Contrat extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				$result=$this->update_statut();
+				$result=$this->update_statut($user);
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -903,6 +903,8 @@ class Contrat extends CommonObject
 	$date_start='', $date_end='', $tvatx,
 	$date_debut_reel='', $date_fin_reel='')
 	{
+		global $user, $conf, $langs;
+
 		// Nettoyage parametres
 		$qty=trim($qty);
 		$desc=trim($desc);
@@ -947,7 +949,7 @@ class Contrat extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$result=$this->update_statut();
+			$result=$this->update_statut($user);
 			if ($result >= 0)
 			{
 				$this->db->commit();
@@ -1013,7 +1015,7 @@ class Contrat extends CommonObject
 	 *      \brief      Update statut of contract according to services
 	 *		\return     int     <0 si ko, >0 si ok
 	 */
-	function update_statut()
+	function update_statut($user)
 	{
 		// If draft, we keep it (should not happen)
 		if ($this->statut == 0) return 1;
@@ -1366,6 +1368,73 @@ class Contrat extends CommonObject
 		return $this->getIdContact('external','SERVICE');
 	}
 
+
+	/**
+	 *		\brief		Initialise le membre avec valeurs fictives aleatoire
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs,$conf;
+
+		$prodids = array();
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE envente = 1";
+		$sql.= " AND entity = ".$conf->entity;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_prods = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_prods)
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
+		}
+
+
+
+		// Initialise parametres
+		$this->id=0;
+		$this->specimen=1;
+
+		$this->ref = 'DOLIBARR';
+		$this->socid = 1;
+		$this->statut= 0;
+		$this->date_contrat = dol_now();
+		$this->commercial_signature_id = 1;
+		$this->commercial_suivi_id = 1;
+		$this->note='This is a comment (private)';
+		$this->note='This is a comment (public)';
+		$this->fk_projet = 0;
+		// Lines
+		$nbp = 5;
+		$xnbp = 0;
+		while ($xnbp < $nbp)
+		{
+			$ligne=new ContratLigne($this->db);
+			$ligne->desc=$langs->trans("Description")." ".$xnbp;
+			$ligne->qty=1;
+			$ligne->subprice=100;
+			$ligne->price=100;
+			$ligne->tva_tx=19.6;
+			$ligne->remise_percent=10;
+			$ligne->total_ht=90;
+			$ligne->total_ttc=107.64;	// 90 * 1.196
+			$ligne->total_tva=17.64;
+			$prodid = rand(1, $num_prods);
+			$ligne->fk_product=$prodids[$prodid];
+			$this->lignes[$xnbp]=$ligne;
+			$xnbp++;
+		}
+
+		$this->amount_ht      = $xnbp*100;
+		$this->total_ht       = $xnbp*100;
+		$this->total_tva      = $xnbp*19.6;
+		$this->total_ttc      = $xnbp*119.6;
+	}
 }
 
 
@@ -1687,7 +1756,7 @@ class ContratLigne
 		{
 			$contrat=new Contrat($this->db);
 			$contrat->fetch($this->fk_contrat);
-			$result=$contrat->update_statut();
+			$result=$contrat->update_statut($user);
 		}
 		else
 		{
