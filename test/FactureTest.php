@@ -47,9 +47,8 @@ if (empty($user->id))
  * @covers Conf
  * @covers Interfaces
  * @covers CommonObject
- * @covers Societe
- * @covers Contact
  * @covers Facture
+ * @covers FactureLigne
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureTest extends PHPUnit_Framework_TestCase

@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/PropalTest.php
+ *      \file       test/AdherentTest.php
  *		\ingroup    test
  *      \brief      This file is an example for a PHPUnit test
  *      \version    $Id$
@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/comm/propal/propal.class.php';
+require_once dirname(__FILE__).'/../htdocs/adherents/class/adherent.class.php';
 
 if (empty($user->id))
 {
@@ -41,11 +41,15 @@ if (empty($user->id))
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @covers Propal
- * @covers PropaleLigne
+ * @covers DoliDb
+ * @covers Translate
+ * @covers Conf
+ * @covers Interfaces
+ * @covers CommonObject
+ * @covers Adherent
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PropalTest extends PHPUnit_Framework_TestCase
+class AdherentTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -56,9 +60,9 @@ class PropalTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return PropalTest
+	 * @return AdherentTest
 	 */
-	function PropalTest()
+	function AdherentTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -99,7 +103,6 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-		//print $db->getVersion()."\n";
     }
 	/**
 	 */
@@ -110,7 +113,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 
     /**
      */
-    public function testPropalCreate()
+    public function testAdherentCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -118,7 +121,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
 
@@ -128,10 +131,10 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testPropalCreate
+     * @depends	testAdherentCreate
      * The depends says test is run only if previous is ok
      */
-    public function testPropalFetch($id)
+    public function testAdherentFetch($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -139,7 +142,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$result=$localobject->fetch($id);
 
     	$this->assertLessThan($result, 0);
@@ -148,10 +151,10 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends	testPropalFetch
+     * @depends	testAdherentFetch
      * The depends says test is run only if previous is ok
      */
-/*    public function testPropalUpdate($localobject)
+    public function testAdherentUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -164,14 +167,14 @@ class PropalTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	return $localobject->id;
+    	return $localobject;
     }
-*/
+
     /**
-     * @depends	testPropalFetch
+     * @depends	testAdherentUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testPropalValid($localobject)
+    public function testAdherentValid($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -179,18 +182,18 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->valid($user);
-
+    	$result=$localobject->validate($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
     	$this->assertLessThan($result, 0);
     	return $localobject->id;
     }
 
-    /**
-     * @depends	testPropalValid
+	/**
+     * @depends	testAdherentValid
      * The depends says test is run only if previous is ok
      */
-    public function testPropalDelete($id)
+    public function testAdherentDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -198,14 +201,15 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Propal($this->savdb);
+		$localobject=new Adherent($this->savdb);
     	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+		$result=$localobject->delete($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
     	return $result;
     }
+
 
 }
 ?>

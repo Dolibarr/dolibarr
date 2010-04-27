@@ -21,6 +21,6 @@ Run > phpunit --coverage-html ./report MyTestSuite.php
 Note that xdebug must be installed for this feature to work.
 
 * Generate a report of Unit tests code coverage among all Dolibarr classes:
-Increase your PHP memory (memory_limit in php.ini) to 1Gb.
+Increase your PHP memory (memory_limit in php.ini) to 528MB.
 Run > phpunit --configuration ./phpunittest.xml --coverage-html ./report MyTestSuite.php
 

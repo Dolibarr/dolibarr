@@ -30,9 +30,6 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/FactureTest.php';
-require_once dirname(__FILE__).'/PropalTest.php';
-require_once dirname(__FILE__).'/CommandeTest.php';
 
 if (empty($user->id))
 {
@@ -51,9 +48,16 @@ class MyTestSuite
     {
 		$suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 
-        $suite->addTestSuite('FactureTest');
-        $suite->addTestSuite('PropalTest');
+		require_once dirname(__FILE__).'/AdherentTest.php';
+        $suite->addTestSuite('AdherentTest');
+		require_once dirname(__FILE__).'/CommandeTest.php';
         $suite->addTestSuite('CommandeTest');
+		require_once dirname(__FILE__).'/ContratTest.php';
+        $suite->addTestSuite('ContratTest');
+        require_once dirname(__FILE__).'/FactureTest.php';
+        $suite->addTestSuite('FactureTest');
+		require_once dirname(__FILE__).'/PropalTest.php';
+        $suite->addTestSuite('PropalTest');
 
         return $suite;
     }

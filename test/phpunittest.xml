@@ -5,9 +5,13 @@
     <directory suffix=".php">../htdocs/includes/adodbtime/</directory>
     <directory suffix=".php">../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../htdocs/includes/fpdf/</directory>
+    <file>../htdocs/lib/databases/mssql.lib.php</file>
+    <file>../htdocs/lib/databases/pgsql.lib.php</file>
+    <file>../htdocs/lib/databases/mysql.lib.php</file>
   </blacklist>
   <whitelist>
     <directory suffix=".class.php">../htdocs/</directory>
+    <directory suffix=".lib.php">../htdocs/</directory>
   </whitelist>
 </filter>
 </phpunit>
