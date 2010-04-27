@@ -2,6 +2,9 @@
 <filter>
   <blacklist>
     <directory suffix=".php">../test/</directory>
+    <directory suffix=".php">../htdocs/includes/adodbtime/</directory>
+    <directory suffix=".php">../htdocs/includes/artichow/</directory>
+    <directory suffix=".php">../htdocs/includes/fpdf/</directory>
   </blacklist>
 </filter>
 </phpunit>

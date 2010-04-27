@@ -43,6 +43,9 @@ if (empty($user->id))
  * @covers DoliDb
  * @covers User
  * @covers Translate
+ * @covers Conf
+ * @covers Interfaces
+ * @covers CommonObject
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureTest extends PHPUnit_Framework_TestCase
