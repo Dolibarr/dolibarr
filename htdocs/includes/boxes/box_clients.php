@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/includes/boxes/box_clients.php
- \ingroup    societes
- \brief      Module de generation de l'affichage de la box clients
- \version	$Id$
+ *	\file       htdocs/includes/boxes/box_clients.php
+ *	\ingroup    societes
+ *	\brief      Module de generation de l'affichage de la box clients
+ *	\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -84,7 +84,6 @@ class box_clients extends ModeleBoxes {
 				$num = $db->num_rows($result);
 
 				$i = 0;
-				//$customerstatic=new Client($db);
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
