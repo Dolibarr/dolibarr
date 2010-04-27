@@ -146,7 +146,7 @@ $dates = array (mktime(12,0,0,1,3,2003),
 	  mktime(12,0,0,12,13,2003),
 	  );
 
-require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 
 print "Build ".GEN_NUMBER_COMMANDE." orders\n";

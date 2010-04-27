@@ -25,7 +25,7 @@
  *       \version    $Id$
  */
 include_once DOL_DOCUMENT_ROOT . "/core/stats.class.php";
-include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
+include_once DOL_DOCUMENT_ROOT . "/commande/class/commande.class.php";
 include_once DOL_DOCUMENT_ROOT . "/fourn/fournisseur.commande.class.php";
 
 

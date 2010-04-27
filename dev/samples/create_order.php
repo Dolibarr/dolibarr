@@ -67,7 +67,7 @@ print 'Argument 2='.$argv[2]."\n";
 // Start of transaction
 $db->begin();
 
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 // Create order object
 $com = new Commande($db);

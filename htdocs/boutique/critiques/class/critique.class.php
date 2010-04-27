@@ -19,7 +19,7 @@
  */
 
 /*
-		\file       htdocs/boutique/critiques/critique.class.php
+		\file       htdocs/boutique/critiques/class/critique.class.php
 		\ingroup    prelevement
 		\brief      Fichier de la classe des critiques OSCommerce
 		\version    $Revision$

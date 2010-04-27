@@ -62,7 +62,7 @@ class box_commandes extends ModeleBoxes {
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
         $commandestatic=new Commande($db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));

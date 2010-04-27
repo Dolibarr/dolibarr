@@ -133,7 +133,7 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/product/product.class.php",
 	DOL_DOCUMENT_ROOT."/product/service.class.php",
 	DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php",
-	DOL_DOCUMENT_ROOT."/commande/commande.class.php",
+	DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
 	DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
 	DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
 	DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
@@ -295,7 +295,7 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 // Number customer orders a deal
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
-	include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 	$board=new Commande($db);
 	$board->load_board($user);
 

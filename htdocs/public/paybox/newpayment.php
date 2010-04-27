@@ -237,7 +237,7 @@ if ($_REQUEST["amount"] == 'order')
 	$found=true;
 	$langs->load("orders");
 
-	require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 	$order=new Commande($db);
 	$result=$order->fetch('',$_REQUEST["ref"]);

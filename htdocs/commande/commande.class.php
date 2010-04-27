@@ -21,7 +21,7 @@
  */
 
 /**
- *  \file       htdocs/commande/commande.class.php
+ *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
  *  \version    $Id$

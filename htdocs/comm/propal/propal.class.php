@@ -1229,7 +1229,7 @@ class Propal extends CommonObject
 			if ($statut == 2)
 			{
 				// Propale signee
-				include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 				$result=$this->create_commande($user);
 
@@ -1313,7 +1313,7 @@ class Propal extends CommonObject
 			if ($this->statut == 2)
 			{
 				// Propale signee
-				include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 				$commande = new Commande($this->db);
 				$result=$commande->create_from_propale($user, $this->id);
 
