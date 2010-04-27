@@ -27,18 +27,18 @@
  */
 
 /**
- *      \class      Client
+ *      \class      BoutiqueClient
  *      \brief      Classe permettant de gerer des clients de la boutique online
  */
 
-class Client
+class BoutiqueClient
 {
     var $db ;
 
     var $id ;
     var $nom;
 
-    function Client($DB, $id=0)
+    function BoutiqueClient($DB, $id=0)
     {
         $this->db = $DB;
         $this->id = $id ;
@@ -52,25 +52,24 @@ class Client
     {
 		global $conf;
 
-        $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers WHERE customers_id = $id";
+        $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."customers WHERE customers_id = ".$id;
 
-        $result = $this->db->query($sql) ;
-
-        if ( $result )
+        $resql = $this->db->query($sql) ;
+        if ( $resql )
         {
-            $result = $this->db->fetch_array();
+            $result = $this->db->fetch_array($resql);
 
             $this->id      = $result["customers_id"];
-            $this->name    = stripslashes($result["customers_firstname"]) . " " . stripslashes($result["customers_lastname"]);
+            $this->name    = $result["customers_firstname"] . " " . $result["customers_lastname"];
 
-            $this->db->free();
+            $this->db->free($resql);
+        	return 1;
         }
         else
         {
             print $this->db->error();
+            return -1;
         }
-
-        return $result;
     }
 
 }
