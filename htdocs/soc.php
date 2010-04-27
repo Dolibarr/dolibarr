@@ -220,7 +220,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 					}
 					else
 					{
-						Header("Location: soc.php?socid=".$soc->id);
+						Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soc->id);
 						return;
 					}
 				}
@@ -240,7 +240,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		{
 			if ($_POST["cancel"])
 			{
-				Header("Location: soc.php?socid=".$socid);
+				Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
 				exit;
 			}
 
@@ -255,7 +255,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 			$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
 			if ($result >= 0)
 			{
-				Header("Location: soc.php?socid=".$socid);
+				Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
 				exit;
 			}
 			else
@@ -457,7 +457,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 
 		dol_htmloutput_errors($soc->error,$soc->errors);
 
-		print '<form action="soc.php" method="post" name="formsoc">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -694,7 +694,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 				print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
 				print $html->selectyesno('localtax2assuj_value',0,1);
 				print '</td></tr>';
-				
+
 			}
 			elseif($mysoc->localtax1_assuj=="1")
 			{
@@ -831,7 +831,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		dol_htmloutput_errors($soc->error,$soc->errors);
 
-		print '<form action="soc.php?socid='.$soc->id.'" method="post" name="formsoc">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'" method="post" name="formsoc">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
@@ -1048,14 +1048,14 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 				print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
 				print $form->selectyesno('localtax2assuj_value',$soc->localtax2_assuj,1);
 				print '</td></tr>';
-				
+
 			}
 			elseif($mysoc->localtax1_assuj=="1")
 			{
 				print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
 				print $form->selectyesno('localtax1assuj_value',$soc->localtax1_assuj,1);
 				print '</td></tr>';
-				
+
 			}
 			elseif($mysoc->localtax2_assuj=="1")
 			{
@@ -1306,7 +1306,7 @@ else
 			print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
 			print yn($soc->localtax2_assuj);
 			print '</td></tr>';
-			
+
 		}
 		elseif($mysoc->localtax1_assuj=="1")
 		{
