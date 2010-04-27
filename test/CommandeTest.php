@@ -40,6 +40,7 @@ if (empty($user->id))
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
+ * @covers Commande
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class CommandeTest extends PHPUnit_Framework_TestCase
@@ -106,7 +107,6 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Commande::create
      */
     public function testCommandeCreate()
     {
@@ -127,7 +127,6 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testCommandeCreate
-     * @covers Commande::fetch
      * The depends says test is run only if previous is ok
      */
     public function testCommandeFetch($id)
@@ -148,7 +147,6 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testCommandeFetch
-     * @covers Commande::update
      * The depends says test is run only if previous is ok
      */
 /*    public function testCommandeUpdate($localobject)
@@ -169,7 +167,6 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 */
     /**
      * @depends	testCommandeFetch
-     * @covers Commande::valid
      * The depends says test is run only if previous is ok
      */
     public function testCommandeValid($localobject)
@@ -189,7 +186,6 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testCommandeValid
-     * @covers Commande::delete
      * The depends says test is run only if previous is ok
      */
     public function testCommandeDelete($id)

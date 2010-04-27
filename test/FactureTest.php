@@ -46,6 +46,9 @@ if (empty($user->id))
  * @covers Conf
  * @covers Interfaces
  * @covers CommonObject
+ * @covers Societe
+ * @covers Contact
+ * @covers Facture
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class FactureTest extends PHPUnit_Framework_TestCase
@@ -111,7 +114,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Facture::create
      */
     public function testFactureCreate()
     {
@@ -132,7 +134,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testFactureCreate
-     * @covers Facture::fetch
      * The depends says test is run only if previous is ok
      */
     public function testFactureFetch($id)
@@ -153,7 +154,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testFactureFetch
-     * @covers Facture::update
      * The depends says test is run only if previous is ok
      */
     public function testFactureUpdate($localobject)
@@ -174,7 +174,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testFactureUpdate
-     * @covers Facture::set_valid
      * The depends says test is run only if previous is ok
      */
     public function testFactureValid($localobject)
@@ -194,7 +193,6 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
 	/**
      * @depends	testFactureValid
-     * @covers Facture::delete
      * The depends says test is run only if previous is ok
      */
     public function testFactureDelete($id)

@@ -40,6 +40,7 @@ if (empty($user->id))
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
+ * @covers Propal
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class PropalTest extends PHPUnit_Framework_TestCase
@@ -106,7 +107,6 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Propal::create
      */
     public function testPropalCreate()
     {
@@ -127,7 +127,6 @@ class PropalTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testPropalCreate
-     * @covers Propal::fetch
      * The depends says test is run only if previous is ok
      */
     public function testPropalFetch($id)
@@ -148,7 +147,6 @@ class PropalTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testPropalFetch
-     * @covers Propal::update
      * The depends says test is run only if previous is ok
      */
 /*    public function testPropalUpdate($localobject)
@@ -169,7 +167,6 @@ class PropalTest extends PHPUnit_Framework_TestCase
 */
     /**
      * @depends	testPropalFetch
-     * @covers Propal::valid
      * The depends says test is run only if previous is ok
      */
     public function testPropalValid($localobject)
@@ -189,7 +186,6 @@ class PropalTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends	testPropalValid
-     * @covers Propal::delete
      * The depends says test is run only if previous is ok
      */
     public function testPropalDelete($id)
