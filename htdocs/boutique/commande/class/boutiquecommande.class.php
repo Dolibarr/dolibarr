@@ -18,27 +18,29 @@
  */
 
 /**
- \file       htdocs/boutique/commande/commande.class.php
- \ingroup    osc
- \brief      Fichier de la classe des commandes OSC
- \version    $Id$
+ *	\file       htdocs/boutique/commande/class/boutiquecommande.class.php
+ *	\ingroup    osc
+ *	\brief      Fichier de la classe des commandes de la boutique online
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/address.class.php");
+include_once(DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.php');
 
 
 /**
- \class      Commande
- \brief      Classe permettant la gestion des commandes OSC
+ *	\class      BoutiqueCommande
+ *	\brief      Classe permettant la gestion des commandes OSC
  */
-class Commande
+class BoutiqueCommande
 {
 	var $db ;
 
 	var $id ;
 	var $nom;
 
-	function Commande($DB, $id=0) {
+	function BoutiqueCommande($DB, $id=0)
+	{
 		$this->db = $DB;
 		$this->id = $id ;
 

@@ -28,7 +28,7 @@
  */
 
 require("../../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT.'/boutique/client/client.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/boutique/client/class/boutiqueclient.class.php');
 
 
 /*

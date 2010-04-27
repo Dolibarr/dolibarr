@@ -22,57 +22,61 @@
  */
 
 /**
-	    \file       htdocs/boutique/commande/fiche.php
-		\ingroup    boutique
-		\brief      Page fiche commande OSCommerce
-		\version    $Revision$
-*/
+ \file       htdocs/boutique/commande/fiche.php
+ \ingroup    boutique
+ \brief      Page fiche commande OSCommerce
+ \version    $Revision$
+ */
 
 require("../../main.inc.php");
+include_once(DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.php');
 
 $langs->load("products");
 
 
+
+/*
+ *	View
+ */
 
 llxHeader();
 
 
 if ($_GET['id'])
 {
-  $commande = new Commande($db);
-  $result = $commande->fetch($_GET['id']);
-  if ( $result )
-    {
-
-      print '<div class="titre">Fiche Commande : '.$commande->id.'</div><br>';
-
-      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-      print '<tr><td width="20%">Date</td><td width="80%" colspan="2">'.$commande->date.'</td></tr>';
-      print '<td width="20%">Client</td><td width="80%" colspan="2"><a href="'.DOL_URL_ROOT.'/boutique/client/fiche.php?id='.$commande->client_id.'">'.$commande->client_name.'</a></td></tr>';
-
-      print '<td width="20%">Paiement</td><td width="80%" colspan="2">'.$commande->payment_method.'</td></tr>';
-
-      print "<tr><td>Adresses</td><td>Livraison</td><td>Facturation</td></tr>";
-
-      print "<td>&nbsp;</td><td>".$commande->delivery_adr->name."<br>".$commande->delivery_adr->street."<br>".$commande->delivery_adr->cp."<br>".$commande->delivery_adr->city."<br>".$commande->delivery_adr->country."</td>";
-      print "<td>".$commande->billing_adr->name."<br>".$commande->billing_adr->street."<br>".$commande->billing_adr->cp."<br>".$commande->billing_adr->city."<br>".$commande->billing_adr->country."</td>";
-      print "</tr>";
-
-      print "</table>";
-
-      print "<br>";
-
-      /*
-       * Produits
-       *
-       */
-      $sql = "SELECT orders_id, products_id, products_model, products_name, products_price, final_price, products_quantity";
-      $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_products";
-      $sql .= " WHERE orders_id = " . $_GET['id'];
-//$commande->id;
-//	echo $sql;
-      if ( $dbosc->query($sql) )
+	$commande = new BoutiqueCommande($db);
+	$result = $commande->fetch($_GET['id']);
+	if ( $result )
 	{
+		print '<div class="titre">'.$langs->trans("OrderCard").': '.$commande->id.'</div><br>';
+
+		print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+		print '<tr><td width="20%">Date</td><td width="80%" colspan="2">'.$commande->date.'</td></tr>';
+		print '<td width="20%">Client</td><td width="80%" colspan="2"><a href="'.DOL_URL_ROOT.'/boutique/client/fiche.php?id='.$commande->client_id.'">'.$commande->client_name.'</a></td></tr>';
+
+		print '<td width="20%">Paiement</td><td width="80%" colspan="2">'.$commande->payment_method.'</td></tr>';
+
+		print "<tr><td>Adresses</td><td>Livraison</td><td>Facturation</td></tr>";
+
+		print "<td>&nbsp;</td><td>".$commande->delivery_adr->name."<br>".$commande->delivery_adr->street."<br>".$commande->delivery_adr->cp."<br>".$commande->delivery_adr->city."<br>".$commande->delivery_adr->country."</td>";
+		print "<td>".$commande->billing_adr->name."<br>".$commande->billing_adr->street."<br>".$commande->billing_adr->cp."<br>".$commande->billing_adr->city."<br>".$commande->billing_adr->country."</td>";
+		print "</tr>";
+
+		print "</table>";
+
+		print "<br>";
+
+		/*
+		 * Produits
+		 *
+		 */
+		$sql = "SELECT orders_id, products_id, products_model, products_name, products_price, final_price, products_quantity";
+		$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_products";
+		$sql .= " WHERE orders_id = " . $_GET['id'];
+		//$commande->id;
+		//	echo $sql;
+		if ( $dbosc->query($sql) )
+		{
 	  $num = $dbosc->num_rows();
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
@@ -81,54 +85,54 @@ if ($_GET['id'])
 	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num)
-	    {
-	      $objp = $dbosc->fetch_object();
-	      $var=!$var;
-	      print "<tr $bc[$var]>";
-	      print '<td align="left" width="40%">';
-	      print '<a href="fiche.php?id='.$objp->products_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
+	  {
+	  	$objp = $dbosc->fetch_object();
+	  	$var=!$var;
+	  	print "<tr $bc[$var]>";
+	  	print '<td align="left" width="40%">';
+	  	print '<a href="fiche.php?id='.$objp->products_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
 
-	      print '<a href="fiche.php?id='.$objp->products_id.'">'.$objp->products_name.'</a>';
-	      print "</td>";
+	  	print '<a href="fiche.php?id='.$objp->products_id.'">'.$objp->products_name.'</a>';
+	  	print "</td>";
 
-	      print '<td align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
-	      print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
-	      print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
+	  	print '<td align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
+	  	print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
+	  	print "<td align=\"right\"><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
 
-	      print "</tr>\n";
-	      $i++;
-	    }
+	  	print "</tr>\n";
+	  	$i++;
+	  }
 	  print "</table>";
 	  $dbosc->free();
-	}
-      else
-	{
+		}
+		else
+		{
 	  print $dbosc->error();
+		}
+
+		/*
+		 *
+		 *
+		 */
+		print "<br>";
+
+		print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+		print "<tr>";
+		print '<td width="20%">Frais d\'expeditions</td><td width="80%">'.price($commande->total_ot_shipping).' EUR</td></tr>';
+		print '<td width="20%">'.$langs->trans("Lastname").'</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
+		print "</table>";
+
+
+
 	}
-
-      /*
-       *
-       *
-       */
-      print "<br>";
-
-      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-      print "<tr>";
-      print '<td width="20%">Frais d\'expeditions</td><td width="80%">'.price($commande->total_ot_shipping).' EUR</td></tr>';
-      print '<td width="20%">'.$langs->trans("Lastname").'</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
-      print "</table>";
-
-
-
-    }
-  else
-    {
-      print "Fetch failed";
-    }
+	else
+	{
+		print "Fetch failed";
+	}
 }
 else
 {
-  print "Error";
+	print "Error";
 }
 
 

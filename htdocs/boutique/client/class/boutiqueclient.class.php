@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/boutique/client/client.class.php
+ *      \file       htdocs/boutique/client/class/boutiqueclient.class.php
  *      \brief      Classe permettant de gerer des clients de la boutique online
  *      \author	    Rodolphe Quiedeville
  *      \version    $Revision$
@@ -30,7 +30,6 @@
  *      \class      BoutiqueClient
  *      \brief      Classe permettant de gerer des clients de la boutique online
  */
-
 class BoutiqueClient
 {
     var $db ;
