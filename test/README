@@ -16,7 +16,11 @@ If using Eclipse, you must also add an entry as external tool for phpunit progra
 Run > phpunit TestFile.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
 
-* Generate a report of Unit tests code coverage:
-Run > phpunit [--configuration ./phpunittestok.xml] --coverage-html ./report MyTestSuite.php
+* Generate a report of Unit tests code coverage among tested classes only:
+Run > phpunit --coverage-html ./report MyTestSuite.php
 Note that xdebug must be installed for this feature to work.
+
+* Generate a report of Unit tests code coverage among all Dolibarr classes:
+Increase your PHP memory (memory_limit in php.ini) to 1Gb.
+Run > phpunit --configuration ./phpunittest.xml --coverage-html ./report MyTestSuite.php
 

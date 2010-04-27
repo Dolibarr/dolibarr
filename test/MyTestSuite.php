@@ -23,6 +23,9 @@
  *      \version    $Id$
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
+print "PHP Version: ".phpversion()."\n";
+print "Memory: ". ini_get('memory_limit')."\n";
+
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
