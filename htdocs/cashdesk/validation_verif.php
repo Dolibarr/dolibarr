@@ -19,7 +19,7 @@
 
 require ('../master.inc.php');
 require (DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
-require (DOL_DOCUMENT_ROOT.'/cashdesk/classes/Facturation.class.php');
+require (DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
 require (DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require (DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 require (DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');

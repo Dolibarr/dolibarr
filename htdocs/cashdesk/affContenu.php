@@ -24,7 +24,7 @@
  *	\brief      Include to show main page for cashdesk module
  *	\version    $Id$
  */
-require ('classes/Facturation.class.php');
+require ('class/Facturation.class.php');
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
 if ( $_GET['id'] == 'NOUV' )

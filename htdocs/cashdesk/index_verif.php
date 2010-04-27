@@ -19,7 +19,7 @@
 
 include('../master.inc.php');
 require('include/environnement.php');
-require('classes/Auth.class.php');
+require('class/Auth.class.php');
 
 $username = $_POST['txtUsername'];
 $password = $_POST['pwdPassword'];

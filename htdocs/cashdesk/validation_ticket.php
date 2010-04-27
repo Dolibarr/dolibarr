@@ -18,7 +18,7 @@
 
 require ('../master.inc.php');
 require ('include/environnement.php');
-require ('classes/Facturation.class.php');
+require ('class/Facturation.class.php');
 
 $obj_facturation = unserialize ($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);

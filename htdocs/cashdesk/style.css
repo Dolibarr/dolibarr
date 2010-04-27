@@ -35,18 +35,18 @@ p {
 }
 
 .conteneur_img_gauche {
-	background: url("images/bg_conteneur_gauche.png") top left repeat-y;
+	background: url("img/bg_conteneur_gauche.png") top left repeat-y;
 }
 
 .conteneur_img_droite {
-	background: url("images/bg_conteneur_droite.png") top right repeat-y;
+	background: url("img/bg_conteneur_droite.png") top right repeat-y;
 }
 
 /* ------------------- En-tête ------------------- */
 .entete {
 	height: 15px;
 	margin: 0;
-	background: url('images/bg_entete.png') no-repeat left top;
+	background: url('img/bg_entete.png') no-repeat left top;
 }
 
 .entete span {
@@ -62,7 +62,7 @@ p {
 	font-size: 14px;
 	width: 735px;
 	height: 84px;
-	background: url('images/bg_menu.png') no-repeat left top;
+	background: url('img/bg_menu.png') no-repeat left top;
 }
 
 .menu_bloc {
@@ -94,15 +94,15 @@ p {
 	width: 100px;
 	padding-left: 60px;
 	height: 48px;
-	background: url('images/new.png') top left no-repeat;
+	background: url('img/new.png') top left no-repeat;
 }
 
 .menu_choix1 a {
-	background: url('images/new.png') top left no-repeat;
+	background: url('img/new.png') top left no-repeat;
 }
 
 .menu_choix2 a {
-	background: url('images/gescom.png') top left no-repeat;
+	background: url('img/gescom.png') top left no-repeat;
 }
 
 .menu_choix1 a:hover,.menu_choix2 a:hover {
@@ -162,7 +162,7 @@ p.titre {
 	font-size: 1.1em;
 	text-decoration: none;
 	padding-right: 25px;
-	background: url('images/basket_delete.png') top right no-repeat;
+	background: url('img/basket_delete.png') top right no-repeat;
 }
 
 .cadre_article p a:hover {
@@ -200,7 +200,7 @@ p.titre {
 	margin: 0 auto;
 	padding-left: 60px;
 	margin-bottom: 20px;
-	background: url('images/login.png') bottom left no-repeat;
+	background: url('img/login.png') bottom left no-repeat;
 }
 
 .formulaire_login table tr {
@@ -387,7 +387,7 @@ p.titre {
 .pied {
 	clear: both;
 	height: 15px;
-	background: url('images/bg_pied.png') no-repeat bottom left;
+	background: url('img/bg_pied.png') no-repeat bottom left;
 }
 
 /* ------------------- Paramètres communs (messages d'erreur, informations, etc...) ------------------- */
