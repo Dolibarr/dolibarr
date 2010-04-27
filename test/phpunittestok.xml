@@ -6,5 +6,8 @@
     <directory suffix=".php">../htdocs/includes/artichow/</directory>
     <directory suffix=".php">../htdocs/includes/fpdf/</directory>
   </blacklist>
+  <whitelist>
+    <directory suffix=".class.php">../htdocs/</directory>
+  </whitelist>
 </filter>
 </phpunit>
