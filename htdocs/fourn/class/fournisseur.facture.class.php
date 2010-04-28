@@ -563,7 +563,7 @@ class FactureFournisseur extends Facture
 	 *      \param      user        Object user
 	 *      \return     int         <0 if KO, =0 if nothing to do, >0 if OK
 	 */
-	function set_valid($user)
+	function validate($user)
 	{
 		global $conf,$langs;
 
@@ -572,7 +572,7 @@ class FactureFournisseur extends Facture
 		// Protection
 		if ($this->statut > 0)	// This is to avoid to validate twice (avoid errors on logs and stock management)
 		{
-			dol_syslog("FactureFournisseur::set_valid no draft status", LOG_WARNING);
+			dol_syslog("FactureFournisseur::validate no draft status", LOG_WARNING);
 			return 0;
 		}
 
@@ -582,7 +582,7 @@ class FactureFournisseur extends Facture
 		$sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog("FactureFournisseur::set_valid sql=".$sql);
+		dol_syslog("FactureFournisseur::validate sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

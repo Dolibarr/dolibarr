@@ -213,7 +213,7 @@ switch ( $_GET['action'] )
 			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiement_le()));
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
+				$resultvalid=$invoice->validate($user,$obj_facturation->num_facture());
 			}
 			else
 			{
@@ -227,7 +227,7 @@ switch ( $_GET['action'] )
 			$resultcreate=$invoice->create($user,0,0);
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
+				$resultvalid=$invoice->validate($user,$obj_facturation->num_facture());
 
 				$id = $invoice->id;
 

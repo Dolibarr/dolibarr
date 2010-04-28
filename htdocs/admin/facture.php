@@ -241,15 +241,22 @@ foreach ($conf->file->dol_document_root as $dirroot)
 		{
 			while (($file = readdir($handle))!==false)
 			{
-				if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+				if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
 				{
-					$filebis = $file."/".$file.".modules.php";
-
-					if (is_readable($dir.$filebis))
+					$filebis = $file;
+					$classname = preg_replace('/\.php$/','',$file);
+					// For compatibility
+					if (! is_file($dir.$filebis))
+					{
+						$filebis = $file."/".$file.".modules.php";
+						$classname = "mod_facture_".$file;
+					}
+					//print "x".$dir."-".$filebis."-".$classname;
+					if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, strlen($filebis)-3, 3) == 'php')
 					{
 						// Chargement de la classe de numerotation
 						require_once($dir.$filebis);
-						$classname = "mod_facture_".$file;
+
 						$module = new $classname($db);
 
 						// Show modules according to features level
@@ -260,7 +267,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 						{
 							$var = !$var;
 							print '<tr '.$bc[$var].'><td width="100">';
-							echo "$file";
+							echo preg_replace('/mod_facture_/','',preg_replace('/\.php$/','',$file));
 							print "</td><td>\n";
 
 							print $module->info();
@@ -271,13 +278,14 @@ foreach ($conf->file->dol_document_root as $dirroot)
 							print '<td nowrap="nowrap">'.$module->getExample().'</td>';
 
 							print '<td align="center">';
-							if ($conf->global->FACTURE_ADDON == "$file")
+							//print "> ".$conf->global->FACTURE_ADDON." - ".$file;
+							if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file)
 							{
 								print img_picto($langs->trans("Activated"),'on');
 							}
 							else
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.preg_replace('/\.php$/','',$file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 							}
 							print '</td>';
 

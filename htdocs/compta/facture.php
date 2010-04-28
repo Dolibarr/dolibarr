@@ -310,7 +310,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	$fac->fetch($_GET['facid']);
 	$fac->fetch_client();
 
-	$result = $fac->set_valid($user);
+	$result = $fac->validate($user);
 	if ($result >= 0)
 	{
 		// Define output language
@@ -679,7 +679,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
 						{
 							$desc=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
-							
+
 							// Dates
 							$date_start=$prop->lignes[$i]->date_debut_prevue;
 							if ($prop->lignes[$i]->date_debut_reel) $date_start=$prop->lignes[$i]->date_debut_reel;
@@ -703,7 +703,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							0,
 							$prop->lignes[$i]->product_type
 							);
-							
+
 							if ($result < 0)
 							{
 								$error++;
@@ -721,13 +721,13 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$error++;
 				}
 			}
-			
+
 			// If creation from order
 			else if ($_POST['commandeid'])
 			{
 				$facture->commandeid = $_POST['commandeid'];
 				$facid = $facture->create($user);
-				
+
 				if ($facid > 0)
 				{
 					$comm = new Commande($db);
@@ -738,11 +738,11 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
 							$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
-							
+
 							// Dates
 							$date_start=$comm->lignes[$i]->date_start;
 							$date_end=$comm->lignes[$i]->date_end;
-							
+
 							// Should use a function using total_ht, total_ttc and total_vat
 							$result = $facture->addline(
 							$facid,
@@ -802,7 +802,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							if ($contrat->lignes[$i]->date_debut_reel) $date_start=$contrat->lignes[$i]->date_debut_reel;
 							$date_end=$contrat->lignes[$i]->date_fin_prevue;
 							if ($contrat->lignes[$i]->date_fin_reel) $date_end=$contrat->lignes[$i]->date_fin_reel;
-							
+
 							$result = $facture->addline(
 							$facid,
 							$desc,
@@ -835,7 +835,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$error++;
 				}
 			}
-			
+
 			// If some invoice's lines already known
 			else
 			{
@@ -1553,7 +1553,7 @@ if ($_GET['action'] == 'create')
 		$object = new $classname($db);
 		$object->fetch($_GET['originid']);
 		$object->fetch_client();
-		
+
 		$soc = $object->client;
 		$cond_reglement_id 	= (!empty($object->cond_reglement_id)?$object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
 		$mode_reglement_id 	= (!empty($object->mode_reglement_id)?$object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
@@ -2516,7 +2516,7 @@ else
 			$nbrows=8;
 			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
 			if ($conf->projet->enabled) $nbrows++;
-			
+
 			//Local taxes
 			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 			{
@@ -2847,7 +2847,7 @@ else
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_tva).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			
+
 			// Amount Local Taxes
 			if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 			{
@@ -2864,7 +2864,7 @@ else
 					print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				}
 			}
-			
+
 			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_ttc).'</td>';
 			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 

@@ -214,8 +214,6 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 
 			migrate_links_transfert($db,$langs,$conf);
 
-			migrate_delete_old_files($db,$langs,$conf);
-
 
 			// Script pour V2.2 -> V2.4
 			migrate_commande_expedition($db,$langs,$conf);
@@ -290,6 +288,11 @@ if (isset($_POST['action']) && preg_match('/upgrade/i',$_POST["action"]))
 		// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
 		$db->commit();
 		$db->close();
+
+		// Actions for all version (not in database)
+		migrate_delete_old_files($db,$langs,$conf);
+
+		migrate_delete_old_dir($db,$langs,$conf);
 	}
 
 	print '</table>';
@@ -1743,6 +1746,39 @@ function migrate_delete_old_files($db,$langs,$conf)
 	}
 	return $result;
 }
+
+/*
+ * Remove deprecated directories
+ */
+function migrate_delete_old_dir($db,$langs,$conf)
+{
+	$result=true;
+
+	dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
+
+	// List of files to delete
+	$filetodeletearray=array(
+	DOL_DOCUMENT_ROOT.'/includes/modules/facture/terre',
+	DOL_DOCUMENT_ROOT.'/includes/modules/facture/mercure'
+	);
+
+	foreach ($filetodeletearray as $filetodelete)
+	{
+		//print '<b>'.$filetodelete."</b><br>\n";
+		if (file_exists($filetodelete))
+		{
+			$result=dol_delete_dir_recursive($filetodelete);
+		}
+		if (! $result)
+		{
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteDir",$filetodelete);
+			print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+		}
+	}
+	return $result;
+}
+
 
 /*
  * Disable/Reenable features modules.

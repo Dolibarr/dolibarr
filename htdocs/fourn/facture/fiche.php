@@ -94,7 +94,7 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
-	$result = $facturefourn->set_valid($user);
+	$result = $facturefourn->validate($user);
 }
 
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')

@@ -1294,11 +1294,10 @@ class Facture extends CommonObject
 	/**
 	 *      \brief     	Tag la facture comme validee + appel trigger BILL_VALIDATE
 	 *      \param     	user            Utilisateur qui valide la facture
-	 *      \param     	soc             Ne sert plus. \\TODO A virer
 	 *      \param     	force_number	Reference a forcer de la facture
 	 *	    \return		int				<0 si ko, >0 si ok
 	 */
-	function set_valid($user, $soc='', $force_number='')
+	function validate($user, $force_number='')
 	{
 		global $conf,$langs;
 
@@ -1307,14 +1306,14 @@ class Facture extends CommonObject
 		// Protection
 		if (! $this->brouillon)
 		{
-			dol_syslog("Facture::set_valid no draft status", LOG_WARNING);
+			dol_syslog("Facture::validate no draft status", LOG_WARNING);
 			return 0;
 		}
 
 		if (! $user->rights->facture->valider)
 		{
 			$this->error='Permission denied';
-			dol_syslog("Facture::set_valid ".$this->error, LOG_ERR);
+			dol_syslog("Facture::validate ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1397,11 +1396,11 @@ class Facture extends CommonObject
 			}
 			$sql.= ' WHERE rowid = '.$this->id;
 
-			dol_syslog("Facture::set_valid sql=".$sql);
+			dol_syslog("Facture::validate sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
-				dol_syslog("Facture::set_valid Echec update - 10 - sql=".$sql, LOG_ERR);
+				dol_syslog("Facture::validate Echec update - 10 - sql=".$sql, LOG_ERR);
 				dol_print_error($this->db);
 				$error++;
 			}
@@ -1450,7 +1449,7 @@ class Facture extends CommonObject
 					$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 					if (file_exists($dirsource))
 					{
-						dol_syslog("Facture::set_valid rename dir ".$dirsource." into ".$dirdest);
+						dol_syslog("Facture::validate rename dir ".$dirsource." into ".$dirdest);
 
 						if (@rename($dirsource, $dirdest))
 						{
@@ -2238,20 +2237,36 @@ class Facture extends CommonObject
 
 		if (empty($conf->global->FACTURE_ADDON))
 		{
-			$conf->global->FACTURE_ADDON='terre';
+			$conf->global->FACTURE_ADDON='mod_facture_terre';
 		}
 
-		$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
-		$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
-
-		// Include file with class
 		$mybool=false;
+
+		$file = $conf->global->FACTURE_ADDON.".php";
+		$classname = $conf->global->FACTURE_ADDON;
+		// Include file with class
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
 			$dir = $dirroot."/includes/modules/facture/";
 			// Load file with numbering class (if found)
 			$mybool|=@include_once($dir.$file);
 		}
+
+		// For compatibility
+		if (! $mybool)
+		{
+			$file = $conf->global->FACTURE_ADDON."/".$conf->global->FACTURE_ADDON.".modules.php";
+			$classname = "mod_facture_".$conf->global->FACTURE_ADDON;
+			// Include file with class
+			foreach ($conf->file->dol_document_root as $dirroot)
+			{
+				$dir = $dirroot."/includes/modules/facture/";
+				// Load file with numbering class (if found)
+				$mybool|=@include_once($dir.$file);
+			}
+		}
+		//print "xx".$mybool.$dir.$file."-".$classname;
+
 		if (! $mybool) dol_print_error('',"Failed to include file ".$file);
 
 		$obj = new $classname();

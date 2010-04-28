@@ -102,7 +102,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 	$result=$facture->create($user);
 	if ($result >= 0)
 	{
-		$result=$facture->set_valid($user,$socid);
+		$result=$facture->validate($user);
 		if ($result)
 		{
 			$nbp = rand(2, 5);
