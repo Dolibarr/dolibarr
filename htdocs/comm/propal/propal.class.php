@@ -391,7 +391,7 @@ class Propal extends CommonObject
 	 */
 	function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='', $price_base_type='HT', $info_bits=0)
 	{
-		global $conf;
+		global $conf,$user,$langs;
 
 		dol_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1583,7 +1583,7 @@ class Propal extends CommonObject
 	 */
 	function delete($user, $notrigger=0)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$this->db->begin();
 
