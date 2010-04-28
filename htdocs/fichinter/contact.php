@@ -25,7 +25,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');

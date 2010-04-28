@@ -24,7 +24,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 
 $langs->load('companies');

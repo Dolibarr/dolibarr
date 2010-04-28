@@ -27,7 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/fichinter/fichinter.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php');
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 
 $langs->load('interventions');
