@@ -89,7 +89,8 @@ class Facture extends CommonObject
 	var $close_code;
 	//! Commentaire si mis a paye sans paiement complet
 	var $close_note;
-	var $propalid;
+	var $origin;
+	var $origin_id;
 	var $fk_project;
 	var $date_lim_reglement;
 	var $cond_reglement_id;			// Id in llx_cond_reglement
@@ -253,24 +254,9 @@ class Facture extends CommonObject
 			$resql=$this->db->query($sql);
 			if (! $resql) $error++;
 
-			// Mise a jour lien avec propal ou commande
-			if (! $error && $this->id && $this->propalid)
+			// Add object linked
+			if (! $error && $this->id && $this->origin && $this->origin_id)
 			{
-				// TODO normaliser ?
-				$this->origin_id = $this->propalid;
-				$this->origin = "propal";
-				$ret = $this->add_object_linked();
-				if (! $ret)
-				{
-					dol_print_error($this->db);
-					$error++;
-				}
-			}
-			if (! $error && $this->id && $this->commandeid)
-			{
-				// TODO normaliser ?
-				$this->origin_id = $this->commandeid;
-				$this->origin = "commande";
 				$ret = $this->add_object_linked();
 				if (! $ret)
 				{
