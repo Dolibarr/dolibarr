@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.ph
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->produit->enabled || $conf->service->enabled) require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
-if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 if (!$user->rights->expedition->livraison->lire) accessforbidden();

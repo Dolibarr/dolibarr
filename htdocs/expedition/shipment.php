@@ -27,7 +27,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
