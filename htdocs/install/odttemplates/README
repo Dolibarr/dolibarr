@@ -2,4 +2,7 @@ README (English)
 --------------------------------
 This directory contains samples of odttemplates used by install
 process.
-Do not edit files in this directory but in installed data directory instead.
+
+WARNING:
+Do not edit files in those directories, but in installed data
+directory instead.
