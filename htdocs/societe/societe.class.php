@@ -88,9 +88,12 @@ class Societe extends CommonObject
 	var $forme_juridique_code;
 	var $forme_juridique;
 
-	var $remise_client;
-	var $mode_reglement;
-	var $cond_reglement;
+	var $remise_percent;
+	var $mode_reglement_id;
+	var $cond_reglement_id;
+	var $remise_client;  // TODO obsolete
+	var $mode_reglement; // TODO obsolete
+	var $cond_reglement; // TODO obsolete
 
 	var $client;					// 0=no customer, 1=customer, 2=prospect
 	var $prospect;					// 0=no prospect, 1=prospect
@@ -675,9 +678,13 @@ class Societe extends CommonObject
 
 				$this->prefix_comm = $obj->prefix_comm;
 
-				$this->remise_client  = $obj->remise_client;
-				$this->mode_reglement = $obj->mode_reglement;
-				$this->cond_reglement = $obj->cond_reglement;
+				$this->remise_percent		= $obj->remise_client;
+				$this->mode_reglement_id 	= $obj->mode_reglement;
+				$this->cond_reglement_id 	= $obj->cond_reglement;
+				$this->remise_client  		= $obj->remise_client;  // TODO obsolete
+				$this->mode_reglement 		= $obj->mode_reglement; // TODO obsolete
+				$this->cond_reglement 		= $obj->cond_reglement; // TODO obsolete
+				
 				$this->client      = $obj->client;
 				$this->fournisseur = $obj->fournisseur;
 

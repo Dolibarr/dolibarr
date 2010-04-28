@@ -1497,10 +1497,10 @@ if ($_GET['action'] == 'create')
 		$ref_client=$propal->ref_client;
 
 		$soc=$propal->client;
-		$cond_reglement_id = $propal->cond_reglement_id;
-		$mode_reglement_id = $propal->mode_reglement_id;
-		$remise_percent = $propal->remise_percent;
-		$remise_absolue = $propal->remise_absolue;
+		$cond_reglement_id 	= $propal->cond_reglement_id;
+		$mode_reglement_id 	= $propal->mode_reglement_id;
+		$remise_percent 	= $propal->remise_percent;
+		$remise_absolue 	= $propal->remise_absolue;
 	}
 	elseif ($_GET['commandeid'])
 	{
@@ -1512,10 +1512,10 @@ if ($_GET['action'] == 'create')
 		$ref_client=$commande->ref_client;
 
 		$soc=$commande->client;
-		$cond_reglement_id = $commande->cond_reglement_id;
-		$mode_reglement_id = $commande->mode_reglement_id;
-		$remise_percent = $commande->remise_percent;
-		$remise_absolue = $commande->remise_absolue;
+		$cond_reglement_id 	= $commande->cond_reglement_id;
+		$mode_reglement_id 	= $commande->mode_reglement_id;
+		$remise_percent 	= $commande->remise_percent;
+		$remise_absolue 	= $commande->remise_absolue;
 	}
 	elseif ($_GET['contratid'])
 	{
@@ -1526,10 +1526,10 @@ if ($_GET['action'] == 'create')
 		$projectid=$contrat->fk_project;
 
 		$soc=$contrat->client;
-		$cond_reglement_id = $soc->cond_reglement;
-		$mode_reglement_id = $soc->mod_reglement;
-		$remise_percent = $soc->remise_client;
-		$remise_absolue = 0;
+		$cond_reglement_id 	= $soc->cond_reglement_id;
+		$mode_reglement_id 	= $soc->mode_reglement_id;
+		$remise_percent 	= $soc->remise_percent;
+		$remise_absolue 	= 0;
 		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	// TODO a mutualiser
@@ -1549,19 +1549,19 @@ if ($_GET['action'] == 'create')
 		$object->fetch_client();
 		
 		$soc = $object->client;
-		$cond_reglement_id = $soc->cond_reglement;
-		$mode_reglement_id = $soc->mode_reglement;
-		$remise_percent = $soc->remise_client;
-		$remise_absolue = 0;
-		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		$cond_reglement_id 	= $soc->cond_reglement_id;
+		$mode_reglement_id 	= $soc->mode_reglement_id;
+		$remise_percent 	= $soc->remise_percent;
+		$remise_absolue 	= 0;
+		//$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	else
 	{
 		$res=$soc->fetch($socid);
-		$cond_reglement_id = $soc->cond_reglement;
-		$mode_reglement_id = $soc->mode_reglement;
-		$remise_percent = $soc->remise_client;
-		$remise_absolue = 0;
+		$cond_reglement_id 	= $soc->cond_reglement_id;
+		$mode_reglement_id 	= $soc->mode_reglement_id;
+		$remise_percent 	= $soc->remise_percent;
+		$remise_absolue 	= 0;
 		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
