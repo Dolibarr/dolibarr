@@ -136,7 +136,7 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
 	DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
 	DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
-	DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+	DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 	// Name class containing the method load_state_board for each line
 	$classes=array('Client',
                    'Prospect',
@@ -372,7 +372,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$langs->load("contracts");
 
-	include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 	$board=new Contrat($db);
 	$board->load_board($user,"inactives");
 
@@ -398,7 +398,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
 	$langs->load("contracts");
 
-	include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 	$board=new Contrat($db);
 	$board->load_board($user,"expired");
 

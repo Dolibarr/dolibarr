@@ -62,7 +62,7 @@ class box_contracts extends ModeleBoxes {
 
     	$this->max=$max;
 
-    	include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+    	include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
     	$contractstatic=new Contrat($db);
 
     	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));

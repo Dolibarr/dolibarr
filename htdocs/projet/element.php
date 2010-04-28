@@ -34,7 +34,7 @@ if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture
 if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
-if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 if ($conf->fichinter->enabled)   require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 if ($conf->deplacement->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
 if ($conf->agenda->enabled)      require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");

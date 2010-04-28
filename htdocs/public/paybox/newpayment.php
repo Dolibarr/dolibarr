@@ -384,7 +384,7 @@ if ($_REQUEST["amount"] == 'contractline')
 	$found=true;
 	$langs->load("contracts");
 
-	require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
 	$contractline=new ContratLigne($db);
 	$result=$contractline->fetch('',$_REQUEST["ref"]);

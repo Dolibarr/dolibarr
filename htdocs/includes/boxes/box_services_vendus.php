@@ -62,7 +62,7 @@ class box_services_vendus extends ModeleBoxes {
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 		$contratlignestatic=new ContratLigne($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract",$max));
