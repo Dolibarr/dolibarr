@@ -64,8 +64,8 @@ class modPayBox extends DolibarrModules
 		$this->special = 1;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
-		// If file is in module/images directory, use this->picto=DOL_URL_ROOT.'/module/images/file.png'
-		$this->picto=DOL_URL_ROOT.'/paybox/images/paybox.png';
+		// If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
+		$this->picto=DOL_URL_ROOT.'/paybox/img/paybox.png';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array('/paybox/temp');
@@ -74,14 +74,14 @@ class modPayBox extends DolibarrModules
 		$this->style_sheet = '';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("paybox.php");
+		$this->config_page_url = array("paybox.php@paybox");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,6);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("paybox");
+		$this->langfiles = array("@paybox");
 
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled

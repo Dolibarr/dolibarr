@@ -1,0 +1,28 @@
+# Dolibarr language file - pt_PT - paybox 
+CHARSET=UTF-8
+PayBoxSetup=Configuração do módulo PayBox
+PayBoxDesc=Este módulo oferece uma página de pagagamento através do fornecedor <a href=\"http://www.paybox.com\" target=\"_blank\">Paybox</a> para realizar qualquer pagamento ou um pagamento em relação com um objeto Dolibarr (facturas, pedidos ...)
+FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponiveis para permitir a um cliente efectuar um pagamento
+WelcomeOnPaymentPage=Bienvenido a nuestros servicios de pago en línea
+ThisScreenAllowsYouToPay=Esta pantalla le permite hacer su pago en línea destinado a %s.
+ThisIsInformationOnPayment=Aquí está la información sobre el pago a realizar
+ToComplete=A completar
+YourEMail=E-Mail de confirmación de pago
+Creditor=Beneficiario
+PaymentCode=Código de pago
+PayBoxDoPayment=Continuar el pago con tarjeta
+YouWillBeRedirectedOnPayBox=Va a ser redirigido a la página segura de  Paybox para indicar su tarjeta de crédito
+PleaseBePatient=Espere unos segundos
+Continue=Continuar
+ToOfferALinkForOnlinePaymentOnOrder=URL que ofrece una interfaz de pago en línea %s basada en el importe de un pedido de cliente
+ToOfferALinkForOnlinePaymentOnInvoice=URL que ofrece una interfaz de pago en línea %s basada en el importe de una factura
+ToOfferALinkForOnlinePaymentOnContractLine=URL que ofrece una interfaz de pago en línea %s basada en el importe de una línea de contrato
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofrece una interfaz de pago en línea %s basada en un importe libre
+YouCanAddTagOnUrl=También puede añadir el parámetro url <b>&tag=<i>value</i></b>  para cualquiera de estas direcciones (obligatorio sólamente para el pago libre) para ver su propio \"código de comentario\" de pago.
+SetupPayBoxToHavePaymentCreatedAutomatically=Configure su url PayBox <b>%s</b> para que el pago se cree automáticamente al Confirmar.
+
+
+// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
+// Reference language: en_US
+PaymentForm=Forma de pagamento
+// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
