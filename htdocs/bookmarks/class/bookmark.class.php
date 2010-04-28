@@ -17,7 +17,7 @@
  */
 
 /**
-        \file       htdocs/bookmarks/bookmark.class.php
+        \file       htdocs/bookmarks/class/bookmark.class.php
         \ingroup    bookmark
         \brief      File the bookmark class
         \version    $Id$

@@ -24,7 +24,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/bookmarks/bookmark.class.php");
+require_once(DOL_DOCUMENT_ROOT."/bookmarks/class/bookmark.class.php");
 
 
 $page=$_GET["page"];
