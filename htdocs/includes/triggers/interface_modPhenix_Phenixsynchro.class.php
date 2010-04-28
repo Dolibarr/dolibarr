@@ -24,7 +24,7 @@
 		\version	$Id$
 */
 
-include_once(DOL_DOCUMENT_ROOT.'/phenix/phenix.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/phenix/class/phenix.class.php');
 
 
 /**

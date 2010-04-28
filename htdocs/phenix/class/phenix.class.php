@@ -20,7 +20,7 @@
  */
 
 /**
-        \file       htdocs/phenix/phenix.class.php
+        \file       htdocs/phenix/class/phenix.class.php
         \ingroup    phenix
 		\brief      Ensemble des fonctions permettant d'acceder a la database phenix.
 		\author     Laurent Destailleur.
