@@ -84,10 +84,8 @@ function versionphparray()
  */
 function versiondolibarrarray()
 {
-	$dol_version = DOL_VERSION;
-	
-	preg_match('/^[0-9\.]+([A-Z\-]+)$/i',DOL_VERSION,$regs);
-	$dol_version = preg_replace('/'.$regs[1].'/','',DOL_VERSION);
+	// Used for development version
+	$dol_version = preg_replace('/([A-Z\-]+)$/i','',DOL_VERSION);
 	
 	return explode('.',$dol_version);
 }
