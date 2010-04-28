@@ -111,6 +111,7 @@ $cfg['Servers'][$i]['AllowDeny']['order']           // Host authentication order
                                      = '';
 $cfg['Servers'][$i]['AllowDeny']['rules']           // Host authentication rules, leave blank for defaults
                                      = array();
+$cfg['Servers'][$i]['AllowNoPassword'] = true;
 
 // If you have more than one server configured, you can set $cfg['ServerDefault']
 // to any one of them to autoconnect to that server when phpMyAdmin is started,
