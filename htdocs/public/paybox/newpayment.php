@@ -33,7 +33,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paybox/paybox.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);

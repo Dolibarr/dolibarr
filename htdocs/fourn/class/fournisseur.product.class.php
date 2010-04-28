@@ -25,7 +25,7 @@
  * 	\version    $Id$
  */
 
-require_once DOL_DOCUMENT_ROOT."/product/product.class.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php";
 
 

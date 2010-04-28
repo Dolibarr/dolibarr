@@ -143,7 +143,7 @@ class Fournisseur extends Societe
 	function ProductCommande($user, $fk_product)
 	{
 		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
-		include_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 		$commf = new CommandeFournisseur($this->db);
 

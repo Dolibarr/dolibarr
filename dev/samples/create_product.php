@@ -67,7 +67,7 @@ print 'Argument 2='.$argv[2]."\n";
 // Start of transaction
 $db->begin();
 
-require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 // Create instance of object
 $myproduct=new Product($db);

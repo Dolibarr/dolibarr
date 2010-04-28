@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/product/product.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
 
 // If socid provided by ajax company selector

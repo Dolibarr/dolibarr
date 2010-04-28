@@ -25,7 +25,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/product/html.formproduct.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))

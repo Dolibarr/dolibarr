@@ -28,7 +28,7 @@
 require("../../main.inc.php");
 require_once("./class/facture-rec.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
 // Security check

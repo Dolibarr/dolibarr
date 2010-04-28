@@ -27,7 +27,7 @@
 
 require_once("../../htdocs/master.inc.php");
 require_once(FPDF_PATH.'fpdf.php');
-require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/canvas/livre/product.livre.class.php");
 
 $error = 0;

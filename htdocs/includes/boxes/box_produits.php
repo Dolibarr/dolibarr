@@ -26,7 +26,7 @@
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
-include_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
 class box_produits extends ModeleBoxes {
@@ -64,7 +64,7 @@ class box_produits extends ModeleBoxes {
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
+		include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 		$productstatic=new Product($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
