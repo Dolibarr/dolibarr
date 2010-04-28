@@ -192,7 +192,7 @@ div.tmenu {
     height: <?php print $heightmenu; ?>px;
 /*    background: #b3c5cc; */
 /*    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);*/
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu3.jpg' ?>);
+    background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu2.jpg' ?>);
 /*    background-position: center bottom; */
     color: #000000;
     text-decoration: none;
