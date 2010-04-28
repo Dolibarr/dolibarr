@@ -40,10 +40,12 @@ For developers:
 - Qual: Mutualize code of menu managers.
 - Better isolation of modules files and dolibarr core files. 
 
-WARNING: A lot of class files (*.class.php) has moved into subdirectories. So If you use
- or develop non official modules that includes Dolibarr classes, you will have to rename
- path to thoose classes into the include function.
-   
+WARNING: 
+- A lot of class files (*.class.php) has moved into subdirectories. So If you use
+  or develop non official modules that includes Dolibarr classes, you will have to rename
+  path to thoose classes into the include function.
+- Also, parameters of the "fetch()" method for class "User" has changed to reflect
+  other fetch methods.   
 
 
 ***** ChangeLog for 2.8.1 compared to 2.8 *****
