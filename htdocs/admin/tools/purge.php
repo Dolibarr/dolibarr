@@ -96,7 +96,7 @@ if ($_REQUEST["action"]=='purge' && ! preg_match('/^confirm/i',$_REQUEST["choice
 		// Update cachenbofdoc
 		if ($conf->ecm->enabled && $_REQUEST["choice"]=='allfiles')
 		{
-			require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
+			require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
 			$ecmdirstatic = new ECMDirectory($db);
 			$result = $ecmdirstatic->refreshcachenboffile(1);
 		}
