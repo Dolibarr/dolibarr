@@ -105,12 +105,10 @@ class User extends CommonObject
 	/**
 	 *    \brief Constructeur de la classe
 	 *    \param  DB         Handler acces base de donnees
-	 *    \param  id         Id de l'utilisateur (0 par defaut)
 	 */
-	function User($DB, $id=0)
+	function User($DB)
 	{
 		$this->db = $DB;
-		$this->id = $id;
 
 		// Preference utilisateur
 		$this->liste_limit = 0;
@@ -121,15 +119,6 @@ class User extends CommonObject
 
 		return 1;
 	}
-
-
-	/* Polymorph functions not allowed in PHP
-	 function fetch($id)
-	 {
-		$this->id=$id;
-		$this->fetch();
-		}
-		*/
 
 	/**
 	 *	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login
@@ -170,7 +159,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$sql.= " AND u.rowid = ".$this->id;
+			$sql.= " AND u.rowid = ".$id;
 		}
 
 		dol_syslog("User::Fetch sql=".$sql, LOG_DEBUG);
