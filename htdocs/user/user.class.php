@@ -577,8 +577,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *      \brief      Change statut d'un utilisateur
-	 *      \return     int     <0 si ko, >=0 si ok
+	 *      \brief      Change status of a user
+	 *      \return     int     <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	function setstatus($statut)
 	{
@@ -1673,23 +1673,6 @@ class User extends CommonObject
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de societe socids
-		$socids = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_socs = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_socs)
-			{
-				$i++;
-
-				$row = $this->db->fetch_row($resql);
-				$socids[$i] = $row[0];
-			}
-		}
-
 		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
@@ -1714,8 +1697,7 @@ class User extends CommonObject
 		$this->datepreviouslogin=time();
 		$this->statut=1;
 
-		$socid = rand(1, $num_socs);
-		$this->societe_id = $socids[$socid];
+		$this->societe_id = 1;
 	}
 
 	/**
