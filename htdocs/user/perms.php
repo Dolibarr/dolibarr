@@ -96,8 +96,8 @@ llxHeader('',$langs->trans("Permissions"));
 
 $form=new Form($db);
 
-$fuser = new User($db, $_GET["id"]);
-$fuser->fetch();
+$fuser = new User($db);
+$fuser->fetch($_GET["id"]);
 $fuser->getrights();
 
 /*

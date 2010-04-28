@@ -37,8 +37,7 @@ $langs->load("bills");
 $langs->load("users");
 
 $fuser = new User($db);
-$fuser->id = $id;
-$fuser->fetch();
+$fuser->fetch($id);
 
 // If user is not user read and no permission to read other users, we stop
 if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))

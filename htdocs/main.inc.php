@@ -399,7 +399,7 @@ if (! defined('NOLOGIN'))
 			exit;
 		}
 
-		$resultFetchUser=$user->fetch($login);
+		$resultFetchUser=$user->fetch('',$login);
 		if ($resultFetchUser <= 0)
 		{
 			dol_syslog('User not found, connexion refused');
@@ -436,7 +436,7 @@ if (! defined('NOLOGIN'))
 	{
 		// It is already in a session
 		$login=$_SESSION["dol_login"];
-		$resultFetchUser=$user->fetch($login);
+		$resultFetchUser=$user->fetch('',$login);
 		dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
 
 		if ($resultFetchUser <= 0)

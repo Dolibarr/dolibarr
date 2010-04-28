@@ -197,8 +197,8 @@ class RejetPrelevement
 
         if ($userid > 0)
         {
-            $emuser = new User($this->db, $userid);
-            $emuser->fetch();
+            $emuser = new User($this->db);
+            $emuser->fetch($userid);
 
             $soc = new Societe($this->db);
             $soc->fetch($fac->socid);

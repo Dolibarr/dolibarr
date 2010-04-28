@@ -1149,14 +1149,14 @@ class Contrat extends CommonObject
 				$this->id = $obj->rowid;
 
 				if ($obj->fk_user_author) {
-					$cuser = new User($this->db, $obj->fk_user_author);
-					$cuser->fetch();
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation     = $cuser;
 				}
 
 				if ($obj->fk_user_cloture) {
-					$cuser = new User($this->db, $obj->fk_user_cloture);
-					$cuser->fetch();
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cuser;
 				}
 				$this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;

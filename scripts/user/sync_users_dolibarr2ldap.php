@@ -79,8 +79,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		$fuser = new User($db);
-		$fuser->id = $obj->rowid;
-		$fuser->fetch();
+		$fuser->fetch($obj->rowid);
 
 		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
 

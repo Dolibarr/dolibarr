@@ -67,8 +67,8 @@ llxHeader("","ClickToDial");
 
 if ($_GET["id"])
 {
-    $fuser = new User($db, $_GET["id"]);
-    $fuser->fetch();
+    $fuser = new User($db);
+    $fuser->fetch($_GET["id"]);
     $fuser->fetch_clicktodial();
 
 

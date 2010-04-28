@@ -600,8 +600,7 @@ class UserGroup extends CommonObject
 			foreach($this->members as $key=>$val)
 			{
 				$muser=new User($this->db);
-				$muser->id=$val;
-				$muser->fetch();
+				$muser->fetch($val);
 
 				$ldapuserid=$muser->login;
 				// TODO ldapuserid should depends on value $conf->global->LDAP_KEY_USERS;

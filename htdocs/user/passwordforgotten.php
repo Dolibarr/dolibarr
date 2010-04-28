@@ -54,7 +54,7 @@ $conf->entity = isset($_POST["entity"])?$_POST["entity"]:1;
 if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["passwordmd5"])
 {
     $edituser = new User($db);
-    $result=$edituser->fetch($_GET["username"]);
+    $result=$edituser->fetch('',$_GET["username"]);
 	if ($result < 0)
 	{
         $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_GET["username"]).'</div>';
@@ -93,7 +93,7 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 	else
 	{
 	    $edituser = new User($db);
-	    $result=$edituser->fetch($_POST["username"],'',1);
+	    $result=$edituser->fetch('',$_POST["username"],'',1);
 		if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
 		{
 	        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_POST["username"]).'</div>';

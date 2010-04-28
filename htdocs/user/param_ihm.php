@@ -63,8 +63,8 @@ $dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
 
 // Charge utilisateur edite
-$fuser = new User($db, $id);
-$fuser->fetch();
+$fuser = new User($db);
+$fuser->fetch($id);
 $fuser->getrights();
 
 // Liste des zone de recherche permanentes supportees

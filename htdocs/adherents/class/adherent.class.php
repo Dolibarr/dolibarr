@@ -504,8 +504,7 @@ class Adherent extends CommonObject
 					// This member is linked with a user, so we also update users informations
 					// if this is an update.
 					$luser=new User($this->db);
-					$luser->id=$this->user_id;
-					$result=$luser->fetch();
+					$result=$luser->fetch($this->user_id);
 
 					if ($result >= 0)
 					{
@@ -2051,22 +2050,22 @@ class Adherent extends CommonObject
 				$this->id = $obj->rowid;
 				if ($obj->fk_user_author)
 				{
-					$cuser = new User($this->db, $obj->fk_user_author);
-					$cuser->fetch();
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation   = $cuser;
 				}
 
 				if ($obj->fk_user_valid)
 				{
-					$vuser = new User($this->db, $obj->fk_user_valid);
-					$vuser->fetch();
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
 
 				if ($obj->fk_user_mod)
 				{
-					$muser = new User($this->db, $obj->fk_user_mod);
-					$muser->fetch();
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_mod);
 					$this->user_modification = $muser;
 				}
 

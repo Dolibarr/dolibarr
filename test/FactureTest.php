@@ -32,8 +32,8 @@ require_once dirname(__FILE__).'/../htdocs/compta/facture/class/facture.class.ph
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user with login 'admin'\n";
-	$user->fetch('admin');
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
 	$user->getrights();
 }
 

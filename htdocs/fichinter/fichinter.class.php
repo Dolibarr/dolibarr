@@ -491,14 +491,14 @@ class Fichinter extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 
-				$cuser = new User($this->db, $obj->fk_user_author);
-				$cuser->fetch();
+				$cuser = new User($this->db);
+				$cuser->fetch($obj->fk_user_author);
 				$this->user_creation     = $cuser;
 
 				if ($obj->fk_user_valid)
 				{
-					$vuser = new User($this->db, $obj->fk_user_valid);
-					$vuser->fetch();
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation     = $vuser;
 				}
 			}

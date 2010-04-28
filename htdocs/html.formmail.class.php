@@ -235,8 +235,7 @@ class FormMail
 				{
 					$langs->load("users");
 					$fuser=new User($this->db);
-					$fuser->id=$this->fromid;
-					$fuser->fetch();
+					$fuser->fetch($this->fromid);
 					print $fuser->getNomUrl(1);
 				}
 				else

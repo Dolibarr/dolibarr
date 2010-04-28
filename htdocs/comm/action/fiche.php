@@ -615,10 +615,10 @@ if ($_GET["id"])
 	}
 	$act->societe = $societe;
 
-	if ($act->author->id > 0)   { $tmpuser=new User($db); $tmpuser->id=$act->author->id;   $res=$tmpuser->fetch(); $act->author=$tmpuser; }
-	if ($act->usermod->id > 0)  { $tmpuser=new User($db); $tmpuser->id=$act->usermod->id;  $res=$tmpuser->fetch(); $act->usermod=$tmpuser; }
-	if ($act->usertodo->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->usertodo->id; $res=$tmpuser->fetch(); $act->usertodo=$tmpuser; }
-	if ($act->userdone->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->userdone->id; $res=$tmpuser->fetch(); $act->userdone=$tmpuser; }
+	if ($act->author->id > 0)   { $tmpuser=new User($db); $res=$tmpuser->fetch($act->author->id); $act->author=$tmpuser; }
+	if ($act->usermod->id > 0)  { $tmpuser=new User($db); $res=$tmpuser->fetch($act->usermod->id); $act->usermod=$tmpuser; }
+	if ($act->usertodo->id > 0) { $tmpuser=new User($db); $res=$tmpuser->fetch($act->usertodo->id); $act->usertodo=$tmpuser; }
+	if ($act->userdone->id > 0) { $tmpuser=new User($db); $res=$tmpuser->fetch($act->userdone->id); $act->userdone=$tmpuser; }
 
 	$contact = new Contact($db);
 	if ($act->contact->id)

@@ -224,8 +224,7 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 	    if ($bookmark->fk_user)
 	    {
 		    $fuser=new User($db);
-		    $fuser->id=$bookmark->fk_user;
-		    $fuser->fetch();
+		    $fuser->fetch($bookmark->fk_user);
 		    //$fuser->nom=$fuser->login; $fuser->prenom='';
 		    print $fuser->getNomUrl(1);
 		}

@@ -98,8 +98,7 @@ if ($_REQUEST["action"] == 'confirm_disable' && $_REQUEST["confirm"] == "yes")
 	if ($_GET["id"] <> $user->id)
 	{
 		$edituser = new User($db);
-		$edituser->id=$_GET["id"];
-		$edituser->fetch();
+		$edituser->fetch($_GET["id"]);
 		$edituser->setstatus(0);
 		Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
 		exit;
@@ -109,9 +108,8 @@ if ($_REQUEST["action"] == 'confirm_enable' && $_REQUEST["confirm"] == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
-		$edituser = new User($db, $_GET["id"]);
-		$edituser->id=$_GET["id"];
-		$edituser->fetch();
+		$edituser = new User($db);
+		$edituser->fetch($_GET["id"]);
 		$edituser->setstatus(1);
 		Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
 		exit;
@@ -122,7 +120,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == "yes")
 {
 	if ($_GET["id"] <> $user->id)
 	{
-		$edituser = new User($db, $_GET["id"]);
+		$edituser = new User($db);
 		$edituser->id=$_GET["id"];
 		$result = $edituser->delete();
 		if ($result < 0)
@@ -242,8 +240,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 		if (! $message)
 		{
 			$db->begin();
-			$edituser = new User($db, $_GET["id"]);
-			$edituser->fetch();
+			$edituser = new User($db);
+			$edituser->fetch($_GET["id"]);
 
 			$edituser->oldcopy=dol_clone($edituser);
 
@@ -328,8 +326,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	}
 	else if ($caneditpassword)	// Case we can edit only password
 	{
-		$edituser = new User($db, $_GET["id"]);
-		$edituser->fetch();
+		$edituser = new User($db);
+		$edituser->fetch($_GET["id"]);
 
 		$ret=$edituser->setPassword($user,$_POST["password"]);
 		if ($ret < 0)
@@ -343,8 +341,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 if ((($_REQUEST["action"] == 'confirm_password' && $_REQUEST["confirm"] == 'yes')
 || ($_REQUEST["action"] == 'confirm_passwordsend' && $_REQUEST["confirm"] == 'yes')) && $caneditpassword)
 {
-	$edituser = new User($db, $_GET["id"]);
-	$edituser->fetch();
+	$edituser = new User($db);
+	$edituser->fetch($_GET["id"]);
 
 	$newpassword=$edituser->setPassword($user,'');
 	if ($newpassword < 0)
@@ -746,8 +744,8 @@ else
 
 	if ($_GET["id"])
 	{
-		$fuser = new User($db, $_GET["id"]);
-		$fuser->fetch();
+		$fuser = new User($db);
+		$fuser->fetch($_GET["id"]);
 
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon

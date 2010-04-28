@@ -33,8 +33,7 @@ $langs->load("users");
 // Security check
 $id = isset($_GET["id"])?$_GET["id"]:'';
 $fuser = new User($db);
-$fuser->id = $id;
-$fuser->fetch();
+$fuser->fetch($id);
 
 // Security check
 $socid=0;

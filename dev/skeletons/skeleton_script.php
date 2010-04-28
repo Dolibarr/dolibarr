@@ -51,7 +51,7 @@ $langs->load("main");				// To load language file for default language
 @set_time_limit(0);					// No timeout for this script
 
 // Load user and its permissions
-$result=$user->fetch('admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+$result=$user->fetch('','admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
 if (! $result > 0) { dol_print_error('',$user->error); exit; }
 $user->getrights();
 

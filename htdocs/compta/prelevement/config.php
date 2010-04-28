@@ -158,8 +158,8 @@ if ($user->rights->prelevement->bons->configurer)
 print '<td>';
 if (defined("PRELEVEMENT_USER") && PRELEVEMENT_USER > 0)
 {
-	$cuser = new User($db, PRELEVEMENT_USER);
-	$cuser->fetch();
+	$cuser = new User($db);
+	$cuser->fetch(PRELEVEMENT_USER);
 	print $cuser->fullname;
 }
 else

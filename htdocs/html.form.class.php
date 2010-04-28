@@ -1958,8 +1958,7 @@ class Form
 				//$this->load_cache_contacts();
 				//print $this->cache_contacts[$selected];
 				$theuser=new User($this->db);
-				$theuser->id=$selected;
-				$theuser->fetch();
+				$theuser->fetch($selected);
 				print $theuser->getNomUrl(1);
 			} else {
 				print "&nbsp;";

@@ -81,9 +81,9 @@ switch ( $_GET['action'] )
 
 
 	case 'valide_facture':
-		
+
 		$now=dol_now('tzserver');
-		
+
 		// Recuperation de la date et de l'heure
 		$date = dol_print_date($now,'day');
 		$heure = dol_print_date($now,'hour');
@@ -131,8 +131,7 @@ switch ( $_GET['action'] )
 
 		$db->begin();
 
-		$user->id=$_SESSION['uid'];
-		$user->fetch();
+		$user->fetch($_SESSION['uid']);
 		$user->getrights();
 
 		$invoice=new Facture($db,$conf_fksoc);
@@ -216,11 +215,11 @@ switch ( $_GET['action'] )
 			{
 				$resultvalid=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
 			}
-			else 
+			else
 			{
 				$error++;
 			}
-			
+
 			$id = $invoice->id;
 		}
 		else
@@ -231,7 +230,7 @@ switch ( $_GET['action'] )
 				$resultvalid=$invoice->set_valid($user,$conf_fksoc,$obj_facturation->num_facture());
 
 				$id = $invoice->id;
-	
+
 				// Add the payment
 				$payment=new Paiement($db);
 				$payment->datepaye=$now;
@@ -240,7 +239,7 @@ switch ( $_GET['action'] )
 				$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->num_facture();
 				$payment->paiementid=$invoice->mode_reglement_id;
 				$payment->num_paiement='';
-	
+
 				$paiement_id = $payment->create($user);
 				if ($paiement_id > 0)
 				{
@@ -260,13 +259,13 @@ switch ( $_GET['action'] )
 						{
 							$bankaccountid=$conf_fkaccount_cb;
 						}
-	
+
 						if ($bankaccountid > 0)
 						{
 							// Insertion dans llx_bank
 							$label = "(CustomerInvoicePayment)";
 							$acc = new Account($db, $bankaccountid);
-	
+
 							$bank_line_id = $acc->addline($payment->datepaye,
 							$payment->paiementid,	// Payment mode id or code ("CHQ or VIR for example")
 							$label,
@@ -276,7 +275,7 @@ switch ( $_GET['action'] )
 							$user,
 							'',
 							'');
-	
+
 							// Mise a jour fk_bank dans llx_paiement.
 							// On connait ainsi le paiement qui a genere l'ecriture bancaire
 							if ($bank_line_id > 0)
@@ -308,7 +307,7 @@ switch ( $_GET['action'] )
 						}
 					}
 				}
-				else 
+				else
 				{
 					$error++;
 				}

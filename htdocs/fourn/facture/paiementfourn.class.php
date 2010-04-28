@@ -356,14 +356,14 @@ class PaiementFourn
 				$this->id = $obj->rowid;
 				if ($obj->fk_user_creat)
 				{
-					$cuser = new User($this->db, $obj->fk_user_creat);
-					$cuser->fetch();
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_creat);
 					$this->user_creation = $cuser;
 				}
 				if ($obj->fk_user_modif)
 				{
-					$muser = new User($this->db, $obj->fk_user_modif);
-					$muser->fetch();
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
 				$this->date_creation     = $this->db->jdate($obj->datec);

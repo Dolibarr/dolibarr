@@ -40,7 +40,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 	global $dolibarr_main_auth_ldap_login_attribute,$dolibarr_main_auth_ldap_dn;
 	global $dolibarr_main_auth_ldap_admin_login,$dolibarr_main_auth_ldap_admin_pass;
 	global $dolibarr_main_auth_ldap_debug;
-	
+
 	if (! function_exists("ldap_connect"))
 	{
 		dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP. LDAP functions are disabled on this PHP");
@@ -50,11 +50,11 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		$_SESSION["dol_loginmesg"]=$langs->trans("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->trans("TryAnotherConnectionMode");
 		return;
 	}
-	
+
 	$login='';
 	$resultFetchUser='';
-	
-	if (! empty($_POST["username"])) 
+
+	if (! empty($_POST["username"]))
 	{
 		// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 		$ldaphost=$dolibarr_main_auth_ldap_host;
@@ -67,7 +67,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		$ldapadminlogin=$dolibarr_main_auth_ldap_admin_login;
 		$ldapadminpass=$dolibarr_main_auth_ldap_admin_pass;
 		$ldapdebug=(empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug=="false" ? false : true);
-		
+
 		if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
 
 		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
@@ -78,16 +78,16 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		$ldap->serverType=$ldapservertype;
 		$ldap->searchUser=$ldapadminlogin;
 		$ldap->searchPassword=$ldapadminpass;
-		
+
 		dol_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest);
-		if ($ldapdebug) 
+		if ($ldapdebug)
 		{
 			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
 			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ladpdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
 			print "DEBUG: Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."\n";
 			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ladpdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."\n";
 		}
-		
+
 		$resultCheckUserDN=false;
 
 		// If admin login provided
@@ -116,7 +116,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 			}
 			$ldap->close();
 		}
-		
+
 		// Forge LDAP user and password to test from config setup
 		$ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;
 		$ldap->searchPassword=$passwordtotest;
@@ -124,7 +124,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
 
 		// Test with this->seachUser and this->searchPassword
-		$result=$ldap->connect_bind();	
+		$result=$ldap->connect_bind();
 		if ($result > 0)
 		{
 			if ($result == 2)
@@ -138,17 +138,17 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 					// On charge les attributs du user ldap
 					if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
 					$ldap->fetch($login);
-					
+
 					if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
 					if ($ldapdebug) print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset,'day')."<br>\n";
 					if ($ldapdebug) print "DEBUG: badPasswordTime = ".dol_print_date($ldap->badpwdtime,'day')."<br>\n";
-					
+
 					// On recherche le user dolibarr en fonction de son SID ldap
 					$sid = $ldap->getObjectSid($login);
 					if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
 
 					$user=new User($db);
-					$resultFetchUser=$user->fetch($login,$sid);
+					$resultFetchUser=$user->fetch('',$login,$sid);
 					if ($resultFetchUser > 0)
 					{
 						// On verifie si le login a change et on met a jour les attributs dolibarr
@@ -179,10 +179,10 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 			$langs->load('other');
 			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 		}
-	
+
 		$ldap->close();
 	}
-		
+
 	return $login;
 }
 

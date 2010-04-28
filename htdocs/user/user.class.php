@@ -133,12 +133,13 @@ class User extends CommonObject
 
 	/**
 	 *	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login
-	 *	\param      login       		Si defini, login a utiliser pour recherche
+	 *	\param      id		       		Si defini, id a utiliser pour recherche
+	 * 	\param      login       		Si defini, login a utiliser pour recherche
 	 *	\param      sid					Si defini, sid a utiliser pour recherche
 	 * 	\param		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
 	 * 	\return		int					<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($login='',$sid='',$loadpersonalconf=1)
+	function fetch($id='', $login='',$sid='',$loadpersonalconf=1)
 	{
 		global $conf;
 

@@ -1107,14 +1107,14 @@ class AccountLine
 
 				if ($obj->fk_user_author)
 				{
-					$cuser = new User($this->db, $obj->fk_user_author);
-					$cuser->fetch();
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation     = $cuser;
 				}
 				if ($obj->fk_user_rappro)
 				{
-					$ruser = new User($this->db, $obj->fk_user_rappro);
-					$ruser->fetch();
+					$ruser = new User($this->db);
+					$ruser->fetch($obj->fk_user_rappro);
 					$this->user_rappro = $ruser;
 				}
 

@@ -173,8 +173,8 @@ if ($_GET["id"])
 
 		if($bon->date_trans <> 0)
 		{
-			$muser = new User($db, $bon->user_trans);
-			$muser->fetch();
+			$muser = new User($db);
+			$muser->fetch($bon->user_trans);
 
 			print '<tr><td width="20%">Date Transmission / Par</td><td>';
 			print dol_print_date($bon->date_trans,'dayhour');

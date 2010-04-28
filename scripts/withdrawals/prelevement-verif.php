@@ -43,8 +43,8 @@ require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 
 $error = 0;
 
-$puser = new user($db, PRELEVEMENT_USER);
-$puser->fetch();
+$puser = new user($db);
+$puser->fetch(PRELEVEMENT_USER);
 dol_syslog("Prelevements effectues par ".$puser->fullname." [".PRELEVEMENT_USER."]");
 
 dol_syslog("Raison sociale : ".PRELEVEMENT_RAISON_SOCIALE);

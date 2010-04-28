@@ -292,14 +292,14 @@ class Entrepot extends CommonObject
 				$this->id = $obj->rowid;
 
 				if ($obj->fk_user_author) {
-					$cuser = new User($this->db, $obj->fk_user_author);
-					$cuser->fetch();
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation     = $cuser;
 				}
 
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db, $obj->fk_user_valid);
-					$vuser->fetch();
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
 

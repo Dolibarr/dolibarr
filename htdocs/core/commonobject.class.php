@@ -386,8 +386,8 @@ class CommonObject
 	 */
 	function fetch_user($userid)
 	{
-		$user = new User($this->db, $userid);
-		$result=$user->fetch();
+		$user = new User($this->db);
+		$result=$user->fetch($userid);
 		$this->user = $user;
 		return $result;
 	}

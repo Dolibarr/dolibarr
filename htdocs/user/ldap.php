@@ -47,8 +47,8 @@ if ($user->id == $_GET["id"])	// A user can always read its own card
 }
 $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 
-$fuser = new User($db, $_GET["id"]);
-$fuser->fetch();
+$fuser = new User($db);
+$fuser->fetch($_GET["id"]);
 $fuser->getrights();
 
 
