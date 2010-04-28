@@ -34,7 +34,7 @@
 
 require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/product.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/contact/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
 
 
 /**

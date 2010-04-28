@@ -27,7 +27,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/adresse_livraison.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/class/adresse_livraison.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");

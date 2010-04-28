@@ -27,7 +27,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';

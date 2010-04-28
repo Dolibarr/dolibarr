@@ -26,7 +26,7 @@
  */
 
 require_once("./main.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
+include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 $langs->load("companies");
 $langs->load("customers");

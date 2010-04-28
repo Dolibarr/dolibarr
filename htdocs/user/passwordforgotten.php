@@ -25,7 +25,7 @@
 define("NOLOGIN",1);	// This means this output page does not require to be logged.
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 

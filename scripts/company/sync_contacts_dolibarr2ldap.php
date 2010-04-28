@@ -44,7 +44,7 @@ $now=$argv[1];
 $version='$Revision$';
 
 require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 

@@ -30,7 +30,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/group/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");

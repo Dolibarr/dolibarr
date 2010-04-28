@@ -31,7 +31,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");

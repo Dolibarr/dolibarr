@@ -26,7 +26,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 $langs->load("companies");
 $langs->load("orders");

@@ -472,7 +472,7 @@ class InterfaceActionsAuto
 			$now=dol_now('tzserver');
 
 			// Insertion action
-			require_once(DOL_DOCUMENT_ROOT.'/contact/contact.class.php');
+			require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
 			require_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
 			$actioncomm = new ActionComm($this->db);
 			$actioncomm->type_code   = $object->actiontypecode;

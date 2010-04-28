@@ -2083,7 +2083,7 @@ class Form
 		{
 			if ($selected)
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/contact/contact.class.php");
+				require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
 				//$this->load_cache_contacts();
 				//print $this->cache_contacts[$selected];
 				$contact=new Contact($this->db);
@@ -2124,7 +2124,7 @@ class Form
 		{
 			if ($selected)
 			{
-				require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
+				require_once(DOL_DOCUMENT_ROOT ."/comm/class/adresse_livraison.class.php");
 				$livraison=new AdresseLivraison($this->db);
 				$result=$livraison->fetch_adresse($selected);
 				print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&id='.$livraison->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$livraison->label.'</a>';
