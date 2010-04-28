@@ -97,7 +97,7 @@ class InterfaceNotification
 		// Si module notification non actif, on ne fait rien
 		if (! $conf->notification->enabled) return 0;
 
-		require_once(DOL_DOCUMENT_ROOT .'/core/notify.class.php');
+		require_once(DOL_DOCUMENT_ROOT .'/core/class/notify.class.php');
 
 		if ($action == 'BILL_VALIDATE')
 		{

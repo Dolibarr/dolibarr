@@ -26,7 +26,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/notify.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/notify.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 

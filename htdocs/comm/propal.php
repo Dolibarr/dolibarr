@@ -1069,7 +1069,7 @@ if ($id > 0 || ! empty($ref))
 		$text=$langs->trans('ConfirmValidateProp',$numref);
 		if ($conf->notification->enabled)
 		{
-			require_once(DOL_DOCUMENT_ROOT ."/core/notify.class.php");
+			require_once(DOL_DOCUMENT_ROOT ."/core/class/notify.class.php");
 			$notify=new Notify($db);
 			$text.='<br>';
 			$text.=$notify->confirmMessage('NOTIFY_VAL_PROPAL',$propal->socid);

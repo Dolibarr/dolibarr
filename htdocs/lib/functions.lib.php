@@ -1801,7 +1801,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
 	global $conf, $db, $user, $langs;
 	if (! is_object($langs))
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/core/translate.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/translate.class.php');
 		$langs=new Translate('',$conf);
 	}
 
@@ -1857,7 +1857,7 @@ function dol_print_error($db='',$error='')
 	// Si erreur intervenue avant chargement langue
 	if (! $langs)
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/core/translate.class.php");
+		require_once(DOL_DOCUMENT_ROOT ."/core/class/translate.class.php");
 		$langs = new Translate("", $conf);
 		$langs->load("main");
 	}

@@ -27,7 +27,7 @@
 
 define('DOL_VERSION','2.5-dev');	// Also defined in htdocs/master.inc.php
 
-require_once('../core/translate.class.php');
+require_once('../core/class/translate.class.php');
 require_once('../lib/functions.lib.php');
 require_once('../lib/admin.lib.php');
 
