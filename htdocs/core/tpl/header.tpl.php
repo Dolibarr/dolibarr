@@ -1,4 +1,5 @@
-{* Copyright (C) 2009 Regis Houssin <regis@dolibarr.fr>
+<?php
+/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- *}
+ */
+?>
  
-<!-- BEGIN SMARTY TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE -->
 
 
 
-<!-- END SMARTY TEMPLATE -->
+<!-- END PHP TEMPLATE -->
