@@ -82,15 +82,12 @@ function versionphparray()
  *	\brief      Return version Dolibarr
  *	\return     array               Tableau de version (vermajeur,vermineur,autre)
  */
-function versiondolibarrarray($fortest=0)
+function versiondolibarrarray()
 {
 	$dol_version = DOL_VERSION;
 	
-	if ($fortest)
-	{
-		preg_match('/^[0-9\.]+([A-Z\-]+)$/i',DOL_VERSION,$regs);
-		$dol_version = preg_replace('/'.$regs[1].'/','',DOL_VERSION);
-	}
+	preg_match('/^[0-9\.]+([A-Z\-]+)$/i',DOL_VERSION,$regs);
+	$dol_version = preg_replace('/'.$regs[1].'/','',DOL_VERSION);
 	
 	return explode('.',$dol_version);
 }
