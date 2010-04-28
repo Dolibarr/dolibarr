@@ -304,8 +304,8 @@ function dol_is_file($pathoffile)
 
 /**
  * Copy a file to another file
- * @param	$srcfile			Source file
- * @param	$destfile			Destination file
+ * @param	$srcfile			Source file (can't be a directory)
+ * @param	$destfile			Destination file (can't be a directory)
  * @param	$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param 	$overwriteifexists	Overwrite file if exists (1 by default)
  * @return	boolean				True if OK, false if KO
@@ -319,7 +319,8 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	if ($overwriteifexists || ! dol_is_file($destfile))
 	{
 		$result=@copy($srcfile, $destfile);
-
+		//$result=copy($srcfile, $destfile);	// To see errors, remove @
+		if (! $result) dol_syslog("files.lib.php::dol_copy failed", LOG_WARNING);
 		if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 		@chmod($file, octdec($newmask));
 	}
