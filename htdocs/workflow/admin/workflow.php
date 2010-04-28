@@ -25,7 +25,7 @@
 
 require("../../main.inc.php");
 //require_once(DOL_DOCUMENT_ROOT."/workflow/class/workflow.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/interfaces.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
 
 $langs->load("admin");
 

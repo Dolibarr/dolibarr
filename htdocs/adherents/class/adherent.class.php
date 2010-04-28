@@ -327,7 +327,7 @@ class Adherent extends CommonObject
 				if (! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -545,7 +545,7 @@ class Adherent extends CommonObject
 					$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -669,7 +669,7 @@ class Adherent extends CommonObject
 						$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 						$interface=new Interfaces($this->db);
 						$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -794,7 +794,7 @@ class Adherent extends CommonObject
 				if (! $error && ! $notrigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1238,7 +1238,7 @@ class Adherent extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1293,7 +1293,7 @@ class Adherent extends CommonObject
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1341,7 +1341,7 @@ class Adherent extends CommonObject
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MEMBER_RESILIATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }

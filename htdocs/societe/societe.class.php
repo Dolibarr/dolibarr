@@ -216,7 +216,7 @@ class Societe extends CommonObject
 					$this->use_webcal=($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?1:0);
 
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('COMPANY_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -492,7 +492,7 @@ class Societe extends CommonObject
 				if ($call_trigger)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -896,7 +896,7 @@ class Societe extends CommonObject
 			if ($sqr == 4)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }

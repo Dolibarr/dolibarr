@@ -465,7 +465,7 @@ class UserGroup extends CommonObject
 		if ($result)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('USER_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -502,7 +502,7 @@ class UserGroup extends CommonObject
 			if ($this->update(1) < 0) return -2;
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -541,7 +541,7 @@ class UserGroup extends CommonObject
 			if (!$error && ! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }

@@ -550,7 +550,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 						$propal->propalrowid=$propal->id;
 
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 						$interface=new Interfaces($db);
 						$result=$interface->run_triggers('PROPAL_SENTBYMAIL',$propal,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }

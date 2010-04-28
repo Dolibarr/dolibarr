@@ -328,7 +328,7 @@ class Commande extends CommonObject
 		if (! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -451,7 +451,7 @@ class Commande extends CommonObject
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_REOPEN',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -700,7 +700,7 @@ class Commande extends CommonObject
 					}
 
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1893,7 +1893,7 @@ class Commande extends CommonObject
 				$this->update_price();
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('LINEORDER_UPDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1987,7 +1987,7 @@ class Commande extends CommonObject
 		if ($err == 0)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -2461,7 +2461,7 @@ class OrderLine
 		if ($resql)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -2560,7 +2560,7 @@ class OrderLine
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }

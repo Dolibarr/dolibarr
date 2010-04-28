@@ -118,7 +118,7 @@ class Project extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('PROJECT_CREATE',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -170,7 +170,7 @@ class Project extends CommonObject
 				if (! $notrigger)
 				{
 					// Call triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('PROJECT_MODIFY',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -395,7 +395,7 @@ class Project extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+	            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('PROJECT_DELETE',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -438,7 +438,7 @@ class Project extends CommonObject
 			if ($resql)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('PROJECT_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -491,7 +491,7 @@ class Project extends CommonObject
 			if ($resql)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('PROJECT_CLOSE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }

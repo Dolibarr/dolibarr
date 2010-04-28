@@ -303,7 +303,7 @@ class CommandeFournisseur extends Commande
 			if (! $error)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -357,7 +357,7 @@ class CommandeFournisseur extends Commande
 				$this->log($user, $statut, time());
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -585,7 +585,7 @@ class CommandeFournisseur extends Commande
 				if ($error == 0)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('ORDER_SUPPLIER_APPROVE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -643,7 +643,7 @@ class CommandeFournisseur extends Commande
 				if ($error == 0)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+					include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('ORDER_SUPPLIER_REFUSE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -745,7 +745,7 @@ class CommandeFournisseur extends Commande
 				$this->log($user, 0, time());
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1057,7 +1057,7 @@ class CommandeFournisseur extends Commande
 		if ($err == 0)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/interfaces.class.php");
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('ORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
