@@ -33,7 +33,7 @@ if (! file_exists($conffile))
 require_once($conffile); if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root . '/compta/facture/class/facture.class.php');
-require_once($dolibarr_main_document_root . '/comm/propal/propal.class.php');
+require_once($dolibarr_main_document_root . '/comm/propal/class/propal.class.php');
 require_once($dolibarr_main_document_root . '/contrat/class/contrat.class.php');
 require_once($dolibarr_main_document_root . '/commande/class/commande.class.php');
 require_once($dolibarr_main_document_root . '/fourn/class/fournisseur.commande.class.php');

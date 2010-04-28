@@ -24,7 +24,7 @@
  */
 
 /**
- *	\file       htdocs/propal.class.php
+ *	\file       htdocs/comm/propal/class/propal.class.php
  *	\brief      Fichier de la classe des propales
  *	\author     Rodolphe Qiedeville
  *	\author	    Eric Seigne

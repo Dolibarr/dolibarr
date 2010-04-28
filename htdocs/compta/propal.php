@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
@@ -30,7 +30,7 @@
 
 require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
@@ -500,13 +500,13 @@ if ($id > 0 || ! empty($ref))
 	{
 		if ($propal->statut == 2 && $user->rights->facture->creer)
 		{
-			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BuildBill")."</a>";
+			print '<a class="butAction" href="facture.php?action=create&origin='.$propal->element.'&originid='.$propal->id.'&socid='.$propal->socid.'">'.$langs->trans("BuildBill").'</a>';
 		}
 
 		$arraypropal=$propal->getInvoiceArrayList();
 		if ($propal->statut == 2 && is_array($arraypropal) && sizeof($arraypropal) > 0)
 		{
-			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("ClassifyBilled")."</a>";
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=setstatut&statut=4&socid='.$propal->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 		}
 	}
 	print "</div>";

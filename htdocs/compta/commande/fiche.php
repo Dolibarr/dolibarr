@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 require_once(DOL_DOCUMENT_ROOT ."/commande/class/commande.class.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 
 if (! $user->rights->commande->lire) accessforbidden();
@@ -548,12 +548,12 @@ if ($id > 0 || ! empty($ref))
 
 			if ($commande->statut > 0 && $user->rights->facture->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socid='.$commande->socid.'">'.$langs->trans("CreateBill").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$commande->element.'&amp;originid='.$commande->id.'&amp;socid='.$commande->socid.'">'.$langs->trans("CreateBill").'</a>';
 			}
 
 			if ($commande->statut > 0 && $user->rights->commande->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande/fiche.php?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=facturee&amp;id='.$commande->id.'">'.$langs->trans("ClassifyBilled").'</a>';
 			}
 			print '</div>';
 		}

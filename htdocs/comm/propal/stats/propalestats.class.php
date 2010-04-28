@@ -26,7 +26,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
-include_once DOL_DOCUMENT_ROOT . "/comm/propal/propal.class.php";
+include_once DOL_DOCUMENT_ROOT . "/comm/propal/class/propal.class.php";
 
 
 /**

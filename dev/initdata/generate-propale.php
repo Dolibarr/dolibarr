@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 $path=preg_replace('/generate-propale.php/i','',$_SERVER["PHP_SELF"]);
 require ($path."../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
 

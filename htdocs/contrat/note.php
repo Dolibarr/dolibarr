@@ -37,9 +37,9 @@ $langs->load("companies");
 $langs->load("contracts");
 
 // Security check
-$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact',$contactid,'');
+$result = restrictedArea($user, 'contrat',$id,'');
 
 
 $contrat = new Contrat($db);

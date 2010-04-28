@@ -38,7 +38,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/comm/propal/propal.class.php');
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 
 if (!$user->rights->commande->lire) accessforbidden();
 

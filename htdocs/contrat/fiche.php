@@ -29,7 +29,7 @@
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
-if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/propal.class.php");
+if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
@@ -1302,7 +1302,7 @@ else
             if ($conf->facture->enabled && $contrat->statut > 0)
             {
                 $langs->load("bills");
-				if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;contratid='.$contrat->id.'&amp;socid='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
+				if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$contrat->element.'&amp;originid='.$contrat->id.'&amp;socid='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
             }
 

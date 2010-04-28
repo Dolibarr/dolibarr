@@ -39,7 +39,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
-if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT.'/comm/propal/propal.class.php');
+if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 if ($conf->contrat->enabled)  require_once(DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 
@@ -1553,9 +1553,12 @@ if ($_GET['action'] == 'create')
 		$object = new $classname($db);
 		$object->fetch($_GET['originid']);
 		$object->fetch_client();
+		
+		$projectid			= (!empty($object->fk_project)?$object->fk_project:'');
+		$ref_client			= (!empty($object->ref_client)?$object->ref_client:'');
 
 		$soc = $object->client;
-		$cond_reglement_id 	= (!empty($object->cond_reglement_id)?$object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
+		$cond_reglement_id 	= (!empty($object->cond_reglement_id)?$object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 		$mode_reglement_id 	= (!empty($object->mode_reglement_id)?$object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 		$remise_percent 	= (!empty($object->remise_percent)?$object->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
 		$remise_absolue 	= (!empty($object->remise_absolue)?$object->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
@@ -1571,7 +1574,6 @@ if ($_GET['action'] == 'create')
 		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
-	if (empty($cond_reglement_id)) $cond_reglement_id=1;
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1806,17 +1808,9 @@ if ($_GET['action'] == 'create')
 	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
 	print '<td valign="top" colspan="2">';
 	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-	if (is_object($propal))
+	if (is_object($object))
 	{
-		print $propal->note_public;
-	}
-	if (is_object($commande))
-	{
-		print $commande->note_public;
-	}
-	if (is_object($contrat))
-	{
-		print $contrat->note_public;
+		print $object->note_public;
 	}
 	print '</textarea></td></tr>';
 
@@ -1827,74 +1821,24 @@ if ($_GET['action'] == 'create')
 		print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
 		print '<td valign="top" colspan="2">';
 		print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-		if (is_object($propal))
+		if (is_object($object))
 		{
-			print $propal->note;
-		}
-		if (is_object($commande))
-		{
-			print $commande->note;
-		}
-		if (is_object($contrat))
-		{
-			print $contrat->note;
+			print $object->note;
 		}
 		print '</textarea></td></tr>';
 	}
 
-	if ($_GET['propalid'] > 0)
+	if (is_object($object))
 	{
-		print "\n<!-- Propal info -->";
-		print '<input type="hidden" name="amount"         value="'.$propal->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$propal->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$propal->total_tva.'">'."\n";
-		//print '<input type="hidden" name="remise_absolue" value="'.$propal->remise_absolue.'">'."\n";
-		//print '<input type="hidden" name="remise_percent" value="'.$propal->remise_percent.'">'."\n";
-		print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
-
-		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.img_object($langs->trans("ShowPropal"),'propal').' '.$propal->ref.'</a></td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($propal->total_tva)."</td></tr>";
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($propal->total_ttc)."</td></tr>";
-	}
-	elseif ($_GET['commandeid'] > 0)
-	{
-		print "\n<!-- Order info -->";
-		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$commande->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$commande->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$commande->total_tva.'">'."\n";
-		//print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
-		//print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
-		print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
-
-		print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a></td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
-	}
-	elseif ($_GET['contratid'] > 0)
-	{
-		// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-		$contrat->remise_absolue=$remise_absolue;
-		$contrat->remise_percent=$remise_percent;
-		$contrat->update_price();
-
-		print "\n<!-- Contract info -->";
-		print '<input type="hidden" name="amount"         value="'.$contrat->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$contrat->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$contrat->total_tva.'">'."\n";
-		//		print '<input type="hidden" name="remise_absolue" value="'.$contrat->remise_absolue.'">'."\n";
-		//		print '<input type="hidden" name="remise_percent" value="'.$contrat->remise_percent.'">'."\n";
-		print '<input type="hidden" name="contratid"      value="'.$contrat->id.'">';
-
-		print '<tr><td>'.$langs->trans('Contract').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$contrat->id.'">'.img_object($langs->trans("ShowContract"),'contract').' '.$contrat->ref.'</a></td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($contrat->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($contrat->total_tva)."</td></tr>";
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($contrat->total_ttc)."</td></tr>";
-	}
-	elseif ($_GET['originid'] > 0)
-	{
+		// TODO for compatibility
+		if ($_GET['origin'] == 'contrat')
+		{
+			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
+			$object->remise_absolue=$remise_absolue;
+			$object->remise_percent=$remise_percent;
+			$object->update_price();
+		}
+		
 		print "\n<!-- ".$classname." info -->";
 		print "\n";
 		print '<input type="hidden" name="amount"         value="'.$object->total_ht.'">'."\n";
@@ -1971,8 +1915,8 @@ if ($_GET['action'] == 'create')
 
 	print "</form>\n";
 
-	// Si creation depuis un propal
-	if ($_GET['propalid'])
+	// TODO deplacer dans la classe
+	if ($_GET['origin'] == 'propal')
 	{
 		$title=$langs->trans('ProductsAndServices');
 
@@ -1982,10 +1926,11 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-		$sql.= ' WHERE pt.fk_propal = '.$_GET['propalid'];
+		$sql.= ' WHERE pt.fk_propal = '.$object->id;
 		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 	}
-	if ($_GET['commandeid'])
+	// TODO deplacer dans la classe
+	if ($_GET['origin'] == 'order')
 	{
 		$title=$langs->trans('Products');
 
@@ -1994,10 +1939,11 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_commande = '.$commande->id;
+		$sql.= ' WHERE pt.fk_commande = '.$object->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 	}
-	if ($_GET['contratid'])
+	// TODO deplacer dans la classe
+	if ($_GET['origin'] == 'contrat')
 	{
 		$title=$langs->trans('Services');
 
@@ -2007,10 +1953,10 @@ if ($_GET['action'] == 'create')
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'contratdet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
-		$sql.= ' WHERE pt.fk_contrat = '.$contrat->id;
+		$sql.= ' WHERE pt.fk_contrat = '.$object->id;
 		$sql.= ' ORDER BY pt.rowid ASC';
 	}
-	if ($_GET['propalid'] || $_GET['commandeid'] || $_GET['contratid'])
+	if ($_GET['origin'] && $_GET['originid'])
 	{
 		print '<br>';
 		print_titre($title);

@@ -443,19 +443,19 @@ if ($socid > 0)
 			if ($user->rights->facture->creer)
 			{
 				$langs->load("bills");
-				if ($societe->client != 0) print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";
-				else print "<a class=\"butActionRefused\" title=\"".dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer"))."\" href=\"#\">".$langs->trans("AddBill")."</a>";
+				if ($societe->client != 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid=$societe->id">'.$langs->trans("AddBill").'</a>';
+				else print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a>';
 			}
 			else
 			{
-				print "<a class=\"butActionRefused\" title=\"".dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer"))."\" href=\"#\">".$langs->trans("AddBill")."</a>";
+				print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a>';
 			}
 		}
 
 		if ($conf->deplacement->enabled)
 		{
 			$langs->load("trips");
-			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create">'.$langs->trans("AddTrip").'</a>';
 		}
 	}
 
