@@ -131,7 +131,7 @@ if ($user->societe_id == 0)
 	DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
 	DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
 	DOL_DOCUMENT_ROOT."/product/class/product.class.php",
-	DOL_DOCUMENT_ROOT."/product/service.class.php",
+	DOL_DOCUMENT_ROOT."/product/class/service.class.php",
 	DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
 	DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
 	DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
