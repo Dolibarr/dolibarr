@@ -27,13 +27,17 @@
 */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
 if ($sortfield == "") {
-  $sortfield="lower(p.label),p.price";
+  $sortfield="p.label,p.price";
 }
 if ($sortorder == "") {
   $sortorder="ASC";

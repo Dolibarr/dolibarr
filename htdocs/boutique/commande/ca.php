@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -28,8 +27,12 @@
 */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
