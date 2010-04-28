@@ -31,7 +31,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/mantis/mantis.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/mantis/class/mantis.class.php');
 
 
 if (!$user->admin)

@@ -20,7 +20,7 @@
  */
 
 /**
-        \file       htdocs/mantis/mantis.class.php
+        \file       htdocs/mantis/class/mantis.class.php
         \ingroup    mantis
 		\brief      Ensemble des fonctions permettant d'acceder a la database mantis.
 		\author     Laurent Destailleur.
