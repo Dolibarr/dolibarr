@@ -1487,53 +1487,7 @@ if ($_GET['action'] == 'create')
 
 	$soc = new Societe($db);
 
-	if ($_GET['propalid'])
-	{
-		$propal = New Propal($db);
-		$propal->fetch($_GET['propalid']);
-		$propal->fetch_client();
-
-		$projectid=$propal->fk_project;
-		$ref_client=$propal->ref_client;
-
-		$soc=$propal->client;
-		$cond_reglement_id 	= $propal->cond_reglement_id;
-		$mode_reglement_id 	= $propal->mode_reglement_id;
-		$remise_percent 	= $propal->remise_percent;
-		$remise_absolue 	= $propal->remise_absolue;
-	}
-	elseif ($_GET['commandeid'])
-	{
-		$commande = New Commande($db);
-		$commande->fetch($_GET['commandeid']);
-		$commande->fetch_client();
-
-		$projectid=$commande->fk_project;
-		$ref_client=$commande->ref_client;
-
-		$soc=$commande->client;
-		$cond_reglement_id 	= $commande->cond_reglement_id;
-		$mode_reglement_id 	= $commande->mode_reglement_id;
-		$remise_percent 	= $commande->remise_percent;
-		$remise_absolue 	= $commande->remise_absolue;
-	}
-	elseif ($_GET['contratid'])
-	{
-		$contrat = New Contrat($db);
-		$contrat->fetch($_GET['contratid']);
-		$contrat->fetch_client();
-
-		$projectid=$contrat->fk_project;
-
-		$soc=$contrat->client;
-		$cond_reglement_id 	= $soc->cond_reglement_id;
-		$mode_reglement_id 	= $soc->mode_reglement_id;
-		$remise_percent 	= $soc->remise_percent;
-		$remise_absolue 	= 0;
-		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-	}
-	// TODO a mutualiser
-	elseif ($_GET['origin'] && $_GET['originid'])
+	if ($_GET['origin'] && $_GET['originid'])
 	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $_GET['origin'];
@@ -1930,7 +1884,7 @@ if ($_GET['action'] == 'create')
 		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 	}
 	// TODO deplacer dans la classe
-	if ($_GET['origin'] == 'order')
+	if ($_GET['origin'] == 'commande')
 	{
 		$title=$langs->trans('Products');
 
