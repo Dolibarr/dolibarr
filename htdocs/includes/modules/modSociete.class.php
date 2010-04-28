@@ -273,11 +273,10 @@ class modSociete extends DolibarrModules
 	{
 		global $conf;
 
-		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-
-		// Prevent pb of modules not correctly disabled
+		// We disable this to prevent pb of modules not correctly disabled
 		//$this->remove($options);
 
+		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/odttemplates/thirdparties';
 		create_exdir($dirodt);
 		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',$dirodt,0,0);

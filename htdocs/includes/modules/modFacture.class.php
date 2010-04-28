@@ -90,12 +90,14 @@ class modFacture extends DolibarrModules
 		$this->const[$r][2] = "terre";
 		$r++;
 
-		$this->const[$r][0] = "FAC_FORCE_DATE_VALIDATION";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
+		$this->const[$r][0] = "FACTURE_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/odttemplates/invoices";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
 		$r++;
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 		$r=0;
 		$this->boxes[$r][1] = "box_factures_imp.php";
@@ -211,8 +213,13 @@ class modFacture extends DolibarrModules
 	{
 		global $conf;
 
-		// Permissions
+		// Remove permissions and default values
 		$this->remove();
+
+		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
+		$dirodt=DOL_DATA_ROOT.'/odttemplates/invoices';
+		create_exdir($dirodt);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/invoices/template_invoices.odt',$dirodt,0,0);
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,

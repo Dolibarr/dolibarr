@@ -1542,12 +1542,12 @@ if ($_GET['action'] == 'create')
 			$element = $regs[1];
 			$subelement = $regs[2];
 		}
-		
+
 		// For compatibility
 		if ($element == 'order')    { $element = $subelement = 'commande'; }
 		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
 		if ($element == 'contract') { $element = $subelement = 'contrat'; }
-		
+
 		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
 		$classname = ucfirst($subelement);
 		$object = new $classname($db);
@@ -2198,7 +2198,7 @@ else
 				if ($facref == 'PROV')
 				{
 					$savdate=$fac->date;
-					if ($conf->global->FAC_FORCE_DATE_VALIDATION)
+					if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
 					{
 						$fac->date=gmmktime();
 						$fac->date_lim_reglement=$fac->calculate_date_lim_reglement();

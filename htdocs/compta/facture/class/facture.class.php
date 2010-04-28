@@ -1370,7 +1370,7 @@ class Facture extends CommonObject
 		}
 		else if (preg_match('/^[\(]?PROV/i', $this->ref))
 		{
-			if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
+			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
 				$this->date=gmmktime();
 				$this->date_lim_reglement=$this->calculate_date_lim_reglement();
@@ -1389,7 +1389,7 @@ class Facture extends CommonObject
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
-			if ($conf->global->FAC_FORCE_DATE_VALIDATION)	// If option enabled, we force invoice date
+			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
 				$sql.= ', datef='.$this->db->idate($this->date);
 				$sql.= ', date_lim_reglement='.$this->db->idate($this->date_lim_reglement);

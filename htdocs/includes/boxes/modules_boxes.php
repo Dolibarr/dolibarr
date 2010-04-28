@@ -239,7 +239,7 @@ class ModeleBoxes
 		}
 
 		// If invisible box with no contents
-		if (empty($head['text']) && empty($head['sublink']) && ! $nblines) print "<br><br>\n";
+		if (empty($head['text']) && empty($head['sublink']) && ! $nblines) print "<br>\n";
 
 		print "</div>\n";
 		print "<!-- Box end -->\n\n";

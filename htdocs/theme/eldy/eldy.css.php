@@ -161,7 +161,7 @@ td.vmenu {
 
 div.fiche {
 	margin-<?php print $left; ?>: 4px;
-	margin-<?php print $right; ?>: 2px;
+	margin-<?php print $right; ?>: 4px;
 }
 
 /* ============================================================================== */
@@ -699,7 +699,7 @@ padding-top: 0px;
 padding-left: 0px;
 padding-right: 0px;
 padding-bottom: 4px;
-margin: 0px 0px;
+margin: 0px 0px 0px 0px;
 }
 
 
@@ -731,10 +731,16 @@ border-right-width: 1px;
 border-right-color: #BBBBBB;
 border-right-style: solid;
 
+border-left-width: 1px;
+border-left-color: #BBBBBB;
+border-left-style: solid;
+
 border-bottom-width: 1px;
 border-bottom-color: #BBBBBB;
 border-bottom-style: solid;
 
+margin-left: 1px;
+margin-right: 1px;
 margin-bottom: 2px;
 margin-top: 0px;
 }
@@ -742,14 +748,17 @@ margin-top: 0px;
 table.noborder tr {
 border-top-color: #FEFEFE;
 
+border-right-width: 1px;
+border-right-color: #BBBBBB;
+border-right-style: solid;
+
 border-left-width: 1px;
-border-left-color: #FEFEFE;
+border-left-color: #BBBBBB;
 border-left-style: solid;
 }
 
 table.noborder td {
-border: 0px;
-padding: 1px 2px;
+padding: 1px 2px;			/* t r b l */
 }
 
 table.nobordernopadding {
@@ -880,7 +889,8 @@ border: 0px;
  */
 
 .box {
-padding-right: 4px;
+padding-right: 0px;
+padding-left: 0px;
 padding-bottom: 4px;
 }
 
