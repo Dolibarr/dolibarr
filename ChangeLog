@@ -30,6 +30,7 @@ For users:
 - Fix: Project PDF document show the tasks.
 - Fix: bug #29278 : SMTP fails with IP
 - Fix: Default language on login page.
+- Fix: Complete support of euros sign (even in PDF).
 
 For developers:
 - More comments in code.

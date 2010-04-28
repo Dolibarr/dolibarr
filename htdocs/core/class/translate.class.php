@@ -507,7 +507,7 @@ class Translate {
 	function convToOutputCharset($str,$pagecodefrom='UTF-8')
 	{
 		if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8')  $str=utf8_encode($str);
-		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1')	$str=utf8_decode($str);
+		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1')	$str=utf8_decode(str_replace('€',chr(128),$str));
 		return $str;
 	}
 
