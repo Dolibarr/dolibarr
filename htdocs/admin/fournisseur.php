@@ -29,8 +29,8 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
 
 $langs->load("admin");
 $langs->load("bills");

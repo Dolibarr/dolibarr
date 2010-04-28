@@ -26,7 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT."/product/product.class.php";
-require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
+require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php";
 
 
 /**

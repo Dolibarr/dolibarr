@@ -27,7 +27,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/product.class.php");
 
 $langs->load("companies");

@@ -128,7 +128,7 @@ if ($user->societe_id == 0)
 	// Class file containing the method load_state_board for each line
 	$includes=array(DOL_DOCUMENT_ROOT."/societe/client.class.php",
 	DOL_DOCUMENT_ROOT."/comm/prospect/prospect.class.php",
-	DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
+	DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
 	DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
 	DOL_DOCUMENT_ROOT."/product/product.class.php",
 	DOL_DOCUMENT_ROOT."/product/service.class.php",
@@ -424,7 +424,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
 {
 	$langs->load("bills");
 
-	include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
+	include_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 	$board=new FactureFournisseur($db);
 	$board->load_board($user);
 

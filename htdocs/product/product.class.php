@@ -1827,7 +1827,7 @@ class Product extends CommonObject
 	 */
 	function fastappro($user)
 	{
-		include_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
+		include_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php";
 
 		$list = $this->list_suppliers();
 		if (sizeof($list) > 0)
