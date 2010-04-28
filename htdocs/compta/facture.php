@@ -1542,6 +1542,12 @@ if ($_GET['action'] == 'create')
 			$element = $regs[1];
 			$subelement = $regs[2];
 		}
+		
+		// For compatibility
+		if ($element == 'order')    { $element = $subelement = 'commande'; }
+		if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
+		if ($element == 'contract') { $element = $subelement = 'contrat'; }
+		
 		require_once(DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php');
 		$classname = ucfirst($subelement);
 		$object = new $classname($db);
@@ -1549,11 +1555,11 @@ if ($_GET['action'] == 'create')
 		$object->fetch_client();
 		
 		$soc = $object->client;
-		$cond_reglement_id 	= $soc->cond_reglement_id;
-		$mode_reglement_id 	= $soc->mode_reglement_id;
-		$remise_percent 	= $soc->remise_percent;
-		$remise_absolue 	= 0;
-		//$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		$cond_reglement_id 	= (!empty($object->cond_reglement_id)?$object->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
+		$mode_reglement_id 	= (!empty($object->mode_reglement_id)?$object->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+		$remise_percent 	= (!empty($object->remise_percent)?$object->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+		$remise_absolue 	= (!empty($object->remise_absolue)?$object->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	else
 	{
@@ -1562,7 +1568,7 @@ if ($_GET['action'] == 'create')
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
-		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 	if (empty($cond_reglement_id)) $cond_reglement_id=1;
