@@ -351,7 +351,7 @@ if (is_dir($aliasDir))
 
 			$aliasContents.='<tr><td><ul class="aliases">';
 
-		    $aliasContents .= '<li><a href="'.preg_replace('/\.conf/','',$file).'/">';
+		    $aliasContents .= '<li><a target="_blank" href="'.preg_replace('/\.conf/','',$file).'/">';
 			$file = preg_replace('/\.conf/','',$file);
 			if (preg_match('/dolibarr/i',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>http://<i>ipofyourserver</i>'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td></tr>';
 			elseif (preg_match('/phpmyadmin/i',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
@@ -566,9 +566,9 @@ a:hover {
 
 	<h2>{$langues[$langue]['titrePage']}</h2>
 	<ul class="tools">
-		<li><a href="index.php?phpinfo=1">Phpinfo</a></li>
-		<li><a href="server-status">Server-status</a></li>
-		<li><a href="/dolibarr/support/index.php">{$langues[$langue]['askhelp']}</a></li>
+		<li><a target="_blank" href="index.php?phpinfo=1">Phpinfo</a></li>
+		<li><a target="_blank" href="server-status">Server-status</a></li>
+		<li><a target="_blank" href="/dolibarr/support/index.php">{$langues[$langue]['askhelp']}</a></li>
 	</ul>
 
 
