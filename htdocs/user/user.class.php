@@ -35,7 +35,7 @@
  \version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**

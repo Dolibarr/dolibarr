@@ -182,7 +182,7 @@ if ($conf->file->main_force_https)
 
 
 // Chargement des includes complementaires de presentation
-if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/core/menu.class.php");			// Need 10ko memory (11ko in 2.2)
+if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/core/class/menu.class.php");			// Need 10ko memory (11ko in 2.2)
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 660ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 22ko memory
 //stopwithmem();
@@ -511,7 +511,7 @@ if (! defined('NOLOGIN'))
 		// Create entity cookie, just used for login page
 		if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && !empty($conf->global->MAIN_MULTICOMPANY_COOKIE) && isset($_POST["entity"]))
 		{
-			include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
+			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
 
 			$entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
 			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);

@@ -1777,7 +1777,7 @@ else
 								{
 									if ($objp->description == '(CREDIT_NOTE)')
 									{
-										require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
+										require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 										$discount=new DiscountAbsolute($db);
 										$discount->fetch($objp->fk_remise_except);
 										print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));

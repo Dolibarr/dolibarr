@@ -31,7 +31,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/societe/client.class.php");
 
@@ -869,7 +869,7 @@ class Facture extends CommonObject
 		global $langs;
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		include_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
 		$this->db->begin();
 
@@ -1967,7 +1967,7 @@ class Facture extends CommonObject
 	 */
 	function getSumCreditNotesUsed()
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
 		$discountstatic=new DiscountAbsolute($this->db);
 		$result=$discountstatic->getSumCreditNotesUsed($this);
@@ -1988,7 +1988,7 @@ class Facture extends CommonObject
 	 */
 	function getSumDepositsUsed()
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
 		$discountstatic=new DiscountAbsolute($this->db);
 		$result=$discountstatic->getSumDepositsUsed($this);

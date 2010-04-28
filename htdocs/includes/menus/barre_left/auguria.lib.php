@@ -87,7 +87,7 @@ function print_left_auguria_menu($db,$menu_array)
 	 */
 	if ($mainmenu)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 		$menuArbo = new Menubase($db,'auguria','left');
 		$overwritemenufor = $menuArbo->listeMainmenu();

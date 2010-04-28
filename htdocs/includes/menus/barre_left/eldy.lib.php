@@ -829,7 +829,7 @@ function print_left_eldy_menu($db,$menu_array)
 		}
 
 		// Affichage des menus personnalises
-		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 		$menuArbo = new Menubase($db,'eldy','left');
 		$overwritemenufor = $menuArbo->listeMainmenu();

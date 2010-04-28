@@ -38,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
 
 
 if (! isset($argv[1]) || ! $argv[1]) {

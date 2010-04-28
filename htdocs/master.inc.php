@@ -138,7 +138,7 @@ if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_d
  * Create $conf object
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/conf.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/conf.class.php");
 
 $conf = new Conf();
 
@@ -278,7 +278,7 @@ if (! defined('NOREQUIREDB'))
 		$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 		if (! empty($_COOKIE[$entityCookieName]) && ! empty($conf->file->cookie_cryptkey)) 						// Just for view specific login page
 		{
-			include_once(DOL_DOCUMENT_ROOT."/core/cookie.class.php");
+			include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
 
 			$lastuser = '';
 			$lastentity = '';

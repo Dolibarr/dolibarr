@@ -961,7 +961,7 @@ class DolibarrModules
 	{
 		global $user;
 
-		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 		$err=0;
 

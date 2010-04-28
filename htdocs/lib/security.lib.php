@@ -119,7 +119,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$entityCookieName = 'DOLENTITYID_'.md5($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"]);
 			if (isset($_COOKIE[$entityCookieName]))
 			{
-				include_once(DOL_DOCUMENT_ROOT . "/core/cookie.class.php");
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
 
 				$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 

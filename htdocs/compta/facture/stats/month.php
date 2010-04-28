@@ -25,7 +25,7 @@
  */
 
 require("../../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
 
 $GRAPHWIDTH=500;
 $GRAPHHEIGHT=200;

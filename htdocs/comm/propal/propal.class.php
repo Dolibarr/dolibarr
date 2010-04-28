@@ -32,7 +32,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
 
@@ -192,7 +192,7 @@ class Propal extends CommonObject
 		global $langs;
 
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		include_once(DOL_DOCUMENT_ROOT.'/core/discount.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
 		$this->db->begin();
 

@@ -234,7 +234,7 @@ class InterfaceLogevents
         // Add entry in event table
         if ($this->date)
         {
-			include_once(DOL_DOCUMENT_ROOT.'/core/events.class.php');
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/events.class.php');
 
 			$event=new Events($this->db);
             $event->type=$action;

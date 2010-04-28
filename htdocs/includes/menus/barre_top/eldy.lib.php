@@ -361,7 +361,7 @@ function print_eldy_menu($db,$atarget,$hideifnotallowed)
 
 
 	// Show personalized menus
-	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
 
 	$menuArbo = new Menubase($db,'eldy','top');
 

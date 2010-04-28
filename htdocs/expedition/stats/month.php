@@ -27,7 +27,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/stats/expeditionstats.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
 
 
 llxHeader();
