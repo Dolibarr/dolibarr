@@ -279,7 +279,7 @@ class modSociete extends DolibarrModules
 		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/odttemplates/thirdparties';
 		create_exdir($dirodt);
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',$dirodt,0,0);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/thirdparties/template_thirdparty.odt',$dirodt.'/template_thirdparty.odt',0,0);
 
 		$sql = array();
 

@@ -219,7 +219,7 @@ class modFacture extends DolibarrModules
 		require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 		$dirodt=DOL_DATA_ROOT.'/odttemplates/invoices';
 		create_exdir($dirodt);
-		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/invoices/template_invoices.odt',$dirodt,0,0);
+		dol_copy(DOL_DOCUMENT_ROOT.'/install/odttemplates/invoices/template_invoice.odt',$dirodt.'/template_invoice.odt',0,0);
 
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
