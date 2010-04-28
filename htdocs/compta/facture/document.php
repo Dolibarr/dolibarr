@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 $langs->load('propal');
 $langs->load('compta');
 $langs->load('other');
+$langs->load("bills");
 
 if (!$user->rights->facture->lire)
 accessforbidden();
