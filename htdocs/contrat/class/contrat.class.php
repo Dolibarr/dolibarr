@@ -625,49 +625,12 @@ class Contrat extends CommonObject
 
 		if (! $error)
 		{
-			// Delete element_contact
-			/*
-			$sql = "DELETE ec";
-			$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
-			$sql.= " WHERE ec.fk_c_type_contact = tc.rowid";
-			$sql.= " AND tc.element='".$this->element."'";
-			$sql.= " AND ec.element_id=".$this->id;
-			*/
-
-			$sql = "SELECT ec.rowid as ecrowid";
-			$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
-			$sql.= " WHERE ec.fk_c_type_contact = tc.rowid";
-			$sql.= " AND tc.element='".$this->element."'";
-			$sql.= " AND ec.element_id=".$this->id;
-
-			dol_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if (! $resql)
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0)
 			{
-				$this->error=$this->db->error();
+				dol_syslog("Contract::delete error", LOG_ERR);
 				$error++;
-			}
-			$numressql=$this->db->num_rows($resql);
-			if (! $error && $numressql )
-			{
-				$tab_resql=array();
-				for($i=0;$i<$numressql;$i++)
-				{
-					$objresql=$this->db->fetch_object($resql);
-					$tab_resql[]= $objresql->ecrowid;
-				}
-				$this->db->free($resql);
-
-				$sql= "DELETE FROM ".MAIN_DB_PREFIX."element_contact ";
-				$sql.= " WHERE ".MAIN_DB_PREFIX."element_contact.rowid IN (".implode(",",$tab_resql).")";
-
-				dol_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
-				$resql=$this->db->query($sql);
-				if (! $resql)
-				{
-					$this->error=$this->db->error();
-					$error++;
-				}
 			}
 		}
 

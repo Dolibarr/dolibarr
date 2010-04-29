@@ -1930,29 +1930,41 @@ class Commande extends CommonObject
 
 		$this->db->begin();
 
+		// Delete order details
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
 		dol_syslog("Commande::delete sql=".$sql);
 		if (! $this->db->query($sql) )
 		{
-			dol_syslog("Commande::delete error", LOG_ERR);
+			dol_syslog("CustomerOrder::delete error", LOG_ERR);
 			$err++;
 		}
 
+		// Delete order
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
 		dol_syslog("Commande::delete sql=".$sql);
 		if (! $this->db->query($sql) )
 		{
-			dol_syslog("Commande::delete error", LOG_ERR);
+			dol_syslog("CustomerOrder::delete error", LOG_ERR);
 			$err++;
 		}
 
+		// Delete linked object
+		// TODO deplacer dans le common
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE fk_target = ".$this->id;
 		$sql.= " AND targettype = '".$this->element."'";
 		dol_syslog("Commande::delete sql=".$sql);
 		if (! $this->db->query($sql) )
 		{
-			dol_syslog("Commande::delete error", LOG_ERR);
+			dol_syslog("CustomerOrder::delete error", LOG_ERR);
+			$err++;
+		}
+		
+		// Delete linked contacts
+		$res = $this->delete_linked_contact();
+		if ($res < 0)
+		{
+			dol_syslog("CustomerOrder::delete error", LOG_ERR);
 			$err++;
 		}
 
@@ -1963,25 +1975,25 @@ class Commande extends CommonObject
 			$dir = $conf->commande->dir_output . "/" . $comref ;
 			$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
 			if (file_exists($file))
-	  {
-	  	commande_delete_preview($this->db, $this->id, $this->ref);
-
-	  	if (!dol_delete_file($file))
-	  	{
-	  		$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-	  		$this->db->rollback();
-	  		return 0;
-	  	}
-	  }
-	  if (file_exists($dir))
-	  {
-	  	if (!dol_delete_dir($dir))
-	  	{
-	  		$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-	  		$this->db->rollback();
-	  		return 0;
-	  	}
-	  }
+			{
+				commande_delete_preview($this->db, $this->id, $this->ref);
+				
+				if (!dol_delete_file($file))
+				{
+					$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+					$this->db->rollback();
+					return 0;
+				}
+			}
+			if (file_exists($dir))
+			{
+				if (!dol_delete_dir($dir))
+				{
+					$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+					$this->db->rollback();
+					return 0;
+				}
+			}
 		}
 
 		if ($err == 0)

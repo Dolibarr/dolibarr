@@ -1593,6 +1593,15 @@ class Propal extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$this->id;
 			if ( $this->db->query($sql) )
 			{
+				// Delete linked contacts
+				$res = $this->delete_linked_contact();
+				if ($res < 0)
+				{
+					$this->error='ErrorFailToDeleteLinkedContact';
+					$this->db->rollback();
+					return 0;
+				}
+				
 				// We remove directory
 				$propalref = dol_sanitizeFileName($this->ref);
 				if ($conf->propale->dir_output)
