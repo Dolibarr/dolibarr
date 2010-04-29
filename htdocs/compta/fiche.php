@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -443,7 +443,7 @@ if ($socid > 0)
 			if ($user->rights->facture->creer)
 			{
 				$langs->load("bills");
-				if ($societe->client != 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid=$societe->id">'.$langs->trans("AddBill").'</a>';
+				if ($societe->client != 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
 				else print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a>';
 			}
 			else
@@ -455,15 +455,16 @@ if ($socid > 0)
 		if ($conf->deplacement->enabled)
 		{
 			$langs->load("trips");
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create">'.$langs->trans("AddTrip").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a>';
 		}
 	}
 
+	// Add action
 	if ($conf->agenda->enabled)
 	{
 		if ($user->rights->agenda->myactions->create)
 		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddAction").'</a>';
 		}
 		else
 		{
@@ -473,7 +474,7 @@ if ($socid > 0)
 
 	if ($user->rights->societe->contact->creer)
 	{
-		print "<a class=\"butAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
+		print "<a class=\"butAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id."&amp;action=create\">".$langs->trans("AddContact")."</a>";
 	}
 
 	print '</div>';
