@@ -989,7 +989,7 @@ class Facture extends CommonObject
 			{
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql.= ' SET fk_facture = NULL';
-				$sql.= ' WHERE fk_facture in ('.join(',',$list_rowid_det).')';
+				$sql.= ' WHERE fk_facture IN ('.join(',',$list_rowid_det).')';
 
 				dol_syslog("Facture.class::delete sql=".$sql);
 				if (! $this->db->query($sql))
@@ -1002,7 +1002,7 @@ class Facture extends CommonObject
 			}
 
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
-			if ($this->db->query($sql))
+			if ($this->db->query($sql) && $this->delete_linked_contact())
 			{
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 				$resql=$this->db->query($sql);

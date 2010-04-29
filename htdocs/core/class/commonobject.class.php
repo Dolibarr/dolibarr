@@ -160,6 +160,38 @@ class CommonObject
 			return -1;
 		}
 	}
+	
+	/**
+	 *    \brief      Supprime une ligne de contact
+	 *    \return     statur        >0 si ok, <0 si ko
+	 */
+	function delete_linked_contact()
+	{
+		$temp = array();
+		$typeContact = $this->liste_type_contact(0);
+		
+		foreach($typeContact as $key => $value)
+		{
+			array_push($temp,$key);
+		}
+		$listId = implode(",", $temp);
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
+		$sql.= " WHERE element_id =".$this->id;
+		$sql.= " AND fk_c_type_contact IN (".$listId.")";
+
+		dol_syslog("CommonObject::delete_linked_contact sql=".$sql);
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("CommonObject::delete_linked_contact error=".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 *    \brief      Get array of all contacts for an object
@@ -249,11 +281,11 @@ class CommonObject
 
 	/**
 	 *      \brief      La liste des valeurs possibles de type de contacts
-	 *      \param      source      internal ou external
+	 *      \param      source      internal, external or all if not defined
 	 *      \param		order		Sort order by : code or rowid
 	 *      \return     array       La liste des natures
 	 */
-	function liste_type_contact($source, $order='code')
+	function liste_type_contact($source='internal', $order='code')
 	{
 		global $langs;
 
@@ -262,7 +294,7 @@ class CommonObject
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE tc.element='".$this->element."'";
-		$sql.= " AND tc.source='".$source."'";
+		if (!empty($source)) $sql.= " AND tc.source='".$source."'";
 		$sql.= " ORDER by tc.".$order;
 
 		$resql=$this->db->query($sql);
