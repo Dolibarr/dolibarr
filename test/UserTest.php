@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../htdocs/user/user.class.php';
+require_once dirname(__FILE__).'/../htdocs/user/class/user.class.php';
 
 if (empty($user->id))
 {

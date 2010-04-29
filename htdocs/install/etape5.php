@@ -149,7 +149,7 @@ if ($_POST["action"] == "set" || preg_match('/upgrade/i',$_POST["action"]))
 			$conf->setValues($db);
 
 			// Create user
-			include_once(DOL_DOCUMENT_ROOT ."/user/user.class.php");
+			include_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");
 
 			$createuser=new User($db);
 			$createuser->id=0;

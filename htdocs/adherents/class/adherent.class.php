@@ -497,7 +497,7 @@ class Adherent extends CommonObject
 			{
 				if ($this->user_id > 0 && ! $nosyncuser)
 				{
-					require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
+					require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
 					dol_syslog("Adherent::update update linked user");
 
@@ -766,7 +766,7 @@ class Adherent extends CommonObject
 
 				if ($this->user_id && ! $nosyncuser)
 				{
-					require_once(DOL_DOCUMENT_ROOT."/user/user.class.php");
+					require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
 					// This member is linked with a user, so we also update users informations
 					// if this is an update.
