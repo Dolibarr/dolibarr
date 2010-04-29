@@ -2291,7 +2291,7 @@ class Product extends CommonObject
 	 */
 	function ajust_stock($user, $id_entrepot, $nbpiece, $movement, $label='')
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php");
+		require_once(DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php");
 
 		$op[0] = "+".trim($nbpiece);
 		$op[1] = "-".trim($nbpiece);
@@ -2314,7 +2314,7 @@ class Product extends CommonObject
 	 */
 	function create_stock($user, $id_entrepot, $nbpiece, $movement=0, $label='')
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php");
+		require_once(DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php");
 
 		$op[0] = "+".trim($nbpiece);
 		$op[1] = "-".trim($nbpiece);

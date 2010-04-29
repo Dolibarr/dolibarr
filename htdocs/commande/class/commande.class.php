@@ -277,7 +277,7 @@ class Commande extends CommonObject
 			// If stock is incremented on validate order, we must increment it
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 				// Loop on each line
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
@@ -383,7 +383,7 @@ class Commande extends CommonObject
 			// If stock is decremented on validate order, we must reincrement it
 			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{

@@ -566,7 +566,7 @@ class CommandeFournisseur extends Commande
 				// If stock is incremented on validate order, we must increment it
 				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER == 1)
 				{
-					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 					{
@@ -923,7 +923,7 @@ class CommandeFournisseur extends Commande
 	function DispatchProducts($user, $products, $qtys, $entrepots)
 	{
 		global $conf;
-		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 
 		$this->db->begin();
 
@@ -945,7 +945,7 @@ class CommandeFournisseur extends Commande
 	{
 		global $conf;
 		$error = 0;
-		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 
 		dol_syslog("CommandeFournisseur::DispatchProduct");
 

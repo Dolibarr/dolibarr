@@ -35,7 +35,7 @@ if ($conf->produit->enabled || $conf->service->enabled)  require_once(DOL_DOCUME
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
 if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 
 $langs->load('orders');
 $langs->load("companies");

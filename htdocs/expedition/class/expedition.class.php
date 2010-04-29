@@ -81,7 +81,7 @@ class Expedition extends CommonObject
 	{
 		global $conf;
 
-		require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 		$error = 0;
 
 		// Clean parameters
@@ -370,7 +370,7 @@ class Expedition extends CommonObject
 			// If stock increment is done on sending (recommanded choice)
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 			{
-				require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+				require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 
 				// Loop on each product line to add a stock movement
 				// TODO possibilite d'expedier a partir d'une propale ou autre origine

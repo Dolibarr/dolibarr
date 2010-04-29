@@ -24,7 +24,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/stock.lib.php");
 

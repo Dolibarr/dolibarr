@@ -750,7 +750,7 @@ class User extends CommonObject
 
 					if (! empty($conf->global->STOCK_USERSTOCK) && ! empty($conf->global->STOCK_USERSTOCK_AUTOCREATE))
 					{
-						require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+						require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 						$entrepot = new Entrepot($this->db);
 						$entrepot->libelle = 'Stock Personnel '.$this->nom;
 						$entrepot->description = 'Cet entrepot represente le stock personnel de '.$this->prenom.' '.$this->nom;

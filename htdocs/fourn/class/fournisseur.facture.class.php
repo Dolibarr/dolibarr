@@ -589,7 +589,7 @@ class FactureFournisseur extends Facture
 			// Si activé on décrémente le produit principal et ses composants à la validation de facture
 			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
@@ -663,7 +663,7 @@ class FactureFournisseur extends Facture
 			// Si active on decremente le produit principal et ses composants a la validation de facture
 			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
