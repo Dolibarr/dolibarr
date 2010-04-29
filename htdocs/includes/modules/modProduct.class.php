@@ -27,7 +27,7 @@
  */
 
 /**
- *	\file       htdocs/includes/modules/modProduit.class.php
+ *	\file       htdocs/includes/modules/modProduct.class.php
  *	\ingroup    produit
  *	\brief      Fichier de description et activation du module Produit
  */
@@ -36,16 +36,16 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
- *	\class      modProduit
+ *	\class      modProduct
  *	\brief      Classe de description et activation du module Produit
  */
-class modProduit extends DolibarrModules
+class modProduct extends DolibarrModules
 {
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
 	 *   \param      DB      handler d'acces base
 	 */
-	function modProduit($DB)
+	function modProduct($DB)
 	{
 		global $conf;
 
@@ -65,7 +65,7 @@ class modProduit extends DolibarrModules
 		$this->picto='product';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/produit/temp");
+		$this->dirs = array("/product/temp");
 
 		// Dependencies
 		$this->depends = array();

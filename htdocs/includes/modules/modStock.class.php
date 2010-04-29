@@ -69,7 +69,7 @@ class modStock extends DolibarrModules
 		$this->config_page_url = array("stock.php");
 
 		// Dependencies
-		$this->depends = array("modProduit");
+		$this->depends = array("modProduct");
 		$this->requiredby = array();
 		$this->langfiles = array("stocks");
 

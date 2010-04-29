@@ -62,7 +62,7 @@ class modBarcode extends DolibarrModules
 		$this->dirs = array("/barcode/temp");
 
 		// Dependances
-		$this->depends = array("modProduit");
+		$this->depends = array("modProduct");
 		$this->requiredby = array();
 
 		// Config pages
