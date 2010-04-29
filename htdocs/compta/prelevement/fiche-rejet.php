@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/*
- * \version	$Id$
+/**
+ * 		\file       htdocs/compta/prelevement/fiche-rejet.php
+ *		\brief      Prelevement
+ * 		\version	$Id$
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 

@@ -25,6 +25,7 @@
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();

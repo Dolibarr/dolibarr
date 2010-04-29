@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/bon-prelevement.class.php
-        \ingroup    prelevement
-        \brief      Fichier de la classe des bons de prelevements
-        \version    $Id$
-*/
+ *      \file       htdocs/compta/prelevement/class/bon-prelevement.class.php
+ *      \ingroup    prelevement
+ *      \brief      Fichier de la classe des bons de prelevements
+ *      \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
@@ -256,7 +256,7 @@ class BonPrelevement extends CommonObject
             }
             else
             {
-                dol_syslog("BonPrelevement::Fetch Erreur aucune ligne retourn�e");
+                dol_syslog("BonPrelevement::Fetch Erreur aucune ligne retournee");
                 return -1;
             }
         }

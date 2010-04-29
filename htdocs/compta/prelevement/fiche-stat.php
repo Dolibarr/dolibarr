@@ -17,11 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/*
- * 	\version	$Id$
+/**
+ *	\file       htdocs/compta/prelevement/fiche-stat.php
+ *	\brief      Prelevement
+ *	\version    $Id$
  */
 
 require('../../main.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();

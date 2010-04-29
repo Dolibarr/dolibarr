@@ -18,23 +18,24 @@
  */
 
 /**
-        \file       htdocs/compta/prelevement/bon.php
-        \ingroup    prelevement
-        \brief      Fiche apercu du bon de prelevement
-        \version    $Id$
-*/
+ *      \file       htdocs/compta/prelevement/bon.php
+ *      \ingroup    prelevement
+ *      \brief      Fiche apercu du bon de prelevement
+ *      \version    $Id$
+ */
 
 require('../../main.inc.php');
+require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php";
 
 $langs->load("bills");
 
 /*
- * S�curit� acc�s client
+ * Securite acces client
  */
 if (!$user->rights->prelevement->bons->lire) accessforbidden();
 
 
-llxHeader('','Bon de pr�l�vement');
+llxHeader('','Bon de prelevement');
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -75,7 +76,7 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dol_fiche_head($head, $hselected, 'Pr�l�vement : '. $bon->ref);
+      dol_fiche_head($head, $hselected, 'Prelevement : '. $bon->ref);
 
       print '<table class="border" width="100%">';
 
