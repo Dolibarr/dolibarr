@@ -1482,7 +1482,7 @@ class Societe extends CommonObject
 	{
 		global $langs;
 
-		require_once DOL_DOCUMENT_ROOT . "/societe/companybankaccount.class.php";
+		require_once DOL_DOCUMENT_ROOT . "/societe/class/companybankaccount.class.php";
 
 		$bac = new CompanyBankAccount($this->db);
 		$bac->socid = $this->id;
@@ -1505,7 +1505,7 @@ class Societe extends CommonObject
 	 */
 	function load_ban()
 	{
-		require_once DOL_DOCUMENT_ROOT . "/societe/companybankaccount.class.php";
+		require_once DOL_DOCUMENT_ROOT . "/societe/class/companybankaccount.class.php";
 
 		$bac = new CompanyBankAccount($this->db, $this->id);
 		$bac->fetch($this->id);

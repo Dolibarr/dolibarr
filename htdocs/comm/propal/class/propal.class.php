@@ -733,7 +733,7 @@ class Propal extends CommonObject
 		$object->id=0;
 		$object->statut=0;
 
-		require_once(DOL_DOCUMENT_ROOT ."/societe/societe.class.php");
+		require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
 		$objsoc=new Societe($this->db);
 		$objsoc->fetch($object->socid);
 

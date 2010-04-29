@@ -125,7 +125,7 @@ function show_array_actions_to_do($max=5)
 	global $langs, $conf, $user, $db, $bc, $socid;
 
 	include_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
-	include_once(DOL_DOCUMENT_ROOT.'/societe/client.class.php');
+	include_once(DOL_DOCUMENT_ROOT.'/societe/class/client.class.php');
 
 	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle,";

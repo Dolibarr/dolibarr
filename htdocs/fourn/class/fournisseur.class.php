@@ -25,7 +25,7 @@
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php");
 

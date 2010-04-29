@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-include_once(DOL_DOCUMENT_ROOT.'/societe/societe.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php');
 

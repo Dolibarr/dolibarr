@@ -218,7 +218,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 // Chargement des includes principaux de librairies communes
 if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user/user.class.php");		// Need 500ko memory
 if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/core/class/translate.class.php");
-if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe/societe.class.php");
+if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
 if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 
 /*
@@ -334,7 +334,7 @@ if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
  */
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/societe/societe.class.php");
+	require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
 	$mysoc=new Societe($db);
 
 	$mysoc->id=0;

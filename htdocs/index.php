@@ -126,7 +126,7 @@ if ($user->societe_id == 0)
 	! empty($conf->telephonie->enabled) && $user->rights->telephonie->lire,
 	! empty($conf->societe->enabled) && $user->rights->contrat->activer);
 	// Class file containing the method load_state_board for each line
-	$includes=array(DOL_DOCUMENT_ROOT."/societe/client.class.php",
+	$includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
 	DOL_DOCUMENT_ROOT."/comm/prospect/prospect.class.php",
 	DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
 	DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",

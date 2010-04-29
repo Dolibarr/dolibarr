@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 // Recupere root dolibarr
 $path=preg_replace('/generate-commande.php/i','',$_SERVER["PHP_SELF"]);
 require ($path."../htdocs/master.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/societe/societe.class.php");
+include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
