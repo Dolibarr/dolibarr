@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ if ($_GET["action"] == 'create')
 		/*
 		 * Invoice lines
 		 */
-		print '<table class="noborder" width="100%">';
+		print '<table class="notopnoleftnoright" width="100%">';
 		print '<tr><td colspan="3">';
 
 		$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
