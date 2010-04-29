@@ -604,7 +604,7 @@ if ($socid > 0)
 			$num = $db->num_rows($result);
 			if ($num > 0)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+				require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
 				$projectstatic = new Project($db);
 

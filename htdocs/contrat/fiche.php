@@ -28,7 +28,7 @@
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
-if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 if ($conf->projet->enabled)  require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");

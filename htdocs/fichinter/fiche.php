@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 if ($conf->projet->enabled)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
-	require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 }
 if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {

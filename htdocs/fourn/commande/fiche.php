@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php";
 require_once DOL_DOCUMENT_ROOT."/lib/fourn.lib.php";
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
+if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
 $langs->load('orders');
 $langs->load('sendings');

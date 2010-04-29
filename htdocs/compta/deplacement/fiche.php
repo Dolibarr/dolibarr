@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 if ($conf->projet->enabled)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
-	require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 }
 
 $langs->load("trips");

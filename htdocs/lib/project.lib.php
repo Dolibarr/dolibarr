@@ -565,7 +565,7 @@ function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 {
 	global $langs,$conf,$user;
 
-	require_once(DOL_DOCUMENT_ROOT."/projet/project.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
 	$projectstatic=new Project($db);
 

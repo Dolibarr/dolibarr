@@ -42,7 +42,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/project.class.php');
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
 
