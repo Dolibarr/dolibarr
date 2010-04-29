@@ -1029,8 +1029,8 @@ class CommonObject
 			// TODO uniformiser emplacement classe
 			$classpath = $object.'/class';
 			$tplpath = $object;
-			if ($object == 'facture') $tplpath = $classpath = 'compta/'.$object;
-			if ($object == 'propal') $tplpath = $classpath = 'comm/'.$object;
+			if ($object == 'facture') $tplpath = 'compta/'.$object; $classpath = $tplpath.'/class';
+			if ($object == 'propal') $tplpath = 'comm/'.$object; $classpath = $tplpath.'/class';
 
 			$classname = ucfirst($object);
 			if(!class_exists($classname)) require(DOL_DOCUMENT_ROOT."/".$classpath."/".$object.".class.php");

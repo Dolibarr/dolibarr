@@ -662,7 +662,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->remise_absolue    = $_POST['remise_absolue'];
 			$facture->remise_percent    = $_POST['remise_percent'];
 
-			// If creation from proposal
+			// If creation from other modules
 			if ($_POST['origin'] && $_POST['originid'])
 			{
 				// Parse element/subelement (ex: project_task)
