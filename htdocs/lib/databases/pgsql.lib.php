@@ -455,10 +455,11 @@ class DoliDb
 
 	/**
 	 * \brief      	Convert request to PostgreSQL syntax, execute it and return the resultset
-	 * \param		query		query string
-	 * \return	    resource    Resultset of answer
+	 * \param		query			SQL query string
+	 * \param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+	 * \return	    resource    	Resultset of answer
 	 */
-	function query($query)
+	function query($query,$usesavepoint=0)
 	{
 		$query = trim($query);
 
@@ -478,6 +479,11 @@ class DoliDb
 			else $loop=false;
 		}
 
+		if ($usesavepoint)
+		{
+			@pg_query($this->db, 'SAVEPOINT mysavepoint');
+		}
+
 		$ret = @pg_query($this->db, $query);
 		//print $query;
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
@@ -490,6 +496,11 @@ class DoliDb
 				$this->lasterrno = $this->errno();
 				//print "\n>> ".$query."<br>\n";
 				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
+
+				if ($usesavepoint)
+				{
+					@pg_query($this->db, 'ROLLBACK TO SAVEPOINT mysavepoint');
+				}
 			}
 			$this->lastquery=$query;
 			$this->results = $ret;
@@ -882,10 +893,18 @@ class DoliDb
 	 * \param	    database	Nom de la database
 	 * \return	    resource
 	 */
-	function DDLListTables($database)
+	function DDLListTables($database, $table='')
 	{
-		$this->results = pg_query($this->db, "SHOW TABLES");
-		return  $this->results;
+		$listtables=array();
+
+		$like = '';
+		if ($table) $like = " AND table_name LIKE '".$table."'";
+		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like);
+		while($row = $this->fetch_row($result))
+		{
+			$listtables[] = $row[0];
+		}
+		return  $listtables;
 	}
 
 	/**

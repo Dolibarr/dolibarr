@@ -361,11 +361,13 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief      Effectue une requete et renvoi le resultset de reponse de la base
-	 *	\param	    query	    Contenu de la query
-	 *	\return	    resource    Resultset de la reponse
+	 * 	\brief     	Execute a SQL request and return the resultset
+	 * 	\param		query			SQL query string
+	 * 	\param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+	 * 								Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 *	\return	    resource    	Resultset of answer
 	 */
-	function query($query)
+	function query($query,$usesavepoint=0)
 	{
 		$query = trim($query);
 		if (! $this->database_name)
@@ -811,10 +813,10 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief     	Liste des tables dans une database.
-	 *	\param	    database		Nom de la database
-	 *	\param	    table   		Filtre sur tables a rechercher
-	 *	\return	    array			Tableau des tables de la base
+	 *	\brief     	List tables into a database.
+	 *	\param	    database		Name of database
+	 *	\param	    table   		Filter on some tables
+	 *	\return	    array			Array list of tables
 	 */
 	function DDLListTables($database, $table='')
 	{

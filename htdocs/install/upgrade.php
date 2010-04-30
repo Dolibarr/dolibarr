@@ -320,7 +320,7 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 			$name = substr($file, 0, strlen($file) - 4);
 
 			// Run sql script
-			$ok=run_sql($dir.$file, 0);
+			$ok=run_sql($dir.$file, 0, '', 1);
 		}
 	}
 

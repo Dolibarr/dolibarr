@@ -186,7 +186,7 @@ if ($ok)
 		$name = substr($file, 0, strlen($file) - 4);
 
 		// Run sql script
-		$ok=run_sql($dir.$file, 0);
+		$ok=run_sql($dir.$file, 0, '', 1);
 	}
 }
 

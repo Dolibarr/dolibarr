@@ -83,17 +83,20 @@ function versionphparray()
  *	\return     array               Tableau de version (vermajeur,vermineur,autre)
  */
 function versiondolibarrarray($fortest=0)
-{	
+{
 	return explode('.',DOL_VERSION);
 }
 
 
 /**
  *	\brief		Launch a sql file
- *	\param		sqlfile		Full path to sql file
- *	\return		int			<=0 if KO, >0 if OK
+ *	\param		sqlfile			Full path to sql file
+ * 	\param		silent			1=Do not output anything, 0=Output line for update page
+ * 	\param		entity			Entity targeted for multicompany module
+ *	\param		usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ * 	\return		int				<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile,$silent=1,$entity='')
+function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 {
 	global $db, $conf, $langs, $user;
 
@@ -153,7 +156,7 @@ function run_sql($sqlfile,$silent=1,$entity='')
 	}
 
 	// Loop on each request to see if there is a __+MAX_table__ key
-	$listofmaxrowid=array();
+	$listofmaxrowid=array();	// This is a cache table
 	foreach($arraysql as $i => $sql)
 	{
 		if ($sql)
@@ -224,7 +227,7 @@ function run_sql($sqlfile,$silent=1,$entity='')
 				dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
 			}
 
-			$result=$db->query($newsql);
+			$result=$db->query($newsql,$usesavepoint);
 			if ($result)
 			{
 				if (preg_replace('/insert into ([^\s]+)/i',$newsql,$reg))

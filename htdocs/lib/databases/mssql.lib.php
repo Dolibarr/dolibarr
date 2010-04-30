@@ -309,10 +309,11 @@ class DoliDb
 
 	/**
 	 *	\brief      Effectue une requete et renvoi le resultset de reponse de la base
-	 *	\param	    query	    Contenu de la query
-	 *	\return	    resource    Resultset de la reponse
+	 *	\param	    query	    	SQL query string
+	 * 	\param		usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
+	 * 	\return	    resource    	Resultset of answer
 	 */
-	function query($query)
+	function query($query,$usesavepoint=0)
 	{
 		$query = trim($query);
 
@@ -782,11 +783,12 @@ class DoliDb
 	}
 
 	/**
-		\brief      Liste des tables dans une database.
-		\param	    database	Nom de la database
-		\return	    resource
-		*/
-	function DDLListTables($database)
+	 *	\brief     	List tables into a database.
+	 *	\param	    database		Name of database
+	 *	\param	    table   		Filter on some tables
+	 *	\return	    array			Array list of tables
+	 */
+	function DDLListTables($database,$table='')
 	{
 		$this->results = mssql_list_tables($database, $this->db);
 		return $this->results;
@@ -970,7 +972,7 @@ class DoliDb
 	  }
 	  return $liste;
 	  */
-		return ''; // attente d�buggage
+		return ''; // attente debuggage
 	}
 
 	function getDefaultCollationDatabase()
