@@ -83,13 +83,8 @@ function versionphparray()
  *	\return     array               Tableau de version (vermajeur,vermineur,autre)
  */
 function versiondolibarrarray($fortest=0)
-{
-	$dol_version = DOL_VERSION;
-	
-	// Used for development version
-	if ($fortest) $dol_version = preg_replace('/([A-Z\-]+)$/i','',DOL_VERSION);
-	
-	return explode('.',$dol_version);
+{	
+	return explode('.',DOL_VERSION);
 }
 
 
