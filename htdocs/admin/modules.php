@@ -98,7 +98,7 @@ function Activate($value,$withdeps=1)
 		}
 
 		// Test if Dolibarr version ok
-		$verdol=versiondolibarrarray();
+		$verdol=versiondolibarrarray(1);
 		$vermin=$objMod->need_dolibarr_version;
 		//print 'eee'.versioncompare($verdol,$vermin).join(',',$verdol).' - '.join(',',$vermin);exit;
 		if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
