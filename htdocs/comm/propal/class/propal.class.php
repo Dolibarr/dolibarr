@@ -92,6 +92,9 @@ class Propal extends CommonObject
 	var $products=array();
 
 	var $lines = array();
+	
+	var $origin;
+	var $origin_id;
 
 	var $labelstatut=array();
 	var $labelstatut_short=array();
@@ -632,6 +635,13 @@ class Propal extends CommonObject
 							dol_print_error($this->db);
 							break;
 						}
+				}
+				
+				// Add linked object
+				if ($this->origin && $this->origin_id)
+				{
+					$ret = $this->add_object_linked();
+					if (! $ret)	dol_print_error($this->db);
 				}
 
 				// Affectation au projet
@@ -1231,6 +1241,7 @@ class Propal extends CommonObject
 				// Propale signee
 				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
+				// TODO move in triggers
 				$result=$this->create_commande($user);
 
 				if ($result >= 0)
@@ -1303,6 +1314,7 @@ class Propal extends CommonObject
 	 *      \brief      Cree une commande a partir de la proposition commerciale
 	 *      \param      user        Utilisateur
 	 *      \return     int         <0 si ko, >=0 si ok
+	 *      TODO move in triggers
 	 */
 	function create_commande($user)
 	{

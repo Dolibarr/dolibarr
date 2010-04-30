@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
@@ -30,10 +30,13 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
+require_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
 $langs->load('companies');
 $langs->load('propal');
@@ -41,10 +44,6 @@ $langs->load('compta');
 $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
-
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/comm/action/actioncomm.class.php');
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 if (isset($_GET["msg"])) { $mesg=$_GET["mesg"]; }
@@ -265,21 +264,24 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	}
 	else
 	{
-		$propal->ref        = $_POST['ref'];
-		$propal->ref_client = $_POST['ref_client'];
-		$propal->datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-		$propal->fk_delivery_address = $_POST['fk_delivery_address'];
-		$propal->adresse_livraison_id = $_POST['fk_delivery_address']; // TODO obsolete
-		$propal->duree_validite = $_POST['duree_validite'];
-		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
-		$propal->mode_reglement_id = $_POST['mode_reglement_id'];
+		$propal->ref					= $_POST['ref'];
+		$propal->ref_client 			= $_POST['ref_client'];
+		$propal->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$propal->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+		$propal->fk_delivery_address 	= $_POST['fk_delivery_address'];
+		$propal->adresse_livraison_id 	= $_POST['fk_delivery_address']; // TODO obsolete
+		$propal->duree_validite 		= $_POST['duree_validite'];
+		$propal->cond_reglement_id 		= $_POST['cond_reglement_id'];
+		$propal->mode_reglement_id 		= $_POST['mode_reglement_id'];
 
 		$propal->contactid  = $_POST['contactidp'];
 		$propal->fk_project = $_POST['projectid'];
 		$propal->modelpdf   = $_POST['model'];
 		$propal->author     = $user->id;		// deprecated
 		$propal->note       = $_POST['note'];
+		
+		$propal->origin		= $_POST['origin'];
+		$propal->origin_id	= $_POST['originid'];
 
 		for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
 		{
