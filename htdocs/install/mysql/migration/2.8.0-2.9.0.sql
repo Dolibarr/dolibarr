@@ -150,7 +150,7 @@ create table llx_c_field_list
   rang      	integer 		DEFAULT 0
 )type=innodb;
 
-INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `title`, `align`, `sort`, `search`, `enabled`, `rang`) VALUES
+INSERT INTO llx_c_field_list (rowid, element, entity, name, alias, title, align, sort, search, enabled, rang) VALUES
 (1, 'product_default', 1, 'p.ref', 'ref', 'Ref', 'left', 1, 1, '1', 1),
 (2, 'product_default', 1, 'p.label', 'label', 'Label', 'left', 1, 1, '1', 2),
 (3, 'product_default', 1, 'p.barcode', 'barcode', 'BarCode', 'center', 1, 1, '$conf->barcode->enabled', 3),
