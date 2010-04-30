@@ -1241,7 +1241,6 @@ class Propal extends CommonObject
 				// Propale signee
 				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
-				// TODO move in triggers
 				$result=$this->create_commande($user);
 
 				if ($result >= 0)
@@ -1314,7 +1313,6 @@ class Propal extends CommonObject
 	 *      \brief      Cree une commande a partir de la proposition commerciale
 	 *      \param      user        Utilisateur
 	 *      \return     int         <0 si ko, >=0 si ok
-	 *      TODO move in triggers
 	 */
 	function create_commande($user)
 	{

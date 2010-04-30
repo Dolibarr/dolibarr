@@ -112,6 +112,7 @@ class Commande extends CommonObject
 	 * 		\brief      Cree la commande depuis une propale existante
 	 *		\param      user            Utilisateur qui cree
 	 *		\param      propale_id      id de la propale qui sert de modele
+	 *		TODO move in trigger
 	 */
 	function create_from_propale($user, $propale_id)
 	{
@@ -158,7 +159,9 @@ class Commande extends CommonObject
 		$soc = new Societe($this->db);
 		$soc->id = $this->socid;
 		$soc->set_as_client();
-		$this->propale_id = $propal->id;
+		
+		$this->origin 		= $propal->element;
+		$this->origin_id 	= $propal->id;
 
 		return $this->create($user);
 	}
