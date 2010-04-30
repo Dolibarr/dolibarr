@@ -354,8 +354,23 @@ class Project extends CommonObject
 	function delete($user, $notrigger=0)
 	{
 		global $conf;
+		
+		$error=0;
 
 		$this->db->begin();
+		
+		if (! $error)
+		{
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0)
+			{
+				$this->error='ErrorFailToDeleteLinkedContact';
+				//$error++;
+				$this->db->rollback();
+				return 0;
+			}
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
 		$sql.= " WHERE rowid=".$this->id;

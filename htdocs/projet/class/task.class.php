@@ -320,6 +320,19 @@ class Task extends CommonObject
 			$this->db->rollback();
 			return 0;
 		}
+		
+		if (! $error)
+		{
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0)
+			{
+				$this->error='ErrorFailToDeleteLinkedContact';
+				//$error++;
+				$this->db->rollback();
+				return 0;
+			}
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE rowid=".$this->id;
