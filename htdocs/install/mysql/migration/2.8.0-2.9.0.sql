@@ -161,7 +161,7 @@ INSERT INTO `llx_c_field_list` (`rowid`, `element`, `entity`, `name`, `alias`, `
 (8, 'product_default', 1, 'p.envente', 'status', 'Status', 'right', 1, 0, '1', 8);
 
 
-UPDATE llx_adherent SET pays = null where pays <= 0 and pays != '0';
+UPDATE llx_adherent SET pays = null where pays <= '0' and pays != '0';
 ALTER table llx_adherent MODIFY pays integer;
 
 -- add milestone module

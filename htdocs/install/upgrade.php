@@ -224,9 +224,9 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 	}
 
 	/*
-	 * Remove deprecated indexes and constraints
+	 * Remove deprecated indexes and constraints for Mysql
 	 */
-	if ($ok)
+	if ($ok && preg_match('/mysql/',$db->type))
 	{
 		$versioncommande=explode('.','4.0');
 		if (sizeof($versioncommande) && sizeof($versionarray)
@@ -279,9 +279,7 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 	 */
 	if ($ok)
 	{
-		if ($choix==1) $dir = "mysql/migration/";
-		elseif ($choix==2) $dir = "pgsql/migration/";
-		else $dir = "mssql/migration/";
+		$dir = "mysql/migration/";		// We use mysql migration scripts whatever is database driver
 
 		$filelist=array();
 		$i = 0;
@@ -292,11 +290,18 @@ if (! isset($_GET["action"]) || preg_match('/upgrade/i',$_GET["action"]))
 		# Recupere list fichier
 		$filesindir=array();
 		$handle=opendir($dir);
-		while (($file = readdir($handle))!==false)
+		if ($handle)
 		{
-			if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+			while (($file = readdir($handle))!==false)
+			{
+				if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+			}
+			sort($filesindir);
 		}
-		sort($filesindir);
+		else
+		{
+			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$dir).'</div>';
+		}
 
 		# Define which file to run
 		foreach($filesindir as $file)
