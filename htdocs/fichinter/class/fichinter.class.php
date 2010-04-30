@@ -517,8 +517,23 @@ class Fichinter extends CommonObject
 	function delete($user)
 	{
 		global $conf;
+		
+		$error=0;
 
 		$this->db->begin();
+		
+		if (! $error)
+		{
+			// Delete linked contacts
+			$res = $this->delete_linked_contact();
+			if ($res < 0)
+			{
+				$this->error='ErrorFailToDeleteLinkedContact';
+				//$error++;
+				$this->db->rollback();
+				return 0;
+			}
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter = ".$this->id;
