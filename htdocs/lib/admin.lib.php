@@ -249,6 +249,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1)
 				$okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
 				'DB_ERROR_COLUMN_ALREADY_EXISTS',
 				'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+				'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',		// PgSql use same code for table and key already exist
 				'DB_ERROR_RECORD_ALREADY_EXISTS',
 				'DB_ERROR_NOSUCHTABLE',
 				'DB_ERROR_NOSUCHFIELD',

@@ -163,6 +163,9 @@ class DoliDb
 		}
 		if ($line != "")
 		{
+			# We remove end of request "AFTER fieldxxx"
+			$line=preg_replace('/AFTER [a-z_]+/i','',$line);
+
 			# we are inside create table statement so lets process datatypes
 			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
 				$line=preg_replace('/\)[\s\t]*type=(MyISAM|innodb);/i',');',$line);
@@ -754,6 +757,7 @@ class DoliDb
 			'42P07' => 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS',
 			'42703' => 'DB_ERROR_NOSUCHFIELD',
 			1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+			42701=> 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
 			'42704' => 'DB_ERROR_SYNTAX',
