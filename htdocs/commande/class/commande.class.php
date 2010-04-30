@@ -76,6 +76,9 @@ class Commande extends CommonObject
 	var $modelpdf;
 	var $info_bits;
 	var $source;			// Origin of order
+	
+	var $origin;
+	var $origin_id;
 
 	var $user_author_id;
 
@@ -665,37 +668,38 @@ class Commande extends CommonObject
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 				if ($this->db->query($sql))
 				{
-					if ($this->id && $this->propale_id)
+					if ($this->id)
 					{
-						// Add proposal link
-						// TODO normaliser ?
-						$this->origin_id = $this->propale_id;
-						$this->origin = "propal";
-						$ret = $this->add_object_linked();
-						if (! $ret)
+						// Add linked object
+						if ($this->origin && $this->origin_id)
 						{
-							dol_print_error($this->db);
+							$ret = $this->add_object_linked();
+							if (! $ret)	dol_print_error($this->db);
 						}
-
-						// On recupere les differents contact interne et externe
-						$prop = New Propal($this->db, $this->socid, $this->propale_id);
-
-						// On recupere le commercial suivi propale
-						$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-
-						if ($this->userid)
+						
+						// TODO mutualiser
+						if ($this->origin == 'propal' && $this->origin_id)
 						{
-							//On passe le commercial suivi propale en commercial suivi commande
-							$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-						}
+							// On recupere les differents contact interne et externe
+							$prop = New Propal($this->db, $this->socid, $this->origin_id);
+							
+							// On recupere le commercial suivi propale
+							$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
+							
+							if ($this->userid)
+							{
+								//On passe le commercial suivi propale en commercial suivi commande
+								$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+							}
 
-						// On recupere le contact client suivi propale
-						$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-
-						if ($this->contactid)
-						{
-							//On passe le contact client suivi propale en contact client suivi commande
-							$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+							// On recupere le contact client suivi propale
+							$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
+							
+							if ($this->contactid)
+							{
+								//On passe le contact client suivi propale en contact client suivi commande
+								$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+							}
 						}
 					}
 
