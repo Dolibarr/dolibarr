@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/projet/tasks/task.class.php
+ *      \file       htdocs/projet/class/task.class.php
  *      \ingroup    project
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
  *		\version    $Id$

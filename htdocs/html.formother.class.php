@@ -324,7 +324,7 @@ class FormOther
 	{
 		global $user, $langs;
 
-		require_once(DOL_DOCUMENT_ROOT."/projet/tasks/task.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 
 		//print $modeproject.'-'.$modetask;
 		$task=new Task($this->db);
