@@ -50,55 +50,12 @@ else if ($_POST["action"] == 'multiprix_num')
 }
 if ($_POST["action"] == 'multiprix')
 {
-	$res=$db->DDLDescTable(MAIN_DB_PREFIX."societe","price_level");
-	if(! $db->fetch_row($res))
-	{
-		$field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
-		if ($_POST["activate_multiprix"])
-		{
-			// on ajoute le champ price_level dans la table societe
-			if ($db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc) < 0)
-			{
-				dol_print_error($db);
-				exit;
-			}
-		}
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
-	}
-	else
-	{
-		dol_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
-	}
+	dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'sousproduits')
 {
-	$res=$db->DDLDescTable(MAIN_DB_PREFIX."product_association");
-	if(! $db->fetch_row($res))
-	{
-		$table = MAIN_DB_PREFIX."product_association";
-		$fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
-		$fields['fk_product_fils'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
-		$fields['qty'] = array('type'=>'double','default'=> 'null');
-		$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
-		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
-		if ($db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) < 0)
-		{
-			dol_print_error($db);
-			exit;
-		}
-		else
-		{
-			dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
-		}
-	}
-	else
-	{
-		dol_syslog("Table definition already ok");
-		dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
-	}
+	dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"],'chaine',0,'',$conf->entity);
 }
 else if ($_POST["action"] == 'viewProdDescInForm')
 {
@@ -279,41 +236,41 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	// Add canvas feature
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
 	$var = false;
-	
+
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
 	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 	print '<td width="80">&nbsp;</td></tr>'."\n";
-	
+
 	if (is_dir($dir))
 	{
 		require_once(DOL_DOCUMENT_ROOT . "/product/class/product.class.php");
-		
+
 		$handle=opendir($dir);
-		
+
 		while (($file = readdir($handle))!==false)
 		{
 			if (file_exists($dir.$file.'/product.'.$file.'.class.php'))
 			{
 				$classfile = $dir.$file.'/product.'.$file.'.class.php';
 				$classname = 'Product'.ucfirst($file);
-				
+
 				require_once($classfile);
 				$object = new $classname();
-				
+
 				$module = $object->module;
-				
+
 				if ($conf->$module->enabled)
 				{
 					$var=!$var;
 					print "<tr $bc[$var]><td>";
-					
+
 					print $object->description;
-					
+
 					print '</td><td align="right">';
-					
+
 					$const = "PRODUCT_SPECIAL_".strtoupper($file);
-					
+
 					if ($conf->global->$const)
 					{
 						print img_tick();
@@ -325,19 +282,19 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 						print '&nbsp;</td><td align="right">';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=1">'.$langs->trans("Activate").'</a>';
 					}
-					
+
 					print '</td></tr>';
 				}
 			}
 		}
-		
+
 		closedir($handle);
 	}
 	else
 	{
 		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 	}
-	
+
 	print '</table>';
 }
 
