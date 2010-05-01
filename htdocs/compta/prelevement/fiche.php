@@ -54,6 +54,8 @@ if ($_POST["action"] == 'confirm_credite' && $_POST["confirm"] == yes)
 
 if ($_POST["action"] == 'infotrans')
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	$bon = new BonPrelevement($db,"");
 	$bon->fetch($_GET["id"]);
 

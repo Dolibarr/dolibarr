@@ -60,36 +60,18 @@ class AntiVir
 
 		$return = 0;
 
-		$maxreclevel = 5 ; 			// maximal recursion level
-		$maxfiles = 1000; 			// maximal number of files to be scanned within archive
-		$maxratio = 200; 			// maximal compression ratio
-		$bz2archivememlim = 0; 		// limit memory usage for bzip2 (0/1)
-		$maxfilesize = 10485760; 	// archived files larger than this value (in bytes) will not be scanned
-
 		@set_time_limit($cfg['ExecTimeLimit']);
 		$outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
 
-		$command=$conf->global->MAIN_ANTIVIRUS_COMMAND;
-		$param=$conf->global->MAIN_ANTIVIRUS_PARAM;
-
-		$param=preg_replace('/%maxreclevel/',$maxreclevel,$param);
-		$param=preg_replace('/%maxfiles/',$maxfiles,$param);
-		$param=preg_replace('/%maxratio/',$maxratiod,$param);
-		$param=preg_replace('/%bz2archivememlim/',$bz2archivememlim,$param);
-		$param=preg_replace('/%maxfilesize/',$maxfilesize,$param);
-		$param=preg_replace('/%file/',trim($file),$param);
-
-		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
-			$param=$param." ".escapeshellarg(trim($file));
-
-		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
+		$fullcommand=$this->getCliCommand($file);
+		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
 
 		$output=array();
 		$return_var=0;
 		// Create a clean fullcommand
-		$fullcommand=$command.' '.$param.' 2>&1';
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand);
 		exec($fullcommand, $output, $return_var);
+
 
 		/*
 		$handle = fopen($outputfile, 'w');
@@ -137,6 +119,44 @@ class AntiVir
 
 		// If return code = 0
 		return 1;
+	}
+
+
+
+	/**
+	 *	\brief  	get full Command Line to run
+	 *	\param	 	file			File to scan
+	 *	\return	 	string			Full command line to run
+	 */
+	function getCliCommand($file)
+	{
+		global $conf;
+
+		$maxreclevel = 5 ; 			// maximal recursion level
+		$maxfiles = 1000; 			// maximal number of files to be scanned within archive
+		$maxratio = 200; 			// maximal compression ratio
+		$bz2archivememlim = 0; 		// limit memory usage for bzip2 (0/1)
+		$maxfilesize = 10485760; 	// archived files larger than this value (in bytes) will not be scanned
+
+		$command=$conf->global->MAIN_ANTIVIRUS_COMMAND;
+		$param=$conf->global->MAIN_ANTIVIRUS_PARAM;
+
+		$param=preg_replace('/%maxreclevel/',$maxreclevel,$param);
+		$param=preg_replace('/%maxfiles/',$maxfiles,$param);
+		$param=preg_replace('/%maxratio/',$maxratio,$param);
+		$param=preg_replace('/%bz2archivememlim/',$bz2archivememlim,$param);
+		$param=preg_replace('/%maxfilesize/',$maxfilesize,$param);
+		$param=preg_replace('/%file/',trim($file),$param);
+
+		if (! preg_match('/%file/',$conf->global->MAIN_ANTIVIRUS_PARAM))
+			$param=$param." ".escapeshellarg(trim($file));
+
+		if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
+
+		$ret=$command.' '.$param;
+		//$ret=$command.' '.$param.' 2>&1';
+
+		return $ret;
 	}
 
 }

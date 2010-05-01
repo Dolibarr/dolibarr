@@ -107,7 +107,9 @@ class mailing_peche extends MailingTargets
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		global $conf,$langs,$_FILES;
-		
+
+		require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 		// For compatibility with Unix, MS-Dos or Macintosh
 		ini_set('auto_detect_line_endings', true);
 
@@ -115,13 +117,10 @@ class mailing_peche extends MailingTargets
 
 		$upload_dir=$conf->mailing->dir_temp;
 
-		// Save file
-		if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-		if (is_dir($upload_dir))
+		if (create_exdir($upload_dir) >= 0)
 		{
-			$result = dol_move_uploaded_file($_FILES['username']['tmp_name'], $upload_dir . "/" . $_FILES['username']['name'], 1);
-			if ($result > 0)
+			$resupload = dol_move_uploaded_file($_FILES['username']['tmp_name'], $upload_dir . "/" . $_FILES['username']['name'], 1, 0, $_FILES['username']['error']);
+			if (is_numeric($resupload) && $resupload > 0)
 			{
 				$cpt=0;
 
@@ -186,22 +185,24 @@ class mailing_peche extends MailingTargets
 
 				dol_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
 			}
-			else if ($result == -99)
+			else
 			{
-				// Files infected by a virus
 				$langs->load("errors");
-				$this->error = $langs->trans("ErrorFileIsInfectedWithAVirus");
-				return -1;
-			}
-			else if ($result < 0)
-			{
-				// Echec transfert (fichier depassant la limite ?)
-				$this->error = $langs->trans("ErrorFileNotUploaded");
-				// print_r($_FILES);
-				return -1;
+				if ($resupload < 0)	// Unknown error
+				{
+					$this->error = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				}
+				else	// Known error
+				{
+					$this->error = '<div class="error">'.$langs->trans($resupload).'</div>';
+				}
 			}
 		}
-		
+
 		ini_set('auto_detect_line_endings', false);
 
 		return parent::add_to_target($mailing_id, $cibles);

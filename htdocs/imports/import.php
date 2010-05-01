@@ -191,6 +191,8 @@ if ($action == 'add_import_model')
 
 if ($step == 3 && $datatoimport)
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		create_exdir($conf->import->dir_temp);

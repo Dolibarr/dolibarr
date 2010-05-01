@@ -2382,6 +2382,8 @@ class Product extends CommonObject
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/photos";
 
 		create_exdir($dir);

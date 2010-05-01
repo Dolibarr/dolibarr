@@ -328,4 +328,124 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	return $result;
 }
 
+
+
+/**
+ *	\brief  Move an uploaded file after some controls.
+ * 			If there is errors (virus found, antivir in error, bad filename), file is not moved.
+ *	\param	src_file			Source full path filename ($_FILES['field']['tmp_name'])
+ *	\param	dest_file			Target full path filename
+ * 	\param	allowoverwrite		1=Overwrite target file if it already exists
+ * 	\param	disablevirusscan	1=Disable virus scan
+ * 	\param	uploaderrorcode		Value of upload error code ($_FILES['field']['error'])
+ *	\return int         		>0 if OK, <0 or string if KO
+ */
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0)
+{
+	global $conf;
+
+	$file_name = $dest_file;
+	// If an upload error has been reported
+	if ($uploaderrorcode)
+	{
+		switch($uploaderrorcode)
+		{
+			case UPLOAD_ERR_INI_SIZE:	// 1
+				return 'ErrorFileSizeTooLarge';
+				break;
+			case UPLOAD_ERR_FORM_SIZE:	// 2
+				return 'ErrorFileSizeTooLarge';
+				break;
+			case UPLOAD_ERR_PARTIAL:	// 3
+				return 'ErrorPartialFile';
+				break;
+			case UPLOAD_ERR_NO_TMP_DIR:	//
+				return 'ErrorNoTmpDir';
+				break;
+			case UPLOAD_ERR_CANT_WRITE:
+				return 'ErrorFailedToWriteInDir';
+				break;
+			case UPLOAD_ERR_EXTENSION:
+				return 'ErrorUploadBlockedByAddon';
+				break;
+			default:
+				break;
+		}
+	}
+
+	// If we need to make a virus scan
+	if (empty($disablevirusscan) && file_exists($src_file) && $conf->global->MAIN_ANTIVIRUS_COMMAND)
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
+		require_once(DOL_DOCUMENT_ROOT.'/lib/antivir.class.php');
+		$antivir=new AntiVir($db);
+		$result = $antivir->dol_avscan_file($src_file);
+		if ($result < 0)	// If virus or error, we stop here
+		{
+			$reterrors=$antivir->errors;
+			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." KO with antivir", LOG_WARNING);
+			return 'ErrorFileIsInfectedWithAVirus: '.join(',',$reterrors);
+		}
+	}
+
+	// Security:
+	// Disallow file with some extensions. We renamed them.
+	// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
+	if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$file_name))
+	{
+		$file_name.= '.noexe';
+	}
+
+	// Security:
+	// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans les noms de fichiers.
+	if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
+	{
+		dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
+		return -1;
+	}
+
+	// Security:
+	// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
+	// les noms de fichiers.
+	if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
+	{
+		dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
+		return -2;
+	}
+
+	// The file functions must be in OS filesystem encoding.
+	$src_file_osencoded=dol_osencode($src_file);
+	$file_name_osencoded=dol_osencode($file_name);
+
+	// Check if destination dir is writable
+	// TODO
+
+	// Check if destination file already exists
+	if (! $allowoverwrite)
+	{
+		if (file_exists($file_name_osencoded))
+		{
+			dol_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
+			return 'ErrorFileAlreadyExists';
+		}
+	}
+
+	// Move file
+	$return=move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+	if ($return)
+	{
+		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
+		dol_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
+		return 1;	// Success
+	}
+	else
+	{
+		dol_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
+		return -3;	// Unknown error
+	}
+
+	return 1;
+}
+
+
 ?>

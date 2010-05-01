@@ -212,6 +212,8 @@ if ($_REQUEST["action"] == 'confirm_sendinfo' && $_REQUEST["confirm"] == 'yes')
 
 if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	$datenaiss='';
 	if (isset($_POST["naissday"]) && $_POST["naissday"]
 		&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
@@ -293,7 +295,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"] && $user->rights->adhe
 				if (@is_dir($dir))
 				{
 					$newfile=$dir.'/'.$_FILES['photo']['name'];
-					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
+					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1,0,$_FILES['photo']['error']) > 0)
 					{
 						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
 					}

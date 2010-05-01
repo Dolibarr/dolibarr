@@ -672,15 +672,15 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$element = $regs[1];
 					$subelement = $regs[2];
 				}
-				
+
 				// For compatibility
 				if ($element == 'order')    { $element = $subelement = 'commande'; }
 				if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
 				if ($element == 'contract') { $element = $subelement = 'contrat'; }
-				
+
 				$facture->origin 	= $_POST['origin'];
 				$facture->origin_id = $_POST['originid'];
-				
+
 				$facid = $facture->create($user);
 
 				if ($facid > 0)
@@ -695,7 +695,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						$lines = $object->lignes;
 						if (empty($lines) && method_exists($object,'fetch_lignes')) $lines = $object->fetch_lignes();
 						if (empty($lines) && method_exists($object,'fetch_lines'))  $lines = $object->fetch_lines();
-						
+
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
 							$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
@@ -1089,40 +1089,43 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
  */
 if ($_POST['addfile'])
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
-	if (! empty($_FILES['addedfile']['tmp_name']))
+	if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+	if (is_dir($upload_dir))
 	{
-		if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-		if (is_dir($upload_dir))
+		$resupload = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0,0, $_FILES['addedfile']['error']);
+		if (is_numeric($resupload) && $resupload > 0)
 		{
-			$result = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0);
-			if ($result > 0)
-			{
-				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-				//print_r($_FILES);
+			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 
-				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
-				$formmail = new FormMail($db);
-				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-			}
-			else if ($result == -99)
+			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+		}
+		else
+		{
+			$langs->load("errors");
+			if ($resupload < 0)	// Unknown error
 			{
-				// Files infected by a virus
-				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			}
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			{
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
 			}
-			else if ($result < 0)
+			else	// Known error
 			{
-				// Echec transfert (fichier depassant la limite ?)
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-				// print_r($_FILES);
+				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
 			}
 		}
 	}
+
 	$_GET["action"]='presend';
 }
 
@@ -1416,7 +1419,7 @@ if ($_GET['action'] == 'create')
 		$object = new $classname($db);
 		$object->fetch($_GET['originid']);
 		$object->fetch_client();
-		
+
 		$projectid			= (!empty($object->fk_project)?$object->fk_project:'');
 		$ref_client			= (!empty($object->ref_client)?$object->ref_client:'');
 
@@ -1701,7 +1704,7 @@ if ($_GET['action'] == 'create')
 			$object->remise_percent=$remise_percent;
 			$object->update_price();
 		}
-		
+
 		print "\n<!-- ".$classname." info -->";
 		print "\n";
 		print '<input type="hidden" name="amount"         value="'.$object->total_ht.'">'."\n";

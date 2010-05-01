@@ -69,28 +69,32 @@ if (! $project->fetch($_GET['id'],$_GET['ref']) > 0)
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
-	if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-	if (is_dir($upload_dir))
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
+
+	if (create_exdir($upload_dir) >= 0)
 	{
-		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
-    	if ($result > 0)
-        {
-            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-            //print_r($_FILES);
-        }
-        else if ($result == -99)
-        {
-        	// Files infected by a virus
-		    $langs->load("errors");
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-        }
-		else if ($result < 0)
+		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+		if (is_numeric($resupload) && $resupload > 0)
 		{
-			// Echec transfert (fichier depassant la limite ?)
-			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			// print_r($_FILES);
+			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+		}
+		else
+		{
+			$langs->load("errors");
+			if ($resupload < 0)	// Unknown error
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			}
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+			}
+			else	// Known error
+			{
+				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+			}
 		}
 	}
 }
@@ -119,9 +123,9 @@ if ($id > 0 || ! empty($ref))
 
 	$company = new Societe($db);
 	$company->fetch($project->socid);
-	
+
 	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
-	
+
 	// To verify role of users
 	$userAccess = $project->restrictedProjectArea($user);
 
@@ -135,7 +139,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$totalsize+=$file['size'];
 	}
-	
+
 	if ($_GET["action"] == 'delete')
 	{
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"]."&urlfile=".$_GET['urlfile'],$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
@@ -143,34 +147,34 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	print '<table class="border" width="100%">';
-	
+
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($project,'ref','',1,'ref','ref');
 	print '</td></tr>';
-	
+
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
-	
+
 	// Company
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';
 	if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
-	
+
 	// Visibility
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($project->public) print $langs->trans('SharedProject');
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
-	
+
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
-	
+
 	// Files infos
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	
+
 	print "</table>\n";
 	print "</div>\n";
 

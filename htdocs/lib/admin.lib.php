@@ -396,7 +396,6 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 		$sql.= $db->encrypt($name,1);
 		$sql.= ", ".$db->encrypt($value,1);
 		$sql.= ",'".$type."',".$visible.",'".addslashes($note)."',".$entity.")";
-
 		dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 	}

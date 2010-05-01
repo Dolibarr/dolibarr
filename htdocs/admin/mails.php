@@ -68,40 +68,46 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
  */
 if ($_POST['addfile'] || $_POST['addfilehtml'])
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
-	if (! empty($_FILES['addedfile']['tmp_name']))
+	if (create_exdir($upload_dir) >= 0)
 	{
-		if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-		if (is_dir($upload_dir))
+		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0,0,$_FILES['addedfile']['error']);
+		if (is_numeric($resupload) && $resupload > 0)
 		{
-			$result = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0);
-			if ($result > 0)
-			{
-				$message = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-				//print_r($_FILES);
+			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 
-				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
-				$formmail = new FormMail($db);
-				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-			}
-			else if ($result == -99)
+			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+		}
+		else
+		{
+			$langs->load("errors");
+			if ($resupload < 0)	// Unknown error
 			{
-				// Files infected by a virus
-				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			}
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			{
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
 			}
-			else if ($result < 0)
+			else	// Known error
 			{
-				// Echec transfert (fichier depassant la limite ?)
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-				// print_r($_FILES);
+				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
 			}
 		}
 	}
+	else
+	{
+		$langs->load("errors");
+		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
+	}
+
 	if ($_POST['addfile'])     $_GET["action"]='test';
 	if ($_POST['addfilehtml']) $_GET["action"]='testhtml';
 }

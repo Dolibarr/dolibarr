@@ -42,29 +42,37 @@ $upload_dir=$conf->admin->dir_temp;
 
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    $result=create_exdir($upload_dir);	// Create dir if not exists
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
+	$result=create_exdir($upload_dir);	// Create dir if not exists
     if ($result >= 0)
     {
-    	$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1);
-        if (is_numeric($resupload) && $resupload > 0)
-        {
-            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-            //print_r($_FILES);
-        }
-        else if (is_numeric($resupload) && $resupload == -99)
-        {
-        	// File infected by a virus
-		    $langs->load("errors");
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-        }
-        else
-        {
-            // Echec transfert (fichier depassant la limite ?)
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded");
-            if (is_array($resupload)) $mesg.= '<br>'.dol_nl2br(join("\n",$resupload));
-            $mesg.= '</div>';
-            // print_r($_FILES);
-        }
+    	$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1,0,$_FILES['userfile']['error']);
+
+    	if (is_numeric($resupload) && $resupload > 0)
+		{
+			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+
+			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			$formmail = new FormMail($db);
+			$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+		}
+		else
+		{
+			$langs->load("errors");
+			if ($resupload < 0)	// Unknown error
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			}
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+			}
+			else	// Known error
+			{
+				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+			}
+		}
     }
 }
 
@@ -261,8 +269,20 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<tr ".$bc[$var].">";
 print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
+// Check command in inside safe_mode
 print '</td>';
 print '<td align="center" width="100">';
+if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
+{
+	$langs->load("errors");
+	$basedir=preg_replace('/"/','',dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+	$listdir=explode(';',ini_get('safe_mode_exec_dir'));
+	if (! in_array($basedir,$listdir))
+	{
+		print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
+		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
+	}
+}
 print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size=80 value="'.htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND).'">';
 print "</td>";
 print '<td align="right">';

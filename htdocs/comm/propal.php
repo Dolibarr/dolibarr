@@ -279,7 +279,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->modelpdf   = $_POST['model'];
 		$propal->author     = $user->id;		// deprecated
 		$propal->note       = $_POST['note'];
-		
+
 		$propal->origin		= $_POST['origin'];
 		$propal->origin_id	= $_POST['originid'];
 
@@ -381,38 +381,41 @@ if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
  */
 if ($_POST['addfile'])
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp/';
 
 	if (! empty($_FILES['addedfile']['tmp_name']))
 	{
-		if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-		if (is_dir($upload_dir))
+		if (create_exdir($upload_dir) >= 0)
 		{
-			$result = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0);
-			if ($result > 0)
+			$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0,0,$_FILES['addedfile']['error']);
+			if (is_numeric($resupload) && $resupload > 0)
 			{
 				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-				//print_r($_FILES);
 
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				// Add file in list of files in session
 				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
 			}
-			else if ($result == -99)
+			else
 			{
-				// Files infected by a virus
 				$langs->load("errors");
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else if ($result < 0)
-			{
-				// Echec transfert (fichier depassant la limite ?)
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-				// print_r($_FILES);
+				if ($resupload < 0)	// Unknown error
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				}
+				else	// Known error
+				{
+					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				}
 			}
 		}
 	}
@@ -1189,14 +1192,14 @@ if ($id > 0 || ! empty($ref))
 
 	if ($conf->projet->enabled) $rowspan++;
 	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
-	
+
 	//Local taxes
 	if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
 		if($mysoc->localtax1_assuj=="1") $rowspan++;
 		if($mysoc->localtax2_assuj=="1") $rowspan++;
 	}
-	
+
 	// Notes
 	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
 	print '</tr>';
@@ -1371,7 +1374,7 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($propal->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	
+
 	// Amount Local Taxes
 	if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
@@ -1388,7 +1391,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 		}
 	}
-	
+
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($propal->total_ttc).'</td>';

@@ -442,6 +442,8 @@ if (! empty($_POST["removedfile"]))
 // Action update emailing
 if ($_POST["action"] == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"]))
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	$mil = new Mailing($db);
 	$mil->fetch($_POST["id"]);
 
@@ -451,39 +453,37 @@ if ($_POST["action"] == 'update' && empty($_POST["removedfile"]) && empty($_POST
 
 	// If upload file
 	$i='';
-	//$i=0;
-	//while ($i < 4)
-	//{
-		if (! empty($_POST["addfile".$i]) && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	if (! empty($_POST["addfile".$i]) && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	{
+		$isupload=1;
+
+		if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+		if (is_dir($upload_dir))
 		{
-			$isupload=1;
-
-			if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-			if (is_dir($upload_dir))
+			$resupload = dol_move_uploaded_file($_FILES['addedfile'.$i]['tmp_name'], $upload_dir . "/" . $_FILES['addedfile'.$i]['name'],1,0,$_FILES['addedfile'.$i]['error']);
+			if (is_numeric($resupload) && $resupload > 0)
 			{
-				$result = dol_move_uploaded_file($_FILES['addedfile'.$i]['tmp_name'], $upload_dir . "/" . $_FILES['addedfile'.$i]['name'],1);
-		    	if ($result > 0)
-		        {
-		            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-		            //print_r($_FILES);
-		        }
-		        else if ($result == -99)
-		        {
-		        	// Files infected by a virus
-				    $langs->load("errors");
-		            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-		        }
-				else if ($result < 0)
+				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+			}
+			else
+			{
+				$langs->load("errors");
+				if ($resupload < 0)	// Unknown error
 				{
-					// Echec transfert (fichier depassant la limite ?)
 					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-					// print_r($_FILES);
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				}
+				else	// Known error
+				{
+					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
 				}
 			}
 		}
-	//	$i++;
-	//}
+	}
 
 	if (! $isupload)
 	{

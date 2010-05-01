@@ -1018,6 +1018,8 @@ class Categorie
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
 		$dir .= "photos/";
 
@@ -1031,7 +1033,7 @@ class Categorie
 			$originImage = $dir . $file['name'];
 
 			// Cree fichier en taille origine
-			$result=dol_move_uploaded_file($file['tmp_name'], $originImage, 1);
+			$result=dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
 
 			if (file_exists($originImage))
 			{

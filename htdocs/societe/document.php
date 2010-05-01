@@ -73,27 +73,30 @@ $courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
 // Envoie fichier
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
-	if (is_dir($upload_dir))
+	if (create_exdir($upload_dir) >= 0)
 	{
-		$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
-		if ($result > 0)
+		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+		if (is_numeric($resupload) && $resupload > 0)
 		{
 			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-			//print_r($_FILES);
 		}
-		else if ($result == -99)
-        {
-        	// Files infected by a virus
-		    $langs->load("errors");
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-        }
-		else if ($result < 0)
+		else
 		{
-			// Echec transfert (fichier depassant la limite ?)
-			$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			// print_r($_FILES);
+			$langs->load("errors");
+			if ($resupload < 0)	// Unknown error
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+			}
+			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+			}
+			else	// Known error
+			{
+				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+			}
 		}
 	}
 }

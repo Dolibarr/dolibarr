@@ -222,6 +222,8 @@ if ($_GET["action"] == 'removegroup' && $caneditfield)
 
 if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+
 	if ($caneditfield)	// Case we can edit all field
 	{
 		$message="";
@@ -258,8 +260,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 			$edituser->phenix_login  = $_POST["phenix_login"];
 			$edituser->phenix_pass   = $_POST["phenix_pass"];
 			$edituser->entity        = $_POST["entity"];
-
-			$edituser->photo         = $_FILES['photo']['name'];
+			if (! empty($_FILES['photo']['name'])) $edituser->photo = $_FILES['photo']['name'];
 
 			$ret=$edituser->update($user);
 			if ($ret < 0)
@@ -295,7 +296,9 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 					if (@is_dir($dir))
 					{
 						$newfile=$dir.'/'.$_FILES['photo']['name'];
-						if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
+						$result=dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1,0,$_FILES['photo']['error']);
+
+						if (! $result > 0)
 						{
 							$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
 						}
