@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -2787,6 +2787,39 @@ class Product extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+	
+	/**
+	 *  \brief 		Load type of canvas
+	 *  \param		id		product id
+	 *  \param		ref		product ref
+	 */
+	function getCanvas($id, $ref)
+	{
+		global $conf;
+		
+		$sql = "SELECT rowid, ref, canvas";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE entity = ".$conf->entity;
+		if (!empty($id)) $sql.= " AND rowid = ".$id;
+		if (!empty($ref)) $sql.= " AND ref = '".$ref."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			
+			$this->id 		= $obj->rowid;
+			$this->ref 		= $obj->ref;
+			$this->canvas 	= $obj->canvas;
+			
 			return 1;
 		}
 		else

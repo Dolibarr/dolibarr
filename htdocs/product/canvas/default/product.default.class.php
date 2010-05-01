@@ -63,11 +63,10 @@ class ProductDefault extends Product
 	/**
 	 *    \brief      Lecture des donnees dans la base
 	 *    \param      id          Product id
-	 *    \param      ref         Product ref
 	 */
-	function fetchCanvas($id='', $ref='', $action='')
+	function fetchCanvas($id='', $action='')
 	{
-		$result = $this->fetch($id,$ref);
+		$result = $this->fetch($id);
 
 		return $result;
 	}
@@ -80,8 +79,12 @@ class ProductDefault extends Product
 	{
 		global $conf,$html;
 		
+		// Ref
 		$this->tpl['showrefnav'] = $html->showrefnav($this,'ref','',1,'ref');
+		// Label
 		$this->tpl['label'] = $this->libelle;
+		// Statut
+		$this->tpl['status'] = $this->getLibStatut(2);
 		
 		if ($action == 'view')
 		{
@@ -98,9 +101,6 @@ class ProductDefault extends Product
 			// Accountancy sell code
 			$this->tpl['accountancySellCodeKey'] = $html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
 			$this->tpl['accountancySellCodeVal'] = $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
-
-			// Statut
-			$this->tpl['status'] = $this->getLibStatut(2);
 
 			// Description
 			$this->tpl['description'] = nl2br($this->description);

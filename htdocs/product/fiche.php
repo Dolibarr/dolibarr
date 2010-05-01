@@ -653,7 +653,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 	if ($mesg) print $mesg."\n";
 
-	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	if ($_GET["canvas"] <> '' && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
 		// On assigne les valeurs meme en creation car elles sont definies si
 		// on revient en erreur
@@ -844,26 +844,17 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
  */
 if ($_GET["id"] || $_GET["ref"])
 {
-	$product = new Product($db);
-
-	if ($_GET["ref"])
-	{
-		$result = $product->fetch('',$_GET["ref"]);
-		$_GET["id"] = $product->id;
-	}
-	elseif ($_GET["id"])
-	{
-		$result = $product->fetch($_GET["id"]);
-	}
+	$productstatic = new Product($db);
+	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
 
 	// Gestion des produits specifiques
-	if (!empty($product->canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
+	if (!empty($productstatic->canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$productstatic->canvas.'/product.'.$productstatic->canvas.'.class.php') )
 	{
-		$classname = 'Product'.ucfirst($product->canvas);
-		include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
+		$classname = 'Product'.ucfirst($productstatic->canvas);
+		include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$productstatic->canvas.'/product.'.$productstatic->canvas.'.class.php');
 		$product = new $classname($db);
 
-		$result = $product->fetchCanvas($_GET["id"],'',$_GET["action"]);
+		$result = $product->fetchCanvas($productstatic->id,'',$_GET["action"]);
 
 		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
 	}
@@ -1132,7 +1123,7 @@ print "\n</div><br>\n";
  * All the "Add to" areas
  */
 
-if ($_GET["id"] && $_GET["action"] == '' && $product->status)
+if ($product->id && $_GET["action"] == '' && $product->status)
 {
 	$propal = New Propal($db);
 
