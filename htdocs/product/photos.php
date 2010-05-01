@@ -177,9 +177,9 @@ if ($_GET["id"] || $_GET["ref"])
 			$maxWidth = 160;
 			$maxHeight = 120;
 
-			$nbphoto=$product->show_photos($dir,1,1000,$nbbyrow,1,1);
+			print $product->show_photos($dir,1,1000,$nbbyrow,1,1);
 
-			if ($nbphoto < 1)
+			if ($product->nbphoto < 1)
 			{
 				print '<br>';
 				print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';				print '<tr align=center valign=middle border=1><td class="photo">';

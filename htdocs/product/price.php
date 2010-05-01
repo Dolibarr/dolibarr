@@ -141,7 +141,7 @@ if ($product->is_photo_available($conf->produit->dir_output))
 {
 	// Photo
 	print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-	$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
+	print $product->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
 	print '</td>';
 }
 

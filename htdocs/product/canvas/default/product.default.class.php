@@ -32,6 +32,8 @@ class ProductDefault extends Product
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
 	
+	var $tpl = array();
+	
 	/**
 	 *    \brief      Constructeur de la classe
 	 *    \param      DB          Handler acces base de donnees
@@ -68,6 +70,100 @@ class ProductDefault extends Product
 		$result = $this->fetch($id,$ref);
 
 		return $result;
+	}
+	
+	/**
+	 *    \brief      Assigne les valeurs pour les templates
+	 *    \param      object     object
+	 */
+	function assign_values($action='')
+	{
+		global $conf,$html;
+		
+		if ($action == 'view')
+		{
+			$this->tpl['showrefnav'] = $html->showrefnav($this,'ref','',1,'ref');
+
+			$this->tpl['nblignes'] = 4;
+			if ($this->is_photo_available($conf->produit->dir_output))
+			{
+				$this->tpl['photos'] = $this->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
+			}
+
+			// Accountancy buy code
+			$this->tpl['accountancyBuyCodeKey'] = $html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
+
+			// Accountancy sell code
+			$this->tpl['accountancySellCodeKey'] = $html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
+
+			// Statut
+			$this->tpl['status'] = $this->getLibStatut(2);
+
+			// Description
+			$this->tpl['description'] = nl2br($this->description);
+
+			// Nature
+			if($this->type!=1)
+			{
+				$this->tpl['finishedLabel'] = $this->getLibFinished();
+			}
+
+			if ($this->isservice())
+			{
+				// Duration
+				if ($this->duration_value > 1)
+				{
+					$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+				}
+				else if ($this->duration_value > 0)
+				{
+					$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+				}
+				$this->tpl['duration'] = $langs->trans($dur[$this->duration_unit]);
+			}
+			else
+			{
+				// Weight
+				if ($this->weight != '')
+				{
+					$this->tpl['weight'] = $this->weight." ".measuring_units_string($this->weight_units,"weight");
+				}
+
+				// Length
+				if ($this->length != '')
+				{
+					$this->tpl['length'] = $this->length." ".measuring_units_string($this->length_units,"size");
+				}
+
+				// Surface
+				if ($this->surface != '')
+				{
+					$this->tpl['surface'] = $this->surface." ".measuring_units_string($this->surface_units,"surface");
+				}
+
+				// Volume
+				if ($this->volume != '')
+				{
+					$this->tpl['volume'] = $this->volume." ".measuring_units_string($this->volume_units,"volume");
+				}
+			}
+
+			// Hidden
+			if ((! $this->isservice() && $user->rights->produit->hidden)
+			|| ($this->isservice() && $user->rights->service->hidden))
+			{
+				$this->tpl['hidden'] = yn($this->hidden);
+			}
+			else
+			{
+				$this->tpl['hidden'] = yn("No");
+			}
+
+			// Note
+			$this->tpl['note'] = nl2br($this->note);
+		}
 	}
 	
 	/**

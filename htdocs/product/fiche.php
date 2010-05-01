@@ -857,17 +857,15 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	// Gestion des produits specifiques
-	if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
+	if (!empty($product->canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
 	{
 		$classname = 'Product'.ucfirst($product->canvas);
-		include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
 		$product = new $classname($db);
 
 		$result = $product->fetchCanvas($_GET["id"],'',$_GET["action"]);
 
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
-
-		$product->assign_smarty_values($smarty,$_GET["action"]);
+		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
 	}
 
 
@@ -890,159 +888,10 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 
 			print($mesg);
-		}
-		if ($_GET["action"] <> 'edit' && $product->canvas <> '')
-		{
-			/*
-			 *  Smarty en mode visu
-			 */
-			$smarty->assign('fiche_cursor_prev',$previous_ref);
-			$smarty->assign('fiche_cursor_next',$next_ref);
 
-			// Photo
-			//$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
-
-			$smarty->display($product->canvas.'-view.tpl');
-
-			print "</div>\n<!-- CUT HERE -->\n";
-		}
-
-		if ($_GET["action"] <> 'edit' && $product->canvas == '')
-		{
-			// En mode visu
-			print '<table class="border" width="100%"><tr>';
-
-			// Ref
-			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-			print $html->showrefnav($product,'ref','',1,'ref');
-			print '</td>';
-
-			print '</tr>';
-
-			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-
-			$nblignes=4;
-			if ($product->is_photo_available($conf->produit->dir_output))
-			{
-				// Photo
-				print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-				$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
-				print '</td>';
-			}
-
-			print '</tr>';
-
-			// Accountancy buy code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer).'</td><td>';
-			print $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$product->accountancy_code_sell,'id',$product->id,$user->rights->produit->creer);
-			print '</td></tr>';
-
-			// Accountancy sell code
-			print '<tr><td>'.$html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer).'</td><td>';
-			print $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$product->accountancy_code_buy,'id',$product->id,$user->rights->produit->creer);
-			print '</td></tr>';
-
-			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td><td>';
-			print $product->getLibStatut(2);
-			print '</td></tr>';
-
-			// Description
-			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.nl2br($product->description).'</td></tr>';
-
-			// Nature
-			if($product->type!=1)
-			{
-				print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
-				print $product->getLibFinished();
-				print '</td></tr>';
-			}
-
-			if ($product->isservice())
-			{
-				// Duration
-				print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2">'.$product->duration_value.'&nbsp;';
-				if ($product->duration_value > 1)
-				{
-					$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-				}
-				else if ($product->duration_value > 0)
-				{
-					$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-				}
-				print $langs->trans($dur[$product->duration_unit])."&nbsp;";
-
-				print '</td></tr>';
-			}
-			else
-			{
-				// Weight
-				print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="2">';
-				if ($product->weight != '')
-				{
-					print $product->weight." ".measuring_units_string($product->weight_units,"weight");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-				// Length
-				print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
-				if ($product->length != '')
-				{
-					print $product->length." ".measuring_units_string($product->length_units,"size");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-				// Surface
-				print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
-				if ($product->surface != '')
-				{
-					print $product->surface." ".measuring_units_string($product->surface_units,"surface");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-				// Volume
-				print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
-				if ($product->volume != '')
-				{
-					print $product->volume." ".measuring_units_string($product->volume_units,"volume");
-				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print "</td></tr>\n";
-			}
-
-			// Hidden
-			if ((! $product->isservice() && $user->rights->produit->hidden)
-			|| ($product->isservice() && $user->rights->service->hidden))
-			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td colspan="2">';
-				print yn($product->hidden);
-				print "</td></tr>\n";
-			}
-			else
-			{
-				print '<tr><td>'.$langs->trans("Hidden").'</td><td>';
-				print yn("No");
-				print '</td></tr>';
-			}
-
-			// Note
-			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.nl2br($product->note).'</td></tr>';
-
-			print "</table>\n";
-			print "</div>\n<!-- CUT HERE -->\n";
+			$product->assign_values('view');
+			
+			include($template_dir.'view.tpl.php');
 		}
 	}
 

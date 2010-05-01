@@ -127,6 +127,8 @@ class Product extends CommonObject
 
 	//! Product ID already linked to a reference supplier
 	var $product_id_already_linked;
+	
+	var $nbphoto;
 
 	/**
 	 *    \brief      Constructeur de la classe
@@ -140,6 +142,7 @@ class Product extends CommonObject
 		$this->db = $DB;
 		$this->id = $id ;
 		$this->status = 0;
+		$this->nbphoto = 0;
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
 		$this->canvas = '';
@@ -2502,6 +2505,7 @@ class Product extends CommonObject
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
 
+		$return='';
 		$nbphoto=0;
 
 		$dir_osencoded=dol_osencode($dir);
@@ -2531,69 +2535,69 @@ class Product extends CommonObject
 						// Get filesize of original file
 						$imgarray=dol_getImageSize($dir.$photo);
 
-						if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+						if ($nbbyrow && $nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
-						if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
-						if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+						if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) $return.= '<tr align=center valign=middle border=1>';
+						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
-						print "\n";
-						print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" target="_blank">';
+						$return.= "\n";
+						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" target="_blank">';
 
 						// Show image (width height=$maxheight)
 						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
 						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
 						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
 						if ($photo_vignette && $imgarray['height'] > $maxheight) {
-							print '<!-- Show thumb -->';
-							print '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+							$return.= '<!-- Show thumb -->';
+							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 						}
 						else {
-							print '<!-- Show original file -->';
-							print '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+							$return.= '<!-- Show original file -->';
+							$return.= '<img class="photo" border="0" height="'.$maxheight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 						}
 
-						print '</a>';
+						$return.= '</a>';
 
-						if ($showfilename) print '<br>'.$viewfilename;
+						if ($showfilename) $return.= '<br>'.$viewfilename;
 						if ($showaction)
 						{
-							print '<br>';
+							$return.= '<br>';
 							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
 							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
 							}
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
 								// Link to resize
-			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
 			               		// Link to delete
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-								print img_delete().'</a>';
+								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return.= img_delete().'</a>';
 							}
 						}
-						print "\n";
+						$return.= "\n";
 
-						if ($nbbyrow) print '</td>';
-						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
+						if ($nbbyrow) $return.= '</td>';
+						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) $return.= '</tr>';
 
 					}
 
 					if ($size == 0) {     // Format origine
-						print '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+						$return.= '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
 
-						if ($showfilename) print '<br>'.$viewfilename;
+						if ($showfilename) $return.= '<br>'.$viewfilename;
 						if ($showaction)
 						{
 							if ($user->rights->produit->creer || $user->rights->service->creer)
 							{
 								// Link to resize
-			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
 			               		// Link to delete
-			               		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-								print img_delete().'</a>';
+			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return.= img_delete().'</a>';
 							}
 						}
 					}
@@ -2608,17 +2612,19 @@ class Product extends CommonObject
 				// Ferme tableau
 				while ($nbphoto % $nbbyrow)
 				{
-					print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+					$return.= '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
 					$nbphoto++;
 				}
 
-				if ($nbphoto) print '</table>';
+				if ($nbphoto) $return.= '</table>';
 			}
 
 			closedir($handle);
 		}
-
-		return $nbphoto;
+		
+		$this->nbphoto = $nbphoto;
+		
+		return $return;
 	}
 
 	/**
