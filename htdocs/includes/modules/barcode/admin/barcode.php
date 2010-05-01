@@ -19,13 +19,13 @@
  */
 
 /**
- *	\file       htdocs/admin/barcode.php
+ *	\file       htdocs/includes/modules/barcode/admin/barcode.php
  *	\ingroup    barcode
  *	\brief      Page d'administration/configuration du module Code barre
  *	\version    $Id$
  */
 
-require("../main.inc.php");
+require("../../../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 

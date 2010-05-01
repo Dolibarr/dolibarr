@@ -66,7 +66,7 @@ class modBarcode extends DolibarrModules
 		$this->requiredby = array();
 
 		// Config pages
-		$this->config_page_url = array("barcode.php");
+		$this->config_page_url = array("barcode.php@includes/modules/barcode");
 
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
