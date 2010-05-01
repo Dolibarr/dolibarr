@@ -56,6 +56,77 @@ class ProductService extends Product
 	}
 	
 	/**
+	 *    \brief      Lecture des donnees dans la base
+	 *    \param      id          Product id
+	 */
+	function fetch($id='', $action='')
+	{
+		$result = parent::fetch($id);
+
+		return $result;
+	}
+	
+	/**
+	 *    \brief      Assigne les valeurs pour les templates
+	 *    \param      object     object
+	 */
+	function assign_values($action='')
+	{
+		global $conf,$html;
+		
+		// Ref
+		$this->tpl['showrefnav'] = $html->showrefnav($this,'ref','',1,'ref');
+		// Label
+		$this->tpl['label'] = $this->libelle;
+		// Statut
+		$this->tpl['status'] = $this->getLibStatut(2);
+		
+		if ($action == 'view')
+		{
+			$this->tpl['nblignes'] = 4;
+			if ($this->is_photo_available($conf->produit->dir_output))
+			{
+				$this->tpl['photos'] = $this->show_photos($conf->produit->dir_output,1,1,0,0,0,80);
+			}
+
+			// Accountancy buy code
+			$this->tpl['accountancyBuyCodeKey'] = $html->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $html->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,'id',$this->id,$user->rights->produit->creer);
+
+			// Accountancy sell code
+			$this->tpl['accountancySellCodeKey'] = $html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
+
+			// Description
+			$this->tpl['description'] = nl2br($this->description);
+
+			// Duration
+			if ($this->duration_value > 1)
+			{
+				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+			}
+			else if ($this->duration_value > 0)
+			{
+				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+			}
+			$this->tpl['duration'] = $langs->trans($dur[$this->duration_unit]);
+
+			// Hidden
+			if ($user->rights->service->hidden)
+			{
+				$this->tpl['hidden'] = yn($this->hidden);
+			}
+			else
+			{
+				$this->tpl['hidden'] = yn("No");
+			}
+
+			// Note
+			$this->tpl['note'] = nl2br($this->note);
+		}
+	}
+	
+	/**
 	 * 	\brief	Fetch datas list
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)

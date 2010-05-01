@@ -620,7 +620,7 @@ $formproduct = new FormProduct($db);
  */
 if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	if ($_GET["canvas"] <> '' && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
 		if (! isset($product))
 		{
@@ -855,7 +855,7 @@ if ($_GET["id"] || $_GET["ref"])
 		include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$productstatic->canvas.'/product.'.$productstatic->canvas.'.class.php');
 		$product = new $classname($db);
 
-		$result = $product->fetchCanvas($productstatic->id,'',$_GET["action"]);
+		$result = $product->fetch($productstatic->id,'',$_GET["action"]);
 
 		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
 	}

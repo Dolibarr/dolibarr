@@ -64,9 +64,9 @@ class ProductDefault extends Product
 	 *    \brief      Lecture des donnees dans la base
 	 *    \param      id          Product id
 	 */
-	function fetchCanvas($id='', $action='')
+	function fetch($id='', $action='')
 	{
-		$result = $this->fetch($id);
+		$result = parent::fetch($id);
 
 		return $result;
 	}
@@ -106,54 +106,34 @@ class ProductDefault extends Product
 			$this->tpl['description'] = nl2br($this->description);
 
 			// Nature
-			if($this->type!=1)
+			$this->tpl['finishedLabel'] = $this->getLibFinished();
+
+			// Weight
+			if ($this->weight != '')
 			{
-				$this->tpl['finishedLabel'] = $this->getLibFinished();
+				$this->tpl['weight'] = $this->weight." ".measuring_units_string($this->weight_units,"weight");
 			}
 
-			if ($this->isservice())
+			// Length
+			if ($this->length != '')
 			{
-				// Duration
-				if ($this->duration_value > 1)
-				{
-					$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-				}
-				else if ($this->duration_value > 0)
-				{
-					$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-				}
-				$this->tpl['duration'] = $langs->trans($dur[$this->duration_unit]);
+				$this->tpl['length'] = $this->length." ".measuring_units_string($this->length_units,"size");
 			}
-			else
+
+			// Surface
+			if ($this->surface != '')
 			{
-				// Weight
-				if ($this->weight != '')
-				{
-					$this->tpl['weight'] = $this->weight." ".measuring_units_string($this->weight_units,"weight");
-				}
+				$this->tpl['surface'] = $this->surface." ".measuring_units_string($this->surface_units,"surface");
+			}
 
-				// Length
-				if ($this->length != '')
-				{
-					$this->tpl['length'] = $this->length." ".measuring_units_string($this->length_units,"size");
-				}
-
-				// Surface
-				if ($this->surface != '')
-				{
-					$this->tpl['surface'] = $this->surface." ".measuring_units_string($this->surface_units,"surface");
-				}
-
-				// Volume
-				if ($this->volume != '')
-				{
-					$this->tpl['volume'] = $this->volume." ".measuring_units_string($this->volume_units,"volume");
-				}
+			// Volume
+			if ($this->volume != '')
+			{
+				$this->tpl['volume'] = $this->volume." ".measuring_units_string($this->volume_units,"volume");
 			}
 
 			// Hidden
-			if ((! $this->isservice() && $user->rights->produit->hidden)
-			|| ($this->isservice() && $user->rights->service->hidden))
+			if ($user->rights->produit->hidden)
 			{
 				$this->tpl['hidden'] = yn($this->hidden);
 			}
