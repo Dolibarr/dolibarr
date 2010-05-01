@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
-$langs->load("products");
+$langs->load("product@products");
 $langs->load("bills");
 
 // Security check

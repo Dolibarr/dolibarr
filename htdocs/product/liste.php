@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
-$langs->load("products");
+$langs->load("product@products");
 
 $type=trim(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
 

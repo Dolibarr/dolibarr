@@ -72,8 +72,8 @@ class modProduct extends DolibarrModules
 		$this->requiredby = array("modStock","modBarcode");
 
 		// Config pages
-		$this->config_page_url = array("produit.php");
-		$this->langfiles = array("products","companies","stocks","bills");
+		$this->config_page_url = array("produit.php@product");
+		$this->langfiles = array("product@products","companies","stocks","bills");
 
 		// Constants
 		$this->const = array();

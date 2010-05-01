@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
-$langs->load("products");
+$langs->load("product@products");
 $langs->load("bills");
 
 // Security check

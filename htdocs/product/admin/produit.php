@@ -21,19 +21,19 @@
  */
 
 /**
- *  \file       htdocs/admin/produit.php
+ *  \file       htdocs/product/admin/produit.php
  *  \ingroup    produit
  *  \brief      Page d'administration/configuration du module Produit
  *  \version    $Id$
  */
 
-require("../main.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("admin");
 $langs->load("propal");
-$langs->load("products");
+$langs->load("product@products");
 
 // Security check
 if (!$user->admin)
