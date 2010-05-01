@@ -30,7 +30,7 @@
 
 <tr>
 <td><?php echo $langs->trans("Label") ?></td>
-<td><?php echo $product->libelle; ?></td>
+<td><?php echo $product->tpl['label']; ?></td>
 
 <?php if ($product->tpl['photos']) { ?>
 <td valign="middle" align="center" width="30%" rowspan="<?php echo $product->tpl['nblignes']; ?>">

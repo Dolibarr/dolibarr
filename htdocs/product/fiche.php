@@ -868,7 +868,6 @@ if ($_GET["id"] || $_GET["ref"])
 		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
 	}
 
-
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 	if ( $result )

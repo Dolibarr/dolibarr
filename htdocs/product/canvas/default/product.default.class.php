@@ -80,10 +80,11 @@ class ProductDefault extends Product
 	{
 		global $conf,$html;
 		
+		$this->tpl['showrefnav'] = $html->showrefnav($this,'ref','',1,'ref');
+		$this->tpl['label'] = $this->libelle;
+		
 		if ($action == 'view')
 		{
-			$this->tpl['showrefnav'] = $html->showrefnav($this,'ref','',1,'ref');
-
 			$this->tpl['nblignes'] = 4;
 			if ($this->is_photo_available($conf->produit->dir_output))
 			{
