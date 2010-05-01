@@ -29,7 +29,7 @@
  *   \version    $Revision$
  */
 
-require("../main.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/mantis/class/mantis.class.php');
 
