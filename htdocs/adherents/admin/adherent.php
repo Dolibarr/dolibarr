@@ -21,13 +21,13 @@
  */
 
 /**
- *   	\file       htdocs/admin/adherent.php
+ *   	\file       htdocs/adherents/admin/adherent.php
  *		\ingroup    adherent
  *		\brief      Page d'administration/configuration du module Adherent
  *		\version    $Id$
  */
 
-require("../main.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");

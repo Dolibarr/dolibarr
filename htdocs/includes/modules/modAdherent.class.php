@@ -53,18 +53,18 @@ class modAdherent extends DolibarrModules
         $this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Gestion des adherents d'une association";
+        $this->description = "Gestion des adhérents d'une association";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='user';
 
         // Data directories to create when module is enabled
-        $this->dirs = array("/adherent/temp");
+        $this->dirs = array("/adherents/temp");
 
         // Config pages
         //-------------
-        $this->config_page_url = array("adherent.php");
+        $this->config_page_url = array("adherent.php@adherents");
 
         // Dependances
         //------------
