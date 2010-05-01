@@ -43,6 +43,11 @@ $sortfield = isset($_GET['sortfield'])?$_GET['sortfield']:$_POST['sortfield'];
 $sortorder = isset($_GET['sortorder'])?$_GET['sortorder']:$_POST['sortorder'];
 $page=isset($_GET['page'])?$_GET['page']:$_POST['page'];
 
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="p.rowid";
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0)
@@ -50,6 +55,8 @@ if ($user->societe_id > 0)
 	$action = '';
 	$socid = $user->societe_id;
 }
+
+
 
 
 /*
@@ -364,7 +371,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 	if (! $sortorder) $sortorder='DESC';
 	if (! $sortfield) $sortfield='p.datep';
 
-	$sql = 'SELECT p.rowid, p.rowid as pid, '.$db->pdate('p.datep').' as dp, p.amount as pamount,';
+	$sql = 'SELECT p.rowid, p.rowid as pid, p.datep as dp, p.amount as pamount,';
 	$sql.= ' f.rowid as facid, f.rowid as ref, f.facnumber, f.amount,';
 	$sql.= ' s.rowid as socid, s.nom,';
 	$sql.= ' c.libelle as paiement_type, p.num_paiement,';
@@ -378,13 +385,27 @@ if (! $_GET['action'] && ! $_POST['action'])
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	if (!$user->rights->societe->client->voir) $sql .= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql.= ' WHERE 1=1';
+	if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)
 	{
-		$sql .= ' WHERE f.fk_soc = '.$socid;
+		$sql .= ' AND f.fk_soc = '.$socid;
 	}
-	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
-	$sql .= $db->plimit($limit + 1 ,$offset);
+	// Search criteria
+	if ($_REQUEST["search_ref"])
+	{
+	  $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
+	}
+	if ($_REQUEST["search_amount"])
+	{
+	  $sql .=" AND p.amount=".price2num($_REQUEST["search_amount"]);
+	}
+	if ($_REQUEST["search_company"])
+	{
+	  $sql .=" AND s.nom like '%".addslashes($_REQUEST["search_company"])."%'";
+	}
+	$sql.= $db->order($sortfield,$sortorder);
+	$sql.= $db->plimit($limit + 1 ,$offset);
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -393,16 +414,39 @@ if (! $_GET['action'] && ! $_POST['action'])
 		$i = 0;
 		$var=True;
 
-		print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
+		$paramlist='';
+		$paramlist.=($_REQUEST["search_ref"]?"&search_ref=".$_REQUEST["search_ref"]:"");
+		$paramlist.=($_REQUEST["search_company"]?"&search_company=".$_REQUEST["search_company"]:"");
+		$paramlist.=($_REQUEST["search_amount"]?"&search_amount=".$_REQUEST["search_amount"]:"");
+
+		print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php',$paramlist,$sortfield,$sortorder,'',$num);
+
+		print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('RefPayment'),'paiement.php','rowid','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('ThirdParty'),'paiement.php','s.nom','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','','','',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Amount'),'paiement.php','f.amount','','','align="right"',$sortfield,$sortorder);
-		//print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('RefPayment'),'paiement.php','p.rowid','',$paramlist,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','',$paramlist,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('ThirdParty'),'paiement.php','s.nom','',$paramlist,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','',$paramlist,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','',$paramlist,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Amount'),'paiement.php','f.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
+		//print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','',$paramlist,'',$sortfield,$sortorder);
+		print "</tr>\n";
+
+		// Lines for filters fields
+		print '<tr class="liste_titre">';
+		print '<td align="left">';
+		print '<input class="fat" type="text" size="4" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
+		print '</td>';
+		print '<td>&nbsp;</td>';
+		print '<td align="left">';
+		print '<input class="fat" type="text" size="6" name="search_company" value="'.$_REQUEST["search_company"].'">';
+		print '</td>';
+		print '<td colspan="2">&nbsp;</td>';
+		print '<td align="right">';
+		print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';
+		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+		print '</td>';
 		print "</tr>\n";
 
 		while ($i < min($num,$limit))
@@ -415,7 +459,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 
 			// Date
-			print '<td nowrap="nowrap" align="center">'.dol_print_date($objp->dp,'day')."</td>\n";
+			print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 
 			print '<td>';
 			if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
@@ -442,6 +486,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 			$i++;
 		}
 		print "</table>";
+		print "</form>\n";
 	}
 	else
 	{

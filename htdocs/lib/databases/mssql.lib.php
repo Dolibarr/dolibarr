@@ -547,10 +547,10 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief      Formatage (par PHP) d'une date vers format texte pour insertion dans champ date.
-	 *				Fonction a utiliser pour generer les INSERT.
-	 *	\param	    param       Date TMS a convertir
-	 *	\return	    date        Date au format texte YYYYMMDDHHMMSS.
+	 *   \brief     Convert (by PHP) a GM Timestamp date into a PHP server TZ to insert into a date field.
+	 *              Function to use to build INSERT, UPDATE or WHERE predica
+	 *   \param	    param       Date TMS to convert
+	 *   \return	string      Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{

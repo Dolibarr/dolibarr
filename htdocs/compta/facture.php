@@ -37,6 +37,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 
@@ -3548,13 +3549,13 @@ else
 		if ($month > 0)
 		{
 			if ($year > 0)
-			$sql.= " AND date_format(f.datef, '%Y-%m') = '$year-$month'";
+			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
 			else
 			$sql.= " AND date_format(f.datef, '%m') = '$month'";
 		}
-		if ($year > 0)
+		else if ($year > 0)
 		{
-			$sql.= ' AND date_format(f.datef, \'%Y\') = '.$year;
+			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 		}
 		if ($_POST['sf_ref'])
 		{
@@ -3567,10 +3568,8 @@ else
 
 		$sql.= ' ORDER BY ';
 		$listfield=explode(',',$sortfield);
-		foreach ($listfield as $key => $value)
-		$sql.= $listfield[$key].' '.$sortorder.',';
+		foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 		$sql.= ' f.rowid DESC ';
-
 		$sql.= $db->plimit($limit+1,$offset);
 
 		$resql = $db->query($sql);
@@ -3671,23 +3670,9 @@ else
 					print "</td>\n";
 
 					// Date
-					if ($objp->df > 0)
-					{
-						$y = dol_print_date($db->jdate($objp->df),'%Y');
-						$m = dol_print_date($db->jdate($objp->df),'%m');
-						$mt = dol_print_date($db->jdate($objp->df),'%b');
-						$d = dol_print_date($db->jdate($objp->df),'%d');
-						print '<td align="center" nowrap>';
-						print $d;
-						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-						print $mt.'</a>';
-						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-						print $y.'</a></td>';
-					}
-					else
-					{
-						print '<td align="center"><b>!!!</b></td>';
-					}
+					print '<td align="center" nowrap>';
+					print dol_print_date($db->jdate($objp->df),'day');
+					print '</td>';
 
 					// Date limit
 					print '<td align="center" nowrap="1">'.dol_print_date($datelimit,'day');

@@ -36,17 +36,9 @@ $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'');
 
-
 $paymentstatic=new Paiement($db);
 $accountstatic=new Account($db);
 $companystatic=new Societe($db);
-
-
-/*
-* 	View
-*/
-
-llxHeader('',$langs->trans("ListPayment"));
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
@@ -57,7 +49,16 @@ $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 
-$sql = "SELECT DISTINCT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
+
+
+
+/*
+* 	View
+*/
+
+llxHeader('',$langs->trans("ListPayment"));
+
+$sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,";
 $sql.= " p.statut, p.num_paiement,";
 //$sql.= " c.libelle as paiement_type,";
 $sql.= " c.code as paiement_code,";
@@ -84,15 +85,24 @@ if ($socid)
 {
   $sql.= " AND f.fk_soc = ".$socid;
 }
-if ($_GET["search_montant"])
+// Search criteria
+if ($_REQUEST["search_ref"])
 {
-  $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
+  $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
+}
+if ($_REQUEST["search_amount"])
+{
+  $sql .=" AND p.amount=".price2num($_REQUEST["search_amount"]);
+}
+if ($_REQUEST["search_company"])
+{
+  $sql .=" AND s.nom like '%".addslashes($_REQUEST["search_company"])."%'";
 }
 
 if ($_GET["orphelins"])     // Option for debugging purpose only
 {
-  // Paiements li�s � aucune facture (pour aide au diagnostic)
-  $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
+  // Paiements lies a aucune facture (pour aide au diagnostic)
+  $sql = "SELECT p.rowid, p.datep as dp, p.amount,";
   $sql.= " p.statut, p.num_paiement,";
   //$sql.= " c.libelle as paiement_type";
   $sql.= " c.code as paiement_code,";
@@ -105,8 +115,7 @@ if ($_GET["orphelins"])     // Option for debugging purpose only
   $sql.= " AND s.entity = ".$conf->entity;
   $sql.= " AND pf.rowid IS NULL";
 }
-$sql.= " ORDER BY ".$sortfield." ".$sortorder;
-//$sql.= ", facnumber ASC";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit( $limit+1 ,$offset);
 //print "$sql";
 
@@ -117,10 +126,15 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$paramlist=($_GET["orphelins"]?"&orphelins=1":"");
+	$paramlist='';
+	$paramlist.=($_REQUEST["orphelins"]?"&orphelins=1":"");
+	$paramlist.=($_REQUEST["search_ref"]?"&search_ref=".$_REQUEST["search_ref"]:"");
+	$paramlist.=($_REQUEST["search_company"]?"&search_company=".$_REQUEST["search_company"]:"");
+	$paramlist.=($_REQUEST["search_amount"]?"&search_amount=".$_REQUEST["search_amount"]:"");
+
 	print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
 
-	print '<form method="get" action="liste.php">';
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("RefPayment"),"liste.php","p.rowid","",$paramlist,"",$sortfield,$sortorder);
@@ -136,11 +150,18 @@ if ($resql)
 	}
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Lines for filters fields
 	print '<tr class="liste_titre">';
-	print '<td colspan="5">&nbsp;</td>';
+	print '<td align="left">';
+	print '<input class="fat" type="text" size="4" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '<td align="left">';
+	print '<input class="fat" type="text" size="6" name="search_company" value="'.$_REQUEST["search_company"].'">';
+	print '</td>';
+	print '<td colspan="2">&nbsp;</td>';
 	print '<td align="right">';
-	print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
+	print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
 	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
@@ -163,7 +184,7 @@ if ($resql)
 		print $paymentstatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td align="center">'.dol_print_date($objp->dp,'day').'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
 
 		// Company
 		print '<td>';

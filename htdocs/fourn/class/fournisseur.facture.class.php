@@ -105,7 +105,7 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *    \brief      Creation de la facture en base
+	 *    \brief      Create supplier invoice into database
 	 *    \param      user        object utilisateur qui cree
 	 *    \return     int         id facture si ok, < 0 si erreur
 	 */
@@ -147,7 +147,8 @@ class FactureFournisseur extends Facture
 		$sql.= ", '".$this->db->idate($this->date)."'";
 		$sql.= ", '".addslashes($this->note)."'";
 		$sql.= ", '".addslashes($this->note_public)."'";
-		$sql.= ", ".$user->id.",'".$this->db->idate($this->date_echeance)."'";
+		$sql.= ", ".$user->id.",";
+		$sql.= $this->date_echeance!=''?"'".$this->db->idate($this->date_echeance)."'":"null";
 		$sql.= ")";
 
 		dol_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
