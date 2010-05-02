@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
-$langs->load("products@product");
+$langs->load("products");
 
 $type=trim(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
 
@@ -111,7 +111,7 @@ else
 		{
 			$texte = $langs->trans("Services");
 		}
-		else 
+		else
 		{
 			$texte = $langs->trans("Products");
 		}
@@ -236,7 +236,7 @@ if ($resql)
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$title_picto = img_picto('',$picto);
 		$title_text = $title;
-		
+
 		// Check if a custom template is present
 		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl'))
 		{
@@ -255,12 +255,12 @@ if ($resql)
 			$template_dir = DOL_DOCUMENT_ROOT . '/core/tpl/';
 			$template = 'error.tpl';
 		}
-		
+
 		// START SMARTY
 		if ($conf->global->MAIN_SMARTY)
 		{
 			$smarty->template_dir = $template_dir;
-			
+
 			$smarty->assign('fieldlist', $fieldlist);
 			$smarty->assign('datas', $datas);
 			$smarty->assign('url_root', $dolibarr_main_url_root);
@@ -268,14 +268,14 @@ if ($resql)
 			$smarty->assign('langs', $langs);
 			$smarty->assign('title_picto', $title_picto);
 			$smarty->assign('title_text', $title_text);
-			
+
 			// Enable caching
 			//$smarty->caching = true;
-			
+
 			//$smarty->debugging = true;
-			
+
 			$smarty->display($template, $_GET["canvas"]);
-			
+
 			// Suppression de la version compilee
 			$smarty->clear_compiled_tpl($template);
 		}

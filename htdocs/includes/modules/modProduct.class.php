@@ -73,7 +73,7 @@ class modProduct extends DolibarrModules
 
 		// Config pages
 		$this->config_page_url = array("produit.php@product");
-		$this->langfiles = array("products@product","companies","stocks","bills");
+		$this->langfiles = array("products","companies","stocks","bills");
 
 		// Constants
 		$this->const = array();

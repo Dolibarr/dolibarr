@@ -29,7 +29,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
-$langs->load("members@adherents");
+$langs->load("members");
 $langs->load("companies");
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];

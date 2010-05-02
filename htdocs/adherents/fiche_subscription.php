@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
-$langs->load("members@adherents");
+$langs->load("members");
 $langs->load("users");
 
 $adh = new Adherent($db);

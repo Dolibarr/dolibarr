@@ -40,7 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("stocks");
-$langs->load("products@product");
+$langs->load("products");
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -140,7 +140,7 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$_GET["type"] = $_POST["type"];
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$product->ref                = $_POST["ref"];
@@ -151,11 +151,11 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		if ($product->price_base_type == 'TTC') $product->price_min_ttc = $_POST["price_min"];
 		else $product->price_min = $_POST["price_min"];
 		$product->tva_tx             = $_POST["tva_tx"];
-		
+
 		// local taxes.
 		$product->localtax1_tx = get_localtax($product->tva_tx,1);
 		$product->localtax2_tx = get_localtax($product->tva_tx,2);
-		
+
 		$product->type               = $_POST["type"];
 		$product->status             = $_POST["statut"];
 		$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
@@ -636,9 +636,9 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		{
 			$filecanvas = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php';
 			$classname = 'Product'.ucfirst($_GET["canvas"]);
-			
+
 			include_once($filecanvas);
-			
+
 			$product = new $classname($db,0,$user);
 		}
 
@@ -665,9 +665,9 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
 		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
-		
+
 		$product->assign_values('create');
-		
+
 		include($template_dir.'create.tpl.php');
 	}
 }
@@ -705,7 +705,7 @@ if ($_GET["id"] || $_GET["ref"])
 			$picto=($product->type==1?'service':'product');
 			dol_fiche_head($head, 'card', $titre, 0, $picto);
 			print "\n<!-- CUT HERE -->\n";
-			
+
 			// Confirmation de la suppression de la facture
 			if ($_GET["action"] == 'delete')
 			{
@@ -716,7 +716,7 @@ if ($_GET["id"] || $_GET["ref"])
 			print($mesg);
 
 			$product->assign_values('view');
-			
+
 			include($template_dir.'view.tpl.php');
 		}
 	}
@@ -729,9 +729,9 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($mesg) {
 			print '<br><div class="error">'.$mesg.'</div><br>';
 		}
-			
+
 		$product->assign_values('edit');
-			
+
 		include($template_dir.'edit.tpl.php');
 	}
 }

@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("admin");
 $langs->load("propal");
-$langs->load("products@product");
+$langs->load("products");
 
 // Security check
 if (!$user->admin)

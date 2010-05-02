@@ -31,7 +31,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
-$langs->load("members@adherents");
+$langs->load("members");
 
 if (!$user->admin)
 accessforbidden();

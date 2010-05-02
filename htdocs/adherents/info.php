@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 
 $langs->load("companies");
 $langs->load("bills");
-$langs->load("members@adherents");
+$langs->load("members");
 $langs->load("users");
 
 if (!$user->rights->adherent->lire)

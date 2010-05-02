@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 $langs->load("other");
-$langs->load("products@product");
+$langs->load("products");
 
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
