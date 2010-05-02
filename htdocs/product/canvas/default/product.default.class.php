@@ -81,6 +81,12 @@ class ProductDefault extends Product
 		global $html;
 		global $formproduct;
 		
+		// canvas
+		$this->tpl['canvas'] = $this->canvas;
+		
+		// id
+		$this->tpl['id'] = $this->id;
+		
 		// Ref
 		$this->tpl['ref'] = $this->ref;
 		
@@ -121,6 +127,11 @@ class ProductDefault extends Product
 			
 			// VAT
 			$this->tpl['tva_tx'] = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+		}
+		
+		if ($action == 'edit')
+		{
+			$this->tpl['title'] = load_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$this->ref, "");
 		}
 		
 		if ($action == 'create' || $action == 'edit')
