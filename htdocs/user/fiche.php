@@ -202,7 +202,8 @@ if ($_POST["action"] == 'addgroup' && $caneditfield)
 {
 	if ($_POST["group"])
 	{
-		$edituser = new User($db, $_GET["id"]);
+		$edituser = new User($db);
+		$edituser->fetch($_GET["id"]);
 		$edituser->SetInGroup($_POST["group"]);
 
 		Header("Location: fiche.php?id=".$_GET["id"]);
@@ -214,7 +215,8 @@ if ($_GET["action"] == 'removegroup' && $caneditfield)
 {
 	if ($_GET["group"])
 	{
-		$edituser = new User($db, $_GET["id"]);
+		$edituser = new User($db);
+		$edituser->fetch($_GET["id"]);
 		$edituser->RemoveFromGroup($_GET["group"]);
 
 		Header("Location: fiche.php?id=".$_GET["id"]);

@@ -333,8 +333,8 @@ else
 
 				// Who
 				print '<tr><td>'.$langs->trans("Person").'</td><td>';
-				$userfee=new User($db,$deplacement->fk_user);
-				$userfee->fetch();
+				$userfee=new User($db);
+				$userfee->fetch($deplacement->fk_user);
 				print $userfee->getNomUrl(1);
 				print '</td></tr>';
 

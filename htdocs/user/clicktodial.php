@@ -45,7 +45,8 @@ $result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
 
 if ($_POST["action"] == 'update' && ! $_POST['cancel'])
 {
-	$edituser = new User($db, $_GET["id"]);
+	$edituser = new User($db);
+	$edituser->fetch($_GET["id"]);
 
 	$edituser->clicktodial_login    = $_POST["login"];
 	$edituser->clicktodial_password = $_POST["password"];

@@ -50,12 +50,12 @@ $datetimeprev = time();
 $month = strftime("%m", $datetimeprev);
 $year = strftime("%Y", $datetimeprev);
 
-$user = new user($db, PRELEVEMENT_USER);
+$user = new user($db);
+$user->fetch(PRELEVEMENT_USER);
+
 
 /*
- *
- * Lectures des factures
- *
+ *	View
  */
 
 $factures = array();

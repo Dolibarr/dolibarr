@@ -115,7 +115,8 @@ if ($_POST["action"] == 'adduser')
 			$editgroup->fetch($_GET["id"]);
 			$editgroup->oldcopy=dol_clone($editgroup);
 
-			$edituser = new User($db, $_POST["user"]);
+			$edituser = new User($db);
+			$edituser->fetch($_POST["user"]);
 			$result=$edituser->SetInGroup($_GET["id"]);
 
 			// We reload members (list has changed)
@@ -146,7 +147,8 @@ if ($_GET["action"] == 'removeuser')
 			$editgroup->fetch($_GET["id"]);
 			$editgroup->oldcopy=dol_clone($editgroup);
 
-			$edituser = new User($db, $_GET["user"]);
+			$edituser = new User($db);
+			$edituser->fetch($_GET["user"]);
 			$edituser->RemoveFromGroup($_GET["id"]);
 
 			// We reload members (list has changed)

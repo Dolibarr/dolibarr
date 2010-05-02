@@ -27,8 +27,8 @@
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
-    exit;
+	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+	exit;
 }
 
 // Recupere root dolibarr
@@ -49,8 +49,9 @@ $sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $row = $db->fetch_row($resql);
-  $user = new User($db, $row[0]);
+	$row = $db->fetch_row($resql);
+	$user = new User($db);
+	$user->fetch($row[0]);
 }
 
 $socids = array();
@@ -58,15 +59,15 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num_socs = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num_socs)
-    {
-      $i++;
+	$num_socs = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num_socs)
+	{
+		$i++;
 
-      $row = $db->fetch_row($resql);
-      $socids[$i] = $row[0];
-    }
+		$row = $db->fetch_row($resql);
+		$socids[$i] = $row[0];
+	}
 }
 
 $prodids = array();
@@ -74,15 +75,15 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num_prods = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num_prods)
-    {
-      $i++;
+	$num_prods = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num_prods)
+	{
+		$i++;
 
-      $row = $db->fetch_row($resql);
-      $prodids[$i] = $row[0];
-    }
+		$row = $db->fetch_row($resql);
+		$prodids[$i] = $row[0];
+	}
 }
 
 $i=0;

@@ -275,7 +275,7 @@ if ($resql)
 		print '<td align="left">';
 		if ($obj->useridauthor)
 		{
-			$userstatic=new User($db,$obj->useridauthor);
+			$userstatic=new User($db);
 			$userstatic->id=$obj->useridauthor;
 			$userstatic->login=$obj->loginauthor;
 			print $userstatic->getLoginUrl(1);
@@ -287,7 +287,7 @@ if ($resql)
 		print '<td align="left">';
 		if ($obj->useridtodo)
 		{
-			$userstatic=new User($db,$obj->useridtodo);
+			$userstatic=new User($db);
 			$userstatic->id=$obj->useridtodo;
 			$userstatic->login=$obj->logintodo;
 			print $userstatic->getLoginUrl(1);
@@ -299,7 +299,7 @@ if ($resql)
 		print '<td align="left">';
 		if ($obj->useriddone)
 		{
-			$userstatic=new User($db,$obj->useriddone);
+			$userstatic=new User($db);
 			$userstatic->id=$obj->useriddone;
 			$userstatic->login=$obj->logindone;
 			print $userstatic->getLoginUrl(1);

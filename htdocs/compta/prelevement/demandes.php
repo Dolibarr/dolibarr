@@ -140,8 +140,8 @@ if ( $db->query($sql) )
 
 		if (!array_key_exists($obj->fk_user_demande,$users))
 		{
-			$users[$obj->fk_user_demande] = new User($db, $obj->fk_user_demande);
-			$users[$obj->fk_user_demande]->fetch();
+			$users[$obj->fk_user_demande] = new User($db);
+			$users[$obj->fk_user_demande]->fetch($obj->fk_user_demande);
 		}
 
 		// User

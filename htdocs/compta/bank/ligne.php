@@ -243,8 +243,8 @@ if ($result)
 		print '<tr><td width="20%">'.$langs->trans("Author")."</td>";
 		if ($objp->fk_user_author)
 		{
-			$author=new User($db,$objp->fk_user_author);
-			$author->fetch();
+			$author=new User($db);
+			$author->fetch($objp->fk_user_author);
 			print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$author->id.'">';
 			print img_object($langs->trans("ShowUser"),'user').' '.$author->fullname.'</a></td>';
 		}

@@ -168,16 +168,16 @@ if ($_POST["action"] == 'add_action')
 	}
 	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
 
-	$usertodo=new User($db,$_POST["affectedto"]);
+	$usertodo=new User($db);
 	if ($_POST["affectedto"] > 0)
 	{
-		$usertodo->fetch();
+		$usertodo->fetch($_POST["affectedto"]);
 	}
 	$actioncomm->usertodo = $usertodo;
-	$userdone=new User($db,$_POST["doneby"]);
+	$userdone=new User($db);
 	if ($_POST["doneby"] > 0)
 	{
-		$userdone->fetch();
+		$userdone->fetch($_POST["doneby"]);
 	}
 	$actioncomm->userdone = $userdone;
 
@@ -357,16 +357,16 @@ if ($_POST["action"] == 'update')
 		}
 
 		// Users
-		$usertodo=new User($db,$_POST["affectedto"]);
+		$usertodo=new User($db);
 		if ($_POST["affectedto"])
 		{
-			$usertodo->fetch();
+			$usertodo->fetch($_POST["affectedto"]);
 		}
 		$actioncomm->usertodo = $usertodo;
-		$userdone=new User($db,$_POST["doneby"]);
+		$userdone=new User($db);
 		if ($_POST["doneby"])
 		{
-			$userdone->fetch();
+			$userdone->fetch($_POST["doneby"]);
 		}
 		$actioncomm->userdone = $userdone;
 

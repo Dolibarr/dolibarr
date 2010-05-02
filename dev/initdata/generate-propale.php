@@ -28,8 +28,8 @@
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
-    exit;
+	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+	exit;
 }
 
 // Recupere root dolibarr
@@ -51,8 +51,9 @@ $sql = "SELECT min(rowid) FROM ".MAIN_DB_PREFIX."user";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $row = $db->fetch_row($resql);
-  $user = new User($db, $row[0]);
+	$row = $db->fetch_row($resql);
+	$user = new User($db);
+	$user->fetch($row[0]);
 }
 
 $socids = array();
@@ -60,15 +61,15 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num_socs = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num_socs)
-    {
-      $i++;
+	$num_socs = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num_socs)
+	{
+		$i++;
 
-      $row = $db->fetch_row($resql);
-      $socids[$i] = $row[0];
-    }
+		$row = $db->fetch_row($resql);
+		$socids[$i] = $row[0];
+	}
 }
 
 $contids = array();
@@ -76,15 +77,15 @@ $sql = "SELECT rowid, fk_soc FROM ".MAIN_DB_PREFIX."socpeople";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num_conts = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num_conts)
-    {
-      $i++;
+	$num_conts = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num_conts)
+	{
+		$i++;
 
-      $row = $db->fetch_row($resql);
-      $contids[$row[1]][0] = $row[0]; // A ameliorer
-    }
+		$row = $db->fetch_row($resql);
+		$contids[$row[1]][0] = $row[0]; // A ameliorer
+	}
 }
 
 $prodids = array();
@@ -92,15 +93,15 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num_prods = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num_prods)
-    {
-      $i++;
+	$num_prods = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num_prods)
+	{
+		$i++;
 
-      $row = $db->fetch_row($resql);
-      $prodids[$i] = $row[0];
-    }
+		$row = $db->fetch_row($resql);
+		$prodids[$i] = $row[0];
+	}
 }
 
 $user->rights->propale->valider=1;
@@ -117,7 +118,7 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 {
 	$i++;
 	$socid = rand(1, $num_socs);
-    print "Proposal ".$i." for socid ".$socid;
+	print "Proposal ".$i." for socid ".$socid;
 
 	$soc = new Societe($db);
 

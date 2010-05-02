@@ -164,8 +164,8 @@ if ($_GET["action"] == 'edit')
 else print dol_nl2br($ecmdir->description);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationUser").'</td><td>';
-$userecm=new User($db,$ecmdir->fk_user_c);
-$userecm->fetch();
+$userecm=new User($db);
+$userecm->fetch($ecmdir->fk_user_c);
 print $userecm->getNomUrl(1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';

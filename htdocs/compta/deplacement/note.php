@@ -137,8 +137,8 @@ if ($id > 0 || ! empty($ref))
 	// Who
 	print "<tr>";
 	print '<td>'.$langs->trans("Person").'</td><td>';
-	$userfee=new User($db,$trip->fk_user);
-	$userfee->fetch();
+	$userfee=new User($db);
+	$userfee->fetch($trip->fk_user);
 	print $userfee->getNomUrl(1);
 	print '</td></tr>';
 
