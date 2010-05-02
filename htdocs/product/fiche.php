@@ -220,10 +220,10 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 	}
 	else
 	{
-		if (!empty($_POST["canvas"]) && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php'))
+		if (!empty($_POST["canvas"]) && file_exists('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php'))
 		{
-			$classname = 'Product'.ucfirst($product->canvas);
-			include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
+			$classname = 'Product'.ucfirst($_POST["canvas"]);
+			include_once('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php');
 			$product = new $classname($db);
 		}
 

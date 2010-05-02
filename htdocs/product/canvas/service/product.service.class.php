@@ -80,6 +80,9 @@ class ProductService extends Product
 		
 		parent::assign_values($action);
 		
+		// Duration
+		$this->tpl['duration_value'] = $this->duration_value;
+		
 		if ($action == 'create')
 		{
 			// Title
