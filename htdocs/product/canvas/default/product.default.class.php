@@ -80,19 +80,72 @@ class ProductDefault extends Product
 		global $conf,$langs,$html;
 		
 		// Ref
-		$this->tpl['showrefnav'] = $html->showrefnav($this,'ref','',1,'ref');
+		$this->tpl['ref'] = $this->ref;
+		
 		// Label
 		$this->tpl['label'] = $this->libelle;
+		
+		// Description
+		$this->tpl['description'] = nl2br($this->description);
+		
 		// Statut
 		$this->tpl['status'] = $this->getLibStatut(2);
 		
+		// Note
+		$this->tpl['note'] = nl2br($this->note);
+		
+		// Hidden
+		if ($user->rights->produit->hidden)
+		{
+			$this->tpl['hidden'] = yn($this->hidden);
+		}
+		else
+		{
+			$this->tpl['hidden'] = yn("No");
+		}
+		
+		// Stock alert
+		$this->tpl['seuil_stock_alerte'] = $this->seuil_stock_alerte;
+		
 		if ($action == 'create')
 		{
-			$this->tpl['cardTitle'] = load_fiche_titre($langs->trans("NewProduct"));
+			// Title
+			$this->tpl['title'] = load_fiche_titre($langs->trans("NewProduct"));
+			
+			// Status
+			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
+			$this->tpl['status'] = $html->selectarray('statut',$statutarray,$this->status);
+			
+			// Finished
+			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+			$this->tpl['finished'] = $html->selectarray('finished',$statutarray,$this->finished);
+		}
+		
+		if ($action == 'create' || $action == 'edit')
+		{
+			// TODO creer fonction
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
+				$this->tpl['doleditor'] = $doleditor;
+			}
+			else
+			{
+				$textarea = '<textarea name="desc" rows="4" cols="90">';
+				$textarea.= $product->description;
+				$textarea.= '</textarea>';
+				
+				$this->tpl['textarea'] = $textarea;
+			}
 		}
 		
 		if ($action == 'view')
 		{
+			// Ref
+			$this->tpl['ref'] = $html->showrefnav($this,'ref','',1,'ref');
+			
+			// Photo
 			$this->tpl['nblignes'] = 4;
 			if ($this->is_photo_available($conf->produit->dir_output))
 			{
@@ -107,11 +160,8 @@ class ProductDefault extends Product
 			$this->tpl['accountancySellCodeKey'] = $html->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
 			$this->tpl['accountancySellCodeVal'] = $html->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,'id',$this->id,$user->rights->produit->creer);
 
-			// Description
-			$this->tpl['description'] = nl2br($this->description);
-
 			// Nature
-			$this->tpl['finishedLabel'] = $this->getLibFinished();
+			$this->tpl['finished'] = $this->getLibFinished();
 
 			// Weight
 			if ($this->weight != '')
@@ -136,19 +186,6 @@ class ProductDefault extends Product
 			{
 				$this->tpl['volume'] = $this->volume." ".measuring_units_string($this->volume_units,"volume");
 			}
-
-			// Hidden
-			if ($user->rights->produit->hidden)
-			{
-				$this->tpl['hidden'] = yn($this->hidden);
-			}
-			else
-			{
-				$this->tpl['hidden'] = yn("No");
-			}
-
-			// Note
-			$this->tpl['note'] = nl2br($this->note);
 		}
 	}
 	

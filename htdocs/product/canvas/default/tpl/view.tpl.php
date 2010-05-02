@@ -25,7 +25,7 @@
 
 <tr>
 <td width="15%"><?php echo $langs->trans("Ref"); ?></td>
-<td colspan="2"><?php echo $product->tpl['showrefnav']; ?></td>
+<td colspan="2"><?php echo $product->tpl['ref']; ?></td>
 </tr>
 
 <tr>
@@ -62,7 +62,7 @@
 
 <tr>
 <td><?php echo $langs->trans("Nature"); ?></td>
-<td colspan="2"><?php echo $product->tpl['finishedLabel']; ?></td>
+<td colspan="2"><?php echo $product->tpl['finished']; ?></td>
 </tr>
 
 <tr>

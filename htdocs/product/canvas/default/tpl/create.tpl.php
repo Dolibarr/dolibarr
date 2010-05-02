@@ -26,62 +26,44 @@
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="canvas" value="<?php echo $_GET['canvas']; ?>">
 
-<?php echo $product->tpl['cardTitle']; ?>
+<?php echo $product->tpl['title']; ?>
 
 <table class="border" width="100%">
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
-<td><input name="ref" size="40" maxlength="32" value="<?php echo $_POST["ref"]; ?>">
-		if ($_error == 1)
-		{
-			print $langs->trans("RefAlreadyExists");
-		}
+<td><input name="ref" size="40" maxlength="32" value="<?php echo $product->tpl['ref']; ?>">
+<?php if ($_error == 1) echo $langs->trans("RefAlreadyExists"); ?>
 </td></tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td>
-<td><input name="libelle" size="40" value="<?php echo $_POST["libelle"]; ?>"></td>
+<td><input name="libelle" size="40" value="<?php echo $product->tpl['label']; ?>"></td>
 </tr>
 
 <tr>
-<td class="fieldrequired"><?php echo $langs->trans("Status"); ?></td><td>
-		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-		$html->select_array('statut',$statutarray,$_POST["statut"]);
-</td>
+<td class="fieldrequired"><?php echo $langs->trans("Status"); ?></td>
+<td><?php echo $product->tpl['status']; ?></td>
 </tr>
 
-		if ($_GET["type"] != 1 && $conf->stock->enabled)
-		{
+<?php if ($conf->stock->enabled) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
-<input name="seuil_stock_alerte" size="4" value="<?php echo $_POST["seuil_stock_alerte"]; ?>">
+<input name="seuil_stock_alerte" size="4" value="<?php echo $product->tpl['seuil_stock_alerte']; ?>">
 </td></tr>
-		}
-		else
-		{
+<?php } else { ?>
 <input name="seuil_stock_alerte" type="hidden" value="0">
-		}
+<?php } ?>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('desc',$_POST["desc"],160,'dolibarr_notes','',false);
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea name="desc" rows="4" cols="90">';
-			print $_POST["desc"];
-			print '</textarea>';
-		}
-
+<?php if (! $product->tpl['textarea']) { 
+$product->tpl['doleditor']->Create();
+}else{
+echo $product->tpl['textarea'];
+}?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Nature"); ?></td><td>
-			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$html->select_array('finished',$statutarray,$_POST["finished"]);
+<?php echo $product->tpl['finished']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Weight"); ?></td><td>
