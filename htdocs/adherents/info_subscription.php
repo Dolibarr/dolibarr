@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
-$langs->load("members");
+$langs->load("members@adherents");
 $langs->load("users");
 
 if (!$user->rights->adherent->lire)

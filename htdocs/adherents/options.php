@@ -28,7 +28,7 @@
 require("../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/class/adherent_options.class.php");
 
-$langs->load("members");
+$langs->load("members@adherents");
 
 $adho = new AdherentOptions($db);
 $form = new Form($db);

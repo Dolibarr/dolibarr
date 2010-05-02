@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
 
 $langs->load("companies");
-$langs->load("members");
+$langs->load("members@adherents");
 
 
 /*

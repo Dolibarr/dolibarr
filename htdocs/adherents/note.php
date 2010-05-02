@@ -32,7 +32,7 @@ $action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["
 $id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
 
 $langs->load("companies");
-$langs->load("members");
+$langs->load("members@adherents");
 $langs->load("bills");
 
 if (!$user->rights->adherent->lire)

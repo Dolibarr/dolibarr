@@ -70,7 +70,7 @@ class modAdherent extends DolibarrModules
         //------------
         $this->depends = array();
         $this->requiredby = array();
-        $this->langfiles = array("members","companies");
+        $this->langfiles = array("members@adherents","companies");
 
         // Constantes
         //-----------

@@ -70,7 +70,7 @@ class modMantis extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages
-		$this->config_page_url = array("mantis.php");
+		$this->config_page_url = array("mantis.php@mantis");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled

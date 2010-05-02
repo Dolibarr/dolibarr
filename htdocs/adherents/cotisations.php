@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
 
-$langs->load("members");
+$langs->load("members@adherents");
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
