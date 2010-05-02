@@ -605,7 +605,7 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
 	$action = '';
-	Header("Location: fiche.php?id=".$_POST["id"]);
+	Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST["id"]);
 	exit;
 }
 
@@ -765,10 +765,10 @@ if ($_GET["action"] == '')
 	if ($user->rights->produit->creer || $user->rights->service->creer)
 	{
 		if ($product->no_button_edit <> 1)
-		print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
 
 		if ($product->no_button_copy <> 1)
-		print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$product->id.'">'.$langs->trans("ToClone").'</a>';
 	}
 
 	$product_is_used = $product->verif_prod_use($product->id);
@@ -776,7 +776,7 @@ if ($_GET["action"] == '')
 	{
 		if (! $product_is_used && $product->no_button_delete <> 1)
 		{
-			print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
 		}
 		else
 		{
@@ -846,7 +846,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 				{
 					$objp = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addinpropal">';
 					print "<tr $bc[$var]>";
@@ -884,7 +884,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 
 			$var=true;
 			$otherprop = $propal->liste_array(1, ' <> '.$user->id);
-			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';
 			if (is_array($otherprop) && sizeof($otherprop))
@@ -964,7 +964,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 				{
 					$objc = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addincommande">';
 					print "<tr $bc[$var]>";
@@ -1003,7 +1003,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 
 			$var=true;
 			$othercom = $commande->liste_array(1, ' <> '.$user->id);
-			print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" width="100%">';
 			if (is_array($othercom) && sizeof($othercom))
@@ -1077,7 +1077,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 				{
 					$objp = $db->fetch_object($result);
 					$var=!$var;
-					print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="addinfacture">';
 					print "<tr $bc[$var]>";
@@ -1139,7 +1139,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 						$objp = $db->fetch_object($result);
 
 						$var=!$var;
-						print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+						print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 						print '<input type="hidden" name="action" value="addinfacture">';
 						print "<tr $bc[$var]>";
