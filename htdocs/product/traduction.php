@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
-$langs->load("product@products");
+$langs->load("products@product");
 $langs->load("languages");
 
 // Security check

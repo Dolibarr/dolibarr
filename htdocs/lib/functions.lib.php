@@ -2029,6 +2029,38 @@ function print_titre($titre)
 }
 
 /**
+ *	\brief  Load a title with picto
+ *	\param	titre				Title to show
+ *	\param	mesg				Added message to show on right
+ *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	\param	id					To force an id on html objects
+ */
+function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
+{
+	global $conf;
+	
+	$return='';
+
+	if ($picto == 'setup') $picto='title.png';
+	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
+
+	$return.= "\n";
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	if (empty($conf->browser->phone) && $picto && $titre) $return.= '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	$return.= '<td class="nobordernopadding" valign="middle">';
+	$return.= '<div class="titre">'.$titre.'</div>';
+	$return.= '</td>';
+	if (strlen($mesg))
+	{
+		$return.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
+	}
+	$return.= '</tr></table>'."\n";
+	
+	return $return;
+}
+
+/**
  *	\brief  Show a title with picto
  *	\param	titre				Title to show
  *	\param	mesg				Added message to show on right
@@ -2038,22 +2070,7 @@ function print_titre($titre)
  */
 function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
-	global $conf;
-
-	if ($picto == 'setup') $picto='title.png';
-	if (empty($conf->browser->firefox) && $picto=='title.png') $picto='title.gif';
-
-	print "\n";
-	print '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-	if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding" valign="middle">';
-	print '<div class="titre">'.$titre.'</div>';
-	print '</td>';
-	if (strlen($mesg))
-	{
-		print '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
-	}
-	print '</tr></table>'."\n";
+	print load_fiche_titre($titre, $mesg, $picto, $pictoisfullpath, $id);
 }
 
 /**

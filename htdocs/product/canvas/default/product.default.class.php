@@ -77,7 +77,7 @@ class ProductDefault extends Product
 	 */
 	function assign_values($action='')
 	{
-		global $conf,$html;
+		global $conf,$langs,$html;
 		
 		// Ref
 		$this->tpl['showrefnav'] = $html->showrefnav($this,'ref','',1,'ref');
@@ -85,6 +85,11 @@ class ProductDefault extends Product
 		$this->tpl['label'] = $this->libelle;
 		// Statut
 		$this->tpl['status'] = $this->getLibStatut(2);
+		
+		if ($action == 'create')
+		{
+			$this->tpl['cardTitle'] = load_fiche_titre($langs->trans("NewProduct"));
+		}
 		
 		if ($action == 'view')
 		{

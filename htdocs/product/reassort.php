@@ -29,7 +29,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
-$langs->load("product@products");
+$langs->load("products@product");
 $langs->load("stocks");
 
 // Security check

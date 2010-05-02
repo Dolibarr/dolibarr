@@ -40,7 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("stocks");
-$langs->load("product@products");
+$langs->load("products@product");
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -120,19 +120,23 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$error++;
 	}
 
+	if (!empty($_POST["canvas"]) && file_exists('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php') )
+	{
+		$classname = 'Product'.ucfirst($_POST["canvas"]);
+		include_once('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php');
+		$product = new $classname($db);
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
+		$_GET["action"] = "create";
+		$_GET["canvas"] = $product->canvas;
+		$_GET["type"] = $_POST["type"];
+		$error++;
+	}
+	
 	if (! $error)
 	{
-		if ($_POST["canvas"] <> '' && file_exists('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php') )
-		{
-			$classname = 'Product'.ucfirst($_POST["canvas"]);
-			include_once('canvas/'.$_POST["canvas"].'/product.'.$_POST["canvas"].'.class.php');
-			$product = new $classname($db);
-		}
-		else
-		{
-			$product = new Product($db);
-		}
-
 		$product->ref                = $_POST["ref"];
 		$product->libelle            = $_POST["libelle"];
 		$product->price_base_type    = $_POST["price_base_type"];
@@ -620,7 +624,7 @@ $formproduct = new FormProduct($db);
  */
 if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	if ($_GET["canvas"] <> '' && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
 		if (! isset($product))
 		{
@@ -631,8 +635,6 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			
 			$product = new $classname($db,0,$user);
 		}
-
-		$product->assign_smarty_values($smarty, 'create');
 
 		if ($_error == 1)
 		{
@@ -654,15 +656,18 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 
 	if ($mesg) print $mesg."\n";
 
-	if ($_GET["canvas"] <> '' && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
 		// On assigne les valeurs meme en creation car elles sont definies si
 		// on revient en erreur
-		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
+		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
 		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
-		$smarty->assign('tva_taux_value', $tvaarray['value']);
-		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
-		$smarty->display($_GET["canvas"].'-create.tpl');
+		//$smarty->assign('tva_taux_value', $tvaarray['value']);
+		//$smarty->assign('tva_taux_libelle', $tvaarray['label']);
+		
+		$product->assign_values('create');
+		
+		include($template_dir.'create.tpl.php');
 	}
 	else
 	{

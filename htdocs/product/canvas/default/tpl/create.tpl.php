@@ -26,9 +26,7 @@
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="canvas" value="<?php echo $_GET['canvas']; ?>">
 
-
-		else $title=$langs->trans("NewProduct");
-		print_fiche_titre($title);
+<?php echo $product->tpl['cardTitle']; ?>
 
 <table class="border" width="100%">
 

@@ -31,7 +31,7 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
-$langs->load("product@products");
+$langs->load("products@product");
 $langs->load("bills");
 
 // Security check
