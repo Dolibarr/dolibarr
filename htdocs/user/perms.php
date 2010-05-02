@@ -60,7 +60,8 @@ if ($user->id <> $_REQUEST["id"] && ! $canreaduser) accessforbidden();
  */
 if ($_GET["action"] == 'addrights' && $caneditperms)
 {
-    $edituser = new User($db,$_GET["id"]);
+    $edituser = new User($db);
+	$edituser->fetch($_GET["id"]);
     $edituser->addrights($_GET["rights"],$module);
 
 	// Si on a touche a ses propres droits, on recharge
@@ -73,7 +74,8 @@ if ($_GET["action"] == 'addrights' && $caneditperms)
 
 if ($_GET["action"] == 'delrights' && $caneditperms)
 {
-    $edituser = new User($db,$_GET["id"]);
+    $edituser = new User($db);
+	$edituser->fetch($_GET["id"]);
     $edituser->delrights($_GET["rights"],$module);
 
 	// Si on a touche a ses propres droits, on recharge

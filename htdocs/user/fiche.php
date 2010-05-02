@@ -83,13 +83,15 @@ $quality = 80;
  */
 if ($_GET["subaction"] == 'addrights' && $caneditperms)
 {
-	$edituser = new User($db,$_GET["id"]);
+	$edituser = new User($db);
+	$edituser->fetch($_GET["id"]);
 	$edituser->addrights($_GET["rights"]);
 }
 
 if ($_GET["subaction"] == 'delrights' && $caneditperms)
 {
-	$edituser = new User($db,$_GET["id"]);
+	$edituser = new User($db);
+	$edituser->fetch($_GET["id"]);
 	$edituser->delrights($_GET["rights"]);
 }
 
