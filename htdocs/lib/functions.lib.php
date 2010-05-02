@@ -2029,6 +2029,19 @@ function print_titre($titre)
 }
 
 /**
+ *	\brief  Show a title with picto
+ *	\param	titre				Title to show
+ *	\param	mesg				Added message to show on right
+ *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
+ * 	\param	id					To force an id on html objects
+ */
+function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
+{
+	print load_fiche_titre($titre, $mesg, $picto, $pictoisfullpath, $id);
+}
+
+/**
  *	\brief  Load a title with picto
  *	\param	titre				Title to show
  *	\param	mesg				Added message to show on right
@@ -2058,19 +2071,6 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 	$return.= '</tr></table>'."\n";
 	
 	return $return;
-}
-
-/**
- *	\brief  Show a title with picto
- *	\param	titre				Title to show
- *	\param	mesg				Added message to show on right
- *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
- *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
- * 	\param	id					To force an id on html objects
- */
-function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
-{
-	print load_fiche_titre($titre, $mesg, $picto, $pictoisfullpath, $id);
 }
 
 /**

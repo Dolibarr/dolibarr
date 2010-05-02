@@ -1513,7 +1513,7 @@ class Form
 		print '</select>';
 		if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	}
-
+	
 	/**
 	 *      \brief      Selection HT ou TTC
 	 *      \param      selected        Id pre-selectionne
@@ -1521,8 +1521,21 @@ class Form
 	 */
 	function select_PriceBaseType($selected='',$htmlname='price_base_type')
 	{
+		print $this->load_PriceBaseType($selected,$htmlname);
+	}
+
+	/**
+	 *      \brief      Selection HT ou TTC
+	 *      \param      selected        Id pre-selectionne
+	 *      \param      htmlname        Nom de la zone select
+	 */
+	function load_PriceBaseType($selected='',$htmlname='price_base_type')
+	{
 		global $langs;
-		print '<select class="flat" name="'.$htmlname.'">';
+		
+		$return='';
+		
+		$return.= '<select class="flat" name="'.$htmlname.'">';
 		$options = array(
 					'HT'=>$langs->trans("HT"),
 					'TTC'=>$langs->trans("TTC")
@@ -1531,15 +1544,17 @@ class Form
 		{
 			if ($selected == $id)
 			{
-				print '<option value="'.$id.'" selected="true">'.$value;
+				$return.= '<option value="'.$id.'" selected="true">'.$value;
 			}
 			else
 			{
-				print '<option value="'.$id.'">'.$value;
+				$return.= '<option value="'.$id.'">'.$value;
 			}
-			print '</option>';
+			$return.= '</option>';
 		}
-		print '</select>';
+		$return.= '</select>';
+		
+		return $return;
 	}
 
 	/**
@@ -2191,8 +2206,7 @@ class Form
 			return 1;
 		}
 	}
-
-
+	
 	/**
 	 *      \brief      Output an HTML select vat rate
 	 *      \param      name                Nom champ html
@@ -2209,7 +2223,29 @@ class Form
 	 */
 	function select_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
 	{
+		print $this->load_tva($name, $selectedrate, $societe_vendeuse, $societe_acheteuse, $taux_produit, $info_bits);
+	}
+
+
+	/**
+	 *      \brief      Output an HTML select vat rate
+	 *      \param      name                Nom champ html
+	 *      \param      selectedrate        Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
+	 *      \param      societe_vendeuse    Objet societe vendeuse
+	 *      \param      societe_acheteuse   Objet societe acheteuse
+	 *      \param      taux_produit        Taux par defaut du produit vendu
+	 *      \param      info_bits           Miscellanous information on line
+	 *      \remarks    Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+	 *                  Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+	 *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+	 *                  Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+	 *                  Sinon la TVA proposee par defaut=0. Fin de regle.
+	 */
+	function load_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
+	{
 		global $langs,$conf,$mysoc;
+		
+		$return='';
 
 		$txtva=array();
 		$libtva=array();
@@ -2225,13 +2261,13 @@ class Form
 		{
 			if ($societe_vendeuse->id == $mysoc->id)
 			{
-				print '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+				$return.= '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
 			}
 			else
 			{
-				print '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
+				$return.= '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
 			}
-			return;
+			return $return;
 		}
 
 		if (is_object($societe_vendeuse))
@@ -2274,12 +2310,12 @@ class Form
 			}
 			else
 			{
-				print '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry",$code_pays).'</font>';
+				$return.= '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry",$code_pays).'</font>';
 			}
 		}
 		else
 		{
-			print '<font class="error">'.$this->db->error().'</font>';
+			$return.= '<font class="error">'.$this->db->error().'</font>';
 		}
 
 		// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -2299,28 +2335,30 @@ class Form
 
 		if (sizeof($txtva))
 		{
-			print '<select class="flat" name="'.$name.'">';
+			$return.= '<select class="flat" name="'.$name.'">';
 
 			for ($i = 0 ; $i < $nbdetaux ; $i++)
 			{
 				//print "xxxxx".$txtva[$i]."-".$nprtva[$i];
-				print '<option value="'.$txtva[$i];
-				print $nprtva[$i] ? '*': '';
-				print '"';
+				$return.= '<option value="'.$txtva[$i];
+				$return.= $nprtva[$i] ? '*': '';
+				$return.= '"';
 				if ($txtva[$i] == $defaulttx && $nprtva[$i] == $defaultnpr)
 				{
-					print ' selected="true"';
+					$return.= ' selected="true"';
 				}
-				print '>'.vatrate($libtva[$i]);
-				print $nprtva[$i] ? ' *': '';
-				print '</option>';
+				$return.= '>'.vatrate($libtva[$i]);
+				$return.= $nprtva[$i] ? ' *': '';
+				$return.= '</option>';
 
 				$this->tva_taux_value[$i] = $txtva[$i];
 				$this->tva_taux_libelle[$i] = $libtva[$i];
 				$this->tva_taux_npr[$i] = $nprtva[$i];
 			}
-			print '</select>';
+			$return.= '</select>';
 		}
+		
+		return $return;
 	}
 
 

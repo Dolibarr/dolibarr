@@ -117,8 +117,7 @@ class FormProduct
 		}
 		print '</select>';
 	}
-
-
+	
 	/**
 	 *  \brief      Selection des unites de mesure
 	 *  \param      name                Nom champ html
@@ -128,8 +127,22 @@ class FormProduct
 	 */
 	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
+		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
+	}
+	
+	/**
+	 *  \brief      Selection des unites de mesure
+	 *  \param      name                Nom champ html
+	 *  \param      measuring_style     Le style de mesure : weight, volume,...
+	 *  \param      default             Forcage de l'unite
+	 *  \remarks pour l'instant on ne definit pas les unites dans la base
+	 */
+	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
+	{
 		global $langs,$conf,$mysoc;
 		$langs->load("other");
+		
+		$return='';
 
 		if ($measuring_style == 'weight')
 		{
@@ -160,19 +173,21 @@ class FormProduct
 			$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
 		}
 
-		print '<select class="flat" name="'.$name.'">';
-		if ($adddefault) print '<option value="0">'.$langs->trans("Default").'</option>';
+		$return.= '<select class="flat" name="'.$name.'">';
+		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
 
 		foreach ($measuring_units as $key => $value)
 		{
-			print '<option value="'.$key.'"';
+			$return.= '<option value="'.$key.'"';
 			if ($key == $default)
 			{
-				print ' selected="true"';
+				$return.= ' selected="true"';
 			}
-			print '>'.$value.'</option>';
+			$return.= '>'.$value.'</option>';
 		}
-		print '</select>';
+		$return.= '</select>';
+		
+		return $return;
 	}
 
 }

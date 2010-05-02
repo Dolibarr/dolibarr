@@ -55,10 +55,10 @@
 <?php } ?>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $product->tpl['textarea']) { 
-$product->tpl['doleditor']->Create();
+<?php if (! $product->tpl['textarea_description']) { 
+$product->tpl['doleditor_description']->Create();
 }else{
-echo $product->tpl['textarea'];
+echo $product->tpl['textarea_description'];
 }?>
 </td></tr>
 
@@ -67,85 +67,60 @@ echo $product->tpl['textarea'];
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Weight"); ?></td><td>
-<input name="weight" size="4" value="<?php echo $_POST["weight"]; ?>">
-			print $formproduct->select_measuring_units("weight_units","weight");
+<input name="weight" size="4" value="<?php echo $product->tpl['weight']; ?>">
+<?php echo $product->tpl['weight_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Length"); ?></td><td>
-<input name="size" size="4" value="<?php echo $_POST["size"]; ?>">
-			print $formproduct->select_measuring_units("size_units","size");
+<input name="size" size="4" value="<?php echo $product->tpl['length']; ?>">
+<?php echo $product->tpl['length_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Surface"); ?></td><td>
-<input name="surface" size="4" value="<?php echo $_POST["surface"]; ?>">
-			print $formproduct->select_measuring_units("surface_units","surface");
+<input name="surface" size="4" value="<?php echo $product->tpl['surface']; ?>">
+<?php echo $product->tpl['surface_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Volume"); ?></td><td>
-<input name="volume" size="4" value="<?php echo $_POST["volume"]; ?>">
-			print $formproduct->select_measuring_units("volume_units","volume");
+<input name="volume" size="4" value="<?php echo $product->tpl['volume']; ?>">
+<?php echo $product->tpl['volume_units']; ?>
 </td></tr>
 
-		// Hidden
-		if (($_GET["type"] != 1 && $user->rights->produit->hidden)
-		|| ($_GET["type"] == 1 && $user->rights->service->hidden))
-		{
-<tr><td><?php echo $langs->trans("Hidden"); ?></td><td>
-			print $html->selectyesno('hidden',$product->hidden);
-</td></tr>
-		}
-		else
-		{
-			print yn("No");
-		}
+<tr><td><?php echo $langs->trans("Hidden"); ?></td>
+<td><?php echo $product->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$_POST["note"],180,'dolibarr_notes','',false);
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea name="note" rows="8" cols="70">';
-			print $_POST["note"];
-			print '</textarea>';
-		}
+<?php if (! $product->tpl['textarea_note']) { 
+$product->tpl['doleditor_note']->Create();
+}else{
+echo $product->tpl['textarea_note'];
+}?>
 </td></tr>
 </table>
 
 <br>
 
-		if ($conf->global->PRODUIT_MULTIPRICES)
-		{
-			// We do no show price array on create when multiprices enabled.
-			// We must set them on prices tab.
-		}
-		else
-		{
-			print '<table class="border" width="100%">';
+<?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
 
-			// PRIX
-			print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
-			print '<td><input name="price" size="10" value="'.$product->price.'">';
-			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
-			print '</td></tr>';
+<table class="border" width="100%">
 
-			// MIN PRICE
-			print '<tr><td>'.$langs->trans("MinPrice").'</td>';
-			print '<td><input name="price_min" size="10" value="'.$product->price_min.'">';
-			print '</td></tr>';
+<tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
+<td><input name="price" size="10" value="<?php echo $product->tpl['price']; ?>">
+<?php echo $product->tpl['price_base_type']; ?>
+</td></tr>
 
-			// VAT
-			print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
-			print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-			print '</td></tr>';
+<tr><td><?php echo $langs->trans("MinPrice"); ?></td>
+<td><input name="price_min" size="10" value="<?php echo $product->tpl['price_min']; ?>">
+</td></tr>
 
-			print '</table>';
+<tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
+<?php echo $product->tpl['tva_tx']; ?>
+</td></tr>
 
-			print '<br>';
-		}
+</table>
+
+<br>
+<?php } ?>
 
 <center><input type="submit" class="button" value="<?php echo $langs->trans("Create"); ?>"></center>
 

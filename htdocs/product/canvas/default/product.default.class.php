@@ -47,7 +47,7 @@ class ProductDefault extends Product
 		$this->module 			= "produit";
 		$this->canvas 			= "default";
 		$this->name 			= "default";
-		$this->description 		= "Canvas des produits (défaut)";
+		$this->definition 		= "Canvas des produits (défaut)";
 		$this->fieldListName    = "product_default";
 
 		$this->next_prev_filter = "canvas='default'";
@@ -77,7 +77,9 @@ class ProductDefault extends Product
 	 */
 	function assign_values($action='')
 	{
-		global $conf,$langs,$html;
+		global $conf,$langs;
+		global $html;
+		global $formproduct;
 		
 		// Ref
 		$this->tpl['ref'] = $this->ref;
@@ -95,7 +97,7 @@ class ProductDefault extends Product
 		$this->tpl['note'] = nl2br($this->note);
 		
 		// Hidden
-		if ($user->rights->produit->hidden)
+		if ($this->user->rights->produit->hidden)
 		{
 			$this->tpl['hidden'] = yn($this->hidden);
 		}
@@ -112,6 +114,17 @@ class ProductDefault extends Product
 			// Title
 			$this->tpl['title'] = load_fiche_titre($langs->trans("NewProduct"));
 			
+			// Price
+			$this->tpl['price'] = $this->price;
+			$this->tpl['price_min'] = $this->price_min;
+			$this->tpl['price_base_type'] = $html->load_PriceBaseType($this->price_base_type, "price_base_type");
+			
+			// VAT
+			$this->tpl['tva_tx'] = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+		}
+		
+		if ($action == 'create' || $action == 'edit')
+		{
 			// Status
 			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 			$this->tpl['status'] = $html->selectarray('statut',$statutarray,$this->status);
@@ -119,24 +132,51 @@ class ProductDefault extends Product
 			// Finished
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
 			$this->tpl['finished'] = $html->selectarray('finished',$statutarray,$this->finished);
-		}
-		
-		if ($action == 'create' || $action == 'edit')
-		{
+			
+			// Weight
+			$this->tpl['weight'] = $this->weight;
+			$this->tpl['weight_units'] = $formproduct->load_measuring_units("weight_units","weight",$this->weight_units);
+			
+			// Length
+			$this->tpl['length'] = $this->length;
+			$this->tpl['length_units'] = $formproduct->load_measuring_units("length_units","size",$this->length_units);
+			
+			// Surface
+			$this->tpl['surface'] = $this->surface;
+			$this->tpl['surface_units'] = $formproduct->load_measuring_units("surface_units","surface",$this->surface_units);
+			
+			// Volume
+			$this->tpl['volume'] = $this->volume;
+			$this->tpl['volume_units'] = $formproduct->load_measuring_units("volume_units","volume",$this->volume_units);
+			
+			// Hidden
+			if ($this->user->rights->produit->hidden)
+			{
+				$this->tpl['hidden'] = $html->selectyesno('hidden',$this->hidden);
+			}
+			
 			// TODO creer fonction
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
-				$this->tpl['doleditor'] = $doleditor;
+				
+				$doleditor=new DolEditor('desc',$this->description,160,'dolibarr_notes','',false);
+				$this->tpl['doleditor_description'] = $doleditor;
+				
+				$doleditor=new DolEditor('note',$this->note,180,'dolibarr_notes','',false);
+				$this->tpl['doleditor_note'] = $doleditor;
 			}
 			else
 			{
 				$textarea = '<textarea name="desc" rows="4" cols="90">';
-				$textarea.= $product->description;
+				$textarea.= $this->description;
 				$textarea.= '</textarea>';
+				$this->tpl['textarea_description'] = $textarea;
 				
-				$this->tpl['textarea'] = $textarea;
+				$textarea = '<textarea name="note" rows="8" cols="70">';
+				$textarea.= $this->note;
+				$textarea.= '</textarea>';
+				$this->tpl['textarea_note'] = $textarea;
 			}
 		}
 		
