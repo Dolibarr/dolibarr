@@ -1,0 +1,5 @@
+# Dolibarr language file - es_ES - marque pages 
+CHARSET= UTF-8
+Bookm= Marcadores
+NewBookmark= Nuevo Marcador
+AddThisPageToBookmarks= Añadir esta página en los marcadores

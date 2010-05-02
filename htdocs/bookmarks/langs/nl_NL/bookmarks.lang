@@ -1,0 +1,5 @@
+# Dolibarr language file - nl_NL - marque pages
+CHARSET=UTF-8
+Bookm=Weblinks
+NewBookmark=Nieuwe weblink
+AddThisPageToBookmarks=Voeg deze webpagina toe aan de weblinks
