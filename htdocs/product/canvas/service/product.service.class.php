@@ -41,13 +41,15 @@ class ProductService extends Product
 	 */
 	function ProductService($DB=0, $id=0, $user=0)
 	{
-		$this->db = $DB;
-		$this->id = $id ;
-		$this->user = $user;
-		$this->module = "service";
-		$this->canvas = "service";
-		$this->name = "service";
-		$this->definition = "Canvas des services";
+		$this->db 				= $DB;
+		$this->id 				= $id ;
+		$this->user 			= $user;
+		$this->smarty			= 0;
+		$this->module 			= "service";
+		$this->canvas 			= "service";
+		$this->name 			= "service";
+		$this->definition 		= "Canvas des services";
+		$this->fieldListName	= "product_service";
 
 		$this->next_prev_filter = "canvas='service'";
 	}

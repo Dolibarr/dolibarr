@@ -31,7 +31,7 @@ class ProductDefault extends Product
 {
 	//! Numero d'erreur Plage 1280-1535
 	var $errno = 0;
-	
+	//! Template container
 	var $tpl = array();
 	
 	/**
@@ -44,6 +44,7 @@ class ProductDefault extends Product
 		$this->db 				= $DB;
 		$this->id 				= $id ;
 		$this->user 			= $user;
+		$this->smarty			= 0;
 		$this->module 			= "produit";
 		$this->canvas 			= "default";
 		$this->name 			= "default";

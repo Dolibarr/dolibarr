@@ -113,16 +113,16 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')).'</div>';
 		$_GET["action"] = "create";
-		$_GET["canvas"] = $product->canvas;
-		$_GET["type"] = $_POST["type"];
+		$_GET["canvas"] = $_POST["canvas"];
+		$_GET["type"] 	= $_POST["type"];
 		$error++;
 	}
 	if (empty($_POST["ref"]))
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
 		$_GET["action"] = "create";
-		$_GET["canvas"] = $product->canvas;
-		$_GET["type"] = $_POST["type"];
+		$_GET["canvas"] = $_POST["canvas"];
+		$_GET["type"] 	= $_POST["type"];
 		$error++;
 	}
 
@@ -134,10 +134,10 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
+		$mesg='<div class="error">'.$langs->trans('ErrorCanvasNotDefined').'</div>';
 		$_GET["action"] = "create";
-		$_GET["canvas"] = $product->canvas;
-		$_GET["type"] = $_POST["type"];
+		$_GET["canvas"] = $_POST["canvas"];
+		$_GET["type"] 	= $_POST["type"];
 		$error++;
 	}
 
@@ -153,27 +153,27 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 		$product->tva_tx             = $_POST["tva_tx"];
 
 		// local taxes.
-		$product->localtax1_tx = get_localtax($product->tva_tx,1);
-		$product->localtax2_tx = get_localtax($product->tva_tx,2);
+		$product->localtax1_tx 			= get_localtax($product->tva_tx,1);
+		$product->localtax2_tx 			= get_localtax($product->tva_tx,2);
 
-		$product->type               = $_POST["type"];
-		$product->status             = $_POST["statut"];
-		$product->description        = dol_htmlcleanlastbr($_POST["desc"]);
-		$product->note               = dol_htmlcleanlastbr($_POST["note"]);
-		$product->duration_value     = $_POST["duration_value"];
-		$product->duration_unit      = $_POST["duration_unit"];
-		$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
-		$product->canvas             = $_POST["canvas"];
-		$product->weight             = $_POST["weight"];
-		$product->weight_units       = $_POST["weight_units"];
-		$product->length             = $_POST["size"];
-		$product->length_units       = $_POST["size_units"];
-		$product->surface            = $_POST["surface"];
-		$product->surface_units      = $_POST["surface_units"];
-		$product->volume             = $_POST["volume"];
-		$product->volume_units       = $_POST["volume_units"];
-		$product->finished           = $_POST["finished"];
-		$product->hidden             = $_POST["hidden"]=='yes'?1:0;
+		$product->type               	= $_POST["type"];
+		$product->status             	= $_POST["statut"];
+		$product->description        	= dol_htmlcleanlastbr($_POST["desc"]);
+		$product->note               	= dol_htmlcleanlastbr($_POST["note"]);
+		$product->duration_value     	= $_POST["duration_value"];
+		$product->duration_unit      	= $_POST["duration_unit"];
+		$product->seuil_stock_alerte 	= $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
+		$product->canvas             	= $_POST["canvas"];
+		$product->weight             	= $_POST["weight"];
+		$product->weight_units       	= $_POST["weight_units"];
+		$product->length             	= $_POST["size"];
+		$product->length_units       	= $_POST["size_units"];
+		$product->surface            	= $_POST["surface"];
+		$product->surface_units      	= $_POST["surface_units"];
+		$product->volume             	= $_POST["volume"];
+		$product->volume_units       	= $_POST["volume_units"];
+		$product->finished           	= $_POST["finished"];
+		$product->hidden             	= $_POST["hidden"]=='yes'?1:0;
 
 		// MultiPrix
 		if($conf->global->PRODUIT_MULTIPRICES)
@@ -220,7 +220,13 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 	}
 	else
 	{
-		$product = new Product($db);
+		if (!empty($_POST["canvas"]) && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php'))
+		{
+			$classname = 'Product'.ucfirst($product->canvas);
+			include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
+			$product = new $classname($db);
+		}
+
 		if ($product->fetch($_POST["id"]))
 		{
 			$product->ref                = $_POST["ref"];
@@ -262,19 +268,6 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 				$_GET["action"] = 'edit';
 				$_GET["id"] = $_POST["id"];
 				$mesg = $langs->trans("ErrorProductBadRefOrLabel");
-			}
-
-			// Specific product
-			if ($product->canvas <> '' && file_exists('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php') )
-			{
-				$classname = 'Product'.ucfirst($product->canvas);
-				include_once('canvas/'.$product->canvas.'/product.'.$product->canvas.'.class.php');
-
-				$product = new $classname($db);
-				if ($product->FetchCanvas($_POST["id"]))
-				{
-					$product->UpdateCanvas($_POST);
-				}
 			}
 		}
 	}
@@ -632,43 +625,44 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 {
 	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
 	{
+		$helpurl='';
+		if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+		if (isset($_GET["type"]) && $_GET["type"] == 1)	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+		
+		llxHeader("",$helpurl,$langs->trans("CardProduct".$product->type));
+		
 		if (! isset($product))
 		{
 			$filecanvas = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php';
 			$classname = 'Product'.ucfirst($_GET["canvas"]);
 
 			include_once($filecanvas);
-
 			$product = new $classname($db,0,$user);
+			
+			$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
+			
+			if ($product->smarty)
+			{
+				$product->assign_smarty_values($smarty, 'create');
+				$smarty->template_dir = $template_dir;
+				
+				//$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
+				//$smarty->assign('tva_taux_value', $tvaarray['value']);
+				//$smarty->assign('tva_taux_libelle', $tvaarray['label']);
+				
+				$smarty->display($_GET["canvas"].'-create.tpl');
+			}
+			else
+			{
+				$product->assign_values('create');
+				include($template_dir.'create.tpl.php');
+			}
 		}
 
 		if ($_error == 1)
 		{
 			$product = $e_product;
 		}
-	}
-
-	$helpurl='';
-	if (isset($_GET["type"]) && $_GET["type"] == 0)
-	{
-		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-	}
-	if (isset($_GET["type"]) && $_GET["type"] == 1)
-	{
-		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-	}
-
-	llxHeader("",$helpurl,$langs->trans("CardProduct".$product->type));
-
-	if ($mesg) print $mesg."\n";
-
-	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
-	{
-		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
-
-		$product->assign_values('create');
-
-		include($template_dir.'create.tpl.php');
 	}
 }
 

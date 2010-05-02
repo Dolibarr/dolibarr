@@ -21,12 +21,17 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
+<?php echo $product->tpl['title']; ?>
+
+<?php if ($mesg) { ?>
+<br><div class="error"><?php echo $mesg; ?></div><br>
+<?php } ?>
+
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
+<input type="hidden" name="type" value="0">
 <input type="hidden" name="canvas" value="<?php echo $_GET['canvas']; ?>">
-
-<?php echo $product->tpl['title']; ?>
 
 <table class="border" width="100%">
 
