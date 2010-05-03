@@ -25,8 +25,8 @@
  *       \version    $Id$
  */
 include_once("./inc.php");
-include_once("../html.form.class.php");
-include_once("../html.formadmin.class.php");
+include_once("../core/class/html.form.class.php");
+include_once("../core/class/html.formadmin.class.php");
 
 
 $err = 0;

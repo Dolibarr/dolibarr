@@ -547,7 +547,7 @@ else
 		print '</td><td valign="top" width="50%">';
 
 		// List of actions on element
-		include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
 		$formactions=new FormActions($db);
 		$somethingshown=$formactions->showactions($project,'project',$socid);
 

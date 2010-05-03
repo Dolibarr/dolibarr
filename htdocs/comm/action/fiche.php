@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formactions.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formactions.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 

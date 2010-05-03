@@ -20,7 +20,7 @@
  */
 
 /**
-        \file       htdocs/html.form.class.php
+        \file       htdocs/core/class/html.form.class.php
         \brief      Fichier de la classe des fonctions pr�d�finie de composants html
         \version    $Revision$
 */
