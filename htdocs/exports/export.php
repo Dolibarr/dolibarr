@@ -25,7 +25,7 @@
  */
 
 require_once("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/exports/class/export.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');

@@ -30,7 +30,7 @@
  */
 
 require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
