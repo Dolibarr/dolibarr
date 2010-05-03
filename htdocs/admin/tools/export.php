@@ -24,7 +24,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
 
 $what=$_REQUEST["what"];

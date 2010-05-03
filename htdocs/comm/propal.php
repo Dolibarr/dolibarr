@@ -396,7 +396,7 @@ if ($_POST['addfile'])
 			{
 				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 
-				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				// Add file in list of files in session
 				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
@@ -451,7 +451,7 @@ if (! empty($_POST['removedfile']))
 			$message = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
 			//print_r($_FILES);
 
-			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 			$formmail = new FormMail($db);
 			$formmail->remove_attached_files($keytodelete);
 		}
@@ -523,7 +523,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile']
 				}
 
 				// Create form object
-				include_once('../html.formmail.class.php');
+				include_once('../core/class/html.formmail.class.php');
 				$formmail = new FormMail($db);
 
 				$attachedfiles=$formmail->get_attached_files();
@@ -2024,7 +2024,7 @@ if ($id > 0 || ! empty($ref))
 		print_titre($langs->trans('SendPropalByMail'));
 
 		// Create form object
-		include_once('../html.formmail.class.php');
+		include_once('../core/class/html.formmail.class.php');
 		$formmail = new FormMail($db);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;

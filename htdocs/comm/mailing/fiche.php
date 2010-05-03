@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/mailing.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $langs->load("mails");
 

@@ -53,7 +53,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 
-			include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 			$formmail = new FormMail($db);
 			$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
 		}
