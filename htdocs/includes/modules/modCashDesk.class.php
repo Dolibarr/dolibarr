@@ -69,7 +69,7 @@ class modCashDesk extends DolibarrModules
 		$this->style_sheet = '';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("cashdesk.php");
+		$this->config_page_url = array("cashdesk.php@cashdesk");
 
 		// Dependencies
 		$this->depends = array("modBanque","modFacture","modProduct");	// List of modules id that must be enabled if this module is enabled
