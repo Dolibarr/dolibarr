@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $projectid='';
 $projectid=isset($_REQUEST["id"])?$_REQUEST["id"]:$_POST["id"];

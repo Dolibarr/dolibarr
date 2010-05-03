@@ -30,7 +30,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");

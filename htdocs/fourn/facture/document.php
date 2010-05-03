@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load('bills');
 $langs->load('other');

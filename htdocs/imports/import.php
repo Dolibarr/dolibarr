@@ -26,7 +26,7 @@
 
 require_once("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/class/import.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/import/modules_import.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");

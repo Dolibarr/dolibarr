@@ -29,7 +29,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
