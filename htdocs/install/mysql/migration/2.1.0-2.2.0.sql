@@ -73,8 +73,8 @@ update llx_bank set dateo = datec where datev = '1970-01-01 00:00:00' and rappro
 
 alter table llx_c_chargesociales add column actioncompta varchar(12) NOT NULL;
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 1, 'Allocations familiales', 1,1,'TAXFAM');
-insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 2, 'GSG Deductible',         1,1,'TAXCSGD');
-insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 3, 'GSG/CRDS NON Deductible',0,1,'TAXCSGND');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 2, 'CSG Deductible',         1,1,'TAXCSGD');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 3, 'CSG/CRDS NON Deductible',0,1,'TAXCSGND');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (10, 'Taxe apprenttissage',    0,1,'TAXAPP');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (11, 'Taxe professionnelle',   0,1,'TAXPRO');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (20, 'Impots locaux/fonciers', 0,1,'TAXFON');

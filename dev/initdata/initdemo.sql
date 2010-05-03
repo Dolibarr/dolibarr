@@ -684,7 +684,7 @@ CREATE TABLE `llx_c_chargesociales` (
 
 LOCK TABLES `llx_c_chargesociales` WRITE;
 /*!40000 ALTER TABLE `llx_c_chargesociales` DISABLE KEYS */;
-INSERT INTO `llx_c_chargesociales` VALUES (1,'Allocations familiales',1,1,'TAXFAM',1),(2,'GSG Deductible',1,1,'TAXCSGD',1),(3,'GSG/CRDS NON Deductible',0,1,'TAXCSGND',1),(10,'Taxe apprenttissage',0,1,'TAXAPP',1),(11,'Taxe professionnelle',0,1,'TAXPRO',1),(20,'Impots locaux/fonciers',0,1,'TAXFON',1),(25,'Impots revenus',0,1,'TAXREV',1),(30,'Assurance Sante',0,1,'TAXSECU',1),(40,'Mutuelle',0,1,'TAXMUT',1),(50,'Assurance vieillesse',0,1,'TAXRET',1),(60,'Assurance Chomage',0,1,'TAXCHOM',1);
+INSERT INTO `llx_c_chargesociales` VALUES (1,'Allocations familiales',1,1,'TAXFAM',1),(2,'CSG Deductible',1,1,'TAXCSGD',1),(3,'CSG/CRDS NON Deductible',0,1,'TAXCSGND',1),(10,'Taxe apprenttissage',0,1,'TAXAPP',1),(11,'Taxe professionnelle',0,1,'TAXPRO',1),(20,'Impots locaux/fonciers',0,1,'TAXFON',1),(25,'Impots revenus',0,1,'TAXREV',1),(30,'Assurance Sante',0,1,'TAXSECU',1),(40,'Mutuelle',0,1,'TAXMUT',1),(50,'Assurance vieillesse',0,1,'TAXRET',1),(60,'Assurance Chomage',0,1,'TAXCHOM',1);
 /*!40000 ALTER TABLE `llx_c_chargesociales` ENABLE KEYS */;
 UNLOCK TABLES;
 
