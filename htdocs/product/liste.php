@@ -91,10 +91,10 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 
 $htmlother=new FormOther($db);
 
-if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php') )
+if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php') )
 {
 	$classname = 'Product'.ucfirst($_GET["canvas"]);
-	include_once('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php');
+	include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php');
 
 	$object = new $classname($db);
 	$object->getFieldList();
@@ -228,37 +228,27 @@ if ($resql)
 		print "</div><br>";
 	}
 
-	if ($_GET["canvas"] <> '' && file_exists('canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
-	{
+	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	{		
 		$fieldlist = $object->field_list;
 		$datas = $object->list_datas;
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$title_picto = img_picto('',$picto);
 		$title_text = $title;
-
+		
+		// Default templates directory
+		$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/';
 		// Check if a custom template is present
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl'))
+		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl')
+		|| file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl.php'))
 		{
 			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/';
+		}
+		
+		if ($object->smarty)
+		{
 			$template = 'list.tpl';
-		}
-		// Check if a default template is present
-		else if (file_exists(DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/list.tpl'))
-		{
-			$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/';
-			$template = 'list.tpl';
-		}
-		// Error template
-		else
-		{
-			$template_dir = DOL_DOCUMENT_ROOT . '/core/tpl/';
-			$template = 'error.tpl';
-		}
-
-		// START SMARTY
-		if ($conf->global->MAIN_SMARTY)
-		{
 			$smarty->template_dir = $template_dir;
 
 			$smarty->assign('fieldlist', $fieldlist);
