@@ -64,7 +64,7 @@ class modWebServices extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array("webservices.php");
+        $this->config_page_url = array("webservices.php@webservices");
 
         // Dependancies
         //-------------
