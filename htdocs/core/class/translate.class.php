@@ -530,7 +530,7 @@ class Translate {
 			{
 				$this->load("languages");
 
-				if ($conf->global->MAIN_SHOW_LANGUAGE_CODE)
+				if (isset($conf->global->MAIN_SHOW_LANGUAGE_CODE) && $conf->global->MAIN_SHOW_LANGUAGE_CODE)
 				{
 					$langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir),$maxlength);
 				}

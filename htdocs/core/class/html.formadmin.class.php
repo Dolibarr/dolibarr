@@ -93,7 +93,6 @@ class FormAdmin
 			{
 				print '<option value="'.$key.'">'.$value.'</option>';
 			}
-			$i++;
 		}
 		print '</select>';
 	}
