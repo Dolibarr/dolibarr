@@ -940,12 +940,11 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 		print '</tr>';
 	}
 
-	$commande = New Commande($db);
-
-
 	// Commande
 	if($conf->commande->enabled && $user->rights->commande->creer)
 	{
+		$commande = New Commande($db);
+		
 		$langs->load("orders");
 
 		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
