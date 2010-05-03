@@ -30,17 +30,17 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
-$langs->load("bills");
-$langs->load("other");
-$langs->load("stocks");
 $langs->load("products");
+$langs->load("other");
+if ($conf->stock->enabled) $langs->load("stocks");
+if ($conf->facture->enabled) $langs->load("bills");
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
