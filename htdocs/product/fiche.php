@@ -821,13 +821,13 @@ print "\n</div><br>\n";
 
 if ($product->id && $_GET["action"] == '' && $product->status)
 {
-	$propal = New Propal($db);
-
 	print '<table width="100%" class="noborder">';
 
 	// Propals
 	if($conf->propal->enabled && $user->rights->propale->creer)
 	{
+		$propal = new Propal($db);
+		
 		$langs->load("propal");
 
 		print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
@@ -943,7 +943,7 @@ if ($product->id && $_GET["action"] == '' && $product->status)
 	// Commande
 	if($conf->commande->enabled && $user->rights->commande->creer)
 	{
-		$commande = New Commande($db);
+		$commande = new Commande($db);
 		
 		$langs->load("orders");
 
