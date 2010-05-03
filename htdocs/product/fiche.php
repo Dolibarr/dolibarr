@@ -643,7 +643,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			
 			if ($product->smarty)
 			{
-				$product->assign_smarty_values($smarty, 'create');
+				$product->assign_smarty_values($smarty, $_GET["action"]);
 				$smarty->template_dir = $template_dir;
 				
 				//$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
@@ -654,7 +654,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			}
 			else
 			{
-				$product->assign_values('create');
+				$product->assign_values($_GET["action"]);
 				include($template_dir.'create.tpl.php');
 			}
 		}
@@ -675,6 +675,8 @@ if ($_GET["id"] || $_GET["ref"])
 {
 	$productstatic = new Product($db);
 	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
+	
+	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 	// Gestion des produits specifiques
 	if (!empty($productstatic->canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$productstatic->canvas.'/product.'.$productstatic->canvas.'.class.php') )
@@ -684,21 +686,46 @@ if ($_GET["id"] || $_GET["ref"])
 		$product = new $classname($db);
 
 		$result = $product->fetch($productstatic->id,'',$_GET["action"]);
-
+		
 		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
+		
+		if ($product->smarty)
+		{
+			$product->assign_smarty_values($smarty, $_GET["action"]);
+			$smarty->template_dir = $template_dir;
+		}
 	}
-
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 	if ( $result )
 	{
-		if ($_GET["action"] <> 'edit')
+		/*
+		 * Fiche en mode edition
+		 */
+		if ($_GET["action"] == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
+		{
+			if ($product->smarty)
+			{
+				//$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'','');
+				//$smarty->assign('tva_taux_value', $tvaarray['value']);
+				//$smarty->assign('tva_taux_libelle', $tvaarray['label']);
+				$smarty->display($product->canvas.'-edit.tpl');
+			}
+			else
+			{
+				$product->assign_values($_GET["action"]);
+				
+				include($template_dir.'edit.tpl.php');
+			}
+		}
+		/*
+		 * Fiche en mode visu
+		 */
+		else
 		{
 			$head=product_prepare_head($product, $user);
 			$titre=$langs->trans("CardProduct".$product->type);
 			$picto=($product->type==1?'service':'product');
 			dol_fiche_head($head, 'card', $titre, 0, $picto);
-			print "\n<!-- CUT HERE -->\n";
 
 			// Confirmation de la suppression de la facture
 			if ($_GET["action"] == 'delete')
@@ -706,27 +733,23 @@ if ($_GET["id"] || $_GET["ref"])
 				$ret=$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,2);
 				if ($ret == 'html') print '<br>';
 			}
-
-			print($mesg);
-
-			$product->assign_values('view');
-
-			include($template_dir.'view.tpl.php');
+			
+			// Smarty template
+			if ($product->smarty)
+			{
+				$smarty->assign('fiche_cursor_prev',$previous_ref);
+				$smarty->assign('fiche_cursor_next',$next_ref);
+				
+				$smarty->display($product->canvas.'-view.tpl');
+			}
+			// PHP template
+			else
+			{
+				$product->assign_values('view');
+				
+				include($template_dir.'view.tpl.php');
+			}
 		}
-	}
-
-	/*
-	 * Fiche en mode edition
-	 */
-	if ($_GET["action"] == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
-	{
-		if ($mesg) {
-			print '<br><div class="error">'.$mesg.'</div><br>';
-		}
-
-		$product->assign_values('edit');
-
-		include($template_dir.'edit.tpl.php');
 	}
 }
 else if (!$_GET["action"] == 'create')
