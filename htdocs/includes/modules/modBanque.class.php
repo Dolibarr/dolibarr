@@ -21,7 +21,7 @@
  */
 
 /**     \defgroup   banque     Module bank
- *		\brief      Module pour g�rer la tenue d'un compte bancaire et rapprochements
+ *		\brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
  *		\version	$Id$
  */
 
@@ -69,7 +69,7 @@ class modBanque extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array("bank.php");
+        $this->config_page_url = array("bank.php@compta/bank");
 
 		// Dependancies
 		$this->depends = array();
