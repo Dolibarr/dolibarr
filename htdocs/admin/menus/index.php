@@ -26,7 +26,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 
 $langs->load("other");

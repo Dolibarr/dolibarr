@@ -82,7 +82,7 @@ class FormOrder
 		global $conf,$langs;
 		$listemethodes=array();
 		
-		require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
 		$form=new Form($this->db);
 		
 		$sql = "SELECT rowid, libelle ";

@@ -341,7 +341,7 @@ class FormFile
 			print '<td align="center">';
 			if (($allowgenifempty || (is_array($modellist) && sizeof($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
-				include_once(DOL_DOCUMENT_ROOT.'/html.formadmin.class.php');
+				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php');
 				$formadmin=new FormAdmin($this->db);
 				$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
 				$formadmin->select_lang($defaultlang);

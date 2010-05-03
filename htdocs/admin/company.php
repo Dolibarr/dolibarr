@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 
 $langs->load("admin");
 $langs->load("companies");

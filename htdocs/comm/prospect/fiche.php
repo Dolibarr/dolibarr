@@ -28,7 +28,7 @@
 require_once("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/prospect/prospect.class.php");
-require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/actioncomm.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");

@@ -22,7 +22,7 @@
  *       \version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
 
 /**     \class      FormMail

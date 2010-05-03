@@ -183,7 +183,7 @@ if ($conf->file->main_force_https)
 
 // Chargement des includes complementaires de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/core/class/menu.class.php");			// Need 10ko memory (11ko in 2.2)
-if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 660ko memory (800ko in 2.2)
+if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");	// Need 660ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 22ko memory
 //stopwithmem();
 

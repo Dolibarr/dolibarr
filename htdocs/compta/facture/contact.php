@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/html.formcompany.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 
 $langs->load("bills");
 $langs->load("companies");
