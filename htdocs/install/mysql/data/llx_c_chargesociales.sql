@@ -24,8 +24,8 @@
 --
 
 --
--- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
--- de l'install et tous les sigles '--' sont supprimés.
+-- Ne pas placer de commentaire en fin de ligne, ce fichier est parse lors
+-- de l'install et tous les sigles '--' sont supprimes.
 --
 
 --
@@ -33,8 +33,8 @@
 --
 
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 1, 'Allocations familiales', 1,1,'TAXFAM'   ,'1');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 2, 'GSG Deductible',         1,1,'TAXCSGD'  ,'1');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 3, 'GSG/CRDS NON Deductible',0,1,'TAXCSGND' ,'1');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 2, 'CSG Deductible',         1,1,'TAXCSGD'  ,'1');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 3, 'CSG/CRDS NON Deductible',0,1,'TAXCSGND' ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (10, 'Taxe apprenttissage',    0,1,'TAXAPP'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (11, 'Taxe professionnelle',   0,1,'TAXPRO'   ,'1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values (20, 'Impots locaux/fonciers', 0,1,'TAXFON'   ,'1');
