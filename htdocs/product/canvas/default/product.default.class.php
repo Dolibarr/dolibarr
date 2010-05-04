@@ -39,7 +39,7 @@ class ProductDefault extends Product
 	 *    \param      DB          Handler acces base de donnees
 	 *    \param      id          Id produit (0 par defaut)
 	 */
-	function ProductDefault($DB=0, $id=0, $user=0)
+	function ProductDefault($DB, $id=0, $user=0)
 	{
 		$this->db 				= $DB;
 		$this->id 				= $id ;
