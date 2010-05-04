@@ -101,20 +101,23 @@ class Fichinter extends CommonObject
 		// on verifie si la ref n'est pas utilisee
 		$soc = new Societe($this->db);
 		$result=$soc->fetch($this->socid);
-		$result=$this->verifyNumRef($soc);
-		if ($result > 0)
+		if (! empty($this->ref))
 		{
-			$this->error='ErrorRefAlreadyExists';
-			dol_syslog("Fichinter::create ".$this->error,LOG_WARNING);
-			$this->db->rollback();
-			return -3;
-		}
-		else if ($result < 0)
-		{
-			$this->error=$this->db->error();
-			dol_syslog("Fichinter::create ".$this->error,LOG_ERR);
-			$this->db->rollback();
-			return -2;
+			$result=$this->verifyNumRef();	// Check ref is not yet used
+			if ($result > 0)
+			{
+				$this->error='ErrorRefAlreadyExists';
+				dol_syslog("Fichinter::create ".$this->error,LOG_WARNING);
+				$this->db->rollback();
+				return -3;
+			}
+			else if ($result < 0)
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Fichinter::create ".$this->error,LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
 		}
 
 		$now=dol_now();
@@ -407,39 +410,6 @@ class Fichinter extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
-	}
-
-	/**
-	 *      \brief      Verifie si la ref n'est pas deja utilisee. Si oui, la modifie avec la prochaine libre.
-	 *      \param	    soc  		            objet societe
-	 * 		\return		int						<0 if KO, 0 if not found, >0 if found
-	 */
-	function verifyNumRef($soc)
-	{
-		global $conf;
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
-		$sql.= " WHERE ref = '".$this->ref."'";
-		$sql.= " AND entity = ".$conf->entity;
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			if ($num > 0)
-			{
-				$this->ref = $this->getNextNumRef($soc);
-			}
-			dol_syslog("Fichinter::verifyNumber num=".$num,LOG_DEBUG);
-			return $num;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_syslog("Fichinter::verifyNumber ".$this->error, LOG_ERR);
-			return -1;
-		}
 	}
 
 

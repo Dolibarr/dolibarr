@@ -92,7 +92,7 @@ class Propal extends CommonObject
 	var $products=array();
 
 	var $lines = array();
-	
+
 	var $origin;
 	var $origin_id;
 
@@ -544,7 +544,7 @@ class Propal extends CommonObject
 		}
 		if (! empty($this->ref))
 		{
-			$this->verifyNumRef($soc);	// Check ref is not yet used
+			$result=$this->verifyNumRef();	// Check ref is not yet used
 		}
 
 
@@ -636,7 +636,7 @@ class Propal extends CommonObject
 							break;
 						}
 				}
-				
+
 				// Add linked object
 				if ($this->origin && $this->origin_id)
 				{
@@ -1241,6 +1241,7 @@ class Propal extends CommonObject
 				// Propale signee
 				include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
+				// TODO move in triggers
 				$result=$this->create_commande($user);
 
 				if ($result >= 0)
@@ -1313,6 +1314,7 @@ class Propal extends CommonObject
 	 *      \brief      Cree une commande a partir de la proposition commerciale
 	 *      \param      user        Utilisateur
 	 *      \return     int         <0 si ko, >=0 si ok
+	 *      TODO move in triggers
 	 */
 	function create_commande($user)
 	{
@@ -1611,7 +1613,7 @@ class Propal extends CommonObject
 					$this->db->rollback();
 					return 0;
 				}
-				
+
 				// We remove directory
 				$propalref = dol_sanitizeFileName($this->ref);
 				if ($conf->propale->dir_output)
@@ -2017,30 +2019,6 @@ class Propal extends CommonObject
 			dol_print_error($this->db);
 			$this->error=$this->db->error();
 			return -1;
-		}
-	}
-
-	/**
-	 *      \brief      Check if ref is used. And if used tkae next one.
-	 *      \param	    soc  		            objet societe
-	 */
-	function verifyNumRef($soc)
-	{
-		global $conf;
-
-		$sql = "SELECT rowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-		$sql.= " WHERE ref = '".$this->ref."'";
-		$sql.= " AND entity = ".$conf->entity;
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			if ($num > 0)
-			{
-				$this->ref = $this->getNextNumRef($soc);
-			}
 		}
 	}
 

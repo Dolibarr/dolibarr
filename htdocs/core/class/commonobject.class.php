@@ -33,6 +33,34 @@
 class CommonObject
 {
 	/**
+	 *      \brief      Check if ref is used.
+	 * 		\return		int			<0 if KO, 0 if not found, >0 if found
+	 */
+	function verifyNumRef()
+	{
+		global $conf;
+
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->element;
+		$sql.= " WHERE ref = '".$this->ref."'";
+		$sql.= " AND entity = ".$conf->entity;
+
+		dol_syslog("CommonObject::verifyNumRef sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			return $num;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("CommonObject::verifyNumRef ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+	/**
 	 *      \brief      Ajoute un contact associe au l'entite definie dans $this->element
 	 *      \param      fk_socpeople        Id du contact a ajouter
 	 *   	\param 		type_contact 		Type de contact (code ou id)
@@ -160,7 +188,7 @@ class CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    \brief      Supprime une ligne de contact
 	 *    \return     statur        >0 si ok, <0 si ko
@@ -169,13 +197,13 @@ class CommonObject
 	{
 		$temp = array();
 		$typeContact = $this->liste_type_contact(0);
-		
+
 		foreach($typeContact as $key => $value)
 		{
 			array_push($temp,$key);
 		}
 		$listId = implode(",", $temp);
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql.= " WHERE element_id =".$this->id;
 		$sql.= " AND fk_c_type_contact IN (".$listId.")";
