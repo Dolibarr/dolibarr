@@ -563,7 +563,7 @@ function clean_orphelins($db)
  */
 function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 {
-	global $langs,$conf,$user;
+	global $langs,$conf,$user,$bc;
 
 	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
@@ -607,7 +607,7 @@ function print_projecttasks_array($db,$mine,$socid,$projectsListId)
 			if ($userAccess >= 0)
 			{
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td nowrap="nowrap">';
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
