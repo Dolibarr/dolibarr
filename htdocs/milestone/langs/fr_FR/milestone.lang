@@ -1,0 +1,9 @@
+# Dolibarr language file - fr_FR - milestone
+CHARSET=UTF-8
+
+Module1790Name= Jalons
+Module1790Desc= Gestion des jalons (projets, contrats, propales, ...)
+
+Milestone=Jalon
+Milestones=Jalons
+NewMilestone=Nouveau jalon

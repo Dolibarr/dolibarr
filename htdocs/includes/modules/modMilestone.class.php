@@ -55,7 +55,7 @@ class modMilestone extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
-		$this->picto = 'milestone';
+		$this->picto = 'milestone@milestone';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -65,7 +65,7 @@ class modMilestone extends DolibarrModules
 
 		// Config pages
 		$this->config_page_url = array();
-		$this->langfiles = array("milestone");
+		$this->langfiles = array("@milestone");
 
 		// Constantes
 		$this->const = array();
@@ -112,6 +112,8 @@ class modMilestone extends DolibarrModules
 	function init()
 	{
 		$sql = array();
+		
+		$result=$this->load_tables();
 
 		return $this->_init($sql);
 	}
@@ -127,6 +129,16 @@ class modMilestone extends DolibarrModules
 		$sql = array();
 
 		return $this->_remove($sql);
+	}
+	
+	/**
+	 *		\brief		Create tables and keys required by module
+	 *					This function is called by this->init.
+	 * 		\return		int		<=0 if KO, >0 if OK
+	 */
+	function load_tables()
+	{
+		return $this->_load_tables('/milestone/sql/');
 	}
 
 }
