@@ -3760,39 +3760,6 @@ INSERT INTO `llx_projet` VALUES (1,NULL,'2010-02-06','2010-02-08 14:59:12','2010
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_projet_milestone`
---
-
-DROP TABLE IF EXISTS `llx_projet_milestone`;
-CREATE TABLE `llx_projet_milestone` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT,
-  `fk_projet` int(11) NOT NULL,
-  `label` varchar(255) NOT NULL,
-  `description` text,
-  `datec` datetime DEFAULT NULL,
-  `tms` timestamp NOT NULL,
-  `dateo` datetime DEFAULT NULL,
-  `datee` datetime DEFAULT NULL,
-  `priority` int(11) DEFAULT '0',
-  `fk_user_creat` int(11) DEFAULT NULL,
-  `rang` int(11) DEFAULT '0',
-  PRIMARY KEY (`rowid`),
-  KEY `idx_projet_milestone_fk_projet` (`fk_projet`),
-  KEY `idx_projet_milestone_fk_user_creat` (`fk_user_creat`),
-  CONSTRAINT `fk_projet_milestone_fk_projet` FOREIGN KEY (`fk_projet`) REFERENCES `llx_projet` (`rowid`),
-  CONSTRAINT `fk_projet_milestone_fk_user_creat` FOREIGN KEY (`fk_user_creat`) REFERENCES `llx_user` (`rowid`)
-) TYPE=InnoDB;
-
---
--- Dumping data for table `llx_projet_milestone`
---
-
-LOCK TABLES `llx_projet_milestone` WRITE;
-/*!40000 ALTER TABLE `llx_projet_milestone` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_projet_milestone` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `llx_projet_task`
 --
 
@@ -3811,7 +3778,6 @@ CREATE TABLE `llx_projet_task` (
   `duration_effective` double NOT NULL DEFAULT '0',
   `progress` int(11) DEFAULT '0',
   `priority` int(11) DEFAULT '0',
-  `fk_milestone` int(11) DEFAULT '0',
   `fk_user_creat` int(11) DEFAULT NULL,
   `fk_user_modif` int(11) DEFAULT NULL,
   `fk_user_valid` int(11) DEFAULT NULL,

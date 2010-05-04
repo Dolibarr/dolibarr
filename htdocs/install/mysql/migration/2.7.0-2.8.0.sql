@@ -124,7 +124,6 @@ ALTER TABLE llx_projet_task MODIFY description text;
 ALTER TABLE llx_projet_task MODIFY duration_effective real DEFAULT 0 NOT NULL;
 ALTER TABLE llx_projet_task ADD COLUMN progress	integer	DEFAULT 0 AFTER duration_effective;
 ALTER TABLE llx_projet_task ADD COLUMN priority	integer	DEFAULT 0 AFTER progress;
-ALTER TABLE llx_projet_task ADD COLUMN fk_milestone	integer	DEFAULT 0 AFTER priority;
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 ALTER TABLE llx_projet_task ADD COLUMN fk_user_valid integer AFTER fk_user_modif;
 UPDATE llx_projet_task SET statut='1' WHERE statut='open';

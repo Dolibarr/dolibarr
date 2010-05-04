@@ -34,7 +34,6 @@ create table llx_projet_task
   duration_effective	real DEFAULT 0 NOT NULL,
   progress				integer	DEFAULT 0,				-- percentage increase
   priority				integer	DEFAULT 0,				-- priority
-  fk_milestone			integer DEFAULT 0,				-- milestone
   fk_user_creat			integer,						-- user who created the task
   fk_user_valid			integer,						-- user who validated the task
   fk_statut				smallint DEFAULT 0 NOT NULL,

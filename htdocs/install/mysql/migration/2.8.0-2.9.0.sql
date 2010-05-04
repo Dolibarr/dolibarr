@@ -166,6 +166,7 @@ ALTER table llx_adherent MODIFY pays integer;
 
 -- add milestone module
 DROP TABLE llx_projet_milestone;
+ALTER TABLE llx_projet drop column fk_milestone;
 create table llx_milestone
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
