@@ -610,7 +610,7 @@ elseif ($fichinterid)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Description');
 	print '</td>';
-	if ($_GET['action'] != 'editdescription' && $fichinter->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdescription&amp;id='.$fichinter->id.'">'.img_edit($langs->trans('SetDescription'),1).'</a></td>';
+	if ($_GET['action'] != 'editdescription' && $fichinter->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdescription&amp;id='.$fichinter->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editdescription')
