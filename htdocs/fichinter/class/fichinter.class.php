@@ -70,6 +70,7 @@ class Fichinter extends CommonObject
 		$this->socid = $socid;
 		$this->products = array();
 		$this->fk_project = 0;
+		$this->statut = 0;
 
 		// List of language codes for status
 		$this->statuts[0]='Draft';
@@ -89,6 +90,7 @@ class Fichinter extends CommonObject
 
 		dol_syslog("Fichinter.class::create ref=".$this->ref);
 
+		// Check parameters
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
 		if ($this->socid <= 0)
 		{
@@ -96,11 +98,6 @@ class Fichinter extends CommonObject
 			dol_syslog("Fichinter::create ".$this->error,LOG_ERR);
 			return -1;
 		}
-
-		$now=dol_now();
-
-		$this->db->begin();
-
 		// on verifie si la ref n'est pas utilisee
 		$soc = new Societe($this->db);
 		$result=$soc->fetch($this->socid);
@@ -120,6 +117,10 @@ class Fichinter extends CommonObject
 			return -2;
 		}
 
+		$now=dol_now();
+
+		$this->db->begin();
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (";
 		$sql.= "fk_soc";
 		$sql.= ", datec";
@@ -129,6 +130,7 @@ class Fichinter extends CommonObject
 		$sql.= ", description";
 		$sql.= ", model_pdf";
 		$sql.= ", fk_projet";
+		$sql.= ", fk_statut";
 		$sql.= ") ";
 		$sql.= " VALUES (";
 		$sql.= $this->socid;
@@ -136,9 +138,10 @@ class Fichinter extends CommonObject
 		$sql.= ", '".$this->ref."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->author;
-		$sql.= ", '".addslashes($this->description)."'";
+		$sql.= ", ".($this->description?"'".addslashes($this->description)."'":"null");
 		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
+		$sql.= ", ".$this->statut;
 		$sql.= ")";
 
 		dol_syslog("Fichinter::create sql=".$sql);
