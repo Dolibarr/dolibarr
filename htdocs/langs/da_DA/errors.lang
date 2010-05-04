@@ -53,7 +53,7 @@ ErrorExportDuplicateProfil=Denne profil navn eksisterer allerede for denne ekspo
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchende er ikke komplet.
 ErrorLDAPMakeManualTest=A. LDIF-fil er blevet genereret i mappen %s. Prøv at indlæse den manuelt fra kommandolinjen for at få flere informationer om fejl.
 ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke gemme en aktion med &quot;vedtægt ikke startes&quot;, hvis feltet &quot;udført af&quot; er også fyldt.
-ErrorBillRefAlreadyExists=Ref bruges til oprettelse eksisterer allerede.
+ErrorRefAlreadyExists=Ref bruges til oprettelse eksisterer allerede.
 ErrorPleaseTypeBankTransactionReportName=Please type bank modtagelsen navn, hvor transaktionen er rapporteret (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
 ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Childs.
 // Date 2009-01-19 21:26:39

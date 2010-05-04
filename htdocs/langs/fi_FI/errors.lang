@@ -51,7 +51,7 @@ ErrorExportDuplicateProfil=Tämä profiilin nimi on jo olemassa tämän vienti a
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP yhteensovitus ei ole täydellinen.
 ErrorLDAPMakeManualTest=A. LDIF tiedosto on luotu hakemistoon %s. Yritä ladata se manuaalisesti komentoriviltä on enemmän tietoa virheitä.
 ErrorCantSaveADoneUserWithZeroPercentage=Ei voi tallentaa toimia &quot;statut ole käynnistetty&quot;, jos alalla &quot;tehtävä&quot; on myös täytettävä.
-ErrorBillRefAlreadyExists=Ref käytetään luomista jo olemassa.
+ErrorRefAlreadyExists=Ref käytetään luomista jo olemassa.
 ErrorPleaseTypeBankTransactionReportName=Kirjoita pankki vastaanottamisesta nimi, jos liiketoimi on raportoitu (Format VVVVKK tai VVVVKKPP)
 ErrorRecordHasChildren=Poistaminen ei onnistunut kirjaa, koska se on noin lapsen.
 // Date 2009-01-19 22:07:11

@@ -162,8 +162,10 @@ if ($_POST["action"] == 'add')
 		}
 		else
 		{
-			$mesg='<div class="error">'.$fichinter->error.'</div>';
+			$langs->load("errors");
+			$mesg='<div class="error">'.$langs->trans($fichinter->error).'</div>';
 			$_GET["action"] = 'create';
+			$_GET["socid"] = $_POST["socid"];
 		}
 	}
 	else

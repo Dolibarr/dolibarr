@@ -97,12 +97,28 @@ class Fichinter extends CommonObject
 			return -1;
 		}
 
+		$now=dol_now();
+
 		$this->db->begin();
 
 		// on verifie si la ref n'est pas utilisee
 		$soc = new Societe($this->db);
 		$result=$soc->fetch($this->socid);
-		$this->verifyNumRef($soc);
+		$result=$this->verifyNumRef($soc);
+		if ($result > 0)
+		{
+			$this->error='ErrorRefAlreadyExists';
+			dol_syslog("Fichinter::create ".$this->error,LOG_WARNING);
+			$this->db->rollback();
+			return -3;
+		}
+		else if ($result < 0)
+		{
+			$this->error=$this->db->error();
+			dol_syslog("Fichinter::create ".$this->error,LOG_ERR);
+			$this->db->rollback();
+			return -2;
+		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (";
 		$sql.= "fk_soc";
@@ -112,11 +128,11 @@ class Fichinter extends CommonObject
 		$sql.= ", fk_user_author";
 		$sql.= ", description";
 		$sql.= ", model_pdf";
-		$sql.=  ", fk_projet";
+		$sql.= ", fk_projet";
 		$sql.= ") ";
 		$sql.= " VALUES (";
 		$sql.= $this->socid;
-		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '".$this->ref."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->author;
@@ -391,11 +407,14 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *      \brief      Verifie si la ref n'est pas deja utilisee
+	 *      \brief      Verifie si la ref n'est pas deja utilisee. Si oui, la modifie avec la prochaine libre.
 	 *      \param	    soc  		            objet societe
+	 * 		\return		int						<0 if KO, 0 if not found, >0 if found
 	 */
 	function verifyNumRef($soc)
 	{
+		global $conf;
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " WHERE ref = '".$this->ref."'";
@@ -409,6 +428,14 @@ class Fichinter extends CommonObject
 			{
 				$this->ref = $this->getNextNumRef($soc);
 			}
+			dol_syslog("Fichinter::verifyNumber num=".$num,LOG_DEBUG);
+			return $num;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog("Fichinter::verifyNumber ".$this->error, LOG_ERR);
+			return -1;
 		}
 	}
 
@@ -517,11 +544,11 @@ class Fichinter extends CommonObject
 	function delete($user)
 	{
 		global $conf;
-		
+
 		$error=0;
 
 		$this->db->begin();
-		
+
 		if (! $error)
 		{
 			// Delete linked contacts

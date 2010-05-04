@@ -51,7 +51,7 @@ ErrorExportDuplicateProfil=Dieses Profil existiert bereits für diesen Export fe
 ErrorLDAPSetupNotComplete=Dolibarr LDAP-Matching ist nicht vollständig.
 ErrorLDAPMakeManualTest=A. Ldif-Datei generiert wurde im Verzeichnis %s. Versuchen Sie, laden Sie es manuell von der Kommandozeile aus, um mehr Informationen über Fehler.
 ErrorCantSaveADoneUserWithZeroPercentage=Kann nicht speichern, eine Aktion mit &quot;statut nicht begonnen&quot;, wenn Feld &quot;durch&quot; ist auch gefüllt.
-ErrorBillRefAlreadyExists=Referenz für die Gründung ist bereits vorhanden.
+ErrorRefAlreadyExists=Referenz für die Gründung ist bereits vorhanden.
 ErrorPleaseTypeBankTransactionReportName=Bitte geben Sie Bank-Eingang, wo Transaktion wird (oder JJJJMM Format JJJJMMTT)
 ErrorRecordHasChildren=Fehler zu löschen Einträge, da es einige Kinder.
 // Date 2009-01-20 00:09:12

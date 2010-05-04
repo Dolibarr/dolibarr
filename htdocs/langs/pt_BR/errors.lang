@@ -45,7 +45,7 @@ ErrorExportDuplicateProfil=o Nome do perfil já existe para este lote de exporta
 ErrorLDAPSetupNotComplete=a configuração Dolibarr-LDAP é incompleta.
 ErrorLDAPMakeManualTest=foi criado unn Arquivo .ldif na pasta %s. Trate de gastor manualmente este Arquivo a partir da linha de comandos para Obter mais detalles acerca do error.
 ErrorCantSaveADoneUserWithZeroPercentage=No se pode cambiar uma acção ao estado no comenzada si tiene un usuario realizante de  a acción.
-ErrorBillRefAlreadyExists=a referencia utilizada para a criação já existe
+ErrorRefAlreadyExists=a referencia utilizada para a criação já existe
 ErrorPleaseTypeBankTransactionReportName=Introduzca o Nome do registo bancario sobre a qual o escrito está constatado (formato AAAAMM ó AAAMMJJ)
 ErrorRecordHasChildren=não se pode eliminar o registo porque tem hijos.
 

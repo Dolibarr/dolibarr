@@ -53,7 +53,7 @@ ErrorExportDuplicateProfil=هذا ملف الاسم بالفعل لتصدير ه
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
 ErrorLDAPMakeManualTest=ألف. ldif الملف قد ولدت في الدليل ٪ s. انها محاولة لتحميل يدويا من سطر في الحصول على مزيد من المعلومات عن الأخطاء.
 ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع &quot;المركز الخاص لم تبدأ&quot; اذا الميدان &quot;الذي قام به&quot; كما شغلها.
-ErrorBillRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
+ErrorRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
 ErrorPleaseTypeBankTransactionReportName=الرجاء كتابة اسم البنك استلام المعاملات ويقال فيها (شكل YYYYMM أو YYYYMMDD)
 ErrorRecordHasChildren=فشل حذف السجلات منذ نحو الطفل.
 // Date 2009-08-11 13:27:01

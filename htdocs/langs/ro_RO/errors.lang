@@ -51,7 +51,7 @@ ErrorExportDuplicateProfil=Acest profil nume există deja pentru acest set de ex
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP de potrivire nu este completă.
 ErrorLDAPMakeManualTest=A. Ldif fişier a fost generat în directorul %s. Încercaţi să încărcaţi manual de la linia de comandă pentru a avea mai multe informatii cu privire la erori.
 ErrorCantSaveADoneUserWithZeroPercentage=Nu se poate salva o acţiune cu &quot;statut nu a început&quot; în cazul în domeniu &quot;realizat de către&quot; este, de asemenea, completat.
-ErrorBillRefAlreadyExists=Ref utilizate pentru crearea există deja.
+ErrorRefAlreadyExists=Ref utilizate pentru crearea există deja.
 ErrorPleaseTypeBankTransactionReportName=Vă rugăm să scrieţi numele băncii primirea în cazul în care tranzacţia este raportate (Format YYYYMM sau YYYYMMDD)
 ErrorRecordHasChildren=Nu a reuşit să ştergeţi înregistrări, deoarece acesta are unele Childs.
 // Date 2009-01-19 21:32:52

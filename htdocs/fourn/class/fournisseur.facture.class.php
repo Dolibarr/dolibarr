@@ -212,7 +212,7 @@ class FactureFournisseur extends Facture
 		{
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				$this->error=$langs->trans('ErrorBillRefAlreadyExists');
+				$this->error=$langs->trans('ErrorRefAlreadyExists');
 				$this->db->rollback();
 				return -1;
 			}

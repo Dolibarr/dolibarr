@@ -53,7 +53,7 @@ ErrorExportDuplicateProfil=Ten profil nazwie już istnieje dla tego zestawu eksp
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP dopasowywania nie jest kompletna.
 ErrorLDAPMakeManualTest=A. LDIF plik został wygenerowany w katalogu %s. Spróbuj załadować go ręcznie z wiersza polecenia, aby mieć więcej informacji na temat błędów.
 ErrorCantSaveADoneUserWithZeroPercentage=Nie można zapisać działania z &quot;Statut nie rozpocznie&quot;, jeśli pole &quot;wykonana przez&quot; jest wypełniona.
-ErrorBillRefAlreadyExists=Numer identyfikacyjny używany do tworzenia już istnieje.
+ErrorRefAlreadyExists=Numer identyfikacyjny używany do tworzenia już istnieje.
 ErrorPleaseTypeBankTransactionReportName=Wpisz nazwę banku otrzymania gdy transakcja jest zgłaszane (Format RRRRMM lub RRRRMMDD)
 ErrorRecordHasChildren=Nie można usunąć rekordy, ponieważ ma pewne Childs.
 // Date 2009-01-19 00:44:06
