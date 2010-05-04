@@ -673,6 +673,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
  */
 if ($_GET["id"] || $_GET["ref"])
 {
+	// TODO en attendant d'inclure le nom du canvas dans les liens
 	$productstatic = new Product($db);
 	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
 	
