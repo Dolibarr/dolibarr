@@ -638,7 +638,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 			
 			$product = $canvas->load_canvas('product',$_GET["canvas"]);
 
-			$canvas->assign_values($_GET["action"],$smarty);
+			$canvas->assign_values('create');
 			$canvas->display_canvas();
 		}
 
@@ -661,21 +661,11 @@ if ($_GET["id"] || $_GET["ref"])
 	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
 
 	// Gestion des produits specifiques
-	if (!empty($productstatic->canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$productstatic->canvas.'/product.'.$productstatic->canvas.'.class.php') )
+	if (!empty($productstatic->canvas))
 	{
-		$classname = 'Product'.ucfirst($productstatic->canvas);
-		include_once(DOL_DOCUMENT_ROOT.'/product/canvas/'.$productstatic->canvas.'/product.'.$productstatic->canvas.'.class.php');
-		$product = new $classname($db);
-
-		$result = $product->fetch($productstatic->id,'',$_GET["action"]);
-		
-		$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/tpl/';
-		
-		if ($product->smarty)
-		{
-			$product->assign_smarty_values($smarty, $_GET["action"]);
-			$smarty->template_dir = $template_dir;
-		}
+		$canvas = new Canvas($db,$user);
+			
+		$product = $canvas->load_canvas('product',$productstatic->canvas);
 	}
 	
 	llxHeader('',$langs->trans("CardProduct".$product->type));
@@ -687,19 +677,8 @@ if ($_GET["id"] || $_GET["ref"])
 		 */
 		if ($_GET["action"] == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
 		{
-			if ($product->smarty)
-			{
-				//$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'','');
-				//$smarty->assign('tva_taux_value', $tvaarray['value']);
-				//$smarty->assign('tva_taux_libelle', $tvaarray['label']);
-				$smarty->display($product->canvas.'-edit.tpl');
-			}
-			else
-			{
-				$product->assign_values($_GET["action"]);
-				
-				include($template_dir.'edit.tpl.php');
-			}
+			$canvas->assign_values('edit');
+			$canvas->display_canvas();
 		}
 		/*
 		 * Fiche en mode visu
@@ -718,21 +697,8 @@ if ($_GET["id"] || $_GET["ref"])
 				if ($ret == 'html') print '<br>';
 			}
 			
-			// Smarty template
-			if ($product->smarty)
-			{
-				$smarty->assign('fiche_cursor_prev',$previous_ref);
-				$smarty->assign('fiche_cursor_next',$next_ref);
-				
-				$smarty->display($product->canvas.'-view.tpl');
-			}
-			// PHP template
-			else
-			{
-				$product->assign_values('view');
-				
-				include($template_dir.'view.tpl.php');
-			}
+			$canvas->assign_values('view');
+			$canvas->display_canvas();
 		}
 	}
 }
