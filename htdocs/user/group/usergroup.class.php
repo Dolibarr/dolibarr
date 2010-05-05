@@ -37,6 +37,7 @@ class UserGroup extends CommonObject
 	var $db;			// Database handler
 	var $error;
 	var $errors=array();
+	var $element='usergroup';
 	var $table_element='usergroup';
 	var $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -490,14 +491,16 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf, $langs;
 
-		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec, nom, entity)";
-		$sql .= " VALUES(".$this->db->idate(mktime()).",'".addslashes($this->nom)."',".$conf->entity.")";
+		$now=dol_now();
 
+		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec, nom, entity)";
+		$sql.= " VALUES('".$this->db->idate($now)."','".addslashes($this->nom)."',".$conf->entity.")";
+
+		dol_syslog("UserGroup::Create sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			$table =  "".MAIN_DB_PREFIX."usergroup";
-			$this->id = $this->db->last_insert_id($table);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."usergroup");
 
 			if ($this->update(1) < 0) return -2;
 
@@ -512,7 +515,8 @@ class UserGroup extends CommonObject
 		}
 		else
 		{
-			dol_syslog("UserGroup::Create");
+			$this->error=$this->db->lasterror();
+			dol_syslog("UserGroup::Create ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
