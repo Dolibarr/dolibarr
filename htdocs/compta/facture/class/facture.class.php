@@ -2224,7 +2224,7 @@ class Facture extends CommonObject
 		// Clean parameters (if not defined or using deprecated value)
 		if (empty($conf->global->FACTURE_ADDON)) $conf->global->FACTURE_ADDON='mod_facture_terre';
 		else if ($conf->global->FACTURE_ADDON=='terre') $conf->global->FACTURE_ADDON='mod_facture_terre';
-		else if ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_mercure_terre';
+		else if ($conf->global->FACTURE_ADDON=='mercure') $conf->global->FACTURE_ADDON='mod_facture_mercure';
 
 		$mybool=false;
 
