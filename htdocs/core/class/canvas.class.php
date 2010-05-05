@@ -84,7 +84,7 @@ class Canvas
 	}
 	
 	/**
-	 * 	\brief 		Assign values
+	 * 	\brief 		Fetch values
 	 */
 	function fetch($id,$ref='',$action='')
 	{
