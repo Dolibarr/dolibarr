@@ -629,7 +629,7 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 		if (isset($_GET["type"]) && $_GET["type"] == 1)	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 		
-		llxHeader("",$helpurl,$langs->trans("CardProduct".$product->type));
+		llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 		
 		if (! isset($product))
 		{
@@ -676,8 +676,6 @@ if ($_GET["id"] || $_GET["ref"])
 	// TODO en attendant d'inclure le nom du canvas dans les liens
 	$productstatic = new Product($db);
 	$result = $productstatic->getCanvas($_GET["id"],$_GET["ref"]);
-	
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 	// Gestion des produits specifiques
 	if (!empty($productstatic->canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$productstatic->canvas.'/product.'.$productstatic->canvas.'.class.php') )
@@ -696,6 +694,8 @@ if ($_GET["id"] || $_GET["ref"])
 			$smarty->template_dir = $template_dir;
 		}
 	}
+	
+	llxHeader('',$langs->trans("CardProduct".$product->type));
 
 	if ( $result )
 	{
