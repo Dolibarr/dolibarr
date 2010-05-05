@@ -207,5 +207,25 @@ class PropalTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
+    /**
+     *
+     */
+    public function testVerifyNumRef()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new Propal($this->savdb);
+    	$result=$localobject->ref='refthatdoesnotexists';
+		$result=$localobject->VerifyNumRef();
+
+		print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 0);
+    	return $result;
+    }
+
 }
 ?>

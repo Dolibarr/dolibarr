@@ -184,7 +184,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->set_valid($user);
+    	$result=$localobject->validate($user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
     	$this->assertLessThan($result, 0);
@@ -212,6 +212,24 @@ class FactureTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
+    /**
+     *
+     */
+    /*public function testVerifyNumRef()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
+		$localobject=new Facture($this->savdb);
+    	$result=$localobject->ref='refthatdoesnotexists';
+		$result=$localobject->VerifyNumRef();
+
+		print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result, 0);
+    	return $result;
+    }*/
 }
 ?>
