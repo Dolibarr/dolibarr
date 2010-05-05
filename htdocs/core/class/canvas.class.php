@@ -118,7 +118,7 @@ class Canvas
 	 */
 	function display_canvas()
 	{
-		global $langs;
+		global $conf, $langs;
 		
 		if (!empty($this->smarty))
 		{
