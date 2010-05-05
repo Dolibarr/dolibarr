@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $product->tpl['title']; ?>
+<?php echo $this->object->tpl['title']; ?>
 
 <?php if ($mesg) { ?>
 <br><div class="error"><?php echo $mesg; ?></div><br>
@@ -37,41 +37,41 @@
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
-<td><input name="ref" size="40" maxlength="32" value="<?php echo $product->tpl['ref']; ?>">
+<td><input name="ref" size="40" maxlength="32" value="<?php echo $this->object->tpl['ref']; ?>">
 <?php if ($_error == 1) echo $langs->trans("RefAlreadyExists"); ?>
 </td></tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td>
-<td><input name="libelle" size="40" value="<?php echo $product->tpl['label']; ?>"></td>
+<td><input name="libelle" size="40" value="<?php echo $this->object->tpl['label']; ?>"></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status"); ?></td>
-<td><?php echo $product->tpl['status']; ?></td>
+<td><?php echo $this->object->tpl['status']; ?></td>
 </tr>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $product->tpl['textarea_description']) { 
-$product->tpl['doleditor_description']->Create();
+<?php if (! $this->object->tpl['textarea_description']) { 
+$this->object->tpl['doleditor_description']->Create();
 }else{
-echo $product->tpl['textarea_description'];
+echo $this->object->tpl['textarea_description'];
 }?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>
-<td><input name="duration_value" size="6" maxlength="5" value="<?php echo $product->tpl['duration_value']; ?>"> &nbsp;
-<?php echo $product->tpl['duration_unit']; ?>
+<td><input name="duration_value" size="6" maxlength="5" value="<?php echo $this->object->tpl['duration_value']; ?>"> &nbsp;
+<?php echo $this->object->tpl['duration_unit']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Hidden"); ?></td>
-<td><?php echo $product->tpl['hidden']; ?></td></tr>
+<td><?php echo $this->object->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-<?php if (! $product->tpl['textarea_note']) { 
-$product->tpl['doleditor_note']->Create();
+<?php if (! $this->object->tpl['textarea_note']) { 
+$this->object->tpl['doleditor_note']->Create();
 }else{
-echo $product->tpl['textarea_note'];
+echo $this->object->tpl['textarea_note'];
 }?>
 </td></tr>
 </table>
@@ -83,16 +83,16 @@ echo $product->tpl['textarea_note'];
 <table class="border" width="100%">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
-<td><input name="price" size="10" value="<?php echo $product->tpl['price']; ?>">
-<?php echo $product->tpl['price_base_type']; ?>
+<td><input name="price" size="10" value="<?php echo $this->object->tpl['price']; ?>">
+<?php echo $this->object->tpl['price_base_type']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
-<td><input name="price_min" size="10" value="<?php echo $product->tpl['price_min']; ?>">
+<td><input name="price_min" size="10" value="<?php echo $this->object->tpl['price_min']; ?>">
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $product->tpl['tva_tx']; ?>
+<?php echo $this->object->tpl['tva_tx']; ?>
 </td></tr>
 
 </table>

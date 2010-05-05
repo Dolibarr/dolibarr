@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $product->tpl['title']; ?>
+<?php echo $this->object->tpl['title']; ?>
 
 <?php if ($mesg) { ?>
 <br><div class="error"><?php echo $mesg; ?></div><br>
@@ -30,48 +30,48 @@
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="id" value="<?php echo $product->tpl['id']; ?>">
-<input type="hidden" name="canvas" value="<?php echo $product->tpl['canvas']; ?>">
+<input type="hidden" name="id" value="<?php echo $this->object->tpl['id']; ?>">
+<input type="hidden" name="canvas" value="<?php echo $this->object->tpl['canvas']; ?>">
 
 
 <table class="border" width="100%">
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
-<td><input name="ref" size="40" maxlength="32" value="<?php echo $product->tpl['ref']; ?>">
+<td><input name="ref" size="40" maxlength="32" value="<?php echo $this->object->tpl['ref']; ?>">
 </td></tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td>
-<td><input name="libelle" size="40" value="<?php echo $product->tpl['label']; ?>"></td>
+<td><input name="libelle" size="40" value="<?php echo $this->object->tpl['label']; ?>"></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status"); ?></td>
-<td><?php echo $product->tpl['status']; ?></td>
+<td><?php echo $this->object->tpl['status']; ?></td>
 </tr>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $product->tpl['textarea_description']) { 
-$product->tpl['doleditor_description']->Create();
+<?php if (! $this->object->tpl['textarea_description']) { 
+$this->object->tpl['doleditor_description']->Create();
 }else{
-echo $product->tpl['textarea_description'];
+echo $this->object->tpl['textarea_description'];
 }?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>
-<td><input name="duration_value" size="6" maxlength="5" value="<?php echo $product->tpl['duration_value']; ?>"> &nbsp;
-<?php echo $product->tpl['duration_unit']; ?>
+<td><input name="duration_value" size="6" maxlength="5" value="<?php echo $this->object->tpl['duration_value']; ?>"> &nbsp;
+<?php echo $this->object->tpl['duration_unit']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Hidden"); ?></td>
-<td><?php echo $product->tpl['hidden']; ?></td></tr>
+<td><?php echo $this->object->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-<?php if (! $product->tpl['textarea_note']) { 
-$product->tpl['doleditor_note']->Create();
+<?php if (! $this->object->tpl['textarea_note']) { 
+$this->object->tpl['doleditor_note']->Create();
 }else{
-echo $product->tpl['textarea_note'];
+echo $this->object->tpl['textarea_note'];
 }?>
 </td></tr>
 </table>

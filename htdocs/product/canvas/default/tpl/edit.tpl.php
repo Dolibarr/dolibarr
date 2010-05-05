@@ -21,7 +21,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php echo $product->tpl['title']; ?>
+<?php echo $this->object->tpl['title']; ?>
 
 <?php if ($mesg) { ?>
 <br><div class="error"><?php echo $mesg; ?></div><br>
@@ -30,75 +30,75 @@
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="id" value="<?php echo $product->tpl['id']; ?>">
-<input type="hidden" name="canvas" value="<?php echo $product->tpl['canvas']; ?>">
+<input type="hidden" name="id" value="<?php echo $this->object->tpl['id']; ?>">
+<input type="hidden" name="canvas" value="<?php echo $this->object->tpl['canvas']; ?>">
 
 
 <table class="border" width="100%">
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
-<td><input name="ref" size="40" maxlength="32" value="<?php echo $product->tpl['ref']; ?>">
+<td><input name="ref" size="40" maxlength="32" value="<?php echo $this->object->tpl['ref']; ?>">
 </td></tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td>
-<td><input name="libelle" size="40" value="<?php echo $product->tpl['label']; ?>"></td>
+<td><input name="libelle" size="40" value="<?php echo $this->object->tpl['label']; ?>"></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status"); ?></td>
-<td><?php echo $product->tpl['status']; ?></td>
+<td><?php echo $this->object->tpl['status']; ?></td>
 </tr>
 
 <?php if ($conf->stock->enabled) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
-<input name="seuil_stock_alerte" size="4" value="<?php echo $product->tpl['seuil_stock_alerte']; ?>">
+<input name="seuil_stock_alerte" size="4" value="<?php echo $this->object->tpl['seuil_stock_alerte']; ?>">
 </td></tr>
 <?php } else { ?>
 <input name="seuil_stock_alerte" type="hidden" value="0">
 <?php } ?>
 
 <tr><td valign="top"><?php echo $langs->trans("Description"); ?></td><td>
-<?php if (! $product->tpl['textarea_description']) { 
-$product->tpl['doleditor_description']->Create();
+<?php if (! $this->object->tpl['textarea_description']) { 
+$this->object->tpl['doleditor_description']->Create();
 }else{
-echo $product->tpl['textarea_description'];
+echo $this->object->tpl['textarea_description'];
 }?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Nature"); ?></td><td>
-<?php echo $product->tpl['finished']; ?>
+<?php echo $this->object->tpl['finished']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Weight"); ?></td><td>
-<input name="weight" size="4" value="<?php echo $product->tpl['weight']; ?>">
-<?php echo $product->tpl['weight_units']; ?>
+<input name="weight" size="4" value="<?php echo $this->object->tpl['weight']; ?>">
+<?php echo $this->object->tpl['weight_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Length"); ?></td><td>
-<input name="size" size="4" value="<?php echo $product->tpl['length']; ?>">
-<?php echo $product->tpl['length_units']; ?>
+<input name="size" size="4" value="<?php echo $this->object->tpl['length']; ?>">
+<?php echo $this->object->tpl['length_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Surface"); ?></td><td>
-<input name="surface" size="4" value="<?php echo $product->tpl['surface']; ?>">
-<?php echo $product->tpl['surface_units']; ?>
+<input name="surface" size="4" value="<?php echo $this->object->tpl['surface']; ?>">
+<?php echo $this->object->tpl['surface_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Volume"); ?></td><td>
-<input name="volume" size="4" value="<?php echo $product->tpl['volume']; ?>">
-<?php echo $product->tpl['volume_units']; ?>
+<input name="volume" size="4" value="<?php echo $this->object->tpl['volume']; ?>">
+<?php echo $this->object->tpl['volume_units']; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("Hidden"); ?></td>
-<td><?php echo $product->tpl['hidden']; ?></td></tr>
+<td><?php echo $this->object->tpl['hidden']; ?></td></tr>
 
 <tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
-<?php if (! $product->tpl['textarea_note']) { 
-$product->tpl['doleditor_note']->Create();
+<?php if (! $this->object->tpl['textarea_note']) { 
+$this->object->tpl['doleditor_note']->Create();
 }else{
-echo $product->tpl['textarea_note'];
+echo $this->object->tpl['textarea_note'];
 }?>
 </td></tr>
 </table>
