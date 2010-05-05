@@ -48,8 +48,8 @@ class MyTestSuite
     {
 		$suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 
-		require_once dirname(__FILE__).'/CommonObjectTest.php';
-        $suite->addTestSuite('CommonObjectTest');
+//		require_once dirname(__FILE__).'/CommonObjectTest.php';
+//        $suite->addTestSuite('CommonObjectTest');
 
         require_once dirname(__FILE__).'/AdherentTest.php';
         $suite->addTestSuite('AdherentTest');

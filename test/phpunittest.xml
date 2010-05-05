@@ -8,6 +8,7 @@
     <file>../htdocs/lib/databases/mssql.lib.php</file>
     <file>../htdocs/lib/databases/pgsql.lib.php</file>
     <file>../htdocs/lib/databases/mysql.lib.php</file>
+    <!--  <file>../htdocs/lib/databases/mysqli.lib.php</file> -->
   </blacklist>
   <whitelist>
     <directory suffix=".class.php">../htdocs/</directory>
