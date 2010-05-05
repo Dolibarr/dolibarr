@@ -22,13 +22,13 @@
  */
 
 /**
- *  \file 		htdocs/admin/boutique.php
+ *  \file 		htdocs/boutique/admin/boutique.php
  *  \ingroup    boutique
  *  \brief      Page d'administration/configuration du module OsCommerce
  *  \version    $Revision$
  */
 
-require("../main.inc.php");
+require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
