@@ -49,7 +49,7 @@ class Canvas
 	}
 	
 	/**
-	 * 	\brief 		Load class
+	 * 	\brief 		Load canvas
 	 */
 	function load_canvas($object,$canvas)
 	{
@@ -84,7 +84,7 @@ class Canvas
 	}
 	
 	/**
-	 * 	\brief 		Fetch values
+	 * 	\brief 		Fetch object values
 	 */
 	function fetch($id,$ref='',$action='')
 	{
@@ -93,7 +93,7 @@ class Canvas
 	}
 
 	/**
-	 * 	\brief 		Assign values
+	 * 	\brief 		Assign templates values
 	 */
 	function assign_values($action='')
 	{
@@ -114,7 +114,7 @@ class Canvas
 	}
 	
 	/**
-	 * 	\brief 		Display
+	 * 	\brief 		Display canvas
 	 */
 	function display_canvas()
 	{
