@@ -43,6 +43,7 @@ class pdf_paiement
 	{
 		global $langs;
 		$langs->load("bills");
+		$langs->load("compta");
 
 		$this->db = $db;
 		$this->description = $langs->transnoentities("ListOfCustomerPayments");
@@ -75,6 +76,8 @@ class pdf_paiement
 	 */
 	function write_file($_dir, $month, $year, $outputlangs)
 	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/date.lib.php');
+
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -106,7 +109,7 @@ class pdf_paiement
 			$pdf = new FPDI_Protection('P','mm','A4');
 			$pdfrights = array('print'); // Ne permet que l'impression du document
 			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-			$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+			$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 		}
 		else
@@ -115,7 +118,7 @@ class pdf_paiement
 		}
 
 
-		$sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";
+		$sql = "SELECT p.datep as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 		$sql .= ", c.code as paiement_code, p.num_paiement";
 		$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
@@ -125,7 +128,7 @@ class pdf_paiement
 		$sql .= MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
 		$sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
 		$sql .= " AND p.fk_paiement = c.id ";
-		$sql .= " AND date_format(p.datep, '%Y%m') = " . sprintf("%04d%02d",$year,$month);
+		$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
 		$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
 		dol_syslog("pdf_paiement::write_file sql=".$sql);
@@ -142,7 +145,7 @@ class pdf_paiement
 				$var=!$var;
 
 				$lines[$i][0] = $objp->facnumber;
-				$lines[$i][1] = dol_print_date($objp->dp,"%d %B %Y",false,$outputlangs,true);
+				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"%d %B %Y",false,$outputlangs,true);
 				//$lines[$i][2] = $objp->paiement_type ;
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;
