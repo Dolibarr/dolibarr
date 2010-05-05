@@ -574,8 +574,8 @@ function print_left_eldy_menu($db,$menu_array)
 					$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->rights->produit->lire);
 					if (! empty($conf->droitpret->enabled))
 					{
-						$newmenu->add(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0&canvas=livre@droipret", $langs->trans("NewBook"), 1, $user->rights->produit->creer);
-						$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre@droipret", $langs->trans("BookList"), 1, $user->rights->produit->creer);
+						$newmenu->add(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0&canvas=livre@droitpret", $langs->trans("NewBook"), 1, $user->rights->produit->creer);
+						$newmenu->add(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre@droitpret", $langs->trans("BookList"), 1, $user->rights->produit->creer);
 					}
 				}
 				if ($conf->propal->enabled)
