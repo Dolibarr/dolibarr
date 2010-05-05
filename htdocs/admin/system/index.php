@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -90,6 +90,15 @@ $dbversion=$db->getVersion();
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" .$dblabel." ".$dbversion."</td></tr>\n";
 print '</table>';
 print '<br>';
+
+// Database
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Browser")."</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("UserAgent")."</td><td>" .$_SERVER["HTTP_USER_AGENT"]."</td></tr>\n";
+print "<tr $bc[1]><td width=\"280\">".$langs->trans("Smartphone")."</td><td>".(empty($conf->browser->phone)?$langs->trans("No"):$conf->browser->phone)."</td></tr>\n";
+print '</table>';
+print '<br>';
+
 
 llxFooter('$Date$ - $Revision$');
 ?>

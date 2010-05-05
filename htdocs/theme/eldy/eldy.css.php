@@ -50,8 +50,8 @@ if (! empty($_GET["lang"])) $langs->setDefaultLang($_GET["lang"]);	// If languag
 $langs->load("main",0,1);
 $right=($langs->direction=='rtl'?'left':'right');
 $left=($langs->direction=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'10';
-$fontsizesmaller=empty($conf->browser->phone)?'11':'10';
+$fontsize=empty($conf->browser->phone)?'12':'12';
+$fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
 ?>
 
@@ -169,10 +169,16 @@ div.fiche {
 /* ============================================================================== */
 
 <?php
-$minwidthtmenu=0;
-$heightmenu=19;
-$minwidthtmenu=70;
-$heightmenu=47;
+if (! empty($conf->browser->phone))
+{
+	$minwidthtmenu=0;
+	$heightmenu=19;
+}
+else
+{
+	$minwidthtmenu=70;
+	$heightmenu=47;
+}
 ?>
 
 div.tmenu {
@@ -276,16 +282,17 @@ li.tmenu {
 	font-weight: normal;
 }
 
-<?php $i=2; ?>
 
 div.mainmenu {
 	position : relative;
 	color: white;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height:28px;
+	height: <?php echo ($heightmenu-19); ?>px;
 	margin-left: 0px;
 }
+
+<?php if (empty($conf->browser->phone)) { ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menus/home.png' ?>);
@@ -393,6 +400,9 @@ foreach($mainmenuusedarray as $key => $val)
 // End of part to add more div class css
 ?>
 
+<?php
+}	// End test if not phone
+?>
 
 /* Login */
 
