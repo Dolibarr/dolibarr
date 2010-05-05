@@ -1,6 +1,13 @@
 README (English)
 --------------------------------
-This directory contains unit tests for Dolibarr code.
+This directory contains unit tests and docs for
+Dolibarr quality analysis.
+
+
+
+PHPUNIT
+-------
+
 To use them, you must:
 
 * Install PHPUnit
@@ -26,3 +33,12 @@ Check that you use the "mysqli" driver in your conf.php file (otherwise
 edit the file phpunittest.xml).
 Run > phpunit --configuration ./phpunittest.xml --coverage-html ./report MyTestSuite.php
 
+
+
+PHPDEPEND
+---------
+* Install PDepend
+
+* Laucnh PDepend analysis:
+pdepend --summary-xml=./report/summary.xml --jdepend-chart=./report/jdepend.svg --overview-pyramid=./report/pyramid.svg /yourdir
+ 
