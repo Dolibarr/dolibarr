@@ -634,10 +634,10 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		
 		if (! isset($product))
 		{
-			$canvas = new Canvas();
+			$canvas = new Canvas($db,$user);
 			
 			$product = $canvas->load_canvas('product',$_GET["canvas"]);
-			print $canvas->error;
+
 			$canvas->assign_values($_GET["action"],$smarty);
 			$canvas->display_canvas();
 		}

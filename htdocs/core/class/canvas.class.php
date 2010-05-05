@@ -42,9 +42,10 @@ class Canvas
 	*   \brief      Constructor.
 	*   \param      DB      Database handler
 	*/
-	function Canvas($DB=0)
+	function Canvas($DB=0,$user)
 	{
 		$this->db = $DB ;
+		$this->user = $user;
 	}
 	
 	/**
@@ -56,8 +57,6 @@ class Canvas
 
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
 		{
-			var_dump($regs);
-			$ret = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php'; print $ret;
 			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php'))
 			{
 				$filecanvas = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php';
@@ -65,7 +64,7 @@ class Canvas
 				$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/tpl/';
 				
 				include_once($filecanvas);
-				$this->object = new $classname($db,0,$user);
+				$this->object = new $classname($this->db,0,$this->user);
 				$this->smarty = $this->object->smarty;
 				
 				return $this->object;
@@ -95,7 +94,7 @@ class Canvas
 		{
 			global $smarty;
 			
-			$smarty->assign_smarty_values($this->smarty, $this->action);
+			$this->object->assign_smarty_values($smarty, $this->action);
 			$smarty->template_dir = $this->template_dir;
 		}
 		else
@@ -116,7 +115,7 @@ class Canvas
 		{
 			global $smarty;
 			
-			$this->smarty->display($this->action.'.tpl');
+			$smarty->display($this->action.'.tpl');
 		}
 		else
 		{
