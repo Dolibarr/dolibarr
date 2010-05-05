@@ -30,6 +30,7 @@
  */
 
 require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -53,8 +54,8 @@ $result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
 
 if (empty($_GET["canvas"]))
 {
-	$_GET["canvas"] = 'default';
-	if ($_GET["type"] == 1) $_GET["canvas"] = 'service';
+	$_GET["canvas"] = 'default@product';
+	if ($_GET["type"] == 1) $_GET["canvas"] = 'service@product';
 }
 
 $mesg = '';
@@ -623,7 +624,7 @@ $formproduct = new FormProduct($db);
  */
 if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
+	if (!empty($_GET["canvas"]))
 	{
 		$helpurl='';
 		if (isset($_GET["type"]) && $_GET["type"] == 0) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
@@ -633,30 +634,12 @@ if ($_GET["action"] == 'create' && ($user->rights->produit->creer || $user->righ
 		
 		if (! isset($product))
 		{
-			$filecanvas = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php';
-			$classname = 'Product'.ucfirst($_GET["canvas"]);
-
-			include_once($filecanvas);
-			$product = new $classname($db,0,$user);
+			$canvas = new Canvas();
 			
-			$template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/tpl/';
-			
-			if ($product->smarty)
-			{
-				$product->assign_smarty_values($smarty, $_GET["action"]);
-				$smarty->template_dir = $template_dir;
-				
-				//$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
-				//$smarty->assign('tva_taux_value', $tvaarray['value']);
-				//$smarty->assign('tva_taux_libelle', $tvaarray['label']);
-				
-				$smarty->display($_GET["canvas"].'-create.tpl');
-			}
-			else
-			{
-				$product->assign_values($_GET["action"]);
-				include($template_dir.'create.tpl.php');
-			}
+			$product = $canvas->load_canvas('product',$_GET["canvas"]);
+			print $canvas->error;
+			$canvas->assign_values($_GET["action"],$smarty);
+			$canvas->display_canvas();
 		}
 
 		if ($_error == 1)

@@ -61,7 +61,7 @@ create table llx_product
   volume_units				tinyint      DEFAULT NULL,
   stock						integer,						-- physical stock
   pmp						double(24,8) DEFAULT 0 NOT NULL,
-  canvas					varchar(15)  DEFAULT 'default',
+  canvas					varchar(32)  DEFAULT 'default@product',
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Need permission see also hidden products
   import_key				varchar(14)						-- import key

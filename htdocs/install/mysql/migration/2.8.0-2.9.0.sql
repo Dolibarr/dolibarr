@@ -187,5 +187,9 @@ ALTER TABLE llx_categorie_member ADD INDEX idx_categorie_member_fk_member (fk_me
 ALTER TABLE llx_categorie_member ADD CONSTRAINT fk_categorie_member_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_member ADD CONSTRAINT fk_categorie_member_member_rowid   FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);
 
-UPDATE llx_product SET canvas = 'default' WHERE fk_product_type = 0 AND canvas = '';
-UPDATE llx_product SET canvas = 'service' WHERE fk_product_type = 1 AND canvas = '';
+ALTER TABLE llx_product MODIFY COLUMN canvas  varchar(32)  DEFAULT 'default@product';
+UPDATE llx_product SET canvas = 'default@product' WHERE fk_product_type = 0 AND (canvas = '' OR canvas = 'default');
+UPDATE llx_product SET canvas = 'service@product' WHERE fk_product_type = 1 AND (canvas = '' OR canvas = 'service');
+UPDATE llx_product SET canvas = 'livre@droitpret' WHERE canvas = 'livre';
+UPDATE llx_product SET canvas = 'livrecontrat@droitpret' WHERE canvas = 'livrecontrat';
+UPDATE llx_product SET canvas = 'livrecouverture@droitpret' WHERE canvas = 'livrecouverture';

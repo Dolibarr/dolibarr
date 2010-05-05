@@ -31,19 +31,98 @@
 
 class Canvas
 {
+	var $canvas;
 	var $template_dir;		// Directory with all core and external templates files
-	var $errors	= array();	// Array for errors
+	var $action;
+	var $smarty;
+	
+	var $error;
 
    /**
 	*   \brief      Constructor.
 	*   \param      DB      Database handler
 	*/
-	function Canvas($DB)
+	function Canvas($DB=0)
 	{
 		$this->db = $DB ;
 	}
 	
+	/**
+	 * 	\brief 		Load class
+	 */
+	function load_canvas($object,$canvas)
+	{
+		global $langs;
+
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
+		{
+			var_dump($regs);
+			$ret = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php'; print $ret;
+			if (file_exists(DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php'))
+			{
+				$filecanvas = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/'.$object.'.'.$regs[1].'.class.php';
+				$classname = ucfirst($object).ucfirst($regs[1]);
+				$this->template_dir = DOL_DOCUMENT_ROOT.'/'.$regs[2].'/canvas/'.$regs[1].'/tpl/';
+				
+				include_once($filecanvas);
+				$this->object = new $classname($db,0,$user);
+				$this->smarty = $this->object->smarty;
+				
+				return $this->object;
+			}
+			else
+			{
+				$this->error = $langs->trans('CanvasIsInvalid');
+				return 0;
+			}
+			
+		}
+		else
+		{
+			$this->error = $langs->trans('BadCanvasName');
+			return 0;
+		}
+	}
+
+	/**
+	 * 	\brief 		Assign values
+	 */
+	function assign_values($action='')
+	{
+		$this->action = $action;
+
+		if (!empty($this->smarty))
+		{
+			global $smarty;
+			
+			$smarty->assign_smarty_values($this->smarty, $this->action);
+			$smarty->template_dir = $this->template_dir;
+		}
+		else
+		{
+			$this->object->assign_values($this->action);
+		}
+		
+	}
 	
+	/**
+	 * 	\brief 		Display
+	 */
+	function display_canvas()
+	{
+		global $langs;
+		
+		if (!empty($this->smarty))
+		{
+			global $smarty;
+			
+			$this->smarty->display($this->action.'.tpl');
+		}
+		else
+		{
+			include($this->template_dir.$this->action.'.tpl.php');
+		}
+	}
 
 }
 ?>
