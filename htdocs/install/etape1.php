@@ -523,37 +523,37 @@ function write_conf_file($conffile)
 		fputs($fp,"# and explanations for all possibles parameters.\n");
 		fputs($fp,"#\n");
 
-		fputs($fp, '$dolibarr_main_url_root=\''.$_POST["main_url"].'\';');
+		fputs($fp, '$dolibarr_main_url_root=\''.addslashes($_POST["main_url"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_document_root=\''.$main_dir.'\';');
+		fputs($fp, '$dolibarr_main_document_root=\''.addslashes($main_dir).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_data_root=\''.$main_data_dir.'\';');
+		fputs($fp, '$dolibarr_main_data_root=\''.addslashes($main_data_dir).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_host=\''.$_POST["db_host"].'\';');
+		fputs($fp, '$dolibarr_main_db_host=\''.addslashes($_POST["db_host"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_port=\''.$_POST["db_port"].'\';');
+		fputs($fp, '$dolibarr_main_db_port=\''.addslashes($_POST["db_port"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_name=\''.$_POST["db_name"].'\';');
+		fputs($fp, '$dolibarr_main_db_name=\''.addslashes($_POST["db_name"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_user=\''.$_POST["db_user"].'\';');
+		fputs($fp, '$dolibarr_main_db_user=\''.addslashes($_POST["db_user"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_pass=\''.$_POST["db_pass"].'\';');
+		fputs($fp, '$dolibarr_main_db_pass=\''.addslashes($_POST["db_pass"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_type=\''.$_POST["db_type"].'\';');
+		fputs($fp, '$dolibarr_main_db_type=\''.addslashes($_POST["db_type"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_character_set=\''.$_POST["dolibarr_main_db_character_set"].'\';');
+		fputs($fp, '$dolibarr_main_db_character_set=\''.addslashes($_POST["dolibarr_main_db_character_set"]).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_collation=\''.$_POST["dolibarr_main_db_collation"].'\';');
+		fputs($fp, '$dolibarr_main_db_collation=\''.addslashes($_POST["dolibarr_main_db_collation"]).'\';');
 		fputs($fp,"\n");
 
 		/* Authentication */
