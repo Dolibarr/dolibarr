@@ -82,6 +82,15 @@ class Canvas
 			return 0;
 		}
 	}
+	
+	/**
+	 * 	\brief 		Assign values
+	 */
+	function fetch($id,$action='')
+	{
+		$ret = $this->object->fetch($id,$action);
+		return $ret;
+	}
 
 	/**
 	 * 	\brief 		Assign values
