@@ -417,6 +417,8 @@ class CommonObject
 	{
 		global $conf;
 
+		if (empty($this->socid)) return 0;
+
 		$client = new Societe($this->db);
 		$result=$client->fetch($this->socid);
 		$this->client = $client;
@@ -429,10 +431,12 @@ class CommonObject
 
 	/**
 	 *		\brief      Charge le projet d'id $this->fk_project dans this->projet
-	 *		\return		int			<0 if KO, >0 if OK
+	 *		\return		int			<0 if KO, >=0 if OK
 	 */
 	function fetch_projet()
 	{
+		if (empty($this->fk_project)) return 0;
+
 		$project = new Project($this->db);
 		$result = $project->fetch($this->fk_project);
 		$this->projet = $project;
