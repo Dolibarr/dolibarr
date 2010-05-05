@@ -562,7 +562,6 @@ if ($_REQUEST["amount"] == 'membersubscription')
 	else
 	{
 		$subscription=new Cotisation($db);
-		//$result=$subscription->fetch();
 	}
 
 	$amount=$subscription->total_ttc;

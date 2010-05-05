@@ -74,8 +74,7 @@ if ($_GET["facid"] > 0)
         $author = new User($db);
         if ($fac->user_author)
         {
-            $author->id = $fac->user_author;
-            $author->fetch();
+            $author->fetch($fac->user_author);
         }
 
 		$head = facture_prepare_head($fac);

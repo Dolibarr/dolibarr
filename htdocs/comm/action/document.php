@@ -130,8 +130,7 @@ if ($objectid > 0)
 		$act->societe=$company;
 
 		$author=new User($db);
-		$author->id=$act->author->id;
-		$author->fetch();
+		$author->fetch($act->author->id);
 		$act->author=$author;
 
 		$contact=new Contact($db);

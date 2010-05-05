@@ -2221,7 +2221,8 @@ class Facture extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("bills");
 
-		if (empty($conf->global->FACTURE_ADDON))
+		// Clean parameters (if not defined or using deprecated value)
+		if (empty($conf->global->FACTURE_ADDON) || $conf->global->FACTURE_ADDON=='terre')
 		{
 			$conf->global->FACTURE_ADDON='mod_facture_terre';
 		}
@@ -2253,7 +2254,11 @@ class Facture extends CommonObject
 		}
 		//print "xx".$mybool.$dir.$file."-".$classname;
 
-		if (! $mybool) dol_print_error('',"Failed to include file ".$file);
+		if (! $mybool)
+		{
+			dol_print_error('',"Failed to include file ".$file);
+			return '';
+		}
 
 		$obj = new $classname();
 
@@ -2267,7 +2272,7 @@ class Facture extends CommonObject
 		else
 		{
 			dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
-			return "";
+			return '';
 		}
 	}
 

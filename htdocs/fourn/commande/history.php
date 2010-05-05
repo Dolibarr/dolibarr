@@ -61,8 +61,7 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($commande->socid);
 
 		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		llxHeader('',$langs->trans("History"),"CommandeFournisseur");
 

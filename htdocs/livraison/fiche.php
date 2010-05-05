@@ -216,8 +216,7 @@ if ($_GET["action"] == 'create')
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
 		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
 		{

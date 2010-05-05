@@ -339,8 +339,7 @@ else
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);
 			$author = new User($db);
-			$author->id = $fac->user_author;
-			$author->fetch();
+			$author->fetch($fac->user_author);
 
 			print_titre($langs->trans("PredefinedInvoices").': '.$fac->titre);
 			print '<br>';

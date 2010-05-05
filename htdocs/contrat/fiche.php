@@ -649,16 +649,13 @@ else
 		$nbofservices=sizeof($contrat->lignes);
 
         $author = new User($db);
-        $author->id = $contrat->user_author_id;
-        $author->fetch();
+        $author->fetch($contrat->user_author_id);
 
         $commercial_signature = new User($db);
-        $commercial_signature->id = $contrat->commercial_signature_id;
-        $commercial_signature->fetch();
+        $commercial_signature->fetch($contrat->commercial_signature_id);
 
         $commercial_suivi = new User($db);
-        $commercial_suivi->id = $contrat->commercial_suivi_id;
-        $commercial_suivi->fetch();
+        $commercial_suivi->fetch($contrat->commercial_suivi_id);
 
 	    $head = contract_prepare_head($contrat);
 
@@ -1329,16 +1326,16 @@ else
             print "</div>";
 			print '<br>';
         }
-        
+
 		/*
 		 * Linked object block
 		 */
 		$contrat->load_object_linked($contrat->id,$contrat->element);
-		
+
 		if (! empty($contrat->linked_object))
 		{
 			print '<table width="100%"><tr><td width="50%" valign="top">';
-			
+
 			foreach($contrat->linked_object as $object => $objectid)
 			{
 				if($conf->$object->enabled && $object != $contrat->element)
@@ -1346,7 +1343,7 @@ else
 					$somethingshown=$contrat->showLinkedObjectBlock($object,$objectid,$somethingshown);
 				}
 			}
-				
+
 			print '</td><td valign="top" width="50%">';
 			print '</td></tr></table>';
 		}

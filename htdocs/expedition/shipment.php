@@ -147,8 +147,7 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($commande->socid);
 
 		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		$head = commande_prepare_head($commande);
 		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), 0, 'order');

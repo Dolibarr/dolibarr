@@ -139,8 +139,7 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($commande->socid);
 
 		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		$head = commande_prepare_head($commande);
 		dol_fiche_head($head, 'accountancy', $langs->trans("CustomerOrder"), 0, 'order');
@@ -150,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		$nbrow=7;
 		if ($conf->projet->enabled) $nbrow++;
-		
+
 		//Local taxes
 		if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
@@ -375,8 +374,8 @@ if ($id > 0 || ! empty($ref))
 				print '<td align="right">'.price($propal->total_localtax2).'</td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 			}
-		}	
-		
+		}
+
 		// Total TTC
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($commande->total_ttc).'</td>';
 		print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
@@ -580,7 +579,7 @@ if ($id > 0 || ! empty($ref))
 		 * Linked object block
 		 */
 		$commande->load_object_linked($commande->id,$commande->element);
-				
+
 		foreach($commande->linked_object as $object => $objectid)
 		{
 			if($conf->$object->enabled && $object != $commande->element)

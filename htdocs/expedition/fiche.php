@@ -268,8 +268,7 @@ if ($_GET["action"] == 'create')
 			$soc->fetch($object->socid);
 
 			$author = new User($db);
-			$author->id = $object->user_author_id;
-			$author->fetch();
+			$author->fetch($object->user_author_id);
 
 			if ($conf->stock->enabled) $entrepot = new Entrepot($db);
 

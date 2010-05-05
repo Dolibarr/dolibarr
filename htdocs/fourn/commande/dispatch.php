@@ -103,8 +103,7 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($commande->socid);
 
 		$author = new User($db);
-		$author->id = $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		$head = ordersupplier_prepare_head($commande);
 

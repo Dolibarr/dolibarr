@@ -1978,8 +1978,7 @@ else
 			$author = new User($db);
 			if ($fac->user_author)
 			{
-				$author->id = $fac->user_author;
-				$author->fetch();
+				$author->fetch($fac->user_author);
 			}
 
 			$facidnext=$fac->getIdReplacingInvoice();

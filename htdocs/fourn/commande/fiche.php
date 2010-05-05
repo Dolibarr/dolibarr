@@ -546,8 +546,7 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($commande->socid);
 
 		$author	= new User($db);
-		$author->id	= $commande->user_author_id;
-		$author->fetch();
+		$author->fetch($commande->user_author_id);
 
 		$head = ordersupplier_prepare_head($commande);
 
@@ -637,14 +636,14 @@ if ($id > 0 || ! empty($ref))
 		 */
 		$nbrow=8;
 		if ($conf->projet->enabled)	$nbrow++;
-		
+
 		//Local taxes
 		if ($mysoc->pays_code=='ES' && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 		{
 			if($mysoc->localtax1_assuj=="1") $nbrow++;
 			if($mysoc->localtax2_assuj=="1") $nbrow++;
 		}
-		
+
 		print '<table class="border" width="100%">';
 
 		// Ref

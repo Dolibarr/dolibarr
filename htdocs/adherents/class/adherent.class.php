@@ -771,8 +771,7 @@ class Adherent extends CommonObject
 					// This member is linked with a user, so we also update users informations
 					// if this is an update.
 					$luser=new User($this->db);
-					$luser->id=$this->user_id;
-					$result=$luser->fetch();
+					$result=$luser->fetch($this->user_id);
 
 					if ($result >= 0)
 					{

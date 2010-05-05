@@ -626,7 +626,8 @@ class User extends CommonObject
 
 
 	/**
-	 *    \brief      Supprime completement un utilisateur
+	 *    	\brief      Delete the user
+	 * 		\param		int		<0 if KO, >0 if OK
 	 */
 	function delete()
 	{
@@ -634,7 +635,7 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		$this->fetch();
+		$this->fetch($this->id);
 
 		// Supprime droits
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;

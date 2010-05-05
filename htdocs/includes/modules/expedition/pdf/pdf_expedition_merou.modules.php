@@ -110,8 +110,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 			//Creation du livreur
 			$idcontact = $object->commande->getIdContact('internal','LIVREUR');
-			$this->livreur = new User($this->db,$idcontact[0]);
-			if ($idcontact[0]) $this->livreur->fetch();
+			$this->livreur = new User($this->db);
+			if ($idcontact[0]) $this->livreur->fetch($idcontact[0]);
 
 
 			// Definition de $dir et $file

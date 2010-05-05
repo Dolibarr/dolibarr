@@ -98,8 +98,7 @@ function dol_print_object_info($object)
 		else
 		{
 			$userstatic=new User($db);
-			$userstatic->id=$object->user_creation;
-			$userstatic->fetch();
+			$userstatic->fetch($object->user_creation);
 			print $userstatic->getNomUrl(1);
 		}
 		print '<br>';
@@ -120,8 +119,7 @@ function dol_print_object_info($object)
 		else
 		{
 			$userstatic=new User($db);
-			$userstatic->id=$object->user_modification;
-			$userstatic->fetch();
+			$userstatic->fetch($object->user_modification);
 			print $userstatic->getNomUrl(1);
 		}
 		print '<br>';
@@ -142,8 +140,7 @@ function dol_print_object_info($object)
 		else
 		{
 			$userstatic=new User($db);
-			$userstatic->id=$object->user_validation;
-			$userstatic->fetch();
+			$userstatic->fetch($object->user_validation);
 			print $userstatic->getNomUrl(1);
 		}
 		print '<br>';
@@ -164,8 +161,7 @@ function dol_print_object_info($object)
 		else
 		{
 			$userstatic=new User($db);
-			$userstatic->id=$object->user_cloture;
-			$userstatic->fetch();
+			$userstatic->fetch($object->user_cloture);
 			print $userstatic->getNomUrl(1);
 		}
 		print '<br>';
@@ -186,8 +182,7 @@ function dol_print_object_info($object)
 		else
 		{
 			$userstatic=new User($db);
-			$userstatic->id=$object->user_rappro;
-			$userstatic->fetch();
+			$userstatic->fetch($object->user_rappro);
 			print $userstatic->getNomUrl(1);
 		}
 		print '<br>';
