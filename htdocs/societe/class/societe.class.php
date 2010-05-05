@@ -684,7 +684,7 @@ class Societe extends CommonObject
 				$this->remise_client  		= $obj->remise_client;  // TODO obsolete
 				$this->mode_reglement 		= $obj->mode_reglement; // TODO obsolete
 				$this->cond_reglement 		= $obj->cond_reglement; // TODO obsolete
-				
+
 				$this->client      = $obj->client;
 				$this->fournisseur = $obj->fournisseur;
 
@@ -700,7 +700,7 @@ class Societe extends CommonObject
 			}
 			else
 			{
-				$this->error='Societe::Fetch no third party found for id='.$this->id;
+				$this->error='Societe::Fetch no third party found for id='.$socid;
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
 			}
