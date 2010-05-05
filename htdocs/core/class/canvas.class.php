@@ -86,9 +86,9 @@ class Canvas
 	/**
 	 * 	\brief 		Assign values
 	 */
-	function fetch($id,$action='')
+	function fetch($id,$ref='',$action='')
 	{
-		$ret = $this->object->fetch($id,$action);
+		$ret = $this->object->fetch($id,$ref,$action);
 		return $ret;
 	}
 

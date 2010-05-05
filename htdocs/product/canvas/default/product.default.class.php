@@ -65,7 +65,7 @@ class ProductDefault extends Product
 	 *    \brief      Lecture des donnees dans la base
 	 *    \param      id          Product id
 	 */
-	function fetch($id='', $action='')
+	function fetch($id='', $ref='', $action='')
 	{
 		$result = parent::fetch($id);
 

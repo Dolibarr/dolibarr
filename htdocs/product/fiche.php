@@ -666,7 +666,7 @@ if ($_GET["id"] || $_GET["ref"])
 		$canvas = new Canvas($db,$user);
 			
 		$product = $canvas->load_canvas('product',$productstatic->canvas);
-		$canvas->fetch($productstatic->id,$_GET["action"]);
+		$canvas->fetch($productstatic->id,'',$_GET["action"]);
 	}
 	
 	llxHeader('',$langs->trans("CardProduct".$product->type));
