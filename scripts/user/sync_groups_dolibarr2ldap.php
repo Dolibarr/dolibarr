@@ -45,7 +45,7 @@ $version='$Revision$';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/group/usergroup.class.php");
+require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
 
 $error=0;
 
