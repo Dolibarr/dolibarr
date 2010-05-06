@@ -464,10 +464,25 @@ class Livraison extends CommonObject
 			dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
-
-		$this->db->commit();
-		dol_syslog("livraison.class.php::valid commit");
-		return 1;
+	
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php');
+		$interface = new Interfaces($this->db);
+		$result = $interface->run_triggers('DELIVERY_VALIDATE', $this, $user, $langs, $conf);
+		// Fin appel triggers
+		if ($result < 0)
+		{
+			$this->db->rollback();
+			$this->error = $interface->errors;
+			dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
+			return -1;
+		}
+		else
+		{
+			$this->db->commit();
+			dol_syslog("livraison.class.php::valid commit");		
+			return 1;
+		}
 	}
 
 	/**     \brief      Cree le bon de livraison depuis une expedition existante
