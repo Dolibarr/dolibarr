@@ -43,7 +43,7 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    	\param      format		Output format (all: complete display, hour: displays only hours, min: displays only minutes)
  *    	\param      lengthOfDay	Length of day (default 86400 seconds)
  *    	\return     sTime		Formated text of duration
- * 		\example	0 return 0h00, 3600 return 1h00, 86400 return 1d, 90000 return 1day 1hour
+ * 		\example	0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  *
  */
 function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
@@ -67,7 +67,7 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 		}
 		$sTime='';
 		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
-		if ($iSecond)
+		if ($iSecond || empty($sDay))
 		{
 			$sTime.= dol_print_date($iSecond,'hour',true);
 		}
@@ -80,7 +80,7 @@ function ConvertSecondToTime($iSecond,$format='all',$lengthOfDay=86400)
 	{
 		$sTime=dol_print_date($iSecond,'%M',true);
 	}
-	return $sTime;
+	return trim($sTime);
 }
 
 
