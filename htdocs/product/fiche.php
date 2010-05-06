@@ -130,7 +130,7 @@ if ($_POST["action"] == 'add' && ($user->rights->produit->creer || $user->rights
 	if (!empty($_POST["canvas"]))
 	{
 		$canvas = new Canvas($db,$user);
-		$product = $canvas->load_canvas('product',$_GET["canvas"]);
+		$product = $canvas->load_canvas('product',$_POST["canvas"]);
 	}
 	else
 	{
@@ -223,7 +223,7 @@ if ($_POST["action"] == 'update' && ($user->rights->produit->creer || $user->rig
 		if (!empty($_POST["canvas"]))
 		{
 			$canvas = new Canvas($db,$user);
-			$product = $canvas->load_canvas('product',$_GET["canvas"]);
+			$product = $canvas->load_canvas('product',$_POST["canvas"]);
 		}
 
 		if ($product->fetch($_POST["id"]))
