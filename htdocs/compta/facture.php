@@ -508,6 +508,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 	$db->begin();
 
+
 	// Replacement invoice
 	if ($_POST['type'] == 1)
 	{
@@ -606,8 +607,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		}
 	}
 
-	// Standard invoice created from a predefined invoice
-	if ($_POST['type'] == 0 && $_POST['fac_rec'] > 0)
+	// Standard invoice or Deposit invoice created from a predefined invoice
+	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
 	{
 		$datefacture = dol_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture))
@@ -627,9 +628,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->ref_client     = $_POST['ref_client'];
 			$facture->modelpdf       = $_POST['model'];
 
-			// Proprietes particulieres a facture recurrente
+			// Source facture
 			$facture->fac_rec        = $_POST['fac_rec'];
-			$facture->type           = 0;
 
 			$facid = $facture->create($user);
 		}

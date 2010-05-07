@@ -57,7 +57,8 @@ $sortfield="f.datef";
  * Actions
  */
 
-// Ajout
+
+// Create predefined invoice
 if ($_POST["action"] == 'add')
 {
 	$facturerec = new FactureRec($db, $facid);
@@ -341,16 +342,16 @@ else
 			$author = new User($db);
 			$author->fetch($fac->user_author);
 
-			print_titre($langs->trans("PredefinedInvoices").': '.$fac->titre);
-			print '<br>';
 
-			/*
-			 *   Facture
-			 */
+			dol_fiche_head($head, 'compta', $langs->trans("PredefinedInvoices"),0,'company');	// Add a div
+
 			print '<table class="border" width="100%">';
+
+			print '<tr><td>'.$langs->trans("Ref").'</td>';
+			print '<td colspan="4">'.$fac->titre.'</td>';
+
 			print '<tr><td>'.$langs->trans("Customer").'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-
 			print "<td>". $langs->trans("PaymentConditions") ." : ";
 			$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
 			print "</td></tr>";
@@ -383,7 +384,9 @@ else
 				print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
 			}
 
-			print "</table><br>";
+			print "</table>";
+
+			print '</div>';
 
 			/*
 			 * Lines
@@ -494,9 +497,7 @@ else
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND s.entity = ".$conf->entity;
-
-			if ($socid)
-			$sql .= " AND s.rowid = ".$socid;
+			if ($socid)	$sql .= " AND s.rowid = ".$socid;
 
 			//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
 			//	$sql .= $db->plimit($limit + 1,$offset);
@@ -537,11 +538,11 @@ else
 					{
 						if ($objp->fk_statut == 0)
 						{
-							print '<td align="center">'.$langs->trans("Draft").'</td>';
+							print '<td align="right">'.$langs->trans("Draft").'</td>';
 						}
 						else
 						{
-							print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">'.$langs->trans("Validated").'</a></td>';
+							print '<td align="right"><a href="facture.php?filtre=paye:0,fk_statut:1">'.$langs->trans("Validated").'</a></td>';
 						}
 					}
 					else
