@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
@@ -115,7 +115,8 @@ if ($_GET["action"] == 'delete')
  * View
  */
 
-llxHeader();
+$help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+llxHeader('',$langs->trans("Agenda"),$help_url);
 
 
 if ($objectid > 0)
@@ -149,16 +150,34 @@ if ($objectid > 0)
 		// Type
 		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
 
-		// Libelle
+		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
 
+		// Location
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+
 		// Societe - contact
-		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
+		if ($act->societe->id && $act->type_code == 'AC_TEL')
+		{
+			if ($act->societe->fetch($act->societe->id))
+			{
+				print "<br>".dol_print_phone($act->societe->tel);
+			}
+		}
+		print '</td>';
 		print '<td>'.$langs->trans("Contact").'</td>';
 		print '<td>';
 		if ($act->contact->id > 0)
 		{
 			print $act->contact->getNomUrl(1);
+			if ($act->contact->id && $act->type_code == 'AC_TEL')
+			{
+				if ($act->contact->fetch($act->contact->id))
+				{
+					print "<br>".dol_print_phone($act->contact->phone_pro);
+				}
+			}
 		}
 		else
 		{
@@ -166,6 +185,21 @@ if ($objectid > 0)
 		}
 
 		print '</td></tr>';
+
+		// Project
+		if ($conf->projet->enabled)
+		{
+			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+			if ($act->fk_project)
+			{
+				$project=new Project($db);
+				$project->fetch($act->fk_project);
+				print $project->getNomUrl(1);
+			}
+			print '</td></tr>';
+		}
+
+		print '</table><br><table class="border" width="100%">';
 
 		// Construit liste des fichiers
 		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
@@ -176,7 +210,7 @@ if ($objectid > 0)
 		}
 
 
-		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+		print '<tr><td width="30%" nowrap>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 		print '</table>';
 

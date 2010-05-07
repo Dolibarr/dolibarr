@@ -606,7 +606,11 @@ if ($_GET["id"])
 
 	$act = new ActionComm($db);
 	$result=$act->fetch($_GET["id"]);
-	if ($result < 0) dol_print_error($db,$act->error);
+	if ($result < 0)
+	{
+		dol_print_error($db,$act->error);
+		exit;
+	}
 
 	$societe = new Societe($db);
 	if ($act->societe->id)

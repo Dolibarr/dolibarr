@@ -232,7 +232,7 @@ class ActionComm
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle,";
 		$sql.= " s.nom as socname,";
 		$sql.= " u.firstname, u.name";
-		$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c)";
+		$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
