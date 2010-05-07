@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -159,7 +159,7 @@ class modPropale extends DolibarrModules
 		$this->export_alias_array[$r]=array('s.rowid'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','c.rowid'=>"orderid",'c.ref'=>"ref",'c.ref_client'=>"refclient",'c.fk_soc'=>"fk_soc",'c.datec'=>"datecreation",'c.datep'=>"datepropal",'c.fin_validite'=>"dateendpropal",'c.remise_percent'=>"globaldiscount",'c.total_ht'=>"totalht",'c.total'=>"totalttc",'c.fk_statut'=>'status','c.note'=>"note",'c.date_livraison'=>'datedelivery','cd.rowid'=>'lineid','cd.description'=>"linedescription",'cd.product_type'=>'linetype','cd.tva_tx'=>"linevatrate",'cd.qty'=>"lineqty",'cd.total_ht'=>"lientotalht",'cd.total_tva'=>"linetotalvat",'cd.total_ttc'=>"linetotalttc",'p.rowid'=>'idproduct','p.ref'=>'refproduct','p.label'=>'label');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'propal as c, '.MAIN_DB_PREFIX.'propaldet as cd, '.MAIN_DB_PREFIX.'societe as s)';
+		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as c, '.MAIN_DB_PREFIX.'propaldet as cd)';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_propal';
 		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
