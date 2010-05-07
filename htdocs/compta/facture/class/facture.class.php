@@ -230,7 +230,7 @@ class Facture extends CommonObject
 		$sql.= ", '".$totalht."'";
 		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
-		$sql.= ",".$this->db->idate($this->date);
+		$sql.= ", '".$this->db->idate($this->date)."'";
 		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
 		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql.= ",".($this->ref_client?"'".addslashes($this->ref_client)."'":"null");
@@ -239,7 +239,7 @@ class Facture extends CommonObject
 		$sql.= ",".($this->fk_project?$this->fk_project:"null");
 		$sql.= ','.$this->cond_reglement_id;
 		$sql.= ",".$this->mode_reglement_id;
-		$sql.= ",".$this->db->idate($datelim).", '".$this->modelpdf."')";
+		$sql.= ", '".$this->db->idate($datelim)."', '".$this->modelpdf."')";
 
 		dol_syslog("Facture::Create sql=".$sql);
 		$resql=$this->db->query($sql);
