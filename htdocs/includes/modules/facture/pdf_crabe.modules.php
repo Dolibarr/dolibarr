@@ -1014,6 +1014,8 @@ class pdf_crabe extends ModelePDFFactures
 
 	    if ($conf->propal->enabled)
 		{
+			require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+			
 			$outputlangs->load('propal');
 			foreach($object->linked_object as $key => $val)
 			{
@@ -1038,6 +1040,8 @@ class pdf_crabe extends ModelePDFFactures
 	    // TODO mutualiser
 		if ($conf->commande->enabled)
 		{
+			require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+			
 			$outputlangs->load('orders');
 			foreach($object->linked_object as $key => $val)
 			{
