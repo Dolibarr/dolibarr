@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
 $langs->load("products");
+$langs->load("stocks");
 
 $type=trim(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
 
@@ -229,14 +230,14 @@ if ($resql)
 	}
 
 	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/product.'.$_GET["canvas"].'.class.php'))
-	{		
+	{
 		$fieldlist = $object->field_list;
 		$datas = $object->list_datas;
 		$picto='title.png';
 		if (empty($conf->browser->firefox)) $picto='title.gif';
 		$title_picto = img_picto('',$picto);
 		$title_text = $title;
-		
+
 		// Default templates directory
 		$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/';
 		// Check if a custom template is present
@@ -245,7 +246,7 @@ if ($resql)
 		{
 			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/';
 		}
-		
+
 		if ($object->smarty)
 		{
 			$template = 'list.tpl';
