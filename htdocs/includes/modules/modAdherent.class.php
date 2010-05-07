@@ -200,7 +200,7 @@ class modAdherent extends DolibarrModules
 		}
 		// Fin complement
         $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'adherent as a, '.MAIN_DB_PREFIX.'adherent_type as ta)';
+        $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'adherent_type as ta, '.MAIN_DB_PREFIX.'adherent as a)';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_options as ao ON a.rowid = ao.fk_member';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'cotisation as c ON c.fk_adherent = a.rowid';
         $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid';
