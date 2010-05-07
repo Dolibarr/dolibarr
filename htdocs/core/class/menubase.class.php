@@ -70,7 +70,7 @@ class Menubase
 
 
 	/**
-	 *      \brief      Create in database
+	 *      \brief      Create menu entry into database
 	 *      \param      user        User that create
 	 *      \return     int         <0 si ko, >0 si ok
 	 */
@@ -141,6 +141,7 @@ class Menubase
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
+			dol_syslog("Menubase::create record added has rowid=".$this->id, LOG_DEBUG);
 
 			return $this->id;
 		}

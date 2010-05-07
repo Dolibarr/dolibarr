@@ -881,17 +881,17 @@ class DolibarrModules
 					{
 						if (strlen($r_subperms) )
 						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-							$sql .= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-							$sql .= " VALUES ";
-							$sql .= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+							$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+							$sql.= " VALUES ";
+							$sql.= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
 						}
 						else
 						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-							$sql .= " (id, entity, libelle, module, type, bydefault, perms)";
-							$sql .= " VALUES ";
-							$sql .= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+							$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+							$sql.= " VALUES ";
+							$sql.= "(".$r_id.",".$conf->entity.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
 						}
 					}
 					else
@@ -903,7 +903,7 @@ class DolibarrModules
 					}
 
 					dol_syslog("DolibarrModules::insert_permissions sql=".$sql, LOG_DEBUG);
-					$resql=$this->db->query($sql);
+					$resql=$this->db->query($sql,1);
 					if (! $resql)
 					{
 						if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
@@ -913,6 +913,7 @@ class DolibarrModules
 							$err++;
 							break;
 						}
+						else dol_syslog("DolibarrModules::insert_permissions record already exists", LOG_INFO);
 					}
 				}
 			}

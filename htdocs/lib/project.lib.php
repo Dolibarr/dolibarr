@@ -159,20 +159,21 @@ function task_prepare_head($object)
 
 /**
  *		\brief      Show a combo list with projects qualified for a third party)
- *		\param      socid       Id third party
+ *		\param      socid       Id third party (-1=all, 0=projects not linked to a third party, id=projects not linked or linked to third party id)
  *		\param      selected    Id project preselected
  *		\param      htmlname    Nom de la zone html
  *		\return     int         Nbre de projet si ok, <0 si ko
  */
-function select_projects($socid, $selected='', $htmlname='projectid')
+function select_projects($socid=-1, $selected='', $htmlname='projectid')
 {
 	global $db,$user,$conf,$langs;
 
 	// On recherche les projets
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-	$sql.= " WHERE (p.fk_soc=".($socid?$socid:'0')." OR p.fk_soc IS NULL)";
-	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " WHERE p.entity = ".$conf->entity;
+	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
+	if ($socid > 0) $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc='0' OR p.fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
 
 	dol_syslog("project.lib::select_projects sql=".$sql);

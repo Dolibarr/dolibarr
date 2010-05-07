@@ -163,9 +163,6 @@ class DoliDb
 		}
 		if ($line != "")
 		{
-			# We remove end of request "AFTER fieldxxx"
-			$line=preg_replace('/AFTER [a-z_]+/i','',$line);
-
 			# we are inside create table statement so lets process datatypes
 			if (preg_match('/(ISAM|innodb)/i',$line)) { # end of create table sequence
 				$line=preg_replace('/\)[\s\t]*type=(MyISAM|innodb);/i',');',$line);
@@ -217,6 +214,12 @@ class DoliDb
 			{
 				$line=preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i','UNIQUE\(\\1\)',$line);
 			}
+
+			# We remove end of requests "AFTER fieldxxx"
+			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
+
+			# We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
+			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
 
 			# alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
 			# ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
@@ -812,8 +815,14 @@ class DoliDb
 	 */
 	function last_insert_id($tab,$fieldid='rowid')
 	{
-		$result = pg_query($this->db,"SELECT MAX(".$fieldid.") FROM ".$tab." ;");
-		$nbre = pg_num_rows($result);
+		//$result = pg_query($this->db,"SELECT MAX(".$fieldid.") FROM ".$tab);
+		$result = pg_query($this->db,"SELECT currval('".$tab."_".$fieldid."_seq')");
+		if (! $result)
+		{
+			print pg_last_error($this->db);
+			exit;
+		}
+		//$nbre = pg_num_rows($result);
 		$row = pg_fetch_result($result,0,0);
 		return $row;
 	}
@@ -936,6 +945,83 @@ class DoliDb
 
 
 	/**
+	 *	\brief      Cree une table
+	 *	\param	    table 			Nom de la table
+	 *	\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
+	 *	\param	    primary_key 	Nom du champ qui sera la clef primaire
+	 *	\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	\param	    fulltext 		Tableau des Nom de champs qui seront indexes en fulltext
+	 *	\param	    key 			Tableau des champs cles noms => valeur
+	 *	\param	    type 			Type de la table
+	 *	\return	    int				<0 si KO, >=0 si OK
+	 * TODO
+	 */
+	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
+	{
+		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
+		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+		$sql = "create table ".$table."(";
+		$i=0;
+		foreach($fields as $field_name => $field_desc)
+		{
+			$sqlfields[$i] = $field_name." ";
+			$sqlfields[$i]  .= $field_desc['type'];
+			if( preg_match("/^[^\s]/i",$field_desc['value']))
+			$sqlfields[$i]  .= "(".$field_desc['value'].")";
+			else if( preg_match("/^[^\s]/i",$field_desc['attribute']))
+			$sqlfields[$i]  .= " ".$field_desc['attribute'];
+			else if( preg_match("/^[^\s]/i",$field_desc['default']))
+			{
+				if(preg_match("/null/i",$field_desc['default']))
+				$sqlfields[$i]  .= " default ".$field_desc['default'];
+				else
+				$sqlfields[$i]  .= " default '".$field_desc['default']."'";
+			}
+			else if( preg_match("/^[^\s]/i",$field_desc['null']))
+			$sqlfields[$i]  .= " ".$field_desc['null'];
+
+			else if( preg_match("/^[^\s]/i",$field_desc['extra']))
+			$sqlfields[$i]  .= " ".$field_desc['extra'];
+			$i++;
+		}
+		if($primary_key != "")
+		$pk = "primary key(".$primary_key.")";
+
+		if($unique_keys != "")
+		{
+			$i = 0;
+			foreach($unique_keys as $key => $value)
+			{
+				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$value."')";
+				$i++;
+			}
+		}
+		if($keys != "")
+		{
+			$i = 0;
+			foreach($keys as $key => $value)
+			{
+				$sqlk[$i] = "KEY ".$key." (".$value.")";
+				$i++;
+			}
+		}
+		$sql .= implode(',',$sqlfields);
+		if($primary_key != "")
+		$sql .= ",".$pk;
+		if($unique_keys != "")
+		$sql .= ",".implode(',',$sqluq);
+		if($keys != "")
+		$sql .= ",".implode(',',$sqlk);
+		$sql .=") type=".$type;
+
+		dol_syslog($sql,LOG_DEBUG);
+		if(! $this -> query($sql))
+		return -1;
+		else
+		return 1;
+	}
+
+	/**
 	 * 	\brief      Create a user
 	 *	\param	    dolibarr_main_db_host 		Ip serveur
 	 *	\param	    dolibarr_main_db_user 		Nom user a creer
@@ -955,6 +1041,23 @@ class DoliDb
 		}
 
 		return 1;
+	}
+
+	/**
+	 *	\brief      decrit une table dans une database.
+	 *	\param	    table	Nom de la table
+	 *	\param	    field	Optionnel : Nom du champ si l'on veut la desc d'un champ
+	 *	\return	    resource
+	 */
+	function DDLDescTable($table,$field="")
+	{
+		$sql ="SELECT attname FROM pg_attribute, pg_type WHERE typname = '".$table."' AND attrelid = typrelid";
+		$sql.=" AND attname NOT IN ('cmin', 'cmax', 'ctid', 'oid', 'tableoid', 'xmin', 'xmax')";
+		if ($field) $sql.= " AND attname = '".$field."'";
+
+		dol_syslog($sql,LOG_DEBUG);
+		$this->results = $this->query($sql);
+		return $this->results;
 	}
 
 	/**

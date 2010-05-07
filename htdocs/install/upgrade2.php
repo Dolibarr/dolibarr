@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
@@ -3103,8 +3103,8 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 	$sqlSelect.= " AND el.targettype = 'delivery'";
 	$sqlSelect.= " AND e.rowid = el.fk_source AND el.sourcetype = 'shipping'";
 	// Add condition to know if we never migrate this record
-	$sqlSelect.= " AND (l.ref_customer IS NULL or l.ref_customer = '')";
-	$sqlSelect.= " AND (l.date_delivery IS NULL or l.date_delivery = '')";
+	$sqlSelect.= " AND (l.ref_customer IS NULL".($db->type!='pgsql'?" or l.ref_customer = ''":"").")";
+	$sqlSelect.= " AND (l.date_delivery IS NULL".($db->type!='pgsql'?" or l.date_delivery = ''":"").")";
 
 	$resql = $db->query($sqlSelect);
 	if ($resql)

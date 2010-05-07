@@ -193,3 +193,9 @@ UPDATE llx_product SET canvas = 'service@product' WHERE fk_product_type = 1 AND 
 UPDATE llx_product SET canvas = 'livre@droitpret' WHERE canvas = 'livre';
 UPDATE llx_product SET canvas = 'livrecontrat@droitpret' WHERE canvas = 'livrecontrat';
 UPDATE llx_product SET canvas = 'livrecouverture@droitpret' WHERE canvas = 'livrecouverture';
+
+
+ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu; 
+
+ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, url, entity);
+

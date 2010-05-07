@@ -187,29 +187,29 @@ $sql.= ' AND u.entity in (0,'.$conf->entity.')';	// To limit to entity
 if ($pid) $sql.=" AND a.fk_project=".addslashes($pid);
 if ($_GET["action"] == 'show_day')
 {
-	$sql.= ' AND (';
-	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
-	$sql.= ' OR ';
-	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
-	$sql.= ' OR ';
-	$sql.= ' (datep < '.$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year));
-	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year)).')';
+	$sql.= " AND (";
+	$sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
+	$sql.= " OR ";
+	$sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
+	$sql.= " OR ";
+	$sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,$_GET["day"],$year))."'";
+	$sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$_GET["day"],$year))."')";
 	$sql.= ')';
 }
 else
 {
 	// To limit array
-	$sql.= ' AND (';
-	$sql.= ' (datep BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';			// End 7 days after + 3 to go from 28 to 31
-	$sql.= ' OR ';
-	$sql.= ' (datep2 BETWEEN '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
-	$sql.= ' AND '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';
-	$sql.= ' OR ';
-	$sql.= ' (datep < '.$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7));
-	$sql.= ' AND datep2 > '.$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10)).')';
+	$sql.= " AND (";
+	$sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";	// Start 7 days before
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";			// End 7 days after + 3 to go from 28 to 31
+	$sql.= " OR ";
+	$sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+	$sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
+	$sql.= " OR ";
+	$sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+	$sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
 	$sql.= ')';
 }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
