@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -23,6 +23,12 @@ class mailing_dolibarr_services_expired extends MailingTargets
 	var $arrayofproducts=array();
 
 
+	/**
+	 * Constructor
+	 *
+	 * @param unknown_type $DB
+	 * @return mailing_dolibarr_services_expired
+	 */
 	function mailing_dolibarr_services_expired($DB)
 	{
 		$this->db=$DB;
@@ -77,13 +83,15 @@ class mailing_dolibarr_services_expired extends MailingTargets
             $product=$this->arrayofproducts[$key];
         }
 
+        $now=dol_now('gmt');
+
 		// La requete doit retourner: id, email, name
 		$sql = " select s.rowid, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
 		$sql.= " from ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c,";
 		$sql.= " ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql.= " where s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$product."'";
-		$sql.= " AND cd.date_fin_validite < '".$this->db->idate(gmmktime())."'";
+		$sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 		$sql.= " ORDER BY s.email";
 
 		// Stocke destinataires dans cibles
@@ -153,6 +161,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
 	*/
 	function getNbOfRecipients($filter=1,$option='')
 	{
+        $now=dol_now('gmt');
 
         // Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
 		// Example: return 500;
@@ -162,8 +171,7 @@ class mailing_dolibarr_services_expired extends MailingTargets
 		$sql.= " where s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
 		$sql.= " AND p.ref in ('".join("','",$this->arrayofproducts)."')";
-		$sql.= " AND cd.date_fin_validite < '".$this->db->idate(gmmktime())."'";
-		$sql.= " ORDER BY s.email";
+		$sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 		//print $sql;
 		$a=parent::getNbOfRecipients($sql);
 

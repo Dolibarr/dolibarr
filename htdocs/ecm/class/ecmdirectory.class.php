@@ -64,7 +64,7 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 *      \brief      Create in database
+	 *      \brief      Create record into database
 	 *      \param      user        User that create
 	 *      \return     int         <0 si ko, >0 si ok
 	 */
@@ -133,7 +133,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= " '".$this->fk_parent."',";
 			$sql.= " '".addslashes($this->description)."',";
 			$sql.= " ".($this->cachenbofdoc).",";
-			$sql.= " ".$this->db->idate($this->date_c).",";
+			$sql.= " '".$this->db->idate($this->date_c)."',";
 			$sql.= " '".$this->fk_user_c."'";
 			$sql.= ")";
 
@@ -277,8 +277,8 @@ class EcmDirectory // extends CommonObject
 		$sql.= " t.cachenbofdoc,";
 		$sql.= " t.fk_user_c,";
 		$sql.= " t.fk_user_m,";
-		$sql.= " ".$this->db->pdate('t.date_c')." as date_c,";
-		$sql.= " ".$this->db->pdate('t.date_m')." as date_m";
+		$sql.= " t.date_c as date_c,";
+		$sql.= " t.date_m as date_m";
 		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
 		$sql.= " WHERE t.rowid = ".$id;
 
@@ -298,8 +298,8 @@ class EcmDirectory // extends CommonObject
 				$this->cachenbofdoc = $obj->cachenbofdoc;
 				$this->fk_user_m = $obj->fk_user_m;
 				$this->fk_user_c = $obj->fk_user_c;
-				$this->date_c = $obj->date_c;
-				$this->date_m = $obj->date_m;
+				$this->date_c = $this->db->jdate($obj->date_c);
+				$this->date_m = $this->db->jdate($obj->date_m);
 			}
 
 			$this->db->free($resql);
