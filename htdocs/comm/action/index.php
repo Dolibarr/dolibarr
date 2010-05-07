@@ -323,10 +323,9 @@ if ($showbirthday)
 	{
 		$sql.= ' AND MONTH(birthday) = '.$month;
 	}
-	// Sort on date
 	$sql.= ' ORDER BY birthday';
-	//print $sql;
 
+	dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
