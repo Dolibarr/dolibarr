@@ -103,10 +103,10 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbort
 
 			// Buttons
 			print '<td align="center" valign="middle" nowrap="nowrap">';
-			print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
-			print '<br>';
-			print '<br>';
 			print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+			print '<br>';
+			print '<br>';
+			print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
 			print '</td>';
 			print '</tr>';
 		}
