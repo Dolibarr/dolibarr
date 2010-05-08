@@ -790,8 +790,8 @@ else
 
 			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty,";
 			$sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
-			$sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
-			$sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle,";
+			$sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
+			$sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
 			$sql.= " cd.commentaire as comment,";
 			$sql.= " p.ref, p.label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
@@ -889,17 +889,19 @@ else
 
 						// Date planned
 						print $langs->trans("DateStartPlanned").': ';
-						if ($objp->date_debut) {
-							print dol_print_date($objp->date_debut);
+						if ($objp->date_debut)
+						{
+							print dol_print_date($db->jdate($objp->date_debut));
 							// Warning si date prevu passee et pas en service
-							if ($objp->statut == 0 && $objp->date_debut < ($now - $conf->contrat->services->inactifs->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
+							if ($objp->statut == 0 && $db->jdate($objp->date_debut) < ($now - $conf->contrat->services->inactifs->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
 						}
 						else print $langs->trans("Unknown");
 						print ' &nbsp;-&nbsp; ';
 						print $langs->trans("DateEndPlanned").': ';
-						if ($objp->date_fin) {
-							print dol_print_date($objp->date_fin);
-							if ($objp->statut == 4 && $objp->date_fin < ($now - $conf->contrat->services->expires->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
+						if ($objp->date_fin)
+						{
+							print dol_print_date($db->jdate($objp->date_fin));
+							if ($objp->statut == 4 && $db->jdate($objp->date_fin) < ($now - $conf->contrat->services->expires->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
 						}
 						else print $langs->trans("Unknown");
 
@@ -942,9 +944,9 @@ else
 					print "<tr $bc[$var]>";
 					print '<td colspan="5">';
 					print $langs->trans("DateStartPlanned").' ';
-					$form->select_date($objp->date_debut,"date_start_update",$usehm,$usehm,($objp->date_debut>0?0:1),"update");
+					$form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
 					print '<br>'.$langs->trans("DateEndPlanned").' ';
-					$form->select_date($objp->date_fin,"date_end_update",$usehm,$usehm,($objp->date_fin>0?0:1),"update");
+					$form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
 					print '</td>';
 					print '</tr>';
 

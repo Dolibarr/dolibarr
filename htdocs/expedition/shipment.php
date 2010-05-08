@@ -388,8 +388,8 @@ if ($id > 0 || ! empty($ref))
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type, cd.description, cd.price, cd.tva_tx, cd.subprice,";
 		$sql.= " cd.qty,";
-		$sql.= ' '.$db->pdate('cd.date_start').' as date_start,';
-		$sql.= ' '.$db->pdate('cd.date_end').' as date_end,';
+		$sql.= ' cd.date_start,';
+		$sql.= ' cd.date_end,';
 		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
@@ -453,7 +453,7 @@ if ($id > 0 || ! empty($ref))
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
@@ -471,7 +471,7 @@ if ($id > 0 || ! empty($ref))
 					print $text.' '.nl2br($objp->description);
 
 					// Show range
-					print_date_range($objp->date_start,$objp->date_end);
+					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 					print "</td>\n";
 				}
 
