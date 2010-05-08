@@ -58,12 +58,12 @@ print_barre_liste("Liste des promotions", $page, "index.php", "",$sortfield, $so
 
 $urladd = "&sortorder=$sortorder&sortfield=$sortfield";
 
-$sql = "SELECT pd.products_name, s.specials_new_products_price, p.products_price, p.products_model, s.status, p.products_id";
-$sql .= ",".$dbosc->pdate("expires_date")." as fin";
-$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."specials as s,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as pd,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products as p";
-$sql .= " WHERE s.products_id = pd.products_id AND pd.products_id = p.products_id AND pd.language_id = ".$conf->global->OSC_LANGUAGE_ID;
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $dbosc->plimit( $limit ,$offset);
+$sql = "SELECT pd.products_name, s.specials_new_products_price, p.products_price, p.products_model, s.status, p.products_id,";
+$sql.= " expires_date as fin";
+$sql.= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."specials as s,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products_description as pd,".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."products as p";
+$sql.= " WHERE s.products_id = pd.products_id AND pd.products_id = p.products_id AND pd.language_id = ".$conf->global->OSC_LANGUAGE_ID;
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $dbosc->plimit( $limit ,$offset);
 
 $resql=$dbosc->query($sql);
 if ($resql)
@@ -102,7 +102,7 @@ if ($resql)
 	  print '<img src="/theme/'.$conf->theme.'/img/icon_status_green_light.png" border="0"></a></td>';
 	  print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0" alt="inactif"></td>';
 	}
-      print "<td>".dol_print_date($objp->fin,'day')."</td>";
+      print "<td>".dol_print_date($dbosc->jdate($objp->fin),'day')."</td>";
       print '<td align="right">'.price($objp->products_price)."</td>";
       print '<td align="right">'.price($objp->specials_new_products_price)."</td>";
       print "</tr>";

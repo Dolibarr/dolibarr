@@ -48,7 +48,7 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des commandes", $page, "commande.php");
 
-    $sql = "SELECT o.orders_id, customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_country, customers_telephone, customers_email_address, customers_address_format_id, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_country, delivery_address_format_id, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_country, billing_address_format_id, payment_method, cc_type, cc_owner, cc_number, cc_expires, last_modified,".$dbosc->pdate("date_purchased")." as date_purchased, orders_status, orders_date_finished, currency, currency_value, t.value";
+    $sql = "SELECT o.orders_id, customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_country, customers_telephone, customers_email_address, customers_address_format_id, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_country, delivery_address_format_id, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_country, billing_address_format_id, payment_method, cc_type, cc_owner, cc_number, cc_expires, last_modified, date_purchased, orders_status, orders_date_finished, currency, currency_value, t.value";
 
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " WHERE o.orders_id = t.orders_id AND t.class = 'ot_total'";
@@ -75,7 +75,7 @@ if ( $dbosc->query($sql) )
 
       print '<td><a href="fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
       print $objp->orders_id ."</a></td><td>";
-      print dol_print_date($objp->date_purchased,'dayhour').'</td>';
+      print dol_print_date($dbosc->jdate($objp->date_purchased),'dayhour').'</td>';
       print '<td><a href="../client/fiche.php?id='.$objp->customers_id.'">'.$objp->customers_name."</a></TD>\n";
       print '<td align="right">'.price($objp->value).'</td>';
       print "</tr>\n";

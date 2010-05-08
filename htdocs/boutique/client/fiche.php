@@ -68,7 +68,7 @@ if ($_GET['id'])
 		/*
 		 * Commandes
 		 */
-		$sql = "SELECT o.orders_id, o.customers_id,".$dbosc->pdate("date_purchased")." as date_purchased, t.value as total";
+		$sql = "SELECT o.orders_id, o.customers_id, date_purchased, t.value as total";
 		$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 		$sql .= " WHERE o.customers_id = " . $_GET['id'];
 		$sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
@@ -90,7 +90,7 @@ if ($_GET['id'])
 
 				print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
 
-				print dol_print_date($objp->date_purchased,'dayhour')."</a>\n";
+				print dol_print_date($dbosc->jdate($objp->date_purchased),'dayhour')."</a>\n";
 				print $objp->total . "</a></TD>\n";
 				print "</tr>\n";
 				$i++;
