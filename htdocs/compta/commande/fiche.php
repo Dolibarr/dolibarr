@@ -282,11 +282,11 @@ if ($id > 0 || ! empty($ref))
 
 			if ($_GET['action'] == 'editdelivery_adress')
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
 			}
 			else
 			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
 			}
 			print '</td></tr>';
 		}

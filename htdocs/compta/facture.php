@@ -2373,7 +2373,7 @@ else
 			if ($invoice->type != 3) continue;	// only deposits
 
 			// For each deposits, get payments
-			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
+			$sql = 'SELECT datep as dp, pf.amount,';
 			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql.= ' WHERE pf.fk_facture = '.$invoice->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
@@ -2391,7 +2391,7 @@ else
 
 			print '<tr '.$bc[$var].'><td>';
 			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objpayment->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-			print dol_print_date($objpayment->dp,'day').'</a>';
+			print dol_print_date($db->jdate($objpayment->dp),'day').'</a>';
 
 			print ' ('.$langs->trans("Deposit").' ';
 			print $invoice->getNomUrl(0).')';
@@ -2419,7 +2419,7 @@ else
 			*/
 
 			// Payments already done (from payment on this invoice)
-			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
+			$sql = 'SELECT datep as dp, pf.amount,';
 			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql.= ' WHERE pf.fk_facture = '.$fac->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
@@ -2439,7 +2439,7 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>';
 						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-						print dol_print_date($objp->dp,'day').'</a></td>';
+						print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
 						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 						print '<td align="right">'.price($objp->amount).'</td>';
 						print '<td>&nbsp;</td>';
@@ -2728,8 +2728,8 @@ else
 			$sql.= ' l.fk_remise_except,';
 			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
-			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
-			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
+			$sql.= ' l.date_start,';
+			$sql.= ' l.date_end,';
 			$sql.= ' l.product_type,';
 			$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
 			$sql.= ' p.description as product_desc';
@@ -2793,7 +2793,7 @@ else
 							print $html->textwithtooltip($text,$description,3,'','',$i);
 
 							// Show range
-							print_date_range($objp->date_start,$objp->date_end);
+							print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 							// Add description in form
 							if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
@@ -2837,7 +2837,7 @@ else
 								print $text.' '.nl2br($objp->description);
 
 								// Show range
-								print_date_range($objp->date_start,$objp->date_end);
+								print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 							}
 							print "</td>\n";
 						}
@@ -2992,9 +2992,9 @@ else
 						{
 							print '<tr '.$bc[$var].'>';
 							print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-							print $html->select_date($objp->date_start,'date_start',$usehm,$usehm,$objp->date_start?0:1,"updateligne");
+							print $html->select_date($db->jdate($objp->date_start),'date_start',$usehm,$usehm,$objp->date_start?0:1,"updateligne");
 							print ' '.$langs->trans('to').' ';
-							print $html->select_date($objp->date_end,'date_end',$usehm,$usehm,$objp->date_end?0:1,"updateligne");
+							print $html->select_date($db->jdate($objp->date_end),'date_end',$usehm,$usehm,$objp->date_end?0:1,"updateligne");
 							print '</td>';
 							print '</tr>';
 						}

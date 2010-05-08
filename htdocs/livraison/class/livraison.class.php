@@ -266,7 +266,6 @@ class Livraison extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->user_valid_id        = $obj->fk_user_valid;
-				$this->adresse_livraison_id = $obj->fk_adresse_livraison; // TODO obsolete
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
 				$this->note                 = $obj->note;
 				$this->note_public          = $obj->note_public;
@@ -328,7 +327,7 @@ class Livraison extends CommonObject
 			{
 				// Definition du nom de module de numerotation de commande
 				$modName = $conf->global->LIVRAISON_ADDON;
-					
+
 				if (is_readable(DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.$modName.'.php'))
 				{
 					require_once DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.$modName.'.php';
@@ -352,7 +351,7 @@ class Livraison extends CommonObject
 					$sql.= " WHERE ref = '".$this->ref."'";
 					$sql.= " AND fk_statut <> 0";
 					$sql.= " AND entity = ".$conf->entity;
-					
+
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -370,7 +369,7 @@ class Livraison extends CommonObject
 					$sql.= ", fk_user_valid = ".$user->id;
 					$sql.= " WHERE rowid = ".$this->id;
 					$sql.= " AND fk_statut = 0";
-					
+
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -464,7 +463,7 @@ class Livraison extends CommonObject
 			dol_syslog("livraison.class.php::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
-	
+
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php');
 		$interface = new Interfaces($this->db);
@@ -480,7 +479,7 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->db->commit();
-			dol_syslog("livraison.class.php::valid commit");		
+			dol_syslog("livraison.class.php::valid commit");
 			return 1;
 		}
 	}
@@ -513,8 +512,7 @@ class Livraison extends CommonObject
 		$this->note                 = $expedition->note;
 		$this->fk_project           = $expedition->fk_project;
 		$this->date_delivery        = $expedition->date_delivery;
-		$this->adresse_livraison_id = $expedition->adresse_livraison_id; // TODO obsolete
-		$this->fk_delivery_address  = $expedition->adresse_livraison_id;
+		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer			= $expedition->ref_customer;
 
@@ -583,7 +581,7 @@ class Livraison extends CommonObject
 				if ( $this->db->query($sql) )
 				{
 					$this->db->commit();
-					
+
 					// On efface le repertoire de pdf provisoire
 					$livref = dol_sanitizeFileName($this->ref);
 					if ($conf->livraison->dir_output)
@@ -607,7 +605,7 @@ class Livraison extends CommonObject
 							}
 						}
 					}
-					
+
 					return 1;
 				}
 				else
@@ -796,7 +794,7 @@ class Livraison extends CommonObject
 		$ligne->total_ht       = 100;
 		$this->lignes[$i] = $ligne;
 	}
-	
+
 	/**
 	 *   \brief      Renvoie la quantite de produit restante a livrer pour une commande
 	 *   \return     array		Product remaining to be delivered
@@ -804,10 +802,10 @@ class Livraison extends CommonObject
 	function getRemainingDelivered()
 	{
 		global $langs;
-		
+
 		// Get the linked object
 		$this->load_object_linked(-1,-1,$this->id,$this->element);
-				
+
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
 		$sqlSourceLine.= ", p.ref, p.label";
@@ -816,7 +814,7 @@ class Livraison extends CommonObject
 		$sqlSourceLine.= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
 
 		$resultSourceLine = $this->db->query($sqlSourceLine);
-		if ($resultSourceLine)	
+		if ($resultSourceLine)
 		{
 			$num_lines = $this->db->num_rows($resultSourceLine);
 			$i = 0;
@@ -824,7 +822,7 @@ class Livraison extends CommonObject
 			while ($i < $num_lines)
 			{
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
-				
+
 				// Recupere les lignes de la source deja livrees
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
@@ -836,11 +834,11 @@ class Livraison extends CommonObject
 				$sql.= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
 				$sql.= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
 				$sql.= " GROUP BY ld.fk_origin_line";
-	
+
 				$result = $this->db->query($sql);
 				$row = $this->db->fetch_row($result);
-					
-				if ($objSourceLine->qty - $row[1] > 0)	
+
+				if ($objSourceLine->qty - $row[1] > 0)
 				{
 					if ($row[0] == $objSourceLine->rowid)
 					{
@@ -850,7 +848,7 @@ class Livraison extends CommonObject
 					{
 						$array[$i]['qty'] = $objSourceLine->qty;
 					}
-						
+
 					$array[$i]['ref'] = $objSourceLine->ref;
 					$array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;
 				}
@@ -858,9 +856,9 @@ class Livraison extends CommonObject
 				{
 					$array[$i]['qty'] = $objSourceLine->qty - $row[1]. " Erreur livraison !";
 					$array[$i]['ref'] = $objSourceLine->ref;
-					$array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;					
+					$array[$i]['label'] = $objSourceLine->label?$objSourceLine->label:$objSourceLine->description;
 				}
-				
+
 					$i++;
 			}
 			return $array;
@@ -872,7 +870,7 @@ class Livraison extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      \brief      Renvoie un tableau avec les livraisons par ligne
 	 *      \param      filtre_statut       Filtre sur statut
@@ -882,7 +880,7 @@ class Livraison extends CommonObject
 	function livraison_array($filtre_statut=-1)
 	{
 		$this->livraisons = array();
-		
+
 		$sql = 'SELECT cd.fk_product, SUM(ld.qty)';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'livraisondet as ld';
 		$sql.= ', '.MAIN_DB_PREFIX.'livraison as l';

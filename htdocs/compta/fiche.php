@@ -304,7 +304,7 @@ if ($socid > 0)
 		print '<table class="noborder" width="100%">';
 
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
-		$sql.= ' '.$db->pdate("f.datef").' as df, '.$db->pdate("f.datec").' as dc, f.paye as paye, f.fk_statut as statut,';
+		$sql.= ' f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut,';
 		$sql.= ' s.nom, s.rowid as socid,';
 		$sql.= ' sum(pf.amount) as am';
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -340,7 +340,7 @@ if ($socid > 0)
 				print '</td>';
 				if ($objp->df > 0)
 				{
-					print "<td align=\"right\">".dol_print_date($objp->df)."</td>\n";
+					print "<td align=\"right\">".dol_print_date($db->jdate($objp->df))."</td>\n";
 				}
 				else
 				{

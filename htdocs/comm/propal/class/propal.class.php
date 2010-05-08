@@ -85,7 +85,6 @@ class Propal extends CommonObject
 	var $remise_absolue;
 	var $note;
 	var $note_public;
-	var $adresse_livraison_id;
 	var $fk_delivery_address;
 	var $adresse;
 
@@ -868,7 +867,6 @@ class Propal extends CommonObject
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
-				$this->adresse_livraison_id = $obj->fk_adresse_livraison; // TODO obsolete
 
 				$this->mode_reglement_id       = $obj->fk_mode_reglement;
 				$this->mode_reglement_code     = $obj->mode_reglement_code;
@@ -1377,7 +1375,7 @@ class Propal extends CommonObject
 	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
 	{
 		global $conf,$user;
-		
+
 		$ga = array();
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
@@ -1413,7 +1411,7 @@ class Propal extends CommonObject
 						$ga[$i]['id']	= $obj->propalid;
 						$ga[$i]['ref'] 	= $obj->ref;
 					}
-					
+
 					$i++;
 				}
 			}

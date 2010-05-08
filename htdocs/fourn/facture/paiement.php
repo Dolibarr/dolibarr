@@ -266,7 +266,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			/*
 			 * Autres factures impayees
 			 */
-			$sql = 'SELECT f.rowid as facid,f.rowid as ref,f.facnumber,f.total_ttc,'.$db->pdate('f.datef').' as df';
+			$sql = 'SELECT f.rowid as facid,f.rowid as ref,f.facnumber,f.total_ttc, f.datef as df';
 			$sql .= ', sum(pf.amount) as am';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -309,7 +309,7 @@ if ($action == 'create' || $action == 'add_paiement')
 						if ($objp->df > 0 )
 						{
 							print '<td align="center">';
-							print dol_print_date($objp->df).'</td>';
+							print dol_print_date($db->jdate($objp->df)).'</td>';
 						}
 						else
 						{

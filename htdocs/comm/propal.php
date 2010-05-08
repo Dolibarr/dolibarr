@@ -241,7 +241,6 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			$propal->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 			$propal->fk_delivery_address 	= $_POST['adresse_livraison_id'];
-			$propal->adresse_livraison_id 	= $_POST['adresse_livraison_id']; // TODO obsolete
 			$propal->duree_validite			= $_POST['duree_validite'];
 			$propal->cond_reglement_id 		= $_POST['cond_reglement_id'];
 			$propal->mode_reglement_id 		= $_POST['mode_reglement_id'];
@@ -269,7 +268,6 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->datep 					= dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		$propal->date_livraison 		= dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 		$propal->fk_delivery_address 	= $_POST['fk_delivery_address'];
-		$propal->adresse_livraison_id 	= $_POST['fk_delivery_address']; // TODO obsolete
 		$propal->duree_validite 		= $_POST['duree_validite'];
 		$propal->cond_reglement_id 		= $_POST['cond_reglement_id'];
 		$propal->mode_reglement_id 		= $_POST['mode_reglement_id'];

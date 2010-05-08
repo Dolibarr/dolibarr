@@ -86,7 +86,7 @@ if ($socid > 0)
 
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df,";
+        $sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, f.datef as df,";
         $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
         $sql.= " u.login, u.rowid as userid";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
@@ -150,7 +150,7 @@ if ($socid > 0)
                 print "</tr>\n";
 
                 // Paiements
-                $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut,";
+                $sql = "SELECT p.rowid, p.datep as dp, pf.amount, p.statut,";
 		$sql.= " p.fk_user_creat, u.login, u.rowid as userid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf,";
                 $sql.= " ".MAIN_DB_PREFIX."paiement as p";
@@ -169,9 +169,9 @@ if ($socid > 0)
                         $objp = $db->fetch_object($resqlp);
                         //$var=!$var;
                         print "<tr $bc[$var]>";
-                        print '<td align="center">'.dol_print_date($objp->dp)."</td>\n";
+                        print '<td align="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
                         print '<td>';
-                        print '&nbsp; &nbsp; &nbsp; '; // D�calage
+                        print '&nbsp; &nbsp; &nbsp; '; // Decalage
                         print '<a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
                         print "<td>&nbsp;</td>\n";
                         print "<td>&nbsp;</td>\n";

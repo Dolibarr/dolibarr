@@ -96,7 +96,7 @@ $html=new Form($db);
 llxHeader($langs->trans("SuppliersInovices"),'','EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
 $sql = "SELECT s.rowid as socid, s.nom, ";
-$sql.= " fac.rowid as ref, fac.rowid as facid, fac.facnumber, ".$db->pdate("fac.datef")." as datef, ".$db->pdate("fac.date_lim_reglement")." as date_echeance,";
+$sql.= " fac.rowid as ref, fac.rowid as facid, fac.facnumber, fac.datef, fac.date_lim_reglement as date_echeance,";
 $sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
@@ -242,9 +242,9 @@ if ($resql)
 		print $facturestatic->getNomUrl(1);
 		print "</td>\n";
 		print '<td nowrap>'.dol_trunc($obj->facnumber,10)."</td>";
-		print '<td align="center" nowrap="1">'.dol_print_date($obj->datef,'day').'</td>';
-		print '<td align="center" nowrap="1">'.dol_print_date($obj->date_echeance,'day');
-		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		print '<td align="center" nowrap="1">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
+		print '<td align="center" nowrap="1">'.dol_print_date($db->jdate($obj->date_echeance),'day');
+		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
 		print '<td>';

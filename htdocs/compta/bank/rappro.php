@@ -128,7 +128,7 @@ $paymentvatstatic=new TVA($db);
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, ".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
+$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
 $sql.= " ORDER BY dateo ASC";
@@ -203,13 +203,13 @@ if ($resql)
         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
 
         // Date op
-        print '<td align="center" nowrap="nowrap">'.dol_print_date($objp->do,"day").'</td>';
+        print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
 
         // Date value
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
 			print '<td align="center" nowrap="nowrap">';
-			print dol_print_date($objp->dv,"day");
+			print dol_print_date($db->jdate($objp->dv),"day");
 			print ' &nbsp; ';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
@@ -220,7 +220,7 @@ if ($resql)
 		else
 		{
 			print '<td align="center">';
-			print dol_print_date($objp->dv,"day");
+			print dol_print_date($db->jdate($objp->dv),"day");
 			print '</td>';
 		}
 
@@ -341,7 +341,7 @@ if ($resql)
                 print img_edit();
                 print '</a>&nbsp; ';
 
-                if ($objp->do <= mktime()) {
+                if ($db->jdate($objp->do) <= mktime()) {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
                     print img_delete();
                     print '</a>';
@@ -358,8 +358,8 @@ if ($resql)
         }
 
 
-        // Affiche zone saisie relev� + bouton "Rapprocher"
-        if ($objp->do <= gmmktime())
+        // Affiche zone saisie releve + bouton "Rapprocher"
+        if ($db->jdate($objp->do) <= gmmktime())
         {
             print '<td align="center" nowrap="nowrap">';
             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';

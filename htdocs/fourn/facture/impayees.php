@@ -78,7 +78,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 	$sql = "SELECT s.nom, s.rowid as socid,";
 	$sql.= " f.rowid as ref, f.facnumber, f.total_ht, f.total_ttc,";
-	$sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
+	$sql.= " f.datef as df, f.date_lim_reglement as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
 	$sql.= " ,sum(pf.amount) as am";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -213,9 +213,9 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print "<td nowrap>".dol_trunc($objp->facnumber,12)."</td>\n";
 
-				print "<td nowrap align=\"center\">".dol_print_date($objp->df)."</td>\n";
-				print "<td nowrap align=\"center\">".dol_print_date($objp->datelimite);
-				if ($objp->datelimite < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df))."</td>\n";
+				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite));
+				if ($db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
 
 				print '<td>';

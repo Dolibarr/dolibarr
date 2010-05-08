@@ -197,7 +197,6 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 	$commande->mode_reglement_id    = $_POST['mode_reglement_id'];
 	$commande->date_livraison       = $datelivraison;
 	$commande->fk_delivery_address  = $_POST['fk_delivery_address'];
-	$commande->adresse_livraison_id = $_POST['fk_delivery_address']; // TODO obsolete
 	$commande->contactid            = $_POST['contactidp'];
 
 	$NBLINES=8;

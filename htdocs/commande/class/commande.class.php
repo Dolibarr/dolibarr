@@ -61,7 +61,6 @@ class Commande extends CommonObject
 	var $cond_reglement_code;
 	var $mode_reglement_id;
 	var $mode_reglement_code;
-	var $adresse_livraison_id; // TODO obsolete
 	var $fk_delivery_address;
 	var $adresse;
 	var $date;				// Date commande
@@ -76,7 +75,7 @@ class Commande extends CommonObject
 	var $modelpdf;
 	var $info_bits;
 	var $source;			// Origin of order
-	
+
 	var $origin;
 	var $origin_id;
 
@@ -149,7 +148,6 @@ class Commande extends CommonObject
 		$this->mode_reglement_id    = $propal->mode_reglement_id;
 		$this->date_livraison       = $propal->date_livraison;
 		$this->fk_delivery_address  = $propal->fk_delivery_address;
-		$this->adresse_livraison_id = $propal->adresse_livraison_id; // TODO obsolete
 		$this->contact_id           = $propal->contactid;
 		$this->ref_client           = $propal->ref_client;
 		$this->note                 = $propal->note;
@@ -159,7 +157,7 @@ class Commande extends CommonObject
 		$soc = new Societe($this->db);
 		$soc->id = $this->socid;
 		$soc->set_as_client();
-		
+
 		$this->origin 		= $propal->element;
 		$this->origin_id 	= $propal->id;
 
@@ -679,16 +677,16 @@ class Commande extends CommonObject
 							$ret = $this->add_object_linked();
 							if (! $ret)	dol_print_error($this->db);
 						}
-						
+
 						// TODO mutualiser
 						if ($this->origin == 'propal' && $this->origin_id)
 						{
 							// On recupere les differents contact interne et externe
 							$prop = New Propal($this->db, $this->socid, $this->origin_id);
-							
+
 							// On recupere le commercial suivi propale
 							$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-							
+
 							if ($this->userid)
 							{
 								//On passe le commercial suivi propale en commercial suivi commande
@@ -697,7 +695,7 @@ class Commande extends CommonObject
 
 							// On recupere le contact client suivi propale
 							$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-							
+
 							if ($this->contactid)
 							{
 								//On passe le contact client suivi propale en contact client suivi commande
@@ -1004,8 +1002,8 @@ class Commande extends CommonObject
 
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
 		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.fk_cond_reglement, c.fk_mode_reglement';
-		$sql.= ', '.$this->db->pdate('c.date_commande').' as date_commande';
-		$sql.= ', '.$this->db->pdate('c.date_livraison').' as date_livraison';
+		$sql.= ', c.date_commande';
+		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
 		$sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -1035,8 +1033,8 @@ class Commande extends CommonObject
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
 				$this->total_ttc              = $obj->total_ttc;
-				$this->date                   = $obj->date_commande;
-				$this->date_commande          = $obj->date_commande;
+				$this->date                   = $this->db->jdate($obj->date_commande);
+				$this->date_commande          = $this->db->jdate($obj->date_commande);
 				$this->remise                 = $obj->remise;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
@@ -1053,8 +1051,7 @@ class Commande extends CommonObject
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-				$this->date_livraison         = $obj->date_livraison;
-				$this->adresse_livraison_id   = $obj->fk_adresse_livraison; // TODO deprecated
+				$this->date_livraison         = $db->jdate($obj->date_livraison);
 				$this->fk_delivery_address    = $obj->fk_adresse_livraison;
 				$this->propale_id             = $obj->fk_source;
 				$this->lignes                 = array();
@@ -1618,7 +1615,6 @@ class Commande extends CommonObject
 
 			if ($this->db->query($sql) )
 			{
-				$this->adresse_livraison_id = $fk_delivery_address; // TODO obsolete
 				$this->fk_delivery_address = $fk_delivery_address;
 				return 1;
 			}
@@ -1966,7 +1962,7 @@ class Commande extends CommonObject
 			dol_syslog("CustomerOrder::delete error", LOG_ERR);
 			$err++;
 		}
-		
+
 		// Delete linked contacts
 		$res = $this->delete_linked_contact();
 		if ($res < 0)
@@ -1984,7 +1980,7 @@ class Commande extends CommonObject
 			if (file_exists($file))
 			{
 				commande_delete_preview($this->db, $this->id, $this->ref);
-				
+
 				if (!dol_delete_file($file))
 				{
 					$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);

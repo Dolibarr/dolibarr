@@ -78,7 +78,7 @@ if ($_GET["id"] > 0) {
 		/*
 		 *   Commande
 		 */
-		$sql = 'SELECT s.nom, s.rowid, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('c.date_commande').' as dp, c.note,';
+		$sql = 'SELECT s.nom, s.rowid, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, c.date_commande as dp, c.note,';
 		$sql.= ' c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ', '.MAIN_DB_PREFIX.'commande as c';

@@ -65,7 +65,7 @@ if ($_GET["id"] > 0) {
 		/*
 		 *   Fiche intervention
 		 */
-		$sql = 'SELECT s.nom, s.rowid, fi.fk_projet, fi.ref, fi.description, fi.fk_statut, '.$db->pdate('fi.datei').' as di,';
+		$sql = 'SELECT s.nom, s.rowid, fi.fk_projet, fi.ref, fi.description, fi.fk_statut, fi.datei as di,';
 		$sql.= ' fi.fk_user_author, fi.fk_user_valid, fi.datec, fi.date_valid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'fichinter as fi';
 		$sql.= ' WHERE fi.fk_soc = s.rowid';

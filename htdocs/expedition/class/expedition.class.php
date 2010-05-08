@@ -52,7 +52,7 @@ class Expedition extends CommonObject
 	var $origin_id;
 	var $lignes;
 	var $meths;
-	
+
 	var $date_delivery;
 	var $date_creation;
 	var $date_valid;
@@ -261,7 +261,6 @@ class Expedition extends CommonObject
 				$this->date                 = $this->db->jdate($obj->date_expedition);	// TODO obsolete
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition);
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);
-				$this->adresse_livraison_id = $obj->fk_adresse_livraison; 				// TODO obsolete
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->expedition_method_id = $obj->fk_expedition_methode;
@@ -379,7 +378,7 @@ class Expedition extends CommonObject
 				$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed";
 				$sql.= " WHERE ed.fk_expedition = ".$this->id;
 				$sql.= " AND cd.rowid = ed.fk_origin_line";
-				
+
 				dol_syslog("Expedition::valid select details sql=".$sql);
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -530,7 +529,7 @@ class Expedition extends CommonObject
 			if ($this->db->query($sql) )
 			{
 				$this->update_price();
-				
+
 				return 1;
 			}
 			else
@@ -780,7 +779,6 @@ class Expedition extends CommonObject
 		}
 		$this->date                 = time();
 		$this->entrepot_id          = 0;
-		$this->adresse_livraison_id = 0; // TODO obsolete
 		$this->fk_delivery_address  = 0;
 		$this->socid = $socids[$socid];
 

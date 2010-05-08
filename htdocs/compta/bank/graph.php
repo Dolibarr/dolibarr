@@ -93,8 +93,7 @@ else
 	$height = 200;
 
 	// Calcul de $min et $max
-	$sql = "SELECT MIN(".$db->pdate("b.datev").")";
-	$sql.= ", MAX(".$db->pdate("b.datev").")";
+	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_account = ba.rowid";
@@ -105,9 +104,9 @@ else
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
-		$row = $db->fetch_row($resql);
-		$min = $row[0];
-		$max = $row[1];
+		$obj = $db->fetch_object($resql);
+		$min = $db->jdate($obj->min);
+		$max = $db->jdate($obj->max);
 	}
 	else
 	{
